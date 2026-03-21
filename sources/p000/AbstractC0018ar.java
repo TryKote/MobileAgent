@@ -32,7 +32,7 @@ public abstract class AbstractC0018ar implements ListItem {
     private static final Vector m489a(ByteBuffer c0043n, int i, boolean z) {
         boolean z2;
         Hashtable hashtable = (Hashtable) JsonParser.m466a(c0043n, 2);
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         Vector vectorM614m = AppState.m614m(1404);
         if (vectorM614m != null && !z) {
             int i2 = f159b;

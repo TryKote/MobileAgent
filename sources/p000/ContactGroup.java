@@ -10,7 +10,7 @@ public abstract class ContactGroup implements Sortable {
     public final Account f396d;
 
     /* renamed from: e */
-    public final Vector f397e = C0040k.m1213g();
+    public final Vector f397e = NetworkUtils.m1213g();
 
     /* renamed from: f */
     public String f398f;
@@ -54,7 +54,7 @@ public abstract class ContactGroup implements Sortable {
         C0032c c0032cM896a = C0032c.m887a(new ByteBuffer().m1321f(35).m1382s(this.f396d.f314j).m1321f(35).m1382s(mo197b()).m1337i()).m896a(this.f399g ? 30 : 31);
         c0032cM896a.f265d = this;
         if (mo198a()) {
-            C0032c c0032cM901a = c0032cM896a.m901a(C0040k.m1215a(C0040k.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);
+            C0032c c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);
             int i2 = 0;
             int size = this.f397e.size();
             while (true) {
@@ -68,7 +68,7 @@ public abstract class ContactGroup implements Sortable {
                 }
             }
             C0032c c0032cM901a2 = c0032cM901a.m901a(StringUtils.m17c(Integer.toString(i2)), 1, 20);
-            StringBuffer stringBufferAppend = C0040k.m1217h().append('/');
+            StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('/');
             int size2 = this.f397e.size();
             int i3 = size2;
             int i4 = size2;
@@ -82,9 +82,9 @@ public abstract class ContactGroup implements Sortable {
                     i3--;
                 }
             }
-            c0032cM901a2.m901a(C0040k.m1215a(stringBufferAppend.append(i3).append(')')), 1, 0);
+            c0032cM901a2.m901a(NetworkUtils.m1215a(stringBufferAppend.append(i3).append(')')), 1, 0);
         } else if (i >= 0) {
-            c0032cM896a.m901a(C0040k.m1215a(C0040k.m1217h().append(this.f398f).append(' ').append('(').append(i).append(')')), 1, 0);
+            c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(').append(i).append(')')), 1, 0);
         } else {
             c0032cM896a.m901a(this.f398f, 1, 0);
         }

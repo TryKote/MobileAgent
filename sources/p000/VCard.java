@@ -187,7 +187,7 @@ public final class VCard {
         }
         if (vector != null) {
             if (!vector.isEmpty()) {
-                vectorM1213g = C0040k.m1213g();
+                vectorM1213g = NetworkUtils.m1213g();
             }
             int size = vector.size();
             while (true) {

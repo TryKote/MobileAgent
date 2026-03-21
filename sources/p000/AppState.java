@@ -54,17 +54,17 @@ public abstract class AppState {
             }
         }
         StringUtils.f0a = new Vector(128);
-        C0040k.f365g = new byte[20][];
-        C0040k.f366h = new StringBuffer[5];
-        C0040k.f367i = new Vector[5];
-        C0040k.f368j = new Hashtable();
-        C0029bb.f237c = C0040k.m1213g();
-        f182g = C0040k.m1221a(1819047278);
+        NetworkUtils.f365g = new byte[20][];
+        NetworkUtils.f366h = new StringBuffer[5];
+        NetworkUtils.f367i = new Vector[5];
+        NetworkUtils.f368j = new Hashtable();
+        C0029bb.f237c = NetworkUtils.m1213g();
+        f182g = NetworkUtils.m1221a(1819047278);
         f176a = new byte[0];
         f178e = new Object[295];
         f177b = new Object[1406];
         f179f = new int[3773];
-        ByteBuffer c0043n = new ByteBuffer(C0040k.m1221a(1734763311), 45000);
+        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.m1221a(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
             f177b[i2] = m618a(c0043n, i2);
         }
@@ -92,7 +92,7 @@ public abstract class AppState {
             iArr[i4] = iM1346q;
         }
         f181d = (String) f177b[1038];
-        ByteBuffer c0043nM851h = C0031bd.m851h(C0040k.m1221a(1164404323));
+        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.m1221a(1164404323));
         while (c0043nM851h.f384b > 0) {
             try {
                 f178e[((Integer) m618a(c0043nM851h, 0)).intValue()] = m618a(c0043nM851h, 0);
@@ -142,7 +142,7 @@ public abstract class AppState {
         f177b[1372] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
         f177b[1361] = new Object[58];
         f177b[1362] = new int[29];
-        f177b[1266] = C0040k.m1213g();
+        f177b[1266] = NetworkUtils.m1213g();
         f177b[1267] = new int[]{1};
         f177b[1268] = new int[]{2};
         f177b[1269] = new int[]{3};
@@ -150,13 +150,13 @@ public abstract class AppState {
         StringUtils.m34h();
         C0015ao.f147a = new long[14];
         f177b[1238] = new Object[1];
-        C0040k.m1208b(f182g);
-        C0040k.m1208b(m620j());
-        C0040k.m1208b(m584b(1233));
-        C0040k.m1208b(m584b(1234));
-        C0040k.m1208b(m584b(1038));
-        C0040k.m1208b(m584b(525044));
-        C0040k.m1208b(m584b(590588));
+        NetworkUtils.m1208b(f182g);
+        NetworkUtils.m1208b(m620j());
+        NetworkUtils.m1208b(m584b(1233));
+        NetworkUtils.m1208b(m584b(1234));
+        NetworkUtils.m1208b(m584b(1038));
+        NetworkUtils.m1208b(m584b(525044));
+        NetworkUtils.m1208b(m584b(590588));
         f177b[112] = C0034e.m967e(!StringUtils.f1b && !StringUtils.f2c ? 1 : 0);
         try {
             m599a(1535, Display.getDisplay(m602d()).numAlphaLevels() > 2);
@@ -201,7 +201,7 @@ public abstract class AppState {
         if (objM583p == null) {
             return null;
         }
-        return objM583p instanceof byte[] ? C0040k.m1218b((byte[]) objM583p) : (String) objM583p;
+        return objM583p instanceof byte[] ? NetworkUtils.m1218b((byte[]) objM583p) : (String) objM583p;
     }
 
     /* renamed from: c */
@@ -223,7 +223,7 @@ public abstract class AppState {
 
     /* renamed from: a */
     public static final void m588a(int i, StringBuffer stringBuffer) {
-        m601a(i, (Object) C0040k.m1215a(stringBuffer));
+        m601a(i, (Object) NetworkUtils.m1215a(stringBuffer));
     }
 
     /* renamed from: a */
@@ -373,8 +373,8 @@ public abstract class AppState {
     }
 
     /* renamed from: h */
-    public static final C0035f m612h() {
-        return (C0035f) f177b[1365];
+    public static final MrimContact m612h() {
+        return (MrimContact) f177b[1365];
     }
 
     /* renamed from: c */
@@ -411,13 +411,13 @@ public abstract class AppState {
             if (i >= 295 && i < 1036) {
                 return bArr;
             }
-            StringBuffer stringBufferM1217h = C0040k.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
             for (byte b : bArr) {
                 stringBufferM1217h.append(Utils.m499a((int) b));
             }
-            C0040k.m1209a(bArr);
+            NetworkUtils.m1209a(bArr);
             String str = f182g;
-            String strM1215a = C0040k.m1215a(stringBufferM1217h);
+            String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
             if (str.equals(strM1215a)) {
                 return null;
             }
@@ -467,14 +467,14 @@ public abstract class AppState {
                     }
                 }
             }
-            C0031bd.m852a(C0040k.m1221a(1164404323), c0043n, z);
+            XmppMailRuProtocol.m852a(NetworkUtils.m1221a(1164404323), c0043n, z);
         } catch (Throwable unused) {
         }
     }
 
     /* renamed from: j */
     public static final String m620j() {
-        return C0040k.m1215a(C0040k.m1217h().append((char) 8230));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) 8230));
     }
 
     /* renamed from: b */
@@ -532,12 +532,12 @@ public abstract class AppState {
 
     /* renamed from: a */
     public static final int m626a(String str, int i) {
-        return str.indexOf(C0040k.m1221a(i));
+        return str.indexOf(NetworkUtils.m1221a(i));
     }
 
     /* renamed from: a */
     public static final int m627a(String str, long j) {
-        return str.indexOf(C0040k.m1221a(j));
+        return str.indexOf(NetworkUtils.m1221a(j));
     }
 
     /* renamed from: b */

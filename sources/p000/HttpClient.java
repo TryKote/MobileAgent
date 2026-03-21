@@ -10,7 +10,7 @@ import javax.microedition.io.HttpConnection;
 
 /* renamed from: ax */
 /* loaded from: MobileAgent_3.9.jar:ax.class */
-public final class C0024ax {
+public final class HttpClient {
 
     /* renamed from: a */
     public Connection f183a;
@@ -43,27 +43,27 @@ public final class C0024ax {
     private ByteBuffer f192j;
 
     /* renamed from: a */
-    public static final C0024ax m629a(String str, Account abstractC0037h, int i) throws IOException {
-        return new C0024ax(str, abstractC0037h, i);
+    public static final HttpClient m629a(String str, Account abstractC0037h, int i) throws IOException {
+        return new HttpClient(str, abstractC0037h, i);
     }
 
     /* renamed from: a */
-    public static final C0024ax m630a(Object obj) throws IOException {
+    public static final HttpClient m630a(Object obj) throws IOException {
         return m629a((String) obj, (Account) null, 3);
     }
 
     /* renamed from: b */
-    public static final C0024ax m631b(Object obj) throws IOException {
+    public static final HttpClient m631b(Object obj) throws IOException {
         return m629a((String) obj, (Account) null, 2);
     }
 
     /* renamed from: a */
-    public static final C0024ax m632a(String str) {
-        return new C0024ax(str);
+    public static final HttpClient m632a(String str) {
+        return new HttpClient(str);
     }
 
     /* renamed from: a */
-    public static final void m633a(C0024ax c0024ax) {
+    public static final void m633a(HttpClient c0024ax) {
         try {
             if (c0024ax.f186d != null && c0024ax.f187e == 0) {
                 C0015ao.m419a(c0024ax.f186d, c0024ax.f190h);
@@ -100,13 +100,13 @@ public final class C0024ax {
         }
     }
 
-    private C0024ax(String str) {
+    private HttpClient(String str) {
         this.f188f = 1;
         this.f187e = 2;
         this.f191i = str.startsWith(AppState.m584b(459255)) ? StringUtils.m15c(str, 7) : str;
     }
 
-    private C0024ax(String str, Account abstractC0037h, int i) throws IOException {
+    private HttpClient(String str, Account abstractC0037h, int i) throws IOException {
         this.f183a = Connector.open(str, 3);
         this.f186d = abstractC0037h;
         this.f187e = i;
@@ -131,7 +131,7 @@ public final class C0024ax {
     }
 
     /* renamed from: a */
-    public final C0024ax m636a(String str, String str2) throws IOException {
+    public final HttpClient m636a(String str, String str2) throws IOException {
         if (this.f188f == 0) {
             ((HttpConnection) this.f183a).setRequestProperty(str, str2);
         } else {
@@ -142,7 +142,7 @@ public final class C0024ax {
     }
 
     /* renamed from: a */
-    public final C0024ax m637a(byte[] bArr, int i) throws IOException {
+    public final HttpClient m637a(byte[] bArr, int i) throws IOException {
         if (i > 0) {
             m640d().write(bArr, 0, i);
             this.f189g += i;
@@ -180,13 +180,13 @@ public final class C0024ax {
     }
 
     /* renamed from: a */
-    public final C0024ax m641a(ByteBuffer c0043n) throws IOException {
+    public final HttpClient m641a(ByteBuffer c0043n) throws IOException {
         m637a(c0043n.f383a, c0043n.f384b);
         return this;
     }
 
     /* renamed from: a */
-    public final C0024ax m642a(int i, int i2, int i3) throws IOException {
+    public final HttpClient m642a(int i, int i2, int i3) throws IOException {
         String str = this.f191i;
         this.f183a = Connector.open(new ByteBuffer().m1310c(593549).m1314d(StringUtils.m13b(str, str.indexOf(47))).m1317c(), 3);
         m641a(new ByteBuffer().m1385u(i2).m1321f(32).m1314d(StringUtils.m15c(str, str.indexOf(47))).m1310c(2951238).m1314d(StringUtils.m13b(str, str.indexOf(58))).m1311d(i3).m1385u(2573));
@@ -198,7 +198,7 @@ public final class C0024ax {
     }
 
     /* renamed from: a */
-    private final C0024ax m643a(int i, int i2) throws IOException {
+    private final HttpClient m643a(int i, int i2) throws IOException {
         return m636a(AppState.m584b(i), AppState.m584b(i2));
     }
 
@@ -210,7 +210,7 @@ public final class C0024ax {
         int iIndexOf = StringUtils.m17c(str.toLowerCase()).indexOf(AppState.m584b(1052310)) + 16;
         int i2 = Integer.parseInt(StringUtils.m12a(str, iIndexOf, str.indexOf(13, iIndexOf)));
         ByteBuffer c0043n = new ByteBuffer();
-        byte[] bArrM1211a = C0040k.m1211a(i2);
+        byte[] bArrM1211a = NetworkUtils.m1211a(i2);
         do {
             i = m639c().read(bArrM1211a, 0, i2 - c0043n.f384b);
             if (i > 0) {
@@ -223,7 +223,7 @@ public final class C0024ax {
                 break;
             }
         } while (i != -1);
-        C0040k.m1209a(bArrM1211a);
+        NetworkUtils.m1209a(bArrM1211a);
         return c0043n;
     }
 

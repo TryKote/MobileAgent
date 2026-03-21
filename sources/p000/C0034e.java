@@ -114,7 +114,7 @@ public final class C0034e {
         if (!C0015ao.m307b(4, 1000L) || (i = (calendarM622k = AppState.m622k()).get(12)) == f286m) {
             return;
         }
-        String strM1215a = C0040k.m1215a(C0040k.m1217h().append(Utils.m501b(calendarM622k.get(11))).append(':').append(Utils.m501b(i)));
+        String strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.m501b(calendarM622k.get(11))).append(':').append(Utils.m501b(i)));
         AppState.m601a(1263, (Object) strM1215a);
         f287f = AppState.m608k(0).m214a(strM1215a);
         f286m = i;
@@ -124,7 +124,7 @@ public final class C0034e {
     /* renamed from: a */
     public static final void m929a(Object[] objArr) {
         while (true) {
-            C0005ae c0005ae = (C0005ae) objArr[0];
+            XmppProtocol c0005ae = (XmppProtocol) objArr[0];
             XmlElement c0022avM47a = ((XmlParser) objArr[2]).m47a();
             synchronized (c0005ae.f30a) {
                 c0005ae.f30a.addElement(c0022avM47a);
@@ -262,7 +262,7 @@ public final class C0034e {
             }
         }
         int iM586d3 = (int) ((j * AppState.m586d(113)) / 1048576);
-        AppState.m588a(1327, C0040k.m1217h().append(iM586d3 / 100).append('.').append(Utils.m501b(iM586d3 % 100)).append(' ').append(AppState.m584b(117)));
+        AppState.m588a(1327, NetworkUtils.m1217h().append(iM586d3 / 100).append('.').append(Utils.m501b(iM586d3 % 100)).append(' ').append(AppState.m584b(117)));
         AppState.m594c(3985, iM586d + 745);
         AbstractC0004ad.m71b(AbstractC0004ad.m75b(3985));
         AppState.m590b(1325, 1335);
@@ -274,7 +274,7 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m937a(C0033d c0033d, String str) {
+    public static final ByteBuffer m937a(MmpProtocol c0033d, String str) {
         ByteBuffer c0043nM1376j = new ByteBuffer().m1376j(str);
         int iM920k = c0033d.m920k();
         return c0033d.m916a(new Object[]{C0015ao.m464a(c0033d, 4872, c0043nM1376j.m1357m(iM920k).m1357m(0).m1357m(1).m1357m(0)), m967e(4), str, m967e(iM920k)});
@@ -285,7 +285,7 @@ public final class C0034e {
         int iM1052c;
         String strM522f = Utils.m522f(AppState.m584b(1279));
         if (str != AppState.m584b(1060)) {
-            StringBuffer stringBufferM1196e = C0040k.m1196e();
+            StringBuffer stringBufferM1196e = NetworkUtils.m1196e();
             if (StringUtils.m3a(473, str)) {
                 AppState.m588a(1279, stringBufferM1196e.append(AppState.m584b(1280)));
                 return 0;
@@ -302,17 +302,17 @@ public final class C0034e {
             return 0;
         }
         String strM584b = AppState.m584b(1314);
-        C0035f c0035f = (C0035f) AppState.f177b[1365];
-        C0028ba c0028ba = (C0028ba) c0035f.f369o;
+        MrimContact c0035f = (MrimContact) AppState.f177b[1365];
+        MrimAccount c0028ba = (MrimAccount) c0035f.f369o;
         if (c0028ba.m1056C()) {
-            c0035f.m1239a(1, C0040k.m1215a(Utils.m497a(C0040k.m1217h().append(AppState.m584b(776)).append(Utils.m530h(strM584b))).append(strM522f)), 0L, 0L);
-            StringBuffer stringBufferAppend = C0040k.m1217h().append('+');
+            c0035f.m1239a(1, NetworkUtils.m1215a(Utils.m497a(NetworkUtils.m1217h().append(AppState.m584b(776)).append(Utils.m530h(strM584b))).append(strM522f)), 0L, 0L);
+            StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('+');
             if (strM584b.charAt(0) == '8') {
                 stringBufferAppend.append('7').append(StringUtils.m15c(strM584b, 1));
             } else {
                 stringBufferAppend.append(strM584b);
             }
-            iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4153, new ByteBuffer().m1360p(0).m1308a(C0040k.m1215a(stringBufferAppend)).m1309b(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
+            iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4153, new ByteBuffer().m1360p(0).m1308a(NetworkUtils.m1215a(stringBufferAppend)).m1309b(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
         } else {
             iM1052c = 299;
         }
@@ -331,7 +331,7 @@ public final class C0034e {
         try {
             try {
                 C0015ao.m343s();
-                C0024ax c0024axM630a = C0024ax.m630a(obj);
+                HttpClient c0024axM630a = HttpClient.m630a(obj);
                 if (c0024axM630a.m634a() != 200) {
                     throw new Throwable();
                 }
@@ -353,20 +353,20 @@ public final class C0034e {
                         str = strM11a;
                     }
                     if (z && str != null) {
-                        C0040k.m1212a(vector);
+                        NetworkUtils.m1212a(vector);
                         C0029bb.m778d((Object) AppState.m584b(494));
-                        C0024ax.m633a(c0024axM630a);
+                        HttpClient.m633a(c0024axM630a);
                         C0015ao.m344t();
                         return;
                     }
                 }
             } catch (Throwable th) {
                 C0029bb.m778d((Object) StringUtils.m8a(493, (Object) null));
-                C0024ax.m633a((C0024ax) null);
+                HttpClient.m633a((HttpClient) null);
                 C0015ao.m344t();
             }
         } catch (Throwable th2) {
-            C0024ax.m633a((C0024ax) null);
+            HttpClient.m633a((HttpClient) null);
             C0015ao.m344t();
             throw th2;
         }
@@ -408,7 +408,7 @@ public final class C0034e {
             i3++;
             jArr[i5] = j;
         }
-        C0040k.m1209a(bArrM581a);
+        NetworkUtils.m1209a(bArrM581a);
         return jArr;
     }
 
@@ -424,7 +424,7 @@ public final class C0034e {
 
     /* renamed from: f */
     public static final int m945f() {
-        C0040k.m1195d();
+        NetworkUtils.m1195d();
         String strM522f = Utils.m522f(AppState.m584b(1286));
         int i = 0;
         int iLastIndexOf = strM522f.lastIndexOf(46);
@@ -463,7 +463,7 @@ public final class C0034e {
 
     /* renamed from: h */
     public static final int m947h() {
-        ((C0028ba) AppState.m616i()).m724j();
+        ((MrimAccount) AppState.m616i()).m724j();
         if (AppState.m587e(286)) {
             return AppState.m586d(1476);
         }
@@ -530,7 +530,7 @@ public final class C0034e {
 
     /* renamed from: b */
     public static final int m952b(Object obj) {
-        C0028ba c0028ba = (C0028ba) AppState.m616i();
+        MrimAccount c0028ba = (MrimAccount) AppState.m616i();
         C0014an c0014an = (C0014an) obj;
         c0028ba.m731a(c0014an);
         C0036g.m1043a(AppState.m614m(1400), c0014an, 0, 5);
@@ -554,13 +554,13 @@ public final class C0034e {
         if (size > 0) {
             c0013amM75b.m255a(832);
             for (int i = 0; i < size; i++) {
-                c0013amM75b.m225a(((C0028ba) vectorM439R.elementAt(i)).m1057D());
+                c0013amM75b.m225a(((MrimAccount) vectorM439R.elementAt(i)).m1057D());
             }
         } else {
             c0013amM75b.f103i = false;
             c0013amM75b.m255a(551);
         }
-        C0040k.m1212a(vectorM439R);
+        NetworkUtils.m1212a(vectorM439R);
         AbstractC0004ad.m70a(c0013amM75b);
         C0008ah.m169e();
         C0008ah.m176a(36, (Account) null);
@@ -584,14 +584,14 @@ public final class C0034e {
                 if (vectorM440S.size() <= 0) {
                     return C0015ao.m338l(422);
                 }
-                ((C0028ba) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 1));
+                ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 1));
                 C0021au.m549c();
                 return 85;
             case 1:
                 if (vectorM440S.size() <= 0) {
                     return C0015ao.m338l(422);
                 }
-                ((C0028ba) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 2));
+                ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 2));
                 return 6;
             case 2:
                 return C0015ao.m310j();
@@ -599,7 +599,7 @@ public final class C0034e {
                 return C0015ao.m311k();
             default:
                 AppState.m594c(4895, 0);
-                C0015ao.m393a((C0028ba) null, C0015ao.m312l().f390a);
+                C0015ao.m393a((MrimAccount) null, C0015ao.m312l().f390a);
                 C0021au.m549c();
                 return 0;
         }
@@ -612,7 +612,7 @@ public final class C0034e {
 
     /* renamed from: m */
     public static final void m958m() {
-        Vector vectorM1142d = C0039j.m1142d();
+        Vector vectorM1142d = ConnectionThread.m1142d();
         int size = vectorM1142d == null ? 0 : vectorM1142d.size();
         int i = size;
         if (size == 0) {
@@ -627,7 +627,7 @@ public final class C0034e {
                 return;
             } else {
                 Object objElementAt = vectorM1142d.elementAt(i);
-                c0013amM75b.m247a(-1, C0039j.m1138a(objElementAt), 6, objElementAt);
+                c0013amM75b.m247a(-1, ConnectionThread.m1138a(objElementAt), 6, objElementAt);
             }
         }
     }
@@ -650,7 +650,7 @@ public final class C0034e {
             AppState.m594c(1456, 0);
             AppState.m591f(1279);
         } else if (StringUtils.m3a(473, str)) {
-            AppState.m588a(1279, C0040k.m1196e().append(AppState.m584b(1280)));
+            AppState.m588a(1279, NetworkUtils.m1196e().append(AppState.m584b(1280)));
         } else if (StringUtils.m3a(474, str)) {
             AppState.m601a(1280, (Object) strM522f);
             AppState.m599a(1460, true);
@@ -665,17 +665,17 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m961a(C0033d c0033d) {
+    public static final ByteBuffer m961a(MmpProtocol c0033d) {
         return C0015ao.m464a(c0033d, 4881, (ByteBuffer) null);
     }
 
     /* renamed from: b */
-    public static final ByteBuffer m962b(C0033d c0033d) {
+    public static final ByteBuffer m962b(MmpProtocol c0033d) {
         return C0015ao.m464a(c0033d, 4882, (ByteBuffer) null);
     }
 
     /* renamed from: c */
-    public static final ByteBuffer m963c(C0033d c0033d) {
+    public static final ByteBuffer m963c(MmpProtocol c0033d) {
         Object[] objArr = new Object[2];
         ByteBuffer c0043nM1357m = new ByteBuffer().m1360p(0).m1357m(0).m1357m(1);
         int size = c0033d.f313i.size();
@@ -721,7 +721,7 @@ public final class C0034e {
     public static final void m965b(String str) {
         try {
             C0015ao.m343s();
-            C0024ax c0024axM631b = C0024ax.m631b((Object) str);
+            HttpClient c0024axM631b = HttpClient.m631b((Object) str);
             if (c0024axM631b.m634a() != 200) {
                 throw new Throwable();
             }
@@ -731,8 +731,8 @@ public final class C0034e {
             while (true) {
                 size--;
                 if (size < 0) {
-                    C0040k.m1212a(vectorM513a);
-                    C0024ax.m633a(c0024axM631b);
+                    NetworkUtils.m1212a(vectorM513a);
+                    HttpClient.m633a(c0024axM631b);
                     C0015ao.m344t();
                     return;
                 } else {
@@ -740,15 +740,15 @@ public final class C0034e {
                     if (vectorM514a.size() == 5) {
                         C0036g.f310a.addElement(new Object[]{vectorM514a.elementAt(0), new long[]{Long.parseLong((String) vectorM514a.elementAt(1)), Long.parseLong((String) vectorM514a.elementAt(2))}, vectorM514a.elementAt(4)});
                     }
-                    C0040k.m1212a(vectorM514a);
+                    NetworkUtils.m1212a(vectorM514a);
                 }
             }
         } catch (RuntimeException th) {
-            C0024ax.m633a((C0024ax) null);
+            HttpClient.m633a((HttpClient) null);
             C0015ao.m344t();
             throw th;
         } catch (Throwable th) {
-            C0024ax.m633a((C0024ax) null);
+            HttpClient.m633a((HttpClient) null);
             C0015ao.m344t();
             throw new RuntimeException(th);
         }
@@ -756,18 +756,18 @@ public final class C0034e {
 
     /* renamed from: a */
     public static final int m966a(Vector vector, String str, String str2) {
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         String str3 = AppState.f181d;
-        String strM1221a = C0040k.m1221a(8236);
+        String strM1221a = NetworkUtils.m1221a(8236);
         int i = 0;
         while (i < Utils.m541c(vector)) {
             stringBufferM1217h.append(i > 0 ? strM1221a : str3).append(((String[]) vector.elementAt(i))[0]);
             i++;
         }
-        AppState.m601a(1352, (Object) C0040k.m1215a(stringBufferM1217h));
+        AppState.m601a(1352, (Object) NetworkUtils.m1215a(stringBufferM1217h));
         AppState.m601a(1353, (Object) Utils.m522f(str));
         String str4 = AppState.f181d;
-        AppState.m588a(1354, C0040k.m1217h().append(AppState.m587e(92) ? C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(93)).append('\n')) : str4).append(AppState.m587e(94) ? C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(95)).append('\n')) : str4).append(Utils.m522f(str2)).append(AppState.m584b(874)));
+        AppState.m588a(1354, NetworkUtils.m1217h().append(AppState.m587e(92) ? NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(93)).append('\n')) : str4).append(AppState.m587e(94) ? NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(95)).append('\n')) : str4).append(Utils.m522f(str2)).append(AppState.m584b(874)));
         return 54;
     }
 
@@ -787,12 +787,12 @@ public final class C0034e {
         int iIndexOf = str.indexOf(64);
         String strM15c = StringUtils.m15c(str, iIndexOf + 1);
         Object[] objArr = new Object[3];
-        if (abstractC0037h instanceof C0033d) {
+        if (abstractC0037h instanceof MmpProtocol) {
             c0043nM1310c = new ByteBuffer().m1310c(3998225).m1314d(str);
         } else {
             ByteBuffer c0043nM1310c2 = new ByteBuffer().m1310c(1704439);
             int iIndexOf2 = strM15c.indexOf(46);
-            c0043nM1310c = c0043nM1310c2.m1314d(iIndexOf2 < 0 ? C0040k.m1221a(6775139) : StringUtils.m13b(strM15c, iIndexOf2)).m1321f(47).m1314d(iIndexOf < 0 ? str : StringUtils.m13b(str, iIndexOf)).m1310c(467 + AppState.m586d(4895));
+            c0043nM1310c = c0043nM1310c2.m1314d(iIndexOf2 < 0 ? NetworkUtils.m1221a(6775139) : StringUtils.m13b(strM15c, iIndexOf2)).m1321f(47).m1314d(iIndexOf < 0 ? str : StringUtils.m13b(str, iIndexOf)).m1310c(467 + AppState.m586d(4895));
         }
         objArr[0] = c0043nM1310c.m1317c();
         objArr[1] = abstractC0037h;
@@ -832,7 +832,7 @@ public final class C0034e {
     public static final void m973p() {
         try {
             C0015ao.m343s();
-            C0024ax c0024axM629a = C0024ax.m629a(AppState.m584b(3607418), (Account) null, 3);
+            HttpClient c0024axM629a = HttpClient.m629a(AppState.m584b(3607418), (Account) null, 3);
             if (c0024axM629a.m634a() != 200) {
                 throw new Throwable();
             }
@@ -843,12 +843,12 @@ public final class C0034e {
             synchronized (AppState.f177b[1357]) {
                 m970a((byte) 0);
             }
-            C0024ax.m633a(c0024axM629a);
+            HttpClient.m633a(c0024axM629a);
             C0015ao.m344t();
         } catch (Throwable unused) {
             synchronized (AppState.f177b[1357]) {
                 m970a((byte) 0);
-                C0024ax.m633a((C0024ax) null);
+                HttpClient.m633a((HttpClient) null);
                 C0015ao.m344t();
             }
         }
@@ -858,7 +858,7 @@ public final class C0034e {
     public static final int m974c(String str) {
         String strM584b = AppState.m584b(1346);
         int iM586d = AppState.m586d(1513);
-        C0028ba c0028ba = (C0028ba) AppState.m616i();
+        MrimAccount c0028ba = (MrimAccount) AppState.m616i();
         ChatRoom c0052wM745h = c0028ba.m745h(iM586d);
         if (StringUtils.m3a(848, str)) {
             c0052wM745h.f415g.addElement(strM584b);
@@ -904,7 +904,7 @@ public final class C0034e {
         if (str != null) {
             ByteBuffer c0043nM1385u3 = c0043nM1310c.m1385u(1031302438).m1314d(strM809a).m1385u(1031367974).m1314d(strM810b).m1385u(1031040294);
             if (StringUtils.m1a(str)) {
-                strM1109a = C0040k.m1221a(1094795585);
+                strM1109a = NetworkUtils.m1221a(1094795585);
             } else {
                 ByteBuffer c0043n = new ByteBuffer();
                 int length = str.length();
@@ -957,8 +957,8 @@ public final class C0034e {
             return;
         }
         try {
-            StringBuffer stringBufferM1217h = C0040k.m1217h();
-            StringBuffer stringBufferM1217h2 = C0040k.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
             ByteBuffer c0043n = (ByteBuffer) obj;
             while (c0043n.f384b > 0 && 32 != (iM1346q2 = c0043n.m1346q())) {
                 stringBufferM1217h.append((char) iM1346q2);
@@ -1002,12 +1002,12 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    private static final ByteBuffer m980a(C0028ba c0028ba) {
+    private static final ByteBuffer m980a(MrimAccount c0028ba) {
         return new ByteBuffer().m1314d(c0028ba.f316l).m1365B();
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m981a(C0028ba c0028ba, Account abstractC0037h, int i, int i2, String str, boolean z, byte[] bArr) {
+    public static final ByteBuffer m981a(MrimAccount c0028ba, Account abstractC0037h, int i, int i2, String str, boolean z, byte[] bArr) {
         ByteBuffer c0043nM1302a = new ByteBuffer().m1384t(266).m1384t(20200).m1360p(i).m1360p(i2).m1308a(str).m1360p(z ? 1 : 0).m1360p(bArr.length).m1302a(bArr);
         while ((c0043nM1302a.f384b & 7) != 0) {
             c0043nM1302a.m1321f(0);
@@ -1020,7 +1020,7 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final void m982a(C0028ba c0028ba, int i, Object[] objArr, ByteBuffer c0043n) {
+    public static final void m982a(MrimAccount c0028ba, int i, Object[] objArr, ByteBuffer c0043n) {
         if (i == 1) {
             c0043n.m1328e();
             c0043n.m1300a(0);
@@ -1028,7 +1028,7 @@ public final class C0034e {
             C0036g.m1037b(c0043nM980a.f383a, c0043nM980a.f384b, c0043n.f383a, c0043n.f384b);
             c0043nM980a.m1301b();
             c0043n.m1328e();
-            C0033d c0033d = (C0033d) objArr[2];
+            MmpProtocol c0033d = (MmpProtocol) objArr[2];
             c0033d.m1052c(C0015ao.m464a(c0033d, 288, new ByteBuffer().m1357m(16).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e())));
         }
     }
@@ -1041,7 +1041,7 @@ public final class C0034e {
 
     /* renamed from: a */
     public static final int m984a(C0013am c0013am) {
-        C0040k.m1195d();
+        NetworkUtils.m1195d();
         String[] strArrM518a = Utils.m518a(true);
         Vector vectorM794a = C0029bb.m794a(c0013am, 1);
         int length = strArrM518a.length;
@@ -1055,7 +1055,7 @@ public final class C0034e {
         if (vectorM794a.size() == 0) {
             return C0015ao.m338l(775);
         }
-        vectorM794a.addElement(((C0028ba) AppState.m616i()).f315k);
+        vectorM794a.addElement(((MrimAccount) AppState.m616i()).f315k);
         AppState.f177b[1284] = vectorM794a;
         return 179;
     }
@@ -1154,12 +1154,12 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m987a(C0028ba c0028ba, C0035f c0035f, int i) {
+    public static final ByteBuffer m987a(MrimAccount c0028ba, MrimContact c0035f, int i) {
         return c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(i).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), m967e(11), c0035f, m967e(i)});
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m988a(C0028ba c0028ba, C0035f c0035f, C0010aj c0010aj) {
+    public static final ByteBuffer m988a(MrimAccount c0028ba, MrimContact c0035f, C0010aj c0010aj) {
         return c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b).m1360p(c0010aj.f74a).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), m967e(12), c0035f, c0010aj});
     }
 }

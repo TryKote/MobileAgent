@@ -32,7 +32,7 @@ public abstract class Account {
     public int f319o;
 
     /* renamed from: p */
-    public C0039j f320p;
+    public ConnectionThread f320p;
 
     /* renamed from: q */
     public final Hashtable f321q;
@@ -98,7 +98,7 @@ public abstract class Account {
     private int f341a;
 
     public Account(int i, String str, String str2) {
-        this.f313i = C0040k.m1213g();
+        this.f313i = NetworkUtils.m1213g();
         this.f314j = i;
         this.f315k = str;
         this.f339I = str;
@@ -106,7 +106,7 @@ public abstract class Account {
         this.f317m = new int[9];
         this.f318n = new ByteBuffer();
         this.f321q = new Hashtable();
-        this.f333C = C0040k.m1213g();
+        this.f333C = NetworkUtils.m1213g();
         ContactGroup abstractC0046qMo85b = mo85b();
         abstractC0046qMo85b.f399g = true;
         this.f335E = abstractC0046qMo85b;
@@ -217,7 +217,7 @@ public abstract class Account {
     /* renamed from: d */
     public final int m1053d(ByteBuffer c0043n) {
         C0015ao.m420b(this, c0043n.f384b);
-        C0039j c0039j = this.f320p;
+        ConnectionThread c0039j = this.f320p;
         if (c0039j.f348b != null) {
             throw new RuntimeException();
         }
@@ -336,7 +336,7 @@ public abstract class Account {
         if (null == th) {
             strM1215a = AppState.m584b(951);
         } else {
-            strM1215a = C0040k.m1215a(C0040k.m1217h().append(th).append(AppState.m584b(946)).append(AppState.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(th).append(AppState.m584b(946)).append(AppState.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         C0029bb.m784a(this, strM1215a);
         m1061F();
@@ -352,7 +352,7 @@ public abstract class Account {
 
     /* renamed from: I */
     public final String m1064I() {
-        return this.f341a != 3 ? this.f316l : C0040k.m1215a(C0040k.m1217h().append((char) (this.f316l.charAt(0) + ' ')).append(StringUtils.m15c(this.f316l, 1)));
+        return this.f341a != 3 ? this.f316l : NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) (this.f316l.charAt(0) + ' ')).append(StringUtils.m15c(this.f316l, 1)));
     }
 
     /* renamed from: J */
@@ -368,7 +368,7 @@ public abstract class Account {
 
     /* renamed from: f */
     public final void m1066f(int i) {
-        C0029bb.m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
+        C0029bb.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
         m1061F();
         this.f324t = mo89g();
     }
@@ -581,7 +581,7 @@ public abstract class Account {
 
     /* renamed from: M */
     public final Vector m1076M() {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
@@ -594,7 +594,7 @@ public abstract class Account {
 
     /* renamed from: N */
     public final Vector m1077N() {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
@@ -607,12 +607,12 @@ public abstract class Account {
 
     /* renamed from: O */
     public Vector mo720O() {
-        return C0040k.m1213g();
+        return NetworkUtils.m1213g();
     }
 
     /* renamed from: P */
     public final Vector m1078P() {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             vectorM1213g.addElement(enumerationElements.nextElement());
@@ -630,7 +630,7 @@ public abstract class Account {
 
     /* renamed from: Q */
     public final Vector m1079Q() {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();

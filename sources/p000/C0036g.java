@@ -23,13 +23,13 @@ public final class C0036g extends ContactGroup {
     /* renamed from: c */
     public static long f312c;
 
-    public C0036g(C0005ae c0005ae, int i, String str) {
+    public C0036g(XmppProtocol c0005ae, int i, String str) {
         super(c0005ae);
         this.f309h = i;
         m1403c(str);
     }
 
-    public C0036g(C0005ae c0005ae, ByteBuffer c0043n) {
+    public C0036g(XmppProtocol c0005ae, ByteBuffer c0043n) {
         super(c0005ae);
         m1403c(c0043n.m1335e((String) null));
         this.f309h = c0043n.m1328e();
@@ -40,7 +40,7 @@ public final class C0036g extends ContactGroup {
                 this.f399g = c0043n.m1340l();
                 return;
             }
-            m1401b((Object) new C0006af(c0005ae, c0043n));
+            m1401b((Object) new XmppContact(c0005ae, c0043n));
         }
     }
 
@@ -69,7 +69,7 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m1001a(C0028ba c0028ba, C0035f c0035f, String str, long j) {
+    public static final ByteBuffer m1001a(MrimAccount c0028ba, MrimContact c0035f, String str, long j) {
         Object[] objArr = new Object[4];
         ByteBuffer c0043nM1308a = new ByteBuffer().m1360p(0).m1308a(c0035f.f297d);
         Hashtable hashtable = new Hashtable();
@@ -83,7 +83,7 @@ public final class C0036g extends ContactGroup {
             hashtable.put(strM584b, StringUtils.m17c(strM584b.toLowerCase()));
         }
         String strM584b2 = AppState.m584b(592860);
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         int length = str.length();
         int length2 = 0;
         while (length2 < length) {
@@ -101,7 +101,7 @@ public final class C0036g extends ContactGroup {
             }
             length2++;
         }
-        objArr[0] = C0015ao.m321a(c0028ba, 4104, c0043nM1308a.m1309b(C0040k.m1215a(stringBufferM1217h)).m1360p(0));
+        objArr[0] = C0015ao.m321a(c0028ba, 4104, c0043nM1308a.m1309b(NetworkUtils.m1215a(stringBufferM1217h)).m1360p(0));
         objArr[1] = C0034e.m967e(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
@@ -152,7 +152,7 @@ public final class C0036g extends ContactGroup {
                     }
                     Account abstractC0037h = (Account) vectorM443V.elementAt(size);
                     if (abstractC0037h.m1056C()) {
-                        if (abstractC0037h instanceof C0028ba) {
+                        if (abstractC0037h instanceof MrimAccount) {
                             z = false;
                             m1003p();
                             break;
@@ -160,7 +160,7 @@ public final class C0036g extends ContactGroup {
                         z = true;
                     }
                 }
-                C0040k.m1212a(vectorM443V);
+                NetworkUtils.m1212a(vectorM443V);
                 if (z) {
                     m1007b(m1005e(m1006a(m1005e(AppState.m584b(1114895)))));
                 }
@@ -169,9 +169,9 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: e */
-    private static final C0039j m1005e(String str) throws Throwable {
+    private static final ConnectionThread m1005e(String str) throws Throwable {
         int iM1131a;
-        C0039j c0039j = new C0039j(str);
+        ConnectionThread c0039j = new ConnectionThread(str);
         do {
             Thread.sleep(100L);
             iM1131a = c0039j.m1131a();
@@ -183,7 +183,7 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    private static final String m1006a(C0039j c0039j) {
+    private static final String m1006a(ConnectionThread c0039j) {
         int i;
         int i2;
         try {
@@ -194,7 +194,7 @@ public final class C0036g extends ContactGroup {
                 i = c0043n.f384b;
                 i2 = i;
             } while (i == 0);
-            StringBuffer stringBufferM1217h = C0040k.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
             while (true) {
                 int i3 = i2;
                 i2 = i3 - 1;
@@ -206,7 +206,7 @@ public final class C0036g extends ContactGroup {
                     stringBufferM1217h.append(cM1344o);
                 }
             }
-            String strM1215a = C0040k.m1215a(stringBufferM1217h);
+            String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
             if (c0039j != null) {
                 c0039j.f349c = 3;
             }
@@ -226,11 +226,11 @@ public final class C0036g extends ContactGroup {
 
     /* JADX DEBUG: Another duplicated slice has different insns count: {[]}, finally: {[CONST, IPUT, IF] complete} */
     /* renamed from: b */
-    private static final void m1007b(C0039j c0039j) {
+    private static final void m1007b(ConnectionThread c0039j) {
         ByteBuffer c0043nM1349s;
         try {
             String strM584b = AppState.m584b(655360);
-            C0028ba c0028ba = new C0028ba(-1, strM584b, strM584b);
+            MrimAccount c0028ba = new MrimAccount(-1, strM584b, strM584b);
             c0028ba.f320p = c0039j;
             c0028ba.m1053d(C0015ao.m377a(c0028ba));
             ByteBuffer c0043n = new ByteBuffer();
@@ -273,7 +273,7 @@ public final class C0036g extends ContactGroup {
 
     /* renamed from: r */
     private static final Object[] m1011r() {
-        Object[] objArr = {new int[10], C0040k.m1211a(128)};
+        Object[] objArr = {new int[10], NetworkUtils.m1211a(128)};
         int[] iArr = (int[]) objArr[0];
         int[] iArrM1008q = m1008q();
         int i = 8;
@@ -333,7 +333,7 @@ public final class C0036g extends ContactGroup {
         while (true) {
             i6--;
             if (i6 < 0) {
-                C0040k.m1209a(bArr);
+                NetworkUtils.m1209a(bArr);
                 return bArr2;
             }
             m1010a(iArr[i6], bArr2, i6 << 2);
@@ -404,8 +404,8 @@ public final class C0036g extends ContactGroup {
     /* renamed from: a */
     public static final byte[] m1015a(byte[] bArr, int i, byte[] bArr2, int i2, int i3) {
         int i4;
-        byte[] bArrM1211a = C0040k.m1211a(64);
-        byte[] bArrM1211a2 = C0040k.m1211a(64);
+        byte[] bArrM1211a = NetworkUtils.m1211a(64);
+        byte[] bArrM1211a2 = NetworkUtils.m1211a(64);
         if (i == 64) {
             i4 = 64;
         } else {
@@ -430,9 +430,9 @@ public final class C0036g extends ContactGroup {
             i6--;
             if (i6 < 0) {
                 Object[] objArrM1012a = m1012a(m1011r(), bArrM1211a, 64);
-                C0040k.m1209a(bArrM1211a);
+                NetworkUtils.m1209a(bArrM1211a);
                 Object[] objArrM1012a2 = m1012a(m1011r(), bArrM1211a2, 64);
-                C0040k.m1209a(bArrM1211a2);
+                NetworkUtils.m1209a(bArrM1211a2);
                 Object[] objArr = {objArrM1012a, objArrM1012a2};
                 m1012a((Object[]) objArr[0], bArr2, i2);
                 return m1013c(m1012a((Object[]) objArr[1], m1013c((Object[]) objArr[0]), 32));
@@ -443,19 +443,19 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m1016a(C0028ba c0028ba) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().m1390v(515).m1360p(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).m1390v(300).m1308a(Utils.m522f(AppState.m584b(223))).m1390v(513).m1360p(c0028ba.f326v).m1390v(335).m1308a(C0040k.m1215a(C0040k.m1217h().append(AppState.m586d(1528)).append('x').append(AppState.m586d(1529)))).m1390v(592).m1360p(AppState.m585c(251)).m1390v(573).m1360p(AppState.m585c(250)).m1390v(636).m1360p(AppState.m585c(290)).m1390v(514).m1360p(AppState.m585c(291)).m1390v(638).m1360p(AppState.m585c(292)).m1390v(639).m1360p(AppState.m585c(294)).m1390v(640).m1360p(AppState.m585c(293));
+    public static final ByteBuffer m1016a(MrimAccount c0028ba) {
+        ByteBuffer c0043nM1360p = new ByteBuffer().m1390v(515).m1360p(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).m1390v(300).m1308a(Utils.m522f(AppState.m584b(223))).m1390v(513).m1360p(c0028ba.f326v).m1390v(335).m1308a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m586d(1528)).append('x').append(AppState.m586d(1529)))).m1390v(592).m1360p(AppState.m585c(251)).m1390v(573).m1360p(AppState.m585c(250)).m1390v(636).m1360p(AppState.m585c(290)).m1390v(514).m1360p(AppState.m585c(291)).m1390v(638).m1360p(AppState.m585c(292)).m1390v(639).m1360p(AppState.m585c(294)).m1390v(640).m1360p(AppState.m585c(293));
         Vector vectorM443V = C0015ao.m443V();
         int size = vectorM443V.size();
         while (true) {
             size--;
             if (size < 0) {
-                C0040k.m1212a(vectorM443V);
+                NetworkUtils.m1212a(vectorM443V);
                 AppState.m619a(true);
                 return c0043nM1360p;
             }
             Account abstractC0037h = (Account) vectorM443V.elementAt(size);
-            if (!(abstractC0037h instanceof C0028ba)) {
+            if (!(abstractC0037h instanceof MrimAccount)) {
                 ByteBuffer c0043nM1390v = c0043nM1360p.m1390v(816);
                 ByteBuffer c0043nM1360p2 = new ByteBuffer().m1390v(515).m1360p(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).m1390v(300).m1308a(Utils.m522f(AppState.m584b(223))).m1390v(305).m1308a(abstractC0037h.f315k).m1390v(306).m1308a(AppState.m584b(abstractC0037h.mo110p())).m1390v(563).m1360p(abstractC0037h.f326v).m1390v(564).m1360p(abstractC0037h.f327w).m1390v(565).m1360p(abstractC0037h.f328x);
                 abstractC0037h.mo924o();
@@ -509,7 +509,7 @@ public final class C0036g extends ContactGroup {
                     if (i2 > 16) {
                         objArrM1018s[i] = null;
                         if (i2 > 32) {
-                            C0040k.m1209a((byte[]) objArrM1018s[i + 29]);
+                            NetworkUtils.m1209a((byte[]) objArrM1018s[i + 29]);
                             objArrM1018s[i + 29] = null;
                         }
                     }
@@ -531,7 +531,7 @@ public final class C0036g extends ContactGroup {
                 byte[] bArr2 = bArr;
                 if (bArr == null) {
                     int i2 = i + 29;
-                    byte[] bArrM1339k = new ByteBuffer(C0040k.m1221a(i < 26 ? 113724026151215L + (i << 8) : 29113350693019951L + (i << 16))).m1339k();
+                    byte[] bArrM1339k = new ByteBuffer(NetworkUtils.m1221a(i < 26 ? 113724026151215L + (i << 8) : 29113350693019951L + (i << 16))).m1339k();
                     bArr2 = bArrM1339k;
                     objArrM1018s[i2] = bArrM1339k;
                 }
@@ -547,7 +547,7 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m1024a(C0028ba c0028ba, int i, String str, String str2, String str3, C0010aj c0010aj, boolean z) {
+    public static final ByteBuffer m1024a(MrimAccount c0028ba, int i, String str, String str2, String str3, C0010aj c0010aj, boolean z) {
         Object[] objArr = new Object[6];
         objArr[0] = C0015ao.m321a(c0028ba, 4121, new ByteBuffer().m1360p(i).m1360p(c0010aj.f74a).m1308a(str).m1309b(str2).m1360p(0).m1318a(new String[]{c0028ba.f339I, str3}).m1360p(z ? 1 : 0));
         objArr[1] = C0034e.m967e(9);
@@ -672,16 +672,16 @@ public final class C0036g extends ContactGroup {
     /* renamed from: i */
     public static final void m1032i() {
         f311b = System.currentTimeMillis();
-        Vector vectorM1140a = C0039j.m1140a(1);
+        Vector vectorM1140a = ConnectionThread.m1140a(1);
         long j = AbstractC0025ay.f196d;
         long j2 = AbstractC0025ay.f195c;
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         int size = vectorM1140a.size();
         while (true) {
             size--;
             if (size < 0) {
                 ByteBuffer c0043nM1385u = new ByteBuffer().m1310c(3216135).m1385u(15713);
-                String strM1215a = C0040k.m1215a(stringBufferM1217h);
+                String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
                 new RunnableC0055z(15, c0043nM1385u.m1314d(strM1215a).m1385u(4022822).m1314d(new ByteBuffer().m1314d(strM1215a).m1310c(660328).m1365B().m1387H()).m1385u(4023078).m1383b(j).m1385u(4023334).m1383b(j2).m1317c());
                 return;
             } else {
@@ -700,7 +700,7 @@ public final class C0036g extends ContactGroup {
 
     /* renamed from: a */
     private static final int[] m1034a(byte[] bArr, int i) {
-        ByteBuffer c0043n = new ByteBuffer(C0040k.m1221a(24879), 4200);
+        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.m1221a(24879), 4200);
         int[] iArr = new int[1060];
         System.arraycopy(Utils.m536a(c0043n.f383a), 0, iArr, 0, 1042);
         c0043n.m1301b();
@@ -919,7 +919,7 @@ public final class C0036g extends ContactGroup {
 
     /* renamed from: a */
     public static final Vector m1045a(String str) {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         try {
             Vector vectorM513a = Utils.m513a(str, '\r', '\n');
             int size = vectorM513a.size();
@@ -930,9 +930,9 @@ public final class C0036g extends ContactGroup {
                 c0014an.f144l = Utils.m510a(vectorM516c.elementAt(4));
                 c0014an.f145m = Utils.m510a(vectorM516c.elementAt(5));
                 vectorM1213g.addElement(c0014an);
-                C0040k.m1212a(vectorM516c);
+                NetworkUtils.m1212a(vectorM516c);
             }
-            C0040k.m1212a(vectorM513a);
+            NetworkUtils.m1212a(vectorM513a);
             Utils.m526b(vectorM1213g);
         } catch (Throwable unused) {
         }
@@ -956,7 +956,7 @@ public final class C0036g extends ContactGroup {
 
     /* renamed from: d */
     public static final Vector m1047d(int i) {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         try {
             ByteBuffer c0043nM986d = C0034e.m986d(AppState.m584b(i));
             if (c0043nM986d.f384b > 4) {

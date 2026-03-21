@@ -13,7 +13,7 @@ import javax.microedition.io.StreamConnection;
 
 /* renamed from: k */
 /* loaded from: MobileAgent_3.9.jar:k.class */
-public final class C0040k {
+public final class NetworkUtils {
 
     /* renamed from: a */
     public final int f359a;
@@ -45,7 +45,7 @@ public final class C0040k {
     /* renamed from: j */
     public static Hashtable f368j;
 
-    public C0040k(ByteBuffer c0043n) {
+    public NetworkUtils(ByteBuffer c0043n) {
         this.f359a = c0043n.m1355w();
         this.f360b = c0043n.m1355w();
         this.f361c = c0043n.m1335e((String) null);
@@ -54,7 +54,7 @@ public final class C0040k {
         this.f364f = c0043n.m1334g();
     }
 
-    public C0040k(int i, String str, int i2, String str2) {
+    public NetworkUtils(int i, String str, int i2, String str2) {
         this.f359a = 1;
         this.f360b = i;
         this.f361c = str;
@@ -74,7 +74,7 @@ public final class C0040k {
 
     /* renamed from: a */
     public static final void m1175a(String str) {
-        C0024ax c0024ax;
+        HttpClient c0024ax;
         byte[] bArr;
         int i;
         int i2;
@@ -91,7 +91,7 @@ public final class C0040k {
             Thread.sleep(1000L);
             C0015ao.m343s();
             if (str == null) {
-                C0024ax c0024axM631b = C0024ax.m631b((Object) new ByteBuffer().m1310c(1442705).m1310c(524308).m1310c(720924).m1317c());
+                HttpClient c0024axM631b = HttpClient.m631b((Object) new ByteBuffer().m1310c(1442705).m1310c(524308).m1310c(720924).m1317c());
                 c0024ax = c0024axM631b;
                 if (c0024axM631b.m634a() == 200) {
                     Vector vector = new ByteBuffer(c0024ax).m1389J().f172b;
@@ -235,20 +235,20 @@ public final class C0040k {
                     c0043nM1310c.m1303a(bArrM1211a, 0, i9);
                 }
                 c0043nM1377k.m1301b();
-                C0024ax c0024axM632a = C0024ax.m632a(new ByteBuffer().m1310c(1311655).m1310c(524300).m1310c(720924).m1317c());
+                HttpClient c0024axM632a = HttpClient.m632a(new ByteBuffer().m1310c(1311655).m1310c(524300).m1310c(720924).m1317c());
                 c0024ax = c0024axM632a;
                 c0024axM632a.m642a(c0043nM1310c.f384b, 1414745936, 1038).m641a(c0043nM1310c).m634a();
             }
-            C0024ax.m633a(c0024ax);
+            HttpClient.m633a(c0024ax);
             C0015ao.m344t();
             m1209a(bArrM1211a);
         } catch (RuntimeException th) {
-            C0024ax.m633a((C0024ax) null);
+            HttpClient.m633a((HttpClient) null);
             C0015ao.m344t();
             m1209a(bArrM1211a);
             throw th;
         } catch (Throwable th) {
-            C0024ax.m633a((C0024ax) null);
+            HttpClient.m633a((HttpClient) null);
             C0015ao.m344t();
             m1209a(bArrM1211a);
             throw new RuntimeException(th);
@@ -563,7 +563,7 @@ public final class C0040k {
                 c0032cM1057D = ((ContactGroup) objElementAt).m1395f(-1);
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
-                if (c0042m.m1255c() instanceof C0028ba) {
+                if (c0042m.m1255c() instanceof MrimAccount) {
                     C0032c c0032cM898b = C0032c.m886c().m896a(C0015ao.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
                     c0032cM898b.f265d = c0042m;
                     c0032cM1057D = c0032cM898b;
@@ -709,7 +709,7 @@ public final class C0040k {
     }
 
     /* renamed from: a */
-    public static final void m1202a(C0028ba c0028ba, int i, ByteBuffer c0043n) {
+    public static final void m1202a(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
         ContactInfo c0042mM1251a = ContactInfo.m1251a(c0028ba);
         switch (i) {
             case 0:
@@ -726,7 +726,7 @@ public final class C0040k {
     }
 
     /* renamed from: b */
-    public static final void m1203b(C0028ba c0028ba, int i, ByteBuffer c0043n) {
+    public static final void m1203b(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
         int i2 = 0;
         Vector vectorM1206a = null;
         switch (i) {
@@ -745,7 +745,7 @@ public final class C0040k {
     }
 
     /* renamed from: c */
-    public static final void m1204c(C0028ba c0028ba, int i, ByteBuffer c0043n) {
+    public static final void m1204c(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
         int i2;
         switch (i) {
             case 0:
@@ -753,7 +753,7 @@ public final class C0040k {
                 break;
             case 1:
                 ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
-                C0035f c0035f = (C0035f) c0028ba.f321q.get(c0042m.m1290i());
+                MrimContact c0035f = (MrimContact) c0028ba.f321q.get(c0042m.m1290i());
                 if (null != c0035f) {
                     c0035f.m1249c(c0042m.m1292k());
                     return;
@@ -767,12 +767,12 @@ public final class C0040k {
     }
 
     /* renamed from: d */
-    public static final void m1205d(C0028ba c0028ba, int i, ByteBuffer c0043n) {
+    public static final void m1205d(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
         if (i == 1) {
             ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
             Hashtable hashtable = c0028ba.f321q;
             String strM1290i = c0042m.m1290i();
-            C0035f c0035f = (C0035f) hashtable.get(strM1290i);
+            MrimContact c0035f = (MrimContact) hashtable.get(strM1290i);
             if (null != c0035f) {
                 String strM1292k = c0042m.m1292k();
                 c0035f.m1249c(strM1292k);
@@ -804,7 +804,7 @@ public final class C0040k {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private static final Vector m1206a(C0028ba c0028ba, ByteBuffer c0043n) {
+    private static final Vector m1206a(MrimAccount c0028ba, ByteBuffer c0043n) {
         Vector vectorM1213g = m1213g();
         Vector vectorM512e = Utils.m512e(AppState.m584b(915));
         int iM1328e = c0043n.m1328e();
@@ -1161,24 +1161,24 @@ public final class C0040k {
         try {
             try {
                 C0015ao.m343s();
-                C0024ax c0024axM630a = C0024ax.m630a(objArr[2]);
+                HttpClient c0024axM630a = HttpClient.m630a(objArr[2]);
                 int iM634a = c0024axM630a.m634a();
                 if (iM634a == 200) {
                     ByteBuffer c0043n = new ByteBuffer(c0024axM630a);
                     switch (((Integer) objArr[1]).intValue()) {
                         case 0:
                             m1226a(objArr, c0043n.m1389J());
-                            C0024ax.m633a(c0024axM630a);
+                            HttpClient.m633a(c0024axM630a);
                             C0015ao.m344t();
                             return;
                         case 1:
                             objArr[3] = c0043n.m1348r();
-                            C0024ax.m633a(c0024axM630a);
+                            HttpClient.m633a(c0024axM630a);
                             C0015ao.m344t();
                             return;
                         case 2:
                             m1226a(objArr, c0043n.m1389J());
-                            C0024ax.m633a(c0024axM630a);
+                            HttpClient.m633a(c0024axM630a);
                             C0015ao.m344t();
                             return;
                     }
@@ -1186,11 +1186,11 @@ public final class C0040k {
                 throw new Throwable(StringUtils.m17c(Integer.toString(iM634a)));
             } catch (Throwable th) {
                 objArr[0] = th;
-                C0024ax.m633a((C0024ax) null);
+                HttpClient.m633a((HttpClient) null);
                 C0015ao.m344t();
             }
         } catch (Throwable th2) {
-            C0024ax.m633a((C0024ax) null);
+            HttpClient.m633a((HttpClient) null);
             C0015ao.m344t();
             throw th2;
         }

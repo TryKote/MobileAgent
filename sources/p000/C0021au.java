@@ -62,12 +62,12 @@ public final class C0021au {
                         c0013amM76c.m249a(156, 642, 0).m249a(159, 643, 1).m249a(157, 644, 2).m249a(160, 645, 3).m249a(158, 646, 4).m249a(155, 647, 5).m252b(-1, 718, 6);
                         break;
                     case 1:
-                        C0033d c0033d = (C0033d) abstractC0037hM616i;
+                        MmpProtocol c0033d = (MmpProtocol) abstractC0037hM616i;
                         int iM915f = c0033d.m915f();
                         c0013amM76c.m249a(iM915f, 642, 0).m249a(iM915f | 16384000, 643, 1).m249a(iM915f | 16449536, 645, 3).m249a(iM915f | 16318464, 644, 4).m249a(iM915f | 16580608, 648, 5).m249a(iM915f | 16646144, 654, 6).m249a(iM915f | 17039360, 649, 7).m249a(iM915f | 16973824, 650, 8).m249a(iM915f | 16908288, 651, 9).m249a(iM915f | 16842752, 652, 10).m249a(iM915f | 17104896, 653, 11).m249a(iM915f | 16515072, 646, 2).m249a(255, 647, 12).m252b(c0033d.mo922n(), 655, 14).m252b(-1, 718, 13);
                         break;
                     default:
-                        if (((C0005ae) abstractC0037hM616i).mo83f()) {
+                        if (((XmppProtocol) abstractC0037hM616i).mo83f()) {
                             c0013amM76c.m249a(387, 642, 1).m249a(385, 647, 0);
                             break;
                         } else {
@@ -86,7 +86,7 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(2733));
                 return;
             case 6:
-                C0039j.m1157f();
+                ConnectionThread.m1157f();
                 return;
             case 7:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(2641));
@@ -98,29 +98,29 @@ public final class C0021au {
                 AppState.m594c(1505, 1);
                 AppState.m601a(1284, (Object) StringUtils.m17c(Long.toString(Runtime.getRuntime().totalMemory())));
                 AppState.m601a(1285, (Object) C0015ao.m298f());
-                AppState.m588a(1288, C0040k.m1217h().append(AppState.m584b(1375)).append(AppState.m584b(511)));
+                AppState.m588a(1288, NetworkUtils.m1217h().append(AppState.m584b(1375)).append(AppState.m584b(511)));
                 AppState.m601a(1287, (Object) new ByteBuffer().m1386c(7234309766870429269L).m1321f(44).m1314d(AppState.m603i(519)).m1317c());
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(2448));
                 return;
             case 10:
-                C0040k.m1198a(10, 710);
+                NetworkUtils.m1198a(10, 710);
                 return;
             case 11:
-                C0040k.m1197a(11, C0040k.m1217h().append(AppState.m584b(768)).append(AppState.m611g().f376u).append(C0040k.m1221a(16167)));
+                NetworkUtils.m1197a(11, NetworkUtils.m1217h().append(AppState.m584b(768)).append(AppState.m611g().f376u).append(NetworkUtils.m1221a(16167)));
                 return;
             case 12:
                 return;
             case 13:
-                C0040k.m1200b(13, 505);
+                NetworkUtils.m1200b(13, 505);
                 return;
             case 14:
-                StringBuffer stringBufferM1217h = C0040k.m1217h();
+                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                 int iM586d = AppState.m586d(113);
                 AppState.m588a(1286, stringBufferM1217h.append(iM586d / 100).append('.').append(Utils.m501b(iM586d % 100)));
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3183));
                 return;
             case 15:
-                C0013am c0013amM1193a = C0040k.m1193a(AbstractC0004ad.m75b(2719), AppState.m614m(1241));
+                C0013am c0013amM1193a = NetworkUtils.m1193a(AbstractC0004ad.m75b(2719), AppState.m614m(1241));
                 Account abstractC0037h = C0008ah.f54k;
                 if (abstractC0037h != null) {
                     c0013amM1193a.m257b(abstractC0037h.m1051A());
@@ -133,7 +133,7 @@ public final class C0021au {
                 return;
             case 17:
                 C0013am c0013amM76c2 = AbstractC0004ad.m76c(17);
-                if (AppState.m616i() instanceof C0033d) {
+                if (AppState.m616i() instanceof MmpProtocol) {
                     for (int i3 = 0; i3 <= 36; i3++) {
                         c0013amM76c2.m249a(i3 + 268, i3 + 118, i3);
                     }
@@ -158,8 +158,8 @@ public final class C0021au {
                         AppState.f177b[i5 + 1303] = vectorM516c.elementAt(i5);
                     }
                 }
-                C0040k.m1212a(vectorM516c);
-                AppState.m594c(3510, (!(abstractC0041lM611g instanceof C0035f) || abstractC0041lM611g.mo996n()) ? 1 : 4);
+                NetworkUtils.m1212a(vectorM516c);
+                AppState.m594c(3510, (!(abstractC0041lM611g instanceof MrimContact) || abstractC0041lM611g.mo996n()) ? 1 : 4);
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3501));
                 return;
             case 20:
@@ -235,7 +235,7 @@ public final class C0021au {
                 }
                 C0029bb.m822a(abstractC0041l);
                 AppState.m594c(1494, 0);
-                boolean z2 = abstractC0041l instanceof C0035f;
+                boolean z2 = abstractC0041l instanceof MrimContact;
                 boolean z3 = z2;
                 AppState.m599a(1495, z2);
                 boolean z4 = z3 && abstractC0041l.mo990d();
@@ -243,7 +243,7 @@ public final class C0021au {
                 AppState.m599a(1497, z3 && !z4);
                 AppState.m599a(1498, abstractC0041l.mo143m());
                 AppState.m599a(1499, abstractC0041l.mo144l() && !abstractC0041l.mo143m());
-                AppState.m599a(1501, z3 && !z4 && ((C0035f) abstractC0041l).m1000q());
+                AppState.m599a(1501, z3 && !z4 && ((MrimContact) abstractC0041l).m1000q());
                 AppState.m594c(3706, 4);
                 AppState.m594c(3705, 30);
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3704));
@@ -267,17 +267,17 @@ public final class C0021au {
                 return;
             case 37:
                 AppState.m591f(1271);
-                C0028ba c0028ba = (C0028ba) AppState.m616i();
+                MrimAccount c0028ba = (MrimAccount) AppState.m616i();
                 if (c0028ba.m742V() != 0 && !c0028ba.f229e) {
                     C0015ao.m402M();
                     return;
                 }
-                C0040k.m1200b(37, 833);
-                Vector vectorM1213g = C0040k.m1213g();
+                NetworkUtils.m1200b(37, 833);
+                Vector vectorM1213g = NetworkUtils.m1213g();
                 JsonParser.m481d(vectorM1213g, 0);
                 vectorM1213g.addElement(AppState.f181d);
                 JsonParser.m481d(vectorM1213g, 1);
-                C0029bb.m813b(C0039j.m1147a(C0040k.m1217h().append(AppState.m584b(1050207)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(2098635)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g)))));
+                C0029bb.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.m584b(1050207)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(2098635)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g)))));
                 return;
             case 38:
                 C0015ao.m402M();
@@ -304,32 +304,32 @@ public final class C0021au {
                     c0013amM75b2.m257b(abstractC0037h2.m1051A());
                 }
                 AbstractC0004ad.m71b(c0013amM75b2);
-                C0040k.m1212a(vectorM614m3);
+                NetworkUtils.m1212a(vectorM614m3);
                 return;
             case 40:
                 C0015ao.m300h();
                 return;
             case 41:
                 AppState.m591f(1271);
-                ChatRoom c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
+                ChatRoom c0052wM745h = ((MrimAccount) AppState.m616i()).m745h(AppState.m586d(1513));
                 if (!c0052wM745h.f419k) {
                     C0029bb.m760c();
                     return;
                 }
-                C0040k.m1200b(41, 836);
-                C0028ba c0028ba2 = (C0028ba) AppState.m616i();
-                Vector vectorM1213g2 = C0040k.m1213g();
+                NetworkUtils.m1200b(41, 836);
+                MrimAccount c0028ba2 = (MrimAccount) AppState.m616i();
+                Vector vectorM1213g2 = NetworkUtils.m1213g();
                 if (c0052wM745h == c0028ba2.m746W()) {
                     vectorM1213g2.addElement(StringUtils.m17c(Integer.toString(0)));
                     vectorM1213g2.addElement(c0052wM745h.f418j);
-                    objArrM1147a = C0039j.m1148a(AppState.m584b(1050207), C0040k.m1216b(722608).append(AppState.m584b(2950868)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1216b(722608).append(AppState.m584b(2950868)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g2))));
                 } else {
                     vectorM1213g2.addElement(StringUtils.m17c(Integer.toString(c0052wM745h.f409a)));
                     int iM586d2 = AppState.m586d(97);
                     vectorM1213g2.addElement(StringUtils.m17c(Integer.toString(Utils.m502a(iM586d2, c0052wM745h.f414f.size() + (c0052wM745h.f420l ? iM586d2 : 0)))));
                     vectorM1213g2.addElement(StringUtils.m17c(Integer.toString(1)));
                     vectorM1213g2.addElement(AppState.f181d);
-                    Vector vectorM1213g3 = C0040k.m1213g();
+                    Vector vectorM1213g3 = NetworkUtils.m1213g();
                     Enumeration enumerationElements = c0052wM745h.f414f.elements();
                     while (enumerationElements.hasMoreElements()) {
                         Hashtable hashtable = c0052wM745h.f416h;
@@ -339,16 +339,16 @@ public final class C0021au {
                         }
                     }
                     vectorM1213g2.addElement(vectorM1213g3);
-                    objArrM1147a = C0039j.m1147a(C0040k.m1216b(1050207).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1640218)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.m1147a(NetworkUtils.m1216b(1050207).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1640218)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g2))));
                 }
                 C0029bb.m813b(objArrM1147a);
                 return;
             case 42:
-                C0040k.m1200b(42, 862);
-                Vector vectorM1213g4 = C0040k.m1213g();
+                NetworkUtils.m1200b(42, 862);
+                Vector vectorM1213g4 = NetworkUtils.m1213g();
                 JsonParser.m481d(vectorM1213g4, AppState.m586d(1527));
                 vectorM1213g4.addElement(AppState.m614m(1356));
-                C0029bb.m813b(C0039j.m1148a(AppState.m584b(1050207), C0040k.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640193)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g4)))));
+                C0029bb.m813b(ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640193)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g4)))));
                 return;
             case 43:
                 C0029bb.m760c();
@@ -370,7 +370,7 @@ public final class C0021au {
                     strArrM32g[6] = Utils.m522f(AppState.m584b(1311));
                     strArrM32g[7] = Utils.m522f(AppState.m584b(1312));
                 }
-                C0040k.m1199a(44, 729, abstractC0037hM616i2.mo115b(strArrM32g));
+                NetworkUtils.m1199a(44, 729, abstractC0037hM616i2.mo115b(strArrM32g));
                 return;
             case 45:
                 return;
@@ -382,15 +382,15 @@ public final class C0021au {
             case 48:
                 AppState.m591f(1271);
                 String strM584b = AppState.m584b(1346);
-                Message c0026az = (Message) ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513)).f416h.get(strM584b);
+                Message c0026az = (Message) ((MrimAccount) AppState.m616i()).m745h(AppState.m586d(1513)).f416h.get(strM584b);
                 Message c0026az2 = c0026az.f223h != null ? c0026az : null;
-                C0040k.m1200b(48, 837);
+                NetworkUtils.m1200b(48, 837);
                 if (c0026az2 == null) {
-                    Vector vectorM1213g5 = C0040k.m1213g();
+                    Vector vectorM1213g5 = NetworkUtils.m1213g();
                     vectorM1213g5.addElement(strM584b);
                     vectorM1213g5.addElement(AppState.f181d);
-                    vectorM1213g5.addElement(C0040k.m1221a(6775156));
-                    C0029bb.m813b(C0039j.m1147a(C0040k.m1217h().append(AppState.m584b(1377926)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1836851)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g5)))));
+                    vectorM1213g5.addElement(NetworkUtils.m1221a(6775156));
+                    C0029bb.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.m584b(1377926)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1836851)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g5)))));
                     return;
                 }
                 return;
@@ -403,7 +403,7 @@ public final class C0021au {
             case 51:
                 String strM584b2 = AppState.m584b(1346);
                 int iM586d4 = AppState.m586d(1513);
-                C0028ba c0028ba3 = (C0028ba) AppState.m616i();
+                MrimAccount c0028ba3 = (MrimAccount) AppState.m616i();
                 boolean z5 = strM584b2 != null;
                 boolean z6 = z5;
                 AppState.m599a(1521, z5);
@@ -417,19 +417,19 @@ public final class C0021au {
                 int size5 = c0052wM745h2.f415g.size();
                 AppState.m599a(1520, size5 != 0);
                 AppState.m599a(1517, c0052wM745h2 != c0028ba3.m746W());
-                AppState.m588a(1347, C0040k.m1217h().append(AppState.m584b(849)).append(size5).append(')'));
+                AppState.m588a(1347, NetworkUtils.m1217h().append(AppState.m584b(849)).append(size5).append(')'));
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4589));
                 return;
             case 52:
                 String strM584b3 = AppState.m584b(1346);
-                ChatRoom c0052wM745h3 = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
+                ChatRoom c0052wM745h3 = ((MrimAccount) AppState.m616i()).m745h(AppState.m586d(1513));
                 int iM1418a = c0052wM745h3.m1418a();
                 Message c0026azM1415b2 = c0052wM745h3.m1415b(strM584b3);
                 if (iM1418a == 2) {
-                    String[] strArrM869c = C0031bd.m869c(c0026azM1415b2.f219d);
+                    String[] strArrM869c = XmppMailRuProtocol.m869c(c0026azM1415b2.f219d);
                     str = strArrM869c != null ? strArrM869c[1] : AppState.f181d;
                 } else {
-                    String[] strArrM869c2 = C0031bd.m869c(c0026azM1415b2.f218c);
+                    String[] strArrM869c2 = XmppMailRuProtocol.m869c(c0026azM1415b2.f218c);
                     str = strArrM869c2 != null ? strArrM869c2[1] : AppState.f181d;
                 }
                 AppState.m601a(1284, (Object) str);
@@ -452,18 +452,18 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4806));
                 return;
             case 55:
-                C0040k.m1200b(55, 761);
+                NetworkUtils.m1200b(55, 761);
                 return;
             case 56:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3052));
                 return;
             case 57:
-                C0040k.m1200b(57, 730);
+                NetworkUtils.m1200b(57, 730);
                 AppState.m597a(219, System.currentTimeMillis());
                 Object[] objArr2 = new Object[1];
                 AppState.f177b[1271] = objArr2;
                 new RunnableC0055z(2, objArr2);
-                C0040k.m1174a();
+                NetworkUtils.m1174a();
                 return;
             case 58:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4729));
@@ -475,7 +475,7 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4711));
                 return;
             case 61:
-                C0040k.m1198a(61, 857);
+                NetworkUtils.m1198a(61, 857);
                 return;
             case 62:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4667));
@@ -500,7 +500,7 @@ public final class C0021au {
                     C0015ao.m340m(713);
                     return;
                 }
-                StringBuffer stringBufferM1217h2 = C0040k.m1217h();
+                StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
                 for (int i8 = 0; i8 < size6; i8++) {
                     stringBufferM1217h2.append(Utils.m530h((String) vectorM516c2.elementAt(i8))).append((char) 0);
                 }
@@ -526,21 +526,21 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3553));
                 return;
             case 71:
-                StringBuffer stringBufferAppend = C0040k.m1217h().append(AppState.m584b(672));
+                StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(672));
                 Object obj3 = AppState.f177b[1365];
-                C0040k.m1197a(71, stringBufferAppend.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).f398f : ((Contact) obj3).f376u).append(C0040k.m1221a(16167)));
+                NetworkUtils.m1197a(71, stringBufferAppend.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).f398f : ((Contact) obj3).f376u).append(NetworkUtils.m1221a(16167)));
                 return;
             case 72:
-                C0040k.m1200b(72, 866);
+                NetworkUtils.m1200b(72, 866);
                 Vector vectorM614m4 = AppState.m614m(1356);
-                Vector vectorM1213g6 = C0040k.m1213g();
+                Vector vectorM1213g6 = NetworkUtils.m1213g();
                 int size7 = vectorM614m4.size();
                 while (true) {
                     size7--;
                     if (size7 < 0) {
-                        Vector vectorM1213g7 = C0040k.m1213g();
+                        Vector vectorM1213g7 = NetworkUtils.m1213g();
                         vectorM1213g7.addElement(vectorM1213g6);
-                        C0029bb.m813b(C0039j.m1148a(AppState.m584b(1377771), C0040k.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574400)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g7)))));
+                        C0029bb.m813b(ConnectionThread.m1148a(AppState.m584b(1377771), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574400)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g7)))));
                         return;
                     } else {
                         Hashtable hashtable2 = new Hashtable();
@@ -558,7 +558,7 @@ public final class C0021au {
                 }
                 Vector vectorM614m5 = AppState.m614m(1318);
                 if (0 != vectorM614m5.size()) {
-                    AbstractC0004ad.m71b(C0040k.m1193a(AbstractC0004ad.m75b(3868), vectorM614m5));
+                    AbstractC0004ad.m71b(NetworkUtils.m1193a(AbstractC0004ad.m75b(3868), vectorM614m5));
                     return;
                 } else {
                     C0015ao.m391H();
@@ -570,41 +570,41 @@ public final class C0021au {
             case 75:
                 return;
             case 76:
-                C0031bd.m838r();
+                XmppMailRuProtocol.m838r();
                 return;
             case 77:
-                C0040k.m1197a(77, C0040k.m1217h().append(AppState.m584b(672)).append(AppState.m616i().f315k).append(C0040k.m1221a(16167)));
+                NetworkUtils.m1197a(77, NetworkUtils.m1217h().append(AppState.m584b(672)).append(AppState.m616i().f315k).append(NetworkUtils.m1221a(16167)));
                 return;
             case 78:
-                C0040k.m1200b(78, 861);
-                Vector vectorM1213g8 = C0040k.m1213g();
+                NetworkUtils.m1200b(78, 861);
+                Vector vectorM1213g8 = NetworkUtils.m1213g();
                 vectorM1213g8.addElement(AppState.m614m(1356));
                 JsonParser.m481d(vectorM1213g8, AppState.m587e(1524) ? 1 : 0);
-                C0029bb.m813b(C0039j.m1148a(AppState.m584b(1508975), C0029bb.m817a(C0040k.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640123)), Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g8)))));
+                C0029bb.m813b(ConnectionThread.m1148a(AppState.m584b(1508975), C0029bb.m817a(NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640123)), Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g8)))));
                 return;
             case 79:
-                C0040k.m1198a(79, 863);
+                NetworkUtils.m1198a(79, 863);
                 return;
             case 80:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4747));
                 return;
             case 81:
-                C0040k.m1200b(81, 872);
-                Vector vectorM1213g9 = C0040k.m1213g();
+                NetworkUtils.m1200b(81, 872);
+                Vector vectorM1213g9 = NetworkUtils.m1213g();
                 vectorM1213g9.addElement(AppState.m584b(AppState.m587e(1526) ? 264068 : 1038));
                 JsonParser.m481d(vectorM1213g9, AppState.m586d(1513));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1348)));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1349)));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1350)));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1351)));
-                C0029bb.m813b(C0039j.m1148a(AppState.m584b(1050207), C0040k.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1509223)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1120b((Object) JsonParser.m484a(vectorM1213g9)))));
+                C0029bb.m813b(ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1509223)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1120b((Object) JsonParser.m484a(vectorM1213g9)))));
                 return;
             case 82:
-                C0040k.m1200b(82, 877);
-                Message c0026az3 = new Message(C0031bd.m871i(Utils.m522f(AppState.m584b(1352))), Utils.m522f(AppState.m584b(1353)), Utils.m522f(AppState.m584b(1354)));
-                Vector vectorM1213g10 = C0040k.m1213g();
+                NetworkUtils.m1200b(82, 877);
+                Message c0026az3 = new Message(XmppMailRuProtocol.m871i(Utils.m522f(AppState.m584b(1352))), Utils.m522f(AppState.m584b(1353)), Utils.m522f(AppState.m584b(1354)));
+                Vector vectorM1213g10 = NetworkUtils.m1213g();
                 vectorM1213g10.addElement(c0026az3.m674e());
-                C0029bb.m813b(C0039j.m1148a(AppState.m584b(1377947), C0029bb.m817a(C0040k.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574735)), Conversation.m1120b((Object) JsonParser.m484a(vectorM1213g10)))));
+                C0029bb.m813b(ConnectionThread.m1148a(AppState.m584b(1377947), C0029bb.m817a(NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574735)), Conversation.m1120b((Object) JsonParser.m484a(vectorM1213g10)))));
                 return;
             case 83:
                 C0034e.m925a(4);
@@ -621,11 +621,11 @@ public final class C0021au {
             case 85:
                 AppState.m591f(1315);
                 if (AppState.m611g() == null) {
-                    C0040k.m1199a(85, 727, 0);
+                    NetworkUtils.m1199a(85, 727, 0);
                     return;
                 } else {
                     Contact abstractC0041lM611g3 = AppState.m611g();
-                    C0040k.m1199a(85, 727, abstractC0041lM611g3.f369o.mo114a(abstractC0041lM611g3));
+                    NetworkUtils.m1199a(85, 727, abstractC0041lM611g3.f369o.mo114a(abstractC0041lM611g3));
                     return;
                 }
             case 86:
@@ -672,7 +672,7 @@ public final class C0021au {
                     return;
                 }
                 C0029bb.m822a(abstractC0041lM611g5);
-                boolean z7 = abstractC0041lM611g5 instanceof C0035f;
+                boolean z7 = abstractC0041lM611g5 instanceof MrimContact;
                 boolean z8 = z7;
                 AppState.m599a(1495, z7);
                 boolean z9 = z8 && abstractC0041lM611g5.mo990d();
@@ -680,20 +680,20 @@ public final class C0021au {
                 AppState.m599a(1497, z8 && !z9);
                 AppState.m599a(1498, abstractC0041lM611g5.mo143m());
                 AppState.m599a(1499, abstractC0041lM611g5.mo144l() && !abstractC0041lM611g5.mo143m());
-                AppState.m599a(1501, z8 && !z9 && ((C0035f) abstractC0041lM611g5).m1000q());
+                AppState.m599a(1501, z8 && !z9 && ((MrimContact) abstractC0041lM611g5).m1000q());
                 AppState.m594c(3706, 3);
                 AppState.m594c(3705, 92);
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3704));
                 return;
             case 93:
                 C0013am c0013amM75b5 = AbstractC0004ad.m75b(2621);
-                if (AppState.m611g() instanceof C0009ai) {
+                if (AppState.m611g() instanceof MmpContact) {
                     for (int i10 = 0; i10 < 43; i10++) {
                         if (AppState.m584b(i10 + 1141) != null) {
                             c0013amM75b5.m254b(i10 + 110, StringUtils.m17c(Integer.toString(i10)), i10);
                         }
                     }
-                } else if (AppState.m611g() instanceof C0006af) {
+                } else if (AppState.m611g() instanceof XmppContact) {
                     for (int i11 = 0; i11 < 37; i11++) {
                         if (AppState.m584b(i11 + 1184) != null) {
                             c0013amM75b5.m254b(i11 + 318, StringUtils.m17c(Integer.toString(i11)), i11);
@@ -783,10 +783,10 @@ public final class C0021au {
                 if (C0015ao.f149c == null && C0015ao.f148b == null) {
                     Contact abstractC0041lM611g6 = AppState.m611g();
                     String strM314m = C0015ao.m314m();
-                    C0040k.m1199a(102, 728, strM314m != null ? abstractC0041lM611g6.f369o.m1075d((Object) strM314m) : C0034e.m969a(abstractC0041lM611g6.mo135a(), abstractC0041lM611g6.f369o));
+                    NetworkUtils.m1199a(102, 728, strM314m != null ? abstractC0041lM611g6.f369o.m1075d((Object) strM314m) : C0034e.m969a(abstractC0041lM611g6.mo135a(), abstractC0041lM611g6.f369o));
                     return;
                 } else {
-                    C0040k.m1199a(102, 728, 0);
+                    NetworkUtils.m1199a(102, 728, 0);
                     C0034e.m969a(C0015ao.f148b, C0015ao.f149c);
                     C0015ao.m394J();
                     return;
@@ -800,7 +800,7 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4204));
                 return;
             case 105:
-                C0031bd.m838r();
+                XmppMailRuProtocol.m838r();
                 AbstractC0004ad.m66b().f94a = 105;
                 return;
             case 106:
@@ -816,12 +816,12 @@ public final class C0021au {
                 return;
             case 107:
                 ContactInfo c0042m2 = (ContactInfo) AppState.f177b[1319];
-                C0040k.m1199a(107, 728, c0042m2.m1255c().m1075d((Object) c0042m2.m1290i()));
+                NetworkUtils.m1199a(107, 728, c0042m2.m1255c().m1075d((Object) c0042m2.m1290i()));
                 return;
             case 108:
                 return;
             case 109:
-                AbstractC0004ad.m71b(AbstractC0004ad.m75b(4862).m257b(AppState.m584b(879 + ((C0033d) AppState.m616i()).m921m())));
+                AbstractC0004ad.m71b(AbstractC0004ad.m75b(4862).m257b(AppState.m584b(879 + ((MmpProtocol) AppState.m616i()).m921m())));
                 return;
             case 110:
                 AppState.m601a(1249, (Object) AppState.f181d);
@@ -841,9 +841,9 @@ public final class C0021au {
                             C0015ao.m340m(762);
                         } else {
                             C0015ao.m353a(vectorM445W);
-                            AbstractC0004ad.m71b(C0040k.m1193a(AbstractC0004ad.m75b(1743), vectorM445W));
+                            AbstractC0004ad.m71b(NetworkUtils.m1193a(AbstractC0004ad.m75b(1743), vectorM445W));
                         }
-                        C0040k.m1212a(vectorM445W);
+                        NetworkUtils.m1212a(vectorM445W);
                         return;
                     }
                     if (((Contact) vectorM445W.elementAt(size10)).mo990d()) {
@@ -854,7 +854,7 @@ public final class C0021au {
                 C0015ao.m341r();
                 return;
             case 113:
-                C0031bd.m858w();
+                XmppMailRuProtocol.m858w();
                 return;
             case 114:
                 AppState.m601a(1250, (Object) AppState.f181d);
@@ -870,7 +870,7 @@ public final class C0021au {
                 return;
             case 116:
                 C0013am c0013amM75b13 = AbstractC0004ad.m75b(1892);
-                Enumeration enumerationM1167j = C0039j.m1167j();
+                Enumeration enumerationM1167j = ConnectionThread.m1167j();
                 while (enumerationM1167j.hasMoreElements()) {
                     C0014an c0014an2 = (C0014an) enumerationM1167j.nextElement();
                     c0013amM75b13.m247a(-1, c0014an2.f133a, 118, c0014an2);
@@ -891,9 +891,9 @@ public final class C0021au {
                             C0015ao.m340m(762);
                         } else {
                             C0015ao.m353a(vectorM445W2);
-                            AbstractC0004ad.m71b(C0040k.m1193a(AbstractC0004ad.m75b(1930), vectorM445W2));
+                            AbstractC0004ad.m71b(NetworkUtils.m1193a(AbstractC0004ad.m75b(1930), vectorM445W2));
                         }
-                        C0040k.m1212a(vectorM445W2);
+                        NetworkUtils.m1212a(vectorM445W2);
                         return;
                     }
                     if (((Contact) vectorM445W2.elementAt(size11)).mo990d()) {
@@ -905,7 +905,7 @@ public final class C0021au {
                 return;
             case 120:
                 C0013am c0013amM75b14 = AbstractC0004ad.m75b(1958);
-                Enumeration enumerationM1167j2 = C0039j.m1167j();
+                Enumeration enumerationM1167j2 = ConnectionThread.m1167j();
                 while (enumerationM1167j2.hasMoreElements()) {
                     C0014an c0014an3 = (C0014an) enumerationM1167j2.nextElement();
                     c0013amM75b14.m247a(-1, c0014an3.f133a, 6, c0014an3);
@@ -916,7 +916,7 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(1968));
                 return;
             case 122:
-                C0040k.m1198a(122, 535);
+                NetworkUtils.m1198a(122, 535);
                 return;
             case 123:
                 AbstractC0004ad.m71b(AppState.m611g().m1246J());
@@ -926,7 +926,7 @@ public final class C0021au {
                 return;
             case 125:
                 Account abstractC0037hM616i3 = AppState.m616i();
-                Vector vectorM1213g11 = C0040k.m1213g();
+                Vector vectorM1213g11 = NetworkUtils.m1213g();
                 Enumeration enumerationElements2 = abstractC0037hM616i3.f321q.elements();
                 while (enumerationElements2.hasMoreElements()) {
                     Contact abstractC0041l2 = (Contact) enumerationElements2.nextElement();
@@ -935,15 +935,15 @@ public final class C0021au {
                     }
                 }
                 if (vectorM1213g11.size() > 0) {
-                    AbstractC0004ad.m71b(C0040k.m1193a(AbstractC0004ad.m75b(4070), vectorM1213g11));
+                    AbstractC0004ad.m71b(NetworkUtils.m1193a(AbstractC0004ad.m75b(4070), vectorM1213g11));
                 } else {
                     C0015ao.m340m(762);
                 }
-                C0040k.m1212a(vectorM1213g11);
+                NetworkUtils.m1212a(vectorM1213g11);
                 return;
             case 126:
                 Account abstractC0037hM616i4 = AppState.m616i();
-                Vector vectorM1213g12 = C0040k.m1213g();
+                Vector vectorM1213g12 = NetworkUtils.m1213g();
                 Enumeration enumerationElements3 = abstractC0037hM616i4.f321q.elements();
                 while (enumerationElements3.hasMoreElements()) {
                     Contact abstractC0041l3 = (Contact) enumerationElements3.nextElement();
@@ -952,15 +952,15 @@ public final class C0021au {
                     }
                 }
                 if (vectorM1213g12.size() > 0) {
-                    AbstractC0004ad.m71b(C0040k.m1193a(AbstractC0004ad.m75b(4060), vectorM1213g12));
+                    AbstractC0004ad.m71b(NetworkUtils.m1193a(AbstractC0004ad.m75b(4060), vectorM1213g12));
                 } else {
                     C0015ao.m340m(762);
                 }
-                C0040k.m1212a(vectorM1213g12);
+                NetworkUtils.m1212a(vectorM1213g12);
                 return;
             case 127:
                 Account abstractC0037hM616i5 = AppState.m616i();
-                Vector vectorM1213g13 = C0040k.m1213g();
+                Vector vectorM1213g13 = NetworkUtils.m1213g();
                 Enumeration enumerationElements4 = abstractC0037hM616i5.f321q.elements();
                 while (enumerationElements4.hasMoreElements()) {
                     Contact abstractC0041l4 = (Contact) enumerationElements4.nextElement();
@@ -969,17 +969,17 @@ public final class C0021au {
                     }
                 }
                 if (vectorM1213g13.size() > 0) {
-                    AbstractC0004ad.m71b(C0040k.m1193a(AbstractC0004ad.m75b(4050), vectorM1213g13));
+                    AbstractC0004ad.m71b(NetworkUtils.m1193a(AbstractC0004ad.m75b(4050), vectorM1213g13));
                 } else {
                     C0015ao.m340m(762);
                 }
-                C0040k.m1212a(vectorM1213g13);
+                NetworkUtils.m1212a(vectorM1213g13);
                 return;
             case 128:
-                C0040k.m1197a(128, C0040k.m1217h().append(AppState.m584b(760)).append(AppState.m611g().f376u).append(C0040k.m1221a(16167)));
+                NetworkUtils.m1197a(128, NetworkUtils.m1217h().append(AppState.m584b(760)).append(AppState.m611g().f376u).append(NetworkUtils.m1221a(16167)));
                 return;
             case 129:
-                StringBuffer stringBufferAppend2 = C0040k.m1217h().append(AppState.m584b(396));
+                StringBuffer stringBufferAppend2 = NetworkUtils.m1217h().append(AppState.m584b(396));
                 Vector vectorM441T = C0015ao.m441T();
                 int i20 = 0;
                 int size12 = vectorM441T.size();
@@ -988,11 +988,11 @@ public final class C0021au {
                     i21--;
                     if (i21 < 0) {
                         AppState.m594c(1438, i20);
-                        AppState.m601a(1252, (Object) C0040k.m1215a(stringBufferAppend2));
+                        AppState.m601a(1252, (Object) NetworkUtils.m1215a(stringBufferAppend2));
                         AbstractC0004ad.m71b(AbstractC0004ad.m75b(1990));
                         return;
                     } else {
-                        String str3 = ((C0028ba) vectorM441T.elementAt(i21)).f315k;
+                        String str3 = ((MrimAccount) vectorM441T.elementAt(i21)).f315k;
                         stringBufferAppend2.append(str3);
                         if (i21 != 0) {
                             stringBufferAppend2.append((char) 0);
@@ -1037,14 +1037,14 @@ public final class C0021au {
                 return;
             case 142:
                 C0013am c0013amM75b15 = AbstractC0004ad.m75b(4159);
-                C0035f c0035f = (C0035f) AppState.m611g();
-                C0028ba c0028ba4 = (C0028ba) c0035f.f369o;
+                MrimContact c0035f = (MrimContact) AppState.m611g();
+                MrimAccount c0028ba4 = (MrimAccount) c0035f.f369o;
                 Vector vectorM614m8 = AppState.m614m(1318);
                 c0035f.m989a(vectorM614m8);
                 for (int i22 = 0; i22 < vectorM614m8.size(); i22++) {
                     String strM521a = Utils.m521a(vectorM614m8, i22);
                     if (!StringUtils.m6a(strM521a, c0028ba4.f315k)) {
-                        C0035f c0035f2 = (C0035f) c0028ba4.m1069c((Object) strM521a);
+                        MrimContact c0035f2 = (MrimContact) c0028ba4.m1069c((Object) strM521a);
                         if (c0035f2 != null) {
                             c0013amM75b15.m225a(c0035f2.mo138b());
                         } else {
@@ -1062,15 +1062,15 @@ public final class C0021au {
                 return;
             case 143:
                 AppState.m594c(2722, 0);
-                AppState.m588a(1292, C0040k.m1217h().append(AppState.m584b(771)).append(1 + (AppState.m586d(63) % 1000)));
-                AbstractC0004ad.m71b(C0029bb.m793a(AbstractC0004ad.m75b(4138), (C0028ba) AppState.m616i(), (Contact) null));
+                AppState.m588a(1292, NetworkUtils.m1217h().append(AppState.m584b(771)).append(1 + (AppState.m586d(63) % 1000)));
+                AbstractC0004ad.m71b(C0029bb.m793a(AbstractC0004ad.m75b(4138), (MrimAccount) AppState.m616i(), (Contact) null));
                 return;
             case 144:
                 AbstractC0004ad.m71b(C0029bb.m793a(AbstractC0004ad.m75b(4169), (Account) null, AppState.m611g()));
                 return;
             case 145:
                 AppState.m591f(1315);
-                C0040k.m1199a(145, 727, ((C0028ba) AppState.m611g().f369o).m732g(C0015ao.m314m()));
+                NetworkUtils.m1199a(145, 727, ((MrimAccount) AppState.m611g().f369o).m732g(C0015ao.m314m()));
                 return;
             case 146:
                 AppState.m599a(1462, C0015ao.m439R().size() > 1);
@@ -1080,7 +1080,7 @@ public final class C0021au {
                 String[] strArrM452Z = C0015ao.m452Z();
                 if (strArrM452Z != null) {
                     AppState.m601a(1285, (Object) strArrM452Z[0]);
-                    AppState.m588a(1284, C0040k.m1217h().append(AppState.m584b(522)).append(strArrM452Z[1]));
+                    AppState.m588a(1284, NetworkUtils.m1217h().append(AppState.m584b(522)).append(strArrM452Z[1]));
                     if (AppState.m586d(282) != 0) {
                         AppState.m591f(524);
                         AppState.m591f(525);
@@ -1100,15 +1100,15 @@ public final class C0021au {
                 return;
             case 150:
                 C0015ao.m392I();
-                C0035f c0035f3 = (C0035f) AppState.m611g();
-                C0028ba c0028ba5 = (C0028ba) c0035f3.f369o;
-                C0040k.m1199a(150, 504, c0028ba5.m1052c(c0028ba5.m719a(new Object[]{C0015ao.m321a(c0028ba5, 4104, new ByteBuffer().m1360p(4194304).m1308a(c0035f3.f297d).m1360p(0).m1360p(0).m1360p(4).m1360p(1)), C0034e.m967e(10), c0035f3, new Long(1L)})));
+                MrimContact c0035f3 = (MrimContact) AppState.m611g();
+                MrimAccount c0028ba5 = (MrimAccount) c0035f3.f369o;
+                NetworkUtils.m1199a(150, 504, c0028ba5.m1052c(c0028ba5.m719a(new Object[]{C0015ao.m321a(c0028ba5, 4104, new ByteBuffer().m1360p(4194304).m1308a(c0035f3.f297d).m1360p(0).m1360p(0).m1360p(4).m1360p(1)), C0034e.m967e(10), c0035f3, new Long(1L)})));
                 return;
             case 151:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3272));
                 return;
             case 152:
-                C0039j.m1173n();
+                ConnectionThread.m1173n();
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(3302));
                 return;
             case 153:
@@ -1118,7 +1118,7 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(2085));
                 return;
             case 155:
-                Vector vectorM1141c = C0039j.m1141c();
+                Vector vectorM1141c = ConnectionThread.m1141c();
                 int iM541c = Utils.m541c(vectorM1141c);
                 if (iM541c == 0) {
                     C0015ao.m340m(404);
@@ -1127,7 +1127,7 @@ public final class C0021au {
                 C0013am c0013amM75b16 = AbstractC0004ad.m75b(2101);
                 for (int i23 = 0; i23 < iM541c; i23++) {
                     Object objElementAt2 = vectorM1141c.elementAt(i23);
-                    c0013amM75b16.m225a(C0032c.m890a(C0039j.m1138a(objElementAt2), !C0039j.f355f.contains(objElementAt2)));
+                    c0013amM75b16.m225a(C0032c.m890a(ConnectionThread.m1138a(objElementAt2), !ConnectionThread.f355f.contains(objElementAt2)));
                 }
                 AbstractC0004ad.m71b(c0013amM75b16);
                 return;
@@ -1155,7 +1155,7 @@ public final class C0021au {
                                 AbstractC0004ad.m71b(c0013amM75b17);
                                 return;
                             }
-                            C0028ba c0028ba6 = (C0028ba) vectorM441T2.elementAt(i24);
+                            MrimAccount c0028ba6 = (MrimAccount) vectorM441T2.elementAt(i24);
                             int iMo108h = c0028ba6.mo108h();
                             String str4 = c0028ba6.f315k;
                             c0013amM75b17.m247a(iMo108h, str4, 153, str4);
@@ -1166,13 +1166,13 @@ public final class C0021au {
                 return;
             case 160:
                 StringBuffer stringBuffer = new StringBuffer(AppState.m584b(780));
-                stringBuffer.append(AppState.m584b(((C0028ba) AppState.m616i()).f231g.f21i + 780));
+                stringBuffer.append(AppState.m584b(((MrimAccount) AppState.m616i()).f231g.f21i + 780));
                 AppState.m588a(1337, stringBuffer);
                 C0034e.f288g = System.currentTimeMillis();
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4258));
                 return;
             case 161:
-                C0040k.m1200b(161, 872);
+                NetworkUtils.m1200b(161, 872);
                 return;
             case 162:
                 Conversation.m1130c(411);
@@ -1180,14 +1180,14 @@ public final class C0021au {
                 return;
             case 163:
                 AppState.m594c(1577, 0);
-                C0040k.m1197a(163, C0040k.m1217h().append(AppState.m584b(1028)));
+                NetworkUtils.m1197a(163, NetworkUtils.m1217h().append(AppState.m584b(1028)));
                 return;
             case 164:
-                C0040k.m1182b();
+                NetworkUtils.m1182b();
                 return;
             case 165:
-                C0040k.m1200b(165, 505);
-                AppState.f177b[1271] = C0040k.m1222i();
+                NetworkUtils.m1200b(165, 505);
+                AppState.f177b[1271] = NetworkUtils.m1222i();
                 return;
             case 166:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(4179));
@@ -1217,7 +1217,7 @@ public final class C0021au {
                     }
                 }
             case 171:
-                C0040k.m1198a(171, 787);
+                NetworkUtils.m1198a(171, 787);
                 AppState.m594c(286, 1);
                 return;
             case 172:
@@ -1230,12 +1230,12 @@ public final class C0021au {
                         AbstractC0004ad.m71b(c0013amM75b19);
                         return;
                     } else {
-                        C0028ba c0028ba7 = (C0028ba) vectorM440S.elementAt(size15);
+                        MrimAccount c0028ba7 = (MrimAccount) vectorM440S.elementAt(size15);
                         c0013amM75b19.m247a(156, c0028ba7.f315k, 0, c0028ba7);
                     }
                 }
             case 173:
-                C0040k.m1198a(173, 416);
+                NetworkUtils.m1198a(173, 416);
                 return;
             case 174:
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(2198));
@@ -1253,7 +1253,7 @@ public final class C0021au {
                 AbstractC0004ad.m71b(AbstractC0004ad.m75b(2279));
                 return;
             case 179:
-                C0040k.m1200b(179, 504);
+                NetworkUtils.m1200b(179, 504);
                 return;
             case 180:
                 break;
@@ -1304,7 +1304,7 @@ public final class C0021au {
                 break;
             case 6:
                 if (!AppState.m587e(1547)) {
-                    C0039j.m1161a(c0013amM66b);
+                    ConnectionThread.m1161a(c0013amM66b);
                 }
                 iM460J = 0;
                 break;
@@ -1342,7 +1342,7 @@ public final class C0021au {
                 iM460J = 0;
                 break;
             case 19:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 String[] strArrM518a = Utils.m518a(false);
                 Object[] objArr = new Object[strArrM518a.length + 1];
                 objArr[0] = Utils.m522f(AppState.m584b(1302));
@@ -1363,12 +1363,12 @@ public final class C0021au {
                 iM460J = C0015ao.m330i(iM68d);
                 break;
             case 21:
-                C0040k.m1195d();
-                iM460J = AppState.m616i() instanceof C0005ae ? ((C0005ae) AppState.m616i()).m116k() : 0;
+                NetworkUtils.m1195d();
+                iM460J = AppState.m616i() instanceof XmppProtocol ? ((XmppProtocol) AppState.m616i()).m116k() : 0;
                 break;
             case 22:
-                C0040k.m1195d();
-                C0028ba c0028ba = (C0028ba) AppState.m616i();
+                NetworkUtils.m1195d();
+                MrimAccount c0028ba = (MrimAccount) AppState.m616i();
                 String strM522f = Utils.m522f(AppState.m584b(1302));
                 String[] strArrM518a2 = Utils.m518a(false);
                 if (!c0028ba.m1056C()) {
@@ -1381,7 +1381,7 @@ public final class C0021au {
                         Enumeration enumerationElements = c0028ba.f321q.elements();
                         while (true) {
                             if (enumerationElements.hasMoreElements()) {
-                                C0035f c0035f = (C0035f) enumerationElements.nextElement();
+                                MrimContact c0035f = (MrimContact) enumerationElements.nextElement();
                                 int i2 = length;
                                 do {
                                     i2--;
@@ -1413,7 +1413,7 @@ public final class C0021au {
                 iM460J = C0015ao.m373a(iM68d, obj);
                 break;
             case 26:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 AppState.m594c(4305, AppState.m586d(72));
                 AbstractC0004ad.m65a();
                 AppState.m582c().m201a();
@@ -1422,13 +1422,13 @@ public final class C0021au {
                 iM460J = 0;
                 break;
             case 27:
-                iM460J = C0040k.m1195d();
+                iM460J = NetworkUtils.m1195d();
                 break;
             case 28:
-                iM460J = C0040k.m1195d();
+                iM460J = NetworkUtils.m1195d();
                 break;
             case 29:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 if (AppState.m586d(4305) != AppState.m586d(243)) {
                     C0008ah.m163a();
                 }
@@ -1441,7 +1441,7 @@ public final class C0021au {
                 iM460J = C0034e.m933a(strM67c, c0032cM69e);
                 break;
             case 33:
-                iM460J = C0040k.m1195d();
+                iM460J = NetworkUtils.m1195d();
                 break;
             case 34:
                 int iM586d = AppState.m586d(1510);
@@ -1504,11 +1504,11 @@ public final class C0021au {
                 iM460J = -1;
                 break;
             case 49:
-                C0040k.m1195d();
-                iM460J = (AppState.m586d(4308) != 4 || 0 == (iM721d = ((C0028ba) AppState.m616i()).m721d(((AppState.m586d(4305) - 157) << 8) + 4))) ? 0 : C0015ao.m338l(iM721d);
+                NetworkUtils.m1195d();
+                iM460J = (AppState.m586d(4308) != 4 || 0 == (iM721d = ((MrimAccount) AppState.m616i()).m721d(((AppState.m586d(4305) - 157) << 8) + 4))) ? 0 : C0015ao.m338l(iM721d);
                 break;
             case 50:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 iM460J = 0;
                 break;
             case 51:
@@ -1521,9 +1521,9 @@ public final class C0021au {
                 iM460J = C0029bb.m787a(strM67c);
                 break;
             case 54:
-                C0040k.m1195d();
-                Vector vectorM1213g = C0040k.m1213g();
-                StringBuffer stringBufferM1217h = C0040k.m1217h();
+                NetworkUtils.m1195d();
+                Vector vectorM1213g = NetworkUtils.m1213g();
+                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                 String strM522f2 = Utils.m522f(AppState.m584b(1352));
                 int length2 = strM522f2.length();
                 int i4 = 0;
@@ -1564,7 +1564,7 @@ public final class C0021au {
                 iM460J = -1;
                 break;
             case 56:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 if (AppState.m587e(90)) {
                     C0015ao.m412O();
                 }
@@ -1598,12 +1598,12 @@ public final class C0021au {
                 iM460J = C0015ao.m401A(iM68d);
                 break;
             case 65:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 AppState.f177b[1314] = Utils.m516c(AppState.m612h().f300g, ',').elementAt(AppState.m586d(1493));
                 iM460J = 0;
                 break;
             case 66:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 int iMo734a = ((ContactInfo) AppState.f177b[1319]).m1255c().mo734a(Utils.m522f(AppState.m584b(1320)), Utils.m522f(AppState.m584b(1321)), Utils.m522f(AppState.m584b(1322)), (ContactGroup) AppState.m614m(1324).elementAt(AppState.m586d(1507)), AppState.m587e(1509));
                 iM460J = 0 != iMo734a ? C0015ao.m338l(iMo734a) : 0;
                 break;
@@ -1614,12 +1614,12 @@ public final class C0021au {
                 iM460J = C0015ao.m291a();
                 break;
             case 69:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 int iMo122a = AppState.m616i().mo122a(Utils.m522f(AppState.m584b(1295)));
                 iM460J = 0 != iMo122a ? C0015ao.m338l(iMo122a) : 0;
                 break;
             case 70:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 int iMo1399b = AppState.m610f().mo1399b(Utils.m522f(AppState.m584b(1306)));
                 iM460J = 0 != iMo1399b ? C0015ao.m338l(iMo1399b) : 0;
                 break;
@@ -1640,7 +1640,7 @@ public final class C0021au {
                 iM460J = -1;
                 break;
             case 76:
-                iM460J = C0031bd.m839s();
+                iM460J = XmppMailRuProtocol.m839s();
                 break;
             case 77:
                 iM460J = C0015ao.m400L();
@@ -1729,7 +1729,7 @@ public final class C0021au {
                 iM460J = C0015ao.m363p(iM68d);
                 break;
             case 105:
-                int iM839s = C0031bd.m839s();
+                int iM839s = XmppMailRuProtocol.m839s();
                 iM460J = 0 == iM839s ? 4 : iM839s;
                 break;
             case 106:
@@ -1742,10 +1742,10 @@ public final class C0021au {
                 iM460J = C0015ao.m327o();
                 break;
             case 109:
-                iM460J = ((C0033d) AppState.m616i()).m923d(iM68d);
+                iM460J = ((MmpProtocol) AppState.m616i()).m923d(iM68d);
                 break;
             case 110:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 iM460J = StringUtils.m1a(Utils.m522f(AppState.m584b(1249))) ? C0015ao.m338l(352) : 0;
                 break;
             case 111:
@@ -1755,10 +1755,10 @@ public final class C0021au {
                 iM460J = -1;
                 break;
             case 113:
-                iM460J = C0031bd.m859h(iM68d);
+                iM460J = XmppMailRuProtocol.m859h(iM68d);
                 break;
             case 114:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 String strM522f3 = Utils.m522f(AppState.m584b(1250));
                 if (StringUtils.m1a(strM522f3)) {
                     iM338l7 = C0015ao.m338l(372);
@@ -1782,12 +1782,12 @@ public final class C0021au {
                 iM460J = iM338l7;
                 break;
             case 115:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 String strM522f4 = Utils.m522f(AppState.m584b(1286));
                 if (StringUtils.m1a(strM522f4)) {
                     iM338l6 = C0015ao.m338l(523);
                 } else {
-                    C0028ba c0028ba2 = (C0028ba) AppState.m611g().f369o;
+                    MrimAccount c0028ba2 = (MrimAccount) AppState.m611g().f369o;
                     boolean zM587e = AppState.m587e(1507);
                     long jM598g = AppState.m598g(1469);
                     if (c0028ba2.m1056C()) {
@@ -1844,7 +1844,7 @@ public final class C0021au {
                 iM460J = 4;
                 break;
             case 129:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 AppState.m594c(44, 1);
                 int iM586d2 = AppState.m586d(1438);
                 if (iM586d2 > 0) {
@@ -1886,7 +1886,7 @@ public final class C0021au {
                 iM460J = 129;
                 break;
             case 140:
-                iM460J = C0040k.m1195d();
+                iM460J = NetworkUtils.m1195d();
                 break;
             case 141:
                 iM460J = -1;
@@ -1903,7 +1903,7 @@ public final class C0021au {
                 iM460J = iM338l5;
                 break;
             case 143:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 String strM522f5 = Utils.m522f(AppState.m584b(1292));
                 if (StringUtils.m1a(strM522f5)) {
                     iM338l4 = C0015ao.m338l(301);
@@ -1912,7 +1912,7 @@ public final class C0021au {
                     if (vectorM794a.size() == 0) {
                         iM338l4 = C0015ao.m338l(775);
                     } else {
-                        C0028ba c0028ba3 = (C0028ba) AppState.m616i();
+                        MrimAccount c0028ba3 = (MrimAccount) AppState.m616i();
                         boolean zM587e2 = AppState.m587e(2722);
                         ByteBuffer c0043n = new ByteBuffer();
                         int size = vectorM794a.size();
@@ -1946,8 +1946,8 @@ public final class C0021au {
                 if (vectorM794a2.size() == 0) {
                     iM338l3 = C0015ao.m338l(775);
                 } else {
-                    C0035f c0035f2 = (C0035f) AppState.m611g();
-                    C0028ba c0028ba4 = (C0028ba) c0035f2.f369o;
+                    MrimContact c0035f2 = (MrimContact) AppState.m611g();
+                    MrimAccount c0028ba4 = (MrimAccount) c0035f2.f369o;
                     ByteBuffer c0043n2 = new ByteBuffer();
                     int size2 = vectorM794a2.size();
                     int i6 = size2;
@@ -1971,12 +1971,12 @@ public final class C0021au {
                 iM460J = C0015ao.m323g(iM68d);
                 break;
             case 147:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 String strM522f6 = Utils.m522f(AppState.m584b(1286));
                 if (StringUtils.m1a(strM522f6)) {
                     iM338l2 = C0015ao.m338l(523);
                 } else {
-                    C0028ba c0028ba5 = (C0028ba) AppState.m616i();
+                    MrimAccount c0028ba5 = (MrimAccount) AppState.m616i();
                     new RunnableC0055z(17, new ByteBuffer().m1310c(1442705).m1310c(1049531).m1385u(4022591).m1314d(c0028ba5.f315k).m1385u(4022822).m1314d(c0028ba5.f316l).m1310c(459757).m1310c(459750).m1314d(Conversation.m1120b((Object) strM522f6)).m1314d(Utils.m522f(AppState.m587e(1468) ? AppState.m584b(1285) : null)).m1317c());
                     AppState.m595d(282, 1);
                     iM338l2 = 0;
@@ -2002,7 +2002,7 @@ public final class C0021au {
                 iM460J = C0034e.m959d(obj);
                 break;
             case 154:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 String strM584b = AppState.m584b(1253);
                 long jMo274v2 = AbstractC0025ay.f196d;
                 long jMo275w2 = AbstractC0025ay.f195c;
@@ -2038,8 +2038,8 @@ public final class C0021au {
                 iM460J = 0;
                 break;
             case 155:
-                Vector vectorM1141c = C0039j.m1141c();
-                StringBuffer stringBufferM1217h2 = C0040k.m1217h();
+                Vector vectorM1141c = ConnectionThread.m1141c();
+                StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
                 Vector vector = c0013amM66b.f108m;
                 int size3 = vector.size();
                 for (int i7 = 0; i7 < size3; i7++) {
@@ -2047,8 +2047,8 @@ public final class C0021au {
                         stringBufferM1217h2.append(vectorM1141c.elementAt(i7)).append((char) 0);
                     }
                 }
-                String strM1215a = C0040k.m1215a(stringBufferM1217h2);
-                C0039j.f355f = Utils.m515b(strM1215a, (char) 0);
+                String strM1215a = NetworkUtils.m1215a(stringBufferM1217h2);
+                ConnectionThread.f355f = Utils.m515b(strM1215a, (char) 0);
                 AppState.m601a(264, (Object) strM1215a);
                 iM460J = 0;
                 break;
@@ -2077,18 +2077,18 @@ public final class C0021au {
                 iM460J = C0015ao.m348v();
                 break;
             case 164:
-                C0040k.m1195d();
-                String strM843u = C0031bd.m843u();
+                NetworkUtils.m1195d();
+                String strM843u = XmppMailRuProtocol.m843u();
                 String strM9b = strM843u;
-                if (!C0031bd.m841f(strM843u)) {
+                if (!XmppMailRuProtocol.m841f(strM843u)) {
                     strM9b = StringUtils.m9b(strM9b, Utils.m542c(694, AppState.m586d(1474)));
                 }
-                if (C0031bd.m844g(strM9b)) {
+                if (XmppMailRuProtocol.m844g(strM9b)) {
                     String str2 = strM9b;
                     String strM522f8 = Utils.m522f(AppState.m584b(1293));
                     String strM522f9 = Utils.m522f(AppState.m584b(1284));
                     int iM586d3 = AppState.m586d(4305);
-                    AppState.f177b[1271] = C0040k.m1223a(str2, 0, strM522f8, strM522f9, 0 == iM586d3 ? Utils.m522f(AppState.m584b(1287)) : (String) Utils.m516c(AppState.m584b(810), (char) 0).elementAt(iM586d3), Utils.m522f(AppState.m584b(1288)), Utils.m522f(AppState.m584b(1298)), Utils.m522f(AppState.m584b(1299)), AppState.m586d(1489), AppState.m586d(1488), AppState.m586d(1491), AppState.m586d(1481), AppState.m586d(1480), AppState.m584b(1342), AppState.m584b(1343));
+                    AppState.f177b[1271] = NetworkUtils.m1223a(str2, 0, strM522f8, strM522f9, 0 == iM586d3 ? Utils.m522f(AppState.m584b(1287)) : (String) Utils.m516c(AppState.m584b(810), (char) 0).elementAt(iM586d3), Utils.m522f(AppState.m584b(1288)), Utils.m522f(AppState.m584b(1298)), Utils.m522f(AppState.m584b(1299)), AppState.m586d(1489), AppState.m586d(1488), AppState.m586d(1491), AppState.m586d(1481), AppState.m586d(1480), AppState.m584b(1342), AppState.m584b(1343));
                     iM338l = 13;
                 } else {
                     iM338l = C0015ao.m338l(559);
@@ -2126,7 +2126,7 @@ public final class C0021au {
                 iM460J = 0;
                 break;
             case 175:
-                C0040k.m1195d();
+                NetworkUtils.m1195d();
                 if (AppState.m587e(280)) {
                     C0029bb.m772f();
                 }
@@ -2199,7 +2199,7 @@ public final class C0021au {
                 iM308i = 0;
                 break;
             case 6:
-                iM308i = C0039j.m1162b(c0013amM66b);
+                iM308i = ConnectionThread.m1162b(c0013amM66b);
                 break;
             case 7:
                 iM308i = 0;
@@ -2707,7 +2707,7 @@ public final class C0021au {
                 iM308i = 0;
                 break;
             case 169:
-                ((C0028ba) AppState.m616i()).f232h = true;
+                ((MrimAccount) AppState.m616i()).f232h = true;
                 iM308i = 0;
                 break;
             case 170:
@@ -2715,7 +2715,7 @@ public final class C0021au {
                 break;
             case 171:
                 AppState.m594c(285, 0);
-                C0039j.m1164h();
+                ConnectionThread.m1164h();
                 iM308i = 6;
                 break;
             case 172:
@@ -2870,7 +2870,7 @@ public final class C0021au {
                 C0015ao.m391H();
                 break;
             case 76:
-                C0031bd.m840t();
+                XmppMailRuProtocol.m840t();
                 break;
             case 78:
                 AppState.m591f(1271);
@@ -2898,20 +2898,20 @@ public final class C0021au {
                 AppState.m594c(1477, 0);
                 break;
             case 105:
-                C0031bd.m840t();
+                XmppMailRuProtocol.m840t();
                 break;
             case 108:
                 C0015ao.m412O();
                 AppState.m591f(1282);
                 break;
             case 113:
-                C0031bd.f257f = null;
+                XmppMailRuProtocol.f257f = null;
                 break;
             case 120:
                 AppState.m594c(1443, 0);
                 break;
             case 122:
-                C0040k.m1212a(AppState.m614m(1291));
+                NetworkUtils.m1212a(AppState.m614m(1291));
                 AppState.m591f(1291);
                 break;
             case 138:
@@ -2960,8 +2960,8 @@ public final class C0021au {
         Vector vectorM614m = AppState.m614m(1272);
         int size = vectorM614m.size() - 1;
         C0013am c0013am = (C0013am) vectorM614m.elementAt(size);
-        C0040k.m1212a(c0013am.f110o);
-        C0040k.m1212a(c0013am.f108m);
+        NetworkUtils.m1212a(c0013am.f110o);
+        NetworkUtils.m1212a(c0013am.f108m);
         vectorM614m.removeElementAt(size);
         Utils.m526b(vectorM614m);
     }

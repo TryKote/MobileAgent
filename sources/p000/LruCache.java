@@ -28,13 +28,13 @@ public final class LruCache {
 
     public LruCache() {
         this.f9c = new Hashtable();
-        this.f10d = C0040k.m1213g();
+        this.f10d = NetworkUtils.m1213g();
         this.f8b = 27;
     }
 
     public LruCache(int i) {
         this.f9c = new Hashtable();
-        this.f10d = C0040k.m1213g();
+        this.f10d = NetworkUtils.m1213g();
         this.f8b = i;
     }
 

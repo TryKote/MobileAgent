@@ -10,12 +10,12 @@ public final class ContactInfo extends Hashtable {
     public ContactInfo(Contact abstractC0041l) {
         put(C0034e.m967e(-2), abstractC0041l.f369o);
         m1258a(0, abstractC0041l.f376u);
-        if (abstractC0041l instanceof C0035f) {
-            m1258a(3, ((C0035f) abstractC0041l).f297d);
-        } else if (abstractC0041l instanceof C0009ai) {
-            m1283d(Utils.m510a((Object) ((C0009ai) abstractC0041l).f57c));
-        } else if (abstractC0041l instanceof C0006af) {
-            m1258a(26, ((C0006af) abstractC0041l).f38a);
+        if (abstractC0041l instanceof MrimContact) {
+            m1258a(3, ((MrimContact) abstractC0041l).f297d);
+        } else if (abstractC0041l instanceof MmpContact) {
+            m1283d(Utils.m510a((Object) ((MmpContact) abstractC0041l).f57c));
+        } else if (abstractC0041l instanceof XmppContact) {
+            m1258a(26, ((XmppContact) abstractC0041l).f38a);
         }
     }
 
@@ -34,7 +34,7 @@ public final class ContactInfo extends Hashtable {
     /* renamed from: a */
     public final boolean m1252a() {
         if (m1256a(26) == null) {
-            return m1255c() != null && (m1255c() instanceof C0005ae);
+            return m1255c() != null && (m1255c() instanceof XmppProtocol);
         }
         return true;
     }
@@ -44,8 +44,8 @@ public final class ContactInfo extends Hashtable {
         if (m1256a(60) != null) {
             return false;
         }
-        if ((m1255c() == null || !(m1255c() instanceof C0033d)) && m1256a(26) == null) {
-            return m1255c() == null || !(m1255c() instanceof C0005ae);
+        if ((m1255c() == null || !(m1255c() instanceof MmpProtocol)) && m1256a(26) == null) {
+            return m1255c() == null || !(m1255c() instanceof XmppProtocol);
         }
         return false;
     }
@@ -178,7 +178,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: a */
     private static final String m1276a(int i, int i2) {
-        return C0040k.m1215a(C0040k.m1217h().append(i).append(AppState.m584b(i2)));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(i).append(AppState.m584b(i2)));
     }
 
     /* renamed from: c */
@@ -192,7 +192,7 @@ public final class ContactInfo extends Hashtable {
         if (iM511a != 0) {
             Vector vectorM512e = Utils.m512e(AppState.m584b(685));
             m1258a(7, (String) vectorM512e.elementAt(iM511a));
-            C0040k.m1212a(vectorM512e);
+            NetworkUtils.m1212a(vectorM512e);
         }
         return this;
     }
@@ -292,16 +292,16 @@ public final class ContactInfo extends Hashtable {
         C0013am c0013amM75b = AbstractC0004ad.m75b(i);
         Vector vectorM512e = Utils.m512e(AppState.m584b(312));
         int size = vectorM512e.size();
-        if (abstractC0037hM1255c instanceof C0028ba) {
-            C0035f c0035f = (C0035f) abstractC0037hM1255c.m1069c((Object) m1256a(3));
+        if (abstractC0037hM1255c instanceof MrimAccount) {
+            MrimContact c0035f = (MrimContact) abstractC0037hM1255c.m1069c((Object) m1256a(3));
             int i3 = 0;
             while (i3 < size) {
                 try {
-                    String strM1215a = C0040k.m1215a(Utils.m497a(C0040k.m1217h().append((String) vectorM512e.elementAt(i3))));
+                    String strM1215a = NetworkUtils.m1215a(Utils.m497a(NetworkUtils.m1217h().append((String) vectorM512e.elementAt(i3))));
                     String strM1256a = m1256a(i3);
                     if (null != strM1256a) {
                         if (i3 == 6) {
-                            c0013amM75b.m248a(strM1215a, C0040k.m1215a(C0040k.m1217h().append(StringUtils.m12a(strM1256a, 8, 10)).append('/').append(StringUtils.m12a(strM1256a, 5, 7)).append('/').append(StringUtils.m13b(strM1256a, 4))));
+                            c0013amM75b.m248a(strM1215a, NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m12a(strM1256a, 8, 10)).append('/').append(StringUtils.m12a(strM1256a, 5, 7)).append('/').append(StringUtils.m13b(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
                                 c0013amM75b.m225a(C0032c.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? C0015ao.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.mo139e()).m898b(Utils.m522f(m1256a(13))));
@@ -317,7 +317,7 @@ public final class ContactInfo extends Hashtable {
             if (c0035f != null) {
                 String strM522f = Utils.m522f(c0035f.f301h);
                 int i4 = Conversation.m1104a(strM522f, 927) ? 936 : Conversation.m1104a(strM522f, 926) ? 935 : Conversation.m1104a(strM522f, 929) ? 937 : Conversation.m1104a(strM522f, 928) ? 938 : Conversation.m1104a(strM522f, 930) ? 939 : Conversation.m1104a(strM522f, 931) ? 940 : Conversation.m1104a(strM522f, 932) ? 941 : Conversation.m1104a(strM522f, 933) ? 942 : 934;
-                StringBuffer stringBufferM1217h = C0040k.m1217h();
+                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                 if (i4 == 934) {
                     int iM627a = AppState.m627a(strM522f, 2467256188365532259L);
                     if (iM627a >= 0 && (iIndexOf3 = strM522f.indexOf(34, iM627a + 9)) >= 0) {
@@ -334,7 +334,7 @@ public final class ContactInfo extends Hashtable {
                         stringBufferM1217h.append('.').append(StringUtils.m12a(strM522f, iM628b2 + 8, iIndexOf2));
                     }
                 }
-                String strM1215a2 = C0040k.m1215a(stringBufferM1217h);
+                String strM1215a2 = NetworkUtils.m1215a(stringBufferM1217h);
                 if (Utils.m535l(strM1215a2)) {
                     C0032c c0032cM901a = C0032c.m889d().m901a(AppState.m584b(317), 0, 6);
                     String str = c0035f.f301h;
@@ -373,7 +373,7 @@ public final class ContactInfo extends Hashtable {
                     c0013amM75b.m225a(C0032c.m889d().m901a(AppState.m584b(326), 0, 6).m896a(365).m898b(strM998o));
                 }
             }
-        } else if (abstractC0037hM1255c instanceof C0033d) {
+        } else if (abstractC0037hM1255c instanceof MmpProtocol) {
             String strM1256a2 = m1256a(60);
             if (null != strM1256a2) {
                 c0013amM75b.m248a(Utils.m527g(AppState.m584b(263250)), strM1256a2);
@@ -382,7 +382,7 @@ public final class ContactInfo extends Hashtable {
                 try {
                     String strM1256a3 = m1256a(i5);
                     if (null != strM1256a3) {
-                        c0013amM75b.m248a(C0040k.m1215a(Utils.m497a(C0040k.m1217h().append(vectorM512e.elementAt(i5)))), strM1256a3);
+                        c0013amM75b.m248a(NetworkUtils.m1215a(Utils.m497a(NetworkUtils.m1217h().append(vectorM512e.elementAt(i5)))), strM1256a3);
                     }
                 } catch (Throwable unused2) {
                 }
@@ -403,7 +403,7 @@ public final class ContactInfo extends Hashtable {
             if (null != strM1256a7) {
                 c0013amM75b.m248a(AppState.m584b(316), strM1256a7);
             }
-        } else if (abstractC0037hM1255c instanceof C0005ae) {
+        } else if (abstractC0037hM1255c instanceof XmppProtocol) {
             Image image = (Image) get(C0034e.m967e(25));
             if (image != null) {
                 c0013amM75b.m225a(C0032c.m893a(new C0012al(image)));
@@ -415,7 +415,7 @@ public final class ContactInfo extends Hashtable {
                 c0013amM75b.m253a(strM1256a8);
             }
         }
-        C0040k.m1212a(vectorM512e);
+        NetworkUtils.m1212a(vectorM512e);
         return c0013amM75b;
     }
 

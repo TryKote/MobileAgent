@@ -333,7 +333,7 @@ public abstract class AbstractC0004ad {
                 return i10;
             case 1:
                 int i11 = i5 + 1;
-                C0032c c0032cM901a = C0032c.m889d().m901a(C0040k.m1215a(C0040k.m1217h().append(Utils.m522f(AppState.m584b(AppState.m586d(i5)))).append(' ')), 0, 0);
+                C0032c c0032cM901a = C0032c.m889d().m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.m522f(AppState.m584b(AppState.m586d(i5)))).append(' ')), 0, 0);
                 int i12 = i11 + 1;
                 String strM522f2 = Utils.m522f(AppState.m584b(AppState.m586d(i11)));
                 if (!StringUtils.m1a(strM522f2)) {

@@ -51,7 +51,7 @@ public final class C0008ah {
     public static final void m163a() {
         f45b = 0;
         f54k = null;
-        AppState.f177b[1246] = C0040k.m1213g();
+        AppState.f177b[1246] = NetworkUtils.m1213g();
         Vector vectorM614m = AppState.m614m(1241);
         int size = vectorM614m.size();
         if (size == 0 || !AppState.m587e(243)) {
@@ -236,8 +236,8 @@ public final class C0008ah {
         if (vectorM614m == null) {
             return;
         }
-        C0040k.m1212a(AppState.m614m(1245));
-        Vector vectorM1213g = C0040k.m1213g();
+        NetworkUtils.m1212a(AppState.m614m(1245));
+        Vector vectorM1213g = NetworkUtils.m1213g();
         AppState.f177b[1245] = vectorM1213g;
         int size = vectorM614m.size();
         int i2 = f45b;

@@ -41,7 +41,7 @@ public final class C0032c {
 
     public C0032c(int i, String str) {
         this.f258a = i;
-        this.f263i = C0040k.m1213g();
+        this.f263i = NetworkUtils.m1213g();
         this.f264j = new int[16];
         this.f259b = str;
         this.f260c = 200;
@@ -118,7 +118,7 @@ public final class C0032c {
         while (true) {
             i2--;
             if (i2 < 0) {
-                C0040k.m1212a(vector);
+                NetworkUtils.m1212a(vector);
                 C0032c c0032cM896a = m884a().m898b(Utils.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
                 c0032cM896a.f265d = new Object[]{C0034e.m967e(i), strArr};
                 return c0032cM896a;
@@ -218,12 +218,12 @@ public final class C0032c {
     /* renamed from: a */
     public final C0032c m902a(String str, int i, int i2, int i3) {
         if (str != null) {
-            Vector vectorM907a = m907a(C0040k.m1213g(), str, 0, str.length(), i, i2, i3);
+            Vector vectorM907a = m907a(NetworkUtils.m1213g(), str, 0, str.length(), i, i2, i3);
             int size = vectorM907a.size();
             for (int i4 = 0; i4 < size; i4++) {
                 m903a(vectorM907a.elementAt(i4));
             }
-            C0040k.m1212a(vectorM907a);
+            NetworkUtils.m1212a(vectorM907a);
         }
         return this;
     }

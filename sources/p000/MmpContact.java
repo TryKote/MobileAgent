@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: ai */
 /* loaded from: MobileAgent_3.9.jar:ai.class */
-public final class C0009ai extends Contact {
+public final class MmpContact extends Contact {
 
     /* renamed from: a */
     public final int f55a;
@@ -64,7 +64,7 @@ public final class C0009ai extends Contact {
     /* renamed from: C */
     private static int f73C;
 
-    public C0009ai(C0033d c0033d, int i, int i2, String str, String str2, boolean z) {
+    public MmpContact(MmpProtocol c0033d, int i, int i2, String str, String str2, boolean z) {
         super(c0033d);
         this.f55a = i;
         this.f56b = i2;
@@ -94,7 +94,7 @@ public final class C0009ai extends Contact {
         return this.f57c;
     }
 
-    public C0009ai(Account abstractC0037h, ByteBuffer c0043n) {
+    public MmpContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f55a = c0043n.m1328e();
         this.f56b = c0043n.m1328e();
@@ -298,7 +298,7 @@ public final class C0009ai extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer stringBufferAppend = C0040k.m1217h().append(AppState.m584b(979));
+                        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(979));
                         int i7 = 952;
                         int i8 = f72B;
                         int i9 = 0;
@@ -307,7 +307,7 @@ public final class C0009ai extends Contact {
                             i8 /= 1000;
                             i7 = 952 + 1;
                         }
-                        StringBuffer stringBufferM1217h = C0040k.m1217h();
+                        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                         stringBufferM1217h.append(i8);
                         if (i9 != 0) {
                             stringBufferM1217h.append('.');
@@ -318,16 +318,16 @@ public final class C0009ai extends Contact {
                             }
                             stringBufferM1217h.append(strM13b);
                         }
-                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(C0040k.m1215a(stringBufferM1217h.append(AppState.m584b(i7)))).append(AppState.m584b(983));
+                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(NetworkUtils.m1215a(stringBufferM1217h.append(AppState.m584b(i7)))).append(AppState.m584b(983));
                         int i10 = f73C;
-                        StringBuffer stringBufferM1217h2 = C0040k.m1217h();
+                        StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             stringBufferM1217h2.append(i11);
                         } else {
                             stringBufferM1217h2.append(i11 / 60).append(AppState.m584b(954)).append(i11 % 60);
                         }
-                        r03[1] = stringBufferAppend2.append(C0040k.m1215a(stringBufferM1217h2.append(AppState.m584b(955)))).toString();
+                        r03[1] = stringBufferAppend2.append(NetworkUtils.m1215a(stringBufferM1217h2.append(AppState.m584b(955)))).toString();
                         r03[2] = AppState.f181d;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
                         r03[1] = AppState.m584b(980);

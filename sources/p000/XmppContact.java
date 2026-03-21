@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: af */
 /* loaded from: MobileAgent_3.9.jar:af.class */
-public final class C0006af extends Contact {
+public final class XmppContact extends Contact {
 
     /* renamed from: a */
     public String f38a;
@@ -22,14 +22,14 @@ public final class C0006af extends Contact {
     /* renamed from: b */
     public boolean f43b;
 
-    public C0006af(C0005ae c0005ae, String str, String str2, String str3) {
+    public XmppContact(XmppProtocol c0005ae, String str, String str2, String str3) {
         super(c0005ae);
         this.f381x = str;
         this.f38a = str;
         this.f41e = str3;
         this.f40d = 0;
         m1249c(Utils.m528a(str2, str));
-        this.f373r = C0005ae.m131d(this.f39c);
+        this.f373r = XmppProtocol.m131d(this.f39c);
         this.f380w = c0005ae.m1050q().m1314d(str).m1317c();
         c0005ae.m1081h(this);
         m1228A();
@@ -52,13 +52,13 @@ public final class C0006af extends Contact {
         return this.f38a;
     }
 
-    public C0006af(Account abstractC0037h, ByteBuffer c0043n) {
+    public XmppContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f38a = c0043n.m1334g();
         m1249c(c0043n.m1335e((String) null));
         this.f380w = abstractC0037h.m1050q().m1314d(this.f38a).m1317c();
         this.f39c = 0;
-        this.f373r = C0005ae.m131d(0);
+        this.f373r = XmppProtocol.m131d(0);
         abstractC0037h.m1081h(this);
         m1228A();
         this.f381x = this.f38a;
@@ -74,7 +74,7 @@ public final class C0006af extends Contact {
     private final int m137o() {
         int iMo139e = mo139e();
         int i = iMo139e & 65535;
-        return (!(this.f369o instanceof C0031bd) || i < 381 || i > 384) ? iMo139e : iMo139e + 4;
+        return (!(this.f369o instanceof XmppMailRuProtocol) || i < 381 || i > 384) ? iMo139e : iMo139e + 4;
     }
 
     @Override // p000.Contact
@@ -173,11 +173,11 @@ public final class C0006af extends Contact {
     }
 
     /* renamed from: a */
-    public final void m147a(C0006af c0006af) {
+    public final void m147a(XmppContact c0006af) {
         this.f39c = c0006af != null ? c0006af.f39c : 0;
         this.f42f = c0006af != null ? c0006af.f42f : null;
         this.f371p = this.f39c != 0;
-        this.f373r = C0005ae.m131d(this.f39c);
+        this.f373r = XmppProtocol.m131d(this.f39c);
         this.f40d = this.f39c == 0 ? 0 : 3;
         this.f375t = true;
         m1228A();
@@ -191,7 +191,7 @@ public final class C0006af extends Contact {
 
     /* renamed from: a */
     public final int m149a(int i) {
-        int iM119a = ((C0005ae) this.f369o).m119a(this, i);
+        int iM119a = ((XmppProtocol) this.f369o).m119a(this, i);
         if (iM119a != i) {
             return iM119a;
         }
@@ -202,7 +202,7 @@ public final class C0006af extends Contact {
 
     /* renamed from: b */
     public final void m150b(int i) {
-        ((C0005ae) this.f369o).m99b(this.f38a, i);
+        ((XmppProtocol) this.f369o).m99b(this.f38a, i);
     }
 
     /* JADX DEBUG: Possible override for method l.f()Ln; */

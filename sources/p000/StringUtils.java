@@ -115,17 +115,17 @@ public final class StringUtils {
 
     /* renamed from: b */
     public static final String m7b(int i, String str) {
-        return C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(i)).append(str));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(i)).append(str));
     }
 
     /* renamed from: a */
     public static final String m8a(int i, Object obj) {
-        return C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(i)).append(obj));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(i)).append(obj));
     }
 
     /* renamed from: b */
     public static final String m9b(String str, String str2) {
-        return C0040k.m1215a(C0040k.m1217h().append(str).append(str2));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(str).append(str2));
     }
 
     /* renamed from: a */
@@ -211,7 +211,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m18a(C0033d c0033d, int i) {
+    public static final ByteBuffer m18a(MmpProtocol c0033d, int i) {
         return c0033d.m916a(new Object[]{C0015ao.m464a(c0033d, 5378, new ByteBuffer().m1357m(1).m1357m(16).m1358n(14).m1360p(c0033d.f269a).m1358n(2000).m1357m(0).m1358n(1202).m1360p(i)), C0034e.m967e(7), C0034e.m967e(i)});
     }
 
@@ -272,10 +272,10 @@ public final class StringUtils {
             objArr[1] = new StringBuffer().append(AppState.m584b(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.m523d(AppState.m586d(1548))).toString();
             C0036g.m1041a(objArr);
             try {
-                Image imageM847a = (c0034eM949i.f281a == 1 && AppState.m587e(1551)) ? C0031bd.m847a(c0034eM949i) : null;
+                Image imageM847a = (c0034eM949i.f281a == 1 && AppState.m587e(1551)) ? XmppMailRuProtocol.m847a(c0034eM949i) : null;
                 imageM876b = imageM847a;
                 if (imageM847a == null) {
-                    imageM876b = C0031bd.m876b(c0034eM949i);
+                    imageM876b = XmppMailRuProtocol.m876b(c0034eM949i);
                 }
             } catch (IOException unused2) {
                 int i3 = i;
@@ -341,7 +341,7 @@ public final class StringUtils {
 
     /* renamed from: m */
     private static final Vector m26m() {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         vectorM1213g.addElement(AppState.m584b(684));
         return vectorM1213g;
     }
@@ -363,8 +363,8 @@ public final class StringUtils {
     /* renamed from: e */
     public static final void m29e() {
         m30f();
-        AppState.f177b[1301] = new XmlParser(new ByteBuffer(C0040k.m1221a(25135), 41000)).m47a().f172b;
-        StringBuffer stringBufferAppend = C0040k.m1217h().append(AppState.m584b(683));
+        AppState.f177b[1301] = new XmlParser(new ByteBuffer(NetworkUtils.m1221a(25135), 41000)).m47a().f172b;
+        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(683));
         Vector vectorM614m = AppState.m614m(1301);
         for (int i = 0; i < Utils.m541c(vectorM614m); i++) {
             stringBufferAppend.append((char) 0).append(m28b((XmlElement) vectorM614m.elementAt(i)));
@@ -631,7 +631,7 @@ public final class StringUtils {
                 AppState.m601a(223, (Object) str);
                 return;
             }
-            StringBuffer stringBufferM1217h = C0040k.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
             int i3 = 0;
             while (i3 < 2) {
                 long jCurrentTimeMillis = i3 == 0 ? System.currentTimeMillis() : (Utils.m520a() << 32) | Utils.m510a((Object) Utils.m522f(AppState.m584b(222)));
@@ -679,7 +679,7 @@ public final class StringUtils {
 
     /* renamed from: j */
     public static final void m41j() {
-        AppState.f177b[1389] = C0040k.m1213g();
+        AppState.f177b[1389] = NetworkUtils.m1213g();
         AppState.f177b[1390] = new GeoRegion(AppState.m584b(996), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
             ByteBuffer c0043nM986d = C0034e.m986d(AppState.m584b(227));
@@ -754,7 +754,7 @@ public final class StringUtils {
                     m42a(c0053x);
                 }
             } else if (m3a(397424, str)) {
-                C0039j.m1137a(1, c0022av2, true);
+                ConnectionThread.m1137a(1, c0022av2, true);
             }
         }
         try {

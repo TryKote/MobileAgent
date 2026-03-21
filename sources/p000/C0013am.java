@@ -133,14 +133,14 @@ public final class C0013am {
     /* renamed from: a */
     public final C0013am m218a() {
         if (AppState.m587e(245)) {
-            this.f110o = C0040k.m1213g();
+            this.f110o = NetworkUtils.m1213g();
             m219s();
         }
         return this;
     }
 
     private C0013am(int i, int i2, int i3, int i4) {
-        this.f108m = C0040k.m1213g();
+        this.f108m = NetworkUtils.m1213g();
         this.f109n = new int[16];
         this.f102h = i;
         this.f95b = i3;
@@ -555,7 +555,7 @@ public final class C0013am {
             c0012al.m210c(1, i40, ((AppState.m586d(1528) - 2) * abstractC0037h.f323s) / 100, iM502a3);
             c0012al.m216a(abstractC0037h.mo108h(), 3, i40 + AbstractC0004ad.m73f());
             c0012al.m207b(0);
-            c0012al.m213a(C0040k.m1215a(C0040k.m1217h().append(abstractC0037h.f315k).append(' ').append(abstractC0037h.f323s).append('%')), 21, i39, 36);
+            c0012al.m213a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(abstractC0037h.f315k).append(' ').append(abstractC0037h.f323s).append('%')), 21, i39, 36);
             iM605e3 -= iM502a2;
         }
     }
@@ -912,7 +912,7 @@ public final class C0013am {
     /* renamed from: p */
     public final void m237p() {
         if (this.f94a == 6) {
-            C0039j.m1163c(this);
+            ConnectionThread.m1163c(this);
             return;
         }
         int size = this.f108m.size();
@@ -1229,7 +1229,7 @@ public final class C0013am {
 
     /* renamed from: q */
     public final void m258q() {
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         int size = this.f108m.size();
         while (true) {
             size--;
@@ -1246,7 +1246,7 @@ public final class C0013am {
         while (true) {
             size2--;
             if (size2 < 0) {
-                C0040k.m1212a(vectorM1213g);
+                NetworkUtils.m1212a(vectorM1213g);
                 return;
             }
             m225a((C0032c) vectorM1213g.elementAt(size2));
@@ -1283,7 +1283,7 @@ public final class C0013am {
         int i7 = i3 - this.f98e;
         int i8 = i4 - this.f99f;
         if (this.f94a == 6) {
-            C0039j.m1161a(this);
+            ConnectionThread.m1161a(this);
             AbstractC0025ay.m664a(i5, i6 - this.f113p);
             return true;
         }

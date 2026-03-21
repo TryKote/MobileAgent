@@ -7,13 +7,13 @@ public final class C0016ap extends ContactGroup {
     /* renamed from: a */
     public int f157a;
 
-    public C0016ap(C0033d c0033d, int i, String str) {
+    public C0016ap(MmpProtocol c0033d, int i, String str) {
         super(c0033d);
         this.f157a = i;
         m1403c(str);
     }
 
-    public C0016ap(C0033d c0033d, ByteBuffer c0043n) {
+    public C0016ap(MmpProtocol c0033d, ByteBuffer c0043n) {
         super(c0033d);
         this.f157a = c0043n.m1328e();
         m1403c(c0043n.m1335e((String) null));
@@ -24,7 +24,7 @@ public final class C0016ap extends ContactGroup {
                 this.f399g = c0043n.m1340l();
                 return;
             }
-            m1401b((Object) new C0009ai(c0033d, c0043n));
+            m1401b((Object) new MmpContact(c0033d, c0043n));
         }
     }
 
@@ -53,7 +53,7 @@ public final class C0016ap extends ContactGroup {
         int size = this.f397e.size();
         ByteBuffer c0043nM1357m2 = c0043nM1357m.m1357m(i3 + (size << 1));
         for (int i4 = 0; i4 < size; i4++) {
-            int i5 = ((C0009ai) m1394e(i4)).f55a;
+            int i5 = ((MmpContact) m1394e(i4)).f55a;
             if (i != i5) {
                 c0043nM1357m2.m1357m(i5);
             }

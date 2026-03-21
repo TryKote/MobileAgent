@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: d */
 /* loaded from: MobileAgent_3.9.jar:d.class */
-public final class C0033d extends Account {
+public final class MmpProtocol extends Account {
 
     /* renamed from: a */
     public int f269a;
@@ -43,7 +43,7 @@ public final class C0033d extends Account {
     /* renamed from: N */
     private int f280N;
 
-    public C0033d(int i, String str, String str2) {
+    public MmpProtocol(int i, String str, String str2) {
         super(i, str, str2);
         this.f324t = -1;
         this.f325u = 0;
@@ -72,7 +72,7 @@ public final class C0033d extends Account {
         return 0;
     }
 
-    public C0033d(ByteBuffer c0043n) {
+    public MmpProtocol(ByteBuffer c0043n) {
         super(c0043n);
         this.f278L = this.f325u >>> 16;
         if (this.f278L <= 0 || this.f278L > 5) {
@@ -251,7 +251,7 @@ public final class C0033d extends Account {
                         C0029bb.m778d((Object) AppState.m584b(479));
                         this.f322r = 0;
                     }
-                    C0040k.m1212a(vectorM439R);
+                    NetworkUtils.m1212a(vectorM439R);
                     break;
                 } else {
                     this.f322r = 3;
@@ -270,7 +270,7 @@ public final class C0033d extends Account {
                     this.f319o = 28179;
                     this.f271K = C0034e.m986d(this.f272c[2]).m1339k();
                     this.f269a = Integer.parseInt(this.f272c[0]);
-                    this.f320p = new C0039j(this.f272c[1]);
+                    this.f320p = new ConnectionThread(this.f272c[1]);
                     this.f322r = 6;
                     this.f272c = null;
                     break;
@@ -326,7 +326,7 @@ public final class C0033d extends Account {
                 this.f324t = mo89g();
                 return;
             }
-            C0040k.m1212a(vectorM440S);
+            NetworkUtils.m1212a(vectorM440S);
         }
         while (true) {
             ByteBuffer c0043nM1350t2 = this.f318n.m1350t();
@@ -361,7 +361,7 @@ public final class C0033d extends Account {
                         while (true) {
                             size--;
                             if (size < 0) {
-                                C0031bd.m882a(this, c0043nM1299a, iM1356x, 0);
+                                XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, 0);
                                 break;
                             } else {
                                 Object[] objArr = (Object[]) vector.elementAt(size);
@@ -393,10 +393,10 @@ public final class C0033d extends Account {
                                     bArr2 = bArr4;
                                 }
                                 if (iM1353u != 3) {
-                                    C0040k.m1209a(bArr4);
+                                    NetworkUtils.m1209a(bArr4);
                                 }
                             }
-                            C0028ba c0028ba = (C0028ba) C0015ao.m440S().elementAt(0);
+                            MrimAccount c0028ba = (MrimAccount) C0015ao.m440S().elementAt(0);
                             c0028ba.m1052c(C0034e.m981a(c0028ba, this, iM1355w, iM1355w2, strM17c, z, bArr2));
                             break;
                         } catch (Throwable unused) {
@@ -409,7 +409,7 @@ public final class C0033d extends Account {
                         m917a(c0043nM1299a.m1363z(), c0043nM1299a);
                         break;
                     case 1025:
-                        C0031bd.m881b(this, iM1356x);
+                        XmppMailRuProtocol.m881b(this, iM1356x);
                         break;
                     case 1031:
                         C0029bb.m821a(this, c0043nM1299a);
@@ -438,10 +438,10 @@ public final class C0033d extends Account {
                         if (this.f273d == 0) {
                             m1067K();
                         }
-                        C0031bd.m882a(this, c0043nM1299a, iM1356x, iM1351l);
+                        XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, iM1351l);
                         break;
                     case 4878:
-                        C0031bd.m882a(this, c0043nM1299a, iM1356x, 0);
+                        XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, 0);
                         break;
                     case 4885:
                         Contact abstractC0041lM1069c2 = m1069c((Object) c0043nM1299a.m1363z());
@@ -457,7 +457,7 @@ public final class C0033d extends Account {
                     case 4891:
                         String strM1363z2 = c0043nM1299a.m1363z();
                         byte bM1344o = c0043nM1299a.m1344o();
-                        m1072a(strM1363z2, 0L, C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(483)).append(AppState.m584b(bM1344o == 1 ? 484 : 485)).append(c0043nM1299a.m1364A())));
+                        m1072a(strM1363z2, 0L, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(483)).append(AppState.m584b(bM1344o == 1 ? 484 : 485)).append(c0043nM1299a.m1364A())));
                         if (bM1344o == 1 && null != (abstractC0041lM1069c = m1069c((Object) strM1363z2))) {
                             abstractC0041lM1069c.mo145h();
                             break;
@@ -467,11 +467,11 @@ public final class C0033d extends Account {
                         m1072a(c0043nM1299a.m1363z(), 0L, AppState.m584b(480));
                         break;
                     case 5377:
-                        C0029bb.m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(481)).append(1501).append('/').append(c0043nM1299a.m1353u()).append(AppState.m584b(482))));
-                        C0031bd.m881b(this, iM1356x);
+                        C0029bb.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(481)).append(1501).append('/').append(c0043nM1299a.m1353u()).append(AppState.m584b(482))));
+                        XmppMailRuProtocol.m881b(this, iM1356x);
                         break;
                     case 5379:
-                        C0031bd.m882a(this, c0043nM1299a, iM1356x, iM1351l);
+                        XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, iM1351l);
                         break;
                 }
                 C0015ao.f152f = true;
@@ -493,7 +493,7 @@ public final class C0033d extends Account {
     private void m917a(String str, ByteBuffer c0043n) {
         int iM511a;
         int i = 255;
-        C0009ai c0009ai = (C0009ai) m1069c((Object) str);
+        MmpContact c0009ai = (MmpContact) m1069c((Object) str);
         if (c0009ai == null || c0009ai.mo143m()) {
             return;
         }
@@ -580,11 +580,11 @@ public final class C0033d extends Account {
                             byte[] bArr2 = new byte[iM1353u5];
                             c0043n.m1347c(bArr2);
                             String strM17c = StringUtils.m17c(new String(bArr2));
-                            if (strM17c.startsWith(C0040k.m1221a(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.m15c(strM17c, 7), 0, 23, -1)) >= 0) {
+                            if (strM17c.startsWith(NetworkUtils.m1221a(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.m15c(strM17c, 7), 0, 23, -1)) >= 0) {
                                 c0009ai.f373r &= -65536;
                                 c0009ai.f373r |= iM511a + 269;
                             }
-                            C0040k.m1209a(bArr2);
+                            NetworkUtils.m1209a(bArr2);
                             iM1353u3 = i7 - iM1353u5;
                         } else {
                             c0043n.m1329g(iM1353u5);
@@ -612,7 +612,7 @@ public final class C0033d extends Account {
             return iMo125a;
         }
         this.f327w++;
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         int i = c0009ai.f62g ? 1 : 0;
         int i2 = c0009ai.f63h ? 2 : 1;
         ByteBuffer c0043nM1373h = new ByteBuffer().m1323a(j).m1357m(i2).m1373h(c0009ai.f57c);
@@ -651,7 +651,7 @@ public final class C0033d extends Account {
         if (0 != iMo112a) {
             return iMo112a;
         }
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         String str = (String) objArr[0];
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4873, c0009ai.m180a(3, str, c0009ai.f56b)), C0034e.m967e(0), c0009ai, str}));
     }
@@ -665,7 +665,7 @@ public final class C0033d extends Account {
         }
         this.f325u = i;
         if (m1056C()) {
-            m1052c(C0031bd.m857a(this, this.f274e));
+            m1052c(XmppMailRuProtocol.m857a(this, this.f274e));
             m1052c(m916a(new Object[]{C0015ao.m464a(this, 286, new ByteBuffer().m1357m(6).m1357m(4).m1359o(268435456 | m919j())), C0034e.m967e(17)}));
             return m1052c(C0015ao.m375a(this));
         }
@@ -681,7 +681,7 @@ public final class C0033d extends Account {
         if (!m1056C()) {
             return 299;
         }
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         AppState.f177b[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.f57c);
         return m1052c(StringUtils.m18a(this, Utils.m510a((Object) c0009ai.f57c)));
     }
@@ -694,7 +694,7 @@ public final class C0033d extends Account {
             return iMo113a;
         }
         m1052c(C0034e.m961a(this));
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), C0034e.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
     }
 
@@ -735,7 +735,7 @@ public final class C0033d extends Account {
     @Override // p000.Account
     /* renamed from: b */
     public final int mo118b(Contact abstractC0041l) {
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         int iMo118b = super.mo118b((Contact) c0009ai);
         if (0 != iMo118b) {
             return iMo118b;
@@ -764,7 +764,7 @@ public final class C0033d extends Account {
             return iMo734a;
         }
         m1052c(C0015ao.m464a(this, 4884, new ByteBuffer().m1373h(str).m1360p(0)));
-        C0009ai c0009ai = (C0009ai) m1069c((Object) str);
+        MmpContact c0009ai = (MmpContact) m1069c((Object) str);
         if (null != c0009ai && !c0009ai.mo143m()) {
             return m1052c(C0029bb.m753a(this, c0009ai, str3));
         }
@@ -817,7 +817,7 @@ public final class C0033d extends Account {
                         if (size2 < 0) {
                             break;
                         }
-                        C0009ai c0009ai = (C0009ai) vector2.elementAt(size2);
+                        MmpContact c0009ai = (MmpContact) vector2.elementAt(size2);
                         if (c0009ai.f55a == iM520a || c0009ai.f59d == iM520a || c0009ai.f60e == iM520a || c0009ai.f61f == iM520a) {
                             z = true;
                         }
@@ -834,13 +834,13 @@ public final class C0033d extends Account {
         if (abstractC0041l.mo143m()) {
             return 310;
         }
-        return m1052c(C0029bb.m792c(this, (C0009ai) abstractC0041l));
+        return m1052c(C0029bb.m792c(this, (MmpContact) abstractC0041l));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final int mo105d(Contact abstractC0041l) {
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         if (c0009ai.mo141j() && !c0009ai.mo140i()) {
             m1052c(C0029bb.m791b(this, c0009ai));
         }
@@ -850,7 +850,7 @@ public final class C0033d extends Account {
     @Override // p000.Account
     /* renamed from: e */
     public final int mo106e(Contact abstractC0041l) {
-        C0009ai c0009ai = (C0009ai) abstractC0041l;
+        MmpContact c0009ai = (MmpContact) abstractC0041l;
         if (!c0009ai.mo141j() && c0009ai.mo140i()) {
             m1052c(C0029bb.m790a(this, c0009ai));
         }
@@ -894,7 +894,7 @@ public final class C0033d extends Account {
     /* renamed from: b */
     public final Contact mo107b(String str) {
         ContactGroup abstractC0046q = this.f334D;
-        C0009ai c0009ai = new C0009ai(this, -1, -1, str, str, true);
+        MmpContact c0009ai = new MmpContact(this, -1, -1, str, str, true);
         abstractC0046q.m1401b((Object) c0009ai);
         ByteBuffer c0043nM1360p = new ByteBuffer().m1360p(this.f269a).m1358n(2000).m1357m(0).m1358n(1375).m1357m(13825).m1358n(4).m1360p(Utils.m510a((Object) str));
         ByteBuffer c0043nM1357m = new ByteBuffer().m1357m(1);
@@ -949,7 +949,7 @@ public final class C0033d extends Account {
         if (!m1056C()) {
             return 0;
         }
-        m1052c(C0031bd.m857a(this, this.f274e));
+        m1052c(XmppMailRuProtocol.m857a(this, this.f274e));
         return 4;
     }
 

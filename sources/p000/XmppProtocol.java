@@ -5,7 +5,7 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: ae */
 /* loaded from: MobileAgent_3.9.jar:ae.class */
-public class C0005ae extends Account {
+public class XmppProtocol extends Account {
 
     /* renamed from: a */
     public final Vector f30a;
@@ -31,10 +31,10 @@ public class C0005ae extends Account {
     /* renamed from: e */
     public String f37e;
 
-    public C0005ae(int i, String str, String str2) {
+    public XmppProtocol(int i, String str, String str2) {
         super(i, str, str2);
         this.f325u = 1;
-        this.f30a = C0040k.m1213g();
+        this.f30a = NetworkUtils.m1213g();
         C0036g c0036g = new C0036g(this, 0, AppState.m584b(1039));
         c0036g.f399g = true;
         this.f334D = c0036g;
@@ -50,15 +50,15 @@ public class C0005ae extends Account {
 
     /* renamed from: r */
     private String m81r() {
-        StringBuffer stringBufferAppend = C0040k.m1217h().append('m');
+        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('m');
         int i = this.f319o + 1;
         this.f319o = i;
-        return C0040k.m1215a(stringBufferAppend.append(i));
+        return NetworkUtils.m1215a(stringBufferAppend.append(i));
     }
 
-    public C0005ae(ByteBuffer c0043n) {
+    public XmppProtocol(ByteBuffer c0043n) {
         super(c0043n);
-        this.f30a = C0040k.m1213g();
+        this.f30a = NetworkUtils.m1213g();
         int iM1328e = c0043n.m1328e();
         while (true) {
             iM1328e--;
@@ -80,7 +80,7 @@ public class C0005ae extends Account {
                 this.f37e = c0043n.m1334g();
                 return;
             }
-            ((C0006af) c0036g.f397e.elementAt(iM541c)).f43b = true;
+            ((XmppContact) c0036g.f397e.elementAt(iM541c)).f43b = true;
         }
     }
 
@@ -219,7 +219,7 @@ public class C0005ae extends Account {
                     } else {
                         this.f322r = 2;
                         if (this.f315k.indexOf(64) <= 0) {
-                            ((C0031bd) this).f37e = this.f315k;
+                            ((XmppMailRuProtocol) this).f37e = this.f315k;
                             objArr = null;
                         } else {
                             String strM13b = StringUtils.m13b(Utils.m544b(), 16);
@@ -257,7 +257,7 @@ public class C0005ae extends Account {
             case 3:
                 this.f323s = 30;
                 this.f319o = 0;
-                this.f320p = new C0039j(C0040k.m1215a(C0040k.m1217h().append(this.f33b).append(':').append(this.f34c)));
+                this.f320p = new ConnectionThread(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f33b).append(':').append(this.f34c)));
                 this.f322r = 4;
                 if (m96t()) {
                     new RunnableC0055z(30, new Object[]{this, new ByteBuffer().m1310c(2365173).m1310c(3807001).m1314d(this.f340J).m1310c(1316577).m1314d(this.f316l).m1337i(), C0034e.f291j[0]});
@@ -356,11 +356,11 @@ public class C0005ae extends Account {
                             String strM584b4 = strM574a != null ? strM574a : AppState.m584b(594984);
                             String strM130h = m130h(c0022av.m554b(262852));
                             if (strM130h != null) {
-                                C0006af c0006afM111f = m111f(strM130h);
+                                XmppContact c0006afM111f = m111f(strM130h);
                                 if (StringUtils.m3a(594926, strM584b4)) {
                                     if (c0006afM111f == null) {
                                         ContactGroup abstractC0046q = this.f334D;
-                                        C0006af c0006af = new C0006af(this, strM130h, m129a(c0022av, strM130h), null);
+                                        XmppContact c0006af = new XmppContact(this, strM130h, m129a(c0022av, strM130h), null);
                                         c0006af.f43b = true;
                                         c0006afM111f = c0006af;
                                         abstractC0046q.m1401b((Object) c0006af);
@@ -375,7 +375,7 @@ public class C0005ae extends Account {
                         } else if (StringUtils.m3a(464488, str)) {
                             String strM130h2 = m130h(c0022av.m554b(262852));
                             if (m111f(strM130h2) != null) {
-                                StringBuffer stringBufferM1217h = C0040k.m1217h();
+                                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                                 XmlElement c0022avM562f = c0022av.m562f(464558);
                                 if (c0022avM562f != null && (strM11a2 = StringUtils.m11a(c0022avM562f.f173c)) != null) {
                                     stringBufferM1217h.append(strM11a2).append('\n');
@@ -384,7 +384,7 @@ public class C0005ae extends Account {
                                 if (c0022avM562f2 != null && (strM11a = StringUtils.m11a(c0022avM562f2.f173c)) != null) {
                                     stringBufferM1217h.append(strM11a);
                                 }
-                                String strM1215a = C0040k.m1215a(stringBufferM1217h);
+                                String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
                                 if (strM1215a.length() > 0) {
                                     m1072a(strM130h2, 0L, strM1215a);
                                 }
@@ -629,22 +629,22 @@ public class C0005ae extends Account {
     }
 
     /* renamed from: f */
-    private C0006af m111f(String str) {
-        return (C0006af) m1069c((Object) str);
+    private XmppContact m111f(String str) {
+        return (XmppContact) m1069c((Object) str);
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int mo112a(Contact abstractC0041l, Object[] objArr) {
         int iMo112a = super.mo112a(abstractC0041l, objArr);
-        return 0 != iMo112a ? iMo112a : m117a(((C0006af) abstractC0041l).f38a, (String) objArr[0], m1080g(abstractC0041l).f398f);
+        return 0 != iMo112a ? iMo112a : m117a(((XmppContact) abstractC0041l).f38a, (String) objArr[0], m1080g(abstractC0041l).f398f);
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         int iMo113a = super.mo113a(abstractC0041l, abstractC0046q, abstractC0046q2);
-        return 0 != iMo113a ? iMo113a : m117a(((C0006af) abstractC0041l).f38a, abstractC0041l.f376u, abstractC0046q2.f398f);
+        return 0 != iMo113a ? iMo113a : m117a(((XmppContact) abstractC0041l).f38a, abstractC0041l.f376u, abstractC0046q2.f398f);
     }
 
     @Override // p000.Account
@@ -653,7 +653,7 @@ public class C0005ae extends Account {
         if (!m1056C()) {
             return 299;
         }
-        AppState.f177b[1316] = new Object[]{m81r(), ((C0006af) abstractC0041l).m151f()};
+        AppState.f177b[1316] = new Object[]{m81r(), ((XmppContact) abstractC0041l).m151f()};
         this.f319o--;
         return m92b(XmlElement.m550a(136604).m570i(196633).m559a(131590, abstractC0041l.mo135a()).m573c(333452, 661030));
     }
@@ -699,7 +699,7 @@ public class C0005ae extends Account {
     }
 
     /* renamed from: a */
-    public final int m119a(C0006af c0006af, int i) {
+    public final int m119a(XmppContact c0006af, int i) {
         if (!m1056C()) {
             return 299;
         }
@@ -813,7 +813,7 @@ public class C0005ae extends Account {
         try {
             Object[] objArrM609l2 = AppState.m609l(1316);
             if (((String) objArrM609l2[0]).equals(c0022av.m554b(131550))) {
-                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).m1297y(C0040k.m1215a(m133a(C0040k.m1217h(), c0022av)));
+                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).m1297y(NetworkUtils.m1215a(m133a(NetworkUtils.m1217h(), c0022av)));
                 Image imageM132e = m132e(c0022av);
                 if (imageM132e != null) {
                     c0042mM1297y.put(C0034e.m967e(25), imageM132e);
@@ -851,7 +851,7 @@ public class C0005ae extends Account {
                 if (!Utils.m535l(strM575c)) {
                     strM584b = AppState.m584b(459528);
                 }
-                C0006af c0006af = (C0006af) m1069c((Object) strM554b);
+                XmppContact c0006af = (XmppContact) m1069c((Object) strM554b);
                 m1074a(c0006af, zM3a);
                 if (!zM3a) {
                     C0036g c0036gM121g = m121g(strM584b);
@@ -861,7 +861,7 @@ public class C0005ae extends Account {
                         c0036g = c0036g2;
                         vector.addElement(c0036g2);
                     }
-                    C0006af c0006af2 = new C0006af(this, strM554b, strM554b3, strM554b2);
+                    XmppContact c0006af2 = new XmppContact(this, strM554b, strM554b3, strM554b2);
                     c0036g.m1401b((Object) c0006af2);
                     c0006af2.m147a(c0006af);
                 }

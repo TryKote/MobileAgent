@@ -88,7 +88,7 @@ public final class C0020at implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String mo273x() {
-        return C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(450)).append(this.f167e).append(AppState.m584b(447 + Utils.m540f(this.f167e))).append(')'));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(450)).append(this.f167e).append(AppState.m584b(447 + Utils.m540f(this.f167e))).append(')'));
     }
 
     @Override // p000.ListItem

@@ -72,13 +72,13 @@ public abstract class AbstractC0030bc {
             int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
             int i5 = (iM689d / i4) * i4;
             f245n = m835a(i5, i, j);
-            StringBuffer stringBufferM1217h = C0040k.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
             if (i5 < 1000) {
                 stringBufferM1217h.append(i5);
             } else {
                 stringBufferM1217h.append(i5 / 1000).append((char) 1082);
             }
-            f246o = C0040k.m1215a(stringBufferM1217h.append((char) 1084));
+            f246o = NetworkUtils.m1215a(stringBufferM1217h.append((char) 1084));
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
@@ -611,7 +611,7 @@ public abstract class AbstractC0030bc {
     public static final void m836a(Graphics graphics, long j, long j2, long j3, long j4, int i, int i2, int i3) {
         boolean z;
         int i4;
-        if (!C0009ai.f71y && !C0009ai.m188p() && !C0009ai.m189q()) {
+        if (!MmpContact.f71y && !MmpContact.m188p() && !MmpContact.m189q()) {
             AppState.m594c(1546, 0);
             return;
         }
@@ -623,10 +623,10 @@ public abstract class AbstractC0030bc {
         int i6 = (int) (j3 + iM688c);
         int i7 = (int) (j4 + iM688c);
         int i8 = (int) (j4 - iM688c);
-        Vector vectorM1213g = C0040k.m1213g();
-        int size = C0009ai.f70n.size();
+        Vector vectorM1213g = NetworkUtils.m1213g();
+        int size = MmpContact.f70n.size();
         for (int i9 = 0; i9 < size; i9++) {
-            int[] iArr = (int[]) ((Object[]) C0009ai.f70n.elementAt(i9))[0];
+            int[] iArr = (int[]) ((Object[]) MmpContact.f70n.elementAt(i9))[0];
             int i10 = iArr[0];
             int i11 = iArr[1];
             int i12 = iArr[2];
@@ -637,12 +637,12 @@ public abstract class AbstractC0030bc {
                 int i16 = iArr[2];
                 int i17 = iArr[3];
                 if ((i15 <= i7 && i15 >= i8 && ((i5 >= i14 && i5 <= i16) || (i6 >= i14 && i6 <= i16))) || (i17 <= i7 && i17 >= i8 && ((i5 >= i14 && i5 <= i16) || (i6 >= i14 && i6 <= i16))) || ((i16 >= i5 && i16 <= i6 && ((i15 >= i7 && i17 <= i7) || (i15 >= i8 && i17 <= i8))) || (i14 >= i5 && i14 <= i6 && ((i15 >= i7 && i17 <= i7) || (i15 >= i8 && i17 <= i8))))) {
-                    vectorM1213g.addElement(C0009ai.f70n.elementAt(i9));
+                    vectorM1213g.addElement(MmpContact.f70n.elementAt(i9));
                 }
             }
         }
         int size2 = vectorM1213g.size();
-        int iM192t = C0009ai.m192t();
+        int iM192t = MmpContact.m192t();
         AppState.m599a(1546, size2 > 0);
         String str = null;
         int i18 = 0;
@@ -692,28 +692,28 @@ public abstract class AbstractC0030bc {
                 }
             }
         } else {
-            if (C0009ai.m188p()) {
-                int iM317a9 = (int) (C0015ao.m317a(C0009ai.f64i[0], i) - (j - (i2 / 2)));
-                int iM317a10 = (int) ((j2 + (i3 / 2)) - C0015ao.m317a(C0009ai.f64i[1], i));
+            if (MmpContact.m188p()) {
+                int iM317a9 = (int) (C0015ao.m317a(MmpContact.f64i[0], i) - (j - (i2 / 2)));
+                int iM317a10 = (int) ((j2 + (i3 / 2)) - C0015ao.m317a(MmpContact.f64i[1], i));
                 if (iM317a9 > 0 && iM317a9 < i2 && iM317a10 > 0 && iM317a10 < i3) {
                     graphics.drawImage(C0036g.m1023b(20), iM317a9, iM317a10, 36);
                 }
             }
-            if (C0009ai.m189q()) {
-                int iM317a11 = (int) (C0015ao.m317a(C0009ai.f65j[0], i) - (j - (i2 / 2)));
-                int iM317a12 = (int) ((j2 + (i3 / 2)) - C0015ao.m317a(C0009ai.f65j[1], i));
+            if (MmpContact.m189q()) {
+                int iM317a11 = (int) (C0015ao.m317a(MmpContact.f65j[0], i) - (j - (i2 / 2)));
+                int iM317a12 = (int) ((j2 + (i3 / 2)) - C0015ao.m317a(MmpContact.f65j[1], i));
                 if (iM317a11 > 0 && iM317a11 < i2 && iM317a12 > 0 && iM317a12 < i3) {
                     graphics.drawImage(C0036g.m1023b(21), iM317a11, iM317a12, 36);
                 }
             }
         }
-        Vector vector = C0009ai.f67l;
+        Vector vector = MmpContact.f67l;
         int size3 = vector.size();
         int color2 = graphics.getColor();
         boolean z2 = false;
         for (int i22 = 0; i22 < size3; i22++) {
             Object[] objArr3 = (Object[]) vector.elementAt(i22);
-            int[] iArrM193a = objArr3[0] != null ? C0009ai.m193a(((Integer) objArr3[0]).intValue()) : null;
+            int[] iArrM193a = objArr3[0] != null ? MmpContact.m193a(((Integer) objArr3[0]).intValue()) : null;
             if (iArrM193a == null) {
                 iArrM193a = (int[]) objArr3[1];
             }
@@ -727,7 +727,7 @@ public abstract class AbstractC0030bc {
                         if (!z2) {
                             AppState.m594c(1575, 0);
                             AppState.m599a(1574, AppState.m587e(1573) && !AppState.m587e(1575));
-                            C0009ai.f68m = null;
+                            MmpContact.f68m = null;
                         }
                         i4 = 9;
                         graphics.setColor(40, 221, 22);
@@ -736,7 +736,7 @@ public abstract class AbstractC0030bc {
                         AppState.m599a(1574, AppState.m587e(1573) && !AppState.m587e(1575));
                         i4 = 11;
                         graphics.setColor(45, 253, 24);
-                        C0009ai.f68m = objArr3;
+                        MmpContact.f68m = objArr3;
                         z2 = true;
                     }
                     graphics.fillArc(i23 - (i4 / 2), i24 - (i4 / 2), i4, i4, 0, 360);
@@ -748,7 +748,7 @@ public abstract class AbstractC0030bc {
         graphics.setColor(color2);
         int i25 = (int) j;
         int i26 = (int) j2;
-        int iM192t2 = C0009ai.m192t();
+        int iM192t2 = MmpContact.m192t();
         if (iM192t2 < 2) {
             z = false;
         } else {
@@ -756,12 +756,12 @@ public abstract class AbstractC0030bc {
             String str2 = null;
             int i27 = 0;
             int i28 = 0;
-            int[] iArrM193a2 = C0009ai.m193a(0);
+            int[] iArrM193a2 = MmpContact.m193a(0);
             int iM317a15 = (int) C0015ao.m317a(iArrM193a2[0], i);
             int iM317a16 = (int) C0015ao.m317a(iArrM193a2[1], i);
             int i29 = iM317a15 - (i25 - (i2 / 2));
             int i30 = (i26 + (i3 / 2)) - iM317a16;
-            String[] strArrM194b = C0009ai.m194b(0);
+            String[] strArrM194b = MmpContact.m194b(0);
             if (Utils.m504c(i25 - iM317a15) >= 7 || Utils.m504c(i26 - iM317a16) >= 7 || strArrM194b == null) {
                 graphics.drawImage(C0036g.m1023b(20), i29, i30, 36);
             } else if (strArrM194b[0] != null) {
@@ -770,12 +770,12 @@ public abstract class AbstractC0030bc {
                 i28 = i30;
                 z3 = true;
             }
-            int[] iArrM193a3 = C0009ai.m193a(iM192t2 - 1);
+            int[] iArrM193a3 = MmpContact.m193a(iM192t2 - 1);
             int iM317a17 = (int) C0015ao.m317a(iArrM193a3[0], i);
             int iM317a18 = (int) C0015ao.m317a(iArrM193a3[1], i);
             int i31 = iM317a17 - (i25 - (i2 / 2));
             int i32 = (i26 + (i3 / 2)) - iM317a18;
-            String[] strArrM194b2 = C0009ai.m194b(iM192t2 - 1);
+            String[] strArrM194b2 = MmpContact.m194b(iM192t2 - 1);
             if (Utils.m504c(i25 - iM317a17) >= 7 || Utils.m504c(i26 - iM317a18) >= 7 || strArrM194b2 == null || z3) {
                 graphics.drawImage(C0036g.m1023b(21), i31, i32, 36);
             } else if (strArrM194b2[0] != null) {
@@ -797,7 +797,7 @@ public abstract class AbstractC0030bc {
             int i33 = (int) j2;
             Font font2 = graphics.getFont();
             graphics.setFont(font);
-            int[] iArrM193a4 = C0009ai.m193a(0);
+            int[] iArrM193a4 = MmpContact.m193a(0);
             int iM317a19 = (int) C0015ao.m317a(iArrM193a4[0], i);
             int iM317a20 = (int) C0015ao.m317a(iArrM193a4[1], i);
             if (Utils.m504c(((int) j) - iM317a19) < 7 && Utils.m504c(i33 - iM317a20) < 7) {

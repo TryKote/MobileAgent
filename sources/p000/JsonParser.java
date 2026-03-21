@@ -9,17 +9,17 @@ import java.util.Vector;
 public abstract class JsonParser {
     /* renamed from: a */
     public static final Object m466a(ByteBuffer c0043n, int i) {
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         Object objM469a = m469a(c0043n, stringBufferM1217h, 2);
-        C0040k.m1215a(stringBufferM1217h);
+        NetworkUtils.m1215a(stringBufferM1217h);
         return objM469a;
     }
 
     /* renamed from: a */
     public static final Object m467a(ByteBuffer c0043n) {
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         Object objM469a = m469a(c0043n, stringBufferM1217h, 1);
-        C0040k.m1215a(stringBufferM1217h);
+        NetworkUtils.m1215a(stringBufferM1217h);
         return objM469a;
     }
 
@@ -70,7 +70,7 @@ public abstract class JsonParser {
             stringBuffer.append(cM468a3);
             return m471b(c0043n, stringBuffer);
         }
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         do {
             Object objM469a2 = m469a(c0043n, stringBuffer, i);
             if (objM469a2 != null) {
@@ -88,7 +88,7 @@ public abstract class JsonParser {
     private static final String m470b(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
         char cM499a;
         char cM1342n;
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         while (true) {
             if (i == 2) {
                 int length = stringBuffer.length() - 1;
@@ -109,7 +109,7 @@ public abstract class JsonParser {
                 cM499a = Utils.m499a((int) m472c(c0043n, stringBuffer));
             }
             if (cM499a == '\"') {
-                return C0040k.m1215a(stringBufferM1217h);
+                return NetworkUtils.m1215a(stringBufferM1217h);
             }
             if (cM499a == '\\') {
                 switch (m472c(c0043n, stringBuffer)) {
@@ -147,7 +147,7 @@ public abstract class JsonParser {
     /* renamed from: b */
     private static final Object m471b(ByteBuffer c0043n, StringBuffer stringBuffer) {
         char cM472c;
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         while (true) {
             cM472c = m472c(c0043n, stringBuffer);
             if (cM472c == ',' || cM472c == '}' || cM472c == ']') {
@@ -156,7 +156,7 @@ public abstract class JsonParser {
             stringBufferM1217h.append(cM472c);
         }
         stringBuffer.append(cM472c);
-        String strM1215a = C0040k.m1215a(stringBufferM1217h);
+        String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
         return StringUtils.m3a(264068, strM1215a) ? C0034e.f292k : StringUtils.m3a(329608, strM1215a) ? C0034e.f293l : StringUtils.m3a(1369, strM1215a) ? C0034e.f290i : C0034e.m967e(Utils.m510a((Object) strM1215a));
     }
 
@@ -228,7 +228,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final String m484a(Object obj) {
-        return C0040k.m1215a(m485a(obj, C0040k.m1217h()));
+        return NetworkUtils.m1215a(m485a(obj, NetworkUtils.m1217h()));
     }
 
     /* renamed from: a */

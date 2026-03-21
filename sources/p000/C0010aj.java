@@ -28,7 +28,7 @@ public final class C0010aj extends ContactGroup {
                 this.f399g = c0043n.m1340l();
                 return;
             }
-            m1401b((Object) new C0035f(abstractC0037h, c0043n));
+            m1401b((Object) new MrimContact(abstractC0037h, c0043n));
         }
     }
 

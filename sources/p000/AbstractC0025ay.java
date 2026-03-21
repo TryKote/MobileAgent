@@ -156,7 +156,7 @@ public abstract class AbstractC0025ay {
             int i12 = i8 < 0 ? (i8 / 128) - 1 : i8 / 128;
             int i13 = (int) ((((i9 << 7) + 64) - f197e) + (f193a / 2));
             int i14 = (int) (f194b - ((((i10 << 7) + 64) - f198f) + (f194b / 2)));
-            Vector vectorM1213g = C0040k.m1213g();
+            Vector vectorM1213g = NetworkUtils.m1213g();
             Graphics graphics = AppState.m615n(1364).getGraphics();
             int iM586d = AppState.m586d(39);
             for (int i15 = i9; i15 <= i11; i15++) {
@@ -242,7 +242,7 @@ public abstract class AbstractC0025ay {
                 for (int i23 = 0; i23 < size5; i23++) {
                     vectorM614m3.addElement(vectorM1213g.elementAt(i23));
                 }
-                C0040k.m1212a(vectorM1213g);
+                NetworkUtils.m1212a(vectorM1213g);
             }
             Vector vectorM614m4 = AppState.m614m(1402);
             synchronized (vectorM614m4) {
@@ -295,14 +295,14 @@ public abstract class AbstractC0025ay {
                 int height = 0;
                 for (int i30 = 0; i30 < size2; i30++) {
                     Object[] objArr2 = (Object[]) vector.elementAt(i30);
-                    if (!C0039j.f355f.contains((String) objArr2[0])) {
+                    if (!ConnectionThread.f355f.contains((String) objArr2[0])) {
                         long j8 = ((long[]) objArr2[1])[0];
                         long j9 = ((long[]) objArr2[1])[1];
                         long jM317a = C0015ao.m317a(j8, iM586d);
                         long jM317a2 = C0015ao.m317a(j9, iM586d);
                         int i31 = (int) (jM317a / 32);
                         int i32 = (int) (jM317a2 / 32);
-                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (imageM1139a = C0039j.m1139a((String) objArr2[0])) != null) {
+                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (imageM1139a = ConnectionThread.m1139a((String) objArr2[0])) != null) {
                             int i33 = (int) (i31 - j4);
                             int i34 = (int) (i32 - j5);
                             if (iArr2[(i34 * i28) + i33] == 0) {
@@ -353,7 +353,7 @@ public abstract class AbstractC0025ay {
             long j13 = f198f;
             int i39 = f193a;
             int i40 = f194b;
-            Enumeration enumerationM1167j = C0039j.m1167j();
+            Enumeration enumerationM1167j = ConnectionThread.m1167j();
             boolean z2 = false;
             C0014an c0014an3 = null;
             while (enumerationM1167j.hasMoreElements()) {
@@ -421,7 +421,7 @@ public abstract class AbstractC0025ay {
                     long j19 = (j17 - (i47 / 2)) / 32;
                     long j20 = (j16 + (i47 / 2)) / 32;
                     long j21 = (j17 + (i47 / 2)) / 32;
-                    ListItem interfaceC0044o4 = C0039j.f358h;
+                    ListItem interfaceC0044o4 = ConnectionThread.f358h;
                     if (AbstractC0030bc.f253h == null || j18 < AbstractC0030bc.f249d || j19 < AbstractC0030bc.f250e || j20 > AbstractC0030bc.f251f || j21 > AbstractC0030bc.f252g) {
                         AbstractC0030bc.f249d = j18 - 10;
                         AbstractC0030bc.f250e = j19 - 10;
@@ -488,7 +488,7 @@ public abstract class AbstractC0025ay {
                         }
                     }
                 }
-                C0040k.m1212a(vectorM448X);
+                NetworkUtils.m1212a(vectorM448X);
             }
             long j22 = f197e;
             long j23 = f198f;
@@ -499,9 +499,9 @@ public abstract class AbstractC0025ay {
                 Vector vectorM449Y = C0015ao.m449Y();
                 int size8 = vectorM449Y.size();
                 if (size8 != 0) {
-                    C0028ba c0028ba = null;
+                    MrimAccount c0028ba = null;
                     for (int i59 = 0; i59 < size8; i59++) {
-                        C0028ba c0028ba2 = (C0028ba) vectorM449Y.elementAt(i59);
+                        MrimAccount c0028ba2 = (MrimAccount) vectorM449Y.elementAt(i59);
                         if (c0028ba2.mo277s()) {
                             long jMo282a4 = c0028ba2.mo282a(iM586d);
                             long jMo283b4 = c0028ba2.mo283b(iM586d);
@@ -526,14 +526,14 @@ public abstract class AbstractC0025ay {
                             m660h();
                         }
                     }
-                    C0039j.m1158g();
+                    ConnectionThread.m1158g();
                 }
             }
             long j24 = f197e;
             long j25 = f198f;
             int i62 = f193a;
             int i63 = f194b;
-            if (AppState.m587e(276) && !C0036g.m1033j() && (interfaceC0044o = C0039j.f358h) != null) {
+            if (AppState.m587e(276) && !C0036g.m1033j() && (interfaceC0044o = ConnectionThread.f358h) != null) {
                 long jMo282a5 = interfaceC0044o.mo282a(iM586d);
                 long jMo283b5 = interfaceC0044o.mo283b(iM586d);
                 graphics.drawImage(C0036g.m1023b(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);
@@ -600,7 +600,7 @@ public abstract class AbstractC0025ay {
                 }
                 if (AbstractC0030bc.f241a != i || AbstractC0030bc.f242b != i2) {
                     int i69 = i66;
-                    StringBuffer stringBufferAppend = C0040k.m1217h().append(AppState.m584b(974));
+                    StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(974));
                     if (i69 < 0 || c0053x4 == null) {
                         i3 = 975;
                     } else {
@@ -609,7 +609,7 @@ public abstract class AbstractC0025ay {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    AppState.m601a(1384, (Object) C0040k.m1215a(stringBufferAppend.append(AppState.m584b(i3))));
+                    AppState.m601a(1384, (Object) NetworkUtils.m1215a(stringBufferAppend.append(AppState.m584b(i3))));
                     AbstractC0030bc.f241a = i;
                     AbstractC0030bc.f242b = i2;
                 }
@@ -777,9 +777,9 @@ public abstract class AbstractC0025ay {
     /* renamed from: a */
     public static final void m653a(C0014an c0014an) {
         if (AppState.m587e(1442)) {
-            C0009ai.m183b(c0014an.f138f, c0014an.f139g);
+            MmpContact.m183b(c0014an.f138f, c0014an.f139g);
         } else {
-            C0009ai.m182a(c0014an.f138f, c0014an.f139g);
+            MmpContact.m182a(c0014an.f138f, c0014an.f139g);
         }
         f200h = true;
         if (m656d()) {
@@ -808,7 +808,7 @@ public abstract class AbstractC0025ay {
 
     /* renamed from: d */
     public static final boolean m656d() {
-        return (C0009ai.f64i[0] > 0L ? 1 : (C0009ai.f64i[0] == 0L ? 0 : -1)) != 0 && (C0009ai.f64i[1] > 0L ? 1 : (C0009ai.f64i[1] == 0L ? 0 : -1)) != 0 && (C0009ai.f65j[0] > 0L ? 1 : (C0009ai.f65j[0] == 0L ? 0 : -1)) != 0 && (C0009ai.f65j[1] > 0L ? 1 : (C0009ai.f65j[1] == 0L ? 0 : -1)) != 0 && ((C0009ai.f64i[0] > C0009ai.f65j[0] ? 1 : (C0009ai.f64i[0] == C0009ai.f65j[0] ? 0 : -1)) != 0 || (C0009ai.f64i[1] > C0009ai.f65j[1] ? 1 : (C0009ai.f64i[1] == C0009ai.f65j[1] ? 0 : -1)) != 0);
+        return (MmpContact.f64i[0] > 0L ? 1 : (MmpContact.f64i[0] == 0L ? 0 : -1)) != 0 && (MmpContact.f64i[1] > 0L ? 1 : (MmpContact.f64i[1] == 0L ? 0 : -1)) != 0 && (MmpContact.f65j[0] > 0L ? 1 : (MmpContact.f65j[0] == 0L ? 0 : -1)) != 0 && (MmpContact.f65j[1] > 0L ? 1 : (MmpContact.f65j[1] == 0L ? 0 : -1)) != 0 && ((MmpContact.f64i[0] > MmpContact.f65j[0] ? 1 : (MmpContact.f64i[0] == MmpContact.f65j[0] ? 0 : -1)) != 0 || (MmpContact.f64i[1] > MmpContact.f65j[1] ? 1 : (MmpContact.f64i[1] == MmpContact.f65j[1] ? 0 : -1)) != 0);
     }
 
     /* renamed from: b */

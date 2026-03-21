@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: f */
 /* loaded from: MobileAgent_3.9.jar:f.class */
-public final class C0035f extends Contact implements ListItem {
+public final class MrimContact extends Contact implements ListItem {
 
     /* renamed from: a */
     public final int f294a;
@@ -51,7 +51,7 @@ public final class C0035f extends Contact implements ListItem {
     /* renamed from: n */
     public SizeCache f308n;
 
-    public C0035f(Account abstractC0037h, int i, int i2, int i3, String str, String str2, int i4, int i5, String str3, String str4, String str5) {
+    public MrimContact(Account abstractC0037h, int i, int i2, int i3, String str, String str2, int i4, int i5, String str3, String str4, String str5) {
         super(abstractC0037h);
         this.f294a = i;
         this.f295b = i2;
@@ -68,7 +68,7 @@ public final class C0035f extends Contact implements ListItem {
         this.f308n = new SizeCache();
     }
 
-    public C0035f() {
+    public MrimContact() {
         super(null);
         this.f294a = 0;
         this.f308n = new SizeCache();
@@ -82,11 +82,11 @@ public final class C0035f extends Contact implements ListItem {
         }
         Vector vectorM516c = Utils.m516c(this.f300g, ',');
         String str = (String) vectorM516c.elementAt(0);
-        C0040k.m1212a(vectorM516c);
+        NetworkUtils.m1212a(vectorM516c);
         return str;
     }
 
-    public C0035f(Account abstractC0037h, ByteBuffer c0043n) {
+    public MrimContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f294a = c0043n.m1328e();
         String str = AppState.f181d;
@@ -144,12 +144,12 @@ public final class C0035f extends Contact implements ListItem {
     /* renamed from: a */
     public final void m989a(Vector vector) {
         if (vector == null) {
-            C0040k.m1212a(this.f305k);
+            NetworkUtils.m1212a(this.f305k);
             this.f305k = null;
             return;
         }
         if (this.f305k == null) {
-            this.f305k = C0040k.m1213g();
+            this.f305k = NetworkUtils.m1213g();
         }
         this.f305k.removeAllElements();
         int size = vector.size();
@@ -219,7 +219,7 @@ public final class C0035f extends Contact implements ListItem {
             return 925;
         }
         this.f302y = jM598g;
-        C0028ba c0028ba = (C0028ba) this.f369o;
+        MrimAccount c0028ba = (MrimAccount) this.f369o;
         int iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4104, new ByteBuffer().m1360p(16512).m1308a(this.f297d).m1309b(AppState.m584b(909)).m1308a(AppState.m584b(33819707))), C0034e.m967e(14)}));
         if (0 != iM1052c) {
             return iM1052c;
@@ -235,11 +235,11 @@ public final class C0035f extends Contact implements ListItem {
         do {
             size--;
             if (size < 0) {
-                C0040k.m1212a(vectorM516c);
+                NetworkUtils.m1212a(vectorM516c);
                 return false;
             }
         } while (!str.equals(vectorM516c.elementAt(size)));
-        C0040k.m1212a(vectorM516c);
+        NetworkUtils.m1212a(vectorM516c);
         return true;
     }
 
@@ -369,12 +369,12 @@ public final class C0035f extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String mo273x() {
-        StringBuffer stringBufferAppend = C0040k.m1217h().append(this.f376u);
+        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(this.f376u);
         String str = this.f306l.f16d;
         if (str.length() > 0) {
             stringBufferAppend.append(',').append(' ').append(str).append('.');
         }
-        return C0040k.m1215a(stringBufferAppend);
+        return NetworkUtils.m1215a(stringBufferAppend);
     }
 
     @Override // p000.ListItem

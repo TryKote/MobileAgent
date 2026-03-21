@@ -44,8 +44,8 @@ public final class ChatRoom {
     public boolean f420l;
 
     public ChatRoom() {
-        this.f414f = C0040k.m1213g();
-        this.f415g = C0040k.m1213g();
+        this.f414f = NetworkUtils.m1213g();
+        this.f415g = NetworkUtils.m1213g();
         this.f416h = new Hashtable();
         this.f420l = true;
     }
@@ -69,8 +69,8 @@ public final class ChatRoom {
             c0043n.m1308a(strM521a);
             Message c0026azM1415b = m1415b(strM521a);
             c0043n.m1323a(c0026azM1415b.f217b);
-            C0031bd.m862a(c0026azM1415b.f218c, c0043n);
-            C0031bd.m862a(c0026azM1415b.f219d, c0043n);
+            XmppMailRuProtocol.m862a(c0026azM1415b.f218c, c0043n);
+            XmppMailRuProtocol.m862a(c0026azM1415b.f219d, c0043n);
             c0043n.m1360p(c0026azM1415b.f220e).m1360p(c0026azM1415b.f221f).m1309b(Utils.m522f(c0026azM1415b.f222g));
             if (c0026azM1415b.f223h == null || c0026azM1415b.f223h.length() > 3072) {
                 c0043n.m1360p(0).m1360p(0);
@@ -127,11 +127,11 @@ public final class ChatRoom {
 
     public ChatRoom(int i) {
         this.f409a = i;
-        this.f414f = C0040k.m1213g();
-        this.f415g = C0040k.m1213g();
+        this.f414f = NetworkUtils.m1213g();
+        this.f415g = NetworkUtils.m1213g();
         this.f416h = new Hashtable();
         this.f417i = new Hashtable();
-        this.f418j = C0040k.m1213g();
+        this.f418j = NetworkUtils.m1213g();
     }
 
     /* renamed from: g */
@@ -216,9 +216,9 @@ public final class ChatRoom {
 
     /* renamed from: f */
     public final String m1425f() {
-        if (this == ((C0028ba) AppState.m616i()).m746W()) {
+        if (this == ((MrimAccount) AppState.m616i()).m746W()) {
             return this.f410b;
         }
-        return C0040k.m1215a(C0040k.m1217h().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));
     }
 }

@@ -40,8 +40,8 @@ public final class Message {
     public Message(Hashtable hashtable) {
         this.f216a = JsonParser.m479c(hashtable, AppState.m584b(591892));
         this.f217b = JsonParser.m477b(hashtable, AppState.m584b(264254)) * 1000;
-        this.f218c = C0031bd.m868b(JsonParser.m479c(hashtable, AppState.m584b(591883)), JsonParser.m479c(hashtable, AppState.m584b(526365)));
-        this.f219d = C0031bd.m868b(JsonParser.m479c(hashtable, AppState.m584b(460804)), JsonParser.m479c(hashtable, AppState.m584b(395262)));
+        this.f218c = XmppMailRuProtocol.m868b(JsonParser.m479c(hashtable, AppState.m584b(591883)), JsonParser.m479c(hashtable, AppState.m584b(526365)));
+        this.f219d = XmppMailRuProtocol.m868b(JsonParser.m479c(hashtable, AppState.m584b(460804)), JsonParser.m479c(hashtable, AppState.m584b(395262)));
         this.f220e = JsonParser.m477b(hashtable, AppState.m584b(591847));
         m670a(4, JsonParser.m477b(hashtable, AppState.m584b(657373)) != 0);
         m670a(1, JsonParser.m477b(hashtable, AppState.m584b(657363)) != 0);
@@ -49,8 +49,8 @@ public final class Message {
     }
 
     public Message(Vector vector, String str, String str2) {
-        C0028ba c0028ba = (C0028ba) AppState.m616i();
-        this.f218c = C0031bd.m867a(C0040k.m1213g(), C0015ao.m459a(c0028ba.f315k, Utils.m522f(c0028ba.f230f)));
+        MrimAccount c0028ba = (MrimAccount) AppState.m616i();
+        this.f218c = XmppMailRuProtocol.m867a(NetworkUtils.m1213g(), C0015ao.m459a(c0028ba.f315k, Utils.m522f(c0028ba.f230f)));
         this.f219d = vector;
         this.f222g = str;
         this.f223h = str2;
@@ -59,8 +59,8 @@ public final class Message {
     public Message(ByteBuffer c0043n, String str) {
         this.f216a = str;
         this.f217b = c0043n.m1341m();
-        this.f218c = C0031bd.m863e(c0043n);
-        this.f219d = C0031bd.m863e(c0043n);
+        this.f218c = XmppMailRuProtocol.m863e(c0043n);
+        this.f219d = XmppMailRuProtocol.m863e(c0043n);
         this.f220e = c0043n.m1328e();
         this.f221f = c0043n.m1328e();
         this.f222g = c0043n.m1335e((String) null);
@@ -89,7 +89,7 @@ public final class Message {
         int iM214a = AppState.m608k(i).m214a(AppState.m620j());
         int iM586d = (((AppState.m586d(1528) - iM214a) - 240) + 227) - 10;
         int i3 = zM671a ? 0 : 19;
-        C0028ba c0028ba = (C0028ba) AppState.m616i();
+        MrimAccount c0028ba = (MrimAccount) AppState.m616i();
         C0032c c0032cM887a = C0032c.m887a(this.f216a);
         c0032cM887a.f265d = this;
         String str = this.f216a;
@@ -111,12 +111,12 @@ public final class Message {
         int i5 = calendarM622k.get(2);
         int i6 = calendarM622k.get(5);
         calendarM622k.setTime(new Date(this.f217b));
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
-        String strM527g = Utils.m527g(C0040k.m1215a((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        String strM527g = Utils.m527g(NetworkUtils.m1215a((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
         C0032c c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
-        String strM1215a = C0040k.m1215a(C0040k.m1217h().append('[').append(this.f220e).append(AppState.m584b(903)));
+        String strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append('[').append(this.f220e).append(AppState.m584b(903)));
         C0032c c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);
-        int iM214a2 = AppState.m608k(i2).m214a(C0040k.m1215a(C0040k.m1217h().append(strM527g).append(strM1215a)));
+        int iM214a2 = AppState.m608k(i2).m214a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(strM527g).append(strM1215a)));
         if (m671a(1)) {
             c0032cM901a2.m896a(221);
             iM214a2 += 20;
@@ -131,12 +131,12 @@ public final class Message {
         }
         int i7 = iM1418a;
         boolean z3 = false;
-        if ((i7 & 1) != 0 && (strArrM869c2 = C0031bd.m869c(m668b())) != null) {
-            c0032cM901a2.m901a(m672a(C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
+        if ((i7 & 1) != 0 && (strArrM869c2 = XmppMailRuProtocol.m869c(m668b())) != null) {
+            c0032cM901a2.m901a(m672a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
             z3 = true;
         }
-        if ((i7 & 2) != 0 && (strArrM869c = C0031bd.m869c(m669c())) != null) {
-            c0032cM901a2.m901a(m672a(C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
+        if ((i7 & 2) != 0 && (strArrM869c = XmppMailRuProtocol.m869c(m669c())) != null) {
+            c0032cM901a2.m901a(m672a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
         }
         boolean z4 = c0052w == c0028ba.m746W();
         c0032cM901a2.m900a(zM671a ? 225 : 237, m672a(m673d(), i2, iM586d - 22, iM214a, z4), i2, i3);
@@ -149,12 +149,12 @@ public final class Message {
 
     /* renamed from: b */
     public final Vector m668b() {
-        return this.f218c == null ? C0040k.m1213g() : this.f218c;
+        return this.f218c == null ? NetworkUtils.m1213g() : this.f218c;
     }
 
     /* renamed from: c */
     public final Vector m669c() {
-        return this.f219d == null ? C0040k.m1213g() : this.f219d;
+        return this.f219d == null ? NetworkUtils.m1213g() : this.f219d;
     }
 
     /* renamed from: a */
@@ -195,9 +195,9 @@ public final class Message {
                 i5 = i6;
                 length = i7;
             }
-            str = C0040k.m1215a(C0040k.m1217h().append(StringUtils.m13b(str, i4 + 1)).append((char) 8230));
+            str = NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m13b(str, i4 + 1)).append((char) 8230));
         }
-        return z ? C0040k.m1215a(C0040k.m1217h().append(str).append('\n')) : str;
+        return z ? NetworkUtils.m1215a(NetworkUtils.m1217h().append(str).append('\n')) : str;
     }
 
     /* renamed from: d */
@@ -208,24 +208,24 @@ public final class Message {
     /* renamed from: e */
     public final Object m674e() {
         Hashtable hashtable = new Hashtable();
-        String[] strArrM869c = C0031bd.m869c(this.f218c);
+        String[] strArrM869c = XmppMailRuProtocol.m869c(this.f218c);
         if (strArrM869c != null) {
             hashtable.put(AppState.m584b(264203), strArrM869c[1]);
         }
         String strM584b = AppState.m584b(133118);
         Vector vector = this.f219d;
-        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         if (vector != null) {
             String str = AppState.f181d;
-            C0040k.m1221a(60);
-            C0040k.m1221a(62);
-            String strM1221a = C0040k.m1221a(44);
+            NetworkUtils.m1221a(60);
+            NetworkUtils.m1221a(62);
+            String strM1221a = NetworkUtils.m1221a(44);
             Enumeration enumerationElements = vector.elements();
             while (enumerationElements.hasMoreElements()) {
                 stringBufferM1217h.append(stringBufferM1217h.length() > 0 ? strM1221a : str).append(str).append(((String[]) enumerationElements.nextElement())[0]).append(str);
             }
         }
-        hashtable.put(strM584b, C0040k.m1215a(stringBufferM1217h));
+        hashtable.put(strM584b, NetworkUtils.m1215a(stringBufferM1217h));
         hashtable.put(AppState.m584b(460837), this.f222g);
         hashtable.put(AppState.m584b(264133), this.f223h);
         JsonParser.m474a(hashtable, AppState.m584b(264258), 1);
@@ -233,7 +233,7 @@ public final class Message {
         JsonParser.m474a(hashtable, AppState.m584b(329772), 0);
         JsonParser.m474a(hashtable, AppState.m584b(460784), 0);
         JsonParser.m474a(hashtable, AppState.m584b(919536), 0);
-        Vector vectorM1213g = C0040k.m1213g();
+        Vector vectorM1213g = NetworkUtils.m1213g();
         int length = this.f224i == null ? 0 : this.f224i.length;
         for (int i = 0; i < length; i++) {
             String[] strArr = (String[]) this.f224i[i];
