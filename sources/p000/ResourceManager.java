@@ -286,16 +286,16 @@ public final class ResourceManager {
         String strM522f = Utils.defaultStr(AppState.getString(1279));
         if (str != AppState.getString(1060)) {
             StringBuffer stringBufferM1196e = NetworkUtils.m1196e();
-            if (StringUtils.m3a(473, str)) {
+            if (StringUtils.matchesKey(473, str)) {
                 AppState.setFromBuffer(1279, stringBufferM1196e.append(AppState.getString(1280)));
                 return 0;
             }
-            if (StringUtils.m3a(474, str)) {
+            if (StringUtils.matchesKey(474, str)) {
                 AppState.setObject(1280, (Object) strM522f);
                 AppState.setBool(1460, true);
                 return 0;
             }
-            if (!StringUtils.m3a(476, str)) {
+            if (!StringUtils.matchesKey(476, str)) {
                 return 0;
             }
             AppState.setObject(1279, (Object) Conversation.transliterateRussian(strM522f));
@@ -347,9 +347,9 @@ public final class ResourceManager {
                     XmlElement c0022av = (XmlElement) vector.elementAt(size);
                     String str2 = c0022av.tagName;
                     String strM11a = StringUtils.fromBuffer(c0022av.textContent);
-                    if (StringUtils.m3a(394658, str2) && StringUtils.m3a(197596, strM11a)) {
+                    if (StringUtils.matchesKey(394658, str2) && StringUtils.matchesKey(197596, strM11a)) {
                         z = true;
-                    } else if (StringUtils.m3a(263156, str2)) {
+                    } else if (StringUtils.matchesKey(263156, str2)) {
                         str = strM11a;
                     }
                     if (z && str != null) {
@@ -361,7 +361,7 @@ public final class ResourceManager {
                     }
                 }
             } catch (Throwable th) {
-                IOUtils.postEvent((Object) StringUtils.m8a(493, (Object) null));
+                IOUtils.postEvent((Object) StringUtils.concatKeyObj(493, (Object) null));
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.releaseNetworkLock();
             }
@@ -641,7 +641,7 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final int handleMessageInputAction(String str, int i) {
         String strM522f = Utils.defaultStr(AppState.getString(1279));
-        if (StringUtils.m3a(1060, str)) {
+        if (StringUtils.matchesKey(1060, str)) {
             int iM1233b = AppState.getCurrentContact().sendMessage(strM522f);
             if (0 != iM1233b) {
                 ScreenBuilder.onScreenClosed();
@@ -649,12 +649,12 @@ public final class ResourceManager {
             }
             AppState.setInt(1456, 0);
             AppState.clearIndex(1279);
-        } else if (StringUtils.m3a(473, str)) {
+        } else if (StringUtils.matchesKey(473, str)) {
             AppState.setFromBuffer(1279, NetworkUtils.m1196e().append(AppState.getString(1280)));
-        } else if (StringUtils.m3a(474, str)) {
+        } else if (StringUtils.matchesKey(474, str)) {
             AppState.setObject(1280, (Object) strM522f);
             AppState.setBool(1460, true);
-        } else if (StringUtils.m3a(478, str)) {
+        } else if (StringUtils.matchesKey(478, str)) {
             AppState.setObject(1279, (Object) IOUtils.transliterate(strM522f));
         }
         if (i == 93 || i == 123 || i == 95 || i == 94) {
@@ -860,29 +860,29 @@ public final class ResourceManager {
         int iM586d = AppState.getInt(1513);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         ChatRoom c0052wM745h = c0028ba.findChatRoomById(iM586d);
-        if (StringUtils.m3a(848, str)) {
+        if (StringUtils.matchesKey(848, str)) {
             c0052wM745h.readMessages.addElement(strM584b);
             return 0;
         }
-        if (StringUtils.m3a(847, str)) {
+        if (StringUtils.matchesKey(847, str)) {
             c0052wM745h.markMessageRead(strM584b);
             return 0;
         }
-        if (StringUtils.m3a(846, str)) {
+        if (StringUtils.matchesKey(846, str)) {
             ScreenBuilder.onScreenClosed();
             composeEmail((Vector) null, (String) null, (String) null);
             return 0;
         }
-        if (StringUtils.m3a(1347, str)) {
+        if (StringUtils.matchesKey(1347, str)) {
             IOUtils.setSelectedItems(c0052wM745h.readMessages);
             return 0;
         }
-        if (StringUtils.m3a(1061, str)) {
+        if (StringUtils.matchesKey(1061, str)) {
             ScreenBuilder.onScreenClosed();
             AppController.toggleOnlineMode(false);
             return 0;
         }
-        if (!StringUtils.m3a(851, str)) {
+        if (!StringUtils.matchesKey(851, str)) {
             return 0;
         }
         AppState.setInt(1514, 0);

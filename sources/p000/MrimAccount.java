@@ -396,17 +396,17 @@ public final class MrimAccount extends Account implements ListItem {
                 case 4117:
                     while (c0043nM1349s.length > 0) {
                         String strM1334g3 = c0043nM1349s.readWideStr();
-                        if (StringUtils.m3a(852768, strM1334g3)) {
+                        if (StringUtils.matchesKey(852768, strM1334g3)) {
                             setDisplayName(c0043nM1349s.readUTF8Str((String) null));
-                        } else if (StringUtils.m3a(983853, strM1334g3)) {
+                        } else if (StringUtils.matchesKey(983853, strM1334g3)) {
                             IOUtils.notifyNewMail(this, Utils.parseInt((Object) c0043nM1349s.readUTF8Str((String) null)), (String) null, (String) null);
-                        } else if (StringUtils.m3a(983868, strM1334g3)) {
+                        } else if (StringUtils.matchesKey(983868, strM1334g3)) {
                             String strM1335e = c0043nM1349s.readUTF8Str((String) null);
                             this.customDomain = StringUtils.prefix(strM1335e, strM1335e.indexOf(58));
-                        } else if (StringUtils.m3a(656203, strM1334g3)) {
+                        } else if (StringUtils.matchesKey(656203, strM1334g3)) {
                             c0043nM1349s.readWideStr();
                             this.hasCustomDomain = true;
-                        } else if (StringUtils.m3a(1114965, strM1334g3)) {
+                        } else if (StringUtils.matchesKey(1114965, strM1334g3)) {
                             c0043nM1349s.skip((((((((c0043nM1349s.readInt() - (4 + c0043nM1349s.readWideStr().length())) - (4 + c0043nM1349s.readWideStr().length())) - (4 + c0043nM1349s.readWideStr().length())) - (4 + (c0043nM1349s.readUTF8Str((String) null).length() << 1))) - (4 + c0043nM1349s.readWideStr().length())) - (4 + c0043nM1349s.readWideStr().length())) - (4 + c0043nM1349s.readWideStr().length())) - (4 + c0043nM1349s.readWideStr().length()));
                         } else {
                             c0043nM1349s.readWideStr();
@@ -553,7 +553,7 @@ public final class MrimAccount extends Account implements ListItem {
                 case 4180:
                     String strM1334g5 = c0043nM1349s.readWideStr();
                     String strM1334g6 = c0043nM1349s.readWideStr();
-                    if (!StringUtils.m3a(525167, strM1334g5)) {
+                    if (!StringUtils.matchesKey(525167, strM1334g5)) {
                         break;
                     } else {
                         this.accountProfile.updatePhotos(new XmlParser(strM1334g6).parse());
@@ -608,9 +608,9 @@ public final class MrimAccount extends Account implements ListItem {
                             String[] strArrM55a = VCard.parseCardFromBuffer((ByteBuffer) vectorM1345p.elementAt(0));
                             if (strArrM55a.length >= 8 && !this.accountProfile.hasCoordinates()) {
                                 String str3 = strArrM55a[2];
-                                if (StringUtils.m3a(525044, str3)) {
+                                if (StringUtils.matchesKey(525044, str3)) {
                                     setSimpleProfile(strArrM55a[1], strArrM55a[0]);
-                                } else if (StringUtils.m3a(590588, str3)) {
+                                } else if (StringUtils.matchesKey(590588, str3)) {
                                     String str4 = strArrM55a[1];
                                     String str5 = strArrM55a[0];
                                     String str6 = strArrM55a[6];
@@ -820,7 +820,7 @@ public final class MrimAccount extends Account implements ListItem {
         for (int i = 0; i < vector.size(); i++) {
             ByteBuffer c0043n = (ByteBuffer) vector.elementAt(i);
             c0043n.readInt();
-            if (StringUtils.m3a(590694, c0043n.readWideStr())) {
+            if (StringUtils.matchesKey(590694, c0043n.readWideStr())) {
                 String[] strArrM55a = VCard.parseCardFromBuffer(c0043n);
                 MrimContact c0035fM717f = findContactByIdentifier(str);
                 if (c0035fM717f != null) {

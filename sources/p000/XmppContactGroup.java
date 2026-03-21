@@ -593,7 +593,7 @@ public final class XmppContactGroup extends ContactGroup {
             textBoxM1028h = getTextInputBox();
         } catch (Throwable unused2) {
         }
-        if (StringUtils.m3a(424, str3)) {
+        if (StringUtils.matchesKey(424, str3)) {
             int iM586d = AppState.getInt(74);
             if (iM586d == 1) {
                 textBoxM1028h.setInitialInputMode(AppState.getString(426));

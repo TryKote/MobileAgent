@@ -260,7 +260,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: v */
     public static final void calculateCacheSize() {
         int size = 0;
-        String[] strArrM10a = StringUtils.m10a();
+        String[] strArrM10a = StringUtils.listRecordStores();
         if (strArrM10a != null) {
             int length = strArrM10a.length;
             while (true) {
@@ -357,7 +357,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     private static final String findOldestCacheStore() {
         String str = null;
         long j = 0;
-        String[] strArrM10a = StringUtils.m10a();
+        String[] strArrM10a = StringUtils.listRecordStores();
         if (strArrM10a != null) {
             String strM584b = AppState.getString(332005);
             int length = strArrM10a.length;
@@ -456,7 +456,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
         int i = c0043n.length;
         if (i == 0) {
-            String[] strArrM10a = StringUtils.m10a();
+            String[] strArrM10a = StringUtils.listRecordStores();
             int i2 = 0;
             while (true) {
                 int i3 = i2;
@@ -482,7 +482,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 } else {
                     recordStore.setRecord(1, bArr, 0, i);
                 }
-                String[] strArrM10a2 = StringUtils.m10a();
+                String[] strArrM10a2 = StringUtils.listRecordStores();
                 int i4 = 0;
                 while (true) {
                     i4++;
@@ -526,7 +526,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 iM854a = i3 + writeRecordChunk(buildChunkName(str, i4), bArr, i3, i2 - i3);
             }
         }
-        String[] strArrM10a = StringUtils.m10a();
+        String[] strArrM10a = StringUtils.listRecordStores();
         while (true) {
             int i5 = i;
             i++;
@@ -810,7 +810,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     public static final void resolveXmppServer(Object[] objArr) {
         try {
             String str = ((XmppProtocol) objArr[0]).login;
-            String strM861j = dnsLookupSrv(StringUtils.m7b(1185660, StringUtils.suffix(str, str.indexOf(64) + 1)));
+            String strM861j = dnsLookupSrv(StringUtils.concatKey(1185660, StringUtils.suffix(str, str.indexOf(64) + 1)));
             if (strM861j == null || strM861j.indexOf(58) <= 0) {
                 XmppProtocol c0005ae = (XmppProtocol) objArr[0];
                 c0005ae.setAuthParameters(c0005ae.mo84j(), 5222);

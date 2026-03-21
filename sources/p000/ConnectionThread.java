@@ -231,7 +231,7 @@ public final class ConnectionThread {
                 int i4 = i3;
                 i3++;
                 XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);
-                if (StringUtils.m3a(263156, c0022av3.tagName)) {
+                if (StringUtils.matchesKey(263156, c0022av3.tagName)) {
                     c0040k.url = StringUtils.fromBuffer(c0022av3.textContent);
                 }
             }
@@ -515,7 +515,7 @@ public final class ConnectionThread {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(329959)) && StringUtils.m3a(657623, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(329959)) && StringUtils.matchesKey(657623, StringUtils.intern(headerFieldKey.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;
@@ -595,7 +595,7 @@ public final class ConnectionThread {
         MapRenderer.currentPixelX = AppController.coordToPixel(MapRenderer.currentLon, iM586d);
         MapRenderer.currentPixelY = AppController.coordToPixel(MapRenderer.currentLat, iM586d);
         AppState.pool[1364] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
-        StringUtils.m19b();
+        StringUtils.initTileCache();
         AppState.pool[1398] = NetworkUtils.newVector();
         AppState.pool[1396] = NetworkUtils.newVector();
         Object[] objArrM332c = AppController.getUrlComponents(AppState.emptyStr);
@@ -616,7 +616,7 @@ public final class ConnectionThread {
         AppState.pool[1397] = NetworkUtils.newVector();
         new AsyncTask(8);
         MapRenderer.syncLock = new Object();
-        StringUtils.m41j();
+        StringUtils.initGeoRegions();
         MapRenderer.invalidate();
         MmpContact.routeRegions = NetworkUtils.newVector();
         MmpContact.routePoints = NetworkUtils.newVector();

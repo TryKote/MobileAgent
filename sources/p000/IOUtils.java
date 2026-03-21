@@ -59,36 +59,36 @@ public final class IOUtils {
             ScreenBuilder.onScreenClosed();
             ScreenBuilder.onScreenClosed();
         }
-        if (StringUtils.m3a(839, str)) {
+        if (StringUtils.matchesKey(839, str)) {
             if (!zM587e) {
                 return ResourceManager.composeEmail(XmppMailRuProtocol.getFirstAddress(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.setMailAction(54, 0);
             return 0;
         }
-        if (StringUtils.m3a(840, str)) {
+        if (StringUtils.matchesKey(840, str)) {
             if (!zM587e) {
                 return ResourceManager.composeEmail(XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.setMailAction(54, 1);
             return 0;
         }
-        if (StringUtils.m3a(841, str)) {
+        if (StringUtils.matchesKey(841, str)) {
             if (!zM587e) {
                 return ResourceManager.composeEmail(NetworkUtils.newVector(), new StringBuffer().append(strM584b3).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.setMailAction(54, 2);
             return 0;
         }
-        if (StringUtils.m3a(855, str)) {
+        if (StringUtils.matchesKey(855, str)) {
             AppState.setInt(1525, 2);
             return 0;
         }
-        if (StringUtils.m3a(856, str)) {
+        if (StringUtils.matchesKey(856, str)) {
             AppState.setInt(1525, 1);
             return 0;
         }
-        if (!StringUtils.m3a(845, str)) {
+        if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
         AppState.setInt(1527, c0028ba.findDefaultChatRoom().id);
@@ -451,7 +451,7 @@ public final class IOUtils {
                 long jM807b = longitudeToPixel(extractLongitude(strM522f));
                 long jM808c = latitudeToPixel(extractLatitude(strM522f));
                 MapRenderer.setPosition(jM807b, jM808c);
-                MapRenderer.setZoom(StringUtils.m43a(jM807b, jM808c) ? 13 : 10);
+                MapRenderer.setZoom(StringUtils.isInSavedRegion(jM807b, jM808c) ? 13 : 10);
             } catch (Throwable unused) {
             }
         } else {
@@ -585,18 +585,18 @@ public final class IOUtils {
         String strM584b3 = AppState.getString(198546);
         String str2 = ((MrimAccount) AppState.getAccount()).login;
         wrapInVector(strM584b);
-        if (StringUtils.m3a(839, str)) {
+        if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
             ResourceManager.composeEmail(XmppMailRuProtocol.getFirstAddress(vectorM668b), StringUtils.concat(strM584b2, strM673d), Utils.quoteText(c0026azM1415b.body));
             return 0;
         }
-        if (!StringUtils.m3a(840, str)) {
-            if (StringUtils.m3a(841, str)) {
+        if (!StringUtils.matchesKey(840, str)) {
+            if (StringUtils.matchesKey(841, str)) {
                 ScreenBuilder.onScreenClosed();
                 ResourceManager.composeEmail(NetworkUtils.newVector(), StringUtils.concat(strM584b3, strM673d), Utils.quoteText(c0026azM1415b.body));
                 return 0;
             }
-            if (!StringUtils.m3a(845, str)) {
+            if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
             AppState.setInt(1527, c0028ba.findDefaultChatRoom().id);
@@ -715,7 +715,7 @@ public final class IOUtils {
         if (i == 54 || i == 63 || i == 85) {
             ScreenBuilder.onScreenClosed();
         }
-        if (StringUtils.m3a(717, str)) {
+        if (StringUtils.matchesKey(717, str)) {
             int iM993f = ((MrimContact) abstractC0041lM611g).requestUserDetails();
             return 0 != iM993f ? AppController.showError(iM993f) : i;
         }
@@ -1056,10 +1056,10 @@ public final class IOUtils {
                 strM1370r = (iM1353u10 == 1 || iM1353u10 == 4) ? c0043n.readByteChars(c0043n.readShortLE() - 1) : null;
                 break;
         }
-        if (!Utils.nonEmpty(strM1370r) || StringUtils.m2a(strM1363z, 875573297)) {
+        if (!Utils.nonEmpty(strM1370r) || StringUtils.matchesEncoded(strM1363z, 875573297)) {
             return;
         }
-        if (StringUtils.m2a(strM1363z, 49)) {
+        if (StringUtils.matchesEncoded(strM1363z, 49)) {
             throw new RuntimeException();
         }
         c0033d.onMessage(strM1363z, 0L, strM1370r);
@@ -1083,7 +1083,7 @@ public final class IOUtils {
                 AppController.clearSearchState();
             }
         }
-        if (StringUtils.m3a(717, str)) {
+        if (StringUtils.matchesKey(717, str)) {
             int iM993f = ((MrimContact) obj).requestUserDetails();
             if (0 != iM993f) {
                 return AppController.showError(iM993f);

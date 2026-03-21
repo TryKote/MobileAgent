@@ -340,7 +340,7 @@ public final class NetworkUtils {
             size--;
             if (size < 0) {
                 break;
-            } else if (StringUtils.m4a(strM15c, vectorM516c.elementAt(size))) {
+            } else if (StringUtils.equalsObj(strM15c, vectorM516c.elementAt(size))) {
                 i = size;
             }
         }
@@ -1144,7 +1144,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final Object[] m1223a(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return m1224a(2, bufToStringCached(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
+        return m1224a(2, bufToStringCached(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
     }
 
     /* renamed from: a */
@@ -1213,13 +1213,13 @@ public final class NetworkUtils {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(size);
             String strM554b = c0022av2.getIntAttribute(329117);
             String strM554b2 = c0022av2.getIntAttribute(262601);
-            if (StringUtils.m3a(132297, strM554b2)) {
+            if (StringUtils.matchesKey(132297, strM554b2)) {
                 objArr[4] = strM554b;
-            } else if (StringUtils.m3a(1115488, strM554b2)) {
+            } else if (StringUtils.matchesKey(1115488, strM554b2)) {
                 objArr[5] = strM554b;
-            } else if (StringUtils.m3a(1246602, strM554b2)) {
+            } else if (StringUtils.matchesKey(1246602, strM554b2)) {
                 objArr[6] = strM554b;
-            } else if (StringUtils.m3a(394658, strM554b2)) {
+            } else if (StringUtils.matchesKey(394658, strM554b2)) {
                 objArr[20] = strM554b;
                 if (Integer.parseInt(strM554b) == 0) {
                     return;

@@ -172,10 +172,10 @@ public final class ChatRoom {
     /* renamed from: a */
     public final int getType() {
         String strM1413g = getFormattedName();
-        if (StringUtils.m3a(896, strM1413g) || StringUtils.m3a(900, strM1413g)) {
+        if (StringUtils.matchesKey(896, strM1413g) || StringUtils.matchesKey(900, strM1413g)) {
             return 1;
         }
-        return (StringUtils.m3a(898, strM1413g) || StringUtils.m3a(899, strM1413g)) ? 2 : 3;
+        return (StringUtils.matchesKey(898, strM1413g) || StringUtils.matchesKey(899, strM1413g)) ? 2 : 3;
     }
 
     /* renamed from: b */

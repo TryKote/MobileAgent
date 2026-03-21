@@ -163,7 +163,7 @@ public final class XmlParser {
                     String strM46a2 = parseTagOrContent(2);
                     int i2 = 0;
                     int length2 = strM46a2.length();
-                    if (StringUtils.m3a(1046, strM46a2)) {
+                    if (StringUtils.matchesKey(1046, strM46a2)) {
                         z = true;
                     } else if (length2 <= 0) {
                         zEndsWith = strM46a2.endsWith(AppState.getString(1046));
@@ -234,7 +234,7 @@ public final class XmlParser {
                             this.rootTagName = strM17c2;
                         }
                         this.rootElement = new XmlElement(strM17c2, this.rootElement, hashtable);
-                        if (StringUtils.m3a(857301, strM17c2)) {
+                        if (StringUtils.matchesKey(857301, strM17c2)) {
                             throw new RuntimeException();
                         }
                     }

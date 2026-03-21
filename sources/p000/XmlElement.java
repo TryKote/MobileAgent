@@ -269,7 +269,7 @@ public final class XmlElement {
                 return null;
             }
             XmlElement c0022avM564g = getChildAt(iM541c);
-            if (StringUtils.m3a(i, c0022avM564g.tagName) && StringUtils.m3a(i2, c0022avM564g.getAttribute(AppState.getString(333027)))) {
+            if (StringUtils.matchesKey(i, c0022avM564g.tagName) && StringUtils.matchesKey(i2, c0022avM564g.getAttribute(AppState.getString(333027)))) {
                 return c0022avM564g;
             }
         }

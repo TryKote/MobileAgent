@@ -157,7 +157,7 @@ public abstract class JsonParser {
         }
         stringBuffer.append(cM472c);
         String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
-        return StringUtils.m3a(264068, strM1215a) ? ResourceManager.boolTrue : StringUtils.m3a(329608, strM1215a) ? ResourceManager.boolFalse : StringUtils.m3a(1369, strM1215a) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) strM1215a));
+        return StringUtils.matchesKey(264068, strM1215a) ? ResourceManager.boolTrue : StringUtils.matchesKey(329608, strM1215a) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, strM1215a) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) strM1215a));
     }
 
     /* renamed from: c */
@@ -303,6 +303,6 @@ public abstract class JsonParser {
 
     /* renamed from: b */
     public static final boolean isSuccess(Object obj) {
-        return StringUtils.m3a(133005, getVectorString(obj, 1)) && StringUtils.m3a(788024, (String) getVectorElement(obj, 0));
+        return StringUtils.matchesKey(133005, getVectorString(obj, 1)) && StringUtils.matchesKey(788024, (String) getVectorElement(obj, 0));
     }
 }

@@ -164,13 +164,13 @@ public abstract class MapRenderer {
                     ResourceManager c0034e = new ResourceManager(1, iM586d, i15, i16);
                     ResourceManager c0034e2 = null;
                     vectorM1213g.addElement(c0034e);
-                    if (AppState.getBool(277) && iM586d > 8 && AppState.getBool(41) && StringUtils.m43a(currentLon, currentLat)) {
+                    if (AppState.getBool(277) && iM586d > 8 && AppState.getBool(41) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
                         ResourceManager c0034e3 = new ResourceManager(3, iM586d, i15, i16);
                         c0034e2 = c0034e3;
                         vectorM1213g.addElement(c0034e3);
                     }
-                    Image imageM20a = StringUtils.m20a(c0034e);
-                    Image imageM20a2 = c0034e2 != null ? StringUtils.m20a(c0034e2) : null;
+                    Image imageM20a = StringUtils.getTileImage(c0034e);
+                    Image imageM20a2 = c0034e2 != null ? StringUtils.getTileImage(c0034e2) : null;
                     if (imageM20a == null) {
                         imageM20a = createCheckerboard();
                     }
@@ -745,7 +745,7 @@ public abstract class MapRenderer {
     /* renamed from: b */
     private static final int clampZoom(int i) {
         int i2;
-        if (StringUtils.m43a(currentLon, currentLat) || i <= 10) {
+        if (StringUtils.isInSavedRegion(currentLon, currentLat) || i <= 10) {
             return (currentRegion == null || i <= (i2 = currentRegion.precision)) ? i : i2;
         }
         return 10;

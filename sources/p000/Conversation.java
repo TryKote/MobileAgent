@@ -424,7 +424,7 @@ public final class Conversation implements ListItem {
             int iIndexOf = str.indexOf(NetworkUtils.longToHex(1031302438), AppState.indexOf(str, 1031302438) + 4);
             String strM15c = iIndexOf < 0 ? StringUtils.suffix(str, iM626a + 4) : StringUtils.substring(str, iM626a + 4, iIndexOf);
             String str2 = strM15c;
-            if (StringUtils.m2a(strM15c, 1094795585)) {
+            if (StringUtils.matchesEncoded(strM15c, 1094795585)) {
                 return AppState.emptyStr;
             }
             ByteBuffer c0043nM986d = ResourceManager.decodeBase64(replaceText(replaceText(replaceText(str2, 200762, 65752), 200765, 65547), 200768, 65552));

@@ -172,7 +172,7 @@ public final class ScreenBuilder {
             case 21:
                 int iMo80a = AppState.getAccount().getType();
                 if (iMo80a == 0) {
-                    StringUtils.m29e();
+                    StringUtils.showRegionSelector();
                     return;
                 }
                 if (iMo80a == 1) {
@@ -180,7 +180,7 @@ public final class ScreenBuilder {
                     ScreenManager.showScreen(ScreenManager.createScreen(3569));
                     return;
                 }
-                StringUtils.m30f();
+                StringUtils.resetRegForm();
                 if (IOUtils.getGroupCount(AppState.getAccount()) == 0) {
                     IOUtils.postEvent((Object) AppState.getString(743));
                     return;
@@ -357,7 +357,7 @@ public final class ScreenBuilder {
                 AppController.prepareFormData();
                 Account abstractC0037hM616i2 = AppState.getAccount();
                 if (AppState.getAccount().getType() == 0) {
-                    strArrM32g = StringUtils.m32g();
+                    strArrM32g = StringUtils.buildRegData();
                 } else {
                     strArrM32g = new String[8];
                     int iM586d3 = AppState.getInt(1491);
@@ -2802,7 +2802,7 @@ public final class ScreenBuilder {
                     AppState.setInt(1492, 0);
                     break;
                 } else {
-                    StringUtils.m30f();
+                    StringUtils.resetRegForm();
                     break;
                 }
             case 22:
@@ -2942,7 +2942,7 @@ public final class ScreenBuilder {
                 AppState.setInt(4305, 0);
                 AppState.clearRange(1341, 1343);
                 AppController.clearPreviewState();
-                StringUtils.m30f();
+                StringUtils.resetRegForm();
                 break;
             case 168:
                 AppController.clearFormFields();

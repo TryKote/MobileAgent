@@ -108,7 +108,7 @@ public abstract class AppState {
         } catch (Throwable unused2) {
             delta = new Object[295];
             try {
-                String[] strArrM10a = StringUtils.m10a();
+                String[] strArrM10a = StringUtils.listRecordStores();
                 if (strArrM10a != null) {
                     int length = strArrM10a.length;
                     while (true) {

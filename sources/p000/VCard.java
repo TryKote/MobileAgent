@@ -105,7 +105,7 @@ public final class VCard {
         strArr[3] = c0043n.readUTF8Str((String) null);
         strArr[4] = c0043n.readWideStr();
         strArr[5] = c0043n.readWideStr();
-        if (StringUtils.m3a(590588, strArr[2])) {
+        if (StringUtils.matchesKey(590588, strArr[2])) {
             strArr[6] = c0043n.readWideStr();
             strArr[7] = c0043n.readWideStr();
         } else {
@@ -150,7 +150,7 @@ public final class VCard {
     /* renamed from: d */
     public final int getCommandCount() {
         try {
-            if (StringUtils.m3a(590588, this.mapTypeStr)) {
+            if (StringUtils.matchesKey(590588, this.mapTypeStr)) {
                 return MapPoint.getMarkerType(Integer.parseInt(this.zoomStr));
             }
             return 10;

@@ -308,7 +308,7 @@ public final class MmpProtocol extends Account {
                         sendData(queueCommand(new Object[]{AppController.createMmpCommand(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.integerOf(17)}));
                         this.contactListIndex = 0;
                         sendData(queueCommand(new Object[]{AppController.createMmpCommand(this, 4868, (ByteBuffer) null), ResourceManager.integerOf(6)}));
-                        sendData(StringUtils.m18a(this, this.serverId));
+                        sendData(StringUtils.createContactInfoCmd(this, this.serverId));
                         this.progress = 8;
                         break;
                     }
@@ -683,7 +683,7 @@ public final class MmpProtocol extends Account {
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         AppState.pool[1316] = ContactInfo.createAccountInfo(this).setMmpContactIdStr(c0009ai.identifier);
-        return trySendData(StringUtils.m18a(this, Utils.parseInt((Object) c0009ai.identifier)));
+        return trySendData(StringUtils.createContactInfoCmd(this, Utils.parseInt((Object) c0009ai.identifier)));
     }
 
     @Override // p000.Account

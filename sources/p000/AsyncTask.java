@@ -55,7 +55,7 @@ public final class AsyncTask implements Runnable, CommandListener {
 
     public final void commandAction(Command command, Displayable displayable) {
         if (this.taskData == null) {
-            String strM16a = StringUtils.m16a((TextBox) displayable);
+            String strM16a = StringUtils.getTextBoxString((TextBox) displayable);
             AppState.setObject(1279, (Object) strM16a);
             AppState.setBool(1456, !StringUtils.isEmpty(strM16a));
             if (command.getPriority() == 0) {
@@ -71,7 +71,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             Screen c0013am = (Screen) ((Object[]) this.taskData)[0];
             MenuItem c0032c = (MenuItem) ((Object[]) this.taskData)[1];
             Object[] objArr = (Object[]) c0032c.data;
-            if (!StringUtils.m4a(strM17c, objArr[0])) {
+            if (!StringUtils.equalsObj(strM17c, objArr[0])) {
                 objArr[0] = strM17c;
                 String strM506c = ((Integer) objArr[2]).intValue() != 327680 ? strM17c : Utils.maskPassword(strM17c);
                 String str = StringUtils.isEmpty(strM506c) ? null : strM506c;
@@ -583,7 +583,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L31d:
             return
         L31e:
-            p000.StringUtils.m22c()     // Catch: java.lang.Throwable -> La84
+            p000.StringUtils.tileLoaderLoop()     // Catch: java.lang.Throwable -> La84
             return
         L322:
             r0 = r8
@@ -681,7 +681,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 0
             r15 = r1
             av r0 = r0.parseXml()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
-            p000.StringUtils.m44a(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            p000.StringUtils.parseGeoConfig(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
@@ -1326,7 +1326,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r8
             r2 = 0
             r1 = r1[r2]     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
-            java.lang.String r0 = p000.StringUtils.m8a(r0, r1)     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
+            java.lang.String r0 = p000.StringUtils.concatKeyObj(r0, r1)     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             r1 = r8
             r2 = 1
             r1 = r1[r2]     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
@@ -1558,7 +1558,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = 333441(0x51681, float:4.6725E-40)
             r1 = r10
             java.lang.String r1 = r1.tagName     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            boolean r0 = p000.StringUtils.m3a(r0, r1)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            boolean r0 = p000.StringUtils.matchesKey(r0, r1)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             if (r0 == 0) goto La32
             r0 = r15
             r0.handleComplete()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
@@ -1571,7 +1571,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             av r2 = r2.findChildByKey(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.StringBuffer r2 = r2.textContent     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.String r2 = p000.StringUtils.fromBuffer(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r1 = p000.StringUtils.m7b(r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r1 = p000.StringUtils.concatKey(r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0.serverResourceId = r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
         La48:
             r0 = r9

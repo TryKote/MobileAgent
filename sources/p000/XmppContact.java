@@ -93,10 +93,10 @@ public final class XmppContact extends Contact {
         if (iMo139e == 16384) {
             return i;
         }
-        if (StringUtils.m3a(262852, this.statusMessage) || StringUtils.m3a(267931, this.statusMessage) || StringUtils.m3a(202403, this.statusMessage)) {
+        if (StringUtils.matchesKey(262852, this.statusMessage) || StringUtils.matchesKey(267931, this.statusMessage) || StringUtils.matchesKey(202403, this.statusMessage)) {
             i = 384;
         }
-        if (StringUtils.m3a(131590, this.statusMessage)) {
+        if (StringUtils.matchesKey(131590, this.statusMessage)) {
             i = (i & 65535) | 20578304;
         }
         return i;
@@ -129,7 +129,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: l */
     public final boolean hasUnread() {
-        return StringUtils.m3a(267931, this.statusMessage) || StringUtils.m3a(262852, this.statusMessage);
+        return StringUtils.matchesKey(267931, this.statusMessage) || StringUtils.matchesKey(262852, this.statusMessage);
     }
 
     @Override // p000.Contact
@@ -146,7 +146,7 @@ public final class XmppContact extends Contact {
         int i = 0;
         this.vCardHash = str;
         this.status = 0;
-        if (StringUtils.m3a(594984, str)) {
+        if (StringUtils.matchesKey(594984, str)) {
             XmlElement c0022avM562f = c0022av.findChildByKey(267927);
             if (c0022avM562f != null) {
                 String strM11a = StringUtils.fromBuffer(c0022avM562f.textContent);
@@ -154,15 +154,15 @@ public final class XmppContact extends Contact {
                     i = 1;
                     this.status = i;
                 } else {
-                    if (StringUtils.m3a(265215, strM11a)) {
+                    if (StringUtils.matchesKey(265215, strM11a)) {
                         i = 4;
-                    } else if (StringUtils.m3a(267829, strM11a)) {
+                    } else if (StringUtils.matchesKey(267829, strM11a)) {
                         i = 2;
-                    } else if (StringUtils.m3a(136761, strM11a)) {
+                    } else if (StringUtils.matchesKey(136761, strM11a)) {
                         i = 6;
-                    } else if (StringUtils.m3a(202299, strM11a)) {
+                    } else if (StringUtils.matchesKey(202299, strM11a)) {
                         i = 5;
-                    } else if (StringUtils.m3a(202302, strM11a)) {
+                    } else if (StringUtils.matchesKey(202302, strM11a)) {
                         i = 3;
                     }
                     this.status = i;

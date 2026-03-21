@@ -56,7 +56,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final boolean m2a(String str, int i) {
+    public static final boolean matchesEncoded(String str, int i) {
         long j = i;
         int length = str.length();
         for (int i2 = 0; i2 < length; i2++) {
@@ -69,7 +69,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final boolean m3a(int i, String str) {
+    public static final boolean matchesKey(int i, String str) {
         if (str == null) {
             return false;
         }
@@ -93,12 +93,12 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final boolean m4a(String str, Object obj) {
+    public static final boolean equalsObj(String str, Object obj) {
         return equals(str, (String) obj);
     }
 
     /* renamed from: b */
-    public static final String m5b(String str) {
+    public static final String getDomain(String str) {
         return suffix(str, str.indexOf(64) + 1);
     }
 
@@ -114,12 +114,12 @@ public final class StringUtils {
     }
 
     /* renamed from: b */
-    public static final String m7b(int i, String str) {
+    public static final String concatKey(int i, String str) {
         return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(str));
     }
 
     /* renamed from: a */
-    public static final String m8a(int i, Object obj) {
+    public static final String concatKeyObj(int i, Object obj) {
         return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(obj));
     }
 
@@ -129,7 +129,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final String[] m10a() {
+    public static final String[] listRecordStores() {
         String[] strArrListRecordStores = RecordStore.listRecordStores();
         if (strArrListRecordStores != null) {
             int length = strArrListRecordStores.length;
@@ -175,7 +175,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final String m16a(TextBox textBox) {
+    public static final String getTextBoxString(TextBox textBox) {
         return Utils.defaultStr(intern(textBox.getString()));
     }
 
@@ -211,20 +211,20 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m18a(MmpProtocol c0033d, int i) {
+    public static final ByteBuffer createContactInfoCmd(MmpProtocol c0033d, int i) {
         return c0033d.queueCommand(new Object[]{AppController.createMmpCommand(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(c0033d.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.integerOf(7), ResourceManager.integerOf(i)});
     }
 
     /* renamed from: b */
-    public static final void m19b() {
+    public static final void initTileCache() {
         int iM586d = AppState.getBool(277) ? (((AppState.getInt(1415) >> 7) + 2) * ((AppState.getInt(1416) >> 7) + 2)) << 1 : ((AppState.getInt(1415) >> 7) + 2) * ((AppState.getInt(1416) >> 7) + 2);
         AppState.pool[1394] = new LruCache(iM586d);
         AppState.setInt(1550, iM586d);
     }
 
     /* renamed from: a */
-    public static final Image m20a(ResourceManager c0034e) {
-        Image image = (Image) m25l().get(c0034e);
+    public static final Image getTileImage(ResourceManager c0034e) {
+        Image image = (Image) getTileCache().get(c0034e);
         if (image == null && !AppState.getVector(1396).contains(c0034e)) {
             ResourceManager.enqueueTileRequest(c0034e);
         }
@@ -232,7 +232,7 @@ public final class StringUtils {
     }
 
     /* renamed from: k */
-    private static final void m21k() {
+    private static final void pruneStaleRequests() {
         Vector vectorM614m = AppState.getVector(1397);
         synchronized (vectorM614m) {
             Vector vectorM614m2 = AppState.getVector(1398);
@@ -252,7 +252,7 @@ public final class StringUtils {
     }
 
     /* renamed from: c */
-    public static final void m22c() {
+    public static final void tileLoaderLoop() {
         Image imageM876b = null;
         int i = 4;
         while (0 == AppState.getInt(1549)) {
@@ -281,7 +281,7 @@ public final class StringUtils {
                 int i3 = i;
                 i = i3 - 1;
                 if (i3 > 0) {
-                    m21k();
+                    pruneStaleRequests();
                     Vector vectorM614m = AppState.getVector(1398);
                     synchronized (vectorM614m) {
                         if (vectorM614m.removeElement(c0034eM949i)) {
@@ -303,78 +303,78 @@ public final class StringUtils {
                     vectorM614m2.addElement(c0034eM949i);
                     XmppContactGroup.flagSyncRequired();
                 } else {
-                    m23a(c0034eM949i, AppState.getImage(1393));
+                    cacheTileImage(c0034eM949i, AppState.getImage(1393));
                 }
                 throw new RuntimeException();
             }
             i = 4;
-            m23a(c0034eM949i, imageM876b);
+            cacheTileImage(c0034eM949i, imageM876b);
             ResourceManager.removeTileRequest(c0034eM949i);
-            m21k();
+            pruneStaleRequests();
         }
     }
 
     /* renamed from: a */
-    private static final void m23a(ResourceManager c0034e, Image image) {
+    private static final void cacheTileImage(ResourceManager c0034e, Image image) {
         try {
-            m25l().put(c0034e, image, 1);
+            getTileCache().put(c0034e, image, 1);
             MapRenderer.needsRedraw = true;
         } catch (Throwable unused) {
         }
     }
 
     /* renamed from: d */
-    public static final void m24d() {
-        Enumeration enumerationM52a = m25l().keys();
+    public static final void clearSatelliteTiles() {
+        Enumeration enumerationM52a = getTileCache().keys();
         while (enumerationM52a.hasMoreElements()) {
             ResourceManager c0034e = (ResourceManager) enumerationM52a.nextElement();
             if (c0034e.tileType == 3) {
-                m25l().remove(c0034e);
+                getTileCache().remove(c0034e);
             }
         }
     }
 
     /* renamed from: l */
-    private static final LruCache m25l() {
+    private static final LruCache getTileCache() {
         return (LruCache) AppState.pool[1394];
     }
 
     /* renamed from: m */
-    private static final Vector m26m() {
+    private static final Vector createRegionVector() {
         Vector vectorM1213g = NetworkUtils.newVector();
         vectorM1213g.addElement(AppState.getString(684));
         return vectorM1213g;
     }
 
     /* renamed from: a */
-    private static final void m27a(Vector vector, Object obj) {
+    private static final void addXmlChildTexts(Vector vector, Object obj) {
         Vector vector2 = ((XmlElement) obj).children;
         for (int i = 0; i < Utils.vectorSize(vector2); i++) {
-            vector.addElement(m28b((XmlElement) vector2.elementAt(i)));
+            vector.addElement(getXmlText((XmlElement) vector2.elementAt(i)));
         }
     }
 
     /* renamed from: b */
-    private static final String m28b(XmlElement c0022av) {
+    private static final String getXmlText(XmlElement c0022av) {
         String strM555c = c0022av.getLongKeyAttr(110);
         return strM555c != null ? strM555c : fromBuffer(c0022av.textContent);
     }
 
     /* renamed from: e */
-    public static final void m29e() {
-        m30f();
+    public static final void showRegionSelector() {
+        resetRegForm();
         AppState.pool[1301] = new XmlParser(new ByteBuffer(NetworkUtils.longToHex(25135), 41000)).parse().children;
         StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(683));
         Vector vectorM614m = AppState.getVector(1301);
         for (int i = 0; i < Utils.vectorSize(vectorM614m); i++) {
-            stringBufferAppend.append((char) 0).append(m28b((XmlElement) vectorM614m.elementAt(i)));
+            stringBufferAppend.append((char) 0).append(getXmlText((XmlElement) vectorM614m.elementAt(i)));
         }
         AppState.setFromBuffer(1300, stringBufferAppend);
         ScreenManager.showScreen(ScreenManager.createScreen(3356));
     }
 
     /* renamed from: f */
-    public static final void m30f() {
+    public static final void resetRegForm() {
         AppState.clearRange(1296, 1301);
         AppState.setInt(1480, 0);
         AppState.setInt(1481, 0);
@@ -390,7 +390,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final void m31a(Screen c0013am, Object obj) {
+    public static final void updateRegDropdowns(Screen c0013am, Object obj) {
         MenuItem c0032c = (MenuItem) obj;
         int iIntValue = ((Integer) ((Object[]) c0032c.data)[0]).intValue();
         String str = c0032c.title;
@@ -433,18 +433,18 @@ public final class StringUtils {
         }
         if (equals(str, strM584b)) {
             MenuItem c0032c8 = c0032c2;
-            Vector vectorM26m = m26m();
+            Vector vectorM26m = createRegionVector();
             if (iIntValue > 0) {
-                m27a(vectorM26m, AppState.getVector(1301).elementAt(iIntValue - 1));
+                addXmlChildTexts(vectorM26m, AppState.getVector(1301).elementAt(iIntValue - 1));
             }
             c0032c8.setChoices(vectorM26m, 0, strM584b2);
             c0032c3.setChoices(Utils.splitByNull(AppState.getString(684)), 0, strM584b3);
         } else if (equals(str, strM584b2)) {
             MenuItem c0032c9 = c0032c3;
             int i = iIntValue2;
-            Vector vectorM26m2 = m26m();
+            Vector vectorM26m2 = createRegionVector();
             if (iIntValue > 0) {
-                m27a(vectorM26m2, ((XmlElement) AppState.getVector(1301).elementAt(i - 1)).children.elementAt(iIntValue - 1));
+                addXmlChildTexts(vectorM26m2, ((XmlElement) AppState.getVector(1301).elementAt(i - 1)).children.elementAt(iIntValue - 1));
             }
             c0032c9.setChoices(vectorM26m2, 0, strM584b3);
         } else if (equals(str, strM584b4)) {
@@ -457,7 +457,7 @@ public final class StringUtils {
     }
 
     /* renamed from: g */
-    public static final String[] m32g() {
+    public static final String[] buildRegData() {
         String[] strArr = new String[16];
         String strM522f = Utils.defaultStr(AppState.getString(1296));
         if (!isEmpty(strM522f)) {
@@ -475,9 +475,9 @@ public final class StringUtils {
         strArr[2] = Utils.defaultStr(AppState.getString(1297));
         strArr[3] = Utils.defaultStr(AppState.getString(1298));
         strArr[4] = Utils.defaultStr(AppState.getString(1299));
-        strArr[5] = m33b(1481);
-        strArr[7] = m33b(1482);
-        strArr[8] = m33b(1483);
+        strArr[5] = intToStringPositive(1481);
+        strArr[7] = intToStringPositive(1482);
+        strArr[8] = intToStringPositive(1483);
         int iM586d = AppState.getInt(1485);
         if (iM586d > 0) {
             XmlElement c0022av = (XmlElement) AppState.getVector(1301).elementAt(iM586d - 1);
@@ -493,9 +493,9 @@ public final class StringUtils {
                 }
             }
         }
-        strArr[12] = m33b(1484);
-        strArr[13] = m33b(1488);
-        strArr[14] = m33b(1489);
+        strArr[12] = intToStringPositive(1484);
+        strArr[13] = intToStringPositive(1488);
+        strArr[14] = intToStringPositive(1489);
         if (AppState.getBool(1490)) {
             strArr[9] = intern(Integer.toString(1));
         }
@@ -503,7 +503,7 @@ public final class StringUtils {
     }
 
     /* renamed from: b */
-    private static final String m33b(int i) {
+    private static final String intToStringPositive(int i) {
         int iM586d = AppState.getInt(i);
         if (iM586d > 0) {
             return intern(Integer.toString(iM586d));
@@ -521,9 +521,9 @@ public final class StringUtils {
                 AppState.setObject(222, (Object) intern(Integer.toString(Utils.nextRandom())));
             }
         }
-        m38d(m39e(AppState.getAppProperty(1381)));
+        setOrGenerateGuid(validateGuid(AppState.getAppProperty(1381)));
         AppState.setObject(1382, (Object) AppState.getAppProperty(1382));
-        AppState.setObject(1381, (Object) new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(AppState.getString(222))).writeLongBytes(263912257062L).writeRawString(m36n()).getStringAndClear());
+        AppState.setObject(1381, (Object) new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(AppState.getString(222))).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
         AppState.setString(1376, getSystemProp(963));
         AppState.setString(1377, getSystemProp(964));
         AppState.setString(1378, getSystemProp(1378));
@@ -555,9 +555,9 @@ public final class StringUtils {
             AppState.setBool(1536, AppState.indexOf(strM17c, 761620851) == 0 || AppState.indexOf(strM17c, 1903060322) == 0);
             AppState.setBool(1543, isKnownDevice1 || isKnownDevice2);
             AppState.setBool(1538, AppState.getBool(1537) || AppState.indexOfLong(strM17c, 29113373327974771L) >= 0 || AppState.indexOf(strM17c, 6514035) == 0 || AppState.indexOf(strM17c, 6841203) == 0 || AppState.indexOf(strM17c, 6842227) == 0 || AppState.indexOf(strM17c, 29799) == 0);
-            byte bM35c = m35c(0);
-            byte bM35c2 = m35c(1);
-            byte bM35c3 = m35c(2);
+            byte bM35c = parseVersionByte(0);
+            byte bM35c2 = parseVersionByte(1);
+            byte bM35c3 = parseVersionByte(2);
             byte[] bArrM581a = AppState.getBytes(907);
             bArrM581a[13] = bM35c;
             bArrM581a[14] = bM35c2;
@@ -575,7 +575,7 @@ public final class StringUtils {
     }
 
     /* renamed from: c */
-    private static final byte m35c(int i) {
+    private static final byte parseVersionByte(int i) {
         try {
             return (byte) Utils.parseInt(Utils.split(AppState.getString(1375), '.').elementAt(i));
         } catch (Throwable unused) {
@@ -584,7 +584,7 @@ public final class StringUtils {
     }
 
     /* renamed from: n */
-    private static final String m36n() {
+    private static final String formatVersion() {
         String strM584b = AppState.getString(1375);
         String[] strArr = new String[3];
         String str = AppState.emptyStr;
@@ -620,7 +620,7 @@ public final class StringUtils {
 
     /* JADX DEBUG: Move duplicate insns, count: 2 to block B:19:0x0071 */
     /* renamed from: d */
-    private static final void m38d(String str) {
+    private static final void setOrGenerateGuid(String str) {
         int i;
         int i2;
         if (str != null) {
@@ -653,7 +653,7 @@ public final class StringUtils {
     }
 
     /* renamed from: e */
-    private static final String m39e(String str) {
+    private static final String validateGuid(String str) {
         if (str == null || str.length() != 32) {
             return null;
         }
@@ -678,7 +678,7 @@ public final class StringUtils {
     }
 
     /* renamed from: j */
-    public static final void m41j() {
+    public static final void initGeoRegions() {
         AppState.pool[1389] = NetworkUtils.newVector();
         AppState.pool[1390] = new GeoRegion(AppState.getString(996), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
@@ -691,7 +691,7 @@ public final class StringUtils {
                     if (iM1355w < 0) {
                         break;
                     } else {
-                        m42a(new GeoRegion(c0043nM986d));
+                        addGeoRegion(new GeoRegion(c0043nM986d));
                     }
                 }
             }
@@ -704,7 +704,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    private static void m42a(GeoRegion c0053x) {
+    private static void addGeoRegion(GeoRegion c0053x) {
         Vector vectorM614m = AppState.getVector(1389);
         if (vectorM614m.contains(c0053x)) {
             return;
@@ -713,7 +713,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final boolean m43a(long j, long j2) {
+    public static final boolean isInSavedRegion(long j, long j2) {
         Vector vectorM614m = AppState.getVector(1389);
         int iM541c = Utils.vectorSize(vectorM614m);
         while (true) {
@@ -729,7 +729,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final void m44a(XmlElement c0022av) {
+    public static final void parseGeoConfig(XmlElement c0022av) {
         Vector vector;
         if (c0022av == null || (vector = c0022av.children) == null) {
             return;
@@ -742,7 +742,7 @@ public final class StringUtils {
         for (int i = 0; i < Utils.vectorSize(vector); i++) {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(i);
             String str = c0022av2.tagName;
-            if (m2a(str, 1936156018)) {
+            if (matchesEncoded(str, 1936156018)) {
                 Vector vector2 = c0022av2.children;
                 for (int i2 = 0; i2 < Utils.vectorSize(vector2); i2++) {
                     XmlElement c0022av3 = (XmlElement) vector2.elementAt(i2);
@@ -751,9 +751,9 @@ public final class StringUtils {
                     c0053x.centerLat = c0022av3.getAttrAsLong(1852796003);
                     c0053x.centerLon = c0022av3.getAttrAsLong(1952541795);
                     c0053x.precision = c0022av3.getAttrAsInt(2054709613);
-                    m42a(c0053x);
+                    addGeoRegion(c0053x);
                 }
-            } else if (m3a(397424, str)) {
+            } else if (matchesKey(397424, str)) {
                 ConnectionThread.m1137a(1, c0022av2, true);
             }
         }

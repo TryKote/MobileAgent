@@ -74,7 +74,7 @@ public final class AppController {
 
     /* renamed from: a */
     public static final int handleMenuAction(String str, Object obj) {
-        if (StringUtils.m3a(548, str)) {
+        if (StringUtils.matchesKey(548, str)) {
             rebuildAccountCaches();
             return 4;
         }
@@ -100,19 +100,19 @@ public final class AppController {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         ChatRoom c0052wM745h = c0028ba.findChatRoomById(iM586d);
         IOUtils.setSelectedItems(c0052wM745h.readMessages);
-        if (StringUtils.m3a(852, str)) {
+        if (StringUtils.matchesKey(852, str)) {
             c0052wM745h.readMessages.removeAllElements();
             return 0;
         }
-        if (StringUtils.m3a(853, str)) {
+        if (StringUtils.matchesKey(853, str)) {
             AppState.setInt(1525, 2);
             return 0;
         }
-        if (StringUtils.m3a(854, str)) {
+        if (StringUtils.matchesKey(854, str)) {
             AppState.setInt(1525, 1);
             return 0;
         }
-        if (!StringUtils.m3a(845, str)) {
+        if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
         AppState.setInt(1527, c0028ba.findDefaultChatRoom().id);
@@ -497,7 +497,7 @@ public final class AppController {
             i--;
             if (i < 0) {
                 MmpContact.clearLocationData();
-                StringUtils.m19b();
+                StringUtils.initTileCache();
                 ConnectionThread.m1146e();
                 MapRenderer.needsRedraw = true;
                 return;
@@ -965,7 +965,7 @@ public final class AppController {
 
     /* renamed from: g */
     public static final int processInputText(String str) {
-        AppState.setBool(1524, StringUtils.m3a(859, str));
+        AppState.setBool(1524, StringUtils.matchesKey(859, str));
         return 0;
     }
 
@@ -2292,7 +2292,7 @@ public final class AppController {
                                                 }
                                                 if (AppState.getBool(277) && checkTimer(7, 300000L)) {
                                                     setTimer(7, 300000L);
-                                                    StringUtils.m24d();
+                                                    StringUtils.clearSatelliteTiles();
                                                     Vector vectorM614m4 = AppState.getVector(1383);
                                                     int size3 = vectorM614m4.size();
                                                     while (true) {
@@ -2347,7 +2347,7 @@ public final class AppController {
                                                     iM338l = iM1181a;
                                                     break;
                                                 } else {
-                                                    showNotification(StringUtils.m8a(506, obj2));
+                                                    showNotification(StringUtils.concatKeyObj(506, obj2));
                                                 }
                                                 iM1181a = 0;
                                                 iM338l = iM1181a;
@@ -2680,7 +2680,7 @@ public final class AppController {
                                                 break;
                                             case 65:
                                                 if (checkTimer(9, 3000L) && (textBoxM1028h = XmppContactGroup.getTextInputBox()) != null) {
-                                                    String strM16a = StringUtils.m16a(textBoxM1028h);
+                                                    String strM16a = StringUtils.getTextBoxString(textBoxM1028h);
                                                     if (AppState.getBool(106)) {
                                                         String strM1123k = Conversation.transliterateRussian(strM16a);
                                                         if (!StringUtils.equals(strM1123k, strM16a)) {
@@ -3223,7 +3223,7 @@ public final class AppController {
                                                 Object[] objArrM609l = AppState.getObjectArray(1271);
                                                 Object obj4 = objArrM609l[0];
                                                 if (obj4 != null) {
-                                                    showNotification(StringUtils.m8a(506, obj4));
+                                                    showNotification(StringUtils.concatKeyObj(506, obj4));
                                                     iM1181a = 0;
                                                 } else {
                                                     iM1181a = objArrM609l[3] == null ? 0 : NetworkUtils.m1181a(objArrM609l);
@@ -3291,14 +3291,14 @@ public final class AppController {
                                                 } else {
                                                     Object objElementAt2 = vectorM614m5.elementAt(0);
                                                     if (objElementAt2 instanceof String) {
-                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.m7b(5510023, Conversation.percentEncode((String) vectorM614m5.lastElement())), null};
+                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.concatKey(5510023, Conversation.percentEncode((String) vectorM614m5.lastElement())), null};
                                                         new AsyncTask(26, objArr2);
                                                         vectorM614m5.setElementAt(objArr2, 0);
                                                     } else {
                                                         Object obj5 = ((Object[]) objElementAt2)[2];
                                                         if (obj5 != null) {
                                                             if (obj5 instanceof Throwable) {
-                                                                IOUtils.postEvent((Object) StringUtils.m8a(1030, obj5));
+                                                                IOUtils.postEvent((Object) StringUtils.concatKeyObj(1030, obj5));
                                                             } else {
                                                                 Utils.dequeue(vectorM614m5);
                                                             }
@@ -3739,7 +3739,7 @@ public final class AppController {
                                             }
                                         } else if (i44 == 21) {
                                             if (AppState.getAccount().getType() == 0) {
-                                                StringUtils.m31a(c0013amM66b8, objM524a);
+                                                StringUtils.updateRegDropdowns(c0013amM66b8, objM524a);
                                             }
                                         } else if (i44 == 164) {
                                             MenuItem c0032c2 = (MenuItem) objM524a;
@@ -4051,7 +4051,7 @@ public final class AppController {
                     } else {
                         AppState.setObject(1346, (Object) c0026az.from);
                         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
-                        if (StringUtils.m3a(894, c0052wM745h.name) || StringUtils.m3a(899, c0052wM745h.name)) {
+                        if (StringUtils.matchesKey(894, c0052wM745h.name) || StringUtils.matchesKey(899, c0052wM745h.name)) {
                             XmppMailRuProtocol.setMailAction(54, 3);
                         } else {
                             XmppMailRuProtocol.setMailAction(52, 0);
