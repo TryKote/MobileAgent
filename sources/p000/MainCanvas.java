@@ -9,7 +9,7 @@ import javax.microedition.lcdui.Graphics;
 
 /* renamed from: ak */
 /* loaded from: MobileAgent_3.9.jar:ak.class */
-public final class C0011ak extends Canvas implements CommandListener {
+public final class MainCanvas extends Canvas implements CommandListener {
 
     /* renamed from: e */
     private Command f76e;
@@ -54,9 +54,9 @@ public final class C0011ak extends Canvas implements CommandListener {
     private int f85n = getHeight();
 
     /* renamed from: g */
-    private C0012al f78g = new C0012al();
+    private GraphicsContext f78g = new GraphicsContext();
 
-    public C0011ak(int i, int i2) {
+    public MainCanvas(int i, int i2) {
         this.f82k = i;
         this.f83l = i2;
         m201a();
@@ -109,7 +109,7 @@ public final class C0011ak extends Canvas implements CommandListener {
     }
 
     public final void paint(Graphics graphics) {
-        C0012al c0012al = this.f78g;
+        GraphicsContext c0012al = this.f78g;
         c0012al.f92b = graphics;
         try {
             synchronized (C0015ao.f150d) {
@@ -124,7 +124,7 @@ public final class C0011ak extends Canvas implements CommandListener {
                             if (i < 0) {
                                 break;
                             }
-                        } while (((C0013am) vectorM614m.elementAt(i)).f99f != 0);
+                        } while (((Screen) vectorM614m.elementAt(i)).f99f != 0);
                         int iM586d = AppState.m586d(1528);
                         int iM586d2 = AppState.m586d(1529);
                         c0012al.m208a(0, 0, iM586d, iM586d2);
@@ -156,12 +156,12 @@ public final class C0011ak extends Canvas implements CommandListener {
                                     }
                                 }
                             }
-                            ((C0013am) vectorM614m.elementAt(i)).m227a(c0012al, z2, false);
+                            ((Screen) vectorM614m.elementAt(i)).m227a(c0012al, z2, false);
                             c0012al.m208a(0, 0, iM586d, iM586d2);
                             i++;
                         }
                     }
-                    if (AbstractC0004ad.m77h()) {
+                    if (ScreenManager.m77h()) {
                         c0012al.m208a(0, 0, 2048, 2048);
                         int iM586d4 = AppState.m586d(1528) - 17;
                         if (C0015ao.m413P() != 0) {
@@ -331,7 +331,7 @@ public final class C0011ak extends Canvas implements CommandListener {
     }
 
     /* renamed from: b */
-    public final C0011ak m204b() {
+    public final MainCanvas m204b() {
         String str = this.f79h;
         this.f79h = null;
         String str2 = this.f80i;

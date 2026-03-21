@@ -78,7 +78,7 @@ public final class Message {
     }
 
     /* renamed from: a */
-    public final C0032c m667a(ChatRoom c0052w) {
+    public final MenuItem m667a(ChatRoom c0052w) {
         boolean z;
         int iM1418a;
         String[] strArrM869c;
@@ -90,7 +90,7 @@ public final class Message {
         int iM586d = (((AppState.m586d(1528) - iM214a) - 240) + 227) - 10;
         int i3 = zM671a ? 0 : 19;
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
-        C0032c c0032cM887a = C0032c.m887a(this.f216a);
+        MenuItem c0032cM887a = MenuItem.m887a(this.f216a);
         c0032cM887a.f265d = this;
         String str = this.f216a;
         Enumeration enumerationElements = c0028ba.f228d.elements();
@@ -105,7 +105,7 @@ public final class Message {
             }
         }
         boolean z2 = z;
-        C0032c c0032cM896a = c0032cM887a.m896a(z ? 25 : -1);
+        MenuItem c0032cM896a = c0032cM887a.m896a(z ? 25 : -1);
         Calendar calendarM622k = AppState.m622k();
         int i4 = calendarM622k.get(1);
         int i5 = calendarM622k.get(2);
@@ -113,9 +113,9 @@ public final class Message {
         calendarM622k.setTime(new Date(this.f217b));
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         String strM527g = Utils.m527g(NetworkUtils.m1215a((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
-        C0032c c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
+        MenuItem c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
         String strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append('[').append(this.f220e).append(AppState.m584b(903)));
-        C0032c c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);
+        MenuItem c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);
         int iM214a2 = AppState.m608k(i2).m214a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(strM527g).append(strM1215a)));
         if (m671a(1)) {
             c0032cM901a2.m896a(221);
@@ -176,7 +176,7 @@ public final class Message {
     private static String m672a(String str, int i, int i2, int i3, boolean z) {
         int i4;
         int iM215a;
-        C0012al c0012alM608k = AppState.m608k(i);
+        GraphicsContext c0012alM608k = AppState.m608k(i);
         if (c0012alM608k.m214a(str) > i2 + i3) {
             int i5 = 4;
             int i6 = 4;

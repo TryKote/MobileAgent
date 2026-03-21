@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: c */
 /* loaded from: MobileAgent_3.9.jar:c.class */
-public final class C0032c {
+public final class MenuItem {
 
     /* renamed from: a */
     public final int f258a;
@@ -39,7 +39,7 @@ public final class C0032c {
     /* renamed from: k */
     private int f268k;
 
-    public C0032c(int i, String str) {
+    public MenuItem(int i, String str) {
         this.f258a = i;
         this.f263i = NetworkUtils.m1213g();
         this.f264j = new int[16];
@@ -47,13 +47,13 @@ public final class C0032c {
         this.f260c = 200;
     }
 
-    private C0032c(String str, int i) {
+    private MenuItem(String str, int i) {
         this(1, str);
         this.f260c = i;
     }
 
     /* renamed from: a */
-    public final C0032c m884a() {
+    public final MenuItem m884a() {
         this.f263i.removeAllElements();
         this.f264j[0] = 0;
         this.f261g = 0;
@@ -67,34 +67,34 @@ public final class C0032c {
     }
 
     /* renamed from: c */
-    public static final C0032c m886c() {
-        return new C0032c(1, AppState.m584b(1038));
+    public static final MenuItem m886c() {
+        return new MenuItem(1, AppState.m584b(1038));
     }
 
     /* renamed from: a */
-    public static final C0032c m887a(String str) {
-        return new C0032c(1, str);
+    public static final MenuItem m887a(String str) {
+        return new MenuItem(1, str);
     }
 
     /* renamed from: a */
-    public static final C0032c m888a(String str, int i) {
-        return new C0032c(str, i);
+    public static final MenuItem m888a(String str, int i) {
+        return new MenuItem(str, i);
     }
 
     /* renamed from: d */
-    public static final C0032c m889d() {
-        return new C0032c(0, AppState.f181d);
+    public static final MenuItem m889d() {
+        return new MenuItem(0, AppState.f181d);
     }
 
     /* renamed from: a */
-    public static final C0032c m890a(String str, boolean z) {
-        C0032c c0032cM899a = new C0032c(2, str).m899a(z ? 25 : 24, str);
+    public static final MenuItem m890a(String str, boolean z) {
+        MenuItem c0032cM899a = new MenuItem(2, str).m899a(z ? 25 : 24, str);
         c0032cM899a.f265d = C0034e.m968a(z);
         return c0032cM899a;
     }
 
     /* renamed from: a */
-    public final C0032c m891a(Object obj, String str, Object obj2, Object obj3, Object obj4) {
+    public final MenuItem m891a(Object obj, String str, Object obj2, Object obj3, Object obj4) {
         String str2 = Utils.m535l(str) ? str : null;
         if (obj instanceof String) {
             m898b(Utils.m527g(this.f259b));
@@ -111,7 +111,7 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    public final C0032c m892a(Vector vector, int i, String str) {
+    public final MenuItem m892a(Vector vector, int i, String str) {
         int size = vector.size();
         int i2 = size;
         String[] strArr = new String[size];
@@ -119,7 +119,7 @@ public final class C0032c {
             i2--;
             if (i2 < 0) {
                 NetworkUtils.m1212a(vector);
-                C0032c c0032cM896a = m884a().m898b(Utils.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
+                MenuItem c0032cM896a = m884a().m898b(Utils.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
                 c0032cM896a.f265d = new Object[]{C0034e.m967e(i), strArr};
                 return c0032cM896a;
             }
@@ -128,8 +128,8 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    public static final C0032c m893a(C0012al c0012al) {
-        C0032c c0032c = new C0032c(11, AppState.f181d);
+    public static final MenuItem m893a(GraphicsContext c0012al) {
+        MenuItem c0032c = new MenuItem(11, AppState.f181d);
         c0032c.f265d = c0012al;
         c0032c.f261g = c0012al.f91a.getWidth();
         c0032c.f262h = c0012al.f91a.getHeight() + 5;
@@ -137,7 +137,7 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    public final int m894a(C0013am c0013am) {
+    public final int m894a(Screen c0013am) {
         if (this.f258a == 2) {
             if (this.f265d != null) {
                 Boolean boolM968a = C0034e.m968a(!((Boolean) this.f265d).booleanValue());
@@ -162,48 +162,48 @@ public final class C0032c {
             C0015ao.m340m(429);
             return 0;
         }
-        C0013am c0013amM75b = AbstractC0004ad.m75b(2351);
+        Screen c0013amM75b = ScreenManager.m75b(2351);
         Object[] objArr = (Object[]) this.f265d;
         String[] strArr = (String[]) objArr[1];
         int iIntValue = ((Integer) objArr[0]).intValue();
         Object[] objArr2 = {objArr, this, c0013am};
         for (String str : strArr) {
-            C0032c c0032cM898b = new C0032c(13, str).m898b(str);
+            MenuItem c0032cM898b = new MenuItem(13, str).m898b(str);
             c0032cM898b.f265d = objArr2;
             c0013amM75b.m225a(c0032cM898b);
         }
         c0013amM75b.m257b(strArr[iIntValue]);
-        AbstractC0004ad.m71b(c0013amM75b);
+        ScreenManager.m71b(c0013amM75b);
         return 0;
     }
 
     /* renamed from: e */
-    public final C0032c m895e() {
+    public final MenuItem m895e() {
         return m903a(new int[]{16, AppState.m586d(1450)});
     }
 
     /* renamed from: a */
-    public final C0032c m896a(int i) {
+    public final MenuItem m896a(int i) {
         return i >= 0 ? m903a(m897c(i)) : this;
     }
 
     /* renamed from: c */
     private static Object m897c(int i) {
-        return new int[]{C0012al.m217c(i), 16, i};
+        return new int[]{GraphicsContext.m217c(i), 16, i};
     }
 
     /* renamed from: b */
-    public final C0032c m898b(String str) {
+    public final MenuItem m898b(String str) {
         return m900a(-1, str, 0, 0);
     }
 
     /* renamed from: a */
-    public final C0032c m899a(int i, String str) {
+    public final MenuItem m899a(int i, String str) {
         return m900a(i, str, 0, 0);
     }
 
     /* renamed from: a */
-    public final C0032c m900a(int i, String str, int i2, int i3) {
+    public final MenuItem m900a(int i, String str, int i2, int i3) {
         if (i >= 0) {
             m896a(i);
         }
@@ -211,12 +211,12 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    public final C0032c m901a(String str, int i, int i2) {
+    public final MenuItem m901a(String str, int i, int i2) {
         return m902a(str, i, i2, -1);
     }
 
     /* renamed from: a */
-    public final C0032c m902a(String str, int i, int i2, int i3) {
+    public final MenuItem m902a(String str, int i, int i2, int i3) {
         if (str != null) {
             Vector vectorM907a = m907a(NetworkUtils.m1213g(), str, 0, str.length(), i, i2, i3);
             int size = vectorM907a.size();
@@ -229,7 +229,7 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    private C0032c m903a(Object obj) {
+    private MenuItem m903a(Object obj) {
         this.f263i.addElement(obj);
         this.f264j = C0015ao.m302a(this.f264j, this.f261g, 0);
         this.f261g += m904b(obj);
@@ -258,7 +258,7 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    private final void m906a(Vector vector, String str, C0012al c0012al, int i, int i2, int i3, int i4, int i5) {
+    private final void m906a(Vector vector, String str, GraphicsContext c0012al, int i, int i2, int i3, int i4, int i5) {
         int iM215a = c0012al.m215a(str, i2, i3);
         if (iM215a < (AppState.m586d(1528) << 2) / 5) {
             vector.addElement(new Object[]{str, new int[]{iM215a, i, i2, i3, i4, i5}});
@@ -345,7 +345,7 @@ public final class C0032c {
                     m907a(vector, str, i12 + AppState.m584b(i13 + 1063).length(), i2, i3, i4, 0);
                 }
             } else if (str != AppState.m584b(1037)) {
-                C0012al c0012alM608k = AppState.m608k(i3);
+                GraphicsContext c0012alM608k = AppState.m608k(i3);
                 int iM623o = AppState.m623o(i3);
                 int i15 = i;
                 int i16 = i;
@@ -386,7 +386,7 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    public final C0032c m908a(int i, int i2) {
+    public final MenuItem m908a(int i, int i2) {
         if (i > 1) {
             this.f268k = i2;
         }
@@ -394,7 +394,7 @@ public final class C0032c {
     }
 
     /* renamed from: b */
-    public final C0032c m909b(int i) {
+    public final MenuItem m909b(int i) {
         if (this.f258a == 11) {
             return this;
         }
@@ -463,9 +463,9 @@ public final class C0032c {
     }
 
     /* renamed from: a */
-    public final void m913a(C0012al c0012al, int i, int i2, int i3) {
+    public final void m913a(GraphicsContext c0012al, int i, int i2, int i3) {
         if (this.f258a == 11) {
-            c0012al.f92b.drawImage(((C0012al) this.f265d).f91a, i, i2, 20);
+            c0012al.f92b.drawImage(((GraphicsContext) this.f265d).f91a, i, i2, 20);
             return;
         }
         Vector vector = this.f263i;
@@ -485,7 +485,7 @@ public final class C0032c {
                     int[] iArr = (int[]) objElementAt;
                     if (iArr.length == 3) {
                         int i8 = iArr[2];
-                        c0012al.m216a(i8, i8 != 244 ? i7 : (i4 + i3) - 13, i6 + AbstractC0004ad.m73f());
+                        c0012al.m216a(i8, i8 != 244 ? i7 : (i4 + i3) - 13, i6 + ScreenManager.m73f());
                     } else if (iArr.length == 2) {
                         c0012al.m207b(18).m211d(i7, i6, i3 - i7, iArr[1]);
                     }
@@ -493,8 +493,8 @@ public final class C0032c {
                     String str = (String) ((Object[]) objElementAt)[0];
                     int[] iArr2 = (int[]) ((Object[]) objElementAt)[1];
                     int i9 = iArr2[4];
-                    C0012al c0012alM608k = AppState.m608k(i9);
-                    C0012al c0012alM207b = c0012al.m212a(c0012alM608k).m207b(iArr2[5]);
+                    GraphicsContext c0012alM608k = AppState.m608k(i9);
+                    GraphicsContext c0012alM207b = c0012al.m212a(c0012alM608k).m207b(iArr2[5]);
                     int i10 = iArr2[2];
                     int i11 = iArr2[3];
                     if (i6 > 0 && i6 < AppState.m586d(1529)) {

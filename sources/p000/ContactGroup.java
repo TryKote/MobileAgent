@@ -50,11 +50,11 @@ public abstract class ContactGroup implements Sortable {
     }
 
     /* renamed from: f */
-    public final C0032c m1395f(int i) {
-        C0032c c0032cM896a = C0032c.m887a(new ByteBuffer().m1321f(35).m1382s(this.f396d.f314j).m1321f(35).m1382s(mo197b()).m1337i()).m896a(this.f399g ? 30 : 31);
+    public final MenuItem m1395f(int i) {
+        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().m1321f(35).m1382s(this.f396d.f314j).m1321f(35).m1382s(mo197b()).m1337i()).m896a(this.f399g ? 30 : 31);
         c0032cM896a.f265d = this;
         if (mo198a()) {
-            C0032c c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);
+            MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);
             int i2 = 0;
             int size = this.f397e.size();
             while (true) {
@@ -67,7 +67,7 @@ public abstract class ContactGroup implements Sortable {
                     i2++;
                 }
             }
-            C0032c c0032cM901a2 = c0032cM901a.m901a(StringUtils.m17c(Integer.toString(i2)), 1, 20);
+            MenuItem c0032cM901a2 = c0032cM901a.m901a(StringUtils.m17c(Integer.toString(i2)), 1, 20);
             StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('/');
             int size2 = this.f397e.size();
             int i3 = size2;

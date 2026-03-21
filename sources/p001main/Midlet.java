@@ -1,7 +1,7 @@
 package p001main;
 
 import javax.microedition.midlet.MIDlet;
-import p000.RunnableC0049t;
+import p000.SplashScreen;
 
 /* loaded from: MobileAgent_3.9.jar:main/Midlet.class */
 public final class Midlet extends MIDlet {
@@ -14,7 +14,7 @@ public final class Midlet extends MIDlet {
             return;
         }
         this.f382a = true;
-        new RunnableC0049t(this);
+        new SplashScreen(this);
     }
 
     public final void pauseApp() {
@@ -22,7 +22,7 @@ public final class Midlet extends MIDlet {
     }
 
     public final void destroyApp(boolean z) {
-        new RunnableC0049t(null);
+        new SplashScreen(null);
         notifyDestroyed();
     }
 }

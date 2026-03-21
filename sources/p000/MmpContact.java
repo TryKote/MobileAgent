@@ -125,8 +125,8 @@ public final class MmpContact extends Contact {
 
     @Override // p000.Contact
     /* renamed from: b */
-    public final C0032c mo138b() {
-        C0032c c0032cM901a = C0032c.m887a(this.f380w).m896a(mo139e()).m901a(this.f376u, mo141j() ? 3 : mo140i() ? 2 : 0, this.f373r == 255 ? 0 : mo140i() ? 4 : mo141j() ? 5 : 3);
+    public final MenuItem mo138b() {
+        MenuItem c0032cM901a = MenuItem.m887a(this.f380w).m896a(mo139e()).m901a(this.f376u, mo141j() ? 3 : mo140i() ? 2 : 0, this.f373r == 255 ? 0 : mo140i() ? 4 : mo141j() ? 5 : 3);
         c0032cM901a.f265d = this;
         return c0032cM901a;
     }
@@ -396,7 +396,7 @@ public final class MmpContact extends Contact {
         for (int i = f69A + 1; i < iM192t; i++) {
             if (m194b(i) != null) {
                 int[] iArrM193a2 = m193a(i);
-                if (AbstractC0030bc.m833a(iM317a, (int) C0015ao.m317a(iArrM193a2[0], iM586d), iM317a2, (int) C0015ao.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
+                if (ChatRenderer.m833a(iM317a, (int) C0015ao.m317a(iArrM193a2[0], iM586d), iM317a2, (int) C0015ao.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
                     f69A = i;
                     break;
                 }
@@ -423,7 +423,7 @@ public final class MmpContact extends Contact {
             }
             if (m194b(i) != null) {
                 iArrM193a = m193a(i);
-                if (AbstractC0030bc.m833a(iM317a, (int) C0015ao.m317a(iArrM193a[0], iM586d), iM317a2, (int) C0015ao.m317a(iArrM193a[1], iM586d)) || i == 0) {
+                if (ChatRenderer.m833a(iM317a, (int) C0015ao.m317a(iArrM193a[0], iM586d), iM317a2, (int) C0015ao.m317a(iArrM193a[1], iM586d)) || i == 0) {
                     break;
                 }
             }

@@ -13,7 +13,7 @@ import p001main.Midlet;
 
 /* renamed from: t */
 /* loaded from: MobileAgent_3.9.jar:t.class */
-public final class RunnableC0049t extends Canvas implements Runnable, CommandListener {
+public final class SplashScreen extends Canvas implements Runnable, CommandListener {
 
     /* renamed from: a */
     private Midlet f404a;
@@ -21,7 +21,7 @@ public final class RunnableC0049t extends Canvas implements Runnable, CommandLis
     /* renamed from: b */
     private Image f405b;
 
-    public RunnableC0049t(Midlet midlet) {
+    public SplashScreen(Midlet midlet) {
         this.f404a = midlet;
         if (midlet != null) {
             new Thread(this).start();
@@ -53,7 +53,7 @@ public final class RunnableC0049t extends Canvas implements Runnable, CommandLis
                 i++;
             }
         } catch (Throwable th) {
-            new RunnableC0049t(this.f404a, th);
+            new SplashScreen(this.f404a, th);
         }
     }
 
@@ -76,7 +76,7 @@ public final class RunnableC0049t extends Canvas implements Runnable, CommandLis
         }
     }
 
-    private RunnableC0049t(Midlet midlet, Throwable th) {
+    private SplashScreen(Midlet midlet, Throwable th) {
         this.f404a = midlet;
         try {
             Form form = new Form("Ошибка");
@@ -100,7 +100,7 @@ public final class RunnableC0049t extends Canvas implements Runnable, CommandLis
                     this.f404a.destroyApp(true);
                     break;
                 case 2:
-                    new RunnableC0049t(this.f404a);
+                    new SplashScreen(this.f404a);
                     break;
             }
         } catch (Throwable unused) {

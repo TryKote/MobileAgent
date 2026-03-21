@@ -6,7 +6,7 @@ import javax.microedition.lcdui.Graphics;
 
 /* renamed from: am */
 /* loaded from: MobileAgent_3.9.jar:am.class */
-public final class C0013am {
+public final class Screen {
 
     /* renamed from: a */
     public int f94a;
@@ -30,7 +30,7 @@ public final class C0013am {
     public int f100g;
 
     /* renamed from: C */
-    private C0032c f101C;
+    private MenuItem f101C;
 
     /* renamed from: h */
     public final int f102h;
@@ -125,13 +125,13 @@ public final class C0013am {
     /* renamed from: B */
     public boolean f132B;
 
-    public C0013am() {
+    public Screen() {
         this.f102h = 2;
         this.f94a = 63;
     }
 
     /* renamed from: a */
-    public final C0013am m218a() {
+    public final Screen m218a() {
         if (AppState.m587e(245)) {
             this.f110o = NetworkUtils.m1213g();
             m219s();
@@ -139,7 +139,7 @@ public final class C0013am {
         return this;
     }
 
-    private C0013am(int i, int i2, int i3, int i4) {
+    private Screen(int i, int i2, int i3, int i4) {
         this.f108m = NetworkUtils.m1213g();
         this.f109n = new int[16];
         this.f102h = i;
@@ -150,13 +150,13 @@ public final class C0013am {
         m219s();
     }
 
-    public C0013am(int i, int i2, int i3, int i4, boolean z) {
+    public Screen(int i, int i2, int i3, int i4, boolean z) {
         this(i, i2, i3, i4);
         this.f103i = z;
     }
 
     /* renamed from: s */
-    private final C0013am m219s() {
+    private final Screen m219s() {
         int i = this.f95b - 4;
         int i2 = this.f96c - 4;
         this.f111E = this.f95b - 2;
@@ -197,7 +197,7 @@ public final class C0013am {
     }
 
     /* renamed from: d */
-    public final C0032c m222d() {
+    public final MenuItem m222d() {
         if (!this.f103i || this.f108m.size() <= 0) {
             return null;
         }
@@ -205,7 +205,7 @@ public final class C0013am {
     }
 
     /* renamed from: e */
-    public final C0032c m223e() {
+    public final MenuItem m223e() {
         int iM261v;
         if (this.f97d != 9 || (iM261v = m261v()) >= this.f108m.size()) {
             return null;
@@ -214,14 +214,14 @@ public final class C0013am {
     }
 
     /* renamed from: a */
-    public final C0013am m224a(int i, String str) {
-        this.f101C = C0032c.m889d().m901a(AppState.m584b(1037), 1, 0).m900a(i, str, 1, 0);
+    public final Screen m224a(int i, String str) {
+        this.f101C = MenuItem.m889d().m901a(AppState.m584b(1037), 1, 0).m900a(i, str, 1, 0);
         m219s();
         return this;
     }
 
     /* renamed from: a */
-    public final C0013am m225a(C0032c c0032c) {
+    public final Screen m225a(MenuItem c0032c) {
         if (this.f102h == 0) {
             c0032c.m909b(this.f114q);
             this.f108m.addElement(c0032c);
@@ -256,7 +256,7 @@ public final class C0013am {
     }
 
     /* renamed from: f */
-    public final C0013am m226f() {
+    public final Screen m226f() {
         if (this.f115r - this.f107l > 5 && this.f102h == 0) {
             this.f96c = this.f112F + this.f107l + 4;
             m219s();
@@ -265,7 +265,7 @@ public final class C0013am {
         Enumeration enumerationElements = this.f108m.elements();
         while (enumerationElements.hasMoreElements()) {
             int i2 = i;
-            int iM910f = ((C0032c) enumerationElements.nextElement()).m910f();
+            int iM910f = ((MenuItem) enumerationElements.nextElement()).m910f();
             if (i2 < iM910f) {
                 i = iM910f;
             }
@@ -285,7 +285,7 @@ public final class C0013am {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void m227a(C0012al c0012al, boolean z, boolean z2) {
+    public final void m227a(GraphicsContext c0012al, boolean z, boolean z2) {
         int iM417c;
         boolean z3 = false;
         if (this.f102h != 2) {
@@ -327,7 +327,7 @@ public final class C0013am {
                 if (iM241d - i12 > this.f115r) {
                     break;
                 }
-                C0032c c0032cM239b = m239b(i13);
+                MenuItem c0032cM239b = m239b(i13);
                 int iM912h = c0032cM239b.m912h();
                 if (iM241d + iM912h >= i12) {
                     int iM240c = m240c(i13);
@@ -413,7 +413,7 @@ public final class C0013am {
                 Vector vector = this.f110o;
                 int i28 = 3;
                 boolean z5 = false;
-                int iM73f = ((iM605e - iM502a) - 1) + AbstractC0004ad.m73f();
+                int iM73f = ((iM605e - iM502a) - 1) + ScreenManager.m73f();
                 for (int i29 = 0; i29 < vector.size(); i29++) {
                     Object objElementAt = vector.elementAt(i29);
                     if (!(objElementAt instanceof Integer)) {
@@ -448,7 +448,7 @@ public final class C0013am {
         }
         if (this.f97d == 1 || this.f97d == 12) {
             c0012al.m212a(AppState.m608k(1));
-            C0008ah c0008ah = (C0008ah) AppState.m614m(1246).elementAt(C0008ah.f45b);
+            TabBar c0008ah = (TabBar) AppState.m614m(1246).elementAt(TabBar.f45b);
             Vector vectorM614m = AppState.m614m(1245);
             int size2 = vectorM614m.size();
             while (true) {
@@ -457,10 +457,10 @@ public final class C0013am {
                     break;
                 }
                 Object objElementAt2 = vectorM614m.elementAt(size2);
-                if (objElementAt2 instanceof C0008ah) {
-                    C0008ah c0008ah2 = (C0008ah) objElementAt2;
-                    boolean z6 = objElementAt2 == c0008ah && !C0008ah.f44a;
-                    C0012al c0012alM207b = c0012al.m207b(16);
+                if (objElementAt2 instanceof TabBar) {
+                    TabBar c0008ah2 = (TabBar) objElementAt2;
+                    boolean z6 = objElementAt2 == c0008ah && !TabBar.f44a;
+                    GraphicsContext c0012alM207b = c0012al.m207b(16);
                     int i30 = c0008ah2.f49f;
                     int i31 = c0008ah2.f48e;
                     int iM623o = AppState.m623o(1) + 7;
@@ -477,11 +477,11 @@ public final class C0013am {
                     } else {
                         iM417c = C0015ao.m417c(c0008ah2.f51h);
                     }
-                    c0012al.m216a(iM417c, c0008ah2.f49f + 4, 4 + AbstractC0004ad.m73f()).m207b(0).m208a(c0008ah2.f49f, 2, c0008ah2.f48e - 3, iM623o - 2).m213a(c0008ah2.f46c, c0008ah2.f49f + 6 + 16, 4, 20);
+                    c0012al.m216a(iM417c, c0008ah2.f49f + 4, 4 + ScreenManager.m73f()).m207b(0).m208a(c0008ah2.f49f, 2, c0008ah2.f48e - 3, iM623o - 2).m213a(c0008ah2.f46c, c0008ah2.f49f + 6 + 16, 4, 20);
                 } else {
                     int[] iArr = (int[]) objElementAt2;
                     int i35 = iArr[0];
-                    int iM73f2 = 4 + AbstractC0004ad.m73f();
+                    int iM73f2 = 4 + ScreenManager.m73f();
                     c0012al.m208a(i35, iM73f2, 16, 16);
                     c0012al.m216a(iArr[1], i35, iM73f2);
                 }
@@ -553,7 +553,7 @@ public final class C0013am {
             c0012al.m207b(13);
             int i40 = i39 - iM586d9;
             c0012al.m210c(1, i40, ((AppState.m586d(1528) - 2) * abstractC0037h.f323s) / 100, iM502a3);
-            c0012al.m216a(abstractC0037h.mo108h(), 3, i40 + AbstractC0004ad.m73f());
+            c0012al.m216a(abstractC0037h.mo108h(), 3, i40 + ScreenManager.m73f());
             c0012al.m207b(0);
             c0012al.m213a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(abstractC0037h.f315k).append(' ').append(abstractC0037h.f323s).append('%')), 21, i39, 36);
             iM605e3 -= iM502a2;
@@ -584,7 +584,7 @@ public final class C0013am {
 
     /* renamed from: i */
     public final void m230i() {
-        C0032c c0032cM222d = m222d();
+        MenuItem c0032cM222d = m222d();
         if (null != c0032cM222d && c0032cM222d.f266e) {
             C0029bb.m775i();
             return;
@@ -649,7 +649,7 @@ public final class C0013am {
         m238t();
         this.f105j += this.f115r - 20;
         if (this.f103i) {
-            C0032c c0032cM239b = m239b(size - 1);
+            MenuItem c0032cM239b = m239b(size - 1);
             int iM241d = m241d(size - 1);
             int iM912h = c0032cM239b.m912h();
             if (this.f105j > (iM241d + iM912h) - this.f115r) {
@@ -736,10 +736,10 @@ public final class C0013am {
             }
             int iM261v = m261v();
             if (iM261v < this.f108m.size()) {
-                ((C0032c) this.f108m.elementAt(iM261v)).f267f = false;
+                ((MenuItem) this.f108m.elementAt(iM261v)).f267f = false;
                 int iM262g = m262g(iM261v);
                 if (iM262g < this.f108m.size()) {
-                    ((C0032c) this.f108m.elementAt(iM262g)).f267f = true;
+                    ((MenuItem) this.f108m.elementAt(iM262g)).f267f = true;
                     this.f128L = iM262g;
                 } else {
                     this.f105j -= 20;
@@ -749,14 +749,14 @@ public final class C0013am {
                 }
             } else if (this.f128L < this.f108m.size()) {
                 int iM262g2 = m262g(this.f128L);
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((C0032c) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M != 1) {
+                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M != 1) {
                     iM262g2 = this.f128L;
                 }
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((C0032c) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M == 1 && m241d(this.f128L) - this.f105j <= 20) {
+                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M == 1 && m241d(this.f128L) - this.f105j <= 20) {
                     iM262g2 = this.f128L;
                 }
                 if (iM262g2 < this.f108m.size()) {
-                    ((C0032c) this.f108m.elementAt(iM262g2)).f267f = true;
+                    ((MenuItem) this.f108m.elementAt(iM262g2)).f267f = true;
                     this.f128L = iM262g2;
                 } else {
                     this.f105j -= 20;
@@ -767,7 +767,7 @@ public final class C0013am {
             } else {
                 int iM264w = m264w();
                 if (iM264w < this.f108m.size()) {
-                    ((C0032c) this.f108m.elementAt(iM264w)).f267f = true;
+                    ((MenuItem) this.f108m.elementAt(iM264w)).f267f = true;
                     this.f128L = iM264w;
                 } else {
                     this.f105j -= 20;
@@ -834,7 +834,7 @@ public final class C0013am {
             if (this.f107l < this.f115r) {
                 this.f105j = 0;
                 return;
-            } else if (((C0032c) this.f108m.lastElement()).m912h() < this.f115r) {
+            } else if (((MenuItem) this.f108m.lastElement()).m912h() < this.f115r) {
                 this.f105j = this.f107l - this.f115r;
                 return;
             } else {
@@ -890,7 +890,7 @@ public final class C0013am {
     }
 
     /* renamed from: o */
-    public final C0013am m236o() {
+    public final Screen m236o() {
         this.f105j = Utils.m502a(0, this.f107l - this.f115r);
         int size = this.f108m.size();
         if (size > 1) {
@@ -899,7 +899,7 @@ public final class C0013am {
         if (this.f97d == 9) {
             int iM264w = m264w();
             if (iM264w < this.f108m.size()) {
-                ((C0032c) this.f108m.elementAt(iM264w)).f267f = true;
+                ((MenuItem) this.f108m.elementAt(iM264w)).f267f = true;
                 this.f128L = iM264w;
             } else {
                 this.f128L = 1000000;
@@ -929,24 +929,24 @@ public final class C0013am {
             }
             int iM261v = m261v();
             if (iM261v < this.f108m.size()) {
-                ((C0032c) this.f108m.elementAt(iM261v)).f267f = false;
+                ((MenuItem) this.f108m.elementAt(iM261v)).f267f = false;
                 int iM263h = m263h(iM261v);
                 if (iM263h < this.f108m.size()) {
-                    ((C0032c) this.f108m.elementAt(iM263h)).f267f = true;
+                    ((MenuItem) this.f108m.elementAt(iM263h)).f267f = true;
                     this.f128L = iM263h;
                 } else if (this.f105j + this.f115r < this.f107l) {
                     this.f105j += 20;
                 }
             } else if (this.f128L < this.f108m.size()) {
                 int iM263h2 = m263h(this.f128L);
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((C0032c) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M != 2) {
+                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M != 2) {
                     iM263h2 = this.f128L;
                 }
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((C0032c) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M == 2 && this.f115r - ((m241d(this.f128L) + ((C0032c) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j) <= 20) {
+                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j <= this.f115r && this.f129M == 2 && this.f115r - ((m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).m912h()) - this.f105j) <= 20) {
                     iM263h2 = this.f128L;
                 }
                 if (iM263h2 < this.f108m.size()) {
-                    ((C0032c) this.f108m.elementAt(iM263h2)).f267f = true;
+                    ((MenuItem) this.f108m.elementAt(iM263h2)).f267f = true;
                     this.f128L = iM263h2;
                 } else if (this.f105j + this.f115r < this.f107l) {
                     this.f105j += 20;
@@ -954,7 +954,7 @@ public final class C0013am {
             } else {
                 int iM264w = m264w();
                 if (iM264w < this.f108m.size()) {
-                    ((C0032c) this.f108m.elementAt(iM264w)).f267f = true;
+                    ((MenuItem) this.f108m.elementAt(iM264w)).f267f = true;
                     this.f128L = iM264w;
                 } else if (this.f105j + this.f115r < this.f107l) {
                     this.f105j += 20;
@@ -1016,7 +1016,7 @@ public final class C0013am {
             }
             return;
         }
-        C0032c c0032c = null;
+        MenuItem c0032c = null;
         int i5 = this.f106k;
         while (true) {
             i5++;
@@ -1026,7 +1026,7 @@ public final class C0013am {
             if (i5 == size) {
                 return;
             }
-            C0032c c0032cM239b = m239b(i5);
+            MenuItem c0032cM239b = m239b(i5);
             c0032c = c0032cM239b;
             if (c0032cM239b.m885b()) {
                 this.f106k = i5;
@@ -1075,9 +1075,9 @@ public final class C0013am {
     }
 
     /* renamed from: b */
-    private final C0032c m239b(int i) {
+    private final MenuItem m239b(int i) {
         if (i >= 0) {
-            return (C0032c) this.f108m.elementAt(i);
+            return (MenuItem) this.f108m.elementAt(i);
         }
         return null;
     }
@@ -1132,68 +1132,68 @@ public final class C0013am {
     }
 
     /* renamed from: a */
-    public final C0013am m245a(String str, String str2, int i) {
+    public final Screen m245a(String str, String str2, int i) {
         return m256a(-1, str, str2, i, (Object) null);
     }
 
     /* renamed from: a */
-    public final C0013am m246a(int i, String str, int i2) {
+    public final Screen m246a(int i, String str, int i2) {
         return m256a(i, (String) null, str, i2, (Object) null);
     }
 
     /* renamed from: a */
-    public final C0013am m247a(int i, String str, int i2, Object obj) {
+    public final Screen m247a(int i, String str, int i2, Object obj) {
         return m256a(i, (String) null, str, i2, obj);
     }
 
     /* renamed from: a */
-    public final C0013am m248a(String str, String str2) {
+    public final Screen m248a(String str, String str2) {
         return m245a(str, str2, 200);
     }
 
     /* renamed from: a */
-    public final C0013am m249a(int i, int i2, int i3) {
+    public final Screen m249a(int i, int i2, int i3) {
         return m246a(i, AppState.m584b(i2), i3);
     }
 
     /* renamed from: b */
-    public final C0013am m250b(int i, String str, int i2, Object obj) {
-        C0032c c0032cM901a = new C0032c(13, AppState.f181d).m896a(i).m901a(str, 5, i2);
+    public final Screen m250b(int i, String str, int i2, Object obj) {
+        MenuItem c0032cM901a = new MenuItem(13, AppState.f181d).m896a(i).m901a(str, 5, i2);
         c0032cM901a.f265d = obj;
         return m225a(c0032cM901a);
     }
 
     /* renamed from: a */
-    public final C0013am m251a(String str, int i) {
-        return m225a(C0032c.m889d().m901a(str, 1, i));
+    public final Screen m251a(String str, int i) {
+        return m225a(MenuItem.m889d().m901a(str, 1, i));
     }
 
     /* renamed from: b */
-    public final C0013am m252b(int i, int i2, int i3) {
+    public final Screen m252b(int i, int i2, int i3) {
         String strM584b = AppState.m584b(i2);
-        C0032c c0032cM896a = C0032c.m888a(strM584b, i3).m896a(i).m898b(strM584b).m896a(244);
+        MenuItem c0032cM896a = MenuItem.m888a(strM584b, i3).m896a(i).m898b(strM584b).m896a(244);
         c0032cM896a.f266e = true;
         return m225a(c0032cM896a);
     }
 
     /* renamed from: a */
-    public final C0013am m253a(String str) {
+    public final Screen m253a(String str) {
         return m246a(-1, str, 200);
     }
 
     /* renamed from: b */
-    public final C0013am m254b(int i, String str, int i2) {
-        return m225a(C0032c.m888a(str, i2).m896a(i));
+    public final Screen m254b(int i, String str, int i2) {
+        return m225a(MenuItem.m888a(str, i2).m896a(i));
     }
 
     /* renamed from: a */
-    public final C0013am m255a(int i) {
-        return m225a(C0032c.m889d().m898b(AppState.m584b(i)));
+    public final Screen m255a(int i) {
+        return m225a(MenuItem.m889d().m898b(AppState.m584b(i)));
     }
 
     /* renamed from: a */
-    public final C0013am m256a(int i, String str, String str2, int i2, Object obj) {
-        C0032c c0032cM888a = C0032c.m888a(str2, i2);
+    public final Screen m256a(int i, String str, String str2, int i2, Object obj) {
+        MenuItem c0032cM888a = MenuItem.m888a(str2, i2);
         if (i >= 0) {
             c0032cM888a.m896a(i);
         }
@@ -1209,7 +1209,7 @@ public final class C0013am {
     }
 
     /* renamed from: b */
-    public final C0013am m257b(String str) {
+    public final Screen m257b(String str) {
         if (str != null) {
             int i = 0;
             Enumeration enumerationElements = this.f108m.elements();
@@ -1217,7 +1217,7 @@ public final class C0013am {
                 if (!enumerationElements.hasMoreElements()) {
                     break;
                 }
-                if (str.equals(((C0032c) enumerationElements.nextElement()).f259b)) {
+                if (str.equals(((MenuItem) enumerationElements.nextElement()).f259b)) {
                     this.f106k = i;
                     break;
                 }
@@ -1249,13 +1249,13 @@ public final class C0013am {
                 NetworkUtils.m1212a(vectorM1213g);
                 return;
             }
-            m225a((C0032c) vectorM1213g.elementAt(size2));
+            m225a((MenuItem) vectorM1213g.elementAt(size2));
         }
     }
 
     /* renamed from: a */
-    public final C0013am m259a(String str, String str2, int i, int i2, int i3) {
-        C0012al c0012alM608k = AppState.m608k(0);
+    public final Screen m259a(String str, String str2, int i, int i2, int i3) {
+        GraphicsContext c0012alM608k = AppState.m608k(0);
         this.f123v = str;
         int iM214a = c0012alM608k.m214a(str);
         this.f124w = str2;
@@ -1284,7 +1284,7 @@ public final class C0013am {
         int i8 = i4 - this.f99f;
         if (this.f94a == 6) {
             ConnectionThread.m1161a(this);
-            AbstractC0025ay.m664a(i5, i6 - this.f113p);
+            MapRenderer.m664a(i5, i6 - this.f113p);
             return true;
         }
         if (this.f103i) {
@@ -1298,7 +1298,7 @@ public final class C0013am {
                     z2 = false;
                     break;
                 }
-                C0032c c0032cM239b = m239b(i12);
+                MenuItem c0032cM239b = m239b(i12);
                 if (c0032cM239b.m885b() && i9 > (iM240c2 = m240c(i12)) && i10 > (iM241d2 = m241d(i12))) {
                     if (i9 < iM240c2 + (this.f102h == 0 ? i11 : c0032cM239b.m911g()) && i10 < iM241d2 + c0032cM239b.m912h()) {
                         if (this.f106k != i12 || z) {
@@ -1330,13 +1330,13 @@ public final class C0013am {
         int i15 = this.f104D ? this.f114q : this.f114q + 2;
         int iM261v = m261v();
         if (iM261v < this.f108m.size()) {
-            ((C0032c) this.f108m.elementAt(iM261v)).f267f = false;
+            ((MenuItem) this.f108m.elementAt(iM261v)).f267f = false;
         }
         int size2 = this.f108m.size();
         while (true) {
             size2--;
             if (size2 >= 0) {
-                C0032c c0032cM239b2 = m239b(size2);
+                MenuItem c0032cM239b2 = m239b(size2);
                 if (c0032cM239b2.f258a == 13 && i13 > (iM240c = m240c(size2)) && i14 > (iM241d = m241d(size2)) && i13 < iM240c + i15 && i14 < iM241d + c0032cM239b2.m912h()) {
                     c0032cM239b2.f267f = true;
                     break;
@@ -1353,7 +1353,7 @@ public final class C0013am {
     private int m261v() {
         int size = this.f108m.size() + 1;
         for (int i = 0; i < this.f108m.size(); i++) {
-            C0032c c0032c = (C0032c) this.f108m.elementAt(i);
+            MenuItem c0032c = (MenuItem) this.f108m.elementAt(i);
             if (c0032c.f258a == 13 && c0032c.f267f && m241d(i) > this.f105j && (m241d(i) + c0032c.m912h()) - this.f105j <= this.f115r) {
                 size = i;
             }
@@ -1365,7 +1365,7 @@ public final class C0013am {
     private int m262g(int i) {
         int size = this.f108m.size() + 1;
         for (int i2 = 0; i2 < this.f108m.size(); i2++) {
-            C0032c c0032c = (C0032c) this.f108m.elementAt(i2);
+            MenuItem c0032c = (MenuItem) this.f108m.elementAt(i2);
             if (c0032c.f258a == 13 && !c0032c.f267f && m241d(i2) > this.f105j && (m241d(i2) + c0032c.m912h()) - this.f105j <= this.f115r && m241d(i2) < m241d(i)) {
                 size = i2;
             }
@@ -1379,7 +1379,7 @@ public final class C0013am {
         int i2 = 0;
         while (true) {
             if (i2 < this.f108m.size()) {
-                C0032c c0032c = (C0032c) this.f108m.elementAt(i2);
+                MenuItem c0032c = (MenuItem) this.f108m.elementAt(i2);
                 if (c0032c.f258a == 13 && !c0032c.f267f && m241d(i2) > this.f105j && (m241d(i2) + c0032c.m912h()) - this.f105j <= this.f115r && m241d(i2) > m241d(i)) {
                     size = i2;
                     break;
@@ -1396,7 +1396,7 @@ public final class C0013am {
     private int m264w() {
         int size = this.f108m.size() + 1;
         for (int i = 0; i < this.f108m.size(); i++) {
-            C0032c c0032c = (C0032c) this.f108m.elementAt(i);
+            MenuItem c0032c = (MenuItem) this.f108m.elementAt(i);
             if (c0032c.f258a == 13 && !c0032c.f267f && m241d(i) > this.f105j && (m241d(i) + c0032c.m912h()) - this.f105j <= this.f115r) {
                 size = i;
             }
@@ -1414,7 +1414,7 @@ public final class C0013am {
     }
 
     /* renamed from: a */
-    public final C0013am m266a(int i, int i2) {
+    public final Screen m266a(int i, int i2) {
         this.f98e = i;
         this.f99f = i2;
         return this;

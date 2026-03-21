@@ -256,15 +256,15 @@ public abstract class Account {
     }
 
     /* renamed from: D */
-    public final C0032c m1057D() {
-        C0032c c0032cM898b = C0032c.m887a(m1051A()).m896a(mo108h()).m898b(this.f315k);
+    public final MenuItem m1057D() {
+        MenuItem c0032cM898b = MenuItem.m887a(m1051A()).m896a(mo108h()).m898b(this.f315k);
         c0032cM898b.f265d = this;
         return c0032cM898b;
     }
 
     /* renamed from: E */
-    public final C0032c m1058E() {
-        C0032c c0032cM896a = C0032c.m887a(m1051A()).m896a(mo108h()).m898b(this.f315k).m896a(244);
+    public final MenuItem m1058E() {
+        MenuItem c0032cM896a = MenuItem.m887a(m1051A()).m896a(mo108h()).m898b(this.f315k).m896a(244);
         c0032cM896a.f266e = true;
         c0032cM896a.f265d = this;
         return c0032cM896a;

@@ -363,7 +363,7 @@ public final class NetworkUtils {
         AppState.m594c(1481, ((Integer) objArr[19]).intValue());
         AppState.f177b[1297] = objArr[20];
         AppState.m594c(1480, ((Integer) objArr[21]).intValue());
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(4399));
+        ScreenManager.m71b(ScreenManager.m75b(4399));
         String strM584b = AppState.m584b(1297);
         if (strM584b == null) {
             C0015ao.m334q();
@@ -552,8 +552,8 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    public static final C0013am m1193a(C0013am c0013am, Vector vector) {
-        C0032c c0032cM1057D;
+    public static final Screen m1193a(Screen c0013am, Vector vector) {
+        MenuItem c0032cM1057D;
         int iM541c = Utils.m541c(vector);
         for (int i = 0; i < iM541c; i++) {
             Object objElementAt = vector.elementAt(i);
@@ -564,13 +564,13 @@ public final class NetworkUtils {
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
                 if (c0042m.m1255c() instanceof MrimAccount) {
-                    C0032c c0032cM898b = C0032c.m886c().m896a(C0015ao.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
+                    MenuItem c0032cM898b = MenuItem.m886c().m896a(C0015ao.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
                     c0032cM898b.f265d = c0042m;
                     c0032cM1057D = c0032cM898b;
                 } else {
-                    C0032c c0032cM886c = C0032c.m886c();
+                    MenuItem c0032cM886c = MenuItem.m886c();
                     int iM510a = Utils.m510a((Object) c0042m.m1256a(61));
-                    C0032c c0032cM898b2 = c0032cM886c.m896a(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).m898b(Utils.m527g(c0042m.m1256a(60))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(StringUtils.m9b(Utils.m527g(c0042m.m1288g()), c0042m.m1289h()));
+                    MenuItem c0032cM898b2 = c0032cM886c.m896a(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).m898b(Utils.m527g(c0042m.m1256a(60))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(StringUtils.m9b(Utils.m527g(c0042m.m1288g()), c0042m.m1289h()));
                     c0032cM898b2.f265d = c0042m;
                     c0032cM1057D = c0032cM898b2;
                 }
@@ -648,13 +648,13 @@ public final class NetworkUtils {
 
     /* renamed from: d */
     public static final int m1195d() {
-        C0013am c0013amM66b = AbstractC0004ad.m66b();
+        Screen c0013amM66b = ScreenManager.m66b();
         int i = c0013amM66b.f100g + 9;
         Vector vector = c0013amM66b.f108m;
         int iM1194a = i + 1;
         int iM586d = AppState.m586d(i);
         for (int i2 = 0; i2 < iM586d; i2++) {
-            iM1194a = m1194a(iM1194a, ((C0032c) vector.elementAt(i2)).f265d);
+            iM1194a = m1194a(iM1194a, ((MenuItem) vector.elementAt(i2)).f265d);
         }
         return 0;
     }
@@ -675,7 +675,7 @@ public final class NetworkUtils {
     public static final void m1197a(int i, StringBuffer stringBuffer) {
         AppState.m594c(4486, i);
         AppState.m588a(1344, stringBuffer);
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(4485));
+        ScreenManager.m71b(ScreenManager.m75b(4485));
         AppState.m591f(1344);
     }
 
@@ -683,7 +683,7 @@ public final class NetworkUtils {
     public static final void m1198a(int i, int i2) {
         AppState.m594c(4486, i);
         AppState.m589a(1344, i2);
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(4485));
+        ScreenManager.m71b(ScreenManager.m75b(4485));
         AppState.m591f(1344);
     }
 
@@ -700,7 +700,7 @@ public final class NetworkUtils {
     public static final void m1200b(int i, int i2) {
         AppState.m594c(4498, i);
         AppState.m594c(4497, i2);
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(4497));
+        ScreenManager.m71b(ScreenManager.m75b(4497));
     }
 
     /* renamed from: f */

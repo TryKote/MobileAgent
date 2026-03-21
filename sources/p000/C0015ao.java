@@ -89,7 +89,7 @@ public final class C0015ao {
 
     /* renamed from: a */
     public static final int m288a(int i) {
-        C0021au.m549c();
+        ScreenBuilder.m549c();
         AppState.m594c(4895, i);
         return AppState.m586d(3650);
     }
@@ -166,7 +166,7 @@ public final class C0015ao {
         if (obj != null) {
             AppState.f177b[267] = obj;
         }
-        C0021au.m549c();
+        ScreenBuilder.m549c();
         return 0;
     }
 
@@ -194,20 +194,20 @@ public final class C0015ao {
         abstractC0041lM611g.f374s = (byte) 0;
         abstractC0041lM611g.f375t = true;
         abstractC0041lM611g.m1228A();
-        AbstractC0004ad.m71b(abstractC0041lM611g.m1242I().m236o());
+        ScreenManager.m71b(abstractC0041lM611g.m1242I().m236o());
     }
 
     /* renamed from: b */
     public static final int m301b(int i) {
         if (i == 4) {
-            AbstractC0004ad.m74g();
+            ScreenManager.m74g();
             return 0;
         }
         if (i != 137) {
             return 0;
         }
-        C0021au.m549c();
-        C0021au.m549c();
+        ScreenBuilder.m549c();
+        ScreenBuilder.m549c();
         return 0;
     }
 
@@ -260,11 +260,11 @@ public final class C0015ao {
 
     /* renamed from: i */
     public static final int m308i() {
-        if (AbstractC0004ad.m72a(43)) {
+        if (ScreenManager.m72a(43)) {
             return 43;
         }
-        C0021au.m549c();
-        C0021au.m549c();
+        ScreenBuilder.m549c();
+        ScreenBuilder.m549c();
         return -1;
     }
 
@@ -341,7 +341,7 @@ public final class C0015ao {
     /* renamed from: b */
     public static final int m320b(String str) {
         if (AppState.m584b(1251).equals(str)) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
             if (ConnectionThread.m1168k()) {
                 return 0;
             }
@@ -350,7 +350,7 @@ public final class C0015ao {
         if (AppState.m584b(376).equals(str)) {
             AppState.m594c(253, 1);
             C0036g.m1049b(AppState.m614m(1401));
-            AbstractC0025ay.f200h = true;
+            MapRenderer.f200h = true;
             return 6;
         }
         if (!AppState.m584b(377).equals(str)) {
@@ -358,7 +358,7 @@ public final class C0015ao {
         }
         AppState.m594c(253, 0);
         C0036g.m1048a(AppState.m614m(1401));
-        AbstractC0025ay.f200h = true;
+        MapRenderer.f200h = true;
         return 6;
     }
 
@@ -499,7 +499,7 @@ public final class C0015ao {
                 MmpContact.m185f();
                 StringUtils.m19b();
                 ConnectionThread.m1146e();
-                AbstractC0025ay.f200h = true;
+                MapRenderer.f200h = true;
                 return;
             }
             C0036g.m1021a(i + 18);
@@ -606,21 +606,21 @@ public final class C0015ao {
         if (AppState.m587e(286)) {
             return AppState.m586d(1476);
         }
-        C0021au.m549c();
+        ScreenBuilder.m549c();
         return 171;
     }
 
     /* renamed from: d */
     public static final int m337d(Object obj) {
         AppState.m617d(obj);
-        C0021au.m549c();
+        ScreenBuilder.m549c();
         return 0;
     }
 
     /* renamed from: l */
     public static final int m338l(int i) {
-        if (AbstractC0004ad.m66b().f97d == 8) {
-            C0021au.m549c();
+        if (ScreenManager.m66b().f97d == 8) {
+            ScreenBuilder.m549c();
         }
         AppState.m589a(1294, i);
         return 112;
@@ -643,7 +643,7 @@ public final class C0015ao {
     /* renamed from: r */
     public static final void m341r() {
         C0034e.m925a(5);
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(3328));
+        ScreenManager.m71b(ScreenManager.m75b(3328));
         AppState.m591f(1294);
     }
 
@@ -725,18 +725,18 @@ public final class C0015ao {
 
     /* renamed from: w */
     public static final void m350w() {
-        C0013am c0013amM75b = AbstractC0004ad.m75b(4852);
+        Screen c0013amM75b = ScreenManager.m75b(4852);
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
         Enumeration enumerationElements = c0028ba.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
-                C0032c c0032cM898b = C0032c.m886c().m896a(234).m898b(c0052w.f410b);
+                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(c0052w.f410b);
                 c0032cM898b.f265d = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
         }
-        AbstractC0004ad.m71b(c0013amM75b);
+        ScreenManager.m71b(c0013amM75b);
     }
 
     /* renamed from: e */
@@ -748,12 +748,12 @@ public final class C0015ao {
     /* renamed from: o */
     public static final int m352o(int i) {
         if (i == 54) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
             C0034e.m966a((Vector) null, (String) null, (String) null);
             return 0;
         }
         if (i == 68) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
             m290a(true);
             return 0;
         }
@@ -910,7 +910,7 @@ public final class C0015ao {
             default:
                 return 0;
         }
-        AbstractC0025ay.f200h = true;
+        MapRenderer.f200h = true;
         return 6;
     }
 
@@ -1056,23 +1056,23 @@ public final class C0015ao {
     /* renamed from: u */
     public static final int m381u(int i) {
         if (i != 54) {
-            C0021au.m549c();
-            C0021au.m549c();
+            ScreenBuilder.m549c();
+            ScreenBuilder.m549c();
             m300h();
             return 0;
         }
         MrimContact c0035fM612h = AppState.m612h();
         AppState.m617d(c0035fM612h.f369o);
         C0034e.m966a(XmppMailRuProtocol.m871i(c0035fM612h.f297d), (String) null, (String) null);
-        C0021au.m549c();
-        C0021au.m549c();
+        ScreenBuilder.m549c();
+        ScreenBuilder.m549c();
         return 0;
     }
 
     /* renamed from: g */
     public static final int m382g(Object obj) {
         if (AppState.m587e(1443)) {
-            AbstractC0025ay.m653a((C0014an) obj);
+            MapRenderer.m653a((C0014an) obj);
             return 0;
         }
         if (!AppState.m587e(1477)) {
@@ -1153,7 +1153,7 @@ public final class C0015ao {
             return m338l(354);
         }
         if (i == 6) {
-            AbstractC0025ay.m654b(f156j);
+            MapRenderer.m654b(f156j);
             return 0;
         }
         if (i == 118) {
@@ -1202,7 +1202,7 @@ public final class C0015ao {
     public static final void m390G() {
         AppState.m594c(217, 0);
         AppState.m594c(1511, 1);
-        AbstractC0004ad.m70a(AbstractC0004ad.m75b(4038));
+        ScreenManager.m70a(ScreenManager.m75b(4038));
     }
 
     /* renamed from: H */
@@ -1265,10 +1265,10 @@ public final class C0015ao {
 
     /* renamed from: i */
     public static final int m398i(Object obj) {
-        AbstractC0025ay.m646a();
+        MapRenderer.m646a();
         GeoRegion c0053x = (GeoRegion) obj;
-        AbstractC0025ay.m649a(c0053x.f426f, c0053x.f427g);
-        AbstractC0025ay.m651a(c0053x == StringUtils.m40i() ? 3 : 11);
+        MapRenderer.m649a(c0053x.f426f, c0053x.f427g);
+        MapRenderer.m651a(c0053x == StringUtils.m40i() ? 3 : 11);
         return 0;
     }
 
@@ -1276,13 +1276,13 @@ public final class C0015ao {
     public static final int m399K() {
         long jMo274v;
         long jMo275w;
-        ListItem interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o != null) {
             jMo274v = interfaceC0044o.mo274v();
             jMo275w = interfaceC0044o.mo275w();
         } else {
-            jMo274v = AbstractC0025ay.f196d;
-            jMo275w = AbstractC0025ay.f195c;
+            jMo274v = MapRenderer.f196d;
+            jMo275w = MapRenderer.f195c;
         }
         AppState.m594c(1479, 0);
         C0034e.m953a(VCard.m62a(AppState.m586d(39), C0029bb.m809a(jMo274v), C0029bb.m810b(jMo275w)), jMo274v, jMo275w);
@@ -1297,7 +1297,7 @@ public final class C0015ao {
             c = 300;
         } else {
             AppState.m614m(1241).removeElement(abstractC0037hM616i);
-            C0008ah.m163a();
+            TabBar.m163a();
             m435ah();
             c = 0;
         }
@@ -1330,18 +1330,18 @@ public final class C0015ao {
 
     /* renamed from: M */
     public static final void m402M() {
-        C0013am c0013amM75b = AbstractC0004ad.m75b(4517);
+        Screen c0013amM75b = ScreenManager.m75b(4517);
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
         Enumeration enumerationElements = c0028ba.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
-                C0032c c0032cM898b = C0032c.m886c().m896a(234).m898b(NetworkUtils.m1215a(NetworkUtils.m1217h().append(c0052w.f410b).append(' ').append('['))).m901a(StringUtils.m17c(Integer.toString(c0052w.f412d)), 1, 0).m898b(NetworkUtils.m1215a(NetworkUtils.m1217h().append('/').append(c0052w.f411c).append(']')));
+                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(NetworkUtils.m1215a(NetworkUtils.m1217h().append(c0052w.f410b).append(' ').append('['))).m901a(StringUtils.m17c(Integer.toString(c0052w.f412d)), 1, 0).m898b(NetworkUtils.m1215a(NetworkUtils.m1217h().append('/').append(c0052w.f411c).append(']')));
                 c0032cM898b.f265d = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
         }
-        AbstractC0004ad.m71b(c0013amM75b);
+        ScreenManager.m71b(c0013amM75b);
     }
 
     /* renamed from: a */
@@ -1357,10 +1357,10 @@ public final class C0015ao {
         long jMo275w;
         Contact abstractC0041l = (Contact) obj;
         String strM584b = AppState.m584b(1249);
-        ListItem interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
-            jMo274v = AbstractC0025ay.f196d;
-            jMo275w = AbstractC0025ay.f195c;
+            jMo274v = MapRenderer.f196d;
+            jMo275w = MapRenderer.f195c;
         } else {
             jMo274v = interfaceC0044o.mo274v();
             jMo275w = interfaceC0044o.mo275w();
@@ -1383,15 +1383,15 @@ public final class C0015ao {
         if (!AppState.m584b(402).equals(str)) {
             return 0;
         }
-        if (AbstractC0025ay.f202j != null) {
-            AbstractC0025ay.f202j.m269c();
+        if (MapRenderer.f202j != null) {
+            MapRenderer.f202j.m269c();
         }
         C0036g.m1048a(AppState.m614m(1401));
         AppState.m594c(253, 0);
         MmpContact.m185f();
-        AbstractC0025ay.f200h = true;
+        MapRenderer.f200h = true;
         C0036g.f312c = System.currentTimeMillis();
-        AbstractC0025ay.f200h = true;
+        MapRenderer.f200h = true;
         return 0;
     }
 
@@ -1456,13 +1456,13 @@ public final class C0015ao {
     /* renamed from: b */
     public static final void m411b(MrimAccount c0028ba) {
         AppState.m614m(1244).removeElement(c0028ba);
-        C0008ah.m178j();
+        TabBar.m178j();
     }
 
     /* renamed from: O */
     public static final void m412O() {
         AppState.m614m(1244).removeAllElements();
-        C0008ah.m178j();
+        TabBar.m178j();
     }
 
     /* renamed from: P */
@@ -1487,7 +1487,7 @@ public final class C0015ao {
             return;
         }
         vectorM614m.addElement(abstractC0041l);
-        C0008ah.m178j();
+        TabBar.m178j();
     }
 
     /* renamed from: b */
@@ -1495,7 +1495,7 @@ public final class C0015ao {
         Vector vectorM614m = AppState.m614m(1243);
         if (vectorM614m.contains(abstractC0041l)) {
             Utils.m525a(vectorM614m, abstractC0041l);
-            C0008ah.m178j();
+            TabBar.m178j();
         }
     }
 
@@ -1809,7 +1809,7 @@ public final class C0015ao {
         } else if (i == 3) {
             vectorM614m2.addElement(new XmppMailRuProtocol(i4, str, str2));
         }
-        C0008ah.m163a();
+        TabBar.m163a();
         m435ah();
         return 0;
     }
@@ -2091,7 +2091,7 @@ public final class C0015ao {
             AppState.m590b(1022, 1023);
             AppState.f177b[1373] = NetworkUtils.m1213g();
             AppState.f177b[1272] = NetworkUtils.m1213g();
-            AbstractC0004ad.m65a();
+            ScreenManager.m65a();
             AppState.f177b[1243] = NetworkUtils.m1213g();
             AppState.f177b[1244] = NetworkUtils.m1213g();
             AppState.f177b[1358] = NetworkUtils.m1213g();
@@ -2113,9 +2113,9 @@ public final class C0015ao {
             AppState.m594c(27, 0);
             AppState.f177b[1402] = NetworkUtils.m1213g();
             XmppMailRuProtocol.m845v();
-            AppState.f177b[1371] = new C0011ak(i, i2);
+            AppState.f177b[1371] = new MainCanvas(i, i2);
             AppState.m590b(332, 333);
-            C0008ah.m163a();
+            TabBar.m163a();
             AppState.f177b[430] = Utils.m536a(AppState.m581a(430));
             AppState.f177b[1357] = new byte[1];
             try {
@@ -2135,7 +2135,7 @@ public final class C0015ao {
                 int iM433Q = m433Q();
                 int i3 = iM433Q;
                 if (iM433Q == 0) {
-                    AbstractC0004ad.m70a(AbstractC0004ad.m75b(4381));
+                    ScreenManager.m70a(ScreenManager.m75b(4381));
                     m334q();
                 } else {
                     while (true) {
@@ -2146,7 +2146,7 @@ public final class C0015ao {
                             m328a(m434I(i3));
                         }
                     }
-                    AbstractC0007ag.m152a();
+                    ContactListManager.m152a();
                     m334q();
                 }
             }
@@ -2181,7 +2181,7 @@ public final class C0015ao {
         boolean z4 = false;
         int[] iArrM190r;
         int[] iArrM191s;
-        C0013am c0013amM66b;
+        Screen c0013amM66b;
         int iM1181a = 0;
         Message c0026azM1415b;
         TextBox textBoxM1028h;
@@ -2195,14 +2195,14 @@ public final class C0015ao {
                 if (!f151e) {
                     AppState.m580b();
                     C0034e.m928b();
-                    if (!C0011ak.f90d && C0011ak.f89c != 0 && System.currentTimeMillis() - C0011ak.f89c > 600) {
-                        int i4 = C0011ak.f86a;
-                        int i5 = C0011ak.f87b;
+                    if (!MainCanvas.f90d && MainCanvas.f89c != 0 && System.currentTimeMillis() - MainCanvas.f89c > 600) {
+                        int i4 = MainCanvas.f86a;
+                        int i5 = MainCanvas.f87b;
                         Vector vectorM614m = AppState.m614m(1266);
                         synchronized (vectorM614m) {
                             vectorM614m.addElement(new int[]{8, i4, i5});
                         }
-                        C0011ak.f89c = 0L;
+                        MainCanvas.f89c = 0L;
                     }
                     Vector vectorM614m2 = AppState.m614m(1241);
                     int size = vectorM614m2.size();
@@ -2215,21 +2215,21 @@ public final class C0015ao {
                             while (true) {
                                 size2--;
                                 if (size2 < 0) {
-                                    if (f152f && AbstractC0004ad.m66b().f94a == 4 && m305K(1)) {
+                                    if (f152f && ScreenManager.m66b().f94a == 4 && m305K(1)) {
                                         f152f = false;
                                         AppState.m584b(1237);
-                                        AbstractC0007ag.m156d();
+                                        ContactListManager.m156d();
                                         AppState.m591f(1237);
                                         m304a(1, 1000L);
                                     }
                                     Object objM524a = Utils.m524a(AppState.m614m(1266));
                                     if (objM524a == null) {
-                                        C0013am c0013amM66b2 = AbstractC0004ad.m66b();
-                                        C0032c c0032cM69e = AbstractC0004ad.m69e();
+                                        Screen c0013amM66b2 = ScreenManager.m66b();
+                                        MenuItem c0032cM69e = ScreenManager.m69e();
                                         Object obj = c0032cM69e == null ? null : c0032cM69e.f265d;
                                         String str = c0032cM69e == null ? null : c0032cM69e.f259b;
                                         int iM338l = 0;
-                                        switch (AbstractC0004ad.m66b().f94a) {
+                                        switch (ScreenManager.m66b().f94a) {
                                             case 1:
                                                 iM1181a = 0;
                                                 iM338l = iM1181a;
@@ -2243,7 +2243,7 @@ public final class C0015ao {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 4:
-                                                iM1181a = AbstractC0007ag.m160a(c0013amM66b2, obj);
+                                                iM1181a = ContactListManager.m160a(c0013amM66b2, obj);
                                                 iM338l = iM1181a;
                                                 break;
                                             case 5:
@@ -2255,18 +2255,18 @@ public final class C0015ao {
                                                 if (jCurrentTimeMillis - AppState.m598g(1556) > 45) {
                                                     AppState.m597a(1556, jCurrentTimeMillis);
                                                 }
-                                                if (m305K(10) && AbstractC0025ay.f201i) {
+                                                if (m305K(10) && MapRenderer.f201i) {
                                                     if (AppState.m587e(276)) {
-                                                        if ((AbstractC0025ay.f196d < VCard.f25m || AbstractC0025ay.f196d > VCard.f27o || AbstractC0025ay.f195c > VCard.f28p || AbstractC0025ay.f195c < VCard.f26n || ((long) AppState.m586d(39)) != VCard.f29q) && AppState.m587e(280)) {
+                                                        if ((MapRenderer.f196d < VCard.f25m || MapRenderer.f196d > VCard.f27o || MapRenderer.f195c > VCard.f28p || MapRenderer.f195c < VCard.f26n || ((long) AppState.m586d(39)) != VCard.f29q) && AppState.m587e(280)) {
                                                             C0029bb.m772f();
                                                         }
                                                     }
-                                                    AbstractC0025ay.m652a(false);
+                                                    MapRenderer.m652a(false);
                                                 }
                                                 int iM586d2 = AppState.m586d(1564);
                                                 if (iM586d2 >= 0 && AppState.m598g(1556) == jCurrentTimeMillis && !AppState.m587e(1553)) {
-                                                    AppState.m597a(1558, AbstractC0025ay.f196d);
-                                                    AppState.m597a(1560, AbstractC0025ay.f195c);
+                                                    AppState.m597a(1558, MapRenderer.f196d);
+                                                    AppState.m597a(1560, MapRenderer.f195c);
                                                     int iM586d3 = AppState.m586d(39);
                                                     long jM315d = (m315d(iM586d3) / m316e(iM586d3)) * 9;
                                                     switch (iM586d2) {
@@ -2283,12 +2283,12 @@ public final class C0015ao {
                                                             AppState.m597a(1560, AppState.m598g(1560) - jM315d);
                                                             break;
                                                     }
-                                                    AbstractC0025ay.m649a(AppState.m598g(1558), AppState.m598g(1560));
+                                                    MapRenderer.m649a(AppState.m598g(1558), AppState.m598g(1560));
                                                     m304a(10, 500L);
-                                                    AbstractC0025ay.m661e();
+                                                    MapRenderer.m661e();
                                                 }
                                                 if (AppState.m598g(1556) == jCurrentTimeMillis) {
-                                                    AbstractC0025ay.m648b();
+                                                    MapRenderer.m648b();
                                                 }
                                                 if (AppState.m587e(277) && m307b(7, 300000L)) {
                                                     m304a(7, 300000L);
@@ -2298,7 +2298,7 @@ public final class C0015ao {
                                                     while (true) {
                                                         size3--;
                                                         if (size3 < 0) {
-                                                            AbstractC0025ay.f200h = true;
+                                                            MapRenderer.f200h = true;
                                                             new RunnableC0055z(6);
                                                         } else if (3 == ((C0034e) vectorM614m4.elementAt(size3)).f281a) {
                                                             vectorM614m4.removeElementAt(size3);
@@ -2308,8 +2308,8 @@ public final class C0015ao {
                                                 if (AppState.m587e(1553)) {
                                                     f153g = true;
                                                 }
-                                                if (AbstractC0025ay.f212q) {
-                                                    AbstractC0025ay.f212q = false;
+                                                if (MapRenderer.f212q) {
+                                                    MapRenderer.f212q = false;
                                                     z5 = true;
                                                 } else {
                                                     z5 = false;
@@ -3314,15 +3314,15 @@ public final class C0015ao {
                                                 break;
                                         }
                                         if (iM338l == 12) {
-                                            C0021au.m549c();
+                                            ScreenBuilder.m549c();
                                         } else if (iM338l != 0) {
-                                            C0021au.m546a(iM338l);
+                                            ScreenBuilder.m546a(iM338l);
                                         }
                                     } else if (objM524a instanceof int[]) {
                                         int[] iArr = (int[]) objM524a;
                                         switch (iArr[0]) {
                                             case 0:
-                                                C0013am c0013amM66b3 = AbstractC0004ad.m66b();
+                                                Screen c0013amM66b3 = ScreenManager.m66b();
                                                 if (c0013amM66b3 == null) {
                                                     break;
                                                 } else {
@@ -3331,19 +3331,19 @@ public final class C0015ao {
                                                     }
                                                     int i13 = iArr[1];
                                                     int i14 = iArr[2];
-                                                    int i15 = AbstractC0004ad.m66b().f94a;
-                                                    int i16 = C0008ah.f45b;
+                                                    int i15 = ScreenManager.m66b().f94a;
+                                                    int i16 = TabBar.f45b;
                                                     int size9 = AppState.m614m(1246).size();
                                                     boolean z6 = i16 == size9 - 1;
                                                     if (i15 == 4) {
-                                                        AbstractC0007ag.m155c();
+                                                        ContactListManager.m155c();
                                                         if (size9 > 1) {
                                                             AppState.m594c(1414, 0);
                                                             if (i14 == 2) {
                                                                 if (c0013amM66b3.m229h()) {
-                                                                    C0008ah c0008ahM168d = C0008ah.m168d();
+                                                                    TabBar c0008ahM168d = TabBar.m168d();
                                                                     if (c0008ahM168d != null) {
-                                                                        C0021au.m546a(c0008ahM168d.m166b());
+                                                                        ScreenBuilder.m546a(c0008ahM168d.m166b());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3351,9 +3351,9 @@ public final class C0015ao {
                                                                 }
                                                             } else if (i14 == 5) {
                                                                 if (c0013amM66b3.m228g()) {
-                                                                    C0008ah c0008ahM167c = C0008ah.m167c();
+                                                                    TabBar c0008ahM167c = TabBar.m167c();
                                                                     if (c0008ahM167c != null) {
-                                                                        C0021au.m546a(c0008ahM167c.m166b());
+                                                                        ScreenBuilder.m546a(c0008ahM167c.m166b());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3362,11 +3362,11 @@ public final class C0015ao {
                                                             } else if (i15 == 36) {
                                                                 AppState.m594c(1414, 0);
                                                                 if (i14 == 2) {
-                                                                    C0021au.m546a(C0008ah.m168d().m166b());
+                                                                    ScreenBuilder.m546a(TabBar.m168d().m166b());
                                                                     z4 = true;
                                                                 } else if (i14 == 5) {
                                                                     if (!z6) {
-                                                                        C0021au.m546a(C0008ah.m167c().m166b());
+                                                                        ScreenBuilder.m546a(TabBar.m167c().m166b());
                                                                     }
                                                                     z4 = true;
                                                                 } else if (i15 != 6) {
@@ -3380,10 +3380,10 @@ public final class C0015ao {
                                                                         z4 = true;
                                                                     } else if (i13 == 48) {
                                                                         Conversation.m1113a(false, (MrimAccount) null);
-                                                                        C0021au.m546a(6);
+                                                                        ScreenBuilder.m546a(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 49) {
-                                                                        C0021au.m546a(100);
+                                                                        ScreenBuilder.m546a(100);
                                                                         z4 = true;
                                                                     } else if (i13 == 50) {
                                                                         boolean zM587e = AppState.m587e(41);
@@ -3393,32 +3393,32 @@ public final class C0015ao {
                                                                             Conversation.m1126a(true);
                                                                         }
                                                                         AppState.m599a(41, !zM587e);
-                                                                        C0021au.m546a(6);
+                                                                        ScreenBuilder.m546a(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 51) {
                                                                         C0029bb.m778d(new C0029bb(7, null));
                                                                         z4 = true;
                                                                     } else if (i13 == 53) {
                                                                         AppState.m599a(230, !AppState.m587e(230));
-                                                                        AbstractC0025ay.f200h = true;
+                                                                        MapRenderer.f200h = true;
                                                                         z4 = true;
                                                                     } else if (i13 == 55) {
                                                                         if (MmpContact.f71y && (iArrM191s = MmpContact.m191s()) != null) {
-                                                                            AbstractC0025ay.m657b(iArrM191s[0], iArrM191s[1]);
+                                                                            MapRenderer.m657b(iArrM191s[0], iArrM191s[1]);
                                                                         }
                                                                         z4 = true;
                                                                     } else if (i13 == 57) {
                                                                         if (MmpContact.f71y && (iArrM190r = MmpContact.m190r()) != null) {
-                                                                            AbstractC0025ay.m657b(iArrM190r[0], iArrM190r[1]);
+                                                                            MapRenderer.m657b(iArrM190r[0], iArrM190r[1]);
                                                                         }
                                                                         z4 = true;
                                                                     }
                                                                 } else if (i14 == 2) {
-                                                                    C0021au.m546a(C0008ah.m168d().m166b());
+                                                                    ScreenBuilder.m546a(TabBar.m168d().m166b());
                                                                     z4 = true;
                                                                 } else if (i14 == 5) {
                                                                     if (!z6) {
-                                                                        C0021au.m546a(C0008ah.m167c().m166b());
+                                                                        ScreenBuilder.m546a(TabBar.m167c().m166b());
                                                                     }
                                                                     z4 = true;
                                                                 } else if (i14 == 1) {
@@ -3432,7 +3432,7 @@ public final class C0015ao {
                                                                 int iM456O = i13 == 42 ? m456O(AppState.m586d(205)) : i13 == 35 ? m456O(AppState.m586d(206)) : (i13 < 48 || i13 > 57) ? 0 : m456O(AppState.m586d(i13 + 159));
                                                                 int i17 = iM456O;
                                                                 if (iM456O != 0) {
-                                                                    C0021au.m546a(i17);
+                                                                    ScreenBuilder.m546a(i17);
                                                                     break;
                                                                 } else if (i14 == 8) {
                                                                     m455ab();
@@ -3445,7 +3445,7 @@ public final class C0015ao {
                                                                     break;
                                                                 } else if (i14 == 2) {
                                                                     if (c0013amM66b3.f125x) {
-                                                                        C0021au.m549c();
+                                                                        ScreenBuilder.m549c();
                                                                         break;
                                                                     } else if (c0013amM66b3.f94a == 6) {
                                                                         AppState.m594c(1564, 1);
@@ -3468,17 +3468,17 @@ public final class C0015ao {
                                                 }
                                                 break;
                                             case 1:
-                                                C0021au.m547a();
+                                                ScreenBuilder.m547a();
                                                 break;
                                             case 2:
-                                                C0021au.m548b();
+                                                ScreenBuilder.m548b();
                                                 break;
                                             case 3:
                                                 f153g = true;
                                                 m455ab();
                                                 break;
                                             case 4:
-                                                if (AbstractC0004ad.m66b().f94a == 6) {
+                                                if (ScreenManager.m66b().f94a == 6) {
                                                     f153g = true;
                                                     AppState.m594c(1564, -1);
                                                 }
@@ -3490,27 +3490,27 @@ public final class C0015ao {
                                                     z2 = false;
                                                 } else {
                                                     if (i19 < (AppState.m586d(1528) >> 1)) {
-                                                        C0021au.m547a();
+                                                        ScreenBuilder.m547a();
                                                     } else {
-                                                        C0021au.m548b();
+                                                        ScreenBuilder.m548b();
                                                     }
                                                     z2 = true;
                                                 }
-                                                if (z2 || (i = AbstractC0004ad.m66b().f94a) == 137) {
+                                                if (z2 || (i = ScreenManager.m66b().f94a) == 137) {
                                                     break;
-                                                } else if (i20 > 17 || !AbstractC0004ad.m77h()) {
+                                                } else if (i20 > 17 || !ScreenManager.m77h()) {
                                                     i2 = 0;
                                                     int i21 = i2;
                                                     if (i2 <= 0) {
                                                         if (i != i21) {
                                                             if (i == 4) {
-                                                                AbstractC0007ag.m155c();
+                                                                ContactListManager.m155c();
                                                             }
-                                                            C0021au.m546a(i21);
+                                                            ScreenBuilder.m546a(i21);
                                                         }
                                                         break;
                                                     } else {
-                                                        C0013am c0013amM66b4 = AbstractC0004ad.m66b();
+                                                        Screen c0013amM66b4 = ScreenManager.m66b();
                                                         if (c0013amM66b4 != null) {
                                                             c0013amM66b4.f132B = true;
                                                             c0013amM66b4.f130z = 0;
@@ -3523,11 +3523,11 @@ public final class C0015ao {
                                                                 int i24 = i23 - c0013amM66b4.f113p;
                                                                 if (i24 > 0) {
                                                                     ConnectionThread.m1161a(c0013amM66b4);
-                                                                    AbstractC0025ay.f211p = false;
-                                                                    AbstractC0025ay.f213r = System.currentTimeMillis();
-                                                                    AbstractC0025ay.f214s = i22;
-                                                                    AbstractC0025ay.f215t = i24;
-                                                                    AbstractC0025ay.f200h = true;
+                                                                    MapRenderer.f211p = false;
+                                                                    MapRenderer.f213r = System.currentTimeMillis();
+                                                                    MapRenderer.f214s = i22;
+                                                                    MapRenderer.f215t = i24;
+                                                                    MapRenderer.f200h = true;
                                                                     z3 = true;
                                                                 } else {
                                                                     z3 = false;
@@ -3535,34 +3535,34 @@ public final class C0015ao {
                                                             } else if (z8 || c0013amM66b4.f97d == 1 || c0013amM66b4.f97d == 12) {
                                                                 z3 = false;
                                                             } else {
-                                                                C0021au.m549c();
+                                                                ScreenBuilder.m549c();
                                                                 f153g = true;
                                                                 z3 = true;
                                                             }
                                                             if (!z3) {
                                                                 int i25 = c0013amM66b4.f97d;
-                                                                if ((i25 == 1 || i25 == 12) && (objM179a = C0008ah.m179a(i19, i20)) != null) {
+                                                                if ((i25 == 1 || i25 == 12) && (objM179a = TabBar.m179a(i19, i20)) != null) {
                                                                     if (!(objM179a instanceof int[])) {
-                                                                        int i26 = ((C0008ah) objM179a).f50g;
-                                                                        Account abstractC0037h = ((C0008ah) objM179a).f51h;
+                                                                        int i26 = ((TabBar) objM179a).f50g;
+                                                                        Account abstractC0037h = ((TabBar) objM179a).f51h;
                                                                         AppState.m594c(1414, 0);
                                                                         if (i == 4) {
-                                                                            AbstractC0007ag.m155c();
+                                                                            ContactListManager.m155c();
                                                                         }
                                                                         if (i26 != 6 && i26 != 36 && abstractC0037h != null) {
-                                                                            C0008ah.m176a(4, ((C0008ah) objM179a).f51h);
-                                                                            C0021au.m546a(4);
+                                                                            TabBar.m176a(4, ((TabBar) objM179a).f51h);
+                                                                            ScreenBuilder.m546a(4);
                                                                         } else if (i != i26) {
-                                                                            C0021au.m546a(i26);
+                                                                            ScreenBuilder.m546a(i26);
                                                                             break;
                                                                         }
                                                                     } else {
                                                                         switch (((int[]) objM179a)[1]) {
                                                                             case 246:
-                                                                                C0021au.m546a(C0008ah.m167c().m166b());
+                                                                                ScreenBuilder.m546a(TabBar.m167c().m166b());
                                                                                 break;
                                                                             case 248:
-                                                                                C0021au.m546a(C0008ah.m168d().m166b());
+                                                                                ScreenBuilder.m546a(TabBar.m168d().m166b());
                                                                                 break;
                                                                         }
                                                                     }
@@ -3598,7 +3598,7 @@ public final class C0015ao {
                                             case 6:
                                                 int i27 = iArr[1];
                                                 int i28 = iArr[2];
-                                                C0013am c0013amM66b5 = AbstractC0004ad.m66b();
+                                                Screen c0013amM66b5 = ScreenManager.m66b();
                                                 if (c0013amM66b5 == null || !c0013amM66b5.f132B) {
                                                     break;
                                                 } else {
@@ -3614,11 +3614,11 @@ public final class C0015ao {
                                                     c0013amM66b5.f131A = i30;
                                                     if (c0013amM66b5.f94a == 6) {
                                                         ConnectionThread.m1161a(c0013amM66b5);
-                                                        AbstractC0025ay.f211p = true;
-                                                        AbstractC0025ay.f213r = 0L;
+                                                        MapRenderer.f211p = true;
+                                                        MapRenderer.f213r = 0L;
                                                         int iM586d7 = AppState.m586d(39);
-                                                        AbstractC0025ay.m649a(AbstractC0025ay.f196d - ((int) m318a(i31, iM586d7)), AbstractC0025ay.f195c + ((int) m318a(i32, iM586d7)));
-                                                        AbstractC0025ay.f200h = true;
+                                                        MapRenderer.m649a(MapRenderer.f196d - ((int) m318a(i31, iM586d7)), MapRenderer.f195c + ((int) m318a(i32, iM586d7)));
+                                                        MapRenderer.f200h = true;
                                                         break;
                                                     } else {
                                                         c0013amM66b5.f105j -= i32;
@@ -3641,7 +3641,7 @@ public final class C0015ao {
                                                 int i35 = iArr[3];
                                                 int i36 = iArr[4];
                                                 int i37 = iArr[5];
-                                                C0013am c0013amM66b6 = AbstractC0004ad.m66b();
+                                                Screen c0013amM66b6 = ScreenManager.m66b();
                                                 if (c0013amM66b6 != null) {
                                                     c0013amM66b6.m260a(i33, i34, i35, i36, i37 != 0);
                                                 }
@@ -3649,7 +3649,7 @@ public final class C0015ao {
                                             case 8:
                                                 int i38 = iArr[1];
                                                 int i39 = iArr[2];
-                                                C0013am c0013amM66b7 = AbstractC0004ad.m66b();
+                                                Screen c0013amM66b7 = ScreenManager.m66b();
                                                 if (c0013amM66b7 != null) {
                                                     int i40 = i38 - c0013amM66b7.f98e;
                                                     int i41 = i39 - c0013amM66b7.f99f;
@@ -3657,7 +3657,7 @@ public final class C0015ao {
                                                     if (c0013amM66b7.f94a == 6) {
                                                         int i42 = i41 - c0013amM66b7.f113p;
                                                         ConnectionThread.m1161a(c0013amM66b7);
-                                                        AbstractC0025ay.m665b(i40, i42);
+                                                        MapRenderer.m665b(i40, i42);
                                                     }
                                                 }
                                                 break;
@@ -3672,7 +3672,7 @@ public final class C0015ao {
                                             MrimAccount c0028ba6 = (MrimAccount) ((Object[]) objM524a)[0];
                                             c0028ba6.f229e = true;
                                             AppState.f177b[1282] = c0028ba6;
-                                            AbstractC0004ad.m71b(AbstractC0004ad.m75b(4485));
+                                            ScreenManager.m71b(ScreenManager.m75b(4485));
                                             AppState.m591f(1344);
                                             f153g = true;
                                         } else {
@@ -3694,7 +3694,7 @@ public final class C0015ao {
                                                 AppState.f177b[1257] = vector4;
                                                 int iIntValue = ((Integer) objArr3[2]).intValue();
                                                 AppState.m594c(1444, iIntValue);
-                                                C0013am c0013amM75b = AbstractC0004ad.m75b(2237);
+                                                Screen c0013amM75b = ScreenManager.m75b(2237);
                                                 if (iIntValue >= 10) {
                                                     c0013amM75b.m247a(6, AppState.m584b(421), 1, null);
                                                 }
@@ -3707,7 +3707,7 @@ public final class C0015ao {
                                                         }
                                                         AppState.m599a(1445, iIntValue < c0020at.f167e - 10);
                                                         AppState.m599a(1446, iIntValue >= 10);
-                                                        AbstractC0004ad.m71b(c0013amM75b);
+                                                        ScreenManager.m71b(c0013amM75b);
                                                         break;
                                                     } else {
                                                         C0045p c0045p = (C0045p) vector4.elementAt(size11);
@@ -3726,10 +3726,10 @@ public final class C0015ao {
                                     } else {
                                         f153g = true;
                                         f152f = true;
-                                        C0013am c0013amM66b8 = AbstractC0004ad.m66b();
-                                        int i44 = AbstractC0004ad.m66b().f94a;
-                                        if (objM524a != null && (objM524a instanceof C0032c)) {
-                                            C0032c c0032c = (C0032c) objM524a;
+                                        Screen c0013amM66b8 = ScreenManager.m66b();
+                                        int i44 = ScreenManager.m66b().f94a;
+                                        if (objM524a != null && (objM524a instanceof MenuItem)) {
+                                            MenuItem c0032c = (MenuItem) objM524a;
                                             if (c0032c.f258a == 2) {
                                                 if (i44 == 147 && AppState.m599a(1468, ((Boolean) c0032c.f265d).booleanValue())) {
                                                     NetworkUtils.m1195d();
@@ -3742,45 +3742,45 @@ public final class C0015ao {
                                                 StringUtils.m31a(c0013amM66b8, objM524a);
                                             }
                                         } else if (i44 == 164) {
-                                            C0032c c0032c2 = (C0032c) objM524a;
+                                            MenuItem c0032c2 = (MenuItem) objM524a;
                                             Object[] objArr4 = (Object[]) c0032c2.f265d;
                                             int iIntValue2 = ((Integer) objArr4[0]).intValue();
                                             String[] strArr = (String[]) objArr4[1];
-                                            C0032c c0032c3 = null;
+                                            MenuItem c0032c3 = null;
                                             Vector vector5 = c0013amM66b8.f108m;
                                             int size12 = vector5.size();
                                             while (true) {
                                                 size12--;
                                                 if (size12 < 0) {
                                                     if (c0032c2.f259b.equals(AppState.m584b(809))) {
-                                                        C0032c c0032c4 = c0032c3;
+                                                        MenuItem c0032c4 = c0032c3;
                                                         String strM522f = iIntValue2 == 0 ? Utils.m522f(AppState.m584b(1287)) : strArr[iIntValue2];
                                                         Object[] objArr5 = (Object[]) c0032c4.f265d;
                                                         c0032c4.m884a().m891a(objArr5[4], strM522f, objArr5[1], objArr5[2], objArr5[3]);
                                                     }
                                                     c0013amM66b8.m258q();
                                                 } else {
-                                                    C0032c c0032c5 = (C0032c) vector5.elementAt(size12);
+                                                    MenuItem c0032c5 = (MenuItem) vector5.elementAt(size12);
                                                     if (c0032c5.f258a == 15 && c0032c5.f259b.startsWith(AppState.m584b(811))) {
                                                         c0032c3 = c0032c5;
                                                     }
                                                 }
                                             }
                                         } else if (i44 == 26) {
-                                            C0032c c0032c6 = (C0032c) objM524a;
+                                            MenuItem c0032c6 = (MenuItem) objM524a;
                                             Object[] objArr6 = (Object[]) c0032c6.f265d;
                                             if (AppState.m584b(560).equals(c0032c6.f259b)) {
                                                 AppState.m594c(72, ((Integer) objArr6[0]).intValue());
                                             }
                                         } else if (i44 == 28) {
-                                            C0034e.m926a(((Integer) ((Object[]) ((C0032c) objM524a).f265d)[0]).intValue(), false);
+                                            C0034e.m926a(((Integer) ((Object[]) ((MenuItem) objM524a).f265d)[0]).intValue(), false);
                                         }
                                     }
-                                    if (!AppState.m587e(71) && null != (c0013amM66b = AbstractC0004ad.m66b())) {
+                                    if (!AppState.m587e(71) && null != (c0013amM66b = ScreenManager.m66b())) {
                                         AppState.m582c().m205a(c0013amM66b.f123v, c0013amM66b.f124w);
                                     }
                                     C0029bb.m756a();
-                                    if (m306a(f147a[0]) && (!AppState.m587e(272) || AbstractC0004ad.m66b().f94a != 6)) {
+                                    if (m306a(f147a[0]) && (!AppState.m587e(272) || ScreenManager.m66b().f94a != 6)) {
                                         if (AppState.m582c().isShown()) {
                                             m358L(0);
                                         } else {
@@ -3836,7 +3836,7 @@ public final class C0015ao {
             if ((m413P() != 0 || m410N()) && m305K(5)) {
                 f153g = true;
             }
-            C0011ak c0011akM582c = AppState.m582c();
+            MainCanvas c0011akM582c = AppState.m582c();
             if (!f151e && f153g) {
                 Object obj7 = AppState.f180c;
                 if (null != obj7) {
@@ -3874,17 +3874,17 @@ public final class C0015ao {
         int i;
         int iM338l;
         int i2;
-        C0032c c0032cM69e = AbstractC0004ad.m69e();
-        if (c0032cM69e == null || c0032cM69e.m894a(AbstractC0004ad.m66b()) == -1) {
-            C0013am c0013amM66b = AbstractC0004ad.m66b();
-            String strM67c = AbstractC0004ad.m67c();
-            int iM68d = AbstractC0004ad.m68d();
-            C0032c c0032cM69e2 = AbstractC0004ad.m69e();
-            C0032c c0032cM223e = AppState.m614m(1272).size() > 0 ? AbstractC0004ad.m66b().m223e() : null;
+        MenuItem c0032cM69e = ScreenManager.m69e();
+        if (c0032cM69e == null || c0032cM69e.m894a(ScreenManager.m66b()) == -1) {
+            Screen c0013amM66b = ScreenManager.m66b();
+            String strM67c = ScreenManager.m67c();
+            int iM68d = ScreenManager.m68d();
+            MenuItem c0032cM69e2 = ScreenManager.m69e();
+            MenuItem c0032cM223e = AppState.m614m(1272).size() > 0 ? ScreenManager.m66b().m223e() : null;
             Object obj = c0032cM69e2 == null ? null : c0032cM69e2.f265d;
             Object obj2 = c0032cM223e == null ? null : c0032cM223e.f265d;
             int iM460J = 0;
-            switch (AbstractC0004ad.m66b().f94a) {
+            switch (ScreenManager.m66b().f94a) {
                 case 1:
                     iM460J = m408B(iM68d);
                     break;
@@ -3895,7 +3895,7 @@ public final class C0015ao {
                     iM460J = C0029bb.m824d(iM68d);
                     break;
                 case 4:
-                    iM460J = AbstractC0007ag.m158a(strM67c, obj);
+                    iM460J = ContactListManager.m158a(strM67c, obj);
                     break;
                 case 5:
                     iM460J = m389z(iM68d);
@@ -3905,10 +3905,10 @@ public final class C0015ao {
                         ConnectionThread.m1161a(c0013amM66b);
                         i2 = -1;
                     } else if (AppState.m587e(1479)) {
-                        String strM809a = C0029bb.m809a(AbstractC0025ay.f196d);
-                        String strM810b = C0029bb.m810b(AbstractC0025ay.f195c);
+                        String strM809a = C0029bb.m809a(MapRenderer.f196d);
+                        String strM810b = C0029bb.m810b(MapRenderer.f195c);
                         AppState.m594c(1479, 0);
-                        C0034e.m953a(VCard.m62a(AppState.m586d(39), strM809a, strM810b), AbstractC0025ay.f196d, AbstractC0025ay.f195c);
+                        C0034e.m953a(VCard.m62a(AppState.m586d(39), strM809a, strM810b), MapRenderer.f196d, MapRenderer.f195c);
                         i2 = 0;
                     } else {
                         i2 = 113;
@@ -4166,8 +4166,8 @@ public final class C0015ao {
                     iM460J = -1;
                     break;
                 case 79:
-                    C0021au.m549c();
-                    C0021au.m549c();
+                    ScreenBuilder.m549c();
+                    ScreenBuilder.m549c();
                     iM460J = 0;
                     break;
                 case 80:
@@ -4478,11 +4478,11 @@ public final class C0015ao {
             }
             if (iM460J != -1) {
                 if (iM460J == 12) {
-                    C0021au.m549c();
+                    ScreenBuilder.m549c();
                     return;
                 }
                 if (iM460J != 0) {
-                    C0021au.m546a(iM460J);
+                    ScreenBuilder.m546a(iM460J);
                     return;
                 }
                 int i3 = c0013amM66b.f122u;
@@ -4490,9 +4490,9 @@ public final class C0015ao {
                     int i4 = i3 == 199 ? iM68d : i3;
                     int i5 = i4;
                     if (i4 == 12) {
-                        C0021au.m549c();
+                        ScreenBuilder.m549c();
                     } else if (i5 != 0) {
-                        C0021au.m546a(i5);
+                        ScreenBuilder.m546a(i5);
                     }
                 }
             }
@@ -4501,11 +4501,11 @@ public final class C0015ao {
 
     /* renamed from: O */
     private static final int m456O(int i) {
-        if (AbstractC0004ad.m66b().f94a == 137) {
+        if (ScreenManager.m66b().f94a == 137) {
             return 0;
         }
-        C0013am c0013amM66b = AbstractC0004ad.m66b();
-        int i2 = AbstractC0004ad.m66b().f94a;
+        Screen c0013amM66b = ScreenManager.m66b();
+        int i2 = ScreenManager.m66b().f94a;
         switch (i) {
             case 4:
                 break;
@@ -4518,7 +4518,7 @@ public final class C0015ao {
                     }
                 } else if (c0013amM66b.f107l < c0013amM66b.f115r) {
                     c0013amM66b.f105j = 0;
-                } else if (((C0032c) c0013amM66b.f108m.lastElement()).m912h() < c0013amM66b.f115r) {
+                } else if (((MenuItem) c0013amM66b.f108m.lastElement()).m912h() < c0013amM66b.f115r) {
                     c0013amM66b.f105j = c0013amM66b.f107l - c0013amM66b.f115r;
                 } else {
                     int[] iArr = c0013amM66b.f109n;
@@ -4618,7 +4618,7 @@ public final class C0015ao {
     /* renamed from: n */
     public static final int m463n(Object obj) {
         if (AppState.m587e(1443)) {
-            AbstractC0025ay.m653a((C0014an) obj);
+            MapRenderer.m653a((C0014an) obj);
             return 6;
         }
         if (!AppState.m587e(1478)) {

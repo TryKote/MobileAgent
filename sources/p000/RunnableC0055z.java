@@ -45,7 +45,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
     public RunnableC0055z() {
     }
 
-    public RunnableC0055z(C0013am c0013am, C0032c c0032c) {
+    public RunnableC0055z(Screen c0013am, MenuItem c0032c) {
         Object[] objArr = (Object[]) c0032c.f265d;
         this.f435c = new Object[]{c0013am, c0032c};
         String str = (String) objArr[0];
@@ -68,8 +68,8 @@ public final class RunnableC0055z implements Runnable, CommandListener {
         }
         if (command.getPriority() == 0) {
             String strM17c = StringUtils.m17c(((TextBox) displayable).getString());
-            C0013am c0013am = (C0013am) ((Object[]) this.f435c)[0];
-            C0032c c0032c = (C0032c) ((Object[]) this.f435c)[1];
+            Screen c0013am = (Screen) ((Object[]) this.f435c)[0];
+            MenuItem c0032c = (MenuItem) ((Object[]) this.f435c)[1];
             Object[] objArr = (Object[]) c0032c.f265d;
             if (!StringUtils.m4a(strM17c, objArr[0])) {
                 objArr[0] = strM17c;
@@ -797,7 +797,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
         L4b5:
             r1 = 0
         L4b6:
-            p000.AbstractC0025ay.m649a(r0, r1)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            p000.MapRenderer.m649a(r0, r1)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
         L4b9:
             r0 = r9
             p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
@@ -884,7 +884,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r0 = 0
             p000.ConnectionThread.f354e = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = 1
-            p000.AbstractC0025ay.f200h = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            p000.MapRenderer.f200h = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = r10
             monitor-exit(r0)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             goto L566

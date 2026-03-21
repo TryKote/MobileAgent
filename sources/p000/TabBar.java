@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: ah */
 /* loaded from: MobileAgent_3.9.jar:ah.class */
-public final class C0008ah {
+public final class TabBar {
 
     /* renamed from: a */
     public static boolean f44a;
@@ -39,11 +39,11 @@ public final class C0008ah {
     /* renamed from: k */
     public static Account f54k;
 
-    private C0008ah(int i, String str, int i2, Account abstractC0037h) {
+    private TabBar(int i, String str, int i2, Account abstractC0037h) {
         this.f47d = i;
         this.f46c = str;
         this.f50g = i2;
-        this.f48e = C0012al.m217c(i) + AppState.m608k(1).m214a(str);
+        this.f48e = GraphicsContext.m217c(i) + AppState.m608k(1).m214a(str);
         this.f51h = abstractC0037h;
     }
 
@@ -78,13 +78,13 @@ public final class C0008ah {
     /* renamed from: a */
     public static final void m164a(int i, String str) {
         Vector vectorM614m = AppState.m614m(1246);
-        C0008ah c0008ah = (C0008ah) vectorM614m.elementAt(0);
+        TabBar c0008ah = (TabBar) vectorM614m.elementAt(0);
         if (c0008ah.f47d == i && c0008ah.f46c == str) {
             return;
         }
         String str2 = c0008ah.f52i;
         int i2 = c0008ah.f53j;
-        C0008ah c0008ah2 = new C0008ah(i, str, 4, null);
+        TabBar c0008ah2 = new TabBar(i, str, 4, null);
         vectorM614m.setElementAt(c0008ah2, 0);
         c0008ah2.f52i = str2;
         c0008ah2.f53j = i2;
@@ -94,7 +94,7 @@ public final class C0008ah {
 
     /* renamed from: a */
     private static void m165a(int i, String str, int i2, Account abstractC0037h) {
-        AppState.m614m(1246).addElement(new C0008ah(i, str, i2, abstractC0037h));
+        AppState.m614m(1246).addElement(new TabBar(i, str, i2, abstractC0037h));
     }
 
     /* renamed from: b */
@@ -112,20 +112,20 @@ public final class C0008ah {
     }
 
     /* renamed from: c */
-    public static final C0008ah m167c() {
+    public static final TabBar m167c() {
         int i = f45b + 1;
         Vector vectorM614m = AppState.m614m(1246);
         if (i < vectorM614m.size()) {
-            return (C0008ah) vectorM614m.elementAt(i);
+            return (TabBar) vectorM614m.elementAt(i);
         }
         return null;
     }
 
     /* renamed from: d */
-    public static final C0008ah m168d() {
+    public static final TabBar m168d() {
         int i = f45b - 1;
         if (i >= 0) {
-            return (C0008ah) AppState.m614m(1246).elementAt(i);
+            return (TabBar) AppState.m614m(1246).elementAt(i);
         }
         return null;
     }
@@ -158,7 +158,7 @@ public final class C0008ah {
 
     /* renamed from: b */
     private static final void m173b(int i, int i2) {
-        C0008ah c0008ah;
+        TabBar c0008ah;
         if (AppState.m587e(i)) {
             return;
         }
@@ -169,7 +169,7 @@ public final class C0008ah {
             if (size < 0) {
                 return;
             } else {
-                c0008ah = (C0008ah) vectorM614m.elementAt(size);
+                c0008ah = (TabBar) vectorM614m.elementAt(size);
             }
         } while (c0008ah.f50g != i2);
         vectorM614m.removeElement(c0008ah);
@@ -186,8 +186,8 @@ public final class C0008ah {
     }
 
     /* renamed from: i */
-    public static final C0008ah m175i() {
-        return (C0008ah) AppState.m614m(1246).elementAt(f45b);
+    public static final TabBar m175i() {
+        return (TabBar) AppState.m614m(1246).elementAt(f45b);
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:10:0x0032, code lost:
@@ -198,13 +198,13 @@ public final class C0008ah {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final C0008ah m176a(int i, Account abstractC0037h) {
+    public static final TabBar m176a(int i, Account abstractC0037h) {
         Vector vectorM614m = AppState.m614m(1246);
         int size = vectorM614m.size();
         while (true) {
             size--;
             if (size >= 0) {
-                C0008ah c0008ah = (C0008ah) vectorM614m.elementAt(size);
+                TabBar c0008ah = (TabBar) vectorM614m.elementAt(size);
                 if (c0008ah.f50g == i && (abstractC0037h == null || c0008ah.f51h == abstractC0037h)) {
                     return c0008ah;
                 }
@@ -215,12 +215,12 @@ public final class C0008ah {
     }
 
     /* renamed from: a */
-    private static final C0008ah m177a(int i) {
+    private static final TabBar m177a(int i) {
         if (f45b != i) {
             f45b = i;
             m178j();
         }
-        C0008ah c0008ah = (C0008ah) AppState.m614m(1246).elementAt(i);
+        TabBar c0008ah = (TabBar) AppState.m614m(1246).elementAt(i);
         f54k = c0008ah.f51h;
         return c0008ah;
     }
@@ -241,12 +241,12 @@ public final class C0008ah {
         AppState.f177b[1245] = vectorM1213g;
         int size = vectorM614m.size();
         int i2 = f45b;
-        C0008ah c0008ah = (C0008ah) vectorM614m.elementAt(i2);
+        TabBar c0008ah = (TabBar) vectorM614m.elementAt(i2);
         int i3 = 0;
         int i4 = 0;
         int i5 = 20;
         for (int i6 = 0; i6 < size; i6++) {
-            C0008ah c0008ah2 = (C0008ah) vectorM614m.elementAt(i6);
+            TabBar c0008ah2 = (TabBar) vectorM614m.elementAt(i6);
             c0008ah2.f48e = 26 + AppState.m608k(1).m214a(c0008ah2.f46c);
             c0008ah2.f49f = i5;
             vectorM1213g.addElement(c0008ah2);
@@ -268,7 +268,7 @@ public final class C0008ah {
                     i8++;
                 }
             }
-            C0008ah c0008ah3 = (C0008ah) objElementAt2;
+            TabBar c0008ah3 = (TabBar) objElementAt2;
             if (c0008ah3 == c0008ah) {
                 break;
             }
@@ -305,7 +305,7 @@ public final class C0008ah {
                 }
             }
             for (int i10 = 0; i10 < size; i10++) {
-                ((C0008ah) vectorM614m.elementAt(i10)).f49f -= i9;
+                ((TabBar) vectorM614m.elementAt(i10)).f49f -= i9;
             }
             i4 -= i9;
             i7 -= i9;
@@ -323,7 +323,7 @@ public final class C0008ah {
                     i11--;
                 }
             }
-            C0008ah c0008ah4 = (C0008ah) objElementAt;
+            TabBar c0008ah4 = (TabBar) objElementAt;
             if (c0008ah4 == c0008ah) {
                 break;
             }
@@ -396,8 +396,8 @@ public final class C0008ah {
             }
         }
         Object objLastElement2 = vectorM1213g.lastElement();
-        if (objLastElement2 instanceof C0008ah) {
-            C0008ah c0008ah5 = (C0008ah) objLastElement2;
+        if (objLastElement2 instanceof TabBar) {
+            TabBar c0008ah5 = (TabBar) objLastElement2;
             i = (c0008ah5.f49f + c0008ah5.f48e) - 20;
         } else {
             i = ((int[]) objLastElement2)[0] - 4;
@@ -438,7 +438,7 @@ public final class C0008ah {
                     return iArr;
                 }
             } else {
-                C0008ah c0008ah = (C0008ah) objElementAt;
+                TabBar c0008ah = (TabBar) objElementAt;
                 int i3 = c0008ah.f49f;
                 if (i >= i3 && i2 >= 0 && i <= i3 + c0008ah.f48e && i2 <= 22) {
                     return c0008ah;

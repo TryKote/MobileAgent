@@ -37,7 +37,7 @@ public final class ConnectionThread {
     public static boolean f356g;
 
     /* renamed from: m */
-    private static C0013am f357m;
+    private static Screen f357m;
 
     /* renamed from: h */
     public static ListItem f358h;
@@ -542,17 +542,17 @@ public final class ConnectionThread {
     public static final void m1157f() {
         m1159s();
         AppState.m594c(1476, 6);
-        C0013am c0013amM75b = AbstractC0004ad.m75b(1578);
+        Screen c0013amM75b = ScreenManager.m75b(1578);
         f357m = c0013amM75b;
         m1160d(c0013amM75b);
-        AbstractC0004ad.m70a(c0013amM75b);
-        C0008ah.m171g();
-        C0008ah.m176a(6, (Account) null);
-        C0008ah.f44a = AppState.m587e(1414);
+        ScreenManager.m70a(c0013amM75b);
+        TabBar.m171g();
+        TabBar.m176a(6, (Account) null);
+        TabBar.f44a = AppState.m587e(1414);
         if (AppState.m587e(281)) {
             return;
         }
-        C0021au.m546a(178);
+        ScreenBuilder.m546a(178);
     }
 
     /* renamed from: g */
@@ -578,7 +578,7 @@ public final class ConnectionThread {
             return;
         }
         f356g = true;
-        int i = AbstractC0004ad.m75b(1578).f115r;
+        int i = ScreenManager.m75b(1578).f115r;
         AppState.m597a(1558, 4178628L);
         AppState.m597a(1560, 7482960L);
         AppState.f177b[1400] = C0036g.m1047d(225);
@@ -587,14 +587,14 @@ public final class ConnectionThread {
         AppState.m594c(1416, i);
         AppState.m597a(1410, AppState.m598g(35));
         AppState.m597a(1412, AppState.m598g(37));
-        AbstractC0025ay.f193a = AppState.m586d(1415);
-        AbstractC0025ay.f194b = AppState.m586d(1416);
-        AbstractC0025ay.f195c = AppState.m598g(1412);
-        AbstractC0025ay.f196d = AppState.m598g(1410);
+        MapRenderer.f193a = AppState.m586d(1415);
+        MapRenderer.f194b = AppState.m586d(1416);
+        MapRenderer.f195c = AppState.m598g(1412);
+        MapRenderer.f196d = AppState.m598g(1410);
         int iM586d = AppState.m586d(39);
-        AbstractC0025ay.f197e = C0015ao.m317a(AbstractC0025ay.f196d, iM586d);
-        AbstractC0025ay.f198f = C0015ao.m317a(AbstractC0025ay.f195c, iM586d);
-        AppState.f177b[1364] = Image.createImage(AbstractC0025ay.f193a, AbstractC0025ay.f194b);
+        MapRenderer.f197e = C0015ao.m317a(MapRenderer.f196d, iM586d);
+        MapRenderer.f198f = C0015ao.m317a(MapRenderer.f195c, iM586d);
+        AppState.f177b[1364] = Image.createImage(MapRenderer.f193a, MapRenderer.f194b);
         StringUtils.m19b();
         AppState.f177b[1398] = NetworkUtils.m1213g();
         AppState.f177b[1396] = NetworkUtils.m1213g();
@@ -611,36 +611,36 @@ public final class ConnectionThread {
             }
             i2 ^= 2;
         }
-        new C0012al(graphics).m216a(312, 56, 56);
+        new GraphicsContext(graphics).m216a(312, 56, 56);
         AppState.f177b[1393] = imageCreateImage;
         AppState.f177b[1397] = NetworkUtils.m1213g();
         new RunnableC0055z(8);
-        AbstractC0025ay.f199g = new Object();
+        MapRenderer.f199g = new Object();
         StringUtils.m41j();
-        AbstractC0025ay.m646a();
+        MapRenderer.m646a();
         MmpContact.f70n = NetworkUtils.m1213g();
         MmpContact.f66k = NetworkUtils.m1213g();
         MmpContact.f67l = NetworkUtils.m1213g();
         MmpContact.f64i = new long[2];
         MmpContact.f65j = new long[2];
-        AbstractC0025ay.f205m = NetworkUtils.m1213g();
+        MapRenderer.f205m = NetworkUtils.m1213g();
         if (AppState.m587e(253)) {
             C0036g.m1049b(AppState.m614m(1401));
         }
         AppState.f177b[1383] = NetworkUtils.m1213g();
-        AbstractC0025ay.f200h = true;
+        MapRenderer.f200h = true;
         AppState.m597a(1556, System.currentTimeMillis() - 90);
         new RunnableC0055z(10);
         m1136q();
     }
 
     /* renamed from: d */
-    private static final void m1160d(C0013am c0013am) {
+    private static final void m1160d(Screen c0013am) {
         c0013am.m259a(AppState.m584b(1062), AppState.m584b(AppState.m587e(1414) ? 1050 : 328), 20, 0, 0);
     }
 
     /* renamed from: a */
-    public static final void m1161a(C0013am c0013am) {
+    public static final void m1161a(Screen c0013am) {
         if (AppState.m587e(1414)) {
             return;
         }
@@ -649,11 +649,11 @@ public final class ConnectionThread {
     }
 
     /* renamed from: b */
-    public static final int m1162b(C0013am c0013am) {
+    public static final int m1162b(Screen c0013am) {
         MrimAccount c0028ba;
         if (AppState.m587e(1547)) {
             ((MrimAccount) AppState.m616i()).f232h = false;
-            AbstractC0025ay.f200h = true;
+            MapRenderer.f200h = true;
             m1164h();
             return 0;
         }
@@ -666,7 +666,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: c */
-    public static final void m1163c(C0013am c0013am) {
+    public static final void m1163c(Screen c0013am) {
         if (AppState.m587e(1414)) {
             AppState.m594c(1564, 3);
         } else {
@@ -682,7 +682,7 @@ public final class ConnectionThread {
         if (!z2) {
             AppState.m594c(1479, 0);
         }
-        C0008ah.f44a = z2;
+        TabBar.f44a = z2;
     }
 
     /* renamed from: a */
@@ -692,12 +692,12 @@ public final class ConnectionThread {
             C0036g.m1043a(AppState.m614m(1400), c0014an, 0, 5);
             C0036g.m1046a(AppState.m614m(1400), 225);
         }
-        AbstractC0025ay.f202j = c0014an;
-        AbstractC0025ay.m646a();
-        AbstractC0025ay.m649a(AbstractC0025ay.f202j.f138f, AbstractC0025ay.f202j.f139g);
-        AbstractC0025ay.m651a(AbstractC0025ay.f202j.f140h);
-        AbstractC0025ay.f202j.m268b();
-        AbstractC0025ay.m661e();
+        MapRenderer.f202j = c0014an;
+        MapRenderer.m646a();
+        MapRenderer.m649a(MapRenderer.f202j.f138f, MapRenderer.f202j.f139g);
+        MapRenderer.m651a(MapRenderer.f202j.f140h);
+        MapRenderer.f202j.m268b();
+        MapRenderer.m661e();
     }
 
     /* renamed from: i */
@@ -714,12 +714,12 @@ public final class ConnectionThread {
         if (size == 0) {
             return C0015ao.m338l(327);
         }
-        C0013am c0013amM75b = AbstractC0004ad.m75b(1717);
+        Screen c0013amM75b = ScreenManager.m75b(1717);
         for (int i = 0; i < size; i++) {
             C0014an c0014an = (C0014an) vectorM614m.elementAt(i);
             c0013amM75b.m247a(-1, c0014an.f133a, 6, c0014an);
         }
-        AbstractC0004ad.m71b(c0013amM75b);
+        ScreenManager.m71b(c0013amM75b);
         return 0;
     }
 
@@ -744,21 +744,21 @@ public final class ConnectionThread {
     public static final void m1170l() {
         long jMo274v;
         long jMo275w;
-        if (AbstractC0025ay.m656d()) {
+        if (MapRenderer.m656d()) {
             MmpContact.m195u();
         }
-        ListItem interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
-            jMo274v = AbstractC0025ay.f196d;
-            jMo275w = AbstractC0025ay.f195c;
+            jMo274v = MapRenderer.f196d;
+            jMo275w = MapRenderer.f195c;
         } else {
             jMo274v = interfaceC0044o.mo274v();
             jMo275w = interfaceC0044o.mo275w();
             interfaceC0044o.mo278t();
         }
         MmpContact.m182a(jMo274v, jMo275w);
-        AbstractC0025ay.f200h = true;
-        if (AbstractC0025ay.m656d()) {
+        MapRenderer.f200h = true;
+        if (MapRenderer.m656d()) {
             Conversation.m1129c();
         }
     }
@@ -767,21 +767,21 @@ public final class ConnectionThread {
     public static final void m1171m() {
         long jMo274v;
         long jMo275w;
-        if (AbstractC0025ay.m656d()) {
+        if (MapRenderer.m656d()) {
             MmpContact.m195u();
         }
-        ListItem interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
-            jMo274v = AbstractC0025ay.f196d;
-            jMo275w = AbstractC0025ay.f195c;
+            jMo274v = MapRenderer.f196d;
+            jMo275w = MapRenderer.f195c;
         } else {
             jMo274v = interfaceC0044o.mo274v();
             jMo275w = interfaceC0044o.mo275w();
             interfaceC0044o.mo278t();
         }
         MmpContact.m183b(jMo274v, jMo275w);
-        AbstractC0025ay.f200h = true;
-        if (AbstractC0025ay.m656d()) {
+        MapRenderer.f200h = true;
+        if (MapRenderer.m656d()) {
             Conversation.m1129c();
         }
     }
@@ -790,8 +790,8 @@ public final class ConnectionThread {
     public static final void m1172a(ListItem interfaceC0044o) {
         if (interfaceC0044o.mo277s()) {
             m1173n();
-            AbstractC0025ay.m649a(interfaceC0044o.mo274v(), interfaceC0044o.mo275w());
-            AbstractC0025ay.m651a(interfaceC0044o.mo280y());
+            MapRenderer.m649a(interfaceC0044o.mo274v(), interfaceC0044o.mo275w());
+            MapRenderer.m651a(interfaceC0044o.mo280y());
             f358h = interfaceC0044o;
         }
     }
@@ -800,6 +800,6 @@ public final class ConnectionThread {
     public static final void m1173n() {
         m1159s();
         AppState.m594c(1414, 1);
-        AbstractC0025ay.m646a();
+        MapRenderer.m646a();
     }
 }

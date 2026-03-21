@@ -673,8 +673,8 @@ public final class C0036g extends ContactGroup {
     public static final void m1032i() {
         f311b = System.currentTimeMillis();
         Vector vectorM1140a = ConnectionThread.m1140a(1);
-        long j = AbstractC0025ay.f196d;
-        long j2 = AbstractC0025ay.f195c;
+        long j = MapRenderer.f196d;
+        long j2 = MapRenderer.f195c;
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         int size = vectorM1140a.size();
         while (true) {

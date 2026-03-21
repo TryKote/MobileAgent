@@ -8,7 +8,7 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: ay */
 /* loaded from: MobileAgent_3.9.jar:ay.class */
-public abstract class AbstractC0025ay {
+public abstract class MapRenderer {
 
     /* renamed from: a */
     public static int f193a;
@@ -323,7 +323,7 @@ public abstract class AbstractC0025ay {
                     }
                 }
                 if (str2 != null) {
-                    AbstractC0030bc.m831a(graphics, str2, AppState.m625m(), i26 - 40, i29, height);
+                    ChatRenderer.m831a(graphics, str2, AppState.m625m(), i26 - 40, i29, height);
                 }
             }
             C0014an c0014an2 = f202j;
@@ -422,14 +422,14 @@ public abstract class AbstractC0025ay {
                     long j20 = (j16 + (i47 / 2)) / 32;
                     long j21 = (j17 + (i47 / 2)) / 32;
                     ListItem interfaceC0044o4 = ConnectionThread.f358h;
-                    if (AbstractC0030bc.f253h == null || j18 < AbstractC0030bc.f249d || j19 < AbstractC0030bc.f250e || j20 > AbstractC0030bc.f251f || j21 > AbstractC0030bc.f252g) {
-                        AbstractC0030bc.f249d = j18 - 10;
-                        AbstractC0030bc.f250e = j19 - 10;
-                        AbstractC0030bc.f251f = j20 + 10;
-                        AbstractC0030bc.f252g = j21 + 10;
-                        int i49 = ((int) (AbstractC0030bc.f251f - AbstractC0030bc.f249d)) + 1;
-                        ListItem[] interfaceC0044oArr = new ListItem[i49 * (((int) (AbstractC0030bc.f252g - AbstractC0030bc.f250e)) + 1)];
-                        AbstractC0030bc.f253h = interfaceC0044oArr;
+                    if (ChatRenderer.f253h == null || j18 < ChatRenderer.f249d || j19 < ChatRenderer.f250e || j20 > ChatRenderer.f251f || j21 > ChatRenderer.f252g) {
+                        ChatRenderer.f249d = j18 - 10;
+                        ChatRenderer.f250e = j19 - 10;
+                        ChatRenderer.f251f = j20 + 10;
+                        ChatRenderer.f252g = j21 + 10;
+                        int i49 = ((int) (ChatRenderer.f251f - ChatRenderer.f249d)) + 1;
+                        ListItem[] interfaceC0044oArr = new ListItem[i49 * (((int) (ChatRenderer.f252g - ChatRenderer.f250e)) + 1)];
+                        ChatRenderer.f253h = interfaceC0044oArr;
                         for (int i50 = 0; i50 < size7; i50++) {
                             ListItem interfaceC0044o5 = (ListItem) vectorM448X.elementAt(i50);
                             if (interfaceC0044o5.mo277s() && interfaceC0044o4 != interfaceC0044o5) {
@@ -437,9 +437,9 @@ public abstract class AbstractC0025ay {
                                 long jMo283b2 = interfaceC0044o5.mo283b(iM586d);
                                 int i51 = (int) (jMo282a2 / 32);
                                 int i52 = (int) (jMo283b2 / 32);
-                                if (i51 >= AbstractC0030bc.f249d && i51 <= AbstractC0030bc.f251f && i52 >= AbstractC0030bc.f250e && i52 <= AbstractC0030bc.f252g) {
-                                    int i53 = (int) (i51 - AbstractC0030bc.f249d);
-                                    int i54 = (int) (i52 - AbstractC0030bc.f250e);
+                                if (i51 >= ChatRenderer.f249d && i51 <= ChatRenderer.f251f && i52 >= ChatRenderer.f250e && i52 <= ChatRenderer.f252g) {
+                                    int i53 = (int) (i51 - ChatRenderer.f249d);
+                                    int i54 = (int) (i52 - ChatRenderer.f250e);
                                     ListItem interfaceC0044o6 = interfaceC0044oArr[(i54 * i49) + i53];
                                     if (interfaceC0044o6 == null) {
                                         interfaceC0044oArr[(i54 * i49) + i53] = interfaceC0044o5;
@@ -455,7 +455,7 @@ public abstract class AbstractC0025ay {
                             }
                         }
                     }
-                    ListItem[] interfaceC0044oArr2 = AbstractC0030bc.f253h;
+                    ListItem[] interfaceC0044oArr2 = ChatRenderer.f253h;
                     ListItem interfaceC0044o7 = null;
                     int length = interfaceC0044oArr2.length;
                     while (true) {
@@ -541,9 +541,9 @@ public abstract class AbstractC0025ay {
                     m659a(interfaceC0044o);
                 }
             }
-            AbstractC0030bc.m836a(graphics, f197e, f198f, f196d, f195c, iM586d, f193a, f194b);
-            AbstractC0030bc.m832a(graphics, f193a, f194b, iM586d, f197e, f198f, f203k);
-            AbstractC0030bc.m829a(graphics, f197e, f198f, iM586d, f193a, f194b, f195c);
+            ChatRenderer.m836a(graphics, f197e, f198f, f196d, f195c, iM586d, f193a, f194b);
+            ChatRenderer.m832a(graphics, f193a, f194b, iM586d, f197e, f198f, f203k);
+            ChatRenderer.m829a(graphics, f197e, f198f, iM586d, f193a, f194b, f195c);
             int i64 = f193a / 2;
             int i65 = f194b / 2;
             if (f201i || AppState.m587e(1479)) {
@@ -598,7 +598,7 @@ public abstract class AbstractC0025ay {
                     i = -1;
                     i2 = -1;
                 }
-                if (AbstractC0030bc.f241a != i || AbstractC0030bc.f242b != i2) {
+                if (ChatRenderer.f241a != i || ChatRenderer.f242b != i2) {
                     int i69 = i66;
                     StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(974));
                     if (i69 < 0 || c0053x4 == null) {
@@ -610,8 +610,8 @@ public abstract class AbstractC0025ay {
                         }
                     }
                     AppState.m601a(1384, (Object) NetworkUtils.m1215a(stringBufferAppend.append(AppState.m584b(i3))));
-                    AbstractC0030bc.f241a = i;
-                    AbstractC0030bc.f242b = i2;
+                    ChatRenderer.f241a = i;
+                    ChatRenderer.f242b = i2;
                 }
                 String strM584b = AppState.m584b(1384);
                 Font font2 = graphics.getFont();
@@ -639,7 +639,7 @@ public abstract class AbstractC0025ay {
                     graphics.setColor(iM586d7);
                     graphics.drawRoundRect(6, clipHeight + ((i70 - 10) / 2), 10, 10, 5, 5);
                     if (i67 > 0 && zM587e) {
-                        new C0012al(graphics).m216a(i67 == 1 ? 212 : 211, 20 + fontM625m2.stringWidth(strM584b) + 4, clipHeight + ((i70 - 16) / 2));
+                        new GraphicsContext(graphics).m216a(i67 == 1 ? 212 : 211, 20 + fontM625m2.stringWidth(strM584b) + 4, clipHeight + ((i70 - 16) / 2));
                     }
                     graphics.setColor(iM586d7);
                 }
@@ -649,7 +649,7 @@ public abstract class AbstractC0025ay {
                 graphics.setColor(color4);
                 graphics.setFont(font2);
             }
-            AbstractC0030bc.m828a(graphics, iM586d, f195c);
+            ChatRenderer.m828a(graphics, iM586d, f195c);
             int i72 = f214s;
             int i73 = f215t;
             long j28 = f213r;
@@ -871,7 +871,7 @@ public abstract class AbstractC0025ay {
         int[] iArr;
         f213r = 0L;
         if (!f211p) {
-            if (f203k != null && (iArr = AbstractC0030bc.f248c) != null && i > iArr[0] && i < iArr[0] + iArr[2] && i2 > iArr[1] - (iArr[3] / 2) && i2 < iArr[1] + (iArr[3] / 2)) {
+            if (f203k != null && (iArr = ChatRenderer.f248c) != null && i > iArr[0] && i < iArr[0] + iArr[2] && i2 > iArr[1] - (iArr[3] / 2) && i2 < iArr[1] + (iArr[3] / 2)) {
                 f212q = true;
                 return;
             } else {

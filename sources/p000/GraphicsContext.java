@@ -6,7 +6,7 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: al */
 /* loaded from: MobileAgent_3.9.jar:al.class */
-public final class C0012al {
+public final class GraphicsContext {
 
     /* renamed from: a */
     public Image f91a;
@@ -17,65 +17,65 @@ public final class C0012al {
     /* renamed from: c */
     public Font f93c;
 
-    public C0012al() {
+    public GraphicsContext() {
     }
 
-    public C0012al(Graphics graphics) {
+    public GraphicsContext(Graphics graphics) {
         this.f92b = graphics;
     }
 
-    public C0012al(Image image) {
+    public GraphicsContext(Image image) {
         this.f91a = image;
     }
 
-    public C0012al(int i, int i2) {
+    public GraphicsContext(int i, int i2) {
         this.f93c = Font.getFont(64, i, i2);
     }
 
     /* renamed from: a */
-    public final C0012al m206a(int i) {
+    public final GraphicsContext m206a(int i) {
         this.f92b.setColor(i);
         return this;
     }
 
     /* renamed from: b */
-    public final C0012al m207b(int i) {
+    public final GraphicsContext m207b(int i) {
         this.f92b.setColor(AppState.m586d(4914 + (i << 3) + AppState.m586d(72)));
         return this;
     }
 
     /* renamed from: a */
-    public final C0012al m208a(int i, int i2, int i3, int i4) {
+    public final GraphicsContext m208a(int i, int i2, int i3, int i4) {
         this.f92b.setClip(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: b */
-    public final C0012al m209b(int i, int i2, int i3, int i4) {
+    public final GraphicsContext m209b(int i, int i2, int i3, int i4) {
         this.f92b.drawLine(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: c */
-    public final C0012al m210c(int i, int i2, int i3, int i4) {
+    public final GraphicsContext m210c(int i, int i2, int i3, int i4) {
         this.f92b.fillRect(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: d */
-    public final C0012al m211d(int i, int i2, int i3, int i4) {
+    public final GraphicsContext m211d(int i, int i2, int i3, int i4) {
         this.f92b.drawRect(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: a */
-    public final C0012al m212a(C0012al c0012al) {
+    public final GraphicsContext m212a(GraphicsContext c0012al) {
         this.f92b.setFont(c0012al.f93c);
         return this;
     }
 
     /* renamed from: a */
-    public final C0012al m213a(String str, int i, int i2, int i3) {
+    public final GraphicsContext m213a(String str, int i, int i2, int i3) {
         if (i2 > 0 && i2 < AppState.m586d(1529)) {
             this.f92b.drawString(str, i, i2, i3);
         }
@@ -99,7 +99,7 @@ public final class C0012al {
     }
 
     /* renamed from: a */
-    public final C0012al m216a(int i, int i2, int i3) {
+    public final GraphicsContext m216a(int i, int i2, int i3) {
         int clipWidth;
         int clipWidth2;
         int clipHeight;

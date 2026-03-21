@@ -4,17 +4,17 @@ import java.util.Vector;
 
 /* renamed from: ag */
 /* loaded from: MobileAgent_3.9.jar:ag.class */
-public abstract class AbstractC0007ag {
+public abstract class ContactListManager {
     /* renamed from: a */
     public static final void m152a() {
         AppState.m591f(1281);
         AppState.m591f(1365);
         AppState.m594c(1476, 4);
-        C0008ah.m176a(4, C0008ah.f54k);
-        C0013am c0013amM161g = m161g();
-        C0008ah c0008ahM175i = C0008ah.m175i();
-        C0013am c0013amM257b = c0013amM161g.m257b(c0008ahM175i.f52i);
-        AbstractC0004ad.m70a(c0013amM257b);
+        TabBar.m176a(4, TabBar.f54k);
+        Screen c0013amM161g = m161g();
+        TabBar c0008ahM175i = TabBar.m175i();
+        Screen c0013amM257b = c0013amM161g.m257b(c0008ahM175i.f52i);
+        ScreenManager.m70a(c0013amM257b);
         c0013amM257b.f105j = c0008ahM175i.f53j;
         c0013amM257b.m235n();
     }
@@ -22,15 +22,15 @@ public abstract class AbstractC0007ag {
     /* renamed from: b */
     public static final int m153b() {
         m154f();
-        C0032c c0032cM69e = AbstractC0004ad.m69e();
+        MenuItem c0032cM69e = ScreenManager.m69e();
         AppState.m613c(c0032cM69e == null ? null : c0032cM69e.f265d);
         return C0015ao.m457ac();
     }
 
     /* renamed from: f */
     private static final void m154f() {
-        C0008ah c0008ahM175i = C0008ah.m175i();
-        C0013am c0013amM66b = AbstractC0004ad.m66b();
+        TabBar c0008ahM175i = TabBar.m175i();
+        Screen c0013amM66b = ScreenManager.m66b();
         c0008ahM175i.f53j = c0013amM66b.f105j;
         c0008ahM175i.f52i = c0013amM66b.m220b();
     }
@@ -45,12 +45,12 @@ public abstract class AbstractC0007ag {
     /* renamed from: d */
     public static final void m156d() {
         m155c();
-        C0008ah c0008ahM175i = C0008ah.m175i();
-        C0013am c0013amM257b = m161g().m257b(c0008ahM175i.f52i);
-        AbstractC0004ad.m70a(c0013amM257b);
+        TabBar c0008ahM175i = TabBar.m175i();
+        Screen c0013amM257b = m161g().m257b(c0008ahM175i.f52i);
+        ScreenManager.m70a(c0013amM257b);
         c0013amM257b.f105j = c0008ahM175i.f53j;
         c0013amM257b.m235n();
-        C0008ah.m176a(4, C0008ah.f54k);
+        TabBar.m176a(4, TabBar.f54k);
         C0015ao.f153g = true;
     }
 
@@ -101,7 +101,7 @@ public abstract class AbstractC0007ag {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final int m160a(C0013am c0013am, Object obj) {
+    public static final int m160a(Screen c0013am, Object obj) {
         Account abstractC0037h;
         int iM1250M = -1;
         if (AppState.f177b[1291] != null) {
@@ -132,7 +132,7 @@ public abstract class AbstractC0007ag {
             int iMo108h = abstractC0037h.mo108h();
             String str = abstractC0037h2.f340J;
             if (!AppState.m587e(243)) {
-                C0008ah.m164a(iMo108h, str);
+                TabBar.m164a(iMo108h, str);
             }
             if (vector != null) {
                 boolean z = false;
@@ -200,16 +200,16 @@ public abstract class AbstractC0007ag {
     }
 
     /* renamed from: g */
-    private static final C0013am m161g() {
+    private static final Screen m161g() {
         boolean zM1056C;
         C0054y c0054y;
         int iM586d = 1 + AppState.m586d(242);
         AppState.m594c(2573, iM586d == 1 ? 1 : 12);
-        C0013am c0013amM75b = AbstractC0004ad.m75b(2571);
+        Screen c0013amM75b = ScreenManager.m75b(2571);
         int i = c0013amM75b.f114q - 1;
         if (!AppState.m587e(99)) {
             boolean z = !AppState.m587e(98);
-            Account abstractC0037h = C0008ah.f54k;
+            Account abstractC0037h = TabBar.f54k;
             Vector vectorM445W = abstractC0037h == null ? C0015ao.m445W() : abstractC0037h.m1078P();
             Vector vector = vectorM445W;
             int iM353a = C0015ao.m353a(vectorM445W);
@@ -225,7 +225,7 @@ public abstract class AbstractC0007ag {
             boolean zM587e = AppState.m587e(101);
             boolean z2 = !AppState.m587e(98);
             Vector vectorM1213g = NetworkUtils.m1213g();
-            Vector vectorM446d = C0015ao.m446d(C0008ah.f54k);
+            Vector vectorM446d = C0015ao.m446d(TabBar.f54k);
             int size = vectorM446d.size();
             while (true) {
                 size--;
@@ -299,7 +299,7 @@ public abstract class AbstractC0007ag {
                     break;
                 }
                 Account abstractC0037hM434I = C0015ao.m434I(iM433Q);
-                Account abstractC0037h2 = C0008ah.f54k;
+                Account abstractC0037h2 = TabBar.f54k;
                 if (abstractC0037h2 == null || abstractC0037h2 == abstractC0037hM434I) {
                     Vector vectorMo720O = abstractC0037hM434I.mo720O();
                     int size4 = vectorMo720O.size();
@@ -413,7 +413,7 @@ public abstract class AbstractC0007ag {
             }
         } else {
             int i14 = i / iM586d;
-            Vector vectorM446d2 = C0015ao.m446d(C0008ah.f54k);
+            Vector vectorM446d2 = C0015ao.m446d(TabBar.f54k);
             int iM353a8 = C0015ao.m353a(vectorM446d2);
             boolean zM587e2 = AppState.m587e(101);
             boolean z4 = !AppState.m587e(98);
@@ -448,7 +448,7 @@ public abstract class AbstractC0007ag {
                     break;
                 }
                 Account abstractC0037hM434I2 = C0015ao.m434I(i17);
-                Account abstractC0037h3 = C0008ah.f54k;
+                Account abstractC0037h3 = TabBar.f54k;
                 if (abstractC0037h3 == null || abstractC0037h3 == abstractC0037hM434I2) {
                     ContactGroup abstractC0046q4 = abstractC0037hM434I2.f338H;
                     Vector vectorMo720O2 = abstractC0037hM434I2.mo720O();
@@ -472,7 +472,7 @@ public abstract class AbstractC0007ag {
                     break;
                 }
                 Account abstractC0037hM434I3 = C0015ao.m434I(i19);
-                Account abstractC0037h4 = C0008ah.f54k;
+                Account abstractC0037h4 = TabBar.f54k;
                 if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037hM434I3) {
                     ContactGroup abstractC0046q5 = abstractC0037hM434I3.f336F;
                     Vector vectorM1077N2 = abstractC0037hM434I3.m1077N();
@@ -496,7 +496,7 @@ public abstract class AbstractC0007ag {
                     break;
                 }
                 Account abstractC0037hM434I4 = C0015ao.m434I(i21);
-                Account abstractC0037h5 = C0008ah.f54k;
+                Account abstractC0037h5 = TabBar.f54k;
                 if (abstractC0037h5 == null || abstractC0037h5 == abstractC0037hM434I4) {
                     ContactGroup abstractC0046q6 = abstractC0037hM434I4.f334D;
                     Vector vectorM1079Q2 = abstractC0037hM434I4.m1079Q();
@@ -520,7 +520,7 @@ public abstract class AbstractC0007ag {
                     break;
                 }
                 Account abstractC0037hM434I5 = C0015ao.m434I(i23);
-                Account abstractC0037h6 = C0008ah.f54k;
+                Account abstractC0037h6 = TabBar.f54k;
                 if (abstractC0037h6 == null || abstractC0037h6 == abstractC0037hM434I5) {
                     ContactGroup abstractC0046q7 = abstractC0037hM434I5.f335E;
                     Vector vectorM1076M2 = abstractC0037hM434I5.m1076M();
@@ -538,7 +538,7 @@ public abstract class AbstractC0007ag {
                 }
             }
         }
-        C0008ah.m178j();
+        TabBar.m178j();
         return c0013amM75b.m218a();
     }
 

@@ -5,16 +5,16 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: ad */
 /* loaded from: MobileAgent_3.9.jar:ad.class */
-public abstract class AbstractC0004ad {
+public abstract class ScreenManager {
     /* renamed from: a */
     public static final void m65a() {
         int iM586d = AppState.m586d(73);
         int i = iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16;
-        C0012al c0012al = new C0012al(0, i);
+        GraphicsContext c0012al = new GraphicsContext(0, i);
         AppState.f177b[1273] = c0012al;
-        C0012al c0012al2 = new C0012al(1, i);
+        GraphicsContext c0012al2 = new GraphicsContext(1, i);
         AppState.f177b[1274] = c0012al2;
-        C0012al c0012al3 = AppState.m587e(70) ? new C0012al(2, i) : c0012al;
+        GraphicsContext c0012al3 = AppState.m587e(70) ? new GraphicsContext(2, i) : c0012al;
         AppState.f177b[1275] = c0012al3;
         AppState.f177b[1276] = c0012al;
         AppState.f177b[1277] = c0012al;
@@ -32,18 +32,18 @@ public abstract class AbstractC0004ad {
             if (size < 0) {
                 return;
             } else {
-                ((C0013am) vectorM614m.elementAt(size)).m258q();
+                ((Screen) vectorM614m.elementAt(size)).m258q();
             }
         }
     }
 
     /* renamed from: b */
-    public static final C0013am m66b() {
+    public static final Screen m66b() {
         Vector vectorM614m = AppState.m614m(1272);
         if (vectorM614m.isEmpty()) {
             return null;
         }
-        return (C0013am) vectorM614m.lastElement();
+        return (Screen) vectorM614m.lastElement();
     }
 
     /* renamed from: c */
@@ -63,7 +63,7 @@ public abstract class AbstractC0004ad {
     }
 
     /* renamed from: e */
-    public static final C0032c m69e() {
+    public static final MenuItem m69e() {
         if (AppState.m614m(1272).size() > 0) {
             return m66b().m222d();
         }
@@ -71,10 +71,10 @@ public abstract class AbstractC0004ad {
     }
 
     /* renamed from: a */
-    public static final void m70a(C0013am c0013am) {
+    public static final void m70a(Screen c0013am) {
         Vector vectorM614m = AppState.m614m(1272);
         while (vectorM614m.size() > 0) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
         }
         vectorM614m.addElement(c0013am);
     }
@@ -85,13 +85,13 @@ public abstract class AbstractC0004ad {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final void m71b(C0013am c0013am) {
-        C0013am c0013am2 = null;
+    public static final void m71b(Screen c0013am) {
+        Screen c0013am2 = null;
         Vector vectorM614m = AppState.m614m(1272);
         int size = vectorM614m.size() - 1;
-        int i = size >= 0 ? ((C0013am) vectorM614m.elementAt(size)).f94a : -1;
+        int i = size >= 0 ? ((Screen) vectorM614m.elementAt(size)).f94a : -1;
         if (i == 137 || i == 63) {
-            C0013am c0013am3 = (C0013am) vectorM614m.elementAt(size);
+            Screen c0013am3 = (Screen) vectorM614m.elementAt(size);
             c0013am2 = c0013am3;
             vectorM614m.removeElement(c0013am3);
         }
@@ -99,12 +99,12 @@ public abstract class AbstractC0004ad {
         if (i2 != 112) {
             int size2 = vectorM614m.size();
             for (int i3 = 0; i3 < size2; i3++) {
-                if (((C0013am) vectorM614m.elementAt(i3)).f94a == i2) {
+                if (((Screen) vectorM614m.elementAt(i3)).f94a == i2) {
                     size2 = i3;
                 }
             }
             while (vectorM614m.size() > size2) {
-                C0021au.m549c();
+                ScreenBuilder.m549c();
             }
         }
         int i4 = c0013am.f97d;
@@ -128,7 +128,7 @@ public abstract class AbstractC0004ad {
                 c0013am.m266a(iM586d, iM605e);
                 break;
             case 10:
-                C0013am c0013amM66b = m66b();
+                Screen c0013amM66b = m66b();
                 if (c0013amM66b != null) {
                     int iM586d2 = c0013amM66b.f98e + c0013amM66b.f95b;
                     int iM265r = c0013amM66b.m265r();
@@ -148,12 +148,12 @@ public abstract class AbstractC0004ad {
         }
         int size3 = vectorM614m.size();
         for (int i7 = 0; i7 < size3; i7++) {
-            if (((C0013am) vectorM614m.elementAt(i7)).f97d == 7) {
+            if (((Screen) vectorM614m.elementAt(i7)).f97d == 7) {
                 size3 = i7;
             }
         }
         while (vectorM614m.size() > size3) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
         }
         c0013am.m235n();
         vectorM614m.addElement(c0013am);
@@ -171,7 +171,7 @@ public abstract class AbstractC0004ad {
             if (size < 0) {
                 return false;
             }
-        } while (((C0013am) vectorM614m.elementAt(size)).f94a != i);
+        } while (((Screen) vectorM614m.elementAt(size)).f94a != i);
         return true;
     }
 
@@ -190,8 +190,8 @@ public abstract class AbstractC0004ad {
     }
 
     /* renamed from: b */
-    public static final C0013am m75b(int i) {
-        C0013am c0013am;
+    public static final Screen m75b(int i) {
+        Screen c0013am;
         int i2 = i + 1;
         String strM522f = Utils.m522f(AppState.m584b(AppState.m586d(i)));
         int i3 = i2 + 1;
@@ -219,26 +219,26 @@ public abstract class AbstractC0004ad {
         switch (i5) {
             case 0:
             case 1:
-                c0013am = new C0013am(0, iM586d, iM586d10, iM605e, true);
+                c0013am = new Screen(0, iM586d, iM586d10, iM605e, true);
                 break;
             case 2:
             case 3:
             case 4:
             case 10:
             case 11:
-                c0013am = new C0013am(0, iM586d, (iM586d10 * 9) / 10, (iM605e * 9) / 10, true);
+                c0013am = new Screen(0, iM586d, (iM586d10 * 9) / 10, (iM605e * 9) / 10, true);
                 break;
             case 5:
             case 9:
-                c0013am = new C0013am(0, iM586d, iM586d10, iM605e, false);
+                c0013am = new Screen(0, iM586d, iM586d10, iM605e, false);
                 break;
             case 6:
             case 12:
-                c0013am = new C0013am(1, iM586d, iM586d10, iM605e, true);
+                c0013am = new Screen(1, iM586d, iM586d10, iM605e, true);
                 break;
             case 7:
             case 8:
-                c0013am = new C0013am(0, iM586d, (iM586d10 * 9) / 10, (iM605e * 9) / 10, false);
+                c0013am = new Screen(0, iM586d, (iM586d10 * 9) / 10, (iM605e * 9) / 10, false);
                 break;
             default:
                 c0013am = null;
@@ -248,7 +248,7 @@ public abstract class AbstractC0004ad {
             if (i5 != 7) {
                 c0013am.m224a(iM586d3, strM522f);
             } else {
-                c0013am.m225a(new C0032c(0, strM522f).m901a(strM522f, 1, 0));
+                c0013am.m225a(new MenuItem(0, strM522f).m901a(strM522f, 1, 0));
             }
         }
         c0013am.f125x = z;
@@ -256,14 +256,14 @@ public abstract class AbstractC0004ad {
         for (int i12 = 0; i12 < iM586d9; i12++) {
             iM79a = m79a(c0013am, iM79a, iM586d);
         }
-        C0013am c0013amM259a = c0013am.m259a(iM586d4 > 0 ? AppState.m584b(iM586d4) : null, iM586d5 > 0 ? AppState.m584b(iM586d5) : null, iM586d6, iM586d7, iM586d8);
+        Screen c0013amM259a = c0013am.m259a(iM586d4 > 0 ? AppState.m584b(iM586d4) : null, iM586d5 > 0 ? AppState.m584b(iM586d5) : null, iM586d6, iM586d7, iM586d8);
         c0013amM259a.f97d = i5;
         return c0013amM259a;
     }
 
     /* renamed from: c */
-    public static final C0013am m76c(int i) {
-        C0013am c0013am = new C0013am(0, i, (AppState.m586d(1528) * 9) / 10, (AppState.m605e() * 9) / 10, true);
+    public static final Screen m76c(int i) {
+        Screen c0013am = new Screen(0, i, (AppState.m586d(1528) * 9) / 10, (AppState.m605e() * 9) / 10, true);
         c0013am.f97d = 2;
         c0013am.f125x = true;
         return c0013am;
@@ -278,12 +278,12 @@ public abstract class AbstractC0004ad {
             if (size <= 0) {
                 return false;
             }
-        } while (((C0013am) vectorM614m.elementAt(size)).f99f != 0);
+        } while (((Screen) vectorM614m.elementAt(size)).f99f != 0);
         return true;
     }
 
     /* renamed from: a */
-    private static final int m78a(boolean z, C0013am c0013am, int i, boolean z2) {
+    private static final int m78a(boolean z, Screen c0013am, int i, boolean z2) {
         int i2 = i + 1;
         int iM586d = AppState.m586d(i);
         int i3 = i2 + 1;
@@ -301,7 +301,7 @@ public abstract class AbstractC0004ad {
     }
 
     /* renamed from: a */
-    private static final int m79a(C0013am c0013am, int i, int i2) {
+    private static final int m79a(Screen c0013am, int i, int i2) {
         int i3;
         Object objM522f;
         int i4;
@@ -333,7 +333,7 @@ public abstract class AbstractC0004ad {
                 return i10;
             case 1:
                 int i11 = i5 + 1;
-                C0032c c0032cM901a = C0032c.m889d().m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.m522f(AppState.m584b(AppState.m586d(i5)))).append(' ')), 0, 0);
+                MenuItem c0032cM901a = MenuItem.m889d().m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.m522f(AppState.m584b(AppState.m586d(i5)))).append(' ')), 0, 0);
                 int i12 = i11 + 1;
                 String strM522f2 = Utils.m522f(AppState.m584b(AppState.m586d(i11)));
                 if (!StringUtils.m1a(strM522f2)) {
@@ -345,7 +345,7 @@ public abstract class AbstractC0004ad {
                 int i13 = i5 + 1;
                 String strM522f3 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
                 int i14 = i13 + 1;
-                c0013am.m225a(C0032c.m890a(strM522f3, AppState.m587e(AppState.m586d(i13))));
+                c0013am.m225a(MenuItem.m890a(strM522f3, AppState.m587e(AppState.m586d(i13))));
                 return i14;
             case 3:
                 int i15 = i5 + 1;
@@ -353,11 +353,11 @@ public abstract class AbstractC0004ad {
                 int i16 = i15 + 1;
                 Vector vectorM512e = Utils.m512e(Utils.m522f(AppState.m584b(AppState.m586d(i15))));
                 int i17 = i16 + 1;
-                c0013am.m225a(new C0032c(9, strM522f4).m892a(vectorM512e, AppState.m586d(AppState.m586d(i16)), strM522f4));
+                c0013am.m225a(new MenuItem(9, strM522f4).m892a(vectorM512e, AppState.m586d(AppState.m586d(i16)), strM522f4));
                 return i17;
             case 4:
                 int i18 = i5 + 1;
-                c0013am.m225a(C0032c.m889d().m901a(Utils.m522f(AppState.m584b(AppState.m586d(i5))), 1, 0));
+                c0013am.m225a(MenuItem.m889d().m901a(Utils.m522f(AppState.m584b(AppState.m586d(i5))), 1, 0));
                 return i18;
             case 5:
                 if (i2 == 49) {
@@ -385,11 +385,11 @@ public abstract class AbstractC0004ad {
                     i4 = i22 + 1;
                     strM522f = Utils.m522f(Utils.m522f(AppState.m584b(AppState.m586d(i22))));
                 }
-                c0013am.m225a(new C0032c(15, obj instanceof String ? (String) obj : AppState.f181d).m891a(obj, strM522f, C0034e.m967e(iM586d6), C0034e.m967e(iM586d7), strM522f5));
+                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.f181d).m891a(obj, strM522f, C0034e.m967e(iM586d6), C0034e.m967e(iM586d7), strM522f5));
                 return i4;
             case 6:
                 int i24 = i5 + 1;
-                c0013am.m225a(C0032c.m889d().m898b(Utils.m522f(AppState.m584b(AppState.m586d(i5)))));
+                c0013am.m225a(MenuItem.m889d().m898b(Utils.m522f(AppState.m584b(AppState.m586d(i5)))));
                 return i24;
             case 7:
                 return m78a(AppState.m587e(AppState.m586d(i5)), c0013am, i5 + 1, z);
@@ -398,13 +398,13 @@ public abstract class AbstractC0004ad {
             case 9:
                 String strM522f6 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
                 String strM522f7 = Utils.m522f(AppState.m584b(AppState.m586d(i5 + 1)));
-                C0032c c0032cM901a2 = new C0032c(4, (String) null).m884a().m896a(221).m901a(Utils.m535l(strM522f7) ? strM522f7 : strM522f6, 1, 7);
+                MenuItem c0032cM901a2 = new MenuItem(4, (String) null).m884a().m896a(221).m901a(Utils.m535l(strM522f7) ? strM522f7 : strM522f6, 1, 7);
                 c0032cM901a2.f265d = new String[]{strM522f6, strM522f7};
                 c0013am.m225a(c0032cM901a2);
                 return i5 + 2;
             case 10:
                 String strM522f8 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
-                C0032c c0032c = new C0032c(5, (String) null);
+                MenuItem c0032c = new MenuItem(5, (String) null);
                 c0032c.m884a();
                 c0032c.m896a(219);
                 if (Utils.m535l(strM522f8)) {
@@ -417,7 +417,7 @@ public abstract class AbstractC0004ad {
                 c0013am.m225a(c0032c);
                 return i5 + 1;
             case 11:
-                c0013am.m225a(C0032c.m893a(new C0012al((Image) AppState.f177b[AppState.m586d(i5)])));
+                c0013am.m225a(MenuItem.m893a(new GraphicsContext((Image) AppState.f177b[AppState.m586d(i5)])));
                 return i5 + 1;
             default:
                 m79a(c0013am, AppState.m586d(i5), i2);

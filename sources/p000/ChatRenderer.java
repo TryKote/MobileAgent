@@ -7,7 +7,7 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: bc */
 /* loaded from: MobileAgent_3.9.jar:bc.class */
-public abstract class AbstractC0030bc {
+public abstract class ChatRenderer {
 
     /* renamed from: a */
     public static int f241a;
@@ -238,12 +238,12 @@ public abstract class AbstractC0030bc {
         }
         int i17 = (i10 - i12) - i16;
         if (i17 < 10) {
-            if (!(AbstractC0025ay.f208n > 0)) {
+            if (!(MapRenderer.f208n > 0)) {
                 int iM504c = Utils.m504c(i17) + 20;
-                if (AbstractC0025ay.f208n <= 0) {
-                    AbstractC0025ay.f208n = iM504c;
-                    AbstractC0025ay.f209o = System.currentTimeMillis();
-                    AbstractC0025ay.f204l = true;
+                if (MapRenderer.f208n <= 0) {
+                    MapRenderer.f208n = iM504c;
+                    MapRenderer.f209o = System.currentTimeMillis();
+                    MapRenderer.f204l = true;
                 }
             }
         }
@@ -251,7 +251,7 @@ public abstract class AbstractC0030bc {
         graphics.fillRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
         graphics.setColor(0);
         graphics.drawRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
-        C0012al c0012al = new C0012al(graphics);
+        GraphicsContext c0012al = new GraphicsContext(graphics);
         if (i8 != 0) {
             c0012al.m216a(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
         }

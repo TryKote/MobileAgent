@@ -129,7 +129,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: a */
     public final void m1232a(long j, String str, int i) {
-        C0008ah c0008ah;
+        TabBar c0008ah;
         AppState.m601a(1237, (Object) this.f380w);
         C0034e.m925a(2);
         m1227c(i);
@@ -153,7 +153,7 @@ public abstract class Contact implements Sortable {
             if (size < 0) {
                 return;
             } else {
-                c0008ah = (C0008ah) vectorM614m.elementAt(size);
+                c0008ah = (TabBar) vectorM614m.elementAt(size);
             }
         } while (c0008ah.f51h != abstractC0037h);
         c0008ah.f52i = str2;
@@ -293,7 +293,7 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: I */
-    public final C0013am m1242I() {
+    public final Screen m1242I() {
         this.f375t = false;
         String str = this.f376u;
         AppState.m601a(1290, (Object) str);
@@ -302,7 +302,7 @@ public abstract class Contact implements Sortable {
             iMo139e += 4;
         }
         AppState.m594c(2594, iMo139e);
-        C0013am c0013amM75b = AbstractC0004ad.m75b(2591);
+        Screen c0013amM75b = ScreenManager.m75b(2591);
         ByteBuffer c0043nM1380F = m1244f().m1380F();
         int iM624l = AppState.m624l();
         while (c0043nM1380F.f384b > 0) {
@@ -334,7 +334,7 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: a */
-    private final void m1243a(C0013am c0013am, String str, int i) {
+    private final void m1243a(Screen c0013am, String str, int i) {
         Vector vectorM1098a = Conversation.m1098a(str);
         int size = vectorM1098a.size();
         for (int i2 = 0; i2 < size; i2++) {
@@ -342,7 +342,7 @@ public abstract class Contact implements Sortable {
             if (Conversation.m1106f(str2)) {
                 c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{C0034e.m967e(0), str2});
             } else {
-                c0013am.m225a(C0032c.m889d().m902a(str2, 0, i, this.f369o.mo80a()));
+                c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.f369o.mo80a()));
             }
         }
         NetworkUtils.m1212a(vectorM1098a);
@@ -362,9 +362,9 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: J */
-    public final C0013am m1246J() {
+    public final Screen m1246J() {
         String strM1215a;
-        C0013am c0013amM75b = AbstractC0004ad.m75b(2631);
+        Screen c0013amM75b = ScreenManager.m75b(2631);
         ByteBuffer c0043nM1380F = m1244f().m1380F();
         while (c0043nM1380F.f384b > 0) {
             int iM1353u = c0043nM1380F.m1353u();
@@ -395,7 +395,7 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: b */
-    public abstract C0032c mo138b();
+    public abstract MenuItem mo138b();
 
     /* renamed from: i */
     public abstract boolean mo140i();

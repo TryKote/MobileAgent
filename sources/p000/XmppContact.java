@@ -79,8 +79,8 @@ public final class XmppContact extends Contact {
 
     @Override // p000.Contact
     /* renamed from: b */
-    public final C0032c mo138b() {
-        C0032c c0032cM901a = C0032c.m887a(this.f380w).m896a(m137o()).m901a(this.f376u, 0, this.f40d);
+    public final MenuItem mo138b() {
+        MenuItem c0032cM901a = MenuItem.m887a(this.f380w).m896a(m137o()).m901a(this.f376u, 0, this.f40d);
         c0032cM901a.f265d = this;
         return c0032cM901a;
     }

@@ -177,11 +177,11 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final int m933a(String str, C0032c c0032c) {
+    public static final int m933a(String str, MenuItem c0032c) {
         Object[] objArr = (Object[]) c0032c.f265d;
         Object[] objArr2 = (Object[]) objArr[0];
-        C0032c c0032c2 = (C0032c) objArr[1];
-        C0013am c0013am = (C0013am) objArr[2];
+        MenuItem c0032c2 = (MenuItem) objArr[1];
+        Screen c0013am = (Screen) objArr[2];
         String[] strArr = (String[]) objArr2[1];
         int i = 0;
         int length = strArr.length;
@@ -264,7 +264,7 @@ public final class C0034e {
         int iM586d3 = (int) ((j * AppState.m586d(113)) / 1048576);
         AppState.m588a(1327, NetworkUtils.m1217h().append(iM586d3 / 100).append('.').append(Utils.m501b(iM586d3 % 100)).append(' ').append(AppState.m584b(117)));
         AppState.m594c(3985, iM586d + 745);
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(3985));
+        ScreenManager.m71b(ScreenManager.m75b(3985));
         AppState.m590b(1325, 1335);
     }
 
@@ -467,7 +467,7 @@ public final class C0034e {
         if (AppState.m587e(286)) {
             return AppState.m586d(1476);
         }
-        C0021au.m549c();
+        ScreenBuilder.m549c();
         return 0;
     }
 
@@ -513,12 +513,12 @@ public final class C0034e {
         if (vector == null) {
             return;
         }
-        C0013am c0013amM75b = AbstractC0004ad.m75b(4292);
+        Screen c0013amM75b = ScreenManager.m75b(4292);
         int size = vector.size();
         while (true) {
             size--;
             if (size < 0) {
-                AbstractC0004ad.m71b(c0013amM75b);
+                ScreenManager.m71b(c0013amM75b);
                 C0015ao.f153g = true;
                 return;
             } else {
@@ -548,7 +548,7 @@ public final class C0034e {
     /* renamed from: k */
     public static final void m954k() {
         AppState.m591f(1281);
-        C0013am c0013amM75b = AbstractC0004ad.m75b(4507);
+        Screen c0013amM75b = ScreenManager.m75b(4507);
         Vector vectorM439R = C0015ao.m439R();
         int size = vectorM439R.size();
         if (size > 0) {
@@ -561,9 +561,9 @@ public final class C0034e {
             c0013amM75b.m255a(551);
         }
         NetworkUtils.m1212a(vectorM439R);
-        AbstractC0004ad.m70a(c0013amM75b);
-        C0008ah.m169e();
-        C0008ah.m176a(36, (Account) null);
+        ScreenManager.m70a(c0013amM75b);
+        TabBar.m169e();
+        TabBar.m176a(36, (Account) null);
     }
 
     /* renamed from: c */
@@ -585,7 +585,7 @@ public final class C0034e {
                     return C0015ao.m338l(422);
                 }
                 ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 1));
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 85;
             case 1:
                 if (vectorM440S.size() <= 0) {
@@ -600,7 +600,7 @@ public final class C0034e {
             default:
                 AppState.m594c(4895, 0);
                 C0015ao.m393a((MrimAccount) null, C0015ao.m312l().f390a);
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 0;
         }
     }
@@ -619,11 +619,11 @@ public final class C0034e {
             C0015ao.m340m(404);
             return;
         }
-        C0013am c0013amM75b = AbstractC0004ad.m75b(2075);
+        Screen c0013amM75b = ScreenManager.m75b(2075);
         while (true) {
             i--;
             if (i < 0) {
-                AbstractC0004ad.m71b(c0013amM75b);
+                ScreenManager.m71b(c0013amM75b);
                 return;
             } else {
                 Object objElementAt = vectorM1142d.elementAt(i);
@@ -644,7 +644,7 @@ public final class C0034e {
         if (StringUtils.m3a(1060, str)) {
             int iM1233b = AppState.m611g().m1233b(strM522f);
             if (0 != iM1233b) {
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return C0015ao.m338l(iM1233b);
             }
             AppState.m594c(1456, 0);
@@ -660,7 +660,7 @@ public final class C0034e {
         if (i == 93 || i == 123 || i == 95 || i == 94) {
             return 0;
         }
-        C0021au.m549c();
+        ScreenBuilder.m549c();
         return 0;
     }
 
@@ -869,7 +869,7 @@ public final class C0034e {
             return 0;
         }
         if (StringUtils.m3a(846, str)) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
             m966a((Vector) null, (String) null, (String) null);
             return 0;
         }
@@ -878,7 +878,7 @@ public final class C0034e {
             return 0;
         }
         if (StringUtils.m3a(1061, str)) {
-            C0021au.m549c();
+            ScreenBuilder.m549c();
             C0015ao.m290a(false);
             return 0;
         }
@@ -971,7 +971,7 @@ public final class C0034e {
             if (m979e(AppState.m584b(1375)) >= m979e(AppState.m584b(1284))) {
                 throw new Throwable();
             }
-            AbstractC0004ad.m71b(AbstractC0004ad.m75b(3850));
+            ScreenManager.m71b(ScreenManager.m75b(3850));
         } catch (Throwable unused) {
             if (zM587e) {
                 C0015ao.m340m(731);
@@ -1035,12 +1035,12 @@ public final class C0034e {
 
     /* renamed from: t */
     public static final void m983t() {
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(5141));
+        ScreenManager.m71b(ScreenManager.m75b(5141));
         C0015ao.m340m(1027);
     }
 
     /* renamed from: a */
-    public static final int m984a(C0013am c0013am) {
+    public static final int m984a(Screen c0013am) {
         NetworkUtils.m1195d();
         String[] strArrM518a = Utils.m518a(true);
         Vector vectorM794a = C0029bb.m794a(c0013am, 1);

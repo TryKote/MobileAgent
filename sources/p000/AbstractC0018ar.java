@@ -25,7 +25,7 @@ public abstract class AbstractC0018ar implements ListItem {
         if (vectorM489a != null && vectorM489a.size() > 0) {
             AppState.f177b[1404] = vectorM489a;
         }
-        AbstractC0025ay.f200h = true;
+        MapRenderer.f200h = true;
     }
 
     /* renamed from: a */

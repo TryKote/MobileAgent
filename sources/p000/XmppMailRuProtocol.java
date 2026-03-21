@@ -88,7 +88,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.m601a(1292, (Object) abstractC0037hM616i.f315k);
                 AppState.m601a(1293, (Object) abstractC0037hM616i.f316l);
             }
-            AbstractC0004ad.m71b(AbstractC0004ad.m75b(2803));
+            ScreenManager.m71b(ScreenManager.m75b(2803));
             return;
         }
         if (m837y() == 2) {
@@ -119,7 +119,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.m601a(1293, (Object) c0005ae.f316l);
                 AppState.m601a(1297, (Object) c0005ae.f339I);
             }
-            AbstractC0004ad.m71b(AbstractC0004ad.m75b(3443));
+            ScreenManager.m71b(ScreenManager.m75b(3443));
             return;
         }
         if (m837y() == 3) {
@@ -134,7 +134,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.m601a(1293, (Object) c0031bd.f316l);
                 AppState.m601a(1297, (Object) c0031bd.f339I);
             }
-            AbstractC0004ad.m71b(AbstractC0004ad.m75b(3463));
+            ScreenManager.m71b(ScreenManager.m75b(3463));
             return;
         }
         m840t();
@@ -163,7 +163,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 i++;
             }
         }
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(2777));
+        ScreenManager.m71b(ScreenManager.m75b(2777));
     }
 
     /* renamed from: s */
@@ -609,7 +609,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (f257f != null) {
             interfaceC0044o = f257f;
         } else {
-            interfaceC0044o = AbstractC0025ay.f203k;
+            interfaceC0044o = MapRenderer.f203k;
             f257f = interfaceC0044o;
         }
         ListItem interfaceC0044o2 = interfaceC0044o;
@@ -646,7 +646,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         while (true) {
             int i4 = i3;
             if (i4 >= 16384) {
-                AbstractC0004ad.m71b(AbstractC0004ad.m75b(1753));
+                ScreenManager.m71b(ScreenManager.m75b(1753));
                 return;
             }
             int i5 = i2;
@@ -665,7 +665,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         switch (i) {
             case 0:
                 AppState.m613c(interfaceC0044o);
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 63;
             case 1:
                 if (iMo276r == 8) {
@@ -674,12 +674,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 } else {
                     AppState.m613c(f257f);
                 }
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 102;
             case 2:
                 if (iMo276r == 3) {
                     AppState.m613c(f257f);
-                    C0021au.m549c();
+                    ScreenBuilder.m549c();
                     return 85;
                 }
                 AppState.m613c((Object) null);
@@ -688,7 +688,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     return C0015ao.m338l(422);
                 }
                 ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(((C0045p) interfaceC0044o).f390a, 1));
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 85;
             case 3:
                 Vector vectorM440S2 = C0015ao.m440S();
@@ -696,10 +696,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     return C0015ao.m338l(422);
                 }
                 ((MrimAccount) vectorM440S2.firstElement()).m751a(new SearchEntry(((C0045p) interfaceC0044o).f390a, 2));
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 6;
             case 4:
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 AppState.f177b[1255] = (Conversation) interfaceC0044o;
                 return 170;
             case 5:
@@ -707,24 +707,24 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 return 12;
             case 6:
                 AppState.m617d(interfaceC0044o);
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 167;
             case 7:
                 AppState.m617d(interfaceC0044o);
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 return 151;
             case 8:
             case 9:
             default:
                 return 6;
             case 10:
-                if (AbstractC0025ay.m656d()) {
+                if (MapRenderer.m656d()) {
                     MmpContact.m195u();
                 }
-                ListItem interfaceC0044o2 = AbstractC0025ay.f203k;
+                ListItem interfaceC0044o2 = MapRenderer.f203k;
                 if (interfaceC0044o2 == null || !interfaceC0044o2.mo277s()) {
-                    jMo274v = AbstractC0025ay.f196d;
-                    jMo275w = AbstractC0025ay.f195c;
+                    jMo274v = MapRenderer.f196d;
+                    jMo275w = MapRenderer.f195c;
                 } else {
                     jMo274v = interfaceC0044o2.mo274v();
                     jMo275w = interfaceC0044o2.mo275w();
@@ -733,14 +733,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 int[] iArr = {(int) jMo274v, (int) jMo275w};
                 MmpContact.f66k.addElement(iArr);
                 MmpContact.f67l.addElement(new Object[]{null, iArr});
-                AbstractC0025ay.f200h = true;
-                if (!AbstractC0025ay.m656d()) {
+                MapRenderer.f200h = true;
+                if (!MapRenderer.m656d()) {
                     return 6;
                 }
                 Conversation.m1129c();
                 return 6;
             case 11:
-                if (AbstractC0025ay.m656d()) {
+                if (MapRenderer.m656d()) {
                     MmpContact.m195u();
                 }
                 if (MmpContact.f68m != null) {
@@ -749,22 +749,22 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 AppState.m594c(1575, 0);
                 AppState.m599a(1574, AppState.m587e(1573));
-                AbstractC0025ay.f200h = true;
-                if (!AbstractC0025ay.m656d()) {
+                MapRenderer.f200h = true;
+                if (!MapRenderer.m656d()) {
                     return 6;
                 }
                 Conversation.m1129c();
                 return 6;
             case 12:
                 MmpContact.m185f();
-                AbstractC0025ay.f200h = true;
+                MapRenderer.f200h = true;
                 return 6;
             case 13:
-                ListItem interfaceC0044o3 = AbstractC0025ay.f203k;
+                ListItem interfaceC0044o3 = MapRenderer.f203k;
                 if (interfaceC0044o3 != null && interfaceC0044o3.mo277s()) {
                     interfaceC0044o3.mo278t();
                 }
-                AbstractC0025ay.f200h = true;
+                MapRenderer.f200h = true;
                 return 6;
             case 14:
                 ConnectionThread.m1170l();
@@ -785,7 +785,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 17:
                 return 114;
             case 18:
-                C0021au.m549c();
+                ScreenBuilder.m549c();
                 Vector vectorM440S3 = C0015ao.m440S();
                 if (vectorM440S3.size() > 1) {
                     return 172;

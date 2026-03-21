@@ -318,7 +318,7 @@ public final class StringUtils {
     private static final void m23a(C0034e c0034e, Image image) {
         try {
             m25l().m49a(c0034e, image, 1);
-            AbstractC0025ay.f200h = true;
+            MapRenderer.f200h = true;
         } catch (Throwable unused) {
         }
     }
@@ -370,7 +370,7 @@ public final class StringUtils {
             stringBufferAppend.append((char) 0).append(m28b((XmlElement) vectorM614m.elementAt(i)));
         }
         AppState.m588a(1300, stringBufferAppend);
-        AbstractC0004ad.m71b(AbstractC0004ad.m75b(3356));
+        ScreenManager.m71b(ScreenManager.m75b(3356));
     }
 
     /* renamed from: f */
@@ -390,8 +390,8 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final void m31a(C0013am c0013am, Object obj) {
-        C0032c c0032c = (C0032c) obj;
+    public static final void m31a(Screen c0013am, Object obj) {
+        MenuItem c0032c = (MenuItem) obj;
         int iIntValue = ((Integer) ((Object[]) c0032c.f265d)[0]).intValue();
         String str = c0032c.f259b;
         String strM584b = AppState.m584b(689);
@@ -400,11 +400,11 @@ public final class StringUtils {
         String strM584b4 = AppState.m584b(688);
         String strM584b5 = AppState.m584b(692);
         String strM584b6 = AppState.m584b(693);
-        C0032c c0032c2 = null;
-        C0032c c0032c3 = null;
-        C0032c c0032c4 = null;
-        C0032c c0032c5 = null;
-        C0032c c0032c6 = null;
+        MenuItem c0032c2 = null;
+        MenuItem c0032c3 = null;
+        MenuItem c0032c4 = null;
+        MenuItem c0032c5 = null;
+        MenuItem c0032c6 = null;
         int iIntValue2 = 0;
         Vector vector = c0013am.f108m;
         int iM541c = Utils.m541c(vector);
@@ -413,7 +413,7 @@ public final class StringUtils {
             if (iM541c < 0) {
                 break;
             }
-            C0032c c0032c7 = (C0032c) vector.elementAt(iM541c);
+            MenuItem c0032c7 = (MenuItem) vector.elementAt(iM541c);
             if (c0032c7.f258a == 9) {
                 String str2 = c0032c7.f259b;
                 if (str2.startsWith(strM584b4)) {
@@ -432,7 +432,7 @@ public final class StringUtils {
             }
         }
         if (m6a(str, strM584b)) {
-            C0032c c0032c8 = c0032c2;
+            MenuItem c0032c8 = c0032c2;
             Vector vectorM26m = m26m();
             if (iIntValue > 0) {
                 m27a(vectorM26m, AppState.m614m(1301).elementAt(iIntValue - 1));
@@ -440,7 +440,7 @@ public final class StringUtils {
             c0032c8.m892a(vectorM26m, 0, strM584b2);
             c0032c3.m892a(Utils.m512e(AppState.m584b(684)), 0, strM584b3);
         } else if (m6a(str, strM584b2)) {
-            C0032c c0032c9 = c0032c3;
+            MenuItem c0032c9 = c0032c3;
             int i = iIntValue2;
             Vector vectorM26m2 = m26m();
             if (iIntValue > 0) {

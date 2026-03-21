@@ -182,8 +182,8 @@ public abstract class AppState {
     }
 
     /* renamed from: c */
-    public static final C0011ak m582c() {
-        return (C0011ak) f177b[1371];
+    public static final MainCanvas m582c() {
+        return (MainCanvas) f177b[1371];
     }
 
     /* renamed from: p */
@@ -353,8 +353,8 @@ public abstract class AppState {
     }
 
     /* renamed from: k */
-    public static final C0012al m608k(int i) {
-        return (C0012al) f177b[i + 1273];
+    public static final GraphicsContext m608k(int i) {
+        return (GraphicsContext) f177b[i + 1273];
     }
 
     /* renamed from: l */
@@ -527,7 +527,7 @@ public abstract class AppState {
 
     /* renamed from: m */
     public static final Font m625m() {
-        return ((C0012al) f177b[1273]).f93c;
+        return ((GraphicsContext) f177b[1273]).f93c;
     }
 
     /* renamed from: a */

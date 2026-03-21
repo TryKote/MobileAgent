@@ -108,8 +108,8 @@ public final class MrimContact extends Contact implements ListItem {
 
     @Override // p000.Contact
     /* renamed from: b */
-    public final C0032c mo138b() {
-        C0032c c0032cM896a = C0032c.m887a(this.f380w).m896a(mo139e());
+    public final MenuItem mo138b() {
+        MenuItem c0032cM896a = MenuItem.m887a(this.f380w).m896a(mo139e());
         String str = this.f376u;
         int i = mo141j() ? 3 : mo140i() ? 2 : 0;
         int i2 = this.f295b;
@@ -311,8 +311,8 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: p */
     public final void m999p() {
         this.f306l = null;
-        AbstractC0030bc.f253h = null;
-        AbstractC0025ay.f200h = true;
+        ChatRenderer.f253h = null;
+        MapRenderer.f200h = true;
     }
 
     /* renamed from: q */
