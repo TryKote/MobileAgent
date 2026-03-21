@@ -60,12 +60,12 @@ public final class AppController {
 
     /* renamed from: a */
     public static final int handleAction(Object obj) {
-        int iM586d = AppState.getInt(1466);
+        int targetState = AppState.getInt(1466);
         if (obj != null) {
             AppState.setAccount(obj);
-            return iM586d;
+            return targetState;
         }
-        if (iM586d != 152) {
+        if (targetState != 152) {
             return 104;
         }
         AppState.clearIndex(1281);
@@ -78,11 +78,10 @@ public final class AppController {
             rebuildAccountCaches();
             return 4;
         }
-        Account abstractC0037h = (Account) obj;
-        int iMo120l = abstractC0037h.isConnecting() ? abstractC0037h.disconnect() : abstractC0037h.connect(0);
-        int i = iMo120l;
-        if (iMo120l != 0) {
-            return showError(i);
+        Account account = (Account) obj;
+        int errorCode = account.isConnecting() ? account.disconnect() : account.connect(0);
+        if (errorCode != 0) {
+            return showError(errorCode);
         }
         return 4;
     }
@@ -96,12 +95,12 @@ public final class AppController {
 
     /* renamed from: a */
     public static final int handleSoftKeyAction(String str) {
-        int iM586d = AppState.getInt(1513);
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        ChatRoom c0052wM745h = c0028ba.findChatRoomById(iM586d);
-        IOUtils.setSelectedItems(c0052wM745h.readMessages);
+        int chatRoomId = AppState.getInt(1513);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        ChatRoom chatRoom = account.findChatRoomById(chatRoomId);
+        IOUtils.setSelectedItems(chatRoom.readMessages);
         if (StringUtils.matchesKey(852, str)) {
-            c0052wM745h.readMessages.removeAllElements();
+            chatRoom.readMessages.removeAllElements();
             return 0;
         }
         if (StringUtils.matchesKey(853, str)) {
@@ -115,7 +114,7 @@ public final class AppController {
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        AppState.setInt(1527, c0028ba.findDefaultChatRoom().id);
+        AppState.setInt(1527, account.findDefaultChatRoom().id);
         return 0;
     }
 
@@ -153,9 +152,9 @@ public final class AppController {
 
     /* renamed from: d */
     public static final int handleLeftKey() {
-        int iM1234D = AppState.getCurrentContact().validateDelete();
-        if (0 != iM1234D) {
-            return showError(iM1234D);
+        int errorCode = AppState.getCurrentContact().validateDelete();
+        if (0 != errorCode) {
+            return showError(errorCode);
         }
         return 4;
     }
@@ -189,12 +188,12 @@ public final class AppController {
 
     /* renamed from: h */
     public static final void clearSearchState() {
-        Contact abstractC0041lM611g = AppState.getCurrentContact();
-        markContactUnread(abstractC0041lM611g);
-        abstractC0041lM611g.flags = (byte) 0;
-        abstractC0041lM611g.dirty = true;
-        abstractC0041lM611g.updateRenderState();
-        ScreenManager.showScreen(abstractC0041lM611g.showMessages().measureContent());
+        Contact contact = AppState.getCurrentContact();
+        markContactUnread(contact);
+        contact.flags = (byte) 0;
+        contact.dirty = true;
+        contact.updateRenderState();
+        ScreenManager.showScreen(contact.showMessages().measureContent());
     }
 
     /* renamed from: b */
@@ -218,17 +217,16 @@ public final class AppController {
 
     /* renamed from: a */
     private static int[] growArray(int[] iArr, int i) {
-        int[] iArr2 = iArr;
-        int i2 = 1 + iArr[0];
-        if (i2 == iArr2.length) {
-            int[] iArr3 = new int[i2 << 1];
-            iArr2 = iArr3;
-            Utils.arraycopy(iArr, 0, iArr3, 0, i2);
+        int[] result = iArr;
+        int newLength = 1 + iArr[0];
+        if (newLength == result.length) {
+            int[] expanded = new int[newLength << 1];
+            result = expanded;
+            Utils.arraycopy(iArr, 0, expanded, 0, newLength);
         }
-        iArr2[i2] = i;
-        int[] iArr4 = iArr2;
-        iArr4[0] = iArr4[0] + 1;
-        return iArr2;
+        result[newLength] = i;
+        result[0] = result[0] + 1;
+        return result;
     }
 
     /* renamed from: a */
@@ -248,13 +246,13 @@ public final class AppController {
 
     /* renamed from: b */
     public static final boolean checkTimer(int i, long j) {
-        long[] jArr = timers;
-        long j2 = jArr[i];
-        long jCurrentTimeMillis = System.currentTimeMillis();
-        if (j2 >= j2) {
+        long[] timerArray = timers;
+        long timerValue = timerArray[i];
+        long currentTime = System.currentTimeMillis();
+        if (timerValue >= timerValue) {
             return false;
         }
-        jArr[i] = jCurrentTimeMillis + j;
+        timerArray[i] = currentTime + j;
         return true;
     }
 
@@ -293,11 +291,11 @@ public final class AppController {
 
     /* renamed from: c */
     public static final int handleAccountOption(int i) {
-        Account abstractC0037hM616i = AppState.getAccount();
-        if (!(abstractC0037hM616i instanceof MmpProtocol)) {
+        Account account = AppState.getAccount();
+        if (!(account instanceof MmpProtocol)) {
             return interpolateColor((i + 161) - 4, (i + 155) - 4, 4);
         }
-        ((MmpProtocol) abstractC0037hM616i).reserved2 = i;
+        ((MmpProtocol) account).reserved2 = i;
         if (i == 0) {
             return 3;
         }
@@ -363,18 +361,18 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer createMrimPacket(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(-559038737).writeIntLE(65557);
-        int i2 = c0028ba.state;
-        c0028ba.state = i2 + 1;
-        return c0043nM1360p.writeIntLE(i2).writeIntLE(i).writeIntLE(c0043n != null ? c0043n.length : 0).writeZeros(24).writeBuffer(c0043n);
+    public static final ByteBuffer createMrimPacket(MrimAccount account, int command, ByteBuffer payload) {
+        ByteBuffer header = new ByteBuffer().writeIntLE(-559038737).writeIntLE(65557);
+        int sequenceNum = account.state;
+        account.state = sequenceNum + 1;
+        return header.writeIntLE(sequenceNum).writeIntLE(command).writeIntLE(payload != null ? payload.length : 0).writeZeros(24).writeBuffer(payload);
     }
 
     /* renamed from: f */
     public static final int handleGroupSelection(int i) {
-        Message c0026azM1415b = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513)).getMessage(AppState.getString(1346));
-        String str = c0026azM1415b.body;
-        c0026azM1415b.body = i == 0 ? Conversation.encodeAlternate(str) : Conversation.decodeAlternate(str);
+        Message message = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513)).getMessage(AppState.getString(1346));
+        String body = message.body;
+        message.body = i == 0 ? Conversation.encodeAlternate(body) : Conversation.decodeAlternate(body);
         return 52;
     }
 
@@ -383,15 +381,15 @@ public final class AppController {
         if (i != 147 && i != 133 && i != 89) {
             return 0;
         }
-        Vector vectorM439R = getMrimAccountList();
-        int size = vectorM439R.size();
+        Vector accounts = getMrimAccountList();
+        int size = accounts.size();
         if (size == 0) {
             return showError(549);
         }
         if (size != 1) {
-            return showAccountList(vectorM439R, i, false);
+            return showAccountList(accounts, i, false);
         }
-        AppState.setAccount(vectorM439R.firstElement());
+        AppState.setAccount(accounts.firstElement());
         return i;
     }
 
@@ -407,56 +405,54 @@ public final class AppController {
         if (i != 6) {
             return 0;
         }
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        c0028ba.isHighlighted = true;
-        if (!c0028ba.isSelected()) {
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        account.isHighlighted = true;
+        if (!account.isSelected()) {
             return showError(667);
         }
         applyViewMode(true, false, !AppState.getBool(276));
         AppState.setInt(281, 1);
-        ConnectionThread.selectMapItem((ListItem) c0028ba);
+        ConnectionThread.selectMapItem((ListItem) account);
         return 0;
     }
 
     /* renamed from: a */
-    public static final ByteBuffer createPingPacket(MmpProtocol c0033d, int i) {
-        ByteBuffer c0043nM1321f = new ByteBuffer().writeByte(42).writeByte(i);
-        int i2 = c0033d.state + 1;
-        c0033d.state = i2;
-        return c0043nM1321f.writeShortBE((i2 & 16777215) % 32768).writeShortBE(0);
+    public static final ByteBuffer createPingPacket(MmpProtocol protocol, int i) {
+        ByteBuffer packet = new ByteBuffer().writeByte(42).writeByte(i);
+        int sequenceNum = protocol.state + 1;
+        protocol.state = sequenceNum;
+        return packet.writeShortBE((sequenceNum & 0xFFFFFF) % 32768).writeShortBE(0);
     }
 
     /* renamed from: o */
     public static final int handleContactListKey() {
-        MrimAccount c0028ba = (MrimAccount) AppState.pool[1282];
+        MrimAccount account = (MrimAccount) AppState.pool[1282];
         ResourceManager.showMailAccountList();
-        AppState.setAccount(c0028ba);
+        AppState.setAccount(account);
         AppState.setInt(1512, 38);
         return 37;
     }
 
     /* renamed from: a */
-    public static final void setCurrentAccount(Account abstractC0037h) {
-        Vector vectorM614m = AppState.getVector(1291);
-        Vector vector = vectorM614m;
-        if (vectorM614m == null) {
-            Vector vectorM1213g = NetworkUtils.newVector();
-            vector = vectorM1213g;
-            AppState.pool[1291] = vectorM1213g;
+    public static final void setCurrentAccount(Account account) {
+        Vector accounts = AppState.getVector(1291);
+        if (accounts == null) {
+            accounts = NetworkUtils.newVector();
+            AppState.pool[1291] = accounts;
         }
-        vector.addElement(abstractC0037h);
+        accounts.addElement(account);
     }
 
     /* renamed from: p */
     public static final int handlePresenceAction() {
-        Vector vectorM614m = AppState.getVector(1291);
-        int size = vectorM614m.size();
+        Vector accounts = AppState.getVector(1291);
+        int size = accounts.size();
         while (true) {
             size--;
             if (size < 0) {
                 return 4;
             }
-            ((Account) vectorM614m.elementAt(size)).connect(0);
+            ((Account) accounts.elementAt(size)).connect(0);
         }
     }
 
@@ -486,10 +482,10 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void applyViewMode(boolean z, boolean z2, boolean z3) {
-        AppState.setBool(276, z);
-        AppState.setBool(277, z2);
-        if (!z3 || !ConnectionThread.mapInitialized) {
+    public static final void applyViewMode(boolean showMap, boolean showList, boolean shouldInvalidate) {
+        AppState.setBool(276, showMap);
+        AppState.setBool(277, showList);
+        if (!shouldInvalidate || !ConnectionThread.mapInitialized) {
             return;
         }
         int i = 11;
@@ -530,73 +526,73 @@ public final class AppController {
 
     /* renamed from: k */
     public static final int handleExtSettingsOption(int i) {
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         switch (i) {
             case 0:
-                if (c0028ba != null) {
-                    c0028ba.markProfileForPublish();
+                if (account != null) {
+                    account.markProfileForPublish();
                     break;
                 } else {
-                    Vector vectorM439R = getMrimAccountList();
-                    int size = vectorM439R.size();
+                    Vector accounts = getMrimAccountList();
+                    int size = accounts.size();
                     while (true) {
                         size--;
                         if (size < 0) {
-                            NetworkUtils.releaseVector(vectorM439R);
+                            NetworkUtils.releaseVector(accounts);
                             break;
                         } else {
-                            findMrimAccount(vectorM439R, size).markProfileForPublish();
+                            findMrimAccount(accounts, size).markProfileForPublish();
                         }
                     }
                 }
             case 1:
-                if (c0028ba != null) {
-                    c0028ba.markProfileForHide();
+                if (account != null) {
+                    account.markProfileForHide();
                     break;
                 } else {
-                    Vector vectorM439R2 = getMrimAccountList();
-                    int size2 = vectorM439R2.size();
+                    Vector accounts2 = getMrimAccountList();
+                    int size2 = accounts2.size();
                     while (true) {
                         size2--;
                         if (size2 < 0) {
-                            NetworkUtils.releaseVector(vectorM439R2);
+                            NetworkUtils.releaseVector(accounts2);
                             break;
                         } else {
-                            findMrimAccount(vectorM439R2, size2).markProfileForHide();
+                            findMrimAccount(accounts2, size2).markProfileForHide();
                         }
                     }
                 }
             case 2:
-                if (c0028ba != null) {
-                    c0028ba.setProfileGroups();
+                if (account != null) {
+                    account.setProfileGroups();
                     break;
                 } else {
-                    Vector vectorM439R3 = getMrimAccountList();
-                    int size3 = vectorM439R3.size();
+                    Vector accounts3 = getMrimAccountList();
+                    int size3 = accounts3.size();
                     while (true) {
                         size3--;
                         if (size3 < 0) {
-                            NetworkUtils.releaseVector(vectorM439R3);
+                            NetworkUtils.releaseVector(accounts3);
                             break;
                         } else {
-                            findMrimAccount(vectorM439R3, size3).setProfileGroups();
+                            findMrimAccount(accounts3, size3).setProfileGroups();
                         }
                     }
                 }
             case 3:
-                if (c0028ba != null) {
-                    c0028ba.clearProfileGroups();
+                if (account != null) {
+                    account.clearProfileGroups();
                     break;
                 } else {
-                    Vector vectorM439R4 = getMrimAccountList();
-                    int size4 = vectorM439R4.size();
+                    Vector accounts4 = getMrimAccountList();
+                    int size4 = accounts4.size();
                     while (true) {
                         size4--;
                         if (size4 < 0) {
-                            NetworkUtils.releaseVector(vectorM439R4);
+                            NetworkUtils.releaseVector(accounts4);
                             break;
                         } else {
-                            findMrimAccount(vectorM439R4, size4).clearProfileGroups();
+                            findMrimAccount(accounts4, size4).clearProfileGroups();
                         }
                     }
                 }
@@ -654,11 +650,11 @@ public final class AppController {
 
     /* renamed from: s */
     public static final void acquireNetworkLock() {
-        Object[] objArrM342ae = createSyncState();
+        Object[] syncState = createSyncState();
         while (true) {
-            synchronized (objArrM342ae) {
-                if (objArrM342ae[0] == null) {
-                    objArrM342ae[0] = Thread.currentThread();
+            synchronized (syncState) {
+                if (syncState[0] == null) {
+                    syncState[0] = Thread.currentThread();
                     return;
                 }
             }
@@ -671,9 +667,9 @@ public final class AppController {
 
     /* renamed from: t */
     public static final void releaseNetworkLock() {
-        Object[] objArrM342ae = createSyncState();
-        synchronized (objArrM342ae) {
-            objArrM342ae[0] = null;
+        Object[] syncState = createSyncState();
+        synchronized (syncState) {
+            syncState[0] = null;
         }
     }
 
@@ -718,25 +714,25 @@ public final class AppController {
                 if (AppState.getString(1224).equals(str)) {
                     return 159;
                 }
-                int i2 = Integer.parseInt(StringUtils.suffix(str, 7));
-                return (!(i2 >= 4 && i2 <= 53) || i2 == 25 || i2 == 31) ? (i & Integer.MIN_VALUE) != 0 ? 158 : 156 : i2 + 157;
+                int optionId = Integer.parseInt(StringUtils.suffix(str, 7));
+                return (!(optionId >= 4 && optionId <= 53) || optionId == 25 || optionId == 31) ? (i & Integer.MIN_VALUE) != 0 ? 158 : 156 : optionId + 157;
         }
     }
 
     /* renamed from: w */
     public static final void processEventQueue() {
-        Screen c0013amM75b = ScreenManager.createScreen(4852);
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
-        while (enumerationElements.hasMoreElements()) {
-            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
-            if (c0052w != c0028ba.getLastChatRoom()) {
-                MenuItem c0032cM898b = MenuItem.createDefault().setIcon(234).setLabel(c0052w.name);
-                c0032cM898b.data = c0052w;
-                c0013amM75b.addItem(c0032cM898b);
+        Screen screen = ScreenManager.createScreen(4852);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Enumeration chatRooms = account.chatRoomsList.elements();
+        while (chatRooms.hasMoreElements()) {
+            ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
+            if (chatRoom != account.getLastChatRoom()) {
+                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(chatRoom.name);
+                menuItem.data = chatRoom;
+                screen.addItem(menuItem);
             }
         }
-        ScreenManager.showScreen(c0013amM75b);
+        ScreenManager.showScreen(screen);
     }
 
     /* renamed from: e */
@@ -772,31 +768,31 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    private static final void sortRange(Vector vector, int i, int i2) {
-        if (i < i2) {
-            if (i + 1 == i2) {
-                if (((Sortable) vector.elementAt(i)).compareTo(vector.elementAt(i2)) > 0) {
-                    Utils.swapElements(vector, i, i2);
+    private static final void sortRange(Vector vector, int left, int right) {
+        if (left < right) {
+            if (left + 1 == right) {
+                if (((Sortable) vector.elementAt(left)).compareTo(vector.elementAt(right)) > 0) {
+                    Utils.swapElements(vector, left, right);
                     return;
                 }
                 return;
             }
-            int i3 = i;
-            int i4 = i2;
-            boolean z = true;
-            while (i3 < i4) {
-                if (((Sortable) vector.elementAt(i3)).compareTo(vector.elementAt(i4)) > 0) {
-                    Utils.swapElements(vector, i3, i4);
-                    z = !z;
+            int lo = left;
+            int hi = right;
+            boolean moveLow = true;
+            while (lo < hi) {
+                if (((Sortable) vector.elementAt(lo)).compareTo(vector.elementAt(hi)) > 0) {
+                    Utils.swapElements(vector, lo, hi);
+                    moveLow = !moveLow;
                 }
-                if (z) {
-                    i3++;
+                if (moveLow) {
+                    lo++;
                 } else {
-                    i4--;
+                    hi--;
                 }
             }
-            sortRange(vector, i, i3 - 1);
-            sortRange(vector, i4 + 1, i2);
+            sortRange(vector, left, lo - 1);
+            sortRange(vector, hi + 1, right);
         }
     }
 
@@ -836,26 +832,26 @@ public final class AppController {
         if (i < 0) {
             return 0;
         }
-        int i2 = 0;
+        int count = 0;
         if ((i & (-65536)) == 0) {
             i <<= 16;
-            i2 = 16;
+            count = 16;
         }
         if ((i & (-16777216)) == 0) {
             i <<= 8;
-            i2 += 8;
+            count += 8;
         }
         while (i > 0) {
-            i2++;
+            count++;
             i <<= 1;
         }
-        return i2;
+        return count;
     }
 
     /* renamed from: b */
     public static final int countLeadingZeros(long j) {
-        int iM359M = computeTimerValue((int) (j >> 32));
-        return iM359M == 32 ? computeTimerValue((int) j) + 32 : iM359M;
+        int highBits = computeTimerValue((int) (j >> 32));
+        return highBits == 32 ? computeTimerValue((int) j) + 32 : highBits;
     }
 
     /* renamed from: b */
@@ -865,19 +861,19 @@ public final class AppController {
 
     /* renamed from: c */
     public static final long roundedShiftRight(long j, int i) {
-        long j2;
-        long j3;
+        long shifted;
+        long result;
         if (i > 64) {
             return 0L;
         }
         if (i == 64) {
-            j2 = j;
-            j3 = 0;
+            shifted = j;
+            result = 0;
         } else {
-            j2 = j << (64 - i);
-            j3 = j >>> i;
+            shifted = j << (64 - i);
+            result = j >>> i;
         }
-        return (j2 >= 0 || (j2 == Long.MIN_VALUE && (j3 & 1) != 1)) ? j3 : j3 + 1;
+        return (shifted >= 0 || (shifted == Long.MIN_VALUE && (result & 1) != 1)) ? result : result + 1;
     }
 
     /* renamed from: p */
@@ -989,22 +985,22 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer createAuthData(MmpProtocol c0033d) {
-        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(5);
-        int i = c0033d.reserved2;
-        ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE(64 + (i == 0 ? 0 : 16));
-        int i2 = 4;
+    public static final ByteBuffer createAuthData(MmpProtocol protocol) {
+        ByteBuffer buffer = new ByteBuffer().writeShortBE(5);
+        int authSlot = protocol.reserved2;
+        buffer = buffer.writeShortBE(64 + (authSlot == 0 ? 0 : 16));
+        int fieldIndex = 4;
         while (true) {
-            i2--;
-            if (i2 < 0) {
+            fieldIndex--;
+            if (fieldIndex < 0) {
                 break;
             }
-            c0043nM1357m2.writeCompressed(i2 + 904);
+            buffer.writeCompressed(fieldIndex + 904);
         }
-        if (i != 0) {
-            c0043nM1357m2.writeBytesAt(AppState.getBytes(908), (i - 1) << 4, 16);
+        if (authSlot != 0) {
+            buffer.writeBytesAt(AppState.getBytes(908), (authSlot - 1) << 4, 16);
         }
-        return createMmpCommand(c0033d, 516, c0043nM1357m2);
+        return createMmpCommand(protocol, 516, buffer);
     }
 
     /* renamed from: E */
@@ -1024,8 +1020,8 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer createMrimAuthPacket(MrimAccount c0028ba) {
-        return createMrimPacket(c0028ba, 4097, new ByteBuffer().writeIntLE(120));
+    public static final ByteBuffer createMrimAuthPacket(MrimAccount account) {
+        return createMrimPacket(account, 4097, new ByteBuffer().writeIntLE(120));
     }
 
     /* renamed from: F */
@@ -1041,11 +1037,10 @@ public final class AppController {
 
     /* renamed from: a */
     public static final void waitForCompletion(Object[] objArr) throws InterruptedException {
-        int i = 15000;
+        int remaining = 15000;
         do {
-            int i2 = i - 500;
-            i = i2;
-            if (i2 < 0) {
+            remaining -= 500;
+            if (remaining < 0) {
                 IOUtils.postEvent((Object) objArr);
                 return;
             }
@@ -1061,9 +1056,9 @@ public final class AppController {
             clearSearchState();
             return 0;
         }
-        MrimContact c0035fM612h = AppState.getCurrentMrimContact();
-        AppState.setAccount(c0035fM612h.account);
-        ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(c0035fM612h.simpleIdentifier), (String) null, (String) null);
+        MrimContact contact = AppState.getCurrentMrimContact();
+        AppState.setAccount(contact.account);
+        ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(contact.simpleIdentifier), (String) null, (String) null);
         ScreenBuilder.onScreenClosed();
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -1079,9 +1074,9 @@ public final class AppController {
             ConnectionThread.navigateToPoint((MapPoint) obj, true);
             return 0;
         }
-        MapPoint c0014an = (MapPoint) obj;
-        ((MrimAccount) AppState.getAccount()).setLocationProfile(c0014an);
-        XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
+        MapPoint mapPoint = (MapPoint) obj;
+        ((MrimAccount) AppState.getAccount()).setLocationProfile(mapPoint);
+        XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), mapPoint, 0, 5);
         XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
         AppState.setInt(1477, 0);
         return 160;
@@ -1126,30 +1121,30 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void handleMmpPacket(MmpProtocol c0033d, ByteBuffer c0043n) {
-        c0043n.skip(6);
-        while (c0043n.length > 0) {
-            int iM1353u = c0043n.readShortBE();
-            int iM1353u2 = c0043n.readShortBE();
-            if (iM1353u == 9 && iM1353u2 == 2) {
-                int iM1353u3 = c0043n.readShortBE();
-                if (iM1353u3 == 1) {
-                    c0033d.handleTimeout();
+    public static final void handleMmpPacket(MmpProtocol protocol, ByteBuffer buffer) {
+        buffer.skip(6);
+        while (buffer.length > 0) {
+            int tag = buffer.readShortBE();
+            int length = buffer.readShortBE();
+            if (tag == 9 && length == 2) {
+                int statusCode = buffer.readShortBE();
+                if (statusCode == 1) {
+                    protocol.handleTimeout();
                     return;
                 } else {
-                    c0033d.handleError(iM1353u3);
+                    protocol.handleError(statusCode);
                     return;
                 }
             }
-            c0043n.skip(iM1353u2);
+            buffer.skip(length);
         }
-        c0033d.handleError(-1);
+        protocol.handleError(-1);
     }
 
     /* renamed from: x */
     public static final int handleChatListOption(int i) {
-        MapPoint c0014an = pendingMapPoint;
-        if (c0014an == null) {
+        MapPoint mapPoint = pendingMapPoint;
+        if (mapPoint == null) {
             return showError(354);
         }
         if (i == 6) {
@@ -1157,13 +1152,13 @@ public final class AppController {
             return 0;
         }
         if (i == 118) {
-            AppState.setObject(43, (Object) c0014an.getResourceUrl());
+            AppState.setObject(43, (Object) mapPoint.getResourceUrl());
             return 0;
         }
         if (i != 120) {
             return 0;
         }
-        ConnectionThread.removeRoutePoint(c0014an);
+        ConnectionThread.removeRoutePoint(mapPoint);
         return 0;
     }
 
@@ -1218,8 +1213,8 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void openUserProfile(MrimAccount c0028ba, String str) {
-        pendingAccount = c0028ba;
+    public static final void openUserProfile(MrimAccount account, String str) {
+        pendingAccount = account;
         pendingUrl = str;
     }
 
@@ -1230,13 +1225,13 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final ByteBuffer createPasswordAuthCmd(MrimAccount c0028ba, String str) {
-        return createMrimPacket(c0028ba, 4128, new ByteBuffer().writeStringLatin1(str));
+    public static final ByteBuffer createPasswordAuthCmd(MrimAccount account, String str) {
+        return createMrimPacket(account, 4128, new ByteBuffer().writeStringLatin1(str));
     }
 
     /* renamed from: h */
     public static final int processPhoneInput(String str) {
-        String strM584b = AppState.getString(1279);
+        String newValue = AppState.getString(1279);
         int i = 15;
         do {
             i--;
@@ -1244,21 +1239,20 @@ public final class AppController {
                 return 0;
             }
         } while (AppState.getString(i + 48) != str);
-        AppState.setObject(i + 48, (Object) strM584b);
+        AppState.setObject(i + 48, (Object) newValue);
         return 0;
     }
 
     /* renamed from: h */
     public static final int handleSearchAction(Object obj) {
-        ContactGroup abstractC0046q = (ContactGroup) obj;
-        if (null == abstractC0046q) {
+        ContactGroup group = (ContactGroup) obj;
+        if (null == group) {
             return 4;
         }
-        Contact abstractC0041lM611g = AppState.getCurrentContact();
-        int iMo113a = abstractC0041lM611g.isOnline() ? 310 : abstractC0041lM611g.account.validateMove(abstractC0041lM611g, abstractC0041lM611g.account.findGroup(abstractC0041lM611g), abstractC0046q);
-        int i = iMo113a;
-        if (0 != iMo113a) {
-            return showError(i);
+        Contact contact = AppState.getCurrentContact();
+        int errorCode = contact.isOnline() ? 310 : contact.account.validateMove(contact, contact.account.findGroup(contact), group);
+        if (0 != errorCode) {
+            return showError(errorCode);
         }
         return 4;
     }
@@ -1266,42 +1260,42 @@ public final class AppController {
     /* renamed from: i */
     public static final int handleSearchResultAction(Object obj) {
         MapRenderer.invalidate();
-        GeoRegion c0053x = (GeoRegion) obj;
-        MapRenderer.setPosition(c0053x.centerLat, c0053x.centerLon);
-        MapRenderer.setZoom(c0053x == StringUtils.getGeoRegion() ? 3 : 11);
+        GeoRegion region = (GeoRegion) obj;
+        MapRenderer.setPosition(region.centerLat, region.centerLon);
+        MapRenderer.setZoom(region == StringUtils.getGeoRegion() ? 3 : 11);
         return 0;
     }
 
     /* renamed from: K */
     public static final int handleInviteAction() {
-        long jMo274v;
-        long jMo275w;
-        ListItem interfaceC0044o = MapRenderer.tooltipItem;
-        if (interfaceC0044o != null) {
-            jMo274v = interfaceC0044o.getWidth();
-            jMo275w = interfaceC0044o.getBaseHeight();
+        long lon;
+        long lat;
+        ListItem item = MapRenderer.tooltipItem;
+        if (item != null) {
+            lon = item.getWidth();
+            lat = item.getBaseHeight();
         } else {
-            jMo274v = MapRenderer.currentLon;
-            jMo275w = MapRenderer.currentLat;
+            lon = MapRenderer.currentLon;
+            lat = MapRenderer.currentLat;
         }
         AppState.setInt(1479, 0);
-        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.pixelToLongitude(jMo274v), IOUtils.pixelToLatitude(jMo275w)), jMo274v, jMo275w);
+        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.pixelToLongitude(lon), IOUtils.pixelToLatitude(lat)), lon, lat);
         return 6;
     }
 
     /* renamed from: L */
     public static final int handleInviteResult() {
-        char c;
-        Account abstractC0037hM616i = AppState.getAccount();
-        if (abstractC0037hM616i.isConnecting()) {
-            c = 300;
+        char errorCode;
+        Account account = AppState.getAccount();
+        if (account.isConnecting()) {
+            errorCode = 300;
         } else {
-            AppState.getVector(1241).removeElement(abstractC0037hM616i);
+            AppState.getVector(1241).removeElement(account);
             TabBar.initialize();
             saveAccountList();
-            c = 0;
+            errorCode = 0;
         }
-        if (0 != c) {
+        if (0 != errorCode) {
             return showError(300);
         }
         return 25;
@@ -1309,18 +1303,18 @@ public final class AppController {
 
     /* renamed from: A */
     public static final int handleAccountSwitchOption(int i) {
-        Contact abstractC0041lM611g = AppState.getCurrentContact();
+        Contact contact = AppState.getCurrentContact();
         switch (i) {
             case 0:
-                int iM1235E = abstractC0041lM611g.validateBlock();
-                if (0 != iM1235E) {
-                    return showError(iM1235E);
+                int blockError = contact.validateBlock();
+                if (0 != blockError) {
+                    return showError(blockError);
                 }
                 return 4;
             case 1:
-                int iM1236F = abstractC0041lM611g.validateUnblock();
-                if (0 != iM1236F) {
-                    return showError(iM1236F);
+                int unblockError = contact.validateUnblock();
+                if (0 != unblockError) {
+                    return showError(unblockError);
                 }
                 return 4;
             default:
@@ -1330,44 +1324,44 @@ public final class AppController {
 
     /* renamed from: M */
     public static final void initChatRoomList() {
-        Screen c0013amM75b = ScreenManager.createScreen(4517);
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
-        while (enumerationElements.hasMoreElements()) {
-            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
-            if (c0052w != c0028ba.getLastChatRoom()) {
-                MenuItem c0032cM898b = MenuItem.createDefault().setIcon(234).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(c0052w.unreadCount)), 1, 0).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.memberCount).append(']')));
-                c0032cM898b.data = c0052w;
-                c0013amM75b.addItem(c0032cM898b);
+        Screen screen = ScreenManager.createScreen(4517);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Enumeration chatRooms = account.chatRoomsList.elements();
+        while (chatRooms.hasMoreElements()) {
+            ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
+            if (chatRoom != account.getLastChatRoom()) {
+                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(chatRoom.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(chatRoom.unreadCount)), 1, 0).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(chatRoom.memberCount).append(']')));
+                menuItem.data = chatRoom;
+                screen.addItem(menuItem);
             }
         }
-        ScreenManager.showScreen(c0013amM75b);
+        ScreenManager.showScreen(screen);
     }
 
     /* renamed from: a */
-    public static final ByteBuffer createChatRoomCmd(MrimAccount c0028ba, String str, int i) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(0);
-        int iIndexOf = str.indexOf(64);
-        return c0028ba.createAndQueueCommand(new Object[]{createMrimPacket(c0028ba, 4137, c0043nM1360p.writeStringLatin1(StringUtils.prefix(str, iIndexOf)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, iIndexOf + 1))), ResourceManager.integerOf(i)});
+    public static final ByteBuffer createChatRoomCmd(MrimAccount account, String str, int i) {
+        ByteBuffer buffer = new ByteBuffer().writeIntLE(0);
+        int atIndex = str.indexOf(64);
+        return account.createAndQueueCommand(new Object[]{createMrimPacket(account, 4137, buffer.writeStringLatin1(StringUtils.prefix(str, atIndex)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, atIndex + 1))), ResourceManager.integerOf(i)});
     }
 
     /* renamed from: j */
     public static final int handleMapSearchAction(Object obj) {
-        long jMo274v;
-        long jMo275w;
-        Contact abstractC0041l = (Contact) obj;
-        String strM584b = AppState.getString(1249);
-        ListItem interfaceC0044o = MapRenderer.tooltipItem;
-        if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
-            jMo274v = MapRenderer.currentLon;
-            jMo275w = MapRenderer.currentLat;
+        long lon;
+        long lat;
+        Contact contact = (Contact) obj;
+        String query = AppState.getString(1249);
+        ListItem item = MapRenderer.tooltipItem;
+        if (item == null || !item.isSelected()) {
+            lon = MapRenderer.currentLon;
+            lat = MapRenderer.currentLat;
         } else {
-            jMo274v = interfaceC0044o.getWidth();
-            jMo275w = interfaceC0044o.getBaseHeight();
+            lon = item.getWidth();
+            lat = item.getBaseHeight();
         }
-        int iM1233b = abstractC0041l.sendMessage(ResourceManager.buildTileRequestUrl(jMo274v, jMo275w, AppState.getInt(39), strM584b));
-        if (0 != iM1233b) {
-            return showError(iM1233b);
+        int errorCode = contact.sendMessage(ResourceManager.buildTileRequestUrl(lon, lat, AppState.getInt(39), query));
+        if (0 != errorCode) {
+            return showError(errorCode);
         }
         return 0;
     }
@@ -1406,23 +1400,23 @@ public final class AppController {
 
     /* renamed from: B */
     public static final int handleMapMenuOption(int i) {
-        int iM433Q = getActiveAccountCount();
+        int activeCount = getActiveAccountCount();
         if (i == 15) {
-            if (iM433Q == 0) {
+            if (activeCount == 0) {
                 return showError(551);
             }
-            if (iM433Q == 1) {
+            if (activeCount == 1) {
                 rebuildAccountCaches();
                 return 4;
             }
         } else {
             if (i == 3) {
-                Vector vectorM443V = getXmppAccountList();
-                int iM285a = showAccountList(vectorM443V, 3, true);
-                if (iM285a != 39) {
-                    return iM285a;
+                Vector accounts = getXmppAccountList();
+                int result = showAccountList(accounts, 3, true);
+                if (result != 39) {
+                    return result;
                 }
-                vectorM443V.insertElementAt(vectorM443V, 0);
+                accounts.insertElementAt(accounts, 0);
                 return 39;
             }
             if (i == 152) {
@@ -1441,9 +1435,9 @@ public final class AppController {
 
     /* renamed from: m */
     public static final int handleFileAction(Object obj) {
-        int iM1233b = ((Contact) obj).sendMessage(AppState.getString(43));
-        if (0 != iM1233b) {
-            return showError(iM1233b);
+        int errorCode = ((Contact) obj).sendMessage(AppState.getString(43));
+        if (0 != errorCode) {
+            return showError(errorCode);
         }
         return 0;
     }
@@ -1454,8 +1448,8 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final void markAccountHighlighted(MrimAccount c0028ba) {
-        AppState.getVector(1244).removeElement(c0028ba);
+    public static final void markAccountHighlighted(MrimAccount account) {
+        AppState.getVector(1244).removeElement(account);
         TabBar.layout();
     }
 
@@ -1468,80 +1462,80 @@ public final class AppController {
     /* renamed from: P */
     public static final int handleTabAction() {
         int i = 0;
-        Vector vectorM614m = AppState.getVector(1243);
-        int size = vectorM614m.size();
+        Vector contacts = AppState.getVector(1243);
+        int size = contacts.size();
         while (true) {
             size--;
             if (size < 0) {
                 return i;
             }
-            i |= ((Contact) vectorM614m.elementAt(size)).flags;
+            i |= ((Contact) contacts.elementAt(size)).flags;
         }
     }
 
     /* renamed from: a */
-    public static final void markContactRead(Contact abstractC0041l) {
+    public static final void markContactRead(Contact contact) {
         markScreenDirty();
-        Vector vectorM614m = AppState.getVector(1243);
-        if (vectorM614m.contains(abstractC0041l)) {
+        Vector contacts = AppState.getVector(1243);
+        if (contacts.contains(contact)) {
             return;
         }
-        vectorM614m.addElement(abstractC0041l);
+        contacts.addElement(contact);
         TabBar.layout();
     }
 
     /* renamed from: b */
-    public static final void markContactUnread(Contact abstractC0041l) {
-        Vector vectorM614m = AppState.getVector(1243);
-        if (vectorM614m.contains(abstractC0041l)) {
-            Utils.removeFrom(vectorM614m, abstractC0041l);
+    public static final void markContactUnread(Contact contact) {
+        Vector contacts = AppState.getVector(1243);
+        if (contacts.contains(contact)) {
+            Utils.removeFrom(contacts, contact);
             TabBar.layout();
         }
     }
 
     /* renamed from: b */
-    public static final boolean isAccountOnline(Account abstractC0037h) {
-        if (abstractC0037h == null) {
+    public static final boolean isAccountOnline(Account account) {
+        if (account == null) {
             return false;
         }
-        Vector vectorM614m = AppState.getVector(1243);
-        int size = vectorM614m.size();
+        Vector contacts = AppState.getVector(1243);
+        int size = contacts.size();
         do {
             size--;
             if (size < 0) {
                 return false;
             }
-        } while (((Contact) vectorM614m.elementAt(size)).account != abstractC0037h);
+        } while (((Contact) contacts.elementAt(size)).account != account);
         return true;
     }
 
     /* renamed from: c */
-    public static final int getAccountStatus(Account abstractC0037h) {
-        if (abstractC0037h == null) {
+    public static final int getAccountStatus(Account account) {
+        if (account == null) {
             return 16384;
         }
-        Vector vectorM614m = AppState.getVector(1243);
-        int size = vectorM614m.size();
+        Vector contacts = AppState.getVector(1243);
+        int size = contacts.size();
         do {
             size--;
             if (size < 0) {
-                return abstractC0037h.getIconId();
+                return account.getIconId();
             }
-        } while (((Contact) vectorM614m.elementAt(size)).account != abstractC0037h);
+        } while (((Contact) contacts.elementAt(size)).account != account);
         return 16384;
     }
 
     /* renamed from: c */
-    public static final void deleteContact(Contact abstractC0041l) {
-        abstractC0041l.clearStatus();
-        AppState.getVector(1242).removeElement(abstractC0041l);
+    public static final void deleteContact(Contact contact) {
+        contact.clearStatus();
+        AppState.getVector(1242).removeElement(contact);
         needsLayoutUpdate = true;
     }
 
     /* renamed from: a */
-    public static final void updateAccountStatus(Account abstractC0037h, int i) {
-        abstractC0037h.resetSyncIfChanged(initStartupState());
-        int[] iArr = abstractC0037h.syncArray;
+    public static final void updateAccountStatus(Account account, int i) {
+        account.resetSyncIfChanged(initStartupState());
+        int[] iArr = account.syncArray;
         iArr[0] = iArr[0] + i;
         iArr[2] = iArr[2] + i;
         iArr[4] = iArr[4] + i;
@@ -1554,9 +1548,9 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final void setAccountOption(Account abstractC0037h, int i) {
-        abstractC0037h.resetSyncIfChanged(initStartupState());
-        int[] iArr = abstractC0037h.syncArray;
+    public static final void setAccountOption(Account account, int i) {
+        account.resetSyncIfChanged(initStartupState());
+        int[] iArr = account.syncArray;
         iArr[1] = iArr[1] + i;
         iArr[3] = iArr[3] + i;
         iArr[5] = iArr[5] + i;
@@ -1569,8 +1563,8 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void processAccountData(Account abstractC0037h, ByteBuffer c0043n) {
-        updateAccountStatus(abstractC0037h, c0043n.length);
+    public static final void processAccountData(Account account, ByteBuffer buffer) {
+        updateAccountStatus(account, buffer.length);
     }
 
     /* renamed from: C */
@@ -1650,60 +1644,60 @@ public final class AppController {
 
     /* renamed from: af */
     private static final int initStartupState() {
-        int iM624l = AppState.getDateCode();
-        int iM586d = AppState.getInt(1);
-        if (iM624l != iM586d) {
+        int currentDate = AppState.getDateCode();
+        int savedDate = AppState.getInt(1);
+        if (currentDate != savedDate) {
             for (int i = 0; i < 4; i++) {
-                int i2 = i << 3;
-                AppState.setInt(i2 + 4, 0);
-                AppState.setInt(i2 + 5, 0);
-                if ((iM624l >>> 8) != (iM586d >>> 8)) {
-                    AppState.setInt(i2 + 6, 0);
-                    AppState.setInt(i2 + 7, 0);
+                int offset = i << 3;
+                AppState.setInt(offset + 4, 0);
+                AppState.setInt(offset + 5, 0);
+                if ((currentDate >>> 8) != (savedDate >>> 8)) {
+                    AppState.setInt(offset + 6, 0);
+                    AppState.setInt(offset + 7, 0);
                 }
             }
-            AppState.setInt(1, iM624l);
+            AppState.setInt(1, currentDate);
         }
-        return iM624l;
+        return currentDate;
     }
 
     /* renamed from: ag */
     private static void loadSavedAccounts() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        ByteBuffer c0043nM851h = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(6513505));
-        while (c0043nM851h.length > 0) {
+        Vector accounts = NetworkUtils.newVector();
+        ByteBuffer buffer = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(6513505));
+        while (buffer.length > 0) {
             try {
-                Account abstractC0037h = null;
-                byte bM1344o = c0043nM851h.readByte();
-                switch (bM1344o & 7) {
+                Account account = null;
+                byte typeByte = buffer.readByte();
+                switch (typeByte & 7) {
                     case 0:
-                        MrimAccount c0028ba = new MrimAccount(c0043nM851h);
-                        abstractC0037h = c0028ba;
-                        vectorM1213g.addElement(c0028ba);
+                        MrimAccount mrimAccount = new MrimAccount(buffer);
+                        account = mrimAccount;
+                        accounts.addElement(mrimAccount);
                         break;
                     case 1:
-                        MmpProtocol c0033d = new MmpProtocol(c0043nM851h);
-                        abstractC0037h = c0033d;
-                        vectorM1213g.addElement(c0033d);
+                        MmpProtocol mmpProtocol = new MmpProtocol(buffer);
+                        account = mmpProtocol;
+                        accounts.addElement(mmpProtocol);
                         break;
                     case 2:
-                        XmppProtocol c0005ae = new XmppProtocol(c0043nM851h);
-                        abstractC0037h = c0005ae;
-                        vectorM1213g.addElement(c0005ae);
+                        XmppProtocol xmppProtocol = new XmppProtocol(buffer);
+                        account = xmppProtocol;
+                        accounts.addElement(xmppProtocol);
                         break;
                     case 3:
-                        XmppMailRuProtocol c0031bd = new XmppMailRuProtocol(c0043nM851h);
-                        abstractC0037h = c0031bd;
-                        vectorM1213g.addElement(c0031bd);
+                        XmppMailRuProtocol xmppMailRu = new XmppMailRuProtocol(buffer);
+                        account = xmppMailRu;
+                        accounts.addElement(xmppMailRu);
                         break;
                 }
-                if ((bM1344o & 8) != 0) {
-                    abstractC0037h.loadProperties(c0043nM851h);
+                if ((typeByte & 8) != 0) {
+                    account.loadProperties(buffer);
                 }
             } catch (Throwable unused) {
             }
         }
-        AppState.pool[1241] = vectorM1213g;
+        AppState.pool[1241] = accounts;
     }
 
     /* renamed from: Q */
@@ -1725,89 +1719,86 @@ public final class AppController {
     /* renamed from: a */
     public static final void saveState(boolean z, boolean z2) {
         try {
-            ByteBuffer c0043n = new ByteBuffer();
-            Vector vectorM614m = AppState.getVector(1241);
+            ByteBuffer buffer = new ByteBuffer();
+            Vector accounts = AppState.getVector(1241);
             if (z2) {
-                c0043n.ensureCapacity(20480);
-                while (vectorM614m.size() > 0) {
-                    ((Account) Utils.dequeue(vectorM614m)).serializeAccount(c0043n, z, true).saveProperties(c0043n);
+                buffer.ensureCapacity(20480);
+                while (accounts.size() > 0) {
+                    ((Account) Utils.dequeue(accounts)).serializeAccount(buffer, z, true).saveProperties(buffer);
                 }
             } else {
-                c0043n.ensureCapacity(3072);
-                for (int i = 0; i < vectorM614m.size(); i++) {
-                    ((Account) vectorM614m.elementAt(i)).serializeAccount(c0043n, z, false).saveProperties(c0043n);
+                buffer.ensureCapacity(3072);
+                for (int i = 0; i < accounts.size(); i++) {
+                    ((Account) accounts.elementAt(i)).serializeAccount(buffer, z, false).saveProperties(buffer);
                 }
             }
-            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(6513505), c0043n, z);
+            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(6513505), buffer, z);
         } catch (Throwable unused) {
         }
     }
 
     /* renamed from: a */
-    public static final int validateCredentials(int i, Account abstractC0037h, String str, String str2) {
-        Account abstractC0037h2;
+    public static final int validateCredentials(int i, Account existingAccount, String str, String str2) {
+        Account foundAccount;
         if (StringUtils.isEmpty(str)) {
             return 301;
         }
         if (StringUtils.isEmpty(str2)) {
             return 306;
         }
-        Vector vectorM614m = AppState.getVector(1241);
-        int size = vectorM614m.size();
+        Vector accounts = AppState.getVector(1241);
+        int size = accounts.size();
         while (true) {
             size--;
             if (size >= 0) {
-                Account abstractC0037h3 = (Account) vectorM614m.elementAt(size);
-                if (i == abstractC0037h3.getType() && str.equals(abstractC0037h3.login)) {
-                    abstractC0037h2 = abstractC0037h3;
+                Account candidate = (Account) accounts.elementAt(size);
+                if (i == candidate.getType() && str.equals(candidate.login)) {
+                    foundAccount = candidate;
                     break;
                 }
             } else {
-                abstractC0037h2 = null;
+                foundAccount = null;
                 break;
             }
         }
-        Account abstractC0037h4 = abstractC0037h2;
-        if (abstractC0037h != null) {
-            if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037h) {
-                return abstractC0037h.setCredentials(str, str2);
+        if (existingAccount != null) {
+            if (foundAccount == null || foundAccount == existingAccount) {
+                return existingAccount.setCredentials(str, str2);
             }
             return 307;
         }
-        if (abstractC0037h4 != null) {
+        if (foundAccount != null) {
             return 307;
         }
-        Vector vectorM614m2 = AppState.getVector(1241);
-        Vector vectorM614m3 = AppState.getVector(1241);
-        int size2 = vectorM614m3.size();
-        int i2 = 0;
+        Vector allAccounts = AppState.getVector(1241);
+        int totalSize = allAccounts.size();
+        int newId = 0;
         while (true) {
-            boolean z = false;
-            int i3 = size2;
+            boolean idTaken = false;
+            int j = totalSize;
             while (true) {
-                i3--;
-                if (i3 < 0) {
+                j--;
+                if (j < 0) {
                     break;
                 }
-                if (((Account) vectorM614m3.elementAt(i3)).accountId == i2) {
-                    z = true;
+                if (((Account) allAccounts.elementAt(j)).accountId == newId) {
+                    idTaken = true;
                     break;
                 }
             }
-            if (!z) {
+            if (!idTaken) {
                 break;
             }
-            i2++;
+            newId++;
         }
-        int i4 = i2;
         if (i == 0) {
-            vectorM614m2.addElement(new MrimAccount(i4, str, str2));
+            allAccounts.addElement(new MrimAccount(newId, str, str2));
         } else if (i == 1) {
-            vectorM614m2.addElement(new MmpProtocol(i4, str, str2));
+            allAccounts.addElement(new MmpProtocol(newId, str, str2));
         } else if (i == 2) {
-            vectorM614m2.addElement(new XmppProtocol(i4, str, str2));
+            allAccounts.addElement(new XmppProtocol(newId, str, str2));
         } else if (i == 3) {
-            vectorM614m2.addElement(new XmppMailRuProtocol(i4, str, str2));
+            allAccounts.addElement(new XmppMailRuProtocol(newId, str, str2));
         }
         TabBar.initialize();
         saveAccountList();
@@ -1816,63 +1807,63 @@ public final class AppController {
 
     /* renamed from: b */
     public static final Account createAccount(int i, String str) {
-        Vector vectorM614m = AppState.getVector(1241);
-        int size = vectorM614m.size();
+        Vector accounts = AppState.getVector(1241);
+        int size = accounts.size();
         while (true) {
             size--;
             if (size < 0) {
                 return null;
             }
-            Account abstractC0037h = (Account) vectorM614m.elementAt(size);
-            if (str.equals(abstractC0037h.login) && abstractC0037h.getType() == i) {
-                return abstractC0037h;
+            Account account = (Account) accounts.elementAt(size);
+            if (str.equals(account.login) && account.getType() == i) {
+                return account;
             }
         }
     }
 
     /* renamed from: R */
     public static final Vector getMrimAccountList() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM614m = AppState.getVector(1241);
-        int size = vectorM614m.size();
+        Vector result = NetworkUtils.newVector();
+        Vector allAccounts = AppState.getVector(1241);
+        int size = allAccounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                return vectorM1213g;
+                return result;
             }
-            Object objElementAt = vectorM614m.elementAt(size);
-            if (objElementAt instanceof MrimAccount) {
-                vectorM1213g.insertElementAt(objElementAt, 0);
+            Object element = allAccounts.elementAt(size);
+            if (element instanceof MrimAccount) {
+                result.insertElementAt(element, 0);
             }
         }
     }
 
     /* renamed from: S */
     public static final Vector getOnlineMrimAccounts() {
-        Vector vectorM439R = getMrimAccountList();
-        int size = vectorM439R.size();
+        Vector accounts = getMrimAccountList();
+        int size = accounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                return vectorM439R;
+                return accounts;
             }
-            if (!findMrimAccount(vectorM439R, size).isConnected()) {
-                vectorM439R.removeElementAt(size);
+            if (!findMrimAccount(accounts, size).isConnected()) {
+                accounts.removeElementAt(size);
             }
         }
     }
 
     /* renamed from: T */
     public static final Vector getMmpAccountList() {
-        Vector vectorM439R = getMrimAccountList();
-        int size = vectorM439R.size();
+        Vector accounts = getMrimAccountList();
+        int size = accounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                return vectorM439R;
+                return accounts;
             }
-            if (findMrimAccount(vectorM439R, size).syncSeq == 0) {
-                vectorM439R.removeElementAt(size);
+            if (findMrimAccount(accounts, size).syncSeq == 0) {
+                accounts.removeElementAt(size);
             }
         }
     }
@@ -1880,42 +1871,42 @@ public final class AppController {
     /* renamed from: U */
     public static final int getActiveScreenId() {
         int i = 0;
-        Vector vectorM439R = getMrimAccountList();
-        int size = vectorM439R.size();
+        Vector accounts = getMrimAccountList();
+        int size = accounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                NetworkUtils.releaseVector(vectorM439R);
+                NetworkUtils.releaseVector(accounts);
                 return i;
             }
-            i += findMrimAccount(vectorM439R, size).syncSeq;
+            i += findMrimAccount(accounts, size).syncSeq;
         }
     }
 
     /* renamed from: V */
     public static final Vector getXmppAccountList() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM614m = AppState.getVector(1241);
-        int size = vectorM614m.size();
+        Vector result = NetworkUtils.newVector();
+        Vector allAccounts = AppState.getVector(1241);
+        int size = allAccounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                return vectorM1213g;
+                return result;
             }
-            vectorM1213g.insertElementAt(vectorM614m.elementAt(size), 0);
+            result.insertElementAt(allAccounts.elementAt(size), 0);
         }
     }
 
     /* renamed from: ai */
     private static void rebuildAccountCaches() {
-        boolean z = true;
+        boolean allDisconnected = true;
         int size = AppState.getVector(1241).size();
         while (true) {
             size--;
             if (size < 0) {
                 break;
             } else if (getAccountByIndex(size).isConnecting()) {
-                z = false;
+                allDisconnected = false;
             }
         }
         int size2 = AppState.getVector(1241).size();
@@ -1924,79 +1915,79 @@ public final class AppController {
             if (size2 < 0) {
                 return;
             }
-            Account abstractC0037hM434I = getAccountByIndex(size2);
-            if (abstractC0037hM434I.isConnecting()) {
-                if (!z) {
-                    abstractC0037hM434I.disconnect();
+            Account account = getAccountByIndex(size2);
+            if (account.isConnecting()) {
+                if (!allDisconnected) {
+                    account.disconnect();
                 }
-            } else if (z) {
-                abstractC0037hM434I.connect(0);
+            } else if (allDisconnected) {
+                account.connect(0);
             }
         }
     }
 
     /* renamed from: W */
     public static final Vector getAllAccountsList() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM614m = AppState.getVector(1241);
-        int iM541c = Utils.vectorSize(vectorM614m);
+        Vector result = NetworkUtils.newVector();
+        Vector allAccounts = AppState.getVector(1241);
+        int accountIdx = Utils.vectorSize(allAccounts);
         while (true) {
-            iM541c--;
-            if (iM541c < 0) {
-                return vectorM1213g;
+            accountIdx--;
+            if (accountIdx < 0) {
+                return result;
             }
-            Vector vectorM1078P = ((Account) vectorM614m.elementAt(iM541c)).getAllContacts();
-            int iM541c2 = Utils.vectorSize(vectorM1078P);
+            Vector contacts = ((Account) allAccounts.elementAt(accountIdx)).getAllContacts();
+            int contactIdx = Utils.vectorSize(contacts);
             while (true) {
-                iM541c2--;
-                if (iM541c2 < 0) {
+                contactIdx--;
+                if (contactIdx < 0) {
                     break;
                 }
-                vectorM1213g.addElement(vectorM1078P.elementAt(iM541c2));
+                result.addElement(contacts.elementAt(contactIdx));
             }
-            NetworkUtils.releaseVector(vectorM1078P);
+            NetworkUtils.releaseVector(contacts);
         }
     }
 
     /* renamed from: d */
-    public static final Vector getAccountConversations(Account abstractC0037h) {
-        if (abstractC0037h == null) {
-            Vector vectorM1213g = NetworkUtils.newVector();
-            int iM433Q = getActiveAccountCount();
+    public static final Vector getAccountConversations(Account targetAccount) {
+        if (targetAccount == null) {
+            Vector result = NetworkUtils.newVector();
+            int count = getActiveAccountCount();
             while (true) {
-                iM433Q--;
-                if (iM433Q < 0) {
-                    return vectorM1213g;
+                count--;
+                if (count < 0) {
+                    return result;
                 }
-                Account abstractC0037hM434I = getAccountByIndex(iM433Q);
-                int size = abstractC0037hM434I.groups.size();
+                Account account = getAccountByIndex(count);
+                int size = account.groups.size();
                 while (true) {
                     size--;
                     if (size < 0) {
                         break;
                     }
-                    vectorM1213g.addElement(abstractC0037hM434I.getGroup(size));
+                    result.addElement(account.getGroup(size));
                 }
             }
         } else {
-            Vector vectorM1213g2 = NetworkUtils.newVector();
-            int iM433Q2 = getActiveAccountCount();
+            Vector result2 = NetworkUtils.newVector();
+            int count2 = getActiveAccountCount();
             while (true) {
-                iM433Q2--;
-                if (iM433Q2 < 0) {
-                    return vectorM1213g2;
+                count2--;
+                if (count2 < 0) {
+                    return result2;
                 }
-                Account abstractC0037hM434I2 = getAccountByIndex(iM433Q2);
-                if (abstractC0037hM434I2 == abstractC0037h) {
-                    int size2 = abstractC0037hM434I2.groups.size();
+                Account account2 = getAccountByIndex(count2);
+                if (account2 == targetAccount) {
+                    int size2 = account2.groups.size();
                     while (true) {
                         size2--;
                         if (size2 < 0) {
                             break;
                         }
-                        ContactGroup abstractC0046qM1082g = abstractC0037hM434I2.getGroup(size2);
-                        if (abstractC0046qM1082g != abstractC0037hM434I2.defaultGroup && abstractC0046qM1082g != abstractC0037hM434I2.onlineGroup && abstractC0046qM1082g != abstractC0037hM434I2.offlineGroup && abstractC0046qM1082g != abstractC0037hM434I2.blockedGroup) {
-                            vectorM1213g2.addElement(abstractC0046qM1082g);
+                        ContactGroup group = account2.getGroup(size2);
+                        if (group != account2.defaultGroup && group != account2.onlineGroup && group != account2.offlineGroup && group != account2.blockedGroup) {
+                            result2.addElement(group);
                         }
                     }
                 }
@@ -2011,43 +2002,43 @@ public final class AppController {
 
     /* renamed from: X */
     public static final Vector getMapContacts() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM439R = getMrimAccountList();
-        int size = vectorM439R.size();
+        Vector result = NetworkUtils.newVector();
+        Vector mrimAccounts = getMrimAccountList();
+        int size = mrimAccounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                return vectorM1213g;
+                return result;
             }
-            Vector vectorM1078P = findMrimAccount(vectorM439R, size).getAllContacts();
-            int size2 = vectorM1078P.size();
+            Vector contacts = findMrimAccount(mrimAccounts, size).getAllContacts();
+            int size2 = contacts.size();
             while (true) {
                 size2--;
                 if (size2 < 0) {
                     break;
                 }
-                MrimContact c0035f = (MrimContact) vectorM1078P.elementAt(size2);
-                if (c0035f.hasVCard()) {
-                    vectorM1213g.addElement(c0035f);
+                MrimContact contact = (MrimContact) contacts.elementAt(size2);
+                if (contact.hasVCard()) {
+                    result.addElement(contact);
                 }
             }
-            NetworkUtils.releaseVector(vectorM1078P);
+            NetworkUtils.releaseVector(contacts);
         }
     }
 
     /* renamed from: Y */
     public static final Vector getMapProfiles() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM439R = getMrimAccountList();
-        int size = vectorM439R.size();
+        Vector result = NetworkUtils.newVector();
+        Vector mrimAccounts = getMrimAccountList();
+        int size = mrimAccounts.size();
         while (true) {
             size--;
             if (size < 0) {
-                return vectorM1213g;
+                return result;
             }
-            MrimAccount c0028baM447a = findMrimAccount(vectorM439R, size);
-            if (c0028baM447a.accountProfile.hasCoordinates()) {
-                vectorM1213g.addElement(c0028baM447a);
+            MrimAccount account = findMrimAccount(mrimAccounts, size);
+            if (account.accountProfile.hasCoordinates()) {
+                result.addElement(account);
             }
         }
     }
@@ -2071,14 +2062,14 @@ public final class AppController {
         } else if (checkTimer(13, computeInitialState())) {
             AppState.clearIndex(1239);
         }
-        String strM584b = AppState.getString(1239);
-        if (strM584b == null) {
+        String formData = AppState.getString(1239);
+        if (formData == null) {
             return null;
         }
         String[] strArr = new String[2];
-        strArr[0] = strM584b;
-        String strM584b2 = AppState.getString(1240);
-        strArr[1] = strM584b2 != null ? strM584b2 : AppState.getString(308);
+        strArr[0] = formData;
+        String langOption = AppState.getString(1240);
+        strArr[1] = langOption != null ? langOption : AppState.getString(308);
         return strArr;
     }
 
@@ -2132,18 +2123,17 @@ public final class AppController {
             if (AppState.getBool(217)) {
                 showSettingsScreen();
             } else {
-                int iM433Q = getActiveAccountCount();
-                int i3 = iM433Q;
-                if (iM433Q == 0) {
+                int accountCount = getActiveAccountCount();
+                if (accountCount == 0) {
                     ScreenManager.pushScreen(ScreenManager.createScreen(4381));
                     refreshContactList();
                 } else {
                     while (true) {
-                        i3--;
-                        if (i3 < 0) {
+                        accountCount--;
+                        if (accountCount < 0) {
                             break;
                         } else {
-                            setCurrentAccount(getAccountByIndex(i3));
+                            setCurrentAccount(getAccountByIndex(accountCount));
                         }
                     }
                     ContactListManager.showContactList();
