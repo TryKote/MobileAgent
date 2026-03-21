@@ -22,16 +22,16 @@ public final class XmppContact extends Contact {
     /* renamed from: b */
     public boolean online;
 
-    public XmppContact(XmppProtocol c0005ae, String str, String str2, String str3) {
-        super(c0005ae);
+    public XmppContact(XmppProtocol protocol, String str, String str2, String str3) {
+        super(protocol);
         this.extra = str;
         this.jabberId = str;
         this.statusMessage = str3;
         this.unreadCount = 0;
         setDisplayName(Utils.defaultIfBlank(str2, str));
         this.defaultIcon = XmppProtocol.getIconForError(this.status);
-        this.identifier = c0005ae.encodeId().writeRawString(str).getStringAndClear();
-        c0005ae.registerContact(this);
+        this.identifier = protocol.encodeId().writeRawString(str).getStringAndClear();
+        protocol.registerContact(this);
         updateRenderState();
     }
 
@@ -52,45 +52,45 @@ public final class XmppContact extends Contact {
         return this.jabberId;
     }
 
-    public XmppContact(Account abstractC0037h, ByteBuffer c0043n) {
-        super(abstractC0037h);
-        this.jabberId = c0043n.readWideStr();
-        setDisplayName(c0043n.readUTF8Str((String) null));
-        this.identifier = abstractC0037h.encodeId().writeRawString(this.jabberId).getStringAndClear();
+    public XmppContact(Account account, ByteBuffer buffer) {
+        super(account);
+        this.jabberId = buffer.readWideStr();
+        setDisplayName(buffer.readUTF8Str((String) null));
+        this.identifier = account.encodeId().writeRawString(this.jabberId).getStringAndClear();
         this.status = 0;
         this.defaultIcon = XmppProtocol.getIconForError(0);
-        abstractC0037h.registerContact(this);
+        account.registerContact(this);
         updateRenderState();
         this.extra = this.jabberId;
     }
 
     @Override // p000.Contact
     /* renamed from: a */
-    public final void deserialize(ByteBuffer c0043n) {
-        c0043n.writeStringLatin1(this.jabberId).writeStringUTF16(this.displayName);
+    public final void deserialize(ByteBuffer buffer) {
+        buffer.writeStringLatin1(this.jabberId).writeStringUTF16(this.displayName);
     }
 
     /* renamed from: o */
     private final int getDisplayIcon() {
-        int iMo139e = getIcon();
-        int i = iMo139e & 65535;
-        return (!(this.account instanceof XmppMailRuProtocol) || i < 381 || i > 384) ? iMo139e : iMo139e + 4;
+        int icon = getIcon();
+        int i = icon & 65535;
+        return (!(this.account instanceof XmppMailRuProtocol) || i < 381 || i > 384) ? icon : icon + 4;
     }
 
     @Override // p000.Contact
     /* renamed from: b */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM901a = MenuItem.create(this.identifier).setIcon(getDisplayIcon()).addText(this.displayName, 0, this.unreadCount);
-        c0032cM901a.data = this;
-        return c0032cM901a;
+        MenuItem menuItem = MenuItem.create(this.identifier).setIcon(getDisplayIcon()).addText(this.displayName, 0, this.unreadCount);
+        menuItem.data = this;
+        return menuItem;
     }
 
     @Override // p000.Contact
     /* renamed from: e */
     public final int getIcon() {
-        int iMo139e = super.getIcon();
-        int i = iMo139e;
-        if (iMo139e == 16384) {
+        int icon = super.getIcon();
+        int i = icon;
+        if (icon == 16384) {
             return i;
         }
         if (StringUtils.matchesKey(262852, this.statusMessage) || StringUtils.matchesKey(267931, this.statusMessage) || StringUtils.matchesKey(202403, this.statusMessage)) {
@@ -142,27 +142,27 @@ public final class XmppContact extends Contact {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void updateFromPresence(String str, XmlElement c0022av) {
+    public final void updateFromPresence(String str, XmlElement element) {
         int i = 0;
         this.vCardHash = str;
         this.status = 0;
         if (StringUtils.matchesKey(594984, str)) {
-            XmlElement c0022avM562f = c0022av.findChildByKey(267927);
-            if (c0022avM562f != null) {
-                String strM11a = StringUtils.fromBuffer(c0022avM562f.textContent);
-                if (StringUtils.isEmpty(strM11a)) {
+            XmlElement showChild = element.findChildByKey(267927);
+            if (showChild != null) {
+                String statusText = StringUtils.fromBuffer(showChild.textContent);
+                if (StringUtils.isEmpty(statusText)) {
                     i = 1;
                     this.status = i;
                 } else {
-                    if (StringUtils.matchesKey(265215, strM11a)) {
+                    if (StringUtils.matchesKey(265215, statusText)) {
                         i = 4;
-                    } else if (StringUtils.matchesKey(267829, strM11a)) {
+                    } else if (StringUtils.matchesKey(267829, statusText)) {
                         i = 2;
-                    } else if (StringUtils.matchesKey(136761, strM11a)) {
+                    } else if (StringUtils.matchesKey(136761, statusText)) {
                         i = 6;
-                    } else if (StringUtils.matchesKey(202299, strM11a)) {
+                    } else if (StringUtils.matchesKey(202299, statusText)) {
                         i = 5;
-                    } else if (StringUtils.matchesKey(202302, strM11a)) {
+                    } else if (StringUtils.matchesKey(202302, statusText)) {
                         i = 3;
                     }
                     this.status = i;
@@ -173,9 +173,9 @@ public final class XmppContact extends Contact {
     }
 
     /* renamed from: a */
-    public final void updateFromContact(XmppContact c0006af) {
-        this.status = c0006af != null ? c0006af.status : 0;
-        this.vCardHash = c0006af != null ? c0006af.vCardHash : null;
+    public final void updateFromContact(XmppContact other) {
+        this.status = other != null ? other.status : 0;
+        this.vCardHash = other != null ? other.vCardHash : null;
         this.highlighted = this.status != 0;
         this.defaultIcon = XmppProtocol.getIconForError(this.status);
         this.unreadCount = this.status == 0 ? 0 : 3;
@@ -191,9 +191,9 @@ public final class XmppContact extends Contact {
 
     /* renamed from: a */
     public final int sendPresence(int i) {
-        int iM119a = ((XmppProtocol) this.account).updateContactPresence(this, i);
-        if (iM119a != i) {
-            return iM119a;
+        int result = ((XmppProtocol) this.account).updateContactPresence(this, i);
+        if (result != i) {
+            return result;
         }
         setPresenceFeature(1);
         setPresenceFeature(0);

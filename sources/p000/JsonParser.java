@@ -8,167 +8,167 @@ import java.util.Vector;
 /* loaded from: MobileAgent_3.9.jar:aq.class */
 public abstract class JsonParser {
     /* renamed from: a */
-    public static final Object parseUTF8(ByteBuffer c0043n, int i) {
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        Object objM469a = parseValue(c0043n, stringBufferM1217h, 2);
-        NetworkUtils.bufToStringCached(stringBufferM1217h);
-        return objM469a;
+    public static final Object parseUTF8(ByteBuffer buffer, int i) {
+        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Object result = parseValue(buffer, sb, 2);
+        NetworkUtils.bufToStringCached(sb);
+        return result;
     }
 
     /* renamed from: a */
-    public static final Object parseJson(ByteBuffer c0043n) {
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        Object objM469a = parseValue(c0043n, stringBufferM1217h, 1);
-        NetworkUtils.bufToStringCached(stringBufferM1217h);
-        return objM469a;
+    public static final Object parseJson(ByteBuffer buffer) {
+        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Object result = parseValue(buffer, sb, 1);
+        NetworkUtils.bufToStringCached(sb);
+        return result;
     }
 
     /* renamed from: a */
-    private static final char skipWhitespace(ByteBuffer c0043n, StringBuffer stringBuffer) {
+    private static final char skipWhitespace(ByteBuffer buffer, StringBuffer stringBuffer) {
         while (true) {
-            char cM472c = nextJsonChar(c0043n, stringBuffer);
-            if (cM472c != ' ' && cM472c != '\n' && cM472c != '\r') {
-                return cM472c;
+            char next = nextJsonChar(buffer, stringBuffer);
+            if (next != ' ' && next != '\n' && next != '\r') {
+                return next;
             }
         }
     }
 
     /* renamed from: a */
-    private static final Object parseValue(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
-        char cM468a;
-        char cM468a2;
-        char cM468a3 = skipWhitespace(c0043n, stringBuffer);
-        if (cM468a3 == 65535) {
+    private static final Object parseValue(ByteBuffer buffer, StringBuffer stringBuffer, int i) {
+        char sep;
+        char delim;
+        char firstChar = skipWhitespace(buffer, stringBuffer);
+        if (firstChar == 65535) {
             throw new RuntimeException();
         }
-        if (cM468a3 == '}' || cM468a3 == ']' || cM468a3 == ',') {
-            stringBuffer.append(cM468a3);
+        if (firstChar == '}' || firstChar == ']' || firstChar == ',') {
+            stringBuffer.append(firstChar);
             return null;
         }
-        if (cM468a3 == '{') {
+        if (firstChar == '{') {
             Hashtable hashtable = new Hashtable();
             do {
-                Object objM469a = parseValue(c0043n, stringBuffer, i);
-                if (!(objM469a instanceof String)) {
+                Object result = parseValue(buffer, stringBuffer, i);
+                if (!(result instanceof String)) {
                     throw new RuntimeException();
                 }
-                if (skipWhitespace(c0043n, stringBuffer) != ':') {
+                if (skipWhitespace(buffer, stringBuffer) != ':') {
                     throw new RuntimeException();
                 }
-                hashtable.put(objM469a, parseValue(c0043n, stringBuffer, i));
-                cM468a2 = skipWhitespace(c0043n, stringBuffer);
-                if (cM468a2 == '}') {
+                hashtable.put(result, parseValue(buffer, stringBuffer, i));
+                delim = skipWhitespace(buffer, stringBuffer);
+                if (delim == '}') {
                     return hashtable;
                 }
-            } while (cM468a2 == ',');
+            } while (delim == ',');
             throw new RuntimeException();
         }
-        if (cM468a3 != '[') {
-            if (cM468a3 == '\"') {
-                return parseString(c0043n, stringBuffer, i);
+        if (firstChar != '[') {
+            if (firstChar == '\"') {
+                return parseString(buffer, stringBuffer, i);
             }
-            stringBuffer.append(cM468a3);
-            return parseUnquoted(c0043n, stringBuffer);
+            stringBuffer.append(firstChar);
+            return parseUnquoted(buffer, stringBuffer);
         }
-        Vector vectorM1213g = NetworkUtils.newVector();
+        Vector items = NetworkUtils.newVector();
         do {
-            Object objM469a2 = parseValue(c0043n, stringBuffer, i);
-            if (objM469a2 != null) {
-                vectorM1213g.addElement(objM469a2);
+            Object value = parseValue(buffer, stringBuffer, i);
+            if (value != null) {
+                items.addElement(value);
             }
-            cM468a = skipWhitespace(c0043n, stringBuffer);
-            if (cM468a == ']') {
-                return vectorM1213g;
+            sep = skipWhitespace(buffer, stringBuffer);
+            if (sep == ']') {
+                return items;
             }
-        } while (cM468a == ',');
+        } while (sep == ',');
         throw new RuntimeException();
     }
 
     /* renamed from: b */
-    private static final String parseString(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
-        char cM499a;
-        char cM1342n;
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+    private static final String parseString(ByteBuffer buffer, StringBuffer stringBuffer, int i) {
+        char ch;
+        char decoded;
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         while (true) {
             if (i == 2) {
                 int length = stringBuffer.length() - 1;
                 if (length >= 0) {
-                    char cCharAt = stringBuffer.charAt(length);
+                    char c = stringBuffer.charAt(length);
                     stringBuffer.setLength(length);
-                    cM1342n = cCharAt;
+                    decoded = c;
                 } else if (i == 2) {
-                    int iM1346q = c0043n.readUByte();
-                    int iM1346q2 = iM1346q > 127 ? c0043n.readUByte() : 0;
-                    int iM1346q3 = iM1346q > 223 ? c0043n.readUByte() : 0;
-                    cM1342n = iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043n.readUByte() : 0) - 128));
+                    int b1 = buffer.readUByte();
+                    int b2 = b1 > 127 ? buffer.readUByte() : 0;
+                    int b3 = b1 > 223 ? buffer.readUByte() : 0;
+                    decoded = b1 < 128 ? (char) b1 : b1 < 224 ? (char) (((b1 - 192) << 6) + (b2 - 128)) : b1 < 240 ? (char) (((b1 - 224) << 12) + ((b2 - 128) << 6) + (b3 - 128)) : (char) (((b1 - 240) << 18) + ((b2 - 128) << 12) + ((b3 - 128) << 6) + ((b1 > 239 ? buffer.readUByte() : 0) - 128));
                 } else {
-                    cM1342n = (char) c0043n.readByteOrEOF();
+                    decoded = (char) buffer.readByteOrEOF();
                 }
-                cM499a = cM1342n;
+                ch = decoded;
             } else {
-                cM499a = Utils.win1251ToChar((int) nextJsonChar(c0043n, stringBuffer));
+                ch = Utils.win1251ToChar((int) nextJsonChar(buffer, stringBuffer));
             }
-            if (cM499a == '\"') {
-                return NetworkUtils.bufToStringCached(stringBufferM1217h);
+            if (ch == '\"') {
+                return NetworkUtils.bufToStringCached(sb);
             }
-            if (cM499a == '\\') {
-                switch (nextJsonChar(c0043n, stringBuffer)) {
+            if (ch == '\\') {
+                switch (nextJsonChar(buffer, stringBuffer)) {
                     case '\"':
-                        stringBufferM1217h.append('\"');
+                        sb.append('\"');
                         break;
                     case '/':
-                        stringBufferM1217h.append('/');
+                        sb.append('/');
                         break;
                     case '\\':
-                        stringBufferM1217h.append('\\');
+                        sb.append('\\');
                         break;
                     case 'b':
-                        stringBufferM1217h.append('\b');
+                        sb.append('\b');
                         break;
                     case 'f':
-                        stringBufferM1217h.append('\f');
+                        sb.append('\f');
                         break;
                     case 'n':
-                        stringBufferM1217h.append('\n');
+                        sb.append('\n');
                         break;
                     case 'r':
-                        stringBufferM1217h.append('\r');
+                        sb.append('\r');
                         break;
                     case 't':
-                        stringBufferM1217h.append('\t');
+                        sb.append('\t');
                         break;
                 }
             } else {
-                stringBufferM1217h.append(cM499a);
+                sb.append(ch);
             }
         }
     }
 
     /* renamed from: b */
-    private static final Object parseUnquoted(ByteBuffer c0043n, StringBuffer stringBuffer) {
-        char cM472c;
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+    private static final Object parseUnquoted(ByteBuffer buffer, StringBuffer stringBuffer) {
+        char next;
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         while (true) {
-            cM472c = nextJsonChar(c0043n, stringBuffer);
-            if (cM472c == ',' || cM472c == '}' || cM472c == ']') {
+            next = nextJsonChar(buffer, stringBuffer);
+            if (next == ',' || next == '}' || next == ']') {
                 break;
             }
-            stringBufferM1217h.append(cM472c);
+            sb.append(next);
         }
-        stringBuffer.append(cM472c);
-        String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
-        return StringUtils.matchesKey(264068, strM1215a) ? ResourceManager.boolTrue : StringUtils.matchesKey(329608, strM1215a) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, strM1215a) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) strM1215a));
+        stringBuffer.append(next);
+        String text = NetworkUtils.bufToStringCached(sb);
+        return StringUtils.matchesKey(264068, text) ? ResourceManager.boolTrue : StringUtils.matchesKey(329608, text) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, text) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) text));
     }
 
     /* renamed from: c */
-    private static final char nextJsonChar(ByteBuffer c0043n, StringBuffer stringBuffer) {
+    private static final char nextJsonChar(ByteBuffer buffer, StringBuffer stringBuffer) {
         int length = stringBuffer.length() - 1;
         if (length < 0) {
-            return (char) c0043n.readByteOrEOF();
+            return (char) buffer.readByteOrEOF();
         }
-        char cCharAt = stringBuffer.charAt(length);
+        char c = stringBuffer.charAt(length);
         stringBuffer.setLength(length);
-        return cCharAt;
+        return c;
     }
 
     /* renamed from: a */
@@ -242,8 +242,8 @@ public abstract class JsonParser {
             String str = (String) obj;
             int length = str.length();
             for (int i = 0; i < length; i++) {
-                char cCharAt = str.charAt(i);
-                switch (cCharAt) {
+                char c = str.charAt(i);
+                switch (c) {
                     case '\b':
                         stringBuffer.append('\\').append('b');
                         break;
@@ -266,7 +266,7 @@ public abstract class JsonParser {
                         stringBuffer.append('\\').append('/');
                         break;
                     default:
-                        stringBuffer.append(cCharAt);
+                        stringBuffer.append(c);
                         break;
                 }
             }
@@ -285,16 +285,16 @@ public abstract class JsonParser {
             stringBuffer.append('{');
             Hashtable hashtable = (Hashtable) obj;
             boolean z = true;
-            Enumeration enumerationKeys = hashtable.keys();
-            while (enumerationKeys.hasMoreElements()) {
+            Enumeration keys = hashtable.keys();
+            while (keys.hasMoreElements()) {
                 if (!z) {
                     stringBuffer.append(',');
                 }
                 z = false;
-                Object objNextElement = enumerationKeys.nextElement();
-                serializeValue(objNextElement, stringBuffer);
+                Object key = keys.nextElement();
+                serializeValue(key, stringBuffer);
                 stringBuffer.append(':');
-                serializeValue(hashtable.get(objNextElement), stringBuffer);
+                serializeValue(hashtable.get(key), stringBuffer);
             }
             stringBuffer.append('}');
         }

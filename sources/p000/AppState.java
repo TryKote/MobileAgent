@@ -39,7 +39,7 @@ public abstract class AppState {
     /* JADX WARN: Type inference failed for: r0v9, types: [byte[], byte[][]] */
     /* renamed from: a */
     public static final void init(Object obj) {
-        int iM1346q;
+        int value;
         ResourceManager.boolTrue = new Boolean(true);
         ResourceManager.boolFalse = new Boolean(false);
         ResourceManager.syncObject = new Object();
@@ -64,38 +64,38 @@ public abstract class AppState {
         delta = new Object[295];
         pool = new Object[1406];
         intPool = new int[3773];
-        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.longToHex(1734763311), 45000);
+        ByteBuffer buffer = new ByteBuffer(NetworkUtils.longToHex(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
-            pool[i2] = decodeObject(c0043n, i2);
+            pool[i2] = decodeObject(buffer, i2);
         }
         for (int i3 = 0; i3 < 3773; i3++) {
             int[] iArr = intPool;
             int i4 = i3;
-            byte bM1344o = c0043n.readByte();
-            if ((bM1344o & 64) != 0) {
-                iM1346q = bM1344o & 63;
-            } else if ((bM1344o & 32) != 0) {
-                iM1346q = ((bM1344o & 31) << 8) + c0043n.readUByte();
+            byte flag = buffer.readByte();
+            if ((flag & 64) != 0) {
+                value = flag & 63;
+            } else if ((flag & 32) != 0) {
+                value = ((flag & 31) << 8) + buffer.readUByte();
             } else {
-                int iM1346q2 = 0;
-                int i5 = bM1344o & 7;
+                int accum = 0;
+                int i5 = flag & 7;
                 while (true) {
                     i5--;
                     if (i5 < 0) {
                         break;
                     } else {
-                        iM1346q2 = (iM1346q2 << 8) + c0043n.readUByte();
+                        accum = (accum << 8) + buffer.readUByte();
                     }
                 }
-                iM1346q = iM1346q2;
+                value = accum;
             }
-            iArr[i4] = iM1346q;
+            iArr[i4] = value;
         }
         emptyStr = (String) pool[1038];
-        ByteBuffer c0043nM851h = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(1164404323));
-        while (c0043nM851h.length > 0) {
+        ByteBuffer recordBuf = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(1164404323));
+        while (recordBuf.length > 0) {
             try {
-                delta[((Integer) decodeObject(c0043nM851h, 0)).intValue()] = decodeObject(c0043nM851h, 0);
+                delta[((Integer) decodeObject(recordBuf, 0)).intValue()] = decodeObject(recordBuf, 0);
             } catch (Throwable unused) {
             }
         }
@@ -108,16 +108,16 @@ public abstract class AppState {
         } catch (Throwable unused2) {
             delta = new Object[295];
             try {
-                String[] strArrM10a = StringUtils.listRecordStores();
-                if (strArrM10a != null) {
-                    int length = strArrM10a.length;
+                String[] stores = StringUtils.listRecordStores();
+                if (stores != null) {
+                    int length = stores.length;
                     while (true) {
                         length--;
                         if (length < 0) {
                             break;
                         } else {
                             try {
-                                RecordStore.deleteRecordStore(strArrM10a[length]);
+                                RecordStore.deleteRecordStore(stores[length]);
                             } catch (Throwable unused3) {
                             }
                         }
@@ -171,9 +171,9 @@ public abstract class AppState {
 
     /* renamed from: b */
     public static final void updateTime() {
-        long jCurrentTimeMillis = System.currentTimeMillis();
-        setLong(1530, jCurrentTimeMillis);
-        setBool(1534, (((int) jCurrentTimeMillis) & Integer.MAX_VALUE) % 2000 < 1000);
+        long now = System.currentTimeMillis();
+        setLong(1530, now);
+        setBool(1534, (((int) now) & Integer.MAX_VALUE) % 2000 < 1000);
     }
 
     /* renamed from: a */
@@ -197,18 +197,18 @@ public abstract class AppState {
         if (i > 5179) {
             return StringUtils.intern(new String(getBytes(295), i & 65535, i >> 16));
         }
-        Object objM583p = getOrDefault(i);
-        if (objM583p == null) {
+        Object result = getOrDefault(i);
+        if (result == null) {
             return null;
         }
-        return objM583p instanceof byte[] ? NetworkUtils.bytesToString((byte[]) objM583p) : (String) objM583p;
+        return result instanceof byte[] ? NetworkUtils.bytesToString((byte[]) result) : (String) result;
     }
 
     /* renamed from: c */
     public static final int getAndClearInt(int i) {
-        int iM586d = getInt(i);
+        int val = getInt(i);
         setInt(i, 0);
-        return iM586d;
+        return val;
     }
 
     /* renamed from: d */
@@ -403,51 +403,51 @@ public abstract class AppState {
     }
 
     /* renamed from: a */
-    private static final Object decodeObject(ByteBuffer c0043n, int i) {
-        byte bM1344o = c0043n.readByte();
-        if ((bM1344o & 128) != 0) {
-            byte[] bArr = new byte[(bM1344o & 64) != 0 ? bM1344o & 63 : ((bM1344o & 31) << 8) + c0043n.readUByte()];
-            c0043n.readIntoBytes(bArr);
+    private static final Object decodeObject(ByteBuffer buffer, int i) {
+        byte flag = buffer.readByte();
+        if ((flag & 128) != 0) {
+            byte[] bArr = new byte[(flag & 64) != 0 ? flag & 63 : ((flag & 31) << 8) + buffer.readUByte()];
+            buffer.readIntoBytes(bArr);
             if (i >= 295 && i < 1036) {
                 return bArr;
             }
-            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+            StringBuffer sb = NetworkUtils.newStringBuffer();
             for (byte b : bArr) {
-                stringBufferM1217h.append(Utils.win1251ToChar((int) b));
+                sb.append(Utils.win1251ToChar((int) b));
             }
             NetworkUtils.releaseBytes(bArr);
             String str = separator;
-            String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
-            if (str.equals(strM1215a)) {
+            String decoded = NetworkUtils.bufToStringCached(sb);
+            if (str.equals(decoded)) {
                 return null;
             }
-            return strM1215a;
+            return decoded;
         }
-        if ((bM1344o & 64) != 0) {
-            return ResourceManager.integerOf(bM1344o & 63);
+        if ((flag & 64) != 0) {
+            return ResourceManager.integerOf(flag & 63);
         }
-        if ((bM1344o & 32) != 0) {
-            return ResourceManager.integerOf(((bM1344o & 31) << 8) + c0043n.readUByte());
+        if ((flag & 32) != 0) {
+            return ResourceManager.integerOf(((flag & 31) << 8) + buffer.readUByte());
         }
-        int iM1346q = 0;
-        int i2 = bM1344o & 7;
+        int value = 0;
+        int i2 = flag & 7;
         while (true) {
             i2--;
             if (i2 < 0) {
-                return ResourceManager.integerOf(iM1346q);
+                return ResourceManager.integerOf(value);
             }
-            iM1346q = (iM1346q << 8) + c0043n.readUByte();
+            value = (value << 8) + buffer.readUByte();
         }
     }
 
     /* renamed from: a */
     public static void saveDelta(boolean z) {
         try {
-            ByteBuffer c0043n = new ByteBuffer();
+            ByteBuffer buffer = new ByteBuffer();
             for (int i = 0; i < 295; i++) {
                 Object obj = delta[i];
                 if (obj != null) {
-                    encodeIndex(c0043n, i);
+                    encodeIndex(buffer, i);
                     if (obj instanceof String) {
                         String str = (String) obj;
                         int length = str.length();
@@ -457,17 +457,17 @@ public abstract class AppState {
                         }
                         int length2 = str.length();
                         if (length2 <= 0 || length2 >= 64) {
-                            c0043n.writeShortBE(length2 | 32768);
+                            buffer.writeShortBE(length2 | 32768);
                         } else {
-                            c0043n.writeByte(192 | length2);
+                            buffer.writeByte(192 | length2);
                         }
-                        c0043n.writeBytes(bArr);
+                        buffer.writeBytes(bArr);
                     } else {
-                        encodeIndex(c0043n, ((Integer) obj).intValue());
+                        encodeIndex(buffer, ((Integer) obj).intValue());
                     }
                 }
             }
-            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(1164404323), c0043n, z);
+            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(1164404323), buffer, z);
         } catch (Throwable unused) {
         }
     }
@@ -478,12 +478,12 @@ public abstract class AppState {
     }
 
     /* renamed from: b */
-    private static final void encodeIndex(ByteBuffer c0043n, int i) {
+    private static final void encodeIndex(ByteBuffer buffer, int i) {
         if (i >= 0 && i <= 63) {
-            c0043n.writeByte(64 | i);
+            buffer.writeByte(64 | i);
             return;
         }
-        ByteBuffer c0043n2 = new ByteBuffer();
+        ByteBuffer tempBuf = new ByteBuffer();
         int[] iArr = new int[8];
         int i2 = 24;
         int i3 = -1;
@@ -498,11 +498,11 @@ public abstract class AppState {
             i3 = 3;
         }
         for (int i5 = i3; i5 < 4; i5++) {
-            c0043n2.writeByte(iArr[i5]);
+            tempBuf.writeByte(iArr[i5]);
         }
-        byte[] bArrM1339k = c0043n2.toByteArray();
-        c0043n.writeByte(8 | bArrM1339k.length);
-        c0043n.writeBytes(bArrM1339k);
+        byte[] bytes = tempBuf.toByteArray();
+        buffer.writeByte(8 | bytes.length);
+        buffer.writeBytes(bytes);
     }
 
     /* renamed from: k */
@@ -521,8 +521,8 @@ public abstract class AppState {
 
     /* renamed from: l */
     public static final int getDateCode() {
-        Calendar calendarM622k = getCalendar();
-        return (calendarM622k.get(1) << 16) + (calendarM622k.get(2) << 8) + calendarM622k.get(5);
+        Calendar cal = getCalendar();
+        return (cal.get(1) << 16) + (cal.get(2) << 8) + cal.get(5);
     }
 
     /* renamed from: m */

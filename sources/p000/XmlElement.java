@@ -40,8 +40,8 @@ public final class XmlElement {
         this.tagName = str;
     }
 
-    public XmlElement(String str, XmlElement c0022av, Hashtable hashtable) {
-        this.parent = c0022av;
+    public XmlElement(String str, XmlElement element, Hashtable hashtable) {
+        this.parent = element;
         this.attributes = hashtable;
         this.tagName = str;
     }
@@ -53,11 +53,11 @@ public final class XmlElement {
     }
 
     /* renamed from: a */
-    public final XmlElement addChild(XmlElement c0022av) {
+    public final XmlElement addChild(XmlElement element) {
         if (this.children == null) {
             this.children = NetworkUtils.newVector();
         }
-        this.children.addElement(c0022av);
+        this.children.addElement(element);
         return this;
     }
 
@@ -127,16 +127,16 @@ public final class XmlElement {
 
     /* renamed from: e */
     private final XmlElement findChildByName(String str) {
-        XmlElement c0022av;
-        int iM541c = Utils.vectorSize(this.children);
+        XmlElement element;
+        int idx = Utils.vectorSize(this.children);
         do {
-            iM541c--;
-            if (iM541c < 0) {
+            idx--;
+            if (idx < 0) {
                 return null;
             }
-            c0022av = (XmlElement) this.children.elementAt(iM541c);
-        } while (!StringUtils.equals(c0022av.tagName, str));
-        return c0022av;
+            element = (XmlElement) this.children.elementAt(idx);
+        } while (!StringUtils.equals(element.tagName, str));
+        return element;
     }
 
     /* renamed from: g */
@@ -145,26 +145,26 @@ public final class XmlElement {
     }
 
     public final String toString() {
-        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('<').append(this.tagName);
+        StringBuffer sb = NetworkUtils.newStringBuffer().append('<').append(this.tagName);
         if (this.attributes != null) {
-            Enumeration enumerationKeys = this.attributes.keys();
-            while (enumerationKeys.hasMoreElements()) {
-                StringBuffer stringBufferAppend2 = stringBufferAppend.append(' ');
-                Object objNextElement = enumerationKeys.nextElement();
-                StringBuffer stringBufferAppend3 = stringBufferAppend2.append(objNextElement).append('=').append('\"');
-                StringBuffer stringBufferM565b = escapeXml(this.attributes.get(objNextElement));
-                stringBufferAppend3.append((Object) stringBufferM565b).append('\"');
-                NetworkUtils.bufToStringCached(stringBufferM565b);
+            Enumeration keys = this.attributes.keys();
+            while (keys.hasMoreElements()) {
+                StringBuffer spaceBuf = sb.append(' ');
+                Object key = keys.nextElement();
+                StringBuffer attrBuf = spaceBuf.append(key).append('=').append('\"');
+                StringBuffer escaped = escapeXml(this.attributes.get(key));
+                attrBuf.append((Object) escaped).append('\"');
+                NetworkUtils.bufToStringCached(escaped);
             }
         }
-        StringBuffer stringBufferAppend4 = NetworkUtils.newStringBuffer().append(NetworkUtils.bufToStringCached(isSelfClosing() ? stringBufferAppend.append('/').append('>') : stringBufferAppend.append('>')));
+        StringBuffer result = NetworkUtils.newStringBuffer().append(NetworkUtils.bufToStringCached(isSelfClosing() ? sb.append('/').append('>') : sb.append('>')));
         if (this.textContent != null) {
-            stringBufferAppend4.append((Object) escapeXml(this.textContent));
+            result.append((Object) escapeXml(this.textContent));
         }
         for (int i = 0; i < Utils.vectorSize(this.children); i++) {
-            stringBufferAppend4.append(this.children.elementAt(i));
+            result.append(this.children.elementAt(i));
         }
-        return NetworkUtils.bufToStringCached(isSelfClosing() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
+        return NetworkUtils.bufToStringCached(isSelfClosing() ? result : result.append(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
     }
 
     /* renamed from: b */
@@ -173,23 +173,23 @@ public final class XmlElement {
             return null;
         }
         String string = obj.toString();
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer out = NetworkUtils.newStringBuffer();
         int length = string.length();
         for (int i = 0; i < length; i++) {
-            char cCharAt = string.charAt(i);
-            if (cCharAt == '&') {
-                stringBufferM1217h.append(NetworkUtils.longToHex(255289286950L));
-            } else if (cCharAt == '\"') {
-                stringBufferM1217h.append(NetworkUtils.longToHex(65371272212774L));
-            } else if (cCharAt == '<') {
-                stringBufferM1217h.append(NetworkUtils.longToHex(997485606));
-            } else if (cCharAt == '>') {
-                stringBufferM1217h.append(NetworkUtils.longToHex(997484326));
+            char ch = string.charAt(i);
+            if (ch == '&') {
+                out.append(NetworkUtils.longToHex(255289286950L));
+            } else if (ch == '\"') {
+                out.append(NetworkUtils.longToHex(65371272212774L));
+            } else if (ch == '<') {
+                out.append(NetworkUtils.longToHex(997485606));
+            } else if (ch == '>') {
+                out.append(NetworkUtils.longToHex(997484326));
             } else {
-                stringBufferM1217h.append(cCharAt);
+                out.append(ch);
             }
         }
-        return stringBufferM1217h;
+        return out;
     }
 
     /* renamed from: c */
@@ -199,16 +199,16 @@ public final class XmlElement {
 
     /* renamed from: a */
     public final XmlElement findChildByText(String str) {
-        XmlElement c0022av;
-        int iM541c = Utils.vectorSize(this.children);
+        XmlElement element;
+        int idx = Utils.vectorSize(this.children);
         do {
-            iM541c--;
-            if (iM541c < 0) {
+            idx--;
+            if (idx < 0) {
                 return null;
             }
-            c0022av = (XmlElement) this.children.elementAt(iM541c);
-        } while (!StringUtils.equals(str, StringUtils.fromBuffer(c0022av.textContent)));
-        return c0022av;
+            element = (XmlElement) this.children.elementAt(idx);
+        } while (!StringUtils.equals(str, StringUtils.fromBuffer(element.textContent)));
+        return element;
     }
 
     /* renamed from: b */
@@ -228,12 +228,12 @@ public final class XmlElement {
 
     /* renamed from: a */
     public final XmlElement addTextChild(String str, String str2) {
-        XmlElement c0022av = new XmlElement(str);
+        XmlElement element = new XmlElement(str);
         if (str2 != null) {
-            c0022av.appendText((Object) str2);
+            element.appendText((Object) str2);
         }
-        addChild(c0022av);
-        return c0022av;
+        addChild(element);
+        return element;
     }
 
     /* renamed from: b */
@@ -262,15 +262,15 @@ public final class XmlElement {
 
     /* renamed from: d */
     public final XmlElement findByAttrs(int i, int i2) {
-        int iM541c = Utils.vectorSize(this.children);
+        int idx = Utils.vectorSize(this.children);
         while (true) {
-            iM541c--;
-            if (iM541c < 0) {
+            idx--;
+            if (idx < 0) {
                 return null;
             }
-            XmlElement c0022avM564g = getChildAt(iM541c);
-            if (StringUtils.matchesKey(i, c0022avM564g.tagName) && StringUtils.matchesKey(i2, c0022avM564g.getAttribute(AppState.getString(333027)))) {
-                return c0022avM564g;
+            XmlElement child = getChildAt(idx);
+            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(AppState.getString(333027)))) {
+                return child;
             }
         }
     }
