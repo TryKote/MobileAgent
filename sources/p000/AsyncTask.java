@@ -29,15 +29,15 @@ public final class AsyncTask implements Runnable, CommandListener {
                 AppController.f151e = true;
                 ResourceManager.m941e();
                 ResourceManager.m957l();
-                Vector vectorM614m = AppState.m614m(1358);
+                Vector vectorM614m = AppState.getVector(1358);
                 if (vectorM614m != null) {
                     synchronized (vectorM614m) {
-                        AppState.m591f(1358);
+                        AppState.clearIndex(1358);
                     }
                 }
                 NetworkUtils.m1183c();
                 AppController.m436a(AppController.f155h, true);
-                AppState.m619a(AppController.f155h);
+                AppState.saveDelta(AppController.f155h);
             }
         }
     }
@@ -50,14 +50,14 @@ public final class AsyncTask implements Runnable, CommandListener {
         this.f435c = new Object[]{c0013am, c0032c};
         String str = (String) objArr[0];
         int iIntValue = ((Integer) objArr[1]).intValue();
-        XmppContactGroup.m1025a(AppState.f181d, str.length() > iIntValue ? StringUtils.m13b(str, iIntValue) : str, iIntValue, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
+        XmppContactGroup.m1025a(AppState.emptyStr, str.length() > iIntValue ? StringUtils.prefix(str, iIntValue) : str, iIntValue, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
     }
 
     public final void commandAction(Command command, Displayable displayable) {
         if (this.f435c == null) {
             String strM16a = StringUtils.m16a((TextBox) displayable);
-            AppState.m601a(1279, (Object) strM16a);
-            AppState.m599a(1456, !StringUtils.m1a(strM16a));
+            AppState.setObject(1279, (Object) strM16a);
+            AppState.setBool(1456, !StringUtils.isEmpty(strM16a));
             if (command.getPriority() == 0) {
                 IOUtils.m773g();
                 return;
@@ -67,14 +67,14 @@ public final class AsyncTask implements Runnable, CommandListener {
             }
         }
         if (command.getPriority() == 0) {
-            String strM17c = StringUtils.m17c(((TextBox) displayable).getString());
+            String strM17c = StringUtils.intern(((TextBox) displayable).getString());
             Screen c0013am = (Screen) ((Object[]) this.f435c)[0];
             MenuItem c0032c = (MenuItem) ((Object[]) this.f435c)[1];
             Object[] objArr = (Object[]) c0032c.f265d;
             if (!StringUtils.m4a(strM17c, objArr[0])) {
                 objArr[0] = strM17c;
                 String strM506c = ((Integer) objArr[2]).intValue() != 327680 ? strM17c : Utils.m506c(strM17c);
-                String str = StringUtils.m1a(strM506c) ? null : strM506c;
+                String str = StringUtils.isEmpty(strM506c) ? null : strM506c;
                 c0032c.m884a();
                 if (objArr[4] instanceof String) {
                     c0032c.m898b(Utils.m527g((String) objArr[4]));
@@ -89,7 +89,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                 c0013am.m258q();
             }
         }
-        AppState.m604b(AppState.m582c().m204b());
+        AppState.setScreen(AppState.getCanvas().m204b());
     }
 
     public AsyncTask(int i) {
@@ -289,7 +289,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0 = 2295208(0x2305a8, float:3.216271E-39)
-            java.lang.String r0 = p000.AppState.m584b(r0)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
+            java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r1 = 0
             r10 = r1
             r1 = 0
@@ -377,7 +377,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             goto L171
         L1a5:
             r0 = 1359(0x54f, float:1.904E-42)
-            java.util.Vector r0 = p000.AppState.m614m(r0)     // Catch: java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.AppState.getVector(r0)     // Catch: java.lang.Throwable -> La84
             r1 = r0
             r8 = r1
             if (r0 == 0) goto L1cb
@@ -386,7 +386,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r1
             monitor-enter(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r8
-            java.lang.Object r0 = p000.Utils.m524a(r0)     // Catch: java.lang.Throwable -> L1c5 java.lang.Throwable -> La84
+            java.lang.Object r0 = p000.Utils.dequeue(r0)     // Catch: java.lang.Throwable -> L1c5 java.lang.Throwable -> La84
             javax.microedition.io.Connection r0 = (javax.microedition.io.Connection) r0     // Catch: java.lang.Throwable -> L1c5 java.lang.Throwable -> La84
             p000.IOUtils.m765a(r0)     // Catch: java.lang.Throwable -> L1c5 java.lang.Throwable -> La84
             r0 = r15
@@ -408,7 +408,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L1d7:
         L1d8:
             r0 = 1358(0x54e, float:1.903E-42)
-            java.util.Vector r0 = p000.AppState.m614m(r0)     // Catch: java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.AppState.getVector(r0)     // Catch: java.lang.Throwable -> La84
             r1 = r0
             r8 = r1
             if (r0 != 0) goto L16f
@@ -478,7 +478,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r17 = r0
             r0 = 1389(0x56d, float:1.946E-42)
-            java.util.Vector r0 = p000.AppState.m614m(r0)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.AppState.getVector(r0)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r0
             r18 = r1
             int r0 = r0.size()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
@@ -560,7 +560,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L2fd:
         L2fe:
             r0 = 1359(0x54f, float:1.904E-42)
-            java.util.Vector r0 = p000.AppState.m614m(r0)     // Catch: java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.AppState.getVector(r0)     // Catch: java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
             if (r0 == 0) goto L31d
@@ -613,7 +613,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r0
             r0 = 0
             r12 = r0
-            java.lang.Object[] r0 = p000.AppState.f177b     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.AppState.pool     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r1 = 1399(0x577, float:1.96E-42)
             r2 = r10
             r0[r1] = r2     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
@@ -633,7 +633,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r0
             r0 = 0
             r12 = r0
-            java.lang.Object[] r0 = p000.AppState.f177b     // Catch: java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.AppState.pool     // Catch: java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r1 = 1399(0x577, float:1.96E-42)
             r2 = r10
             r0[r1] = r2     // Catch: java.lang.Throwable -> L392 java.lang.Throwable -> La84
@@ -814,7 +814,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = 1001(0x3e9, float:1.403E-42)
             r1 = 0
             r8 = r1
-            java.lang.String r0 = p000.AppState.m584b(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r1 = 0
             r8 = r1
             p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
@@ -870,7 +870,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r17 = r0
             java.lang.String r0 = "upi"
             r1 = r17
-            java.lang.String r0 = p000.StringUtils.m9b(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.lang.String r0 = p000.StringUtils.concat(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r16
             p000.XmppMailRuProtocol.m853a(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             java.util.Hashtable r0 = p000.ConnectionThread.f353d     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
@@ -1195,7 +1195,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = 3805583(0x3a118f, float:5.332758E-39)
             r1 = 0
             r10 = r1
-            java.lang.String r0 = p000.AppState.m584b(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r10 = r0
             java.lang.StringBuffer r0 = p000.NetworkUtils.m1217h()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = r10
@@ -1205,14 +1205,14 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r1[r2]     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = 201188(0x311e4, float:2.81924E-40)
-            java.lang.String r1 = p000.AppState.m584b(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.lang.String r1 = p000.AppState.getString(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = r8
             r2 = 2
             r1 = r1[r2]     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = 1774025(0x1b11c9, float:2.485939E-39)
-            java.lang.String r1 = p000.AppState.m584b(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.lang.String r1 = p000.AppState.getString(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.String r0 = p000.NetworkUtils.m1215a(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
@@ -1346,7 +1346,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r9 = r1
             r1 = 267133(0x4137d, float:3.74333E-40)
-            java.lang.String r1 = p000.AppState.m584b(r1)     // Catch: java.lang.Throwable -> L8c2 java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
+            java.lang.String r1 = p000.AppState.getString(r1)     // Catch: java.lang.Throwable -> L8c2 java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             javax.wireless.messaging.Message r0 = r0.newMessage(r1)     // Catch: java.lang.Throwable -> L8c2 java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             javax.wireless.messaging.TextMessage r0 = (javax.wireless.messaging.TextMessage) r0     // Catch: java.lang.Throwable -> L8c2 java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             r1 = r0
@@ -1508,7 +1508,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r5 = 330583(0x50b57, float:4.63245E-40)
             av r4 = r4.findChildByKey(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.StringBuffer r4 = r4.textContent     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r4 = p000.StringUtils.m11a(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r4 = p000.StringUtils.fromBuffer(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r10 = r4
             r4 = 0
             r11 = r4
@@ -1570,7 +1570,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r3 = 131550(0x201de, float:1.84341E-40)
             av r2 = r2.findChildByKey(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.StringBuffer r2 = r2.textContent     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r2 = p000.StringUtils.m11a(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r2 = p000.StringUtils.fromBuffer(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.String r1 = p000.StringUtils.m7b(r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0.f37e = r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
         La48:
@@ -1583,7 +1583,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r2 = r15
             java.lang.String r2 = java.lang.Integer.toString(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r2 = p000.StringUtils.m17c(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r2 = p000.StringUtils.intern(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r1.<init>(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             throw r0     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
         La60:

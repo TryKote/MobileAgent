@@ -166,14 +166,14 @@ public final class XmlParser {
                     if (StringUtils.m3a(1046, strM46a2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        zEndsWith = strM46a2.endsWith(AppState.m584b(1046));
+                        zEndsWith = strM46a2.endsWith(AppState.getString(1046));
                         z = zEndsWith;
                         if (zEndsWith) {
                             length2--;
                         }
-                        String strM12a = StringUtils.m12a(strM46a2, i2, length2);
+                        String strM12a = StringUtils.substring(strM46a2, i2, length2);
                         if (strM17c != null) {
-                            strM17c = StringUtils.m17c(strM12a.toLowerCase());
+                            strM17c = StringUtils.intern(strM12a.toLowerCase());
                         } else {
                             if (hashtable == null) {
                                 hashtable = new Hashtable();
@@ -181,10 +181,10 @@ public final class XmlParser {
                             int length3 = strM12a.length();
                             int iIndexOf = strM12a.indexOf(61);
                             if (iIndexOf >= 0) {
-                                String strM13b = StringUtils.m13b(strM12a, iIndexOf);
+                                String strM13b = StringUtils.prefix(strM12a, iIndexOf);
                                 int i3 = iIndexOf + 1;
                                 if (i3 >= strM12a.length()) {
-                                    hashtable.put(strM13b, AppState.f181d);
+                                    hashtable.put(strM13b, AppState.emptyStr);
                                 } else {
                                     int i4 = i3;
                                     char cCharAt6 = strM12a.charAt(i4);
@@ -196,7 +196,7 @@ public final class XmlParser {
                                     if ((i5 > i4 && cCharAt7 == '\"') || cCharAt7 == '\'') {
                                         i5--;
                                     }
-                                    hashtable.put(strM13b, StringUtils.m12a(strM12a, i4, i5));
+                                    hashtable.put(strM13b, StringUtils.substring(strM12a, i4, i5));
                                 }
                             } else if (!z) {
                                 break;
@@ -215,11 +215,11 @@ public final class XmlParser {
                             z3 = true;
                             length2--;
                         }
-                        zEndsWith = strM46a2.endsWith(AppState.m584b(1046));
+                        zEndsWith = strM46a2.endsWith(AppState.getString(1046));
                         z = zEndsWith;
                         if (zEndsWith) {
                         }
-                        String strM12a2 = StringUtils.m12a(strM46a2, i2, length2);
+                        String strM12a2 = StringUtils.substring(strM46a2, i2, length2);
                         if (strM17c != null) {
                         }
                     }
@@ -228,7 +228,7 @@ public final class XmlParser {
                     }
                 }
                 if (strM17c.charAt(0) != '?') {
-                    String strM17c2 = StringUtils.m17c(strM17c.toLowerCase());
+                    String strM17c2 = StringUtils.intern(strM17c.toLowerCase());
                     if (z2) {
                         if (this.rootTagName == null) {
                             this.rootTagName = strM17c2;
@@ -243,7 +243,7 @@ public final class XmlParser {
                             c0022av.addChild(this.rootElement);
                             this.rootElement = c0022av;
                         }
-                        if (StringUtils.m6a(strM17c2, this.rootTagName)) {
+                        if (StringUtils.equals(strM17c2, this.rootTagName)) {
                             throw new RuntimeException();
                         }
                     }

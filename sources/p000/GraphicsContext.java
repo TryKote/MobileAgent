@@ -40,7 +40,7 @@ public final class GraphicsContext {
 
     /* renamed from: b */
     public final GraphicsContext m207b(int i) {
-        this.f92b.setColor(AppState.m586d(4914 + (i << 3) + AppState.m586d(72)));
+        this.f92b.setColor(AppState.getInt(4914 + (i << 3) + AppState.getInt(72)));
         return this;
     }
 
@@ -76,7 +76,7 @@ public final class GraphicsContext {
 
     /* renamed from: a */
     public final GraphicsContext m213a(String str, int i, int i2, int i3) {
-        if (i2 > 0 && i2 < AppState.m586d(1529)) {
+        if (i2 > 0 && i2 < AppState.getInt(1529)) {
             this.f92b.drawString(str, i, i2, i3);
         }
         return this;
@@ -108,7 +108,7 @@ public final class GraphicsContext {
         if (i4 != 0) {
             return m216a(i & 65535, i2, i3).m216a(i4, i2, i3);
         }
-        if ((i & 16384) != 0 && AppState.m587e(1534)) {
+        if ((i & 16384) != 0 && AppState.getBool(1534)) {
             return this;
         }
         Graphics graphics = this.f92b;
@@ -119,9 +119,9 @@ public final class GraphicsContext {
         if (clipX - i7 < 16) {
             int clipY = graphics.getClipY();
             if (clipY - i6 < 16 && (clipWidth2 = (clipX - i7) + (clipWidth = graphics.getClipWidth())) > 0 && (clipHeight2 = (clipY - i6) + (clipHeight = graphics.getClipHeight())) > 0) {
-                int iM503b = Utils.m503b(clipWidth2, 16);
-                int iM503b2 = Utils.m503b(clipHeight2, 16);
-                int i8 = i5 <= 354 ? 255 & AppState.m581a(295)[i5 + 39] : 256 + AppState.m581a(295)[i5 + 39];
+                int iM503b = Utils.min(clipWidth2, 16);
+                int iM503b2 = Utils.min(clipHeight2, 16);
+                int i8 = i5 <= 354 ? 255 & AppState.getBytes(295)[i5 + 39] : 256 + AppState.getBytes(295)[i5 + 39];
                 int i9 = i8;
                 int i10 = i8 >> 4;
                 int i11 = i9 & 15;

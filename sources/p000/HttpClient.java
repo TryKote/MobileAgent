@@ -103,7 +103,7 @@ public final class HttpClient {
     private HttpClient(String str) {
         this.f188f = 1;
         this.f187e = 2;
-        this.f191i = str.startsWith(AppState.m584b(459255)) ? StringUtils.m15c(str, 7) : str;
+        this.f191i = str.startsWith(AppState.getString(459255)) ? StringUtils.suffix(str, 7) : str;
     }
 
     private HttpClient(String str, Account abstractC0037h, int i) throws IOException {
@@ -188,18 +188,18 @@ public final class HttpClient {
     /* renamed from: a */
     public final HttpClient m642a(int i, int i2, int i3) throws IOException {
         String str = this.f191i;
-        this.f183a = Connector.open(new ByteBuffer().writeCompressed(593549).writeRawString(StringUtils.m13b(str, str.indexOf(47))).getStringAndClear(), 3);
-        m641a(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.m15c(str, str.indexOf(47))).writeCompressed(2951238).writeRawString(StringUtils.m13b(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
+        this.f183a = Connector.open(new ByteBuffer().writeCompressed(593549).writeRawString(StringUtils.prefix(str, str.indexOf(47))).getStringAndClear(), 3);
+        m641a(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.suffix(str, str.indexOf(47))).writeCompressed(2951238).writeRawString(StringUtils.prefix(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
         if (i2 == 1414745936) {
             m643a(788628, 2164851);
             m643a(919726, 788668);
         }
-        return m636a(AppState.m584b(919712), StringUtils.m17c(Integer.toString(i))).m643a(657608, 329938).m641a(new ByteBuffer().writeUInt(2573));
+        return m636a(AppState.getString(919712), StringUtils.intern(Integer.toString(i))).m643a(657608, 329938).m641a(new ByteBuffer().writeUInt(2573));
     }
 
     /* renamed from: a */
     private final HttpClient m643a(int i, int i2) throws IOException {
-        return m636a(AppState.m584b(i), AppState.m584b(i2));
+        return m636a(AppState.getString(i), AppState.getString(i2));
     }
 
     /* renamed from: b */
@@ -207,8 +207,8 @@ public final class HttpClient {
         int i;
         ByteBuffer c0043nM645e = m645e();
         String str = new String(c0043nM645e.data, 0, c0043nM645e.length);
-        int iIndexOf = StringUtils.m17c(str.toLowerCase()).indexOf(AppState.m584b(1052310)) + 16;
-        int i2 = Integer.parseInt(StringUtils.m12a(str, iIndexOf, str.indexOf(13, iIndexOf)));
+        int iIndexOf = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(1052310)) + 16;
+        int i2 = Integer.parseInt(StringUtils.substring(str, iIndexOf, str.indexOf(13, iIndexOf)));
         ByteBuffer c0043n = new ByteBuffer();
         byte[] bArrM1211a = NetworkUtils.m1211a(i2);
         do {

@@ -71,7 +71,7 @@ public final class ChatRoom {
             c0043n.writeLong(c0026azM1415b.timestamp);
             XmppMailRuProtocol.m862a(c0026azM1415b.toList, c0043n);
             XmppMailRuProtocol.m862a(c0026azM1415b.ccList, c0043n);
-            c0043n.writeIntLE(c0026azM1415b.priority).writeIntLE(c0026azM1415b.flags).writeStringUTF16(Utils.m522f(c0026azM1415b.subject));
+            c0043n.writeIntLE(c0026azM1415b.priority).writeIntLE(c0026azM1415b.flags).writeStringUTF16(Utils.defaultStr(c0026azM1415b.subject));
             if (c0026azM1415b.body == null || c0026azM1415b.body.length() > 3072) {
                 c0043n.writeIntLE(0).writeIntLE(0);
             } else {
@@ -121,7 +121,7 @@ public final class ChatRoom {
         this.f411c = JsonParser.getIntByInt(obj, 526252);
         this.f409a = JsonParser.getIntByInt(obj, 132297);
         this.f412d = JsonParser.getIntByInt(obj, 395188);
-        this.f413e = AppState.f181d;
+        this.f413e = AppState.emptyStr;
         this.f419k = true;
     }
 
@@ -142,8 +142,8 @@ public final class ChatRoom {
             if (i < 0) {
                 return this.f410b;
             }
-        } while (!this.f410b.equals(AppState.m584b(i + 891)));
-        return AppState.m584b(i + 896);
+        } while (!this.f410b.equals(AppState.getString(i + 891)));
+        return AppState.getString(i + 896);
     }
 
     /* renamed from: a */
@@ -216,7 +216,7 @@ public final class ChatRoom {
 
     /* renamed from: f */
     public final String m1425f() {
-        if (this == ((MrimAccount) AppState.m616i()).m746W()) {
+        if (this == ((MrimAccount) AppState.getAccount()).m746W()) {
             return this.f410b;
         }
         return NetworkUtils.m1215a(NetworkUtils.m1217h().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));

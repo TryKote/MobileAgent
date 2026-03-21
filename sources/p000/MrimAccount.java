@@ -42,7 +42,7 @@ public final class MrimAccount extends Account implements ListItem {
         super(i, str, str2);
         this.lastError = 0;
         this.configFlags = 1;
-        MrimContactGroup c0010aj = new MrimContactGroup(this, -1, 102, AppState.m584b(1039));
+        MrimContactGroup c0010aj = new MrimContactGroup(this, -1, 102, AppState.getString(1039));
         c0010aj.isSpecial = true;
         this.defaultGroup = c0010aj;
         this.f231g = new VCard();
@@ -180,25 +180,25 @@ public final class MrimAccount extends Account implements ListItem {
     @Override // p000.Account
     /* renamed from: b */
     public final ContactGroup createOnlineGroup() {
-        return new MrimContactGroup(this, -1, 101, AppState.m584b(1040));
+        return new MrimContactGroup(this, -1, 101, AppState.getString(1040));
     }
 
     @Override // p000.Account
     /* renamed from: c */
     public final ContactGroup createBlockedGroup() {
-        return new MrimContactGroup(this, -1, 104, AppState.m584b(1042));
+        return new MrimContactGroup(this, -1, 104, AppState.getString(1042));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final ContactGroup createOfflineGroup() {
-        return new MrimContactGroup(this, -1, 103, AppState.m584b(1041));
+        return new MrimContactGroup(this, -1, 103, AppState.getString(1041));
     }
 
     @Override // p000.Account
     /* renamed from: e */
     public final ContactGroup createSpecialGroup() {
-        return new MrimContactGroup(this, -1, 105, AppState.m584b(1043));
+        return new MrimContactGroup(this, -1, 105, AppState.getString(1043));
     }
 
     /* renamed from: f */
@@ -269,7 +269,7 @@ public final class MrimAccount extends Account implements ListItem {
             case 1:
                 this.msgCount = 20;
                 this.state = 0;
-                this.connection = new ConnectionThread(AppState.m584b(1114895));
+                this.connection = new ConnectionThread(AppState.getString(1114895));
                 this.progress = 2;
                 AppController.f153g = true;
                 break;
@@ -341,11 +341,11 @@ public final class MrimAccount extends Account implements ListItem {
             c0043nM1349s.skip(44);
             switch (iM1330h) {
                 case 4098:
-                    long jM503b = Utils.m503b(c0043nM1349s.readInt(), AppState.m587e(1536) ? 25 : 45) * 1000;
+                    long jM503b = Utils.min(c0043nM1349s.readInt(), AppState.getBool(1536) ? 25 : 45) * 1000;
                     this.timeout = jM503b;
                     this.deadline = System.currentTimeMillis() + jM503b;
                     ByteBuffer c0043nM1308a = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
-                    boolean zM587e = AppState.m587e(105);
+                    boolean zM587e = AppState.getBool(105);
                     sendData(AppController.m321a(this, 4216, c0043nM1308a.writeIntLE(zM587e ? -1 : 22).writeStringLatin1(zM587e ? null : new ByteBuffer().writeCompressed(1642077).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(1704823).writeStringLatin1(XmppContactGroup.m1017d()).writeBuffer(XmppContactGroup.m1016a(this))));
                     this.progress = 6;
                     break;
@@ -399,10 +399,10 @@ public final class MrimAccount extends Account implements ListItem {
                         if (StringUtils.m3a(852768, strM1334g3)) {
                             setDisplayName(c0043nM1349s.readUTF8Str((String) null));
                         } else if (StringUtils.m3a(983853, strM1334g3)) {
-                            IOUtils.m759a(this, Utils.m510a((Object) c0043nM1349s.readUTF8Str((String) null)), (String) null, (String) null);
+                            IOUtils.m759a(this, Utils.parseInt((Object) c0043nM1349s.readUTF8Str((String) null)), (String) null, (String) null);
                         } else if (StringUtils.m3a(983868, strM1334g3)) {
                             String strM1335e = c0043nM1349s.readUTF8Str((String) null);
-                            this.f226b = StringUtils.m13b(strM1335e, strM1335e.indexOf(58));
+                            this.f226b = StringUtils.prefix(strM1335e, strM1335e.indexOf(58));
                         } else if (StringUtils.m3a(656203, strM1334g3)) {
                             c0043nM1349s.readWideStr();
                             this.f227c = true;
@@ -425,7 +425,7 @@ public final class MrimAccount extends Account implements ListItem {
                         int i8 = this.reserved1;
                         this.reserved1 = i8 + 1;
                         if (0 != i8) {
-                            AppState.m594c(1449, 0);
+                            AppState.setInt(1449, 0);
                         }
                         Hashtable hashtable = new Hashtable();
                         String strM1214a = null;
@@ -439,16 +439,16 @@ public final class MrimAccount extends Account implements ListItem {
                             if (!z) {
                                 if (cCharAt == '\n' && stringBufferM1217h2.length() == 0) {
                                     NetworkUtils.m1215a(stringBufferM1217h2);
-                                    String str2 = (String) hashtable.get(AppState.m584b(1379315));
+                                    String str2 = (String) hashtable.get(AppState.getString(1379315));
                                     int i10 = str2 != null ? -1 : Integer.parseInt(str2);
                                     i = i10;
-                                    strM1336h = i10 >= 0 ? null : ResourceManager.m986d(StringUtils.m15c((String) hashtable.get(AppState.m584b(460837)), 13)).readAllWideStr();
-                                    str = (String) hashtable.get(AppState.m584b(396269));
-                                    i2 = Integer.parseInt((String) hashtable.get(AppState.m584b(789512)), 16);
-                                    jM491a = Utils.m491a((String) hashtable.get(AppState.m584b(264254)));
+                                    strM1336h = i10 >= 0 ? null : ResourceManager.m986d(StringUtils.suffix((String) hashtable.get(AppState.getString(460837)), 13)).readAllWideStr();
+                                    str = (String) hashtable.get(AppState.getString(396269));
+                                    i2 = Integer.parseInt((String) hashtable.get(AppState.getString(789512)), 16);
+                                    jM491a = Utils.parseDateTime((String) hashtable.get(AppState.getString(264254)));
                                     i3 = 1;
                                     if ((i2 & 128) != 0) {
-                                        String strM15c = StringUtils.m15c(strM529d, i9);
+                                        String strM15c = StringUtils.suffix(strM529d, i9);
                                         if ((i2 & 2097160) == 0) {
                                             strM1336h2 = ResourceManager.m986d(strM15c).readAllWideStr();
                                         } else {
@@ -456,13 +456,13 @@ public final class MrimAccount extends Account implements ListItem {
                                             i3 = 0;
                                         }
                                     } else {
-                                        int iM627a = AppState.m627a(strM529d, 57408234938722L);
-                                        strM1336h2 = ResourceManager.m986d(StringUtils.m12a(strM529d, iM627a + 6, strM529d.indexOf(AppState.m584b(134123), iM627a))).readAllWideStr();
+                                        int iM627a = AppState.indexOfLong(strM529d, 57408234938722L);
+                                        strM1336h2 = ResourceManager.m986d(StringUtils.substring(strM529d, iM627a + 6, strM529d.indexOf(AppState.getString(134123), iM627a))).readAllWideStr();
                                     }
                                     if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
-                                        Conversation.m1110a(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.m584b(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
+                                        Conversation.m1110a(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
                                     }
-                                    AppState.m594c(1449, 1);
+                                    AppState.setInt(1449, 1);
                                     break;
                                 } else if (cCharAt == ':') {
                                     strM1214a = NetworkUtils.m1214a(stringBufferM1217h2, false);
@@ -480,22 +480,22 @@ public final class MrimAccount extends Account implements ListItem {
                             i9++;
                         }
                         NetworkUtils.m1215a(stringBufferM1217h2);
-                        String str22 = (String) hashtable.get(AppState.m584b(1379315));
+                        String str22 = (String) hashtable.get(AppState.getString(1379315));
                         int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
                         i = i10_2;
-                        strM1336h = i10_2 >= 0 ? null : ResourceManager.m986d(StringUtils.m15c((String) hashtable.get(AppState.m584b(460837)), 13)).readAllWideStr();
-                        str = (String) hashtable.get(AppState.m584b(396269));
-                        i2 = Integer.parseInt((String) hashtable.get(AppState.m584b(789512)), 16);
-                        jM491a = Utils.m491a((String) hashtable.get(AppState.m584b(264254)));
+                        strM1336h = i10_2 >= 0 ? null : ResourceManager.m986d(StringUtils.suffix((String) hashtable.get(AppState.getString(460837)), 13)).readAllWideStr();
+                        str = (String) hashtable.get(AppState.getString(396269));
+                        i2 = Integer.parseInt((String) hashtable.get(AppState.getString(789512)), 16);
+                        jM491a = Utils.parseDateTime((String) hashtable.get(AppState.getString(264254)));
                         i3 = 1;
                         if ((i2 & 128) != 0) {
                         }
                         if (i != -1) {
-                            Conversation.m1110a(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.m584b(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
-                            AppState.m594c(1449, 1);
+                            Conversation.m1110a(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
+                            AppState.setInt(1449, 1);
                         }
                     } catch (Throwable th) {
-                        AppState.m594c(1449, 1);
+                        AppState.setInt(1449, 1);
                         throw th;
                     }
                     break;
@@ -540,7 +540,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 } else if (i11 == 2) {
                                     ContactInfo c0042mM1251a = ContactInfo.m1251a(this);
                                     c0042mM1251a.m1262e(strM1334g4);
-                                    AppState.f177b[1319] = c0042mM1251a;
+                                    AppState.pool[1319] = c0042mM1251a;
                                     IOUtils.m778d(new IOUtils(5, null));
                                 }
                             }
@@ -565,7 +565,7 @@ public final class MrimAccount extends Account implements ListItem {
                     break;
                 case 4195:
                     int iM1328e2 = c0043nM1349s.readInt();
-                    String strM17c = StringUtils.m17c(c0043nM1349s.readWideStr().toLowerCase());
+                    String strM17c = StringUtils.intern(c0043nM1349s.readWideStr().toLowerCase());
                     long jM1341m = c0043nM1349s.readLong();
                     int iM1328e3 = c0043nM1349s.readInt();
                     String strM1335e2 = c0043nM1349s.readUTF8Str((String) null);
@@ -573,8 +573,8 @@ public final class MrimAccount extends Account implements ListItem {
                     if (c0035fM717f3 != null && !c0035fM717f3.isOnline()) {
                         if ((iM1328e2 & 2) == 0) {
                             if ((iM1328e2 & 5) != 0) {
-                                if (AppState.m587e(244) && !StringUtils.m6a(strM1335e2, c0035fM717f3.f303i) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.getLastSentTime() != jM1341m) {
-                                    AppState.m601a(1237, (Object) c0035fM717f3.identifier);
+                                if (AppState.getBool(244) && !StringUtils.equals(strM1335e2, c0035fM717f3.f303i) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.getLastSentTime() != jM1341m) {
+                                    AppState.setObject(1237, (Object) c0035fM717f3.identifier);
                                     ResourceManager.m925a(6);
                                     c0035fM717f3.addFlag(2);
                                     c0035fM717f3.appendMessage(16, strM1335e2, 0L, jM1341m);
@@ -600,7 +600,7 @@ public final class MrimAccount extends Account implements ListItem {
                     m729a(c0043nM1349s.readWideStr(), c0043nM1349s.readBufferArray());
                     break;
                 case 4229:
-                    if (!AppState.m579a()) {
+                    if (!AppState.hasMemory()) {
                         break;
                     } else {
                         Vector vectorM1345p = c0043nM1349s.readBufferArray();
@@ -617,8 +617,8 @@ public final class MrimAccount extends Account implements ListItem {
                                     String str7 = strArrM55a[7];
                                     try {
                                         VCard c0003ac = this.f231g;
-                                        String strM584b = AppState.m584b(590588);
-                                        String str8 = AppState.f181d;
+                                        String strM584b = AppState.getString(590588);
+                                        String str8 = AppState.emptyStr;
                                         c0003ac.m53a(str5, str4, strM584b, str8, str8, str8, str6, str7);
                                     } catch (Throwable unused) {
                                         this.f231g.m61e();
@@ -630,7 +630,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 if (AppController.m442U() != 10) {
                                     break;
                                 } else {
-                                    IOUtils.m778d((Object) AppState.m584b(786));
+                                    IOUtils.m778d((Object) AppState.getString(786));
                                     break;
                                 }
                             } else {
@@ -696,33 +696,33 @@ public final class MrimAccount extends Account implements ListItem {
             case 260:
                 i3--;
             case 516:
-                strM1215a = AppState.m584b(i3);
+                strM1215a = AppState.getString(i3);
                 break;
             default:
-                strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(1226)).append(this.configFlags >> 8));
+                strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(1226)).append(this.configFlags >> 8));
                 break;
         }
         switch (this.configFlags) {
             case 1:
-                strM584b = AppState.m584b(642);
+                strM584b = AppState.getString(642);
                 break;
             case 2:
-                strM584b = AppState.m584b(644);
+                strM584b = AppState.getString(644);
                 break;
             case 3:
-                strM584b = AppState.m584b(642);
+                strM584b = AppState.getString(642);
                 break;
             case 260:
-                strM584b = AppState.m584b(643);
+                strM584b = AppState.getString(643);
                 break;
             case 516:
-                strM584b = AppState.m584b(645);
+                strM584b = AppState.getString(645);
                 break;
             default:
-                strM584b = AppState.m584b(151 + (this.configFlags >> 8));
+                strM584b = AppState.getString(151 + (this.configFlags >> 8));
                 break;
         }
-        return trySendData(AppController.m321a(this, 4130, new ByteBuffer().writeIntLE(i2 != 3 ? i2 : -2147483647).writeStringLatin1(strM1215a).writeStringUTF16(strM584b).writeStringUTF16(AppState.f181d).writeIntLE(AppState.m587e(105) ? -1 : 22)));
+        return trySendData(AppController.m321a(this, 4130, new ByteBuffer().writeIntLE(i2 != 3 ? i2 : -2147483647).writeStringLatin1(strM1215a).writeStringUTF16(strM584b).writeStringUTF16(AppState.emptyStr).writeIntLE(AppState.getBool(105) ? -1 : 22)));
     }
 
     @Override // p000.Account
@@ -742,7 +742,7 @@ public final class MrimAccount extends Account implements ListItem {
             return 0;
         }
         String[] strArr2 = {c0003ac.f13a, c0003ac.f14b, c0003ac.f15c, c0003ac.f16d, c0003ac.f17e, c0003ac.f18f, c0003ac.f20h, c0003ac.f19g};
-        trySendData(AppController.m321a(this, 4213, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(AppState.m584b(590694)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
+        trySendData(AppController.m321a(this, 4213, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(AppState.getString(590694)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
         return 0;
     }
 
@@ -771,7 +771,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.f231g.f21i = 1;
         if (isConnected()) {
             if (i == 3) {
-                m723a(this.f231g.f22j, AppState.m584b(590694));
+                m723a(this.f231g.f22j, AppState.getString(590694));
             }
             m722a(1, new String[0], this.f231g);
         }
@@ -783,7 +783,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.f231g.f21i = 2;
         if (isConnected()) {
             if (i == 3) {
-                m723a(this.f231g.f22j, AppState.m584b(590694));
+                m723a(this.f231g.f22j, AppState.getString(590694));
             }
             m722a(0, new String[0], this.f231g);
         }
@@ -795,9 +795,9 @@ public final class MrimAccount extends Account implements ListItem {
         this.f231g.f21i = 4;
         if (isConnected()) {
             if (i == 3) {
-                m723a(this.f231g.f22j, AppState.m584b(590694));
+                m723a(this.f231g.f22j, AppState.getString(590694));
             }
-            m723a(new String[0], AppState.m584b(590694));
+            m723a(new String[0], AppState.getString(590694));
         }
     }
 
@@ -807,9 +807,9 @@ public final class MrimAccount extends Account implements ListItem {
         this.f231g.f21i = 3;
         if (isConnected()) {
             if (i == 3) {
-                m723a(this.f231g.f23k, AppState.m584b(590694));
+                m723a(this.f231g.f23k, AppState.getString(590694));
             } else if (i == 1 || i == 2) {
-                m723a(new String[0], AppState.m584b(590694));
+                m723a(new String[0], AppState.getString(590694));
             }
             m722a(0, this.f231g.f22j, this.f231g);
         }
@@ -846,8 +846,8 @@ public final class MrimAccount extends Account implements ListItem {
     public final void m730b(String str, String str2) {
         try {
             VCard c0003ac = this.f231g;
-            String strM584b = AppState.m584b(525044);
-            String str3 = AppState.f181d;
+            String strM584b = AppState.getString(525044);
+            String str3 = AppState.emptyStr;
             c0003ac.m53a(str2, str, strM584b, str3, str3, str3, str3, str3);
         } catch (Throwable unused) {
             this.f231g.m61e();
@@ -861,10 +861,10 @@ public final class MrimAccount extends Account implements ListItem {
             VCard c0003ac = this.f231g;
             String strM810b = IOUtils.m810b(c0014an.f139g);
             String strM809a = IOUtils.m809a(c0014an.f138f);
-            String strM584b = AppState.m584b(590588);
+            String strM584b = AppState.getString(590588);
             String strM267a = c0014an.m267a();
-            String str = AppState.f181d;
-            c0003ac.m53a(strM810b, strM809a, strM584b, strM267a, str, str, StringUtils.m17c(Integer.toString(c0014an.f145m)), StringUtils.m17c(Integer.toString(c0014an.f144l)));
+            String str = AppState.emptyStr;
+            c0003ac.m53a(strM810b, strM809a, strM584b, strM267a, str, str, StringUtils.intern(Integer.toString(c0014an.f145m)), StringUtils.intern(Integer.toString(c0014an.f144l)));
         } catch (Throwable unused) {
             this.f231g.m61e();
         }
@@ -940,12 +940,12 @@ public final class MrimAccount extends Account implements ListItem {
         for (int i = 0; i < strArr.length; i++) {
             if (i != 9) {
                 String str = strArr[i];
-                if (Utils.m535l(str)) {
+                if (Utils.nonEmpty(str)) {
                     c0043n.writeIntLE(i).writeString(str, (1 << i) & 28);
                 }
             }
         }
-        if (Utils.m535l(strArr[9])) {
+        if (Utils.nonEmpty(strArr[9])) {
             c0043n.writeIntLE(9).writeStringLatin1(strArr[9]);
         }
         return trySendData(m719a(new Object[]{AppController.m321a(this, 4137, c0043n), ResourceManager.m967e(8)}));
@@ -1023,7 +1023,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final int validateContactDelete(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
         if (c0035f.isOnline()) {
-            return trySendData(XmppContactGroup.m1024a(this, 48, c0035f.f297d, c0035f.displayName, AppState.f181d, m718f(), false));
+            return trySendData(XmppContactGroup.m1024a(this, 48, c0035f.f297d, c0035f.displayName, AppState.emptyStr, m718f(), false));
         }
         int i = c0035f.f295b;
         return trySendData(ResourceManager.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
@@ -1096,7 +1096,7 @@ public final class MrimAccount extends Account implements ListItem {
         MrimContact c0035fM717f = m717f(str);
         MrimContact c0035f = c0035fM717f;
         if (null == c0035fM717f) {
-            String str5 = AppState.f181d;
+            String str5 = AppState.emptyStr;
             ContactGroup abstractC0046q = this.defaultGroup;
             MrimContact c0035f2 = new MrimContact(this, 0, 65664, 3, str, str3, 0, 0, str5, str5, str5);
             abstractC0046q.addContact((Object) c0035f2);
@@ -1131,7 +1131,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: h */
     public final void m740h(String str) {
-        if (StringUtils.m6a(str, this.login) || m717f(str) != null) {
+        if (StringUtils.equals(str, this.login) || m717f(str) != null) {
             return;
         }
         m741a(str, 16);
@@ -1145,7 +1145,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: a */
     private final Contact m741a(String str, int i) {
-        String str2 = AppState.f181d;
+        String str2 = AppState.emptyStr;
         ContactGroup abstractC0046q = this.defaultGroup;
         MrimContact c0035f = new MrimContact(this, 0, 65536, 3, str, str, 0, 0, str2, str2, str2);
         abstractC0046q.addContact((Object) c0035f);
@@ -1196,17 +1196,17 @@ public final class MrimAccount extends Account implements ListItem {
             z = false;
             this.f228d = NetworkUtils.m1213g();
         }
-        Object objM475a = JsonParser.getValue(obj, AppState.m584b(329785));
+        Object objM475a = JsonParser.getValue(obj, AppState.getString(329785));
         for (int i = 0; i < ((Vector) objM475a).size(); i++) {
             Object objM482e = JsonParser.getVectorElement(objM475a, i);
-            ChatRoom c0052wM745h = m745h(JsonParser.getIntValue(objM482e, AppState.m584b(132297)));
+            ChatRoom c0052wM745h = m745h(JsonParser.getIntValue(objM482e, AppState.getString(132297)));
             if (c0052wM745h == null) {
                 this.f228d.addElement(new ChatRoom(objM482e));
             } else {
                 c0052wM745h.m1412a(objM482e);
             }
         }
-        this.f230f = JsonParser.getStringValue(obj, AppState.m584b(526385));
+        this.f230f = JsonParser.getStringValue(obj, AppState.getString(526385));
         m744b(z);
     }
 
@@ -1273,7 +1273,7 @@ public final class MrimAccount extends Account implements ListItem {
                 c0052w.f415g.removeElement(str);
                 c0052w.f416h.remove(str);
                 if (str.equals(c0052w.f413e)) {
-                    c0052w.f413e = AppState.f181d;
+                    c0052w.f413e = AppState.emptyStr;
                 }
             }
         }
@@ -1281,8 +1281,8 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: X */
     public final ChatRoom m749X() {
-        ChatRoom c0052wM750m = m750m(AppState.m584b(897));
-        return c0052wM750m != null ? c0052wM750m : m750m(AppState.m584b(892));
+        ChatRoom c0052wM750m = m750m(AppState.getString(897));
+        return c0052wM750m != null ? c0052wM750m : m750m(AppState.getString(892));
     }
 
     /* renamed from: m */
@@ -1346,44 +1346,44 @@ public final class MrimAccount extends Account implements ListItem {
         int i;
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         if (this.f231g.f24l) {
-            stringBufferM1217h.append(AppState.m584b(489));
+            stringBufferM1217h.append(AppState.getString(489));
             String str = this.f231g.f16d;
-            if (Utils.m535l(str)) {
+            if (Utils.nonEmpty(str)) {
                 stringBufferM1217h.append(str).append('.').append(' ');
             }
             stringBufferM1217h.append("Уточнить?");
         } else {
-            stringBufferM1217h.append(AppState.m584b(488));
+            stringBufferM1217h.append(AppState.getString(488));
             if (AppController.m439R().size() > 1) {
                 stringBufferM1217h.append(' ').append('(').append(this.login).append(')').append('.').append(' ');
             }
             String str2 = this.f231g.f16d;
-            if (Utils.m535l(str2)) {
+            if (Utils.nonEmpty(str2)) {
                 stringBufferM1217h.append(str2).append('.').append(' ');
             }
             switch (this.f231g.f21i) {
                 case 1:
                     i = 781;
-                    strM584b = AppState.m584b(i);
+                    strM584b = AppState.getString(i);
                     break;
                 case 2:
                     i = 782;
-                    strM584b = AppState.m584b(i);
+                    strM584b = AppState.getString(i);
                     break;
                 case 3:
                     i = 783;
-                    strM584b = AppState.m584b(i);
+                    strM584b = AppState.getString(i);
                     break;
                 case 4:
                     i = 784;
-                    strM584b = AppState.m584b(i);
+                    strM584b = AppState.getString(i);
                     break;
                 default:
                     strM584b = null;
                     break;
             }
             String str3 = strM584b;
-            if (Utils.m535l(strM584b)) {
+            if (Utils.nonEmpty(strM584b)) {
                 stringBufferM1217h.append(str3).append('.');
             }
         }

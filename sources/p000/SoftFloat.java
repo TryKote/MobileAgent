@@ -269,7 +269,7 @@ public final class SoftFloat {
         long j3 = 0;
         int iM676m2 = iM676m - m676m(j2);
         while (true) {
-            int iM503b = Utils.m503b(AppController.m360b(jM677n) - 1, AppController.m360b(j3));
+            int iM503b = Utils.min(AppController.m360b(jM677n) - 1, AppController.m360b(j3));
             if (iM503b <= 8) {
                 break;
             }
@@ -334,10 +334,10 @@ public final class SoftFloat {
         if (i3 > 218) {
             return z ? -4503599627370496L : 9218868437227405312L;
         }
-        short s = ((short[]) AppState.f177b[988])[i3];
+        short s = ((short[]) AppState.pool[988])[i3];
         int iM360b = AppController.m360b(j);
         int i4 = s - iM360b;
-        long jM696j = m696j(j << iM360b, ((long[]) AppState.f177b[987])[i3]);
+        long jM696j = m696j(j << iM360b, ((long[]) AppState.pool[987])[i3]);
         for (int i5 = i2 % 3; i5 > 0; i5--) {
             if (jM696j < 0) {
                 jM696j >>>= 1;
@@ -360,7 +360,7 @@ public final class SoftFloat {
     /* renamed from: a */
     public static final long m697a(String str) {
         char cCharAt;
-        String strM17c = StringUtils.m17c(str.trim().toUpperCase());
+        String strM17c = StringUtils.intern(str.trim().toUpperCase());
         int length = strM17c.length();
         if (length == 0) {
             throw new NumberFormatException(strM17c);
@@ -375,7 +375,7 @@ public final class SoftFloat {
         if (z || cCharAt2 == '+') {
             i = 1;
         }
-        if (i < length && (((cCharAt = strM17c.charAt(i)) == 'I' || cCharAt == 'i') && StringUtils.m6a(AppState.m584b(984), StringUtils.m17c(StringUtils.m15c(strM17c, i).toUpperCase())))) {
+        if (i < length && (((cCharAt = strM17c.charAt(i)) == 'I' || cCharAt == 'i') && StringUtils.equals(AppState.getString(984), StringUtils.intern(StringUtils.suffix(strM17c, i).toUpperCase())))) {
             return z2 ? -4503599627370496L : 9218868437227405312L;
         }
         long j = 0;
@@ -409,7 +409,7 @@ public final class SoftFloat {
             throw new NumberFormatException(strM17c);
         }
         if (i + 1 < length && (strM17c.charAt(i) == 'E' || strM17c.charAt(i) == 'e')) {
-            i2 += Integer.parseInt(StringUtils.m15c(strM17c, i + 1));
+            i2 += Integer.parseInt(StringUtils.suffix(strM17c, i + 1));
         } else if (i != length) {
             throw new NumberFormatException(strM17c);
         }
@@ -428,7 +428,7 @@ public final class SoftFloat {
             return NetworkUtils.m1221a(zM675l ? 808333357 : 3157552);
         }
         if (m680p(j)) {
-            return AppState.m584b(zM675l ? 985 : 984);
+            return AppState.getString(zM675l ? 985 : 984);
         }
         if (i < 9) {
             i = 9;
@@ -436,12 +436,12 @@ public final class SoftFloat {
         int iM676m = m676m(j) + 1075;
         long jM677n = m677n(j) << (iM676m % 11);
         int i3 = iM676m / 11;
-        int i4 = ((short[]) AppState.f177b[989])[i3];
+        int i4 = ((short[]) AppState.pool[989])[i3];
         while (jM677n <= 922337203685477580L) {
             jM677n = (jM677n << 3) + (jM677n << 1);
             i4--;
         }
-        long jM696j = m696j(jM677n, ((long[]) AppState.f177b[986])[i3]);
+        long jM696j = m696j(jM677n, ((long[]) AppState.pool[986])[i3]);
         boolean z2 = false;
         while (true) {
             int i5 = (int) (jM696j % 10);
@@ -1022,7 +1022,7 @@ public final class SoftFloat {
             long jM691c2 = m691c(j2, m692d(0L, 4609753056924401664L));
             long jM692d = m692d(0L, 4454258360616903473L);
             if (iM688c2 < 32) {
-                if (i3 != ((int[]) AppState.f177b[993])[iM688c2 - 1]) {
+                if (i3 != ((int[]) AppState.pool[993])[iM688c2 - 1]) {
                     jArr[0] = m691c(jM691c2, jM692d);
                 } else {
                     int i4 = i3 >> 20;
@@ -1199,7 +1199,7 @@ public final class SoftFloat {
         for (int i32 = i17; i32 >= 0; i32--) {
             long jM690b5 = 0;
             for (int i33 = 0; i33 <= 4 && i33 <= i17 - i32; i33++) {
-                jM690b5 = m690b(jM690b5, m692d(((long[]) AppState.f177b[990])[i33], jArr4[i32 + i33]));
+                jM690b5 = m690b(jM690b5, m692d(((long[]) AppState.pool[990])[i33], jArr4[i32 + i33]));
             }
             jArr5[i17 - i32] = jM690b5;
         }

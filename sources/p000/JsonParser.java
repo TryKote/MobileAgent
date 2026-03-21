@@ -157,7 +157,7 @@ public abstract class JsonParser {
         }
         stringBuffer.append(cM472c);
         String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
-        return StringUtils.m3a(264068, strM1215a) ? ResourceManager.f292k : StringUtils.m3a(329608, strM1215a) ? ResourceManager.f293l : StringUtils.m3a(1369, strM1215a) ? ResourceManager.f290i : ResourceManager.m967e(Utils.m510a((Object) strM1215a));
+        return StringUtils.m3a(264068, strM1215a) ? ResourceManager.f292k : StringUtils.m3a(329608, strM1215a) ? ResourceManager.f293l : StringUtils.m3a(1369, strM1215a) ? ResourceManager.f290i : ResourceManager.m967e(Utils.parseInt((Object) strM1215a));
     }
 
     /* renamed from: c */
@@ -173,7 +173,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final void putIntKey(Hashtable hashtable, int i, Object obj) {
-        hashtable.put(AppState.m584b(i), obj);
+        hashtable.put(AppState.getString(i), obj);
     }
 
     /* renamed from: a */
@@ -188,7 +188,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final Object getValueByInt(Object obj, int i) {
-        return ((Hashtable) obj).get(AppState.m584b(i));
+        return ((Hashtable) obj).get(AppState.getString(i));
     }
 
     /* renamed from: b */
@@ -198,7 +198,7 @@ public abstract class JsonParser {
 
     /* renamed from: b */
     public static final int getIntByInt(Object obj, int i) {
-        return ((Integer) getValue(obj, AppState.m584b(i))).intValue();
+        return ((Integer) getValue(obj, AppState.getString(i))).intValue();
     }
 
     /* renamed from: c */
@@ -208,7 +208,7 @@ public abstract class JsonParser {
 
     /* renamed from: c */
     public static final String getStringByInt(Object obj, int i) {
-        return (String) getValue(obj, AppState.m584b(i));
+        return (String) getValue(obj, AppState.getString(i));
     }
 
     /* renamed from: d */
@@ -234,7 +234,7 @@ public abstract class JsonParser {
     /* renamed from: a */
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ResourceManager.f290i) {
-            stringBuffer.append(AppState.m584b(1369));
+            stringBuffer.append(AppState.getString(1369));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);
         } else if (obj instanceof String) {

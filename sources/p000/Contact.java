@@ -70,13 +70,13 @@ public abstract class Contact implements Sortable {
         this.flags = (byte) (this.flags | i);
         AppController.m414a(this);
         this.dirty = true;
-        this.lastMessageTime = AppState.m598g(1530);
+        this.lastMessageTime = AppState.getLong(1530);
         updateRenderState();
     }
 
     /* renamed from: g */
     public String getDefaultName() {
-        return AppState.f181d;
+        return AppState.emptyStr;
     }
 
     /* renamed from: A */
@@ -130,7 +130,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void receiveMessageFull(long j, String str, int i) {
         TabBar c0008ah;
-        AppState.m601a(1237, (Object) this.identifier);
+        AppState.setObject(1237, (Object) this.identifier);
         ResourceManager.m925a(2);
         addFlag(i);
         this.account.markRead(getIdentifier());
@@ -146,7 +146,7 @@ public abstract class Contact implements Sortable {
         if (abstractC0037h == null || str2 == null) {
             return;
         }
-        Vector vectorM614m = AppState.m614m(1246);
+        Vector vectorM614m = AppState.getVector(1246);
         int size = vectorM614m.size();
         do {
             size--;
@@ -163,17 +163,17 @@ public abstract class Contact implements Sortable {
     /* renamed from: b */
     public final int sendMessage(String str) {
         ResourceManager.m925a(4);
-        if (StringUtils.m1a(str)) {
+        if (StringUtils.isEmpty(str)) {
             return 309;
         }
         Account abstractC0037h = this.account;
-        long jM598g = AppState.m598g(1530);
+        long jM598g = AppState.getLong(1530);
         int iMo125a = abstractC0037h.validateSend(this, str, jM598g);
         if (0 != iMo125a) {
             return iMo125a;
         }
         appendMessage(1, str, jM598g, jM598g);
-        this.lastMessageTime = AppState.m598g(1530);
+        this.lastMessageTime = AppState.getLong(1530);
         updateRenderState();
         return 0;
     }
@@ -248,7 +248,7 @@ public abstract class Contact implements Sortable {
         this.dirty = true;
         ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.m851h(this.identifier) : this.messageBuffer;
         this.messageBuffer = c0043nM851h;
-        int iM586d = AppState.m586d(102) - 1;
+        int iM586d = AppState.getInt(102) - 1;
         ByteBuffer c0043n = this.messageBuffer;
         int i2 = 0;
         int i3 = 0;
@@ -263,9 +263,9 @@ public abstract class Contact implements Sortable {
             c0043n.skip(c0043n.readShortBE());
             i2--;
         }
-        c0043nM851h.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.m586d(246) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
+        c0043nM851h.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.getInt(246) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
         saveMessageBuffer();
-        this.lastMessageTime = AppState.m598g(1530);
+        this.lastMessageTime = AppState.getLong(1530);
         updateRenderState();
     }
 
@@ -296,33 +296,33 @@ public abstract class Contact implements Sortable {
     public final Screen showMessages() {
         this.dirty = false;
         String str = this.displayName;
-        AppState.m601a(1290, (Object) str);
+        AppState.setObject(1290, (Object) str);
         int iMo139e = getIcon();
         if ((this instanceof XmppContact) && ((XmppProtocol) this.account).mo83f() && iMo139e >= 381 && iMo139e <= 384) {
             iMo139e += 4;
         }
-        AppState.m594c(2594, iMo139e);
+        AppState.setInt(2594, iMo139e);
         Screen c0013amM75b = ScreenManager.m75b(2591);
         ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
-        int iM624l = AppState.m624l();
+        int iM624l = AppState.getDateCode();
         while (c0043nM1380F.length > 0) {
             int iM1353u = c0043nM1380F.readShortBE();
             byte bM1344o = c0043nM1380F.readByte();
-            long jM1341m = c0043nM1380F.readLong() - AppState.m598g(1532);
+            long jM1341m = c0043nM1380F.readLong() - AppState.getLong(1532);
             long jM1341m2 = c0043nM1380F.readLong();
             String strM539n = Utils.m539n(c0043nM1380F.readUnicodeChars(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
-                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.displayName).append(AppState.m584b(311)).append(formatTime(jM1341m, iM624l))), 8);
+                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
                 if (this.account.isConnected()) {
-                    c0013amM75b.m250b(-1, AppState.m584b(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
+                    c0013amM75b.m250b(-1, AppState.getString(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
                 int iIndexOf = strM539n.indexOf(10);
-                String strM13b = StringUtils.m13b(strM539n, iIndexOf);
-                String strM15c = StringUtils.m15c(strM539n, iIndexOf + 1);
-                c0013amM75b.m251a(StringUtils.m9b(strM13b, formatTime(jM1341m, iM624l)), 8);
+                String strM13b = StringUtils.prefix(strM539n, iIndexOf);
+                String strM15c = StringUtils.suffix(strM539n, iIndexOf + 1);
+                c0013amM75b.m251a(StringUtils.concat(strM13b, formatTime(jM1341m, iM624l)), 8);
                 addMessageLines(c0013amM75b, strM15c, i);
             } else {
                 c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
@@ -373,7 +373,7 @@ public abstract class Contact implements Sortable {
             c0043nM1380F.readLong();
             String strM1369q = c0043nM1380F.readUnicodeChars(iM1353u - 17);
             if (strM1369q.length() > 50) {
-                strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m13b(strM1369q, 50)).append((char) 8230));
+                strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.prefix(strM1369q, 50)).append((char) 8230));
             } else {
                 strM1215a = strM1369q;
             }
@@ -408,7 +408,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: b */
     private static String formatTime(long j, int i) {
-        Calendar calendarM622k = AppState.m622k();
+        Calendar calendarM622k = AppState.getCalendar();
         calendarM622k.setTime(new Date(j));
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         int i2 = calendarM622k.get(1) << 16;
@@ -416,9 +416,9 @@ public abstract class Contact implements Sortable {
         int i4 = i2 + (i3 << 8);
         int i5 = calendarM622k.get(5);
         if (i4 + i5 != i) {
-            stringBufferM1217h.append(Utils.m501b(i5)).append('/').append(Utils.m501b(i3 + 1)).append(' ');
+            stringBufferM1217h.append(Utils.zeroPad(i5)).append('/').append(Utils.zeroPad(i3 + 1)).append(' ');
         }
-        return NetworkUtils.m1215a(stringBufferM1217h.append(Utils.m501b(calendarM622k.get(11))).append(':').append(Utils.m501b(calendarM622k.get(12))));
+        return NetworkUtils.m1215a(stringBufferM1217h.append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(calendarM622k.get(12))));
     }
 
     /* renamed from: a */
@@ -434,11 +434,11 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: c */
     public final void setDisplayName(String str) {
-        if (StringUtils.m6a(str, this.displayName)) {
+        if (StringUtils.equals(str, this.displayName)) {
             return;
         }
         this.displayName = str;
-        this.sortKey = StringUtils.m17c(str.toLowerCase());
+        this.sortKey = StringUtils.intern(str.toLowerCase());
         AppController.f152f = true;
     }
 

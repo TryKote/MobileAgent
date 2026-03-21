@@ -70,7 +70,7 @@ public final class MmpContact extends Contact {
         this.f56b = i2;
         this.f57c = str;
         this.displayName = str2;
-        this.sortKey = StringUtils.m17c(str2.toLowerCase());
+        this.sortKey = StringUtils.intern(str2.toLowerCase());
         this.f58z = z;
         this.defaultIcon = 255;
         this.identifier = c0033d.encodeId().writeRawString(str).readAllByteStr();
@@ -222,8 +222,8 @@ public final class MmpContact extends Contact {
     /* renamed from: a */
     public static final void m184a(boolean z) {
         f71y = z;
-        AppState.m599a(1573, z);
-        AppState.m599a(1574, z && !AppState.m587e(1575));
+        AppState.setBool(1573, z);
+        AppState.setBool(1574, z && !AppState.getBool(1575));
     }
 
     /* renamed from: f */
@@ -237,9 +237,9 @@ public final class MmpContact extends Contact {
         f67l.removeAllElements();
         m184a(false);
         f69A = 0;
-        AppState.m594c(1573, 0);
-        AppState.m594c(1574, 0);
-        AppState.m594c(1575, 0);
+        AppState.setInt(1573, 0);
+        AppState.setInt(1574, 0);
+        AppState.setInt(1575, 0);
     }
 
     /* renamed from: o */
@@ -298,7 +298,7 @@ public final class MmpContact extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(979));
+                        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.getString(979));
                         int i7 = 952;
                         int i8 = f72B;
                         int i9 = 0;
@@ -311,27 +311,27 @@ public final class MmpContact extends Contact {
                         stringBufferM1217h.append(i8);
                         if (i9 != 0) {
                             stringBufferM1217h.append('.');
-                            String strM17c = StringUtils.m17c(Integer.toString(i9));
+                            String strM17c = StringUtils.intern(Integer.toString(i9));
                             String strM13b = strM17c;
                             if (strM17c.length() > 2) {
-                                strM13b = StringUtils.m13b(strM13b, 2);
+                                strM13b = StringUtils.prefix(strM13b, 2);
                             }
                             stringBufferM1217h.append(strM13b);
                         }
-                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(NetworkUtils.m1215a(stringBufferM1217h.append(AppState.m584b(i7)))).append(AppState.m584b(983));
+                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(NetworkUtils.m1215a(stringBufferM1217h.append(AppState.getString(i7)))).append(AppState.getString(983));
                         int i10 = f73C;
                         StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             stringBufferM1217h2.append(i11);
                         } else {
-                            stringBufferM1217h2.append(i11 / 60).append(AppState.m584b(954)).append(i11 % 60);
+                            stringBufferM1217h2.append(i11 / 60).append(AppState.getString(954)).append(i11 % 60);
                         }
-                        r03[1] = stringBufferAppend2.append(NetworkUtils.m1215a(stringBufferM1217h2.append(AppState.m584b(955)))).toString();
-                        r03[2] = AppState.f181d;
+                        r03[1] = stringBufferAppend2.append(NetworkUtils.m1215a(stringBufferM1217h2.append(AppState.getString(955)))).toString();
+                        r03[2] = AppState.emptyStr;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
-                        r03[1] = AppState.m584b(980);
-                        r03[2] = AppState.f181d;
+                        r03[1] = AppState.getString(980);
+                        r03[2] = AppState.emptyStr;
                     } else {
                         r03[1] = vector5.elementAt(2);
                         r03[2] = vector5.elementAt(3);
@@ -389,7 +389,7 @@ public final class MmpContact extends Contact {
     /* renamed from: r */
     public static final int[] m190r() {
         int iM192t = m192t();
-        int iM586d = AppState.m586d(39);
+        int iM586d = AppState.getInt(39);
         int[] iArrM193a = m193a(f69A);
         int iM317a = (int) AppController.m317a(iArrM193a[0], iM586d);
         int iM317a2 = (int) AppController.m317a(iArrM193a[1], iM586d);
@@ -411,7 +411,7 @@ public final class MmpContact extends Contact {
         if (f69A == 0 && m194b(f69A) != null) {
             return m193a(f69A);
         }
-        int iM586d = AppState.m586d(39);
+        int iM586d = AppState.getInt(39);
         int[] iArrM193a2 = m193a(f69A);
         int iM317a = (int) AppController.m317a(iArrM193a2[0], iM586d);
         int iM317a2 = (int) AppController.m317a(iArrM193a2[1], iM586d);

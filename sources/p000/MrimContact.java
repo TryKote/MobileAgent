@@ -89,9 +89,9 @@ public final class MrimContact extends Contact implements ListItem {
     public MrimContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f294a = c0043n.readInt();
-        String str = AppState.f181d;
+        String str = AppState.emptyStr;
         this.f295b = c0043n.readInt();
-        this.f297d = StringUtils.m17c(c0043n.readWideStr().toLowerCase());
+        this.f297d = StringUtils.intern(c0043n.readWideStr().toLowerCase());
         setDisplayName(c0043n.readUTF8Str((String) null));
         this.f298e = c0043n.readInt();
         this.f300g = c0043n.readWideStr();
@@ -114,10 +114,10 @@ public final class MrimContact extends Contact implements ListItem {
         int i = canBlock() ? 3 : canDelete() ? 2 : 0;
         int i2 = this.f295b;
         c0032cM896a.m901a(str, i, (i2 & 1048576) != 0 ? 0 : (i2 & 8) != 0 ? 4 : (i2 & 4) != 0 ? 5 : this.f299f == 0 ? 0 : 3).f265d = this;
-        if (!isOffline() && Utils.m535l(this.f300g)) {
+        if (!isOffline() && Utils.nonEmpty(this.f300g)) {
             c0032cM896a.m896a(27);
         }
-        if (Utils.m535l(this.f304j)) {
+        if (Utils.nonEmpty(this.f304j)) {
             c0032cM896a.m896a(242);
         }
         c0032cM896a.f265d = this;
@@ -195,7 +195,7 @@ public final class MrimContact extends Contact implements ListItem {
             iIndexOf = this.f300g.indexOf(44);
         } catch (Throwable unused) {
         }
-        return iIndexOf >= 0 ? StringUtils.m13b(this.f300g, iIndexOf) : Utils.m522f(this.f300g);
+        return iIndexOf >= 0 ? StringUtils.prefix(this.f300g, iIndexOf) : Utils.defaultStr(this.f300g);
     }
 
     /* renamed from: O */
@@ -214,17 +214,17 @@ public final class MrimContact extends Contact implements ListItem {
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
     public final int m993f() {
-        long jM598g = AppState.m598g(1530);
+        long jM598g = AppState.getLong(1530);
         if (jM598g - this.f302y <= 60000) {
             return 925;
         }
         this.f302y = jM598g;
         MrimAccount c0028ba = (MrimAccount) this.account;
-        int iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.f297d).writeStringUTF16(AppState.m584b(909)).writeStringLatin1(AppState.m584b(33819707))), ResourceManager.m967e(14)}));
+        int iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.f297d).writeStringUTF16(AppState.getString(909)).writeStringLatin1(AppState.getString(33819707))), ResourceManager.m967e(14)}));
         if (0 != iM1052c) {
             return iM1052c;
         }
-        appendMessage(1, AppState.m584b(924), 0L, 0L);
+        appendMessage(1, AppState.getString(924), 0L, 0L);
         return 0;
     }
 

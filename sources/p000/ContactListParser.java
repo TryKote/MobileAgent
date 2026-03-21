@@ -23,7 +23,7 @@ public abstract class ContactListParser implements ListItem {
     public static final void m488a(ByteBuffer c0043n, int i) {
         Vector vectorM489a = m489a(c0043n, i, false);
         if (vectorM489a != null && vectorM489a.size() > 0) {
-            AppState.f177b[1404] = vectorM489a;
+            AppState.pool[1404] = vectorM489a;
         }
         MapRenderer.f200h = true;
     }
@@ -33,7 +33,7 @@ public abstract class ContactListParser implements ListItem {
         boolean z2;
         Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(c0043n, 2);
         Vector vectorM1213g = NetworkUtils.m1213g();
-        Vector vectorM614m = AppState.m614m(1404);
+        Vector vectorM614m = AppState.getVector(1404);
         if (vectorM614m != null && !z) {
             int i2 = f159b;
             f159b = i2 + 1;
@@ -41,7 +41,7 @@ public abstract class ContactListParser implements ListItem {
                 vectorM1213g.addElement(vectorM614m.elementAt(i3));
             }
         }
-        int iM586d = AppState.m586d(39);
+        int iM586d = AppState.getInt(39);
         f158a = 0;
         Enumeration enumerationKeys = hashtable.keys();
         while (enumerationKeys.hasMoreElements()) {
@@ -53,7 +53,7 @@ public abstract class ContactListParser implements ListItem {
                     z2 = false;
                     break;
                 }
-                if (StringUtils.m6a(str, ((Identifiable) vectorM1213g.elementAt(size)).getId()) && i == ((ListItem) vectorM1213g.elementAt(size)).getCommandCount()) {
+                if (StringUtils.equals(str, ((Identifiable) vectorM1213g.elementAt(size)).getId()) && i == ((ListItem) vectorM1213g.elementAt(size)).getCommandCount()) {
                     z2 = true;
                     break;
                 }
@@ -69,11 +69,11 @@ public abstract class ContactListParser implements ListItem {
                     c0045p.f390a = (String) hashtable4.get("email");
                     c0045p.f391b = (String) hashtable4.get("nick");
                     String str2 = (String) hashtable4.get("age");
-                    if (Utils.m535l(str2)) {
+                    if (Utils.nonEmpty(str2)) {
                         c0045p.f392c = Integer.parseInt(str2);
                     }
                     String str3 = (String) hashtable4.get("sex");
-                    if (Utils.m535l(str3)) {
+                    if (Utils.nonEmpty(str3)) {
                         c0045p.f393d = str3.equals("male") ? 1 : 2;
                     }
                     vectorM1213g.addElement(c0045p);

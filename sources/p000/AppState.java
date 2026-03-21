@@ -16,29 +16,29 @@ import p001main.Midlet;
 public abstract class AppState {
 
     /* renamed from: a */
-    public static byte[] f176a;
+    public static byte[] emptyBytes;
 
     /* renamed from: b */
-    public static Object[] f177b;
+    public static Object[] pool;
 
     /* renamed from: e */
-    private static Object[] f178e;
+    private static Object[] delta;
 
     /* renamed from: f */
-    private static int[] f179f;
+    private static int[] intPool;
 
     /* renamed from: c */
-    public static Object f180c;
+    public static Object currentScreen;
 
     /* renamed from: d */
-    public static String f181d;
+    public static String emptyStr;
 
     /* renamed from: g */
-    private static String f182g;
+    private static String separator;
 
     /* JADX WARN: Type inference failed for: r0v9, types: [byte[], byte[][]] */
     /* renamed from: a */
-    public static final void m578a(Object obj) {
+    public static final void init(Object obj) {
         int iM1346q;
         ResourceManager.f292k = new Boolean(true);
         ResourceManager.f293l = new Boolean(false);
@@ -53,23 +53,23 @@ public abstract class AppState {
                 ResourceManager.f291j[i] = new Integer(i);
             }
         }
-        StringUtils.f0a = new Vector(128);
+        StringUtils.internCache = new Vector(128);
         NetworkUtils.f365g = new byte[20][];
         NetworkUtils.f366h = new StringBuffer[5];
         NetworkUtils.f367i = new Vector[5];
         NetworkUtils.f368j = new Hashtable();
         IOUtils.f237c = NetworkUtils.m1213g();
-        f182g = NetworkUtils.m1221a(1819047278);
-        f176a = new byte[0];
-        f178e = new Object[295];
-        f177b = new Object[1406];
-        f179f = new int[3773];
+        separator = NetworkUtils.m1221a(1819047278);
+        emptyBytes = new byte[0];
+        delta = new Object[295];
+        pool = new Object[1406];
+        intPool = new int[3773];
         ByteBuffer c0043n = new ByteBuffer(NetworkUtils.m1221a(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
-            f177b[i2] = m618a(c0043n, i2);
+            pool[i2] = decodeObject(c0043n, i2);
         }
         for (int i3 = 0; i3 < 3773; i3++) {
-            int[] iArr = f179f;
+            int[] iArr = intPool;
             int i4 = i3;
             byte bM1344o = c0043n.readByte();
             if ((bM1344o & 64) != 0) {
@@ -91,22 +91,22 @@ public abstract class AppState {
             }
             iArr[i4] = iM1346q;
         }
-        f181d = (String) f177b[1038];
+        emptyStr = (String) pool[1038];
         ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.m1221a(1164404323));
         while (c0043nM851h.length > 0) {
             try {
-                f178e[((Integer) m618a(c0043nM851h, 0)).intValue()] = m618a(c0043nM851h, 0);
+                delta[((Integer) decodeObject(c0043nM851h, 0)).intValue()] = decodeObject(c0043nM851h, 0);
             } catch (Throwable unused) {
             }
         }
         try {
             try {
             } catch (Throwable th) {
-                m594c(0, 3096);
+                setInt(0, 3096);
                 throw th;
             }
         } catch (Throwable unused2) {
-            f178e = new Object[295];
+            delta = new Object[295];
             try {
                 String[] strArrM10a = StringUtils.m10a();
                 if (strArrM10a != null) {
@@ -125,79 +125,79 @@ public abstract class AppState {
                 }
             } catch (Throwable unused4) {
             }
-            m594c(0, 3096);
+            setInt(0, 3096);
         }
-        if (((Integer) f178e[0]).intValue() != 3096) {
+        if (((Integer) delta[0]).intValue() != 3096) {
             throw new RuntimeException();
         }
-        m594c(0, 3096);
-        m601a(1369, (Object) f182g);
-        f177b[1366] = obj;
-        f177b[1370] = new int[0];
+        setInt(0, 3096);
+        setObject(1369, (Object) separator);
+        pool[1366] = obj;
+        pool[1370] = new int[0];
         Date date = new Date();
-        f177b[1368] = date;
-        f177b[1367] = Calendar.getInstance();
-        m597a(1532, date.getTime() - System.currentTimeMillis());
-        m580b();
-        f177b[1372] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
-        f177b[1361] = new Object[58];
-        f177b[1362] = new int[29];
-        f177b[1266] = NetworkUtils.m1213g();
-        f177b[1267] = new int[]{1};
-        f177b[1268] = new int[]{2};
-        f177b[1269] = new int[]{3};
-        f177b[1270] = new int[]{4};
-        StringUtils.m34h();
+        pool[1368] = date;
+        pool[1367] = Calendar.getInstance();
+        setLong(1532, date.getTime() - System.currentTimeMillis());
+        updateTime();
+        pool[1372] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
+        pool[1361] = new Object[58];
+        pool[1362] = new int[29];
+        pool[1266] = NetworkUtils.m1213g();
+        pool[1267] = new int[]{1};
+        pool[1268] = new int[]{2};
+        pool[1269] = new int[]{3};
+        pool[1270] = new int[]{4};
+        StringUtils.initPlatform();
         AppController.f147a = new long[14];
-        f177b[1238] = new Object[1];
-        NetworkUtils.m1208b(f182g);
-        NetworkUtils.m1208b(m620j());
-        NetworkUtils.m1208b(m584b(1233));
-        NetworkUtils.m1208b(m584b(1234));
-        NetworkUtils.m1208b(m584b(1038));
-        NetworkUtils.m1208b(m584b(525044));
-        NetworkUtils.m1208b(m584b(590588));
-        f177b[112] = ResourceManager.m967e(!StringUtils.f1b && !StringUtils.f2c ? 1 : 0);
+        pool[1238] = new Object[1];
+        NetworkUtils.m1208b(separator);
+        NetworkUtils.m1208b(getEllipsis());
+        NetworkUtils.m1208b(getString(1233));
+        NetworkUtils.m1208b(getString(1234));
+        NetworkUtils.m1208b(getString(1038));
+        NetworkUtils.m1208b(getString(525044));
+        NetworkUtils.m1208b(getString(590588));
+        pool[112] = ResourceManager.m967e(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
         try {
-            m599a(1535, Display.getDisplay(m602d()).numAlphaLevels() > 2);
+            setBool(1535, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
         } catch (Throwable unused5) {
         }
     }
 
     /* renamed from: a */
-    public static final boolean m579a() {
+    public static final boolean hasMemory() {
         return Runtime.getRuntime().totalMemory() > 1572864;
     }
 
     /* renamed from: b */
-    public static final void m580b() {
+    public static final void updateTime() {
         long jCurrentTimeMillis = System.currentTimeMillis();
-        m597a(1530, jCurrentTimeMillis);
-        m599a(1534, (((int) jCurrentTimeMillis) & Integer.MAX_VALUE) % 2000 < 1000);
+        setLong(1530, jCurrentTimeMillis);
+        setBool(1534, (((int) jCurrentTimeMillis) & Integer.MAX_VALUE) % 2000 < 1000);
     }
 
     /* renamed from: a */
-    public static final byte[] m581a(int i) {
-        return (byte[]) f177b[i];
+    public static final byte[] getBytes(int i) {
+        return (byte[]) pool[i];
     }
 
     /* renamed from: c */
-    public static final MainCanvas m582c() {
-        return (MainCanvas) f177b[1371];
+    public static final MainCanvas getCanvas() {
+        return (MainCanvas) pool[1371];
     }
 
     /* renamed from: p */
-    private static final Object m583p(int i) {
+    private static final Object getOrDefault(int i) {
         Object obj;
-        return (i >= 295 || (obj = f178e[i]) == null) ? f177b[i] : obj;
+        return (i >= 295 || (obj = delta[i]) == null) ? pool[i] : obj;
     }
 
     /* renamed from: b */
-    public static final String m584b(int i) {
+    public static final String getString(int i) {
         if (i > 5179) {
-            return StringUtils.m17c(new String(m581a(295), i & 65535, i >> 16));
+            return StringUtils.intern(new String(getBytes(295), i & 65535, i >> 16));
         }
-        Object objM583p = m583p(i);
+        Object objM583p = getOrDefault(i);
         if (objM583p == null) {
             return null;
         }
@@ -205,205 +205,205 @@ public abstract class AppState {
     }
 
     /* renamed from: c */
-    public static final int m585c(int i) {
-        int iM586d = m586d(i);
-        m594c(i, 0);
+    public static final int getAndClearInt(int i) {
+        int iM586d = getInt(i);
+        setInt(i, 0);
         return iM586d;
     }
 
     /* renamed from: d */
-    public static final int m586d(int i) {
-        return i < 1406 ? ((Integer) m583p(i)).intValue() : f179f[i - 1406];
+    public static final int getInt(int i) {
+        return i < 1406 ? ((Integer) getOrDefault(i)).intValue() : intPool[i - 1406];
     }
 
     /* renamed from: e */
-    public static final boolean m587e(int i) {
-        return m586d(i) != 0;
+    public static final boolean getBool(int i) {
+        return getInt(i) != 0;
     }
 
     /* renamed from: a */
-    public static final void m588a(int i, StringBuffer stringBuffer) {
-        m601a(i, (Object) NetworkUtils.m1215a(stringBuffer));
+    public static final void setFromBuffer(int i, StringBuffer stringBuffer) {
+        setObject(i, (Object) NetworkUtils.m1215a(stringBuffer));
     }
 
     /* renamed from: a */
-    public static final void m589a(int i, int i2) {
-        m601a(i, (Object) m584b(i2));
+    public static final void setFromPool(int i, int i2) {
+        setObject(i, (Object) getString(i2));
     }
 
     /* renamed from: b */
-    public static final void m590b(int i, int i2) {
+    public static final void clearRange(int i, int i2) {
         while (i <= i2) {
             int i3 = i;
             i++;
-            m591f(i3);
+            clearIndex(i3);
         }
     }
 
     /* renamed from: f */
-    public static final void m591f(int i) {
+    public static final void clearIndex(int i) {
         if (i >= 295) {
-            f177b[i] = null;
+            pool[i] = null;
         } else {
-            f178e[i] = null;
+            delta[i] = null;
         }
     }
 
     /* renamed from: a */
-    public static final void m592a(int i, String str) {
-        m601a(i, (Object) Utils.m522f(str));
+    public static final void setString(int i, String str) {
+        setObject(i, (Object) Utils.defaultStr(str));
     }
 
     /* renamed from: b */
-    public static final void m593b(int i, String str) {
-        m601a(m586d(i), (Object) str);
+    public static final void setStringInd(int i, String str) {
+        setObject(getInt(i), (Object) str);
     }
 
     /* renamed from: c */
-    public static final void m594c(int i, int i2) {
+    public static final void setInt(int i, int i2) {
         if (i < 1406) {
-            m601a(i, ResourceManager.m967e(i2));
+            setObject(i, ResourceManager.m967e(i2));
         } else {
-            f179f[i - 1406] = i2;
+            intPool[i - 1406] = i2;
         }
     }
 
     /* renamed from: d */
-    public static final void m595d(int i, int i2) {
-        m594c(i, m586d(i) + i2);
+    public static final void addInt(int i, int i2) {
+        setInt(i, getInt(i) + i2);
     }
 
     /* renamed from: e */
-    public static final void m596e(int i, int i2) {
-        m594c(m586d(i), i2);
+    public static final void setIntInd(int i, int i2) {
+        setInt(getInt(i), i2);
     }
 
     /* renamed from: a */
-    public static final void m597a(int i, long j) {
-        m594c(i, (int) (j >>> 32));
-        m594c(i + 1, (int) j);
+    public static final void setLong(int i, long j) {
+        setInt(i, (int) (j >>> 32));
+        setInt(i + 1, (int) j);
     }
 
     /* renamed from: g */
-    public static final long m598g(int i) {
-        return (m586d(i) << 32) | (m586d(i + 1) & 4294967295L);
+    public static final long getLong(int i) {
+        return (getInt(i) << 32) | (getInt(i + 1) & 4294967295L);
     }
 
     /* renamed from: a */
-    public static final boolean m599a(int i, boolean z) {
-        m594c(i, z ? 1 : 0);
+    public static final boolean setBool(int i, boolean z) {
+        setInt(i, z ? 1 : 0);
         return z;
     }
 
     /* renamed from: h */
-    public static final boolean m600h(int i) {
-        boolean z = !m587e(i);
+    public static final boolean toggleBool(int i) {
+        boolean z = !getBool(i);
         boolean z2 = z;
-        m599a(i, z);
+        setBool(i, z);
         return z2;
     }
 
     /* renamed from: a */
-    public static final Object m601a(int i, Object obj) {
-        if (i >= f178e.length) {
-            f177b[i] = obj;
+    public static final Object setObject(int i, Object obj) {
+        if (i >= delta.length) {
+            pool[i] = obj;
         } else {
-            Object obj2 = f177b[i];
+            Object obj2 = pool[i];
             if (obj2 == null && obj != null) {
-                f178e[i] = obj;
+                delta[i] = obj;
             } else if (obj2 == null || obj2.equals(obj)) {
-                f178e[i] = null;
+                delta[i] = null;
             } else {
-                f178e[i] = obj;
+                delta[i] = obj;
             }
         }
         return obj;
     }
 
     /* renamed from: d */
-    public static final Midlet m602d() {
-        return (Midlet) f177b[1366];
+    public static final Midlet getMidlet() {
+        return (Midlet) pool[1366];
     }
 
     /* renamed from: i */
-    public static final String m603i(int i) {
-        return StringUtils.m17c(m602d().getAppProperty(m584b(i)));
+    public static final String getAppProperty(int i) {
+        return StringUtils.intern(getMidlet().getAppProperty(getString(i)));
     }
 
     /* renamed from: b */
-    public static final void m604b(Object obj) {
-        f180c = obj;
+    public static final void setScreen(Object obj) {
+        currentScreen = obj;
         AppController.m304a(0, AppController.m376E());
     }
 
     /* renamed from: e */
-    public static final int m605e() {
-        return m586d(1529) - (m587e(71) ? m586d(1450) + 2 : 0);
+    public static final int getHeight() {
+        return getInt(1529) - (getBool(71) ? getInt(1450) + 2 : 0);
     }
 
     /* renamed from: f */
-    public static final void m606f(int i, int i2) {
-        m594c(1528, i);
-        m594c(1529, i2);
+    public static final void setDimensions(int i, int i2) {
+        setInt(1528, i);
+        setInt(1529, i2);
     }
 
     /* renamed from: j */
-    public static final void m607j(int i) {
-        m601a(i, (Object) f181d);
+    public static final void resetToEmpty(int i) {
+        setObject(i, (Object) emptyStr);
     }
 
     /* renamed from: k */
-    public static final GraphicsContext m608k(int i) {
-        return (GraphicsContext) f177b[i + 1273];
+    public static final GraphicsContext getGfxContext(int i) {
+        return (GraphicsContext) pool[i + 1273];
     }
 
     /* renamed from: l */
-    public static final Object[] m609l(int i) {
-        return (Object[]) f177b[i];
+    public static final Object[] getObjectArray(int i) {
+        return (Object[]) pool[i];
     }
 
     /* renamed from: f */
-    public static final ContactGroup m610f() {
-        return (ContactGroup) f177b[1365];
+    public static final ContactGroup getCurrentGroup() {
+        return (ContactGroup) pool[1365];
     }
 
     /* renamed from: g */
-    public static final Contact m611g() {
-        return (Contact) f177b[1365];
+    public static final Contact getCurrentContact() {
+        return (Contact) pool[1365];
     }
 
     /* renamed from: h */
-    public static final MrimContact m612h() {
-        return (MrimContact) f177b[1365];
+    public static final MrimContact getCurrentMrimContact() {
+        return (MrimContact) pool[1365];
     }
 
     /* renamed from: c */
-    public static final void m613c(Object obj) {
-        f177b[1365] = obj;
+    public static final void setCurrentEntity(Object obj) {
+        pool[1365] = obj;
     }
 
     /* renamed from: m */
-    public static final Vector m614m(int i) {
-        return (Vector) f177b[i];
+    public static final Vector getVector(int i) {
+        return (Vector) pool[i];
     }
 
     /* renamed from: n */
-    public static final Image m615n(int i) {
-        return (Image) f177b[i];
+    public static final Image getImage(int i) {
+        return (Image) pool[i];
     }
 
     /* renamed from: i */
-    public static final Account m616i() {
-        return (Account) f177b[1281];
+    public static final Account getAccount() {
+        return (Account) pool[1281];
     }
 
     /* renamed from: d */
-    public static final void m617d(Object obj) {
-        f177b[1281] = obj;
+    public static final void setAccount(Object obj) {
+        pool[1281] = obj;
     }
 
     /* renamed from: a */
-    private static final Object m618a(ByteBuffer c0043n, int i) {
+    private static final Object decodeObject(ByteBuffer c0043n, int i) {
         byte bM1344o = c0043n.readByte();
         if ((bM1344o & 128) != 0) {
             byte[] bArr = new byte[(bM1344o & 64) != 0 ? bM1344o & 63 : ((bM1344o & 31) << 8) + c0043n.readUByte()];
@@ -416,7 +416,7 @@ public abstract class AppState {
                 stringBufferM1217h.append(Utils.m499a((int) b));
             }
             NetworkUtils.m1209a(bArr);
-            String str = f182g;
+            String str = separator;
             String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
             if (str.equals(strM1215a)) {
                 return null;
@@ -441,13 +441,13 @@ public abstract class AppState {
     }
 
     /* renamed from: a */
-    public static void m619a(boolean z) {
+    public static void saveDelta(boolean z) {
         try {
             ByteBuffer c0043n = new ByteBuffer();
             for (int i = 0; i < 295; i++) {
-                Object obj = f178e[i];
+                Object obj = delta[i];
                 if (obj != null) {
-                    m621b(c0043n, i);
+                    encodeIndex(c0043n, i);
                     if (obj instanceof String) {
                         String str = (String) obj;
                         int length = str.length();
@@ -463,7 +463,7 @@ public abstract class AppState {
                         }
                         c0043n.writeBytes(bArr);
                     } else {
-                        m621b(c0043n, ((Integer) obj).intValue());
+                        encodeIndex(c0043n, ((Integer) obj).intValue());
                     }
                 }
             }
@@ -473,12 +473,12 @@ public abstract class AppState {
     }
 
     /* renamed from: j */
-    public static final String m620j() {
+    public static final String getEllipsis() {
         return NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) 8230));
     }
 
     /* renamed from: b */
-    private static final void m621b(ByteBuffer c0043n, int i) {
+    private static final void encodeIndex(ByteBuffer c0043n, int i) {
         if (i >= 0 && i <= 63) {
             c0043n.writeByte(64 | i);
             return;
@@ -506,42 +506,42 @@ public abstract class AppState {
     }
 
     /* renamed from: k */
-    public static final Calendar m622k() {
-        Calendar calendar = (Calendar) f177b[1367];
-        Date date = (Date) f177b[1368];
-        date.setTime((m598g(1530) - m598g(1532)) + ((m586d(246) - 13) * 3600000));
+    public static final Calendar getCalendar() {
+        Calendar calendar = (Calendar) pool[1367];
+        Date date = (Date) pool[1368];
+        date.setTime((getLong(1530) - getLong(1532)) + ((getInt(246) - 13) * 3600000));
         calendar.setTime(date);
         return calendar;
     }
 
     /* renamed from: o */
-    public static final int m623o(int i) {
-        return m586d(i + 1450);
+    public static final int getIntOffset(int i) {
+        return getInt(i + 1450);
     }
 
     /* renamed from: l */
-    public static final int m624l() {
-        Calendar calendarM622k = m622k();
+    public static final int getDateCode() {
+        Calendar calendarM622k = getCalendar();
         return (calendarM622k.get(1) << 16) + (calendarM622k.get(2) << 8) + calendarM622k.get(5);
     }
 
     /* renamed from: m */
-    public static final Font m625m() {
-        return ((GraphicsContext) f177b[1273]).f93c;
+    public static final Font getFont() {
+        return ((GraphicsContext) pool[1273]).f93c;
     }
 
     /* renamed from: a */
-    public static final int m626a(String str, int i) {
+    public static final int indexOf(String str, int i) {
         return str.indexOf(NetworkUtils.m1221a(i));
     }
 
     /* renamed from: a */
-    public static final int m627a(String str, long j) {
+    public static final int indexOfLong(String str, long j) {
         return str.indexOf(NetworkUtils.m1221a(j));
     }
 
     /* renamed from: b */
-    public static final int m628b(String str, int i) {
-        return str.indexOf(m584b(i));
+    public static final int indexOfPool(String str, int i) {
+        return str.indexOf(getString(i));
     }
 }

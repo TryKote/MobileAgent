@@ -8,24 +8,24 @@ import javax.microedition.lcdui.Image;
 public abstract class ScreenManager {
     /* renamed from: a */
     public static final void m65a() {
-        int iM586d = AppState.m586d(73);
+        int iM586d = AppState.getInt(73);
         int i = iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16;
         GraphicsContext c0012al = new GraphicsContext(0, i);
-        AppState.f177b[1273] = c0012al;
+        AppState.pool[1273] = c0012al;
         GraphicsContext c0012al2 = new GraphicsContext(1, i);
-        AppState.f177b[1274] = c0012al2;
-        GraphicsContext c0012al3 = AppState.m587e(70) ? new GraphicsContext(2, i) : c0012al;
-        AppState.f177b[1275] = c0012al3;
-        AppState.f177b[1276] = c0012al;
-        AppState.f177b[1277] = c0012al;
-        AppState.f177b[1278] = c0012al2;
-        AppState.m594c(1450, c0012al.f93c.getHeight());
-        AppState.m594c(1453, c0012al.f93c.getHeight());
-        AppState.m594c(1454, c0012al.f93c.getHeight());
-        AppState.m594c(1455, c0012al2.f93c.getHeight());
-        AppState.m594c(1451, c0012al2.f93c.getHeight());
-        AppState.m594c(1452, c0012al3.f93c.getHeight());
-        Vector vectorM614m = AppState.m614m(1272);
+        AppState.pool[1274] = c0012al2;
+        GraphicsContext c0012al3 = AppState.getBool(70) ? new GraphicsContext(2, i) : c0012al;
+        AppState.pool[1275] = c0012al3;
+        AppState.pool[1276] = c0012al;
+        AppState.pool[1277] = c0012al;
+        AppState.pool[1278] = c0012al2;
+        AppState.setInt(1450, c0012al.f93c.getHeight());
+        AppState.setInt(1453, c0012al.f93c.getHeight());
+        AppState.setInt(1454, c0012al.f93c.getHeight());
+        AppState.setInt(1455, c0012al2.f93c.getHeight());
+        AppState.setInt(1451, c0012al2.f93c.getHeight());
+        AppState.setInt(1452, c0012al3.f93c.getHeight());
+        Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size();
         while (true) {
             size--;
@@ -39,7 +39,7 @@ public abstract class ScreenManager {
 
     /* renamed from: b */
     public static final Screen m66b() {
-        Vector vectorM614m = AppState.m614m(1272);
+        Vector vectorM614m = AppState.getVector(1272);
         if (vectorM614m.isEmpty()) {
             return null;
         }
@@ -48,7 +48,7 @@ public abstract class ScreenManager {
 
     /* renamed from: c */
     public static final String m67c() {
-        if (AppState.m614m(1272).size() > 0) {
+        if (AppState.getVector(1272).size() > 0) {
             return m66b().m220b();
         }
         return null;
@@ -56,7 +56,7 @@ public abstract class ScreenManager {
 
     /* renamed from: d */
     public static final int m68d() {
-        if (AppState.m614m(1272).size() > 0) {
+        if (AppState.getVector(1272).size() > 0) {
             return m66b().m221c();
         }
         return 200;
@@ -64,7 +64,7 @@ public abstract class ScreenManager {
 
     /* renamed from: e */
     public static final MenuItem m69e() {
-        if (AppState.m614m(1272).size() > 0) {
+        if (AppState.getVector(1272).size() > 0) {
             return m66b().m222d();
         }
         return null;
@@ -72,7 +72,7 @@ public abstract class ScreenManager {
 
     /* renamed from: a */
     public static final void m70a(Screen c0013am) {
-        Vector vectorM614m = AppState.m614m(1272);
+        Vector vectorM614m = AppState.getVector(1272);
         while (vectorM614m.size() > 0) {
             ScreenBuilder.m549c();
         }
@@ -87,7 +87,7 @@ public abstract class ScreenManager {
     */
     public static final void m71b(Screen c0013am) {
         Screen c0013am2 = null;
-        Vector vectorM614m = AppState.m614m(1272);
+        Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size() - 1;
         int i = size >= 0 ? ((Screen) vectorM614m.elementAt(size)).f94a : -1;
         if (i == 137 || i == 63) {
@@ -113,8 +113,8 @@ public abstract class ScreenManager {
         }
         int i5 = c0013am.f95b;
         int i6 = c0013am.f96c;
-        int iM586d = AppState.m586d(1528) - i5;
-        int iM605e = AppState.m605e() - i6;
+        int iM586d = AppState.getInt(1528) - i5;
+        int iM605e = AppState.getHeight() - i6;
         switch (i4) {
             case 2:
             case 7:
@@ -132,18 +132,18 @@ public abstract class ScreenManager {
                 if (c0013amM66b != null) {
                     int iM586d2 = c0013amM66b.f98e + c0013amM66b.f95b;
                     int iM265r = c0013amM66b.m265r();
-                    if (iM586d2 + c0013am.f95b > AppState.m586d(1528)) {
-                        iM586d2 = AppState.m586d(1528) - c0013am.f95b;
+                    if (iM586d2 + c0013am.f95b > AppState.getInt(1528)) {
+                        iM586d2 = AppState.getInt(1528) - c0013am.f95b;
                     }
-                    if (iM265r + c0013am.f96c > AppState.m605e()) {
-                        iM265r = AppState.m605e() - c0013am.f96c;
+                    if (iM265r + c0013am.f96c > AppState.getHeight()) {
+                        iM265r = AppState.getHeight() - c0013am.f96c;
                     }
                     c0013am.m266a(iM586d2, iM265r);
                     break;
                 }
                 break;
             case 11:
-                c0013am.m266a(iM586d >> 1, (AppState.m605e() - i6) - (i6 / 10));
+                c0013am.m266a(iM586d >> 1, (AppState.getHeight() - i6) - (i6 / 10));
                 break;
         }
         int size3 = vectorM614m.size();
@@ -164,7 +164,7 @@ public abstract class ScreenManager {
 
     /* renamed from: a */
     public static final boolean m72a(int i) {
-        Vector vectorM614m = AppState.m614m(1272);
+        Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size();
         do {
             size--;
@@ -177,15 +177,15 @@ public abstract class ScreenManager {
 
     /* renamed from: f */
     public static final int m73f() {
-        return Utils.m502a(0, (AppState.m586d(1450) - 16) >> 1);
+        return Utils.max(0, (AppState.getInt(1450) - 16) >> 1);
     }
 
     /* renamed from: g */
     public static final int m74g() {
-        if (!AppState.m587e(1543)) {
+        if (!AppState.getBool(1543)) {
             return AppController.m338l(470);
         }
-        AppState.m604b(new Object());
+        AppState.setScreen(new Object());
         return 0;
     }
 
@@ -193,29 +193,29 @@ public abstract class ScreenManager {
     public static final Screen m75b(int i) {
         Screen c0013am;
         int i2 = i + 1;
-        String strM522f = Utils.m522f(AppState.m584b(AppState.m586d(i)));
+        String strM522f = Utils.defaultStr(AppState.getString(AppState.getInt(i)));
         int i3 = i2 + 1;
-        int iM586d = AppState.m586d(i2);
+        int iM586d = AppState.getInt(i2);
         int i4 = i3 + 1;
-        int iM586d2 = AppState.m586d(i3);
+        int iM586d2 = AppState.getInt(i3);
         boolean z = (iM586d2 & 16) != 0;
         int i5 = iM586d2 & 15;
         int i6 = i4 + 1;
-        int iM586d3 = AppState.m586d(i4);
+        int iM586d3 = AppState.getInt(i4);
         int i7 = i6 + 1;
-        int iM586d4 = AppState.m586d(i6);
+        int iM586d4 = AppState.getInt(i6);
         int i8 = i7 + 1;
-        int iM586d5 = AppState.m586d(i7);
+        int iM586d5 = AppState.getInt(i7);
         int i9 = i8 + 1;
-        int iM586d6 = AppState.m586d(i8);
+        int iM586d6 = AppState.getInt(i8);
         int i10 = i9 + 1;
-        int iM586d7 = AppState.m586d(i9);
+        int iM586d7 = AppState.getInt(i9);
         int i11 = i10 + 1;
-        int iM586d8 = AppState.m586d(i10);
+        int iM586d8 = AppState.getInt(i10);
         int iM79a = i11 + 1;
-        int iM586d9 = AppState.m586d(i11);
-        int iM586d10 = AppState.m586d(1528);
-        int iM605e = AppState.m605e();
+        int iM586d9 = AppState.getInt(i11);
+        int iM586d10 = AppState.getInt(1528);
+        int iM605e = AppState.getHeight();
         switch (i5) {
             case 0:
             case 1:
@@ -256,14 +256,14 @@ public abstract class ScreenManager {
         for (int i12 = 0; i12 < iM586d9; i12++) {
             iM79a = m79a(c0013am, iM79a, iM586d);
         }
-        Screen c0013amM259a = c0013am.m259a(iM586d4 > 0 ? AppState.m584b(iM586d4) : null, iM586d5 > 0 ? AppState.m584b(iM586d5) : null, iM586d6, iM586d7, iM586d8);
+        Screen c0013amM259a = c0013am.m259a(iM586d4 > 0 ? AppState.getString(iM586d4) : null, iM586d5 > 0 ? AppState.getString(iM586d5) : null, iM586d6, iM586d7, iM586d8);
         c0013amM259a.f97d = i5;
         return c0013amM259a;
     }
 
     /* renamed from: c */
     public static final Screen m76c(int i) {
-        Screen c0013am = new Screen(0, i, (AppState.m586d(1528) * 9) / 10, (AppState.m605e() * 9) / 10, true);
+        Screen c0013am = new Screen(0, i, (AppState.getInt(1528) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
         c0013am.f97d = 2;
         c0013am.f125x = true;
         return c0013am;
@@ -271,7 +271,7 @@ public abstract class ScreenManager {
 
     /* renamed from: h */
     public static final boolean m77h() {
-        Vector vectorM614m = AppState.m614m(1272);
+        Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size();
         do {
             size--;
@@ -285,11 +285,11 @@ public abstract class ScreenManager {
     /* renamed from: a */
     private static final int m78a(boolean z, Screen c0013am, int i, boolean z2) {
         int i2 = i + 1;
-        int iM586d = AppState.m586d(i);
+        int iM586d = AppState.getInt(i);
         int i3 = i2 + 1;
-        int iM586d2 = AppState.m586d(i2);
+        int iM586d2 = AppState.getInt(i2);
         int i4 = i3 + 1;
-        int iM586d3 = AppState.m586d(i3);
+        int iM586d3 = AppState.getInt(i3);
         if (z) {
             if (z2) {
                 c0013am.m252b(iM586d2, iM586d3, iM586d);
@@ -307,7 +307,7 @@ public abstract class ScreenManager {
         int i4;
         String strM522f;
         int i5 = i + 1;
-        int iM586d = AppState.m586d(i);
+        int iM586d = AppState.getInt(i);
         boolean z = (iM586d & 16) != 0;
         boolean z2 = (iM586d & 32) != 0;
         switch (iM586d & 15) {
@@ -316,15 +316,15 @@ public abstract class ScreenManager {
                 int i6 = i5;
                 if (z2) {
                     i6++;
-                    zM587e = AppState.m587e(AppState.m586d(i6));
+                    zM587e = AppState.getBool(AppState.getInt(i6));
                 }
                 int i7 = i6;
                 int i8 = i6 + 1;
-                int iM586d2 = AppState.m586d(i7);
+                int iM586d2 = AppState.getInt(i7);
                 int i9 = i8 + 1;
-                int iM586d3 = AppState.m586d(i8);
+                int iM586d3 = AppState.getInt(i8);
                 int i10 = i9 + 1;
-                int iM586d4 = AppState.m586d(i9);
+                int iM586d4 = AppState.getInt(i9);
                 if (zM587e) {
                     c0013am.m252b(iM586d3, iM586d4, iM586d2);
                 } else {
@@ -333,83 +333,83 @@ public abstract class ScreenManager {
                 return i10;
             case 1:
                 int i11 = i5 + 1;
-                MenuItem c0032cM901a = MenuItem.m889d().m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.m522f(AppState.m584b(AppState.m586d(i5)))).append(' ')), 0, 0);
+                MenuItem c0032cM901a = MenuItem.m889d().m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
                 int i12 = i11 + 1;
-                String strM522f2 = Utils.m522f(AppState.m584b(AppState.m586d(i11)));
-                if (!StringUtils.m1a(strM522f2)) {
+                String strM522f2 = Utils.defaultStr(AppState.getString(AppState.getInt(i11)));
+                if (!StringUtils.isEmpty(strM522f2)) {
                     c0032cM901a.m901a(strM522f2, 0, 6);
                 }
                 c0013am.m225a(c0032cM901a);
                 return i12;
             case 2:
                 int i13 = i5 + 1;
-                String strM522f3 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
+                String strM522f3 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 int i14 = i13 + 1;
-                c0013am.m225a(MenuItem.m890a(strM522f3, AppState.m587e(AppState.m586d(i13))));
+                c0013am.m225a(MenuItem.m890a(strM522f3, AppState.getBool(AppState.getInt(i13))));
                 return i14;
             case 3:
                 int i15 = i5 + 1;
-                String strM522f4 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
+                String strM522f4 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 int i16 = i15 + 1;
-                Vector vectorM512e = Utils.m512e(Utils.m522f(AppState.m584b(AppState.m586d(i15))));
+                Vector vectorM512e = Utils.splitByNull(Utils.defaultStr(AppState.getString(AppState.getInt(i15))));
                 int i17 = i16 + 1;
-                c0013am.m225a(new MenuItem(9, strM522f4).m892a(vectorM512e, AppState.m586d(AppState.m586d(i16)), strM522f4));
+                c0013am.m225a(new MenuItem(9, strM522f4).m892a(vectorM512e, AppState.getInt(AppState.getInt(i16)), strM522f4));
                 return i17;
             case 4:
                 int i18 = i5 + 1;
-                c0013am.m225a(MenuItem.m889d().m901a(Utils.m522f(AppState.m584b(AppState.m586d(i5))), 1, 0));
+                c0013am.m225a(MenuItem.m889d().m901a(Utils.defaultStr(AppState.getString(AppState.getInt(i5))), 1, 0));
                 return i18;
             case 5:
                 if (i2 == 49) {
                     i3 = i5 + 1;
-                    int iM586d5 = AppState.m586d(i5);
-                    objM522f = (iM586d5 < 268 || iM586d5 > 304) ? (iM586d5 < 161 || iM586d5 > 210) ? AppState.m584b(iM586d5) : ResourceManager.m967e(iM586d5) : ResourceManager.m967e(iM586d5);
+                    int iM586d5 = AppState.getInt(i5);
+                    objM522f = (iM586d5 < 268 || iM586d5 > 304) ? (iM586d5 < 161 || iM586d5 > 210) ? AppState.getString(iM586d5) : ResourceManager.m967e(iM586d5) : ResourceManager.m967e(iM586d5);
                 } else {
                     i3 = i5 + 1;
-                    objM522f = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
+                    objM522f = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 }
                 Object obj = objM522f;
                 int i19 = i3;
                 int i20 = i3 + 1;
-                int iM586d6 = AppState.m586d(i19);
+                int iM586d6 = AppState.getInt(i19);
                 int i21 = i20 + 1;
-                String strM522f5 = Utils.m522f(AppState.m584b(AppState.m586d(i20)));
+                String strM522f5 = Utils.defaultStr(AppState.getString(AppState.getInt(i20)));
                 int i22 = i21 + 1;
-                int iM586d7 = AppState.m586d(i21);
+                int iM586d7 = AppState.getInt(i21);
                 if (iM586d7 == 2) {
                     int i23 = i22 + 3;
                     i4 = i23 + 1;
-                    int iM586d8 = AppState.m586d(AppState.m586d(i23));
-                    strM522f = iM586d8 >= 0 ? StringUtils.m17c(Integer.toString(iM586d8)) : AppState.f181d;
+                    int iM586d8 = AppState.getInt(AppState.getInt(i23));
+                    strM522f = iM586d8 >= 0 ? StringUtils.intern(Integer.toString(iM586d8)) : AppState.emptyStr;
                 } else {
                     i4 = i22 + 1;
-                    strM522f = Utils.m522f(Utils.m522f(AppState.m584b(AppState.m586d(i22))));
+                    strM522f = Utils.defaultStr(Utils.defaultStr(AppState.getString(AppState.getInt(i22))));
                 }
-                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.f181d).m891a(obj, strM522f, ResourceManager.m967e(iM586d6), ResourceManager.m967e(iM586d7), strM522f5));
+                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).m891a(obj, strM522f, ResourceManager.m967e(iM586d6), ResourceManager.m967e(iM586d7), strM522f5));
                 return i4;
             case 6:
                 int i24 = i5 + 1;
-                c0013am.m225a(MenuItem.m889d().m898b(Utils.m522f(AppState.m584b(AppState.m586d(i5)))));
+                c0013am.m225a(MenuItem.m889d().m898b(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))));
                 return i24;
             case 7:
-                return m78a(AppState.m587e(AppState.m586d(i5)), c0013am, i5 + 1, z);
+                return m78a(AppState.getBool(AppState.getInt(i5)), c0013am, i5 + 1, z);
             case 8:
-                return m78a(!AppState.m587e(AppState.m586d(i5)), c0013am, i5 + 1, z);
+                return m78a(!AppState.getBool(AppState.getInt(i5)), c0013am, i5 + 1, z);
             case 9:
-                String strM522f6 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
-                String strM522f7 = Utils.m522f(AppState.m584b(AppState.m586d(i5 + 1)));
-                MenuItem c0032cM901a2 = new MenuItem(4, (String) null).m884a().m896a(221).m901a(Utils.m535l(strM522f7) ? strM522f7 : strM522f6, 1, 7);
+                String strM522f6 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
+                String strM522f7 = Utils.defaultStr(AppState.getString(AppState.getInt(i5 + 1)));
+                MenuItem c0032cM901a2 = new MenuItem(4, (String) null).m884a().m896a(221).m901a(Utils.nonEmpty(strM522f7) ? strM522f7 : strM522f6, 1, 7);
                 c0032cM901a2.f265d = new String[]{strM522f6, strM522f7};
                 c0013am.m225a(c0032cM901a2);
                 return i5 + 2;
             case 10:
-                String strM522f8 = Utils.m522f(AppState.m584b(AppState.m586d(i5)));
+                String strM522f8 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 MenuItem c0032c = new MenuItem(5, (String) null);
                 c0032c.m884a();
                 c0032c.m896a(219);
-                if (Utils.m535l(strM522f8)) {
+                if (Utils.nonEmpty(strM522f8)) {
                     int iIndexOf = strM522f8.indexOf(0);
-                    c0032c.m901a(iIndexOf < 0 ? strM522f8 : StringUtils.m13b(strM522f8, iIndexOf), 1, 7);
+                    c0032c.m901a(iIndexOf < 0 ? strM522f8 : StringUtils.prefix(strM522f8, iIndexOf), 1, 7);
                 } else {
                     c0032c.m895e();
                 }
@@ -417,10 +417,10 @@ public abstract class ScreenManager {
                 c0013am.m225a(c0032c);
                 return i5 + 1;
             case 11:
-                c0013am.m225a(MenuItem.m893a(new GraphicsContext((Image) AppState.f177b[AppState.m586d(i5)])));
+                c0013am.m225a(MenuItem.m893a(new GraphicsContext((Image) AppState.pool[AppState.getInt(i5)])));
                 return i5 + 1;
             default:
-                m79a(c0013am, AppState.m586d(i5), i2);
+                m79a(c0013am, AppState.getInt(i5), i2);
                 return i5 + 1;
         }
     }

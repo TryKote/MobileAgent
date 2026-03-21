@@ -42,7 +42,7 @@ public final class MergedContactGroup extends ContactGroup {
     public final int toggleSpecial() {
         if (this.isSpecial) {
             String str = this.name;
-            Vector vectorM614m = AppState.m614m(1241);
+            Vector vectorM614m = AppState.getVector(1241);
             int size = vectorM614m.size();
             while (true) {
                 size--;
@@ -57,7 +57,7 @@ public final class MergedContactGroup extends ContactGroup {
                         break;
                     }
                     ContactGroup abstractC0046qM1082g = abstractC0037h.getGroup(size2);
-                    if (StringUtils.m6a(str, abstractC0046qM1082g.name)) {
+                    if (StringUtils.equals(str, abstractC0046qM1082g.name)) {
                         abstractC0046qM1082g.isSpecial = false;
                     }
                 }
@@ -76,7 +76,7 @@ public final class MergedContactGroup extends ContactGroup {
             }
         } else {
             String str2 = this.name;
-            Vector vectorM614m2 = AppState.m614m(1241);
+            Vector vectorM614m2 = AppState.getVector(1241);
             int size3 = vectorM614m2.size();
             while (true) {
                 size3--;
@@ -91,7 +91,7 @@ public final class MergedContactGroup extends ContactGroup {
                         break;
                     }
                     ContactGroup abstractC0046qM1082g2 = abstractC0037h2.getGroup(size4);
-                    if (StringUtils.m6a(str2, abstractC0046qM1082g2.name)) {
+                    if (StringUtils.equals(str2, abstractC0046qM1082g2.name)) {
                         abstractC0046qM1082g2.isSpecial = true;
                     }
                 }

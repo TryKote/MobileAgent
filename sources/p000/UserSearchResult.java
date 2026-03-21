@@ -90,7 +90,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
     */
     public final String getText() {
         int i;
-        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(Utils.m535l(this.f391b) ? this.f391b : AppState.m584b(451));
+        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(Utils.nonEmpty(this.f391b) ? this.f391b : AppState.getString(451));
         if (this.f392c > 0) {
             StringBuffer stringBufferAppend2 = stringBufferAppend.append(',').append(' ').append(this.f392c);
             if (this.f392c >= 100) {
@@ -101,9 +101,9 @@ public final class UserSearchResult implements ListItem, Identifiable {
             } else {
                 i = 320;
             }
-            stringBufferAppend2.append(AppState.m584b(i));
+            stringBufferAppend2.append(AppState.getString(i));
         }
-        if (Utils.m535l(this.f389h)) {
+        if (Utils.nonEmpty(this.f389h)) {
             stringBufferAppend.append(',').append(' ').append(this.f389h);
         }
         return NetworkUtils.m1215a(stringBufferAppend);

@@ -149,8 +149,8 @@ public final class XmppContact extends Contact {
         if (StringUtils.m3a(594984, str)) {
             XmlElement c0022avM562f = c0022av.findChildByKey(267927);
             if (c0022avM562f != null) {
-                String strM11a = StringUtils.m11a(c0022avM562f.textContent);
-                if (StringUtils.m1a(strM11a)) {
+                String strM11a = StringUtils.fromBuffer(c0022avM562f.textContent);
+                if (StringUtils.isEmpty(strM11a)) {
                     i = 1;
                     this.f39c = i;
                 } else {
@@ -186,7 +186,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: L */
     public final void mo148L() {
-        AppState.m591f(1316);
+        AppState.clearIndex(1316);
     }
 
     /* renamed from: a */

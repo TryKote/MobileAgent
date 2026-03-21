@@ -13,7 +13,7 @@ public final class ContactInfo extends Hashtable {
         if (abstractC0041l instanceof MrimContact) {
             m1258a(3, ((MrimContact) abstractC0041l).f297d);
         } else if (abstractC0041l instanceof MmpContact) {
-            m1283d(Utils.m510a((Object) ((MmpContact) abstractC0041l).f57c));
+            m1283d(Utils.parseInt((Object) ((MmpContact) abstractC0041l).f57c));
         } else if (abstractC0041l instanceof XmppContact) {
             m1258a(26, ((XmppContact) abstractC0041l).f38a);
         }
@@ -72,7 +72,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: a */
     private final ContactInfo m1258a(int i, String str) {
-        if (Utils.m535l(str)) {
+        if (Utils.nonEmpty(str)) {
             put(ResourceManager.m967e(i), str);
         }
         return this;
@@ -100,12 +100,12 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: d */
     public final ContactInfo m1263d() {
-        return m1258a(4, AppState.m584b(318));
+        return m1258a(4, AppState.getString(318));
     }
 
     /* renamed from: e */
     public final ContactInfo m1264e() {
-        return m1258a(4, AppState.m584b(319));
+        return m1258a(4, AppState.getString(319));
     }
 
     /* renamed from: f */
@@ -167,7 +167,7 @@ public final class ContactInfo extends Hashtable {
         String strM584b;
         int i2 = i % 10;
         if (i <= 0 || i >= 100) {
-            strM584b = AppState.m584b(323);
+            strM584b = AppState.getString(323);
         } else if (i < 5 || i > 20) {
             strM584b = i2 == 1 ? m1276a(i, 321) : (i2 < 2 || i2 > 4) ? m1276a(i, 320) : m1276a(i, 322);
         } else {
@@ -178,19 +178,19 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: a */
     private static final String m1276a(int i, int i2) {
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(i).append(AppState.m584b(i2)));
+        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(i).append(AppState.getString(i2)));
     }
 
     /* renamed from: c */
     public final ContactInfo m1277c(int i) {
-        return i == 1 ? m1264e() : i == 2 ? m1263d() : m1258a(4, AppState.m584b(197069));
+        return i == 1 ? m1264e() : i == 2 ? m1263d() : m1258a(4, AppState.getString(197069));
     }
 
     /* renamed from: p */
     public final ContactInfo m1278p(String str) {
         int iM511a = Utils.m511a(str, 1, 12, 0);
         if (iM511a != 0) {
-            Vector vectorM512e = Utils.m512e(AppState.m584b(685));
+            Vector vectorM512e = Utils.splitByNull(AppState.getString(685));
             m1258a(7, (String) vectorM512e.elementAt(iM511a));
             NetworkUtils.m1212a(vectorM512e);
         }
@@ -219,7 +219,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: d */
     public final ContactInfo m1283d(int i) {
-        return m1258a(60, StringUtils.m17c(Integer.toString(i)));
+        return m1258a(60, StringUtils.intern(Integer.toString(i)));
     }
 
     /* renamed from: u */
@@ -229,12 +229,12 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: e */
     public final ContactInfo m1285e(int i) {
-        return m1258a(61, StringUtils.m17c(Integer.toString(i)));
+        return m1258a(61, StringUtils.intern(Integer.toString(i)));
     }
 
     /* renamed from: h */
     private final String m1286h(int i) {
-        return Utils.m522f(m1256a(i));
+        return Utils.defaultStr(m1256a(i));
     }
 
     /* renamed from: f */
@@ -260,15 +260,15 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: j */
     public final String m1291j() {
-        String strM533j = Utils.m533j(m1286h(0));
-        return StringUtils.m1a(strM533j) ? m1256a(60) : strM533j;
+        String strM533j = Utils.trim(m1286h(0));
+        return StringUtils.isEmpty(strM533j) ? m1256a(60) : strM533j;
     }
 
     /* renamed from: k */
     public final String m1292k() {
-        String strM533j = Utils.m533j(StringUtils.m9b(Utils.m527g(m1286h(1)), Utils.m533j(m1286h(2))));
+        String strM533j = Utils.trim(StringUtils.concat(Utils.m527g(m1286h(1)), Utils.trim(m1286h(2))));
         String str = strM533j;
-        if (StringUtils.m1a(strM533j)) {
+        if (StringUtils.isEmpty(strM533j)) {
             String strM1256a = m1256a(0);
             str = strM1256a;
             if (null == strM1256a) {
@@ -290,7 +290,7 @@ public final class ContactInfo extends Hashtable {
         int iIndexOf3;
         Account abstractC0037hM1255c = m1255c();
         Screen c0013amM75b = ScreenManager.m75b(i);
-        Vector vectorM512e = Utils.m512e(AppState.m584b(312));
+        Vector vectorM512e = Utils.splitByNull(AppState.getString(312));
         int size = vectorM512e.size();
         if (abstractC0037hM1255c instanceof MrimAccount) {
             MrimContact c0035f = (MrimContact) abstractC0037hM1255c.getContact((Object) m1256a(3));
@@ -301,10 +301,10 @@ public final class ContactInfo extends Hashtable {
                     String strM1256a = m1256a(i3);
                     if (null != strM1256a) {
                         if (i3 == 6) {
-                            c0013amM75b.m248a(strM1215a, NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m12a(strM1256a, 8, 10)).append('/').append(StringUtils.m12a(strM1256a, 5, 7)).append('/').append(StringUtils.m13b(strM1256a, 4))));
+                            c0013amM75b.m248a(strM1215a, NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.getIcon()).m898b(Utils.m522f(m1256a(13))));
+                                c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(m1256a(12))) : c0035f.getIcon()).m898b(Utils.defaultStr(m1256a(13))));
                                 break;
                             }
                             c0013amM75b.m248a(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);
@@ -315,28 +315,28 @@ public final class ContactInfo extends Hashtable {
                 i3++;
             }
             if (c0035f != null) {
-                String strM522f = Utils.m522f(c0035f.f301h);
+                String strM522f = Utils.defaultStr(c0035f.f301h);
                 int i4 = Conversation.m1104a(strM522f, 927) ? 936 : Conversation.m1104a(strM522f, 926) ? 935 : Conversation.m1104a(strM522f, 929) ? 937 : Conversation.m1104a(strM522f, 928) ? 938 : Conversation.m1104a(strM522f, 930) ? 939 : Conversation.m1104a(strM522f, 931) ? 940 : Conversation.m1104a(strM522f, 932) ? 941 : Conversation.m1104a(strM522f, 933) ? 942 : 934;
                 StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                 if (i4 == 934) {
-                    int iM627a = AppState.m627a(strM522f, 2467256188365532259L);
+                    int iM627a = AppState.indexOfLong(strM522f, 2467256188365532259L);
                     if (iM627a >= 0 && (iIndexOf3 = strM522f.indexOf(34, iM627a + 9)) >= 0) {
-                        stringBufferM1217h.append(StringUtils.m12a(strM522f, iM627a + 8, iIndexOf3));
+                        stringBufferM1217h.append(StringUtils.substring(strM522f, iM627a + 8, iIndexOf3));
                     }
                 } else {
-                    stringBufferM1217h.append(AppState.m584b(i4));
+                    stringBufferM1217h.append(AppState.getString(i4));
                 }
-                int iM628b = AppState.m628b(strM522f, 943);
+                int iM628b = AppState.indexOfPool(strM522f, 943);
                 if (iM628b >= 0 && (iIndexOf = strM522f.indexOf(34, iM628b + 11)) >= 0) {
-                    stringBufferM1217h.append(AppState.m584b(944)).append(StringUtils.m12a(strM522f, iM628b + 10, iIndexOf));
-                    int iM628b2 = AppState.m628b(strM522f, 527990);
+                    stringBufferM1217h.append(AppState.getString(944)).append(StringUtils.substring(strM522f, iM628b + 10, iIndexOf));
+                    int iM628b2 = AppState.indexOfPool(strM522f, 527990);
                     if (iM628b2 >= 0 && (iIndexOf2 = strM522f.indexOf(34, iM628b2 + 9)) >= 0) {
-                        stringBufferM1217h.append('.').append(StringUtils.m12a(strM522f, iM628b2 + 8, iIndexOf2));
+                        stringBufferM1217h.append('.').append(StringUtils.substring(strM522f, iM628b2 + 8, iIndexOf2));
                     }
                 }
                 String strM1215a2 = NetworkUtils.m1215a(stringBufferM1217h);
-                if (Utils.m535l(strM1215a2)) {
-                    MenuItem c0032cM901a = MenuItem.m889d().m901a(AppState.m584b(317), 0, 6);
+                if (Utils.nonEmpty(strM1215a2)) {
+                    MenuItem c0032cM901a = MenuItem.m889d().m901a(AppState.getString(317), 0, 6);
                     String str = c0035f.f301h;
                     if (str == null) {
                         i2 = -1;
@@ -361,22 +361,22 @@ public final class ContactInfo extends Hashtable {
                     }
                 }
                 String str2 = c0035f.f304j;
-                if (Utils.m535l(str2)) {
-                    c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.m584b(324), 0, 6).m896a(242).m898b(str2));
+                if (Utils.nonEmpty(str2)) {
+                    c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.getString(324), 0, 6).m896a(242).m898b(str2));
                 }
                 String str3 = c0035f.f303i;
-                if (Utils.m535l(str3)) {
-                    c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.m584b(325), 0, 6).m896a(2).m898b(str3));
+                if (Utils.nonEmpty(str3)) {
+                    c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.getString(325), 0, 6).m896a(2).m898b(str3));
                 }
                 String strM998o = c0035f.m998o();
-                if (Utils.m535l(strM998o)) {
-                    c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.m584b(326), 0, 6).m896a(365).m898b(strM998o));
+                if (Utils.nonEmpty(strM998o)) {
+                    c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.getString(326), 0, 6).m896a(365).m898b(strM998o));
                 }
             }
         } else if (abstractC0037hM1255c instanceof MmpProtocol) {
             String strM1256a2 = m1256a(60);
             if (null != strM1256a2) {
-                c0013amM75b.m248a(Utils.m527g(AppState.m584b(263250)), strM1256a2);
+                c0013amM75b.m248a(Utils.m527g(AppState.getString(263250)), strM1256a2);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
@@ -389,27 +389,27 @@ public final class ContactInfo extends Hashtable {
             }
             String strM1256a4 = m1256a(5);
             if (null != strM1256a4) {
-                c0013amM75b.m248a(AppState.m584b(315), strM1256a4);
+                c0013amM75b.m248a(AppState.getString(315), strM1256a4);
             }
             String strM1256a5 = m1256a(32);
             if (null != strM1256a5) {
-                c0013amM75b.m248a(AppState.m584b(313), strM1256a5);
+                c0013amM75b.m248a(AppState.getString(313), strM1256a5);
             }
             String strM1256a6 = m1256a(37);
             if (null != strM1256a6) {
-                c0013amM75b.m248a(AppState.m584b(314), strM1256a6);
+                c0013amM75b.m248a(AppState.getString(314), strM1256a6);
             }
             String strM1256a7 = m1256a(36);
             if (null != strM1256a7) {
-                c0013amM75b.m248a(AppState.m584b(316), strM1256a7);
+                c0013amM75b.m248a(AppState.getString(316), strM1256a7);
             }
         } else if (abstractC0037hM1255c instanceof XmppProtocol) {
             Image image = (Image) get(ResourceManager.m967e(25));
             if (image != null) {
                 c0013amM75b.m225a(MenuItem.m893a(new GraphicsContext(image)));
             }
-            c0013amM75b.m246a(Utils.m510a((Object) m1256a(24)), m1286h(0), 0);
-            c0013amM75b.m245a(AppState.m584b(744), m1256a(26), 0);
+            c0013amM75b.m246a(Utils.parseInt((Object) m1256a(24)), m1286h(0), 0);
+            c0013amM75b.m245a(AppState.getString(744), m1256a(26), 0);
             String strM1256a8 = m1256a(11);
             if (null != strM1256a8) {
                 c0013amM75b.m253a(strM1256a8);
@@ -441,6 +441,6 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: g */
     public final ContactInfo m1298g(int i) {
-        return m1258a(24, StringUtils.m17c(Integer.toString(i)));
+        return m1258a(24, StringUtils.intern(Integer.toString(i)));
     }
 }

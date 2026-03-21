@@ -48,7 +48,7 @@ public final class MmpProtocol extends Account {
         this.lastError = -1;
         this.configFlags = 0;
         this.f278L = 4;
-        MmpContactGroup c0016ap = new MmpContactGroup(this, 0, AppState.m584b(1039));
+        MmpContactGroup c0016ap = new MmpContactGroup(this, 0, AppState.getString(1039));
         c0016ap.isSpecial = true;
         this.defaultGroup = c0016ap;
         this.f275f = new Hashtable();
@@ -105,25 +105,25 @@ public final class MmpProtocol extends Account {
     @Override // p000.Account
     /* renamed from: b */
     public final ContactGroup createOnlineGroup() {
-        return new MmpContactGroup(this, -1, AppState.m584b(1040));
+        return new MmpContactGroup(this, -1, AppState.getString(1040));
     }
 
     @Override // p000.Account
     /* renamed from: c */
     public final ContactGroup createBlockedGroup() {
-        return new MmpContactGroup(this, -2, AppState.m584b(1042));
+        return new MmpContactGroup(this, -2, AppState.getString(1042));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final ContactGroup createOfflineGroup() {
-        return new MmpContactGroup(this, -3, AppState.m584b(1041));
+        return new MmpContactGroup(this, -3, AppState.getString(1041));
     }
 
     @Override // p000.Account
     /* renamed from: e */
     public final ContactGroup createSpecialGroup() {
-        return new MmpContactGroup(this, -4, AppState.m584b(1043));
+        return new MmpContactGroup(this, -4, AppState.getString(1043));
     }
 
     @Override // p000.Account
@@ -248,7 +248,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.m541c(vectorM439R) == 0) {
-                        IOUtils.m778d((Object) AppState.m584b(479));
+                        IOUtils.m778d((Object) AppState.getString(479));
                         this.progress = 0;
                     }
                     NetworkUtils.m1212a(vectorM439R);
@@ -296,7 +296,7 @@ public final class MmpProtocol extends Account {
                     this.msgCount = 85;
                     AppController.m421a((Account) this, c0043nM1350t);
                     if (c0043nM1350t.peekByteAt(1) == 1) {
-                        long j = AppState.m587e(1536) ? 25000L : 60000L;
+                        long j = AppState.getBool(1536) ? 25000L : 60000L;
                         this.timeout = j;
                         this.deadline = System.currentTimeMillis() + j;
                         incrementSync();
@@ -374,9 +374,9 @@ public final class MmpProtocol extends Account {
                         try {
                             int iM1355w = c0043nM1299a.readIntBE();
                             int iM1355w2 = c0043nM1299a.readIntBE();
-                            String strM17c = AppState.f181d;
+                            String strM17c = AppState.emptyStr;
                             boolean z = false;
-                            byte[] bArr2 = AppState.f176a;
+                            byte[] bArr2 = AppState.emptyBytes;
                             while (c0043nM1299a.length > 0) {
                                 int iM1353u = c0043nM1299a.readShortBE();
                                 int iM1353u2 = c0043nM1299a.readShortBE();
@@ -386,7 +386,7 @@ public final class MmpProtocol extends Account {
                                     c0043nM1299a.readIntoBytes(bArr4);
                                 }
                                 if (iM1353u == 1) {
-                                    strM17c = StringUtils.m17c(new String(bArr4));
+                                    strM17c = StringUtils.intern(new String(bArr4));
                                 } else if (iM1353u == 2) {
                                     z = true;
                                 } else if (iM1353u == 3) {
@@ -457,17 +457,17 @@ public final class MmpProtocol extends Account {
                     case 4891:
                         String strM1363z2 = c0043nM1299a.readLenPrefixStr();
                         byte bM1344o = c0043nM1299a.readByte();
-                        onMessage(strM1363z2, 0L, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(483)).append(AppState.m584b(bM1344o == 1 ? 484 : 485)).append(c0043nM1299a.readVarLenStr())));
+                        onMessage(strM1363z2, 0L, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(483)).append(AppState.getString(bM1344o == 1 ? 484 : 485)).append(c0043nM1299a.readVarLenStr())));
                         if (bM1344o == 1 && null != (abstractC0041lM1069c = getContact((Object) strM1363z2))) {
                             abstractC0041lM1069c.performAction();
                             break;
                         }
                         break;
                     case 4892:
-                        onMessage(c0043nM1299a.readLenPrefixStr(), 0L, AppState.m584b(480));
+                        onMessage(c0043nM1299a.readLenPrefixStr(), 0L, AppState.getString(480));
                         break;
                     case 5377:
-                        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.m584b(482))));
+                        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.getString(482))));
                         XmppMailRuProtocol.m881b(this, iM1356x);
                         break;
                     case 5379:
@@ -549,9 +549,9 @@ public final class MmpProtocol extends Account {
                         c0009ai.highlighted = true;
                     }
                 } else if (iM1353u2 == 13) {
-                    byte[] bArrM581a = AppState.m581a(905);
-                    byte[] bArrM581a2 = AppState.m581a(906);
-                    byte[] bArrM581a3 = AppState.m581a(908);
+                    byte[] bArrM581a = AppState.getBytes(905);
+                    byte[] bArrM581a2 = AppState.getBytes(906);
+                    byte[] bArrM581a3 = AppState.getBytes(908);
                     byte[] bArr = c0043n.data;
                     int i3 = c0043n.offset;
                     for (int i4 = 0; i4 < iM1353u3; i4 += 16) {
@@ -579,8 +579,8 @@ public final class MmpProtocol extends Account {
                         } else if (iM1353u4 == 14) {
                             byte[] bArr2 = new byte[iM1353u5];
                             c0043n.readIntoBytes(bArr2);
-                            String strM17c = StringUtils.m17c(new String(bArr2));
-                            if (strM17c.startsWith(NetworkUtils.m1221a(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.m15c(strM17c, 7), 0, 23, -1)) >= 0) {
+                            String strM17c = StringUtils.intern(new String(bArr2));
+                            if (strM17c.startsWith(NetworkUtils.m1221a(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.suffix(strM17c, 7), 0, 23, -1)) >= 0) {
                                 c0009ai.defaultIcon &= -65536;
                                 c0009ai.defaultIcon |= iM511a + 269;
                             }
@@ -682,8 +682,8 @@ public final class MmpProtocol extends Account {
             return 299;
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        AppState.f177b[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.f57c);
-        return trySendData(StringUtils.m18a(this, Utils.m510a((Object) c0009ai.f57c)));
+        AppState.pool[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.f57c);
+        return trySendData(StringUtils.m18a(this, Utils.parseInt((Object) c0009ai.f57c)));
     }
 
     @Override // p000.Account
@@ -881,7 +881,7 @@ public final class MmpProtocol extends Account {
         ByteBuffer c0043nM1358n = new ByteBuffer().writeIntLE(this.f269a).writeShortLE(2000).writeShortBE(0).writeShortLE(1375);
         String str = strArr[0];
         if (str.length() > 0) {
-            c0043nM1358n.writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.m510a((Object) str));
+            c0043nM1358n.writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.parseInt((Object) str));
         } else {
             c0043nM1358n.writeShortBE(12290).writeShortLE(1).writeByte(strArr[1].length()).writeProtocolStr(21505, strArr[2]).writeProtocolStr(16385, strArr[3]).writeProtocolStr(18945, strArr[4]).writeProtocolStr(24065, strArr[5]).writeProtocolStr(36865, strArr[6]).writeProtocolStr(9730, strArr[7]);
         }
@@ -896,7 +896,7 @@ public final class MmpProtocol extends Account {
         ContactGroup abstractC0046q = this.defaultGroup;
         MmpContact c0009ai = new MmpContact(this, -1, -1, str, str, true);
         abstractC0046q.addContact((Object) c0009ai);
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(this.f269a).writeShortLE(2000).writeShortBE(0).writeShortLE(1375).writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.m510a((Object) str));
+        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(this.f269a).writeShortLE(2000).writeShortBE(0).writeShortLE(1375).writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.parseInt((Object) str));
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(1);
         int i = c0043nM1360p.length;
         trySendData(m916a(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.writeShortBE(i + 2).writeShortLE(i).writeBuffer(c0043nM1360p)), ResourceManager.m967e(21)}));

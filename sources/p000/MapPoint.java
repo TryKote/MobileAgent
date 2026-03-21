@@ -101,7 +101,7 @@ public final class MapPoint implements ListItem {
         int iIndexOf;
         try {
             int iIndexOf2 = this.f133a.indexOf(59);
-            return (iIndexOf2 < 0 || (iIndexOf = this.f133a.indexOf(59, iIndexOf2 + 1)) < 0) ? this.f133a : StringUtils.m13b(this.f133a, iIndexOf);
+            return (iIndexOf2 < 0 || (iIndexOf = this.f133a.indexOf(59, iIndexOf2 + 1)) < 0) ? this.f133a : StringUtils.prefix(this.f133a, iIndexOf);
         } catch (Throwable unused) {
             return this.f133a;
         }

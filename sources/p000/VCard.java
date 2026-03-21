@@ -8,28 +8,28 @@ import java.util.Vector;
 public final class VCard {
 
     /* renamed from: a */
-    public String f13a = AppState.f181d;
+    public String f13a = AppState.emptyStr;
 
     /* renamed from: b */
-    public String f14b = AppState.f181d;
+    public String f14b = AppState.emptyStr;
 
     /* renamed from: c */
-    public String f15c = AppState.f181d;
+    public String f15c = AppState.emptyStr;
 
     /* renamed from: d */
-    public String f16d = AppState.f181d;
+    public String f16d = AppState.emptyStr;
 
     /* renamed from: e */
-    public String f17e = AppState.f181d;
+    public String f17e = AppState.emptyStr;
 
     /* renamed from: f */
-    public String f18f = AppState.f181d;
+    public String f18f = AppState.emptyStr;
 
     /* renamed from: g */
-    public String f19g = AppState.f181d;
+    public String f19g = AppState.emptyStr;
 
     /* renamed from: h */
-    public String f20h = AppState.f181d;
+    public String f20h = AppState.emptyStr;
 
     /* renamed from: i */
     public int f21i = 2;
@@ -109,8 +109,8 @@ public final class VCard {
             strArr[6] = c0043n.readWideStr();
             strArr[7] = c0043n.readWideStr();
         } else {
-            strArr[6] = AppState.f181d;
-            strArr[7] = AppState.f181d;
+            strArr[6] = AppState.emptyStr;
+            strArr[7] = AppState.emptyStr;
         }
         return strArr;
     }
@@ -144,7 +144,7 @@ public final class VCard {
 
     /* renamed from: c */
     public final boolean m59c() {
-        return (StringUtils.m1a(this.f13a) || StringUtils.m1a(this.f14b)) ? false : true;
+        return (StringUtils.isEmpty(this.f13a) || StringUtils.isEmpty(this.f14b)) ? false : true;
     }
 
     /* renamed from: d */
@@ -161,7 +161,7 @@ public final class VCard {
 
     /* renamed from: e */
     public final void m61e() {
-        String str = AppState.f181d;
+        String str = AppState.emptyStr;
         this.f14b = str;
         this.f13a = str;
         this.f24l = false;

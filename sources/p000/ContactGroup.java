@@ -67,7 +67,7 @@ public abstract class ContactGroup implements Sortable {
                     i2++;
                 }
             }
-            MenuItem c0032cM901a2 = c0032cM901a.m901a(StringUtils.m17c(Integer.toString(i2)), 1, 20);
+            MenuItem c0032cM901a2 = c0032cM901a.m901a(StringUtils.intern(Integer.toString(i2)), 1, 20);
             StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('/');
             int size2 = this.contacts.size();
             int i3 = size2;
@@ -138,7 +138,7 @@ public abstract class ContactGroup implements Sortable {
 
     /* renamed from: c */
     public final void setNameIfChanged(String str) {
-        if (StringUtils.m6a(str, this.name)) {
+        if (StringUtils.equals(str, this.name)) {
             return;
         }
         setName(str);
@@ -148,7 +148,7 @@ public abstract class ContactGroup implements Sortable {
     /* renamed from: d */
     public final void setName(String str) {
         this.name = str;
-        this.nameLower = StringUtils.m17c(str.toLowerCase());
+        this.nameLower = StringUtils.intern(str.toLowerCase());
     }
 
     /* renamed from: b */

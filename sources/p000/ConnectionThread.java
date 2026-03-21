@@ -53,7 +53,7 @@ public final class ConnectionThread {
 
     public ConnectionThread(String str) {
         this.f351k = str;
-        Vector vectorM614m = AppState.m614m(1358);
+        Vector vectorM614m = AppState.getVector(1358);
         if (vectorM614m != null) {
             synchronized (vectorM614m) {
                 vectorM614m.addElement(IOUtils.m761a(this));
@@ -94,7 +94,7 @@ public final class ConnectionThread {
         switch (this.f349c) {
             case 1:
                 try {
-                    this.f350j = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeRawString(this.f351k).getStringAndClear(), AppState.m587e(112));
+                    this.f350j = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeRawString(this.f351k).getStringAndClear(), AppState.getBool(112));
                     if (this.f349c == 1) {
                         this.f349c = 2;
                     }
@@ -117,7 +117,7 @@ public final class ConnectionThread {
                 this.f349c = 0;
                 return;
             default:
-                Vector vectorM614m = AppState.m614m(1358);
+                Vector vectorM614m = AppState.getVector(1358);
                 if (vectorM614m != null) {
                     synchronized (vectorM614m) {
                         vectorM614m.removeElement(this);
@@ -147,7 +147,7 @@ public final class ConnectionThread {
                     } while (iM1190a != iM1188c);
                     synchronized (c0043n) {
                         c0043n.ensureCapacity(iM1188c);
-                        Utils.m490a((Object) bArrM1211a, 0, (Object) c0043n.data, c0043n.length, iM1188c);
+                        Utils.arraycopy((Object) bArrM1211a, 0, (Object) c0043n.data, c0043n.length, iM1188c);
                         c0043n.length += iM1188c;
                         c0043n.compact();
                     }
@@ -171,7 +171,7 @@ public final class ConnectionThread {
                     int i = c0043n.length;
                     if (i > 0) {
                         byte[] bArrM1211a = NetworkUtils.m1211a(i);
-                        Utils.m490a((Object) c0043n.data, c0043n.offset, (Object) bArrM1211a, 0, i);
+                        Utils.arraycopy((Object) c0043n.data, c0043n.offset, (Object) bArrM1211a, 0, i);
                         c0043n.offset += i;
                         c0043n.length -= i;
                         c0043n.compact();
@@ -190,9 +190,9 @@ public final class ConnectionThread {
     /* renamed from: q */
     private static void m1136q() {
         XmppContactGroup.f310a = NetworkUtils.m1213g();
-        f355f = Utils.m515b(AppState.m584b(264), (char) 0);
+        f355f = Utils.split(AppState.getString(264), (char) 0);
         try {
-            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.m584b(265));
+            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(265));
             f352l = new Hashtable();
             try {
                 if (c0043nM986d.length > 0) {
@@ -203,13 +203,13 @@ public final class ConnectionThread {
                             break;
                         }
                         NetworkUtils c0040k = new NetworkUtils(c0043nM986d);
-                        f352l.put(StringUtils.m17c(Integer.toString(c0040k.f360b)), c0040k);
+                        f352l.put(StringUtils.intern(Integer.toString(c0040k.f360b)), c0040k);
                     }
                 }
             } catch (Throwable unused) {
             }
             m1146e();
-            AppState.m594c(1576, 1);
+            AppState.setInt(1576, 1);
         } catch (Throwable unused2) {
         }
     }
@@ -232,25 +232,25 @@ public final class ConnectionThread {
                 i3++;
                 XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);
                 if (StringUtils.m3a(263156, c0022av3.tagName)) {
-                    c0040k.f362d = StringUtils.m11a(c0022av3.textContent);
+                    c0040k.f362d = StringUtils.fromBuffer(c0022av3.textContent);
                 }
             }
             f352l.put(strM555c, c0040k);
         }
         f353d = new Hashtable();
-        AppState.m594c(1576, 1);
+        AppState.setInt(1576, 1);
         try {
-            AppState.m601a(265, (Object) AppState.f181d);
-            AppState.m601a(265, (Object) m1145r().toBase64());
+            AppState.setObject(265, (Object) AppState.emptyStr);
+            AppState.setObject(265, (Object) m1145r().toBase64());
         } catch (Throwable unused) {
-            AppState.m601a(254, (Object) AppState.f181d);
+            AppState.setObject(254, (Object) AppState.emptyStr);
         }
     }
 
     /* renamed from: a */
     public static final String m1138a(Object obj) {
         NetworkUtils c0040k;
-        if (!AppState.m587e(1576) || (c0040k = (NetworkUtils) f352l.get(obj)) == null) {
+        if (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(obj)) == null) {
             return null;
         }
         return c0040k.f361c;
@@ -260,7 +260,7 @@ public final class ConnectionThread {
     public static final Image m1139a(String str) {
         NetworkUtils c0040k;
         Image image;
-        if (!AppState.m587e(1576)) {
+        if (!AppState.getBool(1576)) {
             return null;
         }
         synchronized (f353d) {
@@ -269,13 +269,13 @@ public final class ConnectionThread {
             if (image2 == null) {
                 try {
                     Hashtable hashtable = f353d;
-                    Image imageM1348r = XmppMailRuProtocol.m851h(StringUtils.m9b("upi", str)).toImage();
+                    Image imageM1348r = XmppMailRuProtocol.m851h(StringUtils.concat("upi", str)).toImage();
                     image3 = imageM1348r;
                     hashtable.put(str, imageM1348r);
                 } catch (Throwable unused) {
                     if (f354e == null) {
                         f354e = str;
-                        new AsyncTask(14, (!AppState.m587e(1576) || (c0040k = (NetworkUtils) f352l.get(str)) == null) ? null : c0040k.f362d);
+                        new AsyncTask(14, (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(str)) == null) ? null : c0040k.f362d);
                     }
                 }
                 image = image3;
@@ -288,7 +288,7 @@ public final class ConnectionThread {
 
     /* renamed from: a */
     public static final Vector m1140a(int i) {
-        if (!AppState.m587e(1576)) {
+        if (!AppState.getBool(1576)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.m1213g();
@@ -307,7 +307,7 @@ public final class ConnectionThread {
 
     /* renamed from: c */
     public static final Vector m1141c() {
-        if (!AppState.m587e(1576)) {
+        if (!AppState.getBool(1576)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.m1213g();
@@ -323,7 +323,7 @@ public final class ConnectionThread {
 
     /* renamed from: d */
     public static final Vector m1142d() {
-        if (!AppState.m587e(1576)) {
+        if (!AppState.getBool(1576)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.m1213g();
@@ -339,7 +339,7 @@ public final class ConnectionThread {
 
     /* renamed from: b */
     private static final int m1143b(Object obj) {
-        if (!AppState.m587e(1576)) {
+        if (!AppState.getBool(1576)) {
             return 2;
         }
         try {
@@ -398,7 +398,7 @@ public final class ConnectionThread {
     /* JADX WARN: Multi-variable type inference failed */
     /* renamed from: b */
     public static final void m1150b(Object[] objArr) throws InterruptedException {
-        MrimAccount c0028ba = (MrimAccount) AppState.m616i();
+        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         Object[] objArrM1151a = m1151a(objArr, c0028ba);
         if (objArr[8] != null) {
             objArr[4] = objArrM1151a;
@@ -409,8 +409,8 @@ public final class ConnectionThread {
             return;
         }
         objArr[8] = objArr;
-        MrimAccount c0028ba2 = (MrimAccount) AppState.m616i();
-        Object[] objArrM1147a = m1147a(NetworkUtils.m1217h().append(AppState.m584b(1771076)).append(c0028ba2.login).append(AppState.m584b(656925)).append(c0028ba2.password).append(AppState.m584b(1381)));
+        MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
+        Object[] objArrM1147a = m1147a(NetworkUtils.m1217h().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) m1149a(objArrM1147a)[7]).f436a.join();
         c0028ba.f225a = (String) objArrM1147a[6];
@@ -428,7 +428,7 @@ public final class ConnectionThread {
                         AppController.m343s();
                         String str = (String) objArr[5];
                         if (str == null) {
-                            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(1115687)).append(objArr[2]));
+                            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(1115687)).append(objArr[2]));
                         } else {
                             strM1215a = str;
                         }
@@ -476,7 +476,7 @@ public final class ConnectionThread {
             c0024ax.m635b((String) objArr[0]);
             m1153a(c0024ax, 919726, 788668);
             m1153a(c0024ax, 657608, 329938);
-            m1154a(c0024ax, 395489, ((MrimAccount) AppState.m616i()).f225a);
+            m1154a(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).f225a);
             byte[] bArr = (byte[]) objArr[3];
             if (bArr != null) {
                 m1153a(c0024ax, 788628, 2164851);
@@ -491,13 +491,13 @@ public final class ConnectionThread {
 
     /* renamed from: a */
     public static final void m1153a(HttpClient c0024ax, int i, int i2) throws IOException {
-        m1154a(c0024ax, i, AppState.m584b(i2));
+        m1154a(c0024ax, i, AppState.getString(i2));
     }
 
     /* renamed from: a */
     private static void m1154a(HttpClient c0024ax, int i, String str) throws IOException {
         if (str != null) {
-            c0024ax.m636a(AppState.m584b(i), str);
+            c0024ax.m636a(AppState.getString(i), str);
         }
     }
 
@@ -515,14 +515,14 @@ public final class ConnectionThread {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.m584b(329959)) && StringUtils.m3a(657623, StringUtils.m17c(headerFieldKey.toLowerCase()))) {
-                        objArr[6] = StringUtils.m13b(headerField, headerField.indexOf(59));
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(329959)) && StringUtils.m3a(657623, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                        objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;
                 } catch (Throwable unused) {
                 }
             }
-            M804a = IOUtils.m804a(iM634a, StringUtils.m17c(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
+            M804a = IOUtils.m804a(iM634a, StringUtils.intern(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
             return M804a;
         } catch (Throwable th) {
             return IOUtils.m803f(th);
@@ -541,15 +541,15 @@ public final class ConnectionThread {
     /* renamed from: f */
     public static final void m1157f() {
         m1159s();
-        AppState.m594c(1476, 6);
+        AppState.setInt(1476, 6);
         Screen c0013amM75b = ScreenManager.m75b(1578);
         f357m = c0013amM75b;
         m1160d(c0013amM75b);
         ScreenManager.m70a(c0013amM75b);
         TabBar.m171g();
         TabBar.m176a(6, (Account) null);
-        TabBar.f44a = AppState.m587e(1414);
-        if (AppState.m587e(281)) {
+        TabBar.f44a = AppState.getBool(1414);
+        if (AppState.getBool(281)) {
             return;
         }
         ScreenBuilder.m546a(178);
@@ -557,19 +557,19 @@ public final class ConnectionThread {
 
     /* renamed from: g */
     public static final void m1158g() {
-        if (AppState.m587e(1547)) {
-            if (AppState.m587e(1409) || f357m == null) {
+        if (AppState.getBool(1547)) {
+            if (AppState.getBool(1409) || f357m == null) {
                 return;
             }
-            f357m.m259a(AppState.m584b(330), AppState.m584b(1055), 167, 4, 167);
-            AppState.m594c(1409, 1);
+            f357m.m259a(AppState.getString(330), AppState.getString(1055), 167, 4, 167);
+            AppState.setInt(1409, 1);
             return;
         }
-        if (!AppState.m587e(1409) || f357m == null) {
+        if (!AppState.getBool(1409) || f357m == null) {
             return;
         }
         m1160d(f357m);
-        AppState.m594c(1409, 0);
+        AppState.setInt(1409, 0);
     }
 
     /* renamed from: s */
@@ -579,27 +579,27 @@ public final class ConnectionThread {
         }
         f356g = true;
         int i = ScreenManager.m75b(1578).f115r;
-        AppState.m597a(1558, 4178628L);
-        AppState.m597a(1560, 7482960L);
-        AppState.f177b[1400] = XmppContactGroup.m1047d(225);
-        AppState.f177b[1401] = XmppContactGroup.m1047d(226);
-        AppState.m594c(1415, AppState.m586d(1528));
-        AppState.m594c(1416, i);
-        AppState.m597a(1410, AppState.m598g(35));
-        AppState.m597a(1412, AppState.m598g(37));
-        MapRenderer.f193a = AppState.m586d(1415);
-        MapRenderer.f194b = AppState.m586d(1416);
-        MapRenderer.f195c = AppState.m598g(1412);
-        MapRenderer.f196d = AppState.m598g(1410);
-        int iM586d = AppState.m586d(39);
+        AppState.setLong(1558, 4178628L);
+        AppState.setLong(1560, 7482960L);
+        AppState.pool[1400] = XmppContactGroup.m1047d(225);
+        AppState.pool[1401] = XmppContactGroup.m1047d(226);
+        AppState.setInt(1415, AppState.getInt(1528));
+        AppState.setInt(1416, i);
+        AppState.setLong(1410, AppState.getLong(35));
+        AppState.setLong(1412, AppState.getLong(37));
+        MapRenderer.f193a = AppState.getInt(1415);
+        MapRenderer.f194b = AppState.getInt(1416);
+        MapRenderer.f195c = AppState.getLong(1412);
+        MapRenderer.f196d = AppState.getLong(1410);
+        int iM586d = AppState.getInt(39);
         MapRenderer.f197e = AppController.m317a(MapRenderer.f196d, iM586d);
         MapRenderer.f198f = AppController.m317a(MapRenderer.f195c, iM586d);
-        AppState.f177b[1364] = Image.createImage(MapRenderer.f193a, MapRenderer.f194b);
+        AppState.pool[1364] = Image.createImage(MapRenderer.f193a, MapRenderer.f194b);
         StringUtils.m19b();
-        AppState.f177b[1398] = NetworkUtils.m1213g();
-        AppState.f177b[1396] = NetworkUtils.m1213g();
-        Object[] objArrM332c = AppController.m332c(AppState.f181d);
-        AppState.f177b[1395] = objArrM332c;
+        AppState.pool[1398] = NetworkUtils.m1213g();
+        AppState.pool[1396] = NetworkUtils.m1213g();
+        Object[] objArrM332c = AppController.m332c(AppState.emptyStr);
+        AppState.pool[1395] = objArrM332c;
         XmppContactGroup.m1041a(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
         Graphics graphics = imageCreateImage.getGraphics();
@@ -612,8 +612,8 @@ public final class ConnectionThread {
             i2 ^= 2;
         }
         new GraphicsContext(graphics).m216a(312, 56, 56);
-        AppState.f177b[1393] = imageCreateImage;
-        AppState.f177b[1397] = NetworkUtils.m1213g();
+        AppState.pool[1393] = imageCreateImage;
+        AppState.pool[1397] = NetworkUtils.m1213g();
         new AsyncTask(8);
         MapRenderer.f199g = new Object();
         StringUtils.m41j();
@@ -624,24 +624,24 @@ public final class ConnectionThread {
         MmpContact.f64i = new long[2];
         MmpContact.f65j = new long[2];
         MapRenderer.f205m = NetworkUtils.m1213g();
-        if (AppState.m587e(253)) {
-            XmppContactGroup.m1049b(AppState.m614m(1401));
+        if (AppState.getBool(253)) {
+            XmppContactGroup.m1049b(AppState.getVector(1401));
         }
-        AppState.f177b[1383] = NetworkUtils.m1213g();
+        AppState.pool[1383] = NetworkUtils.m1213g();
         MapRenderer.f200h = true;
-        AppState.m597a(1556, System.currentTimeMillis() - 90);
+        AppState.setLong(1556, System.currentTimeMillis() - 90);
         new AsyncTask(10);
         m1136q();
     }
 
     /* renamed from: d */
     private static final void m1160d(Screen c0013am) {
-        c0013am.m259a(AppState.m584b(1062), AppState.m584b(AppState.m587e(1414) ? 1050 : 328), 20, 0, 0);
+        c0013am.m259a(AppState.getString(1062), AppState.getString(AppState.getBool(1414) ? 1050 : 328), 20, 0, 0);
     }
 
     /* renamed from: a */
     public static final void m1161a(Screen c0013am) {
-        if (AppState.m587e(1414)) {
+        if (AppState.getBool(1414)) {
             return;
         }
         m1164h();
@@ -651,13 +651,13 @@ public final class ConnectionThread {
     /* renamed from: b */
     public static final int m1162b(Screen c0013am) {
         MrimAccount c0028ba;
-        if (AppState.m587e(1547)) {
-            ((MrimAccount) AppState.m616i()).f232h = false;
+        if (AppState.getBool(1547)) {
+            ((MrimAccount) AppState.getAccount()).f232h = false;
             MapRenderer.f200h = true;
             m1164h();
             return 0;
         }
-        if (AppState.m587e(1479) && (c0028ba = (MrimAccount) AppState.m616i()) != null) {
+        if (AppState.getBool(1479) && (c0028ba = (MrimAccount) AppState.getAccount()) != null) {
             c0028ba.deselect();
         }
         m1164h();
@@ -667,8 +667,8 @@ public final class ConnectionThread {
 
     /* renamed from: c */
     public static final void m1163c(Screen c0013am) {
-        if (AppState.m587e(1414)) {
-            AppState.m594c(1564, 3);
+        if (AppState.getBool(1414)) {
+            AppState.setInt(1564, 3);
         } else {
             m1161a(c0013am);
         }
@@ -676,11 +676,11 @@ public final class ConnectionThread {
 
     /* renamed from: h */
     public static final void m1164h() {
-        boolean z = !AppState.m587e(1414);
+        boolean z = !AppState.getBool(1414);
         boolean z2 = z;
-        AppState.m599a(1414, z);
+        AppState.setBool(1414, z);
         if (!z2) {
-            AppState.m594c(1479, 0);
+            AppState.setInt(1479, 0);
         }
         TabBar.f44a = z2;
     }
@@ -689,8 +689,8 @@ public final class ConnectionThread {
     public static final void m1165a(MapPoint c0014an, boolean z) {
         m1159s();
         if (z) {
-            XmppContactGroup.m1043a(AppState.m614m(1400), c0014an, 0, 5);
-            XmppContactGroup.m1046a(AppState.m614m(1400), 225);
+            XmppContactGroup.m1043a(AppState.getVector(1400), c0014an, 0, 5);
+            XmppContactGroup.m1046a(AppState.getVector(1400), 225);
         }
         MapRenderer.f202j = c0014an;
         MapRenderer.m646a();
@@ -702,9 +702,9 @@ public final class ConnectionThread {
 
     /* renamed from: i */
     public static final int m1166i() {
-        Vector vectorM614m = AppState.m614m(1399);
+        Vector vectorM614m = AppState.getVector(1399);
         if (vectorM614m != null) {
-            AppState.m591f(1399);
+            AppState.clearIndex(1399);
         }
         if (vectorM614m == null) {
             return 0;
@@ -725,17 +725,17 @@ public final class ConnectionThread {
 
     /* renamed from: j */
     public static final Enumeration m1167j() {
-        return AppState.m614m(1401).elements();
+        return AppState.getVector(1401).elements();
     }
 
     /* renamed from: k */
     public static final boolean m1168k() {
-        return AppState.m614m(1401).size() > 0;
+        return AppState.getVector(1401).size() > 0;
     }
 
     /* renamed from: a */
     public static final void m1169a(MapPoint c0014an) {
-        Vector vectorM614m = AppState.m614m(1401);
+        Vector vectorM614m = AppState.getVector(1401);
         vectorM614m.removeElement(c0014an);
         XmppContactGroup.m1046a(vectorM614m, 226);
     }
@@ -799,7 +799,7 @@ public final class ConnectionThread {
     /* renamed from: n */
     public static final void m1173n() {
         m1159s();
-        AppState.m594c(1414, 1);
+        AppState.setInt(1414, 1);
         MapRenderer.m646a();
     }
 }

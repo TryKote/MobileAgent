@@ -119,7 +119,7 @@ public abstract class Account {
         ContactGroup abstractC0046qMo88e = createSpecialGroup();
         abstractC0046qMo88e.isSpecial = true;
         this.specialGroup = abstractC0046qMo88e;
-        this.shortName = Utils.m538m(str);
+        this.shortName = Utils.beforeAt(str);
     }
 
     public Account(ByteBuffer c0043n) {
@@ -226,7 +226,7 @@ public abstract class Account {
         if (i > 0) {
             synchronized (c0043n2) {
                 c0043n2.ensureCapacity(i);
-                Utils.m490a((Object) c0043n.data, c0043n.offset, (Object) c0043n2.data, c0043n2.length, i);
+                Utils.arraycopy((Object) c0043n.data, c0043n.offset, (Object) c0043n2.data, c0043n2.length, i);
                 c0043n.clear();
                 c0043n2.length += i;
                 c0043n2.compact();
@@ -334,9 +334,9 @@ public abstract class Account {
         String strM1215a;
         Throwable th = this.connection.f348b;
         if (null == th) {
-            strM1215a = AppState.m584b(951);
+            strM1215a = AppState.getString(951);
         } else {
-            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(th).append(AppState.m584b(946)).append(AppState.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         IOUtils.m784a(this, strM1215a);
         closeConnection();
@@ -352,7 +352,7 @@ public abstract class Account {
 
     /* renamed from: I */
     public final String getFormattedName() {
-        return this.authMode != 3 ? this.password : NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.m15c(this.password, 1)));
+        return this.authMode != 3 ? this.password : NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.suffix(this.password, 1)));
     }
 
     /* renamed from: J */
@@ -368,7 +368,7 @@ public abstract class Account {
 
     /* renamed from: f */
     public final void handleError(int i) {
-        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
+        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(459)).append(this).append(AppState.getString(460)).append(AppState.getString(457)).append(i)));
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -417,8 +417,8 @@ public abstract class Account {
             return;
         }
         AppController.m418c(abstractC0041lM1069c);
-        AppState.m614m(1242).addElement(abstractC0041lM1069c);
-        abstractC0041lM1069c.statusCode = AppState.m586d(1531);
+        AppState.getVector(1242).addElement(abstractC0041lM1069c);
+        abstractC0041lM1069c.statusCode = AppState.getInt(1531);
         abstractC0041lM1069c.dirty = true;
     }
 
@@ -491,16 +491,16 @@ public abstract class Account {
         if (!isConnected()) {
             return 299;
         }
-        if (StringUtils.m1a(str2)) {
+        if (StringUtils.isEmpty(str2)) {
             return 301;
         }
-        return StringUtils.m1a(str3) ? 302 : 0;
+        return StringUtils.isEmpty(str3) ? 302 : 0;
     }
 
     /* renamed from: a */
     public int validateModify(Contact abstractC0041l, Object[] objArr) {
         if (isConnected()) {
-            return StringUtils.m1a((String) objArr[0]) ? 301 : 0;
+            return StringUtils.isEmpty((String) objArr[0]) ? 301 : 0;
         }
         return 299;
     }
@@ -514,7 +514,7 @@ public abstract class Account {
     /* renamed from: a */
     public int validateGroupCreate(String str) {
         if (isConnected()) {
-            return StringUtils.m1a(str) ? 301 : 0;
+            return StringUtils.isEmpty(str) ? 301 : 0;
         }
         return 299;
     }
@@ -525,14 +525,14 @@ public abstract class Account {
             return 304;
         }
         if (isConnected()) {
-            return StringUtils.m1a(str) ? 301 : 0;
+            return StringUtils.isEmpty(str) ? 301 : 0;
         }
         return 299;
     }
 
     /* renamed from: a */
     public int setCredentials(String str, String str2) {
-        if (StringUtils.m1a(str)) {
+        if (StringUtils.isEmpty(str)) {
             return 301;
         }
         if (this.login.equals(str) && this.password.equals(str2)) {
@@ -542,7 +542,7 @@ public abstract class Account {
             return 300;
         }
         this.login = str;
-        this.shortName = Utils.m538m(str);
+        this.shortName = Utils.beforeAt(str);
         this.password = str2;
         return 0;
     }

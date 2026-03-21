@@ -81,13 +81,13 @@ public abstract class MapRenderer {
 
     /* renamed from: a */
     public static final void m646a() {
-        AppState.m599a(1551, false);
+        AppState.setBool(1551, false);
         f200h = true;
     }
 
     /* renamed from: f */
     private static final Image m647f() {
-        Image imageM615n = AppState.m615n(1363);
+        Image imageM615n = AppState.getImage(1363);
         if (imageM615n != null) {
             return imageM615n;
         }
@@ -103,7 +103,7 @@ public abstract class MapRenderer {
             i2 += 2;
             i ^= 2;
         }
-        AppState.f177b[1363] = imageCreateImage;
+        AppState.pool[1363] = imageCreateImage;
         return imageCreateImage;
     }
 
@@ -157,14 +157,14 @@ public abstract class MapRenderer {
             int i13 = (int) ((((i9 << 7) + 64) - f197e) + (f193a / 2));
             int i14 = (int) (f194b - ((((i10 << 7) + 64) - f198f) + (f194b / 2)));
             Vector vectorM1213g = NetworkUtils.m1213g();
-            Graphics graphics = AppState.m615n(1364).getGraphics();
-            int iM586d = AppState.m586d(39);
+            Graphics graphics = AppState.getImage(1364).getGraphics();
+            int iM586d = AppState.getInt(39);
             for (int i15 = i9; i15 <= i11; i15++) {
                 for (int i16 = i10; i16 <= i12; i16++) {
                     ResourceManager c0034e = new ResourceManager(1, iM586d, i15, i16);
                     ResourceManager c0034e2 = null;
                     vectorM1213g.addElement(c0034e);
-                    if (AppState.m587e(277) && iM586d > 8 && AppState.m587e(41) && StringUtils.m43a(f196d, f195c)) {
+                    if (AppState.getBool(277) && iM586d > 8 && AppState.getBool(41) && StringUtils.m43a(f196d, f195c)) {
                         ResourceManager c0034e3 = new ResourceManager(3, iM586d, i15, i16);
                         c0034e2 = c0034e3;
                         vectorM1213g.addElement(c0034e3);
@@ -178,7 +178,7 @@ public abstract class MapRenderer {
                     if (c0034e2 != null && imageM20a != m647f()) {
                         if (imageM20a2 != null) {
                             graphics.drawImage(imageM20a2, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
-                        } else if (imageM20a2 == null && !AppState.m614m(1396).contains(c0034e2)) {
+                        } else if (imageM20a2 == null && !AppState.getVector(1396).contains(c0034e2)) {
                             int i17 = i13 + (128 * (i15 - i9));
                             int i18 = i14 - (128 * (i16 - i10));
                             int color = graphics.getColor();
@@ -187,7 +187,7 @@ public abstract class MapRenderer {
                             graphics.drawRect((i17 - 64) + 2, (i18 - 64) + 2, 124, 124);
                             graphics.setStrokeStyle(0);
                             graphics.setColor(color);
-                            if (AppState.m587e(1535) && AppState.m587e(1414)) {
+                            if (AppState.getBool(1535) && AppState.getBool(1414)) {
                                 int[] iArr = new int[128];
                                 int i19 = 128;
                                 while (true) {
@@ -212,16 +212,16 @@ public abstract class MapRenderer {
                     }
                 }
             }
-            Vector vectorM614m2 = AppState.m614m(1383);
+            Vector vectorM614m2 = AppState.getVector(1383);
             int size3 = vectorM1213g.size();
             for (int i21 = 0; i21 < size3; i21++) {
                 ResourceManager c0034e4 = (ResourceManager) vectorM1213g.elementAt(i21);
                 if (!vectorM614m2.contains(c0034e4)) {
                     int i22 = c0034e4.f281a;
                     if (i22 == 1) {
-                        AppState.m595d(250, 1);
+                        AppState.addInt(250, 1);
                     } else if (i22 == 3) {
-                        AppState.m595d(251, 1);
+                        AppState.addInt(251, 1);
                     }
                     vectorM614m2.addElement(c0034e4);
                 }
@@ -235,7 +235,7 @@ public abstract class MapRenderer {
                     vectorM614m2.removeElementAt(size4);
                 }
             }
-            Vector vectorM614m3 = AppState.m614m(1397);
+            Vector vectorM614m3 = AppState.getVector(1397);
             synchronized (vectorM614m3) {
                 vectorM614m3.removeAllElements();
                 int size5 = vectorM1213g.size();
@@ -244,7 +244,7 @@ public abstract class MapRenderer {
                 }
                 NetworkUtils.m1212a(vectorM1213g);
             }
-            Vector vectorM614m4 = AppState.m614m(1402);
+            Vector vectorM614m4 = AppState.getVector(1402);
             synchronized (vectorM614m4) {
                 int size6 = vectorM614m4.size();
                 if (size6 > 0) {
@@ -265,14 +265,14 @@ public abstract class MapRenderer {
                     }
                     Font font = graphics.getFont();
                     int color2 = graphics.getColor();
-                    Font fontM625m = AppState.m625m();
+                    Font fontM625m = AppState.getFont();
                     graphics.setFont(fontM625m);
-                    int iM586d2 = AppState.m586d(72);
-                    graphics.setColor(AppState.m586d(5050 + iM586d2));
+                    int iM586d2 = AppState.getInt(72);
+                    graphics.setColor(AppState.getInt(5050 + iM586d2));
                     int iStringWidth = fontM625m.stringWidth(str) + 10;
-                    int iM586d3 = AppState.m586d(1450);
+                    int iM586d3 = AppState.getInt(1450);
                     graphics.fillRoundRect(5, 5, iStringWidth, iM586d3, 10, 10);
-                    graphics.setColor(AppState.m586d(iM586d2 + 4914));
+                    graphics.setColor(AppState.getInt(iM586d2 + 4914));
                     graphics.drawRoundRect(5, 5, iStringWidth, iM586d3, 10, 10);
                     graphics.drawString(str, 10, 5, 20);
                     graphics.setFont(font);
@@ -283,7 +283,7 @@ public abstract class MapRenderer {
             long j3 = f198f;
             int i26 = f193a;
             int i27 = f194b;
-            if (AppState.m587e(277) && !XmppContactGroup.m1033j() && iM586d >= 9 && (vector = XmppContactGroup.f310a) != null && (size2 = vector.size()) != 0) {
+            if (AppState.getBool(277) && !XmppContactGroup.m1033j() && iM586d >= 9 && (vector = XmppContactGroup.f310a) != null && (size2 = vector.size()) != 0) {
                 long j4 = (j2 - (i26 / 2)) / 32;
                 long j5 = (j3 - (i26 / 2)) / 32;
                 long j6 = (j2 + (i26 / 2)) / 32;
@@ -312,7 +312,7 @@ public abstract class MapRenderer {
                                 iArr2[(i34 * i28) + i33] = 1;
                                 if (str2 == null && Utils.m505a(j2 - jM317a) < 20 && Utils.m505a(j3 - jM317a2) < 20) {
                                     String str3 = (String) objArr2[2];
-                                    if (Utils.m535l(str3)) {
+                                    if (Utils.nonEmpty(str3)) {
                                         str2 = str3;
                                         i29 = i35;
                                         height = (i36 - (imageM1139a.getHeight() / 2)) + 2;
@@ -323,7 +323,7 @@ public abstract class MapRenderer {
                     }
                 }
                 if (str2 != null) {
-                    ChatRenderer.m831a(graphics, str2, AppState.m625m(), i26 - 40, i29, height);
+                    ChatRenderer.m831a(graphics, str2, AppState.getFont(), i26 - 40, i29, height);
                 }
             }
             MapPoint c0014an2 = f202j;
@@ -377,9 +377,9 @@ public abstract class MapRenderer {
             long j15 = f198f;
             int i41 = f193a;
             int i42 = f194b;
-            if (AppState.m587e(276) && AppState.m587e(280) && !XmppContactGroup.m1033j() && (vectorM614m = AppState.m614m(1404)) != null && (size = vectorM614m.size()) != 0) {
+            if (AppState.getBool(276) && AppState.getBool(280) && !XmppContactGroup.m1033j() && (vectorM614m = AppState.getVector(1404)) != null && (size = vectorM614m.size()) != 0) {
                 ListItem interfaceC0044o2 = null;
-                int iM586d4 = AppState.m586d(39);
+                int iM586d4 = AppState.getInt(39);
                 for (int i43 = 0; i43 < size; i43++) {
                     ListItem interfaceC0044o3 = (ListItem) vectorM614m.elementAt(i43);
                     if (interfaceC0044o3.isSelected() && iM586d4 == interfaceC0044o3.getCommandCount()) {
@@ -413,7 +413,7 @@ public abstract class MapRenderer {
             long j17 = f198f;
             int i47 = f193a;
             int i48 = f194b;
-            if (AppState.m587e(276) && AppState.m587e(279) && !XmppContactGroup.m1033j()) {
+            if (AppState.getBool(276) && AppState.getBool(279) && !XmppContactGroup.m1033j()) {
                 Vector vectorM448X = AppController.m448X();
                 int size7 = vectorM448X.size();
                 if (size7 > 0) {
@@ -494,8 +494,8 @@ public abstract class MapRenderer {
             long j23 = f198f;
             int i57 = f193a;
             int i58 = f194b;
-            if (AppState.m587e(276) && AppState.m587e(278) && !XmppContactGroup.m1033j()) {
-                AppState.m594c(1547, 0);
+            if (AppState.getBool(276) && AppState.getBool(278) && !XmppContactGroup.m1033j()) {
+                AppState.setInt(1547, 0);
                 Vector vectorM449Y = AppController.m449Y();
                 int size8 = vectorM449Y.size();
                 if (size8 != 0) {
@@ -519,9 +519,9 @@ public abstract class MapRenderer {
                         if (c0028ba != null) {
                             m659a(c0028ba);
                             if (c0028ba.f231g.f24l) {
-                                AppState.m594c(1547, 1);
+                                AppState.setInt(1547, 1);
                             }
-                            AppState.m617d(c0028ba);
+                            AppState.setAccount(c0028ba);
                         } else {
                             m660h();
                         }
@@ -533,7 +533,7 @@ public abstract class MapRenderer {
             long j25 = f198f;
             int i62 = f193a;
             int i63 = f194b;
-            if (AppState.m587e(276) && !XmppContactGroup.m1033j() && (interfaceC0044o = ConnectionThread.f358h) != null) {
+            if (AppState.getBool(276) && !XmppContactGroup.m1033j() && (interfaceC0044o = ConnectionThread.f358h) != null) {
                 long jMo282a5 = interfaceC0044o.getCommandId(iM586d);
                 long jMo283b5 = interfaceC0044o.executeCommand(iM586d);
                 graphics.drawImage(XmppContactGroup.m1023b(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);
@@ -546,7 +546,7 @@ public abstract class MapRenderer {
             ChatRenderer.m829a(graphics, f197e, f198f, iM586d, f193a, f194b, f195c);
             int i64 = f193a / 2;
             int i65 = f194b / 2;
-            if (f201i || AppState.m587e(1479)) {
+            if (f201i || AppState.getBool(1479)) {
                 int color3 = graphics.getColor();
                 graphics.setColor(0);
                 graphics.fillRect(i64 - 1, i65 - 7, 2, 5);
@@ -558,7 +558,7 @@ public abstract class MapRenderer {
             long j26 = f196d;
             long j27 = f195c;
             GeoRegion c0053x = null;
-            Vector vectorM614m5 = AppState.m614m(1389);
+            Vector vectorM614m5 = AppState.getVector(1389);
             int size9 = vectorM614m5.size();
             while (true) {
                 size9--;
@@ -576,8 +576,8 @@ public abstract class MapRenderer {
                 }
             }
             GeoRegion c0053x4 = c0053x;
-            if (AppState.m587e(277)) {
-                boolean zM587e = AppState.m587e(230);
+            if (AppState.getBool(277)) {
+                boolean zM587e = AppState.getBool(230);
                 int clipWidth = zM587e ? graphics.getClipWidth() - 4 : 18;
                 int i66 = -1;
                 int i67 = 0;
@@ -600,7 +600,7 @@ public abstract class MapRenderer {
                 }
                 if (ChatRenderer.f241a != i || ChatRenderer.f242b != i2) {
                     int i69 = i66;
-                    StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(974));
+                    StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.getString(974));
                     if (i69 < 0 || c0053x4 == null) {
                         i3 = 975;
                     } else {
@@ -609,22 +609,22 @@ public abstract class MapRenderer {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    AppState.m601a(1384, (Object) NetworkUtils.m1215a(stringBufferAppend.append(AppState.m584b(i3))));
+                    AppState.setObject(1384, (Object) NetworkUtils.m1215a(stringBufferAppend.append(AppState.getString(i3))));
                     ChatRenderer.f241a = i;
                     ChatRenderer.f242b = i2;
                 }
-                String strM584b = AppState.m584b(1384);
+                String strM584b = AppState.getString(1384);
                 Font font2 = graphics.getFont();
                 int color4 = graphics.getColor();
-                Font fontM625m2 = AppState.m625m();
+                Font fontM625m2 = AppState.getFont();
                 graphics.setFont(fontM625m2);
-                int iM586d5 = AppState.m586d(1450);
-                int iM586d6 = AppState.m586d(72);
-                int iM586d7 = AppState.m586d(iM586d6 + 4914);
+                int iM586d5 = AppState.getInt(1450);
+                int iM586d6 = AppState.getInt(72);
+                int iM586d7 = AppState.getInt(iM586d6 + 4914);
                 int i70 = iM586d5 > 18 ? iM586d5 : 18;
                 int clipHeight = (graphics.getClipHeight() - i70) - 1;
                 if (zM587e) {
-                    graphics.setColor(AppState.m586d(iM586d6 + 5050));
+                    graphics.setColor(AppState.getInt(iM586d6 + 5050));
                     graphics.fillRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
                 }
                 graphics.setColor(iM586d7);
@@ -660,20 +660,20 @@ public abstract class MapRenderer {
                 if (iCurrentTimeMillis >= 200) {
                     int i74 = iCurrentTimeMillis < 300 ? 40 : iCurrentTimeMillis < 400 ? 80 : iCurrentTimeMillis < 500 ? 120 : 140;
                     int color5 = graphics.getColor();
-                    graphics.setColor(AppState.m586d(5050 + AppState.m586d(72)));
+                    graphics.setColor(AppState.getInt(5050 + AppState.getInt(72)));
                     int i75 = i74;
                     graphics.fillArc(i72 - (i74 / 2), i73 - (i74 / 2), i75, i74, 0, 360);
                     graphics.setColor(color5);
                     j = i75;
                 }
             }
-            AppState.m594c(1553, 1);
+            AppState.setInt(1553, 1);
             if (f213r == 0) {
                 f200h = false;
             }
         }
         if (AppController.m307b(11, 2000L)) {
-            AppState.m594c(1549, 0);
+            AppState.setInt(1549, 0);
         }
         Vector vector2 = f205m;
         synchronized (vector2) {
@@ -690,13 +690,13 @@ public abstract class MapRenderer {
         if (f208n > 0 && !f201i) {
             long jCurrentTimeMillis2 = System.currentTimeMillis();
             if (jCurrentTimeMillis2 - f209o > 80) {
-                int iM586d8 = AppState.m586d(39);
+                int iM586d8 = AppState.getInt(39);
                 m649a(f196d, f195c + ((AppController.m315d(iM586d8) / AppController.m316e(iM586d8)) * 9));
                 f208n -= 9;
                 f209o = jCurrentTimeMillis2;
             }
         }
-        if (AppState.m587e(277) && System.currentTimeMillis() - XmppContactGroup.f311b > 600000 && AppState.m587e(1576) && AppState.m587e(1414) && !AppController.m345u()) {
+        if (AppState.getBool(277) && System.currentTimeMillis() - XmppContactGroup.f311b > 600000 && AppState.getBool(1576) && AppState.getBool(1414) && !AppController.m345u()) {
             XmppContactGroup.m1032i();
         }
     }
@@ -707,16 +707,16 @@ public abstract class MapRenderer {
         if (j2 == f195c && j == f196d) {
             return;
         }
-        int iM586d = AppState.m586d(39);
+        int iM586d = AppState.getInt(39);
         synchronized (f199g) {
             f195c = j2;
-            AppState.m597a(37, 37L);
+            AppState.setLong(37, 37L);
             f196d = j;
-            AppState.m597a(35, j);
+            AppState.setLong(35, j);
             f197e = AppController.m317a(j, iM586d);
             f198f = AppController.m317a(j2, iM586d);
             GeoRegion c0053x2 = f210w;
-            Vector vectorM614m = AppState.m614m(1389);
+            Vector vectorM614m = AppState.getVector(1389);
             int iM541c = Utils.m541c(vectorM614m);
             while (true) {
                 iM541c--;
@@ -732,7 +732,7 @@ public abstract class MapRenderer {
             }
             GeoRegion c0053x4 = c0053x;
             if (c0053x2 != c0053x) {
-                if (AppState.m587e(277)) {
+                if (AppState.getBool(277)) {
                     XmppContactGroup.m1032i();
                 }
                 f210w = c0053x4;
@@ -753,13 +753,13 @@ public abstract class MapRenderer {
 
     /* renamed from: a */
     public static final void m651a(int i) {
-        int iM586d = AppState.m586d(39);
+        int iM586d = AppState.getInt(39);
         if (i == iM586d || i < 3 || i > 17) {
             return;
         }
         int iM650b = m650b(i);
         int i2 = iM650b != 8 ? iM650b : iM586d < iM650b ? 9 : 7;
-        AppState.m594c(39, i2);
+        AppState.setInt(39, i2);
         f197e = AppController.m317a(f196d, i2);
         f198f = AppController.m317a(f195c, i2);
         m661e();
@@ -776,7 +776,7 @@ public abstract class MapRenderer {
 
     /* renamed from: a */
     public static final void m653a(MapPoint c0014an) {
-        if (AppState.m587e(1442)) {
+        if (AppState.getBool(1442)) {
             MmpContact.m183b(c0014an.f138f, c0014an.f139g);
         } else {
             MmpContact.m182a(c0014an.f138f, c0014an.f139g);
@@ -786,7 +786,7 @@ public abstract class MapRenderer {
             Conversation.m1129c();
         }
         c0014an.m269c();
-        AppState.m594c(1443, 0);
+        AppState.setInt(1443, 0);
     }
 
     /* renamed from: b */
@@ -875,7 +875,7 @@ public abstract class MapRenderer {
                 f212q = true;
                 return;
             } else {
-                int iM586d = AppState.m586d(39);
+                int iM586d = AppState.getInt(39);
                 m657b((int) AppController.m318a(m662c(i), iM586d), (int) AppController.m318a(m663d(i2), iM586d));
             }
         }
@@ -886,7 +886,7 @@ public abstract class MapRenderer {
     public static final void m665b(int i, int i2) {
         f212q = true;
         f213r = 0L;
-        int iM586d = AppState.m586d(39);
+        int iM586d = AppState.getInt(39);
         m649a((int) AppController.m318a(m662c(i), iM586d), (int) AppController.m318a(m663d(i2), iM586d));
         f200h = true;
     }
