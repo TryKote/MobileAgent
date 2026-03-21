@@ -57,7 +57,7 @@ public final class C0052w {
     }
 
     /* renamed from: a */
-    public final void m1410a(C0043n c0043n) {
+    public final void m1410a(ByteBuffer c0043n) {
         c0043n.m1309b(this.f410b).m1360p(this.f411c).m1360p(this.f409a).m1360p(this.f412d).m1308a(this.f413e);
         if (this.f414f.size() > 20) {
             this.f414f.setSize(20);
@@ -65,13 +65,13 @@ public final class C0052w {
         int size = this.f414f.size();
         c0043n.m1360p(size);
         for (int i = 0; i < size; i++) {
-            String strM521a = AbstractC0019as.m521a(this.f414f, i);
+            String strM521a = Utils.m521a(this.f414f, i);
             c0043n.m1308a(strM521a);
             C0026az c0026azM1415b = m1415b(strM521a);
             c0043n.m1323a(c0026azM1415b.f217b);
             C0031bd.m862a(c0026azM1415b.f218c, c0043n);
             C0031bd.m862a(c0026azM1415b.f219d, c0043n);
-            c0043n.m1360p(c0026azM1415b.f220e).m1360p(c0026azM1415b.f221f).m1309b(AbstractC0019as.m522f(c0026azM1415b.f222g));
+            c0043n.m1360p(c0026azM1415b.f220e).m1360p(c0026azM1415b.f221f).m1309b(Utils.m522f(c0026azM1415b.f222g));
             if (c0026azM1415b.f223h == null || c0026azM1415b.f223h.length() > 3072) {
                 c0043n.m1360p(0).m1360p(0);
             } else {
@@ -98,7 +98,7 @@ public final class C0052w {
     }
 
     /* renamed from: b */
-    public static final C0052w m1411b(C0043n c0043n) {
+    public static final C0052w m1411b(ByteBuffer c0043n) {
         C0052w c0052w = new C0052w();
         c0052w.f410b = c0043n.m1335e((String) null);
         c0052w.f411c = c0043n.m1328e();
@@ -117,11 +117,11 @@ public final class C0052w {
 
     /* renamed from: a */
     public final void m1412a(Object obj) {
-        this.f410b = AbstractC0017aq.m480c(obj, 263472);
-        this.f411c = AbstractC0017aq.m478b(obj, 526252);
-        this.f409a = AbstractC0017aq.m478b(obj, 132297);
-        this.f412d = AbstractC0017aq.m478b(obj, 395188);
-        this.f413e = AbstractC0023aw.f181d;
+        this.f410b = JsonParser.m480c(obj, 263472);
+        this.f411c = JsonParser.m478b(obj, 526252);
+        this.f409a = JsonParser.m478b(obj, 132297);
+        this.f412d = JsonParser.m478b(obj, 395188);
+        this.f413e = AppState.f181d;
         this.f419k = true;
     }
 
@@ -142,8 +142,8 @@ public final class C0052w {
             if (i < 0) {
                 return this.f410b;
             }
-        } while (!this.f410b.equals(AbstractC0023aw.m584b(i + 891)));
-        return AbstractC0023aw.m584b(i + 896);
+        } while (!this.f410b.equals(AppState.m584b(i + 891)));
+        return AppState.m584b(i + 896);
     }
 
     /* renamed from: a */
@@ -172,10 +172,10 @@ public final class C0052w {
     /* renamed from: a */
     public final int m1418a() {
         String strM1413g = m1413g();
-        if (C0000a.m3a(896, strM1413g) || C0000a.m3a(900, strM1413g)) {
+        if (StringUtils.m3a(896, strM1413g) || StringUtils.m3a(900, strM1413g)) {
             return 1;
         }
-        return (C0000a.m3a(898, strM1413g) || C0000a.m3a(899, strM1413g)) ? 2 : 3;
+        return (StringUtils.m3a(898, strM1413g) || StringUtils.m3a(899, strM1413g)) ? 2 : 3;
     }
 
     /* renamed from: b */
@@ -216,7 +216,7 @@ public final class C0052w {
 
     /* renamed from: f */
     public final String m1425f() {
-        if (this == ((C0028ba) AbstractC0023aw.m616i()).m746W()) {
+        if (this == ((C0028ba) AppState.m616i()).m746W()) {
             return this.f410b;
         }
         return C0040k.m1215a(C0040k.m1217h().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));

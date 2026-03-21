@@ -7,9 +7,9 @@ import java.util.Vector;
 public abstract class AbstractC0007ag {
     /* renamed from: a */
     public static final void m152a() {
-        AbstractC0023aw.m591f(1281);
-        AbstractC0023aw.m591f(1365);
-        AbstractC0023aw.m594c(1476, 4);
+        AppState.m591f(1281);
+        AppState.m591f(1365);
+        AppState.m594c(1476, 4);
         C0008ah.m176a(4, C0008ah.f54k);
         C0013am c0013amM161g = m161g();
         C0008ah c0008ahM175i = C0008ah.m175i();
@@ -23,7 +23,7 @@ public abstract class AbstractC0007ag {
     public static final int m153b() {
         m154f();
         C0032c c0032cM69e = AbstractC0004ad.m69e();
-        AbstractC0023aw.m613c(c0032cM69e == null ? null : c0032cM69e.f265d);
+        AppState.m613c(c0032cM69e == null ? null : c0032cM69e.f265d);
         return C0015ao.m457ac();
     }
 
@@ -37,8 +37,8 @@ public abstract class AbstractC0007ag {
 
     /* renamed from: c */
     public static final void m155c() {
-        AbstractC0023aw.m591f(1281);
-        AbstractC0023aw.m591f(1365);
+        AppState.m591f(1281);
+        AppState.m591f(1365);
         m154f();
     }
 
@@ -66,7 +66,7 @@ public abstract class AbstractC0007ag {
             return -1;
         }
         m154f();
-        AbstractC0023aw.m613c(obj);
+        AppState.m613c(obj);
         if (obj == null) {
             return 0;
         }
@@ -77,7 +77,7 @@ public abstract class AbstractC0007ag {
         if (!(obj instanceof AbstractC0041l)) {
             return 0;
         }
-        AbstractC0023aw.m591f(1279);
+        AppState.m591f(1279);
         C0015ao.m300h();
         return ((AbstractC0041l) obj).m1247K();
     }
@@ -85,7 +85,7 @@ public abstract class AbstractC0007ag {
     /* renamed from: a */
     public static final int m159a(Object obj) {
         m154f();
-        AbstractC0023aw.m613c(obj);
+        AppState.m613c(obj);
         return obj != null ? 30 : -1;
     }
 
@@ -104,13 +104,13 @@ public abstract class AbstractC0007ag {
     public static final int m160a(C0013am c0013am, Object obj) {
         AbstractC0037h abstractC0037h;
         int iM1250M = -1;
-        if (AbstractC0023aw.f177b[1291] != null) {
+        if (AppState.f177b[1291] != null) {
             return 122;
         }
-        if (!AbstractC0023aw.m587e(1471)) {
-            AbstractC0023aw.m594c(1471, 1);
-            if (System.currentTimeMillis() - AbstractC0023aw.m598g(219) > 604800000) {
-                AbstractC0023aw.m594c(1505, 0);
+        if (!AppState.m587e(1471)) {
+            AppState.m594c(1471, 1);
+            if (System.currentTimeMillis() - AppState.m598g(219) > 604800000) {
+                AppState.m594c(1505, 0);
                 return 57;
             }
         }
@@ -131,12 +131,12 @@ public abstract class AbstractC0007ag {
             AbstractC0037h abstractC0037h2 = abstractC0037h;
             int iMo108h = abstractC0037h.mo108h();
             String str = abstractC0037h2.f340J;
-            if (!AbstractC0023aw.m587e(243)) {
+            if (!AppState.m587e(243)) {
                 C0008ah.m164a(iMo108h, str);
             }
             if (vector != null) {
                 boolean z = false;
-                String str2 = AbstractC0023aw.f181d;
+                String str2 = AppState.f181d;
                 int i = 0;
                 if (abstractC0041l != null) {
                     try {
@@ -196,19 +196,19 @@ public abstract class AbstractC0007ag {
             vector.removeAllElements();
             C0015ao.f153g = true;
         }
-        return AbstractC0023aw.m587e(1577) ? 163 : 0;
+        return AppState.m587e(1577) ? 163 : 0;
     }
 
     /* renamed from: g */
     private static final C0013am m161g() {
         boolean zM1056C;
         C0054y c0054y;
-        int iM586d = 1 + AbstractC0023aw.m586d(242);
-        AbstractC0023aw.m594c(2573, iM586d == 1 ? 1 : 12);
+        int iM586d = 1 + AppState.m586d(242);
+        AppState.m594c(2573, iM586d == 1 ? 1 : 12);
         C0013am c0013amM75b = AbstractC0004ad.m75b(2571);
         int i = c0013amM75b.f114q - 1;
-        if (!AbstractC0023aw.m587e(99)) {
-            boolean z = !AbstractC0023aw.m587e(98);
+        if (!AppState.m587e(99)) {
+            boolean z = !AppState.m587e(98);
             AbstractC0037h abstractC0037h = C0008ah.f54k;
             Vector vectorM445W = abstractC0037h == null ? C0015ao.m445W() : abstractC0037h.m1078P();
             Vector vector = vectorM445W;
@@ -220,10 +220,10 @@ public abstract class AbstractC0007ag {
                 }
             }
             C0040k.m1212a(vector);
-        } else if (AbstractC0023aw.m587e(100)) {
+        } else if (AppState.m587e(100)) {
             int i3 = i / iM586d;
-            boolean zM587e = AbstractC0023aw.m587e(101);
-            boolean z2 = !AbstractC0023aw.m587e(98);
+            boolean zM587e = AppState.m587e(101);
+            boolean z2 = !AppState.m587e(98);
             Vector vectorM1213g = C0040k.m1213g();
             Vector vectorM446d = C0015ao.m446d(C0008ah.f54k);
             int size = vectorM446d.size();
@@ -415,8 +415,8 @@ public abstract class AbstractC0007ag {
             int i14 = i / iM586d;
             Vector vectorM446d2 = C0015ao.m446d(C0008ah.f54k);
             int iM353a8 = C0015ao.m353a(vectorM446d2);
-            boolean zM587e2 = AbstractC0023aw.m587e(101);
-            boolean z4 = !AbstractC0023aw.m587e(98);
+            boolean zM587e2 = AppState.m587e(101);
+            boolean z4 = !AppState.m587e(98);
             for (int i15 = 0; i15 < iM353a8; i15++) {
                 AbstractC0046q abstractC0046q3 = (AbstractC0046q) vectorM446d2.elementAt(i15);
                 boolean z5 = false;

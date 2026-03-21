@@ -90,7 +90,7 @@ public final class C0045p implements ListItem, Identifiable {
     */
     public final String mo273x() {
         int i;
-        StringBuffer stringBufferAppend = C0040k.m1217h().append(AbstractC0019as.m535l(this.f391b) ? this.f391b : AbstractC0023aw.m584b(451));
+        StringBuffer stringBufferAppend = C0040k.m1217h().append(Utils.m535l(this.f391b) ? this.f391b : AppState.m584b(451));
         if (this.f392c > 0) {
             StringBuffer stringBufferAppend2 = stringBufferAppend.append(',').append(' ').append(this.f392c);
             if (this.f392c >= 100) {
@@ -101,9 +101,9 @@ public final class C0045p implements ListItem, Identifiable {
             } else {
                 i = 320;
             }
-            stringBufferAppend2.append(AbstractC0023aw.m584b(i));
+            stringBufferAppend2.append(AppState.m584b(i));
         }
-        if (AbstractC0019as.m535l(this.f389h)) {
+        if (Utils.m535l(this.f389h)) {
             stringBufferAppend.append(',').append(' ').append(this.f389h);
         }
         return C0040k.m1215a(stringBufferAppend);

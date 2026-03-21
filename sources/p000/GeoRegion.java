@@ -51,7 +51,7 @@ public final class GeoRegion {
         this.f425e = j4;
     }
 
-    public GeoRegion(C0043n c0043n) {
+    public GeoRegion(ByteBuffer c0043n) {
         this(c0043n.m1335e((String) null), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m());
         this.f430j = c0043n.m1335e((String) null);
         this.f426f = c0043n.m1341m();

@@ -40,7 +40,7 @@ public final class C0024ax {
     private String f191i;
 
     /* renamed from: j */
-    private C0043n f192j;
+    private ByteBuffer f192j;
 
     /* renamed from: a */
     public static final C0024ax m629a(String str, AbstractC0037h abstractC0037h, int i) throws IOException {
@@ -103,7 +103,7 @@ public final class C0024ax {
     private C0024ax(String str) {
         this.f188f = 1;
         this.f187e = 2;
-        this.f191i = str.startsWith(AbstractC0023aw.m584b(459255)) ? C0000a.m15c(str, 7) : str;
+        this.f191i = str.startsWith(AppState.m584b(459255)) ? StringUtils.m15c(str, 7) : str;
     }
 
     private C0024ax(String str, AbstractC0037h abstractC0037h, int i) throws IOException {
@@ -135,7 +135,7 @@ public final class C0024ax {
         if (this.f188f == 0) {
             ((HttpConnection) this.f183a).setRequestProperty(str, str2);
         } else {
-            m641a(new C0043n().m1314d(str).m1385u(8250).m1314d(str2).m1385u(2573));
+            m641a(new ByteBuffer().m1314d(str).m1385u(8250).m1314d(str2).m1385u(2573));
         }
         this.f189g += str.length() + str2.length() + 4;
         return this;
@@ -180,7 +180,7 @@ public final class C0024ax {
     }
 
     /* renamed from: a */
-    public final C0024ax m641a(C0043n c0043n) throws IOException {
+    public final C0024ax m641a(ByteBuffer c0043n) throws IOException {
         m637a(c0043n.f383a, c0043n.f384b);
         return this;
     }
@@ -188,28 +188,28 @@ public final class C0024ax {
     /* renamed from: a */
     public final C0024ax m642a(int i, int i2, int i3) throws IOException {
         String str = this.f191i;
-        this.f183a = Connector.open(new C0043n().m1310c(593549).m1314d(C0000a.m13b(str, str.indexOf(47))).m1317c(), 3);
-        m641a(new C0043n().m1385u(i2).m1321f(32).m1314d(C0000a.m15c(str, str.indexOf(47))).m1310c(2951238).m1314d(C0000a.m13b(str, str.indexOf(58))).m1311d(i3).m1385u(2573));
+        this.f183a = Connector.open(new ByteBuffer().m1310c(593549).m1314d(StringUtils.m13b(str, str.indexOf(47))).m1317c(), 3);
+        m641a(new ByteBuffer().m1385u(i2).m1321f(32).m1314d(StringUtils.m15c(str, str.indexOf(47))).m1310c(2951238).m1314d(StringUtils.m13b(str, str.indexOf(58))).m1311d(i3).m1385u(2573));
         if (i2 == 1414745936) {
             m643a(788628, 2164851);
             m643a(919726, 788668);
         }
-        return m636a(AbstractC0023aw.m584b(919712), C0000a.m17c(Integer.toString(i))).m643a(657608, 329938).m641a(new C0043n().m1385u(2573));
+        return m636a(AppState.m584b(919712), StringUtils.m17c(Integer.toString(i))).m643a(657608, 329938).m641a(new ByteBuffer().m1385u(2573));
     }
 
     /* renamed from: a */
     private final C0024ax m643a(int i, int i2) throws IOException {
-        return m636a(AbstractC0023aw.m584b(i), AbstractC0023aw.m584b(i2));
+        return m636a(AppState.m584b(i), AppState.m584b(i2));
     }
 
     /* renamed from: b */
-    public final C0043n m644b() throws IOException, NumberFormatException {
+    public final ByteBuffer m644b() throws IOException, NumberFormatException {
         int i;
-        C0043n c0043nM645e = m645e();
+        ByteBuffer c0043nM645e = m645e();
         String str = new String(c0043nM645e.f383a, 0, c0043nM645e.f384b);
-        int iIndexOf = C0000a.m17c(str.toLowerCase()).indexOf(AbstractC0023aw.m584b(1052310)) + 16;
-        int i2 = Integer.parseInt(C0000a.m12a(str, iIndexOf, str.indexOf(13, iIndexOf)));
-        C0043n c0043n = new C0043n();
+        int iIndexOf = StringUtils.m17c(str.toLowerCase()).indexOf(AppState.m584b(1052310)) + 16;
+        int i2 = Integer.parseInt(StringUtils.m12a(str, iIndexOf, str.indexOf(13, iIndexOf)));
+        ByteBuffer c0043n = new ByteBuffer();
         byte[] bArrM1211a = C0040k.m1211a(i2);
         do {
             i = m639c().read(bArrM1211a, 0, i2 - c0043n.f384b);
@@ -228,11 +228,11 @@ public final class C0024ax {
     }
 
     /* renamed from: e */
-    private final C0043n m645e() throws IOException {
+    private final ByteBuffer m645e() throws IOException {
         if (this.f192j != null) {
             return this.f192j.m1299a();
         }
-        this.f192j = new C0043n();
+        this.f192j = new ByteBuffer();
         while (true) {
             int i = 0;
             while (true) {

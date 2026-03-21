@@ -13,7 +13,7 @@ import p001main.Midlet;
 
 /* renamed from: aw */
 /* loaded from: MobileAgent_3.9.jar:aw.class */
-public abstract class AbstractC0023aw {
+public abstract class AppState {
 
     /* renamed from: a */
     public static byte[] f176a;
@@ -53,7 +53,7 @@ public abstract class AbstractC0023aw {
                 C0034e.f291j[i] = new Integer(i);
             }
         }
-        C0000a.f0a = new Vector(128);
+        StringUtils.f0a = new Vector(128);
         C0040k.f365g = new byte[20][];
         C0040k.f366h = new StringBuffer[5];
         C0040k.f367i = new Vector[5];
@@ -64,7 +64,7 @@ public abstract class AbstractC0023aw {
         f178e = new Object[295];
         f177b = new Object[1406];
         f179f = new int[3773];
-        C0043n c0043n = new C0043n(C0040k.m1221a(1734763311), 45000);
+        ByteBuffer c0043n = new ByteBuffer(C0040k.m1221a(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
             f177b[i2] = m618a(c0043n, i2);
         }
@@ -92,7 +92,7 @@ public abstract class AbstractC0023aw {
             iArr[i4] = iM1346q;
         }
         f181d = (String) f177b[1038];
-        C0043n c0043nM851h = C0031bd.m851h(C0040k.m1221a(1164404323));
+        ByteBuffer c0043nM851h = C0031bd.m851h(C0040k.m1221a(1164404323));
         while (c0043nM851h.f384b > 0) {
             try {
                 f178e[((Integer) m618a(c0043nM851h, 0)).intValue()] = m618a(c0043nM851h, 0);
@@ -108,7 +108,7 @@ public abstract class AbstractC0023aw {
         } catch (Throwable unused2) {
             f178e = new Object[295];
             try {
-                String[] strArrM10a = C0000a.m10a();
+                String[] strArrM10a = StringUtils.m10a();
                 if (strArrM10a != null) {
                     int length = strArrM10a.length;
                     while (true) {
@@ -147,7 +147,7 @@ public abstract class AbstractC0023aw {
         f177b[1268] = new int[]{2};
         f177b[1269] = new int[]{3};
         f177b[1270] = new int[]{4};
-        C0000a.m34h();
+        StringUtils.m34h();
         C0015ao.f147a = new long[14];
         f177b[1238] = new Object[1];
         C0040k.m1208b(f182g);
@@ -157,7 +157,7 @@ public abstract class AbstractC0023aw {
         C0040k.m1208b(m584b(1038));
         C0040k.m1208b(m584b(525044));
         C0040k.m1208b(m584b(590588));
-        f177b[112] = C0034e.m967e(!C0000a.f1b && !C0000a.f2c ? 1 : 0);
+        f177b[112] = C0034e.m967e(!StringUtils.f1b && !StringUtils.f2c ? 1 : 0);
         try {
             m599a(1535, Display.getDisplay(m602d()).numAlphaLevels() > 2);
         } catch (Throwable unused5) {
@@ -195,7 +195,7 @@ public abstract class AbstractC0023aw {
     /* renamed from: b */
     public static final String m584b(int i) {
         if (i > 5179) {
-            return C0000a.m17c(new String(m581a(295), i & 65535, i >> 16));
+            return StringUtils.m17c(new String(m581a(295), i & 65535, i >> 16));
         }
         Object objM583p = m583p(i);
         if (objM583p == null) {
@@ -251,7 +251,7 @@ public abstract class AbstractC0023aw {
 
     /* renamed from: a */
     public static final void m592a(int i, String str) {
-        m601a(i, (Object) AbstractC0019as.m522f(str));
+        m601a(i, (Object) Utils.m522f(str));
     }
 
     /* renamed from: b */
@@ -327,7 +327,7 @@ public abstract class AbstractC0023aw {
 
     /* renamed from: i */
     public static final String m603i(int i) {
-        return C0000a.m17c(m602d().getAppProperty(m584b(i)));
+        return StringUtils.m17c(m602d().getAppProperty(m584b(i)));
     }
 
     /* renamed from: b */
@@ -403,7 +403,7 @@ public abstract class AbstractC0023aw {
     }
 
     /* renamed from: a */
-    private static final Object m618a(C0043n c0043n, int i) {
+    private static final Object m618a(ByteBuffer c0043n, int i) {
         byte bM1344o = c0043n.m1344o();
         if ((bM1344o & 128) != 0) {
             byte[] bArr = new byte[(bM1344o & 64) != 0 ? bM1344o & 63 : ((bM1344o & 31) << 8) + c0043n.m1346q()];
@@ -413,7 +413,7 @@ public abstract class AbstractC0023aw {
             }
             StringBuffer stringBufferM1217h = C0040k.m1217h();
             for (byte b : bArr) {
-                stringBufferM1217h.append(AbstractC0019as.m499a((int) b));
+                stringBufferM1217h.append(Utils.m499a((int) b));
             }
             C0040k.m1209a(bArr);
             String str = f182g;
@@ -443,7 +443,7 @@ public abstract class AbstractC0023aw {
     /* renamed from: a */
     public static void m619a(boolean z) {
         try {
-            C0043n c0043n = new C0043n();
+            ByteBuffer c0043n = new ByteBuffer();
             for (int i = 0; i < 295; i++) {
                 Object obj = f178e[i];
                 if (obj != null) {
@@ -453,7 +453,7 @@ public abstract class AbstractC0023aw {
                         int length = str.length();
                         byte[] bArr = new byte[length];
                         for (int i2 = 0; i2 < length; i2++) {
-                            bArr[i2] = AbstractC0019as.m500b(str.charAt(i2));
+                            bArr[i2] = Utils.m500b(str.charAt(i2));
                         }
                         int length2 = str.length();
                         if (length2 <= 0 || length2 >= 64) {
@@ -478,12 +478,12 @@ public abstract class AbstractC0023aw {
     }
 
     /* renamed from: b */
-    private static final void m621b(C0043n c0043n, int i) {
+    private static final void m621b(ByteBuffer c0043n, int i) {
         if (i >= 0 && i <= 63) {
             c0043n.m1321f(64 | i);
             return;
         }
-        C0043n c0043n2 = new C0043n();
+        ByteBuffer c0043n2 = new ByteBuffer();
         int[] iArr = new int[8];
         int i2 = 24;
         int i3 = -1;

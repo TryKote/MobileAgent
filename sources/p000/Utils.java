@@ -6,7 +6,7 @@ import javax.microedition.lcdui.Font;
 
 /* renamed from: as */
 /* loaded from: MobileAgent_3.9.jar:as.class */
-public abstract class AbstractC0019as {
+public abstract class Utils {
     /* renamed from: a */
     public static final void m490a(Object obj, int i, Object obj2, int i2, int i3) {
         if (i3 > 0) {
@@ -18,7 +18,7 @@ public abstract class AbstractC0019as {
     public static final long m491a(String str) {
         Vector vectorM517a = m517a(str, ' ', false);
         int iM510a = m510a(vectorM517a.elementAt(1));
-        int iIndexOf = AbstractC0023aw.m584b(2558996).indexOf(m521a(vectorM517a, 2)) / 3;
+        int iIndexOf = AppState.m584b(2558996).indexOf(m521a(vectorM517a, 2)) / 3;
         int iM510a2 = m510a(vectorM517a.elementAt(3));
         String strM521a = m521a(vectorM517a, 4);
         C0040k.m1212a(vectorM517a);
@@ -36,15 +36,15 @@ public abstract class AbstractC0019as {
         while (true) {
             i2--;
             if (i2 < 0) {
-                return (1000 * (((86400 * i) + (iM510a3 * 3600)) + (iM510a4 * 60))) - ((AbstractC0023aw.m586d(246) - 13) * 3600000);
+                return (1000 * (((86400 * i) + (iM510a3 * 3600)) + (iM510a4 * 60))) - ((AppState.m586d(246) - 13) * 3600000);
             }
-            i += i2 == 1 ? b : AbstractC0023aw.m581a(945)[i2];
+            i += i2 == 1 ? b : AppState.m581a(945)[i2];
         }
     }
 
     /* renamed from: a */
     private static StringBuffer m492a(StringBuffer stringBuffer, int i) {
-        return stringBuffer.append(AbstractC0023aw.m584b(i));
+        return stringBuffer.append(AppState.m584b(i));
     }
 
     /* renamed from: a */
@@ -264,7 +264,7 @@ public abstract class AbstractC0019as {
         Vector vectorM1213g = C0040k.m1213g();
         for (int i = 0; i < 3; i++) {
             StringBuffer stringBufferM1217h = C0040k.m1217h();
-            String strM522f = m522f(AbstractC0023aw.m584b(i + 1303));
+            String strM522f = m522f(AppState.m584b(i + 1303));
             int length = strM522f.length();
             for (int i2 = 0; i2 < length; i2++) {
                 char cCharAt = strM522f.charAt(i2);
@@ -273,7 +273,7 @@ public abstract class AbstractC0019as {
                 }
             }
             String strM1215a = C0040k.m1215a(stringBufferM1217h);
-            if (!C0000a.m1a(strM1215a)) {
+            if (!StringUtils.m1a(strM1215a)) {
                 vectorM1213g.addElement(strM1215a);
             }
         }
@@ -296,7 +296,7 @@ public abstract class AbstractC0019as {
 
     /* renamed from: a */
     public static final int m520a() {
-        return ((Random) AbstractC0023aw.f177b[1372]).nextInt();
+        return ((Random) AppState.f177b[1372]).nextInt();
     }
 
     /* renamed from: a */
@@ -306,7 +306,7 @@ public abstract class AbstractC0019as {
 
     /* renamed from: f */
     public static final String m522f(String str) {
-        return str != null ? str : AbstractC0023aw.f181d;
+        return str != null ? str : AppState.f181d;
     }
 
     /* renamed from: d */
@@ -322,17 +322,17 @@ public abstract class AbstractC0019as {
         stringBufferM1217h.append(i);
         if (i3 != 0 && i2 == 754) {
             stringBufferM1217h.append('.');
-            String strM17c = C0000a.m17c(Integer.toString(i3));
+            String strM17c = StringUtils.m17c(Integer.toString(i3));
             String strM13b = strM17c;
             if (strM17c.length() > 2) {
-                strM13b = C0000a.m13b(strM13b, 2);
+                strM13b = StringUtils.m13b(strM13b, 2);
             }
             if (strM13b.length() < 2) {
                 stringBufferM1217h.append('0');
             }
             stringBufferM1217h.append(strM13b);
         }
-        return C0040k.m1215a(stringBufferM1217h.append(AbstractC0023aw.m584b(i2)));
+        return C0040k.m1215a(stringBufferM1217h.append(AppState.m584b(i2)));
     }
 
     /* renamed from: a */
@@ -392,7 +392,7 @@ public abstract class AbstractC0019as {
     /* renamed from: h */
     public static final String m530h(String str) {
         if (str == null) {
-            return AbstractC0023aw.f181d;
+            return AppState.f181d;
         }
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         if (m531a(str, 99897)) {
@@ -446,7 +446,7 @@ public abstract class AbstractC0019as {
     /* renamed from: j */
     public static final String m533j(String str) {
         while (str.length() > 0 && str.charAt(0) == ' ') {
-            str = C0000a.m15c(str, 1);
+            str = StringUtils.m15c(str, 1);
         }
         int length = str.length();
         while (true) {
@@ -454,7 +454,7 @@ public abstract class AbstractC0019as {
             if (length < 0 || str.charAt(length) != ' ') {
                 break;
             }
-            str = C0000a.m13b(str, length);
+            str = StringUtils.m13b(str, length);
         }
         return str;
     }
@@ -462,7 +462,7 @@ public abstract class AbstractC0019as {
     /* renamed from: k */
     public static final String m534k(String str) {
         while (str.length() > 0 && (str.charAt(0) & 65535) <= 32) {
-            str = C0000a.m15c(str, 1);
+            str = StringUtils.m15c(str, 1);
         }
         int length = str.length();
         while (true) {
@@ -470,7 +470,7 @@ public abstract class AbstractC0019as {
             if (length < 0 || (str.charAt(length) & 65535) > 32) {
                 break;
             }
-            str = C0000a.m13b(str, length);
+            str = StringUtils.m13b(str, length);
         }
         return str;
     }
@@ -502,7 +502,7 @@ public abstract class AbstractC0019as {
 
     /* renamed from: e */
     public static final short[] m537e(int i) {
-        byte[] bArrM581a = AbstractC0023aw.m581a(i);
+        byte[] bArrM581a = AppState.m581a(i);
         int length = bArrM581a.length >> 1;
         short[] sArr = new short[length];
         int i2 = 0;
@@ -522,7 +522,7 @@ public abstract class AbstractC0019as {
     /* renamed from: m */
     public static final String m538m(String str) {
         int iIndexOf = str.indexOf(64);
-        return iIndexOf >= 0 ? C0000a.m13b(str, iIndexOf) : str;
+        return iIndexOf >= 0 ? StringUtils.m13b(str, iIndexOf) : str;
     }
 
     /* renamed from: n */
@@ -576,7 +576,7 @@ public abstract class AbstractC0019as {
 
     /* renamed from: c */
     public static final String m542c(int i, int i2) {
-        Vector vectorM517a = m517a(AbstractC0023aw.m584b(i), (char) 0, false);
+        Vector vectorM517a = m517a(AppState.m584b(i), (char) 0, false);
         String str = (String) vectorM517a.elementAt(i2);
         C0040k.m1212a(vectorM517a);
         return str;
@@ -593,9 +593,9 @@ public abstract class AbstractC0019as {
             length = str.length();
         }
         int i3 = 0;
-        int iStringWidth = font.stringWidth(AbstractC0023aw.m584b(1046));
+        int iStringWidth = font.stringWidth(AppState.m584b(1046));
         while (length != -1) {
-            String strM12a = C0000a.m12a(str, i2, length);
+            String strM12a = StringUtils.m12a(str, i2, length);
             int iStringWidth2 = font.stringWidth(strM12a);
             i3 += iStringWidth2;
             if (stringBufferM1217h.length() > 0) {
@@ -607,7 +607,7 @@ public abstract class AbstractC0019as {
                 }
                 stringBufferM1217h.append(strM12a);
             } else {
-                vectorM1213g.addElement(C0000a.m14b(stringBufferM1217h));
+                vectorM1213g.addElement(StringUtils.m14b(stringBufferM1217h));
                 stringBufferM1217h.append(strM12a);
                 i3 = iStringWidth2;
             }
@@ -622,13 +622,13 @@ public abstract class AbstractC0019as {
             }
         }
         if (stringBufferM1217h.length() > 0) {
-            vectorM1213g.addElement(C0000a.m14b(stringBufferM1217h));
+            vectorM1213g.addElement(StringUtils.m14b(stringBufferM1217h));
         }
         return vectorM1213g;
     }
 
     /* renamed from: b */
     public static final String m544b() {
-        return new C0043n().m1360p(m520a()).m1323a(System.currentTimeMillis()).m1365B().m1387H();
+        return new ByteBuffer().m1360p(m520a()).m1323a(System.currentTimeMillis()).m1365B().m1387H();
     }
 }

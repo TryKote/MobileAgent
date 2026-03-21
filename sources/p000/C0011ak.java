@@ -60,8 +60,8 @@ public final class C0011ak extends Canvas implements CommandListener {
         this.f82k = i;
         this.f83l = i2;
         m201a();
-        AbstractC0023aw.m606f(m200d(), m199c());
-        AbstractC0023aw.m604b(this);
+        AppState.m606f(m200d(), m199c());
+        AppState.m604b(this);
     }
 
     /* renamed from: c */
@@ -92,7 +92,7 @@ public final class C0011ak extends Canvas implements CommandListener {
 
     /* renamed from: a */
     public final void m201a() {
-        boolean zM587e = AbstractC0023aw.m587e(71);
+        boolean zM587e = AppState.m587e(71);
         if (zM587e) {
             if (this.f76e != null) {
                 removeCommand(this.f76e);
@@ -105,7 +105,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         }
         setFullScreenMode(zM587e);
         this.f88o = zM587e;
-        AbstractC0023aw.m606f(m200d(), m199c());
+        AppState.m606f(m200d(), m199c());
     }
 
     public final void paint(Graphics graphics) {
@@ -115,7 +115,7 @@ public final class C0011ak extends Canvas implements CommandListener {
             synchronized (C0015ao.f150d) {
                 if (!C0015ao.f151e) {
                     C0036g.m1020e();
-                    Vector vectorM614m = AbstractC0023aw.m614m(1272);
+                    Vector vectorM614m = AppState.m614m(1272);
                     int size = vectorM614m.size();
                     if (size > 0) {
                         int i = size;
@@ -125,16 +125,16 @@ public final class C0011ak extends Canvas implements CommandListener {
                                 break;
                             }
                         } while (((C0013am) vectorM614m.elementAt(i)).f99f != 0);
-                        int iM586d = AbstractC0023aw.m586d(1528);
-                        int iM586d2 = AbstractC0023aw.m586d(1529);
+                        int iM586d = AppState.m586d(1528);
+                        int iM586d2 = AppState.m586d(1529);
                         c0012al.m208a(0, 0, iM586d, iM586d2);
                         c0012al.m207b(14);
                         c0012al.m210c(0, 0, iM586d, iM586d2);
                         while (i < size) {
                             boolean z = i == size - 1;
                             boolean z2 = z;
-                            if (z && AbstractC0023aw.m587e(66) && AbstractC0023aw.m587e(1535)) {
-                                int iM586d3 = AbstractC0023aw.m586d(1528);
+                            if (z && AppState.m587e(66) && AppState.m587e(1535)) {
+                                int iM586d3 = AppState.m586d(1528);
                                 int[] iArr = new int[iM586d3];
                                 int i2 = iM586d3;
                                 while (true) {
@@ -146,7 +146,7 @@ public final class C0011ak extends Canvas implements CommandListener {
                                     }
                                 }
                                 Graphics graphics2 = c0012al.f92b;
-                                int iM605e = AbstractC0023aw.m605e();
+                                int iM605e = AppState.m605e();
                                 while (true) {
                                     iM605e--;
                                     if (iM605e < 0) {
@@ -163,7 +163,7 @@ public final class C0011ak extends Canvas implements CommandListener {
                     }
                     if (AbstractC0004ad.m77h()) {
                         c0012al.m208a(0, 0, 2048, 2048);
-                        int iM586d4 = AbstractC0023aw.m586d(1528) - 17;
+                        int iM586d4 = AppState.m586d(1528) - 17;
                         if (C0015ao.m413P() != 0) {
                             c0012al.m216a(16384, iM586d4, 1);
                             iM586d4 -= 17;
@@ -185,7 +185,7 @@ public final class C0011ak extends Canvas implements CommandListener {
     }
 
     public final void keyRepeated(int i) {
-        if (AbstractC0023aw.m614m(1266).size() < 3) {
+        if (AppState.m614m(1266).size() < 3) {
             m203a(i, 1);
         }
     }
@@ -200,7 +200,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         try {
             return getKeyName(i).toUpperCase();
         } catch (Throwable unused) {
-            return AbstractC0023aw.f181d;
+            return AppState.f181d;
         }
     }
 
@@ -210,7 +210,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         C0015ao.m304a(0, C0015ao.m376E());
         C0015ao.m304a(3, 10000L);
         int gameAction = 0;
-        boolean zM587e = AbstractC0023aw.m587e(1511);
+        boolean zM587e = AppState.m587e(1511);
         try {
             gameAction = getGameAction(i);
         } catch (Throwable unused) {
@@ -227,7 +227,7 @@ public final class C0011ak extends Canvas implements CommandListener {
                 C0029bb.m775i();
                 return;
             } else {
-                AbstractC0023aw.m599a(218, false);
+                AppState.m599a(218, false);
                 C0029bb.m773g();
                 return;
             }
@@ -238,7 +238,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         }
         if (i2 == 0) {
             try {
-                if (AbstractC0023aw.m587e(71)) {
+                if (AppState.m587e(71)) {
                     String strM202a = m202a(i);
                     if (i == -6 || strM202a.indexOf("SEND") >= 0 || strM202a.indexOf("SOFT1") >= 0 || strM202a.equals("SOFTKEY 1")) {
                         C0029bb.m773g();
@@ -246,11 +246,11 @@ public final class C0011ak extends Canvas implements CommandListener {
                     }
                     if (i == -7 || i == 11 || strM202a.indexOf("CLEAR") >= 0 || strM202a.indexOf("SOFT2") >= 0 || strM202a.equals("SOFTKEY 4")) {
                         if (zM587e) {
-                            AbstractC0023aw.m599a(218, false);
+                            AppState.m599a(218, false);
                         }
                         C0029bb.m774h();
                     } else if (zM587e) {
-                        AbstractC0023aw.m599a(218, false);
+                        AppState.m599a(218, false);
                         C0029bb.m773g();
                     }
                 }
@@ -264,7 +264,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         f87b = i2;
         C0015ao.m304a(3, 10000L);
         C0015ao.m304a(0, C0015ao.m376E());
-        Vector vectorM614m = AbstractC0023aw.m614m(1266);
+        Vector vectorM614m = AppState.m614m(1266);
         synchronized (vectorM614m) {
             vectorM614m.addElement(new int[]{5, i, i2});
         }
@@ -274,12 +274,12 @@ public final class C0011ak extends Canvas implements CommandListener {
     }
 
     public final void pointerDragged(int i, int i2) {
-        if (AbstractC0019as.m504c(i - f86a) > 5 || AbstractC0019as.m504c(i2 - f87b) > 5) {
+        if (Utils.m504c(i - f86a) > 5 || Utils.m504c(i2 - f87b) > 5) {
             int i3 = f86a;
             int i4 = f87b;
-            Vector vectorM614m = AbstractC0023aw.m614m(1266);
+            Vector vectorM614m = AppState.m614m(1266);
             synchronized (vectorM614m) {
-                int iM541c = AbstractC0019as.m541c(vectorM614m);
+                int iM541c = Utils.m541c(vectorM614m);
                 while (true) {
                     iM541c--;
                     if (iM541c < 0) {
@@ -305,7 +305,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         int i3 = f86a;
         int i4 = f87b;
         boolean z = f90d;
-        Vector vectorM614m = AbstractC0023aw.m614m(1266);
+        Vector vectorM614m = AppState.m614m(1266);
         synchronized (vectorM614m) {
             int[] iArr = new int[6];
             iArr[0] = 7;
@@ -353,7 +353,7 @@ public final class C0011ak extends Canvas implements CommandListener {
         if (this.f77f != null) {
             removeCommand(this.f77f);
         }
-        boolean zM587e = AbstractC0023aw.m587e(65);
+        boolean zM587e = AppState.m587e(65);
         if (str != null) {
             Command command = new Command(str, zM587e ? 3 : 4, 1);
             this.f76e = command;

@@ -63,12 +63,12 @@ public abstract class AbstractC0030bc {
         if (i < 0 || i > 17) {
             i = 0;
         }
-        if (i != f244m || AbstractC0019as.m505a(j - f243l) > 10000 || !f247p) {
+        if (i != f244m || Utils.m505a(j - f243l) > 10000 || !f247p) {
             f247p = true;
             f243l = j;
             f244m = i;
             int i3 = i;
-            int iM689d = (int) C0027b.m689d(C0027b.m692d(C0027b.m713k(C0027b.m699e(C0027b.m697a(C0029bb.m810b(j)))), C0027b.m687b((50 * C0015ao.m315d(i3)) / C0015ao.m316e(i3))));
+            int iM689d = (int) SoftFloat.m689d(SoftFloat.m692d(SoftFloat.m713k(SoftFloat.m699e(SoftFloat.m697a(C0029bb.m810b(j)))), SoftFloat.m687b((50 * C0015ao.m315d(i3)) / C0015ao.m316e(i3))));
             int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
             int i5 = (iM689d / i4) * i4;
             f245n = m835a(i5, i, j);
@@ -82,12 +82,12 @@ public abstract class AbstractC0030bc {
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
-        Font fontM625m = AbstractC0023aw.m625m();
+        Font fontM625m = AppState.m625m();
         graphics.setFont(fontM625m);
-        int iM586d = AbstractC0023aw.m586d(1450);
-        int iM502a = AbstractC0019as.m502a(f245n, fontM625m.stringWidth(f246o));
+        int iM586d = AppState.m586d(1450);
+        int iM502a = Utils.m502a(f245n, fontM625m.stringWidth(f246o));
         int height = fontM625m.getHeight();
-        if (AbstractC0023aw.m587e(230)) {
+        if (AppState.m587e(230)) {
             i2 = -(iM586d > 16 ? iM586d : 18);
         } else {
             i2 = 0;
@@ -137,22 +137,22 @@ public abstract class AbstractC0030bc {
             if (size < 0) {
                 return iM502a;
             }
-            iM502a = AbstractC0019as.m502a(iM502a, font.stringWidth((String) vector.elementAt(size)));
+            iM502a = Utils.m502a(iM502a, font.stringWidth((String) vector.elementAt(size)));
         }
     }
 
     /* renamed from: a */
     public static final void m831a(Graphics graphics, String str, Font font, int i, int i2, int i3) {
-        Vector vectorM543a = AbstractC0019as.m543a(str, font, i);
+        Vector vectorM543a = Utils.m543a(str, font, i);
         int size = vectorM543a.size();
         int iM830a = m830a(vectorM543a, font) + 10;
         int height = font.getHeight();
         int i4 = (height * size) + 6;
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
-        int iM586d = AbstractC0023aw.m586d(72);
-        graphics.setColor(AbstractC0023aw.m586d(iM586d + 5050));
-        int iM503b = AbstractC0019as.m503b(iM830a / 25, 3);
+        int iM586d = AppState.m586d(72);
+        graphics.setColor(AppState.m586d(iM586d + 5050));
+        int iM503b = Utils.m503b(iM830a / 25, 3);
         int i5 = iM503b << 1;
         int i6 = i2 - (iM830a / 2);
         int i7 = (i3 - i5) - i4;
@@ -160,12 +160,12 @@ public abstract class AbstractC0030bc {
         graphics.setColor(0);
         graphics.drawRoundRect(i6, i7, iM830a, i4, 10, 10);
         graphics.setFont(font);
-        graphics.setColor(AbstractC0023aw.m586d(iM586d + 4914));
+        graphics.setColor(AppState.m586d(iM586d + 4914));
         int i8 = size;
         while (true) {
             i8--;
             if (i8 < 0) {
-                graphics.setColor(AbstractC0023aw.m586d(iM586d + 5050));
+                graphics.setColor(AppState.m586d(iM586d + 5050));
                 graphics.fillTriangle(i2 + iM503b, i3 - (iM503b << 1), i2 + (iM503b << 2), i3 - (iM503b << 1), i2, i3);
                 graphics.setColor(0);
                 graphics.drawLine(i2 + iM503b, i3 - (iM503b << 1), i2, i3);
@@ -183,7 +183,7 @@ public abstract class AbstractC0030bc {
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
             return;
         }
-        int iM586d = AbstractC0023aw.m586d(73);
+        int iM586d = AppState.m586d(73);
         Font font = Font.getFont(64, 0, iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16);
         int iMo282a = (int) ((i / 2) + (interfaceC0044o.mo282a(i3) - j));
         int iMo283b = (int) ((i2 / 2) + (j2 - interfaceC0044o.mo283b(i3)));
@@ -215,10 +215,10 @@ public abstract class AbstractC0030bc {
         int i8 = i6;
         int i9 = iMo282a + i4;
         int i10 = iMo283b - i5;
-        Vector vectorM543a = AbstractC0019as.m543a(AbstractC0019as.m522f(interfaceC0044o.mo273x()), font, i - 40);
+        Vector vectorM543a = Utils.m543a(Utils.m522f(interfaceC0044o.mo273x()), font, i - 40);
         int size = vectorM543a.size();
         int iM830a = m830a(vectorM543a, font);
-        int iStringWidth = font.stringWidth(AbstractC0023aw.m584b(982)) + 6 + 24;
+        int iStringWidth = font.stringWidth(AppState.m584b(982)) + 6 + 24;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
@@ -229,8 +229,8 @@ public abstract class AbstractC0030bc {
         if (i13 < iStringWidth) {
             i14 = iStringWidth;
         }
-        int iM586d2 = AbstractC0023aw.m586d(72);
-        graphics.setColor(AbstractC0023aw.m586d(iM586d2 + 5050));
+        int iM586d2 = AppState.m586d(72);
+        graphics.setColor(AppState.m586d(iM586d2 + 5050));
         int i15 = i14 / 25;
         int i16 = i15;
         if (i15 < 3) {
@@ -239,7 +239,7 @@ public abstract class AbstractC0030bc {
         int i17 = (i10 - i12) - i16;
         if (i17 < 10) {
             if (!(AbstractC0025ay.f208n > 0)) {
-                int iM504c = AbstractC0019as.m504c(i17) + 20;
+                int iM504c = Utils.m504c(i17) + 20;
                 if (AbstractC0025ay.f208n <= 0) {
                     AbstractC0025ay.f208n = iM504c;
                     AbstractC0025ay.f209o = System.currentTimeMillis();
@@ -256,7 +256,7 @@ public abstract class AbstractC0030bc {
             c0012al.m216a(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
         }
         graphics.setFont(font);
-        graphics.setColor(AbstractC0023aw.m586d(iM586d2 + 4914));
+        graphics.setColor(AppState.m586d(iM586d2 + 4914));
         for (int i19 = 0; i19 < size; i19++) {
             graphics.drawString((String) vectorM543a.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
         }
@@ -273,9 +273,9 @@ public abstract class AbstractC0030bc {
             int i21 = ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)) + (i11 / 2);
             f248c[1] = i21;
             graphics.drawImage(imageM1023b, i20, i21, 6);
-            graphics.drawString(AbstractC0023aw.m584b(982), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
+            graphics.drawString(AppState.m584b(982), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
         }
-        graphics.setColor(AbstractC0023aw.m586d(iM586d2 + 5050));
+        graphics.setColor(AppState.m586d(iM586d2 + 5050));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
         graphics.setColor(0);
         graphics.drawLine(i9 + i16, i10 - i18, i9, i10);
@@ -286,13 +286,13 @@ public abstract class AbstractC0030bc {
 
     /* renamed from: a */
     public static final boolean m833a(int i, int i2, int i3, int i4) {
-        int iM504c = AbstractC0019as.m504c(i2 - i);
-        int iM504c2 = AbstractC0019as.m504c(i4 - i3);
-        int iM502a = AbstractC0019as.m502a(iM504c, iM504c2);
+        int iM504c = Utils.m504c(i2 - i);
+        int iM504c2 = Utils.m504c(i4 - i3);
+        int iM502a = Utils.m502a(iM504c, iM504c2);
         if (iM502a >= 5) {
             return true;
         }
-        return iM502a == 4 && AbstractC0019as.m503b(iM504c, iM504c2) >= 3;
+        return iM502a == 4 && Utils.m503b(iM504c, iM504c2) >= 3;
     }
 
     /* renamed from: b */
@@ -313,7 +313,7 @@ public abstract class AbstractC0030bc {
 
     /* renamed from: a */
     private static int m835a(int i, int i2, long j) {
-        return (int) C0027b.m689d(C0027b.m693e(C0027b.m687b(C0015ao.m317a(i, i2)), C0027b.m713k(C0027b.m699e(C0027b.m697a(C0029bb.m810b(j))))));
+        return (int) SoftFloat.m689d(SoftFloat.m693e(SoftFloat.m687b(C0015ao.m317a(i, i2)), SoftFloat.m713k(SoftFloat.m699e(SoftFloat.m697a(C0029bb.m810b(j))))));
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:132:0x0416, code lost:
@@ -424,9 +424,9 @@ public abstract class AbstractC0030bc {
      */
     /* JADX WARN: Code restructure failed: missing block: B:161:0x0524, code lost:
     
-        r0 = p000.AbstractC0019as.m504c(r0 - r0);
-        r0 = p000.AbstractC0019as.m504c(r0 - r0);
-        r0 = p000.AbstractC0023aw.m586d(39);
+        r0 = p000.Utils.m504c(r0 - r0);
+        r0 = p000.Utils.m504c(r0 - r0);
+        r0 = p000.AppState.m586d(39);
      */
     /* JADX WARN: Code restructure failed: missing block: B:162:0x0555, code lost:
     
@@ -612,13 +612,13 @@ public abstract class AbstractC0030bc {
         boolean z;
         int i4;
         if (!C0009ai.f71y && !C0009ai.m188p() && !C0009ai.m189q()) {
-            AbstractC0023aw.m594c(1546, 0);
+            AppState.m594c(1546, 0);
             return;
         }
         int color = graphics.getColor();
-        int iM586d = AbstractC0023aw.m586d(73);
+        int iM586d = AppState.m586d(73);
         Font font = Font.getFont(64, 0, iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16);
-        int iM688c = (i2 / 2) * C0027b.m688c(C0027b.m692d(C0027b.m687b(1 << (17 - i)), 4608057598812004689L));
+        int iM688c = (i2 / 2) * SoftFloat.m688c(SoftFloat.m692d(SoftFloat.m687b(1 << (17 - i)), 4608057598812004689L));
         int i5 = (int) (j3 - iM688c);
         int i6 = (int) (j3 + iM688c);
         int i7 = (int) (j4 + iM688c);
@@ -643,7 +643,7 @@ public abstract class AbstractC0030bc {
         }
         int size2 = vectorM1213g.size();
         int iM192t = C0009ai.m192t();
-        AbstractC0023aw.m599a(1546, size2 > 0);
+        AppState.m599a(1546, size2 > 0);
         String str = null;
         int i18 = 0;
         int i19 = 0;
@@ -671,7 +671,7 @@ public abstract class AbstractC0030bc {
                                 int iM317a4 = (int) C0015ao.m317a(((int[]) objArr2[0])[1], i);
                                 int iM317a5 = (int) (C0015ao.m317a(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
                                 int iM317a6 = (int) ((j2 + (i3 / 2)) - C0015ao.m317a(((int[]) objArr2[0])[1], i));
-                                if (AbstractC0019as.m505a(j - iM317a3) < 7 && AbstractC0019as.m505a(j2 - iM317a4) < 7 && str == null) {
+                                if (Utils.m505a(j - iM317a3) < 7 && Utils.m505a(j2 - iM317a4) < 7 && str == null) {
                                     str = strArr[0];
                                     i18 = iM317a5;
                                     i19 = iM317a6;
@@ -723,17 +723,17 @@ public abstract class AbstractC0030bc {
                 int i23 = iM317a13 - (((int) j) - (i2 / 2));
                 int i24 = (((int) j2) + (i3 / 2)) - iM317a14;
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
-                    if (AbstractC0019as.m505a(j - iM317a13) >= 20 || AbstractC0019as.m505a(j2 - iM317a14) >= 20 || z2) {
+                    if (Utils.m505a(j - iM317a13) >= 20 || Utils.m505a(j2 - iM317a14) >= 20 || z2) {
                         if (!z2) {
-                            AbstractC0023aw.m594c(1575, 0);
-                            AbstractC0023aw.m599a(1574, AbstractC0023aw.m587e(1573) && !AbstractC0023aw.m587e(1575));
+                            AppState.m594c(1575, 0);
+                            AppState.m599a(1574, AppState.m587e(1573) && !AppState.m587e(1575));
                             C0009ai.f68m = null;
                         }
                         i4 = 9;
                         graphics.setColor(40, 221, 22);
                     } else {
-                        AbstractC0023aw.m599a(1575, AbstractC0023aw.m587e(1573));
-                        AbstractC0023aw.m599a(1574, AbstractC0023aw.m587e(1573) && !AbstractC0023aw.m587e(1575));
+                        AppState.m599a(1575, AppState.m587e(1573));
+                        AppState.m599a(1574, AppState.m587e(1573) && !AppState.m587e(1575));
                         i4 = 11;
                         graphics.setColor(45, 253, 24);
                         C0009ai.f68m = objArr3;
@@ -762,7 +762,7 @@ public abstract class AbstractC0030bc {
             int i29 = iM317a15 - (i25 - (i2 / 2));
             int i30 = (i26 + (i3 / 2)) - iM317a16;
             String[] strArrM194b = C0009ai.m194b(0);
-            if (AbstractC0019as.m504c(i25 - iM317a15) >= 7 || AbstractC0019as.m504c(i26 - iM317a16) >= 7 || strArrM194b == null) {
+            if (Utils.m504c(i25 - iM317a15) >= 7 || Utils.m504c(i26 - iM317a16) >= 7 || strArrM194b == null) {
                 graphics.drawImage(C0036g.m1023b(20), i29, i30, 36);
             } else if (strArrM194b[0] != null) {
                 str2 = strArrM194b[0];
@@ -776,7 +776,7 @@ public abstract class AbstractC0030bc {
             int i31 = iM317a17 - (i25 - (i2 / 2));
             int i32 = (i26 + (i3 / 2)) - iM317a18;
             String[] strArrM194b2 = C0009ai.m194b(iM192t2 - 1);
-            if (AbstractC0019as.m504c(i25 - iM317a17) >= 7 || AbstractC0019as.m504c(i26 - iM317a18) >= 7 || strArrM194b2 == null || z3) {
+            if (Utils.m504c(i25 - iM317a17) >= 7 || Utils.m504c(i26 - iM317a18) >= 7 || strArrM194b2 == null || z3) {
                 graphics.drawImage(C0036g.m1023b(21), i31, i32, 36);
             } else if (strArrM194b2[0] != null) {
                 str2 = strArrM194b2[0];
@@ -800,20 +800,20 @@ public abstract class AbstractC0030bc {
             int[] iArrM193a4 = C0009ai.m193a(0);
             int iM317a19 = (int) C0015ao.m317a(iArrM193a4[0], i);
             int iM317a20 = (int) C0015ao.m317a(iArrM193a4[1], i);
-            if (AbstractC0019as.m504c(((int) j) - iM317a19) < 7 && AbstractC0019as.m504c(i33 - iM317a20) < 7) {
+            if (Utils.m504c(((int) j) - iM317a19) < 7 && Utils.m504c(i33 - iM317a20) < 7) {
                 int height = font.getHeight();
                 int clipHeight = (graphics.getClipHeight() - height) - 1;
                 int i34 = 22;
-                if (AbstractC0023aw.m587e(230)) {
+                if (AppState.m587e(230)) {
                     clipHeight -= (height > 18 ? height : 18) + 2;
                     i34 = 22 - 20;
                 }
-                String strM584b = AbstractC0023aw.m584b(981);
+                String strM584b = AppState.m584b(981);
                 int iStringWidth = font.stringWidth(strM584b) + 6;
-                int iM586d2 = AbstractC0023aw.m586d(72);
-                graphics.setColor(AbstractC0023aw.m586d(iM586d2 + 5050));
+                int iM586d2 = AppState.m586d(72);
+                graphics.setColor(AppState.m586d(iM586d2 + 5050));
                 graphics.fillRoundRect(i34, clipHeight, iStringWidth, height, 10, 10);
-                graphics.setColor(AbstractC0023aw.m586d(iM586d2 + 4914));
+                graphics.setColor(AppState.m586d(iM586d2 + 4914));
                 graphics.drawRoundRect(i34, clipHeight, iStringWidth, height, 10, 10);
                 graphics.drawString(strM584b, i34 + 3, clipHeight, 20);
                 graphics.setFont(font2);

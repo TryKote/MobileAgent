@@ -17,7 +17,7 @@ public final class C0010aj extends AbstractC0046q {
         m1403c(str);
     }
 
-    public C0010aj(AbstractC0037h abstractC0037h, C0043n c0043n) {
+    public C0010aj(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f75b = c0043n.m1328e();
         m1403c(c0043n.m1335e((String) null));
@@ -38,7 +38,7 @@ public final class C0010aj extends AbstractC0046q {
 
     @Override // p000.AbstractC0046q
     /* renamed from: a */
-    public final void mo196a(C0043n c0043n, boolean z) {
+    public final void mo196a(ByteBuffer c0043n, boolean z) {
         c0043n.m1360p(this.f75b);
         c0043n.m1309b(this.f398f);
         super.mo196a(c0043n, z);

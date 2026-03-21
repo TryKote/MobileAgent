@@ -28,7 +28,7 @@ public final class C0006af extends AbstractC0041l {
         this.f38a = str;
         this.f41e = str3;
         this.f40d = 0;
-        m1249c(AbstractC0019as.m528a(str2, str));
+        m1249c(Utils.m528a(str2, str));
         this.f373r = C0005ae.m131d(this.f39c);
         this.f380w = c0005ae.m1050q().m1314d(str).m1317c();
         c0005ae.m1081h(this);
@@ -52,7 +52,7 @@ public final class C0006af extends AbstractC0041l {
         return this.f38a;
     }
 
-    public C0006af(AbstractC0037h abstractC0037h, C0043n c0043n) {
+    public C0006af(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f38a = c0043n.m1334g();
         m1249c(c0043n.m1335e((String) null));
@@ -66,7 +66,7 @@ public final class C0006af extends AbstractC0041l {
 
     @Override // p000.AbstractC0041l
     /* renamed from: a */
-    public final void mo136a(C0043n c0043n) {
+    public final void mo136a(ByteBuffer c0043n) {
         c0043n.m1308a(this.f38a).m1309b(this.f376u);
     }
 
@@ -93,10 +93,10 @@ public final class C0006af extends AbstractC0041l {
         if (iMo139e == 16384) {
             return i;
         }
-        if (C0000a.m3a(262852, this.f41e) || C0000a.m3a(267931, this.f41e) || C0000a.m3a(202403, this.f41e)) {
+        if (StringUtils.m3a(262852, this.f41e) || StringUtils.m3a(267931, this.f41e) || StringUtils.m3a(202403, this.f41e)) {
             i = 384;
         }
-        if (C0000a.m3a(131590, this.f41e)) {
+        if (StringUtils.m3a(131590, this.f41e)) {
             i = (i & 65535) | 20578304;
         }
         return i;
@@ -129,7 +129,7 @@ public final class C0006af extends AbstractC0041l {
     @Override // p000.AbstractC0041l
     /* renamed from: l */
     public final boolean mo144l() {
-        return C0000a.m3a(267931, this.f41e) || C0000a.m3a(262852, this.f41e);
+        return StringUtils.m3a(267931, this.f41e) || StringUtils.m3a(262852, this.f41e);
     }
 
     @Override // p000.AbstractC0041l
@@ -142,27 +142,27 @@ public final class C0006af extends AbstractC0041l {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void m146a(String str, C0022av c0022av) {
+    public final void m146a(String str, XmlElement c0022av) {
         int i = 0;
         this.f42f = str;
         this.f39c = 0;
-        if (C0000a.m3a(594984, str)) {
-            C0022av c0022avM562f = c0022av.m562f(267927);
+        if (StringUtils.m3a(594984, str)) {
+            XmlElement c0022avM562f = c0022av.m562f(267927);
             if (c0022avM562f != null) {
-                String strM11a = C0000a.m11a(c0022avM562f.f173c);
-                if (C0000a.m1a(strM11a)) {
+                String strM11a = StringUtils.m11a(c0022avM562f.f173c);
+                if (StringUtils.m1a(strM11a)) {
                     i = 1;
                     this.f39c = i;
                 } else {
-                    if (C0000a.m3a(265215, strM11a)) {
+                    if (StringUtils.m3a(265215, strM11a)) {
                         i = 4;
-                    } else if (C0000a.m3a(267829, strM11a)) {
+                    } else if (StringUtils.m3a(267829, strM11a)) {
                         i = 2;
-                    } else if (C0000a.m3a(136761, strM11a)) {
+                    } else if (StringUtils.m3a(136761, strM11a)) {
                         i = 6;
-                    } else if (C0000a.m3a(202299, strM11a)) {
+                    } else if (StringUtils.m3a(202299, strM11a)) {
                         i = 5;
-                    } else if (C0000a.m3a(202302, strM11a)) {
+                    } else if (StringUtils.m3a(202302, strM11a)) {
                         i = 3;
                     }
                     this.f39c = i;
@@ -186,7 +186,7 @@ public final class C0006af extends AbstractC0041l {
     @Override // p000.AbstractC0041l
     /* renamed from: L */
     public final void mo148L() {
-        AbstractC0023aw.m591f(1316);
+        AppState.m591f(1316);
     }
 
     /* renamed from: a */

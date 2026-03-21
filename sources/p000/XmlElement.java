@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /* renamed from: av */
 /* loaded from: MobileAgent_3.9.jar:av.class */
-public final class C0022av {
+public final class XmlElement {
 
     /* renamed from: a */
     public String f171a;
@@ -18,42 +18,42 @@ public final class C0022av {
     public StringBuffer f173c;
 
     /* renamed from: d */
-    public C0022av f174d;
+    public XmlElement f174d;
 
     /* renamed from: e */
     private Hashtable f175e;
 
-    public C0022av() {
+    public XmlElement() {
         this(null, null, null);
     }
 
     /* renamed from: a */
-    public static final C0022av m550a(int i) {
-        return new C0022av(AbstractC0023aw.m584b(i));
+    public static final XmlElement m550a(int i) {
+        return new XmlElement(AppState.m584b(i));
     }
 
-    public C0022av(int i) {
+    public XmlElement(int i) {
         this(C0040k.m1221a(i));
     }
 
-    private C0022av(String str) {
+    private XmlElement(String str) {
         this.f171a = str;
     }
 
-    public C0022av(String str, C0022av c0022av, Hashtable hashtable) {
+    public XmlElement(String str, XmlElement c0022av, Hashtable hashtable) {
         this.f174d = c0022av;
         this.f175e = hashtable;
         this.f171a = str;
     }
 
     /* renamed from: a */
-    public final C0022av m551a(int i, int i2) {
-        m571a(AbstractC0023aw.m584b(i), AbstractC0023aw.m584b(i2));
+    public final XmlElement m551a(int i, int i2) {
+        m571a(AppState.m584b(i), AppState.m584b(i2));
         return this;
     }
 
     /* renamed from: a */
-    public final C0022av m552a(C0022av c0022av) {
+    public final XmlElement m552a(XmlElement c0022av) {
         if (this.f172b == null) {
             this.f172b = C0040k.m1213g();
         }
@@ -62,7 +62,7 @@ public final class C0022av {
     }
 
     /* renamed from: a */
-    public final C0022av m553a(Object obj) {
+    public final XmlElement m553a(Object obj) {
         if (this.f173c == null) {
             this.f173c = C0040k.m1217h();
         }
@@ -72,7 +72,7 @@ public final class C0022av {
 
     /* renamed from: b */
     public final String m554b(int i) {
-        return m558d(AbstractC0023aw.m584b(i));
+        return m558d(AppState.m584b(i));
     }
 
     /* renamed from: c */
@@ -96,17 +96,17 @@ public final class C0022av {
     }
 
     /* renamed from: a */
-    public final C0022av m559a(int i, String str) {
-        return m561b(AbstractC0023aw.m584b(i), str);
+    public final XmlElement m559a(int i, String str) {
+        return m561b(AppState.m584b(i), str);
     }
 
     /* renamed from: b */
-    public final C0022av m560b(int i, String str) {
+    public final XmlElement m560b(int i, String str) {
         return m561b(C0040k.m1221a(i), str);
     }
 
     /* renamed from: b */
-    private C0022av m561b(String str, String str2) {
+    private XmlElement m561b(String str, String str2) {
         if (str != null) {
             if (str2 != null) {
                 if (this.f175e == null) {
@@ -121,27 +121,27 @@ public final class C0022av {
     }
 
     /* renamed from: f */
-    public final C0022av m562f(int i) {
-        return m563e(AbstractC0023aw.m584b(i));
+    public final XmlElement m562f(int i) {
+        return m563e(AppState.m584b(i));
     }
 
     /* renamed from: e */
-    private final C0022av m563e(String str) {
-        C0022av c0022av;
-        int iM541c = AbstractC0019as.m541c(this.f172b);
+    private final XmlElement m563e(String str) {
+        XmlElement c0022av;
+        int iM541c = Utils.m541c(this.f172b);
         do {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            c0022av = (C0022av) this.f172b.elementAt(iM541c);
-        } while (!C0000a.m6a(c0022av.f171a, str));
+            c0022av = (XmlElement) this.f172b.elementAt(iM541c);
+        } while (!StringUtils.m6a(c0022av.f171a, str));
         return c0022av;
     }
 
     /* renamed from: g */
-    public final C0022av m564g(int i) {
-        return (C0022av) this.f172b.elementAt(i);
+    public final XmlElement m564g(int i) {
+        return (XmlElement) this.f172b.elementAt(i);
     }
 
     public final String toString() {
@@ -161,7 +161,7 @@ public final class C0022av {
         if (this.f173c != null) {
             stringBufferAppend4.append((Object) m565b(this.f173c));
         }
-        for (int i = 0; i < AbstractC0019as.m541c(this.f172b); i++) {
+        for (int i = 0; i < Utils.m541c(this.f172b); i++) {
             stringBufferAppend4.append(this.f172b.elementAt(i));
         }
         return C0040k.m1215a(m566c() ? stringBufferAppend4 : stringBufferAppend4.append(C0040k.m1215a(C0040k.m1217h().append('<').append('/').append(this.f171a).append('>'))));
@@ -198,37 +198,37 @@ public final class C0022av {
     }
 
     /* renamed from: a */
-    public final C0022av m567a(String str) {
-        C0022av c0022av;
-        int iM541c = AbstractC0019as.m541c(this.f172b);
+    public final XmlElement m567a(String str) {
+        XmlElement c0022av;
+        int iM541c = Utils.m541c(this.f172b);
         do {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            c0022av = (C0022av) this.f172b.elementAt(iM541c);
-        } while (!C0000a.m6a(str, C0000a.m11a(c0022av.f173c)));
+            c0022av = (XmlElement) this.f172b.elementAt(iM541c);
+        } while (!StringUtils.m6a(str, StringUtils.m11a(c0022av.f173c)));
         return c0022av;
     }
 
     /* renamed from: b */
-    public final C0022av m568b(String str) {
+    public final XmlElement m568b(String str) {
         return m563e(str);
     }
 
     /* renamed from: h */
-    public final C0022av m569h(int i) {
-        return m559a(333027, AbstractC0023aw.m584b(i));
+    public final XmlElement m569h(int i) {
+        return m559a(333027, AppState.m584b(i));
     }
 
     /* renamed from: i */
-    public final C0022av m570i(int i) {
-        return m559a(262589, AbstractC0023aw.m584b(i));
+    public final XmlElement m570i(int i) {
+        return m559a(262589, AppState.m584b(i));
     }
 
     /* renamed from: a */
-    public final C0022av m571a(String str, String str2) {
-        C0022av c0022av = new C0022av(str);
+    public final XmlElement m571a(String str, String str2) {
+        XmlElement c0022av = new XmlElement(str);
         if (str2 != null) {
             c0022av.m553a((Object) str2);
         }
@@ -237,46 +237,46 @@ public final class C0022av {
     }
 
     /* renamed from: b */
-    public final C0022av m572b(int i, int i2) {
-        return m571a(AbstractC0023aw.m584b(i), (String) null).m569h(i2);
+    public final XmlElement m572b(int i, int i2) {
+        return m571a(AppState.m584b(i), (String) null).m569h(i2);
     }
 
     /* renamed from: c */
-    public final C0022av m573c(int i, int i2) {
-        return m552a(new C0022av(AbstractC0023aw.m584b(i)).m569h(i2));
+    public final XmlElement m573c(int i, int i2) {
+        return m552a(new XmlElement(AppState.m584b(i)).m569h(i2));
     }
 
     /* renamed from: a */
     public final String m574a() {
-        return m558d(AbstractC0023aw.m584b(262589));
+        return m558d(AppState.m584b(262589));
     }
 
     /* renamed from: c */
     public final String m575c(String str) {
         try {
-            return C0000a.m11a(m563e(str).f173c);
+            return StringUtils.m11a(m563e(str).f173c);
         } catch (Throwable unused) {
-            return AbstractC0023aw.f181d;
+            return AppState.f181d;
         }
     }
 
     /* renamed from: d */
-    public final C0022av m576d(int i, int i2) {
-        int iM541c = AbstractC0019as.m541c(this.f172b);
+    public final XmlElement m576d(int i, int i2) {
+        int iM541c = Utils.m541c(this.f172b);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            C0022av c0022avM564g = m564g(iM541c);
-            if (C0000a.m3a(i, c0022avM564g.f171a) && C0000a.m3a(i2, c0022avM564g.m558d(AbstractC0023aw.m584b(333027)))) {
+            XmlElement c0022avM564g = m564g(iM541c);
+            if (StringUtils.m3a(i, c0022avM564g.f171a) && StringUtils.m3a(i2, c0022avM564g.m558d(AppState.m584b(333027)))) {
                 return c0022avM564g;
             }
         }
     }
 
     /* renamed from: b */
-    public final C0022av m577b() {
-        return m570i(398982).m559a(131590, m558d(AbstractC0023aw.m584b(262852))).m559a(262852, (String) null);
+    public final XmlElement m577b() {
+        return m570i(398982).m559a(131590, m558d(AppState.m584b(262852))).m559a(262852, (String) null);
     }
 }

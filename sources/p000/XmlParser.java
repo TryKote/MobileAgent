@@ -4,13 +4,13 @@ import java.util.Hashtable;
 
 /* renamed from: aa */
 /* loaded from: MobileAgent_3.9.jar:aa.class */
-public final class C0001aa {
+public final class XmlParser {
 
     /* renamed from: a */
     private String f3a;
 
     /* renamed from: b */
-    private C0022av f4b;
+    private XmlElement f4b;
 
     /* renamed from: c */
     private Object f5c;
@@ -18,21 +18,21 @@ public final class C0001aa {
     /* renamed from: d */
     private int f6d;
 
-    public C0001aa(Object obj) {
+    public XmlParser(Object obj) {
         this.f5c = obj;
     }
 
     /* renamed from: b */
     private final int m45b() {
         if (!(this.f5c instanceof String)) {
-            if (!(this.f5c instanceof C0043n)) {
+            if (!(this.f5c instanceof ByteBuffer)) {
                 return C0034e.m930b((Object[]) this.f5c);
             }
-            C0043n c0043n = (C0043n) this.f5c;
+            ByteBuffer c0043n = (ByteBuffer) this.f5c;
             if (c0043n.f384b == 0) {
                 return -1;
             }
-            return AbstractC0019as.m499a(c0043n.m1346q());
+            return Utils.m499a(c0043n.m1346q());
         }
         int i = this.f6d;
         String str = (String) this.f5c;
@@ -94,10 +94,10 @@ public final class C0001aa {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final C0022av m47a() {
+    public final XmlElement m47a() {
         boolean zEndsWith;
         boolean z;
-        C0022av c0022av;
+        XmlElement c0022av;
         String strM1215a;
         this.f3a = null;
         this.f4b = null;
@@ -105,7 +105,7 @@ public final class C0001aa {
             try {
                 String strM46a = m46a(1);
                 if (this.f4b != null) {
-                    C0022av c0022av2 = this.f4b;
+                    XmlElement c0022av2 = this.f4b;
                     if (strM46a.indexOf(38) < 0) {
                         strM1215a = strM46a;
                     } else {
@@ -163,17 +163,17 @@ public final class C0001aa {
                     String strM46a2 = m46a(2);
                     int i2 = 0;
                     int length2 = strM46a2.length();
-                    if (C0000a.m3a(1046, strM46a2)) {
+                    if (StringUtils.m3a(1046, strM46a2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        zEndsWith = strM46a2.endsWith(AbstractC0023aw.m584b(1046));
+                        zEndsWith = strM46a2.endsWith(AppState.m584b(1046));
                         z = zEndsWith;
                         if (zEndsWith) {
                             length2--;
                         }
-                        String strM12a = C0000a.m12a(strM46a2, i2, length2);
+                        String strM12a = StringUtils.m12a(strM46a2, i2, length2);
                         if (strM17c != null) {
-                            strM17c = C0000a.m17c(strM12a.toLowerCase());
+                            strM17c = StringUtils.m17c(strM12a.toLowerCase());
                         } else {
                             if (hashtable == null) {
                                 hashtable = new Hashtable();
@@ -181,10 +181,10 @@ public final class C0001aa {
                             int length3 = strM12a.length();
                             int iIndexOf = strM12a.indexOf(61);
                             if (iIndexOf >= 0) {
-                                String strM13b = C0000a.m13b(strM12a, iIndexOf);
+                                String strM13b = StringUtils.m13b(strM12a, iIndexOf);
                                 int i3 = iIndexOf + 1;
                                 if (i3 >= strM12a.length()) {
-                                    hashtable.put(strM13b, AbstractC0023aw.f181d);
+                                    hashtable.put(strM13b, AppState.f181d);
                                 } else {
                                     int i4 = i3;
                                     char cCharAt6 = strM12a.charAt(i4);
@@ -196,7 +196,7 @@ public final class C0001aa {
                                     if ((i5 > i4 && cCharAt7 == '\"') || cCharAt7 == '\'') {
                                         i5--;
                                     }
-                                    hashtable.put(strM13b, C0000a.m12a(strM12a, i4, i5));
+                                    hashtable.put(strM13b, StringUtils.m12a(strM12a, i4, i5));
                                 }
                             } else if (!z) {
                                 break;
@@ -215,11 +215,11 @@ public final class C0001aa {
                             z3 = true;
                             length2--;
                         }
-                        zEndsWith = strM46a2.endsWith(AbstractC0023aw.m584b(1046));
+                        zEndsWith = strM46a2.endsWith(AppState.m584b(1046));
                         z = zEndsWith;
                         if (zEndsWith) {
                         }
-                        String strM12a2 = C0000a.m12a(strM46a2, i2, length2);
+                        String strM12a2 = StringUtils.m12a(strM46a2, i2, length2);
                         if (strM17c != null) {
                         }
                     }
@@ -228,13 +228,13 @@ public final class C0001aa {
                     }
                 }
                 if (strM17c.charAt(0) != '?') {
-                    String strM17c2 = C0000a.m17c(strM17c.toLowerCase());
+                    String strM17c2 = StringUtils.m17c(strM17c.toLowerCase());
                     if (z2) {
                         if (this.f3a == null) {
                             this.f3a = strM17c2;
                         }
-                        this.f4b = new C0022av(strM17c2, this.f4b, hashtable);
-                        if (C0000a.m3a(857301, strM17c2)) {
+                        this.f4b = new XmlElement(strM17c2, this.f4b, hashtable);
+                        if (StringUtils.m3a(857301, strM17c2)) {
                             throw new RuntimeException();
                         }
                     }
@@ -243,7 +243,7 @@ public final class C0001aa {
                             c0022av.m552a(this.f4b);
                             this.f4b = c0022av;
                         }
-                        if (C0000a.m6a(strM17c2, this.f3a)) {
+                        if (StringUtils.m6a(strM17c2, this.f3a)) {
                             throw new RuntimeException();
                         }
                     }

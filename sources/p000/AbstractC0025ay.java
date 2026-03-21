@@ -81,13 +81,13 @@ public abstract class AbstractC0025ay {
 
     /* renamed from: a */
     public static final void m646a() {
-        AbstractC0023aw.m599a(1551, false);
+        AppState.m599a(1551, false);
         f200h = true;
     }
 
     /* renamed from: f */
     private static final Image m647f() {
-        Image imageM615n = AbstractC0023aw.m615n(1363);
+        Image imageM615n = AppState.m615n(1363);
         if (imageM615n != null) {
             return imageM615n;
         }
@@ -103,7 +103,7 @@ public abstract class AbstractC0025ay {
             i2 += 2;
             i ^= 2;
         }
-        AbstractC0023aw.f177b[1363] = imageCreateImage;
+        AppState.f177b[1363] = imageCreateImage;
         return imageCreateImage;
     }
 
@@ -157,20 +157,20 @@ public abstract class AbstractC0025ay {
             int i13 = (int) ((((i9 << 7) + 64) - f197e) + (f193a / 2));
             int i14 = (int) (f194b - ((((i10 << 7) + 64) - f198f) + (f194b / 2)));
             Vector vectorM1213g = C0040k.m1213g();
-            Graphics graphics = AbstractC0023aw.m615n(1364).getGraphics();
-            int iM586d = AbstractC0023aw.m586d(39);
+            Graphics graphics = AppState.m615n(1364).getGraphics();
+            int iM586d = AppState.m586d(39);
             for (int i15 = i9; i15 <= i11; i15++) {
                 for (int i16 = i10; i16 <= i12; i16++) {
                     C0034e c0034e = new C0034e(1, iM586d, i15, i16);
                     C0034e c0034e2 = null;
                     vectorM1213g.addElement(c0034e);
-                    if (AbstractC0023aw.m587e(277) && iM586d > 8 && AbstractC0023aw.m587e(41) && C0000a.m43a(f196d, f195c)) {
+                    if (AppState.m587e(277) && iM586d > 8 && AppState.m587e(41) && StringUtils.m43a(f196d, f195c)) {
                         C0034e c0034e3 = new C0034e(3, iM586d, i15, i16);
                         c0034e2 = c0034e3;
                         vectorM1213g.addElement(c0034e3);
                     }
-                    Image imageM20a = C0000a.m20a(c0034e);
-                    Image imageM20a2 = c0034e2 != null ? C0000a.m20a(c0034e2) : null;
+                    Image imageM20a = StringUtils.m20a(c0034e);
+                    Image imageM20a2 = c0034e2 != null ? StringUtils.m20a(c0034e2) : null;
                     if (imageM20a == null) {
                         imageM20a = m647f();
                     }
@@ -178,7 +178,7 @@ public abstract class AbstractC0025ay {
                     if (c0034e2 != null && imageM20a != m647f()) {
                         if (imageM20a2 != null) {
                             graphics.drawImage(imageM20a2, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
-                        } else if (imageM20a2 == null && !AbstractC0023aw.m614m(1396).contains(c0034e2)) {
+                        } else if (imageM20a2 == null && !AppState.m614m(1396).contains(c0034e2)) {
                             int i17 = i13 + (128 * (i15 - i9));
                             int i18 = i14 - (128 * (i16 - i10));
                             int color = graphics.getColor();
@@ -187,7 +187,7 @@ public abstract class AbstractC0025ay {
                             graphics.drawRect((i17 - 64) + 2, (i18 - 64) + 2, 124, 124);
                             graphics.setStrokeStyle(0);
                             graphics.setColor(color);
-                            if (AbstractC0023aw.m587e(1535) && AbstractC0023aw.m587e(1414)) {
+                            if (AppState.m587e(1535) && AppState.m587e(1414)) {
                                 int[] iArr = new int[128];
                                 int i19 = 128;
                                 while (true) {
@@ -212,16 +212,16 @@ public abstract class AbstractC0025ay {
                     }
                 }
             }
-            Vector vectorM614m2 = AbstractC0023aw.m614m(1383);
+            Vector vectorM614m2 = AppState.m614m(1383);
             int size3 = vectorM1213g.size();
             for (int i21 = 0; i21 < size3; i21++) {
                 C0034e c0034e4 = (C0034e) vectorM1213g.elementAt(i21);
                 if (!vectorM614m2.contains(c0034e4)) {
                     int i22 = c0034e4.f281a;
                     if (i22 == 1) {
-                        AbstractC0023aw.m595d(250, 1);
+                        AppState.m595d(250, 1);
                     } else if (i22 == 3) {
-                        AbstractC0023aw.m595d(251, 1);
+                        AppState.m595d(251, 1);
                     }
                     vectorM614m2.addElement(c0034e4);
                 }
@@ -235,7 +235,7 @@ public abstract class AbstractC0025ay {
                     vectorM614m2.removeElementAt(size4);
                 }
             }
-            Vector vectorM614m3 = AbstractC0023aw.m614m(1397);
+            Vector vectorM614m3 = AppState.m614m(1397);
             synchronized (vectorM614m3) {
                 vectorM614m3.removeAllElements();
                 int size5 = vectorM1213g.size();
@@ -244,7 +244,7 @@ public abstract class AbstractC0025ay {
                 }
                 C0040k.m1212a(vectorM1213g);
             }
-            Vector vectorM614m4 = AbstractC0023aw.m614m(1402);
+            Vector vectorM614m4 = AppState.m614m(1402);
             synchronized (vectorM614m4) {
                 int size6 = vectorM614m4.size();
                 if (size6 > 0) {
@@ -265,14 +265,14 @@ public abstract class AbstractC0025ay {
                     }
                     Font font = graphics.getFont();
                     int color2 = graphics.getColor();
-                    Font fontM625m = AbstractC0023aw.m625m();
+                    Font fontM625m = AppState.m625m();
                     graphics.setFont(fontM625m);
-                    int iM586d2 = AbstractC0023aw.m586d(72);
-                    graphics.setColor(AbstractC0023aw.m586d(5050 + iM586d2));
+                    int iM586d2 = AppState.m586d(72);
+                    graphics.setColor(AppState.m586d(5050 + iM586d2));
                     int iStringWidth = fontM625m.stringWidth(str) + 10;
-                    int iM586d3 = AbstractC0023aw.m586d(1450);
+                    int iM586d3 = AppState.m586d(1450);
                     graphics.fillRoundRect(5, 5, iStringWidth, iM586d3, 10, 10);
-                    graphics.setColor(AbstractC0023aw.m586d(iM586d2 + 4914));
+                    graphics.setColor(AppState.m586d(iM586d2 + 4914));
                     graphics.drawRoundRect(5, 5, iStringWidth, iM586d3, 10, 10);
                     graphics.drawString(str, 10, 5, 20);
                     graphics.setFont(font);
@@ -283,7 +283,7 @@ public abstract class AbstractC0025ay {
             long j3 = f198f;
             int i26 = f193a;
             int i27 = f194b;
-            if (AbstractC0023aw.m587e(277) && !C0036g.m1033j() && iM586d >= 9 && (vector = C0036g.f310a) != null && (size2 = vector.size()) != 0) {
+            if (AppState.m587e(277) && !C0036g.m1033j() && iM586d >= 9 && (vector = C0036g.f310a) != null && (size2 = vector.size()) != 0) {
                 long j4 = (j2 - (i26 / 2)) / 32;
                 long j5 = (j3 - (i26 / 2)) / 32;
                 long j6 = (j2 + (i26 / 2)) / 32;
@@ -310,9 +310,9 @@ public abstract class AbstractC0025ay {
                                 int i36 = (int) ((i27 / 2) + (j3 - jM317a2));
                                 graphics.drawImage(imageM1139a, i35, i36, 3);
                                 iArr2[(i34 * i28) + i33] = 1;
-                                if (str2 == null && AbstractC0019as.m505a(j2 - jM317a) < 20 && AbstractC0019as.m505a(j3 - jM317a2) < 20) {
+                                if (str2 == null && Utils.m505a(j2 - jM317a) < 20 && Utils.m505a(j3 - jM317a2) < 20) {
                                     String str3 = (String) objArr2[2];
-                                    if (AbstractC0019as.m535l(str3)) {
+                                    if (Utils.m535l(str3)) {
                                         str2 = str3;
                                         i29 = i35;
                                         height = (i36 - (imageM1139a.getHeight() / 2)) + 2;
@@ -323,7 +323,7 @@ public abstract class AbstractC0025ay {
                     }
                 }
                 if (str2 != null) {
-                    AbstractC0030bc.m831a(graphics, str2, AbstractC0023aw.m625m(), i26 - 40, i29, height);
+                    AbstractC0030bc.m831a(graphics, str2, AppState.m625m(), i26 - 40, i29, height);
                 }
             }
             C0014an c0014an2 = f202j;
@@ -332,7 +332,7 @@ public abstract class AbstractC0025ay {
             int i37 = f193a;
             int i38 = f194b;
             m660h();
-            if (c0014an2 != null && c0014an2.f141i && c0014an2.m267a() != null && AbstractC0019as.m505a(j10 - c0014an2.m270c(iM586d)) <= i37 / 2 && AbstractC0019as.m505a(j11 - c0014an2.m271d(iM586d)) <= i38 / 2) {
+            if (c0014an2 != null && c0014an2.f141i && c0014an2.m267a() != null && Utils.m505a(j10 - c0014an2.m270c(iM586d)) <= i37 / 2 && Utils.m505a(j11 - c0014an2.m271d(iM586d)) <= i38 / 2) {
                 int iM270c = (int) ((i37 / 2) + (c0014an2.m270c(iM586d) - j10));
                 int iM271d2 = (int) ((i38 / 2) + (j11 - c0014an2.m271d(iM586d)));
                 if (c0014an2.f143k == 2) {
@@ -343,7 +343,7 @@ public abstract class AbstractC0025ay {
                     i4 = 4;
                 }
                 graphics.drawImage(imageM1023b2, iM270c, iM271d2, 32 | i4);
-                if (AbstractC0019as.m505a(j10 - c0014an2.m270c(iM586d)) >= 20 || AbstractC0019as.m505a(j11 - c0014an2.m271d(iM586d)) >= 20) {
+                if (Utils.m505a(j10 - c0014an2.m270c(iM586d)) >= 20 || Utils.m505a(j11 - c0014an2.m271d(iM586d)) >= 20) {
                     m660h();
                 } else {
                     m659a((ListItem) c0014an2);
@@ -358,9 +358,9 @@ public abstract class AbstractC0025ay {
             C0014an c0014an3 = null;
             while (enumerationM1167j.hasMoreElements()) {
                 C0014an c0014an4 = (C0014an) enumerationM1167j.nextElement();
-                if (AbstractC0019as.m505a(j12 - c0014an4.m270c(iM586d)) < i39 / 2 && AbstractC0019as.m505a(j13 - c0014an4.m271d(iM586d)) < i40 / 2 && c0014an4.f141i) {
+                if (Utils.m505a(j12 - c0014an4.m270c(iM586d)) < i39 / 2 && Utils.m505a(j13 - c0014an4.m271d(iM586d)) < i40 / 2 && c0014an4.f141i) {
                     graphics.drawImage(C0036g.m1023b(18), (int) ((i39 / 2) + (c0014an4.m270c(iM586d) - j12)), (int) ((i40 / 2) + (j13 - c0014an4.m271d(iM586d))), 36);
-                    if (AbstractC0019as.m505a(j12 - c0014an4.m270c(iM586d)) < 20 && (iM271d = (int) (j13 - c0014an4.m271d(iM586d))) < 20 && iM271d > -10 && !z2) {
+                    if (Utils.m505a(j12 - c0014an4.m270c(iM586d)) < 20 && (iM271d = (int) (j13 - c0014an4.m271d(iM586d))) < 20 && iM271d > -10 && !z2) {
                         c0014an3 = c0014an4;
                         z2 = true;
                     }
@@ -377,9 +377,9 @@ public abstract class AbstractC0025ay {
             long j15 = f198f;
             int i41 = f193a;
             int i42 = f194b;
-            if (AbstractC0023aw.m587e(276) && AbstractC0023aw.m587e(280) && !C0036g.m1033j() && (vectorM614m = AbstractC0023aw.m614m(1404)) != null && (size = vectorM614m.size()) != 0) {
+            if (AppState.m587e(276) && AppState.m587e(280) && !C0036g.m1033j() && (vectorM614m = AppState.m614m(1404)) != null && (size = vectorM614m.size()) != 0) {
                 ListItem interfaceC0044o2 = null;
-                int iM586d4 = AbstractC0023aw.m586d(39);
+                int iM586d4 = AppState.m586d(39);
                 for (int i43 = 0; i43 < size; i43++) {
                     ListItem interfaceC0044o3 = (ListItem) vectorM614m.elementAt(i43);
                     if (interfaceC0044o3.mo277s() && iM586d4 == interfaceC0044o3.mo280y()) {
@@ -396,7 +396,7 @@ public abstract class AbstractC0025ay {
                             }
                             graphics.drawImage(imageM1023b, i44, i45, 3);
                         }
-                        if (AbstractC0019as.m505a(j14 - jMo282a) < 20 && AbstractC0019as.m505a(j15 - jMo283b) < 20 && interfaceC0044o2 == null) {
+                        if (Utils.m505a(j14 - jMo282a) < 20 && Utils.m505a(j15 - jMo283b) < 20 && interfaceC0044o2 == null) {
                             interfaceC0044o2 = interfaceC0044o3;
                         }
                     }
@@ -413,7 +413,7 @@ public abstract class AbstractC0025ay {
             long j17 = f198f;
             int i47 = f193a;
             int i48 = f194b;
-            if (AbstractC0023aw.m587e(276) && AbstractC0023aw.m587e(279) && !C0036g.m1033j()) {
+            if (AppState.m587e(276) && AppState.m587e(279) && !C0036g.m1033j()) {
                 Vector vectorM448X = C0015ao.m448X();
                 int size7 = vectorM448X.size();
                 if (size7 > 0) {
@@ -475,7 +475,7 @@ public abstract class AbstractC0025ay {
                             if (imageM1023b3 != null) {
                                 graphics.drawImage(image, i55, i56, 3);
                             }
-                            if (AbstractC0019as.m505a(j16 - jMo282a3) < 20 && AbstractC0019as.m505a(j17 - jMo283b3) < 20 && interfaceC0044o7 == null) {
+                            if (Utils.m505a(j16 - jMo282a3) < 20 && Utils.m505a(j17 - jMo283b3) < 20 && interfaceC0044o7 == null) {
                                 interfaceC0044o7 = interfaceC0044o8;
                             }
                         }
@@ -494,8 +494,8 @@ public abstract class AbstractC0025ay {
             long j23 = f198f;
             int i57 = f193a;
             int i58 = f194b;
-            if (AbstractC0023aw.m587e(276) && AbstractC0023aw.m587e(278) && !C0036g.m1033j()) {
-                AbstractC0023aw.m594c(1547, 0);
+            if (AppState.m587e(276) && AppState.m587e(278) && !C0036g.m1033j()) {
+                AppState.m594c(1547, 0);
                 Vector vectorM449Y = C0015ao.m449Y();
                 int size8 = vectorM449Y.size();
                 if (size8 != 0) {
@@ -510,7 +510,7 @@ public abstract class AbstractC0025ay {
                             if (i60 > 0 && i60 < i57 && i61 > 0 && i61 < i58) {
                                 graphics.drawImage(C0036g.m1023b(22), i60, i61, 3);
                             }
-                            if (AbstractC0019as.m505a(j22 - jMo282a4) < 20 && AbstractC0019as.m505a(j23 - jMo283b4) < 20 && c0028ba == null) {
+                            if (Utils.m505a(j22 - jMo282a4) < 20 && Utils.m505a(j23 - jMo283b4) < 20 && c0028ba == null) {
                                 c0028ba = c0028ba2;
                             }
                         }
@@ -519,9 +519,9 @@ public abstract class AbstractC0025ay {
                         if (c0028ba != null) {
                             m659a(c0028ba);
                             if (c0028ba.f231g.f24l) {
-                                AbstractC0023aw.m594c(1547, 1);
+                                AppState.m594c(1547, 1);
                             }
-                            AbstractC0023aw.m617d(c0028ba);
+                            AppState.m617d(c0028ba);
                         } else {
                             m660h();
                         }
@@ -533,11 +533,11 @@ public abstract class AbstractC0025ay {
             long j25 = f198f;
             int i62 = f193a;
             int i63 = f194b;
-            if (AbstractC0023aw.m587e(276) && !C0036g.m1033j() && (interfaceC0044o = C0039j.f358h) != null) {
+            if (AppState.m587e(276) && !C0036g.m1033j() && (interfaceC0044o = C0039j.f358h) != null) {
                 long jMo282a5 = interfaceC0044o.mo282a(iM586d);
                 long jMo283b5 = interfaceC0044o.mo283b(iM586d);
                 graphics.drawImage(C0036g.m1023b(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);
-                if (AbstractC0019as.m505a(j24 - jMo282a5) < 20 && AbstractC0019as.m505a(j25 - jMo283b5) < 20) {
+                if (Utils.m505a(j24 - jMo282a5) < 20 && Utils.m505a(j25 - jMo283b5) < 20) {
                     m659a(interfaceC0044o);
                 }
             }
@@ -546,7 +546,7 @@ public abstract class AbstractC0025ay {
             AbstractC0030bc.m829a(graphics, f197e, f198f, iM586d, f193a, f194b, f195c);
             int i64 = f193a / 2;
             int i65 = f194b / 2;
-            if (f201i || AbstractC0023aw.m587e(1479)) {
+            if (f201i || AppState.m587e(1479)) {
                 int color3 = graphics.getColor();
                 graphics.setColor(0);
                 graphics.fillRect(i64 - 1, i65 - 7, 2, 5);
@@ -558,7 +558,7 @@ public abstract class AbstractC0025ay {
             long j26 = f196d;
             long j27 = f195c;
             GeoRegion c0053x = null;
-            Vector vectorM614m5 = AbstractC0023aw.m614m(1389);
+            Vector vectorM614m5 = AppState.m614m(1389);
             int size9 = vectorM614m5.size();
             while (true) {
                 size9--;
@@ -576,8 +576,8 @@ public abstract class AbstractC0025ay {
                 }
             }
             GeoRegion c0053x4 = c0053x;
-            if (AbstractC0023aw.m587e(277)) {
-                boolean zM587e = AbstractC0023aw.m587e(230);
+            if (AppState.m587e(277)) {
+                boolean zM587e = AppState.m587e(230);
                 int clipWidth = zM587e ? graphics.getClipWidth() - 4 : 18;
                 int i66 = -1;
                 int i67 = 0;
@@ -600,7 +600,7 @@ public abstract class AbstractC0025ay {
                 }
                 if (AbstractC0030bc.f241a != i || AbstractC0030bc.f242b != i2) {
                     int i69 = i66;
-                    StringBuffer stringBufferAppend = C0040k.m1217h().append(AbstractC0023aw.m584b(974));
+                    StringBuffer stringBufferAppend = C0040k.m1217h().append(AppState.m584b(974));
                     if (i69 < 0 || c0053x4 == null) {
                         i3 = 975;
                     } else {
@@ -609,22 +609,22 @@ public abstract class AbstractC0025ay {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    AbstractC0023aw.m601a(1384, (Object) C0040k.m1215a(stringBufferAppend.append(AbstractC0023aw.m584b(i3))));
+                    AppState.m601a(1384, (Object) C0040k.m1215a(stringBufferAppend.append(AppState.m584b(i3))));
                     AbstractC0030bc.f241a = i;
                     AbstractC0030bc.f242b = i2;
                 }
-                String strM584b = AbstractC0023aw.m584b(1384);
+                String strM584b = AppState.m584b(1384);
                 Font font2 = graphics.getFont();
                 int color4 = graphics.getColor();
-                Font fontM625m2 = AbstractC0023aw.m625m();
+                Font fontM625m2 = AppState.m625m();
                 graphics.setFont(fontM625m2);
-                int iM586d5 = AbstractC0023aw.m586d(1450);
-                int iM586d6 = AbstractC0023aw.m586d(72);
-                int iM586d7 = AbstractC0023aw.m586d(iM586d6 + 4914);
+                int iM586d5 = AppState.m586d(1450);
+                int iM586d6 = AppState.m586d(72);
+                int iM586d7 = AppState.m586d(iM586d6 + 4914);
                 int i70 = iM586d5 > 18 ? iM586d5 : 18;
                 int clipHeight = (graphics.getClipHeight() - i70) - 1;
                 if (zM587e) {
-                    graphics.setColor(AbstractC0023aw.m586d(iM586d6 + 5050));
+                    graphics.setColor(AppState.m586d(iM586d6 + 5050));
                     graphics.fillRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
                 }
                 graphics.setColor(iM586d7);
@@ -660,20 +660,20 @@ public abstract class AbstractC0025ay {
                 if (iCurrentTimeMillis >= 200) {
                     int i74 = iCurrentTimeMillis < 300 ? 40 : iCurrentTimeMillis < 400 ? 80 : iCurrentTimeMillis < 500 ? 120 : 140;
                     int color5 = graphics.getColor();
-                    graphics.setColor(AbstractC0023aw.m586d(5050 + AbstractC0023aw.m586d(72)));
+                    graphics.setColor(AppState.m586d(5050 + AppState.m586d(72)));
                     int i75 = i74;
                     graphics.fillArc(i72 - (i74 / 2), i73 - (i74 / 2), i75, i74, 0, 360);
                     graphics.setColor(color5);
                     j = i75;
                 }
             }
-            AbstractC0023aw.m594c(1553, 1);
+            AppState.m594c(1553, 1);
             if (f213r == 0) {
                 f200h = false;
             }
         }
         if (C0015ao.m307b(11, 2000L)) {
-            AbstractC0023aw.m594c(1549, 0);
+            AppState.m594c(1549, 0);
         }
         Vector vector2 = f205m;
         synchronized (vector2) {
@@ -690,13 +690,13 @@ public abstract class AbstractC0025ay {
         if (f208n > 0 && !f201i) {
             long jCurrentTimeMillis2 = System.currentTimeMillis();
             if (jCurrentTimeMillis2 - f209o > 80) {
-                int iM586d8 = AbstractC0023aw.m586d(39);
+                int iM586d8 = AppState.m586d(39);
                 m649a(f196d, f195c + ((C0015ao.m315d(iM586d8) / C0015ao.m316e(iM586d8)) * 9));
                 f208n -= 9;
                 f209o = jCurrentTimeMillis2;
             }
         }
-        if (AbstractC0023aw.m587e(277) && System.currentTimeMillis() - C0036g.f311b > 600000 && AbstractC0023aw.m587e(1576) && AbstractC0023aw.m587e(1414) && !C0015ao.m345u()) {
+        if (AppState.m587e(277) && System.currentTimeMillis() - C0036g.f311b > 600000 && AppState.m587e(1576) && AppState.m587e(1414) && !C0015ao.m345u()) {
             C0036g.m1032i();
         }
     }
@@ -707,17 +707,17 @@ public abstract class AbstractC0025ay {
         if (j2 == f195c && j == f196d) {
             return;
         }
-        int iM586d = AbstractC0023aw.m586d(39);
+        int iM586d = AppState.m586d(39);
         synchronized (f199g) {
             f195c = j2;
-            AbstractC0023aw.m597a(37, 37L);
+            AppState.m597a(37, 37L);
             f196d = j;
-            AbstractC0023aw.m597a(35, j);
+            AppState.m597a(35, j);
             f197e = C0015ao.m317a(j, iM586d);
             f198f = C0015ao.m317a(j2, iM586d);
             GeoRegion c0053x2 = f210w;
-            Vector vectorM614m = AbstractC0023aw.m614m(1389);
-            int iM541c = AbstractC0019as.m541c(vectorM614m);
+            Vector vectorM614m = AppState.m614m(1389);
+            int iM541c = Utils.m541c(vectorM614m);
             while (true) {
                 iM541c--;
                 if (iM541c < 0) {
@@ -732,7 +732,7 @@ public abstract class AbstractC0025ay {
             }
             GeoRegion c0053x4 = c0053x;
             if (c0053x2 != c0053x) {
-                if (AbstractC0023aw.m587e(277)) {
+                if (AppState.m587e(277)) {
                     C0036g.m1032i();
                 }
                 f210w = c0053x4;
@@ -745,7 +745,7 @@ public abstract class AbstractC0025ay {
     /* renamed from: b */
     private static final int m650b(int i) {
         int i2;
-        if (C0000a.m43a(f196d, f195c) || i <= 10) {
+        if (StringUtils.m43a(f196d, f195c) || i <= 10) {
             return (f210w == null || i <= (i2 = f210w.f431k)) ? i : i2;
         }
         return 10;
@@ -753,13 +753,13 @@ public abstract class AbstractC0025ay {
 
     /* renamed from: a */
     public static final void m651a(int i) {
-        int iM586d = AbstractC0023aw.m586d(39);
+        int iM586d = AppState.m586d(39);
         if (i == iM586d || i < 3 || i > 17) {
             return;
         }
         int iM650b = m650b(i);
         int i2 = iM650b != 8 ? iM650b : iM586d < iM650b ? 9 : 7;
-        AbstractC0023aw.m594c(39, i2);
+        AppState.m594c(39, i2);
         f197e = C0015ao.m317a(f196d, i2);
         f198f = C0015ao.m317a(f195c, i2);
         m661e();
@@ -776,7 +776,7 @@ public abstract class AbstractC0025ay {
 
     /* renamed from: a */
     public static final void m653a(C0014an c0014an) {
-        if (AbstractC0023aw.m587e(1442)) {
+        if (AppState.m587e(1442)) {
             C0009ai.m183b(c0014an.f138f, c0014an.f139g);
         } else {
             C0009ai.m182a(c0014an.f138f, c0014an.f139g);
@@ -786,7 +786,7 @@ public abstract class AbstractC0025ay {
             C0038i.m1129c();
         }
         c0014an.m269c();
-        AbstractC0023aw.m594c(1443, 0);
+        AppState.m594c(1443, 0);
     }
 
     /* renamed from: b */
@@ -875,7 +875,7 @@ public abstract class AbstractC0025ay {
                 f212q = true;
                 return;
             } else {
-                int iM586d = AbstractC0023aw.m586d(39);
+                int iM586d = AppState.m586d(39);
                 m657b((int) C0015ao.m318a(m662c(i), iM586d), (int) C0015ao.m318a(m663d(i2), iM586d));
             }
         }
@@ -886,7 +886,7 @@ public abstract class AbstractC0025ay {
     public static final void m665b(int i, int i2) {
         f212q = true;
         f213r = 0L;
-        int iM586d = AbstractC0023aw.m586d(39);
+        int iM586d = AppState.m586d(39);
         m649a((int) C0015ao.m318a(m662c(i), iM586d), (int) C0015ao.m318a(m663d(i2), iM586d));
         f200h = true;
     }

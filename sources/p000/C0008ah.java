@@ -43,7 +43,7 @@ public final class C0008ah {
         this.f47d = i;
         this.f46c = str;
         this.f50g = i2;
-        this.f48e = C0012al.m217c(i) + AbstractC0023aw.m608k(1).m214a(str);
+        this.f48e = C0012al.m217c(i) + AppState.m608k(1).m214a(str);
         this.f51h = abstractC0037h;
     }
 
@@ -51,11 +51,11 @@ public final class C0008ah {
     public static final void m163a() {
         f45b = 0;
         f54k = null;
-        AbstractC0023aw.f177b[1246] = C0040k.m1213g();
-        Vector vectorM614m = AbstractC0023aw.m614m(1241);
+        AppState.f177b[1246] = C0040k.m1213g();
+        Vector vectorM614m = AppState.m614m(1241);
         int size = vectorM614m.size();
-        if (size == 0 || !AbstractC0023aw.m587e(243)) {
-            m165a(156, AbstractC0023aw.m584b(1047), 4, null);
+        if (size == 0 || !AppState.m587e(243)) {
+            m165a(156, AppState.m584b(1047), 4, null);
         } else {
             for (int i = 0; i < size; i++) {
                 AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM614m.elementAt(i);
@@ -65,11 +65,11 @@ public final class C0008ah {
                 }
             }
         }
-        if (AbstractC0023aw.m587e(67)) {
-            m165a(240, AbstractC0023aw.m584b(1044), 36, null);
+        if (AppState.m587e(67)) {
+            m165a(240, AppState.m584b(1044), 36, null);
         }
-        if (AbstractC0023aw.m587e(68)) {
-            m165a(264, AbstractC0023aw.m584b(1045), 6, null);
+        if (AppState.m587e(68)) {
+            m165a(264, AppState.m584b(1045), 6, null);
         }
         m178j();
         C0015ao.f153g = true;
@@ -77,7 +77,7 @@ public final class C0008ah {
 
     /* renamed from: a */
     public static final void m164a(int i, String str) {
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         C0008ah c0008ah = (C0008ah) vectorM614m.elementAt(0);
         if (c0008ah.f47d == i && c0008ah.f46c == str) {
             return;
@@ -94,12 +94,12 @@ public final class C0008ah {
 
     /* renamed from: a */
     private static void m165a(int i, String str, int i2, AbstractC0037h abstractC0037h) {
-        AbstractC0023aw.m614m(1246).addElement(new C0008ah(i, str, i2, abstractC0037h));
+        AppState.m614m(1246).addElement(new C0008ah(i, str, i2, abstractC0037h));
     }
 
     /* renamed from: b */
     public final int m166b() {
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         int size = vectorM614m.size();
         do {
             size--;
@@ -114,7 +114,7 @@ public final class C0008ah {
     /* renamed from: c */
     public static final C0008ah m167c() {
         int i = f45b + 1;
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         if (i < vectorM614m.size()) {
             return (C0008ah) vectorM614m.elementAt(i);
         }
@@ -125,7 +125,7 @@ public final class C0008ah {
     public static final C0008ah m168d() {
         int i = f45b - 1;
         if (i >= 0) {
-            return (C0008ah) AbstractC0023aw.m614m(1246).elementAt(i);
+            return (C0008ah) AppState.m614m(1246).elementAt(i);
         }
         return null;
     }
@@ -134,7 +134,7 @@ public final class C0008ah {
     public static final void m169e() {
         m174k();
         if (m176a(36, (AbstractC0037h) null) == null) {
-            m165a(240, AbstractC0023aw.m584b(1044), 36, null);
+            m165a(240, AppState.m584b(1044), 36, null);
         }
     }
 
@@ -147,7 +147,7 @@ public final class C0008ah {
     public static final void m171g() {
         m174k();
         if (m176a(6, (AbstractC0037h) null) == null) {
-            m165a(264, AbstractC0023aw.m584b(1045), 6, null);
+            m165a(264, AppState.m584b(1045), 6, null);
         }
     }
 
@@ -159,10 +159,10 @@ public final class C0008ah {
     /* renamed from: b */
     private static final void m173b(int i, int i2) {
         C0008ah c0008ah;
-        if (AbstractC0023aw.m587e(i)) {
+        if (AppState.m587e(i)) {
             return;
         }
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         int size = vectorM614m.size();
         do {
             size--;
@@ -179,15 +179,15 @@ public final class C0008ah {
 
     /* renamed from: k */
     private static final void m174k() {
-        if (AbstractC0023aw.m587e(243)) {
+        if (AppState.m587e(243)) {
             return;
         }
-        m164a(156, AbstractC0023aw.m584b(1047));
+        m164a(156, AppState.m584b(1047));
     }
 
     /* renamed from: i */
     public static final C0008ah m175i() {
-        return (C0008ah) AbstractC0023aw.m614m(1246).elementAt(f45b);
+        return (C0008ah) AppState.m614m(1246).elementAt(f45b);
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:10:0x0032, code lost:
@@ -199,7 +199,7 @@ public final class C0008ah {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public static final C0008ah m176a(int i, AbstractC0037h abstractC0037h) {
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         int size = vectorM614m.size();
         while (true) {
             size--;
@@ -220,7 +220,7 @@ public final class C0008ah {
             f45b = i;
             m178j();
         }
-        C0008ah c0008ah = (C0008ah) AbstractC0023aw.m614m(1246).elementAt(i);
+        C0008ah c0008ah = (C0008ah) AppState.m614m(1246).elementAt(i);
         f54k = c0008ah.f51h;
         return c0008ah;
     }
@@ -232,13 +232,13 @@ public final class C0008ah {
         int[] iArr;
         Object objElementAt2;
         int[] iArr2;
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         if (vectorM614m == null) {
             return;
         }
-        C0040k.m1212a(AbstractC0023aw.m614m(1245));
+        C0040k.m1212a(AppState.m614m(1245));
         Vector vectorM1213g = C0040k.m1213g();
-        AbstractC0023aw.f177b[1245] = vectorM1213g;
+        AppState.f177b[1245] = vectorM1213g;
         int size = vectorM614m.size();
         int i2 = f45b;
         C0008ah c0008ah = (C0008ah) vectorM614m.elementAt(i2);
@@ -247,7 +247,7 @@ public final class C0008ah {
         int i5 = 20;
         for (int i6 = 0; i6 < size; i6++) {
             C0008ah c0008ah2 = (C0008ah) vectorM614m.elementAt(i6);
-            c0008ah2.f48e = 26 + AbstractC0023aw.m608k(1).m214a(c0008ah2.f46c);
+            c0008ah2.f48e = 26 + AppState.m608k(1).m214a(c0008ah2.f46c);
             c0008ah2.f49f = i5;
             vectorM1213g.addElement(c0008ah2);
             i5 += c0008ah2.f48e;
@@ -257,7 +257,7 @@ public final class C0008ah {
             }
         }
         int i7 = i3;
-        int iM586d = AbstractC0023aw.m586d(1528) - 20;
+        int iM586d = AppState.m586d(1528) - 20;
         while (i4 >= iM586d - 32) {
             int i8 = 0;
             while (true) {
@@ -297,7 +297,7 @@ public final class C0008ah {
             }
             if (c0008ah3.f50g == 4) {
                 AbstractC0037h abstractC0037h = c0008ah3.f51h;
-                if (C0015ao.m416b(abstractC0037h) && AbstractC0023aw.m587e(67) && iArr2[1] == 248) {
+                if (C0015ao.m416b(abstractC0037h) && AppState.m587e(67) && iArr2[1] == 248) {
                     vectorM1213g.insertElementAt(new int[]{20, C0015ao.m417c(abstractC0037h)}, 0);
                     int[] iArr6 = iArr2;
                     iArr6[0] = iArr6[0] + 16;
@@ -370,7 +370,7 @@ public final class C0008ah {
                     vectorM1213g.addElement(iArr9);
                     i14 -= 16;
                 }
-                if (c0008ah4.f50g == 36 && C0015ao.m410N() && AbstractC0023aw.m587e(67)) {
+                if (c0008ah4.f50g == 36 && C0015ao.m410N() && AppState.m587e(67)) {
                     vectorM1213g.addElement(new int[]{i15 + 16, 16385});
                     i14 -= 16;
                 }
@@ -424,7 +424,7 @@ public final class C0008ah {
 
     /* renamed from: a */
     public static final Object m179a(int i, int i2) {
-        Vector vectorM614m = AbstractC0023aw.m614m(1245);
+        Vector vectorM614m = AppState.m614m(1245);
         int size = vectorM614m.size();
         while (true) {
             size--;

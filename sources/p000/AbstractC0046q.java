@@ -36,7 +36,7 @@ public abstract class AbstractC0046q implements Sortable {
     }
 
     /* renamed from: a */
-    public void mo196a(C0043n c0043n, boolean z) {
+    public void mo196a(ByteBuffer c0043n, boolean z) {
         int size = this.f397e.size();
         c0043n.m1360p(size);
         for (int i = 0; i < size; i++) {
@@ -46,12 +46,12 @@ public abstract class AbstractC0046q implements Sortable {
         if (z) {
             this.f397e.removeAllElements();
         }
-        AbstractC0019as.m526b(this.f397e);
+        Utils.m526b(this.f397e);
     }
 
     /* renamed from: f */
     public final C0032c m1395f(int i) {
-        C0032c c0032cM896a = C0032c.m887a(new C0043n().m1321f(35).m1382s(this.f396d.f314j).m1321f(35).m1382s(mo197b()).m1337i()).m896a(this.f399g ? 30 : 31);
+        C0032c c0032cM896a = C0032c.m887a(new ByteBuffer().m1321f(35).m1382s(this.f396d.f314j).m1321f(35).m1382s(mo197b()).m1337i()).m896a(this.f399g ? 30 : 31);
         c0032cM896a.f265d = this;
         if (mo198a()) {
             C0032c c0032cM901a = c0032cM896a.m901a(C0040k.m1215a(C0040k.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);
@@ -67,7 +67,7 @@ public abstract class AbstractC0046q implements Sortable {
                     i2++;
                 }
             }
-            C0032c c0032cM901a2 = c0032cM901a.m901a(C0000a.m17c(Integer.toString(i2)), 1, 20);
+            C0032c c0032cM901a2 = c0032cM901a.m901a(StringUtils.m17c(Integer.toString(i2)), 1, 20);
             StringBuffer stringBufferAppend = C0040k.m1217h().append('/');
             int size2 = this.f397e.size();
             int i3 = size2;
@@ -138,7 +138,7 @@ public abstract class AbstractC0046q implements Sortable {
 
     /* renamed from: c */
     public final void m1403c(String str) {
-        if (C0000a.m6a(str, this.f398f)) {
+        if (StringUtils.m6a(str, this.f398f)) {
             return;
         }
         m1404d(str);
@@ -148,7 +148,7 @@ public abstract class AbstractC0046q implements Sortable {
     /* renamed from: d */
     public final void m1404d(String str) {
         this.f398f = str;
-        this.f400a = C0000a.m17c(str.toLowerCase());
+        this.f400a = StringUtils.m17c(str.toLowerCase());
     }
 
     /* renamed from: b */

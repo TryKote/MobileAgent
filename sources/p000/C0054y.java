@@ -42,7 +42,7 @@ public final class C0054y extends AbstractC0046q {
     public final int mo1397n() {
         if (this.f399g) {
             String str = this.f398f;
-            Vector vectorM614m = AbstractC0023aw.m614m(1241);
+            Vector vectorM614m = AppState.m614m(1241);
             int size = vectorM614m.size();
             while (true) {
                 size--;
@@ -57,7 +57,7 @@ public final class C0054y extends AbstractC0046q {
                         break;
                     }
                     AbstractC0046q abstractC0046qM1082g = abstractC0037h.m1082g(size2);
-                    if (C0000a.m6a(str, abstractC0046qM1082g.f398f)) {
+                    if (StringUtils.m6a(str, abstractC0046qM1082g.f398f)) {
                         abstractC0046qM1082g.f399g = false;
                     }
                 }
@@ -76,7 +76,7 @@ public final class C0054y extends AbstractC0046q {
             }
         } else {
             String str2 = this.f398f;
-            Vector vectorM614m2 = AbstractC0023aw.m614m(1241);
+            Vector vectorM614m2 = AppState.m614m(1241);
             int size3 = vectorM614m2.size();
             while (true) {
                 size3--;
@@ -91,7 +91,7 @@ public final class C0054y extends AbstractC0046q {
                         break;
                     }
                     AbstractC0046q abstractC0046qM1082g2 = abstractC0037h2.m1082g(size4);
-                    if (C0000a.m6a(str2, abstractC0046qM1082g2.f398f)) {
+                    if (StringUtils.m6a(str2, abstractC0046qM1082g2.f398f)) {
                         abstractC0046qM1082g2.f399g = true;
                     }
                 }

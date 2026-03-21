@@ -102,10 +102,10 @@ public final class C0038i implements ListItem {
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         int size = this.f343a.size();
         if (this.f344c == 5) {
-            stringBufferM1217h.append(AbstractC0023aw.m584b(445)).append(size);
+            stringBufferM1217h.append(AppState.m584b(445)).append(size);
         } else {
             int i = size - 1;
-            stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).mo273x()).append(AbstractC0023aw.m584b(446)).append(i).append(AbstractC0023aw.m584b(442 + AbstractC0019as.m540f(i)));
+            stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).mo273x()).append(AppState.m584b(446)).append(i).append(AppState.m584b(442 + Utils.m540f(i)));
         }
         return C0040k.m1215a(stringBufferM1217h);
     }
@@ -132,9 +132,9 @@ public final class C0038i implements ListItem {
                 if (((Integer) objArr[1]).intValue() == 0) {
                     c0033d.f323s = 30;
                     C0015ao.f153g = true;
-                    C0024ax c0024axM629a = C0024ax.m629a(AbstractC0023aw.m584b(2755089), c0033d, 0);
+                    C0024ax c0024axM629a = C0024ax.m629a(AppState.m584b(2755089), c0033d, 0);
                     c0024axM629a.m635b(C0040k.m1221a(1414745936));
-                    C0043n c0043nM1315a = new C0043n().m1310c(2755131).m1315a(objArr[2]).m1310c(330609).m1315a(objArr[3]);
+                    ByteBuffer c0043nM1315a = new ByteBuffer().m1310c(2755131).m1315a(objArr[2]).m1310c(330609).m1315a(objArr[3]);
                     C0039j.m1153a(c0024axM629a, 788628, 2164851);
                     c0024axM629a.m637a(c0043nM1315a.f383a, c0043nM1315a.f384b);
                     int iM634a = c0024axM629a.m634a();
@@ -142,17 +142,17 @@ public final class C0038i implements ListItem {
                     if (iM634a == 200) {
                         c0033d.f323s = 40;
                         C0015ao.f153g = true;
-                        C0022av c0022avM1389J = new C0043n(c0024axM629a).m1389J();
-                        int i2 = Integer.parseInt(C0000a.m11a(c0022avM1389J.m562f(658246).f173c));
+                        XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).m1389J();
+                        int i2 = Integer.parseInt(StringUtils.m11a(c0022avM1389J.m562f(658246).f173c));
                         if (i2 != 200) {
                             if (i2 == 330) {
                                 ((C0033d) objArr[0]).m1065J();
                                 objArr[0] = null;
                             }
-                            throw new RuntimeException(C0000a.m17c(Integer.toString(i2)));
+                            throw new RuntimeException(StringUtils.m17c(Integer.toString(i2)));
                         }
-                        C0022av c0022avM562f = c0022avM1389J.m562f(262156);
-                        new RunnableC0055z(31, new Object[]{objArr[0], C0034e.m967e(1), C0000a.m11a(c0022avM562f.m562f(461648).f173c), C0000a.m11a(c0022avM562f.m562f(330583).m562f(65538).f173c), C0000a.m11a(c0022avM562f.m562f(527196).f173c), C0000a.m11a(c0022avM562f.m562f(854884).f173c), objArr[3]});
+                        XmlElement c0022avM562f = c0022avM1389J.m562f(262156);
+                        new RunnableC0055z(31, new Object[]{objArr[0], C0034e.m967e(1), StringUtils.m11a(c0022avM562f.m562f(461648).f173c), StringUtils.m11a(c0022avM562f.m562f(330583).m562f(65538).f173c), StringUtils.m11a(c0022avM562f.m562f(527196).f173c), StringUtils.m11a(c0022avM562f.m562f(854884).f173c), objArr[3]});
                         C0024ax.m633a(c0024axM629a);
                         C0015ao.m344t();
                         return;
@@ -160,22 +160,22 @@ public final class C0038i implements ListItem {
                 } else {
                     c0033d.f323s = 50;
                     C0015ao.f153g = true;
-                    C0043n c0043nM1321f = new C0043n().m1310c(2951781).m1321f(63);
-                    String strM1337i = new C0043n().m1310c(132058).m1315a(objArr[3]).m1310c(11012754).m1316b(objArr[4]).m1337i();
-                    C0024ax c0024axM642a = C0024ax.m632a(c0043nM1321f.m1314d(strM1337i).m1310c(789306).m1314d(m1089a(new C0043n().m1310c(265078).m1314d(m1125a(AbstractC0023aw.m584b(2951781), false)).m1321f(38).m1314d(m1125a(strM1337i, false)).m1337i(), m1089a((String) objArr[5], (String) objArr[6]))).m1337i()).m642a(0, 5522759, 330359);
+                    ByteBuffer c0043nM1321f = new ByteBuffer().m1310c(2951781).m1321f(63);
+                    String strM1337i = new ByteBuffer().m1310c(132058).m1315a(objArr[3]).m1310c(11012754).m1316b(objArr[4]).m1337i();
+                    C0024ax c0024axM642a = C0024ax.m632a(c0043nM1321f.m1314d(strM1337i).m1310c(789306).m1314d(m1089a(new ByteBuffer().m1310c(265078).m1314d(m1125a(AppState.m584b(2951781), false)).m1321f(38).m1314d(m1125a(strM1337i, false)).m1337i(), m1089a((String) objArr[5], (String) objArr[6]))).m1337i()).m642a(0, 5522759, 330359);
                     int iM634a2 = c0024axM642a.m634a();
                     i = iM634a2;
                     if (iM634a2 == 200) {
                         c0033d.f323s = 60;
                         C0015ao.f153g = true;
-                        C0022av c0022avM562f2 = c0024axM642a.m644b().m1389J().m562f(262156);
-                        ((C0033d) objArr[0]).f272c = new String[]{(String) objArr[2], C0040k.m1215a(C0040k.m1217h().append(C0000a.m11a(c0022avM562f2.m562f(265052).f173c)).append(':').append(C0000a.m11a(c0022avM562f2.m562f(265005).f173c))), C0000a.m11a(c0022avM562f2.m562f(395483).f173c)};
+                        XmlElement c0022avM562f2 = c0024axM642a.m644b().m1389J().m562f(262156);
+                        ((C0033d) objArr[0]).f272c = new String[]{(String) objArr[2], C0040k.m1215a(C0040k.m1217h().append(StringUtils.m11a(c0022avM562f2.m562f(265052).f173c)).append(':').append(StringUtils.m11a(c0022avM562f2.m562f(265005).f173c))), StringUtils.m11a(c0022avM562f2.m562f(395483).f173c)};
                         C0024ax.m633a(c0024axM642a);
                         C0015ao.m344t();
                         return;
                     }
                 }
-                throw new Throwable(C0000a.m17c(Integer.toString(i)));
+                throw new Throwable(StringUtils.m17c(Integer.toString(i)));
             } catch (Throwable th) {
                 C0033d c0033d2 = (C0033d) objArr[0];
                 c0033d2.f324t = c0033d2.mo89g();
@@ -193,13 +193,13 @@ public final class C0038i implements ListItem {
 
     /* renamed from: a */
     private static final String m1089a(String str, String str2) {
-        return new C0043n().m1304b(C0036g.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).m1320d();
+        return new ByteBuffer().m1304b(C0036g.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).m1320d();
     }
 
     /* renamed from: a */
     public static final byte[] m1090a(byte[] bArr, int i) {
         int[] iArr = new int[16];
-        int[] iArrM536a = AbstractC0019as.m536a(AbstractC0023aw.m581a(962));
+        int[] iArrM536a = Utils.m536a(AppState.m581a(962));
         int[] iArr2 = new int[2];
         byte[] bArrM1211a = C0040k.m1211a(64);
         m1095a(bArr, i, iArr, iArrM536a, iArr2, bArrM1211a);
@@ -250,11 +250,11 @@ public final class C0038i implements ListItem {
         int i4 = 64 - i2;
         int i5 = i4;
         if (i >= i4) {
-            AbstractC0019as.m490a((Object) bArr, 0, (Object) bArr2, i2, i5);
+            Utils.m490a((Object) bArr, 0, (Object) bArr2, i2, i5);
             m1096a(bArr2, iArr, iArr2);
             byte[] bArrM1211a = C0040k.m1211a(64);
             while (i5 + 63 < i) {
-                AbstractC0019as.m490a((Object) bArr, i5, (Object) bArrM1211a, 0, 64);
+                Utils.m490a((Object) bArr, i5, (Object) bArrM1211a, 0, 64);
                 m1096a(bArrM1211a, iArr, iArr2);
                 i5 += 64;
             }
@@ -263,7 +263,7 @@ public final class C0038i implements ListItem {
         } else {
             i5 = 0;
         }
-        AbstractC0019as.m490a((Object) bArr, i5, (Object) bArr2, i2, i - i5);
+        Utils.m490a((Object) bArr, i5, (Object) bArr2, i2, i - i5);
     }
 
     /* renamed from: a */
@@ -383,27 +383,27 @@ public final class C0038i implements ListItem {
             int i2 = 0;
             while (true) {
                 try {
-                    int iIndexOf = str.indexOf(AbstractC0023aw.m584b(1245774), i);
+                    int iIndexOf = str.indexOf(AppState.m584b(1245774), i);
                     if (iIndexOf < 0) {
                         break;
                     }
                     i2 = iIndexOf;
                     if (i != iIndexOf) {
-                        vectorM1213g.addElement(C0000a.m12a(str, i, iIndexOf));
+                        vectorM1213g.addElement(StringUtils.m12a(str, i, iIndexOf));
                     }
                     int iIndexOf2 = str.indexOf(32, iIndexOf);
                     i = iIndexOf2;
                     if (iIndexOf2 < 0) {
-                        vectorM1213g.addElement(C0000a.m15c(str, iIndexOf));
+                        vectorM1213g.addElement(StringUtils.m15c(str, iIndexOf));
                         break;
                     }
-                    vectorM1213g.addElement(C0000a.m12a(str, iIndexOf, i));
+                    vectorM1213g.addElement(StringUtils.m12a(str, iIndexOf, i));
                 } catch (Throwable unused) {
                 }
             }
             int iIndexOf3 = str.indexOf(32, i2);
             if (iIndexOf3 >= 0) {
-                vectorM1213g.addElement(C0000a.m15c(str, iIndexOf3));
+                vectorM1213g.addElement(StringUtils.m15c(str, iIndexOf3));
             }
         } else {
             vectorM1213g.addElement(str);
@@ -416,18 +416,18 @@ public final class C0038i implements ListItem {
         try {
             if (!m1107n(str)) {
                 if (m1108o(str)) {
-                    return AbstractC0023aw.m584b(994);
+                    return AppState.m584b(994);
                 }
                 return null;
             }
-            int iM626a = AbstractC0023aw.m626a(str, 1031040294);
-            int iIndexOf = str.indexOf(C0040k.m1221a(1031302438), AbstractC0023aw.m626a(str, 1031302438) + 4);
-            String strM15c = iIndexOf < 0 ? C0000a.m15c(str, iM626a + 4) : C0000a.m12a(str, iM626a + 4, iIndexOf);
+            int iM626a = AppState.m626a(str, 1031040294);
+            int iIndexOf = str.indexOf(C0040k.m1221a(1031302438), AppState.m626a(str, 1031302438) + 4);
+            String strM15c = iIndexOf < 0 ? StringUtils.m15c(str, iM626a + 4) : StringUtils.m12a(str, iM626a + 4, iIndexOf);
             String str2 = strM15c;
-            if (C0000a.m2a(strM15c, 1094795585)) {
-                return AbstractC0023aw.f181d;
+            if (StringUtils.m2a(strM15c, 1094795585)) {
+                return AppState.f181d;
             }
-            C0043n c0043nM986d = C0034e.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
+            ByteBuffer c0043nM986d = C0034e.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
             StringBuffer stringBufferM1217h = C0040k.m1217h();
             while (c0043nM986d.f384b > 0) {
                 int iM1346q = c0043nM986d.m1346q();
@@ -445,10 +445,10 @@ public final class C0038i implements ListItem {
     public static final String m1100c(String str) {
         try {
             if (m1107n(str)) {
-                return C0000a.m12a(str, AbstractC0023aw.m626a(str, 1031302438) + 4, AbstractC0023aw.m626a(str, 1031367974));
+                return StringUtils.m12a(str, AppState.m626a(str, 1031302438) + 4, AppState.m626a(str, 1031367974));
             }
             if (m1108o(str)) {
-                return C0000a.m12a(str, AbstractC0023aw.m626a(str, 4028451) + 3, AbstractC0023aw.m626a(str, 4028710));
+                return StringUtils.m12a(str, AppState.m626a(str, 4028451) + 3, AppState.m626a(str, 4028710));
             }
             return null;
         } catch (Throwable unused) {
@@ -460,10 +460,10 @@ public final class C0038i implements ListItem {
     public static final String m1101d(String str) {
         try {
             if (m1107n(str)) {
-                return C0000a.m12a(str, AbstractC0023aw.m626a(str, 1031367974) + 4, AbstractC0023aw.m626a(str, 1031040294));
+                return StringUtils.m12a(str, AppState.m626a(str, 1031367974) + 4, AppState.m626a(str, 1031040294));
             }
             if (m1108o(str)) {
-                return C0000a.m12a(str, AbstractC0023aw.m626a(str, 4028710) + 3, AbstractC0023aw.m626a(str, 4028966));
+                return StringUtils.m12a(str, AppState.m626a(str, 4028710) + 3, AppState.m626a(str, 4028966));
             }
             return null;
         } catch (Throwable unused) {
@@ -474,7 +474,7 @@ public final class C0038i implements ListItem {
     /* renamed from: e */
     public static final String m1102e(String str) {
         try {
-            return C0000a.m12a(str, AbstractC0023aw.m626a(str, 4028966) + 3, AbstractC0023aw.m628b(str, 397364));
+            return StringUtils.m12a(str, AppState.m626a(str, 4028966) + 3, AppState.m628b(str, 397364));
         } catch (Throwable unused) {
             return null;
         }
@@ -482,17 +482,17 @@ public final class C0038i implements ListItem {
 
     /* renamed from: m */
     private static final boolean m1103m(String str) {
-        return AbstractC0023aw.m628b(str, 1245774) >= 0;
+        return AppState.m628b(str, 1245774) >= 0;
     }
 
     /* renamed from: a */
     public static final boolean m1104a(String str, int i) {
-        return AbstractC0023aw.m628b(str, i) >= 0;
+        return AppState.m628b(str, i) >= 0;
     }
 
     /* renamed from: b */
     private static final boolean m1105b(String str, int i) {
-        return AbstractC0023aw.m626a(str, i) >= 0;
+        return AppState.m626a(str, i) >= 0;
     }
 
     /* renamed from: f */
@@ -519,27 +519,27 @@ public final class C0038i implements ListItem {
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:8:0x0038 */
     /* renamed from: a */
     public static final String m1109a(String str, int i, int i2) {
-        String strM584b = AbstractC0023aw.m584b(i);
+        String strM584b = AppState.m584b(i);
         if (str.indexOf(strM584b) < 0) {
             return str;
         }
-        String strM584b2 = AbstractC0023aw.m584b(i2);
+        String strM584b2 = AppState.m584b(i2);
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         int length = 0;
         while (true) {
             int i3 = length;
             int iIndexOf = str.indexOf(strM584b, i3);
             if (iIndexOf < 0) {
-                return C0040k.m1215a(stringBufferM1217h.append(C0000a.m15c(str, i3)));
+                return C0040k.m1215a(stringBufferM1217h.append(StringUtils.m15c(str, i3)));
             }
-            stringBufferM1217h.append(C0000a.m12a(str, i3, iIndexOf)).append(strM584b2);
+            stringBufferM1217h.append(StringUtils.m12a(str, i3, iIndexOf)).append(strM584b2);
             length = iIndexOf + strM584b.length();
         }
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:13:0x00be */
     /* renamed from: a */
-    public static final void m1110a(C0028ba c0028ba, C0043n c0043n, long j) {
+    public static final void m1110a(C0028ba c0028ba, ByteBuffer c0043n, long j) {
         C0035f c0035f;
         int i;
         int iIndexOf;
@@ -552,9 +552,9 @@ public final class C0038i implements ListItem {
         if ((iM1328e2 & 8) == 0) {
             String strM1111p = m1111p(strM1332j);
             StringBuffer stringBufferM1217h = C0040k.m1217h();
-            String strM584b = AbstractC0023aw.m584b(658377);
-            String strM584b2 = AbstractC0023aw.m584b(396261);
-            String strM584b3 = AbstractC0023aw.m584b(592851);
+            String strM584b = AppState.m584b(658377);
+            String strM584b2 = AppState.m584b(396261);
+            String strM584b3 = AppState.m584b(592851);
             int i2 = 0;
             while (true) {
                 int i3 = i2;
@@ -563,20 +563,20 @@ public final class C0038i implements ListItem {
                 }
                 int iIndexOf2 = strM1111p.indexOf(strM584b, i3);
                 if (iIndexOf2 < 0) {
-                    stringBufferM1217h.append(C0000a.m15c(strM1111p, i3));
+                    stringBufferM1217h.append(StringUtils.m15c(strM1111p, i3));
                     break;
                 }
-                stringBufferM1217h.append(C0000a.m12a(strM1111p, i3, iIndexOf2));
+                stringBufferM1217h.append(StringUtils.m12a(strM1111p, i3, iIndexOf2));
                 int iIndexOf3 = strM1111p.indexOf(strM584b2, iIndexOf2 + 10);
                 if (iIndexOf3 < 0 || (iIndexOf = strM1111p.indexOf(strM584b3, (i = iIndexOf3 + 6))) < 0) {
                     break;
                 }
-                stringBufferM1217h.append(C0000a.m12a(strM1111p, i, iIndexOf));
+                stringBufferM1217h.append(StringUtils.m12a(strM1111p, i, iIndexOf));
                 i2 = iIndexOf + 9;
             }
             strM1215a = C0040k.m1215a(stringBufferM1217h);
         } else {
-            C0043n c0043nM986d = C0034e.m986d(strM1332j);
+            ByteBuffer c0043nM986d = C0034e.m986d(strM1332j);
             int i4 = iM1328e2 & 2097152;
             int iM1328e3 = c0043nM986d.m1328e();
             String[] strArr = new String[iM1328e3];
@@ -606,17 +606,17 @@ public final class C0038i implements ListItem {
                     while (true) {
                         iM1328e4--;
                         if (iM1328e4 < 0) {
-                            AbstractC0023aw.f177b[1318] = vectorM1213g;
+                            AppState.f177b[1318] = vectorM1213g;
                             break;
                         } else {
                             vectorM1213g.addElement(c0043n.m1334g());
                         }
                     }
                 case 3:
-                    c0028ba.m739a(strM1338j, AbstractC0023aw.m584b(911), c0043n.m1335e((String) null), c0043n.m1334g(), c0043n, j);
+                    c0028ba.m739a(strM1338j, AppState.m584b(911), c0043n.m1335e((String) null), c0043n.m1334g(), c0043n, j);
                     break;
                 case 5:
-                    c0028ba.m738a(strM1338j, AbstractC0023aw.m584b(912), c0043n.m1335e((String) null), c0043n.m1334g(), j);
+                    c0028ba.m738a(strM1338j, AppState.m584b(912), c0043n.m1335e((String) null), c0043n.m1334g(), j);
                     break;
             }
             return;
@@ -624,7 +624,7 @@ public final class C0038i implements ListItem {
         boolean z = (iM1328e2 & 2048) != 0;
         boolean z2 = (iM1328e2 & 8192) != 0;
         if ((iM1328e2 & 4) == 0) {
-            c0028ba.m1052c(C0015ao.m321a(c0028ba, 4113, new C0043n().m1308a((z2 || z) ? AbstractC0023aw.m584b(1052223) : strM1338j).m1360p(iM1328e)));
+            c0028ba.m1052c(C0015ao.m321a(c0028ba, 4113, new ByteBuffer().m1308a((z2 || z) ? AppState.m584b(1052223) : strM1338j).m1360p(iM1328e)));
         }
         if (z2) {
             Enumeration enumerationElements = c0028ba.f321q.elements();
@@ -666,7 +666,7 @@ public final class C0038i implements ListItem {
             return;
         }
         if ((iM1328e2 & 16384) != 0) {
-            c0028ba.m1072a(strM1338j, j, AbstractC0023aw.m584b(910));
+            c0028ba.m1072a(strM1338j, j, AppState.m584b(910));
         } else if ((iM1328e2 & 1024) != 0) {
             c0028ba.m1070d(strM1338j);
         } else {
@@ -678,7 +678,7 @@ public final class C0038i implements ListItem {
     /* renamed from: p */
     private static final String m1111p(String str) {
         StringBuffer stringBufferM1217h = C0040k.m1217h();
-        String strM584b = AbstractC0023aw.m584b(854972);
+        String strM584b = AppState.m584b(854972);
         int i = 0;
         while (true) {
             int i2 = i;
@@ -687,22 +687,22 @@ public final class C0038i implements ListItem {
             }
             int iIndexOf = str.indexOf(strM584b, i2);
             if (iIndexOf >= 0) {
-                stringBufferM1217h.append(C0000a.m12a(str, i2, iIndexOf));
+                stringBufferM1217h.append(StringUtils.m12a(str, i2, iIndexOf));
                 int i3 = iIndexOf + 13;
                 int iIndexOf2 = str.indexOf(62, i3);
                 if (iIndexOf2 < 0) {
                     break;
                 }
                 try {
-                    int i4 = Integer.parseInt(C0000a.m12a(str, i3, iIndexOf2));
+                    int i4 = Integer.parseInt(StringUtils.m12a(str, i3, iIndexOf2));
                     if (i4 < 42 && i4 >= 0) {
-                        stringBufferM1217h.append(AbstractC0023aw.m584b(i4 + 1063));
+                        stringBufferM1217h.append(AppState.m584b(i4 + 1063));
                     }
                 } catch (Throwable unused) {
                 }
                 i = iIndexOf2 + 1;
             } else {
-                stringBufferM1217h.append(C0000a.m15c(str, i2));
+                stringBufferM1217h.append(StringUtils.m15c(str, i2));
                 break;
             }
         }
@@ -710,7 +710,7 @@ public final class C0038i implements ListItem {
     }
 
     /* renamed from: a */
-    public static final void m1112a(C0028ba c0028ba, C0043n c0043n) {
+    public static final void m1112a(C0028ba c0028ba, ByteBuffer c0043n) {
         C0010aj c0010aj;
         c0028ba.f324t = c0028ba.f325u;
         c0028ba.m1067K();
@@ -739,8 +739,8 @@ public final class C0038i implements ListItem {
             Vector vector2 = c0028ba.f313i;
             int length2 = strM1334g2.length();
             vector2.size();
-            String strM584b = AbstractC0023aw.m584b(1233);
-            String strM584b2 = AbstractC0023aw.m584b(923);
+            String strM584b = AppState.m584b(1233);
+            String strM584b2 = AppState.m584b(923);
             while (c0043n.f384b > 0) {
                 int iM1328e4 = c0043n.m1328e();
                 int iM1328e5 = c0043n.m1328e();
@@ -750,7 +750,7 @@ public final class C0038i implements ListItem {
                 int iM1328e6 = c0043n.m1328e();
                 int iM1328e7 = c0043n.m1328e();
                 String strM1334g3 = c0043n.m1334g();
-                C0043n c0043n2 = new C0043n();
+                ByteBuffer c0043n2 = new ByteBuffer();
                 if (strM1334g3 != null) {
                     for (int i4 = 0; i4 < strM1334g3.length(); i4++) {
                         char cCharAt = strM1334g3.charAt(i4);
@@ -765,16 +765,16 @@ public final class C0038i implements ListItem {
                 c0043n.m1335e((String) null);
                 c0043n.m1328e();
                 String strM1334g5 = c0043n.m1334g();
-                if (C0000a.m6a(str, strM584b) || (iM1328e4 & 1048576) != 0) {
+                if (StringUtils.m6a(str, strM584b) || (iM1328e4 & 1048576) != 0) {
                     str = strM584b;
                     iM1328e4 = (iM1328e4 | 1048576) & (-29);
-                    if (C0000a.m1a(strM1317c)) {
+                    if (StringUtils.m1a(strM1317c)) {
                         iM1328e4 |= 1;
                     }
                 }
                 if (str.endsWith(strM584b2)) {
                     iM1328e4 |= 128;
-                    strM1317c = AbstractC0023aw.f181d;
+                    strM1317c = AppState.f181d;
                 }
                 int i5 = iM1328e4 & (-65537);
                 if (0 == (i5 & 1)) {
@@ -812,18 +812,18 @@ public final class C0038i implements ListItem {
             c0028ba.f322r = 100;
             c0028ba.f323s = 100;
             c0028ba.m721d(c0028ba.f325u);
-            c0028ba.m1052c(C0015ao.m321a(c0028ba, 4228, new C0043n().m1392a((Vector) null).m1392a((Vector) null)));
+            c0028ba.m1052c(C0015ao.m321a(c0028ba, 4228, new ByteBuffer().m1392a((Vector) null).m1392a((Vector) null)));
             if (c0028ba.f326v == 1) {
-                String strM17c = C0000a.m17c(AbstractC0019as.m522f(AbstractC0023aw.m584b(1382)).toLowerCase());
-                if (!C0000a.m1a(strM17c)) {
+                String strM17c = StringUtils.m17c(Utils.m522f(AppState.m584b(1382)).toLowerCase());
+                if (!StringUtils.m1a(strM17c)) {
                     new RunnableC0055z(27, new Object[]{strM17c, c0028ba});
                 }
                 if (C0015ao.m442U() == 1) {
-                    AbstractC0023aw.m594c(1577, 1);
+                    AppState.m594c(1577, 1);
                 }
             }
         } else {
-            C0029bb.m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(458)).append(iM1328e)));
+            C0029bb.m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(458)).append(iM1328e)));
             c0028ba.m1061F();
             c0028ba.f324t = c0028ba.mo89g();
             c0028ba.m1068L();
@@ -835,11 +835,11 @@ public final class C0038i implements ListItem {
     public static final void m1113a(boolean z, C0028ba c0028ba) {
         String strM1215a;
         String strM1215a2;
-        C0022av c0022avM550a = C0022av.m550a(266953);
-        C0022av c0022avM550a2 = C0022av.m550a(398003);
-        C0022av c0022avM552a = c0022avM550a.m552a(c0022avM550a2);
+        XmlElement c0022avM550a = XmlElement.m550a(266953);
+        XmlElement c0022avM550a2 = XmlElement.m550a(398003);
+        XmlElement c0022avM552a = c0022avM550a.m552a(c0022avM550a2);
         try {
-            c0022avM550a2.m552a(new C0022av(99).m559a(262589, C0040k.m1221a(5067591)).m559a(329117, C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(529061)).append(C0015ao.m367C()).append(',').append(C0015ao.m368D()).append(',').append(C0015ao.m365A()).append(',').append(C0015ao.m366B()).append(',').append(0))));
+            c0022avM550a2.m552a(new XmlElement(99).m559a(262589, C0040k.m1221a(5067591)).m559a(329117, C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(529061)).append(C0015ao.m367C()).append(',').append(C0015ao.m368D()).append(',').append(C0015ao.m365A()).append(',').append(C0015ao.m366B()).append(',').append(0))));
         } catch (Throwable unused) {
         }
         Vector vectorM439R = C0015ao.m439R();
@@ -847,7 +847,7 @@ public final class C0038i implements ListItem {
             vectorM439R.addElement(c0028ba);
             c0028ba = null;
         }
-        int iM541c = AbstractC0019as.m541c(vectorM439R);
+        int iM541c = Utils.m541c(vectorM439R);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
@@ -862,14 +862,14 @@ public final class C0038i implements ListItem {
         C0040k.m1212a(vectorM439R);
         C0028ba c0028ba3 = c0028ba;
         if (c0028ba3 != null) {
-            strM1215a = C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(463517)).append(c0028ba3.f315k));
-            strM1215a2 = C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(725650)).append(c0028ba3.f226b));
+            strM1215a = C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(463517)).append(c0028ba3.f315k));
+            strM1215a2 = C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(725650)).append(c0028ba3.f226b));
         } else {
-            String str = AbstractC0023aw.f181d;
+            String str = AppState.f181d;
             strM1215a = str;
             strM1215a2 = str;
         }
-        new RunnableC0055z(23, new C0043n().m1310c(5771795).m1315a((Object) new C0043n().m1314d(c0022avM552a.toString()).m1320d()).m1311d(z ? 791174 : 1038).m1314d(strM1215a2).m1314d(strM1215a).m1310c(397997).m1311d(223).m1310c(594539).m1311d(1375).m1317c());
+        new RunnableC0055z(23, new ByteBuffer().m1310c(5771795).m1315a((Object) new ByteBuffer().m1314d(c0022avM552a.toString()).m1320d()).m1311d(z ? 791174 : 1038).m1314d(strM1215a2).m1314d(strM1215a).m1310c(397997).m1311d(223).m1310c(594539).m1311d(1375).m1317c());
     }
 
     /*  JADX ERROR: Types fix failed
@@ -986,7 +986,7 @@ public final class C0038i implements ListItem {
             r0 = r9
             r1 = 725709(0xb12cd, float:1.016935E-39)
             java.lang.String r0 = r0.m554b(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            int r0 = p000.AbstractC0019as.m510a(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            int r0 = p000.Utils.m510a(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             p000.AbstractC0025ay.m651a(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = 1
             p000.AbstractC0025ay.f200h = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
@@ -995,7 +995,7 @@ public final class C0038i implements ListItem {
             r2 = r9
             r3 = 594548(0x91274, float:8.33139E-40)
             java.lang.String r2 = r2.m554b(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            int r2 = p000.AbstractC0019as.m510a(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            int r2 = p000.Utils.m510a(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r9 = r2
             r15 = r1
             p000.AbstractC0030bc.f254i = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
@@ -1030,7 +1030,7 @@ public final class C0038i implements ListItem {
             r0 = 308(0x134, float:4.32E-43)
             r1 = 0
             r9 = r1
-            java.lang.String r0 = p000.AbstractC0023aw.m584b(r0)     // Catch: java.lang.Throwable -> Ldc
+            java.lang.String r0 = p000.AppState.m584b(r0)     // Catch: java.lang.Throwable -> Ldc
             p000.C0029bb.m778d(r0)     // Catch: java.lang.Throwable -> Ldc
         Ld4:
             r0 = r8
@@ -1050,7 +1050,7 @@ public final class C0038i implements ListItem {
 
     /* renamed from: q */
     private static final boolean m1115q(String str) {
-        return AbstractC0023aw.m628b(str, 791174) > 0;
+        return AppState.m628b(str, 791174) > 0;
     }
 
     /* renamed from: h */
@@ -1065,8 +1065,8 @@ public final class C0038i implements ListItem {
 
     /* renamed from: b */
     private static final String m1118b(String str, int i, int i2) {
-        String strM584b = AbstractC0023aw.m584b(i);
-        String strM584b2 = AbstractC0023aw.m584b(i2);
+        String strM584b = AppState.m584b(i);
+        String strM584b2 = AppState.m584b(i2);
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         int length = str.length();
         for (int i3 = 0; i3 < length; i3++) {
@@ -1081,10 +1081,10 @@ public final class C0038i implements ListItem {
     public static final String m1119a(Object obj) {
         String string = obj.toString().toString();
         StringBuffer stringBufferM1217h = C0040k.m1217h();
-        AbstractC0023aw.m584b(266215);
-        AbstractC0023aw.m584b(266221);
-        AbstractC0023aw.m584b(397287);
-        AbstractC0023aw.m584b(397293);
+        AppState.m584b(266215);
+        AppState.m584b(266221);
+        AppState.m584b(397287);
+        AppState.m584b(397293);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char cCharAt = string.charAt(i);
@@ -1103,10 +1103,10 @@ public final class C0038i implements ListItem {
     public static final String m1120b(Object obj) {
         String string = obj.toString();
         StringBuffer stringBufferM1217h = C0040k.m1217h();
-        String strM584b = AbstractC0023aw.m584b(266215);
-        String strM584b2 = AbstractC0023aw.m584b(266221);
-        String strM584b3 = AbstractC0023aw.m584b(397287);
-        String strM584b4 = AbstractC0023aw.m584b(397293);
+        String strM584b = AppState.m584b(266215);
+        String strM584b2 = AppState.m584b(266221);
+        String strM584b3 = AppState.m584b(397287);
+        String strM584b4 = AppState.m584b(397293);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char cCharAt = string.charAt(i);
@@ -1131,7 +1131,7 @@ public final class C0038i implements ListItem {
 
     /* renamed from: a */
     public static String m1121a(int i, int i2) {
-        String strM17c = C0000a.m17c(Integer.toString(i));
+        String strM17c = StringUtils.m17c(Integer.toString(i));
         int length = strM17c.length();
         if (length >= 2) {
             return strM17c;
@@ -1146,8 +1146,8 @@ public final class C0038i implements ListItem {
 
     /* renamed from: j */
     public static final String m1122j(String str) {
-        Vector vectorM512e = AbstractC0019as.m512e(AbstractC0023aw.m584b(1511369));
-        Vector vectorM512e2 = AbstractC0019as.m512e(AbstractC0023aw.m584b(462816));
+        Vector vectorM512e = Utils.m512e(AppState.m584b(1511369));
+        Vector vectorM512e2 = Utils.m512e(AppState.m584b(462816));
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         int length = str.length();
         int length2 = 0;
@@ -1180,14 +1180,14 @@ public final class C0038i implements ListItem {
     /* renamed from: k */
     public static final String m1123k(String str) {
         StringBuffer stringBufferM1217h = C0040k.m1217h();
-        Vector vectorM512e = AbstractC0019as.m512e(AbstractC0023aw.m584b(4788096));
+        Vector vectorM512e = Utils.m512e(AppState.m584b(4788096));
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char cCharAt = str.charAt(i);
             int i2 = (cCharAt < 1072 || cCharAt > 1103) ? cCharAt == 1105 ? 32 : (cCharAt < 1040 || cCharAt > 1071) ? cCharAt == 1025 ? 72 : -1 : (cCharAt - 1040) + 40 : cCharAt - 1072;
             int i3 = i2;
             if (i2 >= 40) {
-                stringBufferM1217h.append(AbstractC0019as.m521a(vectorM512e, i3 - 40).toUpperCase());
+                stringBufferM1217h.append(Utils.m521a(vectorM512e, i3 - 40).toUpperCase());
             } else if (i3 >= 0) {
                 stringBufferM1217h.append(vectorM512e.elementAt(i3));
             } else {
@@ -1223,17 +1223,17 @@ public final class C0038i implements ListItem {
     /* renamed from: a */
     public static final void m1126a(boolean z) {
         AbstractC0025ay.f200h = true;
-        AbstractC0023aw.m599a(41, z);
+        AppState.m599a(41, z);
     }
 
     /* renamed from: a */
     public static final void m1127a() {
-        AbstractC0025ay.m651a(AbstractC0023aw.m586d(39) + 1);
+        AbstractC0025ay.m651a(AppState.m586d(39) + 1);
     }
 
     /* renamed from: b */
     public static final void m1128b() {
-        AbstractC0025ay.m651a(AbstractC0023aw.m586d(39) - 1);
+        AbstractC0025ay.m651a(AppState.m586d(39) - 1);
     }
 
     /* renamed from: c */
@@ -1243,6 +1243,6 @@ public final class C0038i implements ListItem {
 
     /* renamed from: c */
     public static final void m1130c(int i) {
-        AbstractC0023aw.m588a(1251, C0040k.m1217h().append(AbstractC0023aw.m584b(i)).append(' ').append('(').append(AbstractC0023aw.m614m(1401).size()).append(')'));
+        AppState.m588a(1251, C0040k.m1217h().append(AppState.m584b(i)).append(' ').append('(').append(AppState.m614m(1401).size()).append(')'));
     }
 }

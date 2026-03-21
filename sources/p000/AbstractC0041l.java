@@ -12,7 +12,7 @@ public abstract class AbstractC0041l implements Sortable {
     public final AbstractC0037h f369o;
 
     /* renamed from: a */
-    private C0043n f370a;
+    private ByteBuffer f370a;
 
     /* renamed from: p */
     public boolean f371p;
@@ -52,7 +52,7 @@ public abstract class AbstractC0041l implements Sortable {
     }
 
     /* renamed from: a */
-    public abstract void mo136a(C0043n c0043n);
+    public abstract void mo136a(ByteBuffer c0043n);
 
     /* renamed from: e */
     public int mo139e() {
@@ -70,13 +70,13 @@ public abstract class AbstractC0041l implements Sortable {
         this.f374s = (byte) (this.f374s | i);
         C0015ao.m414a(this);
         this.f375t = true;
-        this.f379c = AbstractC0023aw.m598g(1530);
+        this.f379c = AppState.m598g(1530);
         m1228A();
     }
 
     /* renamed from: g */
     public String mo995g() {
-        return AbstractC0023aw.f181d;
+        return AppState.f181d;
     }
 
     /* renamed from: A */
@@ -101,7 +101,7 @@ public abstract class AbstractC0041l implements Sortable {
 
     /* renamed from: B */
     public final void m1229B() {
-        this.f370a = new C0043n();
+        this.f370a = new ByteBuffer();
         m1245o();
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractC0041l implements Sortable {
     /* renamed from: a */
     public final void m1232a(long j, String str, int i) {
         C0008ah c0008ah;
-        AbstractC0023aw.m601a(1237, (Object) this.f380w);
+        AppState.m601a(1237, (Object) this.f380w);
         C0034e.m925a(2);
         m1227c(i);
         this.f369o.m1071e(mo135a());
@@ -146,7 +146,7 @@ public abstract class AbstractC0041l implements Sortable {
         if (abstractC0037h == null || str2 == null) {
             return;
         }
-        Vector vectorM614m = AbstractC0023aw.m614m(1246);
+        Vector vectorM614m = AppState.m614m(1246);
         int size = vectorM614m.size();
         do {
             size--;
@@ -163,17 +163,17 @@ public abstract class AbstractC0041l implements Sortable {
     /* renamed from: b */
     public final int m1233b(String str) {
         C0034e.m925a(4);
-        if (C0000a.m1a(str)) {
+        if (StringUtils.m1a(str)) {
             return 309;
         }
         AbstractC0037h abstractC0037h = this.f369o;
-        long jM598g = AbstractC0023aw.m598g(1530);
+        long jM598g = AppState.m598g(1530);
         int iMo125a = abstractC0037h.mo125a(this, str, jM598g);
         if (0 != iMo125a) {
             return iMo125a;
         }
         m1239a(1, str, jM598g, jM598g);
-        this.f379c = AbstractC0023aw.m598g(1530);
+        this.f379c = AppState.m598g(1530);
         m1228A();
         return 0;
     }
@@ -224,7 +224,7 @@ public abstract class AbstractC0041l implements Sortable {
     /* renamed from: a */
     public final void m1238a(long j, int i) {
         this.f375t = true;
-        C0043n c0043nM851h = this.f370a == null ? C0031bd.m851h(this.f380w) : this.f370a;
+        ByteBuffer c0043nM851h = this.f370a == null ? C0031bd.m851h(this.f380w) : this.f370a;
         this.f370a = c0043nM851h;
         int i2 = c0043nM851h.f384b;
         int i3 = 0;
@@ -246,10 +246,10 @@ public abstract class AbstractC0041l implements Sortable {
     /* renamed from: a */
     public final void m1239a(int i, String str, long j, long j2) {
         this.f375t = true;
-        C0043n c0043nM851h = this.f370a == null ? C0031bd.m851h(this.f380w) : this.f370a;
+        ByteBuffer c0043nM851h = this.f370a == null ? C0031bd.m851h(this.f380w) : this.f370a;
         this.f370a = c0043nM851h;
-        int iM586d = AbstractC0023aw.m586d(102) - 1;
-        C0043n c0043n = this.f370a;
+        int iM586d = AppState.m586d(102) - 1;
+        ByteBuffer c0043n = this.f370a;
         int i2 = 0;
         int i3 = 0;
         int i4 = c0043n.f384b;
@@ -263,9 +263,9 @@ public abstract class AbstractC0041l implements Sortable {
             c0043n.m1329g(c0043n.m1353u());
             i2--;
         }
-        c0043nM851h.m1357m(17 + (str.length() << 1)).m1321f(i).m1323a((j != 0 ? j : System.currentTimeMillis()) + ((AbstractC0023aw.m586d(246) - 13) * 3600000)).m1323a(j2).m1374i(str).m1299a();
+        c0043nM851h.m1357m(17 + (str.length() << 1)).m1321f(i).m1323a((j != 0 ? j : System.currentTimeMillis()) + ((AppState.m586d(246) - 13) * 3600000)).m1323a(j2).m1374i(str).m1299a();
         m1245o();
-        this.f379c = AbstractC0023aw.m598g(1530);
+        this.f379c = AppState.m598g(1530);
         m1228A();
     }
 
@@ -277,7 +277,7 @@ public abstract class AbstractC0041l implements Sortable {
     /* renamed from: H */
     public final long m1241H() {
         long j = 0;
-        C0043n c0043nM1380F = m1244f().m1380F();
+        ByteBuffer c0043nM1380F = m1244f().m1380F();
         while (c0043nM1380F.f384b > 0) {
             int iM1353u = c0043nM1380F.m1353u();
             byte bM1344o = c0043nM1380F.m1344o();
@@ -296,33 +296,33 @@ public abstract class AbstractC0041l implements Sortable {
     public final C0013am m1242I() {
         this.f375t = false;
         String str = this.f376u;
-        AbstractC0023aw.m601a(1290, (Object) str);
+        AppState.m601a(1290, (Object) str);
         int iMo139e = mo139e();
         if ((this instanceof C0006af) && ((C0005ae) this.f369o).mo83f() && iMo139e >= 381 && iMo139e <= 384) {
             iMo139e += 4;
         }
-        AbstractC0023aw.m594c(2594, iMo139e);
+        AppState.m594c(2594, iMo139e);
         C0013am c0013amM75b = AbstractC0004ad.m75b(2591);
-        C0043n c0043nM1380F = m1244f().m1380F();
-        int iM624l = AbstractC0023aw.m624l();
+        ByteBuffer c0043nM1380F = m1244f().m1380F();
+        int iM624l = AppState.m624l();
         while (c0043nM1380F.f384b > 0) {
             int iM1353u = c0043nM1380F.m1353u();
             byte bM1344o = c0043nM1380F.m1344o();
-            long jM1341m = c0043nM1380F.m1341m() - AbstractC0023aw.m598g(1532);
+            long jM1341m = c0043nM1380F.m1341m() - AppState.m598g(1532);
             long jM1341m2 = c0043nM1380F.m1341m();
-            String strM539n = AbstractC0019as.m539n(c0043nM1380F.m1369q(iM1353u - 17));
+            String strM539n = Utils.m539n(c0043nM1380F.m1369q(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
-                c0013amM75b.m251a(C0040k.m1215a(C0040k.m1217h().append(this.f376u).append(AbstractC0023aw.m584b(311)).append(m1248b(jM1341m, iM624l))), 8);
+                c0013amM75b.m251a(C0040k.m1215a(C0040k.m1217h().append(this.f376u).append(AppState.m584b(311)).append(m1248b(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
                 if (this.f369o.m1056C()) {
-                    c0013amM75b.m250b(-1, AbstractC0023aw.m584b(839), i, new Object[]{C0034e.m967e(1), strM539n, str, new Long(jM1341m2)});
+                    c0013amM75b.m250b(-1, AppState.m584b(839), i, new Object[]{C0034e.m967e(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
                 int iIndexOf = strM539n.indexOf(10);
-                String strM13b = C0000a.m13b(strM539n, iIndexOf);
-                String strM15c = C0000a.m15c(strM539n, iIndexOf + 1);
-                c0013amM75b.m251a(C0000a.m9b(strM13b, m1248b(jM1341m, iM624l)), 8);
+                String strM13b = StringUtils.m13b(strM539n, iIndexOf);
+                String strM15c = StringUtils.m15c(strM539n, iIndexOf + 1);
+                c0013amM75b.m251a(StringUtils.m9b(strM13b, m1248b(jM1341m, iM624l)), 8);
                 m1243a(c0013amM75b, strM15c, i);
             } else {
                 c0013amM75b.m251a(C0040k.m1215a(C0040k.m1217h().append(bM1344o == 0 ? this.f376u : this.f369o.f339I).append(',').append(' ').append(m1248b(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
@@ -349,7 +349,7 @@ public abstract class AbstractC0041l implements Sortable {
     }
 
     /* renamed from: f */
-    private final C0043n m1244f() {
+    private final ByteBuffer m1244f() {
         if (this.f370a == null) {
             this.f370a = C0031bd.m851h(this.f380w);
         }
@@ -365,7 +365,7 @@ public abstract class AbstractC0041l implements Sortable {
     public final C0013am m1246J() {
         String strM1215a;
         C0013am c0013amM75b = AbstractC0004ad.m75b(2631);
-        C0043n c0043nM1380F = m1244f().m1380F();
+        ByteBuffer c0043nM1380F = m1244f().m1380F();
         while (c0043nM1380F.f384b > 0) {
             int iM1353u = c0043nM1380F.m1353u();
             c0043nM1380F.m1344o();
@@ -373,7 +373,7 @@ public abstract class AbstractC0041l implements Sortable {
             c0043nM1380F.m1341m();
             String strM1369q = c0043nM1380F.m1369q(iM1353u - 17);
             if (strM1369q.length() > 50) {
-                strM1215a = C0040k.m1215a(C0040k.m1217h().append(C0000a.m13b(strM1369q, 50)).append((char) 8230));
+                strM1215a = C0040k.m1215a(C0040k.m1217h().append(StringUtils.m13b(strM1369q, 50)).append((char) 8230));
             } else {
                 strM1215a = strM1369q;
             }
@@ -408,7 +408,7 @@ public abstract class AbstractC0041l implements Sortable {
 
     /* renamed from: b */
     private static String m1248b(long j, int i) {
-        Calendar calendarM622k = AbstractC0023aw.m622k();
+        Calendar calendarM622k = AppState.m622k();
         calendarM622k.setTime(new Date(j));
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         int i2 = calendarM622k.get(1) << 16;
@@ -416,9 +416,9 @@ public abstract class AbstractC0041l implements Sortable {
         int i4 = i2 + (i3 << 8);
         int i5 = calendarM622k.get(5);
         if (i4 + i5 != i) {
-            stringBufferM1217h.append(AbstractC0019as.m501b(i5)).append('/').append(AbstractC0019as.m501b(i3 + 1)).append(' ');
+            stringBufferM1217h.append(Utils.m501b(i5)).append('/').append(Utils.m501b(i3 + 1)).append(' ');
         }
-        return C0040k.m1215a(stringBufferM1217h.append(AbstractC0019as.m501b(calendarM622k.get(11))).append(':').append(AbstractC0019as.m501b(calendarM622k.get(12))));
+        return C0040k.m1215a(stringBufferM1217h.append(Utils.m501b(calendarM622k.get(11))).append(':').append(Utils.m501b(calendarM622k.get(12))));
     }
 
     /* renamed from: a */
@@ -434,11 +434,11 @@ public abstract class AbstractC0041l implements Sortable {
 
     /* renamed from: c */
     public final void m1249c(String str) {
-        if (C0000a.m6a(str, this.f376u)) {
+        if (StringUtils.m6a(str, this.f376u)) {
             return;
         }
         this.f376u = str;
-        this.f377v = C0000a.m17c(str.toLowerCase());
+        this.f377v = StringUtils.m17c(str.toLowerCase());
         C0015ao.f152f = true;
     }
 

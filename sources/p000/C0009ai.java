@@ -70,7 +70,7 @@ public final class C0009ai extends AbstractC0041l {
         this.f56b = i2;
         this.f57c = str;
         this.f376u = str2;
-        this.f377v = C0000a.m17c(str2.toLowerCase());
+        this.f377v = StringUtils.m17c(str2.toLowerCase());
         this.f58z = z;
         this.f373r = 255;
         this.f380w = c0033d.m1050q().m1314d(str).m1337i();
@@ -94,7 +94,7 @@ public final class C0009ai extends AbstractC0041l {
         return this.f57c;
     }
 
-    public C0009ai(AbstractC0037h abstractC0037h, C0043n c0043n) {
+    public C0009ai(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f55a = c0043n.m1328e();
         this.f56b = c0043n.m1328e();
@@ -119,7 +119,7 @@ public final class C0009ai extends AbstractC0041l {
 
     @Override // p000.AbstractC0041l
     /* renamed from: a */
-    public final void mo136a(C0043n c0043n) {
+    public final void mo136a(ByteBuffer c0043n) {
         c0043n.m1360p(this.f55a).m1360p(this.f56b).m1308a(this.f57c).m1309b(this.f376u).m1322a(this.f58z).m1322a(false).m1357m(this.f59d).m1357m(this.f60e).m1357m(this.f61f).m1321f(this.f374s);
     }
 
@@ -145,15 +145,15 @@ public final class C0009ai extends AbstractC0041l {
     }
 
     /* renamed from: a */
-    public final C0043n m180a(int i, String str, int i2) {
-        C0043n c0043n = new C0043n();
+    public final ByteBuffer m180a(int i, String str, int i2) {
+        ByteBuffer c0043n = new ByteBuffer();
         if (i != 2) {
             c0043n.m1357m(305).m1376j(str);
         }
         if (i == 5) {
             c0043n.m1357m(102).m1357m(0);
         }
-        return new C0043n().m1376j(this.f57c).m1357m(i2).m1357m(this.f55a).m1357m(0).m1326b(c0043n);
+        return new ByteBuffer().m1376j(this.f57c).m1357m(i2).m1357m(this.f55a).m1357m(0).m1326b(c0043n);
     }
 
     @Override // p000.AbstractC0041l
@@ -222,8 +222,8 @@ public final class C0009ai extends AbstractC0041l {
     /* renamed from: a */
     public static final void m184a(boolean z) {
         f71y = z;
-        AbstractC0023aw.m599a(1573, z);
-        AbstractC0023aw.m599a(1574, z && !AbstractC0023aw.m587e(1575));
+        AppState.m599a(1573, z);
+        AppState.m599a(1574, z && !AppState.m587e(1575));
     }
 
     /* renamed from: f */
@@ -237,14 +237,14 @@ public final class C0009ai extends AbstractC0041l {
         f67l.removeAllElements();
         m184a(false);
         f69A = 0;
-        AbstractC0023aw.m594c(1573, 0);
-        AbstractC0023aw.m594c(1574, 0);
-        AbstractC0023aw.m594c(1575, 0);
+        AppState.m594c(1573, 0);
+        AppState.m594c(1574, 0);
+        AppState.m594c(1575, 0);
     }
 
     /* renamed from: o */
     public static final String m186o() {
-        C0043n c0043nM1314d = new C0043n().m1310c(1442705).m1310c(3085016).m1314d(C0029bb.m809a(f64i[0])).m1385u(1026586918).m1314d(C0029bb.m810b(f64i[1]));
+        ByteBuffer c0043nM1314d = new ByteBuffer().m1310c(1442705).m1310c(3085016).m1314d(C0029bb.m809a(f64i[0])).m1385u(1026586918).m1314d(C0029bb.m810b(f64i[1]));
         int size = f66k.size();
         int i = 0;
         while (i <= size) {
@@ -262,7 +262,7 @@ public final class C0009ai extends AbstractC0041l {
     /* JADX WARN: Type inference failed for: r0v90, types: [java.lang.Object[]] */
     /* JADX WARN: Type inference failed for: r2v9 */
     /* renamed from: b */
-    public static final void m187b(C0043n c0043n) {
+    public static final void m187b(ByteBuffer c0043n) {
         int[] iArr = null;
         int i = 0;
         int i2 = 0;
@@ -272,7 +272,7 @@ public final class C0009ai extends AbstractC0041l {
         f70n.removeAllElements();
         f72B = 0;
         f73C = 0;
-        Hashtable hashtable = (Hashtable) AbstractC0017aq.m466a(c0043n, 2);
+        Hashtable hashtable = (Hashtable) JsonParser.m466a(c0043n, 2);
         f72B = ((Integer) hashtable.get("totalLength")).intValue();
         f73C = ((Integer) hashtable.get("totalTime")).intValue();
         Vector vector = (Vector) hashtable.get("regions");
@@ -298,7 +298,7 @@ public final class C0009ai extends AbstractC0041l {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer stringBufferAppend = C0040k.m1217h().append(AbstractC0023aw.m584b(979));
+                        StringBuffer stringBufferAppend = C0040k.m1217h().append(AppState.m584b(979));
                         int i7 = 952;
                         int i8 = f72B;
                         int i9 = 0;
@@ -311,27 +311,27 @@ public final class C0009ai extends AbstractC0041l {
                         stringBufferM1217h.append(i8);
                         if (i9 != 0) {
                             stringBufferM1217h.append('.');
-                            String strM17c = C0000a.m17c(Integer.toString(i9));
+                            String strM17c = StringUtils.m17c(Integer.toString(i9));
                             String strM13b = strM17c;
                             if (strM17c.length() > 2) {
-                                strM13b = C0000a.m13b(strM13b, 2);
+                                strM13b = StringUtils.m13b(strM13b, 2);
                             }
                             stringBufferM1217h.append(strM13b);
                         }
-                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(C0040k.m1215a(stringBufferM1217h.append(AbstractC0023aw.m584b(i7)))).append(AbstractC0023aw.m584b(983));
+                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(C0040k.m1215a(stringBufferM1217h.append(AppState.m584b(i7)))).append(AppState.m584b(983));
                         int i10 = f73C;
                         StringBuffer stringBufferM1217h2 = C0040k.m1217h();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             stringBufferM1217h2.append(i11);
                         } else {
-                            stringBufferM1217h2.append(i11 / 60).append(AbstractC0023aw.m584b(954)).append(i11 % 60);
+                            stringBufferM1217h2.append(i11 / 60).append(AppState.m584b(954)).append(i11 % 60);
                         }
-                        r03[1] = stringBufferAppend2.append(C0040k.m1215a(stringBufferM1217h2.append(AbstractC0023aw.m584b(955)))).toString();
-                        r03[2] = AbstractC0023aw.f181d;
+                        r03[1] = stringBufferAppend2.append(C0040k.m1215a(stringBufferM1217h2.append(AppState.m584b(955)))).toString();
+                        r03[2] = AppState.f181d;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
-                        r03[1] = AbstractC0023aw.m584b(980);
-                        r03[2] = AbstractC0023aw.f181d;
+                        r03[1] = AppState.m584b(980);
+                        r03[2] = AppState.f181d;
                     } else {
                         r03[1] = vector5.elementAt(2);
                         r03[2] = vector5.elementAt(3);
@@ -389,7 +389,7 @@ public final class C0009ai extends AbstractC0041l {
     /* renamed from: r */
     public static final int[] m190r() {
         int iM192t = m192t();
-        int iM586d = AbstractC0023aw.m586d(39);
+        int iM586d = AppState.m586d(39);
         int[] iArrM193a = m193a(f69A);
         int iM317a = (int) C0015ao.m317a(iArrM193a[0], iM586d);
         int iM317a2 = (int) C0015ao.m317a(iArrM193a[1], iM586d);
@@ -411,7 +411,7 @@ public final class C0009ai extends AbstractC0041l {
         if (f69A == 0 && m194b(f69A) != null) {
             return m193a(f69A);
         }
-        int iM586d = AbstractC0023aw.m586d(39);
+        int iM586d = AppState.m586d(39);
         int[] iArrM193a2 = m193a(f69A);
         int iM317a = (int) C0015ao.m317a(iArrM193a2[0], iM586d);
         int iM317a2 = (int) C0015ao.m317a(iArrM193a2[1], iM586d);

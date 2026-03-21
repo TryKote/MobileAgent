@@ -81,7 +81,7 @@ public final class C0014an implements ListItem {
         this.f146n = new SizeCache();
     }
 
-    public C0014an(C0043n c0043n) {
+    public C0014an(ByteBuffer c0043n) {
         this.f133a = c0043n.m1335e((String) null);
         this.f134b = c0043n.m1341m();
         this.f135c = c0043n.m1341m();
@@ -101,7 +101,7 @@ public final class C0014an implements ListItem {
         int iIndexOf;
         try {
             int iIndexOf2 = this.f133a.indexOf(59);
-            return (iIndexOf2 < 0 || (iIndexOf = this.f133a.indexOf(59, iIndexOf2 + 1)) < 0) ? this.f133a : C0000a.m13b(this.f133a, iIndexOf);
+            return (iIndexOf2 < 0 || (iIndexOf = this.f133a.indexOf(59, iIndexOf2 + 1)) < 0) ? this.f133a : StringUtils.m13b(this.f133a, iIndexOf);
         } catch (Throwable unused) {
             return this.f133a;
         }

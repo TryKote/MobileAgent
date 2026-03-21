@@ -26,7 +26,7 @@ public abstract class AbstractC0037h {
     public final int[] f317m;
 
     /* renamed from: n */
-    public final C0043n f318n;
+    public final ByteBuffer f318n;
 
     /* renamed from: o */
     public int f319o;
@@ -104,7 +104,7 @@ public abstract class AbstractC0037h {
         this.f339I = str;
         this.f316l = str2;
         this.f317m = new int[9];
-        this.f318n = new C0043n();
+        this.f318n = new ByteBuffer();
         this.f321q = new Hashtable();
         this.f333C = C0040k.m1213g();
         AbstractC0046q abstractC0046qMo85b = mo85b();
@@ -119,10 +119,10 @@ public abstract class AbstractC0037h {
         AbstractC0046q abstractC0046qMo88e = mo88e();
         abstractC0046qMo88e.f399g = true;
         this.f338H = abstractC0046qMo88e;
-        this.f340J = AbstractC0019as.m538m(str);
+        this.f340J = Utils.m538m(str);
     }
 
-    public AbstractC0037h(C0043n c0043n) {
+    public AbstractC0037h(ByteBuffer c0043n) {
         this(c0043n.m1328e(), c0043n.m1338j(), c0043n.m1334g());
         c0043n.m1328e();
         for (int i = 2; i < 9; i++) {
@@ -133,13 +133,13 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: q */
-    public final C0043n m1050q() {
-        return new C0043n().m1382s(this.f314j).m1321f(95);
+    public final ByteBuffer m1050q() {
+        return new ByteBuffer().m1382s(this.f314j).m1321f(95);
     }
 
     /* renamed from: A */
     public final String m1051A() {
-        return new C0043n().m1321f(35).m1382s(this.f314j).m1321f(35).m1314d(this.f315k).m1337i();
+        return new ByteBuffer().m1321f(35).m1382s(this.f314j).m1321f(35).m1314d(this.f315k).m1337i();
     }
 
     /* renamed from: b */
@@ -158,7 +158,7 @@ public abstract class AbstractC0037h {
     public abstract int mo108h();
 
     /* renamed from: a */
-    public void mo715a(C0043n c0043n) {
+    public void mo715a(ByteBuffer c0043n) {
         if (c0043n.m1328e() == 12) {
             this.f326v = c0043n.m1328e();
             this.f327w = c0043n.m1328e();
@@ -168,12 +168,12 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: b */
-    public void mo714b(C0043n c0043n) {
+    public void mo714b(ByteBuffer c0043n) {
         c0043n.m1360p(12).m1360p(this.f326v).m1360p(this.f327w).m1360p(this.f328x).m1360p(0);
     }
 
     /* renamed from: a */
-    public AbstractC0037h mo82a(C0043n c0043n, boolean z, boolean z2) {
+    public AbstractC0037h mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
         c0043n.m1321f(mo80a() | 8).m1360p(this.f314j).m1308a(this.f315k).m1308a(this.f316l).m1360p(0);
         for (int i = 2; i < 9; i++) {
             c0043n.m1360p(this.f317m[i]);
@@ -207,7 +207,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: c */
-    public final int m1052c(C0043n c0043n) {
+    public final int m1052c(ByteBuffer c0043n) {
         if (m1056C()) {
             return m1053d(c0043n);
         }
@@ -215,18 +215,18 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: d */
-    public final int m1053d(C0043n c0043n) {
+    public final int m1053d(ByteBuffer c0043n) {
         C0015ao.m420b(this, c0043n.f384b);
         C0039j c0039j = this.f320p;
         if (c0039j.f348b != null) {
             throw new RuntimeException();
         }
-        C0043n c0043n2 = c0039j.f347a;
+        ByteBuffer c0043n2 = c0039j.f347a;
         int i = c0043n.f384b;
         if (i > 0) {
             synchronized (c0043n2) {
                 c0043n2.m1300a(i);
-                AbstractC0019as.m490a((Object) c0043n.f383a, c0043n.f385c, (Object) c0043n2.f383a, c0043n2.f384b, i);
+                Utils.m490a((Object) c0043n.f383a, c0043n.f385c, (Object) c0043n2.f383a, c0043n2.f384b, i);
                 c0043n.m1301b();
                 c0043n2.f384b += i;
                 c0043n2.m1299a();
@@ -241,7 +241,7 @@ public abstract class AbstractC0037h {
 
     /* renamed from: c */
     public final AbstractC0037h m1054c(String str) {
-        this.f339I = AbstractC0019as.m528a(str, this.f315k);
+        this.f339I = Utils.m528a(str, this.f315k);
         return this;
     }
 
@@ -334,9 +334,9 @@ public abstract class AbstractC0037h {
         String strM1215a;
         Throwable th = this.f320p.f348b;
         if (null == th) {
-            strM1215a = AbstractC0023aw.m584b(951);
+            strM1215a = AppState.m584b(951);
         } else {
-            strM1215a = C0040k.m1215a(C0040k.m1217h().append(th).append(AbstractC0023aw.m584b(946)).append(AbstractC0023aw.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            strM1215a = C0040k.m1215a(C0040k.m1217h().append(th).append(AppState.m584b(946)).append(AppState.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         C0029bb.m784a(this, strM1215a);
         m1061F();
@@ -352,7 +352,7 @@ public abstract class AbstractC0037h {
 
     /* renamed from: I */
     public final String m1064I() {
-        return this.f341a != 3 ? this.f316l : C0040k.m1215a(C0040k.m1217h().append((char) (this.f316l.charAt(0) + ' ')).append(C0000a.m15c(this.f316l, 1)));
+        return this.f341a != 3 ? this.f316l : C0040k.m1215a(C0040k.m1217h().append((char) (this.f316l.charAt(0) + ' ')).append(StringUtils.m15c(this.f316l, 1)));
     }
 
     /* renamed from: J */
@@ -368,7 +368,7 @@ public abstract class AbstractC0037h {
 
     /* renamed from: f */
     public final void m1066f(int i) {
-        C0029bb.m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(459)).append(this).append(AbstractC0023aw.m584b(460)).append(AbstractC0023aw.m584b(457)).append(i)));
+        C0029bb.m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
         m1061F();
         this.f324t = mo89g();
     }
@@ -417,8 +417,8 @@ public abstract class AbstractC0037h {
             return;
         }
         C0015ao.m418c(abstractC0041lM1069c);
-        AbstractC0023aw.m614m(1242).addElement(abstractC0041lM1069c);
-        abstractC0041lM1069c.f372q = AbstractC0023aw.m586d(1531);
+        AppState.m614m(1242).addElement(abstractC0041lM1069c);
+        abstractC0041lM1069c.f372q = AppState.m586d(1531);
         abstractC0041lM1069c.f375t = true;
     }
 
@@ -491,16 +491,16 @@ public abstract class AbstractC0037h {
         if (!m1056C()) {
             return 299;
         }
-        if (C0000a.m1a(str2)) {
+        if (StringUtils.m1a(str2)) {
             return 301;
         }
-        return C0000a.m1a(str3) ? 302 : 0;
+        return StringUtils.m1a(str3) ? 302 : 0;
     }
 
     /* renamed from: a */
     public int mo112a(AbstractC0041l abstractC0041l, Object[] objArr) {
         if (m1056C()) {
-            return C0000a.m1a((String) objArr[0]) ? 301 : 0;
+            return StringUtils.m1a((String) objArr[0]) ? 301 : 0;
         }
         return 299;
     }
@@ -514,7 +514,7 @@ public abstract class AbstractC0037h {
     /* renamed from: a */
     public int mo122a(String str) {
         if (m1056C()) {
-            return C0000a.m1a(str) ? 301 : 0;
+            return StringUtils.m1a(str) ? 301 : 0;
         }
         return 299;
     }
@@ -525,14 +525,14 @@ public abstract class AbstractC0037h {
             return 304;
         }
         if (m1056C()) {
-            return C0000a.m1a(str) ? 301 : 0;
+            return StringUtils.m1a(str) ? 301 : 0;
         }
         return 299;
     }
 
     /* renamed from: a */
     public int mo102a(String str, String str2) {
-        if (C0000a.m1a(str)) {
+        if (StringUtils.m1a(str)) {
             return 301;
         }
         if (this.f315k.equals(str) && this.f316l.equals(str2)) {
@@ -542,7 +542,7 @@ public abstract class AbstractC0037h {
             return 300;
         }
         this.f315k = str;
-        this.f340J = AbstractC0019as.m538m(str);
+        this.f340J = Utils.m538m(str);
         this.f316l = str2;
         return 0;
     }

@@ -9,7 +9,7 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: n */
 /* loaded from: MobileAgent_3.9.jar:n.class */
-public final class C0043n {
+public final class ByteBuffer {
 
     /* renamed from: a */
     public byte[] f383a;
@@ -20,11 +20,11 @@ public final class C0043n {
     /* renamed from: c */
     public int f385c;
 
-    public C0043n() {
-        this.f383a = AbstractC0023aw.f176a;
+    public ByteBuffer() {
+        this.f383a = AppState.f176a;
     }
 
-    public C0043n(C0024ax c0024ax) {
+    public ByteBuffer(C0024ax c0024ax) {
         this.f383a = C0040k.m1211a(2048);
         try {
             byte[] bArrM1211a = C0040k.m1211a(2048);
@@ -40,15 +40,15 @@ public final class C0043n {
         }
     }
 
-    public C0043n(String str) {
+    public ByteBuffer(String str) {
         this(str, 2048);
     }
 
-    public C0043n(String str, int i) {
+    public ByteBuffer(String str, int i) {
         this((InputStream) C0029bb.m761a((Object) str.getClass().getResourceAsStream(str)), i);
     }
 
-    private C0043n(InputStream inputStream, int i) {
+    private ByteBuffer(InputStream inputStream, int i) {
         this.f383a = C0040k.m1211a(i);
         try {
             byte[] bArrM1211a = C0040k.m1211a(8192);
@@ -67,7 +67,7 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1299a() {
+    public final ByteBuffer m1299a() {
         int i = this.f384b;
         if (i == 0) {
             m1301b();
@@ -85,7 +85,7 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1300a(int i) {
+    public final ByteBuffer m1300a(int i) {
         byte[] bArr = this.f383a;
         int length = bArr.length;
         int i2 = this.f384b;
@@ -94,7 +94,7 @@ public final class C0043n {
         boolean z2 = z;
         byte[] bArrM1211a = z ? C0040k.m1211a(i3 + 32) : bArr;
         if (z2 || this.f385c != 0) {
-            AbstractC0019as.m490a((Object) bArr, this.f385c, (Object) bArrM1211a, 0, i2);
+            Utils.m490a((Object) bArr, this.f385c, (Object) bArrM1211a, 0, i2);
             if (z2) {
                 C0040k.m1209a(bArr);
                 this.f383a = bArrM1211a;
@@ -105,16 +105,16 @@ public final class C0043n {
     }
 
     /* renamed from: b */
-    public final C0043n m1301b() {
+    public final ByteBuffer m1301b() {
         C0040k.m1209a(this.f383a);
-        this.f383a = AbstractC0023aw.f176a;
+        this.f383a = AppState.f176a;
         this.f384b = 0;
         this.f385c = 0;
         return this;
     }
 
     /* renamed from: a */
-    public final C0043n m1302a(byte[] bArr) {
+    public final ByteBuffer m1302a(byte[] bArr) {
         if (bArr != null) {
             m1303a(bArr, 0, bArr.length);
         }
@@ -122,17 +122,17 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1303a(byte[] bArr, int i, int i2) {
+    public final ByteBuffer m1303a(byte[] bArr, int i, int i2) {
         if (i2 > 0) {
             m1300a(i2);
-            AbstractC0019as.m490a((Object) bArr, i, (Object) this.f383a, this.f384b, i2);
+            Utils.m490a((Object) bArr, i, (Object) this.f383a, this.f384b, i2);
             this.f384b += i2;
         }
         return this;
     }
 
     /* renamed from: b */
-    public final C0043n m1304b(byte[] bArr) {
+    public final ByteBuffer m1304b(byte[] bArr) {
         m1301b();
         this.f383a = bArr;
         this.f384b = bArr.length;
@@ -141,7 +141,7 @@ public final class C0043n {
 
     /* renamed from: b */
     public final byte[] m1305b(byte[] bArr, int i, int i2) {
-        AbstractC0019as.m490a((Object) this.f383a, this.f385c, (Object) bArr, i, i2);
+        Utils.m490a((Object) this.f383a, this.f385c, (Object) bArr, i, i2);
         this.f384b -= i2;
         this.f385c += i2;
         m1299a();
@@ -149,7 +149,7 @@ public final class C0043n {
     }
 
     /* renamed from: b */
-    public final C0043n m1306b(int i) {
+    public final ByteBuffer m1306b(int i) {
         m1300a(i);
         while (true) {
             int i2 = i;
@@ -165,12 +165,12 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1307a(String str, int i) {
+    public final ByteBuffer m1307a(String str, int i) {
         return i != 0 ? m1309b(str) : m1308a(str);
     }
 
     /* renamed from: a */
-    public final C0043n m1308a(String str) {
+    public final ByteBuffer m1308a(String str) {
         int length;
         if (str == null || (length = str.length()) <= 0) {
             return m1360p(0);
@@ -187,7 +187,7 @@ public final class C0043n {
     }
 
     /* renamed from: b */
-    public final C0043n m1309b(String str) {
+    public final ByteBuffer m1309b(String str) {
         int length;
         if (str == null || (length = str.length()) <= 0) {
             return m1360p(0);
@@ -210,18 +210,18 @@ public final class C0043n {
     }
 
     /* renamed from: c */
-    public final C0043n m1310c(int i) {
-        return i > 5179 ? m1303a(AbstractC0023aw.m581a(295), i & 65535, i >> 16) : m1302a(AbstractC0023aw.m581a(i));
+    public final ByteBuffer m1310c(int i) {
+        return i > 5179 ? m1303a(AppState.m581a(295), i & 65535, i >> 16) : m1302a(AppState.m581a(i));
     }
 
     /* renamed from: d */
-    public final C0043n m1311d(int i) {
-        return m1314d(AbstractC0023aw.m584b(i));
+    public final ByteBuffer m1311d(int i) {
+        return m1314d(AppState.m584b(i));
     }
 
     /* renamed from: e */
-    public final C0043n m1312e(int i) {
-        m1314d(AbstractC0023aw.m584b(i & 65535));
+    public final ByteBuffer m1312e(int i) {
+        m1314d(AppState.m584b(i & 65535));
         int i2 = i >>> 16;
         if (i2 != 0) {
             m1321f(i2);
@@ -230,12 +230,12 @@ public final class C0043n {
     }
 
     /* renamed from: c */
-    public final C0043n m1313c(String str) {
+    public final ByteBuffer m1313c(String str) {
         return m1314d(C0038i.m1120b((Object) str));
     }
 
     /* renamed from: d */
-    public final C0043n m1314d(String str) {
+    public final ByteBuffer m1314d(String str) {
         int length;
         if (str != null && (length = str.length()) > 0) {
             m1300a(length);
@@ -250,25 +250,25 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1315a(Object obj) {
+    public final ByteBuffer m1315a(Object obj) {
         return m1314d(C0038i.m1124l((String) obj));
     }
 
     /* renamed from: b */
-    public final C0043n m1316b(Object obj) {
+    public final ByteBuffer m1316b(Object obj) {
         return m1314d((String) obj);
     }
 
     /* renamed from: c */
     public final String m1317c() {
-        String strM17c = this.f384b == 0 ? AbstractC0023aw.f181d : C0000a.m17c(new String(this.f383a, this.f385c, this.f384b));
+        String strM17c = this.f384b == 0 ? AppState.f181d : StringUtils.m17c(new String(this.f383a, this.f385c, this.f384b));
         m1301b();
         return strM17c;
     }
 
     /* renamed from: a */
-    public final C0043n m1318a(String[] strArr) {
-        C0043n c0043n = new C0043n();
+    public final ByteBuffer m1318a(String[] strArr) {
+        ByteBuffer c0043n = new ByteBuffer();
         c0043n.m1360p(2);
         for (int i = 0; i < 2; i++) {
             c0043n.m1309b(strArr[i]);
@@ -278,7 +278,7 @@ public final class C0043n {
 
     /* renamed from: w */
     private static char m1319w(int i) {
-        return (char) AbstractC0023aw.m581a(961)[i & 63];
+        return (char) AppState.m581a(961)[i & 63];
     }
 
     /* renamed from: d */
@@ -323,7 +323,7 @@ public final class C0043n {
     }
 
     /* renamed from: f */
-    public final C0043n m1321f(int i) {
+    public final ByteBuffer m1321f(int i) {
         m1300a(1);
         byte[] bArr = this.f383a;
         int i2 = this.f384b;
@@ -333,17 +333,17 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1322a(boolean z) {
+    public final ByteBuffer m1322a(boolean z) {
         return m1321f(z ? 1 : 0);
     }
 
     /* renamed from: a */
-    public final C0043n m1323a(long j) {
+    public final ByteBuffer m1323a(long j) {
         return m1360p((int) j).m1360p((int) (j >> 32));
     }
 
     /* renamed from: a */
-    private C0043n m1324a(C0043n c0043n, int i) {
+    private ByteBuffer m1324a(ByteBuffer c0043n, int i) {
         byte[] bArrM1211a = C0040k.m1211a(i);
         c0043n.m1305b(bArrM1211a, 0, i);
         m1303a(bArrM1211a, 0, i);
@@ -352,7 +352,7 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1325a(C0043n c0043n) {
+    public final ByteBuffer m1325a(ByteBuffer c0043n) {
         if (c0043n != null) {
             m1324a(c0043n, c0043n.f384b);
         }
@@ -360,7 +360,7 @@ public final class C0043n {
     }
 
     /* renamed from: b */
-    public final C0043n m1326b(C0043n c0043n) {
+    public final ByteBuffer m1326b(ByteBuffer c0043n) {
         if (c0043n != null) {
             m1357m(c0043n.f384b).m1324a(c0043n, c0043n.f384b);
         }
@@ -368,7 +368,7 @@ public final class C0043n {
     }
 
     /* renamed from: c */
-    public final C0043n m1327c(C0043n c0043n) {
+    public final ByteBuffer m1327c(ByteBuffer c0043n) {
         return c0043n != null ? m1360p(c0043n.f384b).m1324a(c0043n, c0043n.f384b) : m1360p(0);
     }
 
@@ -381,7 +381,7 @@ public final class C0043n {
     }
 
     /* renamed from: g */
-    public final C0043n m1329g(int i) {
+    public final ByteBuffer m1329g(int i) {
         this.f385c += i;
         int i2 = this.f384b - i;
         this.f384b = i2;
@@ -420,7 +420,7 @@ public final class C0043n {
             if (iM1328e < 0) {
                 return C0040k.m1215a(stringBufferM1217h);
             }
-            stringBufferM1217h.append(AbstractC0019as.m499a((int) m1344o()));
+            stringBufferM1217h.append(Utils.m499a((int) m1344o()));
         }
     }
 
@@ -471,7 +471,7 @@ public final class C0043n {
     public final String m1337i() {
         StringBuffer stringBufferM1217h = C0040k.m1217h();
         while (this.f384b > 0) {
-            stringBufferM1217h.append(AbstractC0019as.m499a((int) m1344o()));
+            stringBufferM1217h.append(Utils.m499a((int) m1344o()));
         }
         m1301b();
         return C0040k.m1215a(stringBufferM1217h);
@@ -479,7 +479,7 @@ public final class C0043n {
 
     /* renamed from: j */
     public final String m1338j() {
-        return C0000a.m17c(m1334g().toLowerCase());
+        return StringUtils.m17c(m1334g().toLowerCase());
     }
 
     /* renamed from: k */
@@ -487,7 +487,7 @@ public final class C0043n {
         byte[] bArr = this.f383a;
         int i = this.f385c;
         byte[] bArr2 = new byte[this.f384b];
-        AbstractC0019as.m490a((Object) bArr, i, (Object) bArr2, 0, this.f384b);
+        Utils.m490a((Object) bArr, i, (Object) bArr2, 0, this.f384b);
         m1301b();
         return bArr2;
     }
@@ -538,7 +538,7 @@ public final class C0043n {
             if (iM1328e < 0) {
                 return vectorM1213g;
             }
-            vectorM1213g.addElement(new C0043n().m1324a(this, m1330h(0) + 4));
+            vectorM1213g.addElement(new ByteBuffer().m1324a(this, m1330h(0) + 4));
         }
     }
 
@@ -552,7 +552,7 @@ public final class C0043n {
         if (this.f384b == 0) {
             return -1;
         }
-        int iM503b = AbstractC0019as.m503b(bArr.length, this.f384b);
+        int iM503b = Utils.m503b(bArr.length, this.f384b);
         m1305b(bArr, 0, iM503b);
         return iM503b;
     }
@@ -567,7 +567,7 @@ public final class C0043n {
     }
 
     /* renamed from: s */
-    public final C0043n m1349s() {
+    public final ByteBuffer m1349s() {
         int i = this.f384b;
         if (i >= 4 && m1330h(0) != -559038737) {
             throw new RuntimeException();
@@ -575,11 +575,11 @@ public final class C0043n {
         if (i < 44 || i < 44 + m1330h(16)) {
             return null;
         }
-        return new C0043n().m1324a(this, 44 + m1330h(16)).m1299a();
+        return new ByteBuffer().m1324a(this, 44 + m1330h(16)).m1299a();
     }
 
     /* renamed from: t */
-    public final C0043n m1350t() {
+    public final ByteBuffer m1350t() {
         int i = this.f384b;
         if (i < 6) {
             return null;
@@ -595,7 +595,7 @@ public final class C0043n {
         if (iM1351l + 6 > i) {
             return null;
         }
-        return new C0043n().m1324a(this, iM1351l + 6).m1299a();
+        return new ByteBuffer().m1324a(this, iM1351l + 6).m1299a();
     }
 
     /* renamed from: l */
@@ -648,7 +648,7 @@ public final class C0043n {
     }
 
     /* renamed from: m */
-    public final C0043n m1357m(int i) {
+    public final ByteBuffer m1357m(int i) {
         m1300a(2);
         byte[] bArr = this.f383a;
         int i2 = this.f384b;
@@ -662,7 +662,7 @@ public final class C0043n {
     }
 
     /* renamed from: n */
-    public final C0043n m1358n(int i) {
+    public final ByteBuffer m1358n(int i) {
         m1300a(2);
         byte[] bArr = this.f383a;
         int i2 = this.f384b;
@@ -679,7 +679,7 @@ public final class C0043n {
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r2v4, types: [int] */
     /* renamed from: o */
-    public final C0043n m1359o(int i) {
+    public final ByteBuffer m1359o(int i) {
         m1300a(4);
         byte[] bArr = this.f383a;
         int i2 = this.f384b;
@@ -704,7 +704,7 @@ public final class C0043n {
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r2v21, types: [int] */
     /* renamed from: p */
-    public final C0043n m1360p(int i) {
+    public final ByteBuffer m1360p(int i) {
         m1300a(4);
         byte[] bArr = this.f383a;
         int i2 = this.f384b;
@@ -726,7 +726,7 @@ public final class C0043n {
     }
 
     /* renamed from: f */
-    public final C0043n m1361f(String str) {
+    public final ByteBuffer m1361f(String str) {
         int length = str.length();
         m1300a(2 + length);
         m1357m(length);
@@ -740,7 +740,7 @@ public final class C0043n {
     }
 
     /* renamed from: y */
-    public final C0043n m1362y() {
+    public final ByteBuffer m1362y() {
         m1300a(0);
         byte[] bArr = this.f383a;
         int i = this.f384b - 6;
@@ -755,7 +755,7 @@ public final class C0043n {
         byte[] bArr = this.f383a;
         int i2 = this.f385c + 1;
         this.f385c = i2;
-        String strM17c = C0000a.m17c(new String(bArr, i2, i));
+        String strM17c = StringUtils.m17c(new String(bArr, i2, i));
         this.f385c += i;
         this.f384b -= i + 1;
         return strM17c;
@@ -763,13 +763,13 @@ public final class C0043n {
 
     /* renamed from: A */
     public final String m1364A() {
-        String strM0a = C0000a.m0a(this.f383a, this.f385c);
+        String strM0a = StringUtils.m0a(this.f383a, this.f385c);
         m1329g(2 + m1351l(0));
         return strM0a;
     }
 
     /* renamed from: B */
-    public final C0043n m1365B() {
+    public final ByteBuffer m1365B() {
         m1300a(0);
         byte[] bArrM1090a = C0038i.m1090a(this.f383a, this.f384b);
         m1301b();
@@ -783,7 +783,7 @@ public final class C0043n {
         int iM1352K = m1352K() - 1;
         if (iM1352K <= 0) {
             m1329g(3);
-            return AbstractC0023aw.f181d;
+            return AppState.f181d;
         }
         this.f383a[this.f385c] = (byte) (iM1352K >> 8);
         this.f383a[this.f385c + 1] = (byte) iM1352K;
@@ -812,7 +812,7 @@ public final class C0043n {
         String strM1364A = m1379a(this.f385c + 2, iM1352K) ? m1364A() : m1378L();
         String str = strM1364A;
         int length = strM1364A.length();
-        return length > 0 ? C0000a.m13b(str, length - 1) : str;
+        return length > 0 ? StringUtils.m13b(str, length - 1) : str;
     }
 
     /* renamed from: q */
@@ -835,27 +835,27 @@ public final class C0043n {
             if (i < 0) {
                 return C0040k.m1215a(stringBufferM1217h);
             }
-            stringBufferM1217h.append(AbstractC0019as.m499a(m1346q()));
+            stringBufferM1217h.append(Utils.m499a(m1346q()));
         }
     }
 
     /* renamed from: g */
-    public final C0043n m1371g(String str) {
+    public final ByteBuffer m1371g(String str) {
         int length = str.length();
         for (int i = 0; i < length; i++) {
-            m1321f(AbstractC0019as.m500b(str.charAt(i)));
+            m1321f(Utils.m500b(str.charAt(i)));
         }
         return this;
     }
 
     /* renamed from: a */
-    public final C0043n m1372a(int i, String str) {
+    public final ByteBuffer m1372a(int i, String str) {
         int length = str.length();
         return length > 0 ? m1357m(i).m1358n(length + 3).m1358n(length + 1).m1371g(str).m1321f(0) : this;
     }
 
     /* renamed from: h */
-    public final C0043n m1373h(String str) {
+    public final ByteBuffer m1373h(String str) {
         int length = str.length();
         m1321f(length);
         for (int i = 0; i < length; i++) {
@@ -865,7 +865,7 @@ public final class C0043n {
     }
 
     /* renamed from: i */
-    public final C0043n m1374i(String str) {
+    public final ByteBuffer m1374i(String str) {
         int length = str.length();
         for (int i = 0; i < length; i++) {
             m1357m(str.charAt(i));
@@ -897,7 +897,7 @@ public final class C0043n {
     }
 
     /* renamed from: j */
-    public final C0043n m1376j(String str) {
+    public final ByteBuffer m1376j(String str) {
         byte[] bArrM1375l = m1375l(str);
         m1302a(bArrM1375l);
         C0040k.m1209a(bArrM1375l);
@@ -905,7 +905,7 @@ public final class C0043n {
     }
 
     /* renamed from: k */
-    public final C0043n m1377k(String str) {
+    public final ByteBuffer m1377k(String str) {
         byte[] bArrM1375l = m1375l(str);
         m1303a(bArrM1375l, 2, bArrM1375l.length - 2);
         C0040k.m1209a(bArrM1375l);
@@ -956,8 +956,8 @@ public final class C0043n {
     }
 
     /* renamed from: F */
-    public final C0043n m1380F() {
-        return new C0043n().m1303a(this.f383a, this.f385c, this.f384b);
+    public final ByteBuffer m1380F() {
+        return new ByteBuffer().m1303a(this.f383a, this.f385c, this.f384b);
     }
 
     /* renamed from: G */
@@ -965,37 +965,37 @@ public final class C0043n {
         m1300a(2);
         byte[] bArr = this.f383a;
         int i = this.f384b;
-        AbstractC0019as.m490a((Object) bArr, 0, (Object) bArr, 2, i);
+        Utils.m490a((Object) bArr, 0, (Object) bArr, 2, i);
         bArr[0] = (byte) (i >>> 8);
         bArr[1] = (byte) i;
-        String strM0a = C0000a.m0a(bArr, this.f385c);
+        String strM0a = StringUtils.m0a(bArr, this.f385c);
         m1301b();
         return strM0a;
     }
 
     /* renamed from: s */
-    public final C0043n m1382s(int i) {
-        return m1314d(C0000a.m17c(Integer.toString(i)));
+    public final ByteBuffer m1382s(int i) {
+        return m1314d(StringUtils.m17c(Integer.toString(i)));
     }
 
     /* renamed from: b */
-    public final C0043n m1383b(long j) {
-        return m1314d(C0000a.m17c(Long.toString(j)));
+    public final ByteBuffer m1383b(long j) {
+        return m1314d(StringUtils.m17c(Long.toString(j)));
     }
 
     /* renamed from: t */
-    public final C0043n m1384t(int i) {
-        String strM17c = C0000a.m17c(Integer.toString(i));
+    public final ByteBuffer m1384t(int i) {
+        String strM17c = StringUtils.m17c(Integer.toString(i));
         return m1360p(strM17c.length()).m1314d(strM17c);
     }
 
     /* renamed from: u */
-    public final C0043n m1385u(int i) {
+    public final ByteBuffer m1385u(int i) {
         return m1386c(i & 4294967295L);
     }
 
     /* renamed from: c */
-    public final C0043n m1386c(long j) {
+    public final ByteBuffer m1386c(long j) {
         while (j != 0) {
             m1321f((int) j);
             j >>>= 8;
@@ -1030,23 +1030,23 @@ public final class C0043n {
     }
 
     /* renamed from: I */
-    public final C0022av m1388I() {
-        return new C0001aa(m1381G()).m47a();
+    public final XmlElement m1388I() {
+        return new XmlParser(m1381G()).m47a();
     }
 
     /* renamed from: J */
-    public final C0022av m1389J() {
-        return new C0001aa(m1317c()).m47a();
+    public final XmlElement m1389J() {
+        return new XmlParser(m1317c()).m47a();
     }
 
     /* renamed from: v */
-    public final C0043n m1390v(int i) {
+    public final ByteBuffer m1390v(int i) {
         return m1360p(i & 255).m1321f(i >>> 8);
     }
 
     /* renamed from: b */
-    public final C0043n m1391b(String[] strArr) {
-        C0043n c0043n = new C0043n();
+    public final ByteBuffer m1391b(String[] strArr) {
+        ByteBuffer c0043n = new ByteBuffer();
         int length = strArr == null ? 0 : strArr.length;
         int i = length;
         c0043n.m1360p(length);
@@ -1057,8 +1057,8 @@ public final class C0043n {
     }
 
     /* renamed from: a */
-    public final C0043n m1392a(Vector vector) {
-        C0043n c0043n = new C0043n();
+    public final ByteBuffer m1392a(Vector vector) {
+        ByteBuffer c0043n = new ByteBuffer();
         c0043n.m1360p(0);
         return m1327c(c0043n);
     }

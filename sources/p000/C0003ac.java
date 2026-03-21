@@ -8,28 +8,28 @@ import java.util.Vector;
 public final class C0003ac {
 
     /* renamed from: a */
-    public String f13a = AbstractC0023aw.f181d;
+    public String f13a = AppState.f181d;
 
     /* renamed from: b */
-    public String f14b = AbstractC0023aw.f181d;
+    public String f14b = AppState.f181d;
 
     /* renamed from: c */
-    public String f15c = AbstractC0023aw.f181d;
+    public String f15c = AppState.f181d;
 
     /* renamed from: d */
-    public String f16d = AbstractC0023aw.f181d;
+    public String f16d = AppState.f181d;
 
     /* renamed from: e */
-    public String f17e = AbstractC0023aw.f181d;
+    public String f17e = AppState.f181d;
 
     /* renamed from: f */
-    public String f18f = AbstractC0023aw.f181d;
+    public String f18f = AppState.f181d;
 
     /* renamed from: g */
-    public String f19g = AbstractC0023aw.f181d;
+    public String f19g = AppState.f181d;
 
     /* renamed from: h */
-    public String f20h = AbstractC0023aw.f181d;
+    public String f20h = AppState.f181d;
 
     /* renamed from: i */
     public int f21i = 2;
@@ -72,7 +72,7 @@ public final class C0003ac {
     }
 
     /* renamed from: a */
-    public final void m54a(C0022av c0022av) {
+    public final void m54a(XmlElement c0022av) {
         Vector vector;
         String[] strArr;
         if (c0022av == null) {
@@ -80,13 +80,13 @@ public final class C0003ac {
         }
         this.f23k = this.f22j;
         String[] strArr2 = new String[0];
-        if (c0022av.f172b == null || (vector = ((C0022av) c0022av.f172b.elementAt(0)).f172b) == null) {
+        if (c0022av.f172b == null || (vector = ((XmlElement) c0022av.f172b.elementAt(0)).f172b) == null) {
             strArr = strArr2;
         } else {
             int size = vector.size();
             String[] strArr3 = new String[size];
             for (int i = 0; i < size; i++) {
-                strArr3[i] = ((C0022av) vector.elementAt(i)).m554b(328413);
+                strArr3[i] = ((XmlElement) vector.elementAt(i)).m554b(328413);
             }
             strArr = strArr3;
         }
@@ -94,7 +94,7 @@ public final class C0003ac {
     }
 
     /* renamed from: a */
-    public static final String[] m55a(C0043n c0043n) {
+    public static final String[] m55a(ByteBuffer c0043n) {
         if (c0043n.f384b == 0 || c0043n.m1328e() == 0) {
             return null;
         }
@@ -105,12 +105,12 @@ public final class C0003ac {
         strArr[3] = c0043n.m1335e((String) null);
         strArr[4] = c0043n.m1334g();
         strArr[5] = c0043n.m1334g();
-        if (C0000a.m3a(590588, strArr[2])) {
+        if (StringUtils.m3a(590588, strArr[2])) {
             strArr[6] = c0043n.m1334g();
             strArr[7] = c0043n.m1334g();
         } else {
-            strArr[6] = AbstractC0023aw.f181d;
-            strArr[7] = AbstractC0023aw.f181d;
+            strArr[6] = AppState.f181d;
+            strArr[7] = AppState.f181d;
         }
         return strArr;
     }
@@ -126,7 +126,7 @@ public final class C0003ac {
     }
 
     /* renamed from: b */
-    public static final C0003ac m58b(C0043n c0043n) {
+    public static final C0003ac m58b(ByteBuffer c0043n) {
         C0003ac c0003ac = new C0003ac();
         if (c0043n.m1340l()) {
             try {
@@ -144,13 +144,13 @@ public final class C0003ac {
 
     /* renamed from: c */
     public final boolean m59c() {
-        return (C0000a.m1a(this.f13a) || C0000a.m1a(this.f14b)) ? false : true;
+        return (StringUtils.m1a(this.f13a) || StringUtils.m1a(this.f14b)) ? false : true;
     }
 
     /* renamed from: d */
     public final int m60d() {
         try {
-            if (C0000a.m3a(590588, this.f15c)) {
+            if (StringUtils.m3a(590588, this.f15c)) {
                 return C0014an.m284e(Integer.parseInt(this.f19g));
             }
             return 10;
@@ -161,7 +161,7 @@ public final class C0003ac {
 
     /* renamed from: e */
     public final void m61e() {
-        String str = AbstractC0023aw.f181d;
+        String str = AppState.f181d;
         this.f14b = str;
         this.f13a = str;
         this.f24l = false;
@@ -169,20 +169,20 @@ public final class C0003ac {
 
     /* renamed from: a */
     public static final String m62a(int i, String str, String str2) {
-        return new C0043n().m1310c(3473998).m1382s(i).m1385u(4028454).m1314d(str).m1385u(4028710).m1314d(str2).m1310c(1311433).m1382s(AbstractC0019as.m520a()).m1317c();
+        return new ByteBuffer().m1310c(3473998).m1382s(i).m1385u(4028454).m1314d(str).m1385u(4028710).m1314d(str2).m1310c(1311433).m1382s(Utils.m520a()).m1317c();
     }
 
     /* renamed from: a */
     public static final String m63a(C0020at c0020at, int i) {
-        return new C0043n().m1310c(1901187).m1314d(c0020at.f164b).m1310c(393954).m1314d(c0020at.f163a).m1310c(393960).m1314d(c0020at.f166d).m1310c(393966).m1314d(c0020at.f165c).m1310c(1311413).m1382s(i).m1310c(393943).m1382s(AbstractC0019as.m520a()).m1317c();
+        return new ByteBuffer().m1310c(1901187).m1314d(c0020at.f164b).m1310c(393954).m1314d(c0020at.f163a).m1310c(393960).m1314d(c0020at.f166d).m1310c(393966).m1314d(c0020at.f165c).m1310c(1311413).m1382s(i).m1310c(393943).m1382s(Utils.m520a()).m1317c();
     }
 
     /* renamed from: a */
-    public static final Vector m64a(C0043n c0043n, long j, long j2) throws NumberFormatException {
+    public static final Vector m64a(ByteBuffer c0043n, long j, long j2) throws NumberFormatException {
         Vector vector = null;
         Vector vectorM1213g = null;
         try {
-            vector = (Vector) AbstractC0017aq.m466a(c0043n, 2);
+            vector = (Vector) JsonParser.m466a(c0043n, 2);
         } catch (Throwable unused) {
         }
         if (vector != null) {

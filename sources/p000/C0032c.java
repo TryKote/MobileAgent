@@ -68,7 +68,7 @@ public final class C0032c {
 
     /* renamed from: c */
     public static final C0032c m886c() {
-        return new C0032c(1, AbstractC0023aw.m584b(1038));
+        return new C0032c(1, AppState.m584b(1038));
     }
 
     /* renamed from: a */
@@ -83,7 +83,7 @@ public final class C0032c {
 
     /* renamed from: d */
     public static final C0032c m889d() {
-        return new C0032c(0, AbstractC0023aw.f181d);
+        return new C0032c(0, AppState.f181d);
     }
 
     /* renamed from: a */
@@ -95,14 +95,14 @@ public final class C0032c {
 
     /* renamed from: a */
     public final C0032c m891a(Object obj, String str, Object obj2, Object obj3, Object obj4) {
-        String str2 = AbstractC0019as.m535l(str) ? str : null;
+        String str2 = Utils.m535l(str) ? str : null;
         if (obj instanceof String) {
-            m898b(AbstractC0019as.m527g(this.f259b));
+            m898b(Utils.m527g(this.f259b));
         } else {
             m896a(((Integer) obj).intValue());
         }
         if (str2 != null) {
-            m901a(((Integer) obj3).intValue() != 327680 ? str2 : AbstractC0019as.m506c(str2), 1, 7);
+            m901a(((Integer) obj3).intValue() != 327680 ? str2 : Utils.m506c(str2), 1, 7);
         } else {
             m895e();
         }
@@ -119,7 +119,7 @@ public final class C0032c {
             i2--;
             if (i2 < 0) {
                 C0040k.m1212a(vector);
-                C0032c c0032cM896a = m884a().m898b(AbstractC0019as.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
+                C0032c c0032cM896a = m884a().m898b(Utils.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
                 c0032cM896a.f265d = new Object[]{C0034e.m967e(i), strArr};
                 return c0032cM896a;
             }
@@ -129,7 +129,7 @@ public final class C0032c {
 
     /* renamed from: a */
     public static final C0032c m893a(C0012al c0012al) {
-        C0032c c0032c = new C0032c(11, AbstractC0023aw.f181d);
+        C0032c c0032c = new C0032c(11, AppState.f181d);
         c0032c.f265d = c0012al;
         c0032c.f261g = c0012al.f91a.getWidth();
         c0032c.f262h = c0012al.f91a.getHeight() + 5;
@@ -153,7 +153,7 @@ public final class C0032c {
         }
         if (this.f258a != 9) {
             if (this.f258a == 4) {
-                C0015ao.m340m(AbstractC0019as.m522f(AbstractC0023aw.m584b(1379)).length() > 0 ? 427 : 428);
+                C0015ao.m340m(Utils.m522f(AppState.m584b(1379)).length() > 0 ? 427 : 428);
                 return 0;
             }
             if (this.f258a != 5) {
@@ -179,7 +179,7 @@ public final class C0032c {
 
     /* renamed from: e */
     public final C0032c m895e() {
-        return m903a(new int[]{16, AbstractC0023aw.m586d(1450)});
+        return m903a(new int[]{16, AppState.m586d(1450)});
     }
 
     /* renamed from: a */
@@ -243,7 +243,7 @@ public final class C0032c {
 
     /* renamed from: b */
     private static int m904b(Object obj) {
-        if (obj == AbstractC0023aw.f177b[1370]) {
+        if (obj == AppState.f177b[1370]) {
             return 0;
         }
         return obj instanceof int[] ? ((int[]) obj)[0] + 2 : ((int[]) ((Object[]) obj)[1])[0];
@@ -251,7 +251,7 @@ public final class C0032c {
 
     /* renamed from: c */
     private static int m905c(Object obj) {
-        if (obj == AbstractC0023aw.f177b[1370]) {
+        if (obj == AppState.f177b[1370]) {
             return 0;
         }
         return obj instanceof int[] ? ((int[]) obj)[1] : ((int[]) ((Object[]) obj)[1])[1];
@@ -260,7 +260,7 @@ public final class C0032c {
     /* renamed from: a */
     private final void m906a(Vector vector, String str, C0012al c0012al, int i, int i2, int i3, int i4, int i5) {
         int iM215a = c0012al.m215a(str, i2, i3);
-        if (iM215a < (AbstractC0023aw.m586d(1528) << 2) / 5) {
+        if (iM215a < (AppState.m586d(1528) << 2) / 5) {
             vector.addElement(new Object[]{str, new int[]{iM215a, i, i2, i3, i4, i5}});
             return;
         }
@@ -293,7 +293,7 @@ public final class C0032c {
                 int i6 = -1;
                 int i7 = -1;
                 for (int i8 = 0; i8 < 43; i8++) {
-                    String strM584b = AbstractC0023aw.m584b(i8 + 1141);
+                    String strM584b = AppState.m584b(i8 + 1141);
                     if (null != strM584b && (iIndexOf2 = str.indexOf(strM584b, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
                         i6 = iIndexOf2;
                         i7 = i8;
@@ -304,13 +304,13 @@ public final class C0032c {
                 } else {
                     m907a(vector, str, i, i6, i3, i4, -1);
                     vector.addElement(new int[]{16, 16, i7 + 110});
-                    m907a(vector, str, i6 + AbstractC0023aw.m584b(i7 + 1141).length(), i2, i3, i4, 1);
+                    m907a(vector, str, i6 + AppState.m584b(i7 + 1141).length(), i2, i3, i4, 1);
                 }
             } else if (i5 == 2 || i5 == 3) {
                 int i9 = -1;
                 int i10 = -1;
                 for (int i11 = 0; i11 < 37; i11++) {
-                    String strM584b2 = AbstractC0023aw.m584b(i11 + 1184);
+                    String strM584b2 = AppState.m584b(i11 + 1184);
                     if (null != strM584b2 && (iIndexOf = str.indexOf(strM584b2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
                         i9 = iIndexOf;
                         i10 = i11;
@@ -321,13 +321,13 @@ public final class C0032c {
                 } else {
                     m907a(vector, str, i, i9, i3, i4, -1);
                     vector.addElement(new int[]{16, 16, i10 + 318});
-                    m907a(vector, str, i9 + AbstractC0023aw.m584b(i10 + 1184).length(), i2, i3, i4, 2);
+                    m907a(vector, str, i9 + AppState.m584b(i10 + 1184).length(), i2, i3, i4, 2);
                 }
             } else if (i5 == 0) {
                 int i12 = -1;
                 int i13 = -1;
                 for (int i14 = 0; i14 < 78; i14++) {
-                    int iIndexOf3 = str.indexOf(AbstractC0023aw.m584b(i14 + 1063), i);
+                    int iIndexOf3 = str.indexOf(AppState.m584b(i14 + 1063), i);
                     if (iIndexOf3 >= 0 && (iIndexOf3 < i12 || i12 == -1)) {
                         i12 = iIndexOf3;
                         i13 = i14;
@@ -342,11 +342,11 @@ public final class C0032c {
                     iArr[1] = 16;
                     iArr[2] = i13 < 74 ? i13 + 36 : i13 == 74 ? 142 : i13 == 75 ? 137 : i13 == 76 ? 210 : 205;
                     vector.addElement(iArr);
-                    m907a(vector, str, i12 + AbstractC0023aw.m584b(i13 + 1063).length(), i2, i3, i4, 0);
+                    m907a(vector, str, i12 + AppState.m584b(i13 + 1063).length(), i2, i3, i4, 0);
                 }
-            } else if (str != AbstractC0023aw.m584b(1037)) {
-                C0012al c0012alM608k = AbstractC0023aw.m608k(i3);
-                int iM623o = AbstractC0023aw.m623o(i3);
+            } else if (str != AppState.m584b(1037)) {
+                C0012al c0012alM608k = AppState.m608k(i3);
+                int iM623o = AppState.m623o(i3);
                 int i15 = i;
                 int i16 = i;
                 while (true) {
@@ -371,7 +371,7 @@ public final class C0032c {
                             if (i19 > 0) {
                                 m906a(vector, str, c0012alM608k, iM623o, i15, i19, i3, i4);
                             }
-                            vector.addElement(AbstractC0023aw.f177b[1370]);
+                            vector.addElement(AppState.f177b[1370]);
                             i15 = i16 + 1;
                         }
                         i16++;
@@ -379,7 +379,7 @@ public final class C0032c {
                 }
             } else {
                 int length = str.length();
-                vector.addElement(new Object[]{str, new int[]{AbstractC0023aw.m608k(i3).m215a(str, 0, length), AbstractC0023aw.m623o(i3), 0, length, i3, i4}});
+                vector.addElement(new Object[]{str, new int[]{AppState.m608k(i3).m215a(str, 0, length), AppState.m623o(i3), 0, length, i3, i4}});
             }
         }
         return vector;
@@ -407,7 +407,7 @@ public final class C0032c {
         this.f262h = 0;
         for (int i4 = 0; i4 < size; i4++) {
             Object objElementAt = vector.elementAt(i4);
-            if (objElementAt != AbstractC0023aw.f177b[1370]) {
+            if (objElementAt != AppState.f177b[1370]) {
                 int iM904b = m904b(objElementAt);
                 int iM905c = m905c(objElementAt);
                 int i5 = 0;
@@ -424,7 +424,7 @@ public final class C0032c {
                     iM502a = 0;
                 }
                 this.f264j = C0015ao.m302a(this.f264j, i2, i3);
-                iM502a = AbstractC0019as.m502a(iM502a, iM905c);
+                iM502a = Utils.m502a(iM502a, iM905c);
                 i2 += iM904b;
             } else {
                 i2 = 0;
@@ -448,7 +448,7 @@ public final class C0032c {
             if (size < 0) {
                 return iM502a + 4;
             }
-            iM502a = AbstractC0019as.m502a(iM502a, this.f264j[(size << 1) + 1] + m904b(vector.elementAt(size)));
+            iM502a = Utils.m502a(iM502a, this.f264j[(size << 1) + 1] + m904b(vector.elementAt(size)));
         }
     }
 
@@ -459,7 +459,7 @@ public final class C0032c {
 
     /* renamed from: h */
     public final int m912h() {
-        return AbstractC0019as.m502a(this.f262h, AbstractC0023aw.m586d(1450)) + 4;
+        return Utils.m502a(this.f262h, AppState.m586d(1450)) + 4;
     }
 
     /* renamed from: a */
@@ -476,7 +476,7 @@ public final class C0032c {
                 return;
             }
             Object objElementAt = vector.elementAt(size);
-            if (objElementAt != AbstractC0023aw.f177b[1370]) {
+            if (objElementAt != AppState.f177b[1370]) {
                 int i4 = i + 2;
                 int i5 = this.f264j[(size << 1) + 1];
                 int i6 = i2 + 2 + this.f264j[(size << 1) + 1 + 1];
@@ -493,17 +493,17 @@ public final class C0032c {
                     String str = (String) ((Object[]) objElementAt)[0];
                     int[] iArr2 = (int[]) ((Object[]) objElementAt)[1];
                     int i9 = iArr2[4];
-                    C0012al c0012alM608k = AbstractC0023aw.m608k(i9);
+                    C0012al c0012alM608k = AppState.m608k(i9);
                     C0012al c0012alM207b = c0012al.m212a(c0012alM608k).m207b(iArr2[5]);
                     int i10 = iArr2[2];
                     int i11 = iArr2[3];
-                    if (i6 > 0 && i6 < AbstractC0023aw.m586d(1529)) {
+                    if (i6 > 0 && i6 < AppState.m586d(1529)) {
                         c0012alM207b.f92b.drawSubstring(str, i10, i11, i7, i6, 20);
                     }
                     if (i9 == 3) {
-                        c0012al.m211d(i7, i6 + (AbstractC0023aw.m586d(1450) >> 1), c0012alM608k.m215a(str, iArr2[2], iArr2[3]), 0);
+                        c0012al.m211d(i7, i6 + (AppState.m586d(1450) >> 1), c0012alM608k.m215a(str, iArr2[2], iArr2[3]), 0);
                     } else if (i9 == 5) {
-                        c0012al.m211d(i7, i6 + AbstractC0023aw.m586d(1450), c0012alM608k.m215a(str, iArr2[2], iArr2[3]), 0);
+                        c0012al.m211d(i7, i6 + AppState.m586d(1450), c0012alM608k.m215a(str, iArr2[2], iArr2[3]), 0);
                     }
                 }
             }

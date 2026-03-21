@@ -15,25 +15,25 @@ public abstract class AbstractC0018ar implements ListItem {
     private static int f159b;
 
     /* renamed from: a */
-    public static final void m487a(C0043n c0043n, Object obj, Object obj2) {
+    public static final void m487a(ByteBuffer c0043n, Object obj, Object obj2) {
         C0029bb.m778d(new C0029bb(4, new Object[]{obj, m489a(c0043n, 10, true), obj2}));
     }
 
     /* renamed from: a */
-    public static final void m488a(C0043n c0043n, int i) {
+    public static final void m488a(ByteBuffer c0043n, int i) {
         Vector vectorM489a = m489a(c0043n, i, false);
         if (vectorM489a != null && vectorM489a.size() > 0) {
-            AbstractC0023aw.f177b[1404] = vectorM489a;
+            AppState.f177b[1404] = vectorM489a;
         }
         AbstractC0025ay.f200h = true;
     }
 
     /* renamed from: a */
-    private static final Vector m489a(C0043n c0043n, int i, boolean z) {
+    private static final Vector m489a(ByteBuffer c0043n, int i, boolean z) {
         boolean z2;
-        Hashtable hashtable = (Hashtable) AbstractC0017aq.m466a(c0043n, 2);
+        Hashtable hashtable = (Hashtable) JsonParser.m466a(c0043n, 2);
         Vector vectorM1213g = C0040k.m1213g();
-        Vector vectorM614m = AbstractC0023aw.m614m(1404);
+        Vector vectorM614m = AppState.m614m(1404);
         if (vectorM614m != null && !z) {
             int i2 = f159b;
             f159b = i2 + 1;
@@ -41,7 +41,7 @@ public abstract class AbstractC0018ar implements ListItem {
                 vectorM1213g.addElement(vectorM614m.elementAt(i3));
             }
         }
-        int iM586d = AbstractC0023aw.m586d(39);
+        int iM586d = AppState.m586d(39);
         f158a = 0;
         Enumeration enumerationKeys = hashtable.keys();
         while (enumerationKeys.hasMoreElements()) {
@@ -53,7 +53,7 @@ public abstract class AbstractC0018ar implements ListItem {
                     z2 = false;
                     break;
                 }
-                if (C0000a.m6a(str, ((Identifiable) vectorM1213g.elementAt(size)).mo545a()) && i == ((ListItem) vectorM1213g.elementAt(size)).mo280y()) {
+                if (StringUtils.m6a(str, ((Identifiable) vectorM1213g.elementAt(size)).mo545a()) && i == ((ListItem) vectorM1213g.elementAt(size)).mo280y()) {
                     z2 = true;
                     break;
                 }
@@ -69,11 +69,11 @@ public abstract class AbstractC0018ar implements ListItem {
                     c0045p.f390a = (String) hashtable4.get("email");
                     c0045p.f391b = (String) hashtable4.get("nick");
                     String str2 = (String) hashtable4.get("age");
-                    if (AbstractC0019as.m535l(str2)) {
+                    if (Utils.m535l(str2)) {
                         c0045p.f392c = Integer.parseInt(str2);
                     }
                     String str3 = (String) hashtable4.get("sex");
-                    if (AbstractC0019as.m535l(str3)) {
+                    if (Utils.m535l(str3)) {
                         c0045p.f393d = str3.equals("male") ? 1 : 2;
                     }
                     vectorM1213g.addElement(c0045p);

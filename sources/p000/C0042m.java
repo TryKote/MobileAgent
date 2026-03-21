@@ -13,7 +13,7 @@ public final class C0042m extends Hashtable {
         if (abstractC0041l instanceof C0035f) {
             m1258a(3, ((C0035f) abstractC0041l).f297d);
         } else if (abstractC0041l instanceof C0009ai) {
-            m1283d(AbstractC0019as.m510a((Object) ((C0009ai) abstractC0041l).f57c));
+            m1283d(Utils.m510a((Object) ((C0009ai) abstractC0041l).f57c));
         } else if (abstractC0041l instanceof C0006af) {
             m1258a(26, ((C0006af) abstractC0041l).f38a);
         }
@@ -72,7 +72,7 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: a */
     private final C0042m m1258a(int i, String str) {
-        if (AbstractC0019as.m535l(str)) {
+        if (Utils.m535l(str)) {
             put(C0034e.m967e(i), str);
         }
         return this;
@@ -100,12 +100,12 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: d */
     public final C0042m m1263d() {
-        return m1258a(4, AbstractC0023aw.m584b(318));
+        return m1258a(4, AppState.m584b(318));
     }
 
     /* renamed from: e */
     public final C0042m m1264e() {
-        return m1258a(4, AbstractC0023aw.m584b(319));
+        return m1258a(4, AppState.m584b(319));
     }
 
     /* renamed from: f */
@@ -167,7 +167,7 @@ public final class C0042m extends Hashtable {
         String strM584b;
         int i2 = i % 10;
         if (i <= 0 || i >= 100) {
-            strM584b = AbstractC0023aw.m584b(323);
+            strM584b = AppState.m584b(323);
         } else if (i < 5 || i > 20) {
             strM584b = i2 == 1 ? m1276a(i, 321) : (i2 < 2 || i2 > 4) ? m1276a(i, 320) : m1276a(i, 322);
         } else {
@@ -178,19 +178,19 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: a */
     private static final String m1276a(int i, int i2) {
-        return C0040k.m1215a(C0040k.m1217h().append(i).append(AbstractC0023aw.m584b(i2)));
+        return C0040k.m1215a(C0040k.m1217h().append(i).append(AppState.m584b(i2)));
     }
 
     /* renamed from: c */
     public final C0042m m1277c(int i) {
-        return i == 1 ? m1264e() : i == 2 ? m1263d() : m1258a(4, AbstractC0023aw.m584b(197069));
+        return i == 1 ? m1264e() : i == 2 ? m1263d() : m1258a(4, AppState.m584b(197069));
     }
 
     /* renamed from: p */
     public final C0042m m1278p(String str) {
-        int iM511a = AbstractC0019as.m511a(str, 1, 12, 0);
+        int iM511a = Utils.m511a(str, 1, 12, 0);
         if (iM511a != 0) {
-            Vector vectorM512e = AbstractC0019as.m512e(AbstractC0023aw.m584b(685));
+            Vector vectorM512e = Utils.m512e(AppState.m584b(685));
             m1258a(7, (String) vectorM512e.elementAt(iM511a));
             C0040k.m1212a(vectorM512e);
         }
@@ -219,7 +219,7 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: d */
     public final C0042m m1283d(int i) {
-        return m1258a(60, C0000a.m17c(Integer.toString(i)));
+        return m1258a(60, StringUtils.m17c(Integer.toString(i)));
     }
 
     /* renamed from: u */
@@ -229,12 +229,12 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: e */
     public final C0042m m1285e(int i) {
-        return m1258a(61, C0000a.m17c(Integer.toString(i)));
+        return m1258a(61, StringUtils.m17c(Integer.toString(i)));
     }
 
     /* renamed from: h */
     private final String m1286h(int i) {
-        return AbstractC0019as.m522f(m1256a(i));
+        return Utils.m522f(m1256a(i));
     }
 
     /* renamed from: f */
@@ -260,15 +260,15 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: j */
     public final String m1291j() {
-        String strM533j = AbstractC0019as.m533j(m1286h(0));
-        return C0000a.m1a(strM533j) ? m1256a(60) : strM533j;
+        String strM533j = Utils.m533j(m1286h(0));
+        return StringUtils.m1a(strM533j) ? m1256a(60) : strM533j;
     }
 
     /* renamed from: k */
     public final String m1292k() {
-        String strM533j = AbstractC0019as.m533j(C0000a.m9b(AbstractC0019as.m527g(m1286h(1)), AbstractC0019as.m533j(m1286h(2))));
+        String strM533j = Utils.m533j(StringUtils.m9b(Utils.m527g(m1286h(1)), Utils.m533j(m1286h(2))));
         String str = strM533j;
-        if (C0000a.m1a(strM533j)) {
+        if (StringUtils.m1a(strM533j)) {
             String strM1256a = m1256a(0);
             str = strM1256a;
             if (null == strM1256a) {
@@ -290,24 +290,24 @@ public final class C0042m extends Hashtable {
         int iIndexOf3;
         AbstractC0037h abstractC0037hM1255c = m1255c();
         C0013am c0013amM75b = AbstractC0004ad.m75b(i);
-        Vector vectorM512e = AbstractC0019as.m512e(AbstractC0023aw.m584b(312));
+        Vector vectorM512e = Utils.m512e(AppState.m584b(312));
         int size = vectorM512e.size();
         if (abstractC0037hM1255c instanceof C0028ba) {
             C0035f c0035f = (C0035f) abstractC0037hM1255c.m1069c((Object) m1256a(3));
             int i3 = 0;
             while (i3 < size) {
                 try {
-                    String strM1215a = C0040k.m1215a(AbstractC0019as.m497a(C0040k.m1217h().append((String) vectorM512e.elementAt(i3))));
+                    String strM1215a = C0040k.m1215a(Utils.m497a(C0040k.m1217h().append((String) vectorM512e.elementAt(i3))));
                     String strM1256a = m1256a(i3);
                     if (null != strM1256a) {
                         if (i3 == 6) {
-                            c0013amM75b.m248a(strM1215a, C0040k.m1215a(C0040k.m1217h().append(C0000a.m12a(strM1256a, 8, 10)).append('/').append(C0000a.m12a(strM1256a, 5, 7)).append('/').append(C0000a.m13b(strM1256a, 4))));
+                            c0013amM75b.m248a(strM1215a, C0040k.m1215a(C0040k.m1217h().append(StringUtils.m12a(strM1256a, 8, 10)).append('/').append(StringUtils.m12a(strM1256a, 5, 7)).append('/').append(StringUtils.m13b(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.m225a(C0032c.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? C0015ao.m349a(AbstractC0019as.m511a(strM1256a, 0, 4, 0), AbstractC0019as.m522f(m1256a(12))) : c0035f.mo139e()).m898b(AbstractC0019as.m522f(m1256a(13))));
+                                c0013amM75b.m225a(C0032c.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? C0015ao.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.mo139e()).m898b(Utils.m522f(m1256a(13))));
                                 break;
                             }
-                            c0013amM75b.m248a(strM1215a, i3 == 9 ? AbstractC0019as.m530h(AbstractC0019as.m532i(strM1256a)) : strM1256a);
+                            c0013amM75b.m248a(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);
                         }
                     }
                 } catch (Throwable unused) {
@@ -315,28 +315,28 @@ public final class C0042m extends Hashtable {
                 i3++;
             }
             if (c0035f != null) {
-                String strM522f = AbstractC0019as.m522f(c0035f.f301h);
+                String strM522f = Utils.m522f(c0035f.f301h);
                 int i4 = C0038i.m1104a(strM522f, 927) ? 936 : C0038i.m1104a(strM522f, 926) ? 935 : C0038i.m1104a(strM522f, 929) ? 937 : C0038i.m1104a(strM522f, 928) ? 938 : C0038i.m1104a(strM522f, 930) ? 939 : C0038i.m1104a(strM522f, 931) ? 940 : C0038i.m1104a(strM522f, 932) ? 941 : C0038i.m1104a(strM522f, 933) ? 942 : 934;
                 StringBuffer stringBufferM1217h = C0040k.m1217h();
                 if (i4 == 934) {
-                    int iM627a = AbstractC0023aw.m627a(strM522f, 2467256188365532259L);
+                    int iM627a = AppState.m627a(strM522f, 2467256188365532259L);
                     if (iM627a >= 0 && (iIndexOf3 = strM522f.indexOf(34, iM627a + 9)) >= 0) {
-                        stringBufferM1217h.append(C0000a.m12a(strM522f, iM627a + 8, iIndexOf3));
+                        stringBufferM1217h.append(StringUtils.m12a(strM522f, iM627a + 8, iIndexOf3));
                     }
                 } else {
-                    stringBufferM1217h.append(AbstractC0023aw.m584b(i4));
+                    stringBufferM1217h.append(AppState.m584b(i4));
                 }
-                int iM628b = AbstractC0023aw.m628b(strM522f, 943);
+                int iM628b = AppState.m628b(strM522f, 943);
                 if (iM628b >= 0 && (iIndexOf = strM522f.indexOf(34, iM628b + 11)) >= 0) {
-                    stringBufferM1217h.append(AbstractC0023aw.m584b(944)).append(C0000a.m12a(strM522f, iM628b + 10, iIndexOf));
-                    int iM628b2 = AbstractC0023aw.m628b(strM522f, 527990);
+                    stringBufferM1217h.append(AppState.m584b(944)).append(StringUtils.m12a(strM522f, iM628b + 10, iIndexOf));
+                    int iM628b2 = AppState.m628b(strM522f, 527990);
                     if (iM628b2 >= 0 && (iIndexOf2 = strM522f.indexOf(34, iM628b2 + 9)) >= 0) {
-                        stringBufferM1217h.append('.').append(C0000a.m12a(strM522f, iM628b2 + 8, iIndexOf2));
+                        stringBufferM1217h.append('.').append(StringUtils.m12a(strM522f, iM628b2 + 8, iIndexOf2));
                     }
                 }
                 String strM1215a2 = C0040k.m1215a(stringBufferM1217h);
-                if (AbstractC0019as.m535l(strM1215a2)) {
-                    C0032c c0032cM901a = C0032c.m889d().m901a(AbstractC0023aw.m584b(317), 0, 6);
+                if (Utils.m535l(strM1215a2)) {
+                    C0032c c0032cM901a = C0032c.m889d().m901a(AppState.m584b(317), 0, 6);
                     String str = c0035f.f301h;
                     if (str == null) {
                         i2 = -1;
@@ -361,55 +361,55 @@ public final class C0042m extends Hashtable {
                     }
                 }
                 String str2 = c0035f.f304j;
-                if (AbstractC0019as.m535l(str2)) {
-                    c0013amM75b.m225a(C0032c.m889d().m901a(AbstractC0023aw.m584b(324), 0, 6).m896a(242).m898b(str2));
+                if (Utils.m535l(str2)) {
+                    c0013amM75b.m225a(C0032c.m889d().m901a(AppState.m584b(324), 0, 6).m896a(242).m898b(str2));
                 }
                 String str3 = c0035f.f303i;
-                if (AbstractC0019as.m535l(str3)) {
-                    c0013amM75b.m225a(C0032c.m889d().m901a(AbstractC0023aw.m584b(325), 0, 6).m896a(2).m898b(str3));
+                if (Utils.m535l(str3)) {
+                    c0013amM75b.m225a(C0032c.m889d().m901a(AppState.m584b(325), 0, 6).m896a(2).m898b(str3));
                 }
                 String strM998o = c0035f.m998o();
-                if (AbstractC0019as.m535l(strM998o)) {
-                    c0013amM75b.m225a(C0032c.m889d().m901a(AbstractC0023aw.m584b(326), 0, 6).m896a(365).m898b(strM998o));
+                if (Utils.m535l(strM998o)) {
+                    c0013amM75b.m225a(C0032c.m889d().m901a(AppState.m584b(326), 0, 6).m896a(365).m898b(strM998o));
                 }
             }
         } else if (abstractC0037hM1255c instanceof C0033d) {
             String strM1256a2 = m1256a(60);
             if (null != strM1256a2) {
-                c0013amM75b.m248a(AbstractC0019as.m527g(AbstractC0023aw.m584b(263250)), strM1256a2);
+                c0013amM75b.m248a(Utils.m527g(AppState.m584b(263250)), strM1256a2);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
                     String strM1256a3 = m1256a(i5);
                     if (null != strM1256a3) {
-                        c0013amM75b.m248a(C0040k.m1215a(AbstractC0019as.m497a(C0040k.m1217h().append(vectorM512e.elementAt(i5)))), strM1256a3);
+                        c0013amM75b.m248a(C0040k.m1215a(Utils.m497a(C0040k.m1217h().append(vectorM512e.elementAt(i5)))), strM1256a3);
                     }
                 } catch (Throwable unused2) {
                 }
             }
             String strM1256a4 = m1256a(5);
             if (null != strM1256a4) {
-                c0013amM75b.m248a(AbstractC0023aw.m584b(315), strM1256a4);
+                c0013amM75b.m248a(AppState.m584b(315), strM1256a4);
             }
             String strM1256a5 = m1256a(32);
             if (null != strM1256a5) {
-                c0013amM75b.m248a(AbstractC0023aw.m584b(313), strM1256a5);
+                c0013amM75b.m248a(AppState.m584b(313), strM1256a5);
             }
             String strM1256a6 = m1256a(37);
             if (null != strM1256a6) {
-                c0013amM75b.m248a(AbstractC0023aw.m584b(314), strM1256a6);
+                c0013amM75b.m248a(AppState.m584b(314), strM1256a6);
             }
             String strM1256a7 = m1256a(36);
             if (null != strM1256a7) {
-                c0013amM75b.m248a(AbstractC0023aw.m584b(316), strM1256a7);
+                c0013amM75b.m248a(AppState.m584b(316), strM1256a7);
             }
         } else if (abstractC0037hM1255c instanceof C0005ae) {
             Image image = (Image) get(C0034e.m967e(25));
             if (image != null) {
                 c0013amM75b.m225a(C0032c.m893a(new C0012al(image)));
             }
-            c0013amM75b.m246a(AbstractC0019as.m510a((Object) m1256a(24)), m1286h(0), 0);
-            c0013amM75b.m245a(AbstractC0023aw.m584b(744), m1256a(26), 0);
+            c0013amM75b.m246a(Utils.m510a((Object) m1256a(24)), m1286h(0), 0);
+            c0013amM75b.m245a(AppState.m584b(744), m1256a(26), 0);
             String strM1256a8 = m1256a(11);
             if (null != strM1256a8) {
                 c0013amM75b.m253a(strM1256a8);
@@ -441,6 +441,6 @@ public final class C0042m extends Hashtable {
 
     /* renamed from: g */
     public final C0042m m1298g(int i) {
-        return m1258a(24, C0000a.m17c(Integer.toString(i)));
+        return m1258a(24, StringUtils.m17c(Integer.toString(i)));
     }
 }

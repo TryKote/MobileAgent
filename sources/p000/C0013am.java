@@ -132,7 +132,7 @@ public final class C0013am {
 
     /* renamed from: a */
     public final C0013am m218a() {
-        if (AbstractC0023aw.m587e(245)) {
+        if (AppState.m587e(245)) {
             this.f110o = C0040k.m1213g();
             m219s();
         }
@@ -173,7 +173,7 @@ public final class C0013am {
         this.f115r = this.f118I - 2;
         if (this.f110o != null) {
             int i3 = this.f118I;
-            int iM502a = AbstractC0019as.m502a(AbstractC0023aw.m586d(1450), 16) + 3;
+            int iM502a = Utils.m502a(AppState.m586d(1450), 16) + 3;
             this.f118I = i3 - iM502a;
             this.f115r -= iM502a;
         }
@@ -215,7 +215,7 @@ public final class C0013am {
 
     /* renamed from: a */
     public final C0013am m224a(int i, String str) {
-        this.f101C = C0032c.m889d().m901a(AbstractC0023aw.m584b(1037), 1, 0).m900a(i, str, 1, 0);
+        this.f101C = C0032c.m889d().m901a(AppState.m584b(1037), 1, 0).m900a(i, str, 1, 0);
         m219s();
         return this;
     }
@@ -303,9 +303,9 @@ public final class C0013am {
                 int i6 = this.f98e + 1;
                 int i7 = this.f99f + 1;
                 c0012al.m208a(i6, i7, this.f111E, this.f112F);
-                int iM586d = AbstractC0023aw.m586d(72);
-                int iM586d2 = AbstractC0023aw.m586d(5042 + iM586d);
-                if (iM586d2 != AbstractC0023aw.m586d(iM586d + 5082)) {
+                int iM586d = AppState.m586d(72);
+                int iM586d2 = AppState.m586d(5042 + iM586d);
+                if (iM586d2 != AppState.m586d(iM586d + 5082)) {
                     for (int i8 = 1; i8 < this.f112F; i8++) {
                         c0012al.m206a(((255 - ((i8 * (255 - (iM586d2 >> 16))) / this.f112F)) << 16) | ((255 - ((i8 * (255 - ((iM586d2 >> 8) & 255))) / this.f112F)) << 8) | (255 - ((i8 * (255 - (iM586d2 & 255))) / this.f112F)));
                         c0012al.m211d(i6, i7 + i8, this.f111E, 0);
@@ -402,14 +402,14 @@ public final class C0013am {
                 int i27 = this.f99f + this.f117H;
                 c0012al.m208a(i26, i27, 7, this.f118I + 4);
                 c0012al.m207b(16);
-                c0012al.m210c(i26 + 1, i27 + (this.f107l == 0 ? 0 : AbstractC0019as.m503b(((this.f118I - 4) * this.f105j) / this.f107l, (this.f118I - 4) - this.f119J)), 1, this.f119J + 2);
+                c0012al.m210c(i26 + 1, i27 + (this.f107l == 0 ? 0 : Utils.m503b(((this.f118I - 4) * this.f105j) / this.f107l, (this.f118I - 4) - this.f119J)), 1, this.f119J + 2);
                 c0012al.m211d(i26, i27 - 1, 2, this.f118I + 1);
             }
             if (this.f110o != null) {
-                int iM502a = AbstractC0019as.m502a(AbstractC0023aw.m586d(1450), 16);
-                int iM605e = AbstractC0023aw.m605e() - 1;
-                int iM586d3 = AbstractC0023aw.m586d(1528);
-                c0012al.m208a(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).m207b(16).m210c(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).m207b(17).m210c(1, (iM605e - iM502a) - 2, iM586d3 - 2, iM502a + 2).m207b(0).m212a(AbstractC0023aw.m608k(0));
+                int iM502a = Utils.m502a(AppState.m586d(1450), 16);
+                int iM605e = AppState.m605e() - 1;
+                int iM586d3 = AppState.m586d(1528);
+                c0012al.m208a(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).m207b(16).m210c(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).m207b(17).m210c(1, (iM605e - iM502a) - 2, iM586d3 - 2, iM502a + 2).m207b(0).m212a(AppState.m608k(0));
                 Vector vector = this.f110o;
                 int i28 = 3;
                 boolean z5 = false;
@@ -429,11 +429,11 @@ public final class C0013am {
                     }
                 }
             }
-            if (z && AbstractC0023aw.m587e(71)) {
-                int iM586d4 = AbstractC0023aw.m586d(1528);
-                int iM605e2 = AbstractC0023aw.m605e();
+            if (z && AppState.m587e(71)) {
+                int iM586d4 = AppState.m586d(1528);
+                int iM605e2 = AppState.m605e();
                 c0012al.m208a(0, 0, iM586d4, 2048 + iM605e2);
-                c0012al.m212a(AbstractC0023aw.m608k(0));
+                c0012al.m212a(AppState.m608k(0));
                 c0012al.m207b(15);
                 if (this.f123v != null) {
                     c0012al.m213a(this.f123v, 1, iM605e2, 20);
@@ -442,14 +442,14 @@ public final class C0013am {
                     c0012al.m213a(this.f124w, iM586d4 - 1, iM605e2, 24);
                 }
                 if (C0034e.f287f + this.f126K < iM586d4 - 6) {
-                    c0012al.m213a(AbstractC0019as.m522f(AbstractC0023aw.m584b(1263)), iM586d4 >> 1, iM605e2, 17);
+                    c0012al.m213a(Utils.m522f(AppState.m584b(1263)), iM586d4 >> 1, iM605e2, 17);
                 }
             }
         }
         if (this.f97d == 1 || this.f97d == 12) {
-            c0012al.m212a(AbstractC0023aw.m608k(1));
-            C0008ah c0008ah = (C0008ah) AbstractC0023aw.m614m(1246).elementAt(C0008ah.f45b);
-            Vector vectorM614m = AbstractC0023aw.m614m(1245);
+            c0012al.m212a(AppState.m608k(1));
+            C0008ah c0008ah = (C0008ah) AppState.m614m(1246).elementAt(C0008ah.f45b);
+            Vector vectorM614m = AppState.m614m(1245);
             int size2 = vectorM614m.size();
             while (true) {
                 size2--;
@@ -463,7 +463,7 @@ public final class C0013am {
                     C0012al c0012alM207b = c0012al.m207b(16);
                     int i30 = c0008ah2.f49f;
                     int i31 = c0008ah2.f48e;
-                    int iM623o = AbstractC0023aw.m623o(1) + 7;
+                    int iM623o = AppState.m623o(1) + 7;
                     c0012alM207b.m208a(i30, 2, i31, iM623o - 2).m209b(c0008ah2.f49f, iM623o, c0008ah2.f49f, 6).m209b(c0008ah2.f49f, 6, c0008ah2.f49f + 4, 2).m209b(c0008ah2.f49f + 4, 2, (c0008ah2.f49f + c0008ah2.f48e) - 2, 2).m209b((c0008ah2.f49f + c0008ah2.f48e) - 2, 2, (c0008ah2.f49f + c0008ah2.f48e) - 2, iM623o).m207b(z6 ? 1 : 17);
                     int i32 = z6 ? iM623o : iM623o - 1;
                     int i33 = 3;
@@ -473,7 +473,7 @@ public final class C0013am {
                     }
                     if (c0008ah2.f51h == null) {
                         int i34 = c0008ah2.f47d;
-                        iM417c = (i34 == 240 && C0015ao.m410N()) ? 16385 : (i34 == 240 || i34 == 264 || AbstractC0023aw.m614m(1243).size() <= 0) ? i34 : 16384;
+                        iM417c = (i34 == 240 && C0015ao.m410N()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.m614m(1243).size() <= 0) ? i34 : 16384;
                     } else {
                         iM417c = C0015ao.m417c(c0008ah2.f51h);
                     }
@@ -492,11 +492,11 @@ public final class C0013am {
             int i37 = this.f99f + this.f113p;
             c0012al.m208a(i36, i37, this.f95b, this.f115r);
             try {
-                int iM586d5 = AbstractC0023aw.m586d(1415);
-                int iM586d6 = AbstractC0023aw.m586d(1416);
+                int iM586d5 = AppState.m586d(1415);
+                int iM586d6 = AppState.m586d(1416);
                 Graphics graphics3 = c0012al.f92b;
-                graphics3.drawImage(AbstractC0023aw.m615n(1364), iM586d5 >> 1, i37 + (iM586d6 >> 1), 3);
-                if (!AbstractC0023aw.m587e(1414) && AbstractC0023aw.m587e(1535)) {
+                graphics3.drawImage(AppState.m615n(1364), iM586d5 >> 1, i37 + (iM586d6 >> 1), 3);
+                if (!AppState.m587e(1414) && AppState.m587e(1535)) {
                     int[] iArr2 = new int[iM586d5];
                     int i38 = iM586d5;
                     while (true) {
@@ -518,28 +518,28 @@ public final class C0013am {
                 }
             } catch (Throwable unused) {
             }
-            AbstractC0023aw.m594c(1553, 0);
+            AppState.m594c(1553, 0);
             return;
         }
         if (this.f94a != 4) {
             return;
         }
         c0012al.m208a(this.f98e + 2, this.f99f + this.f113p, this.f95b, this.f115r);
-        int iM586d7 = AbstractC0023aw.m586d(1408);
+        int iM586d7 = AppState.m586d(1408);
         if (iM586d7 <= 0) {
             return;
         }
-        c0012al.m212a(AbstractC0023aw.m608k(0));
-        int iM605e3 = AbstractC0023aw.m605e() - 1;
-        int iM586d8 = AbstractC0023aw.m586d(1528);
+        c0012al.m212a(AppState.m608k(0));
+        int iM605e3 = AppState.m605e() - 1;
+        int iM586d8 = AppState.m586d(1528);
         c0012al.m208a(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
         c0012al.m207b(16);
         c0012al.m210c(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
         c0012al.m208a(1, iM605e3 - iM586d7, iM586d8 - 2, iM586d7);
         c0012al.m207b(1);
         c0012al.m210c(0, 0, 2048, 2048);
-        int iM502a2 = AbstractC0019as.m502a(AbstractC0023aw.m586d(1450), 16);
-        Vector vectorM614m2 = AbstractC0023aw.m614m(1247);
+        int iM502a2 = Utils.m502a(AppState.m586d(1450), 16);
+        Vector vectorM614m2 = AppState.m614m(1247);
         int size3 = vectorM614m2.size();
         while (true) {
             size3--;
@@ -548,11 +548,11 @@ public final class C0013am {
             }
             AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM614m2.elementAt(size3);
             int i39 = iM605e3;
-            int iM586d9 = AbstractC0023aw.m586d(1450);
-            int iM502a3 = AbstractC0019as.m502a(iM586d9, 16);
+            int iM586d9 = AppState.m586d(1450);
+            int iM502a3 = Utils.m502a(iM586d9, 16);
             c0012al.m207b(13);
             int i40 = i39 - iM586d9;
-            c0012al.m210c(1, i40, ((AbstractC0023aw.m586d(1528) - 2) * abstractC0037h.f323s) / 100, iM502a3);
+            c0012al.m210c(1, i40, ((AppState.m586d(1528) - 2) * abstractC0037h.f323s) / 100, iM502a3);
             c0012al.m216a(abstractC0037h.mo108h(), 3, i40 + AbstractC0004ad.m73f());
             c0012al.m207b(0);
             c0012al.m213a(C0040k.m1215a(C0040k.m1217h().append(abstractC0037h.f315k).append(' ').append(abstractC0037h.f323s).append('%')), 21, i39, 36);
@@ -590,7 +590,7 @@ public final class C0013am {
             return;
         }
         if (this.f94a == 6) {
-            AbstractC0023aw.m594c(1564, 0);
+            AppState.m594c(1564, 0);
             return;
         }
         if (this.f94a != 4) {
@@ -665,7 +665,7 @@ public final class C0013am {
                 this.f105j = iM241d2;
             }
         } else {
-            this.f105j = AbstractC0019as.m503b(this.f107l - this.f115r, this.f105j);
+            this.f105j = Utils.m503b(this.f107l - this.f115r, this.f105j);
             if (this.f107l < this.f115r) {
                 this.f105j = 0;
             }
@@ -703,7 +703,7 @@ public final class C0013am {
     public final void m234m() {
         boolean z;
         if (this.f94a == 6) {
-            AbstractC0023aw.m594c(1564, 2);
+            AppState.m594c(1564, 2);
             return;
         }
         if (this.f108m.size() == 0) {
@@ -812,7 +812,7 @@ public final class C0013am {
                         break;
                     }
                 }
-                this.f105j = AbstractC0019as.m503b(this.f105j, m241d(this.f106k));
+                this.f105j = Utils.m503b(this.f105j, m241d(this.f106k));
                 return;
             }
             if (this.f105j != 0) {
@@ -891,10 +891,10 @@ public final class C0013am {
 
     /* renamed from: o */
     public final C0013am m236o() {
-        this.f105j = AbstractC0019as.m502a(0, this.f107l - this.f115r);
+        this.f105j = Utils.m502a(0, this.f107l - this.f115r);
         int size = this.f108m.size();
         if (size > 1) {
-            this.f105j = AbstractC0019as.m503b(this.f105j, m241d(size - 2));
+            this.f105j = Utils.m503b(this.f105j, m241d(size - 2));
         }
         if (this.f97d == 9) {
             int iM264w = m264w();
@@ -1153,12 +1153,12 @@ public final class C0013am {
 
     /* renamed from: a */
     public final C0013am m249a(int i, int i2, int i3) {
-        return m246a(i, AbstractC0023aw.m584b(i2), i3);
+        return m246a(i, AppState.m584b(i2), i3);
     }
 
     /* renamed from: b */
     public final C0013am m250b(int i, String str, int i2, Object obj) {
-        C0032c c0032cM901a = new C0032c(13, AbstractC0023aw.f181d).m896a(i).m901a(str, 5, i2);
+        C0032c c0032cM901a = new C0032c(13, AppState.f181d).m896a(i).m901a(str, 5, i2);
         c0032cM901a.f265d = obj;
         return m225a(c0032cM901a);
     }
@@ -1170,7 +1170,7 @@ public final class C0013am {
 
     /* renamed from: b */
     public final C0013am m252b(int i, int i2, int i3) {
-        String strM584b = AbstractC0023aw.m584b(i2);
+        String strM584b = AppState.m584b(i2);
         C0032c c0032cM896a = C0032c.m888a(strM584b, i3).m896a(i).m898b(strM584b).m896a(244);
         c0032cM896a.f266e = true;
         return m225a(c0032cM896a);
@@ -1188,7 +1188,7 @@ public final class C0013am {
 
     /* renamed from: a */
     public final C0013am m255a(int i) {
-        return m225a(C0032c.m889d().m898b(AbstractC0023aw.m584b(i)));
+        return m225a(C0032c.m889d().m898b(AppState.m584b(i)));
     }
 
     /* renamed from: a */
@@ -1202,7 +1202,7 @@ public final class C0013am {
         }
         if (str2 != null) {
             int iIndexOf = str2.indexOf(0);
-            c0032cM888a.m898b(iIndexOf < 0 ? str2 : C0000a.m13b(str2, iIndexOf));
+            c0032cM888a.m898b(iIndexOf < 0 ? str2 : StringUtils.m13b(str2, iIndexOf));
         }
         c0032cM888a.f265d = obj;
         return m225a(c0032cM888a);
@@ -1255,11 +1255,11 @@ public final class C0013am {
 
     /* renamed from: a */
     public final C0013am m259a(String str, String str2, int i, int i2, int i3) {
-        C0012al c0012alM608k = AbstractC0023aw.m608k(0);
+        C0012al c0012alM608k = AppState.m608k(0);
         this.f123v = str;
         int iM214a = c0012alM608k.m214a(str);
         this.f124w = str2;
-        this.f126K = AbstractC0019as.m502a(iM214a, c0012alM608k.m214a(str2)) << 1;
+        this.f126K = Utils.m502a(iM214a, c0012alM608k.m214a(str2)) << 1;
         this.f120s = i;
         this.f121t = i2;
         this.f122u = i3;
