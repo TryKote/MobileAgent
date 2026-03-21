@@ -547,7 +547,7 @@ public final class C0039j {
         m1160d(c0013amM75b);
         AbstractC0004ad.m70a(c0013amM75b);
         C0008ah.m171g();
-        C0008ah.m176a(6, (AbstractC0037h) null);
+        C0008ah.m176a(6, (Account) null);
         C0008ah.f44a = AppState.m587e(1414);
         if (AppState.m587e(281)) {
             return;
@@ -759,7 +759,7 @@ public final class C0039j {
         C0009ai.m182a(jMo274v, jMo275w);
         AbstractC0025ay.f200h = true;
         if (AbstractC0025ay.m656d()) {
-            C0038i.m1129c();
+            Conversation.m1129c();
         }
     }
 
@@ -782,7 +782,7 @@ public final class C0039j {
         C0009ai.m183b(jMo274v, jMo275w);
         AbstractC0025ay.f200h = true;
         if (AbstractC0025ay.m656d()) {
-            C0038i.m1129c();
+            Conversation.m1129c();
         }
     }
 

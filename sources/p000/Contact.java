@@ -6,10 +6,10 @@ import java.util.Vector;
 
 /* renamed from: l */
 /* loaded from: MobileAgent_3.9.jar:l.class */
-public abstract class AbstractC0041l implements Sortable {
+public abstract class Contact implements Sortable {
 
     /* renamed from: o */
-    public final AbstractC0037h f369o;
+    public final Account f369o;
 
     /* renamed from: a */
     private ByteBuffer f370a;
@@ -47,7 +47,7 @@ public abstract class AbstractC0041l implements Sortable {
     /* renamed from: x */
     public String f381x;
 
-    public AbstractC0041l(AbstractC0037h abstractC0037h) {
+    public Contact(Account abstractC0037h) {
         this.f369o = abstractC0037h;
     }
 
@@ -136,12 +136,12 @@ public abstract class AbstractC0041l implements Sortable {
         this.f369o.m1071e(mo135a());
         m1230C();
         m1239a(i != 4 ? 0 : 8, str, j, 0L);
-        AbstractC0046q abstractC0046qM1080g = this.f369o.m1080g(this);
+        ContactGroup abstractC0046qM1080g = this.f369o.m1080g(this);
         if (abstractC0046qM1080g != null && abstractC0046qM1080g.f399g) {
             abstractC0046qM1080g.mo1397n();
         }
         m1228A();
-        AbstractC0037h abstractC0037h = this.f369o;
+        Account abstractC0037h = this.f369o;
         String str2 = this.f380w;
         if (abstractC0037h == null || str2 == null) {
             return;
@@ -166,7 +166,7 @@ public abstract class AbstractC0041l implements Sortable {
         if (StringUtils.m1a(str)) {
             return 309;
         }
-        AbstractC0037h abstractC0037h = this.f369o;
+        Account abstractC0037h = this.f369o;
         long jM598g = AppState.m598g(1530);
         int iMo125a = abstractC0037h.mo125a(this, str, jM598g);
         if (0 != iMo125a) {
@@ -202,7 +202,7 @@ public abstract class AbstractC0041l implements Sortable {
     @Override // p000.Sortable
     /* renamed from: a */
     public final int mo1237a(Object obj) {
-        AbstractC0041l abstractC0041l = (AbstractC0041l) obj;
+        Contact abstractC0041l = (Contact) obj;
         int i = abstractC0041l.f378b - this.f378b;
         if (i != 0) {
             return i;
@@ -335,12 +335,12 @@ public abstract class AbstractC0041l implements Sortable {
 
     /* renamed from: a */
     private final void m1243a(C0013am c0013am, String str, int i) {
-        Vector vectorM1098a = C0038i.m1098a(str);
+        Vector vectorM1098a = Conversation.m1098a(str);
         int size = vectorM1098a.size();
         for (int i2 = 0; i2 < size; i2++) {
             String str2 = (String) vectorM1098a.elementAt(i2);
-            if (C0038i.m1106f(str2)) {
-                c0013am.m250b(264, C0038i.m1099b(str2), i, new Object[]{C0034e.m967e(0), str2});
+            if (Conversation.m1106f(str2)) {
+                c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{C0034e.m967e(0), str2});
             } else {
                 c0013am.m225a(C0032c.m889d().m902a(str2, 0, i, this.f369o.mo80a()));
             }

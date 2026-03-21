@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: f */
 /* loaded from: MobileAgent_3.9.jar:f.class */
-public final class C0035f extends AbstractC0041l implements ListItem {
+public final class C0035f extends Contact implements ListItem {
 
     /* renamed from: a */
     public final int f294a;
@@ -43,7 +43,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
     public Vector f305k;
 
     /* renamed from: l */
-    public C0003ac f306l;
+    public VCard f306l;
 
     /* renamed from: m */
     public boolean f307m;
@@ -51,7 +51,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
     /* renamed from: n */
     public SizeCache f308n;
 
-    public C0035f(AbstractC0037h abstractC0037h, int i, int i2, int i3, String str, String str2, int i4, int i5, String str3, String str4, String str5) {
+    public C0035f(Account abstractC0037h, int i, int i2, int i3, String str, String str2, int i4, int i5, String str3, String str4, String str5) {
         super(abstractC0037h);
         this.f294a = i;
         this.f295b = i2;
@@ -74,7 +74,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         this.f308n = new SizeCache();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: a */
     public final String mo135a() {
         if (!mo990d()) {
@@ -86,7 +86,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         return str;
     }
 
-    public C0035f(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
+    public C0035f(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f294a = c0043n.m1328e();
         String str = AppState.f181d;
@@ -98,7 +98,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         byte bM1344o = c0043n.m1344o();
         this.f374s = bM1344o;
         if (bM1344o != 0) {
-            C0015ao.m414a((AbstractC0041l) this);
+            C0015ao.m414a((Contact) this);
         }
         this.f301h = str;
         this.f373r = 155;
@@ -106,7 +106,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         this.f308n = new SizeCache();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: b */
     public final C0032c mo138b() {
         C0032c c0032cM896a = C0032c.m887a(this.f380w).m896a(mo139e());
@@ -124,7 +124,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         return c0032cM896a;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: c */
     public final void mo134c() {
         this.f373r = 155;
@@ -135,7 +135,7 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         super.mo134c();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: a */
     public final void mo136a(ByteBuffer c0043n) {
         c0043n.m1360p(this.f294a).m1360p(this.f295b).m1308a(this.f297d).m1309b(this.f376u).m1360p(this.f298e).m1308a(this.f300g).m1321f(this.f374s);
@@ -163,13 +163,13 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         }
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: d */
     public final boolean mo990d() {
         return (this.f295b & 1048576) != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: e */
     public final int mo139e() {
         if (mo990d()) {
@@ -243,49 +243,49 @@ public final class C0035f extends AbstractC0041l implements ListItem {
         return true;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: g */
     public final String mo995g() {
         return this.f300g;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: h */
     public final void mo145h() {
         this.f298e &= -2;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: i */
     public final boolean mo140i() {
         return (this.f295b & 8) != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: j */
     public final boolean mo141j() {
         return (this.f295b & 4) != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: k */
     public final boolean mo142k() {
         return (this.f295b & 16) != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: l */
     public final boolean mo144l() {
         return (this.f298e & 1) != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: m */
     public final boolean mo143m() {
         return (this.f295b & 65536) != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: n */
     public final boolean mo996n() {
         return (this.f295b & 128) != 0;

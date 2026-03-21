@@ -1019,7 +1019,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r11 = r1
             r1 = r17
             r2 = r19
-            java.util.Vector r0 = p000.C0003ac.m64a(r0, r1, r2)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.VCard.m64a(r0, r1, r2)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             p000.C0034e.f289h = r0     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             bb r0 = new bb     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r1 = r0
@@ -1243,7 +1243,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r2 = r18
             r3 = 1
             r2 = r2[r3]     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
-            java.util.Vector r0 = p000.C0003ac.m64a(r0, r1, r2)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.VCard.m64a(r0, r1, r2)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r10 = r0
             r0 = r11
             r1 = r10
@@ -1306,7 +1306,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r1 = 0
             r13 = r1
             java.lang.String r0 = (java.lang.String) r0     // Catch: java.lang.Throwable -> La84
-            p000.C0038i.m1114g(r0)     // Catch: java.lang.Throwable -> La84
+            p000.Conversation.m1114g(r0)     // Catch: java.lang.Throwable -> La84
             return
         L854:
             r0 = r8
@@ -1412,7 +1412,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.f435c     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.C0038i.m1088a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.Conversation.m1088a(r0)     // Catch: java.lang.Throwable -> La84
             return
         L90f:
             p000.C0034e.m973p()     // Catch: java.lang.Throwable -> La84
@@ -1440,7 +1440,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r1 = r8
             r2 = 0
             r1 = r1[r2]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            h r1 = (p000.AbstractC0037h) r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            h r1 = (p000.Account) r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r2 = 0
             ax r0 = p000.C0024ax.m629a(r0, r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r1 = r0

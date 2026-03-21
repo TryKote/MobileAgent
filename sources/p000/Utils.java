@@ -49,7 +49,7 @@ public abstract class Utils {
 
     /* renamed from: a */
     public static final StringBuffer m493a(StringBuffer stringBuffer, int i, String str) {
-        return m492a(stringBuffer, i).append('=').append(C0038i.m1120b((Object) m522f(str)));
+        return m492a(stringBuffer, i).append('=').append(Conversation.m1120b((Object) m522f(str)));
     }
 
     /* renamed from: a */

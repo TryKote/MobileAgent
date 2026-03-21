@@ -4,10 +4,10 @@ import java.util.Vector;
 
 /* renamed from: q */
 /* loaded from: MobileAgent_3.9.jar:q.class */
-public abstract class AbstractC0046q implements Sortable {
+public abstract class ContactGroup implements Sortable {
 
     /* renamed from: d */
-    public final AbstractC0037h f396d;
+    public final Account f396d;
 
     /* renamed from: e */
     public final Vector f397e = C0040k.m1213g();
@@ -21,18 +21,18 @@ public abstract class AbstractC0046q implements Sortable {
     /* renamed from: a */
     private String f400a;
 
-    public AbstractC0046q(AbstractC0037h abstractC0037h) {
+    public ContactGroup(Account abstractC0037h) {
         this.f396d = abstractC0037h;
     }
 
     /* renamed from: a */
-    public final void m1393a(AbstractC0041l abstractC0041l) {
+    public final void m1393a(Contact abstractC0041l) {
         this.f397e.removeElement(abstractC0041l);
     }
 
     /* renamed from: e */
-    public final AbstractC0041l m1394e(int i) {
-        return (AbstractC0041l) this.f397e.elementAt(i);
+    public final Contact m1394e(int i) {
+        return (Contact) this.f397e.elementAt(i);
     }
 
     /* renamed from: a */
@@ -62,7 +62,7 @@ public abstract class AbstractC0046q implements Sortable {
                 if (size < 0) {
                     break;
                 }
-                AbstractC0041l abstractC0041lM1394e = m1394e(size);
+                Contact abstractC0041lM1394e = m1394e(size);
                 if (abstractC0041lM1394e.f371p && !abstractC0041lM1394e.mo144l() && !abstractC0041lM1394e.mo142k() && !abstractC0041lM1394e.mo990d() && !abstractC0041lM1394e.mo996n()) {
                     i2++;
                 }
@@ -77,7 +77,7 @@ public abstract class AbstractC0046q implements Sortable {
                 if (i4 < 0) {
                     break;
                 }
-                AbstractC0041l abstractC0041lM1394e2 = m1394e(i4);
+                Contact abstractC0041lM1394e2 = m1394e(i4);
                 if (abstractC0041lM1394e2.mo990d() || abstractC0041lM1394e2.mo144l() || abstractC0041lM1394e2.mo142k() || abstractC0041lM1394e2.mo996n()) {
                     i3--;
                 }
@@ -113,7 +113,7 @@ public abstract class AbstractC0046q implements Sortable {
     }
 
     /* renamed from: b */
-    public final boolean m1400b(AbstractC0041l abstractC0041l) {
+    public final boolean m1400b(Contact abstractC0041l) {
         return this.f397e.contains(abstractC0041l);
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractC0046q implements Sortable {
     @Override // p000.Sortable
     /* renamed from: a */
     public final int mo1237a(Object obj) {
-        return this.f400a.compareTo(((AbstractC0046q) obj).f400a);
+        return this.f400a.compareTo(((ContactGroup) obj).f400a);
     }
 
     /* renamed from: b */

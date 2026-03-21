@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: i */
 /* loaded from: MobileAgent_3.9.jar:i.class */
-public final class C0038i implements ListItem {
+public final class Conversation implements ListItem {
 
     /* renamed from: c */
     private int f344c = 5;
@@ -1045,7 +1045,7 @@ public final class C0038i implements ListItem {
             r0 = r10
             throw r0
         */
-        throw new UnsupportedOperationException("Method not decompiled: p000.C0038i.m1114g(java.lang.String):void");
+        throw new UnsupportedOperationException("Method not decompiled: p000.Conversation.m1114g(java.lang.String):void");
     }
 
     /* renamed from: q */

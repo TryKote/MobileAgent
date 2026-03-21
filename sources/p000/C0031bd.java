@@ -25,7 +25,7 @@ public final class C0031bd extends C0005ae {
         this.f34c = 5222;
     }
 
-    @Override // p000.C0005ae, p000.AbstractC0037h
+    @Override // p000.C0005ae, p000.Account
     /* renamed from: a */
     public final int mo80a() {
         return 3;
@@ -37,7 +37,7 @@ public final class C0031bd extends C0005ae {
         this.f34c = 5222;
     }
 
-    @Override // p000.C0005ae, p000.AbstractC0037h
+    @Override // p000.C0005ae, p000.Account
     /* renamed from: h */
     public final int mo108h() {
         int iMo108h = super.mo108h();
@@ -63,7 +63,7 @@ public final class C0031bd extends C0005ae {
         return this.f37e;
     }
 
-    @Override // p000.C0005ae, p000.AbstractC0037h
+    @Override // p000.C0005ae, p000.Account
     /* renamed from: p */
     public final int mo110p() {
         return 595126;
@@ -71,14 +71,14 @@ public final class C0031bd extends C0005ae {
 
     /* renamed from: y */
     private static final int m837y() {
-        AbstractC0037h abstractC0037hM616i = AppState.m616i();
+        Account abstractC0037hM616i = AppState.m616i();
         return null != abstractC0037hM616i ? abstractC0037hM616i.mo80a() : AppState.m586d(1475);
     }
 
     /* renamed from: r */
     public static final void m838r() {
         if (m837y() == 1) {
-            AbstractC0037h abstractC0037hM616i = AppState.m616i();
+            Account abstractC0037hM616i = AppState.m616i();
             if (abstractC0037hM616i != null && abstractC0037hM616i.m1055B()) {
                 C0015ao.m340m(300);
                 return;
@@ -139,7 +139,7 @@ public final class C0031bd extends C0005ae {
         }
         m840t();
         AppState.m594c(1474, 0);
-        AbstractC0037h abstractC0037hM616i2 = AppState.m616i();
+        Account abstractC0037hM616i2 = AppState.m616i();
         if (null != abstractC0037hM616i2) {
             AppState.m601a(1293, (Object) abstractC0037hM616i2.f316l);
             String str = abstractC0037hM616i2.f315k;
@@ -170,7 +170,7 @@ public final class C0031bd extends C0005ae {
     public static final int m839s() {
         C0040k.m1195d();
         if (m837y() == 1) {
-            AbstractC0037h abstractC0037hM616i = AppState.m616i();
+            Account abstractC0037hM616i = AppState.m616i();
             String strM843u = m843u();
             int iM437a = C0015ao.m437a(1, abstractC0037hM616i, strM843u, Utils.m522f(AppState.m584b(1293)));
             if (0 != iM437a) {
@@ -700,10 +700,10 @@ public final class C0031bd extends C0005ae {
                 return 6;
             case 4:
                 C0021au.m549c();
-                AppState.f177b[1255] = (C0038i) interfaceC0044o;
+                AppState.f177b[1255] = (Conversation) interfaceC0044o;
                 return 170;
             case 5:
-                C0034e.m932a(C0003ac.m63a((C0020at) interfaceC0044o, 0), (C0020at) interfaceC0044o, 0);
+                C0034e.m932a(VCard.m63a((C0020at) interfaceC0044o, 0), (C0020at) interfaceC0044o, 0);
                 return 12;
             case 6:
                 AppState.m617d(interfaceC0044o);
@@ -737,7 +737,7 @@ public final class C0031bd extends C0005ae {
                 if (!AbstractC0025ay.m656d()) {
                     return 6;
                 }
-                C0038i.m1129c();
+                Conversation.m1129c();
                 return 6;
             case 11:
                 if (AbstractC0025ay.m656d()) {
@@ -753,7 +753,7 @@ public final class C0031bd extends C0005ae {
                 if (!AbstractC0025ay.m656d()) {
                     return 6;
                 }
-                C0038i.m1129c();
+                Conversation.m1129c();
                 return 6;
             case 12:
                 C0009ai.m185f();
@@ -798,10 +798,10 @@ public final class C0031bd extends C0005ae {
                 C0039j.m1169a((C0014an) f257f);
                 return 6;
             case 21:
-                C0038i.m1127a();
+                Conversation.m1127a();
                 return 6;
             case 22:
-                C0038i.m1128b();
+                Conversation.m1128b();
                 return 6;
         }
     }
@@ -974,7 +974,7 @@ public final class C0031bd extends C0005ae {
     /* renamed from: b */
     public static final Vector m868b(String str, String str2) {
         Vector vectorM1213g = C0040k.m1213g();
-        Vector vectorM870k = m870k(C0038i.m1122j(str2));
+        Vector vectorM870k = m870k(Conversation.m1122j(str2));
         Vector vectorM870k2 = m870k(str);
         for (int i = 0; i < Utils.m541c(vectorM870k2); i++) {
             m867a(vectorM1213g, C0015ao.m459a((String) vectorM870k2.elementAt(i), (String) vectorM870k.elementAt(i)));
@@ -1058,8 +1058,8 @@ public final class C0031bd extends C0005ae {
             return iM818c;
         }
         String strM584b = AppState.m584b(1346);
-        C0052w c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
-        C0026az c0026azM1415b = c0052wM745h.m1415b(strM584b);
+        ChatRoom c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
+        Message c0026azM1415b = c0052wM745h.m1415b(strM584b);
         boolean zM671a = c0026azM1415b.m671a(4);
         Object objM819l = C0029bb.m819l();
         Object objM476a = JsonParser.m476a(objM819l, 722874);
@@ -1111,7 +1111,7 @@ public final class C0031bd extends C0005ae {
     private static final int m874T() {
         int iM586d = AppState.m586d(1515);
         if (iM586d == 54) {
-            C0026az c0026azM1415b = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513)).m1415b(AppState.m584b(1346));
+            Message c0026azM1415b = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513)).m1415b(AppState.m584b(1346));
             Vector vectorM668b = c0026azM1415b.m668b();
             Vector vectorM669c = c0026azM1415b.m669c();
             m869c(vectorM668b);
@@ -1337,7 +1337,7 @@ public final class C0031bd extends C0005ae {
             case 2:
                 int iM1353u3 = c0043n.m1353u();
                 if (iM1353u3 == 0) {
-                    c0033d.m1084c((AbstractC0046q) objArr[2]);
+                    c0033d.m1084c((ContactGroup) objArr[2]);
                     c0033d.m1052c(C0034e.m963c(c0033d));
                 } else {
                     C0029bb.m781c(objArr, iM1353u3);
@@ -1369,7 +1369,7 @@ public final class C0031bd extends C0005ae {
             case 5:
                 int iM1353u6 = c0043n.m1353u();
                 if (iM1353u6 == 0) {
-                    c0033d.m1074a((AbstractC0041l) objArr[2], true);
+                    c0033d.m1074a((Contact) objArr[2], true);
                     c0033d.m1052c(C0034e.m962b(c0033d));
                 } else {
                     C0029bb.m781c(objArr, iM1353u6);
@@ -1521,15 +1521,15 @@ public final class C0031bd extends C0005ae {
                     c0043n.m1354v();
                     int iM1354v = c0043n.m1354v();
                     c0043n.m1344o();
-                    C0042m c0042m = (C0042m) AppState.f177b[1316];
-                    C0042m c0042mM1254b = c0042m;
+                    ContactInfo c0042m = (ContactInfo) AppState.f177b[1316];
+                    ContactInfo c0042mM1254b = c0042m;
                     if (c0042m == null) {
-                        c0042mM1254b = C0042m.m1254b(c0033d);
+                        c0042mM1254b = ContactInfo.m1254b(c0033d);
                     }
                     switch (iM1354v) {
                         case 200:
                             String strM1366C = c0043n.m1366C();
-                            C0042m c0042mM1268i = c0042mM1254b.m1259b(strM1366C).m1260c(c0043n.m1366C()).m1261d(c0043n.m1366C()).m1262e(c0043n.m1366C()).m1268i(c0043n.m1366C());
+                            ContactInfo c0042mM1268i = c0042mM1254b.m1259b(strM1366C).m1260c(c0043n.m1366C()).m1261d(c0043n.m1366C()).m1262e(c0043n.m1366C()).m1268i(c0043n.m1366C());
                             c0043n.m1366C();
                             c0042mM1268i.m1266g(c0043n.m1366C()).m1269j(c0043n.m1366C()).m1270k(c0043n.m1366C()).m1271l(c0043n.m1366C());
                             if (c0033d.f269a == ((Integer) objArr[2]).intValue()) {
@@ -1538,7 +1538,7 @@ public final class C0031bd extends C0005ae {
                             }
                             break;
                         case 220:
-                            C0042m c0042mM1273n = c0042mM1254b.m1275b(c0043n.m1354v()).m1277c(c0043n.m1344o()).m1273n(c0043n.m1366C());
+                            ContactInfo c0042mM1273n = c0042mM1254b.m1275b(c0043n.m1354v()).m1277c(c0043n.m1344o()).m1273n(c0043n.m1366C());
                             int iM1354v2 = c0043n.m1354v();
                             byte bM1344o = c0043n.m1344o();
                             byte bM1344o2 = c0043n.m1344o();
@@ -1617,7 +1617,7 @@ public final class C0031bd extends C0005ae {
                     int iM1354v5 = c0043n.m1354v();
                     if ((420 == iM1354v5 || 430 == iM1354v5) && c0043n.m1344o() == 10) {
                         c0043n.m1353u();
-                        C0042m c0042mM1262e = C0042m.m1254b(c0033d).m1283d(c0043n.m1328e()).m1259b(c0043n.m1366C()).m1260c(c0043n.m1366C()).m1261d(c0043n.m1366C()).m1262e(c0043n.m1366C());
+                        ContactInfo c0042mM1262e = ContactInfo.m1254b(c0033d).m1283d(c0043n.m1328e()).m1259b(c0043n.m1366C()).m1260c(c0043n.m1366C()).m1261d(c0043n.m1366C()).m1262e(c0043n.m1366C());
                         c0043n.m1344o();
                         vectorM614m.addElement(c0042mM1262e.m1285e(c0043n.m1354v()).m1277c(c0043n.m1344o()).m1275b(c0043n.m1354v()));
                     }
@@ -1767,9 +1767,9 @@ public final class C0031bd extends C0005ae {
                     int iM1354v6 = c0043n.m1354v();
                     if ((420 == iM1354v6 || 430 == iM1354v6) && c0043n.m1344o() == 10) {
                         c0043n.m1353u();
-                        C0042m c0042mM1262e2 = C0042m.m1254b(c0033d).m1283d(c0043n.m1328e()).m1259b(c0043n.m1366C()).m1260c(c0043n.m1366C()).m1261d(c0043n.m1366C()).m1262e(c0043n.m1366C());
+                        ContactInfo c0042mM1262e2 = ContactInfo.m1254b(c0033d).m1283d(c0043n.m1328e()).m1259b(c0043n.m1366C()).m1260c(c0043n.m1366C()).m1261d(c0043n.m1366C()).m1262e(c0043n.m1366C());
                         c0043n.m1344o();
-                        C0042m c0042mM1275b = c0042mM1262e2.m1285e(c0043n.m1354v()).m1277c(c0043n.m1344o()).m1275b(c0043n.m1354v());
+                        ContactInfo c0042mM1275b = c0042mM1262e2.m1285e(c0043n.m1354v()).m1277c(c0043n.m1344o()).m1275b(c0043n.m1354v());
                         C0009ai c0009ai8 = (C0009ai) c0033d.f321q.get(c0042mM1275b.m1256a(60));
                         if (null != c0009ai8) {
                             c0009ai8.m1249c(c0042mM1275b.m1291j());
@@ -1822,7 +1822,7 @@ public final class C0031bd extends C0005ae {
                     C0029bb.m781c(objArr, iM1328e);
                     break;
                 } else {
-                    c0028ba.m1074a((AbstractC0041l) objArr[2], true);
+                    c0028ba.m1074a((Contact) objArr[2], true);
                     break;
                 }
             case 3:
@@ -1836,7 +1836,7 @@ public final class C0031bd extends C0005ae {
                     while (true) {
                         size2--;
                         if (size2 < 0) {
-                            c0028ba.m1084c((AbstractC0046q) c0010aj);
+                            c0028ba.m1084c((ContactGroup) c0010aj);
                             break;
                         } else {
                             C0010aj c0010aj2 = (C0010aj) c0028ba.m1082g(size2);

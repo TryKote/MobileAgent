@@ -546,7 +546,7 @@ public final class C0013am {
             if (size3 < 0) {
                 return;
             }
-            AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM614m2.elementAt(size3);
+            Account abstractC0037h = (Account) vectorM614m2.elementAt(size3);
             int i39 = iM605e3;
             int iM586d9 = AppState.m586d(1450);
             int iM502a3 = Utils.m502a(iM586d9, 16);

@@ -231,7 +231,7 @@ public final class ByteBuffer {
 
     /* renamed from: c */
     public final ByteBuffer m1313c(String str) {
-        return m1314d(C0038i.m1120b((Object) str));
+        return m1314d(Conversation.m1120b((Object) str));
     }
 
     /* renamed from: d */
@@ -251,7 +251,7 @@ public final class ByteBuffer {
 
     /* renamed from: a */
     public final ByteBuffer m1315a(Object obj) {
-        return m1314d(C0038i.m1124l((String) obj));
+        return m1314d(Conversation.m1124l((String) obj));
     }
 
     /* renamed from: b */
@@ -771,7 +771,7 @@ public final class ByteBuffer {
     /* renamed from: B */
     public final ByteBuffer m1365B() {
         m1300a(0);
-        byte[] bArrM1090a = C0038i.m1090a(this.f383a, this.f384b);
+        byte[] bArrM1090a = Conversation.m1090a(this.f383a, this.f384b);
         m1301b();
         this.f383a = bArrM1090a;
         this.f384b = 16;

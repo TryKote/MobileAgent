@@ -363,13 +363,13 @@ public abstract class AppState {
     }
 
     /* renamed from: f */
-    public static final AbstractC0046q m610f() {
-        return (AbstractC0046q) f177b[1365];
+    public static final ContactGroup m610f() {
+        return (ContactGroup) f177b[1365];
     }
 
     /* renamed from: g */
-    public static final AbstractC0041l m611g() {
-        return (AbstractC0041l) f177b[1365];
+    public static final Contact m611g() {
+        return (Contact) f177b[1365];
     }
 
     /* renamed from: h */
@@ -393,8 +393,8 @@ public abstract class AppState {
     }
 
     /* renamed from: i */
-    public static final AbstractC0037h m616i() {
-        return (AbstractC0037h) f177b[1281];
+    public static final Account m616i() {
+        return (Account) f177b[1281];
     }
 
     /* renamed from: d */

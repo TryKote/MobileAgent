@@ -28,7 +28,7 @@ public final class C0008ah {
     public int f50g;
 
     /* renamed from: h */
-    public final AbstractC0037h f51h;
+    public final Account f51h;
 
     /* renamed from: i */
     public String f52i;
@@ -37,9 +37,9 @@ public final class C0008ah {
     public int f53j;
 
     /* renamed from: k */
-    public static AbstractC0037h f54k;
+    public static Account f54k;
 
-    private C0008ah(int i, String str, int i2, AbstractC0037h abstractC0037h) {
+    private C0008ah(int i, String str, int i2, Account abstractC0037h) {
         this.f47d = i;
         this.f46c = str;
         this.f50g = i2;
@@ -58,7 +58,7 @@ public final class C0008ah {
             m165a(156, AppState.m584b(1047), 4, null);
         } else {
             for (int i = 0; i < size; i++) {
-                AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM614m.elementAt(i);
+                Account abstractC0037h = (Account) vectorM614m.elementAt(i);
                 m165a(abstractC0037h.mo108h(), abstractC0037h.f340J, 4, abstractC0037h);
                 if (i == 0) {
                     f54k = abstractC0037h;
@@ -93,7 +93,7 @@ public final class C0008ah {
     }
 
     /* renamed from: a */
-    private static void m165a(int i, String str, int i2, AbstractC0037h abstractC0037h) {
+    private static void m165a(int i, String str, int i2, Account abstractC0037h) {
         AppState.m614m(1246).addElement(new C0008ah(i, str, i2, abstractC0037h));
     }
 
@@ -133,7 +133,7 @@ public final class C0008ah {
     /* renamed from: e */
     public static final void m169e() {
         m174k();
-        if (m176a(36, (AbstractC0037h) null) == null) {
+        if (m176a(36, (Account) null) == null) {
             m165a(240, AppState.m584b(1044), 36, null);
         }
     }
@@ -146,7 +146,7 @@ public final class C0008ah {
     /* renamed from: g */
     public static final void m171g() {
         m174k();
-        if (m176a(6, (AbstractC0037h) null) == null) {
+        if (m176a(6, (Account) null) == null) {
             m165a(264, AppState.m584b(1045), 6, null);
         }
     }
@@ -198,7 +198,7 @@ public final class C0008ah {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final C0008ah m176a(int i, AbstractC0037h abstractC0037h) {
+    public static final C0008ah m176a(int i, Account abstractC0037h) {
         Vector vectorM614m = AppState.m614m(1246);
         int size = vectorM614m.size();
         while (true) {
@@ -296,7 +296,7 @@ public final class C0008ah {
                 i9 -= 16;
             }
             if (c0008ah3.f50g == 4) {
-                AbstractC0037h abstractC0037h = c0008ah3.f51h;
+                Account abstractC0037h = c0008ah3.f51h;
                 if (C0015ao.m416b(abstractC0037h) && AppState.m587e(67) && iArr2[1] == 248) {
                     vectorM1213g.insertElementAt(new int[]{20, C0015ao.m417c(abstractC0037h)}, 0);
                     int[] iArr6 = iArr2;
@@ -375,7 +375,7 @@ public final class C0008ah {
                     i14 -= 16;
                 }
                 if (c0008ah4.f50g == 4) {
-                    AbstractC0037h abstractC0037h2 = c0008ah4.f51h;
+                    Account abstractC0037h2 = c0008ah4.f51h;
                     if (C0015ao.m416b(abstractC0037h2)) {
                         if (iArr[1] == 246) {
                             vectorM1213g.addElement(new int[]{i15 + 16, C0015ao.m417c(abstractC0037h2)});

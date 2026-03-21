@@ -168,7 +168,7 @@ public final class C0034e {
 
     /* renamed from: a */
     public static final void m931a(C0020at c0020at, int i) {
-        m932a(C0003ac.m63a(c0020at, i), c0020at, i);
+        m932a(VCard.m63a(c0020at, i), c0020at, i);
     }
 
     /* renamed from: a */
@@ -225,7 +225,7 @@ public final class C0034e {
         int i;
         int i2;
         int iM586d = AppState.m586d(1510);
-        AbstractC0037h abstractC0037hM616i = AppState.m616i();
+        Account abstractC0037hM616i = AppState.m616i();
         if (abstractC0037hM616i != null) {
             int iM1060a = abstractC0037hM616i.m1060a(iM586d, 0);
             i = iM1060a;
@@ -298,7 +298,7 @@ public final class C0034e {
             if (!StringUtils.m3a(476, str)) {
                 return 0;
             }
-            AppState.m601a(1279, (Object) C0038i.m1123k(strM522f));
+            AppState.m601a(1279, (Object) Conversation.m1123k(strM522f));
             return 0;
         }
         String strM584b = AppState.m584b(1314);
@@ -563,7 +563,7 @@ public final class C0034e {
         C0040k.m1212a(vectorM439R);
         AbstractC0004ad.m70a(c0013amM75b);
         C0008ah.m169e();
-        C0008ah.m176a(36, (AbstractC0037h) null);
+        C0008ah.m176a(36, (Account) null);
     }
 
     /* renamed from: c */
@@ -702,7 +702,7 @@ public final class C0034e {
                     AppState.m594c(1458, iM586d);
                     int length = C0036g.m1026g().length();
                     if (length != AppState.m586d(1459) && Utils.m504c(iM586d - AppState.m586d(1457)) > 10000) {
-                        AbstractC0041l abstractC0041lM611g = AppState.m611g();
+                        Contact abstractC0041lM611g = AppState.m611g();
                         if (!abstractC0041lM611g.mo143m() && !abstractC0041lM611g.mo144l() && !abstractC0041lM611g.mo990d()) {
                             abstractC0041lM611g.f369o.mo735f(abstractC0041lM611g);
                         }
@@ -782,7 +782,7 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final int m969a(String str, AbstractC0037h abstractC0037h) {
+    public static final int m969a(String str, Account abstractC0037h) {
         ByteBuffer c0043nM1310c;
         int iIndexOf = str.indexOf(64);
         String strM15c = StringUtils.m15c(str, iIndexOf + 1);
@@ -832,7 +832,7 @@ public final class C0034e {
     public static final void m973p() {
         try {
             C0015ao.m343s();
-            C0024ax c0024axM629a = C0024ax.m629a(AppState.m584b(3607418), (AbstractC0037h) null, 3);
+            C0024ax c0024axM629a = C0024ax.m629a(AppState.m584b(3607418), (Account) null, 3);
             if (c0024axM629a.m634a() != 200) {
                 throw new Throwable();
             }
@@ -859,7 +859,7 @@ public final class C0034e {
         String strM584b = AppState.m584b(1346);
         int iM586d = AppState.m586d(1513);
         C0028ba c0028ba = (C0028ba) AppState.m616i();
-        C0052w c0052wM745h = c0028ba.m745h(iM586d);
+        ChatRoom c0052wM745h = c0028ba.m745h(iM586d);
         if (StringUtils.m3a(848, str)) {
             c0052wM745h.f415g.addElement(strM584b);
             return 0;
@@ -918,7 +918,7 @@ public final class C0034e {
                         c0043n.m1321f(224 + (iCharAt >> 12)).m1321f(128 + ((iCharAt >> 6) & 63)).m1321f(128 + (iCharAt & 63));
                     }
                 }
-                strM1109a = C0038i.m1109a(C0038i.m1109a(c0043n.m1320d(), 65547, 200765), 65552, 200768);
+                strM1109a = Conversation.m1109a(Conversation.m1109a(c0043n.m1320d(), 65547, 200765), 65552, 200768);
             }
             c0043nM1385u3.m1314d(strM1109a);
         }
@@ -929,13 +929,13 @@ public final class C0034e {
     public static final int m976q() {
         int iMo1396m;
         Object obj = AppState.f177b[1365];
-        if ((obj instanceof AbstractC0046q) && 0 != (iMo1396m = ((AbstractC0046q) obj).mo1396m())) {
+        if ((obj instanceof ContactGroup) && 0 != (iMo1396m = ((ContactGroup) obj).mo1396m())) {
             return C0015ao.m338l(iMo1396m);
         }
-        if (!(obj instanceof AbstractC0041l)) {
+        if (!(obj instanceof Contact)) {
             return 4;
         }
-        AbstractC0041l abstractC0041l = (AbstractC0041l) obj;
+        Contact abstractC0041l = (Contact) obj;
         int iMo118b = abstractC0041l.f369o.mo118b(abstractC0041l);
         if (0 != iMo118b) {
             return C0015ao.m338l(iMo118b);
@@ -1007,7 +1007,7 @@ public final class C0034e {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m981a(C0028ba c0028ba, AbstractC0037h abstractC0037h, int i, int i2, String str, boolean z, byte[] bArr) {
+    public static final ByteBuffer m981a(C0028ba c0028ba, Account abstractC0037h, int i, int i2, String str, boolean z, byte[] bArr) {
         ByteBuffer c0043nM1302a = new ByteBuffer().m1384t(266).m1384t(20200).m1360p(i).m1360p(i2).m1308a(str).m1360p(z ? 1 : 0).m1360p(bArr.length).m1302a(bArr);
         while ((c0043nM1302a.f384b & 7) != 0) {
             c0043nM1302a.m1321f(0);

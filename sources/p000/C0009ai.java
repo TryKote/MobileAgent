@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: ai */
 /* loaded from: MobileAgent_3.9.jar:ai.class */
-public final class C0009ai extends AbstractC0041l {
+public final class C0009ai extends Contact {
 
     /* renamed from: a */
     public final int f55a;
@@ -79,7 +79,7 @@ public final class C0009ai extends AbstractC0041l {
         this.f381x = str;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: c */
     public final void mo134c() {
         this.f373r = 255;
@@ -88,13 +88,13 @@ public final class C0009ai extends AbstractC0041l {
         super.mo134c();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: a */
     public final String mo135a() {
         return this.f57c;
     }
 
-    public C0009ai(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
+    public C0009ai(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f55a = c0043n.m1328e();
         this.f56b = c0043n.m1328e();
@@ -108,7 +108,7 @@ public final class C0009ai extends AbstractC0041l {
         byte bM1344o = c0043n.m1344o();
         this.f374s = bM1344o;
         if (bM1344o != 0) {
-            C0015ao.m414a((AbstractC0041l) this);
+            C0015ao.m414a((Contact) this);
         }
         this.f373r = 255;
         this.f380w = abstractC0037h.m1050q().m1314d(this.f57c).m1337i();
@@ -117,13 +117,13 @@ public final class C0009ai extends AbstractC0041l {
         this.f381x = this.f57c;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: a */
     public final void mo136a(ByteBuffer c0043n) {
         c0043n.m1360p(this.f55a).m1360p(this.f56b).m1308a(this.f57c).m1309b(this.f376u).m1322a(this.f58z).m1322a(false).m1357m(this.f59d).m1357m(this.f60e).m1357m(this.f61f).m1321f(this.f374s);
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: b */
     public final C0032c mo138b() {
         C0032c c0032cM901a = C0032c.m887a(this.f380w).m896a(mo139e()).m901a(this.f376u, mo141j() ? 3 : mo140i() ? 2 : 0, this.f373r == 255 ? 0 : mo140i() ? 4 : mo141j() ? 5 : 3);
@@ -131,7 +131,7 @@ public final class C0009ai extends AbstractC0041l {
         return c0032cM901a;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: e */
     public final int mo139e() {
         int iMo139e = super.mo139e();
@@ -156,37 +156,37 @@ public final class C0009ai extends AbstractC0041l {
         return new ByteBuffer().m1376j(this.f57c).m1357m(i2).m1357m(this.f55a).m1357m(0).m1326b(c0043n);
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: i */
     public final boolean mo140i() {
         return this.f59d != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: j */
     public final boolean mo141j() {
         return this.f60e != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: k */
     public final boolean mo142k() {
         return this.f61f != 0;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: m */
     public final boolean mo143m() {
         return this.f55a == -1;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: l */
     public final boolean mo144l() {
         return this.f58z && this.f55a != -1;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: h */
     public final void mo145h() {
         if (mo143m()) {

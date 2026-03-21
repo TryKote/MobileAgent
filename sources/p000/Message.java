@@ -8,7 +8,7 @@ import java.util.Vector;
 
 /* renamed from: az */
 /* loaded from: MobileAgent_3.9.jar:az.class */
-public final class C0026az {
+public final class Message {
 
     /* renamed from: a */
     public String f216a;
@@ -37,7 +37,7 @@ public final class C0026az {
     /* renamed from: i */
     public Object[] f224i;
 
-    public C0026az(Hashtable hashtable) {
+    public Message(Hashtable hashtable) {
         this.f216a = JsonParser.m479c(hashtable, AppState.m584b(591892));
         this.f217b = JsonParser.m477b(hashtable, AppState.m584b(264254)) * 1000;
         this.f218c = C0031bd.m868b(JsonParser.m479c(hashtable, AppState.m584b(591883)), JsonParser.m479c(hashtable, AppState.m584b(526365)));
@@ -45,10 +45,10 @@ public final class C0026az {
         this.f220e = JsonParser.m477b(hashtable, AppState.m584b(591847));
         m670a(4, JsonParser.m477b(hashtable, AppState.m584b(657373)) != 0);
         m670a(1, JsonParser.m477b(hashtable, AppState.m584b(657363)) != 0);
-        this.f222g = C0038i.m1122j(JsonParser.m479c(hashtable, AppState.m584b(460837)));
+        this.f222g = Conversation.m1122j(JsonParser.m479c(hashtable, AppState.m584b(460837)));
     }
 
-    public C0026az(Vector vector, String str, String str2) {
+    public Message(Vector vector, String str, String str2) {
         C0028ba c0028ba = (C0028ba) AppState.m616i();
         this.f218c = C0031bd.m867a(C0040k.m1213g(), C0015ao.m459a(c0028ba.f315k, Utils.m522f(c0028ba.f230f)));
         this.f219d = vector;
@@ -56,7 +56,7 @@ public final class C0026az {
         this.f223h = str2;
     }
 
-    public C0026az(ByteBuffer c0043n, String str) {
+    public Message(ByteBuffer c0043n, String str) {
         this.f216a = str;
         this.f217b = c0043n.m1341m();
         this.f218c = C0031bd.m863e(c0043n);
@@ -78,7 +78,7 @@ public final class C0026az {
     }
 
     /* renamed from: a */
-    public final C0032c m667a(C0052w c0052w) {
+    public final C0032c m667a(ChatRoom c0052w) {
         boolean z;
         int iM1418a;
         String[] strArrM869c;
@@ -99,7 +99,7 @@ public final class C0026az {
                 z = false;
                 break;
             }
-            if (((C0052w) enumerationElements.nextElement()).m1414a(str)) {
+            if (((ChatRoom) enumerationElements.nextElement()).m1414a(str)) {
                 z = true;
                 break;
             }
@@ -112,7 +112,7 @@ public final class C0026az {
         int i6 = calendarM622k.get(5);
         calendarM622k.setTime(new Date(this.f217b));
         StringBuffer stringBufferM1217h = C0040k.m1217h();
-        String strM527g = Utils.m527g(C0040k.m1215a((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(C0038i.m1121a(calendarM622k.get(11), 2)).append(':').append(C0038i.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(C0038i.m1121a(calendarM622k.get(5), 2)).append('.').append(C0038i.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(C0038i.m1121a(calendarM622k.get(1) - 2000, 2))));
+        String strM527g = Utils.m527g(C0040k.m1215a((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
         C0032c c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
         String strM1215a = C0040k.m1215a(C0040k.m1217h().append('[').append(this.f220e).append(AppState.m584b(903)));
         C0032c c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);

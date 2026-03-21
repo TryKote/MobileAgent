@@ -72,10 +72,10 @@ public final class C0014an implements ListItem {
 
     public C0014an(String str) {
         try {
-            this.f133a = C0038i.m1099b(str);
-            this.f138f = C0029bb.m807b(C0038i.m1100c(str));
-            this.f139g = C0029bb.m808c(C0038i.m1101d(str));
-            this.f140h = Integer.parseInt(C0038i.m1102e(str));
+            this.f133a = Conversation.m1099b(str);
+            this.f138f = C0029bb.m807b(Conversation.m1100c(str));
+            this.f139g = C0029bb.m808c(Conversation.m1101d(str));
+            this.f140h = Integer.parseInt(Conversation.m1102e(str));
         } catch (Throwable unused) {
         }
         this.f146n = new SizeCache();

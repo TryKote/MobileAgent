@@ -70,16 +70,16 @@ public abstract class AbstractC0007ag {
         if (obj == null) {
             return 0;
         }
-        if (obj instanceof AbstractC0046q) {
+        if (obj instanceof ContactGroup) {
             C0015ao.f152f = true;
-            return ((AbstractC0046q) obj).mo1397n();
+            return ((ContactGroup) obj).mo1397n();
         }
-        if (!(obj instanceof AbstractC0041l)) {
+        if (!(obj instanceof Contact)) {
             return 0;
         }
         AppState.m591f(1279);
         C0015ao.m300h();
-        return ((AbstractC0041l) obj).m1247K();
+        return ((Contact) obj).m1247K();
     }
 
     /* renamed from: a */
@@ -102,7 +102,7 @@ public abstract class AbstractC0007ag {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public static final int m160a(C0013am c0013am, Object obj) {
-        AbstractC0037h abstractC0037h;
+        Account abstractC0037h;
         int iM1250M = -1;
         if (AppState.f177b[1291] != null) {
             return 122;
@@ -117,18 +117,18 @@ public abstract class AbstractC0007ag {
         m154f();
         Vector vector = c0013am.f110o;
         if (obj != null) {
-            AbstractC0041l abstractC0041l = null;
-            AbstractC0046q abstractC0046q = null;
-            if (obj instanceof AbstractC0046q) {
-                AbstractC0046q abstractC0046q2 = (AbstractC0046q) obj;
+            Contact abstractC0041l = null;
+            ContactGroup abstractC0046q = null;
+            if (obj instanceof ContactGroup) {
+                ContactGroup abstractC0046q2 = (ContactGroup) obj;
                 abstractC0046q = abstractC0046q2;
                 abstractC0037h = abstractC0046q2.f396d;
             } else {
-                AbstractC0041l abstractC0041l2 = (AbstractC0041l) obj;
+                Contact abstractC0041l2 = (Contact) obj;
                 abstractC0041l = abstractC0041l2;
                 abstractC0037h = abstractC0041l2.f369o;
             }
-            AbstractC0037h abstractC0037h2 = abstractC0037h;
+            Account abstractC0037h2 = abstractC0037h;
             int iMo108h = abstractC0037h.mo108h();
             String str = abstractC0037h2.f340J;
             if (!AppState.m587e(243)) {
@@ -209,12 +209,12 @@ public abstract class AbstractC0007ag {
         int i = c0013amM75b.f114q - 1;
         if (!AppState.m587e(99)) {
             boolean z = !AppState.m587e(98);
-            AbstractC0037h abstractC0037h = C0008ah.f54k;
+            Account abstractC0037h = C0008ah.f54k;
             Vector vectorM445W = abstractC0037h == null ? C0015ao.m445W() : abstractC0037h.m1078P();
             Vector vector = vectorM445W;
             int iM353a = C0015ao.m353a(vectorM445W);
             for (int i2 = 0; i2 < iM353a; i2++) {
-                AbstractC0041l abstractC0041l = (AbstractC0041l) vector.elementAt(i2);
+                Contact abstractC0041l = (Contact) vector.elementAt(i2);
                 if (!abstractC0041l.mo142k() && (abstractC0041l.m1240G() || abstractC0041l.mo143m() || (!abstractC0041l.mo142k() && (z || (((zM1056C = abstractC0041l.f369o.m1056C()) && abstractC0041l.f371p) || (!zM1056C && abstractC0041l.mo990d())))))) {
                     c0013amM75b.m225a(abstractC0041l.mo138b().m908a(iM586d, i / iM586d));
                 }
@@ -232,7 +232,7 @@ public abstract class AbstractC0007ag {
                 if (size < 0) {
                     break;
                 }
-                AbstractC0046q abstractC0046q = (AbstractC0046q) vectorM446d.elementAt(size);
+                ContactGroup abstractC0046q = (ContactGroup) vectorM446d.elementAt(size);
                 String str = abstractC0046q.f398f;
                 int size2 = vectorM1213g.size();
                 while (true) {
@@ -266,7 +266,7 @@ public abstract class AbstractC0007ag {
             C0040k.m1212a(vectorM446d);
             int iM353a2 = C0015ao.m353a(vectorM1213g);
             for (int i4 = 0; i4 < iM353a2; i4++) {
-                AbstractC0046q abstractC0046q2 = (AbstractC0046q) vectorM1213g.elementAt(i4);
+                ContactGroup abstractC0046q2 = (ContactGroup) vectorM1213g.elementAt(i4);
                 boolean z3 = false;
                 if (zM587e || !abstractC0046q2.m1398o()) {
                     c0013amM75b.m225a(abstractC0046q2.m1395f(-1).m908a(iM586d, i));
@@ -276,7 +276,7 @@ public abstract class AbstractC0007ag {
                     Vector vector3 = abstractC0046q2.f397e;
                     int iM353a3 = C0015ao.m353a(vector3);
                     for (int i5 = 0; i5 < iM353a3; i5++) {
-                        AbstractC0041l abstractC0041l2 = (AbstractC0041l) vector3.elementAt(i5);
+                        Contact abstractC0041l2 = (Contact) vector3.elementAt(i5);
                         if (m162a(z2, abstractC0041l2)) {
                             if (!z3) {
                                 c0013amM75b.m225a(abstractC0046q2.m1395f(-1).m908a(iM586d, i));
@@ -298,8 +298,8 @@ public abstract class AbstractC0007ag {
                 if (iM433Q < 0) {
                     break;
                 }
-                AbstractC0037h abstractC0037hM434I = C0015ao.m434I(iM433Q);
-                AbstractC0037h abstractC0037h2 = C0008ah.f54k;
+                Account abstractC0037hM434I = C0015ao.m434I(iM433Q);
+                Account abstractC0037h2 = C0008ah.f54k;
                 if (abstractC0037h2 == null || abstractC0037h2 == abstractC0037hM434I) {
                     Vector vectorMo720O = abstractC0037hM434I.mo720O();
                     int size4 = vectorMo720O.size();
@@ -373,7 +373,7 @@ public abstract class AbstractC0007ag {
                 c0013amM75b.m225a(c0054y8.m1395f(iM353a4).m908a(iM586d, i));
                 if (c0054y8.m1398o()) {
                     for (int i10 = 0; i10 < iM353a4; i10++) {
-                        c0013amM75b.m225a(((AbstractC0041l) vector4.elementAt(i10)).mo138b().m908a(iM586d, i3));
+                        c0013amM75b.m225a(((Contact) vector4.elementAt(i10)).mo138b().m908a(iM586d, i3));
                     }
                     C0040k.m1212a(vector4);
                 }
@@ -384,7 +384,7 @@ public abstract class AbstractC0007ag {
                 c0013amM75b.m225a(c0054y5.m1395f(iM353a5).m908a(iM586d, i));
                 if (c0054y5.m1398o()) {
                     for (int i11 = 0; i11 < iM353a5; i11++) {
-                        c0013amM75b.m225a(((AbstractC0041l) vector5.elementAt(i11)).mo138b().m908a(iM586d, i3));
+                        c0013amM75b.m225a(((Contact) vector5.elementAt(i11)).mo138b().m908a(iM586d, i3));
                     }
                     C0040k.m1212a(vector5);
                 }
@@ -395,7 +395,7 @@ public abstract class AbstractC0007ag {
                 c0013amM75b.m225a(c0054y7.m1395f(iM353a6).m908a(iM586d, i));
                 if (c0054y7.m1398o()) {
                     for (int i12 = 0; i12 < iM353a6; i12++) {
-                        c0013amM75b.m225a(((AbstractC0041l) vector6.elementAt(i12)).mo138b().m908a(iM586d, i3));
+                        c0013amM75b.m225a(((Contact) vector6.elementAt(i12)).mo138b().m908a(iM586d, i3));
                     }
                     C0040k.m1212a(vector6);
                 }
@@ -406,7 +406,7 @@ public abstract class AbstractC0007ag {
                 c0013amM75b.m225a(c0054y6.m1395f(iM353a7).m908a(iM586d, i));
                 if (c0054y6.m1398o()) {
                     for (int i13 = 0; i13 < iM353a7; i13++) {
-                        c0013amM75b.m225a(((AbstractC0041l) vector7.elementAt(i13)).mo138b().m908a(iM586d, i3));
+                        c0013amM75b.m225a(((Contact) vector7.elementAt(i13)).mo138b().m908a(iM586d, i3));
                     }
                     C0040k.m1212a(vector7);
                 }
@@ -418,7 +418,7 @@ public abstract class AbstractC0007ag {
             boolean zM587e2 = AppState.m587e(101);
             boolean z4 = !AppState.m587e(98);
             for (int i15 = 0; i15 < iM353a8; i15++) {
-                AbstractC0046q abstractC0046q3 = (AbstractC0046q) vectorM446d2.elementAt(i15);
+                ContactGroup abstractC0046q3 = (ContactGroup) vectorM446d2.elementAt(i15);
                 boolean z5 = false;
                 if (zM587e2 || !abstractC0046q3.m1398o()) {
                     c0013amM75b.m225a(abstractC0046q3.m1395f(-1).m908a(iM586d, i));
@@ -428,7 +428,7 @@ public abstract class AbstractC0007ag {
                     Vector vector8 = abstractC0046q3.f397e;
                     int iM353a9 = C0015ao.m353a(vector8);
                     for (int i16 = 0; i16 < iM353a9; i16++) {
-                        AbstractC0041l abstractC0041l3 = (AbstractC0041l) vector8.elementAt(i16);
+                        Contact abstractC0041l3 = (Contact) vector8.elementAt(i16);
                         if (m162a(z4, abstractC0041l3)) {
                             if (!z5) {
                                 c0013amM75b.m225a(abstractC0046q3.m1395f(-1).m908a(iM586d, i));
@@ -447,10 +447,10 @@ public abstract class AbstractC0007ag {
                 if (i17 < 0) {
                     break;
                 }
-                AbstractC0037h abstractC0037hM434I2 = C0015ao.m434I(i17);
-                AbstractC0037h abstractC0037h3 = C0008ah.f54k;
+                Account abstractC0037hM434I2 = C0015ao.m434I(i17);
+                Account abstractC0037h3 = C0008ah.f54k;
                 if (abstractC0037h3 == null || abstractC0037h3 == abstractC0037hM434I2) {
-                    AbstractC0046q abstractC0046q4 = abstractC0037hM434I2.f338H;
+                    ContactGroup abstractC0046q4 = abstractC0037hM434I2.f338H;
                     Vector vectorMo720O2 = abstractC0037hM434I2.mo720O();
                     int size8 = vectorMo720O2.size();
                     if (size8 > 0) {
@@ -458,7 +458,7 @@ public abstract class AbstractC0007ag {
                         if (abstractC0046q4.m1398o()) {
                             C0015ao.m353a(vectorMo720O2);
                             for (int i18 = 0; i18 < size8; i18++) {
-                                c0013amM75b.m225a(((AbstractC0041l) vectorMo720O2.elementAt(i18)).mo138b().m908a(iM586d, i14));
+                                c0013amM75b.m225a(((Contact) vectorMo720O2.elementAt(i18)).mo138b().m908a(iM586d, i14));
                             }
                         }
                     }
@@ -471,10 +471,10 @@ public abstract class AbstractC0007ag {
                 if (i19 < 0) {
                     break;
                 }
-                AbstractC0037h abstractC0037hM434I3 = C0015ao.m434I(i19);
-                AbstractC0037h abstractC0037h4 = C0008ah.f54k;
+                Account abstractC0037hM434I3 = C0015ao.m434I(i19);
+                Account abstractC0037h4 = C0008ah.f54k;
                 if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037hM434I3) {
-                    AbstractC0046q abstractC0046q5 = abstractC0037hM434I3.f336F;
+                    ContactGroup abstractC0046q5 = abstractC0037hM434I3.f336F;
                     Vector vectorM1077N2 = abstractC0037hM434I3.m1077N();
                     int size9 = vectorM1077N2.size();
                     if (size9 > 0) {
@@ -482,7 +482,7 @@ public abstract class AbstractC0007ag {
                         if (abstractC0046q5.m1398o()) {
                             C0015ao.m353a(vectorM1077N2);
                             for (int i20 = 0; i20 < size9; i20++) {
-                                c0013amM75b.m225a(((AbstractC0041l) vectorM1077N2.elementAt(i20)).mo138b().m908a(iM586d, i14));
+                                c0013amM75b.m225a(((Contact) vectorM1077N2.elementAt(i20)).mo138b().m908a(iM586d, i14));
                             }
                         }
                     }
@@ -495,10 +495,10 @@ public abstract class AbstractC0007ag {
                 if (i21 < 0) {
                     break;
                 }
-                AbstractC0037h abstractC0037hM434I4 = C0015ao.m434I(i21);
-                AbstractC0037h abstractC0037h5 = C0008ah.f54k;
+                Account abstractC0037hM434I4 = C0015ao.m434I(i21);
+                Account abstractC0037h5 = C0008ah.f54k;
                 if (abstractC0037h5 == null || abstractC0037h5 == abstractC0037hM434I4) {
-                    AbstractC0046q abstractC0046q6 = abstractC0037hM434I4.f334D;
+                    ContactGroup abstractC0046q6 = abstractC0037hM434I4.f334D;
                     Vector vectorM1079Q2 = abstractC0037hM434I4.m1079Q();
                     int size10 = vectorM1079Q2.size();
                     if (size10 > 0) {
@@ -506,7 +506,7 @@ public abstract class AbstractC0007ag {
                         if (abstractC0046q6.m1398o()) {
                             C0015ao.m353a(vectorM1079Q2);
                             for (int i22 = 0; i22 < size10; i22++) {
-                                c0013amM75b.m225a(((AbstractC0041l) vectorM1079Q2.elementAt(i22)).mo138b().m908a(iM586d, i14));
+                                c0013amM75b.m225a(((Contact) vectorM1079Q2.elementAt(i22)).mo138b().m908a(iM586d, i14));
                             }
                         }
                     }
@@ -519,10 +519,10 @@ public abstract class AbstractC0007ag {
                 if (i23 < 0) {
                     break;
                 }
-                AbstractC0037h abstractC0037hM434I5 = C0015ao.m434I(i23);
-                AbstractC0037h abstractC0037h6 = C0008ah.f54k;
+                Account abstractC0037hM434I5 = C0015ao.m434I(i23);
+                Account abstractC0037h6 = C0008ah.f54k;
                 if (abstractC0037h6 == null || abstractC0037h6 == abstractC0037hM434I5) {
-                    AbstractC0046q abstractC0046q7 = abstractC0037hM434I5.f335E;
+                    ContactGroup abstractC0046q7 = abstractC0037hM434I5.f335E;
                     Vector vectorM1076M2 = abstractC0037hM434I5.m1076M();
                     int size11 = vectorM1076M2.size();
                     if (size11 > 0) {
@@ -530,7 +530,7 @@ public abstract class AbstractC0007ag {
                         if (abstractC0046q7.m1398o()) {
                             C0015ao.m353a(vectorM1076M2);
                             for (int i24 = 0; i24 < size11; i24++) {
-                                c0013amM75b.m225a(((AbstractC0041l) vectorM1076M2.elementAt(i24)).mo138b().m908a(iM586d, i14));
+                                c0013amM75b.m225a(((Contact) vectorM1076M2.elementAt(i24)).mo138b().m908a(iM586d, i14));
                             }
                         }
                     }
@@ -543,7 +543,7 @@ public abstract class AbstractC0007ag {
     }
 
     /* renamed from: a */
-    private static final boolean m162a(boolean z, AbstractC0041l abstractC0041l) {
+    private static final boolean m162a(boolean z, Contact abstractC0041l) {
         return ((!abstractC0041l.m1240G() && !z && !abstractC0041l.f371p) || abstractC0041l.mo142k() || abstractC0041l.mo144l() || abstractC0041l.mo143m() || abstractC0041l.mo990d() || abstractC0041l.mo996n()) ? false : true;
     }
 }

@@ -9,7 +9,7 @@ import javax.microedition.lcdui.TextBox;
 
 /* renamed from: g */
 /* loaded from: MobileAgent_3.9.jar:g.class */
-public final class C0036g extends AbstractC0046q {
+public final class C0036g extends ContactGroup {
 
     /* renamed from: h */
     private int f309h;
@@ -48,7 +48,7 @@ public final class C0036g extends AbstractC0046q {
         super(null);
     }
 
-    @Override // p000.AbstractC0046q
+    @Override // p000.ContactGroup
     /* renamed from: a */
     public final void mo196a(ByteBuffer c0043n, boolean z) {
         c0043n.m1309b(this.f398f);
@@ -56,13 +56,13 @@ public final class C0036g extends AbstractC0046q {
         super.mo196a(c0043n, z);
     }
 
-    @Override // p000.AbstractC0046q
+    @Override // p000.ContactGroup
     /* renamed from: a */
     public final boolean mo198a() {
         return this.f309h <= 0;
     }
 
-    @Override // p000.AbstractC0046q
+    @Override // p000.ContactGroup
     /* renamed from: b */
     public final int mo197b() {
         return this.f309h;
@@ -150,7 +150,7 @@ public final class C0036g extends AbstractC0046q {
                     if (size < 0) {
                         break;
                     }
-                    AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM443V.elementAt(size);
+                    Account abstractC0037h = (Account) vectorM443V.elementAt(size);
                     if (abstractC0037h.m1056C()) {
                         if (abstractC0037h instanceof C0028ba) {
                             z = false;
@@ -454,7 +454,7 @@ public final class C0036g extends AbstractC0046q {
                 AppState.m619a(true);
                 return c0043nM1360p;
             }
-            AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM443V.elementAt(size);
+            Account abstractC0037h = (Account) vectorM443V.elementAt(size);
             if (!(abstractC0037h instanceof C0028ba)) {
                 ByteBuffer c0043nM1390v = c0043nM1360p.m1390v(816);
                 ByteBuffer c0043nM1360p2 = new ByteBuffer().m1390v(515).m1360p(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).m1390v(300).m1308a(Utils.m522f(AppState.m584b(223))).m1390v(305).m1308a(abstractC0037h.f315k).m1390v(306).m1308a(AppState.m584b(abstractC0037h.mo110p())).m1390v(563).m1360p(abstractC0037h.f326v).m1390v(564).m1360p(abstractC0037h.f327w).m1390v(565).m1360p(abstractC0037h.f328x);

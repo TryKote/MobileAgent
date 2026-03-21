@@ -444,9 +444,9 @@ public abstract class AbstractC0025ay {
                                     if (interfaceC0044o6 == null) {
                                         interfaceC0044oArr[(i54 * i49) + i53] = interfaceC0044o5;
                                     } else if (interfaceC0044o6.mo276r() == 5) {
-                                        ((C0038i) interfaceC0044o6).m1086a(interfaceC0044o5);
+                                        ((Conversation) interfaceC0044o6).m1086a(interfaceC0044o5);
                                     } else if (interfaceC0044o6.mo276r() == 3) {
-                                        C0038i c0038i = new C0038i();
+                                        Conversation c0038i = new Conversation();
                                         c0038i.m1086a(interfaceC0044o5);
                                         c0038i.m1086a(interfaceC0044o6);
                                         interfaceC0044oArr[(i54 * i49) + i53] = c0038i;
@@ -783,7 +783,7 @@ public abstract class AbstractC0025ay {
         }
         f200h = true;
         if (m656d()) {
-            C0038i.m1129c();
+            Conversation.m1129c();
         }
         c0014an.m269c();
         AppState.m594c(1443, 0);

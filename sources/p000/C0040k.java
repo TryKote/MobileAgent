@@ -304,7 +304,7 @@ public final class C0040k {
         if (str != null) {
             if (Utils.m510a((Object) str) == 0) {
                 String str2 = (String) objArr[7];
-                int iM437a = C0015ao.m437a(0, (AbstractC0037h) null, str2, (String) objArr[9]);
+                int iM437a = C0015ao.m437a(0, (Account) null, str2, (String) objArr[9]);
                 if (0 != iM437a) {
                     return C0015ao.m338l(iM437a);
                 }
@@ -557,12 +557,12 @@ public final class C0040k {
         int iM541c = Utils.m541c(vector);
         for (int i = 0; i < iM541c; i++) {
             Object objElementAt = vector.elementAt(i);
-            if (objElementAt instanceof AbstractC0041l) {
-                c0032cM1057D = ((AbstractC0041l) objElementAt).mo138b();
-            } else if (objElementAt instanceof AbstractC0046q) {
-                c0032cM1057D = ((AbstractC0046q) objElementAt).m1395f(-1);
-            } else if (objElementAt instanceof C0042m) {
-                C0042m c0042m = (C0042m) objElementAt;
+            if (objElementAt instanceof Contact) {
+                c0032cM1057D = ((Contact) objElementAt).mo138b();
+            } else if (objElementAt instanceof ContactGroup) {
+                c0032cM1057D = ((ContactGroup) objElementAt).m1395f(-1);
+            } else if (objElementAt instanceof ContactInfo) {
+                ContactInfo c0042m = (ContactInfo) objElementAt;
                 if (c0042m.m1255c() instanceof C0028ba) {
                     C0032c c0032cM898b = C0032c.m886c().m896a(C0015ao.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
                     c0032cM898b.f265d = c0042m;
@@ -575,7 +575,7 @@ public final class C0040k {
                     c0032cM1057D = c0032cM898b2;
                 }
             } else {
-                c0032cM1057D = ((AbstractC0037h) objElementAt).m1057D();
+                c0032cM1057D = ((Account) objElementAt).m1057D();
             }
             c0013am.m225a(c0032cM1057D);
         }
@@ -710,13 +710,13 @@ public final class C0040k {
 
     /* renamed from: a */
     public static final void m1202a(C0028ba c0028ba, int i, ByteBuffer c0043n) {
-        C0042m c0042mM1251a = C0042m.m1251a(c0028ba);
+        ContactInfo c0042mM1251a = ContactInfo.m1251a(c0028ba);
         switch (i) {
             case 0:
                 c0042mM1251a.m1257a(AppState.m584b(913));
                 break;
             case 1:
-                c0042mM1251a = (C0042m) m1206a(c0028ba, c0043n).elementAt(0);
+                c0042mM1251a = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
                 break;
             default:
                 c0042mM1251a.m1257a(m1215a(m1217h().append(AppState.m584b(914)).append(i)));
@@ -752,7 +752,7 @@ public final class C0040k {
                 i2 = 913;
                 break;
             case 1:
-                C0042m c0042m = (C0042m) m1206a(c0028ba, c0043n).elementAt(0);
+                ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
                 C0035f c0035f = (C0035f) c0028ba.f321q.get(c0042m.m1290i());
                 if (null != c0035f) {
                     c0035f.m1249c(c0042m.m1292k());
@@ -769,14 +769,14 @@ public final class C0040k {
     /* renamed from: d */
     public static final void m1205d(C0028ba c0028ba, int i, ByteBuffer c0043n) {
         if (i == 1) {
-            C0042m c0042m = (C0042m) m1206a(c0028ba, c0043n).elementAt(0);
+            ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
             Hashtable hashtable = c0028ba.f321q;
             String strM1290i = c0042m.m1290i();
             C0035f c0035f = (C0035f) hashtable.get(strM1290i);
             if (null != c0035f) {
                 String strM1292k = c0042m.m1292k();
                 c0035f.m1249c(strM1292k);
-                c0028ba.mo734a(strM1290i, strM1292k, AppState.m584b(741), (AbstractC0046q) c0028ba.m718f(), true);
+                c0028ba.mo734a(strM1290i, strM1292k, AppState.m584b(741), (ContactGroup) c0028ba.m718f(), true);
             }
         }
     }
@@ -815,7 +815,7 @@ public final class C0040k {
             vectorM1213g2.addElement(c0043n.m1338j());
         }
         for (int i2 = 0; i2 < iM1328e2 && c0043n.f384b > 0; i2++) {
-            C0042m c0042mM1251a = C0042m.m1251a(c0028ba);
+            ContactInfo c0042mM1251a = ContactInfo.m1251a(c0028ba);
             vectorM1213g.addElement(c0042mM1251a);
             int i3 = 0;
             while (i3 < iM1328e) {

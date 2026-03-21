@@ -46,7 +46,7 @@ public final class C0029bb {
         m815g(strM584b);
         int iM586d = AppState.m586d(1513);
         C0028ba c0028ba = (C0028ba) AppState.m616i();
-        C0026az c0026azM1415b = c0028ba.m745h(iM586d).m1415b(strM584b);
+        Message c0026azM1415b = c0028ba.m745h(iM586d).m1415b(strM584b);
         String strM673d = c0026azM1415b.m673d();
         Vector vectorM668b = c0026azM1415b.m668b();
         Vector vectorM669c = c0026azM1415b.m669c();
@@ -169,13 +169,13 @@ public final class C0029bb {
     }
 
     /* renamed from: a */
-    public static final int m757a(AbstractC0037h abstractC0037h) {
+    public static final int m757a(Account abstractC0037h) {
         Vector vector = abstractC0037h.f313i;
         int iM541c = Utils.m541c(vector);
         if (iM541c > 0) {
             StringBuffer stringBufferM1217h = C0040k.m1217h();
             for (int i = 0; i < iM541c; i++) {
-                stringBufferM1217h.append(((AbstractC0046q) vector.elementAt(i)).f398f).append((char) 0);
+                stringBufferM1217h.append(((ContactGroup) vector.elementAt(i)).f398f).append((char) 0);
             }
             AppState.m588a(1323, stringBufferM1217h);
             AppState.f177b[1324] = vector;
@@ -186,8 +186,8 @@ public final class C0029bb {
 
     /* renamed from: b */
     public static final void m758b() {
-        C0042m c0042m = (C0042m) AppState.f177b[1319];
-        AbstractC0037h abstractC0037hM1255c = c0042m.m1255c();
+        ContactInfo c0042m = (ContactInfo) AppState.f177b[1319];
+        Account abstractC0037hM1255c = c0042m.m1255c();
         if (m757a(abstractC0037hM1255c) == 0) {
             m778d((Object) AppState.m584b(743));
             return;
@@ -251,7 +251,7 @@ public final class C0029bb {
 
     /* renamed from: c */
     public static final void m760c() {
-        C0052w c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
+        ChatRoom c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
         C0013am c0013amM75b = AbstractC0004ad.m75b(4527);
         c0013amM75b.m224a(234, c0052wM745h.m1425f());
         Vector vectorM1213g = C0040k.m1213g();
@@ -265,7 +265,7 @@ public final class C0029bb {
         }
         Enumeration enumerationElements2 = vectorM1213g.elements();
         while (enumerationElements2.hasMoreElements()) {
-            c0013amM75b.m225a(((C0026az) enumerationElements2.nextElement()).m667a(c0052wM745h));
+            c0013amM75b.m225a(((Message) enumerationElements2.nextElement()).m667a(c0052wM745h));
         }
         if (c0013amM75b.f108m.size() == 0) {
             c0013amM75b.f103i = false;
@@ -351,7 +351,7 @@ public final class C0029bb {
         Vector vectorM1213g = C0040k.m1213g();
         Enumeration enumerationElements = c0028ba.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
-            AbstractC0041l abstractC0041l = (AbstractC0041l) enumerationElements.nextElement();
+            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (!abstractC0041l.mo990d() && !abstractC0041l.mo143m()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
@@ -395,7 +395,7 @@ public final class C0029bb {
             }
         }
         C0028ba c0028ba = (C0028ba) AppState.m616i();
-        C0003ac c0003ac = c0028ba.f231g;
+        VCard c0003ac = c0028ba.f231g;
         c0003ac.f23k = c0003ac.f22j;
         int size2 = vectorM1213g.size();
         c0003ac.f22j = new String[size2];
@@ -455,10 +455,10 @@ public final class C0029bb {
             } catch (Throwable unused) {
             }
         } else {
-            String strM1109a = C0038i.m1109a(strM522f, 1046, 199350);
+            String strM1109a = Conversation.m1109a(strM522f, 1046, 199350);
             Image imageM615n = AppState.m615n(1364);
             long j = AbstractC0025ay.f195c;
-            new RunnableC0055z(9, new ByteBuffer().m1310c(1442705).m1310c(1511760).m1314d(C0038i.m1120b((Object) strM1109a)).m1310c(659815).m1383b(j).m1310c(659825).m1383b(AbstractC0025ay.f196d).m1310c(659835).m1382s(imageM615n.getWidth()).m1310c(659845).m1382s(imageM615n.getHeight()).m1317c());
+            new RunnableC0055z(9, new ByteBuffer().m1310c(1442705).m1310c(1511760).m1314d(Conversation.m1120b((Object) strM1109a)).m1310c(659815).m1383b(j).m1310c(659825).m1383b(AbstractC0025ay.f196d).m1310c(659835).m1382s(imageM615n.getWidth()).m1310c(659845).m1382s(imageM615n.getHeight()).m1317c());
         }
         return AppState.m587e(1477) ? 161 : 6;
     }
@@ -491,11 +491,11 @@ public final class C0029bb {
         long j2 = AbstractC0025ay.f198f;
         int i2 = AbstractC0025ay.f194b / 2;
         ByteBuffer c0043nM1314d = c0043nM1310c.m1314d(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (C0015ao.m318a((int) (j2 + i2), iM586d) - C0015ao.m318a((int) (AbstractC0025ay.f198f - i2), iM586d)))), 100));
-        C0003ac.f25m = (int) C0015ao.m318a((int) (AbstractC0025ay.f197e - (AbstractC0025ay.f193a / 2)), AppState.m586d(39));
-        C0003ac.f26n = (int) C0015ao.m318a((int) (AbstractC0025ay.f198f - (AbstractC0025ay.f194b / 2)), AppState.m586d(39));
-        C0003ac.f27o = (int) C0015ao.m318a((int) (AbstractC0025ay.f197e + (AbstractC0025ay.f193a / 2)), AppState.m586d(39));
-        C0003ac.f28p = (int) C0015ao.m318a((int) (AbstractC0025ay.f198f + (AbstractC0025ay.f194b / 2)), AppState.m586d(39));
-        C0003ac.f29q = AppState.m586d(39);
+        VCard.f25m = (int) C0015ao.m318a((int) (AbstractC0025ay.f197e - (AbstractC0025ay.f193a / 2)), AppState.m586d(39));
+        VCard.f26n = (int) C0015ao.m318a((int) (AbstractC0025ay.f198f - (AbstractC0025ay.f194b / 2)), AppState.m586d(39));
+        VCard.f27o = (int) C0015ao.m318a((int) (AbstractC0025ay.f197e + (AbstractC0025ay.f193a / 2)), AppState.m586d(39));
+        VCard.f28p = (int) C0015ao.m318a((int) (AbstractC0025ay.f198f + (AbstractC0025ay.f194b / 2)), AppState.m586d(39));
+        VCard.f29q = AppState.m586d(39);
         new RunnableC0055z(20, new Object[]{c0043nM1314d.m1317c(), C0034e.m967e(AppState.m586d(39))});
     }
 
@@ -553,17 +553,17 @@ public final class C0029bb {
     }
 
     /* renamed from: a */
-    public static final void m783a(AbstractC0037h abstractC0037h, int i) {
+    public static final void m783a(Account abstractC0037h, int i) {
         m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(459)).append(abstractC0037h).append(AppState.m584b(460)).append(AppState.m584b(i))));
     }
 
     /* renamed from: a */
-    public static final void m784a(AbstractC0037h abstractC0037h, String str) {
+    public static final void m784a(Account abstractC0037h, String str) {
         m778d((Object) C0040k.m1215a(C0040k.m1217h().append(AppState.m584b(459)).append(abstractC0037h).append(AppState.m584b(460)).append(str)));
     }
 
     /* renamed from: b */
-    private static void m785b(AbstractC0037h abstractC0037h, String str) {
+    private static void m785b(Account abstractC0037h, String str) {
         m778d((Object) new Object[]{abstractC0037h, str});
     }
 
@@ -577,7 +577,7 @@ public final class C0029bb {
         String strM584b = AppState.m584b(1346);
         int iM586d = AppState.m586d(1513);
         C0028ba c0028ba = (C0028ba) AppState.m616i();
-        C0026az c0026azM1415b = c0028ba.m745h(iM586d).m1415b(strM584b);
+        Message c0026azM1415b = c0028ba.m745h(iM586d).m1415b(strM584b);
         Vector vectorM668b = c0026azM1415b.m668b();
         Vector vectorM669c = c0026azM1415b.m669c();
         String strM673d = c0026azM1415b.m673d();
@@ -652,7 +652,7 @@ public final class C0029bb {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final C0013am m793a(C0013am c0013am, AbstractC0037h abstractC0037h, AbstractC0041l abstractC0041l) {
+    public static final C0013am m793a(C0013am c0013am, Account abstractC0037h, Contact abstractC0041l) {
         C0032c c0032cM899a = null;
         if (abstractC0041l != null) {
             abstractC0037h = abstractC0041l.f369o;
@@ -708,7 +708,7 @@ public final class C0029bb {
     /* renamed from: b */
     public static final int m795b(String str, int i) {
         AppState.m591f(1281);
-        AbstractC0041l abstractC0041lM611g = AppState.m611g();
+        Contact abstractC0041lM611g = AppState.m611g();
         if (i == 63 && !abstractC0041lM611g.f369o.m1056C()) {
             return C0015ao.m338l(299);
         }
@@ -727,7 +727,7 @@ public final class C0029bb {
             if (abstractC0041lM611g instanceof C0006af) {
                 return ((C0006af) abstractC0041lM611g).m149a(40);
             }
-            AppState.f177b[1319] = new C0042m(abstractC0041lM611g);
+            AppState.f177b[1319] = new ContactInfo(abstractC0041lM611g);
         } else if (i == 54) {
             AppState.m617d(abstractC0041lM611g.f369o);
             C0034e.m966a(C0031bd.m871i(((C0035f) abstractC0041lM611g).f297d), (String) null, (String) null);
@@ -1066,7 +1066,7 @@ public final class C0029bb {
     }
 
     /* renamed from: a */
-    public static final void m822a(AbstractC0041l abstractC0041l) {
+    public static final void m822a(Contact abstractC0041l) {
         AppState.m599a(1504, (abstractC0041l instanceof C0006af) && !((C0005ae) abstractC0041l.f369o).mo83f());
     }
 
@@ -1074,7 +1074,7 @@ public final class C0029bb {
     public static final int m823c(String str, int i) {
         AppState.m591f(1281);
         Object obj = AppState.f177b[1365];
-        if (i == 63 && !((AbstractC0041l) obj).f369o.m1056C()) {
+        if (i == 63 && !((Contact) obj).f369o.m1056C()) {
             return C0015ao.m338l(299);
         }
         if (i == 40 || i == 63 || i == 85) {
@@ -1099,7 +1099,7 @@ public final class C0029bb {
             if (obj instanceof C0006af) {
                 return ((C0006af) obj).m149a(4);
             }
-            AppState.f177b[1319] = new C0042m((AbstractC0041l) obj);
+            AppState.f177b[1319] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.m617d(((C0035f) obj).f369o);
             C0034e.m966a(C0031bd.m871i(((C0035f) obj).f297d), (String) null, (String) null);
@@ -1115,7 +1115,7 @@ public final class C0029bb {
 
     /* renamed from: d */
     public static final int m824d(int i) {
-        AbstractC0037h abstractC0037hM616i = AppState.m616i();
+        Account abstractC0037hM616i = AppState.m616i();
         switch (abstractC0037hM616i.mo80a()) {
             case 0:
                 C0028ba c0028ba = (C0028ba) abstractC0037hM616i;
@@ -1240,7 +1240,7 @@ public final class C0029bb {
         try {
             try {
                 C0015ao.m343s();
-                C0024ax c0024axM629a = C0024ax.m629a((String) objArr[1], (AbstractC0037h) objArr[0], 0);
+                C0024ax c0024axM629a = C0024ax.m629a((String) objArr[1], (Account) objArr[0], 0);
                 int iM634a = c0024axM629a.m634a();
                 if (iM634a == 200) {
                     Vector vectorM516c = Utils.m516c(new ByteBuffer(c0024axM629a).m1317c(), '\n');

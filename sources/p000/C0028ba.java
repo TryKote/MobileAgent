@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /* renamed from: ba */
 /* loaded from: MobileAgent_3.9.jar:ba.class */
-public final class C0028ba extends AbstractC0037h implements ListItem {
+public final class C0028ba extends Account implements ListItem {
 
     /* renamed from: a */
     public String f225a;
@@ -27,7 +27,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     public String f230f;
 
     /* renamed from: g */
-    public C0003ac f231g;
+    public VCard f231g;
 
     /* renamed from: h */
     public boolean f232h;
@@ -45,13 +45,13 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         C0010aj c0010aj = new C0010aj(this, -1, 102, AppState.m584b(1039));
         c0010aj.f399g = true;
         this.f334D = c0010aj;
-        this.f231g = new C0003ac();
+        this.f231g = new VCard();
         this.f232h = true;
         this.f233K = new SizeCache();
         this.f234L = C0040k.m1213g();
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
     public final int mo80a() {
         return 0;
@@ -90,21 +90,21 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         this.f228d = C0040k.m1213g();
         int iM1328e3 = c0043n2.m1328e();
         for (int i = 0; i < iM1328e3; i++) {
-            this.f228d.addElement(C0052w.m1411b(c0043n2));
+            this.f228d.addElement(ChatRoom.m1411b(c0043n2));
         }
         if (c0043n2.m1353u() != 21554) {
             throw new RuntimeException();
         }
         m744b(false);
-        this.f231g = new C0003ac();
+        this.f231g = new VCard();
         this.f232h = true;
         this.f233K = new SizeCache();
         this.f234L = C0040k.m1213g();
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final AbstractC0037h mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
+    public final Account mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
         super.mo82a(c0043n, z, z2);
         if (z2) {
             c0043n.m1327c(m716a(z));
@@ -114,11 +114,11 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return this;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
     public final void mo714b(ByteBuffer c0043n) {
         c0043n.m1360p(13).m1360p(this.f326v).m1360p(this.f327w).m1360p(this.f328x);
-        C0003ac c0003ac = this.f231g;
+        VCard c0003ac = this.f231g;
         boolean zM59c = c0003ac.m59c();
         c0043n.m1322a(zM59c);
         if (zM59c) {
@@ -126,7 +126,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         }
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
     public final void mo715a(ByteBuffer c0043n) {
         int iM1328e = c0043n.m1328e();
@@ -141,7 +141,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
             this.f326v = c0043n.m1328e();
             this.f327w = c0043n.m1328e();
             this.f328x = c0043n.m1328e();
-            this.f231g = C0003ac.m58b(c0043n);
+            this.f231g = VCard.m58b(c0043n);
         }
     }
 
@@ -159,7 +159,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                 c0043n.m1360p(0);
                 c0043n.m1360p(iM742V - 1);
                 for (int i = 0; i < iM742V; i++) {
-                    C0052w c0052w = (C0052w) this.f228d.elementAt(i);
+                    ChatRoom c0052w = (ChatRoom) this.f228d.elementAt(i);
                     if (c0052w != m746W()) {
                         c0052w.m1410a(c0043n);
                     }
@@ -177,27 +177,27 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return (C0035f) m1069c((Object) str);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
-    public final AbstractC0046q mo85b() {
+    public final ContactGroup mo85b() {
         return new C0010aj(this, -1, 101, AppState.m584b(1040));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: c */
-    public final AbstractC0046q mo86c() {
+    public final ContactGroup mo86c() {
         return new C0010aj(this, -1, 104, AppState.m584b(1042));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: d */
-    public final AbstractC0046q mo87d() {
+    public final ContactGroup mo87d() {
         return new C0010aj(this, -1, 103, AppState.m584b(1041));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: e */
-    public final AbstractC0046q mo88e() {
+    public final ContactGroup mo88e() {
         return new C0010aj(this, -1, 105, AppState.m584b(1043));
     }
 
@@ -206,7 +206,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return (C0010aj) this.f313i.elementAt(0);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: g */
     public final int mo89g() {
         m1061F();
@@ -217,7 +217,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return 0;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: h */
     public final int mo108h() {
         if (this.f322r >= 1 && this.f322r < 100) {
@@ -248,7 +248,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     /* JADX WARN: Removed duplicated region for block: B:115:0x067c A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
     /* JADX WARN: Removed duplicated region for block: B:119:0x06a3 A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
     /* JADX WARN: Removed duplicated region for block: B:130:0x06e7 A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: i */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -287,7 +287,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                 int i4 = this.f318n.f384b;
                 int i5 = i4;
                 if (i4 > 0) {
-                    C0015ao.m419a((AbstractC0037h) this, i5);
+                    C0015ao.m419a((Account) this, i5);
                     this.f323s = 60;
                     StringBuffer stringBufferM1217h = C0040k.m1217h();
                     while (true) {
@@ -335,7 +335,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                 m1052c(C0015ao.m321a(this, 4102, (ByteBuffer) null));
                 return;
             }
-            C0015ao.m421a((AbstractC0037h) this, c0043nM1349s);
+            C0015ao.m421a((Account) this, c0043nM1349s);
             int iM1330h = c0043nM1349s.m1330h(12);
             int iM1330h2 = c0043nM1349s.m1330h(8);
             c0043nM1349s.m1329g(44);
@@ -357,7 +357,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                     C0015ao.m461a(this, c0043nM1349s);
                     break;
                 case 4105:
-                    C0038i.m1110a(this, c0043nM1349s, 0L);
+                    Conversation.m1110a(this, c0043nM1349s, 0L);
                     break;
                 case 4111:
                     int iM1328e = c0043nM1349s.m1328e();
@@ -460,7 +460,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                                         strM1336h2 = C0034e.m986d(StringUtils.m12a(strM529d, iM627a + 6, strM529d.indexOf(AppState.m584b(134123), iM627a))).m1336h();
                                     }
                                     if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
-                                        C0038i.m1110a(this, new ByteBuffer().m1360p(0).m1360p(i2 | 4 | 128).m1308a((String) hashtable.get(AppState.m584b(264203))).m1307a(strM1336h2, i3).m1360p(0).m1360p(0).m1360p(i).m1309b(strM1336h).m1308a(str), jM491a);
+                                        Conversation.m1110a(this, new ByteBuffer().m1360p(0).m1360p(i2 | 4 | 128).m1308a((String) hashtable.get(AppState.m584b(264203))).m1307a(strM1336h2, i3).m1360p(0).m1360p(0).m1360p(i).m1309b(strM1336h).m1308a(str), jM491a);
                                     }
                                     AppState.m594c(1449, 1);
                                     break;
@@ -491,7 +491,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                         if ((i2 & 128) != 0) {
                         }
                         if (i != -1) {
-                            C0038i.m1110a(this, new ByteBuffer().m1360p(0).m1360p(i2 | 4 | 128).m1308a((String) hashtable.get(AppState.m584b(264203))).m1307a(strM1336h2, i3).m1360p(0).m1360p(0).m1360p(i).m1309b(strM1336h).m1308a(str), jM491a);
+                            Conversation.m1110a(this, new ByteBuffer().m1360p(0).m1360p(i2 | 4 | 128).m1308a((String) hashtable.get(AppState.m584b(264203))).m1307a(strM1336h2, i3).m1360p(0).m1360p(0).m1360p(i).m1309b(strM1336h).m1308a(str), jM491a);
                             AppState.m594c(1449, 1);
                         }
                     } catch (Throwable th) {
@@ -514,7 +514,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                     C0031bd.m883a(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4151:
-                    C0038i.m1112a(this, c0043nM1349s);
+                    Conversation.m1112a(this, c0043nM1349s);
                     break;
                 case 4160:
                     C0031bd.m883a(this, c0043nM1349s, iM1330h2);
@@ -538,7 +538,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                                     m732g(strM1334g4);
                                     C0015ao.m393a(this, strM1334g4);
                                 } else if (i11 == 2) {
-                                    C0042m c0042mM1251a = C0042m.m1251a(this);
+                                    ContactInfo c0042mM1251a = ContactInfo.m1251a(this);
                                     c0042mM1251a.m1262e(strM1334g4);
                                     AppState.f177b[1319] = c0042mM1251a;
                                     C0029bb.m778d(new C0029bb(5, null));
@@ -578,7 +578,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                                     C0034e.m925a(6);
                                     c0035fM717f3.m1227c(2);
                                     c0035fM717f3.m1239a(16, strM1335e2, 0L, jM1341m);
-                                    AbstractC0046q abstractC0046qM1080g = c0035fM717f3.f369o.m1080g(c0035fM717f3);
+                                    ContactGroup abstractC0046qM1080g = c0035fM717f3.f369o.m1080g(c0035fM717f3);
                                     if (abstractC0046qM1080g != null && abstractC0046qM1080g.f399g) {
                                         abstractC0046qM1080g.mo1397n();
                                     }
@@ -605,7 +605,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                     } else {
                         Vector vectorM1345p = c0043nM1349s.m1345p();
                         if (!vectorM1345p.isEmpty()) {
-                            String[] strArrM55a = C0003ac.m55a((ByteBuffer) vectorM1345p.elementAt(0));
+                            String[] strArrM55a = VCard.m55a((ByteBuffer) vectorM1345p.elementAt(0));
                             if (strArrM55a.length >= 8 && !this.f231g.m59c()) {
                                 String str3 = strArrM55a[2];
                                 if (StringUtils.m3a(525044, str3)) {
@@ -616,7 +616,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
                                     String str6 = strArrM55a[6];
                                     String str7 = strArrM55a[7];
                                     try {
-                                        C0003ac c0003ac = this.f231g;
+                                        VCard c0003ac = this.f231g;
                                         String strM584b = AppState.m584b(590588);
                                         String str8 = AppState.f181d;
                                         c0003ac.m53a(str5, str4, strM584b, str8, str8, str8, str6, str7);
@@ -658,7 +658,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return c0043n;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: O */
     public final Vector mo720O() {
         Vector vectorMo720O = super.mo720O();
@@ -725,9 +725,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(C0015ao.m321a(this, 4130, new ByteBuffer().m1360p(i2 != 3 ? i2 : -2147483647).m1308a(strM1215a).m1309b(strM584b).m1309b(AppState.f181d).m1360p(AppState.m587e(105) ? -1 : 22)));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo125a(AbstractC0041l abstractC0041l, String str, long j) {
+    public final int mo125a(Contact abstractC0041l, String str, long j) {
         int iMo125a = super.mo125a(abstractC0041l, str, j);
         if (0 != iMo125a) {
             return iMo125a;
@@ -737,7 +737,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     }
 
     /* renamed from: a */
-    private int m722a(int i, String[] strArr, C0003ac c0003ac) {
+    private int m722a(int i, String[] strArr, VCard c0003ac) {
         if (!c0003ac.m59c() || c0003ac.f24l) {
             return 0;
         }
@@ -821,14 +821,14 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
             ByteBuffer c0043n = (ByteBuffer) vector.elementAt(i);
             c0043n.m1328e();
             if (StringUtils.m3a(590694, c0043n.m1334g())) {
-                String[] strArrM55a = C0003ac.m55a(c0043n);
+                String[] strArrM55a = VCard.m55a(c0043n);
                 C0035f c0035fM717f = m717f(str);
                 if (c0035fM717f != null) {
                     if (strArrM55a == null) {
                         c0035fM717f.m999p();
                     } else {
                         try {
-                            c0035fM717f.f306l = new C0003ac();
+                            c0035fM717f.f306l = new VCard();
                             c0035fM717f.f306l.m53a(strArrM55a[0], strArrM55a[1], strArrM55a[2], strArrM55a[3], strArrM55a[4], strArrM55a[5], strArrM55a[6], strArrM55a[7]);
                             c0035fM717f.f307m = true;
                         } catch (Throwable unused) {
@@ -845,7 +845,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     /* renamed from: b */
     public final void m730b(String str, String str2) {
         try {
-            C0003ac c0003ac = this.f231g;
+            VCard c0003ac = this.f231g;
             String strM584b = AppState.m584b(525044);
             String str3 = AppState.f181d;
             c0003ac.m53a(str2, str, strM584b, str3, str3, str3, str3, str3);
@@ -858,7 +858,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     /* renamed from: a */
     public final void m731a(C0014an c0014an) {
         try {
-            C0003ac c0003ac = this.f231g;
+            VCard c0003ac = this.f231g;
             String strM810b = C0029bb.m810b(c0014an.f139g);
             String strM809a = C0029bb.m809a(c0014an.f138f);
             String strM584b = AppState.m584b(590588);
@@ -871,9 +871,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         this.f233K.f403a = -1;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo124a(AbstractC0046q abstractC0046q, String str) {
+    public final int mo124a(ContactGroup abstractC0046q, String str) {
         int iMo124a = super.mo124a(abstractC0046q, str);
         if (0 != iMo124a) {
             return iMo124a;
@@ -882,7 +882,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, new ByteBuffer().m1360p(c0010aj.f74a).m1360p(c0010aj.f75b).m1360p(0).m1309b(str).m1309b(str).m1360p(0)), C0034e.m967e(1), c0010aj, str}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
     public final int mo122a(String str) {
         int iMo122a = super.mo122a(str);
@@ -894,9 +894,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4121, c0043n.m1360p(size).m1306b(8).m1309b(str).m1306b(12)), C0034e.m967e(4), str, C0034e.m967e(size)}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo123a(AbstractC0046q abstractC0046q) {
+    public final int mo123a(ContactGroup abstractC0046q) {
         int iMo123a = super.mo123a(abstractC0046q);
         if (0 != iMo123a) {
             return iMo123a;
@@ -907,9 +907,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, c0043nM1360p.m1309b(str).m1309b(str).m1360p(0)), C0034e.m967e(3), c0010aj}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
-    public final int mo118b(AbstractC0041l abstractC0041l) {
+    public final int mo118b(Contact abstractC0041l) {
         int iMo118b = super.mo118b(abstractC0041l);
         if (0 != iMo118b) {
             return iMo118b;
@@ -921,9 +921,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b | 1).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), C0034e.m967e(2), c0035f}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo114a(AbstractC0041l abstractC0041l) {
+    public final int mo114a(Contact abstractC0041l) {
         return m732g(((C0035f) abstractC0041l).f297d);
     }
 
@@ -932,7 +932,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(C0015ao.m403a(this, str, 7));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
     public final int mo115b(Object obj) {
         String[] strArr = (String[]) obj;
@@ -951,9 +951,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4137, c0043n), C0034e.m967e(8)}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo112a(AbstractC0041l abstractC0041l, Object[] objArr) {
+    public final int mo112a(Contact abstractC0041l, Object[] objArr) {
         int iMo112a = super.mo112a(abstractC0041l, objArr);
         if (0 != iMo112a) {
             return iMo112a;
@@ -1002,9 +1002,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return 0;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo734a(String str, String str2, String str3, AbstractC0046q abstractC0046q, boolean z) {
+    public final int mo734a(String str, String str2, String str3, ContactGroup abstractC0046q, boolean z) {
         int iMo734a = super.mo734a(str, str2, str3, abstractC0046q, z);
         if (0 != iMo734a) {
             return iMo734a;
@@ -1018,9 +1018,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(C0015ao.m321a(this, 4104, new ByteBuffer().m1360p(z ? 524300 : 12).m1308a(str).m1318a(new String[]{this.f339I, str3}).m1360p(0)));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: c */
-    public final int mo104c(AbstractC0041l abstractC0041l) {
+    public final int mo104c(Contact abstractC0041l) {
         C0035f c0035f = (C0035f) abstractC0041l;
         if (c0035f.mo143m()) {
             return m1052c(C0036g.m1024a(this, 48, c0035f.f297d, c0035f.f376u, AppState.f181d, m718f(), false));
@@ -1029,9 +1029,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(C0034e.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: d */
-    public final int mo105d(AbstractC0041l abstractC0041l) {
+    public final int mo105d(Contact abstractC0041l) {
         C0035f c0035f = (C0035f) abstractC0041l;
         int i = c0035f.f295b ^ 8;
         int i2 = i;
@@ -1041,9 +1041,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(C0034e.m987a(this, c0035f, i2));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: e */
-    public final int mo106e(AbstractC0041l abstractC0041l) {
+    public final int mo106e(Contact abstractC0041l) {
         C0035f c0035f = (C0035f) abstractC0041l;
         int i = c0035f.f295b ^ 4;
         int i2 = i;
@@ -1053,21 +1053,21 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         return m1052c(C0034e.m987a(this, c0035f, i2));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: f */
-    public final int mo735f(AbstractC0041l abstractC0041l) {
+    public final int mo735f(Contact abstractC0041l) {
         int iMo735f = super.mo735f(abstractC0041l);
         return 0 != iMo735f ? iMo735f : m1052c(C0015ao.m321a(this, 4104, new ByteBuffer().m1360p(1024).m1308a(((C0035f) abstractC0041l).f297d).m1360p(0).m1360p(0)));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo113a(AbstractC0041l abstractC0041l, AbstractC0046q abstractC0046q, AbstractC0046q abstractC0046q2) {
+    public final int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         int iMo113a = super.mo113a(abstractC0041l, abstractC0046q, abstractC0046q2);
         return 0 != iMo113a ? iMo113a : m1052c(C0034e.m988a(this, (C0035f) abstractC0041l, (C0010aj) abstractC0046q2));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: l */
     public final int mo120l() {
         int iMo120l = super.mo120l();
@@ -1097,7 +1097,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         C0035f c0035f = c0035fM717f;
         if (null == c0035fM717f) {
             String str5 = AppState.f181d;
-            AbstractC0046q abstractC0046q = this.f334D;
+            ContactGroup abstractC0046q = this.f334D;
             C0035f c0035f2 = new C0035f(this, 0, 65664, 3, str, str3, 0, 0, str5, str5, str5);
             abstractC0046q.m1401b((Object) c0035f2);
             if (this.f313i.size() > 0) {
@@ -1137,23 +1137,23 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         m741a(str, 16);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
-    public final AbstractC0041l mo107b(String str) {
+    public final Contact mo107b(String str) {
         return m741a(str, 13);
     }
 
     /* renamed from: a */
-    private final AbstractC0041l m741a(String str, int i) {
+    private final Contact m741a(String str, int i) {
         String str2 = AppState.f181d;
-        AbstractC0046q abstractC0046q = this.f334D;
+        ContactGroup abstractC0046q = this.f334D;
         C0035f c0035f = new C0035f(this, 0, 65536, 3, str, str, 0, 0, str2, str2, str2);
         abstractC0046q.m1401b((Object) c0035f);
         m1052c(C0015ao.m403a(this, str, i));
         return c0035f;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: c */
     public final void mo100c(int i) {
         int i2;
@@ -1199,9 +1199,9 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
         Object objM475a = JsonParser.m475a(obj, AppState.m584b(329785));
         for (int i = 0; i < ((Vector) objM475a).size(); i++) {
             Object objM482e = JsonParser.m482e(objM475a, i);
-            C0052w c0052wM745h = m745h(JsonParser.m477b(objM482e, AppState.m584b(132297)));
+            ChatRoom c0052wM745h = m745h(JsonParser.m477b(objM482e, AppState.m584b(132297)));
             if (c0052wM745h == null) {
-                this.f228d.addElement(new C0052w(objM482e));
+                this.f228d.addElement(new ChatRoom(objM482e));
             } else {
                 c0052wM745h.m1412a(objM482e);
             }
@@ -1222,19 +1222,19 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
             i++;
             Enumeration enumerationElements = this.f228d.elements();
             while (enumerationElements.hasMoreElements()) {
-                if (((C0052w) enumerationElements.nextElement()).f409a == i) {
+                if (((ChatRoom) enumerationElements.nextElement()).f409a == i) {
                     z2 = true;
                 }
             }
         } while (z2);
-        this.f228d.addElement(new C0052w(i));
+        this.f228d.addElement(new ChatRoom(i));
     }
 
     /* renamed from: h */
-    public final C0052w m745h(int i) {
+    public final ChatRoom m745h(int i) {
         Enumeration enumerationElements = this.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
-            C0052w c0052w = (C0052w) enumerationElements.nextElement();
+            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w.f409a == i) {
                 return c0052w;
             }
@@ -1243,15 +1243,15 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     }
 
     /* renamed from: W */
-    public final C0052w m746W() {
-        return (C0052w) this.f228d.lastElement();
+    public final ChatRoom m746W() {
+        return (ChatRoom) this.f228d.lastElement();
     }
 
     /* renamed from: i */
-    public final C0052w m747i(String str) {
+    public final ChatRoom m747i(String str) {
         Enumeration enumerationElements = this.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
-            C0052w c0052w = (C0052w) enumerationElements.nextElement();
+            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w.m1416c(str)) {
                 return c0052w;
             }
@@ -1267,7 +1267,7 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
             if (iM742V < 0) {
                 return;
             }
-            C0052w c0052w = (C0052w) this.f228d.elementAt(iM742V);
+            ChatRoom c0052w = (ChatRoom) this.f228d.elementAt(iM742V);
             if (c0052w.m1416c(str)) {
                 c0052w.f414f.removeElement(str);
                 c0052w.f415g.removeElement(str);
@@ -1280,16 +1280,16 @@ public final class C0028ba extends AbstractC0037h implements ListItem {
     }
 
     /* renamed from: X */
-    public final C0052w m749X() {
-        C0052w c0052wM750m = m750m(AppState.m584b(897));
+    public final ChatRoom m749X() {
+        ChatRoom c0052wM750m = m750m(AppState.m584b(897));
         return c0052wM750m != null ? c0052wM750m : m750m(AppState.m584b(892));
     }
 
     /* renamed from: m */
-    private C0052w m750m(String str) {
+    private ChatRoom m750m(String str) {
         Enumeration enumerationElements = this.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
-            C0052w c0052w = (C0052w) enumerationElements.nextElement();
+            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w.f410b.equals(str)) {
                 return c0052w;
             }

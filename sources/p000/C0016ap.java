@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: ap */
 /* loaded from: MobileAgent_3.9.jar:ap.class */
-public final class C0016ap extends AbstractC0046q {
+public final class C0016ap extends ContactGroup {
 
     /* renamed from: a */
     public int f157a;
@@ -32,7 +32,7 @@ public final class C0016ap extends AbstractC0046q {
         super(null);
     }
 
-    @Override // p000.AbstractC0046q
+    @Override // p000.ContactGroup
     /* renamed from: a */
     public final void mo196a(ByteBuffer c0043n, boolean z) {
         c0043n.m1360p(this.f157a);
@@ -40,7 +40,7 @@ public final class C0016ap extends AbstractC0046q {
         super.mo196a(c0043n, z);
     }
 
-    @Override // p000.AbstractC0046q
+    @Override // p000.ContactGroup
     /* renamed from: b */
     public final int mo197b() {
         return this.f157a;
@@ -64,7 +64,7 @@ public final class C0016ap extends AbstractC0046q {
         return new ByteBuffer().m1376j(str).m1357m(this.f157a).m1359o(1).m1326b(c0043nM1357m2);
     }
 
-    @Override // p000.AbstractC0046q
+    @Override // p000.ContactGroup
     /* renamed from: a */
     public final boolean mo198a() {
         return this.f157a >= 0;

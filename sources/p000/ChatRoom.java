@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: w */
 /* loaded from: MobileAgent_3.9.jar:w.class */
-public final class C0052w {
+public final class ChatRoom {
 
     /* renamed from: a */
     public int f409a;
@@ -43,14 +43,14 @@ public final class C0052w {
     /* renamed from: l */
     public boolean f420l;
 
-    public C0052w() {
+    public ChatRoom() {
         this.f414f = C0040k.m1213g();
         this.f415g = C0040k.m1213g();
         this.f416h = new Hashtable();
         this.f420l = true;
     }
 
-    public C0052w(Object obj) {
+    public ChatRoom(Object obj) {
         this();
         m1412a(obj);
         this.f420l = true;
@@ -67,7 +67,7 @@ public final class C0052w {
         for (int i = 0; i < size; i++) {
             String strM521a = Utils.m521a(this.f414f, i);
             c0043n.m1308a(strM521a);
-            C0026az c0026azM1415b = m1415b(strM521a);
+            Message c0026azM1415b = m1415b(strM521a);
             c0043n.m1323a(c0026azM1415b.f217b);
             C0031bd.m862a(c0026azM1415b.f218c, c0043n);
             C0031bd.m862a(c0026azM1415b.f219d, c0043n);
@@ -98,8 +98,8 @@ public final class C0052w {
     }
 
     /* renamed from: b */
-    public static final C0052w m1411b(ByteBuffer c0043n) {
-        C0052w c0052w = new C0052w();
+    public static final ChatRoom m1411b(ByteBuffer c0043n) {
+        ChatRoom c0052w = new ChatRoom();
         c0052w.f410b = c0043n.m1335e((String) null);
         c0052w.f411c = c0043n.m1328e();
         c0052w.f409a = c0043n.m1328e();
@@ -110,7 +110,7 @@ public final class C0052w {
             Vector vector = c0052w.f414f;
             String strM1334g = c0043n.m1334g();
             vector.addElement(strM1334g);
-            c0052w.f416h.put(strM1334g, new C0026az(c0043n, strM1334g));
+            c0052w.f416h.put(strM1334g, new Message(c0043n, strM1334g));
         }
         return c0052w;
     }
@@ -125,7 +125,7 @@ public final class C0052w {
         this.f419k = true;
     }
 
-    public C0052w(int i) {
+    public ChatRoom(int i) {
         this.f409a = i;
         this.f414f = C0040k.m1213g();
         this.f415g = C0040k.m1213g();
@@ -152,9 +152,9 @@ public final class C0052w {
     }
 
     /* renamed from: b */
-    public final C0026az m1415b(String str) {
+    public final Message m1415b(String str) {
         if (str != null) {
-            return (C0026az) this.f416h.get(str);
+            return (Message) this.f416h.get(str);
         }
         return null;
     }

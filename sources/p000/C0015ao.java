@@ -78,7 +78,7 @@ public final class C0015ao {
             m444ai();
             return 4;
         }
-        AbstractC0037h abstractC0037h = (AbstractC0037h) obj;
+        Account abstractC0037h = (Account) obj;
         int iMo120l = abstractC0037h.m1055B() ? abstractC0037h.mo120l() : abstractC0037h.mo914a_(0);
         int i = iMo120l;
         if (iMo120l != 0) {
@@ -98,7 +98,7 @@ public final class C0015ao {
     public static final int m289a(String str) {
         int iM586d = AppState.m586d(1513);
         C0028ba c0028ba = (C0028ba) AppState.m616i();
-        C0052w c0052wM745h = c0028ba.m745h(iM586d);
+        ChatRoom c0052wM745h = c0028ba.m745h(iM586d);
         C0029bb.m814e(c0052wM745h.f415g);
         if (StringUtils.m3a(852, str)) {
             c0052wM745h.f415g.removeAllElements();
@@ -189,7 +189,7 @@ public final class C0015ao {
 
     /* renamed from: h */
     public static final void m300h() {
-        AbstractC0041l abstractC0041lM611g = AppState.m611g();
+        Contact abstractC0041lM611g = AppState.m611g();
         m415b(abstractC0041lM611g);
         abstractC0041lM611g.f374s = (byte) 0;
         abstractC0041lM611g.f375t = true;
@@ -293,7 +293,7 @@ public final class C0015ao {
 
     /* renamed from: c */
     public static final int m313c(int i) {
-        AbstractC0037h abstractC0037hM616i = AppState.m616i();
+        Account abstractC0037hM616i = AppState.m616i();
         if (!(abstractC0037hM616i instanceof C0033d)) {
             return m383c((i + 161) - 4, (i + 155) - 4, 4);
         }
@@ -372,9 +372,9 @@ public final class C0015ao {
 
     /* renamed from: f */
     public static final int m322f(int i) {
-        C0026az c0026azM1415b = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513)).m1415b(AppState.m584b(1346));
+        Message c0026azM1415b = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513)).m1415b(AppState.m584b(1346));
         String str = c0026azM1415b.f223h;
-        c0026azM1415b.f223h = i == 0 ? C0038i.m1116h(str) : C0038i.m1117i(str);
+        c0026azM1415b.f223h = i == 0 ? Conversation.m1116h(str) : Conversation.m1117i(str);
         return 52;
     }
 
@@ -399,7 +399,7 @@ public final class C0015ao {
     public static final void m324n() {
         C0040k.m1200b(180, 504);
         AppState.m590b(1239, 1240);
-        C0038i.m1113a(true, (C0028ba) AppState.m616i());
+        Conversation.m1113a(true, (C0028ba) AppState.m616i());
     }
 
     /* renamed from: h */
@@ -436,7 +436,7 @@ public final class C0015ao {
     }
 
     /* renamed from: a */
-    public static final void m328a(AbstractC0037h abstractC0037h) {
+    public static final void m328a(Account abstractC0037h) {
         Vector vectorM614m = AppState.m614m(1291);
         Vector vector = vectorM614m;
         if (vectorM614m == null) {
@@ -456,7 +456,7 @@ public final class C0015ao {
             if (size < 0) {
                 return 4;
             }
-            ((AbstractC0037h) vectorM614m.elementAt(size)).mo914a_(0);
+            ((Account) vectorM614m.elementAt(size)).mo914a_(0);
         }
     }
 
@@ -464,7 +464,7 @@ public final class C0015ao {
     public static final int m330i(int i) {
         switch (i) {
             case 0:
-                C0038i.m1113a(false, (C0028ba) null);
+                Conversation.m1113a(false, (C0028ba) null);
                 return 12;
             case 1:
                 m331a(false, true, true);
@@ -473,10 +473,10 @@ public final class C0015ao {
                 m331a(true, false, true);
                 return 12;
             case 3:
-                C0038i.m1126a(true);
+                Conversation.m1126a(true);
                 return 12;
             case 4:
-                C0038i.m1126a(false);
+                Conversation.m1126a(false);
                 return 12;
             case 5:
                 return C0040k.m1201f();
@@ -729,7 +729,7 @@ public final class C0015ao {
         C0028ba c0028ba = (C0028ba) AppState.m616i();
         Enumeration enumerationElements = c0028ba.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
-            C0052w c0052w = (C0052w) enumerationElements.nextElement();
+            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
                 C0032c c0032cM898b = C0032c.m886c().m896a(234).m898b(c0052w.f410b);
                 c0032cM898b.f265d = c0052w;
@@ -741,7 +741,7 @@ public final class C0015ao {
 
     /* renamed from: e */
     public static final int m351e(Object obj) {
-        AppState.m594c(1527, ((C0052w) obj).f409a);
+        AppState.m594c(1527, ((ChatRoom) obj).f409a);
         return 0;
     }
 
@@ -896,10 +896,10 @@ public final class C0015ao {
     public static final int m364q(int i) {
         switch (i) {
             case 0:
-                C0038i.m1127a();
+                Conversation.m1127a();
                 break;
             case 1:
-                C0038i.m1128b();
+                Conversation.m1128b();
                 break;
             case 2:
                 AppState.m594c(230, 1);
@@ -1250,11 +1250,11 @@ public final class C0015ao {
 
     /* renamed from: h */
     public static final int m397h(Object obj) {
-        AbstractC0046q abstractC0046q = (AbstractC0046q) obj;
+        ContactGroup abstractC0046q = (ContactGroup) obj;
         if (null == abstractC0046q) {
             return 4;
         }
-        AbstractC0041l abstractC0041lM611g = AppState.m611g();
+        Contact abstractC0041lM611g = AppState.m611g();
         int iMo113a = abstractC0041lM611g.mo143m() ? 310 : abstractC0041lM611g.f369o.mo113a(abstractC0041lM611g, abstractC0041lM611g.f369o.m1080g(abstractC0041lM611g), abstractC0046q);
         int i = iMo113a;
         if (0 != iMo113a) {
@@ -1285,14 +1285,14 @@ public final class C0015ao {
             jMo275w = AbstractC0025ay.f195c;
         }
         AppState.m594c(1479, 0);
-        C0034e.m953a(C0003ac.m62a(AppState.m586d(39), C0029bb.m809a(jMo274v), C0029bb.m810b(jMo275w)), jMo274v, jMo275w);
+        C0034e.m953a(VCard.m62a(AppState.m586d(39), C0029bb.m809a(jMo274v), C0029bb.m810b(jMo275w)), jMo274v, jMo275w);
         return 6;
     }
 
     /* renamed from: L */
     public static final int m400L() {
         char c;
-        AbstractC0037h abstractC0037hM616i = AppState.m616i();
+        Account abstractC0037hM616i = AppState.m616i();
         if (abstractC0037hM616i.m1055B()) {
             c = 300;
         } else {
@@ -1309,7 +1309,7 @@ public final class C0015ao {
 
     /* renamed from: A */
     public static final int m401A(int i) {
-        AbstractC0041l abstractC0041lM611g = AppState.m611g();
+        Contact abstractC0041lM611g = AppState.m611g();
         switch (i) {
             case 0:
                 int iM1235E = abstractC0041lM611g.m1235E();
@@ -1334,7 +1334,7 @@ public final class C0015ao {
         C0028ba c0028ba = (C0028ba) AppState.m616i();
         Enumeration enumerationElements = c0028ba.f228d.elements();
         while (enumerationElements.hasMoreElements()) {
-            C0052w c0052w = (C0052w) enumerationElements.nextElement();
+            ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
                 C0032c c0032cM898b = C0032c.m886c().m896a(234).m898b(C0040k.m1215a(C0040k.m1217h().append(c0052w.f410b).append(' ').append('['))).m901a(StringUtils.m17c(Integer.toString(c0052w.f412d)), 1, 0).m898b(C0040k.m1215a(C0040k.m1217h().append('/').append(c0052w.f411c).append(']')));
                 c0032cM898b.f265d = c0052w;
@@ -1355,7 +1355,7 @@ public final class C0015ao {
     public static final int m404j(Object obj) {
         long jMo274v;
         long jMo275w;
-        AbstractC0041l abstractC0041l = (AbstractC0041l) obj;
+        Contact abstractC0041l = (Contact) obj;
         String strM584b = AppState.m584b(1249);
         ListItem interfaceC0044o = AbstractC0025ay.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
@@ -1441,7 +1441,7 @@ public final class C0015ao {
 
     /* renamed from: m */
     public static final int m409m(Object obj) {
-        int iM1233b = ((AbstractC0041l) obj).m1233b(AppState.m584b(43));
+        int iM1233b = ((Contact) obj).m1233b(AppState.m584b(43));
         if (0 != iM1233b) {
             return m338l(iM1233b);
         }
@@ -1475,12 +1475,12 @@ public final class C0015ao {
             if (size < 0) {
                 return i;
             }
-            i |= ((AbstractC0041l) vectorM614m.elementAt(size)).f374s;
+            i |= ((Contact) vectorM614m.elementAt(size)).f374s;
         }
     }
 
     /* renamed from: a */
-    public static final void m414a(AbstractC0041l abstractC0041l) {
+    public static final void m414a(Contact abstractC0041l) {
         m356y();
         Vector vectorM614m = AppState.m614m(1243);
         if (vectorM614m.contains(abstractC0041l)) {
@@ -1491,7 +1491,7 @@ public final class C0015ao {
     }
 
     /* renamed from: b */
-    public static final void m415b(AbstractC0041l abstractC0041l) {
+    public static final void m415b(Contact abstractC0041l) {
         Vector vectorM614m = AppState.m614m(1243);
         if (vectorM614m.contains(abstractC0041l)) {
             Utils.m525a(vectorM614m, abstractC0041l);
@@ -1500,7 +1500,7 @@ public final class C0015ao {
     }
 
     /* renamed from: b */
-    public static final boolean m416b(AbstractC0037h abstractC0037h) {
+    public static final boolean m416b(Account abstractC0037h) {
         if (abstractC0037h == null) {
             return false;
         }
@@ -1511,12 +1511,12 @@ public final class C0015ao {
             if (size < 0) {
                 return false;
             }
-        } while (((AbstractC0041l) vectorM614m.elementAt(size)).f369o != abstractC0037h);
+        } while (((Contact) vectorM614m.elementAt(size)).f369o != abstractC0037h);
         return true;
     }
 
     /* renamed from: c */
-    public static final int m417c(AbstractC0037h abstractC0037h) {
+    public static final int m417c(Account abstractC0037h) {
         if (abstractC0037h == null) {
             return 16384;
         }
@@ -1527,19 +1527,19 @@ public final class C0015ao {
             if (size < 0) {
                 return abstractC0037h.mo108h();
             }
-        } while (((AbstractC0041l) vectorM614m.elementAt(size)).f369o != abstractC0037h);
+        } while (((Contact) vectorM614m.elementAt(size)).f369o != abstractC0037h);
         return 16384;
     }
 
     /* renamed from: c */
-    public static final void m418c(AbstractC0041l abstractC0041l) {
+    public static final void m418c(Contact abstractC0041l) {
         abstractC0041l.m1230C();
         AppState.m614m(1242).removeElement(abstractC0041l);
         f152f = true;
     }
 
     /* renamed from: a */
-    public static final void m419a(AbstractC0037h abstractC0037h, int i) {
+    public static final void m419a(Account abstractC0037h, int i) {
         abstractC0037h.m1059e(m431af());
         int[] iArr = abstractC0037h.f317m;
         iArr[0] = iArr[0] + i;
@@ -1554,7 +1554,7 @@ public final class C0015ao {
     }
 
     /* renamed from: b */
-    public static final void m420b(AbstractC0037h abstractC0037h, int i) {
+    public static final void m420b(Account abstractC0037h, int i) {
         abstractC0037h.m1059e(m431af());
         int[] iArr = abstractC0037h.f317m;
         iArr[1] = iArr[1] + i;
@@ -1569,7 +1569,7 @@ public final class C0015ao {
     }
 
     /* renamed from: a */
-    public static final void m421a(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
+    public static final void m421a(Account abstractC0037h, ByteBuffer c0043n) {
         m419a(abstractC0037h, c0043n.f384b);
     }
 
@@ -1673,7 +1673,7 @@ public final class C0015ao {
         ByteBuffer c0043nM851h = C0031bd.m851h(C0040k.m1221a(6513505));
         while (c0043nM851h.f384b > 0) {
             try {
-                AbstractC0037h abstractC0037h = null;
+                Account abstractC0037h = null;
                 byte bM1344o = c0043nM851h.m1344o();
                 switch (bM1344o & 7) {
                     case 0:
@@ -1712,8 +1712,8 @@ public final class C0015ao {
     }
 
     /* renamed from: I */
-    public static final AbstractC0037h m434I(int i) {
-        return (AbstractC0037h) AppState.m614m(1241).elementAt(i);
+    public static final Account m434I(int i) {
+        return (Account) AppState.m614m(1241).elementAt(i);
     }
 
     /* renamed from: ah */
@@ -1730,12 +1730,12 @@ public final class C0015ao {
             if (z2) {
                 c0043n.m1300a(20480);
                 while (vectorM614m.size() > 0) {
-                    ((AbstractC0037h) Utils.m524a(vectorM614m)).mo82a(c0043n, z, true).mo714b(c0043n);
+                    ((Account) Utils.m524a(vectorM614m)).mo82a(c0043n, z, true).mo714b(c0043n);
                 }
             } else {
                 c0043n.m1300a(3072);
                 for (int i = 0; i < vectorM614m.size(); i++) {
-                    ((AbstractC0037h) vectorM614m.elementAt(i)).mo82a(c0043n, z, false).mo714b(c0043n);
+                    ((Account) vectorM614m.elementAt(i)).mo82a(c0043n, z, false).mo714b(c0043n);
                 }
             }
             C0031bd.m852a(C0040k.m1221a(6513505), c0043n, z);
@@ -1744,8 +1744,8 @@ public final class C0015ao {
     }
 
     /* renamed from: a */
-    public static final int m437a(int i, AbstractC0037h abstractC0037h, String str, String str2) {
-        AbstractC0037h abstractC0037h2;
+    public static final int m437a(int i, Account abstractC0037h, String str, String str2) {
+        Account abstractC0037h2;
         if (StringUtils.m1a(str)) {
             return 301;
         }
@@ -1757,7 +1757,7 @@ public final class C0015ao {
         while (true) {
             size--;
             if (size >= 0) {
-                AbstractC0037h abstractC0037h3 = (AbstractC0037h) vectorM614m.elementAt(size);
+                Account abstractC0037h3 = (Account) vectorM614m.elementAt(size);
                 if (i == abstractC0037h3.mo80a() && str.equals(abstractC0037h3.f315k)) {
                     abstractC0037h2 = abstractC0037h3;
                     break;
@@ -1767,7 +1767,7 @@ public final class C0015ao {
                 break;
             }
         }
-        AbstractC0037h abstractC0037h4 = abstractC0037h2;
+        Account abstractC0037h4 = abstractC0037h2;
         if (abstractC0037h != null) {
             if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037h) {
                 return abstractC0037h.mo102a(str, str2);
@@ -1789,7 +1789,7 @@ public final class C0015ao {
                 if (i3 < 0) {
                     break;
                 }
-                if (((AbstractC0037h) vectorM614m3.elementAt(i3)).f314j == i2) {
+                if (((Account) vectorM614m3.elementAt(i3)).f314j == i2) {
                     z = true;
                     break;
                 }
@@ -1815,7 +1815,7 @@ public final class C0015ao {
     }
 
     /* renamed from: b */
-    public static final AbstractC0037h m438b(int i, String str) {
+    public static final Account m438b(int i, String str) {
         Vector vectorM614m = AppState.m614m(1241);
         int size = vectorM614m.size();
         while (true) {
@@ -1823,7 +1823,7 @@ public final class C0015ao {
             if (size < 0) {
                 return null;
             }
-            AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM614m.elementAt(size);
+            Account abstractC0037h = (Account) vectorM614m.elementAt(size);
             if (str.equals(abstractC0037h.f315k) && abstractC0037h.mo80a() == i) {
                 return abstractC0037h;
             }
@@ -1924,7 +1924,7 @@ public final class C0015ao {
             if (size2 < 0) {
                 return;
             }
-            AbstractC0037h abstractC0037hM434I = m434I(size2);
+            Account abstractC0037hM434I = m434I(size2);
             if (abstractC0037hM434I.m1055B()) {
                 if (!z) {
                     abstractC0037hM434I.mo120l();
@@ -1945,7 +1945,7 @@ public final class C0015ao {
             if (iM541c < 0) {
                 return vectorM1213g;
             }
-            Vector vectorM1078P = ((AbstractC0037h) vectorM614m.elementAt(iM541c)).m1078P();
+            Vector vectorM1078P = ((Account) vectorM614m.elementAt(iM541c)).m1078P();
             int iM541c2 = Utils.m541c(vectorM1078P);
             while (true) {
                 iM541c2--;
@@ -1959,7 +1959,7 @@ public final class C0015ao {
     }
 
     /* renamed from: d */
-    public static final Vector m446d(AbstractC0037h abstractC0037h) {
+    public static final Vector m446d(Account abstractC0037h) {
         if (abstractC0037h == null) {
             Vector vectorM1213g = C0040k.m1213g();
             int iM433Q = m433Q();
@@ -1968,7 +1968,7 @@ public final class C0015ao {
                 if (iM433Q < 0) {
                     return vectorM1213g;
                 }
-                AbstractC0037h abstractC0037hM434I = m434I(iM433Q);
+                Account abstractC0037hM434I = m434I(iM433Q);
                 int size = abstractC0037hM434I.f313i.size();
                 while (true) {
                     size--;
@@ -1986,7 +1986,7 @@ public final class C0015ao {
                 if (iM433Q2 < 0) {
                     return vectorM1213g2;
                 }
-                AbstractC0037h abstractC0037hM434I2 = m434I(iM433Q2);
+                Account abstractC0037hM434I2 = m434I(iM433Q2);
                 if (abstractC0037hM434I2 == abstractC0037h) {
                     int size2 = abstractC0037hM434I2.f313i.size();
                     while (true) {
@@ -1994,7 +1994,7 @@ public final class C0015ao {
                         if (size2 < 0) {
                             break;
                         }
-                        AbstractC0046q abstractC0046qM1082g = abstractC0037hM434I2.m1082g(size2);
+                        ContactGroup abstractC0046qM1082g = abstractC0037hM434I2.m1082g(size2);
                         if (abstractC0046qM1082g != abstractC0037hM434I2.f334D && abstractC0046qM1082g != abstractC0037hM434I2.f335E && abstractC0046qM1082g != abstractC0037hM434I2.f336F && abstractC0046qM1082g != abstractC0037hM434I2.f337G) {
                             vectorM1213g2.addElement(abstractC0046qM1082g);
                         }
@@ -2183,12 +2183,12 @@ public final class C0015ao {
         int[] iArrM191s;
         C0013am c0013amM66b;
         int iM1181a = 0;
-        C0026az c0026azM1415b;
+        Message c0026azM1415b;
         TextBox textBoxM1028h;
         int i3 = 0;
         C0028ba c0028ba;
-        C0052w c0052wM745h;
-        C0026az c0026azM1415b2;
+        ChatRoom c0052wM745h;
+        Message c0026azM1415b2;
         boolean z5;
         while (!f151e) {
             synchronized (f150d) {
@@ -2257,7 +2257,7 @@ public final class C0015ao {
                                                 }
                                                 if (m305K(10) && AbstractC0025ay.f201i) {
                                                     if (AppState.m587e(276)) {
-                                                        if ((AbstractC0025ay.f196d < C0003ac.f25m || AbstractC0025ay.f196d > C0003ac.f27o || AbstractC0025ay.f195c > C0003ac.f28p || AbstractC0025ay.f195c < C0003ac.f26n || ((long) AppState.m586d(39)) != C0003ac.f29q) && AppState.m587e(280)) {
+                                                        if ((AbstractC0025ay.f196d < VCard.f25m || AbstractC0025ay.f196d > VCard.f27o || AbstractC0025ay.f195c > VCard.f28p || AbstractC0025ay.f195c < VCard.f26n || ((long) AppState.m586d(39)) != VCard.f29q) && AppState.m587e(280)) {
                                                             C0029bb.m772f();
                                                         }
                                                     }
@@ -2464,7 +2464,7 @@ public final class C0015ao {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 40:
-                                                AbstractC0041l abstractC0041lM611g = AppState.m611g();
+                                                Contact abstractC0041lM611g = AppState.m611g();
                                                 iM338l = (abstractC0041lM611g.f374s != 0) || abstractC0041lM611g.f375t ? 40 : 0;
                                                 break;
                                             case 41:
@@ -2476,7 +2476,7 @@ public final class C0015ao {
                                                     } else {
                                                         Object objM819l = C0029bb.m819l();
                                                         C0028ba c0028ba2 = (C0028ba) AppState.m616i();
-                                                        C0052w c0052wM745h2 = c0028ba2.m745h(AppState.m586d(1513));
+                                                        ChatRoom c0052wM745h2 = c0028ba2.m745h(AppState.m586d(1513));
                                                         if (c0052wM745h2 != c0028ba2.m746W()) {
                                                             c0052wM745h2.f413e = JsonParser.m479c(objM819l, AppState.m584b(591768));
                                                             c0052wM745h2.f414f.removeAllElements();
@@ -2486,7 +2486,7 @@ public final class C0015ao {
                                                             }
                                                             Enumeration enumerationElements2 = ((Vector) JsonParser.m475a(objM819l, AppState.m584b(329636))).elements();
                                                             while (enumerationElements2.hasMoreElements()) {
-                                                                C0026az c0026az = new C0026az((Hashtable) enumerationElements2.nextElement());
+                                                                Message c0026az = new Message((Hashtable) enumerationElements2.nextElement());
                                                                 c0052wM745h2.f416h.put(c0026az.f216a, c0026az);
                                                             }
                                                             Enumeration enumerationKeys = c0052wM745h2.f416h.keys();
@@ -2507,7 +2507,7 @@ public final class C0015ao {
                                                         } else {
                                                             Enumeration enumerationElements4 = ((Vector) objM819l).elements();
                                                             while (enumerationElements4.hasMoreElements()) {
-                                                                C0026az c0026az2 = new C0026az((Hashtable) enumerationElements4.nextElement());
+                                                                Message c0026az2 = new Message((Hashtable) enumerationElements4.nextElement());
                                                                 c0052wM745h2.f416h.put(c0026az2.f216a, c0026az2);
                                                             }
                                                         }
@@ -2532,8 +2532,8 @@ public final class C0015ao {
                                                             Enumeration enumerationKeys2 = ((Hashtable) JsonParser.m482e(objM819l2, i6)).keys();
                                                             while (enumerationKeys2.hasMoreElements()) {
                                                                 String str5 = (String) enumerationKeys2.nextElement();
-                                                                C0052w c0052wM747i = c0028ba3.m747i(str5);
-                                                                C0052w c0052wM745h3 = c0028ba3.m745h(AppState.m586d(1527));
+                                                                ChatRoom c0052wM747i = c0028ba3.m747i(str5);
+                                                                ChatRoom c0052wM745h3 = c0028ba3.m745h(AppState.m586d(1527));
                                                                 if (c0052wM747i != null && (c0026azM1415b2 = c0052wM747i.m1415b(str5)) != null && c0052wM745h3 != null) {
                                                                     if (c0026azM1415b2.m671a(4)) {
                                                                         if (c0052wM745h3 == c0028ba3.m749X()) {
@@ -2577,7 +2577,7 @@ public final class C0015ao {
                                                             obj3 = c0052wM745h.f416h.get(objNextElement);
                                                         }
                                                     }
-                                                    if (str == (obj3 != null ? ((C0026az) obj3).f216a : null)) {
+                                                    if (str == (obj3 != null ? ((Message) obj3).f216a : null)) {
                                                         c0052wM745h.m1424a(true);
                                                         i3 = 41;
                                                     }
@@ -2682,7 +2682,7 @@ public final class C0015ao {
                                                 if (m307b(9, 3000L) && (textBoxM1028h = C0036g.m1028h()) != null) {
                                                     String strM16a = StringUtils.m16a(textBoxM1028h);
                                                     if (AppState.m587e(106)) {
-                                                        String strM1123k = C0038i.m1123k(strM16a);
+                                                        String strM1123k = Conversation.m1123k(strM16a);
                                                         if (!StringUtils.m6a(strM1123k, strM16a)) {
                                                             textBoxM1028h.setString(strM1123k);
                                                         }
@@ -2750,8 +2750,8 @@ public final class C0015ao {
                                                                 Object objM482e = JsonParser.m482e(objM819l3, size5);
                                                                 int iM510a = Utils.m510a((Object) JsonParser.m480c(objM482e, 263673));
                                                                 String strM480c = JsonParser.m480c(objM482e, 329240);
-                                                                C0052w c0052wM747i2 = ((C0028ba) AppState.m616i()).m747i(strM480c);
-                                                                C0026az c0026azM1415b3 = c0052wM747i2.m1415b(strM480c);
+                                                                ChatRoom c0052wM747i2 = ((C0028ba) AppState.m616i()).m747i(strM480c);
+                                                                Message c0026azM1415b3 = c0052wM747i2.m1415b(strM480c);
                                                                 if (c0052wM747i2 != null) {
                                                                     c0052wM747i2.m1417d(strM480c);
                                                                 }
@@ -2808,7 +2808,7 @@ public final class C0015ao {
                                                                 if (size6 >= 0) {
                                                                     String strM483f = JsonParser.m483f(objM476a, size6);
                                                                     C0028ba c0028ba4 = (C0028ba) AppState.m616i();
-                                                                    C0052w c0052wM747i3 = c0028ba4.m747i(strM483f);
+                                                                    ChatRoom c0052wM747i3 = c0028ba4.m747i(strM483f);
                                                                     if (c0052wM747i3 != null && (c0026azM1415b = c0052wM747i3.m1415b(strM483f)) != null) {
                                                                         if (c0026azM1415b.m671a(4)) {
                                                                             c0052wM747i3.m1419b();
@@ -2841,7 +2841,7 @@ public final class C0015ao {
                                                     if (iM818c6 != 0) {
                                                         iM1181a = iM818c6;
                                                     } else {
-                                                        C0052w c0052wM746W = ((C0028ba) AppState.m616i()).m746W();
+                                                        ChatRoom c0052wM746W = ((C0028ba) AppState.m616i()).m746W();
                                                         Vector vector = (Vector) C0029bb.m819l();
                                                         c0052wM746W.m1422e();
                                                         int size7 = vector.size();
@@ -2864,7 +2864,7 @@ public final class C0015ao {
                                                             C0028ba c0028ba5 = (C0028ba) AppState.m616i();
                                                             for (int i12 = 0; i12 < iM541c; i12++) {
                                                                 String strM521a = Utils.m521a(c0052wM746W.f414f, i12);
-                                                                C0026az c0026azM1415b4 = c0028ba5.m745h(Utils.m510a(c0052wM746W.f417i.get(strM521a))).m1415b(strM521a);
+                                                                Message c0026azM1415b4 = c0028ba5.m745h(Utils.m510a(c0052wM746W.f417i.get(strM521a))).m1415b(strM521a);
                                                                 if (c0026azM1415b4 != null) {
                                                                     c0052wM746W.f416h.put(strM521a, c0026azM1415b4);
                                                                 } else {
@@ -3291,7 +3291,7 @@ public final class C0015ao {
                                                 } else {
                                                     Object objElementAt2 = vectorM614m5.elementAt(0);
                                                     if (objElementAt2 instanceof String) {
-                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.m7b(5510023, C0038i.m1124l((String) vectorM614m5.lastElement())), null};
+                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.m7b(5510023, Conversation.m1124l((String) vectorM614m5.lastElement())), null};
                                                         new RunnableC0055z(26, objArr2);
                                                         vectorM614m5.setElementAt(objArr2, 0);
                                                     } else {
@@ -3373,13 +3373,13 @@ public final class C0015ao {
                                                                     z4 = false;
                                                                 } else if (AppState.m587e(1414)) {
                                                                     if (i13 == 42) {
-                                                                        C0038i.m1127a();
+                                                                        Conversation.m1127a();
                                                                         z4 = true;
                                                                     } else if (i13 == 35) {
-                                                                        C0038i.m1128b();
+                                                                        Conversation.m1128b();
                                                                         z4 = true;
                                                                     } else if (i13 == 48) {
-                                                                        C0038i.m1113a(false, (C0028ba) null);
+                                                                        Conversation.m1113a(false, (C0028ba) null);
                                                                         C0021au.m546a(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 49) {
@@ -3388,9 +3388,9 @@ public final class C0015ao {
                                                                     } else if (i13 == 50) {
                                                                         boolean zM587e = AppState.m587e(41);
                                                                         if (zM587e) {
-                                                                            C0038i.m1126a(false);
+                                                                            Conversation.m1126a(false);
                                                                         } else {
-                                                                            C0038i.m1126a(true);
+                                                                            Conversation.m1126a(true);
                                                                         }
                                                                         AppState.m599a(41, !zM587e);
                                                                         C0021au.m546a(6);
@@ -3544,7 +3544,7 @@ public final class C0015ao {
                                                                 if ((i25 == 1 || i25 == 12) && (objM179a = C0008ah.m179a(i19, i20)) != null) {
                                                                     if (!(objM179a instanceof int[])) {
                                                                         int i26 = ((C0008ah) objM179a).f50g;
-                                                                        AbstractC0037h abstractC0037h = ((C0008ah) objM179a).f51h;
+                                                                        Account abstractC0037h = ((C0008ah) objM179a).f51h;
                                                                         AppState.m594c(1414, 0);
                                                                         if (i == 4) {
                                                                             AbstractC0007ag.m155c();
@@ -3788,14 +3788,14 @@ public final class C0015ao {
                                         }
                                     }
                                 } else {
-                                    AbstractC0041l abstractC0041l = (AbstractC0041l) vectorM614m3.elementAt(size2);
+                                    Contact abstractC0041l = (Contact) vectorM614m3.elementAt(size2);
                                     if (Utils.m504c(iM586d - abstractC0041l.f372q) > 10000) {
                                         m418c(abstractC0041l);
                                     }
                                 }
                             }
                         } else {
-                            AbstractC0037h abstractC0037h2 = (AbstractC0037h) vectorM614m2.elementAt(size);
+                            Account abstractC0037h2 = (Account) vectorM614m2.elementAt(size);
                             try {
                                 if (abstractC0037h2.f322r <= 0 || abstractC0037h2.f322r == 100) {
                                     Vector vectorM614m6 = AppState.m614m(1247);
@@ -3908,7 +3908,7 @@ public final class C0015ao {
                         String strM809a = C0029bb.m809a(AbstractC0025ay.f196d);
                         String strM810b = C0029bb.m810b(AbstractC0025ay.f195c);
                         AppState.m594c(1479, 0);
-                        C0034e.m953a(C0003ac.m62a(AppState.m586d(39), strM809a, strM810b), AbstractC0025ay.f196d, AbstractC0025ay.f195c);
+                        C0034e.m953a(VCard.m62a(AppState.m586d(39), strM809a, strM810b), AbstractC0025ay.f196d, AbstractC0025ay.f195c);
                         i2 = 0;
                     } else {
                         i2 = 113;
@@ -4003,7 +4003,7 @@ public final class C0015ao {
                     iM460J = -1;
                     break;
                 case 38:
-                    AppState.m594c(1513, ((C0052w) obj).f409a);
+                    AppState.m594c(1513, ((ChatRoom) obj).f409a);
                     iM460J = 0;
                     break;
                 case 39:
@@ -4031,7 +4031,7 @@ public final class C0015ao {
                         }
                     } else {
                         AppState.m591f(1279);
-                        AbstractC0041l abstractC0041lM611g = AppState.m611g();
+                        Contact abstractC0041lM611g = AppState.m611g();
                         iM338l = !abstractC0041lM611g.f369o.m1056C() ? m338l(299) : abstractC0041lM611g.mo990d() ? C0034e.m946g() : 63;
                     }
                     iM460J = iM338l;
@@ -4045,12 +4045,12 @@ public final class C0015ao {
                 case 43:
                     AppState.m594c(1514, c0013amM66b.f105j);
                     AppState.m601a(1345, (Object) strM67c);
-                    C0026az c0026az = (C0026az) obj;
+                    Message c0026az = (Message) obj;
                     if (c0026az == null) {
                         i = -1;
                     } else {
                         AppState.m601a(1346, (Object) c0026az.f216a);
-                        C0052w c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
+                        ChatRoom c0052wM745h = ((C0028ba) AppState.m616i()).m745h(AppState.m586d(1513));
                         if (StringUtils.m3a(894, c0052wM745h.f410b) || StringUtils.m3a(899, c0052wM745h.f410b)) {
                             C0031bd.m872b(54, 3);
                         } else {
@@ -4551,10 +4551,10 @@ public final class C0015ao {
     /* renamed from: ac */
     public static final int m457ac() {
         Object obj = AppState.f177b[1365];
-        if (obj == null || !(obj instanceof AbstractC0041l)) {
+        if (obj == null || !(obj instanceof Contact)) {
             return 0;
         }
-        AbstractC0041l abstractC0041l = (AbstractC0041l) obj;
+        Contact abstractC0041l = (Contact) obj;
         if (!abstractC0041l.f369o.m1056C()) {
             return m338l(299);
         }

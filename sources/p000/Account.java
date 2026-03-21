@@ -8,7 +8,7 @@ import javax.microedition.io.ConnectionNotFoundException;
 
 /* renamed from: h */
 /* loaded from: MobileAgent_3.9.jar:h.class */
-public abstract class AbstractC0037h {
+public abstract class Account {
 
     /* renamed from: i */
     public final Vector f313i;
@@ -74,19 +74,19 @@ public abstract class AbstractC0037h {
     public final Vector f333C;
 
     /* renamed from: D */
-    public AbstractC0046q f334D;
+    public ContactGroup f334D;
 
     /* renamed from: E */
-    public final AbstractC0046q f335E;
+    public final ContactGroup f335E;
 
     /* renamed from: F */
-    public final AbstractC0046q f336F;
+    public final ContactGroup f336F;
 
     /* renamed from: G */
-    public final AbstractC0046q f337G;
+    public final ContactGroup f337G;
 
     /* renamed from: H */
-    public final AbstractC0046q f338H;
+    public final ContactGroup f338H;
 
     /* renamed from: I */
     public String f339I;
@@ -97,7 +97,7 @@ public abstract class AbstractC0037h {
     /* renamed from: a */
     private int f341a;
 
-    public AbstractC0037h(int i, String str, String str2) {
+    public Account(int i, String str, String str2) {
         this.f313i = C0040k.m1213g();
         this.f314j = i;
         this.f315k = str;
@@ -107,22 +107,22 @@ public abstract class AbstractC0037h {
         this.f318n = new ByteBuffer();
         this.f321q = new Hashtable();
         this.f333C = C0040k.m1213g();
-        AbstractC0046q abstractC0046qMo85b = mo85b();
+        ContactGroup abstractC0046qMo85b = mo85b();
         abstractC0046qMo85b.f399g = true;
         this.f335E = abstractC0046qMo85b;
-        AbstractC0046q abstractC0046qMo87d = mo87d();
+        ContactGroup abstractC0046qMo87d = mo87d();
         abstractC0046qMo87d.f399g = true;
         this.f336F = abstractC0046qMo87d;
-        AbstractC0046q abstractC0046qMo86c = mo86c();
+        ContactGroup abstractC0046qMo86c = mo86c();
         abstractC0046qMo86c.f399g = true;
         this.f337G = abstractC0046qMo86c;
-        AbstractC0046q abstractC0046qMo88e = mo88e();
+        ContactGroup abstractC0046qMo88e = mo88e();
         abstractC0046qMo88e.f399g = true;
         this.f338H = abstractC0046qMo88e;
         this.f340J = Utils.m538m(str);
     }
 
-    public AbstractC0037h(ByteBuffer c0043n) {
+    public Account(ByteBuffer c0043n) {
         this(c0043n.m1328e(), c0043n.m1338j(), c0043n.m1334g());
         c0043n.m1328e();
         for (int i = 2; i < 9; i++) {
@@ -143,16 +143,16 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: b */
-    public abstract AbstractC0046q mo85b();
+    public abstract ContactGroup mo85b();
 
     /* renamed from: d */
-    public abstract AbstractC0046q mo87d();
+    public abstract ContactGroup mo87d();
 
     /* renamed from: c */
-    public abstract AbstractC0046q mo86c();
+    public abstract ContactGroup mo86c();
 
     /* renamed from: e */
-    public abstract AbstractC0046q mo88e();
+    public abstract ContactGroup mo88e();
 
     /* renamed from: h */
     public abstract int mo108h();
@@ -173,7 +173,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: a */
-    public AbstractC0037h mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
+    public Account mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
         c0043n.m1321f(mo80a() | 8).m1360p(this.f314j).m1308a(this.f315k).m1308a(this.f316l).m1360p(0);
         for (int i = 2; i < 9; i++) {
             c0043n.m1360p(this.f317m[i]);
@@ -240,7 +240,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: c */
-    public final AbstractC0037h m1054c(String str) {
+    public final Account m1054c(String str) {
         this.f339I = Utils.m528a(str, this.f315k);
         return this;
     }
@@ -381,14 +381,14 @@ public abstract class AbstractC0037h {
             if (size < 0) {
                 return;
             }
-            AbstractC0046q abstractC0046qM1082g = m1082g(size);
+            ContactGroup abstractC0046qM1082g = m1082g(size);
             int size2 = abstractC0046qM1082g.f397e.size();
             while (true) {
                 size2--;
                 if (size2 < 0) {
                     break;
                 }
-                AbstractC0041l abstractC0041lM1394e = abstractC0046qM1082g.m1394e(size2);
+                Contact abstractC0041lM1394e = abstractC0046qM1082g.m1394e(size2);
                 m1074a(abstractC0041lM1394e, false);
                 C0015ao.m415b(abstractC0041lM1394e);
             }
@@ -400,19 +400,19 @@ public abstract class AbstractC0037h {
     public final void m1068L() {
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
-            ((AbstractC0041l) enumerationElements.nextElement()).mo134c();
+            ((Contact) enumerationElements.nextElement()).mo134c();
         }
         C0015ao.f152f = true;
     }
 
     /* renamed from: c */
-    public final AbstractC0041l m1069c(Object obj) {
-        return (AbstractC0041l) this.f321q.get(obj);
+    public final Contact m1069c(Object obj) {
+        return (Contact) this.f321q.get(obj);
     }
 
     /* renamed from: d */
     public final void m1070d(String str) {
-        AbstractC0041l abstractC0041lM1069c = m1069c((Object) str);
+        Contact abstractC0041lM1069c = m1069c((Object) str);
         if (abstractC0041lM1069c == null || abstractC0041lM1069c.mo143m() || abstractC0041lM1069c.mo144l() || abstractC0041lM1069c.mo996n()) {
             return;
         }
@@ -424,7 +424,7 @@ public abstract class AbstractC0037h {
 
     /* renamed from: e */
     public final void m1071e(String str) {
-        AbstractC0041l abstractC0041lM1069c = m1069c((Object) str);
+        Contact abstractC0041lM1069c = m1069c((Object) str);
         if (abstractC0041lM1069c != null) {
             C0015ao.m418c(abstractC0041lM1069c);
         }
@@ -432,8 +432,8 @@ public abstract class AbstractC0037h {
 
     /* renamed from: a */
     public final void m1072a(String str, long j, String str2) {
-        AbstractC0041l abstractC0041lM1069c = m1069c((Object) str);
-        AbstractC0041l abstractC0041lMo107b = abstractC0041lM1069c;
+        Contact abstractC0041lM1069c = m1069c((Object) str);
+        Contact abstractC0041lMo107b = abstractC0041lM1069c;
         if (abstractC0041lM1069c == null) {
             abstractC0041lMo107b = mo107b(str);
         }
@@ -442,23 +442,23 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: b */
-    public abstract AbstractC0041l mo107b(String str);
+    public abstract Contact mo107b(String str);
 
     /* renamed from: a */
     public final void m1073a(String str, long j, int i) {
-        AbstractC0041l abstractC0041lM1069c = m1069c((Object) str);
+        Contact abstractC0041lM1069c = m1069c((Object) str);
         if (abstractC0041lM1069c != null) {
             abstractC0041lM1069c.m1238a(j, i);
         }
     }
 
     /* renamed from: a */
-    public int mo125a(AbstractC0041l abstractC0041l, String str, long j) {
+    public int mo125a(Contact abstractC0041l, String str, long j) {
         return m1056C() ? 0 : 299;
     }
 
     /* renamed from: a */
-    public final int m1074a(AbstractC0041l abstractC0041l, boolean z) {
+    public final int m1074a(Contact abstractC0041l, boolean z) {
         if (abstractC0041l == null) {
             return 0;
         }
@@ -487,7 +487,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: a */
-    public int mo734a(String str, String str2, String str3, AbstractC0046q abstractC0046q, boolean z) {
+    public int mo734a(String str, String str2, String str3, ContactGroup abstractC0046q, boolean z) {
         if (!m1056C()) {
             return 299;
         }
@@ -498,7 +498,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: a */
-    public int mo112a(AbstractC0041l abstractC0041l, Object[] objArr) {
+    public int mo112a(Contact abstractC0041l, Object[] objArr) {
         if (m1056C()) {
             return StringUtils.m1a((String) objArr[0]) ? 301 : 0;
         }
@@ -509,7 +509,7 @@ public abstract class AbstractC0037h {
     public abstract int mo115b(Object obj);
 
     /* renamed from: a */
-    public abstract int mo114a(AbstractC0041l abstractC0041l);
+    public abstract int mo114a(Contact abstractC0041l);
 
     /* renamed from: a */
     public int mo122a(String str) {
@@ -520,7 +520,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: a */
-    public int mo124a(AbstractC0046q abstractC0046q, String str) {
+    public int mo124a(ContactGroup abstractC0046q, String str) {
         if (abstractC0046q == this.f334D || abstractC0046q == this.f335E || abstractC0046q == this.f338H || abstractC0046q == this.f336F) {
             return 304;
         }
@@ -548,7 +548,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: a */
-    public int mo123a(AbstractC0046q abstractC0046q) {
+    public int mo123a(ContactGroup abstractC0046q) {
         if (abstractC0046q == this.f334D || abstractC0046q == this.f335E) {
             return 304;
         }
@@ -556,7 +556,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: b */
-    public int mo118b(AbstractC0041l abstractC0041l) {
+    public int mo118b(Contact abstractC0041l) {
         return (abstractC0041l.mo143m() || m1056C()) ? 0 : 299;
     }
 
@@ -566,16 +566,16 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: c */
-    public abstract int mo104c(AbstractC0041l abstractC0041l);
+    public abstract int mo104c(Contact abstractC0041l);
 
     /* renamed from: d */
-    public abstract int mo105d(AbstractC0041l abstractC0041l);
+    public abstract int mo105d(Contact abstractC0041l);
 
     /* renamed from: e */
-    public abstract int mo106e(AbstractC0041l abstractC0041l);
+    public abstract int mo106e(Contact abstractC0041l);
 
     /* renamed from: f */
-    public int mo735f(AbstractC0041l abstractC0041l) {
+    public int mo735f(Contact abstractC0041l) {
         return !m1056C() ? 299 : 0;
     }
 
@@ -584,7 +584,7 @@ public abstract class AbstractC0037h {
         Vector vectorM1213g = C0040k.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
-            AbstractC0041l abstractC0041l = (AbstractC0041l) enumerationElements.nextElement();
+            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (abstractC0041l.mo144l()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
@@ -597,7 +597,7 @@ public abstract class AbstractC0037h {
         Vector vectorM1213g = C0040k.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
-            AbstractC0041l abstractC0041l = (AbstractC0041l) enumerationElements.nextElement();
+            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (abstractC0041l.mo990d()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
@@ -621,7 +621,7 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: a */
-    public int mo113a(AbstractC0041l abstractC0041l, AbstractC0046q abstractC0046q, AbstractC0046q abstractC0046q2) {
+    public int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         if (abstractC0046q == abstractC0046q2) {
             return 305;
         }
@@ -633,7 +633,7 @@ public abstract class AbstractC0037h {
         Vector vectorM1213g = C0040k.m1213g();
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
-            AbstractC0041l abstractC0041l = (AbstractC0041l) enumerationElements.nextElement();
+            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (abstractC0041l.mo143m()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
@@ -642,8 +642,8 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: g */
-    public final AbstractC0046q m1080g(AbstractC0041l abstractC0041l) {
-        AbstractC0046q abstractC0046qM1082g;
+    public final ContactGroup m1080g(Contact abstractC0041l) {
+        ContactGroup abstractC0046qM1082g;
         if (abstractC0041l.mo143m() || this.f334D.m1400b(abstractC0041l)) {
             return this.f334D;
         }
@@ -668,8 +668,8 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: h */
-    public final void m1081h(AbstractC0041l abstractC0041l) {
-        AbstractC0041l abstractC0041l2 = (AbstractC0041l) this.f321q.get(abstractC0041l.mo135a());
+    public final void m1081h(Contact abstractC0041l) {
+        Contact abstractC0041l2 = (Contact) this.f321q.get(abstractC0041l.mo135a());
         if (abstractC0041l2 != null && abstractC0041l2 != abstractC0041l) {
             this.f334D.m1393a(abstractC0041l2);
             this.f335E.m1393a(abstractC0041l2);
@@ -681,17 +681,17 @@ public abstract class AbstractC0037h {
     }
 
     /* renamed from: g */
-    public final AbstractC0046q m1082g(int i) {
-        return (AbstractC0046q) this.f313i.elementAt(i);
+    public final ContactGroup m1082g(int i) {
+        return (ContactGroup) this.f313i.elementAt(i);
     }
 
     /* renamed from: b */
-    public final void m1083b(AbstractC0046q abstractC0046q) {
+    public final void m1083b(ContactGroup abstractC0046q) {
         this.f313i.addElement(abstractC0046q);
     }
 
     /* renamed from: c */
-    public final void m1084c(AbstractC0046q abstractC0046q) {
+    public final void m1084c(ContactGroup abstractC0046q) {
         this.f313i.removeElement(abstractC0046q);
     }
 

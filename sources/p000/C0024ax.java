@@ -22,7 +22,7 @@ public final class C0024ax {
     private OutputStream f185c;
 
     /* renamed from: d */
-    private AbstractC0037h f186d;
+    private Account f186d;
 
     /* renamed from: e */
     private int f187e;
@@ -43,18 +43,18 @@ public final class C0024ax {
     private ByteBuffer f192j;
 
     /* renamed from: a */
-    public static final C0024ax m629a(String str, AbstractC0037h abstractC0037h, int i) throws IOException {
+    public static final C0024ax m629a(String str, Account abstractC0037h, int i) throws IOException {
         return new C0024ax(str, abstractC0037h, i);
     }
 
     /* renamed from: a */
     public static final C0024ax m630a(Object obj) throws IOException {
-        return m629a((String) obj, (AbstractC0037h) null, 3);
+        return m629a((String) obj, (Account) null, 3);
     }
 
     /* renamed from: b */
     public static final C0024ax m631b(Object obj) throws IOException {
-        return m629a((String) obj, (AbstractC0037h) null, 2);
+        return m629a((String) obj, (Account) null, 2);
     }
 
     /* renamed from: a */
@@ -106,7 +106,7 @@ public final class C0024ax {
         this.f191i = str.startsWith(AppState.m584b(459255)) ? StringUtils.m15c(str, 7) : str;
     }
 
-    private C0024ax(String str, AbstractC0037h abstractC0037h, int i) throws IOException {
+    private C0024ax(String str, Account abstractC0037h, int i) throws IOException {
         this.f183a = Connector.open(str, 3);
         this.f186d = abstractC0037h;
         this.f187e = i;

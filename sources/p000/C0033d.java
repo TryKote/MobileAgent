@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: d */
 /* loaded from: MobileAgent_3.9.jar:d.class */
-public final class C0033d extends AbstractC0037h {
+public final class C0033d extends Account {
 
     /* renamed from: a */
     public int f269a;
@@ -56,13 +56,13 @@ public final class C0033d extends AbstractC0037h {
         this.f277h = new Hashtable();
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
     public final int mo80a() {
         return 1;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
     public final int mo102a(String str, String str2) {
         int iMo102a = super.mo102a(str, str2);
@@ -91,42 +91,42 @@ public final class C0033d extends AbstractC0037h {
                 this.f277h = new Hashtable();
                 return;
             }
-            m1083b((AbstractC0046q) new C0016ap(this, c0043n));
+            m1083b((ContactGroup) new C0016ap(this, c0043n));
         }
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final AbstractC0037h mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
+    public final Account mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
         this.f325u = (this.f325u & 65535) + (this.f278L << 16);
         return super.mo82a(c0043n, z, z2);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
-    public final AbstractC0046q mo85b() {
+    public final ContactGroup mo85b() {
         return new C0016ap(this, -1, AppState.m584b(1040));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: c */
-    public final AbstractC0046q mo86c() {
+    public final ContactGroup mo86c() {
         return new C0016ap(this, -2, AppState.m584b(1042));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: d */
-    public final AbstractC0046q mo87d() {
+    public final ContactGroup mo87d() {
         return new C0016ap(this, -3, AppState.m584b(1041));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: e */
-    public final AbstractC0046q mo88e() {
+    public final ContactGroup mo88e() {
         return new C0016ap(this, -4, AppState.m584b(1043));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a_ */
     public final int mo914a_(int i) {
         int iMo914a_ = super.mo914a_(i);
@@ -144,7 +144,7 @@ public final class C0033d extends AbstractC0037h {
         return 268 + this.f332B;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: g */
     public final int mo89g() {
         m1061F();
@@ -155,7 +155,7 @@ public final class C0033d extends AbstractC0037h {
         return -1;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: h */
     public final int mo108h() {
         if (this.f322r >= 1 && this.f322r < 100) {
@@ -204,10 +204,10 @@ public final class C0033d extends AbstractC0037h {
         return c0043n;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: i */
     public final void mo97i() throws Throwable {
-        AbstractC0041l abstractC0041lM1069c;
+        Contact abstractC0041lM1069c;
         if (this.f322r <= 0) {
             m1061F();
             this.f324t = -1;
@@ -237,7 +237,7 @@ public final class C0033d extends AbstractC0037h {
                     while (true) {
                         iM541c--;
                         if (iM541c >= 0) {
-                            AbstractC0037h abstractC0037h = (AbstractC0037h) vectorM439R.elementAt(iM541c);
+                            Account abstractC0037h = (Account) vectorM439R.elementAt(iM541c);
                             if (abstractC0037h.m1056C()) {
                                 this.f322r = 3;
                             } else if (!abstractC0037h.m1055B()) {
@@ -294,7 +294,7 @@ public final class C0033d extends AbstractC0037h {
                 if (c0043nM1350t != null) {
                     C0015ao.f153g = true;
                     this.f323s = 85;
-                    C0015ao.m421a((AbstractC0037h) this, c0043nM1350t);
+                    C0015ao.m421a((Account) this, c0043nM1350t);
                     if (c0043nM1350t.m1331i(1) == 1) {
                         long j = AppState.m587e(1536) ? 25000L : 60000L;
                         this.f330z = j;
@@ -342,7 +342,7 @@ public final class C0033d extends AbstractC0037h {
                 }
                 return;
             }
-            C0015ao.m421a((AbstractC0037h) this, c0043nM1299a);
+            C0015ao.m421a((Account) this, c0043nM1299a);
             this.f323s = 90;
             if (c0043nM1299a.m1331i(1) == 2) {
                 int iM1331i = (c0043nM1299a.m1331i(6) << 24) | (c0043nM1299a.m1331i(8) << 16) | (c0043nM1299a.m1331i(7) << 8) | c0043nM1299a.m1331i(9);
@@ -444,7 +444,7 @@ public final class C0033d extends AbstractC0037h {
                         C0031bd.m882a(this, c0043nM1299a, iM1356x, 0);
                         break;
                     case 4885:
-                        AbstractC0041l abstractC0041lM1069c2 = m1069c((Object) c0043nM1299a.m1363z());
+                        Contact abstractC0041lM1069c2 = m1069c((Object) c0043nM1299a.m1363z());
                         if (null != abstractC0041lM1069c2) {
                             abstractC0041lM1069c2.mo145h();
                             break;
@@ -603,9 +603,9 @@ public final class C0033d extends AbstractC0037h {
         C0034e.m925a(1);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo125a(AbstractC0041l abstractC0041l, String str, long j) {
+    public final int mo125a(Contact abstractC0041l, String str, long j) {
         ByteBuffer c0043nM464a;
         int iMo125a = super.mo125a(abstractC0041l, str, j);
         if (0 != iMo125a) {
@@ -644,9 +644,9 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(c0043nM464a);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo112a(AbstractC0041l abstractC0041l, Object[] objArr) {
+    public final int mo112a(Contact abstractC0041l, Object[] objArr) {
         int iMo112a = super.mo112a(abstractC0041l, objArr);
         if (0 != iMo112a) {
             return iMo112a;
@@ -675,20 +675,20 @@ public final class C0033d extends AbstractC0037h {
         return mo914a_(0);
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo114a(AbstractC0041l abstractC0041l) {
+    public final int mo114a(Contact abstractC0041l) {
         if (!m1056C()) {
             return 299;
         }
         C0009ai c0009ai = (C0009ai) abstractC0041l;
-        AppState.f177b[1316] = C0042m.m1254b(this).m1284u(c0009ai.f57c);
+        AppState.f177b[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.f57c);
         return m1052c(StringUtils.m18a(this, Utils.m510a((Object) c0009ai.f57c)));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo113a(AbstractC0041l abstractC0041l, AbstractC0046q abstractC0046q, AbstractC0046q abstractC0046q2) {
+    public final int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         int iMo113a = super.mo113a(abstractC0041l, abstractC0046q, abstractC0046q2);
         if (0 != iMo113a) {
             return iMo113a;
@@ -698,9 +698,9 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), C0034e.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo124a(AbstractC0046q abstractC0046q, String str) {
+    public final int mo124a(ContactGroup abstractC0046q, String str) {
         int iMo124a = super.mo124a(abstractC0046q, str);
         if (iMo124a != 0) {
             return iMo124a;
@@ -709,7 +709,7 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4873, c0016ap.m465a(str, -1, -1)), C0034e.m967e(1), c0016ap, str}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
     public final int mo122a(String str) {
         int iMo122a = super.mo122a(str);
@@ -720,9 +720,9 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(C0034e.m937a(this, str));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo123a(AbstractC0046q abstractC0046q) {
+    public final int mo123a(ContactGroup abstractC0046q) {
         int iMo123a = super.mo123a(abstractC0046q);
         if (0 != iMo123a) {
             return iMo123a;
@@ -732,16 +732,16 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0016ap.m465a(c0016ap.f398f, -1, -1)), C0034e.m967e(2), c0016ap}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
-    public final int mo118b(AbstractC0041l abstractC0041l) {
+    public final int mo118b(Contact abstractC0041l) {
         C0009ai c0009ai = (C0009ai) abstractC0041l;
-        int iMo118b = super.mo118b((AbstractC0041l) c0009ai);
+        int iMo118b = super.mo118b((Contact) c0009ai);
         if (0 != iMo118b) {
             return iMo118b;
         }
         if (c0009ai.mo143m()) {
-            m1074a((AbstractC0041l) c0009ai, true);
+            m1074a((Contact) c0009ai, true);
             return 0;
         }
         if (c0009ai.mo142k()) {
@@ -756,9 +756,9 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), C0034e.m967e(5), c0009ai}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: a */
-    public final int mo734a(String str, String str2, String str3, AbstractC0046q abstractC0046q, boolean z) {
+    public final int mo734a(String str, String str2, String str3, ContactGroup abstractC0046q, boolean z) {
         int iMo734a = super.mo734a(str, str2, str3, abstractC0046q, z);
         if (0 != iMo734a) {
             return iMo734a;
@@ -828,18 +828,18 @@ public final class C0033d extends AbstractC0037h {
         return iM520a;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: c */
-    public final int mo104c(AbstractC0041l abstractC0041l) {
+    public final int mo104c(Contact abstractC0041l) {
         if (abstractC0041l.mo143m()) {
             return 310;
         }
         return m1052c(C0029bb.m792c(this, (C0009ai) abstractC0041l));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: d */
-    public final int mo105d(AbstractC0041l abstractC0041l) {
+    public final int mo105d(Contact abstractC0041l) {
         C0009ai c0009ai = (C0009ai) abstractC0041l;
         if (c0009ai.mo141j() && !c0009ai.mo140i()) {
             m1052c(C0029bb.m791b(this, c0009ai));
@@ -847,9 +847,9 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(C0029bb.m790a(this, c0009ai));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: e */
-    public final int mo106e(AbstractC0041l abstractC0041l) {
+    public final int mo106e(Contact abstractC0041l) {
         C0009ai c0009ai = (C0009ai) abstractC0041l;
         if (!c0009ai.mo141j() && c0009ai.mo140i()) {
             m1052c(C0029bb.m790a(this, c0009ai));
@@ -857,7 +857,7 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(C0029bb.m791b(this, c0009ai));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: l */
     public final int mo120l() {
         if (this.f272c != null) {
@@ -874,7 +874,7 @@ public final class C0033d extends AbstractC0037h {
         return 0;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
     public final int mo115b(Object obj) {
         String[] strArr = (String[]) obj;
@@ -890,10 +890,10 @@ public final class C0033d extends AbstractC0037h {
         return m1052c(m916a(new Object[]{C0015ao.m464a(this, 5378, c0043nM1357m.m1357m(i + 2).m1358n(i).m1325a(c0043nM1358n)), C0034e.m967e(9)}));
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: b */
-    public final AbstractC0041l mo107b(String str) {
-        AbstractC0046q abstractC0046q = this.f334D;
+    public final Contact mo107b(String str) {
+        ContactGroup abstractC0046q = this.f334D;
         C0009ai c0009ai = new C0009ai(this, -1, -1, str, str, true);
         abstractC0046q.m1401b((Object) c0009ai);
         ByteBuffer c0043nM1360p = new ByteBuffer().m1360p(this.f269a).m1358n(2000).m1357m(0).m1358n(1375).m1357m(13825).m1358n(4).m1360p(Utils.m510a((Object) str));
@@ -903,7 +903,7 @@ public final class C0033d extends AbstractC0037h {
         return c0009ai;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: c */
     public final void mo100c(int i) {
         switch (i) {
@@ -937,7 +937,7 @@ public final class C0033d extends AbstractC0037h {
         return this.f278L;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: n */
     public final int mo922n() {
         return 369 + this.f278L;
@@ -953,14 +953,14 @@ public final class C0033d extends AbstractC0037h {
         return 4;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: o */
     public final void mo924o() {
         super.mo924o();
         this.f326v = 0;
     }
 
-    @Override // p000.AbstractC0037h
+    @Override // p000.Account
     /* renamed from: p */
     public final int mo110p() {
         return 197381;

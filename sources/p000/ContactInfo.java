@@ -6,8 +6,8 @@ import javax.microedition.lcdui.Image;
 
 /* renamed from: m */
 /* loaded from: MobileAgent_3.9.jar:m.class */
-public final class C0042m extends Hashtable {
-    public C0042m(AbstractC0041l abstractC0041l) {
+public final class ContactInfo extends Hashtable {
+    public ContactInfo(Contact abstractC0041l) {
         put(C0034e.m967e(-2), abstractC0041l.f369o);
         m1258a(0, abstractC0041l.f376u);
         if (abstractC0041l instanceof C0035f) {
@@ -19,16 +19,16 @@ public final class C0042m extends Hashtable {
         }
     }
 
-    public C0042m() {
+    public ContactInfo() {
     }
 
-    private C0042m(AbstractC0037h abstractC0037h) {
+    private ContactInfo(Account abstractC0037h) {
         put(C0034e.m967e(-2), abstractC0037h);
     }
 
     /* renamed from: a */
-    public static final C0042m m1251a(AbstractC0037h abstractC0037h) {
-        return new C0042m(abstractC0037h);
+    public static final ContactInfo m1251a(Account abstractC0037h) {
+        return new ContactInfo(abstractC0037h);
     }
 
     /* renamed from: a */
@@ -51,13 +51,13 @@ public final class C0042m extends Hashtable {
     }
 
     /* renamed from: b */
-    public static final C0042m m1254b(AbstractC0037h abstractC0037h) {
-        return new C0042m(abstractC0037h);
+    public static final ContactInfo m1254b(Account abstractC0037h) {
+        return new ContactInfo(abstractC0037h);
     }
 
     /* renamed from: c */
-    public final AbstractC0037h m1255c() {
-        return (AbstractC0037h) get(C0034e.m967e(-2));
+    public final Account m1255c() {
+        return (Account) get(C0034e.m967e(-2));
     }
 
     /* renamed from: a */
@@ -66,12 +66,12 @@ public final class C0042m extends Hashtable {
     }
 
     /* renamed from: a */
-    public final C0042m m1257a(String str) {
+    public final ContactInfo m1257a(String str) {
         return m1258a(-1, str);
     }
 
     /* renamed from: a */
-    private final C0042m m1258a(int i, String str) {
+    private final ContactInfo m1258a(int i, String str) {
         if (Utils.m535l(str)) {
             put(C0034e.m967e(i), str);
         }
@@ -79,82 +79,82 @@ public final class C0042m extends Hashtable {
     }
 
     /* renamed from: b */
-    public final C0042m m1259b(String str) {
+    public final ContactInfo m1259b(String str) {
         return m1258a(0, str);
     }
 
     /* renamed from: c */
-    public final C0042m m1260c(String str) {
+    public final ContactInfo m1260c(String str) {
         return m1258a(1, str);
     }
 
     /* renamed from: d */
-    public final C0042m m1261d(String str) {
+    public final ContactInfo m1261d(String str) {
         return m1258a(2, str);
     }
 
     /* renamed from: e */
-    public final C0042m m1262e(String str) {
+    public final ContactInfo m1262e(String str) {
         return m1258a(3, str);
     }
 
     /* renamed from: d */
-    public final C0042m m1263d() {
+    public final ContactInfo m1263d() {
         return m1258a(4, AppState.m584b(318));
     }
 
     /* renamed from: e */
-    public final C0042m m1264e() {
+    public final ContactInfo m1264e() {
         return m1258a(4, AppState.m584b(319));
     }
 
     /* renamed from: f */
-    public final C0042m m1265f(String str) {
+    public final ContactInfo m1265f(String str) {
         return m1258a(6, str);
     }
 
     /* renamed from: g */
-    public final C0042m m1266g(String str) {
+    public final ContactInfo m1266g(String str) {
         return m1258a(9, str);
     }
 
     /* renamed from: h */
-    public final C0042m m1267h(String str) {
+    public final ContactInfo m1267h(String str) {
         return m1258a(10, str);
     }
 
     /* renamed from: i */
-    public final C0042m m1268i(String str) {
+    public final ContactInfo m1268i(String str) {
         return m1258a(32, str);
     }
 
     /* renamed from: j */
-    public final C0042m m1269j(String str) {
+    public final ContactInfo m1269j(String str) {
         return m1258a(33, str);
     }
 
     /* renamed from: k */
-    public final C0042m m1270k(String str) {
+    public final ContactInfo m1270k(String str) {
         return m1258a(34, str);
     }
 
     /* renamed from: l */
-    public final C0042m m1271l(String str) {
+    public final ContactInfo m1271l(String str) {
         return m1258a(35, str);
     }
 
     /* renamed from: m */
-    public final C0042m m1272m(String str) {
+    public final ContactInfo m1272m(String str) {
         return m1258a(36, str);
     }
 
     /* renamed from: n */
-    public final C0042m m1273n(String str) {
+    public final ContactInfo m1273n(String str) {
         return m1258a(37, str);
     }
 
     /* renamed from: o */
-    public final C0042m m1274o(String str) {
+    public final ContactInfo m1274o(String str) {
         return m1258a(8, str);
     }
 
@@ -163,7 +163,7 @@ public final class C0042m extends Hashtable {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final C0042m m1275b(int i) {
+    public final ContactInfo m1275b(int i) {
         String strM584b;
         int i2 = i % 10;
         if (i <= 0 || i >= 100) {
@@ -182,12 +182,12 @@ public final class C0042m extends Hashtable {
     }
 
     /* renamed from: c */
-    public final C0042m m1277c(int i) {
+    public final ContactInfo m1277c(int i) {
         return i == 1 ? m1264e() : i == 2 ? m1263d() : m1258a(4, AppState.m584b(197069));
     }
 
     /* renamed from: p */
-    public final C0042m m1278p(String str) {
+    public final ContactInfo m1278p(String str) {
         int iM511a = Utils.m511a(str, 1, 12, 0);
         if (iM511a != 0) {
             Vector vectorM512e = Utils.m512e(AppState.m584b(685));
@@ -198,37 +198,37 @@ public final class C0042m extends Hashtable {
     }
 
     /* renamed from: q */
-    public final C0042m m1279q(String str) {
+    public final ContactInfo m1279q(String str) {
         return m1258a(50, str);
     }
 
     /* renamed from: r */
-    public final C0042m m1280r(String str) {
+    public final ContactInfo m1280r(String str) {
         return m1258a(51, str);
     }
 
     /* renamed from: s */
-    public final C0042m m1281s(String str) {
+    public final ContactInfo m1281s(String str) {
         return m1258a(52, str);
     }
 
     /* renamed from: t */
-    public final C0042m m1282t(String str) {
+    public final ContactInfo m1282t(String str) {
         return m1258a(53, str);
     }
 
     /* renamed from: d */
-    public final C0042m m1283d(int i) {
+    public final ContactInfo m1283d(int i) {
         return m1258a(60, StringUtils.m17c(Integer.toString(i)));
     }
 
     /* renamed from: u */
-    public final C0042m m1284u(String str) {
+    public final ContactInfo m1284u(String str) {
         return m1258a(60, str);
     }
 
     /* renamed from: e */
-    public final C0042m m1285e(int i) {
+    public final ContactInfo m1285e(int i) {
         return m1258a(61, StringUtils.m17c(Integer.toString(i)));
     }
 
@@ -288,7 +288,7 @@ public final class C0042m extends Hashtable {
         int iIndexOf;
         int iIndexOf2;
         int iIndexOf3;
-        AbstractC0037h abstractC0037hM1255c = m1255c();
+        Account abstractC0037hM1255c = m1255c();
         C0013am c0013amM75b = AbstractC0004ad.m75b(i);
         Vector vectorM512e = Utils.m512e(AppState.m584b(312));
         int size = vectorM512e.size();
@@ -316,7 +316,7 @@ public final class C0042m extends Hashtable {
             }
             if (c0035f != null) {
                 String strM522f = Utils.m522f(c0035f.f301h);
-                int i4 = C0038i.m1104a(strM522f, 927) ? 936 : C0038i.m1104a(strM522f, 926) ? 935 : C0038i.m1104a(strM522f, 929) ? 937 : C0038i.m1104a(strM522f, 928) ? 938 : C0038i.m1104a(strM522f, 930) ? 939 : C0038i.m1104a(strM522f, 931) ? 940 : C0038i.m1104a(strM522f, 932) ? 941 : C0038i.m1104a(strM522f, 933) ? 942 : 934;
+                int i4 = Conversation.m1104a(strM522f, 927) ? 936 : Conversation.m1104a(strM522f, 926) ? 935 : Conversation.m1104a(strM522f, 929) ? 937 : Conversation.m1104a(strM522f, 928) ? 938 : Conversation.m1104a(strM522f, 930) ? 939 : Conversation.m1104a(strM522f, 931) ? 940 : Conversation.m1104a(strM522f, 932) ? 941 : Conversation.m1104a(strM522f, 933) ? 942 : 934;
                 StringBuffer stringBufferM1217h = C0040k.m1217h();
                 if (i4 == 934) {
                     int iM627a = AppState.m627a(strM522f, 2467256188365532259L);
@@ -342,19 +342,19 @@ public final class C0042m extends Hashtable {
                         i2 = -1;
                         c0013amM75b.m225a(c0032cM901a.m896a(i2).m898b(strM1215a2));
                     } else {
-                        if (C0038i.m1104a(str, 927)) {
+                        if (Conversation.m1104a(str, 927)) {
                             i2 = 357;
-                        } else if (C0038i.m1104a(str, 926)) {
+                        } else if (Conversation.m1104a(str, 926)) {
                             i2 = 317;
-                        } else if (C0038i.m1104a(str, 929)) {
+                        } else if (Conversation.m1104a(str, 929)) {
                             i2 = 355;
-                        } else if (C0038i.m1104a(str, 928)) {
+                        } else if (Conversation.m1104a(str, 928)) {
                             i2 = 356;
-                        } else if (C0038i.m1104a(str, 930)) {
+                        } else if (Conversation.m1104a(str, 930)) {
                             i2 = 358;
-                        } else if (C0038i.m1104a(str, 931) || C0038i.m1104a(str, 932)) {
+                        } else if (Conversation.m1104a(str, 931) || Conversation.m1104a(str, 932)) {
                             i2 = 359;
-                        } else if (C0038i.m1104a(str, 933)) {
+                        } else if (Conversation.m1104a(str, 933)) {
                             i2 = 307;
                         }
                         c0013amM75b.m225a(c0032cM901a.m896a(i2).m898b(strM1215a2));
@@ -430,17 +430,17 @@ public final class C0042m extends Hashtable {
     }
 
     /* renamed from: x */
-    public final C0042m m1296x(String str) {
+    public final ContactInfo m1296x(String str) {
         return m1258a(11, str);
     }
 
     /* renamed from: y */
-    public final C0042m m1297y(String str) {
+    public final ContactInfo m1297y(String str) {
         return m1258a(11, str);
     }
 
     /* renamed from: g */
-    public final C0042m m1298g(int i) {
+    public final ContactInfo m1298g(int i) {
         return m1258a(24, StringUtils.m17c(Integer.toString(i)));
     }
 }

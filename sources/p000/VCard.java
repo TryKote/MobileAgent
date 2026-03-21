@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: ac */
 /* loaded from: MobileAgent_3.9.jar:ac.class */
-public final class C0003ac {
+public final class VCard {
 
     /* renamed from: a */
     public String f13a = AppState.f181d;
@@ -126,8 +126,8 @@ public final class C0003ac {
     }
 
     /* renamed from: b */
-    public static final C0003ac m58b(ByteBuffer c0043n) {
-        C0003ac c0003ac = new C0003ac();
+    public static final VCard m58b(ByteBuffer c0043n) {
+        VCard c0003ac = new VCard();
         if (c0043n.m1340l()) {
             try {
                 c0003ac.m53a(c0043n.m1334g(), c0043n.m1334g(), c0043n.m1334g(), c0043n.m1335e((String) null), c0043n.m1334g(), c0043n.m1334g(), c0043n.m1334g(), c0043n.m1334g());

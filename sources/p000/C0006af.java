@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: af */
 /* loaded from: MobileAgent_3.9.jar:af.class */
-public final class C0006af extends AbstractC0041l {
+public final class C0006af extends Contact {
 
     /* renamed from: a */
     public String f38a;
@@ -35,7 +35,7 @@ public final class C0006af extends AbstractC0041l {
         m1228A();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: c */
     public final void mo134c() {
         this.f39c = 0;
@@ -46,13 +46,13 @@ public final class C0006af extends AbstractC0041l {
         super.mo134c();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: a */
     public final String mo135a() {
         return this.f38a;
     }
 
-    public C0006af(AbstractC0037h abstractC0037h, ByteBuffer c0043n) {
+    public C0006af(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f38a = c0043n.m1334g();
         m1249c(c0043n.m1335e((String) null));
@@ -64,7 +64,7 @@ public final class C0006af extends AbstractC0041l {
         this.f381x = this.f38a;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: a */
     public final void mo136a(ByteBuffer c0043n) {
         c0043n.m1308a(this.f38a).m1309b(this.f376u);
@@ -77,7 +77,7 @@ public final class C0006af extends AbstractC0041l {
         return (!(this.f369o instanceof C0031bd) || i < 381 || i > 384) ? iMo139e : iMo139e + 4;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: b */
     public final C0032c mo138b() {
         C0032c c0032cM901a = C0032c.m887a(this.f380w).m896a(m137o()).m901a(this.f376u, 0, this.f40d);
@@ -85,7 +85,7 @@ public final class C0006af extends AbstractC0041l {
         return c0032cM901a;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: e */
     public final int mo139e() {
         int iMo139e = super.mo139e();
@@ -102,37 +102,37 @@ public final class C0006af extends AbstractC0041l {
         return i;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: i */
     public final boolean mo140i() {
         return false;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: j */
     public final boolean mo141j() {
         return false;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: k */
     public final boolean mo142k() {
         return false;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: m */
     public final boolean mo143m() {
         return this.f43b;
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: l */
     public final boolean mo144l() {
         return StringUtils.m3a(267931, this.f41e) || StringUtils.m3a(262852, this.f41e);
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: h */
     public final void mo145h() {
     }
@@ -183,7 +183,7 @@ public final class C0006af extends AbstractC0041l {
         m1228A();
     }
 
-    @Override // p000.AbstractC0041l
+    @Override // p000.Contact
     /* renamed from: L */
     public final void mo148L() {
         AppState.m591f(1316);
@@ -207,7 +207,7 @@ public final class C0006af extends AbstractC0041l {
 
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
-    public final C0042m m151f() {
-        return new C0042m(this).m1298g(m137o());
+    public final ContactInfo m151f() {
+        return new ContactInfo(this).m1298g(m137o());
     }
 }
