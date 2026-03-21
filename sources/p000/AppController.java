@@ -310,7 +310,7 @@ public final class AppController {
         if (obj == null) {
             return null;
         }
-        return obj instanceof String ? (String) obj : ((MrimContact) obj).f297d;
+        return obj instanceof String ? (String) obj : ((MrimContact) obj).simpleIdentifier;
     }
 
     /* renamed from: d */
@@ -496,7 +496,7 @@ public final class AppController {
         while (true) {
             i--;
             if (i < 0) {
-                MmpContact.m185f();
+                MmpContact.clearLocationData();
                 StringUtils.m19b();
                 ConnectionThread.m1146e();
                 MapRenderer.f200h = true;
@@ -684,7 +684,7 @@ public final class AppController {
 
     /* renamed from: n */
     public static final int m346n(int i) {
-        ((XmppContact) AppState.getCurrentContact()).m150b(i);
+        ((XmppContact) AppState.getCurrentContact()).setPresenceFeature(i);
         return 0;
     }
 
@@ -1063,7 +1063,7 @@ public final class AppController {
         }
         MrimContact c0035fM612h = AppState.getCurrentMrimContact();
         AppState.setAccount(c0035fM612h.account);
-        ResourceManager.m966a(XmppMailRuProtocol.m871i(c0035fM612h.f297d), (String) null, (String) null);
+        ResourceManager.m966a(XmppMailRuProtocol.m871i(c0035fM612h.simpleIdentifier), (String) null, (String) null);
         ScreenBuilder.m549c();
         ScreenBuilder.m549c();
         return 0;
@@ -1100,14 +1100,14 @@ public final class AppController {
     public static final int m384v(int i) {
         if (i == 0) {
             ConnectionThread.m1170l();
-            if (MmpContact.m189q()) {
+            if (MmpContact.hasSecondToken()) {
                 return 6;
             }
             AppState.setInt(1442, 1);
             return 158;
         }
         ConnectionThread.m1171m();
-        if (MmpContact.m188p()) {
+        if (MmpContact.hasFirstToken()) {
             return 6;
         }
         AppState.setInt(1442, 0);
@@ -1388,7 +1388,7 @@ public final class AppController {
         }
         XmppContactGroup.m1048a(AppState.getVector(1401));
         AppState.setInt(253, 0);
-        MmpContact.m185f();
+        MmpContact.clearLocationData();
         MapRenderer.f200h = true;
         XmppContactGroup.f312c = System.currentTimeMillis();
         MapRenderer.f200h = true;
@@ -2027,7 +2027,7 @@ public final class AppController {
                     break;
                 }
                 MrimContact c0035f = (MrimContact) vectorM1078P.elementAt(size2);
-                if (c0035f.m1000q()) {
+                if (c0035f.hasVCard()) {
                     vectorM1213g.addElement(c0035f);
                 }
             }
@@ -3403,12 +3403,12 @@ public final class AppController {
                                                                         MapRenderer.f200h = true;
                                                                         z4 = true;
                                                                     } else if (i13 == 55) {
-                                                                        if (MmpContact.f71y && (iArrM191s = MmpContact.m191s()) != null) {
+                                                                        if (MmpContact.locationEnabled && (iArrM191s = MmpContact.getPrevRoutePoint()) != null) {
                                                                             MapRenderer.m657b(iArrM191s[0], iArrM191s[1]);
                                                                         }
                                                                         z4 = true;
                                                                     } else if (i13 == 57) {
-                                                                        if (MmpContact.f71y && (iArrM190r = MmpContact.m190r()) != null) {
+                                                                        if (MmpContact.locationEnabled && (iArrM190r = MmpContact.getNextRoutePoint()) != null) {
                                                                             MapRenderer.m657b(iArrM190r[0], iArrM190r[1]);
                                                                         }
                                                                         z4 = true;

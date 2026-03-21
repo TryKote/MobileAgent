@@ -1155,11 +1155,11 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer m987a(MrimAccount c0028ba, MrimContact c0035f, int i) {
-        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(i).writeIntLE(c0035f.f296c).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.f300g)), m967e(11), c0035f, m967e(i)});
+        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(i).writeIntLE(c0035f.groupId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), m967e(11), c0035f, m967e(i)});
     }
 
     /* renamed from: a */
     public static final ByteBuffer m988a(MrimAccount c0028ba, MrimContact c0035f, MrimContactGroup c0010aj) {
-        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b).writeIntLE(c0010aj.serverId).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.f300g)), m967e(12), c0035f, c0010aj});
+        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(c0035f.statusFlags).writeIntLE(c0010aj.serverId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), m967e(12), c0035f, c0010aj});
     }
 }

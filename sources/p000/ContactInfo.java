@@ -11,11 +11,11 @@ public final class ContactInfo extends Hashtable {
         put(ResourceManager.m967e(-2), abstractC0041l.account);
         m1258a(0, abstractC0041l.displayName);
         if (abstractC0041l instanceof MrimContact) {
-            m1258a(3, ((MrimContact) abstractC0041l).f297d);
+            m1258a(3, ((MrimContact) abstractC0041l).simpleIdentifier);
         } else if (abstractC0041l instanceof MmpContact) {
-            m1283d(Utils.parseInt((Object) ((MmpContact) abstractC0041l).f57c));
+            m1283d(Utils.parseInt((Object) ((MmpContact) abstractC0041l).identifier));
         } else if (abstractC0041l instanceof XmppContact) {
-            m1258a(26, ((XmppContact) abstractC0041l).f38a);
+            m1258a(26, ((XmppContact) abstractC0041l).jabberId);
         }
     }
 
@@ -315,7 +315,7 @@ public final class ContactInfo extends Hashtable {
                 i3++;
             }
             if (c0035f != null) {
-                String strM522f = Utils.defaultStr(c0035f.f301h);
+                String strM522f = Utils.defaultStr(c0035f.statusMessage);
                 int i4 = Conversation.m1104a(strM522f, 927) ? 936 : Conversation.m1104a(strM522f, 926) ? 935 : Conversation.m1104a(strM522f, 929) ? 937 : Conversation.m1104a(strM522f, 928) ? 938 : Conversation.m1104a(strM522f, 930) ? 939 : Conversation.m1104a(strM522f, 931) ? 940 : Conversation.m1104a(strM522f, 932) ? 941 : Conversation.m1104a(strM522f, 933) ? 942 : 934;
                 StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                 if (i4 == 934) {
@@ -337,7 +337,7 @@ public final class ContactInfo extends Hashtable {
                 String strM1215a2 = NetworkUtils.bufToStringCached(stringBufferM1217h);
                 if (Utils.nonEmpty(strM1215a2)) {
                     MenuItem c0032cM901a = MenuItem.m889d().m901a(AppState.getString(317), 0, 6);
-                    String str = c0035f.f301h;
+                    String str = c0035f.statusMessage;
                     if (str == null) {
                         i2 = -1;
                         c0013amM75b.m225a(c0032cM901a.m896a(i2).m898b(strM1215a2));
@@ -360,15 +360,15 @@ public final class ContactInfo extends Hashtable {
                         c0013amM75b.m225a(c0032cM901a.m896a(i2).m898b(strM1215a2));
                     }
                 }
-                String str2 = c0035f.f304j;
+                String str2 = c0035f.customLink;
                 if (Utils.nonEmpty(str2)) {
                     c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.getString(324), 0, 6).m896a(242).m898b(str2));
                 }
-                String str3 = c0035f.f303i;
+                String str3 = c0035f.customNote;
                 if (Utils.nonEmpty(str3)) {
                     c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.getString(325), 0, 6).m896a(2).m898b(str3));
                 }
-                String strM998o = c0035f.m998o();
+                String strM998o = c0035f.getVCardDescription();
                 if (Utils.nonEmpty(strM998o)) {
                     c0013amM75b.m225a(MenuItem.m889d().m901a(AppState.getString(326), 0, 6).m896a(365).m898b(strM998o));
                 }

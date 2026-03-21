@@ -618,11 +618,11 @@ public final class ConnectionThread {
         MapRenderer.f199g = new Object();
         StringUtils.m41j();
         MapRenderer.m646a();
-        MmpContact.f70n = NetworkUtils.newVector();
-        MmpContact.f66k = NetworkUtils.newVector();
-        MmpContact.f67l = NetworkUtils.newVector();
-        MmpContact.f64i = new long[2];
-        MmpContact.f65j = new long[2];
+        MmpContact.routeRegions = NetworkUtils.newVector();
+        MmpContact.routePoints = NetworkUtils.newVector();
+        MmpContact.nearestPoints = NetworkUtils.newVector();
+        MmpContact.lastTokenPair = new long[2];
+        MmpContact.currentTokenPair = new long[2];
         MapRenderer.f205m = NetworkUtils.newVector();
         if (AppState.getBool(253)) {
             XmppContactGroup.m1049b(AppState.getVector(1401));
@@ -745,7 +745,7 @@ public final class ConnectionThread {
         long jMo274v;
         long jMo275w;
         if (MapRenderer.m656d()) {
-            MmpContact.m195u();
+            MmpContact.clearRouteProgress();
         }
         ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
@@ -756,7 +756,7 @@ public final class ConnectionThread {
             jMo275w = interfaceC0044o.getBaseHeight();
             interfaceC0044o.select();
         }
-        MmpContact.m182a(jMo274v, jMo275w);
+        MmpContact.setFirstToken(jMo274v, jMo275w);
         MapRenderer.f200h = true;
         if (MapRenderer.m656d()) {
             Conversation.m1129c();
@@ -768,7 +768,7 @@ public final class ConnectionThread {
         long jMo274v;
         long jMo275w;
         if (MapRenderer.m656d()) {
-            MmpContact.m195u();
+            MmpContact.clearRouteProgress();
         }
         ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
@@ -779,7 +779,7 @@ public final class ConnectionThread {
             jMo275w = interfaceC0044o.getBaseHeight();
             interfaceC0044o.select();
         }
-        MmpContact.m183b(jMo274v, jMo275w);
+        MmpContact.setSecondToken(jMo274v, jMo275w);
         MapRenderer.f200h = true;
         if (MapRenderer.m656d()) {
             Conversation.m1129c();

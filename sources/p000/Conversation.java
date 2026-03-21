@@ -634,7 +634,7 @@ public final class Conversation implements ListItem {
                     break;
                 }
                 MrimContact c0035f2 = (MrimContact) enumerationElements.nextElement();
-                if (c0035f2.m994a(strM1338j) && c0035f2 != null) {
+                if (c0035f2.isInGroup(strM1338j) && c0035f2 != null) {
                     c0035f = c0035f2;
                     break;
                 }
@@ -652,7 +652,7 @@ public final class Conversation implements ListItem {
                 ResourceManager.m925a(3);
                 c0028ba.onMessage(strM1338j, 0L, str);
                 return;
-            } else if ((c0035fM717f.f295b & 65536) == 0) {
+            } else if ((c0035fM717f.statusFlags & 65536) == 0) {
                 c0035fM717f.performAction();
                 c0028ba.trySendData(AppController.m395b(c0028ba, strM1338j));
                 return;
@@ -1238,7 +1238,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void m1129c() {
-        new AsyncTask(11, MmpContact.m186o());
+        new AsyncTask(11, MmpContact.buildLocationString());
     }
 
     /* renamed from: c */

@@ -500,8 +500,8 @@ public final class MmpProtocol extends Account {
         boolean z = c0009ai.highlighted;
         c0009ai.defaultIcon = 255;
         c0009ai.highlighted = false;
-        c0009ai.f62g = false;
-        c0009ai.f63h = false;
+        c0009ai.isBlocked = false;
+        c0009ai.isUnblocked = false;
         c0009ai.dirty = true;
         try {
             c0043n.skip(2);
@@ -563,9 +563,9 @@ public final class MmpProtocol extends Account {
                             }
                         }
                         if (Utils.m509a(bArrM581a, 0, bArr, i5, 16)) {
-                            c0009ai.f62g = true;
+                            c0009ai.isBlocked = true;
                         } else if (Utils.m509a(bArrM581a2, 0, bArr, i5, 16)) {
-                            c0009ai.f63h = true;
+                            c0009ai.isUnblocked = true;
                         }
                     }
                 } else if (iM1353u2 == 29) {
@@ -613,9 +613,9 @@ public final class MmpProtocol extends Account {
         }
         this.sentCount++;
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        int i = c0009ai.f62g ? 1 : 0;
-        int i2 = c0009ai.f63h ? 2 : 1;
-        ByteBuffer c0043nM1373h = new ByteBuffer().writeLong(j).writeShortBE(i2).writeByteLenStr(c0009ai.f57c);
+        int i = c0009ai.isBlocked ? 1 : 0;
+        int i2 = c0009ai.isUnblocked ? 2 : 1;
+        ByteBuffer c0043nM1373h = new ByteBuffer().writeLong(j).writeShortBE(i2).writeByteLenStr(c0009ai.identifier);
         ByteBuffer c0043n = new ByteBuffer();
         if (i2 == 1) {
             if (i == 1) {
@@ -653,7 +653,7 @@ public final class MmpProtocol extends Account {
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         String str = (String) objArr[0];
-        return trySendData(m916a(new Object[]{AppController.m464a(this, 4873, c0009ai.m180a(3, str, c0009ai.f56b)), ResourceManager.m967e(0), c0009ai, str}));
+        return trySendData(m916a(new Object[]{AppController.m464a(this, 4873, c0009ai.encodeContactUpdate(3, str, c0009ai.onlineSemaphore)), ResourceManager.m967e(0), c0009ai, str}));
     }
 
     /* renamed from: b */
@@ -682,8 +682,8 @@ public final class MmpProtocol extends Account {
             return 299;
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        AppState.pool[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.f57c);
-        return trySendData(StringUtils.m18a(this, Utils.parseInt((Object) c0009ai.f57c)));
+        AppState.pool[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.identifier);
+        return trySendData(StringUtils.m18a(this, Utils.parseInt((Object) c0009ai.identifier)));
     }
 
     @Override // p000.Account
@@ -695,7 +695,7 @@ public final class MmpProtocol extends Account {
         }
         trySendData(ResourceManager.m961a(this));
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        return trySendData(m916a(new Object[]{AppController.m464a(this, 4874, c0009ai.m180a(2, c0009ai.displayName, c0009ai.f56b)), ResourceManager.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
+        return trySendData(m916a(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
     }
 
     @Override // p000.Account
@@ -753,7 +753,7 @@ public final class MmpProtocol extends Account {
         if (c0009ai.canBlock()) {
             trySendData(IOUtils.m791b(this, c0009ai));
         }
-        return trySendData(m916a(new Object[]{AppController.m464a(this, 4874, c0009ai.m180a(2, c0009ai.displayName, c0009ai.f56b)), ResourceManager.m967e(5), c0009ai}));
+        return trySendData(m916a(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.m967e(5), c0009ai}));
     }
 
     @Override // p000.Account
@@ -818,7 +818,7 @@ public final class MmpProtocol extends Account {
                             break;
                         }
                         MmpContact c0009ai = (MmpContact) vector2.elementAt(size2);
-                        if (c0009ai.f55a == iM520a || c0009ai.f59d == iM520a || c0009ai.f60e == iM520a || c0009ai.f61f == iM520a) {
+                        if (c0009ai.userId == iM520a || c0009ai.canDelete == iM520a || c0009ai.canBlock == iM520a || c0009ai.canUnblock == iM520a) {
                             z = true;
                         }
                     }

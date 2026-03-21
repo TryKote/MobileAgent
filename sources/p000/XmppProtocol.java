@@ -80,7 +80,7 @@ public class XmppProtocol extends Account {
                 this.f37e = c0043n.readWideStr();
                 return;
             }
-            ((XmppContact) c0036g.contacts.elementAt(iM541c)).f43b = true;
+            ((XmppContact) c0036g.contacts.elementAt(iM541c)).online = true;
         }
     }
 
@@ -361,15 +361,15 @@ public class XmppProtocol extends Account {
                                     if (c0006afM111f == null) {
                                         ContactGroup abstractC0046q = this.defaultGroup;
                                         XmppContact c0006af = new XmppContact(this, strM130h, m129a(c0022av, strM130h), null);
-                                        c0006af.f43b = true;
+                                        c0006af.online = true;
                                         c0006afM111f = c0006af;
                                         abstractC0046q.addContact((Object) c0006af);
                                     }
-                                    c0006afM111f.m146a(strM584b4, c0022av);
+                                    c0006afM111f.updateFromPresence(strM584b4, c0022av);
                                     ResourceManager.m925a(3);
                                     onMessage(strM130h, 0L, AppState.getString(1031));
                                 } else if (c0006afM111f != null) {
-                                    c0006afM111f.m146a(strM584b4, c0022av);
+                                    c0006afM111f.updateFromPresence(strM584b4, c0022av);
                                 }
                             }
                         } else if (StringUtils.m3a(464488, str)) {
@@ -637,14 +637,14 @@ public class XmppProtocol extends Account {
     /* renamed from: a */
     public final int validateModify(Contact abstractC0041l, Object[] objArr) {
         int iMo112a = super.validateModify(abstractC0041l, objArr);
-        return 0 != iMo112a ? iMo112a : m117a(((XmppContact) abstractC0041l).f38a, (String) objArr[0], findGroup(abstractC0041l).name);
+        return 0 != iMo112a ? iMo112a : m117a(((XmppContact) abstractC0041l).jabberId, (String) objArr[0], findGroup(abstractC0041l).name);
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int validateMove(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         int iMo113a = super.validateMove(abstractC0041l, abstractC0046q, abstractC0046q2);
-        return 0 != iMo113a ? iMo113a : m117a(((XmppContact) abstractC0041l).f38a, abstractC0041l.displayName, abstractC0046q2.name);
+        return 0 != iMo113a ? iMo113a : m117a(((XmppContact) abstractC0041l).jabberId, abstractC0041l.displayName, abstractC0046q2.name);
     }
 
     @Override // p000.Account
@@ -653,7 +653,7 @@ public class XmppProtocol extends Account {
         if (!isConnected()) {
             return 299;
         }
-        AppState.pool[1316] = new Object[]{m81r(), ((XmppContact) abstractC0041l).m151f()};
+        AppState.pool[1316] = new Object[]{m81r(), ((XmppContact) abstractC0041l).getContactInfo()};
         this.state--;
         return m92b(XmlElement.createFromState(136604).addNameAttr(196633).setAttrValue(131590, abstractC0041l.getIdentifier()).addSimpleChild(333452, 661030));
     }
@@ -703,10 +703,10 @@ public class XmppProtocol extends Account {
         if (!isConnected()) {
             return 299;
         }
-        String str = c0006af.f38a;
+        String str = c0006af.jabberId;
         String str2 = c0006af.displayName;
         ContactGroup abstractC0046qM1080g = findGroup(c0006af);
-        m117a(str, str2, (abstractC0046qM1080g == this.onlineGroup || c0006af.f43b) ? AppState.getString(459528) : abstractC0046qM1080g.name);
+        m117a(str, str2, (abstractC0046qM1080g == this.onlineGroup || c0006af.online) ? AppState.getString(459528) : abstractC0046qM1080g.name);
         return i;
     }
 
@@ -863,7 +863,7 @@ public class XmppProtocol extends Account {
                     }
                     XmppContact c0006af2 = new XmppContact(this, strM554b, strM554b3, strM554b2);
                     c0036g.addContact((Object) c0006af2);
-                    c0006af2.m147a(c0006af);
+                    c0006af2.updateFromContact(c0006af);
                 }
             }
         }

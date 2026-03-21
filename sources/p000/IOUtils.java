@@ -97,7 +97,7 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final ByteBuffer m753a(MmpProtocol c0033d, MmpContact c0009ai, String str) {
-        return AppController.m464a(c0033d, 4888, new ByteBuffer().writeByteLenStr(c0009ai.f57c).writeUTF(str).writeShortBE(0));
+        return AppController.m464a(c0033d, 4888, new ByteBuffer().writeByteLenStr(c0009ai.identifier).writeUTF(str).writeShortBE(0));
     }
 
     /* renamed from: a */
@@ -622,29 +622,29 @@ public final class IOUtils {
 
     /* renamed from: a */
     private static final ByteBuffer m788a(MmpProtocol c0033d, MmpContact c0009ai, int i) {
-        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(c0009ai.f57c).writeShortBE(0);
+        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0);
         int iM920k = c0033d.m920k();
         return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.m967e(18), c0009ai, ResourceManager.m967e(i), ResourceManager.m967e(iM920k)});
     }
 
     /* renamed from: a */
     private static final ByteBuffer m789a(MmpProtocol c0033d, MmpContact c0009ai, int i, int i2) {
-        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.f57c).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.m967e(19), c0009ai, ResourceManager.m967e(i2)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.m967e(19), c0009ai, ResourceManager.m967e(i2)});
     }
 
     /* renamed from: a */
     public static final ByteBuffer m790a(MmpProtocol c0033d, MmpContact c0009ai) {
-        return c0009ai.canDelete() ? m789a(c0033d, c0009ai, c0009ai.f59d, 2) : m788a(c0033d, c0009ai, 2);
+        return c0009ai.canDelete() ? m789a(c0033d, c0009ai, c0009ai.canDelete, 2) : m788a(c0033d, c0009ai, 2);
     }
 
     /* renamed from: b */
     public static final ByteBuffer m791b(MmpProtocol c0033d, MmpContact c0009ai) {
-        return c0009ai.canBlock() ? m789a(c0033d, c0009ai, c0009ai.f60e, 3) : m788a(c0033d, c0009ai, 3);
+        return c0009ai.canBlock() ? m789a(c0033d, c0009ai, c0009ai.canBlock, 3) : m788a(c0033d, c0009ai, 3);
     }
 
     /* renamed from: c */
     public static final ByteBuffer m792c(MmpProtocol c0033d, MmpContact c0009ai) {
-        return c0009ai.canUnblock() ? m789a(c0033d, c0009ai, c0009ai.f61f, 14) : m788a(c0033d, c0009ai, 14);
+        return c0009ai.canUnblock() ? m789a(c0033d, c0009ai, c0009ai.canUnblock, 14) : m788a(c0033d, c0009ai, 14);
     }
 
     /* JADX WARN: Removed duplicated region for block: B:28:0x00a9  */
@@ -672,11 +672,11 @@ public final class IOUtils {
         AppController.m353a(vectorM1078P);
         for (int i = 0; i < vectorM1078P.size(); i++) {
             MrimContact c0035f2 = (MrimContact) vectorM1078P.elementAt(i);
-            String str = c0035f2.f297d;
+            String str = c0035f2.simpleIdentifier;
             String str2 = c0035f2.displayName;
             if (abstractC0041l != null) {
                 MrimContact c0035f3 = (MrimContact) abstractC0041l;
-                c0032cM899a = c0035f3.f305k != null && c0035f3.f305k.contains(str) ? new MenuItem(2, str2).m899a(375, str2) : MenuItem.m890a(str2, false);
+                c0032cM899a = c0035f3.groupsList != null && c0035f3.groupsList.contains(str) ? new MenuItem(2, str2).m899a(375, str2) : MenuItem.m890a(str2, false);
             }
             c0032cM899a.f259b = str;
             c0013am.m225a(c0032cM899a);
@@ -716,7 +716,7 @@ public final class IOUtils {
             ScreenBuilder.m549c();
         }
         if (StringUtils.m3a(717, str)) {
-            int iM993f = ((MrimContact) abstractC0041lM611g).m993f();
+            int iM993f = ((MrimContact) abstractC0041lM611g).requestUserDetails();
             return 0 != iM993f ? AppController.m338l(iM993f) : i;
         }
         if (i == 65) {
@@ -725,12 +725,12 @@ public final class IOUtils {
         }
         if (i == 66) {
             if (abstractC0041lM611g instanceof XmppContact) {
-                return ((XmppContact) abstractC0041lM611g).m149a(40);
+                return ((XmppContact) abstractC0041lM611g).sendPresence(40);
             }
             AppState.pool[1319] = new ContactInfo(abstractC0041lM611g);
         } else if (i == 54) {
             AppState.setAccount(abstractC0041lM611g.account);
-            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) abstractC0041lM611g).f297d), (String) null, (String) null);
+            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) abstractC0041lM611g).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
             interfaceC0044o.deselect();
@@ -1084,7 +1084,7 @@ public final class IOUtils {
             }
         }
         if (StringUtils.m3a(717, str)) {
-            int iM993f = ((MrimContact) obj).m993f();
+            int iM993f = ((MrimContact) obj).requestUserDetails();
             if (0 != iM993f) {
                 return AppController.m338l(iM993f);
             }
@@ -1097,12 +1097,12 @@ public final class IOUtils {
         }
         if (i == 66) {
             if (obj instanceof XmppContact) {
-                return ((XmppContact) obj).m149a(4);
+                return ((XmppContact) obj).sendPresence(4);
             }
             AppState.pool[1319] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
-            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) obj).f297d), (String) null, (String) null);
+            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.deselect();

@@ -777,9 +777,9 @@ public abstract class MapRenderer {
     /* renamed from: a */
     public static final void m653a(MapPoint c0014an) {
         if (AppState.getBool(1442)) {
-            MmpContact.m183b(c0014an.longitude, c0014an.latitude);
+            MmpContact.setSecondToken(c0014an.longitude, c0014an.latitude);
         } else {
-            MmpContact.m182a(c0014an.longitude, c0014an.latitude);
+            MmpContact.setFirstToken(c0014an.longitude, c0014an.latitude);
         }
         f200h = true;
         if (m656d()) {
@@ -808,7 +808,7 @@ public abstract class MapRenderer {
 
     /* renamed from: d */
     public static final boolean m656d() {
-        return (MmpContact.f64i[0] > 0L ? 1 : (MmpContact.f64i[0] == 0L ? 0 : -1)) != 0 && (MmpContact.f64i[1] > 0L ? 1 : (MmpContact.f64i[1] == 0L ? 0 : -1)) != 0 && (MmpContact.f65j[0] > 0L ? 1 : (MmpContact.f65j[0] == 0L ? 0 : -1)) != 0 && (MmpContact.f65j[1] > 0L ? 1 : (MmpContact.f65j[1] == 0L ? 0 : -1)) != 0 && ((MmpContact.f64i[0] > MmpContact.f65j[0] ? 1 : (MmpContact.f64i[0] == MmpContact.f65j[0] ? 0 : -1)) != 0 || (MmpContact.f64i[1] > MmpContact.f65j[1] ? 1 : (MmpContact.f64i[1] == MmpContact.f65j[1] ? 0 : -1)) != 0);
+        return (MmpContact.lastTokenPair[0] > 0L ? 1 : (MmpContact.lastTokenPair[0] == 0L ? 0 : -1)) != 0 && (MmpContact.lastTokenPair[1] > 0L ? 1 : (MmpContact.lastTokenPair[1] == 0L ? 0 : -1)) != 0 && (MmpContact.currentTokenPair[0] > 0L ? 1 : (MmpContact.currentTokenPair[0] == 0L ? 0 : -1)) != 0 && (MmpContact.currentTokenPair[1] > 0L ? 1 : (MmpContact.currentTokenPair[1] == 0L ? 0 : -1)) != 0 && ((MmpContact.lastTokenPair[0] > MmpContact.currentTokenPair[0] ? 1 : (MmpContact.lastTokenPair[0] == MmpContact.currentTokenPair[0] ? 0 : -1)) != 0 || (MmpContact.lastTokenPair[1] > MmpContact.currentTokenPair[1] ? 1 : (MmpContact.lastTokenPair[1] == MmpContact.currentTokenPair[1] ? 0 : -1)) != 0);
     }
 
     /* renamed from: b */

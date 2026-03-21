@@ -368,13 +368,13 @@ public final class MrimAccount extends Account implements ListItem {
                     if (c0035fM717f != null && !c0035fM717f.isOnline()) {
                         c0043nM1349s.readInt();
                         String strM1334g2 = c0043nM1349s.readWideStr();
-                        int i7 = c0035fM717f.f299f;
-                        c0035fM717f.f299f = iM1328e;
-                        c0035fM717f.f301h = strM1334g2;
+                        int i7 = c0035fM717f.unreadCount;
+                        c0035fM717f.unreadCount = iM1328e;
+                        c0035fM717f.statusMessage = strM1334g2;
                         c0035fM717f.defaultIcon = AppController.m349a(iM1328e, strM1334g);
                         c0035fM717f.highlighted = iM1328e != 0;
                         if (iM1328e == 0) {
-                            c0035fM717f.m999p();
+                            c0035fM717f.clearVCard();
                         }
                         c0035fM717f.dirty = true;
                         c0035fM717f.updateRenderState();
@@ -504,7 +504,7 @@ public final class MrimAccount extends Account implements ListItem {
                     if (null == c0035fM717f2) {
                         break;
                     } else {
-                        c0035fM717f2.f298e &= -2;
+                        c0035fM717f2.hasUnreadFlag &= -2;
                         break;
                     }
                 case 4133:
@@ -573,7 +573,7 @@ public final class MrimAccount extends Account implements ListItem {
                     if (c0035fM717f3 != null && !c0035fM717f3.isOnline()) {
                         if ((iM1328e2 & 2) == 0) {
                             if ((iM1328e2 & 5) != 0) {
-                                if (AppState.getBool(244) && !StringUtils.equals(strM1335e2, c0035fM717f3.f303i) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.getLastSentTime() != jM1341m) {
+                                if (AppState.getBool(244) && !StringUtils.equals(strM1335e2, c0035fM717f3.customNote) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.getLastSentTime() != jM1341m) {
                                     AppState.setObject(1237, (Object) c0035fM717f3.identifier);
                                     ResourceManager.m925a(6);
                                     c0035fM717f3.addFlag(2);
@@ -584,13 +584,13 @@ public final class MrimAccount extends Account implements ListItem {
                                     }
                                     c0035fM717f3.updateRenderState();
                                 }
-                                c0035fM717f3.f303i = strM1335e2;
+                                c0035fM717f3.customNote = strM1335e2;
                                 break;
                             } else {
                                 break;
                             }
                         } else {
-                            c0035fM717f3.f304j = strM1335e2;
+                            c0035fM717f3.customLink = strM1335e2;
                             break;
                         }
                     } else {
@@ -825,16 +825,16 @@ public final class MrimAccount extends Account implements ListItem {
                 MrimContact c0035fM717f = m717f(str);
                 if (c0035fM717f != null) {
                     if (strArrM55a == null) {
-                        c0035fM717f.m999p();
+                        c0035fM717f.clearVCard();
                     } else {
                         try {
-                            c0035fM717f.f306l = new VCard();
-                            c0035fM717f.f306l.m53a(strArrM55a[0], strArrM55a[1], strArrM55a[2], strArrM55a[3], strArrM55a[4], strArrM55a[5], strArrM55a[6], strArrM55a[7]);
-                            c0035fM717f.f307m = true;
+                            c0035fM717f.vCardInfo = new VCard();
+                            c0035fM717f.vCardInfo.m53a(strArrM55a[0], strArrM55a[1], strArrM55a[2], strArrM55a[3], strArrM55a[4], strArrM55a[5], strArrM55a[6], strArrM55a[7]);
+                            c0035fM717f.isSelected = true;
                         } catch (Throwable unused) {
-                            c0035fM717f.m999p();
+                            c0035fM717f.clearVCard();
                         }
-                        c0035fM717f.f308n.lastScale = -1;
+                        c0035fM717f.sizeCache.lastScale = -1;
                     }
                 }
             }
@@ -918,13 +918,13 @@ public final class MrimAccount extends Account implements ListItem {
             return removeContact(abstractC0041l, true);
         }
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b | 1).writeIntLE(c0035f.f296c).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.f300g)), ResourceManager.m967e(2), c0035f}));
+        return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(c0035f.statusFlags | 1).writeIntLE(c0035f.groupId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), ResourceManager.m967e(2), c0035f}));
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int validateDelete(Contact abstractC0041l) {
-        return m732g(((MrimContact) abstractC0041l).f297d);
+        return m732g(((MrimContact) abstractC0041l).simpleIdentifier);
     }
 
     /* renamed from: g */
@@ -977,13 +977,13 @@ public final class MrimAccount extends Account implements ListItem {
                 if (i2 < 0) {
                     break;
                 }
-                if (c0035f2 != abstractC0041l && c0035f2.m994a(strArr[i2])) {
+                if (c0035f2 != abstractC0041l && c0035f2.isInGroup(strArr[i2])) {
                     return 486;
                 }
             }
         }
         String strM519a = Utils.m519a(strArr);
-        return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b).writeIntLE(c0035f.f296c).writeStringLatin1(c0035f.f297d).writeStringUTF16(str).writeStringLatin1(strM519a)), ResourceManager.m967e(0), c0035f, str, strM519a}));
+        return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(c0035f.statusFlags).writeIntLE(c0035f.groupId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(str).writeStringLatin1(strM519a)), ResourceManager.m967e(0), c0035f, str, strM519a}));
     }
 
     /* renamed from: U */
@@ -1023,9 +1023,9 @@ public final class MrimAccount extends Account implements ListItem {
     public final int validateContactDelete(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
         if (c0035f.isOnline()) {
-            return trySendData(XmppContactGroup.m1024a(this, 48, c0035f.f297d, c0035f.displayName, AppState.emptyStr, m718f(), false));
+            return trySendData(XmppContactGroup.m1024a(this, 48, c0035f.simpleIdentifier, c0035f.displayName, AppState.emptyStr, m718f(), false));
         }
-        int i = c0035f.f295b;
+        int i = c0035f.statusFlags;
         return trySendData(ResourceManager.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
     }
 
@@ -1033,7 +1033,7 @@ public final class MrimAccount extends Account implements ListItem {
     /* renamed from: d */
     public final int validateContactBlock(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        int i = c0035f.f295b ^ 8;
+        int i = c0035f.statusFlags ^ 8;
         int i2 = i;
         if ((i & 8) != 0) {
             i2 &= -5;
@@ -1045,7 +1045,7 @@ public final class MrimAccount extends Account implements ListItem {
     /* renamed from: e */
     public final int validateContactUnblock(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        int i = c0035f.f295b ^ 4;
+        int i = c0035f.statusFlags ^ 4;
         int i2 = i;
         if ((i & 4) != 0) {
             i2 &= -9;
@@ -1057,7 +1057,7 @@ public final class MrimAccount extends Account implements ListItem {
     /* renamed from: f */
     public final int validateContactResend(Contact abstractC0041l) {
         int iMo735f = super.validateContactResend(abstractC0041l);
-        return 0 != iMo735f ? iMo735f : trySendData(AppController.m321a(this, 4104, new ByteBuffer().writeIntLE(1024).writeStringLatin1(((MrimContact) abstractC0041l).f297d).writeIntLE(0).writeIntLE(0)));
+        return 0 != iMo735f ? iMo735f : trySendData(AppController.m321a(this, 4104, new ByteBuffer().writeIntLE(1024).writeStringLatin1(((MrimContact) abstractC0041l).simpleIdentifier).writeIntLE(0).writeIntLE(0)));
     }
 
     @Override // p000.Account

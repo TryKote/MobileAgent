@@ -729,8 +729,8 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
-            p000.MmpContact.m187b(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
-            java.util.Vector r0 = p000.MmpContact.f70n     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            p000.MmpContact.parseRouteFromJson(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.MmpContact.routeRegions     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             int r0 = r0.size()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             if (r0 <= 0) goto L44a
             r0 = 1
@@ -740,11 +740,11 @@ public final class AsyncTask implements Runnable, CommandListener {
         L44b:
             if (r0 == 0) goto L4b9
             r0 = 1
-            p000.MmpContact.m184a(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
-            java.util.Vector r0 = p000.MmpContact.f70n     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            p000.MmpContact.setLocationEnabled(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.MmpContact.routeRegions     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             int r0 = r0.size()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             if (r0 <= 0) goto L483
-            java.util.Vector r0 = p000.MmpContact.f70n     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.MmpContact.routeRegions     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             java.lang.Object r0 = r0.firstElement()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r1 = 1
@@ -769,10 +769,10 @@ public final class AsyncTask implements Runnable, CommandListener {
         L483:
             r0 = 0
         L484:
-            java.util.Vector r1 = p000.MmpContact.f70n     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.util.Vector r1 = p000.MmpContact.routeRegions     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             int r1 = r1.size()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             if (r1 <= 0) goto L4b5
-            java.util.Vector r1 = p000.MmpContact.f70n     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.util.Vector r1 = p000.MmpContact.routeRegions     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             java.lang.Object r1 = r1.firstElement()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             java.lang.Object[] r1 = (java.lang.Object[]) r1     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r2 = 1

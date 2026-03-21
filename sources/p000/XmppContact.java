@@ -5,31 +5,31 @@ package p000;
 public final class XmppContact extends Contact {
 
     /* renamed from: a */
-    public String f38a;
+    public String jabberId;
 
     /* renamed from: c */
-    private int f39c;
+    private int status;
 
     /* renamed from: d */
-    private int f40d;
+    private int unreadCount;
 
     /* renamed from: e */
-    private String f41e;
+    private String statusMessage;
 
     /* renamed from: f */
-    private String f42f;
+    private String vCardHash;
 
     /* renamed from: b */
-    public boolean f43b;
+    public boolean online;
 
     public XmppContact(XmppProtocol c0005ae, String str, String str2, String str3) {
         super(c0005ae);
         this.extra = str;
-        this.f38a = str;
-        this.f41e = str3;
-        this.f40d = 0;
+        this.jabberId = str;
+        this.statusMessage = str3;
+        this.unreadCount = 0;
         setDisplayName(Utils.m528a(str2, str));
-        this.defaultIcon = XmppProtocol.m131d(this.f39c);
+        this.defaultIcon = XmppProtocol.m131d(this.status);
         this.identifier = c0005ae.encodeId().writeRawString(str).getStringAndClear();
         c0005ae.registerContact(this);
         updateRenderState();
@@ -38,40 +38,40 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: c */
     public final void clearUnread() {
-        this.f39c = 0;
+        this.status = 0;
         this.defaultIcon = 381;
-        this.f41e = null;
-        this.f42f = null;
-        this.f40d = 0;
+        this.statusMessage = null;
+        this.vCardHash = null;
+        this.unreadCount = 0;
         super.clearUnread();
     }
 
     @Override // p000.Contact
     /* renamed from: a */
     public final String getIdentifier() {
-        return this.f38a;
+        return this.jabberId;
     }
 
     public XmppContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
-        this.f38a = c0043n.readWideStr();
+        this.jabberId = c0043n.readWideStr();
         setDisplayName(c0043n.readUTF8Str((String) null));
-        this.identifier = abstractC0037h.encodeId().writeRawString(this.f38a).getStringAndClear();
-        this.f39c = 0;
+        this.identifier = abstractC0037h.encodeId().writeRawString(this.jabberId).getStringAndClear();
+        this.status = 0;
         this.defaultIcon = XmppProtocol.m131d(0);
         abstractC0037h.registerContact(this);
         updateRenderState();
-        this.extra = this.f38a;
+        this.extra = this.jabberId;
     }
 
     @Override // p000.Contact
     /* renamed from: a */
     public final void deserialize(ByteBuffer c0043n) {
-        c0043n.writeStringLatin1(this.f38a).writeStringUTF16(this.displayName);
+        c0043n.writeStringLatin1(this.jabberId).writeStringUTF16(this.displayName);
     }
 
     /* renamed from: o */
-    private final int m137o() {
+    private final int getDisplayIcon() {
         int iMo139e = getIcon();
         int i = iMo139e & 65535;
         return (!(this.account instanceof XmppMailRuProtocol) || i < 381 || i > 384) ? iMo139e : iMo139e + 4;
@@ -80,7 +80,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: b */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM901a = MenuItem.m887a(this.identifier).m896a(m137o()).m901a(this.displayName, 0, this.f40d);
+        MenuItem c0032cM901a = MenuItem.m887a(this.identifier).m896a(getDisplayIcon()).m901a(this.displayName, 0, this.unreadCount);
         c0032cM901a.f265d = this;
         return c0032cM901a;
     }
@@ -93,10 +93,10 @@ public final class XmppContact extends Contact {
         if (iMo139e == 16384) {
             return i;
         }
-        if (StringUtils.m3a(262852, this.f41e) || StringUtils.m3a(267931, this.f41e) || StringUtils.m3a(202403, this.f41e)) {
+        if (StringUtils.m3a(262852, this.statusMessage) || StringUtils.m3a(267931, this.statusMessage) || StringUtils.m3a(202403, this.statusMessage)) {
             i = 384;
         }
-        if (StringUtils.m3a(131590, this.f41e)) {
+        if (StringUtils.m3a(131590, this.statusMessage)) {
             i = (i & 65535) | 20578304;
         }
         return i;
@@ -123,13 +123,13 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: m */
     public final boolean isOnline() {
-        return this.f43b;
+        return this.online;
     }
 
     @Override // p000.Contact
     /* renamed from: l */
     public final boolean hasUnread() {
-        return StringUtils.m3a(267931, this.f41e) || StringUtils.m3a(262852, this.f41e);
+        return StringUtils.m3a(267931, this.statusMessage) || StringUtils.m3a(262852, this.statusMessage);
     }
 
     @Override // p000.Contact
@@ -142,17 +142,17 @@ public final class XmppContact extends Contact {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void m146a(String str, XmlElement c0022av) {
+    public final void updateFromPresence(String str, XmlElement c0022av) {
         int i = 0;
-        this.f42f = str;
-        this.f39c = 0;
+        this.vCardHash = str;
+        this.status = 0;
         if (StringUtils.m3a(594984, str)) {
             XmlElement c0022avM562f = c0022av.findChildByKey(267927);
             if (c0022avM562f != null) {
                 String strM11a = StringUtils.fromBuffer(c0022avM562f.textContent);
                 if (StringUtils.isEmpty(strM11a)) {
                     i = 1;
-                    this.f39c = i;
+                    this.status = i;
                 } else {
                     if (StringUtils.m3a(265215, strM11a)) {
                         i = 4;
@@ -165,20 +165,20 @@ public final class XmppContact extends Contact {
                     } else if (StringUtils.m3a(202302, strM11a)) {
                         i = 3;
                     }
-                    this.f39c = i;
+                    this.status = i;
                 }
             }
         }
-        m147a(this);
+        updateFromContact(this);
     }
 
     /* renamed from: a */
-    public final void m147a(XmppContact c0006af) {
-        this.f39c = c0006af != null ? c0006af.f39c : 0;
-        this.f42f = c0006af != null ? c0006af.f42f : null;
-        this.highlighted = this.f39c != 0;
-        this.defaultIcon = XmppProtocol.m131d(this.f39c);
-        this.f40d = this.f39c == 0 ? 0 : 3;
+    public final void updateFromContact(XmppContact c0006af) {
+        this.status = c0006af != null ? c0006af.status : 0;
+        this.vCardHash = c0006af != null ? c0006af.vCardHash : null;
+        this.highlighted = this.status != 0;
+        this.defaultIcon = XmppProtocol.m131d(this.status);
+        this.unreadCount = this.status == 0 ? 0 : 3;
         this.dirty = true;
         updateRenderState();
     }
@@ -190,24 +190,24 @@ public final class XmppContact extends Contact {
     }
 
     /* renamed from: a */
-    public final int m149a(int i) {
+    public final int sendPresence(int i) {
         int iM119a = ((XmppProtocol) this.account).m119a(this, i);
         if (iM119a != i) {
             return iM119a;
         }
-        m150b(1);
-        m150b(0);
+        setPresenceFeature(1);
+        setPresenceFeature(0);
         return i;
     }
 
     /* renamed from: b */
-    public final void m150b(int i) {
-        ((XmppProtocol) this.account).m99b(this.f38a, i);
+    public final void setPresenceFeature(int i) {
+        ((XmppProtocol) this.account).m99b(this.jabberId, i);
     }
 
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
-    public final ContactInfo m151f() {
-        return new ContactInfo(this).m1298g(m137o());
+    public final ContactInfo getContactInfo() {
+        return new ContactInfo(this).m1298g(getDisplayIcon());
     }
 }

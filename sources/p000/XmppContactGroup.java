@@ -71,7 +71,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer m1001a(MrimAccount c0028ba, MrimContact c0035f, String str, long j) {
         Object[] objArr = new Object[4];
-        ByteBuffer c0043nM1308a = new ByteBuffer().writeIntLE(0).writeStringLatin1(c0035f.f297d);
+        ByteBuffer c0043nM1308a = new ByteBuffer().writeIntLE(0).writeStringLatin1(c0035f.simpleIdentifier);
         Hashtable hashtable = new Hashtable();
         int i = 78;
         while (true) {

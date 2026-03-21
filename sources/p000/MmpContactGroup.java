@@ -53,7 +53,7 @@ public final class MmpContactGroup extends ContactGroup {
         int size = this.contacts.size();
         ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE(i3 + (size << 1));
         for (int i4 = 0; i4 < size; i4++) {
-            int i5 = ((MmpContact) getContact(i4)).f55a;
+            int i5 = ((MmpContact) getContact(i4)).userId;
             if (i != i5) {
                 c0043nM1357m2.writeShortBE(i5);
             }

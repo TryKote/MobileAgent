@@ -7,80 +7,80 @@ import java.util.Vector;
 public final class MrimContact extends Contact implements ListItem {
 
     /* renamed from: a */
-    public final int f294a;
+    public final int contactId;
 
     /* renamed from: b */
-    public int f295b;
+    public int statusFlags;
 
     /* renamed from: c */
-    public int f296c;
+    public int groupId;
 
     /* renamed from: d */
-    public String f297d;
+    public String simpleIdentifier;
 
     /* renamed from: e */
-    public int f298e;
+    public int hasUnreadFlag;
 
     /* renamed from: f */
-    public int f299f;
+    public int unreadCount;
 
     /* renamed from: g */
-    public String f300g;
+    public String contactGroupsStr;
 
     /* renamed from: h */
-    public String f301h;
+    public String statusMessage;
 
     /* renamed from: y */
-    private long f302y;
+    private long lastStatusCheckTime;
 
     /* renamed from: i */
-    public String f303i;
+    public String customNote;
 
     /* renamed from: j */
-    public String f304j;
+    public String customLink;
 
     /* renamed from: k */
-    public Vector f305k;
+    public Vector groupsList;
 
     /* renamed from: l */
-    public VCard f306l;
+    public VCard vCardInfo;
 
     /* renamed from: m */
-    public boolean f307m;
+    public boolean isSelected;
 
     /* renamed from: n */
-    public SizeCache f308n;
+    public SizeCache sizeCache;
 
     public MrimContact(Account abstractC0037h, int i, int i2, int i3, String str, String str2, int i4, int i5, String str3, String str4, String str5) {
         super(abstractC0037h);
-        this.f294a = i;
-        this.f295b = i2;
-        this.f296c = i3;
-        this.f297d = str;
-        this.f298e = i4;
-        this.f299f = i5;
-        this.f300g = str3;
-        this.f301h = str5;
+        this.contactId = i;
+        this.statusFlags = i2;
+        this.groupId = i3;
+        this.simpleIdentifier = str;
+        this.hasUnreadFlag = i4;
+        this.unreadCount = i5;
+        this.contactGroupsStr = str3;
+        this.statusMessage = str5;
         setDisplayName(Utils.m528a(str2, str));
         this.defaultIcon = AppController.m349a(i5, str4);
         this.highlighted = i5 != 0;
-        m992O();
-        this.f308n = new SizeCache();
+        updateIdentifierAndRegister();
+        this.sizeCache = new SizeCache();
     }
 
     public MrimContact() {
         super(null);
-        this.f294a = 0;
-        this.f308n = new SizeCache();
+        this.contactId = 0;
+        this.sizeCache = new SizeCache();
     }
 
     @Override // p000.Contact
     /* renamed from: a */
     public final String getIdentifier() {
         if (!isOffline()) {
-            return this.f297d;
+            return this.simpleIdentifier;
         }
-        Vector vectorM516c = Utils.m516c(this.f300g, ',');
+        Vector vectorM516c = Utils.m516c(this.contactGroupsStr, ',');
         String str = (String) vectorM516c.elementAt(0);
         NetworkUtils.releaseVector(vectorM516c);
         return str;
@@ -88,22 +88,22 @@ public final class MrimContact extends Contact implements ListItem {
 
     public MrimContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
-        this.f294a = c0043n.readInt();
+        this.contactId = c0043n.readInt();
         String str = AppState.emptyStr;
-        this.f295b = c0043n.readInt();
-        this.f297d = StringUtils.intern(c0043n.readWideStr().toLowerCase());
+        this.statusFlags = c0043n.readInt();
+        this.simpleIdentifier = StringUtils.intern(c0043n.readWideStr().toLowerCase());
         setDisplayName(c0043n.readUTF8Str((String) null));
-        this.f298e = c0043n.readInt();
-        this.f300g = c0043n.readWideStr();
+        this.hasUnreadFlag = c0043n.readInt();
+        this.contactGroupsStr = c0043n.readWideStr();
         byte bM1344o = c0043n.readByte();
         this.flags = bM1344o;
         if (bM1344o != 0) {
             AppController.m414a((Contact) this);
         }
-        this.f301h = str;
+        this.statusMessage = str;
         this.defaultIcon = 155;
-        m992O();
-        this.f308n = new SizeCache();
+        updateIdentifierAndRegister();
+        this.sizeCache = new SizeCache();
     }
 
     @Override // p000.Contact
@@ -112,12 +112,12 @@ public final class MrimContact extends Contact implements ListItem {
         MenuItem c0032cM896a = MenuItem.m887a(this.identifier).m896a(getIcon());
         String str = this.displayName;
         int i = canBlock() ? 3 : canDelete() ? 2 : 0;
-        int i2 = this.f295b;
-        c0032cM896a.m901a(str, i, (i2 & 1048576) != 0 ? 0 : (i2 & 8) != 0 ? 4 : (i2 & 4) != 0 ? 5 : this.f299f == 0 ? 0 : 3).f265d = this;
-        if (!isOffline() && Utils.nonEmpty(this.f300g)) {
+        int i2 = this.statusFlags;
+        c0032cM896a.m901a(str, i, (i2 & 1048576) != 0 ? 0 : (i2 & 8) != 0 ? 4 : (i2 & 4) != 0 ? 5 : this.unreadCount == 0 ? 0 : 3).f265d = this;
+        if (!isOffline() && Utils.nonEmpty(this.contactGroupsStr)) {
             c0032cM896a.m896a(27);
         }
-        if (Utils.nonEmpty(this.f304j)) {
+        if (Utils.nonEmpty(this.customLink)) {
             c0032cM896a.m896a(242);
         }
         c0032cM896a.f265d = this;
@@ -128,37 +128,37 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: c */
     public final void clearUnread() {
         this.defaultIcon = 155;
-        this.f299f = 0;
-        this.f304j = null;
-        this.f303i = null;
-        m999p();
+        this.unreadCount = 0;
+        this.customLink = null;
+        this.customNote = null;
+        clearVCard();
         super.clearUnread();
     }
 
     @Override // p000.Contact
     /* renamed from: a */
     public final void deserialize(ByteBuffer c0043n) {
-        c0043n.writeIntLE(this.f294a).writeIntLE(this.f295b).writeStringLatin1(this.f297d).writeStringUTF16(this.displayName).writeIntLE(this.f298e).writeStringLatin1(this.f300g).writeByte(this.flags);
+        c0043n.writeIntLE(this.contactId).writeIntLE(this.statusFlags).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(this.displayName).writeIntLE(this.hasUnreadFlag).writeStringLatin1(this.contactGroupsStr).writeByte(this.flags);
     }
 
     /* renamed from: a */
-    public final void m989a(Vector vector) {
+    public final void setGroupsList(Vector vector) {
         if (vector == null) {
-            NetworkUtils.releaseVector(this.f305k);
-            this.f305k = null;
+            NetworkUtils.releaseVector(this.groupsList);
+            this.groupsList = null;
             return;
         }
-        if (this.f305k == null) {
-            this.f305k = NetworkUtils.newVector();
+        if (this.groupsList == null) {
+            this.groupsList = NetworkUtils.newVector();
         }
-        this.f305k.removeAllElements();
+        this.groupsList.removeAllElements();
         int size = vector.size();
         while (true) {
             size--;
             if (size < 0) {
                 return;
             } else {
-                this.f305k.addElement(vector.elementAt(size));
+                this.groupsList.addElement(vector.elementAt(size));
             }
         }
     }
@@ -166,7 +166,7 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.Contact
     /* renamed from: d */
     public final boolean isOffline() {
-        return (this.f295b & 1048576) != 0;
+        return (this.statusFlags & 1048576) != 0;
     }
 
     @Override // p000.Contact
@@ -182,26 +182,26 @@ public final class MrimContact extends Contact implements ListItem {
         if (iMo139e == 16384 || iMo139e == 26) {
             return iMo139e;
         }
-        if (0 != (this.f298e & 1) || isOnline()) {
+        if (0 != (this.hasUnreadFlag & 1) || isOnline()) {
             return 154;
         }
         return iMo139e;
     }
 
     /* renamed from: N */
-    private final String m991N() {
+    private final String getFirstGroupName() {
         int iIndexOf = -1;
         try {
-            iIndexOf = this.f300g.indexOf(44);
+            iIndexOf = this.contactGroupsStr.indexOf(44);
         } catch (Throwable unused) {
         }
-        return iIndexOf >= 0 ? StringUtils.prefix(this.f300g, iIndexOf) : Utils.defaultStr(this.f300g);
+        return iIndexOf >= 0 ? StringUtils.prefix(this.contactGroupsStr, iIndexOf) : Utils.defaultStr(this.contactGroupsStr);
     }
 
     /* renamed from: O */
-    private void m992O() {
+    private void updateIdentifierAndRegister() {
         ByteBuffer c0043nM1050q = this.account.encodeId();
-        String strM991N = isOffline() ? m991N() : this.f297d;
+        String strM991N = isOffline() ? getFirstGroupName() : this.simpleIdentifier;
         this.extra = strM991N;
         this.identifier = c0043nM1050q.writeRawString(strM991N).readAllByteStr();
         if (isOffline()) {
@@ -213,14 +213,14 @@ public final class MrimContact extends Contact implements ListItem {
 
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
-    public final int m993f() {
+    public final int requestUserDetails() {
         long jM598g = AppState.getLong(1530);
-        if (jM598g - this.f302y <= 60000) {
+        if (jM598g - this.lastStatusCheckTime <= 60000) {
             return 925;
         }
-        this.f302y = jM598g;
+        this.lastStatusCheckTime = jM598g;
         MrimAccount c0028ba = (MrimAccount) this.account;
-        int iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.f297d).writeStringUTF16(AppState.getString(909)).writeStringLatin1(AppState.getString(33819707))), ResourceManager.m967e(14)}));
+        int iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(909)).writeStringLatin1(AppState.getString(33819707))), ResourceManager.m967e(14)}));
         if (0 != iM1052c) {
             return iM1052c;
         }
@@ -229,8 +229,8 @@ public final class MrimContact extends Contact implements ListItem {
     }
 
     /* renamed from: a */
-    public final boolean m994a(String str) {
-        Vector vectorM516c = Utils.m516c(this.f300g, ',');
+    public final boolean isInGroup(String str) {
+        Vector vectorM516c = Utils.m516c(this.contactGroupsStr, ',');
         int size = vectorM516c.size();
         do {
             size--;
@@ -246,78 +246,78 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.Contact
     /* renamed from: g */
     public final String getDefaultName() {
-        return this.f300g;
+        return this.contactGroupsStr;
     }
 
     @Override // p000.Contact
     /* renamed from: h */
     public final void performAction() {
-        this.f298e &= -2;
+        this.hasUnreadFlag &= -2;
     }
 
     @Override // p000.Contact
     /* renamed from: i */
     public final boolean canDelete() {
-        return (this.f295b & 8) != 0;
+        return (this.statusFlags & 8) != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: j */
     public final boolean canBlock() {
-        return (this.f295b & 4) != 0;
+        return (this.statusFlags & 4) != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: k */
     public final boolean canUnblock() {
-        return (this.f295b & 16) != 0;
+        return (this.statusFlags & 16) != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: l */
     public final boolean hasUnread() {
-        return (this.f298e & 1) != 0;
+        return (this.hasUnreadFlag & 1) != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: m */
     public final boolean isOnline() {
-        return (this.f295b & 65536) != 0;
+        return (this.statusFlags & 65536) != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: n */
     public final boolean isSystem() {
-        return (this.f295b & 128) != 0;
+        return (this.statusFlags & 128) != 0;
     }
 
     /* renamed from: a */
-    public final void m997a(String str, String str2) {
+    public final void updateDisplayNameAndGroups(String str, String str2) {
         setDisplayName(str);
-        this.f300g = str2;
-        this.extra = isOffline() ? Utils.m530h(m991N()) : this.f297d;
+        this.contactGroupsStr = str2;
+        this.extra = isOffline() ? Utils.m530h(getFirstGroupName()) : this.simpleIdentifier;
     }
 
     /* JADX DEBUG: Possible override for method l.o()V */
     /* renamed from: o */
-    public final String m998o() {
+    public final String getVCardDescription() {
         try {
-            return this.f306l.f16d;
+            return this.vCardInfo.f16d;
         } catch (Throwable unused) {
             return null;
         }
     }
 
     /* renamed from: p */
-    public final void m999p() {
-        this.f306l = null;
+    public final void clearVCard() {
+        this.vCardInfo = null;
         ChatRenderer.f253h = null;
         MapRenderer.f200h = true;
     }
 
     /* renamed from: q */
-    public final boolean m1000q() {
-        return this.f306l != null;
+    public final boolean hasVCard() {
+        return this.vCardInfo != null;
     }
 
     @Override // p000.ListItem
@@ -329,28 +329,28 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: s */
     public final boolean isSelected() {
-        return this.f307m && this.f306l != null && this.f306l.m59c();
+        return this.isSelected && this.vCardInfo != null && this.vCardInfo.m59c();
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
     public final void select() {
-        this.f307m = false;
+        this.isSelected = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
     public final void deselect() {
-        this.f307m = true;
+        this.isSelected = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
     public final int getWidth() {
         try {
-            return (int) this.f306l.m56a();
+            return (int) this.vCardInfo.m56a();
         } catch (Throwable unused) {
-            m999p();
+            clearVCard();
             return 0;
         }
     }
@@ -359,9 +359,9 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: w */
     public final int getBaseHeight() {
         try {
-            return (int) this.f306l.m57b();
+            return (int) this.vCardInfo.m57b();
         } catch (Throwable unused) {
-            m999p();
+            clearVCard();
             return 0;
         }
     }
@@ -370,7 +370,7 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: x */
     public final String getText() {
         StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(this.displayName);
-        String str = this.f306l.f16d;
+        String str = this.vCardInfo.f16d;
         if (str.length() > 0) {
             stringBufferAppend.append(',').append(' ').append(str).append('.');
         }
@@ -380,8 +380,8 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: y */
     public final int getCommandCount() {
-        if (this.f306l != null) {
-            return this.f306l.m60d();
+        if (this.vCardInfo != null) {
+            return this.vCardInfo.m60d();
         }
         return 10;
     }
@@ -389,18 +389,18 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: z */
     public final boolean isHighlighted() {
-        return this.f306l.m59c() && !this.f306l.f24l;
+        return this.vCardInfo.m59c() && !this.vCardInfo.f24l;
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
     public final int getCommandId(int i) {
-        return this.f308n.getWidth(i, this);
+        return this.sizeCache.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
     public final int executeCommand(int i) {
-        return this.f308n.getHeight(i, this);
+        return this.sizeCache.getHeight(i, this);
     }
 }
