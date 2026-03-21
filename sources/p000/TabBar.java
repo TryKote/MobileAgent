@@ -39,12 +39,12 @@ public final class TabBar {
     /* renamed from: k */
     public static Account currentAccount;
 
-    private TabBar(int i, String str, int i2, Account abstractC0037h) {
+    private TabBar(int i, String str, int i2, Account acct) {
         this.iconId = i;
         this.title = str;
         this.type = i2;
         this.width = GraphicsContext.getIconSize(i) + AppState.getGfxContext(1).stringWidth(str);
-        this.account = abstractC0037h;
+        this.account = acct;
     }
 
     /* renamed from: a */
@@ -52,16 +52,16 @@ public final class TabBar {
         currentIndex = 0;
         currentAccount = null;
         AppState.pool[1246] = NetworkUtils.newVector();
-        Vector vectorM614m = AppState.getVector(1241);
-        int size = vectorM614m.size();
+        Vector tabs = AppState.getVector(1241);
+        int size = tabs.size();
         if (size == 0 || !AppState.getBool(243)) {
             addTab(156, AppState.getString(1047), 4, null);
         } else {
             for (int i = 0; i < size; i++) {
-                Account abstractC0037h = (Account) vectorM614m.elementAt(i);
-                addTab(abstractC0037h.getIconId(), abstractC0037h.shortName, 4, abstractC0037h);
+                Account acct = (Account) tabs.elementAt(i);
+                addTab(acct.getIconId(), acct.shortName, 4, acct);
                 if (i == 0) {
-                    currentAccount = abstractC0037h;
+                    currentAccount = acct;
                 }
             }
         }
@@ -77,36 +77,36 @@ public final class TabBar {
 
     /* renamed from: a */
     public static final void updateTitle(int i, String str) {
-        Vector vectorM614m = AppState.getVector(1246);
-        TabBar c0008ah = (TabBar) vectorM614m.elementAt(0);
-        if (c0008ah.iconId == i && c0008ah.title == str) {
+        Vector tabs = AppState.getVector(1246);
+        TabBar tab = (TabBar) tabs.elementAt(0);
+        if (tab.iconId == i && tab.title == str) {
             return;
         }
-        String str2 = c0008ah.selectedTitle;
-        int i2 = c0008ah.selectedIndex;
-        TabBar c0008ah2 = new TabBar(i, str, 4, null);
-        vectorM614m.setElementAt(c0008ah2, 0);
-        c0008ah2.selectedTitle = str2;
-        c0008ah2.selectedIndex = i2;
+        String str2 = tab.selectedTitle;
+        int i2 = tab.selectedIndex;
+        TabBar iterTab = new TabBar(i, str, 4, null);
+        tabs.setElementAt(iterTab, 0);
+        iterTab.selectedTitle = str2;
+        iterTab.selectedIndex = i2;
         layout();
         AppController.needsRepaint = true;
     }
 
     /* renamed from: a */
-    private static void addTab(int i, String str, int i2, Account abstractC0037h) {
-        AppState.getVector(1246).addElement(new TabBar(i, str, i2, abstractC0037h));
+    private static void addTab(int i, String str, int i2, Account acct) {
+        AppState.getVector(1246).addElement(new TabBar(i, str, i2, acct));
     }
 
     /* renamed from: b */
     public final int selectTab() {
-        Vector vectorM614m = AppState.getVector(1246);
-        int size = vectorM614m.size();
+        Vector tabs = AppState.getVector(1246);
+        int size = tabs.size();
         do {
             size--;
             if (size < 0) {
                 return 0;
             }
-        } while (vectorM614m.elementAt(size) != this);
+        } while (tabs.elementAt(size) != this);
         selectTabByIndex(size);
         return this.type;
     }
@@ -114,9 +114,9 @@ public final class TabBar {
     /* renamed from: c */
     public static final TabBar getNextTab() {
         int i = currentIndex + 1;
-        Vector vectorM614m = AppState.getVector(1246);
-        if (i < vectorM614m.size()) {
-            return (TabBar) vectorM614m.elementAt(i);
+        Vector tabs = AppState.getVector(1246);
+        if (i < tabs.size()) {
+            return (TabBar) tabs.elementAt(i);
         }
         return null;
     }
@@ -158,21 +158,21 @@ public final class TabBar {
 
     /* renamed from: b */
     private static final void removeTabByType(int i, int i2) {
-        TabBar c0008ah;
+        TabBar tab;
         if (AppState.getBool(i)) {
             return;
         }
-        Vector vectorM614m = AppState.getVector(1246);
-        int size = vectorM614m.size();
+        Vector tabs = AppState.getVector(1246);
+        int size = tabs.size();
         do {
             size--;
             if (size < 0) {
                 return;
             } else {
-                c0008ah = (TabBar) vectorM614m.elementAt(size);
+                tab = (TabBar) tabs.elementAt(size);
             }
-        } while (c0008ah.type != i2);
-        vectorM614m.removeElement(c0008ah);
+        } while (tab.type != i2);
+        tabs.removeElement(tab);
         layout();
         AppController.needsRepaint = true;
     }
@@ -198,15 +198,15 @@ public final class TabBar {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final TabBar findTab(int i, Account abstractC0037h) {
-        Vector vectorM614m = AppState.getVector(1246);
-        int size = vectorM614m.size();
+    public static final TabBar findTab(int i, Account acct) {
+        Vector tabs = AppState.getVector(1246);
+        int size = tabs.size();
         while (true) {
             size--;
             if (size >= 0) {
-                TabBar c0008ah = (TabBar) vectorM614m.elementAt(size);
-                if (c0008ah.type == i && (abstractC0037h == null || c0008ah.account == abstractC0037h)) {
-                    return c0008ah;
+                TabBar tab = (TabBar) tabs.elementAt(size);
+                if (tab.type == i && (acct == null || tab.account == acct)) {
+                    return tab;
                 }
             } else {
                 return null;
@@ -220,171 +220,171 @@ public final class TabBar {
             currentIndex = i;
             layout();
         }
-        TabBar c0008ah = (TabBar) AppState.getVector(1246).elementAt(i);
-        currentAccount = c0008ah.account;
-        return c0008ah;
+        TabBar tab = (TabBar) AppState.getVector(1246).elementAt(i);
+        currentAccount = tab.account;
+        return tab;
     }
 
     /* renamed from: j */
     public static final void layout() {
         int i;
-        Object objElementAt;
+        Object elem;
         int[] iArr;
-        Object objElementAt2;
+        Object leftElem;
         int[] iArr2;
-        Vector vectorM614m = AppState.getVector(1246);
-        if (vectorM614m == null) {
+        Vector tabs = AppState.getVector(1246);
+        if (tabs == null) {
             return;
         }
         NetworkUtils.releaseVector(AppState.getVector(1245));
-        Vector vectorM1213g = NetworkUtils.newVector();
-        AppState.pool[1245] = vectorM1213g;
-        int size = vectorM614m.size();
+        Vector layoutItems = NetworkUtils.newVector();
+        AppState.pool[1245] = layoutItems;
+        int size = tabs.size();
         int i2 = currentIndex;
-        TabBar c0008ah = (TabBar) vectorM614m.elementAt(i2);
+        TabBar tab = (TabBar) tabs.elementAt(i2);
         int i3 = 0;
         int i4 = 0;
         int i5 = 20;
         for (int i6 = 0; i6 < size; i6++) {
-            TabBar c0008ah2 = (TabBar) vectorM614m.elementAt(i6);
-            c0008ah2.width = 26 + AppState.getGfxContext(1).stringWidth(c0008ah2.title);
-            c0008ah2.xOffset = i5;
-            vectorM1213g.addElement(c0008ah2);
-            i5 += c0008ah2.width;
-            i3 += c0008ah2.width;
+            TabBar iterTab = (TabBar) tabs.elementAt(i6);
+            iterTab.width = 26 + AppState.getGfxContext(1).stringWidth(iterTab.title);
+            iterTab.xOffset = i5;
+            layoutItems.addElement(iterTab);
+            i5 += iterTab.width;
+            i3 += iterTab.width;
             if (i6 == i2) {
                 i4 = i3;
             }
         }
         int i7 = i3;
-        int iM586d = AppState.getInt(1528) - 20;
-        while (i4 >= iM586d - 32) {
+        int availWidth = AppState.getInt(1528) - 20;
+        while (i4 >= availWidth - 32) {
             int i8 = 0;
             while (true) {
-                objElementAt2 = vectorM614m.elementAt(i8);
-                if (vectorM1213g.contains(objElementAt2)) {
+                leftElem = tabs.elementAt(i8);
+                if (layoutItems.contains(leftElem)) {
                     break;
                 } else {
                     i8++;
                 }
             }
-            TabBar c0008ah3 = (TabBar) objElementAt2;
-            if (c0008ah3 == c0008ah) {
+            TabBar leftTab = (TabBar) leftElem;
+            if (leftTab == tab) {
                 break;
             }
-            int i9 = c0008ah3.width;
-            vectorM1213g.removeElement(c0008ah3);
-            Object objFirstElement = vectorM1213g.firstElement();
-            if (objFirstElement instanceof int[]) {
-                iArr2 = (int[]) objFirstElement;
+            int i9 = leftTab.width;
+            layoutItems.removeElement(leftTab);
+            Object firstElem = layoutItems.firstElement();
+            if (firstElem instanceof int[]) {
+                iArr2 = (int[]) firstElem;
             } else {
                 int[] iArr3 = {20, 248};
                 iArr2 = iArr3;
-                vectorM1213g.insertElementAt(iArr3, 0);
+                layoutItems.insertElementAt(iArr3, 0);
                 i9 -= 16;
             }
-            if (c0008ah3.type == 36 && AppController.hasActiveConnection()) {
+            if (leftTab.type == 36 && AppController.hasActiveConnection()) {
                 if (iArr2[1] == 248) {
-                    vectorM1213g.insertElementAt(new int[]{20, 16385}, 0);
+                    layoutItems.insertElementAt(new int[]{20, 16385}, 0);
                     int[] iArr4 = iArr2;
                     iArr4[0] = iArr4[0] + 16;
                 } else {
-                    vectorM1213g.insertElementAt(new int[]{36, 16385}, 1);
-                    int[] iArr5 = (int[]) vectorM1213g.elementAt(2);
+                    layoutItems.insertElementAt(new int[]{36, 16385}, 1);
+                    int[] iArr5 = (int[]) layoutItems.elementAt(2);
                     iArr5[0] = iArr5[0] + 16;
                 }
                 i9 -= 16;
             }
-            if (c0008ah3.type == 4) {
-                Account abstractC0037h = c0008ah3.account;
-                if (AppController.isAccountOnline(abstractC0037h) && AppState.getBool(67) && iArr2[1] == 248) {
-                    vectorM1213g.insertElementAt(new int[]{20, AppController.getAccountStatus(abstractC0037h)}, 0);
+            if (leftTab.type == 4) {
+                Account acct = leftTab.account;
+                if (AppController.isAccountOnline(acct) && AppState.getBool(67) && iArr2[1] == 248) {
+                    layoutItems.insertElementAt(new int[]{20, AppController.getAccountStatus(acct)}, 0);
                     int[] iArr6 = iArr2;
                     iArr6[0] = iArr6[0] + 16;
                     i9 -= 16;
                 }
             }
             for (int i10 = 0; i10 < size; i10++) {
-                ((TabBar) vectorM614m.elementAt(i10)).xOffset -= i9;
+                ((TabBar) tabs.elementAt(i10)).xOffset -= i9;
             }
             i4 -= i9;
             i7 -= i9;
         }
         while (true) {
-            if (i7 < iM586d) {
+            if (i7 < availWidth) {
                 break;
             }
             int i11 = size - 1;
             while (true) {
-                objElementAt = vectorM614m.elementAt(i11);
-                if (vectorM1213g.contains(objElementAt)) {
+                elem = tabs.elementAt(i11);
+                if (layoutItems.contains(elem)) {
                     break;
                 } else {
                     i11--;
                 }
             }
-            TabBar c0008ah4 = (TabBar) objElementAt;
-            if (c0008ah4 == c0008ah) {
+            TabBar rightTab = (TabBar) elem;
+            if (rightTab == tab) {
                 break;
             }
-            int i12 = c0008ah4 == vectorM614m.lastElement() ? 16 : 0;
-            if (c0008ah4.width > (i7 - iM586d) + i12) {
-                int i13 = (i7 - iM586d) + i12;
-                c0008ah4.width -= i13;
-                int size2 = vectorM1213g.size();
+            int i12 = rightTab == tabs.lastElement() ? 16 : 0;
+            if (rightTab.width > (i7 - availWidth) + i12) {
+                int i13 = (i7 - availWidth) + i12;
+                rightTab.width -= i13;
+                int size2 = layoutItems.size();
                 while (true) {
                     size2--;
                     if (size2 < 0) {
                         break;
                     }
-                    Object objElementAt3 = vectorM1213g.elementAt(size2);
-                    if (!(objElementAt3 instanceof int[])) {
+                    Object shrinkElem = layoutItems.elementAt(size2);
+                    if (!(shrinkElem instanceof int[])) {
                         break;
                     }
-                    int[] iArr7 = (int[]) objElementAt3;
+                    int[] iArr7 = (int[]) shrinkElem;
                     iArr7[0] = iArr7[0] - i13;
                 }
             } else {
-                int i14 = c0008ah4.width;
-                int i15 = c0008ah4.xOffset;
-                vectorM1213g.removeElement(c0008ah4);
-                Object objLastElement = vectorM1213g.lastElement();
-                if (objLastElement instanceof int[]) {
-                    iArr = (int[]) objLastElement;
-                    int size3 = vectorM1213g.size();
+                int i14 = rightTab.width;
+                int i15 = rightTab.xOffset;
+                layoutItems.removeElement(rightTab);
+                Object endElem = layoutItems.lastElement();
+                if (endElem instanceof int[]) {
+                    iArr = (int[]) endElem;
+                    int size3 = layoutItems.size();
                     while (true) {
                         size3--;
                         if (size3 < 0) {
                             break;
                         }
-                        Object objElementAt4 = vectorM1213g.elementAt(size3);
-                        if (!(objElementAt4 instanceof int[])) {
+                        Object innerElem = layoutItems.elementAt(size3);
+                        if (!(innerElem instanceof int[])) {
                             break;
                         }
-                        int[] iArr8 = (int[]) objElementAt4;
+                        int[] iArr8 = (int[]) innerElem;
                         iArr8[0] = iArr8[0] - i14;
                     }
                 } else {
                     int[] iArr9 = {i15, 246};
                     iArr = iArr9;
-                    vectorM1213g.addElement(iArr9);
+                    layoutItems.addElement(iArr9);
                     i14 -= 16;
                 }
-                if (c0008ah4.type == 36 && AppController.hasActiveConnection() && AppState.getBool(67)) {
-                    vectorM1213g.addElement(new int[]{i15 + 16, 16385});
+                if (rightTab.type == 36 && AppController.hasActiveConnection() && AppState.getBool(67)) {
+                    layoutItems.addElement(new int[]{i15 + 16, 16385});
                     i14 -= 16;
                 }
-                if (c0008ah4.type == 4) {
-                    Account abstractC0037h2 = c0008ah4.account;
-                    if (AppController.isAccountOnline(abstractC0037h2)) {
+                if (rightTab.type == 4) {
+                    Account acct2 = rightTab.account;
+                    if (AppController.isAccountOnline(acct2)) {
                         if (iArr[1] == 246) {
-                            vectorM1213g.addElement(new int[]{i15 + 16, AppController.getAccountStatus(abstractC0037h2)});
+                            layoutItems.addElement(new int[]{i15 + 16, AppController.getAccountStatus(acct2)});
                             i14 -= 16;
                         } else {
-                            int size4 = vectorM1213g.size() - 2;
-                            int i16 = ((int[]) vectorM1213g.elementAt(size4))[1];
+                            int size4 = layoutItems.size() - 2;
+                            int i16 = ((int[]) layoutItems.elementAt(size4))[1];
                             if (i16 != 16384 && i16 != 16386) {
-                                vectorM1213g.insertElementAt(new int[]{i15 + 16, AppController.getAccountStatus(abstractC0037h2)}, size4 + 1);
+                                layoutItems.insertElementAt(new int[]{i15 + 16, AppController.getAccountStatus(acct2)}, size4 + 1);
                                 int[] iArr10 = iArr;
                                 iArr10[0] = iArr10[0] + 16;
                                 i14 -= 16;
@@ -395,53 +395,53 @@ public final class TabBar {
                 i7 -= i14;
             }
         }
-        Object objLastElement2 = vectorM1213g.lastElement();
-        if (objLastElement2 instanceof TabBar) {
-            TabBar c0008ah5 = (TabBar) objLastElement2;
-            i = (c0008ah5.xOffset + c0008ah5.width) - 20;
+        Object lastElem = layoutItems.lastElement();
+        if (lastElem instanceof TabBar) {
+            TabBar lastTab = (TabBar) lastElem;
+            i = (lastTab.xOffset + lastTab.width) - 20;
         } else {
-            i = ((int[]) objLastElement2)[0] - 4;
+            i = ((int[]) lastElem)[0] - 4;
         }
-        if (i <= iM586d) {
+        if (i <= availWidth) {
             return;
         }
-        int i17 = i - iM586d;
-        c0008ah.width -= i17;
-        int size5 = vectorM1213g.size();
+        int i17 = i - availWidth;
+        tab.width -= i17;
+        int size5 = layoutItems.size();
         while (true) {
             size5--;
             if (size5 < 0) {
                 return;
             }
-            Object objElementAt5 = vectorM1213g.elementAt(size5);
-            if (!(objElementAt5 instanceof int[])) {
+            Object tailElem = layoutItems.elementAt(size5);
+            if (!(tailElem instanceof int[])) {
                 return;
             }
-            int[] iArr11 = (int[]) objElementAt5;
+            int[] iArr11 = (int[]) tailElem;
             iArr11[0] = iArr11[0] - i17;
         }
     }
 
     /* renamed from: a */
     public static final Object hitTest(int i, int i2) {
-        Vector vectorM614m = AppState.getVector(1245);
-        int size = vectorM614m.size();
+        Vector tabs = AppState.getVector(1245);
+        int size = tabs.size();
         while (true) {
             size--;
             if (size < 0) {
                 return null;
             }
-            Object objElementAt = vectorM614m.elementAt(size);
-            if (objElementAt instanceof int[]) {
-                int[] iArr = (int[]) objElementAt;
+            Object elem = tabs.elementAt(size);
+            if (elem instanceof int[]) {
+                int[] iArr = (int[]) elem;
                 if (i >= iArr[0] && i < iArr[0] + 16 && i2 >= 0 && i2 <= 22) {
                     return iArr;
                 }
             } else {
-                TabBar c0008ah = (TabBar) objElementAt;
-                int i3 = c0008ah.xOffset;
-                if (i >= i3 && i2 >= 0 && i <= i3 + c0008ah.width && i2 <= 22) {
-                    return c0008ah;
+                TabBar tab = (TabBar) elem;
+                int i3 = tab.xOffset;
+                if (i >= i3 && i2 >= 0 && i <= i3 + tab.width && i2 <= 22) {
+                    return tab;
                 }
             }
         }

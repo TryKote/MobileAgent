@@ -107,29 +107,29 @@ public abstract class Account {
         this.dataBuffer = new ByteBuffer();
         this.contactMap = new Hashtable();
         this.extras = NetworkUtils.newVector();
-        ContactGroup abstractC0046qMo85b = createOnlineGroup();
-        abstractC0046qMo85b.isSpecial = true;
-        this.onlineGroup = abstractC0046qMo85b;
-        ContactGroup abstractC0046qMo87d = createOfflineGroup();
-        abstractC0046qMo87d.isSpecial = true;
-        this.offlineGroup = abstractC0046qMo87d;
-        ContactGroup abstractC0046qMo86c = createBlockedGroup();
-        abstractC0046qMo86c.isSpecial = true;
-        this.blockedGroup = abstractC0046qMo86c;
-        ContactGroup abstractC0046qMo88e = createSpecialGroup();
-        abstractC0046qMo88e.isSpecial = true;
-        this.specialGroup = abstractC0046qMo88e;
+        ContactGroup onlineGrp = createOnlineGroup();
+        onlineGrp.isSpecial = true;
+        this.onlineGroup = onlineGrp;
+        ContactGroup offlineGrp = createOfflineGroup();
+        offlineGrp.isSpecial = true;
+        this.offlineGroup = offlineGrp;
+        ContactGroup blockedGrp = createBlockedGroup();
+        blockedGrp.isSpecial = true;
+        this.blockedGroup = blockedGrp;
+        ContactGroup specialGrp = createSpecialGroup();
+        specialGrp.isSpecial = true;
+        this.specialGroup = specialGrp;
         this.shortName = Utils.beforeAt(str);
     }
 
-    public Account(ByteBuffer c0043n) {
-        this(c0043n.readInt(), c0043n.readHexStr(), c0043n.readWideStr());
-        c0043n.readInt();
+    public Account(ByteBuffer buffer) {
+        this(buffer.readInt(), buffer.readHexStr(), buffer.readWideStr());
+        buffer.readInt();
         for (int i = 2; i < 9; i++) {
-            this.syncArray[i] = c0043n.readInt();
+            this.syncArray[i] = buffer.readInt();
         }
-        this.configFlags = c0043n.readInt();
-        this.displayName = c0043n.readUTF8Str((String) null);
+        this.configFlags = buffer.readInt();
+        this.displayName = buffer.readUTF8Str((String) null);
     }
 
     /* renamed from: q */
@@ -158,31 +158,31 @@ public abstract class Account {
     public abstract int getIconId();
 
     /* renamed from: a */
-    public void loadProperties(ByteBuffer c0043n) {
-        if (c0043n.readInt() == 12) {
-            this.syncSeq = c0043n.readInt();
-            this.sentCount = c0043n.readInt();
-            this.recvCount = c0043n.readInt();
-            c0043n.readInt();
+    public void loadProperties(ByteBuffer buffer) {
+        if (buffer.readInt() == 12) {
+            this.syncSeq = buffer.readInt();
+            this.sentCount = buffer.readInt();
+            this.recvCount = buffer.readInt();
+            buffer.readInt();
         }
     }
 
     /* renamed from: b */
-    public void saveProperties(ByteBuffer c0043n) {
-        c0043n.writeIntLE(12).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount).writeIntLE(0);
+    public void saveProperties(ByteBuffer buffer) {
+        buffer.writeIntLE(12).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount).writeIntLE(0);
     }
 
     /* renamed from: a */
-    public Account serializeAccount(ByteBuffer c0043n, boolean z, boolean z2) {
-        c0043n.writeByte(getType() | 8).writeIntLE(this.accountId).writeStringLatin1(this.login).writeStringLatin1(this.password).writeIntLE(0);
+    public Account serializeAccount(ByteBuffer buffer, boolean z, boolean z2) {
+        buffer.writeByte(getType() | 8).writeIntLE(this.accountId).writeStringLatin1(this.login).writeStringLatin1(this.password).writeIntLE(0);
         for (int i = 2; i < 9; i++) {
-            c0043n.writeIntLE(this.syncArray[i]);
+            buffer.writeIntLE(this.syncArray[i]);
         }
-        c0043n.writeIntLE(this.configFlags);
+        buffer.writeIntLE(this.configFlags);
         if (this.displayName != null) {
-            c0043n.writeStringUTF16(this.displayName);
+            buffer.writeStringUTF16(this.displayName);
         } else {
-            c0043n.writeIntLE(0);
+            buffer.writeIntLE(0);
         }
         if (z2) {
             if (!z) {
@@ -190,46 +190,46 @@ public abstract class Account {
             }
             int size = this.groups.size();
             int i2 = size;
-            c0043n.writeIntLE(size);
+            buffer.writeIntLE(size);
             while (true) {
                 i2--;
                 if (i2 < 0) {
                     break;
                 }
-                getGroup(i2).serialize(c0043n, true);
+                getGroup(i2).serialize(buffer, true);
             }
-            this.defaultGroup.serialize(c0043n, true);
+            this.defaultGroup.serialize(buffer, true);
             this.contactMap.clear();
         } else {
-            this.defaultGroup.serialize(c0043n.writeIntLE(0), false);
+            this.defaultGroup.serialize(buffer.writeIntLE(0), false);
         }
         return this;
     }
 
     /* renamed from: c */
-    public final int trySendData(ByteBuffer c0043n) {
+    public final int trySendData(ByteBuffer buffer) {
         if (isConnected()) {
-            return sendData(c0043n);
+            return sendData(buffer);
         }
         return 299;
     }
 
     /* renamed from: d */
-    public final int sendData(ByteBuffer c0043n) {
-        AppController.setAccountOption(this, c0043n.length);
-        ConnectionThread c0039j = this.connection;
-        if (c0039j.exception != null) {
+    public final int sendData(ByteBuffer buffer) {
+        AppController.setAccountOption(this, buffer.length);
+        ConnectionThread conn = this.connection;
+        if (conn.exception != null) {
             throw new RuntimeException();
         }
-        ByteBuffer c0043n2 = c0039j.outBuffer;
-        int i = c0043n.length;
+        ByteBuffer outBuf = conn.outBuffer;
+        int i = buffer.length;
         if (i > 0) {
-            synchronized (c0043n2) {
-                c0043n2.ensureCapacity(i);
-                Utils.arraycopy((Object) c0043n.data, c0043n.offset, (Object) c0043n2.data, c0043n2.length, i);
-                c0043n.clear();
-                c0043n2.length += i;
-                c0043n2.compact();
+            synchronized (outBuf) {
+                outBuf.ensureCapacity(i);
+                Utils.arraycopy((Object) buffer.data, buffer.offset, (Object) outBuf.data, outBuf.length, i);
+                buffer.clear();
+                outBuf.length += i;
+                outBuf.compact();
             }
         }
         if (this.timeout <= 0) {
@@ -257,17 +257,17 @@ public abstract class Account {
 
     /* renamed from: D */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM898b = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login);
-        c0032cM898b.data = this;
-        return c0032cM898b;
+        MenuItem item = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login);
+        item.data = this;
+        return item;
     }
 
     /* renamed from: E */
     public final MenuItem createFlagMenuItem() {
-        MenuItem c0032cM896a = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login).setIcon(244);
-        c0032cM896a.enabled = true;
-        c0032cM896a.data = this;
-        return c0032cM896a;
+        MenuItem item = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login).setIcon(244);
+        item.enabled = true;
+        item.data = this;
+        return item;
     }
 
     /* renamed from: a */
@@ -279,8 +279,8 @@ public abstract class Account {
             return 297;
         }
         if (i == 0) {
-            char cCharAt = this.password.charAt(0);
-            this.authMode = (cCharAt < 'A' || cCharAt > 'Z') ? 1 : 2;
+            char firstChar = this.password.charAt(0);
+            this.authMode = (firstChar < 'A' || firstChar > 'Z') ? 1 : 2;
         } else {
             this.authMode = i;
         }
@@ -331,14 +331,14 @@ public abstract class Account {
 
     /* renamed from: G */
     public final void handleConnError() {
-        String strM1215a;
+        String errorMsg;
         Throwable th = this.connection.exception;
         if (null == th) {
-            strM1215a = AppState.getString(951);
+            errorMsg = AppState.getString(951);
         } else {
-            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            errorMsg = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
-        IOUtils.postAccountMessage(this, strM1215a);
+        IOUtils.postAccountMessage(this, errorMsg);
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -381,26 +381,26 @@ public abstract class Account {
             if (size < 0) {
                 return;
             }
-            ContactGroup abstractC0046qM1082g = getGroup(size);
-            int size2 = abstractC0046qM1082g.contacts.size();
+            ContactGroup group = getGroup(size);
+            int size2 = group.contacts.size();
             while (true) {
                 size2--;
                 if (size2 < 0) {
                     break;
                 }
-                Contact abstractC0041lM1394e = abstractC0046qM1082g.getContact(size2);
-                removeContact(abstractC0041lM1394e, false);
-                AppController.markContactUnread(abstractC0041lM1394e);
+                Contact contact = group.getContact(size2);
+                removeContact(contact, false);
+                AppController.markContactUnread(contact);
             }
-            removeGroup(abstractC0046qM1082g);
+            removeGroup(group);
         }
     }
 
     /* renamed from: L */
     public final void markAllRead() {
-        Enumeration enumerationElements = this.contactMap.elements();
-        while (enumerationElements.hasMoreElements()) {
-            ((Contact) enumerationElements.nextElement()).clearUnread();
+        Enumeration elements = this.contactMap.elements();
+        while (elements.hasMoreElements()) {
+            ((Contact) elements.nextElement()).clearUnread();
         }
         AppController.needsLayoutUpdate = true;
     }
@@ -412,33 +412,33 @@ public abstract class Account {
 
     /* renamed from: d */
     public final void deleteContact(String str) {
-        Contact abstractC0041lM1069c = getContact((Object) str);
-        if (abstractC0041lM1069c == null || abstractC0041lM1069c.isOnline() || abstractC0041lM1069c.hasUnread() || abstractC0041lM1069c.isSystem()) {
+        Contact contact = getContact((Object) str);
+        if (contact == null || contact.isOnline() || contact.hasUnread() || contact.isSystem()) {
             return;
         }
-        AppController.deleteContact(abstractC0041lM1069c);
-        AppState.getVector(1242).addElement(abstractC0041lM1069c);
-        abstractC0041lM1069c.statusCode = AppState.getInt(1531);
-        abstractC0041lM1069c.dirty = true;
+        AppController.deleteContact(contact);
+        AppState.getVector(1242).addElement(contact);
+        contact.statusCode = AppState.getInt(1531);
+        contact.dirty = true;
     }
 
     /* renamed from: e */
     public final void markRead(String str) {
-        Contact abstractC0041lM1069c = getContact((Object) str);
-        if (abstractC0041lM1069c != null) {
-            AppController.deleteContact(abstractC0041lM1069c);
+        Contact contact = getContact((Object) str);
+        if (contact != null) {
+            AppController.deleteContact(contact);
         }
     }
 
     /* renamed from: a */
     public final void onMessage(String str, long j, String str2) {
-        Contact abstractC0041lM1069c = getContact((Object) str);
-        Contact abstractC0041lMo107b = abstractC0041lM1069c;
-        if (abstractC0041lM1069c == null) {
-            abstractC0041lMo107b = newContact(str);
+        Contact contact = getContact((Object) str);
+        Contact target = contact;
+        if (contact == null) {
+            target = newContact(str);
         }
         this.recvCount++;
-        abstractC0041lMo107b.receiveMessageFull(j, str2, 1);
+        target.receiveMessageFull(j, str2, 1);
     }
 
     /* renamed from: b */
@@ -446,31 +446,31 @@ public abstract class Account {
 
     /* renamed from: a */
     public final void updateStatus(String str, long j, int i) {
-        Contact abstractC0041lM1069c = getContact((Object) str);
-        if (abstractC0041lM1069c != null) {
-            abstractC0041lM1069c.updateMessageFlag(j, i);
+        Contact contact = getContact((Object) str);
+        if (contact != null) {
+            contact.updateMessageFlag(j, i);
         }
     }
 
     /* renamed from: a */
-    public int validateSend(Contact abstractC0041l, String str, long j) {
+    public int validateSend(Contact contact, String str, long j) {
         return isConnected() ? 0 : 299;
     }
 
     /* renamed from: a */
-    public final int removeContact(Contact abstractC0041l, boolean z) {
-        if (abstractC0041l == null) {
+    public final int removeContact(Contact contact, boolean z) {
+        if (contact == null) {
             return 0;
         }
-        Enumeration enumerationKeys = this.contactMap.keys();
+        Enumeration keys = this.contactMap.keys();
         while (true) {
-            if (!enumerationKeys.hasMoreElements()) {
+            if (!keys.hasMoreElements()) {
                 break;
             }
             Hashtable hashtable = this.contactMap;
-            Object objNextElement = enumerationKeys.nextElement();
-            if (hashtable.get(objNextElement) == abstractC0041l) {
-                this.contactMap.remove(objNextElement);
+            Object key = keys.nextElement();
+            if (hashtable.get(key) == contact) {
+                this.contactMap.remove(key);
                 break;
             }
         }
@@ -478,16 +478,16 @@ public abstract class Account {
         while (true) {
             size--;
             if (size < 0) {
-                this.defaultGroup.removeElement(abstractC0041l);
-                AppController.markContactUnread(abstractC0041l);
+                this.defaultGroup.removeElement(contact);
+                AppController.markContactUnread(contact);
                 return 0;
             }
-            getGroup(size).removeElement(abstractC0041l);
+            getGroup(size).removeElement(contact);
         }
     }
 
     /* renamed from: a */
-    public int validateGroupAdd(String str, String str2, String str3, ContactGroup abstractC0046q, boolean z) {
+    public int validateGroupAdd(String str, String str2, String str3, ContactGroup group, boolean z) {
         if (!isConnected()) {
             return 299;
         }
@@ -498,7 +498,7 @@ public abstract class Account {
     }
 
     /* renamed from: a */
-    public int validateModify(Contact abstractC0041l, Object[] objArr) {
+    public int validateModify(Contact contact, Object[] objArr) {
         if (isConnected()) {
             return StringUtils.isEmpty((String) objArr[0]) ? 301 : 0;
         }
@@ -509,7 +509,7 @@ public abstract class Account {
     public abstract int validateObject(Object obj);
 
     /* renamed from: a */
-    public abstract int validateDelete(Contact abstractC0041l);
+    public abstract int validateDelete(Contact contact);
 
     /* renamed from: a */
     public int validateGroupCreate(String str) {
@@ -520,8 +520,8 @@ public abstract class Account {
     }
 
     /* renamed from: a */
-    public int validateGroupRename(ContactGroup abstractC0046q, String str) {
-        if (abstractC0046q == this.defaultGroup || abstractC0046q == this.onlineGroup || abstractC0046q == this.specialGroup || abstractC0046q == this.offlineGroup) {
+    public int validateGroupRename(ContactGroup group, String str) {
+        if (group == this.defaultGroup || group == this.onlineGroup || group == this.specialGroup || group == this.offlineGroup) {
             return 304;
         }
         if (isConnected()) {
@@ -548,16 +548,16 @@ public abstract class Account {
     }
 
     /* renamed from: a */
-    public int validateGroupDelete(ContactGroup abstractC0046q) {
-        if (abstractC0046q == this.defaultGroup || abstractC0046q == this.onlineGroup) {
+    public int validateGroupDelete(ContactGroup group) {
+        if (group == this.defaultGroup || group == this.onlineGroup) {
             return 304;
         }
-        return abstractC0046q.contacts.size() > 0 ? 303 : 0;
+        return group.contacts.size() > 0 ? 303 : 0;
     }
 
     /* renamed from: b */
-    public int validateResend(Contact abstractC0041l) {
-        return (abstractC0041l.isOnline() || isConnected()) ? 0 : 299;
+    public int validateResend(Contact contact) {
+        return (contact.isOnline() || isConnected()) ? 0 : 299;
     }
 
     /* renamed from: d */
@@ -566,43 +566,43 @@ public abstract class Account {
     }
 
     /* renamed from: c */
-    public abstract int validateContactDelete(Contact abstractC0041l);
+    public abstract int validateContactDelete(Contact contact);
 
     /* renamed from: d */
-    public abstract int validateContactBlock(Contact abstractC0041l);
+    public abstract int validateContactBlock(Contact contact);
 
     /* renamed from: e */
-    public abstract int validateContactUnblock(Contact abstractC0041l);
+    public abstract int validateContactUnblock(Contact contact);
 
     /* renamed from: f */
-    public int validateContactResend(Contact abstractC0041l) {
+    public int validateContactResend(Contact contact) {
         return !isConnected() ? 299 : 0;
     }
 
     /* renamed from: M */
     public final Vector getUnreadContacts() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationElements = this.contactMap.elements();
-        while (enumerationElements.hasMoreElements()) {
-            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
-            if (abstractC0041l.hasUnread()) {
-                vectorM1213g.addElement(abstractC0041l);
+        Vector result = NetworkUtils.newVector();
+        Enumeration elements = this.contactMap.elements();
+        while (elements.hasMoreElements()) {
+            Contact contact = (Contact) elements.nextElement();
+            if (contact.hasUnread()) {
+                result.addElement(contact);
             }
         }
-        return vectorM1213g;
+        return result;
     }
 
     /* renamed from: N */
     public final Vector getOfflineContacts() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationElements = this.contactMap.elements();
-        while (enumerationElements.hasMoreElements()) {
-            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
-            if (abstractC0041l.isOffline()) {
-                vectorM1213g.addElement(abstractC0041l);
+        Vector result = NetworkUtils.newVector();
+        Enumeration elements = this.contactMap.elements();
+        while (elements.hasMoreElements()) {
+            Contact contact = (Contact) elements.nextElement();
+            if (contact.isOffline()) {
+                result.addElement(contact);
             }
         }
-        return vectorM1213g;
+        return result;
     }
 
     /* renamed from: O */
@@ -612,17 +612,17 @@ public abstract class Account {
 
     /* renamed from: P */
     public final Vector getAllContacts() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationElements = this.contactMap.elements();
-        while (enumerationElements.hasMoreElements()) {
-            vectorM1213g.addElement(enumerationElements.nextElement());
+        Vector result = NetworkUtils.newVector();
+        Enumeration elements = this.contactMap.elements();
+        while (elements.hasMoreElements()) {
+            result.addElement(elements.nextElement());
         }
-        return vectorM1213g;
+        return result;
     }
 
     /* renamed from: a */
-    public int validateMove(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
-        if (abstractC0046q == abstractC0046q2) {
+    public int validateMove(Contact contact, ContactGroup group, ContactGroup toGroup) {
+        if (group == toGroup) {
             return 305;
         }
         return !isConnected() ? 299 : 0;
@@ -630,30 +630,30 @@ public abstract class Account {
 
     /* renamed from: Q */
     public final Vector getOnlineContacts() {
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationElements = this.contactMap.elements();
-        while (enumerationElements.hasMoreElements()) {
-            Contact abstractC0041l = (Contact) enumerationElements.nextElement();
-            if (abstractC0041l.isOnline()) {
-                vectorM1213g.addElement(abstractC0041l);
+        Vector result = NetworkUtils.newVector();
+        Enumeration elements = this.contactMap.elements();
+        while (elements.hasMoreElements()) {
+            Contact contact = (Contact) elements.nextElement();
+            if (contact.isOnline()) {
+                result.addElement(contact);
             }
         }
-        return vectorM1213g;
+        return result;
     }
 
     /* renamed from: g */
-    public final ContactGroup findGroup(Contact abstractC0041l) {
-        ContactGroup abstractC0046qM1082g;
-        if (abstractC0041l.isOnline() || this.defaultGroup.containsContact(abstractC0041l)) {
+    public final ContactGroup findGroup(Contact contact) {
+        ContactGroup group;
+        if (contact.isOnline() || this.defaultGroup.containsContact(contact)) {
             return this.defaultGroup;
         }
-        if (abstractC0041l.isSystem()) {
+        if (contact.isSystem()) {
             return this.specialGroup;
         }
-        if (abstractC0041l.hasUnread()) {
+        if (contact.hasUnread()) {
             return this.onlineGroup;
         }
-        if (abstractC0041l.isOffline()) {
+        if (contact.isOffline()) {
             return this.offlineGroup;
         }
         int size = this.groups.size();
@@ -662,22 +662,22 @@ public abstract class Account {
             if (size < 0) {
                 return null;
             }
-            abstractC0046qM1082g = getGroup(size);
-        } while (!abstractC0046qM1082g.containsContact(abstractC0041l));
-        return abstractC0046qM1082g;
+            group = getGroup(size);
+        } while (!group.containsContact(contact));
+        return group;
     }
 
     /* renamed from: h */
-    public final void registerContact(Contact abstractC0041l) {
-        Contact abstractC0041l2 = (Contact) this.contactMap.get(abstractC0041l.getIdentifier());
-        if (abstractC0041l2 != null && abstractC0041l2 != abstractC0041l) {
-            this.defaultGroup.removeContact(abstractC0041l2);
-            this.onlineGroup.removeContact(abstractC0041l2);
-            this.offlineGroup.removeContact(abstractC0041l2);
-            this.blockedGroup.removeContact(abstractC0041l2);
-            this.specialGroup.removeContact(abstractC0041l2);
+    public final void registerContact(Contact contact) {
+        Contact existing = (Contact) this.contactMap.get(contact.getIdentifier());
+        if (existing != null && existing != contact) {
+            this.defaultGroup.removeContact(existing);
+            this.onlineGroup.removeContact(existing);
+            this.offlineGroup.removeContact(existing);
+            this.blockedGroup.removeContact(existing);
+            this.specialGroup.removeContact(existing);
         }
-        this.contactMap.put(abstractC0041l.getIdentifier(), abstractC0041l);
+        this.contactMap.put(contact.getIdentifier(), contact);
     }
 
     /* renamed from: g */
@@ -686,13 +686,13 @@ public abstract class Account {
     }
 
     /* renamed from: b */
-    public final void addGroup(ContactGroup abstractC0046q) {
-        this.groups.addElement(abstractC0046q);
+    public final void addGroup(ContactGroup group) {
+        this.groups.addElement(group);
     }
 
     /* renamed from: c */
-    public final void removeGroup(ContactGroup abstractC0046q) {
-        this.groups.removeElement(abstractC0046q);
+    public final void removeGroup(ContactGroup group) {
+        this.groups.removeElement(group);
     }
 
     /* renamed from: c */
