@@ -12,22 +12,22 @@ public final class ScreenBuilder {
     public static final void openScreen(int i) {
         boolean z;
         String str;
-        String[] strArrM32g;
-        Object[] objArrM1147a;
+        String[] regData;
+        Object[] request;
         int i2;
         AppController.markScreenDirty();
         AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
-                Vector vectorM614m = AppState.getVector(1272);
-                int size = vectorM614m.size();
+                Vector screenStack = AppState.getVector(1272);
+                int size = screenStack.size();
                 do {
                     size--;
                     if (size < 0) {
                         z = false;
                         break;
                     } else {
-                        i2 = ((Screen) vectorM614m.elementAt(size)).screenType;
+                        i2 = ((Screen) screenStack.elementAt(size)).screenType;
                         if (i2 == 8) {
                             break;
                         }
@@ -55,27 +55,27 @@ public final class ScreenBuilder {
                 AppController.showSettingsScreen();
                 return;
             case 3:
-                Screen c0013amM76c = ScreenManager.createDialogScreen(3);
-                Account abstractC0037hM616i = AppState.getAccount();
-                switch (abstractC0037hM616i.getType()) {
+                Screen dialogScreen = ScreenManager.createDialogScreen(3);
+                Account account = AppState.getAccount();
+                switch (account.getType()) {
                     case 0:
-                        c0013amM76c.addIconById(156, 642, 0).addIconById(159, 643, 1).addIconById(157, 644, 2).addIconById(160, 645, 3).addIconById(158, 646, 4).addIconById(155, 647, 5).addActionById(-1, 718, 6);
+                        dialogScreen.addIconById(156, 642, 0).addIconById(159, 643, 1).addIconById(157, 644, 2).addIconById(160, 645, 3).addIconById(158, 646, 4).addIconById(155, 647, 5).addActionById(-1, 718, 6);
                         break;
                     case 1:
-                        MmpProtocol c0033d = (MmpProtocol) abstractC0037hM616i;
-                        int iM915f = c0033d.getIconResourceId();
-                        c0013amM76c.addIconById(iM915f, 642, 0).addIconById(iM915f | 16384000, 643, 1).addIconById(iM915f | 16449536, 645, 3).addIconById(iM915f | 16318464, 644, 4).addIconById(iM915f | 16580608, 648, 5).addIconById(iM915f | 16646144, 654, 6).addIconById(iM915f | 17039360, 649, 7).addIconById(iM915f | 16973824, 650, 8).addIconById(iM915f | 16908288, 651, 9).addIconById(iM915f | 16842752, 652, 10).addIconById(iM915f | 17104896, 653, 11).addIconById(iM915f | 16515072, 646, 2).addIconById(255, 647, 12).addActionById(c0033d.getExtType(), 655, 14).addActionById(-1, 718, 13);
+                        MmpProtocol mmpProtocol = (MmpProtocol) account;
+                        int iconResId = mmpProtocol.getIconResourceId();
+                        dialogScreen.addIconById(iconResId, 642, 0).addIconById(iconResId | 16384000, 643, 1).addIconById(iconResId | 16449536, 645, 3).addIconById(iconResId | 16318464, 644, 4).addIconById(iconResId | 16580608, 648, 5).addIconById(iconResId | 16646144, 654, 6).addIconById(iconResId | 17039360, 649, 7).addIconById(iconResId | 16973824, 650, 8).addIconById(iconResId | 16908288, 651, 9).addIconById(iconResId | 16842752, 652, 10).addIconById(iconResId | 17104896, 653, 11).addIconById(iconResId | 16515072, 646, 2).addIconById(255, 647, 12).addActionById(mmpProtocol.getExtType(), 655, 14).addActionById(-1, 718, 13);
                         break;
                     default:
-                        if (((XmppProtocol) abstractC0037hM616i).mo83f()) {
-                            c0013amM76c.addIconById(387, 642, 1).addIconById(385, 647, 0);
+                        if (((XmppProtocol) account).mo83f()) {
+                            dialogScreen.addIconById(387, 642, 1).addIconById(385, 647, 0);
                             break;
                         } else {
-                            c0013amM76c.addIconById(383, 642, 1).addIconById(16384383, 643, 4).addIconById(16318847, 644, 2).addIconById(16449919, 645, 5).addIconById(16580991, 648, 6).addIconById(16515455, 646, 3).addIconById(381, 647, 0);
+                            dialogScreen.addIconById(383, 642, 1).addIconById(16384383, 643, 4).addIconById(16318847, 644, 2).addIconById(16449919, 645, 5).addIconById(16580991, 648, 6).addIconById(16515455, 646, 3).addIconById(381, 647, 0);
                             break;
                         }
                 }
-                ScreenManager.showScreen(c0013amM76c.setSoftKeys(AppState.getString(1048), AppState.getString(1050), 199, 12, 199));
+                ScreenManager.showScreen(dialogScreen.setSoftKeys(AppState.getString(1048), AppState.getString(1050), 199, 12, 199));
                 return;
             case 4:
                 ContactListManager.showContactList();
@@ -114,68 +114,68 @@ public final class ScreenBuilder {
                 NetworkUtils.showConfirmDialog(13, 505);
                 return;
             case 14:
-                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-                int iM586d = AppState.getInt(113);
-                AppState.setFromBuffer(1286, stringBufferM1217h.append(iM586d / 100).append('.').append(Utils.zeroPad(iM586d % 100)));
+                StringBuffer sb = NetworkUtils.newStringBuffer();
+                int intVal = AppState.getInt(113);
+                AppState.setFromBuffer(1286, sb.append(intVal / 100).append('.').append(Utils.zeroPad(intVal % 100)));
                 ScreenManager.showScreen(ScreenManager.createScreen(3183));
                 return;
             case 15:
-                Screen c0013amM1193a = NetworkUtils.addContactItems(ScreenManager.createScreen(2719), AppState.getVector(1241));
-                Account abstractC0037h = TabBar.currentAccount;
-                if (abstractC0037h != null) {
-                    c0013amM1193a.selectByTitle(abstractC0037h.getSignature());
+                Screen contactListScreen = NetworkUtils.addContactItems(ScreenManager.createScreen(2719), AppState.getVector(1241));
+                Account currentAccount = TabBar.currentAccount;
+                if (currentAccount != null) {
+                    contactListScreen.selectByTitle(currentAccount.getSignature());
                 }
-                ScreenManager.showScreen(c0013amM1193a);
+                ScreenManager.showScreen(contactListScreen);
                 return;
             case 16:
                 AppState.setInt(1475, 0);
                 ScreenManager.showScreen(ScreenManager.createScreen(4467));
                 return;
             case 17:
-                Screen c0013amM76c2 = ScreenManager.createDialogScreen(17);
+                Screen dialogScreen2 = ScreenManager.createDialogScreen(17);
                 if (AppState.getAccount() instanceof MmpProtocol) {
                     for (int i3 = 0; i3 <= 36; i3++) {
-                        c0013amM76c2.addIconById(i3 + 268, i3 + 118, i3);
+                        dialogScreen2.addIconById(i3 + 268, i3 + 118, i3);
                     }
                 } else {
                     for (int i4 = 0; i4 <= 49; i4++) {
                         if (i4 != 21 && i4 != 27) {
-                            c0013amM76c2.addIconById(i4 + 161, i4 + 155, i4 + 4);
+                            dialogScreen2.addIconById(i4 + 161, i4 + 155, i4 + 4);
                         }
                     }
                 }
-                ScreenManager.showScreen(c0013amM76c2.setSoftKeys(AppState.getString(1048), AppState.getString(1050), 199, 12, 199));
+                ScreenManager.showScreen(dialogScreen2.setSoftKeys(AppState.getString(1048), AppState.getString(1050), 199, 12, 199));
                 return;
             case 18:
                 return;
             case 19:
                 AppController.clearFormFields();
-                Contact abstractC0041lM611g = AppState.getCurrentContact();
-                AppState.setObject(1302, (Object) abstractC0041lM611g.displayName);
-                Vector vectorM516c = Utils.splitNonEmpty(abstractC0041lM611g.getDefaultName(), ',');
+                Contact contact = AppState.getCurrentContact();
+                AppState.setObject(1302, (Object) contact.displayName);
+                Vector nameParts = Utils.splitNonEmpty(contact.getDefaultName(), ',');
                 for (int i5 = 0; i5 < 3; i5++) {
-                    if (i5 < vectorM516c.size()) {
-                        AppState.pool[i5 + 1303] = vectorM516c.elementAt(i5);
+                    if (i5 < nameParts.size()) {
+                        AppState.pool[i5 + 1303] = nameParts.elementAt(i5);
                     }
                 }
-                NetworkUtils.releaseVector(vectorM516c);
-                AppState.setInt(3510, (!(abstractC0041lM611g instanceof MrimContact) || abstractC0041lM611g.isSystem()) ? 1 : 4);
+                NetworkUtils.releaseVector(nameParts);
+                AppState.setInt(3510, (!(contact instanceof MrimContact) || contact.isSystem()) ? 1 : 4);
                 ScreenManager.showScreen(ScreenManager.createScreen(3501));
                 return;
             case 20:
-                boolean zM587e = AppState.getBool(41);
-                boolean zM587e2 = AppState.getBool(277);
-                AppState.setBool(1422, !zM587e && zM587e2);
-                AppState.setBool(1423, zM587e && zM587e2);
+                boolean flag = AppState.getBool(41);
+                boolean flag2 = AppState.getBool(277);
+                AppState.setBool(1422, !flag && flag2);
+                AppState.setBool(1423, flag && flag2);
                 ScreenManager.showScreen(ScreenManager.createScreen(1632));
                 return;
             case 21:
-                int iMo80a = AppState.getAccount().getType();
-                if (iMo80a == 0) {
+                int accountType = AppState.getAccount().getType();
+                if (accountType == 0) {
                     StringUtils.showRegionSelector();
                     return;
                 }
-                if (iMo80a == 1) {
+                if (accountType == 1) {
                     AppState.setInt(1491, -1);
                     ScreenManager.showScreen(ScreenManager.createScreen(3569));
                     return;
@@ -196,13 +196,13 @@ public final class ScreenBuilder {
             case 24:
                 return;
             case 25:
-                Screen c0013amM75b = ScreenManager.createScreen(2581);
-                Vector vectorM614m2 = AppState.getVector(1241);
-                int size3 = vectorM614m2.size();
+                Screen screen = ScreenManager.createScreen(2581);
+                Vector accounts = AppState.getVector(1241);
+                int size3 = accounts.size();
                 for (int i6 = 0; i6 < size3; i6++) {
-                    c0013amM75b.addItem(((Account) vectorM614m2.elementAt(i6)).createFlagMenuItem());
+                    screen.addItem(((Account) accounts.elementAt(i6)).createFlagMenuItem());
                 }
-                ScreenManager.showScreen(c0013amM75b.addActionById(-1, 531, 16).addIconById(-1, 532, 1).addIconById(-1, 533, 3).addIconById(-1, 534, 2));
+                ScreenManager.showScreen(screen.addActionById(-1, 531, 16).addIconById(-1, 532, 1).addIconById(-1, 533, 3).addIconById(-1, 534, 2));
                 return;
             case 26:
                 AppState.setInt(4305, AppState.getInt(72));
@@ -226,24 +226,24 @@ public final class ScreenBuilder {
                     ScreenManager.showScreen(ScreenManager.createScreen(3686));
                     return;
                 }
-                Contact abstractC0041l = (Contact) obj;
-                if (abstractC0041l.isSystem()) {
+                Contact selectedContact = (Contact) obj;
+                if (selectedContact.isSystem()) {
                     AppState.setInt(3784, 30);
                     AppState.setInt(3785, 4);
                     ScreenManager.showScreen(ScreenManager.createScreen(3783));
                     return;
                 }
-                IOUtils.updateContactFlags(abstractC0041l);
+                IOUtils.updateContactFlags(selectedContact);
                 AppState.setInt(1494, 0);
-                boolean z2 = abstractC0041l instanceof MrimContact;
+                boolean z2 = selectedContact instanceof MrimContact;
                 boolean z3 = z2;
                 AppState.setBool(1495, z2);
-                boolean z4 = z3 && abstractC0041l.isOffline();
+                boolean z4 = z3 && selectedContact.isOffline();
                 AppState.setBool(1496, z4);
                 AppState.setBool(1497, z3 && !z4);
-                AppState.setBool(1498, abstractC0041l.isOnline());
-                AppState.setBool(1499, abstractC0041l.hasUnread() && !abstractC0041l.isOnline());
-                AppState.setBool(1501, z3 && !z4 && ((MrimContact) abstractC0041l).hasVCard());
+                AppState.setBool(1498, selectedContact.isOnline());
+                AppState.setBool(1499, selectedContact.hasUnread() && !selectedContact.isOnline());
+                AppState.setBool(1501, z3 && !z4 && ((MrimContact) selectedContact).hasVCard());
                 AppState.setInt(3706, 4);
                 AppState.setInt(3705, 30);
                 ScreenManager.showScreen(ScreenManager.createScreen(3704));
@@ -267,110 +267,110 @@ public final class ScreenBuilder {
                 return;
             case 37:
                 AppState.clearIndex(1271);
-                MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-                if (c0028ba.getChatRoomCount() != 0 && !c0028ba.chatRoomsLoaded) {
+                MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+                if (mrimAccount.getChatRoomCount() != 0 && !mrimAccount.chatRoomsLoaded) {
                     AppController.initChatRoomList();
                     return;
                 }
                 NetworkUtils.showConfirmDialog(37, 833);
-                Vector vectorM1213g = NetworkUtils.newVector();
-                JsonParser.addIntToVector(vectorM1213g, 0);
-                vectorM1213g.addElement(AppState.emptyStr);
-                JsonParser.addIntToVector(vectorM1213g, 1);
-                IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g)))));
+                Vector params = NetworkUtils.newVector();
+                JsonParser.addIntToVector(params, 0);
+                params.addElement(AppState.emptyStr);
+                JsonParser.addIntToVector(params, 1);
+                IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 return;
             case 38:
                 AppController.initChatRoomList();
                 return;
             case 39:
-                Vector vectorM614m3 = AppState.getVector(1283);
-                Screen c0013amM75b2 = ScreenManager.createScreen(2581);
-                c0013amM75b2.screenId = 39;
-                c0013amM75b2.showCheckboxes = true;
-                int size4 = vectorM614m3.size();
-                boolean zM587e3 = AppState.getBool(1467);
+                Vector accountList = AppState.getVector(1283);
+                Screen screen2 = ScreenManager.createScreen(2581);
+                screen2.screenId = 39;
+                screen2.showCheckboxes = true;
+                int size4 = accountList.size();
+                boolean showFlags = AppState.getBool(1467);
                 for (int i7 = 0; i7 < size4; i7++) {
-                    Object objElementAt = vectorM614m3.elementAt(i7);
-                    if (!(objElementAt instanceof Account)) {
-                        c0013amM75b2.addActionById(11, 548, 0);
-                    } else if (zM587e3) {
-                        c0013amM75b2.addItem(((Account) objElementAt).createFlagMenuItem());
+                    Object element = accountList.elementAt(i7);
+                    if (!(element instanceof Account)) {
+                        screen2.addActionById(11, 548, 0);
+                    } else if (showFlags) {
+                        screen2.addItem(((Account) element).createFlagMenuItem());
                     } else {
-                        c0013amM75b2.addItem(((Account) objElementAt).createMenuItem());
+                        screen2.addItem(((Account) element).createMenuItem());
                     }
                 }
-                Account abstractC0037h2 = TabBar.currentAccount;
-                if (abstractC0037h2 != null) {
-                    c0013amM75b2.selectByTitle(abstractC0037h2.getSignature());
+                Account currentAccount2 = TabBar.currentAccount;
+                if (currentAccount2 != null) {
+                    screen2.selectByTitle(currentAccount2.getSignature());
                 }
-                ScreenManager.showScreen(c0013amM75b2);
-                NetworkUtils.releaseVector(vectorM614m3);
+                ScreenManager.showScreen(screen2);
+                NetworkUtils.releaseVector(accountList);
                 return;
             case 40:
                 AppController.clearSearchState();
                 return;
             case 41:
                 AppState.clearIndex(1271);
-                ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
-                if (!c0052wM745h.isInitialized) {
+                ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
+                if (!chatRoom.isInitialized) {
                     IOUtils.showChatRoomMessages();
                     return;
                 }
                 NetworkUtils.showConfirmDialog(41, 836);
-                MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-                Vector vectorM1213g2 = NetworkUtils.newVector();
-                if (c0052wM745h == c0028ba2.getLastChatRoom()) {
-                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(0)));
-                    vectorM1213g2.addElement(c0052wM745h.participants);
-                    objArrM1147a = ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.appendFromState(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
+                MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
+                Vector params2 = NetworkUtils.newVector();
+                if (chatRoom == mrimAccount2.getLastChatRoom()) {
+                    params2.addElement(StringUtils.intern(Integer.toString(0)));
+                    params2.addElement(chatRoom.participants);
+                    request = ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.appendFromState(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 } else {
-                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(c0052wM745h.id)));
-                    int iM586d2 = AppState.getInt(97);
-                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(Utils.max(iM586d2, c0052wM745h.messageIds.size() + (c0052wM745h.isActive ? iM586d2 : 0)))));
-                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(1)));
-                    vectorM1213g2.addElement(AppState.emptyStr);
-                    Vector vectorM1213g3 = NetworkUtils.newVector();
-                    Enumeration enumerationElements = c0052wM745h.messageIds.elements();
-                    while (enumerationElements.hasMoreElements()) {
-                        Hashtable hashtable = c0052wM745h.messages;
-                        Object objNextElement = enumerationElements.nextElement();
-                        if (hashtable.containsKey(objNextElement)) {
-                            vectorM1213g3.addElement(objNextElement);
+                    params2.addElement(StringUtils.intern(Integer.toString(chatRoom.id)));
+                    int intVal2 = AppState.getInt(97);
+                    params2.addElement(StringUtils.intern(Integer.toString(Utils.max(intVal2, chatRoom.messageIds.size() + (chatRoom.isActive ? intVal2 : 0)))));
+                    params2.addElement(StringUtils.intern(Integer.toString(1)));
+                    params2.addElement(AppState.emptyStr);
+                    Vector messageIdParams = NetworkUtils.newVector();
+                    Enumeration contactEnum = chatRoom.messageIds.elements();
+                    while (contactEnum.hasMoreElements()) {
+                        Hashtable hashtable = chatRoom.messages;
+                        Object msgIdObj = contactEnum.nextElement();
+                        if (hashtable.containsKey(msgIdObj)) {
+                            messageIdParams.addElement(msgIdObj);
                         }
                     }
-                    vectorM1213g2.addElement(vectorM1213g3);
-                    objArrM1147a = ConnectionThread.createAuthRequest(NetworkUtils.appendFromState(1050207).append('?').append(AppState.getString(722608)).append(AppState.getString(1640218)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
+                    params2.addElement(messageIdParams);
+                    request = ConnectionThread.createAuthRequest(NetworkUtils.appendFromState(1050207).append('?').append(AppState.getString(722608)).append(AppState.getString(1640218)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 }
-                IOUtils.sendChatRoomRequest(objArrM1147a);
+                IOUtils.sendChatRoomRequest(request);
                 return;
             case 42:
                 NetworkUtils.showConfirmDialog(42, 862);
-                Vector vectorM1213g4 = NetworkUtils.newVector();
-                JsonParser.addIntToVector(vectorM1213g4, AppState.getInt(1527));
-                vectorM1213g4.addElement(AppState.getVector(1356));
-                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g4)))));
+                Vector params4 = NetworkUtils.newVector();
+                JsonParser.addIntToVector(params4, AppState.getInt(1527));
+                params4.addElement(AppState.getVector(1356));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
                 return;
             case 43:
                 IOUtils.showChatRoomMessages();
                 return;
             case 44:
                 AppController.prepareFormData();
-                Account abstractC0037hM616i2 = AppState.getAccount();
+                Account account2 = AppState.getAccount();
                 if (AppState.getAccount().getType() == 0) {
-                    strArrM32g = StringUtils.buildRegData();
+                    regData = StringUtils.buildRegData();
                 } else {
-                    strArrM32g = new String[8];
-                    int iM586d3 = AppState.getInt(1491);
-                    strArrM32g[0] = iM586d3 > 0 ? StringUtils.intern(Integer.toString(iM586d3)) : AppState.emptyStr;
-                    strArrM32g[1] = AppState.getString(AppState.getBool(1492) ? 1046 : 1038);
-                    strArrM32g[2] = Utils.defaultStr(AppState.getString(1307));
-                    strArrM32g[3] = Utils.defaultStr(AppState.getString(1308));
-                    strArrM32g[4] = Utils.defaultStr(AppState.getString(1309));
-                    strArrM32g[5] = Utils.defaultStr(AppState.getString(1310));
-                    strArrM32g[6] = Utils.defaultStr(AppState.getString(1311));
-                    strArrM32g[7] = Utils.defaultStr(AppState.getString(1312));
+                    regData = new String[8];
+                    int intVal3 = AppState.getInt(1491);
+                    regData[0] = intVal3 > 0 ? StringUtils.intern(Integer.toString(intVal3)) : AppState.emptyStr;
+                    regData[1] = AppState.getString(AppState.getBool(1492) ? 1046 : 1038);
+                    regData[2] = Utils.defaultStr(AppState.getString(1307));
+                    regData[3] = Utils.defaultStr(AppState.getString(1308));
+                    regData[4] = Utils.defaultStr(AppState.getString(1309));
+                    regData[5] = Utils.defaultStr(AppState.getString(1310));
+                    regData[6] = Utils.defaultStr(AppState.getString(1311));
+                    regData[7] = Utils.defaultStr(AppState.getString(1312));
                 }
-                NetworkUtils.showErrorOrConfirm(44, 729, abstractC0037hM616i2.validateObject(strArrM32g));
+                NetworkUtils.showErrorOrConfirm(44, 729, account2.validateObject(regData));
                 return;
             case 45:
                 return;
@@ -381,16 +381,16 @@ public final class ScreenBuilder {
                 return;
             case 48:
                 AppState.clearIndex(1271);
-                String strM584b = AppState.getString(1346);
-                Message c0026az = (Message) ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513)).messages.get(strM584b);
-                Message c0026az2 = c0026az.body != null ? c0026az : null;
+                String msgId = AppState.getString(1346);
+                Message message = (Message) ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513)).messages.get(msgId);
+                Message messageWithBody = message.body != null ? message : null;
                 NetworkUtils.showConfirmDialog(48, 837);
-                if (c0026az2 == null) {
-                    Vector vectorM1213g5 = NetworkUtils.newVector();
-                    vectorM1213g5.addElement(strM584b);
-                    vectorM1213g5.addElement(AppState.emptyStr);
-                    vectorM1213g5.addElement(NetworkUtils.longToHex(6775156));
-                    IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g5)))));
+                if (messageWithBody == null) {
+                    Vector params5 = NetworkUtils.newVector();
+                    params5.addElement(msgId);
+                    params5.addElement(AppState.emptyStr);
+                    params5.addElement(NetworkUtils.longToHex(6775156));
+                    IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(params5)))));
                     return;
                 }
                 return;
@@ -401,48 +401,48 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(3170));
                 return;
             case 51:
-                String strM584b2 = AppState.getString(1346);
-                int iM586d4 = AppState.getInt(1513);
-                MrimAccount c0028ba3 = (MrimAccount) AppState.getAccount();
-                boolean z5 = strM584b2 != null;
+                String msgId2 = AppState.getString(1346);
+                int chatRoomId = AppState.getInt(1513);
+                MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
+                boolean z5 = msgId2 != null;
                 boolean z6 = z5;
                 AppState.setBool(1521, z5);
-                ChatRoom c0052wM745h2 = c0028ba3.findChatRoomById(iM586d4);
-                boolean zM1414a = c0052wM745h2.isMessageRead(strM584b2);
-                AppState.setBool(1518, z6 && zM1414a);
-                AppState.setBool(1519, z6 && !zM1414a);
-                Message c0026azM1415b = c0052wM745h2.getMessage(strM584b2);
-                AppState.setBool(1522, z6 && !c0026azM1415b.isRead());
-                AppState.setBool(1523, z6 && c0026azM1415b.isRead());
-                int size5 = c0052wM745h2.readMessages.size();
+                ChatRoom chatRoom2 = mrimAccount3.findChatRoomById(chatRoomId);
+                boolean isRead = chatRoom2.isMessageRead(msgId2);
+                AppState.setBool(1518, z6 && isRead);
+                AppState.setBool(1519, z6 && !isRead);
+                Message message3 = chatRoom2.getMessage(msgId2);
+                AppState.setBool(1522, z6 && !message3.isRead());
+                AppState.setBool(1523, z6 && message3.isRead());
+                int size5 = chatRoom2.readMessages.size();
                 AppState.setBool(1520, size5 != 0);
-                AppState.setBool(1517, c0052wM745h2 != c0028ba3.getLastChatRoom());
+                AppState.setBool(1517, chatRoom2 != mrimAccount3.getLastChatRoom());
                 AppState.setFromBuffer(1347, NetworkUtils.newStringBuffer().append(AppState.getString(849)).append(size5).append(')'));
                 ScreenManager.showScreen(ScreenManager.createScreen(4589));
                 return;
             case 52:
-                String strM584b3 = AppState.getString(1346);
-                ChatRoom c0052wM745h3 = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
-                int iM1418a = c0052wM745h3.getType();
-                Message c0026azM1415b2 = c0052wM745h3.getMessage(strM584b3);
-                if (iM1418a == 2) {
-                    String[] strArrM869c = XmppMailRuProtocol.getFirstRecipient(c0026azM1415b2.ccList);
-                    str = strArrM869c != null ? strArrM869c[1] : AppState.emptyStr;
+                String msgId3 = AppState.getString(1346);
+                ChatRoom chatRoom3 = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
+                int roomType = chatRoom3.getType();
+                Message message4 = chatRoom3.getMessage(msgId3);
+                if (roomType == 2) {
+                    String[] ccRecipient = XmppMailRuProtocol.getFirstRecipient(message4.ccList);
+                    str = ccRecipient != null ? ccRecipient[1] : AppState.emptyStr;
                 } else {
-                    String[] strArrM869c2 = XmppMailRuProtocol.getFirstRecipient(c0026azM1415b2.toList);
-                    str = strArrM869c2 != null ? strArrM869c2[1] : AppState.emptyStr;
+                    String[] toRecipient = XmppMailRuProtocol.getFirstRecipient(message4.toList);
+                    str = toRecipient != null ? toRecipient[1] : AppState.emptyStr;
                 }
                 AppState.setObject(1284, (Object) str);
-                AppState.setObject(1285, (Object) Utils.normalizeSpaces(c0026azM1415b2.getSubject()));
-                AppState.setObject(1286, (Object) Utils.normalizeSpaces(c0026azM1415b2.body));
-                Screen c0013amM75b3 = ScreenManager.createScreen(4537);
-                Object[] objArr = c0026azM1415b2.attachments;
+                AppState.setObject(1285, (Object) Utils.normalizeSpaces(message4.getSubject()));
+                AppState.setObject(1286, (Object) Utils.normalizeSpaces(message4.body));
+                Screen screen3 = ScreenManager.createScreen(4537);
+                Object[] objArr = message4.attachments;
                 if (objArr != null) {
                     for (Object obj2 : objArr) {
-                        c0013amM75b3.addItem(MenuItem.createSeparator().setIcon(221).addText(((String[]) obj2)[1], 1, 0));
+                        screen3.addItem(MenuItem.createSeparator().setIcon(221).addText(((String[]) obj2)[1], 1, 0));
                     }
                 }
-                ScreenManager.showScreen(c0013amM75b3);
+                ScreenManager.showScreen(screen3);
                 AppController.clearPreviewState();
                 return;
             case 53:
@@ -488,23 +488,23 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(new Screen());
                 return;
             case 64:
-                Contact abstractC0041lM611g2 = AppState.getCurrentContact();
-                AppState.setInt(4113, abstractC0041lM611g2.canDelete() ? 25 : 24);
-                AppState.setInt(4118, abstractC0041lM611g2.canBlock() ? 25 : 24);
+                Contact contact2 = AppState.getCurrentContact();
+                AppState.setInt(4113, contact2.canDelete() ? 25 : 24);
+                AppState.setInt(4118, contact2.canBlock() ? 25 : 24);
                 ScreenManager.showScreen(ScreenManager.createScreen(4100));
                 return;
             case 65:
-                Vector vectorM516c2 = Utils.splitNonEmpty(AppState.getCurrentMrimContact().contactGroupsStr, ',');
-                int size6 = vectorM516c2.size();
+                Vector phoneGroups = Utils.splitNonEmpty(AppState.getCurrentMrimContact().contactGroupsStr, ',');
+                int size6 = phoneGroups.size();
                 if (size6 <= 0) {
                     AppController.showMessageById(713);
                     return;
                 }
-                StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
+                StringBuffer sb2 = NetworkUtils.newStringBuffer();
                 for (int i8 = 0; i8 < size6; i8++) {
-                    stringBufferM1217h2.append(Utils.formatPhone((String) vectorM516c2.elementAt(i8))).append((char) 0);
+                    sb2.append(Utils.formatPhone((String) phoneGroups.elementAt(i8))).append((char) 0);
                 }
-                AppState.setFromBuffer(1313, stringBufferM1217h2);
+                AppState.setFromBuffer(1313, sb2);
                 AppState.setInt(1493, 0);
                 ScreenManager.showScreen(ScreenManager.createScreen(3627));
                 return;
@@ -526,39 +526,39 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(3553));
                 return;
             case 71:
-                StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(672));
+                StringBuffer sbAlert = NetworkUtils.newStringBuffer().append(AppState.getString(672));
                 Object obj3 = AppState.pool[1365];
-                NetworkUtils.showAlertBuffer(71, stringBufferAppend.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).name : ((Contact) obj3).displayName).append(NetworkUtils.longToHex(16167)));
+                NetworkUtils.showAlertBuffer(71, sbAlert.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).name : ((Contact) obj3).displayName).append(NetworkUtils.longToHex(16167)));
                 return;
             case 72:
                 NetworkUtils.showConfirmDialog(72, 866);
-                Vector vectorM614m4 = AppState.getVector(1356);
-                Vector vectorM1213g6 = NetworkUtils.newVector();
-                int size7 = vectorM614m4.size();
+                Vector selectedItems = AppState.getVector(1356);
+                Vector itemsParams = NetworkUtils.newVector();
+                int size7 = selectedItems.size();
                 while (true) {
                     size7--;
                     if (size7 < 0) {
-                        Vector vectorM1213g7 = NetworkUtils.newVector();
-                        vectorM1213g7.addElement(vectorM1213g6);
-                        IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g7)))));
+                        Vector outerParams = NetworkUtils.newVector();
+                        outerParams.addElement(itemsParams);
+                        IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
                         return;
                     } else {
                         Hashtable hashtable2 = new Hashtable();
-                        JsonParser.putIntKey(hashtable2, 329240, JsonParser.getVectorElement(vectorM614m4, size7));
+                        JsonParser.putIntKey(hashtable2, 329240, JsonParser.getVectorElement(selectedItems, size7));
                         JsonParser.putIntKey(hashtable2, 263673, ResourceManager.integerOf(AppState.getInt(1525)));
-                        vectorM1213g6.addElement(hashtable2);
+                        itemsParams.addElement(hashtable2);
                     }
                 }
             case 73:
-                int iM586d5 = AppState.getInt(1506);
-                if (0 != iM586d5) {
+                int errorMsgId = AppState.getInt(1506);
+                if (0 != errorMsgId) {
                     AppController.clearSearchResults2();
-                    AppController.showMessageById(iM586d5);
+                    AppController.showMessageById(errorMsgId);
                     return;
                 }
-                Vector vectorM614m5 = AppState.getVector(1318);
-                if (0 != vectorM614m5.size()) {
-                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(3868), vectorM614m5));
+                Vector searchResults = AppState.getVector(1318);
+                if (0 != searchResults.size()) {
+                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(3868), searchResults));
                     return;
                 } else {
                     AppController.clearSearchResults2();
@@ -577,10 +577,10 @@ public final class ScreenBuilder {
                 return;
             case 78:
                 NetworkUtils.showConfirmDialog(78, 861);
-                Vector vectorM1213g8 = NetworkUtils.newVector();
-                vectorM1213g8.addElement(AppState.getVector(1356));
-                JsonParser.addIntToVector(vectorM1213g8, AppState.getBool(1524) ? 1 : 0);
-                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1508975), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g8)))));
+                Vector params8 = NetworkUtils.newVector();
+                params8.addElement(AppState.getVector(1356));
+                JsonParser.addIntToVector(params8, AppState.getBool(1524) ? 1 : 0);
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1508975), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
                 return;
             case 79:
                 NetworkUtils.showAlertById(79, 863);
@@ -590,21 +590,21 @@ public final class ScreenBuilder {
                 return;
             case 81:
                 NetworkUtils.showConfirmDialog(81, 872);
-                Vector vectorM1213g9 = NetworkUtils.newVector();
-                vectorM1213g9.addElement(AppState.getString(AppState.getBool(1526) ? 264068 : 1038));
-                JsonParser.addIntToVector(vectorM1213g9, AppState.getInt(1513));
-                vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1348)));
-                vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1349)));
-                vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1350)));
-                vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1351)));
-                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g9)))));
+                Vector params9 = NetworkUtils.newVector();
+                params9.addElement(AppState.getString(AppState.getBool(1526) ? 264068 : 1038));
+                JsonParser.addIntToVector(params9, AppState.getInt(1513));
+                params9.addElement(Utils.defaultStr(AppState.getString(1348)));
+                params9.addElement(Utils.defaultStr(AppState.getString(1349)));
+                params9.addElement(Utils.defaultStr(AppState.getString(1350)));
+                params9.addElement(Utils.defaultStr(AppState.getString(1351)));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params9)))));
                 return;
             case 82:
                 NetworkUtils.showConfirmDialog(82, 877);
-                Message c0026az3 = new Message(XmppMailRuProtocol.parseRecipientList(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
-                Vector vectorM1213g10 = NetworkUtils.newVector();
-                vectorM1213g10.addElement(c0026az3.toHashtable());
-                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1377947), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g10)))));
+                Message newMessage = new Message(XmppMailRuProtocol.parseRecipientList(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
+                Vector params10 = NetworkUtils.newVector();
+                params10.addElement(newMessage.toHashtable());
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1377947), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
                 return;
             case 83:
                 ResourceManager.playNotificationSound(4);
@@ -613,9 +613,9 @@ public final class ScreenBuilder {
                 AppController.clearNotifications();
                 return;
             case 84:
-                String strM1026g = XmppContactGroup.getTextInputValue();
-                AppState.setObject(1279, (Object) strM1026g);
-                AppState.setBool(1456, !StringUtils.isEmpty(strM1026g));
+                String inputText = XmppContactGroup.getTextInputValue();
+                AppState.setObject(1279, (Object) inputText);
+                AppState.setBool(1456, !StringUtils.isEmpty(inputText));
                 ScreenManager.showScreen(ScreenManager.createScreen(2299));
                 return;
             case 85:
@@ -624,23 +624,23 @@ public final class ScreenBuilder {
                     NetworkUtils.showErrorOrConfirm(85, 727, 0);
                     return;
                 } else {
-                    Contact abstractC0041lM611g3 = AppState.getCurrentContact();
-                    NetworkUtils.showErrorOrConfirm(85, 727, abstractC0041lM611g3.account.validateDelete(abstractC0041lM611g3));
+                    Contact contact3 = AppState.getCurrentContact();
+                    NetworkUtils.showErrorOrConfirm(85, 727, contact3.account.validateDelete(contact3));
                     return;
                 }
             case 86:
-                Screen c0013amM75b4 = ScreenManager.createScreen(4238);
-                Contact abstractC0041lM611g4 = AppState.getCurrentContact();
-                Vector vector = abstractC0041lM611g4.account.groups;
+                Screen screen4 = ScreenManager.createScreen(4238);
+                Contact contact4 = AppState.getCurrentContact();
+                Vector vector = contact4.account.groups;
                 int size8 = vector.size();
                 for (int i9 = 0; i9 < size8; i9++) {
-                    ContactGroup abstractC0046q = (ContactGroup) vector.elementAt(i9);
-                    c0013amM75b4.addItem(abstractC0046q.createMenuItem(-1));
-                    if (abstractC0046q.containsContact(abstractC0041lM611g4)) {
-                        c0013amM75b4.selectedIndex = i9;
+                    ContactGroup group = (ContactGroup) vector.elementAt(i9);
+                    screen4.addItem(group.createMenuItem(-1));
+                    if (group.containsContact(contact4)) {
+                        screen4.selectedIndex = i9;
                     }
                 }
-                ScreenManager.showScreen(c0013amM75b4);
+                ScreenManager.showScreen(screen4);
                 return;
             case 87:
                 AppState.setBool(1456, Utils.nonEmpty(AppState.getString(1279)));
@@ -656,134 +656,134 @@ public final class ScreenBuilder {
                 AppController.processEventQueue();
                 return;
             case 91:
-                boolean zM587e4 = AppState.getBool(277);
-                boolean zM587e5 = AppState.getBool(230);
-                AppState.setBool(1418, zM587e4 && !zM587e5);
-                AppState.setBool(1419, zM587e4 && zM587e5);
+                boolean isOnline4 = AppState.getBool(277);
+                boolean isCustom = AppState.getBool(230);
+                AppState.setBool(1418, isOnline4 && !isCustom);
+                AppState.setBool(1419, isOnline4 && isCustom);
                 ScreenManager.showScreen(ScreenManager.createScreen(1600));
                 return;
             case 92:
                 AppState.setInt(3707, 0);
-                Contact abstractC0041lM611g5 = AppState.getCurrentContact();
-                if (abstractC0041lM611g5.isSystem()) {
+                Contact contact5 = AppState.getCurrentContact();
+                if (contact5.isSystem()) {
                     AppState.setInt(3784, 92);
                     AppState.setInt(3785, 3);
                     ScreenManager.showScreen(ScreenManager.createScreen(3783));
                     return;
                 }
-                IOUtils.updateContactFlags(abstractC0041lM611g5);
-                boolean z7 = abstractC0041lM611g5 instanceof MrimContact;
+                IOUtils.updateContactFlags(contact5);
+                boolean z7 = contact5 instanceof MrimContact;
                 boolean z8 = z7;
                 AppState.setBool(1495, z7);
-                boolean z9 = z8 && abstractC0041lM611g5.isOffline();
+                boolean z9 = z8 && contact5.isOffline();
                 AppState.setBool(1496, z9);
                 AppState.setBool(1497, z8 && !z9);
-                AppState.setBool(1498, abstractC0041lM611g5.isOnline());
-                AppState.setBool(1499, abstractC0041lM611g5.hasUnread() && !abstractC0041lM611g5.isOnline());
-                AppState.setBool(1501, z8 && !z9 && ((MrimContact) abstractC0041lM611g5).hasVCard());
+                AppState.setBool(1498, contact5.isOnline());
+                AppState.setBool(1499, contact5.hasUnread() && !contact5.isOnline());
+                AppState.setBool(1501, z8 && !z9 && ((MrimContact) contact5).hasVCard());
                 AppState.setInt(3706, 3);
                 AppState.setInt(3705, 92);
                 ScreenManager.showScreen(ScreenManager.createScreen(3704));
                 return;
             case 93:
-                Screen c0013amM75b5 = ScreenManager.createScreen(2621);
+                Screen screen5 = ScreenManager.createScreen(2621);
                 if (AppState.getCurrentContact() instanceof MmpContact) {
                     for (int i10 = 0; i10 < 43; i10++) {
                         if (AppState.getString(i10 + 1141) != null) {
-                            c0013amM75b5.addIconTextItem(i10 + 110, StringUtils.intern(Integer.toString(i10)), i10);
+                            screen5.addIconTextItem(i10 + 110, StringUtils.intern(Integer.toString(i10)), i10);
                         }
                     }
                 } else if (AppState.getCurrentContact() instanceof XmppContact) {
                     for (int i11 = 0; i11 < 37; i11++) {
                         if (AppState.getString(i11 + 1184) != null) {
-                            c0013amM75b5.addIconTextItem(i11 + 318, StringUtils.intern(Integer.toString(i11)), i11);
+                            screen5.addIconTextItem(i11 + 318, StringUtils.intern(Integer.toString(i11)), i11);
                         }
                     }
                 } else {
                     for (int i12 = 10; i12 < 74; i12++) {
-                        c0013amM75b5.addIconTextItem(i12 + 36, StringUtils.intern(Integer.toString(i12)), i12);
+                        screen5.addIconTextItem(i12 + 36, StringUtils.intern(Integer.toString(i12)), i12);
                     }
                     for (int i13 = 0; i13 < 10; i13++) {
-                        c0013amM75b5.addIconTextItem(i13 + 36, StringUtils.intern(Integer.toString(i13)), i13);
+                        screen5.addIconTextItem(i13 + 36, StringUtils.intern(Integer.toString(i13)), i13);
                     }
-                    c0013amM75b5.addIconTextItem(142, StringUtils.intern(Integer.toString(74)), 74);
-                    c0013amM75b5.addIconTextItem(137, StringUtils.intern(Integer.toString(75)), 75);
-                    c0013amM75b5.addIconTextItem(210, StringUtils.intern(Integer.toString(76)), 76);
-                    c0013amM75b5.addIconTextItem(205, StringUtils.intern(Integer.toString(77)), 77);
+                    screen5.addIconTextItem(142, StringUtils.intern(Integer.toString(74)), 74);
+                    screen5.addIconTextItem(137, StringUtils.intern(Integer.toString(75)), 75);
+                    screen5.addIconTextItem(210, StringUtils.intern(Integer.toString(76)), 76);
+                    screen5.addIconTextItem(205, StringUtils.intern(Integer.toString(77)), 77);
                 }
-                ScreenManager.showScreen(c0013amM75b5);
+                ScreenManager.showScreen(screen5);
                 return;
             case 94:
-                Screen c0013amM75b6 = ScreenManager.createScreen(2611);
+                Screen screen6 = ScreenManager.createScreen(2611);
                 for (int i14 = 0; i14 < 15; i14++) {
-                    c0013amM75b6.addTextItem(AppState.getString(i14 + 48));
+                    screen6.addTextItem(AppState.getString(i14 + 48));
                 }
-                ScreenManager.showScreen(c0013amM75b6);
+                ScreenManager.showScreen(screen6);
                 return;
             case 95:
-                Screen c0013amM75b7 = ScreenManager.createScreen(2601);
+                Screen screen7 = ScreenManager.createScreen(2601);
                 for (int i15 = 0; i15 < 15; i15++) {
-                    c0013amM75b7.addTextItem(AppState.getString(i15 + 48));
+                    screen7.addTextItem(AppState.getString(i15 + 48));
                 }
-                ScreenManager.showScreen(c0013amM75b7);
+                ScreenManager.showScreen(screen7);
                 return;
             case 96:
-                ContactInfo c0042m = (ContactInfo) AppState.pool[1315];
-                String str2 = (String) c0042m.get(ResourceManager.integerOf(-1));
+                ContactInfo contactInfo = (ContactInfo) AppState.pool[1315];
+                String str2 = (String) contactInfo.get(ResourceManager.integerOf(-1));
                 if (null != str2) {
                     AppController.showNotification(str2);
                 } else {
-                    AppState.setInt(3834, c0042m.isXmppContact() ? 0 : 503);
-                    ScreenManager.showScreen(c0042m.buildContactScreen(3830));
+                    AppState.setInt(3834, contactInfo.isXmppContact() ? 0 : 503);
+                    ScreenManager.showScreen(contactInfo.buildContactScreen(3830));
                 }
                 AppState.setInt(3650, 102);
                 return;
             case 97:
-                Vector vectorM614m6 = AppState.getVector(1389);
-                int size9 = vectorM614m6.size();
+                Vector regions = AppState.getVector(1389);
+                int size9 = regions.size();
                 if (size9 == 0) {
                     AppController.showMessageById(397);
                     return;
                 }
-                Screen c0013amM75b8 = ScreenManager.createScreen(1691);
+                Screen screen8 = ScreenManager.createScreen(1691);
                 for (int i16 = 0; i16 < size9; i16++) {
-                    GeoRegion c0053x = (GeoRegion) vectorM614m6.elementAt(i16);
-                    c0013amM75b8.addIconItemWithData(-1, c0053x.name, 6, c0053x);
+                    GeoRegion region = (GeoRegion) regions.elementAt(i16);
+                    screen8.addIconItemWithData(-1, region.name, 6, region);
                 }
-                GeoRegion c0053xM40i = StringUtils.getGeoRegion();
-                c0013amM75b8.addIconItemWithData(-1, c0053xM40i.name, 6, c0053xM40i);
-                ScreenManager.showScreen(c0013amM75b8);
+                GeoRegion currentRegion = StringUtils.getGeoRegion();
+                screen8.addIconItemWithData(-1, currentRegion.name, 6, currentRegion);
+                ScreenManager.showScreen(screen8);
                 return;
             case 98:
-                Screen c0013amM75b9 = ScreenManager.createScreen(4080);
+                Screen screen9 = ScreenManager.createScreen(4080);
                 for (int i17 = 0; i17 < 15; i17++) {
-                    c0013amM75b9.addTextItem(AppState.getString(i17 + 48));
+                    screen9.addTextItem(AppState.getString(i17 + 48));
                 }
-                ScreenManager.showScreen(c0013amM75b9);
+                ScreenManager.showScreen(screen9);
                 return;
             case 99:
-                Screen c0013amM75b10 = ScreenManager.createScreen(4090);
+                Screen screen10 = ScreenManager.createScreen(4090);
                 for (int i18 = 0; i18 < 15; i18++) {
-                    c0013amM75b10.addTextItem(AppState.getString(i18 + 48));
+                    screen10.addTextItem(AppState.getString(i18 + 48));
                 }
-                ScreenManager.showScreen(c0013amM75b10);
+                ScreenManager.showScreen(screen10);
                 return;
             case 100:
-                Screen c0013amM75b11 = ScreenManager.createScreen(1701);
-                Vector vectorM614m7 = AppState.getVector(1400);
-                for (int i19 = 0; i19 < vectorM614m7.size(); i19++) {
-                    MapPoint c0014an = (MapPoint) vectorM614m7.elementAt(i19);
-                    c0013amM75b11.addIconItemWithData(-1, c0014an.name, 6, c0014an);
+                Screen screen11 = ScreenManager.createScreen(1701);
+                Vector mapPoints = AppState.getVector(1400);
+                for (int i19 = 0; i19 < mapPoints.size(); i19++) {
+                    MapPoint mapPoint = (MapPoint) mapPoints.elementAt(i19);
+                    screen11.addIconItemWithData(-1, mapPoint.name, 6, mapPoint);
                 }
-                ScreenManager.showScreen(c0013amM75b11);
+                ScreenManager.showScreen(screen11);
                 return;
             case 101:
                 return;
             case 102:
                 if (AppController.pendingAccount == null && AppController.pendingUrl == null) {
-                    Contact abstractC0041lM611g6 = AppState.getCurrentContact();
-                    String strM314m = AppController.getStatusText();
-                    NetworkUtils.showErrorOrConfirm(102, 728, strM314m != null ? abstractC0041lM611g6.account.getResourceId((Object) strM314m) : ResourceManager.loadUserProfile(abstractC0041lM611g6.getIdentifier(), abstractC0041lM611g6.account));
+                    Contact contact6 = AppState.getCurrentContact();
+                    String statusText = AppController.getStatusText();
+                    NetworkUtils.showErrorOrConfirm(102, 728, statusText != null ? contact6.account.getResourceId((Object) statusText) : ResourceManager.loadUserProfile(contact6.getIdentifier(), contact6.account));
                     return;
                 } else {
                     NetworkUtils.showErrorOrConfirm(102, 728, 0);
@@ -804,19 +804,19 @@ public final class ScreenBuilder {
                 ScreenManager.getCurrentScreen().screenId = 105;
                 return;
             case 106:
-                Screen c0013amM75b12 = ScreenManager.createScreen(3840);
+                Screen screen12 = ScreenManager.createScreen(3840);
                 Object obj4 = ((Object[]) AppState.pool[1271])[2];
                 if (obj4 instanceof Image) {
-                    c0013amM75b12.addItem(MenuItem.createGraphics(new GraphicsContext((Image) obj4)));
+                    screen12.addItem(MenuItem.createGraphics(new GraphicsContext((Image) obj4)));
                 } else {
-                    c0013amM75b12.addLabelById(((Integer) obj4).intValue());
+                    screen12.addLabelById(((Integer) obj4).intValue());
                 }
-                ScreenManager.showScreen(c0013amM75b12);
+                ScreenManager.showScreen(screen12);
                 AppState.clearIndex(1271);
                 return;
             case 107:
-                ContactInfo c0042m2 = (ContactInfo) AppState.pool[1319];
-                NetworkUtils.showErrorOrConfirm(107, 728, c0042m2.getAccount().getResourceId((Object) c0042m2.getEmailOrMmpId()));
+                ContactInfo contactInfo2 = (ContactInfo) AppState.pool[1319];
+                NetworkUtils.showErrorOrConfirm(107, 728, contactInfo2.getAccount().getResourceId((Object) contactInfo2.getEmailOrMmpId()));
                 return;
             case 108:
                 return;
@@ -825,29 +825,29 @@ public final class ScreenBuilder {
                 return;
             case 110:
                 AppState.setObject(1249, (Object) AppState.emptyStr);
-                String strM655c = MapRenderer.getTooltipText();
-                if (strM655c != null) {
-                    AppState.setObject(1249, (Object) strM655c);
+                String tooltipText = MapRenderer.getTooltipText();
+                if (tooltipText != null) {
+                    AppState.setObject(1249, (Object) tooltipText);
                 }
                 ScreenManager.showScreen(ScreenManager.createScreen(1727));
                 return;
             case 111:
-                Vector vectorM445W = AppController.getAllAccountsList();
-                int size10 = vectorM445W.size();
+                Vector allContacts = AppController.getAllAccountsList();
+                int size10 = allContacts.size();
                 while (true) {
                     size10--;
                     if (size10 < 0) {
-                        if (vectorM445W.size() == 0) {
+                        if (allContacts.size() == 0) {
                             AppController.showMessageById(762);
                         } else {
-                            AppController.sortContacts(vectorM445W);
-                            ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(1743), vectorM445W));
+                            AppController.sortContacts(allContacts);
+                            ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(1743), allContacts));
                         }
-                        NetworkUtils.releaseVector(vectorM445W);
+                        NetworkUtils.releaseVector(allContacts);
                         return;
                     }
-                    if (((Contact) vectorM445W.elementAt(size10)).isOffline()) {
-                        vectorM445W.removeElementAt(size10);
+                    if (((Contact) allContacts.elementAt(size10)).isOffline()) {
+                        allContacts.removeElementAt(size10);
                     }
                 }
             case 112:
@@ -858,9 +858,9 @@ public final class ScreenBuilder {
                 return;
             case 114:
                 AppState.setObject(1250, (Object) AppState.emptyStr);
-                String strM655c2 = MapRenderer.getTooltipText();
-                if (strM655c2 != null) {
-                    AppState.setObject(1250, (Object) strM655c2);
+                String tooltipText2 = MapRenderer.getTooltipText();
+                if (tooltipText2 != null) {
+                    AppState.setObject(1250, (Object) tooltipText2);
                 }
                 ScreenManager.showScreen(ScreenManager.createScreen(1876));
                 return;
@@ -869,48 +869,48 @@ public final class ScreenBuilder {
                 AppController.clearPreviewState();
                 return;
             case 116:
-                Screen c0013amM75b13 = ScreenManager.createScreen(1892);
-                Enumeration enumerationM1167j = ConnectionThread.getRouteElements();
-                while (enumerationM1167j.hasMoreElements()) {
-                    MapPoint c0014an2 = (MapPoint) enumerationM1167j.nextElement();
-                    c0013amM75b13.addIconItemWithData(-1, c0014an2.name, 118, c0014an2);
+                Screen screen13 = ScreenManager.createScreen(1892);
+                Enumeration routeEnum = ConnectionThread.getRouteElements();
+                while (routeEnum.hasMoreElements()) {
+                    MapPoint mapPoint2 = (MapPoint) routeEnum.nextElement();
+                    screen13.addIconItemWithData(-1, mapPoint2.name, 118, mapPoint2);
                 }
-                ScreenManager.showScreen(c0013amM75b13);
+                ScreenManager.showScreen(screen13);
                 return;
             case 117:
                 Conversation.updateStatusText(375);
                 ScreenManager.showScreen(ScreenManager.createScreen(1902));
                 return;
             case 118:
-                Vector vectorM445W2 = AppController.getAllAccountsList();
-                int size11 = vectorM445W2.size();
+                Vector allContacts2 = AppController.getAllAccountsList();
+                int size11 = allContacts2.size();
                 while (true) {
                     size11--;
                     if (size11 < 0) {
-                        if (vectorM445W2.size() == 0) {
+                        if (allContacts2.size() == 0) {
                             AppController.showMessageById(762);
                         } else {
-                            AppController.sortContacts(vectorM445W2);
-                            ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(1930), vectorM445W2));
+                            AppController.sortContacts(allContacts2);
+                            ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(1930), allContacts2));
                         }
-                        NetworkUtils.releaseVector(vectorM445W2);
+                        NetworkUtils.releaseVector(allContacts2);
                         return;
                     }
-                    if (((Contact) vectorM445W2.elementAt(size11)).isOffline()) {
-                        vectorM445W2.removeElementAt(size11);
+                    if (((Contact) allContacts2.elementAt(size11)).isOffline()) {
+                        allContacts2.removeElementAt(size11);
                     }
                 }
             case 119:
                 ScreenManager.showScreen(ScreenManager.createScreen(1940));
                 return;
             case 120:
-                Screen c0013amM75b14 = ScreenManager.createScreen(1958);
-                Enumeration enumerationM1167j2 = ConnectionThread.getRouteElements();
-                while (enumerationM1167j2.hasMoreElements()) {
-                    MapPoint c0014an3 = (MapPoint) enumerationM1167j2.nextElement();
-                    c0013amM75b14.addIconItemWithData(-1, c0014an3.name, 6, c0014an3);
+                Screen screen14 = ScreenManager.createScreen(1958);
+                Enumeration routeEnum2 = ConnectionThread.getRouteElements();
+                while (routeEnum2.hasMoreElements()) {
+                    MapPoint mapPoint3 = (MapPoint) routeEnum2.nextElement();
+                    screen14.addIconItemWithData(-1, mapPoint3.name, 6, mapPoint3);
                 }
-                ScreenManager.showScreen(c0013amM75b14);
+                ScreenManager.showScreen(screen14);
                 return;
             case 121:
                 ScreenManager.showScreen(ScreenManager.createScreen(1968));
@@ -925,77 +925,77 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(3479));
                 return;
             case 125:
-                Account abstractC0037hM616i3 = AppState.getAccount();
-                Vector vectorM1213g11 = NetworkUtils.newVector();
-                Enumeration enumerationElements2 = abstractC0037hM616i3.contactMap.elements();
-                while (enumerationElements2.hasMoreElements()) {
-                    Contact abstractC0041l2 = (Contact) enumerationElements2.nextElement();
-                    if (abstractC0041l2.canDelete()) {
-                        vectorM1213g11.addElement(abstractC0041l2);
+                Account account3 = AppState.getAccount();
+                Vector contacts11 = NetworkUtils.newVector();
+                Enumeration contactEnum2 = account3.contactMap.elements();
+                while (contactEnum2.hasMoreElements()) {
+                    Contact contactToDelete = (Contact) contactEnum2.nextElement();
+                    if (contactToDelete.canDelete()) {
+                        contacts11.addElement(contactToDelete);
                     }
                 }
-                if (vectorM1213g11.size() > 0) {
-                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(4070), vectorM1213g11));
+                if (contacts11.size() > 0) {
+                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(4070), contacts11));
                 } else {
                     AppController.showMessageById(762);
                 }
-                NetworkUtils.releaseVector(vectorM1213g11);
+                NetworkUtils.releaseVector(contacts11);
                 return;
             case 126:
-                Account abstractC0037hM616i4 = AppState.getAccount();
-                Vector vectorM1213g12 = NetworkUtils.newVector();
-                Enumeration enumerationElements3 = abstractC0037hM616i4.contactMap.elements();
-                while (enumerationElements3.hasMoreElements()) {
-                    Contact abstractC0041l3 = (Contact) enumerationElements3.nextElement();
-                    if (abstractC0041l3.canBlock()) {
-                        vectorM1213g12.addElement(abstractC0041l3);
+                Account account4 = AppState.getAccount();
+                Vector contacts12 = NetworkUtils.newVector();
+                Enumeration contactEnum3 = account4.contactMap.elements();
+                while (contactEnum3.hasMoreElements()) {
+                    Contact contactToBlock = (Contact) contactEnum3.nextElement();
+                    if (contactToBlock.canBlock()) {
+                        contacts12.addElement(contactToBlock);
                     }
                 }
-                if (vectorM1213g12.size() > 0) {
-                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(4060), vectorM1213g12));
+                if (contacts12.size() > 0) {
+                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(4060), contacts12));
                 } else {
                     AppController.showMessageById(762);
                 }
-                NetworkUtils.releaseVector(vectorM1213g12);
+                NetworkUtils.releaseVector(contacts12);
                 return;
             case 127:
-                Account abstractC0037hM616i5 = AppState.getAccount();
-                Vector vectorM1213g13 = NetworkUtils.newVector();
-                Enumeration enumerationElements4 = abstractC0037hM616i5.contactMap.elements();
-                while (enumerationElements4.hasMoreElements()) {
-                    Contact abstractC0041l4 = (Contact) enumerationElements4.nextElement();
-                    if (abstractC0041l4.canUnblock()) {
-                        vectorM1213g13.addElement(abstractC0041l4);
+                Account account5 = AppState.getAccount();
+                Vector contacts13 = NetworkUtils.newVector();
+                Enumeration contactEnum4 = account5.contactMap.elements();
+                while (contactEnum4.hasMoreElements()) {
+                    Contact contactToUnblock = (Contact) contactEnum4.nextElement();
+                    if (contactToUnblock.canUnblock()) {
+                        contacts13.addElement(contactToUnblock);
                     }
                 }
-                if (vectorM1213g13.size() > 0) {
-                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(4050), vectorM1213g13));
+                if (contacts13.size() > 0) {
+                    ScreenManager.showScreen(NetworkUtils.addContactItems(ScreenManager.createScreen(4050), contacts13));
                 } else {
                     AppController.showMessageById(762);
                 }
-                NetworkUtils.releaseVector(vectorM1213g13);
+                NetworkUtils.releaseVector(contacts13);
                 return;
             case 128:
                 NetworkUtils.showAlertBuffer(128, NetworkUtils.newStringBuffer().append(AppState.getString(760)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.longToHex(16167)));
                 return;
             case 129:
-                StringBuffer stringBufferAppend2 = NetworkUtils.newStringBuffer().append(AppState.getString(396));
-                Vector vectorM441T = AppController.getMmpAccountList();
+                StringBuffer sbAccounts = NetworkUtils.newStringBuffer().append(AppState.getString(396));
+                Vector mmpAccounts = AppController.getMmpAccountList();
                 int i20 = 0;
-                int size12 = vectorM441T.size();
+                int size12 = mmpAccounts.size();
                 int i21 = size12;
                 while (true) {
                     i21--;
                     if (i21 < 0) {
                         AppState.setInt(1438, i20);
-                        AppState.setObject(1252, (Object) NetworkUtils.bufToStringCached(stringBufferAppend2));
+                        AppState.setObject(1252, (Object) NetworkUtils.bufToStringCached(sbAccounts));
                         ScreenManager.showScreen(ScreenManager.createScreen(1990));
                         return;
                     } else {
-                        String str3 = ((MrimAccount) vectorM441T.elementAt(i21)).login;
-                        stringBufferAppend2.append(str3);
+                        String str3 = ((MrimAccount) mmpAccounts.elementAt(i21)).login;
+                        sbAccounts.append(str3);
                         if (i21 != 0) {
-                            stringBufferAppend2.append((char) 0);
+                            sbAccounts.append((char) 0);
                         }
                         if (str3.equals(AppState.getString(267))) {
                             i20 = size12 - i21;
@@ -1036,28 +1036,28 @@ public final class ScreenBuilder {
             case 141:
                 return;
             case 142:
-                Screen c0013amM75b15 = ScreenManager.createScreen(4159);
-                MrimContact c0035f = (MrimContact) AppState.getCurrentContact();
-                MrimAccount c0028ba4 = (MrimAccount) c0035f.account;
-                Vector vectorM614m8 = AppState.getVector(1318);
-                c0035f.setGroupsList(vectorM614m8);
-                for (int i22 = 0; i22 < vectorM614m8.size(); i22++) {
-                    String strM521a = Utils.getVectorString(vectorM614m8, i22);
-                    if (!StringUtils.equals(strM521a, c0028ba4.login)) {
-                        MrimContact c0035f2 = (MrimContact) c0028ba4.getContact((Object) strM521a);
-                        if (c0035f2 != null) {
-                            c0013amM75b15.addItem(c0035f2.createMenuItem());
+                Screen screen15 = ScreenManager.createScreen(4159);
+                MrimContact mrimContact = (MrimContact) AppState.getCurrentContact();
+                MrimAccount mrimAccount4 = (MrimAccount) mrimContact.account;
+                Vector groupMembers = AppState.getVector(1318);
+                mrimContact.setGroupsList(groupMembers);
+                for (int i22 = 0; i22 < groupMembers.size(); i22++) {
+                    String memberLogin = Utils.getVectorString(groupMembers, i22);
+                    if (!StringUtils.equals(memberLogin, mrimAccount4.login)) {
+                        MrimContact mrimContact2 = (MrimContact) mrimAccount4.getContact((Object) memberLogin);
+                        if (mrimContact2 != null) {
+                            screen15.addItem(mrimContact2.createMenuItem());
                         } else {
-                            c0013amM75b15.addIconItemWithData(154, strM521a, 0, strM521a);
+                            screen15.addIconItemWithData(154, memberLogin, 0, memberLogin);
                         }
                     }
                 }
-                if (c0013amM75b15.menuItems.size() == 0) {
-                    c0013amM75b15.selectable = false;
-                    Screen c0013amM255a = c0013amM75b15.addLabelById(772);
-                    c0013amM255a.setSoftKeys(AppState.getString(1038), AppState.getString(1050), c0013amM255a.softKeyLeft, c0013amM255a.softKeyCenter, c0013amM255a.softKeyRight);
+                if (screen15.menuItems.size() == 0) {
+                    screen15.selectable = false;
+                    Screen labelScreen = screen15.addLabelById(772);
+                    labelScreen.setSoftKeys(AppState.getString(1038), AppState.getString(1050), labelScreen.softKeyLeft, labelScreen.softKeyCenter, labelScreen.softKeyRight);
                 }
-                ScreenManager.showScreen(c0013amM75b15);
+                ScreenManager.showScreen(screen15);
                 AppState.clearIndex(1318);
                 return;
             case 143:
@@ -1077,10 +1077,10 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(2523));
                 return;
             case 147:
-                String[] strArrM452Z = AppController.getLanguageOptions();
-                if (strArrM452Z != null) {
-                    AppState.setObject(1285, (Object) strArrM452Z[0]);
-                    AppState.setFromBuffer(1284, NetworkUtils.newStringBuffer().append(AppState.getString(522)).append(strArrM452Z[1]));
+                String[] langOptions = AppController.getLanguageOptions();
+                if (langOptions != null) {
+                    AppState.setObject(1285, (Object) langOptions[0]);
+                    AppState.setFromBuffer(1284, NetworkUtils.newStringBuffer().append(AppState.getString(522)).append(langOptions[1]));
                     if (AppState.getInt(282) != 0) {
                         AppState.clearIndex(524);
                         AppState.clearIndex(525);
@@ -1100,9 +1100,9 @@ public final class ScreenBuilder {
                 return;
             case 150:
                 AppController.prepareFormData();
-                MrimContact c0035f3 = (MrimContact) AppState.getCurrentContact();
-                MrimAccount c0028ba5 = (MrimAccount) c0035f3.account;
-                NetworkUtils.showErrorOrConfirm(150, 504, c0028ba5.trySendData(c0028ba5.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), c0035f3, new Long(1L)})));
+                MrimContact mrimContact3 = (MrimContact) AppState.getCurrentContact();
+                MrimAccount mrimAccount5 = (MrimAccount) mrimContact3.account;
+                NetworkUtils.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{AppController.createMrimPacket(mrimAccount5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), mrimContact3, new Long(1L)})));
                 return;
             case 151:
                 ScreenManager.showScreen(ScreenManager.createScreen(3272));
@@ -1118,18 +1118,18 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(2085));
                 return;
             case 155:
-                Vector vectorM1141c = ConnectionThread.getAllContactIds();
-                int iM541c = Utils.vectorSize(vectorM1141c);
-                if (iM541c == 0) {
+                Vector contactIds = ConnectionThread.getAllContactIds();
+                int count = Utils.vectorSize(contactIds);
+                if (count == 0) {
                     AppController.showMessageById(404);
                     return;
                 }
-                Screen c0013amM75b16 = ScreenManager.createScreen(2101);
-                for (int i23 = 0; i23 < iM541c; i23++) {
-                    Object objElementAt2 = vectorM1141c.elementAt(i23);
-                    c0013amM75b16.addItem(MenuItem.createCheckbox(ConnectionThread.getPhotoHost(objElementAt2), !ConnectionThread.hiddenContacts.contains(objElementAt2)));
+                Screen screen16 = ScreenManager.createScreen(2101);
+                for (int i23 = 0; i23 < count; i23++) {
+                    Object contactId = contactIds.elementAt(i23);
+                    screen16.addItem(MenuItem.createCheckbox(ConnectionThread.getPhotoHost(contactId), !ConnectionThread.hiddenContacts.contains(contactId)));
                 }
-                ScreenManager.showScreen(c0013amM75b16);
+                ScreenManager.showScreen(screen16);
                 return;
             case 156:
                 IOUtils.showPhotoSelector();
@@ -1144,21 +1144,21 @@ public final class ScreenBuilder {
                 return;
             case 159:
                 if (!AppState.getBool(266)) {
-                    Vector vectorM441T2 = AppController.getMmpAccountList();
-                    int size13 = vectorM441T2.size();
+                    Vector mmpAccounts2 = AppController.getMmpAccountList();
+                    int size13 = mmpAccounts2.size();
                     int i24 = size13;
                     if (size13 > 0) {
-                        Screen c0013amM75b17 = ScreenManager.createScreen(2140);
+                        Screen screen17 = ScreenManager.createScreen(2140);
                         while (true) {
                             i24--;
                             if (i24 < 0) {
-                                ScreenManager.showScreen(c0013amM75b17);
+                                ScreenManager.showScreen(screen17);
                                 return;
                             }
-                            MrimAccount c0028ba6 = (MrimAccount) vectorM441T2.elementAt(i24);
-                            int iMo108h = c0028ba6.getIconId();
-                            String str4 = c0028ba6.login;
-                            c0013amM75b17.addIconItemWithData(iMo108h, str4, 153, str4);
+                            MrimAccount mrimAccount6 = (MrimAccount) mmpAccounts2.elementAt(i24);
+                            int iconId = mrimAccount6.getIconId();
+                            String str4 = mrimAccount6.login;
+                            screen17.addIconItemWithData(iconId, str4, 153, str4);
                         }
                     }
                 }
@@ -1202,18 +1202,18 @@ public final class ScreenBuilder {
                 ResourceManager.showSavedLocations();
                 return;
             case 170:
-                Screen c0013amM75b18 = ScreenManager.createScreen(2176);
+                Screen screen18 = ScreenManager.createScreen(2176);
                 Vector vector2 = ((Conversation) AppState.pool[1255]).items;
                 int size14 = vector2.size();
                 while (true) {
                     size14--;
                     if (size14 < 0) {
-                        ScreenManager.showScreen(c0013amM75b18);
+                        ScreenManager.showScreen(screen18);
                         AppState.clearIndex(1255);
                         return;
                     } else {
-                        ListItem interfaceC0044o = (ListItem) vector2.elementAt(size14);
-                        c0013amM75b18.addIconItemWithData(-1, interfaceC0044o.getText(), 0, interfaceC0044o);
+                        ListItem listItem = (ListItem) vector2.elementAt(size14);
+                        screen18.addIconItemWithData(-1, listItem.getText(), 0, listItem);
                     }
                 }
             case 171:
@@ -1221,17 +1221,17 @@ public final class ScreenBuilder {
                 AppState.setInt(286, 1);
                 return;
             case 172:
-                Screen c0013amM75b19 = ScreenManager.createScreen(2186);
-                Vector vectorM440S = AppController.getOnlineMrimAccounts();
-                int size15 = vectorM440S.size();
+                Screen screen19 = ScreenManager.createScreen(2186);
+                Vector onlineAccounts = AppController.getOnlineMrimAccounts();
+                int size15 = onlineAccounts.size();
                 while (true) {
                     size15--;
                     if (size15 < 0) {
-                        ScreenManager.showScreen(c0013amM75b19);
+                        ScreenManager.showScreen(screen19);
                         return;
                     } else {
-                        MrimAccount c0028ba7 = (MrimAccount) vectorM440S.elementAt(size15);
-                        c0013amM75b19.addIconItemWithData(156, c0028ba7.login, 0, c0028ba7);
+                        MrimAccount mrimAccount7 = (MrimAccount) onlineAccounts.elementAt(size15);
+                        screen19.addIconItemWithData(156, mrimAccount7.login, 0, mrimAccount7);
                     }
                 }
             case 173:
@@ -1263,154 +1263,154 @@ public final class ScreenBuilder {
 
     /* renamed from: a */
     public static final void onMenuItemSelected() {
-        int iM338l;
-        int iM338l2;
-        int iM338l3;
-        int iM338l4;
-        int iM338l5;
-        int iM1234D;
-        int iM1236F;
-        int iM1235E;
-        int iM1052c;
-        int iM338l6;
-        int iM338l7;
-        int iM338l8;
-        int iM721d;
-        int iM1052c2;
-        int iMo112a;
+        int errorCode;
+        int errorCode2;
+        int errorCode3;
+        int errorCode4;
+        int errorCode5;
+        int deleteResult;
+        int unblockResult;
+        int blockResult;
+        int sendResult;
+        int errorCode6;
+        int errorCode7;
+        int errorCode8;
+        int configResult;
+        int sendResult2;
+        int modifyResult;
         AppController.needsRepaint = true;
         AppController.needsLayoutUpdate = true;
-        Screen c0013amM66b = ScreenManager.getCurrentScreen();
-        String strM67c = ScreenManager.getCurrentTitle();
-        int iM68d = ScreenManager.getCurrentWidth();
-        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
-        Object obj = c0032cM69e == null ? null : c0032cM69e.data;
-        int iM460J = 0;
+        Screen currentScreen = ScreenManager.getCurrentScreen();
+        String title = ScreenManager.getCurrentTitle();
+        int action = ScreenManager.getCurrentWidth();
+        MenuItem menuItem = ScreenManager.getCurrentMenuItem();
+        Object obj = menuItem == null ? null : menuItem.data;
+        int nextScreen = 0;
         switch (ScreenManager.getCurrentScreen().screenId) {
             case 1:
-                iM460J = AppController.handleMapMenuOption(iM68d);
+                nextScreen = AppController.handleMapMenuOption(action);
                 break;
             case 2:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 3:
-                iM460J = IOUtils.handleStatusChange(iM68d);
+                nextScreen = IOUtils.handleStatusChange(action);
                 break;
             case 4:
-                iM460J = ContactListManager.getSelectedContact();
+                nextScreen = ContactListManager.getSelectedContact();
                 break;
             case 5:
-                iM460J = AppController.handleChatSettingsOption(iM68d);
+                nextScreen = AppController.handleChatSettingsOption(action);
                 break;
             case 6:
                 if (!AppState.getBool(1547)) {
-                    ConnectionThread.toggleMapControls(c0013amM66b);
+                    ConnectionThread.toggleMapControls(currentScreen);
                 }
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 7:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 8:
-                iM460J = AppController.handleSettingsOption(iM68d);
+                nextScreen = AppController.handleSettingsOption(action);
                 break;
             case 9:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 10:
-                iM460J = 55;
+                nextScreen = 55;
                 break;
             case 11:
-                iM460J = AppController.handleLeftKey();
+                nextScreen = AppController.handleLeftKey();
                 break;
             case 13:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 14:
-                iM460J = ResourceManager.parseBalance();
+                nextScreen = ResourceManager.parseBalance();
                 break;
             case 15:
-                iM460J = AppController.handleMenuAction(strM67c, obj);
+                nextScreen = AppController.handleMenuAction(title, obj);
                 break;
             case 16:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 17:
-                iM460J = AppController.handleAccountOption(iM68d);
+                nextScreen = AppController.handleAccountOption(action);
                 break;
             case 18:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 19:
                 NetworkUtils.processScreenForm();
-                String[] strArrM518a = Utils.getPhoneNumbers(false);
-                Object[] objArr = new Object[strArrM518a.length + 1];
+                String[] phoneNumbers = Utils.getPhoneNumbers(false);
+                Object[] objArr = new Object[phoneNumbers.length + 1];
                 objArr[0] = Utils.defaultStr(AppState.getString(1302));
-                for (int i = 0; i < strArrM518a.length; i++) {
-                    objArr[i + 1] = strArrM518a[i];
+                for (int i = 0; i < phoneNumbers.length; i++) {
+                    objArr[i + 1] = phoneNumbers[i];
                 }
-                Contact abstractC0041lM611g = AppState.getCurrentContact();
-                if (abstractC0041lM611g.isOnline()) {
-                    abstractC0041lM611g.setDisplayName((String) objArr[0]);
+                Contact contact = AppState.getCurrentContact();
+                if (contact.isOnline()) {
+                    contact.setDisplayName((String) objArr[0]);
                     AppController.needsLayoutUpdate = true;
-                    iMo112a = 0;
+                    modifyResult = 0;
                 } else {
-                    iMo112a = abstractC0041lM611g.account.validateModify(abstractC0041lM611g, objArr);
+                    modifyResult = contact.account.validateModify(contact, objArr);
                 }
-                iM460J = 0 != iMo112a ? AppController.showError(iMo112a) : 0;
+                nextScreen = 0 != modifyResult ? AppController.showError(modifyResult) : 0;
                 break;
             case 20:
-                iM460J = AppController.handleProfileAction(iM68d);
+                nextScreen = AppController.handleProfileAction(action);
                 break;
             case 21:
                 NetworkUtils.processScreenForm();
-                iM460J = AppState.getAccount() instanceof XmppProtocol ? ((XmppProtocol) AppState.getAccount()).addNewContact() : 0;
+                nextScreen = AppState.getAccount() instanceof XmppProtocol ? ((XmppProtocol) AppState.getAccount()).addNewContact() : 0;
                 break;
             case 22:
                 NetworkUtils.processScreenForm();
-                MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-                String strM522f = Utils.defaultStr(AppState.getString(1302));
-                String[] strArrM518a2 = Utils.getPhoneNumbers(false);
-                if (!c0028ba.isConnected()) {
-                    iM1052c2 = 299;
-                } else if (Utils.nonEmpty(strM522f)) {
-                    int length = strArrM518a2.length;
+                MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+                String displayName = Utils.defaultStr(AppState.getString(1302));
+                String[] phoneNumbers2 = Utils.getPhoneNumbers(false);
+                if (!mrimAccount.isConnected()) {
+                    sendResult2 = 299;
+                } else if (Utils.nonEmpty(displayName)) {
+                    int length = phoneNumbers2.length;
                     if (length == 0) {
-                        iM1052c2 = 709;
+                        sendResult2 = 709;
                     } else {
-                        Enumeration enumerationElements = c0028ba.contactMap.elements();
+                        Enumeration contactEnum = mrimAccount.contactMap.elements();
                         while (true) {
-                            if (enumerationElements.hasMoreElements()) {
-                                MrimContact c0035f = (MrimContact) enumerationElements.nextElement();
+                            if (contactEnum.hasMoreElements()) {
+                                MrimContact mrimContact = (MrimContact) contactEnum.nextElement();
                                 int i2 = length;
                                 do {
                                     i2--;
                                     if (i2 < 0) {
                                         break;
                                     }
-                                } while (!c0035f.isInGroup(strArrM518a2[i2]));
-                                iM1052c2 = 486;
+                                } while (!mrimContact.isInGroup(phoneNumbers2[i2]));
+                                sendResult2 = 486;
                             } else {
-                                MrimContactGroup c0010ajM718f = c0028ba.getFirstContactGroup();
-                                ByteBuffer c0043nM1309b = new ByteBuffer().writeIntLE(1048576).writeIntLE(103).writeStringLatin1(AppState.getString(1233)).writeStringUTF16(strM522f);
-                                String strM519a = Utils.joinComma(strArrM518a2);
-                                iM1052c2 = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba, 4121, c0043nM1309b.writeStringLatin1(strM519a).writeZeros(8)), ResourceManager.integerOf(5), strM522f, strM519a, c0010ajM718f}));
+                                MrimContactGroup contactGroup = mrimAccount.getFirstContactGroup();
+                                ByteBuffer packetBuf = new ByteBuffer().writeIntLE(1048576).writeIntLE(103).writeStringLatin1(AppState.getString(1233)).writeStringUTF16(displayName);
+                                String emailsJoined = Utils.joinComma(phoneNumbers2);
+                                sendResult2 = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{AppController.createMrimPacket(mrimAccount, 4121, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ResourceManager.integerOf(5), displayName, emailsJoined, contactGroup}));
                             }
                         }
                     }
                 } else {
-                    iM1052c2 = 708;
+                    sendResult2 = 708;
                 }
-                iM460J = 0 != iM1052c2 ? AppController.showError(iM1052c2) : 0;
+                nextScreen = 0 != sendResult2 ? AppController.showError(sendResult2) : 0;
                 break;
             case 23:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 24:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 25:
-                iM460J = AppController.handleInputAction(iM68d, obj);
+                nextScreen = AppController.handleInputAction(action, obj);
                 break;
             case 26:
                 NetworkUtils.processScreenForm();
@@ -1419,747 +1419,747 @@ public final class ScreenBuilder {
                 AppState.getCanvas().updateFullScreenMode();
                 TabBar.initialize();
                 ResourceManager.resetClock();
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 27:
-                iM460J = NetworkUtils.processScreenForm();
+                nextScreen = NetworkUtils.processScreenForm();
                 break;
             case 28:
-                iM460J = NetworkUtils.processScreenForm();
+                nextScreen = NetworkUtils.processScreenForm();
                 break;
             case 29:
                 NetworkUtils.processScreenForm();
                 if (AppState.getInt(4305) != AppState.getInt(243)) {
                     TabBar.initialize();
                 }
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 30:
-                iM460J = IOUtils.handleContactGroupAction(strM67c, iM68d);
+                nextScreen = IOUtils.handleContactGroupAction(title, action);
                 break;
             case 32:
-                iM460J = ResourceManager.handleDropdownSelect(strM67c, c0032cM69e);
+                nextScreen = ResourceManager.handleDropdownSelect(title, menuItem);
                 break;
             case 33:
-                iM460J = NetworkUtils.processScreenForm();
+                nextScreen = NetworkUtils.processScreenForm();
                 break;
             case 34:
-                int iM586d = AppState.getInt(1510);
-                Account abstractC0037hM616i = AppState.getAccount();
-                if (abstractC0037hM616i != null) {
-                    abstractC0037hM616i.syncArray[iM586d + iM586d + 1] = 0;
-                    abstractC0037hM616i.syncArray[iM586d + iM586d] = 0;
+                int intVal = AppState.getInt(1510);
+                Account account = AppState.getAccount();
+                if (account != null) {
+                    account.syncArray[intVal + intVal + 1] = 0;
+                    account.syncArray[intVal + intVal] = 0;
                 } else {
                     for (int i3 = 0; i3 < 4; i3++) {
-                        AppController.addTrafficCount(i3, iM586d, 0);
-                        AppController.addTrafficCount(i3, iM586d, 1);
+                        AppController.addTrafficCount(i3, intVal, 0);
+                        AppController.addTrafficCount(i3, intVal, 1);
                     }
                 }
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 35:
-                iM460J = AppController.handleConnectionOption(iM68d);
+                nextScreen = AppController.handleConnectionOption(action);
                 break;
             case 36:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 37:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 38:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 39:
-                iM460J = AppController.handleAction(obj);
+                nextScreen = AppController.handleAction(obj);
                 break;
             case 40:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 41:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 42:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 43:
-                AppState.setInt(1514, c0013amM66b.scrollOffset);
-                AppState.setObject(1345, (Object) strM67c);
-                Message c0026az = (Message) obj;
-                AppState.setObject(1346, (Object) (c0026az != null ? c0026az.from : null));
-                iM460J = 0;
+                AppState.setInt(1514, currentScreen.scrollOffset);
+                AppState.setObject(1345, (Object) title);
+                Message message = (Message) obj;
+                AppState.setObject(1346, (Object) (message != null ? message.from : null));
+                nextScreen = 0;
                 break;
             case 44:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 45:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 46:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 47:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 48:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 49:
                 NetworkUtils.processScreenForm();
-                iM460J = (AppState.getInt(4308) != 4 || 0 == (iM721d = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(4305) - 157) << 8) + 4))) ? 0 : AppController.showError(iM721d);
+                nextScreen = (AppState.getInt(4308) != 4 || 0 == (configResult = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(4305) - 157) << 8) + 4))) ? 0 : AppController.showError(configResult);
                 break;
             case 50:
                 NetworkUtils.processScreenForm();
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 51:
-                iM460J = ResourceManager.handleChatRoomAction(strM67c);
+                nextScreen = ResourceManager.handleChatRoomAction(title);
                 break;
             case 52:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 53:
-                iM460J = IOUtils.handleMailForwardAction(strM67c);
+                nextScreen = IOUtils.handleMailForwardAction(title);
                 break;
             case 54:
                 NetworkUtils.processScreenForm();
-                Vector vectorM1213g = NetworkUtils.newVector();
-                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-                String strM522f2 = Utils.defaultStr(AppState.getString(1352));
-                int length2 = strM522f2.length();
+                Vector params = NetworkUtils.newVector();
+                StringBuffer sb = NetworkUtils.newStringBuffer();
+                String recipientStr = Utils.defaultStr(AppState.getString(1352));
+                int length2 = recipientStr.length();
                 int i4 = 0;
                 while (i4 <= length2) {
-                    char cCharAt = i4 == length2 ? ';' : strM522f2.charAt(i4);
-                    char c = cCharAt;
-                    if (cCharAt == ';' || c == ',' || c == ' ') {
-                        String strM14b = StringUtils.extractBuffer(stringBufferM1217h);
-                        if (!StringUtils.isEmpty(strM14b)) {
-                            vectorM1213g.addElement(strM14b);
+                    char ch = i4 == length2 ? ';' : recipientStr.charAt(i4);
+                    char c = ch;
+                    if (ch == ';' || c == ',' || c == ' ') {
+                        String token = StringUtils.extractBuffer(sb);
+                        if (!StringUtils.isEmpty(token)) {
+                            params.addElement(token);
                         }
                     } else {
-                        stringBufferM1217h.append(c);
+                        sb.append(c);
                     }
                     i4++;
                 }
-                if (Utils.vectorSize(vectorM1213g) == 0) {
-                    iM338l8 = AppController.showError(873);
+                if (Utils.vectorSize(params) == 0) {
+                    errorCode8 = AppController.showError(873);
                 } else {
                     boolean z = false;
-                    int iM541c = Utils.vectorSize(vectorM1213g);
+                    int count = Utils.vectorSize(params);
                     while (true) {
-                        iM541c--;
-                        if (iM541c < 0) {
-                            iM338l8 = z ? AppController.showError(876) : 0;
+                        count--;
+                        if (count < 0) {
+                            errorCode8 = z ? AppController.showError(876) : 0;
                         } else {
-                            String str = (String) vectorM1213g.elementAt(iM541c);
-                            int iIndexOf = str.indexOf(64);
-                            if (iIndexOf <= 0 || str.indexOf(46) <= 0 || str.indexOf(32) >= 0 || iIndexOf != str.lastIndexOf(64) || str.indexOf(44) >= 0) {
+                            String str = (String) params.elementAt(count);
+                            int atIdx = str.indexOf(64);
+                            if (atIdx <= 0 || str.indexOf(46) <= 0 || str.indexOf(32) >= 0 || atIdx != str.lastIndexOf(64) || str.indexOf(44) >= 0) {
                                 z = true;
                             }
                         }
                     }
                 }
-                iM460J = iM338l8;
+                nextScreen = errorCode8;
                 break;
             case 55:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 56:
                 NetworkUtils.processScreenForm();
                 if (AppState.getBool(90)) {
                     AppController.updateTabBar();
                 }
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 57:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 58:
-                iM460J = AppController.handleGroupSelection(iM68d);
+                nextScreen = AppController.handleGroupSelection(action);
                 break;
             case 59:
-                iM460J = ResourceManager.applyVersionLabel();
+                nextScreen = ResourceManager.applyVersionLabel();
                 break;
             case 60:
-                iM460J = AppController.processInputText(strM67c);
+                nextScreen = AppController.processInputText(title);
                 break;
             case 61:
-                iM460J = 42;
+                nextScreen = 42;
                 break;
             case 62:
-                iM460J = IOUtils.handleMailMenuAction(strM67c, iM68d);
+                nextScreen = IOUtils.handleMailMenuAction(title, action);
                 break;
             case 63:
                 AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas().updateCommands());
                 onScreenClosed();
-                iM460J = 84;
+                nextScreen = 84;
                 break;
             case 64:
-                iM460J = AppController.handleAccountSwitchOption(iM68d);
+                nextScreen = AppController.handleAccountSwitchOption(action);
                 break;
             case 65:
                 NetworkUtils.processScreenForm();
                 AppState.pool[1314] = Utils.splitNonEmpty(AppState.getCurrentMrimContact().contactGroupsStr, ',').elementAt(AppState.getInt(1493));
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 66:
                 NetworkUtils.processScreenForm();
-                int iMo734a = ((ContactInfo) AppState.pool[1319]).getAccount().validateGroupAdd(Utils.defaultStr(AppState.getString(1320)), Utils.defaultStr(AppState.getString(1321)), Utils.defaultStr(AppState.getString(1322)), (ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507)), AppState.getBool(1509));
-                iM460J = 0 != iMo734a ? AppController.showError(iMo734a) : 0;
+                int addResult = ((ContactInfo) AppState.pool[1319]).getAccount().validateGroupAdd(Utils.defaultStr(AppState.getString(1320)), Utils.defaultStr(AppState.getString(1321)), Utils.defaultStr(AppState.getString(1322)), (ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507)), AppState.getBool(1509));
+                nextScreen = 0 != addResult ? AppController.showError(addResult) : 0;
                 break;
             case 67:
-                iM460J = AppController.handleSoftKeyAction(strM67c);
+                nextScreen = AppController.handleSoftKeyAction(title);
                 break;
             case 68:
-                iM460J = AppController.handleEnterKey();
+                nextScreen = AppController.handleEnterKey();
                 break;
             case 69:
                 NetworkUtils.processScreenForm();
-                int iMo122a = AppState.getAccount().validateGroupCreate(Utils.defaultStr(AppState.getString(1295)));
-                iM460J = 0 != iMo122a ? AppController.showError(iMo122a) : 0;
+                int createResult = AppState.getAccount().validateGroupCreate(Utils.defaultStr(AppState.getString(1295)));
+                nextScreen = 0 != createResult ? AppController.showError(createResult) : 0;
                 break;
             case 70:
                 NetworkUtils.processScreenForm();
-                int iMo1399b = AppState.getCurrentGroup().rename(Utils.defaultStr(AppState.getString(1306)));
-                iM460J = 0 != iMo1399b ? AppController.showError(iMo1399b) : 0;
+                int renameResult = AppState.getCurrentGroup().rename(Utils.defaultStr(AppState.getString(1306)));
+                nextScreen = 0 != renameResult ? AppController.showError(renameResult) : 0;
                 break;
             case 71:
-                iM460J = ResourceManager.deleteSelectedEntity();
+                nextScreen = ResourceManager.deleteSelectedEntity();
                 break;
             case 72:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 73:
                 AppState.pool[1319] = obj;
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 74:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 75:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 76:
-                iM460J = XmppMailRuProtocol.performLogin();
+                nextScreen = XmppMailRuProtocol.performLogin();
                 break;
             case 77:
-                iM460J = AppController.handleInviteResult();
+                nextScreen = AppController.handleInviteResult();
                 break;
             case 78:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 79:
                 onScreenClosed();
                 onScreenClosed();
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 80:
-                iM460J = AppController.handleNotificationOption(iM68d);
+                nextScreen = AppController.handleNotificationOption(action);
                 break;
             case 81:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 82:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 83:
-                iM460J = AppController.handleHashKey();
+                nextScreen = AppController.handleHashKey();
                 break;
             case 84:
-                iM460J = ResourceManager.handleMessageInputAction(strM67c, iM68d);
+                nextScreen = ResourceManager.handleMessageInputAction(title, action);
                 break;
             case 85:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 86:
-                iM460J = AppController.handleSearchAction(obj);
+                nextScreen = AppController.handleSearchAction(obj);
                 break;
             case 87:
-                iM460J = ResourceManager.handleChatInputAction(strM67c);
+                nextScreen = ResourceManager.handleChatInputAction(title);
                 break;
             case 88:
-                iM460J = AppController.handleThemeOption(iM68d);
+                nextScreen = AppController.handleThemeOption(action);
                 break;
             case 89:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 90:
-                iM460J = AppController.handleEventObject(obj);
+                nextScreen = AppController.handleEventObject(obj);
                 break;
             case 91:
-                iM460J = AppController.getThemeBackground(iM68d);
+                nextScreen = AppController.getThemeBackground(action);
                 break;
             case 92:
-                iM460J = IOUtils.handleContactMenuAction(strM67c, iM68d);
+                nextScreen = IOUtils.handleContactMenuAction(title, action);
                 break;
             case 93:
-                iM460J = AppController.handleSoundOption(iM68d);
+                nextScreen = AppController.handleSoundOption(action);
                 break;
             case 94:
-                iM460J = AppController.processPhoneInput(strM67c);
+                nextScreen = AppController.processPhoneInput(title);
                 break;
             case 95:
-                iM460J = AppController.validateServerAddress(strM67c);
+                nextScreen = AppController.validateServerAddress(title);
                 break;
             case 96:
-                iM460J = ((ContactInfo) AppState.pool[1315]).isMrimContact() ? 130 : ((ContactInfo) AppState.pool[1315]).isXmppContact() ? -1 : AppState.getInt(3650);
+                nextScreen = ((ContactInfo) AppState.pool[1315]).isMrimContact() ? 130 : ((ContactInfo) AppState.pool[1315]).isXmppContact() ? -1 : AppState.getInt(3650);
                 break;
             case 97:
-                iM460J = AppController.handleSearchResultAction(obj);
+                nextScreen = AppController.handleSearchResultAction(obj);
                 break;
             case 98:
-                iM460J = AppController.processPhoneInput(strM67c);
+                nextScreen = AppController.processPhoneInput(title);
                 break;
             case 99:
-                iM460J = AppController.openUrl(strM67c);
+                nextScreen = AppController.openUrl(title);
                 break;
             case 100:
-                iM460J = IOUtils.handleMapSearch(iM68d, obj);
+                nextScreen = IOUtils.handleMapSearch(action, obj);
                 break;
             case 101:
-                iM460J = AppController.handleConversationAction(obj);
+                nextScreen = AppController.handleConversationAction(obj);
                 break;
             case 102:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 103:
-                iM460J = ((ContactInfo) AppState.pool[1319]).isMrimContact() ? 130 : AppState.getInt(3650);
+                nextScreen = ((ContactInfo) AppState.pool[1319]).isMrimContact() ? 130 : AppState.getInt(3650);
                 break;
             case 104:
-                iM460J = AppController.getThemeColor(iM68d);
+                nextScreen = AppController.getThemeColor(action);
                 break;
             case 105:
-                int iM839s = XmppMailRuProtocol.performLogin();
-                iM460J = 0 == iM839s ? 4 : iM839s;
+                int loginResult = XmppMailRuProtocol.performLogin();
+                nextScreen = 0 == loginResult ? 4 : loginResult;
                 break;
             case 106:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 107:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 108:
-                iM460J = AppController.handleContactListKey();
+                nextScreen = AppController.handleContactListKey();
                 break;
             case 109:
-                iM460J = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(iM68d);
+                nextScreen = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(action);
                 break;
             case 110:
                 NetworkUtils.processScreenForm();
-                iM460J = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(1249))) ? AppController.showError(352) : 0;
+                nextScreen = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(1249))) ? AppController.showError(352) : 0;
                 break;
             case 111:
-                iM460J = AppController.handleMapSearchAction(obj);
+                nextScreen = AppController.handleMapSearchAction(obj);
                 break;
             case 112:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 113:
-                iM460J = XmppMailRuProtocol.handleMapAction(iM68d);
+                nextScreen = XmppMailRuProtocol.handleMapAction(action);
                 break;
             case 114:
                 NetworkUtils.processScreenForm();
-                String strM522f3 = Utils.defaultStr(AppState.getString(1250));
-                if (StringUtils.isEmpty(strM522f3)) {
-                    iM338l7 = AppController.showError(372);
+                String locationName = Utils.defaultStr(AppState.getString(1250));
+                if (StringUtils.isEmpty(locationName)) {
+                    errorCode7 = AppController.showError(372);
                 } else {
-                    long jMo274v = MapRenderer.currentLon;
-                    long jMo275w = MapRenderer.currentLat;
-                    ListItem interfaceC0044o = MapRenderer.tooltipItem;
-                    if (interfaceC0044o != null && interfaceC0044o.isSelected()) {
-                        jMo274v = interfaceC0044o.getWidth();
-                        jMo275w = interfaceC0044o.getBaseHeight();
-                        interfaceC0044o.select();
+                    long lon = MapRenderer.currentLon;
+                    long lat = MapRenderer.currentLat;
+                    ListItem listItem = MapRenderer.tooltipItem;
+                    if (listItem != null && listItem.isSelected()) {
+                        lon = listItem.getWidth();
+                        lat = listItem.getBaseHeight();
+                        listItem.select();
                     }
-                    MapPoint c0014an = new MapPoint(strM522f3, 0L, 0L, 0L, 0L, jMo274v, jMo275w, AppState.getInt(39));
-                    c0014an.height = 4;
-                    Vector vectorM614m = AppState.getVector(1401);
-                    XmppContactGroup.addMapPointIfNew(vectorM614m, c0014an, 0, 50);
-                    XmppContactGroup.saveMapPoints(vectorM614m, 226);
-                    MapRenderer.navigateToMapPoint(c0014an);
-                    iM338l7 = 0;
+                    MapPoint mapPoint = new MapPoint(locationName, 0L, 0L, 0L, 0L, lon, lat, AppState.getInt(39));
+                    mapPoint.height = 4;
+                    Vector screenStack = AppState.getVector(1401);
+                    XmppContactGroup.addMapPointIfNew(screenStack, mapPoint, 0, 50);
+                    XmppContactGroup.saveMapPoints(screenStack, 226);
+                    MapRenderer.navigateToMapPoint(mapPoint);
+                    errorCode7 = 0;
                 }
-                iM460J = iM338l7;
+                nextScreen = errorCode7;
                 break;
             case 115:
                 NetworkUtils.processScreenForm();
-                String strM522f4 = Utils.defaultStr(AppState.getString(1286));
-                if (StringUtils.isEmpty(strM522f4)) {
-                    iM338l6 = AppController.showError(523);
+                String messageText4 = Utils.defaultStr(AppState.getString(1286));
+                if (StringUtils.isEmpty(messageText4)) {
+                    errorCode6 = AppController.showError(523);
                 } else {
-                    MrimAccount c0028ba2 = (MrimAccount) AppState.getCurrentContact().account;
-                    boolean zM587e = AppState.getBool(1507);
-                    long jM598g = AppState.getLong(1469);
-                    if (c0028ba2.isConnected()) {
+                    MrimAccount mrimAccount2 = (MrimAccount) AppState.getCurrentContact().account;
+                    boolean flag = AppState.getBool(1507);
+                    long timestamp = AppState.getLong(1469);
+                    if (mrimAccount2.isConnected()) {
                         IOUtils.postEvent((Object) AppState.getString(494));
-                        iM1052c = c0028ba2.trySendData(AppController.createMrimPacket(c0028ba2, 4196, new ByteBuffer().writeIntLE(zM587e ? 5 : 20).writeStringUTF16(strM522f4).writeLong(jM598g)));
+                        sendResult = mrimAccount2.trySendData(AppController.createMrimPacket(mrimAccount2, 4196, new ByteBuffer().writeIntLE(flag ? 5 : 20).writeStringUTF16(messageText4).writeLong(timestamp)));
                     } else {
-                        iM1052c = 299;
+                        sendResult = 299;
                     }
-                    iM338l6 = 0 != iM1052c ? AppController.showError(iM1052c) : 0;
+                    errorCode6 = 0 != sendResult ? AppController.showError(sendResult) : 0;
                 }
-                iM460J = iM338l6;
+                nextScreen = errorCode6;
                 break;
             case 116:
-                iM460J = AppController.handleMapResultAction(obj);
+                nextScreen = AppController.handleMapResultAction(obj);
                 break;
             case 117:
-                iM460J = AppController.processLoginField(strM67c);
+                nextScreen = AppController.processLoginField(title);
                 break;
             case 118:
-                iM460J = AppController.handleFileAction(obj);
+                nextScreen = AppController.handleFileAction(obj);
                 break;
             case 119:
-                iM460J = AppController.handleChatRoomOption(iM68d);
+                nextScreen = AppController.handleChatRoomOption(action);
                 break;
             case 120:
-                iM460J = AppController.handleIncomingCall(obj);
+                nextScreen = AppController.handleIncomingCall(obj);
                 break;
             case 121:
-                iM460J = AppController.handleChatListOption(iM68d);
+                nextScreen = AppController.handleChatListOption(action);
                 break;
             case 122:
-                iM460J = AppController.handlePresenceAction();
+                nextScreen = AppController.handlePresenceAction();
                 break;
             case 123:
-                iM460J = AppController.handleLocationAction(obj);
+                nextScreen = AppController.handleLocationAction(obj);
                 break;
             case 124:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 125:
-                Contact abstractC0041l = (Contact) obj;
-                iM460J = (null == abstractC0041l || 0 == (iM1235E = abstractC0041l.validateBlock())) ? 0 : AppController.showError(iM1235E);
+                Contact selectedContact = (Contact) obj;
+                nextScreen = (null == selectedContact || 0 == (blockResult = selectedContact.validateBlock())) ? 0 : AppController.showError(blockResult);
                 break;
             case 126:
-                Contact abstractC0041l2 = (Contact) obj;
-                iM460J = (null == abstractC0041l2 || 0 == (iM1236F = abstractC0041l2.validateUnblock())) ? 0 : AppController.showError(iM1236F);
+                Contact contactToDelete = (Contact) obj;
+                nextScreen = (null == contactToDelete || 0 == (unblockResult = contactToDelete.validateUnblock())) ? 0 : AppController.showError(unblockResult);
                 break;
             case 127:
-                Contact abstractC0041l3 = (Contact) obj;
-                iM460J = (null == abstractC0041l3 || 0 == (iM1234D = abstractC0041l3.validateDelete())) ? 0 : AppController.showError(iM1234D);
+                Contact contactToBlock = (Contact) obj;
+                nextScreen = (null == contactToBlock || 0 == (deleteResult = contactToBlock.validateDelete())) ? 0 : AppController.showError(deleteResult);
                 break;
             case 128:
                 AppState.getCurrentContact().initMessageBuffer();
-                iM460J = 4;
+                nextScreen = 4;
                 break;
             case 129:
                 NetworkUtils.processScreenForm();
                 AppState.setInt(44, 1);
-                int iM586d2 = AppState.getInt(1438);
-                if (iM586d2 > 0) {
+                int intVal2 = AppState.getInt(1438);
+                if (intVal2 > 0) {
                     AppState.setInt(266, 1);
-                    AppState.setObject(267, (Object) Utils.splitAndGet(1252, iM586d2));
+                    AppState.setObject(267, (Object) Utils.splitAndGet(1252, intVal2));
                 } else {
                     AppState.setObject(267, (Object) AppState.emptyStr);
                 }
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 130:
-                iM460J = AppController.handleScreenAction(iM68d);
+                nextScreen = AppController.handleScreenAction(action);
                 break;
             case 131:
-                iM460J = AppController.processSearchQuery(strM67c);
+                nextScreen = AppController.processSearchQuery(title);
                 break;
             case 132:
-                iM460J = AppController.mapKeyToAction(iM68d);
+                nextScreen = AppController.mapKeyToAction(action);
                 break;
             case 133:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 134:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 135:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 136:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 137:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 138:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 139:
-                iM460J = 129;
+                nextScreen = 129;
                 break;
             case 140:
-                iM460J = NetworkUtils.processScreenForm();
+                nextScreen = NetworkUtils.processScreenForm();
                 break;
             case 141:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 142:
                 if (obj == null) {
-                    iM338l5 = -1;
+                    errorCode5 = -1;
                 } else if (obj instanceof String) {
                     AppState.pool[1319] = ContactInfo.createForAccount(AppState.getCurrentContact().account).setEmailAddress((String) obj).setDisplayName((String) obj);
-                    iM338l5 = 66;
+                    errorCode5 = 66;
                 } else {
-                    iM338l5 = AppController.showError(773);
+                    errorCode5 = AppController.showError(773);
                 }
-                iM460J = iM338l5;
+                nextScreen = errorCode5;
                 break;
             case 143:
                 NetworkUtils.processScreenForm();
-                String strM522f5 = Utils.defaultStr(AppState.getString(1292));
-                if (StringUtils.isEmpty(strM522f5)) {
-                    iM338l4 = AppController.showError(301);
+                String chatName = Utils.defaultStr(AppState.getString(1292));
+                if (StringUtils.isEmpty(chatName)) {
+                    errorCode4 = AppController.showError(301);
                 } else {
-                    Vector vectorM794a = IOUtils.getCheckedItems(c0013amM66b, 3);
-                    if (vectorM794a.size() == 0) {
-                        iM338l4 = AppController.showError(775);
+                    Vector checkedItems = IOUtils.getCheckedItems(currentScreen, 3);
+                    if (checkedItems.size() == 0) {
+                        errorCode4 = AppController.showError(775);
                     } else {
-                        MrimAccount c0028ba3 = (MrimAccount) AppState.getAccount();
-                        boolean zM587e2 = AppState.getBool(2722);
-                        ByteBuffer c0043n = new ByteBuffer();
-                        int size = vectorM794a.size();
+                        MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
+                        boolean flag2 = AppState.getBool(2722);
+                        ByteBuffer buffer = new ByteBuffer();
+                        int size = checkedItems.size();
                         int i5 = size;
-                        ByteBuffer c0043nM1360p = c0043n.writeIntLE(size);
+                        ByteBuffer membersBuf = buffer.writeIntLE(size);
                         while (true) {
                             i5--;
                             if (i5 < 0) {
-                                ByteBuffer c0043nM1327c = new ByteBuffer().writeBufferIntLen(c0043nM1360p);
+                                ByteBuffer wrappedBuf = new ByteBuffer().writeBufferIntLen(membersBuf);
                                 Object[] objArr2 = new Object[3];
-                                objArr2[0] = AppController.createMrimPacket(c0028ba3, 4121, new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(strM522f5).writeZeros(12).writeBufferIntLen(zM587e2 ? c0043nM1327c.writeStringLatin1(c0028ba3.login) : c0043nM1327c));
+                                objArr2[0] = AppController.createMrimPacket(mrimAccount3, 4121, new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(chatName).writeZeros(12).writeBufferIntLen(flag2 ? wrappedBuf.writeStringLatin1(mrimAccount3.login) : wrappedBuf));
                                 objArr2[1] = ResourceManager.integerOf(15);
-                                objArr2[2] = strM522f5;
-                                int iM1052c3 = c0028ba3.trySendData(c0028ba3.createAndQueueCommand(objArr2));
-                                if (0 != iM1052c3) {
-                                    iM338l4 = AppController.showError(iM1052c3);
+                                objArr2[2] = chatName;
+                                int sendResult3 = mrimAccount3.trySendData(mrimAccount3.createAndQueueCommand(objArr2));
+                                if (0 != sendResult3) {
+                                    errorCode4 = AppController.showError(sendResult3);
                                 } else {
                                     AppState.addInt(63, 1);
-                                    iM338l4 = 0;
+                                    errorCode4 = 0;
                                 }
                             } else {
-                                c0043nM1360p.writeStringLatin1((String) vectorM794a.elementAt(i5));
+                                membersBuf.writeStringLatin1((String) checkedItems.elementAt(i5));
                             }
                         }
                     }
                 }
-                iM460J = iM338l4;
+                nextScreen = errorCode4;
                 break;
             case 144:
-                Vector vectorM794a2 = IOUtils.getCheckedItems(c0013amM66b, 0);
-                if (vectorM794a2.size() == 0) {
-                    iM338l3 = AppController.showError(775);
+                Vector checkedItems2 = IOUtils.getCheckedItems(currentScreen, 0);
+                if (checkedItems2.size() == 0) {
+                    errorCode3 = AppController.showError(775);
                 } else {
-                    MrimContact c0035f2 = (MrimContact) AppState.getCurrentContact();
-                    MrimAccount c0028ba4 = (MrimAccount) c0035f2.account;
-                    ByteBuffer c0043n2 = new ByteBuffer();
-                    int size2 = vectorM794a2.size();
+                    MrimContact mrimContact2 = (MrimContact) AppState.getCurrentContact();
+                    MrimAccount mrimAccount4 = (MrimAccount) mrimContact2.account;
+                    ByteBuffer buffer2 = new ByteBuffer();
+                    int size2 = checkedItems2.size();
                     int i6 = size2;
-                    ByteBuffer c0043nM1360p2 = c0043n2.writeIntLE(size2);
+                    ByteBuffer membersBuf2 = buffer2.writeIntLE(size2);
                     while (true) {
                         i6--;
                         if (i6 < 0) {
-                            int iM1052c4 = c0028ba4.trySendData(c0028ba4.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba4, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(c0043nM1360p2))), ResourceManager.integerOf(10), c0035f2, new Long(2L)}));
-                            iM338l3 = 0 != iM1052c4 ? AppController.showError(iM1052c4) : 0;
+                            int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{AppController.createMrimPacket(mrimAccount4, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf2))), ResourceManager.integerOf(10), mrimContact2, new Long(2L)}));
+                            errorCode3 = 0 != sendResult4 ? AppController.showError(sendResult4) : 0;
                         } else {
-                            c0043nM1360p2.writeStringLatin1((String) vectorM794a2.elementAt(i6));
+                            membersBuf2.writeStringLatin1((String) checkedItems2.elementAt(i6));
                         }
                     }
                 }
-                iM460J = iM338l3;
+                nextScreen = errorCode3;
                 break;
             case 145:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 146:
-                iM460J = AppController.handleGroupRename(iM68d);
+                nextScreen = AppController.handleGroupRename(action);
                 break;
             case 147:
                 NetworkUtils.processScreenForm();
-                String strM522f6 = Utils.defaultStr(AppState.getString(1286));
-                if (StringUtils.isEmpty(strM522f6)) {
-                    iM338l2 = AppController.showError(523);
+                String messageText6 = Utils.defaultStr(AppState.getString(1286));
+                if (StringUtils.isEmpty(messageText6)) {
+                    errorCode2 = AppController.showError(523);
                 } else {
-                    MrimAccount c0028ba5 = (MrimAccount) AppState.getAccount();
-                    new AsyncTask(17, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(c0028ba5.login).writeUInt(4022822).writeRawString(c0028ba5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) strM522f6)).writeRawString(Utils.defaultStr(AppState.getBool(1468) ? AppState.getString(1285) : null)).getStringAndClear());
+                    MrimAccount mrimAccount5 = (MrimAccount) AppState.getAccount();
+                    new AsyncTask(17, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(1468) ? AppState.getString(1285) : null)).getStringAndClear());
                     AppState.addInt(282, 1);
-                    iM338l2 = 0;
+                    errorCode2 = 0;
                 }
-                iM460J = iM338l2;
+                nextScreen = errorCode2;
                 break;
             case 148:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 149:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 150:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 151:
-                iM460J = AppController.handleExtSettingsOption(iM68d);
+                nextScreen = AppController.handleExtSettingsOption(action);
                 break;
             case 152:
-                iM460J = AppController.handleContactOption(iM68d);
+                nextScreen = AppController.handleContactOption(action);
                 break;
             case 153:
-                iM460J = ResourceManager.setSelectedObject(obj);
+                nextScreen = ResourceManager.setSelectedObject(obj);
                 break;
             case 154:
                 NetworkUtils.processScreenForm();
-                String strM584b = AppState.getString(1253);
-                long jMo274v2 = MapRenderer.currentLon;
-                long jMo275w2 = MapRenderer.currentLat;
-                ListItem interfaceC0044o2 = MapRenderer.tooltipItem;
-                if (interfaceC0044o2 != null && interfaceC0044o2.isSelected()) {
-                    jMo274v2 = interfaceC0044o2.getWidth();
-                    jMo275w2 = interfaceC0044o2.getBaseHeight();
-                    interfaceC0044o2.select();
+                String msgId = AppState.getString(1253);
+                long lon2 = MapRenderer.currentLon;
+                long lat2 = MapRenderer.currentLat;
+                ListItem tooltipItem2 = MapRenderer.tooltipItem;
+                if (tooltipItem2 != null && tooltipItem2.isSelected()) {
+                    lon2 = tooltipItem2.getWidth();
+                    lat2 = tooltipItem2.getBaseHeight();
+                    tooltipItem2.select();
                 }
-                String strM584b2 = AppState.getString(1254);
-                long j = jMo274v2;
-                long j2 = jMo275w2;
-                if (strM584b != null) {
-                    XmppContactGroup.sharedContactList.addElement(new Object[]{strM584b, new long[]{j, j2}, strM584b2});
+                String msgId2 = AppState.getString(1254);
+                long j = lon2;
+                long j2 = lat2;
+                if (msgId != null) {
+                    XmppContactGroup.sharedContactList.addElement(new Object[]{msgId, new long[]{j, j2}, msgId2});
                 }
-                long j3 = jMo274v2;
-                long j4 = jMo275w2;
-                if (strM584b != null) {
-                    String strM522f7 = Utils.defaultStr(AppState.getString(223));
-                    ByteBuffer c0043nM1314d = new ByteBuffer().writeCompressed(3150648).writeUInt(15713).writeRawString(strM584b).writeUInt(4022822).writeLongAsString(j3).writeUInt(4023078).writeLongAsString(j4).writeUInt(4023334).writeRawString(strM522f7).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(strM522f7).writeCompressed(396139).writeLongAsString(j3).encryptMD5().toHexString());
-                    if (strM584b2 != null) {
-                        c0043nM1314d.writeUInt(4023846).writeEncodedString(strM584b2);
+                long j3 = lon2;
+                long j4 = lat2;
+                if (msgId != null) {
+                    String sessionKey = Utils.defaultStr(AppState.getString(223));
+                    ByteBuffer requestBuf = new ByteBuffer().writeCompressed(3150648).writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(j3).writeUInt(4023078).writeLongAsString(j4).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCompressed(396139).writeLongAsString(j3).encryptMD5().toHexString());
+                    if (msgId2 != null) {
+                        requestBuf.writeUInt(4023846).writeEncodedString(msgId2);
                     }
                     if (AppState.getBool(266)) {
-                        String strM584b3 = AppState.getString(267);
-                        if (Utils.nonEmpty(strM584b3)) {
-                            c0043nM1314d.writeUInt(4024102).writeEncodedString(strM584b3);
+                        String msgId3 = AppState.getString(267);
+                        if (Utils.nonEmpty(msgId3)) {
+                            requestBuf.writeUInt(4024102).writeEncodedString(msgId3);
                         }
                     }
-                    new AsyncTask(16, c0043nM1314d.getStringAndClear());
+                    new AsyncTask(16, requestBuf.getStringAndClear());
                 }
                 MapRenderer.needsRedraw = true;
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 155:
-                Vector vectorM1141c = ConnectionThread.getAllContactIds();
-                StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
-                Vector vector = c0013amM66b.menuItems;
+                Vector contactIds = ConnectionThread.getAllContactIds();
+                StringBuffer sb2 = NetworkUtils.newStringBuffer();
+                Vector vector = currentScreen.menuItems;
                 int size3 = vector.size();
                 for (int i7 = 0; i7 < size3; i7++) {
                     if (!((Boolean) ((MenuItem) vector.elementAt(i7)).data).booleanValue()) {
-                        stringBufferM1217h2.append(vectorM1141c.elementAt(i7)).append((char) 0);
+                        sb2.append(contactIds.elementAt(i7)).append((char) 0);
                     }
                 }
-                String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h2);
-                ConnectionThread.hiddenContacts = Utils.split(strM1215a, (char) 0);
-                AppState.setObject(264, (Object) strM1215a);
-                iM460J = 0;
+                String hiddenStr = NetworkUtils.bufToStringCached(sb2);
+                ConnectionThread.hiddenContacts = Utils.split(hiddenStr, (char) 0);
+                AppState.setObject(264, (Object) hiddenStr);
+                nextScreen = 0;
                 break;
             case 156:
-                iM460J = IOUtils.applyPhotoSelection();
+                nextScreen = IOUtils.applyPhotoSelection();
                 break;
             case 157:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 158:
-                iM460J = AppController.handleViewOption(iM68d);
+                nextScreen = AppController.handleViewOption(action);
                 break;
             case 159:
-                iM460J = AppController.handleItemAction(obj);
+                nextScreen = AppController.handleItemAction(obj);
                 break;
             case 160:
-                iM460J = ResourceManager.syncAndReturn();
+                nextScreen = ResourceManager.syncAndReturn();
                 break;
             case 161:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 162:
-                iM460J = AppController.handleChatDetailOption(iM68d);
+                nextScreen = AppController.handleChatDetailOption(action);
                 break;
             case 163:
-                iM460J = AppController.handleSendKey();
+                nextScreen = AppController.handleSendKey();
                 break;
             case 164:
                 NetworkUtils.processScreenForm();
-                String strM843u = XmppMailRuProtocol.getLoginLowerCase();
-                String strM9b = strM843u;
-                if (!XmppMailRuProtocol.isMailRuDomain(strM843u)) {
-                    strM9b = StringUtils.concat(strM9b, Utils.splitAndGet(694, AppState.getInt(1474)));
+                String loginLower = XmppMailRuProtocol.getLoginLowerCase();
+                String fullLogin = loginLower;
+                if (!XmppMailRuProtocol.isMailRuDomain(loginLower)) {
+                    fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(694, AppState.getInt(1474)));
                 }
-                if (XmppMailRuProtocol.isValidUsername(strM9b)) {
-                    String str2 = strM9b;
-                    String strM522f8 = Utils.defaultStr(AppState.getString(1293));
-                    String strM522f9 = Utils.defaultStr(AppState.getString(1284));
-                    int iM586d3 = AppState.getInt(4305);
-                    AppState.pool[1271] = NetworkUtils.createRegRequest(str2, 0, strM522f8, strM522f9, 0 == iM586d3 ? Utils.defaultStr(AppState.getString(1287)) : (String) Utils.splitNonEmpty(AppState.getString(810), (char) 0).elementAt(iM586d3), Utils.defaultStr(AppState.getString(1288)), Utils.defaultStr(AppState.getString(1298)), Utils.defaultStr(AppState.getString(1299)), AppState.getInt(1489), AppState.getInt(1488), AppState.getInt(1491), AppState.getInt(1481), AppState.getInt(1480), AppState.getString(1342), AppState.getString(1343));
-                    iM338l = 13;
+                if (XmppMailRuProtocol.isValidUsername(fullLogin)) {
+                    String str2 = fullLogin;
+                    String password = Utils.defaultStr(AppState.getString(1293));
+                    String firstName = Utils.defaultStr(AppState.getString(1284));
+                    int intVal3 = AppState.getInt(4305);
+                    AppState.pool[1271] = NetworkUtils.createRegRequest(str2, 0, password, firstName, 0 == intVal3 ? Utils.defaultStr(AppState.getString(1287)) : (String) Utils.splitNonEmpty(AppState.getString(810), (char) 0).elementAt(intVal3), Utils.defaultStr(AppState.getString(1288)), Utils.defaultStr(AppState.getString(1298)), Utils.defaultStr(AppState.getString(1299)), AppState.getInt(1489), AppState.getInt(1488), AppState.getInt(1491), AppState.getInt(1481), AppState.getInt(1480), AppState.getString(1342), AppState.getString(1343));
+                    errorCode = 13;
                 } else {
-                    iM338l = AppController.showError(559);
+                    errorCode = AppController.showError(559);
                 }
-                iM460J = iM338l;
+                nextScreen = errorCode;
                 break;
             case 165:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 166:
-                iM460J = AppController.handleChatOption(iM68d);
+                nextScreen = AppController.handleChatOption(action);
                 break;
             case 167:
-                iM460J = AppController.handleMailboxOption(iM68d);
+                nextScreen = AppController.handleMailboxOption(action);
                 break;
             case 168:
-                iM460J = ResourceManager.collectInvitees(c0013amM66b);
+                nextScreen = ResourceManager.collectInvitees(currentScreen);
                 break;
             case 169:
-                iM460J = ResourceManager.applyLocationProfile(obj);
+                nextScreen = ResourceManager.applyLocationProfile(obj);
                 break;
             case 170:
-                iM460J = AppController.handleFormSubmit(obj);
+                nextScreen = AppController.handleFormSubmit(obj);
                 break;
             case 171:
-                iM460J = AppController.handleRightKey();
+                nextScreen = AppController.handleRightKey();
                 break;
             case 172:
-                iM460J = AppController.handleObjectAction(obj);
+                nextScreen = AppController.handleObjectAction(obj);
                 break;
             case 173:
-                iM460J = AppController.handleInviteAction();
+                nextScreen = AppController.handleInviteAction();
                 break;
             case 174:
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 175:
                 NetworkUtils.processScreenForm();
                 if (AppState.getBool(280)) {
                     IOUtils.requestNearbyPeople();
                 }
-                iM460J = 0;
+                nextScreen = 0;
                 break;
             case 176:
-                iM460J = AppController.handleStarAction(obj);
+                nextScreen = AppController.handleStarAction(obj);
                 break;
             case 177:
-                iM460J = ResourceManager.handleSearchResultAction(iM68d);
+                nextScreen = ResourceManager.handleSearchResultAction(action);
                 break;
             case 178:
-                iM460J = AppController.handleEditAction(iM68d);
+                nextScreen = AppController.handleEditAction(action);
                 break;
             case 179:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
             case 180:
-                iM460J = -1;
+                nextScreen = -1;
                 break;
         }
-        if (iM460J != -1) {
-            if (iM460J == 12) {
+        if (nextScreen != -1) {
+            if (nextScreen == 12) {
                 onScreenClosed();
                 return;
             }
-            if (iM460J != 0) {
-                openScreen(iM460J);
+            if (nextScreen != 0) {
+                openScreen(nextScreen);
                 return;
             }
-            int i8 = c0013amM66b.softKeyLeft;
+            int i8 = currentScreen.softKeyLeft;
             if (i8 != 200) {
-                int i9 = i8 == 199 ? iM68d : i8;
+                int i9 = i8 == 199 ? action : i8;
                 int i10 = i9;
                 if (i9 == 12) {
                     onScreenClosed();
@@ -2173,590 +2173,590 @@ public final class ScreenBuilder {
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* renamed from: b */
     public static final void onMenuItemAction() {
-        int iM1233b;
+        int sendMsgResult;
         AppController.needsRepaint = true;
         AppController.needsLayoutUpdate = true;
-        Screen c0013amM66b = ScreenManager.getCurrentScreen();
+        Screen currentScreen = ScreenManager.getCurrentScreen();
         int i = ScreenManager.getCurrentScreen().screenId;
         ScreenManager.getCurrentTitle();
-        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
-        Object obj = c0032cM69e == null ? null : c0032cM69e.data;
-        int iM308i = 0;
+        MenuItem menuItem = ScreenManager.getCurrentMenuItem();
+        Object obj = menuItem == null ? null : menuItem.data;
+        int result = 0;
         switch (i) {
             case 1:
-                iM308i = 0;
+                result = 0;
                 break;
             case 2:
-                iM308i = 0;
+                result = 0;
                 break;
             case 3:
-                iM308i = 0;
+                result = 0;
                 break;
             case 4:
-                iM308i = ContactListManager.onContactAction(obj);
+                result = ContactListManager.onContactAction(obj);
                 break;
             case 5:
-                iM308i = 0;
+                result = 0;
                 break;
             case 6:
-                iM308i = ConnectionThread.handleMapBack(c0013amM66b);
+                result = ConnectionThread.handleMapBack(currentScreen);
                 break;
             case 7:
-                iM308i = 0;
+                result = 0;
                 break;
             case 8:
-                iM308i = 0;
+                result = 0;
                 break;
             case 9:
-                iM308i = 0;
+                result = 0;
                 break;
             case 10:
-                iM308i = 0;
+                result = 0;
                 break;
             case 11:
-                iM308i = 0;
+                result = 0;
                 break;
             case 13:
-                iM308i = 0;
+                result = 0;
                 break;
             case 14:
-                iM308i = 0;
+                result = 0;
                 break;
             case 15:
-                iM308i = 0;
+                result = 0;
                 break;
             case 16:
-                iM308i = 0;
+                result = 0;
                 break;
             case 17:
-                iM308i = 0;
+                result = 0;
                 break;
             case 18:
-                iM308i = 0;
+                result = 0;
                 break;
             case 19:
-                iM308i = 0;
+                result = 0;
                 break;
             case 20:
-                iM308i = 0;
+                result = 0;
                 break;
             case 21:
-                iM308i = 0;
+                result = 0;
                 break;
             case 22:
-                iM308i = 0;
+                result = 0;
                 break;
             case 23:
-                iM308i = 0;
+                result = 0;
                 break;
             case 24:
-                iM308i = 0;
+                result = 0;
                 break;
             case 25:
-                iM308i = 0;
+                result = 0;
                 break;
             case 26:
                 AppController.needsLayoutUpdate = true;
-                iM308i = 0;
+                result = 0;
                 break;
             case 27:
-                iM308i = 0;
+                result = 0;
                 break;
             case 28:
-                iM308i = 0;
+                result = 0;
                 break;
             case 29:
-                iM308i = 0;
+                result = 0;
                 break;
             case 30:
-                iM308i = 0;
+                result = 0;
                 break;
             case 32:
-                iM308i = 0;
+                result = 0;
                 break;
             case 33:
-                iM308i = 0;
+                result = 0;
                 break;
             case 34:
-                iM308i = 0;
+                result = 0;
                 break;
             case 35:
-                iM308i = 0;
+                result = 0;
                 break;
             case 36:
-                iM308i = ResourceManager.selectMailAccount(obj);
+                result = ResourceManager.selectMailAccount(obj);
                 break;
             case 37:
-                iM308i = 0;
+                result = 0;
                 break;
             case 38:
-                iM308i = 0;
+                result = 0;
                 break;
             case 39:
-                iM308i = 0;
+                result = 0;
                 break;
             case 40:
-                iM308i = 0;
+                result = 0;
                 break;
             case 41:
                 AppState.clearIndex(1271);
-                iM308i = 0;
+                result = 0;
                 break;
             case 42:
-                iM308i = 0;
+                result = 0;
                 break;
             case 43:
-                iM308i = 0;
+                result = 0;
                 break;
             case 44:
-                iM308i = 0;
+                result = 0;
                 break;
             case 45:
-                iM308i = 0;
+                result = 0;
                 break;
             case 46:
-                iM308i = 0;
+                result = 0;
                 break;
             case 47:
-                iM308i = 0;
+                result = 0;
                 break;
             case 48:
                 AppState.clearIndex(1271);
-                iM308i = 0;
+                result = 0;
                 break;
             case 49:
-                iM308i = 0;
+                result = 0;
                 break;
             case 50:
-                iM308i = 0;
+                result = 0;
                 break;
             case 51:
-                iM308i = 0;
+                result = 0;
                 break;
             case 52:
-                iM308i = 0;
+                result = 0;
                 break;
             case 53:
-                iM308i = 0;
+                result = 0;
                 break;
             case 54:
-                iM308i = 0;
+                result = 0;
                 break;
             case 55:
-                iM308i = -1;
+                result = -1;
                 break;
             case 56:
-                iM308i = 0;
+                result = 0;
                 break;
             case 57:
-                iM308i = 0;
+                result = 0;
                 break;
             case 58:
-                iM308i = 0;
+                result = 0;
                 break;
             case 59:
-                iM308i = 0;
+                result = 0;
                 break;
             case 60:
-                iM308i = 0;
+                result = 0;
                 break;
             case 61:
-                iM308i = 12;
+                result = 12;
                 break;
             case 62:
-                iM308i = 0;
+                result = 0;
                 break;
             case 63:
-                String strM1026g = XmppContactGroup.getTextInputValue();
-                if (!StringUtils.isEmpty(strM1026g) && 0 != (iM1233b = AppState.getCurrentContact().sendMessage(strM1026g))) {
+                String inputText = XmppContactGroup.getTextInputValue();
+                if (!StringUtils.isEmpty(inputText) && 0 != (sendMsgResult = AppState.getCurrentContact().sendMessage(inputText))) {
                     onScreenClosed();
-                    IOUtils.postEvent((Object) AppState.getString(iM1233b));
+                    IOUtils.postEvent((Object) AppState.getString(sendMsgResult));
                 }
                 AppState.setInt(1456, 0);
                 AppState.clearIndex(1279);
                 AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas());
                 onScreenClosed();
-                iM308i = 40;
+                result = 40;
                 break;
             case 64:
-                iM308i = 0;
+                result = 0;
                 break;
             case 65:
-                iM308i = 0;
+                result = 0;
                 break;
             case 66:
-                iM308i = 0;
+                result = 0;
                 break;
             case 67:
-                iM308i = 0;
+                result = 0;
                 break;
             case 68:
-                iM308i = AppController.handleBackKey();
+                result = AppController.handleBackKey();
                 break;
             case 69:
-                iM308i = 0;
+                result = 0;
                 break;
             case 70:
-                iM308i = 0;
+                result = 0;
                 break;
             case 71:
-                iM308i = 0;
+                result = 0;
                 break;
             case 72:
-                iM308i = 0;
+                result = 0;
                 break;
             case 73:
-                iM308i = 0;
+                result = 0;
                 break;
             case 74:
-                iM308i = 0;
+                result = 0;
                 break;
             case 75:
-                iM308i = 0;
+                result = 0;
                 break;
             case 76:
-                iM308i = 0;
+                result = 0;
                 break;
             case 77:
-                iM308i = 0;
+                result = 0;
                 break;
             case 78:
-                iM308i = 0;
+                result = 0;
                 break;
             case 79:
-                iM308i = 0;
+                result = 0;
                 break;
             case 80:
-                iM308i = 0;
+                result = 0;
                 break;
             case 81:
-                iM308i = 0;
+                result = 0;
                 break;
             case 82:
-                iM308i = 0;
+                result = 0;
                 break;
             case 83:
-                iM308i = AppController.handleHashKey();
+                result = AppController.handleHashKey();
                 break;
             case 84:
                 onScreenClosed();
-                iM308i = 0;
+                result = 0;
                 break;
             case 85:
                 AppController.clearMapPoints();
-                iM308i = 0;
+                result = 0;
                 break;
             case 86:
-                iM308i = 0;
+                result = 0;
                 break;
             case 87:
-                iM308i = 0;
+                result = 0;
                 break;
             case 88:
-                iM308i = 0;
+                result = 0;
                 break;
             case 89:
-                iM308i = 0;
+                result = 0;
                 break;
             case 90:
-                iM308i = 0;
+                result = 0;
                 break;
             case 91:
-                iM308i = 0;
+                result = 0;
                 break;
             case 92:
-                iM308i = 0;
+                result = 0;
                 break;
             case 93:
-                iM308i = 0;
+                result = 0;
                 break;
             case 94:
-                iM308i = 0;
+                result = 0;
                 break;
             case 95:
-                iM308i = 0;
+                result = 0;
                 break;
             case 96:
                 AppController.clearMapPoints();
-                iM308i = 0;
+                result = 0;
                 break;
             case 97:
-                iM308i = 0;
+                result = 0;
                 break;
             case 98:
-                iM308i = 0;
+                result = 0;
                 break;
             case 99:
-                iM308i = 0;
+                result = 0;
                 break;
             case 100:
                 AppState.setInt(1443, 0);
                 AppState.setInt(1477, 0);
-                iM308i = 0;
+                result = 0;
                 break;
             case 101:
                 AppState.setInt(1478, 0);
                 AppState.setInt(1443, 0);
-                iM308i = 0;
+                result = 0;
                 break;
             case 102:
                 AppState.clearIndex(1271);
-                iM308i = 0;
+                result = 0;
                 break;
             case 103:
-                iM308i = 0;
+                result = 0;
                 break;
             case 104:
-                iM308i = 0;
+                result = 0;
                 break;
             case 105:
-                iM308i = 12;
+                result = 12;
                 break;
             case 106:
-                iM308i = 0;
+                result = 0;
                 break;
             case 107:
                 AppState.clearIndex(1271);
-                iM308i = 0;
+                result = 0;
                 break;
             case 108:
-                iM308i = 0;
+                result = 0;
                 break;
             case 109:
-                iM308i = 0;
+                result = 0;
                 break;
             case 110:
-                iM308i = 0;
+                result = 0;
                 break;
             case 111:
-                iM308i = 0;
+                result = 0;
                 break;
             case 112:
-                iM308i = 0;
+                result = 0;
                 break;
             case 113:
-                iM308i = 0;
+                result = 0;
                 break;
             case 114:
-                iM308i = 0;
+                result = 0;
                 break;
             case 115:
-                iM308i = 0;
+                result = 0;
                 break;
             case 116:
                 AppState.setInt(1443, 0);
-                iM308i = 0;
+                result = 0;
                 break;
             case 117:
-                iM308i = 0;
+                result = 0;
                 break;
             case 118:
-                iM308i = 0;
+                result = 0;
                 break;
             case 119:
-                iM308i = 0;
+                result = 0;
                 break;
             case 120:
                 AppState.setInt(1478, 0);
-                iM308i = 0;
+                result = 0;
                 break;
             case 121:
-                iM308i = 0;
+                result = 0;
                 break;
             case 122:
-                iM308i = 0;
+                result = 0;
                 break;
             case 123:
-                iM308i = 0;
+                result = 0;
                 break;
             case 124:
-                iM308i = 0;
+                result = 0;
                 break;
             case 125:
-                iM308i = 0;
+                result = 0;
                 break;
             case 126:
-                iM308i = 0;
+                result = 0;
                 break;
             case 127:
-                iM308i = 0;
+                result = 0;
                 break;
             case 128:
-                iM308i = 0;
+                result = 0;
                 break;
             case 129:
-                iM308i = 0;
+                result = 0;
                 break;
             case 130:
-                iM308i = 0;
+                result = 0;
                 break;
             case 131:
-                iM308i = 0;
+                result = 0;
                 break;
             case 132:
-                iM308i = 0;
+                result = 0;
                 break;
             case 133:
-                iM308i = 0;
+                result = 0;
                 break;
             case 134:
-                iM308i = 0;
+                result = 0;
                 break;
             case 135:
-                iM308i = 0;
+                result = 0;
                 break;
             case 136:
-                iM308i = 0;
+                result = 0;
                 break;
             case 137:
-                iM308i = 12;
+                result = 12;
                 break;
             case 138:
-                iM308i = 0;
+                result = 0;
                 break;
             case 139:
-                iM308i = 6;
+                result = 6;
                 break;
             case 140:
-                iM308i = 0;
+                result = 0;
                 break;
             case 141:
-                iM308i = 0;
+                result = 0;
                 break;
             case 142:
-                iM308i = 0;
+                result = 0;
                 break;
             case 143:
-                iM308i = 0;
+                result = 0;
                 break;
             case 144:
-                iM308i = 0;
+                result = 0;
                 break;
             case 145:
-                iM308i = 0;
+                result = 0;
                 break;
             case 146:
-                iM308i = 0;
+                result = 0;
                 break;
             case 147:
-                iM308i = 0;
+                result = 0;
                 break;
             case 148:
-                iM308i = 0;
+                result = 0;
                 break;
             case 149:
-                iM308i = 0;
+                result = 0;
                 break;
             case 150:
-                iM308i = 12;
+                result = 12;
                 break;
             case 151:
-                iM308i = 0;
+                result = 0;
                 break;
             case 152:
-                iM308i = 0;
+                result = 0;
                 break;
             case 153:
-                iM308i = 0;
+                result = 0;
                 break;
             case 154:
-                iM308i = 0;
+                result = 0;
                 break;
             case 155:
-                iM308i = 0;
+                result = 0;
                 break;
             case 156:
-                iM308i = 0;
+                result = 0;
                 break;
             case 157:
-                iM308i = 0;
+                result = 0;
                 break;
             case 158:
-                iM308i = 0;
+                result = 0;
                 break;
             case 159:
-                iM308i = 0;
+                result = 0;
                 break;
             case 160:
                 onScreenClosed();
-                iM308i = 0;
+                result = 0;
                 break;
             case 161:
-                iM308i = 4;
+                result = 4;
                 break;
             case 162:
-                iM308i = 0;
+                result = 0;
                 break;
             case 163:
-                iM308i = 0;
+                result = 0;
                 break;
             case 164:
-                iM308i = 0;
+                result = 0;
                 break;
             case 165:
-                iM308i = 0;
+                result = 0;
                 break;
             case 166:
-                iM308i = 0;
+                result = 0;
                 break;
             case 167:
-                iM308i = 0;
+                result = 0;
                 break;
             case 168:
-                iM308i = 0;
+                result = 0;
                 break;
             case 169:
                 ((MrimAccount) AppState.getAccount()).isHighlighted = true;
-                iM308i = 0;
+                result = 0;
                 break;
             case 170:
-                iM308i = 0;
+                result = 0;
                 break;
             case 171:
                 AppState.setInt(285, 0);
                 ConnectionThread.toggleScrollMode();
-                iM308i = 6;
+                result = 6;
                 break;
             case 172:
-                iM308i = 0;
+                result = 0;
                 break;
             case 173:
                 AppState.setAccount((Object) null);
-                iM308i = 12;
+                result = 12;
                 break;
             case 174:
-                iM308i = 0;
+                result = 0;
                 break;
             case 175:
-                iM308i = 0;
+                result = 0;
                 break;
             case 176:
-                iM308i = 12;
+                result = 12;
                 break;
             case 177:
-                iM308i = 0;
+                result = 0;
                 break;
             case 178:
-                iM308i = 0;
+                result = 0;
                 break;
             case 179:
-                iM308i = 0;
+                result = 0;
                 break;
             case 180:
-                iM308i = 0;
+                result = 0;
                 break;
         }
-        if (iM308i != -1) {
-            if (iM308i == 12) {
+        if (result != -1) {
+            if (result == 12) {
                 onScreenClosed();
                 return;
             }
-            if (iM308i != 0) {
-                openScreen(iM308i);
+            if (result != 0) {
+                openScreen(result);
                 return;
             }
-            int i2 = c0013amM66b.softKeyCenter;
+            int i2 = currentScreen.softKeyCenter;
             if (i2 != 200) {
                 if (i2 == 12) {
                     onScreenClosed();
@@ -2791,8 +2791,8 @@ public final class ScreenBuilder {
                 AppController.clearFormFields();
                 break;
             case 21:
-                int iMo80a = AppState.getAccount().getType();
-                if (iMo80a != 0 && iMo80a == 1) {
+                int accountType = AppState.getAccount().getType();
+                if (accountType != 0 && accountType == 1) {
                     AppState.clearIndex(1307);
                     AppState.clearIndex(1308);
                     AppState.clearIndex(1309);
@@ -2957,12 +2957,12 @@ public final class ScreenBuilder {
                 AppState.clearIndex(1271);
                 break;
         }
-        Vector vectorM614m = AppState.getVector(1272);
-        int size = vectorM614m.size() - 1;
-        Screen c0013am = (Screen) vectorM614m.elementAt(size);
-        NetworkUtils.releaseVector(c0013am.tabItems);
-        NetworkUtils.releaseVector(c0013am.menuItems);
-        vectorM614m.removeElementAt(size);
-        Utils.trimIfEmpty(vectorM614m);
+        Vector screenStack = AppState.getVector(1272);
+        int size = screenStack.size() - 1;
+        Screen closedScreen = (Screen) screenStack.elementAt(size);
+        NetworkUtils.releaseVector(closedScreen.tabItems);
+        NetworkUtils.releaseVector(closedScreen.menuItems);
+        screenStack.removeElementAt(size);
+        Utils.trimIfEmpty(screenStack);
     }
 }
