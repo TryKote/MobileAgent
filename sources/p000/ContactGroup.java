@@ -122,7 +122,7 @@ public abstract class ContactGroup implements Sortable {
 
     @Override // p000.Sortable
     /* renamed from: a */
-    public final int mo1237a(Object obj) {
+    public final int compareTo(Object obj) {
         return this.f400a.compareTo(((ContactGroup) obj).f400a);
     }
 

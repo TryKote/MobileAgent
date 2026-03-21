@@ -409,7 +409,7 @@ public final class AppController {
         }
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
         c0028ba.f232h = true;
-        if (!c0028ba.mo277s()) {
+        if (!c0028ba.isSelected()) {
             return m338l(667);
         }
         m331a(true, false, !AppState.m587e(276));
@@ -775,7 +775,7 @@ public final class AppController {
     private static final void m354a(Vector vector, int i, int i2) {
         if (i < i2) {
             if (i + 1 == i2) {
-                if (((Sortable) vector.elementAt(i)).mo1237a(vector.elementAt(i2)) > 0) {
+                if (((Sortable) vector.elementAt(i)).compareTo(vector.elementAt(i2)) > 0) {
                     Utils.m508a(vector, i, i2);
                     return;
                 }
@@ -785,7 +785,7 @@ public final class AppController {
             int i4 = i2;
             boolean z = true;
             while (i3 < i4) {
-                if (((Sortable) vector.elementAt(i3)).mo1237a(vector.elementAt(i4)) > 0) {
+                if (((Sortable) vector.elementAt(i3)).compareTo(vector.elementAt(i4)) > 0) {
                     Utils.m508a(vector, i3, i4);
                     z = !z;
                 }
@@ -1267,7 +1267,7 @@ public final class AppController {
     public static final int m398i(Object obj) {
         MapRenderer.m646a();
         GeoRegion c0053x = (GeoRegion) obj;
-        MapRenderer.m649a(c0053x.f426f, c0053x.f427g);
+        MapRenderer.m649a(c0053x.centerLat, c0053x.centerLon);
         MapRenderer.m651a(c0053x == StringUtils.m40i() ? 3 : 11);
         return 0;
     }
@@ -1278,8 +1278,8 @@ public final class AppController {
         long jMo275w;
         ListItem interfaceC0044o = MapRenderer.f203k;
         if (interfaceC0044o != null) {
-            jMo274v = interfaceC0044o.mo274v();
-            jMo275w = interfaceC0044o.mo275w();
+            jMo274v = interfaceC0044o.getWidth();
+            jMo275w = interfaceC0044o.getBaseHeight();
         } else {
             jMo274v = MapRenderer.f196d;
             jMo275w = MapRenderer.f195c;
@@ -1358,12 +1358,12 @@ public final class AppController {
         Contact abstractC0041l = (Contact) obj;
         String strM584b = AppState.m584b(1249);
         ListItem interfaceC0044o = MapRenderer.f203k;
-        if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
+        if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
             jMo274v = MapRenderer.f196d;
             jMo275w = MapRenderer.f195c;
         } else {
-            jMo274v = interfaceC0044o.mo274v();
-            jMo275w = interfaceC0044o.mo275w();
+            jMo274v = interfaceC0044o.getWidth();
+            jMo275w = interfaceC0044o.getBaseHeight();
         }
         int iM1233b = abstractC0041l.m1233b(ResourceManager.m975a(jMo274v, jMo275w, AppState.m586d(39), strM584b));
         if (0 != iM1233b) {
@@ -3711,7 +3711,7 @@ public final class AppController {
                                                         break;
                                                     } else {
                                                         UserSearchResult c0045p = (UserSearchResult) vector4.elementAt(size11);
-                                                        c0013amM75b.m247a(c0045p.f393d == 1 ? 377 : c0045p.f393d == 2 ? 378 : 379, c0045p.mo273x(), 0, c0045p);
+                                                        c0013amM75b.m247a(c0045p.f393d == 1 ? 377 : c0045p.f393d == 2 ? 378 : 379, c0045p.getText(), 0, c0045p);
                                                     }
                                                 }
                                             case 5:

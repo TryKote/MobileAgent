@@ -136,49 +136,49 @@ public final class MapPoint implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: x */
-    public final String mo273x() {
+    public final String getText() {
         return m267a();
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public final int mo274v() {
+    public final int getWidth() {
         return (int) this.f138f;
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public final int mo275w() {
+    public final int getBaseHeight() {
         return (int) this.f139g;
     }
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public final int mo276r() {
+    public final int getHeight() {
         return this.f143k;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public final boolean mo277s() {
+    public final boolean isSelected() {
         return this.f141i;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public final void mo278t() {
+    public final void select() {
         this.f141i = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public final void mo279u() {
+    public final void deselect() {
         this.f141i = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public final int mo280y() {
+    public final int getCommandCount() {
         if (this.f144l != 0) {
             return m284e(this.f144l);
         }
@@ -187,20 +187,20 @@ public final class MapPoint implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public final boolean mo281z() {
+    public final boolean isHighlighted() {
         return true;
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public final int mo282a(int i) {
-        return this.f146n.m1405a(i, this);
+    public final int getCommandId(int i) {
+        return this.f146n.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public final int mo283b(int i) {
-        return this.f146n.m1406b(i, this);
+    public final int executeCommand(int i) {
+        return this.f146n.getHeight(i, this);
     }
 
     /* renamed from: e */

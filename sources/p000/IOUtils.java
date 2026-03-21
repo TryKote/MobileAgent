@@ -733,7 +733,7 @@ public final class IOUtils {
             ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) abstractC0041lM611g).f297d), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
-            interfaceC0044o.mo279u();
+            interfaceC0044o.deselect();
             ConnectionThread.m1172a(interfaceC0044o);
         }
         return i;
@@ -1105,7 +1105,7 @@ public final class IOUtils {
             ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) obj).f297d), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) obj;
-            interfaceC0044o.mo279u();
+            interfaceC0044o.deselect();
             ConnectionThread.m1172a(interfaceC0044o);
             AppController.m331a(true, false, !AppState.m587e(276));
             AppState.m594c(281, 1);

@@ -201,7 +201,7 @@ public abstract class Contact implements Sortable {
 
     @Override // p000.Sortable
     /* renamed from: a */
-    public final int mo1237a(Object obj) {
+    public final int compareTo(Object obj) {
         Contact abstractC0041l = (Contact) obj;
         int i = abstractC0041l.f378b - this.f378b;
         if (i != 0) {

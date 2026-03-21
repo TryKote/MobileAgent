@@ -53,7 +53,7 @@ public abstract class ContactListParser implements ListItem {
                     z2 = false;
                     break;
                 }
-                if (StringUtils.m6a(str, ((Identifiable) vectorM1213g.elementAt(size)).mo545a()) && i == ((ListItem) vectorM1213g.elementAt(size)).mo280y()) {
+                if (StringUtils.m6a(str, ((Identifiable) vectorM1213g.elementAt(size)).getId()) && i == ((ListItem) vectorM1213g.elementAt(size)).getCommandCount()) {
                     z2 = true;
                     break;
                 }
@@ -86,45 +86,45 @@ public abstract class ContactListParser implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public abstract int mo283b(int i);
+    public abstract int executeCommand(int i);
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public abstract int mo282a(int i);
+    public abstract int getCommandId(int i);
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public abstract boolean mo281z();
+    public abstract boolean isHighlighted();
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public abstract int mo280y();
+    public abstract int getCommandCount();
 
     @Override // p000.ListItem
     /* renamed from: x */
-    public abstract String mo273x();
+    public abstract String getText();
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public abstract int mo275w();
+    public abstract int getBaseHeight();
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public abstract int mo274v();
+    public abstract int getWidth();
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public abstract void mo279u();
+    public abstract void deselect();
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public abstract void mo278t();
+    public abstract void select();
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public abstract boolean mo277s();
+    public abstract boolean isSelected();
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public abstract int mo276r();
+    public abstract int getHeight();
 }

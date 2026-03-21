@@ -4,35 +4,35 @@ package p000;
 /* loaded from: MobileAgent_3.9.jar:o.class */
 public interface ListItem {
     /* renamed from: r */
-    int mo276r();
+    int getHeight();
 
     /* renamed from: s */
-    boolean mo277s();
+    boolean isSelected();
 
     /* renamed from: t */
-    void mo278t();
+    void select();
 
     /* renamed from: u */
-    void mo279u();
+    void deselect();
 
     /* renamed from: v */
-    int mo274v();
+    int getWidth();
 
     /* renamed from: w */
-    int mo275w();
+    int getBaseHeight();
 
     /* renamed from: x */
-    String mo273x();
+    String getText();
 
     /* renamed from: y */
-    int mo280y();
+    int getCommandCount();
 
     /* renamed from: z */
-    boolean mo281z();
+    boolean isHighlighted();
 
     /* renamed from: a */
-    int mo282a(int i);
+    int getCommandId(int i);
 
     /* renamed from: b */
-    int mo283b(int i);
+    int executeCommand(int i);
 }

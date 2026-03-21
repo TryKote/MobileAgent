@@ -48,37 +48,37 @@ public final class UserSearchResult implements ListItem, Identifiable {
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public final int mo276r() {
+    public final int getHeight() {
         return 8;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public final boolean mo277s() {
+    public final boolean isSelected() {
         return this.f386e;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public final void mo278t() {
+    public final void select() {
         this.f386e = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public final void mo279u() {
+    public final void deselect() {
         this.f386e = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public final int mo274v() {
+    public final int getWidth() {
         return this.f387f;
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public final int mo275w() {
+    public final int getBaseHeight() {
         return this.f388g;
     }
 
@@ -88,7 +88,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final String mo273x() {
+    public final String getText() {
         int i;
         StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(Utils.m535l(this.f391b) ? this.f391b : AppState.m584b(451));
         if (this.f392c > 0) {
@@ -111,31 +111,31 @@ public final class UserSearchResult implements ListItem, Identifiable {
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public final int mo280y() {
+    public final int getCommandCount() {
         return this.f394i;
     }
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public final boolean mo281z() {
+    public final boolean isHighlighted() {
         return true;
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public final int mo282a(int i) {
-        return this.f395j.m1405a(i, this);
+    public final int getCommandId(int i) {
+        return this.f395j.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public final int mo283b(int i) {
-        return this.f395j.m1406b(i, this);
+    public final int executeCommand(int i) {
+        return this.f395j.getHeight(i, this);
     }
 
     @Override // p000.Identifiable
     /* renamed from: a */
-    public final String mo545a() {
+    public final String getId() {
         return this.f390a;
     }
 }

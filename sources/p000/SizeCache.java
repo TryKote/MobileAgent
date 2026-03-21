@@ -5,41 +5,41 @@ package p000;
 public final class SizeCache {
 
     /* renamed from: b */
-    private int f401b;
+    private int cachedWidth;
 
     /* renamed from: c */
-    private int f402c;
+    private int cachedHeight;
 
     /* renamed from: a */
-    public int f403a = -1;
+    public int lastScale = -1;
 
     /* renamed from: a */
-    public final int m1405a(int i, ListItem interfaceC0044o) {
-        if (m1408a(i)) {
-            return this.f401b;
+    public final int getWidth(int i, ListItem interfaceC0044o) {
+        if (isCached(i)) {
+            return this.cachedWidth;
         }
-        m1407a(i, interfaceC0044o.mo274v(), interfaceC0044o.mo275w());
-        return this.f401b;
+        updateCache(i, interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
+        return this.cachedWidth;
     }
 
     /* renamed from: b */
-    public final int m1406b(int i, ListItem interfaceC0044o) {
-        if (m1408a(i)) {
-            return this.f402c;
+    public final int getHeight(int i, ListItem interfaceC0044o) {
+        if (isCached(i)) {
+            return this.cachedHeight;
         }
-        m1407a(i, interfaceC0044o.mo274v(), interfaceC0044o.mo275w());
-        return this.f402c;
+        updateCache(i, interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
+        return this.cachedHeight;
     }
 
     /* renamed from: a */
-    private final void m1407a(int i, int i2, int i3) {
-        this.f401b = (int) AppController.m317a(i2, i);
-        this.f402c = (int) AppController.m317a(i3, i);
-        this.f403a = i;
+    private final void updateCache(int i, int i2, int i3) {
+        this.cachedWidth = (int) AppController.m317a(i2, i);
+        this.cachedHeight = (int) AppController.m317a(i3, i);
+        this.lastScale = i;
     }
 
     /* renamed from: a */
-    private final boolean m1408a(int i) {
-        return this.f403a == i;
+    private final boolean isCached(int i) {
+        return this.lastScale == i;
     }
 }

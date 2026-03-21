@@ -180,17 +180,17 @@ public abstract class ChatRenderer {
 
     /* renamed from: a */
     public static final void m832a(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem interfaceC0044o) {
-        if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
+        if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
             return;
         }
         int iM586d = AppState.m586d(73);
         Font font = Font.getFont(64, 0, iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16);
-        int iMo282a = (int) ((i / 2) + (interfaceC0044o.mo282a(i3) - j));
-        int iMo283b = (int) ((i2 / 2) + (j2 - interfaceC0044o.mo283b(i3)));
+        int iMo282a = (int) ((i / 2) + (interfaceC0044o.getCommandId(i3) - j));
+        int iMo283b = (int) ((i2 / 2) + (j2 - interfaceC0044o.executeCommand(i3)));
         int i4 = 8;
         int i5 = 22;
-        boolean zMo281z = interfaceC0044o.mo281z();
-        int iMo276r = interfaceC0044o.mo276r();
+        boolean zMo281z = interfaceC0044o.isHighlighted();
+        int iMo276r = interfaceC0044o.getHeight();
         int i6 = iMo276r == 1 ? 303 : 360;
         if (iMo276r == 2) {
             i6 = 308;
@@ -215,7 +215,7 @@ public abstract class ChatRenderer {
         int i8 = i6;
         int i9 = iMo282a + i4;
         int i10 = iMo283b - i5;
-        Vector vectorM543a = Utils.m543a(Utils.m522f(interfaceC0044o.mo273x()), font, i - 40);
+        Vector vectorM543a = Utils.m543a(Utils.m522f(interfaceC0044o.getText()), font, i - 40);
         int size = vectorM543a.size();
         int iM830a = m830a(vectorM543a, font);
         int iStringWidth = font.stringWidth(AppState.m584b(982)) + 6 + 24;

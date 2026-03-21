@@ -22,30 +22,30 @@ public final class Conversation implements ListItem {
     /* renamed from: a */
     public final void m1086a(ListItem interfaceC0044o) {
         this.f343a.addElement(interfaceC0044o);
-        this.f345d.f403a = -1;
+        this.f345d.lastScale = -1;
     }
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public final int mo276r() {
+    public final int getHeight() {
         return this.f344c;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public final boolean mo277s() {
+    public final boolean isSelected() {
         return this.f342b && this.f343a.size() > 0;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public final void mo278t() {
+    public final void select() {
         this.f342b = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public final void mo279u() {
+    public final void deselect() {
         this.f342b = true;
     }
 
@@ -56,7 +56,7 @@ public final class Conversation implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public final int mo274v() {
+    public final int getWidth() {
         long jMo274v = 0;
         int size = this.f343a.size();
         int i = size;
@@ -65,13 +65,13 @@ public final class Conversation implements ListItem {
             if (i < 0) {
                 return (int) (jMo274v / size);
             }
-            jMo274v += m1087d(i).mo274v();
+            jMo274v += m1087d(i).getWidth();
         }
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public final int mo275w() {
+    public final int getBaseHeight() {
         long jMo275w = 0;
         int size = this.f343a.size();
         int i = size;
@@ -80,45 +80,45 @@ public final class Conversation implements ListItem {
             if (i < 0) {
                 return (int) (jMo275w / size);
             }
-            jMo275w += m1087d(i).mo275w();
+            jMo275w += m1087d(i).getBaseHeight();
         }
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public final int mo282a(int i) {
-        return this.f345d.m1405a(i, this);
+    public final int getCommandId(int i) {
+        return this.f345d.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public final int mo283b(int i) {
-        return this.f345d.m1406b(i, this);
+    public final int executeCommand(int i) {
+        return this.f345d.getHeight(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: x */
-    public final String mo273x() {
+    public final String getText() {
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         int size = this.f343a.size();
         if (this.f344c == 5) {
             stringBufferM1217h.append(AppState.m584b(445)).append(size);
         } else {
             int i = size - 1;
-            stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).mo273x()).append(AppState.m584b(446)).append(i).append(AppState.m584b(442 + Utils.m540f(i)));
+            stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).getText()).append(AppState.m584b(446)).append(i).append(AppState.m584b(442 + Utils.m540f(i)));
         }
         return NetworkUtils.m1215a(stringBufferM1217h);
     }
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public final int mo280y() {
+    public final int getCommandCount() {
         return 10;
     }
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public final boolean mo281z() {
+    public final boolean isHighlighted() {
         return true;
     }
 

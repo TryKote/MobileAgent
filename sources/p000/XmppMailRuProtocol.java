@@ -613,8 +613,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             f257f = interfaceC0044o;
         }
         ListItem interfaceC0044o2 = interfaceC0044o;
-        if (interfaceC0044o != null && interfaceC0044o2.mo277s()) {
-            switch (interfaceC0044o2.mo276r()) {
+        if (interfaceC0044o != null && interfaceC0044o2.isSelected()) {
+            switch (interfaceC0044o2.getHeight()) {
                 case 3:
                     i = 4384;
                     break;
@@ -661,7 +661,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         long jMo274v;
         long jMo275w;
         ListItem interfaceC0044o = f257f;
-        int iMo276r = interfaceC0044o == null ? 0 : interfaceC0044o.mo276r();
+        int iMo276r = interfaceC0044o == null ? 0 : interfaceC0044o.getHeight();
         switch (i) {
             case 0:
                 AppState.m613c(interfaceC0044o);
@@ -722,13 +722,13 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContact.m195u();
                 }
                 ListItem interfaceC0044o2 = MapRenderer.f203k;
-                if (interfaceC0044o2 == null || !interfaceC0044o2.mo277s()) {
+                if (interfaceC0044o2 == null || !interfaceC0044o2.isSelected()) {
                     jMo274v = MapRenderer.f196d;
                     jMo275w = MapRenderer.f195c;
                 } else {
-                    jMo274v = interfaceC0044o2.mo274v();
-                    jMo275w = interfaceC0044o2.mo275w();
-                    interfaceC0044o2.mo278t();
+                    jMo274v = interfaceC0044o2.getWidth();
+                    jMo275w = interfaceC0044o2.getBaseHeight();
+                    interfaceC0044o2.select();
                 }
                 int[] iArr = {(int) jMo274v, (int) jMo275w};
                 MmpContact.f66k.addElement(iArr);
@@ -761,8 +761,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 return 6;
             case 13:
                 ListItem interfaceC0044o3 = MapRenderer.f203k;
-                if (interfaceC0044o3 != null && interfaceC0044o3.mo277s()) {
-                    interfaceC0044o3.mo278t();
+                if (interfaceC0044o3 != null && interfaceC0044o3.isSelected()) {
+                    interfaceC0044o3.select();
                 }
                 MapRenderer.f200h = true;
                 return 6;

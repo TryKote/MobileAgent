@@ -658,7 +658,7 @@ public final class ConnectionThread {
             return 0;
         }
         if (AppState.m587e(1479) && (c0028ba = (MrimAccount) AppState.m616i()) != null) {
-            c0028ba.mo279u();
+            c0028ba.deselect();
         }
         m1164h();
         m1160d(c0013am);
@@ -748,13 +748,13 @@ public final class ConnectionThread {
             MmpContact.m195u();
         }
         ListItem interfaceC0044o = MapRenderer.f203k;
-        if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
+        if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
             jMo274v = MapRenderer.f196d;
             jMo275w = MapRenderer.f195c;
         } else {
-            jMo274v = interfaceC0044o.mo274v();
-            jMo275w = interfaceC0044o.mo275w();
-            interfaceC0044o.mo278t();
+            jMo274v = interfaceC0044o.getWidth();
+            jMo275w = interfaceC0044o.getBaseHeight();
+            interfaceC0044o.select();
         }
         MmpContact.m182a(jMo274v, jMo275w);
         MapRenderer.f200h = true;
@@ -771,13 +771,13 @@ public final class ConnectionThread {
             MmpContact.m195u();
         }
         ListItem interfaceC0044o = MapRenderer.f203k;
-        if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
+        if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
             jMo274v = MapRenderer.f196d;
             jMo275w = MapRenderer.f195c;
         } else {
-            jMo274v = interfaceC0044o.mo274v();
-            jMo275w = interfaceC0044o.mo275w();
-            interfaceC0044o.mo278t();
+            jMo274v = interfaceC0044o.getWidth();
+            jMo275w = interfaceC0044o.getBaseHeight();
+            interfaceC0044o.select();
         }
         MmpContact.m183b(jMo274v, jMo275w);
         MapRenderer.f200h = true;
@@ -788,10 +788,10 @@ public final class ConnectionThread {
 
     /* renamed from: a */
     public static final void m1172a(ListItem interfaceC0044o) {
-        if (interfaceC0044o.mo277s()) {
+        if (interfaceC0044o.isSelected()) {
             m1173n();
-            MapRenderer.m649a(interfaceC0044o.mo274v(), interfaceC0044o.mo275w());
-            MapRenderer.m651a(interfaceC0044o.mo280y());
+            MapRenderer.m649a(interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
+            MapRenderer.m651a(interfaceC0044o.getCommandCount());
             f358h = interfaceC0044o;
         }
     }

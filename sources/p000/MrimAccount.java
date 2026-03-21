@@ -531,9 +531,9 @@ public final class MrimAccount extends Account implements ListItem {
                                 break;
                             }
                             SearchEntry c0050u = (SearchEntry) this.f234L.elementAt(size);
-                            if (iM1330h2 == c0050u.f406a) {
+                            if (iM1330h2 == c0050u.id) {
                                 this.f234L.removeElementAt(size);
-                                int i11 = c0050u.f408c;
+                                int i11 = c0050u.type;
                                 if (i11 == 1) {
                                     m732g(strM1334g4);
                                     AppController.m393a(this, strM1334g4);
@@ -623,7 +623,7 @@ public final class MrimAccount extends Account implements ListItem {
                                     } catch (Throwable unused) {
                                         this.f231g.m61e();
                                     }
-                                    this.f233K.f403a = -1;
+                                    this.f233K.lastScale = -1;
                                     this.f231g.f16d = strArrM55a[3];
                                 }
                                 this.f231g.f24l = true;
@@ -834,7 +834,7 @@ public final class MrimAccount extends Account implements ListItem {
                         } catch (Throwable unused) {
                             c0035fM717f.m999p();
                         }
-                        c0035fM717f.f308n.f403a = -1;
+                        c0035fM717f.f308n.lastScale = -1;
                     }
                 }
             }
@@ -852,7 +852,7 @@ public final class MrimAccount extends Account implements ListItem {
         } catch (Throwable unused) {
             this.f231g.m61e();
         }
-        this.f233K.f403a = -1;
+        this.f233K.lastScale = -1;
     }
 
     /* renamed from: a */
@@ -868,7 +868,7 @@ public final class MrimAccount extends Account implements ListItem {
         } catch (Throwable unused) {
             this.f231g.m61e();
         }
-        this.f233K.f403a = -1;
+        this.f233K.lastScale = -1;
     }
 
     @Override // p000.Account
@@ -1299,31 +1299,31 @@ public final class MrimAccount extends Account implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public final int mo276r() {
+    public final int getHeight() {
         return 6;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public final boolean mo277s() {
+    public final boolean isSelected() {
         return this.f232h && this.f231g != null && this.f231g.m59c();
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public final void mo278t() {
+    public final void select() {
         this.f232h = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public final void mo279u() {
+    public final void deselect() {
         this.f232h = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public final int mo274v() {
+    public final int getWidth() {
         if (this.f231g != null) {
             return (int) this.f231g.m56a();
         }
@@ -1332,7 +1332,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public final int mo275w() {
+    public final int getBaseHeight() {
         if (this.f231g != null) {
             return (int) this.f231g.m57b();
         }
@@ -1341,7 +1341,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: x */
-    public final String mo273x() {
+    public final String getText() {
         String strM584b;
         int i;
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
@@ -1392,33 +1392,33 @@ public final class MrimAccount extends Account implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public final int mo280y() {
+    public final int getCommandCount() {
         return this.f231g.m60d();
     }
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public final boolean mo281z() {
+    public final boolean isHighlighted() {
         return this.f231g.m59c() && !this.f231g.f24l;
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public final int mo282a(int i) {
-        return this.f233K.m1405a(i, this);
+    public final int getCommandId(int i) {
+        return this.f233K.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public final int mo283b(int i) {
-        return this.f233K.m1406b(i, this);
+    public final int executeCommand(int i) {
+        return this.f233K.getHeight(i, this);
     }
 
     /* renamed from: a */
     public final void m751a(SearchEntry c0050u) {
         if (m1056C()) {
-            c0050u.f406a = this.f319o;
-            m1053d(AppController.m321a(this, 4162, new ByteBuffer().m1360p(1).m1308a(c0050u.f407b)));
+            c0050u.id = this.f319o;
+            m1053d(AppController.m321a(this, 4162, new ByteBuffer().m1360p(1).m1308a(c0050u.query)));
             this.f234L.addElement(c0050u);
         }
     }

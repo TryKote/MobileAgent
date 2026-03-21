@@ -748,10 +748,10 @@ public final class ScreenBuilder {
                 Screen c0013amM75b8 = ScreenManager.m75b(1691);
                 for (int i16 = 0; i16 < size9; i16++) {
                     GeoRegion c0053x = (GeoRegion) vectorM614m6.elementAt(i16);
-                    c0013amM75b8.m247a(-1, c0053x.f421a, 6, c0053x);
+                    c0013amM75b8.m247a(-1, c0053x.name, 6, c0053x);
                 }
                 GeoRegion c0053xM40i = StringUtils.m40i();
-                c0013amM75b8.m247a(-1, c0053xM40i.f421a, 6, c0053xM40i);
+                c0013amM75b8.m247a(-1, c0053xM40i.name, 6, c0053xM40i);
                 ScreenManager.m71b(c0013amM75b8);
                 return;
             case 98:
@@ -1213,7 +1213,7 @@ public final class ScreenBuilder {
                         return;
                     } else {
                         ListItem interfaceC0044o = (ListItem) vector2.elementAt(size14);
-                        c0013amM75b18.m247a(-1, interfaceC0044o.mo273x(), 0, interfaceC0044o);
+                        c0013amM75b18.m247a(-1, interfaceC0044o.getText(), 0, interfaceC0044o);
                     }
                 }
             case 171:
@@ -1766,10 +1766,10 @@ public final class ScreenBuilder {
                     long jMo274v = MapRenderer.f196d;
                     long jMo275w = MapRenderer.f195c;
                     ListItem interfaceC0044o = MapRenderer.f203k;
-                    if (interfaceC0044o != null && interfaceC0044o.mo277s()) {
-                        jMo274v = interfaceC0044o.mo274v();
-                        jMo275w = interfaceC0044o.mo275w();
-                        interfaceC0044o.mo278t();
+                    if (interfaceC0044o != null && interfaceC0044o.isSelected()) {
+                        jMo274v = interfaceC0044o.getWidth();
+                        jMo275w = interfaceC0044o.getBaseHeight();
+                        interfaceC0044o.select();
                     }
                     MapPoint c0014an = new MapPoint(strM522f3, 0L, 0L, 0L, 0L, jMo274v, jMo275w, AppState.m586d(39));
                     c0014an.f143k = 4;
@@ -2007,10 +2007,10 @@ public final class ScreenBuilder {
                 long jMo274v2 = MapRenderer.f196d;
                 long jMo275w2 = MapRenderer.f195c;
                 ListItem interfaceC0044o2 = MapRenderer.f203k;
-                if (interfaceC0044o2 != null && interfaceC0044o2.mo277s()) {
-                    jMo274v2 = interfaceC0044o2.mo274v();
-                    jMo275w2 = interfaceC0044o2.mo275w();
-                    interfaceC0044o2.mo278t();
+                if (interfaceC0044o2 != null && interfaceC0044o2.isSelected()) {
+                    jMo274v2 = interfaceC0044o2.getWidth();
+                    jMo275w2 = interfaceC0044o2.getBaseHeight();
+                    interfaceC0044o2.select();
                 }
                 String strM584b2 = AppState.m584b(1254);
                 long j = jMo274v2;

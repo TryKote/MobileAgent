@@ -382,13 +382,13 @@ public abstract class MapRenderer {
                 int iM586d4 = AppState.m586d(39);
                 for (int i43 = 0; i43 < size; i43++) {
                     ListItem interfaceC0044o3 = (ListItem) vectorM614m.elementAt(i43);
-                    if (interfaceC0044o3.mo277s() && iM586d4 == interfaceC0044o3.mo280y()) {
-                        long jMo282a = interfaceC0044o3.mo282a(iM586d);
-                        long jMo283b = interfaceC0044o3.mo283b(iM586d);
+                    if (interfaceC0044o3.isSelected() && iM586d4 == interfaceC0044o3.getCommandCount()) {
+                        long jMo282a = interfaceC0044o3.getCommandId(iM586d);
+                        long jMo283b = interfaceC0044o3.executeCommand(iM586d);
                         int i44 = (int) ((i41 / 2) + (jMo282a - j14));
                         int i45 = (int) ((i42 / 2) + (j15 - jMo283b));
                         if (i44 > 0 && i44 < i41 && i45 > 0 && i45 < i42) {
-                            if (interfaceC0044o3.mo276r() == 8) {
+                            if (interfaceC0044o3.getHeight() == 8) {
                                 int i46 = ((UserSearchResult) interfaceC0044o3).f393d;
                                 imageM1023b = (i46 == 1 || i46 == 0) ? XmppContactGroup.m1023b(27) : XmppContactGroup.m1023b(28);
                             } else {
@@ -432,9 +432,9 @@ public abstract class MapRenderer {
                         ChatRenderer.f253h = interfaceC0044oArr;
                         for (int i50 = 0; i50 < size7; i50++) {
                             ListItem interfaceC0044o5 = (ListItem) vectorM448X.elementAt(i50);
-                            if (interfaceC0044o5.mo277s() && interfaceC0044o4 != interfaceC0044o5) {
-                                long jMo282a2 = interfaceC0044o5.mo282a(iM586d);
-                                long jMo283b2 = interfaceC0044o5.mo283b(iM586d);
+                            if (interfaceC0044o5.isSelected() && interfaceC0044o4 != interfaceC0044o5) {
+                                long jMo282a2 = interfaceC0044o5.getCommandId(iM586d);
+                                long jMo283b2 = interfaceC0044o5.executeCommand(iM586d);
                                 int i51 = (int) (jMo282a2 / 32);
                                 int i52 = (int) (jMo283b2 / 32);
                                 if (i51 >= ChatRenderer.f249d && i51 <= ChatRenderer.f251f && i52 >= ChatRenderer.f250e && i52 <= ChatRenderer.f252g) {
@@ -443,9 +443,9 @@ public abstract class MapRenderer {
                                     ListItem interfaceC0044o6 = interfaceC0044oArr[(i54 * i49) + i53];
                                     if (interfaceC0044o6 == null) {
                                         interfaceC0044oArr[(i54 * i49) + i53] = interfaceC0044o5;
-                                    } else if (interfaceC0044o6.mo276r() == 5) {
+                                    } else if (interfaceC0044o6.getHeight() == 5) {
                                         ((Conversation) interfaceC0044o6).m1086a(interfaceC0044o5);
-                                    } else if (interfaceC0044o6.mo276r() == 3) {
+                                    } else if (interfaceC0044o6.getHeight() == 3) {
                                         Conversation c0038i = new Conversation();
                                         c0038i.m1086a(interfaceC0044o5);
                                         c0038i.m1086a(interfaceC0044o6);
@@ -465,11 +465,11 @@ public abstract class MapRenderer {
                         }
                         ListItem interfaceC0044o8 = interfaceC0044oArr2[length];
                         if (interfaceC0044o8 != null) {
-                            long jMo282a3 = interfaceC0044o8.mo282a(iM586d);
-                            long jMo283b3 = interfaceC0044o8.mo283b(iM586d);
+                            long jMo282a3 = interfaceC0044o8.getCommandId(iM586d);
+                            long jMo283b3 = interfaceC0044o8.executeCommand(iM586d);
                             int i55 = (int) ((i47 / 2) + (jMo282a3 - j16));
                             int i56 = (int) ((i48 / 2) + (j17 - jMo283b3));
-                            int iMo276r = interfaceC0044o8.mo276r();
+                            int iMo276r = interfaceC0044o8.getHeight();
                             Image imageM1023b3 = iMo276r == 3 ? XmppContactGroup.m1023b(26) : iMo276r == 5 ? XmppContactGroup.m1023b(23) : null;
                             Image image = imageM1023b3;
                             if (imageM1023b3 != null) {
@@ -502,9 +502,9 @@ public abstract class MapRenderer {
                     MrimAccount c0028ba = null;
                     for (int i59 = 0; i59 < size8; i59++) {
                         MrimAccount c0028ba2 = (MrimAccount) vectorM449Y.elementAt(i59);
-                        if (c0028ba2.mo277s()) {
-                            long jMo282a4 = c0028ba2.mo282a(iM586d);
-                            long jMo283b4 = c0028ba2.mo283b(iM586d);
+                        if (c0028ba2.isSelected()) {
+                            long jMo282a4 = c0028ba2.getCommandId(iM586d);
+                            long jMo283b4 = c0028ba2.executeCommand(iM586d);
                             int i60 = (int) ((i57 / 2) + (jMo282a4 - j22));
                             int i61 = (int) ((i58 / 2) + (j23 - jMo283b4));
                             if (i60 > 0 && i60 < i57 && i61 > 0 && i61 < i58) {
@@ -534,8 +534,8 @@ public abstract class MapRenderer {
             int i62 = f193a;
             int i63 = f194b;
             if (AppState.m587e(276) && !XmppContactGroup.m1033j() && (interfaceC0044o = ConnectionThread.f358h) != null) {
-                long jMo282a5 = interfaceC0044o.mo282a(iM586d);
-                long jMo283b5 = interfaceC0044o.mo283b(iM586d);
+                long jMo282a5 = interfaceC0044o.getCommandId(iM586d);
+                long jMo283b5 = interfaceC0044o.executeCommand(iM586d);
                 graphics.drawImage(XmppContactGroup.m1023b(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);
                 if (Utils.m505a(j24 - jMo282a5) < 20 && Utils.m505a(j25 - jMo283b5) < 20) {
                     m659a(interfaceC0044o);
@@ -566,10 +566,10 @@ public abstract class MapRenderer {
                     break;
                 }
                 GeoRegion c0053x2 = (GeoRegion) vectorM614m5.elementAt(size9);
-                if (c0053x2.m1426a(j26, j27) && c0053x2.f428h != -1) {
+                if (c0053x2.containsPoint(j26, j27) && c0053x2.zoomLevel != -1) {
                     if (c0053x != null) {
                         GeoRegion c0053x3 = c0053x;
-                        if (c0053x2.f424d - c0053x2.f422b < c0053x3.f424d - c0053x3.f422b && c0053x2.f423c - c0053x2.f425e < c0053x3.f423c - c0053x3.f425e) {
+                        if (c0053x2.maxLat - c0053x2.minLat < c0053x3.maxLat - c0053x3.minLat && c0053x2.maxLon - c0053x2.minLon < c0053x3.maxLon - c0053x3.minLon) {
                         }
                     }
                     c0053x = c0053x2;
@@ -584,16 +584,16 @@ public abstract class MapRenderer {
                 boolean z3 = false;
                 int i68 = 0;
                 if (c0053x4 != null) {
-                    i66 = c0053x4.f428h;
-                    i67 = c0053x4.f429i;
+                    i66 = c0053x4.zoomLevel;
+                    i67 = c0053x4.mapType;
                     if (i66 >= 0) {
                         z3 = true;
                         i68 = i66 <= 45 ? 65280 : (i66 <= 45 || i66 >= 75) ? 16711680 : 16361985;
                     }
                 }
                 if (c0053x4 != null) {
-                    i = c0053x4.f428h;
-                    i2 = c0053x4.f429i;
+                    i = c0053x4.zoomLevel;
+                    i2 = c0053x4.mapType;
                 } else {
                     i = -1;
                     i2 = -1;
@@ -725,7 +725,7 @@ public abstract class MapRenderer {
                     break;
                 }
                 GeoRegion c0053x3 = (GeoRegion) vectorM614m.elementAt(iM541c);
-                if (c0053x3.m1426a(j, j2)) {
+                if (c0053x3.containsPoint(j, j2)) {
                     c0053x = c0053x3;
                     break;
                 }
@@ -746,7 +746,7 @@ public abstract class MapRenderer {
     private static final int m650b(int i) {
         int i2;
         if (StringUtils.m43a(f196d, f195c) || i <= 10) {
-            return (f210w == null || i <= (i2 = f210w.f431k)) ? i : i2;
+            return (f210w == null || i <= (i2 = f210w.precision)) ? i : i2;
         }
         return 10;
     }
@@ -801,7 +801,7 @@ public abstract class MapRenderer {
     /* renamed from: c */
     public static final String m655c() {
         if (f203k != null) {
-            return f203k.mo273x();
+            return f203k.getText();
         }
         return null;
     }

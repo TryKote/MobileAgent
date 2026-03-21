@@ -491,7 +491,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             x r0 = (p000.GeoRegion) r0     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r0
             r20 = r1
-            java.lang.String r0 = r0.f430j     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            java.lang.String r0 = r0.description     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r17
             boolean r0 = r0.equals(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             if (r0 == 0) goto L292
@@ -518,10 +518,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r12 = r1
             r1 = r11
-            r0.f428h = r1     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            r0.zoomLevel = r1     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r0 = r12
             r1 = r13
-            r0.f429i = r1     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            r0.mapType = r1     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
         L2c1:
             int r10 = r10 + (-1)
             r0 = r10

@@ -51,73 +51,73 @@ public final class PhoneContact implements ListItem, Identifiable {
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public final int mo276r() {
+    public final int getHeight() {
         return 7;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public final boolean mo277s() {
+    public final boolean isSelected() {
         return this.f160f;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public final void mo278t() {
+    public final void select() {
         this.f160f = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public final void mo279u() {
+    public final void deselect() {
         this.f160f = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public final int mo274v() {
+    public final int getWidth() {
         return this.f161g;
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public final int mo275w() {
+    public final int getBaseHeight() {
         return this.f162h;
     }
 
     @Override // p000.ListItem
     /* renamed from: x */
-    public final String mo273x() {
+    public final String getText() {
         return NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(450)).append(this.f167e).append(AppState.m584b(447 + Utils.m540f(this.f167e))).append(')'));
     }
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public final int mo280y() {
+    public final int getCommandCount() {
         return this.f169j;
     }
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public final boolean mo281z() {
+    public final boolean isHighlighted() {
         return true;
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public final int mo282a(int i) {
-        return this.f170k.m1405a(i, this);
+    public final int getCommandId(int i) {
+        return this.f170k.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public final int mo283b(int i) {
-        return this.f170k.m1406b(i, this);
+    public final int executeCommand(int i) {
+        return this.f170k.getHeight(i, this);
     }
 
     @Override // p000.Identifiable
     /* renamed from: a */
-    public final String mo545a() {
+    public final String getId() {
         return this.f168i;
     }
 }

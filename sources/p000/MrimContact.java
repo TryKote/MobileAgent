@@ -322,31 +322,31 @@ public final class MrimContact extends Contact implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: r */
-    public final int mo276r() {
+    public final int getHeight() {
         return 3;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
-    public final boolean mo277s() {
+    public final boolean isSelected() {
         return this.f307m && this.f306l != null && this.f306l.m59c();
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
-    public final void mo278t() {
+    public final void select() {
         this.f307m = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
-    public final void mo279u() {
+    public final void deselect() {
         this.f307m = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
-    public final int mo274v() {
+    public final int getWidth() {
         try {
             return (int) this.f306l.m56a();
         } catch (Throwable unused) {
@@ -357,7 +357,7 @@ public final class MrimContact extends Contact implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: w */
-    public final int mo275w() {
+    public final int getBaseHeight() {
         try {
             return (int) this.f306l.m57b();
         } catch (Throwable unused) {
@@ -368,7 +368,7 @@ public final class MrimContact extends Contact implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: x */
-    public final String mo273x() {
+    public final String getText() {
         StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(this.f376u);
         String str = this.f306l.f16d;
         if (str.length() > 0) {
@@ -379,7 +379,7 @@ public final class MrimContact extends Contact implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: y */
-    public final int mo280y() {
+    public final int getCommandCount() {
         if (this.f306l != null) {
             return this.f306l.m60d();
         }
@@ -388,19 +388,19 @@ public final class MrimContact extends Contact implements ListItem {
 
     @Override // p000.ListItem
     /* renamed from: z */
-    public final boolean mo281z() {
+    public final boolean isHighlighted() {
         return this.f306l.m59c() && !this.f306l.f24l;
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
-    public final int mo282a(int i) {
-        return this.f308n.m1405a(i, this);
+    public final int getCommandId(int i) {
+        return this.f308n.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
-    public final int mo283b(int i) {
-        return this.f308n.m1406b(i, this);
+    public final int executeCommand(int i) {
+        return this.f308n.getHeight(i, this);
     }
 }

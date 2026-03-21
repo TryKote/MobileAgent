@@ -5,62 +5,62 @@ package p000;
 public final class GeoRegion {
 
     /* renamed from: a */
-    public String f421a;
+    public String name;
 
     /* renamed from: b */
-    public long f422b;
+    public long minLat;
 
     /* renamed from: c */
-    public long f423c;
+    public long maxLon;
 
     /* renamed from: d */
-    public long f424d;
+    public long maxLat;
 
     /* renamed from: e */
-    public long f425e;
+    public long minLon;
 
     /* renamed from: f */
-    public long f426f;
+    public long centerLat;
 
     /* renamed from: g */
-    public long f427g;
+    public long centerLon;
 
     /* renamed from: h */
-    public int f428h;
+    public int zoomLevel;
 
     /* renamed from: i */
-    public int f429i;
+    public int mapType;
 
     /* renamed from: j */
-    public String f430j;
+    public String description;
 
     /* renamed from: k */
-    public int f431k;
+    public int precision;
 
     private GeoRegion() {
-        this.f428h = -1;
-        this.f431k = 16;
+        this.zoomLevel = -1;
+        this.precision = 16;
     }
 
     public GeoRegion(String str, long j, long j2, long j3, long j4) {
         this();
-        this.f421a = str;
-        this.f422b = j;
-        this.f423c = j2;
-        this.f424d = j3;
-        this.f425e = j4;
+        this.name = str;
+        this.minLat = j;
+        this.maxLon = j2;
+        this.maxLat = j3;
+        this.minLon = j4;
     }
 
     public GeoRegion(ByteBuffer c0043n) {
         this(c0043n.m1335e((String) null), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m());
-        this.f430j = c0043n.m1335e((String) null);
-        this.f426f = c0043n.m1341m();
-        this.f427g = c0043n.m1341m();
-        this.f431k = c0043n.m1328e();
+        this.description = c0043n.m1335e((String) null);
+        this.centerLat = c0043n.m1341m();
+        this.centerLon = c0043n.m1341m();
+        this.precision = c0043n.m1328e();
     }
 
     /* renamed from: a */
-    public final boolean m1426a(long j, long j2) {
-        return j < this.f424d && j > this.f422b && j2 < this.f423c && j2 > this.f425e;
+    public final boolean containsPoint(long j, long j2) {
+        return j < this.maxLat && j > this.minLat && j2 < this.maxLon && j2 > this.minLon;
     }
 }

@@ -698,8 +698,8 @@ public final class StringUtils {
         } catch (Throwable unused) {
         }
         GeoRegion c0053x = new GeoRegion(AppState.m584b(995), 1866877L, 15815124L, 21989606L, 4133096L);
-        c0053x.f426f = 10848141L;
-        c0053x.f427g = 8758455L;
+        c0053x.centerLat = 10848141L;
+        c0053x.centerLon = 8758455L;
         AppState.f177b[1391] = c0053x;
     }
 
@@ -722,7 +722,7 @@ public final class StringUtils {
                 return false;
             }
             GeoRegion c0053x = (GeoRegion) vectorM614m.elementAt(iM541c);
-            if (c0053x.m1426a(j, j2) && AppState.m628b(c0053x.f421a, 995) < 0) {
+            if (c0053x.containsPoint(j, j2) && AppState.m628b(c0053x.name, 995) < 0) {
                 return true;
             }
         }
@@ -747,10 +747,10 @@ public final class StringUtils {
                 for (int i2 = 0; i2 < Utils.m541c(vector2); i2++) {
                     XmlElement c0022av3 = (XmlElement) vector2.elementAt(i2);
                     GeoRegion c0053x = new GeoRegion(c0022av3.m555c(1701667182), c0022av3.m556d(28780), c0022av3.m556d(28788), c0022av3.m556d(28786), c0022av3.m556d(28770));
-                    c0053x.f430j = c0022av3.m555c(25705);
-                    c0053x.f426f = c0022av3.m556d(1852796003);
-                    c0053x.f427g = c0022av3.m556d(1952541795);
-                    c0053x.f431k = c0022av3.m557e(2054709613);
+                    c0053x.description = c0022av3.m555c(25705);
+                    c0053x.centerLat = c0022av3.m556d(1852796003);
+                    c0053x.centerLon = c0022av3.m556d(1952541795);
+                    c0053x.precision = c0022av3.m557e(2054709613);
                     m42a(c0053x);
                 }
             } else if (m3a(397424, str)) {
@@ -765,7 +765,7 @@ public final class StringUtils {
             c0043n.m1359o(size);
             for (int i3 = 0; i3 < size; i3++) {
                 GeoRegion c0053x2 = (GeoRegion) vectorM614m.elementAt(i3);
-                c0043n.m1309b(c0053x2.f421a).m1323a(c0053x2.f422b).m1323a(c0053x2.f423c).m1323a(c0053x2.f424d).m1323a(c0053x2.f425e).m1309b(c0053x2.f430j).m1323a(c0053x2.f426f).m1323a(c0053x2.f427g).m1360p(c0053x2.f431k);
+                c0043n.m1309b(c0053x2.name).m1323a(c0053x2.minLat).m1323a(c0053x2.maxLon).m1323a(c0053x2.maxLat).m1323a(c0053x2.minLon).m1309b(c0053x2.description).m1323a(c0053x2.centerLat).m1323a(c0053x2.centerLon).m1360p(c0053x2.precision);
             }
             AppState.m601a(227, (Object) c0043n.m1320d());
         } catch (Throwable unused) {

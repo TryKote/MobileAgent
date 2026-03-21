@@ -5,16 +5,16 @@ package p000;
 public final class SearchEntry {
 
     /* renamed from: a */
-    public int f406a;
+    public int id;
 
     /* renamed from: b */
-    public String f407b;
+    public String query;
 
     /* renamed from: c */
-    public int f408c;
+    public int type;
 
     public SearchEntry(String str, int i) {
-        this.f407b = str;
-        this.f408c = i;
+        this.query = str;
+        this.type = i;
     }
 }
