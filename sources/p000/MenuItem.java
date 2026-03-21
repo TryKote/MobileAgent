@@ -97,12 +97,12 @@ public final class MenuItem {
     public final MenuItem setAction(Object obj, String str, Object obj2, Object obj3, Object obj4) {
         String str2 = Utils.nonEmpty(str) ? str : null;
         if (obj instanceof String) {
-            setLabel(Utils.m527g(this.title));
+            setLabel(Utils.appendSpace(this.title));
         } else {
             setIcon(((Integer) obj).intValue());
         }
         if (str2 != null) {
-            addText(((Integer) obj3).intValue() != 327680 ? str2 : Utils.m506c(str2), 1, 7);
+            addText(((Integer) obj3).intValue() != 327680 ? str2 : Utils.maskPassword(str2), 1, 7);
         } else {
             setDefaultFont();
         }
@@ -119,7 +119,7 @@ public final class MenuItem {
             i2--;
             if (i2 < 0) {
                 NetworkUtils.releaseVector(vector);
-                MenuItem c0032cM896a = clear().setLabel(Utils.m527g(str)).addText(strArr[i], 1, 7).setIcon(247);
+                MenuItem c0032cM896a = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(247);
                 c0032cM896a.data = new Object[]{ResourceManager.integerOf(i), strArr};
                 return c0032cM896a;
             }

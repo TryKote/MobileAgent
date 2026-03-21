@@ -88,7 +88,7 @@ public final class PhoneContact implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(450)).append(this.userCount).append(AppState.getString(447 + Utils.m540f(this.userCount))).append(')'));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(450)).append(this.userCount).append(AppState.getString(447 + Utils.pluralForm(this.userCount))).append(')'));
     }
 
     @Override // p000.ListItem

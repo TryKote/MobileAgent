@@ -46,7 +46,7 @@ public abstract class ContactGroup implements Sortable {
         if (z) {
             this.contacts.removeAllElements();
         }
-        Utils.m526b(this.contacts);
+        Utils.trimIfEmpty(this.contacts);
     }
 
     /* renamed from: f */

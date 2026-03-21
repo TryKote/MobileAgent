@@ -191,7 +191,7 @@ public final class StringUtils {
         synchronized (vector) {
             int iIndexOf = vector.indexOf(str);
             if (iIndexOf >= 0) {
-                String strM521a = Utils.m521a(vector, iIndexOf);
+                String strM521a = Utils.getVectorString(vector, iIndexOf);
                 if (iIndexOf != 0) {
                     vector.removeElementAt(iIndexOf);
                     vector.insertElementAt(strM521a, 0);
@@ -349,7 +349,7 @@ public final class StringUtils {
     /* renamed from: a */
     private static final void m27a(Vector vector, Object obj) {
         Vector vector2 = ((XmlElement) obj).children;
-        for (int i = 0; i < Utils.m541c(vector2); i++) {
+        for (int i = 0; i < Utils.vectorSize(vector2); i++) {
             vector.addElement(m28b((XmlElement) vector2.elementAt(i)));
         }
     }
@@ -366,7 +366,7 @@ public final class StringUtils {
         AppState.pool[1301] = new XmlParser(new ByteBuffer(NetworkUtils.longToHex(25135), 41000)).parse().children;
         StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(683));
         Vector vectorM614m = AppState.getVector(1301);
-        for (int i = 0; i < Utils.m541c(vectorM614m); i++) {
+        for (int i = 0; i < Utils.vectorSize(vectorM614m); i++) {
             stringBufferAppend.append((char) 0).append(m28b((XmlElement) vectorM614m.elementAt(i)));
         }
         AppState.setFromBuffer(1300, stringBufferAppend);
@@ -407,7 +407,7 @@ public final class StringUtils {
         MenuItem c0032c6 = null;
         int iIntValue2 = 0;
         Vector vector = c0013am.menuItems;
-        int iM541c = Utils.m541c(vector);
+        int iM541c = Utils.vectorSize(vector);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
@@ -468,7 +468,7 @@ public final class StringUtils {
                 strArr[1] = suffix(strM17c, iIndexOf + 1);
             } else {
                 strArr[0] = strM17c;
-                strArr[1] = suffix(Utils.m542c(694, AppState.getInt(1480)), 1);
+                strArr[1] = suffix(Utils.splitAndGet(694, AppState.getInt(1480)), 1);
             }
             return strArr;
         }
@@ -518,7 +518,7 @@ public final class StringUtils {
             try {
                 throw new Throwable();
             } catch (Throwable unused) {
-                AppState.setObject(222, (Object) intern(Integer.toString(Utils.m520a())));
+                AppState.setObject(222, (Object) intern(Integer.toString(Utils.nextRandom())));
             }
         }
         m38d(m39e(AppState.getAppProperty(1381)));
@@ -634,7 +634,7 @@ public final class StringUtils {
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             int i3 = 0;
             while (i3 < 2) {
-                long jCurrentTimeMillis = i3 == 0 ? System.currentTimeMillis() : (Utils.m520a() << 32) | Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)));
+                long jCurrentTimeMillis = i3 == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)));
                 for (int i4 = 0; i4 < 64; i4 += 4) {
                     int i5 = ((int) (jCurrentTimeMillis >>> (60 - i4))) & 15;
                     if (i5 < 10) {
@@ -715,7 +715,7 @@ public final class StringUtils {
     /* renamed from: a */
     public static final boolean m43a(long j, long j2) {
         Vector vectorM614m = AppState.getVector(1389);
-        int iM541c = Utils.m541c(vectorM614m);
+        int iM541c = Utils.vectorSize(vectorM614m);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
@@ -739,12 +739,12 @@ public final class StringUtils {
         if (strM554b != null) {
             AppState.setObject(254, (Object) strM554b);
         }
-        for (int i = 0; i < Utils.m541c(vector); i++) {
+        for (int i = 0; i < Utils.vectorSize(vector); i++) {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(i);
             String str = c0022av2.tagName;
             if (m2a(str, 1936156018)) {
                 Vector vector2 = c0022av2.children;
-                for (int i2 = 0; i2 < Utils.m541c(vector2); i2++) {
+                for (int i2 = 0; i2 < Utils.vectorSize(vector2); i2++) {
                     XmlElement c0022av3 = (XmlElement) vector2.elementAt(i2);
                     GeoRegion c0053x = new GeoRegion(c0022av3.getLongKeyAttr(1701667182), c0022av3.getAttrAsLong(28780), c0022av3.getAttrAsLong(28788), c0022av3.getAttrAsLong(28786), c0022av3.getAttrAsLong(28770));
                     c0053x.description = c0022av3.getLongKeyAttr(25705);

@@ -188,7 +188,7 @@ public final class ResourceManager {
         while (true) {
             length--;
             if (length < 0) {
-                c0032c2.clear().setLabel(Utils.m527g(c0032c2.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{integerOf(i), strArr};
+                c0032c2.clear().setLabel(Utils.appendSpace(c0032c2.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{integerOf(i), strArr};
                 c0013am.rebuildItems();
                 IOUtils.postEvent(c0032c2);
                 return 0;
@@ -305,7 +305,7 @@ public final class ResourceManager {
         MrimContact c0035f = (MrimContact) AppState.pool[1365];
         MrimAccount c0028ba = (MrimAccount) c0035f.account;
         if (c0028ba.isConnected()) {
-            c0035f.appendMessage(1, NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append(AppState.getString(776)).append(Utils.m530h(strM584b))).append(strM522f)), 0L, 0L);
+            c0035f.appendMessage(1, NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append(AppState.getString(776)).append(Utils.formatPhone(strM584b))).append(strM522f)), 0L, 0L);
             StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('+');
             if (strM584b.charAt(0) == '8') {
                 stringBufferAppend.append('7').append(StringUtils.suffix(strM584b, 1));
@@ -378,11 +378,11 @@ public final class ResourceManager {
         AppState.pool[987] = readLongArray(987);
         AppState.pool[990] = readLongArray(990);
         AppState.pool[991] = readLongArray(991);
-        AppState.pool[989] = Utils.m537e(989);
-        AppState.pool[988] = Utils.m537e(988);
-        AppState.pool[992] = Utils.m536a(AppState.getBytes(992));
-        AppState.pool[993] = Utils.m536a(AppState.getBytes(993));
-        AppState.pool[580] = Utils.m536a(AppState.getBytes(580));
+        AppState.pool[989] = Utils.readShortArray(989);
+        AppState.pool[988] = Utils.readShortArray(988);
+        AppState.pool[992] = Utils.bytesToInts(AppState.getBytes(992));
+        AppState.pool[993] = Utils.bytesToInts(AppState.getBytes(993));
+        AppState.pool[580] = Utils.bytesToInts(AppState.getBytes(580));
     }
 
     /* renamed from: e */
@@ -725,7 +725,7 @@ public final class ResourceManager {
             if (c0024axM631b.getResponseCode() != 200) {
                 throw new Throwable();
             }
-            Vector vectorM513a = Utils.m513a(new ByteBuffer(c0024axM631b).readUTFWithLen(), '\n', '\r');
+            Vector vectorM513a = Utils.splitReplace(new ByteBuffer(c0024axM631b).readUTFWithLen(), '\n', '\r');
             XmppContactGroup.sharedContactList.removeAllElements();
             int size = vectorM513a.size();
             while (true) {
@@ -736,7 +736,7 @@ public final class ResourceManager {
                     AppController.releaseNetworkLock();
                     return;
                 } else {
-                    Vector vectorM514a = Utils.m514a((String) vectorM513a.elementAt(size), '|');
+                    Vector vectorM514a = Utils.splitMerge((String) vectorM513a.elementAt(size), '|');
                     if (vectorM514a.size() == 5) {
                         XmppContactGroup.sharedContactList.addElement(new Object[]{vectorM514a.elementAt(0), new long[]{Long.parseLong((String) vectorM514a.elementAt(1)), Long.parseLong((String) vectorM514a.elementAt(2))}, vectorM514a.elementAt(4)});
                     }
@@ -760,7 +760,7 @@ public final class ResourceManager {
         String str3 = AppState.emptyStr;
         String strM1221a = NetworkUtils.longToHex(8236);
         int i = 0;
-        while (i < Utils.m541c(vector)) {
+        while (i < Utils.vectorSize(vector)) {
             stringBufferM1217h.append(i > 0 ? strM1221a : str3).append(((String[]) vector.elementAt(i))[0]);
             i++;
         }
@@ -1042,7 +1042,7 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final int collectInvitees(Screen c0013am) {
         NetworkUtils.m1195d();
-        String[] strArrM518a = Utils.m518a(true);
+        String[] strArrM518a = Utils.getPhoneNumbers(true);
         Vector vectorM794a = IOUtils.getCheckedItems(c0013am, 1);
         int length = strArrM518a.length;
         while (true) {

@@ -61,7 +61,7 @@ public final class MrimContact extends Contact implements ListItem {
         this.unreadCount = i5;
         this.contactGroupsStr = str3;
         this.statusMessage = str5;
-        setDisplayName(Utils.m528a(str2, str));
+        setDisplayName(Utils.defaultIfBlank(str2, str));
         this.defaultIcon = AppController.handleServerAction(i5, str4);
         this.highlighted = i5 != 0;
         updateIdentifierAndRegister();
@@ -80,7 +80,7 @@ public final class MrimContact extends Contact implements ListItem {
         if (!isOffline()) {
             return this.simpleIdentifier;
         }
-        Vector vectorM516c = Utils.m516c(this.contactGroupsStr, ',');
+        Vector vectorM516c = Utils.splitNonEmpty(this.contactGroupsStr, ',');
         String str = (String) vectorM516c.elementAt(0);
         NetworkUtils.releaseVector(vectorM516c);
         return str;
@@ -205,7 +205,7 @@ public final class MrimContact extends Contact implements ListItem {
         this.extra = strM991N;
         this.identifier = c0043nM1050q.writeRawString(strM991N).readAllByteStr();
         if (isOffline()) {
-            this.extra = Utils.m530h(this.extra);
+            this.extra = Utils.formatPhone(this.extra);
         }
         updateRenderState();
         this.account.registerContact(this);
@@ -230,7 +230,7 @@ public final class MrimContact extends Contact implements ListItem {
 
     /* renamed from: a */
     public final boolean isInGroup(String str) {
-        Vector vectorM516c = Utils.m516c(this.contactGroupsStr, ',');
+        Vector vectorM516c = Utils.splitNonEmpty(this.contactGroupsStr, ',');
         int size = vectorM516c.size();
         do {
             size--;
@@ -295,7 +295,7 @@ public final class MrimContact extends Contact implements ListItem {
     public final void updateDisplayNameAndGroups(String str, String str2) {
         setDisplayName(str);
         this.contactGroupsStr = str2;
-        this.extra = isOffline() ? Utils.m530h(getFirstGroupName()) : this.simpleIdentifier;
+        this.extra = isOffline() ? Utils.formatPhone(getFirstGroupName()) : this.simpleIdentifier;
     }
 
     /* JADX DEBUG: Possible override for method l.o()V */

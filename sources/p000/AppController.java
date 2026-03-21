@@ -776,7 +776,7 @@ public final class AppController {
         if (i < i2) {
             if (i + 1 == i2) {
                 if (((Sortable) vector.elementAt(i)).compareTo(vector.elementAt(i2)) > 0) {
-                    Utils.m508a(vector, i, i2);
+                    Utils.swapElements(vector, i, i2);
                     return;
                 }
                 return;
@@ -786,7 +786,7 @@ public final class AppController {
             boolean z = true;
             while (i3 < i4) {
                 if (((Sortable) vector.elementAt(i3)).compareTo(vector.elementAt(i4)) > 0) {
-                    Utils.m508a(vector, i3, i4);
+                    Utils.swapElements(vector, i3, i4);
                     z = !z;
                 }
                 if (z) {
@@ -1939,14 +1939,14 @@ public final class AppController {
     public static final Vector getAllAccountsList() {
         Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM614m = AppState.getVector(1241);
-        int iM541c = Utils.m541c(vectorM614m);
+        int iM541c = Utils.vectorSize(vectorM614m);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
                 return vectorM1213g;
             }
             Vector vectorM1078P = ((Account) vectorM614m.elementAt(iM541c)).getAllContacts();
-            int iM541c2 = Utils.m541c(vectorM1078P);
+            int iM541c2 = Utils.vectorSize(vectorM1078P);
             while (true) {
                 iM541c2--;
                 if (iM541c2 < 0) {
@@ -2055,7 +2055,7 @@ public final class AppController {
     /* renamed from: a */
     public static final void setFormFields(String str, String str2, String str3, String str4, String str5) {
         AppState.setObject(1240, (Object) str5);
-        AppState.setFromBuffer(1239, Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(NetworkUtils.newStringBuffer(), 262572, str), 262576, str2), 524724, str3), 590268, str4), 524741, str5));
+        AppState.setFromBuffer(1239, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(NetworkUtils.newStringBuffer(), 262572, str), 262576, str2), 524724, str3), 590268, str4), 524741, str5));
         setTimer(13, computeInitialState());
     }
 
@@ -2116,7 +2116,7 @@ public final class AppController {
             AppState.pool[1371] = new MainCanvas(i, i2);
             AppState.clearRange(332, 333);
             TabBar.initialize();
-            AppState.pool[430] = Utils.m536a(AppState.getBytes(430));
+            AppState.pool[430] = Utils.bytesToInts(AppState.getBytes(430));
             AppState.pool[1357] = new byte[1];
             try {
                 computeLayoutParam(1004);
@@ -2858,12 +2858,12 @@ public final class AppController {
                                                             }
                                                         }
                                                         c0052wM746W.isInitialized = false;
-                                                        int iM541c = Utils.m541c(c0052wM746W.messageIds);
+                                                        int iM541c = Utils.vectorSize(c0052wM746W.messageIds);
                                                         if (iM541c > 0) {
                                                             c0052wM746W.subject = (String) c0052wM746W.messageIds.lastElement();
                                                             MrimAccount c0028ba5 = (MrimAccount) AppState.getAccount();
                                                             for (int i12 = 0; i12 < iM541c; i12++) {
-                                                                String strM521a = Utils.m521a(c0052wM746W.messageIds, i12);
+                                                                String strM521a = Utils.getVectorString(c0052wM746W.messageIds, i12);
                                                                 Message c0026azM1415b4 = c0028ba5.findChatRoomById(Utils.parseInt(c0052wM746W.metadata.get(strM521a))).getMessage(strM521a);
                                                                 if (c0026azM1415b4 != null) {
                                                                     c0052wM746W.messages.put(strM521a, c0026azM1415b4);
@@ -3284,7 +3284,7 @@ public final class AppController {
                                                 break;
                                             case 179:
                                                 Vector vectorM614m5 = AppState.getVector(1284);
-                                                if (Utils.m541c(vectorM614m5) <= 1) {
+                                                if (Utils.vectorSize(vectorM614m5) <= 1) {
                                                     NetworkUtils.releaseVector(vectorM614m5);
                                                     IOUtils.postEvent((Object) AppState.getString(1029));
                                                     iM1181a = 4;

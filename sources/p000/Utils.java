@@ -16,13 +16,13 @@ public abstract class Utils {
 
     /* renamed from: a */
     public static final long parseDateTime(String str) {
-        Vector vectorM517a = m517a(str, ' ', false);
+        Vector vectorM517a = splitImpl(str, ' ', false);
         int iM510a = parseInt(vectorM517a.elementAt(1));
-        int iIndexOf = AppState.getString(2558996).indexOf(m521a(vectorM517a, 2)) / 3;
+        int iIndexOf = AppState.getString(2558996).indexOf(getVectorString(vectorM517a, 2)) / 3;
         int iM510a2 = parseInt(vectorM517a.elementAt(3));
-        String strM521a = m521a(vectorM517a, 4);
+        String strM521a = getVectorString(vectorM517a, 4);
         NetworkUtils.releaseVector(vectorM517a);
-        Vector vectorM517a2 = m517a(strM521a, ':', false);
+        Vector vectorM517a2 = splitImpl(strM521a, ':', false);
         int iM510a3 = parseInt(vectorM517a2.elementAt(0));
         int iM510a4 = parseInt(vectorM517a2.elementAt(1));
         parseInt(vectorM517a2.elementAt(2));
@@ -43,27 +43,27 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    private static StringBuffer m492a(StringBuffer stringBuffer, int i) {
+    private static StringBuffer appendKey(StringBuffer stringBuffer, int i) {
         return stringBuffer.append(AppState.getString(i));
     }
 
     /* renamed from: a */
-    public static final StringBuffer m493a(StringBuffer stringBuffer, int i, String str) {
-        return m492a(stringBuffer, i).append('=').append(Conversation.urlEncodeCyrillic((Object) defaultStr(str)));
+    public static final StringBuffer appendParam(StringBuffer stringBuffer, int i, String str) {
+        return appendKey(stringBuffer, i).append('=').append(Conversation.urlEncodeCyrillic((Object) defaultStr(str)));
     }
 
     /* renamed from: a */
-    public static final StringBuffer m494a(StringBuffer stringBuffer, int i, int i2) {
-        return m492a(stringBuffer, i).append('=').append(i2);
+    public static final StringBuffer appendIntParam(StringBuffer stringBuffer, int i, int i2) {
+        return appendKey(stringBuffer, i).append('=').append(i2);
     }
 
     /* renamed from: b */
-    public static final String m495b(String str) {
-        return NetworkUtils.bufToStringCached(m496a(NetworkUtils.newStringBuffer().append(str), true));
+    public static final String withComma(String str) {
+        return NetworkUtils.bufToStringCached(appendCommaIf(NetworkUtils.newStringBuffer().append(str), true));
     }
 
     /* renamed from: a */
-    public static final StringBuffer m496a(StringBuffer stringBuffer, boolean z) {
+    public static final StringBuffer appendCommaIf(StringBuffer stringBuffer, boolean z) {
         if (z) {
             stringBuffer.append(',').append(' ');
         }
@@ -71,17 +71,17 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final StringBuffer m497a(StringBuffer stringBuffer) {
+    public static final StringBuffer appendColon(StringBuffer stringBuffer) {
         return stringBuffer.append(':').append(' ');
     }
 
     /* renamed from: a */
-    public static final boolean m498a(char c) {
+    public static final boolean isDigitOrSep(char c) {
         return (c >= '0' && c <= '9') || c == '.' || c == ':';
     }
 
     /* renamed from: a */
-    public static final char m499a(int i) {
+    public static final char win1251ToChar(int i) {
         int i2 = i & 255;
         if (i2 >= 192) {
             return (char) (i2 + 848);
@@ -96,7 +96,7 @@ public abstract class Utils {
     }
 
     /* renamed from: b */
-    public static final byte m500b(char c) {
+    public static final byte charToWin1251(char c) {
         if (c >= 1040 && c <= 1103) {
             return (byte) (c - 848);
         }
@@ -134,12 +134,12 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final long m505a(long j) {
+    public static final long absLong(long j) {
         return j >= 0 ? j : -j;
     }
 
     /* renamed from: c */
-    public static final String m506c(String str) {
+    public static final String maskPassword(String str) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         while (true) {
@@ -152,7 +152,7 @@ public abstract class Utils {
     }
 
     /* renamed from: d */
-    public static final String m507d(String str) {
+    public static final String quoteText(String str) {
         StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('>');
         int length = str == null ? 0 : str.length();
         for (int i = 0; i < length; i++) {
@@ -167,14 +167,14 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final void m508a(Vector vector, int i, int i2) {
+    public static final void swapElements(Vector vector, int i, int i2) {
         Object objElementAt = vector.elementAt(i);
         vector.setElementAt(vector.elementAt(i2), i);
         vector.setElementAt(objElementAt, i2);
     }
 
     /* renamed from: a */
-    public static final boolean m509a(byte[] bArr, int i, byte[] bArr2, int i2, int i3) {
+    public static final boolean compareBytes(byte[] bArr, int i, byte[] bArr2, int i2, int i3) {
         do {
             i3--;
             if (i3 < 0) {
@@ -194,7 +194,7 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final int m511a(String str, int i, int i2, int i3) {
+    public static final int parseIntBounded(String str, int i, int i2, int i3) {
         int i4 = i3;
         try {
             i4 = Integer.parseInt(str);
@@ -205,25 +205,25 @@ public abstract class Utils {
 
     /* renamed from: e */
     public static final Vector splitByNull(String str) {
-        return m517a(str, (char) 0, false);
+        return splitImpl(str, (char) 0, false);
     }
 
     /* renamed from: a */
-    public static final Vector m513a(String str, char c, char c2) {
+    public static final Vector splitReplace(String str, char c, char c2) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str == null ? 0 : str.length();
         for (int i = 0; i < length; i++) {
             char cCharAt = str.charAt(i);
             stringBufferM1217h.append(cCharAt == c2 ? c : cCharAt);
         }
-        return m517a(NetworkUtils.bufToStringCached(stringBufferM1217h), c, false);
+        return splitImpl(NetworkUtils.bufToStringCached(stringBufferM1217h), c, false);
     }
 
     /* renamed from: a */
-    public static final Vector m514a(String str, char c) {
-        Vector vectorM517a = m517a(str, '|', true);
+    public static final Vector splitMerge(String str, char c) {
+        Vector vectorM517a = splitImpl(str, '|', true);
         while (vectorM517a.size() > 5) {
-            vectorM517a.setElementAt(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(m521a(vectorM517a, 4)).append('|').append(vectorM517a.elementAt(5))), 4);
+            vectorM517a.setElementAt(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(getVectorString(vectorM517a, 4)).append('|').append(vectorM517a.elementAt(5))), 4);
             vectorM517a.removeElementAt(5);
         }
         return vectorM517a;
@@ -231,16 +231,16 @@ public abstract class Utils {
 
     /* renamed from: b */
     public static final Vector split(String str, char c) {
-        return m517a(str, c, true);
+        return splitImpl(str, c, true);
     }
 
     /* renamed from: c */
-    public static final Vector m516c(String str, char c) {
-        return m517a(str, c, false);
+    public static final Vector splitNonEmpty(String str, char c) {
+        return splitImpl(str, c, false);
     }
 
     /* renamed from: a */
-    private static final Vector m517a(String str, char c, boolean z) {
+    private static final Vector splitImpl(String str, char c, boolean z) {
         Vector vectorM1213g = NetworkUtils.newVector();
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str == null ? 0 : str.length();
@@ -260,7 +260,7 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final String[] m518a(boolean z) {
+    public static final String[] getPhoneNumbers(boolean z) {
         Vector vectorM1213g = NetworkUtils.newVector();
         for (int i = 0; i < 3; i++) {
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
@@ -283,7 +283,7 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final String m519a(String[] strArr) {
+    public static final String joinComma(String[] strArr) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         for (int i = 0; i < strArr.length; i++) {
             if (i > 0) {
@@ -295,12 +295,12 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final int m520a() {
+    public static final int nextRandom() {
         return ((Random) AppState.pool[1372]).nextInt();
     }
 
     /* renamed from: a */
-    public static final String m521a(Vector vector, int i) {
+    public static final String getVectorString(Vector vector, int i) {
         return (String) vector.elementAt(i);
     }
 
@@ -343,7 +343,7 @@ public abstract class Utils {
             }
             Object objElementAt = vector.elementAt(0);
             vector.removeElementAt(0);
-            m526b(vector);
+            trimIfEmpty(vector);
             return objElementAt;
         }
     }
@@ -351,23 +351,23 @@ public abstract class Utils {
     /* renamed from: a */
     public static final void removeFrom(Vector vector, Object obj) {
         vector.removeElement(obj);
-        m526b(vector);
+        trimIfEmpty(vector);
     }
 
     /* renamed from: b */
-    public static final void m526b(Vector vector) {
+    public static final void trimIfEmpty(Vector vector) {
         if (vector.size() == 0) {
             vector.trimToSize();
         }
     }
 
     /* renamed from: g */
-    public static final String m527g(String str) {
+    public static final String appendSpace(String str) {
         return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(str).append(' '));
     }
 
     /* renamed from: a */
-    public static final String m528a(String str, String str2) {
+    public static final String defaultIfBlank(String str, String str2) {
         for (int length = str.length() - 1; length >= 0; length--) {
             if (str.charAt(length) != ' ') {
                 return str;
@@ -377,7 +377,7 @@ public abstract class Utils {
     }
 
     /* renamed from: d */
-    public static final String m529d(String str, char c) {
+    public static final String removeChar(String str, char c) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
@@ -390,12 +390,12 @@ public abstract class Utils {
     }
 
     /* renamed from: h */
-    public static final String m530h(String str) {
+    public static final String formatPhone(String str) {
         if (str == null) {
             return AppState.emptyStr;
         }
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        if (m531a(str, 99897)) {
+        if (startsWithInt(str, 99897)) {
             for (int i = 0; i < str.length(); i++) {
                 if (i == 0) {
                     stringBufferM1217h.append('(').append('+');
@@ -407,7 +407,7 @@ public abstract class Utils {
                 stringBufferM1217h.append(str.charAt(i));
             }
         } else {
-            int i2 = m531a(str, 380) ? 1 : 0;
+            int i2 = startsWithInt(str, 380) ? 1 : 0;
             for (int i3 = 0; i3 < str.length(); i3++) {
                 if (i3 == 0) {
                     stringBufferM1217h.append('+');
@@ -425,12 +425,12 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    private static boolean m531a(String str, int i) {
+    private static boolean startsWithInt(String str, int i) {
         return str.startsWith(Integer.toString(i));
     }
 
     /* renamed from: i */
-    public static final String m532i(String str) {
+    public static final String extractDigits(String str) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         if (str != null) {
             for (int i = 0; i < str.length(); i++) {
@@ -460,7 +460,7 @@ public abstract class Utils {
     }
 
     /* renamed from: k */
-    public static final String m534k(String str) {
+    public static final String trimAll(String str) {
         while (str.length() > 0 && (str.charAt(0) & 65535) <= 32) {
             str = StringUtils.suffix(str, 1);
         }
@@ -481,7 +481,7 @@ public abstract class Utils {
     }
 
     /* renamed from: a */
-    public static final int[] m536a(byte[] bArr) {
+    public static final int[] bytesToInts(byte[] bArr) {
         int length = bArr.length >> 2;
         int[] iArr = new int[length];
         int i = 0;
@@ -501,7 +501,7 @@ public abstract class Utils {
     }
 
     /* renamed from: e */
-    public static final short[] m537e(int i) {
+    public static final short[] readShortArray(int i) {
         byte[] bArrM581a = AppState.getBytes(i);
         int length = bArrM581a.length >> 1;
         short[] sArr = new short[length];
@@ -526,7 +526,7 @@ public abstract class Utils {
     }
 
     /* renamed from: n */
-    public static final String m539n(String str) {
+    public static final String normalizeSpaces(String str) {
         int length;
         if (str == null || (length = str.length()) == 0) {
             return str;
@@ -555,7 +555,7 @@ public abstract class Utils {
     }
 
     /* renamed from: f */
-    public static final int m540f(int i) {
+    public static final int pluralForm(int i) {
         int i2 = i % 10;
         if (i2 == 1 && i % 100 != 11) {
             return 0;
@@ -567,7 +567,7 @@ public abstract class Utils {
     }
 
     /* renamed from: c */
-    public static final int m541c(Vector vector) {
+    public static final int vectorSize(Vector vector) {
         if (vector == null) {
             return 0;
         }
@@ -575,8 +575,8 @@ public abstract class Utils {
     }
 
     /* renamed from: c */
-    public static final String m542c(int i, int i2) {
-        Vector vectorM517a = m517a(AppState.getString(i), (char) 0, false);
+    public static final String splitAndGet(int i, int i2) {
+        Vector vectorM517a = splitImpl(AppState.getString(i), (char) 0, false);
         String str = (String) vectorM517a.elementAt(i2);
         NetworkUtils.releaseVector(vectorM517a);
         return str;
@@ -628,7 +628,7 @@ public abstract class Utils {
     }
 
     /* renamed from: b */
-    public static final String m544b() {
-        return new ByteBuffer().writeIntLE(m520a()).writeLong(System.currentTimeMillis()).encryptMD5().toHexString();
+    public static final String generateRandomHash() {
+        return new ByteBuffer().writeIntLE(nextRandom()).writeLong(System.currentTimeMillis()).encryptMD5().toHexString();
     }
 }

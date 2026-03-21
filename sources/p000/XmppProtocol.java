@@ -69,7 +69,7 @@ public class XmppProtocol extends Account {
             }
         }
         XmppContactGroup c0036g = new XmppContactGroup(this, c0043n);
-        int iM541c = Utils.m541c(c0036g.contacts);
+        int iM541c = Utils.vectorSize(c0036g.contacts);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
@@ -222,7 +222,7 @@ public class XmppProtocol extends Account {
                             ((XmppMailRuProtocol) this).serverResourceId = this.login;
                             objArr = null;
                         } else {
-                            String strM13b = StringUtils.prefix(Utils.m544b(), 16);
+                            String strM13b = StringUtils.prefix(Utils.generateRandomHash(), 16);
                             Object[] objArr3 = {this, strM13b, new ByteBuffer().writeCompressed(5249005).writeRawString(strM13b).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
                             new AsyncTask(34, objArr3);
                             objArr = objArr3;
@@ -345,7 +345,7 @@ public class XmppProtocol extends Account {
                                 String str3 = this.serverAddress;
                                 String strM12a = StringUtils.substring(strM1317c, i, strM1317c.indexOf(34, i));
                                 ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(660529).writeRawString(strMo128m).writeCompressed(595003).writeRawString(str3).writeCompressed(595012).writeRawString(strM12a).writeCompressed(1446989);
-                                String strM544b = Utils.m544b();
+                                String strM544b = Utils.generateRandomHash();
                                 c0022avM569h2.appendText((Object) c0043nM1310c.writeRawString(strM544b).writeCompressed(1840227).writeRawString(str3).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(strMo128m).writeByte(58).writeRawString(str3).writeByte(58).writeRawString(str2).encryptMD5().writeByte(58).writeRawString(strM12a).writeByte(58).writeRawString(strM544b).encryptMD5().toHexString()).writeByte(58).writeRawString(strM12a).writeCompressed(660619).writeRawString(strM544b).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(str3).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
                             }
                             sendXmlElement(c0022avM569h2);
@@ -435,7 +435,7 @@ public class XmppProtocol extends Account {
                                             } else if (StringUtils.m3a(398982, strM574a2)) {
                                                 removeAllContacts();
                                                 parseRosterItems(c0022avM576d);
-                                                if (Utils.m541c(this.groups) == 0) {
+                                                if (Utils.vectorSize(this.groups) == 0) {
                                                     this.groups.addElement(new XmppContactGroup(this, 1, AppState.getString(459528)));
                                                 }
                                                 this.progress = 100;
@@ -730,7 +730,7 @@ public class XmppProtocol extends Account {
     private XmppContactGroup findGroupByName(String str) {
         XmppContactGroup c0036g;
         Vector vector = this.groups;
-        int iM541c = Utils.m541c(vector);
+        int iM541c = Utils.vectorSize(vector);
         do {
             iM541c--;
             if (iM541c < 0) {
@@ -773,7 +773,7 @@ public class XmppProtocol extends Account {
         if (0 != iMo124a) {
             return iMo124a;
         }
-        if (Utils.m541c(abstractC0046q.contacts) != 0) {
+        if (Utils.vectorSize(abstractC0046q.contacts) != 0) {
             return 1032;
         }
         abstractC0046q.setNameIfChanged(str);
@@ -830,7 +830,7 @@ public class XmppProtocol extends Account {
     private final void parseRosterItems(XmlElement c0022av) {
         Vector vector = this.groups;
         Vector vector2 = c0022av.children;
-        int iM541c = Utils.m541c(vector2);
+        int iM541c = Utils.vectorSize(vector2);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
@@ -917,7 +917,7 @@ public class XmppProtocol extends Account {
         Image imageM132e;
         String strM11a;
         if (StringUtils.m3a(398966, c0022av.tagName) && (strM11a = StringUtils.fromBuffer(c0022av.textContent)) != null) {
-            String strM534k = Utils.m534k(strM11a);
+            String strM534k = Utils.trimAll(strM11a);
             if (Utils.nonEmpty(strM534k)) {
                 try {
                     return ResourceManager.decodeBase64(strM534k).toImage();
@@ -925,7 +925,7 @@ public class XmppProtocol extends Account {
                 }
             }
         }
-        int iM541c = Utils.m541c(c0022av.children);
+        int iM541c = Utils.vectorSize(c0022av.children);
         do {
             iM541c--;
             if (iM541c < 0) {
@@ -941,12 +941,12 @@ public class XmppProtocol extends Account {
         if (!StringUtils.m3a(333436, c0022av.tagName)) {
             String strM11a = StringUtils.fromBuffer(c0022av.textContent);
             if (strM11a != null) {
-                String strM534k = Utils.m534k(strM11a);
+                String strM534k = Utils.trimAll(strM11a);
                 if (Utils.nonEmpty(strM534k)) {
                     stringBuffer.append(strM534k).append('\n');
                 }
             }
-            for (int i = 0; i < Utils.m541c(c0022av.children); i++) {
+            for (int i = 0; i < Utils.vectorSize(c0022av.children); i++) {
                 buildContactDescription(stringBuffer, c0022av.getChildAt(i));
             }
         }

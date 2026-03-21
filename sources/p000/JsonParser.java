@@ -106,7 +106,7 @@ public abstract class JsonParser {
                 }
                 cM499a = cM1342n;
             } else {
-                cM499a = Utils.m499a((int) nextJsonChar(c0043n, stringBuffer));
+                cM499a = Utils.win1251ToChar((int) nextJsonChar(c0043n, stringBuffer));
             }
             if (cM499a == '\"') {
                 return NetworkUtils.bufToStringCached(stringBufferM1217h);
@@ -223,7 +223,7 @@ public abstract class JsonParser {
 
     /* renamed from: f */
     public static final String getVectorString(Object obj, int i) {
-        return Utils.m521a((Vector) obj, i);
+        return Utils.getVectorString((Vector) obj, i);
     }
 
     /* renamed from: a */

@@ -65,7 +65,7 @@ public final class ChatRoom {
         int size = this.messageIds.size();
         c0043n.writeIntLE(size);
         for (int i = 0; i < size; i++) {
-            String strM521a = Utils.m521a(this.messageIds, i);
+            String strM521a = Utils.getVectorString(this.messageIds, i);
             c0043n.writeStringLatin1(strM521a);
             Message c0026azM1415b = getMessage(strM521a);
             c0043n.writeLong(c0026azM1415b.timestamp);

@@ -7,13 +7,13 @@ import p000.SplashScreen;
 public final class Midlet extends MIDlet {
 
     /* renamed from: a */
-    private boolean f382a;
+    private boolean started;
 
     public final void startApp() {
-        if (this.f382a) {
+        if (this.started) {
             return;
         }
-        this.f382a = true;
+        this.started = true;
         new SplashScreen(this);
     }
 

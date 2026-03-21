@@ -101,8 +101,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             AppState.setInt(1474, 0);
             if (c0005ae != null) {
                 String strM13b = c0005ae.login;
-                Vector vectorM516c = Utils.m516c(AppState.getString(696), (char) 0);
-                int iM541c = Utils.m541c(vectorM516c);
+                Vector vectorM516c = Utils.splitNonEmpty(AppState.getString(696), (char) 0);
+                int iM541c = Utils.vectorSize(vectorM516c);
                 while (true) {
                     iM541c--;
                     if (iM541c < 1) {
@@ -143,7 +143,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (null != abstractC0037hM616i2) {
             AppState.setObject(1293, (Object) abstractC0037hM616i2.password);
             String str = abstractC0037hM616i2.login;
-            Vector vectorM516c2 = Utils.m516c(AppState.getString(694), (char) 0);
+            Vector vectorM516c2 = Utils.splitNonEmpty(AppState.getString(694), (char) 0);
             int size = vectorM516c2.size();
             int i = 0;
             while (true) {
@@ -193,7 +193,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             return AppController.showError(301);
         }
         if (!containsDomainSuffix(strM9b, 694) && !containsDomainSuffix(strM9b, 695)) {
-            strM9b = StringUtils.concat(strM9b, Utils.m542c(694, AppState.getInt(1474)));
+            strM9b = StringUtils.concat(strM9b, Utils.splitAndGet(694, AppState.getInt(1474)));
         }
         if (!isValidUsername(strM9b)) {
             return AppController.showError(559);
@@ -219,7 +219,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: c */
     private static final boolean containsDomainSuffix(String str, int i) {
-        Vector vectorM516c = Utils.m516c(AppState.getString(i), (char) 0);
+        Vector vectorM516c = Utils.splitNonEmpty(AppState.getString(i), (char) 0);
         int size = vectorM516c.size();
         do {
             size--;
@@ -815,8 +815,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 XmppProtocol c0005ae = (XmppProtocol) objArr[0];
                 c0005ae.setAuthParameters(c0005ae.mo84j(), 5222);
             } else {
-                Vector vectorM516c = Utils.m516c(strM861j, ':');
-                ((XmppProtocol) objArr[0]).setAuthParameters(Utils.m521a(vectorM516c, 0), Integer.parseInt(Utils.m521a(vectorM516c, 1)));
+                Vector vectorM516c = Utils.splitNonEmpty(strM861j, ':');
+                ((XmppProtocol) objArr[0]).setAuthParameters(Utils.getVectorString(vectorM516c, 0), Integer.parseInt(Utils.getVectorString(vectorM516c, 1)));
                 NetworkUtils.releaseVector(vectorM516c);
             }
         } catch (Throwable th) {
@@ -830,10 +830,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         DatagramConnection datagramConnection = null;
         try {
             AppController.acquireNetworkLock();
-            Vector vectorM516c = Utils.m516c(str, '.');
+            Vector vectorM516c = Utils.splitNonEmpty(str, '.');
             ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(792490);
-            for (int i = 0; i < Utils.m541c(vectorM516c); i++) {
-                c0043nM1310c.writeByteLenStr(Utils.m521a(vectorM516c, i));
+            for (int i = 0; i < Utils.vectorSize(vectorM516c); i++) {
+                c0043nM1310c.writeByteLenStr(Utils.getVectorString(vectorM516c, i));
             }
             NetworkUtils.releaseVector(vectorM516c);
             c0043nM1310c.writeCompressed(333750);
@@ -899,7 +899,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: a */
     public static final void writeAddressPairs(Vector vector, ByteBuffer c0043n) {
-        int iM541c = Utils.m541c(vector);
+        int iM541c = Utils.vectorSize(vector);
         c0043n.writeIntLE(iM541c);
         for (int i = 0; i < iM541c; i++) {
             String[] strArr = (String[]) vector.elementAt(i);
@@ -923,7 +923,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: a */
     public static final Vector copyAddressList(Vector vector) {
         Vector vectorM1213g = NetworkUtils.newVector();
-        for (int i = 0; i < Utils.m541c(vector); i++) {
+        for (int i = 0; i < Utils.vectorSize(vector); i++) {
             vectorM1213g.addElement(vector.elementAt(i));
         }
         return vectorM1213g;
@@ -943,7 +943,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: b */
     public static final Vector getFirstAddress(Vector vector) {
         Vector vectorM1213g = NetworkUtils.newVector();
-        if (Utils.m541c(vector) > 0) {
+        if (Utils.vectorSize(vector) > 0) {
             vectorM1213g.addElement(vector.elementAt(0));
         }
         return vectorM1213g;
@@ -954,7 +954,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         String str = strArr[0];
         if (str.indexOf(64) != -1) {
             boolean z = false;
-            int iM541c = Utils.m541c(vector);
+            int iM541c = Utils.vectorSize(vector);
             while (true) {
                 iM541c--;
                 if (iM541c < 0) {
@@ -976,7 +976,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM870k = splitCommaSeparated(Conversation.decodeHtmlSpecial(str2));
         Vector vectorM870k2 = splitCommaSeparated(str);
-        for (int i = 0; i < Utils.m541c(vectorM870k2); i++) {
+        for (int i = 0; i < Utils.vectorSize(vectorM870k2); i++) {
             addUniqueAddress(vectorM1213g, AppController.createAddressPair((String) vectorM870k2.elementAt(i), (String) vectorM870k.elementAt(i)));
         }
         NetworkUtils.releaseVector(vectorM870k);
@@ -986,7 +986,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: c */
     public static final String[] getFirstRecipient(Vector vector) {
-        if (Utils.m541c(vector) > 0) {
+        if (Utils.vectorSize(vector) > 0) {
             return (String[]) vector.elementAt(0);
         }
         return null;
@@ -1119,7 +1119,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             String str = c0026azM1415b.body;
             String strM584b = AppState.getString(198549);
             String strM584b2 = AppState.getString(198546);
-            String string = new StringBuffer().append(AppState.getString(838)).append(Utils.m507d(str)).toString();
+            String string = new StringBuffer().append(AppState.getString(838)).append(Utils.quoteText(str)).toString();
             switch (AppState.getInt(1516)) {
                 case 0:
                     ResourceManager.composeEmail(getFirstAddress(vectorM668b), new StringBuffer().append(strM584b).append(strM673d).toString(), string);

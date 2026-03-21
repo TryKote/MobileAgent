@@ -233,7 +233,7 @@ public final class MmpProtocol extends Account {
             case 2:
                 if (this.networkResourceMode != 0) {
                     Vector vectorM439R = AppController.getMrimAccountList();
-                    int iM541c = Utils.m541c(vectorM439R);
+                    int iM541c = Utils.vectorSize(vectorM439R);
                     while (true) {
                         iM541c--;
                         if (iM541c >= 0) {
@@ -247,7 +247,7 @@ public final class MmpProtocol extends Account {
                             break;
                         }
                     }
-                    if (Utils.m541c(vectorM439R) == 0) {
+                    if (Utils.vectorSize(vectorM439R) == 0) {
                         IOUtils.postEvent((Object) AppState.getString(479));
                         this.progress = 0;
                     }
@@ -321,7 +321,7 @@ public final class MmpProtocol extends Account {
         this.connection.m1132a(this.dataBuffer);
         if (this.networkResourceMode == 1) {
             Vector vectorM440S = AppController.getOnlineMrimAccounts();
-            if (Utils.m541c(vectorM440S) == 0) {
+            if (Utils.vectorSize(vectorM440S) == 0) {
                 closeConnection();
                 this.lastError = getDefaultError();
                 return;
@@ -557,14 +557,14 @@ public final class MmpProtocol extends Account {
                     for (int i4 = 0; i4 < iM1353u3; i4 += 16) {
                         int i5 = i3 + i4;
                         for (int i6 = 0; i6 < 576; i6 += 16) {
-                            if (Utils.m509a(bArrM581a3, i6, bArr, i5, 16)) {
+                            if (Utils.compareBytes(bArrM581a3, i6, bArr, i5, 16)) {
                                 c0009ai.defaultIcon &= -65536;
                                 c0009ai.defaultIcon |= (i6 >> 4) + 269;
                             }
                         }
-                        if (Utils.m509a(bArrM581a, 0, bArr, i5, 16)) {
+                        if (Utils.compareBytes(bArrM581a, 0, bArr, i5, 16)) {
                             c0009ai.isBlocked = true;
-                        } else if (Utils.m509a(bArrM581a2, 0, bArr, i5, 16)) {
+                        } else if (Utils.compareBytes(bArrM581a2, 0, bArr, i5, 16)) {
                             c0009ai.isUnblocked = true;
                         }
                     }
@@ -580,7 +580,7 @@ public final class MmpProtocol extends Account {
                             byte[] bArr2 = new byte[iM1353u5];
                             c0043n.readIntoBytes(bArr2);
                             String strM17c = StringUtils.intern(new String(bArr2));
-                            if (strM17c.startsWith(NetworkUtils.longToHex(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.suffix(strM17c, 7), 0, 23, -1)) >= 0) {
+                            if (strM17c.startsWith(NetworkUtils.longToHex(28270022039266153L)) && (iM511a = Utils.parseIntBounded(StringUtils.suffix(strM17c, 7), 0, 23, -1)) >= 0) {
                                 c0009ai.defaultIcon &= -65536;
                                 c0009ai.defaultIcon |= iM511a + 269;
                             }
@@ -795,7 +795,7 @@ public final class MmpProtocol extends Account {
         int iM520a;
         do {
             z = false;
-            iM520a = (Utils.m520a() & 28671) + 4096;
+            iM520a = (Utils.nextRandom() & 28671) + 4096;
             if (iM520a == this.groupSequenceId) {
                 z = true;
             } else {

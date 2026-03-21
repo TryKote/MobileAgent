@@ -202,7 +202,7 @@ public final class XmppContactGroup extends ContactGroup {
                     break;
                 }
                 char cM1344o = (char) c0043n.readByte();
-                if (Utils.m498a(cM1344o)) {
+                if (Utils.isDigitOrSep(cM1344o)) {
                     stringBufferM1217h.append(cM1344o);
                 }
             }
@@ -702,7 +702,7 @@ public final class XmppContactGroup extends ContactGroup {
     private static final int[] expandRC4Key(byte[] bArr, int i) {
         ByteBuffer c0043n = new ByteBuffer(NetworkUtils.longToHex(24879), 4200);
         int[] iArr = new int[1060];
-        System.arraycopy(Utils.m536a(c0043n.data), 0, iArr, 0, 1042);
+        System.arraycopy(Utils.bytesToInts(c0043n.data), 0, iArr, 0, 1042);
         c0043n.clear();
         int i2 = 0;
         for (int i3 = 0; i3 < 18; i3++) {
@@ -921,10 +921,10 @@ public final class XmppContactGroup extends ContactGroup {
     public static final Vector parseMapPointsFromStr(String str) {
         Vector vectorM1213g = NetworkUtils.newVector();
         try {
-            Vector vectorM513a = Utils.m513a(str, '\r', '\n');
+            Vector vectorM513a = Utils.splitReplace(str, '\r', '\n');
             int size = vectorM513a.size();
             for (int i = 0; i < size; i++) {
-                Vector vectorM516c = Utils.m516c((String) vectorM513a.elementAt(i), '|');
+                Vector vectorM516c = Utils.splitNonEmpty((String) vectorM513a.elementAt(i), '|');
                 MapPoint c0014an = new MapPoint((String) vectorM516c.elementAt(0), Long.parseLong((String) vectorM516c.elementAt(2)), Long.parseLong((String) vectorM516c.elementAt(1)), Utils.parseInt(vectorM516c.elementAt(3)));
                 c0014an.height = 1;
                 c0014an.typeCode = Utils.parseInt(vectorM516c.elementAt(4));
@@ -933,7 +933,7 @@ public final class XmppContactGroup extends ContactGroup {
                 NetworkUtils.releaseVector(vectorM516c);
             }
             NetworkUtils.releaseVector(vectorM513a);
-            Utils.m526b(vectorM1213g);
+            Utils.trimIfEmpty(vectorM1213g);
         } catch (Throwable unused) {
         }
         return vectorM1213g;
@@ -965,7 +965,7 @@ public final class XmppContactGroup extends ContactGroup {
                     vectorM1213g.addElement(new MapPoint(c0043nM986d));
                 }
             }
-            Utils.m526b(vectorM1213g);
+            Utils.trimIfEmpty(vectorM1213g);
         } catch (Throwable unused) {
         }
         return vectorM1213g;

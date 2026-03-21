@@ -334,7 +334,7 @@ public final class NetworkUtils {
             strM15c = AppState.emptyStr;
         }
         int i = 0;
-        Vector vectorM516c = Utils.m516c(AppState.getString(694), (char) 0);
+        Vector vectorM516c = Utils.splitNonEmpty(AppState.getString(694), (char) 0);
         int size = vectorM516c.size();
         while (true) {
             size--;
@@ -554,7 +554,7 @@ public final class NetworkUtils {
     /* renamed from: a */
     public static final Screen m1193a(Screen c0013am, Vector vector) {
         MenuItem c0032cM1057D;
-        int iM541c = Utils.m541c(vector);
+        int iM541c = Utils.vectorSize(vector);
         for (int i = 0; i < iM541c; i++) {
             Object objElementAt = vector.elementAt(i);
             if (objElementAt instanceof Contact) {
@@ -564,13 +564,13 @@ public final class NetworkUtils {
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
                 if (c0042m.getAccount() instanceof MrimAccount) {
-                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.handleServerAction(Utils.m511a(c0042m.getString(10), 0, 4, 0), c0042m.getString(12))).addText(Utils.m495b(c0042m.getDisplayName()), 1, 0).setLabel(c0042m.getString(3));
+                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.handleServerAction(Utils.parseIntBounded(c0042m.getString(10), 0, 4, 0), c0042m.getString(12))).addText(Utils.withComma(c0042m.getDisplayName()), 1, 0).setLabel(c0042m.getString(3));
                     c0032cM898b.data = c0042m;
                     c0032cM1057D = c0032cM898b;
                 } else {
                     MenuItem c0032cM886c = MenuItem.createDefault();
                     int iM510a = Utils.parseInt((Object) c0042m.getString(61));
-                    MenuItem c0032cM898b2 = c0032cM886c.setIcon(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).setLabel(Utils.m527g(c0042m.getString(60))).addText(Utils.m495b(c0042m.getDisplayName()), 1, 0).setLabel(StringUtils.concat(Utils.m527g(c0042m.getFirstName()), c0042m.getLastName()));
+                    MenuItem c0032cM898b2 = c0032cM886c.setIcon(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).setLabel(Utils.appendSpace(c0042m.getString(60))).addText(Utils.withComma(c0042m.getDisplayName()), 1, 0).setLabel(StringUtils.concat(Utils.appendSpace(c0042m.getFirstName()), c0042m.getLastName()));
                     c0032cM898b2.data = c0042m;
                     c0032cM1057D = c0032cM898b2;
                 }
@@ -611,7 +611,7 @@ public final class NetworkUtils {
                     int i7 = i6 + 1;
                     int iM586d2 = AppState.getInt(i6);
                     int i8 = i7 + 1;
-                    int iM511a = Utils.m511a(str, iM586d, iM586d2, AppState.getInt(i7));
+                    int iM511a = Utils.parseIntBounded(str, iM586d, iM586d2, AppState.getInt(i7));
                     i2 = i8 + 1;
                     AppState.setIntInd(i8, iM511a);
                 } else {
@@ -822,7 +822,7 @@ public final class NetworkUtils {
                 int i4 = i3;
                 i3++;
                 String str = (String) vectorM1213g2.elementAt(i4);
-                int iM541c = Utils.m541c(vectorM512e);
+                int iM541c = Utils.vectorSize(vectorM512e);
                 do {
                     iM541c--;
                     if (iM541c < 0) {
@@ -844,7 +844,7 @@ public final class NetworkUtils {
                             c0042mM1251a.setLastName(c0043n.readUTF8Str((String) null));
                             break;
                         case 5:
-                            int iM511a = Utils.m511a(c0043n.readWideStr(), 1, 2, 0);
+                            int iM511a = Utils.parseIntBounded(c0043n.readWideStr(), 1, 2, 0);
                             if (1 == iM511a) {
                                 c0042mM1251a.setMaritalMarried();
                                 break;
@@ -1001,7 +1001,7 @@ public final class NetworkUtils {
     public static final void releaseVector(Vector vector) {
         if (vector != null) {
             vector.removeAllElements();
-            Utils.m526b(vector);
+            Utils.trimIfEmpty(vector);
             Vector[] vectorArr = vectorPool;
             synchronized (vectorArr) {
                 for (int i = 0; i < 5; i++) {
@@ -1103,7 +1103,7 @@ public final class NetworkUtils {
     /* renamed from: a */
     private static final String m1219a(byte[] bArr, StringBuffer stringBuffer, boolean z) {
         for (byte b : bArr) {
-            stringBuffer.append(Utils.m499a((int) b));
+            stringBuffer.append(Utils.win1251ToChar((int) b));
         }
         return bufToString(stringBuffer, z);
     }
@@ -1144,7 +1144,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final Object[] m1223a(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return m1224a(2, bufToStringCached(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
+        return m1224a(2, bufToStringCached(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
     }
 
     /* renamed from: a */

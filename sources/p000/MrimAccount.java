@@ -301,7 +301,7 @@ public final class MrimAccount extends Account implements ListItem {
                             break;
                         } else {
                             char cM1344o = (char) this.dataBuffer.readByte();
-                            if (Utils.m498a(cM1344o)) {
+                            if (Utils.isDigitOrSep(cM1344o)) {
                                 stringBufferM1217h.append(cM1344o);
                             }
                         }
@@ -429,7 +429,7 @@ public final class MrimAccount extends Account implements ListItem {
                         }
                         Hashtable hashtable = new Hashtable();
                         String strM1214a = null;
-                        String strM529d = Utils.m529d(c0043nM1349s.readWideStr(), '\r');
+                        String strM529d = Utils.removeChar(c0043nM1349s.readWideStr(), '\r');
                         int length = strM529d.length();
                         StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
                         boolean z = false;
@@ -962,7 +962,7 @@ public final class MrimAccount extends Account implements ListItem {
         int length = objArr.length - 1;
         String[] strArr = new String[length];
         for (int i = 0; i < length; i++) {
-            strArr[i] = Utils.m532i((String) objArr[i + 1]);
+            strArr[i] = Utils.extractDigits((String) objArr[i + 1]);
         }
         MrimContact c0035f = (MrimContact) abstractC0041l;
         if (c0035f.isOffline() && length == 0) {
@@ -982,7 +982,7 @@ public final class MrimAccount extends Account implements ListItem {
                 }
             }
         }
-        String strM519a = Utils.m519a(strArr);
+        String strM519a = Utils.joinComma(strArr);
         return trySendData(createAndQueueCommand(new Object[]{AppController.createMrimPacket(this, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(c0035f.statusFlags).writeIntLE(c0035f.groupId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(str).writeStringLatin1(strM519a)), ResourceManager.integerOf(0), c0035f, str, strM519a}));
     }
 
@@ -1088,7 +1088,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: l */
     private final StringBuffer formatContactName(String str) {
-        return Utils.m496a(NetworkUtils.newStringBuffer().append(getContactDisplayName(str)), true).append('\n');
+        return Utils.appendCommaIf(NetworkUtils.newStringBuffer().append(getContactDisplayName(str)), true).append('\n');
     }
 
     /* renamed from: a */
@@ -1125,7 +1125,7 @@ public final class MrimAccount extends Account implements ListItem {
                 c0035fM717f.receiveMessage(j, stringBufferAppend);
                 return;
             }
-            Utils.m496a(stringBufferAppend.append(getContactDisplayName(c0043n.readWideStr())), iM1328e != 0);
+            Utils.appendCommaIf(stringBufferAppend.append(getContactDisplayName(c0043n.readWideStr())), iM1328e != 0);
         }
     }
 

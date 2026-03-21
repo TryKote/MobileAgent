@@ -32,7 +32,7 @@ public final class XmlParser {
             if (c0043n.length == 0) {
                 return -1;
             }
-            return Utils.m499a(c0043n.readUByte());
+            return Utils.win1251ToChar(c0043n.readUByte());
         }
         int i = this.position;
         String str = (String) this.source;

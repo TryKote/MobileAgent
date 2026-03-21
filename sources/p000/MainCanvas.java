@@ -279,7 +279,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
             int i4 = pointerDownY;
             Vector vectorM614m = AppState.getVector(1266);
             synchronized (vectorM614m) {
-                int iM541c = Utils.m541c(vectorM614m);
+                int iM541c = Utils.vectorSize(vectorM614m);
                 while (true) {
                     iM541c--;
                     if (iM541c < 0) {

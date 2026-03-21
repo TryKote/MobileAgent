@@ -28,7 +28,7 @@ public final class XmppContact extends Contact {
         this.jabberId = str;
         this.statusMessage = str3;
         this.unreadCount = 0;
-        setDisplayName(Utils.m528a(str2, str));
+        setDisplayName(Utils.defaultIfBlank(str2, str));
         this.defaultIcon = XmppProtocol.getIconForError(this.status);
         this.identifier = c0005ae.encodeId().writeRawString(str).getStringAndClear();
         c0005ae.registerContact(this);

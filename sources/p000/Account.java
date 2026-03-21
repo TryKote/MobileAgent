@@ -241,7 +241,7 @@ public abstract class Account {
 
     /* renamed from: c */
     public final Account setDisplayName(String str) {
-        this.displayName = Utils.m528a(str, this.login);
+        this.displayName = Utils.defaultIfBlank(str, this.login);
         return this;
     }
 

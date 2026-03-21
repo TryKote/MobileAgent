@@ -73,11 +73,11 @@ public final class AsyncTask implements Runnable, CommandListener {
             Object[] objArr = (Object[]) c0032c.data;
             if (!StringUtils.m4a(strM17c, objArr[0])) {
                 objArr[0] = strM17c;
-                String strM506c = ((Integer) objArr[2]).intValue() != 327680 ? strM17c : Utils.m506c(strM17c);
+                String strM506c = ((Integer) objArr[2]).intValue() != 327680 ? strM17c : Utils.maskPassword(strM17c);
                 String str = StringUtils.isEmpty(strM506c) ? null : strM506c;
                 c0032c.clear();
                 if (objArr[4] instanceof String) {
-                    c0032c.setLabel(Utils.m527g((String) objArr[4]));
+                    c0032c.setLabel(Utils.appendSpace((String) objArr[4]));
                 } else {
                     c0032c.setIcon(((Integer) objArr[4]).intValue());
                 }

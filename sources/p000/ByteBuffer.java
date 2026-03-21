@@ -420,7 +420,7 @@ public final class ByteBuffer {
             if (iM1328e < 0) {
                 return NetworkUtils.bufToStringCached(stringBufferM1217h);
             }
-            stringBufferM1217h.append(Utils.m499a((int) readByte()));
+            stringBufferM1217h.append(Utils.win1251ToChar((int) readByte()));
         }
     }
 
@@ -471,7 +471,7 @@ public final class ByteBuffer {
     public final String readAllByteStr() {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         while (this.length > 0) {
-            stringBufferM1217h.append(Utils.m499a((int) readByte()));
+            stringBufferM1217h.append(Utils.win1251ToChar((int) readByte()));
         }
         clear();
         return NetworkUtils.bufToStringCached(stringBufferM1217h);
@@ -835,7 +835,7 @@ public final class ByteBuffer {
             if (i < 0) {
                 return NetworkUtils.bufToStringCached(stringBufferM1217h);
             }
-            stringBufferM1217h.append(Utils.m499a(readUByte()));
+            stringBufferM1217h.append(Utils.win1251ToChar(readUByte()));
         }
     }
 
@@ -843,7 +843,7 @@ public final class ByteBuffer {
     public final ByteBuffer writeCharBytes(String str) {
         int length = str.length();
         for (int i = 0; i < length; i++) {
-            writeByte(Utils.m500b(str.charAt(i)));
+            writeByte(Utils.charToWin1251(str.charAt(i)));
         }
         return this;
     }

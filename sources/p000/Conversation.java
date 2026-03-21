@@ -105,7 +105,7 @@ public final class Conversation implements ListItem {
             stringBufferM1217h.append(AppState.getString(445)).append(size);
         } else {
             int i = size - 1;
-            stringBufferM1217h.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.m540f(i)));
+            stringBufferM1217h.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.pluralForm(i)));
         }
         return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
@@ -199,7 +199,7 @@ public final class Conversation implements ListItem {
     /* renamed from: a */
     public static final byte[] hashData(byte[] bArr, int i) {
         int[] iArr = new int[16];
-        int[] iArrM536a = Utils.m536a(AppState.getBytes(962));
+        int[] iArrM536a = Utils.bytesToInts(AppState.getBytes(962));
         int[] iArr2 = new int[2];
         byte[] bArrM1211a = NetworkUtils.newBytes(64);
         md5ProcessBuffer(bArr, i, iArr, iArrM536a, iArr2, bArrM1211a);
@@ -847,7 +847,7 @@ public final class Conversation implements ListItem {
             vectorM439R.addElement(c0028ba);
             c0028ba = null;
         }
-        int iM541c = Utils.m541c(vectorM439R);
+        int iM541c = Utils.vectorSize(vectorM439R);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
@@ -1187,7 +1187,7 @@ public final class Conversation implements ListItem {
             int i2 = (cCharAt < 1072 || cCharAt > 1103) ? cCharAt == 1105 ? 32 : (cCharAt < 1040 || cCharAt > 1071) ? cCharAt == 1025 ? 72 : -1 : (cCharAt - 1040) + 40 : cCharAt - 1072;
             int i3 = i2;
             if (i2 >= 40) {
-                stringBufferM1217h.append(Utils.m521a(vectorM512e, i3 - 40).toUpperCase());
+                stringBufferM1217h.append(Utils.getVectorString(vectorM512e, i3 - 40).toUpperCase());
             } else if (i3 >= 0) {
                 stringBufferM1217h.append(vectorM512e.elementAt(i3));
             } else {

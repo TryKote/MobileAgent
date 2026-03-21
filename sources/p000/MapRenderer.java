@@ -310,7 +310,7 @@ public abstract class MapRenderer {
                                 int i36 = (int) ((i27 / 2) + (j3 - jM317a2));
                                 graphics.drawImage(imageM1139a, i35, i36, 3);
                                 iArr2[(i34 * i28) + i33] = 1;
-                                if (str2 == null && Utils.m505a(j2 - jM317a) < 20 && Utils.m505a(j3 - jM317a2) < 20) {
+                                if (str2 == null && Utils.absLong(j2 - jM317a) < 20 && Utils.absLong(j3 - jM317a2) < 20) {
                                     String str3 = (String) objArr2[2];
                                     if (Utils.nonEmpty(str3)) {
                                         str2 = str3;
@@ -332,7 +332,7 @@ public abstract class MapRenderer {
             int i37 = viewportWidth;
             int i38 = viewportHeight;
             hideTooltip();
-            if (c0014an2 != null && c0014an2.selected && c0014an2.getDisplayName() != null && Utils.m505a(j10 - c0014an2.getLonAtZoom(iM586d)) <= i37 / 2 && Utils.m505a(j11 - c0014an2.getLatAtZoom(iM586d)) <= i38 / 2) {
+            if (c0014an2 != null && c0014an2.selected && c0014an2.getDisplayName() != null && Utils.absLong(j10 - c0014an2.getLonAtZoom(iM586d)) <= i37 / 2 && Utils.absLong(j11 - c0014an2.getLatAtZoom(iM586d)) <= i38 / 2) {
                 int iM270c = (int) ((i37 / 2) + (c0014an2.getLonAtZoom(iM586d) - j10));
                 int iM271d2 = (int) ((i38 / 2) + (j11 - c0014an2.getLatAtZoom(iM586d)));
                 if (c0014an2.height == 2) {
@@ -343,7 +343,7 @@ public abstract class MapRenderer {
                     i4 = 4;
                 }
                 graphics.drawImage(imageM1023b2, iM270c, iM271d2, 32 | i4);
-                if (Utils.m505a(j10 - c0014an2.getLonAtZoom(iM586d)) >= 20 || Utils.m505a(j11 - c0014an2.getLatAtZoom(iM586d)) >= 20) {
+                if (Utils.absLong(j10 - c0014an2.getLonAtZoom(iM586d)) >= 20 || Utils.absLong(j11 - c0014an2.getLatAtZoom(iM586d)) >= 20) {
                     hideTooltip();
                 } else {
                     showTooltip((ListItem) c0014an2);
@@ -358,9 +358,9 @@ public abstract class MapRenderer {
             MapPoint c0014an3 = null;
             while (enumerationM1167j.hasMoreElements()) {
                 MapPoint c0014an4 = (MapPoint) enumerationM1167j.nextElement();
-                if (Utils.m505a(j12 - c0014an4.getLonAtZoom(iM586d)) < i39 / 2 && Utils.m505a(j13 - c0014an4.getLatAtZoom(iM586d)) < i40 / 2 && c0014an4.selected) {
+                if (Utils.absLong(j12 - c0014an4.getLonAtZoom(iM586d)) < i39 / 2 && Utils.absLong(j13 - c0014an4.getLatAtZoom(iM586d)) < i40 / 2 && c0014an4.selected) {
                     graphics.drawImage(XmppContactGroup.getOrLoadImage(18), (int) ((i39 / 2) + (c0014an4.getLonAtZoom(iM586d) - j12)), (int) ((i40 / 2) + (j13 - c0014an4.getLatAtZoom(iM586d))), 36);
-                    if (Utils.m505a(j12 - c0014an4.getLonAtZoom(iM586d)) < 20 && (iM271d = (int) (j13 - c0014an4.getLatAtZoom(iM586d))) < 20 && iM271d > -10 && !z2) {
+                    if (Utils.absLong(j12 - c0014an4.getLonAtZoom(iM586d)) < 20 && (iM271d = (int) (j13 - c0014an4.getLatAtZoom(iM586d))) < 20 && iM271d > -10 && !z2) {
                         c0014an3 = c0014an4;
                         z2 = true;
                     }
@@ -396,7 +396,7 @@ public abstract class MapRenderer {
                             }
                             graphics.drawImage(imageM1023b, i44, i45, 3);
                         }
-                        if (Utils.m505a(j14 - jMo282a) < 20 && Utils.m505a(j15 - jMo283b) < 20 && interfaceC0044o2 == null) {
+                        if (Utils.absLong(j14 - jMo282a) < 20 && Utils.absLong(j15 - jMo283b) < 20 && interfaceC0044o2 == null) {
                             interfaceC0044o2 = interfaceC0044o3;
                         }
                     }
@@ -475,7 +475,7 @@ public abstract class MapRenderer {
                             if (imageM1023b3 != null) {
                                 graphics.drawImage(image, i55, i56, 3);
                             }
-                            if (Utils.m505a(j16 - jMo282a3) < 20 && Utils.m505a(j17 - jMo283b3) < 20 && interfaceC0044o7 == null) {
+                            if (Utils.absLong(j16 - jMo282a3) < 20 && Utils.absLong(j17 - jMo283b3) < 20 && interfaceC0044o7 == null) {
                                 interfaceC0044o7 = interfaceC0044o8;
                             }
                         }
@@ -510,7 +510,7 @@ public abstract class MapRenderer {
                             if (i60 > 0 && i60 < i57 && i61 > 0 && i61 < i58) {
                                 graphics.drawImage(XmppContactGroup.getOrLoadImage(22), i60, i61, 3);
                             }
-                            if (Utils.m505a(j22 - jMo282a4) < 20 && Utils.m505a(j23 - jMo283b4) < 20 && c0028ba == null) {
+                            if (Utils.absLong(j22 - jMo282a4) < 20 && Utils.absLong(j23 - jMo283b4) < 20 && c0028ba == null) {
                                 c0028ba = c0028ba2;
                             }
                         }
@@ -537,7 +537,7 @@ public abstract class MapRenderer {
                 long jMo282a5 = interfaceC0044o.getCommandId(iM586d);
                 long jMo283b5 = interfaceC0044o.executeCommand(iM586d);
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);
-                if (Utils.m505a(j24 - jMo282a5) < 20 && Utils.m505a(j25 - jMo283b5) < 20) {
+                if (Utils.absLong(j24 - jMo282a5) < 20 && Utils.absLong(j25 - jMo283b5) < 20) {
                     showTooltip(interfaceC0044o);
                 }
             }
@@ -717,7 +717,7 @@ public abstract class MapRenderer {
             currentPixelY = AppController.coordToPixel(j2, iM586d);
             GeoRegion c0053x2 = currentRegion;
             Vector vectorM614m = AppState.getVector(1389);
-            int iM541c = Utils.m541c(vectorM614m);
+            int iM541c = Utils.vectorSize(vectorM614m);
             while (true) {
                 iM541c--;
                 if (iM541c < 0) {

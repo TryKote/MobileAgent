@@ -121,7 +121,7 @@ public final class ConnectionThread {
                 if (vectorM614m != null) {
                     synchronized (vectorM614m) {
                         vectorM614m.removeElement(this);
-                        Utils.m526b(vectorM614m);
+                        Utils.trimIfEmpty(vectorM614m);
                         IOUtils.unregisterResource(this);
                     }
                     return;
@@ -221,13 +221,13 @@ public final class ConnectionThread {
         if (vector == null) {
             return;
         }
-        for (int i2 = 0; i2 < Utils.m541c(vector); i2++) {
+        for (int i2 = 0; i2 < Utils.vectorSize(vector); i2++) {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(i2);
             String strM555c = c0022av2.getLongKeyAttr(25705);
             NetworkUtils c0040k = new NetworkUtils(Integer.parseInt(strM555c), c0022av2.getIntAttribute(262601), Integer.parseInt(c0022av2.getIntAttribute(201594)), c0022av2.getIntAttribute(529266));
             Vector vector2 = c0022av2.children;
             int i3 = 0;
-            while (i3 < Utils.m541c(vector2)) {
+            while (i3 < Utils.vectorSize(vector2)) {
                 int i4 = i3;
                 i3++;
                 XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);

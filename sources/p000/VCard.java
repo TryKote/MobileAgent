@@ -169,12 +169,12 @@ public final class VCard {
 
     /* renamed from: a */
     public static final String formatLocationUrl(int i, String str, String str2) {
-        return new ByteBuffer().writeCompressed(3473998).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(1311433).writeIntAsString(Utils.m520a()).getStringAndClear();
+        return new ByteBuffer().writeCompressed(3473998).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(1311433).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     /* renamed from: a */
     public static final String formatPhoneContactUrl(PhoneContact c0020at, int i) {
-        return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.surname).writeCompressed(393954).writeRawString(c0020at.firstName).writeCompressed(393960).writeRawString(c0020at.address).writeCompressed(393966).writeRawString(c0020at.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.m520a()).getStringAndClear();
+        return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.surname).writeCompressed(393954).writeRawString(c0020at.firstName).writeCompressed(393960).writeRawString(c0020at.address).writeCompressed(393966).writeRawString(c0020at.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     /* renamed from: a */

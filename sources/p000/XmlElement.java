@@ -128,7 +128,7 @@ public final class XmlElement {
     /* renamed from: e */
     private final XmlElement findChildByName(String str) {
         XmlElement c0022av;
-        int iM541c = Utils.m541c(this.children);
+        int iM541c = Utils.vectorSize(this.children);
         do {
             iM541c--;
             if (iM541c < 0) {
@@ -152,23 +152,23 @@ public final class XmlElement {
                 StringBuffer stringBufferAppend2 = stringBufferAppend.append(' ');
                 Object objNextElement = enumerationKeys.nextElement();
                 StringBuffer stringBufferAppend3 = stringBufferAppend2.append(objNextElement).append('=').append('\"');
-                StringBuffer stringBufferM565b = m565b(this.attributes.get(objNextElement));
+                StringBuffer stringBufferM565b = escapeXml(this.attributes.get(objNextElement));
                 stringBufferAppend3.append((Object) stringBufferM565b).append('\"');
                 NetworkUtils.bufToStringCached(stringBufferM565b);
             }
         }
-        StringBuffer stringBufferAppend4 = NetworkUtils.newStringBuffer().append(NetworkUtils.bufToStringCached(m566c() ? stringBufferAppend.append('/').append('>') : stringBufferAppend.append('>')));
+        StringBuffer stringBufferAppend4 = NetworkUtils.newStringBuffer().append(NetworkUtils.bufToStringCached(isSelfClosing() ? stringBufferAppend.append('/').append('>') : stringBufferAppend.append('>')));
         if (this.textContent != null) {
-            stringBufferAppend4.append((Object) m565b(this.textContent));
+            stringBufferAppend4.append((Object) escapeXml(this.textContent));
         }
-        for (int i = 0; i < Utils.m541c(this.children); i++) {
+        for (int i = 0; i < Utils.vectorSize(this.children); i++) {
             stringBufferAppend4.append(this.children.elementAt(i));
         }
-        return NetworkUtils.bufToStringCached(m566c() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
+        return NetworkUtils.bufToStringCached(isSelfClosing() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
     }
 
     /* renamed from: b */
-    private final StringBuffer m565b(Object obj) {
+    private final StringBuffer escapeXml(Object obj) {
         if (obj == null) {
             return null;
         }
@@ -193,14 +193,14 @@ public final class XmlElement {
     }
 
     /* renamed from: c */
-    private final boolean m566c() {
+    private final boolean isSelfClosing() {
         return this.textContent == null && this.children == null;
     }
 
     /* renamed from: a */
     public final XmlElement findChildByText(String str) {
         XmlElement c0022av;
-        int iM541c = Utils.m541c(this.children);
+        int iM541c = Utils.vectorSize(this.children);
         do {
             iM541c--;
             if (iM541c < 0) {
@@ -262,7 +262,7 @@ public final class XmlElement {
 
     /* renamed from: d */
     public final XmlElement findByAttrs(int i, int i2) {
-        int iM541c = Utils.m541c(this.children);
+        int iM541c = Utils.vectorSize(this.children);
         while (true) {
             iM541c--;
             if (iM541c < 0) {

@@ -188,7 +188,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: p */
     public final ContactInfo setBirthdayMonth(String str) {
-        int iM511a = Utils.m511a(str, 1, 12, 0);
+        int iM511a = Utils.parseIntBounded(str, 1, 12, 0);
         if (iM511a != 0) {
             Vector vectorM512e = Utils.splitByNull(AppState.getString(685));
             setContactField(7, (String) vectorM512e.elementAt(iM511a));
@@ -266,7 +266,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: k */
     public final String getFullName() {
-        String strM533j = Utils.trim(StringUtils.concat(Utils.m527g(getFieldDefault(1)), Utils.trim(getFieldDefault(2))));
+        String strM533j = Utils.trim(StringUtils.concat(Utils.appendSpace(getFieldDefault(1)), Utils.trim(getFieldDefault(2))));
         String str = strM533j;
         if (StringUtils.isEmpty(strM533j)) {
             String strM1256a = getString(0);
@@ -297,17 +297,17 @@ public final class ContactInfo extends Hashtable {
             int i3 = 0;
             while (i3 < size) {
                 try {
-                    String strM1215a = NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append((String) vectorM512e.elementAt(i3))));
+                    String strM1215a = NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append((String) vectorM512e.elementAt(i3))));
                     String strM1256a = getString(i3);
                     if (null != strM1256a) {
                         if (i3 == 6) {
                             c0013amM75b.addLabelValue(strM1215a, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.addItem(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.handleServerAction(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
+                                c0013amM75b.addItem(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.handleServerAction(Utils.parseIntBounded(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
                                 break;
                             }
-                            c0013amM75b.addLabelValue(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);
+                            c0013amM75b.addLabelValue(strM1215a, i3 == 9 ? Utils.formatPhone(Utils.extractDigits(strM1256a)) : strM1256a);
                         }
                     }
                 } catch (Throwable unused) {
@@ -376,13 +376,13 @@ public final class ContactInfo extends Hashtable {
         } else if (abstractC0037hM1255c instanceof MmpProtocol) {
             String strM1256a2 = getString(60);
             if (null != strM1256a2) {
-                c0013amM75b.addLabelValue(Utils.m527g(AppState.getString(263250)), strM1256a2);
+                c0013amM75b.addLabelValue(Utils.appendSpace(AppState.getString(263250)), strM1256a2);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
                     String strM1256a3 = getString(i5);
                     if (null != strM1256a3) {
-                        c0013amM75b.addLabelValue(NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append(vectorM512e.elementAt(i5)))), strM1256a3);
+                        c0013amM75b.addLabelValue(NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append(vectorM512e.elementAt(i5)))), strM1256a3);
                     }
                 } catch (Throwable unused2) {
                 }

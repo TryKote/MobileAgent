@@ -413,7 +413,7 @@ public abstract class AppState {
             }
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             for (byte b : bArr) {
-                stringBufferM1217h.append(Utils.m499a((int) b));
+                stringBufferM1217h.append(Utils.win1251ToChar((int) b));
             }
             NetworkUtils.releaseBytes(bArr);
             String str = separator;
@@ -453,7 +453,7 @@ public abstract class AppState {
                         int length = str.length();
                         byte[] bArr = new byte[length];
                         for (int i2 = 0; i2 < length; i2++) {
-                            bArr[i2] = Utils.m500b(str.charAt(i2));
+                            bArr[i2] = Utils.charToWin1251(str.charAt(i2));
                         }
                         int length2 = str.length();
                         if (length2 <= 0 || length2 >= 64) {

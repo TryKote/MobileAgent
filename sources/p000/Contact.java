@@ -310,7 +310,7 @@ public abstract class Contact implements Sortable {
             byte bM1344o = c0043nM1380F.readByte();
             long jM1341m = c0043nM1380F.readLong() - AppState.getLong(1532);
             long jM1341m2 = c0043nM1380F.readLong();
-            String strM539n = Utils.m539n(c0043nM1380F.readUnicodeChars(iM1353u - 17));
+            String strM539n = Utils.normalizeSpaces(c0043nM1380F.readUnicodeChars(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
                 c0013amM75b.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);

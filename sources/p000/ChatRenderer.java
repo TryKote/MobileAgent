@@ -63,7 +63,7 @@ public abstract class ChatRenderer {
         if (i < 0 || i > 17) {
             i = 0;
         }
-        if (i != scaleZoom || Utils.m505a(j - scaleTimestamp) > 10000 || !scaleValid) {
+        if (i != scaleZoom || Utils.absLong(j - scaleTimestamp) > 10000 || !scaleValid) {
             scaleValid = true;
             scaleTimestamp = j;
             scaleZoom = i;
@@ -671,7 +671,7 @@ public abstract class ChatRenderer {
                                 int iM317a4 = (int) AppController.coordToPixel(((int[]) objArr2[0])[1], i);
                                 int iM317a5 = (int) (AppController.coordToPixel(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
                                 int iM317a6 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) objArr2[0])[1], i));
-                                if (Utils.m505a(j - iM317a3) < 7 && Utils.m505a(j2 - iM317a4) < 7 && str == null) {
+                                if (Utils.absLong(j - iM317a3) < 7 && Utils.absLong(j2 - iM317a4) < 7 && str == null) {
                                     str = strArr[0];
                                     i18 = iM317a5;
                                     i19 = iM317a6;
@@ -723,7 +723,7 @@ public abstract class ChatRenderer {
                 int i23 = iM317a13 - (((int) j) - (i2 / 2));
                 int i24 = (((int) j2) + (i3 / 2)) - iM317a14;
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
-                    if (Utils.m505a(j - iM317a13) >= 20 || Utils.m505a(j2 - iM317a14) >= 20 || z2) {
+                    if (Utils.absLong(j - iM317a13) >= 20 || Utils.absLong(j2 - iM317a14) >= 20 || z2) {
                         if (!z2) {
                             AppState.setInt(1575, 0);
                             AppState.setBool(1574, AppState.getBool(1573) && !AppState.getBool(1575));
