@@ -8,64 +8,64 @@ import java.util.Vector;
 public final class Conversation implements ListItem {
 
     /* renamed from: c */
-    private int f344c = 5;
+    private int height = 5;
 
     /* renamed from: b */
-    private boolean f342b = true;
+    private boolean selected = true;
 
     /* renamed from: a */
-    public Vector f343a = NetworkUtils.newVector();
+    public Vector items = NetworkUtils.newVector();
 
     /* renamed from: d */
-    private SizeCache f345d = new SizeCache();
+    private SizeCache sizeCache = new SizeCache();
 
     /* renamed from: a */
-    public final void m1086a(ListItem interfaceC0044o) {
-        this.f343a.addElement(interfaceC0044o);
-        this.f345d.lastScale = -1;
+    public final void addItem(ListItem interfaceC0044o) {
+        this.items.addElement(interfaceC0044o);
+        this.sizeCache.lastScale = -1;
     }
 
     @Override // p000.ListItem
     /* renamed from: r */
     public final int getHeight() {
-        return this.f344c;
+        return this.height;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
     public final boolean isSelected() {
-        return this.f342b && this.f343a.size() > 0;
+        return this.selected && this.items.size() > 0;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
     public final void select() {
-        this.f342b = false;
+        this.selected = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
     public final void deselect() {
-        this.f342b = true;
+        this.selected = true;
     }
 
     /* renamed from: d */
-    private final ListItem m1087d(int i) {
-        return (ListItem) this.f343a.elementAt(i);
+    private final ListItem getItem(int i) {
+        return (ListItem) this.items.elementAt(i);
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
     public final int getWidth() {
         long jMo274v = 0;
-        int size = this.f343a.size();
+        int size = this.items.size();
         int i = size;
         while (true) {
             i--;
             if (i < 0) {
                 return (int) (jMo274v / size);
             }
-            jMo274v += m1087d(i).getWidth();
+            jMo274v += getItem(i).getWidth();
         }
     }
 
@@ -73,39 +73,39 @@ public final class Conversation implements ListItem {
     /* renamed from: w */
     public final int getBaseHeight() {
         long jMo275w = 0;
-        int size = this.f343a.size();
+        int size = this.items.size();
         int i = size;
         while (true) {
             i--;
             if (i < 0) {
                 return (int) (jMo275w / size);
             }
-            jMo275w += m1087d(i).getBaseHeight();
+            jMo275w += getItem(i).getBaseHeight();
         }
     }
 
     @Override // p000.ListItem
     /* renamed from: a */
     public final int getCommandId(int i) {
-        return this.f345d.getWidth(i, this);
+        return this.sizeCache.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
     public final int executeCommand(int i) {
-        return this.f345d.getHeight(i, this);
+        return this.sizeCache.getHeight(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        int size = this.f343a.size();
-        if (this.f344c == 5) {
+        int size = this.items.size();
+        if (this.height == 5) {
             stringBufferM1217h.append(AppState.getString(445)).append(size);
         } else {
             int i = size - 1;
-            stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.m540f(i)));
+            stringBufferM1217h.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.m540f(i)));
         }
         return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
@@ -123,7 +123,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static final void m1088a(Object[] objArr) {
+    public static final void fetchHistory(Object[] objArr) {
         int i;
         MmpProtocol c0033d = (MmpProtocol) objArr[0];
         try {
@@ -162,7 +162,7 @@ public final class Conversation implements ListItem {
                     AppController.f153g = true;
                     ByteBuffer c0043nM1321f = new ByteBuffer().writeCompressed(2951781).writeByte(63);
                     String strM1337i = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
-                    HttpClient c0024axM642a = HttpClient.createMockClient(c0043nM1321f.writeRawString(strM1337i).writeCompressed(789306).writeRawString(m1089a(new ByteBuffer().writeCompressed(265078).writeRawString(m1125a(AppState.getString(2951781), false)).writeByte(38).writeRawString(m1125a(strM1337i, false)).readAllByteStr(), m1089a((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    HttpClient c0024axM642a = HttpClient.createMockClient(c0043nM1321f.writeRawString(strM1337i).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(2951781), false)).writeByte(38).writeRawString(percentEncodeInternal(strM1337i, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
                     int iM634a2 = c0024axM642a.getResponseCode();
                     i = iM634a2;
                     if (iM634a2 == 200) {
@@ -192,54 +192,54 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    private static final String m1089a(String str, String str2) {
-        return new ByteBuffer().setData(XmppContactGroup.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).toBase64();
+    private static final String encryptData(String str, String str2) {
+        return new ByteBuffer().setData(XmppContactGroup.hmacSHA256(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).toBase64();
     }
 
     /* renamed from: a */
-    public static final byte[] m1090a(byte[] bArr, int i) {
+    public static final byte[] hashData(byte[] bArr, int i) {
         int[] iArr = new int[16];
         int[] iArrM536a = Utils.m536a(AppState.getBytes(962));
         int[] iArr2 = new int[2];
         byte[] bArrM1211a = NetworkUtils.newBytes(64);
-        m1095a(bArr, i, iArr, iArrM536a, iArr2, bArrM1211a);
-        byte[] bArrM1097a = m1097a(NetworkUtils.newBytes(16), iArr2, 8);
+        md5ProcessBuffer(bArr, i, iArr, iArrM536a, iArr2, bArrM1211a);
+        byte[] bArrM1097a = md5Finalize(NetworkUtils.newBytes(16), iArr2, 8);
         byte[] bArrM1211a2 = NetworkUtils.newBytes(64);
         bArrM1211a2[0] = -128;
         int i2 = (iArr2[0] >>> 3) & 63;
-        m1095a(bArrM1211a2, i2 < 56 ? 56 - i2 : 120 - i2, iArr, iArrM536a, iArr2, bArrM1211a);
-        m1095a(bArrM1097a, 8, iArr, iArrM536a, iArr2, bArrM1211a);
+        md5ProcessBuffer(bArrM1211a2, i2 < 56 ? 56 - i2 : 120 - i2, iArr, iArrM536a, iArr2, bArrM1211a);
+        md5ProcessBuffer(bArrM1097a, 8, iArr, iArrM536a, iArr2, bArrM1211a);
         NetworkUtils.releaseBytes(bArrM1211a2);
         NetworkUtils.releaseBytes(bArrM1211a);
-        return m1097a(bArrM1097a, iArrM536a, 16);
+        return md5Finalize(bArrM1097a, iArrM536a, 16);
     }
 
     /* renamed from: a */
-    private static final int m1091a(int i, int i2, int i3, int i4, int i5) {
+    private static final int md5Round1(int i, int i2, int i3, int i4, int i5) {
         int i6 = (((i ^ (-1)) & i3) | (i & i2)) + i5;
         return ((i6 << i4) | (i6 >>> (32 - i4))) + i;
     }
 
     /* renamed from: b */
-    private static final int m1092b(int i, int i2, int i3, int i4, int i5) {
+    private static final int md5Round2(int i, int i2, int i3, int i4, int i5) {
         int i6 = (((i3 ^ (-1)) & i2) | (i & i3)) + i5;
         return ((i6 << i4) | (i6 >>> (32 - i4))) + i;
     }
 
     /* renamed from: c */
-    private static final int m1093c(int i, int i2, int i3, int i4, int i5) {
+    private static final int md5Round3(int i, int i2, int i3, int i4, int i5) {
         int i6 = ((i ^ i2) ^ i3) + i5;
         return ((i6 << i4) | (i6 >>> (32 - i4))) + i;
     }
 
     /* renamed from: d */
-    private static final int m1094d(int i, int i2, int i3, int i4, int i5) {
+    private static final int md5Round4(int i, int i2, int i3, int i4, int i5) {
         int i6 = (((i3 ^ (-1)) | i) ^ i2) + i5;
         return ((i6 << i4) | (i6 >>> (32 - i4))) + i;
     }
 
     /* renamed from: a */
-    private static final void m1095a(byte[] bArr, int i, int[] iArr, int[] iArr2, int[] iArr3, byte[] bArr2) {
+    private static final void md5ProcessBuffer(byte[] bArr, int i, int[] iArr, int[] iArr2, int[] iArr3, byte[] bArr2) {
         int i2 = (iArr3[0] >>> 3) & 63;
         int i3 = iArr3[0] + (i << 3);
         iArr3[0] = i3;
@@ -251,11 +251,11 @@ public final class Conversation implements ListItem {
         int i5 = i4;
         if (i >= i4) {
             Utils.arraycopy((Object) bArr, 0, (Object) bArr2, i2, i5);
-            m1096a(bArr2, iArr, iArr2);
+            md5ProcessBlock(bArr2, iArr, iArr2);
             byte[] bArrM1211a = NetworkUtils.newBytes(64);
             while (i5 + 63 < i) {
                 Utils.arraycopy((Object) bArr, i5, (Object) bArrM1211a, 0, 64);
-                m1096a(bArrM1211a, iArr, iArr2);
+                md5ProcessBlock(bArrM1211a, iArr, iArr2);
                 i5 += 64;
             }
             NetworkUtils.releaseBytes(bArrM1211a);
@@ -267,7 +267,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    private static final void m1096a(byte[] bArr, int[] iArr, int[] iArr2) {
+    private static final void md5ProcessBlock(byte[] bArr, int[] iArr, int[] iArr2) {
         int i = 0;
         int i2 = -1;
         do {
@@ -283,70 +283,70 @@ public final class Conversation implements ListItem {
         } while (i < 16);
         int i9 = iArr2[1];
         int i10 = iArr2[2];
-        int iM1091a = m1091a(i9, i10, iArr2[3], 7, (iArr2[0] + iArr[0]) - 680876936);
-        int iM1091a2 = m1091a(iM1091a, i9, i10, 12, (iArr2[3] + iArr[1]) - 389564586);
-        int iM1091a3 = m1091a(iM1091a2, iM1091a, i9, 17, i10 + iArr[2] + 606105819);
-        int iM1091a4 = m1091a(iM1091a3, iM1091a2, iM1091a, 22, (i9 + iArr[3]) - 1044525330);
-        int iM1091a5 = m1091a(iM1091a4, iM1091a3, iM1091a2, 7, (iM1091a + iArr[4]) - 176418897);
-        int iM1091a6 = m1091a(iM1091a5, iM1091a4, iM1091a3, 12, iM1091a2 + iArr[5] + 1200080426);
-        int iM1091a7 = m1091a(iM1091a6, iM1091a5, iM1091a4, 17, (iM1091a3 + iArr[6]) - 1473231341);
-        int iM1091a8 = m1091a(iM1091a7, iM1091a6, iM1091a5, 22, (iM1091a4 + iArr[7]) - 45705983);
-        int iM1091a9 = m1091a(iM1091a8, iM1091a7, iM1091a6, 7, iM1091a5 + iArr[8] + 1770035416);
-        int iM1091a10 = m1091a(iM1091a9, iM1091a8, iM1091a7, 12, (iM1091a6 + iArr[9]) - 1958414417);
-        int iM1091a11 = m1091a(iM1091a10, iM1091a9, iM1091a8, 17, (iM1091a7 + iArr[10]) - 42063);
-        int iM1091a12 = m1091a(iM1091a11, iM1091a10, iM1091a9, 22, (iM1091a8 + iArr[11]) - 1990404162);
-        int iM1091a13 = m1091a(iM1091a12, iM1091a11, iM1091a10, 7, iM1091a9 + iArr[12] + 1804603682);
-        int iM1091a14 = m1091a(iM1091a13, iM1091a12, iM1091a11, 12, (iM1091a10 + iArr[13]) - 40341101);
-        int iM1091a15 = m1091a(iM1091a14, iM1091a13, iM1091a12, 17, (iM1091a11 + iArr[14]) - 1502002290);
-        int iM1091a16 = m1091a(iM1091a15, iM1091a14, iM1091a13, 22, iM1091a12 + iArr[15] + 1236535329);
-        int iM1092b = m1092b(iM1091a16, iM1091a15, iM1091a14, 5, (iM1091a13 + iArr[1]) - 165796510);
-        int iM1092b2 = m1092b(iM1092b, iM1091a16, iM1091a15, 9, (iM1091a14 + iArr[6]) - 1069501632);
-        int iM1092b3 = m1092b(iM1092b2, iM1092b, iM1091a16, 14, iM1091a15 + iArr[11] + 643717713);
-        int iM1092b4 = m1092b(iM1092b3, iM1092b2, iM1092b, 20, (iM1091a16 + iArr[0]) - 373897302);
-        int iM1092b5 = m1092b(iM1092b4, iM1092b3, iM1092b2, 5, (iM1092b + iArr[5]) - 701558691);
-        int iM1092b6 = m1092b(iM1092b5, iM1092b4, iM1092b3, 9, iM1092b2 + iArr[10] + 38016083);
-        int iM1092b7 = m1092b(iM1092b6, iM1092b5, iM1092b4, 14, (iM1092b3 + iArr[15]) - 660478335);
-        int iM1092b8 = m1092b(iM1092b7, iM1092b6, iM1092b5, 20, (iM1092b4 + iArr[4]) - 405537848);
-        int iM1092b9 = m1092b(iM1092b8, iM1092b7, iM1092b6, 5, iM1092b5 + iArr[9] + 568446438);
-        int iM1092b10 = m1092b(iM1092b9, iM1092b8, iM1092b7, 9, (iM1092b6 + iArr[14]) - 1019803690);
-        int iM1092b11 = m1092b(iM1092b10, iM1092b9, iM1092b8, 14, (iM1092b7 + iArr[3]) - 187363961);
-        int iM1092b12 = m1092b(iM1092b11, iM1092b10, iM1092b9, 20, iM1092b8 + iArr[8] + 1163531501);
-        int iM1092b13 = m1092b(iM1092b12, iM1092b11, iM1092b10, 5, (iM1092b9 + iArr[13]) - 1444681467);
-        int iM1092b14 = m1092b(iM1092b13, iM1092b12, iM1092b11, 9, (iM1092b10 + iArr[2]) - 51403784);
-        int iM1092b15 = m1092b(iM1092b14, iM1092b13, iM1092b12, 14, iM1092b11 + iArr[7] + 1735328473);
-        int iM1092b16 = m1092b(iM1092b15, iM1092b14, iM1092b13, 20, (iM1092b12 + iArr[12]) - 1926607734);
-        int iM1093c = m1093c(iM1092b16, iM1092b15, iM1092b14, 4, (iM1092b13 + iArr[5]) - 378558);
-        int iM1093c2 = m1093c(iM1093c, iM1092b16, iM1092b15, 11, (iM1092b14 + iArr[8]) - 2022574463);
-        int iM1093c3 = m1093c(iM1093c2, iM1093c, iM1092b16, 16, iM1092b15 + iArr[11] + 1839030562);
-        int iM1093c4 = m1093c(iM1093c3, iM1093c2, iM1093c, 23, (iM1092b16 + iArr[14]) - 35309556);
-        int iM1093c5 = m1093c(iM1093c4, iM1093c3, iM1093c2, 4, (iM1093c + iArr[1]) - 1530992060);
-        int iM1093c6 = m1093c(iM1093c5, iM1093c4, iM1093c3, 11, iM1093c2 + iArr[4] + 1272893353);
-        int iM1093c7 = m1093c(iM1093c6, iM1093c5, iM1093c4, 16, (iM1093c3 + iArr[7]) - 155497632);
-        int iM1093c8 = m1093c(iM1093c7, iM1093c6, iM1093c5, 23, (iM1093c4 + iArr[10]) - 1094730640);
-        int iM1093c9 = m1093c(iM1093c8, iM1093c7, iM1093c6, 4, iM1093c5 + iArr[13] + 681279174);
-        int iM1093c10 = m1093c(iM1093c9, iM1093c8, iM1093c7, 11, (iM1093c6 + iArr[0]) - 358537222);
-        int iM1093c11 = m1093c(iM1093c10, iM1093c9, iM1093c8, 16, (iM1093c7 + iArr[3]) - 722521979);
-        int iM1093c12 = m1093c(iM1093c11, iM1093c10, iM1093c9, 23, iM1093c8 + iArr[6] + 76029189);
-        int iM1093c13 = m1093c(iM1093c12, iM1093c11, iM1093c10, 4, (iM1093c9 + iArr[9]) - 640364487);
-        int iM1093c14 = m1093c(iM1093c13, iM1093c12, iM1093c11, 11, (iM1093c10 + iArr[12]) - 421815835);
-        int iM1093c15 = m1093c(iM1093c14, iM1093c13, iM1093c12, 16, iM1093c11 + iArr[15] + 530742520);
-        int iM1093c16 = m1093c(iM1093c15, iM1093c14, iM1093c13, 23, (iM1093c12 + iArr[2]) - 995338651);
-        int iM1094d = m1094d(iM1093c16, iM1093c15, iM1093c14, 6, (iM1093c13 + iArr[0]) - 198630844);
-        int iM1094d2 = m1094d(iM1094d, iM1093c16, iM1093c15, 10, iM1093c14 + iArr[7] + 1126891415);
-        int iM1094d3 = m1094d(iM1094d2, iM1094d, iM1093c16, 15, (iM1093c15 + iArr[14]) - 1416354905);
-        int iM1094d4 = m1094d(iM1094d3, iM1094d2, iM1094d, 21, (iM1093c16 + iArr[5]) - 57434055);
-        int iM1094d5 = m1094d(iM1094d4, iM1094d3, iM1094d2, 6, iM1094d + iArr[12] + 1700485571);
-        int iM1094d6 = m1094d(iM1094d5, iM1094d4, iM1094d3, 10, (iM1094d2 + iArr[3]) - 1894986606);
-        int iM1094d7 = m1094d(iM1094d6, iM1094d5, iM1094d4, 15, (iM1094d3 + iArr[10]) - 1051523);
-        int iM1094d8 = m1094d(iM1094d7, iM1094d6, iM1094d5, 21, (iM1094d4 + iArr[1]) - 2054922799);
-        int iM1094d9 = m1094d(iM1094d8, iM1094d7, iM1094d6, 6, iM1094d5 + iArr[8] + 1873313359);
-        int iM1094d10 = m1094d(iM1094d9, iM1094d8, iM1094d7, 10, (iM1094d6 + iArr[15]) - 30611744);
-        int iM1094d11 = m1094d(iM1094d10, iM1094d9, iM1094d8, 15, (iM1094d7 + iArr[6]) - 1560198380);
-        int iM1094d12 = m1094d(iM1094d11, iM1094d10, iM1094d9, 21, iM1094d8 + iArr[13] + 1309151649);
-        int iM1094d13 = m1094d(iM1094d12, iM1094d11, iM1094d10, 6, (iM1094d9 + iArr[4]) - 145523070);
-        int iM1094d14 = m1094d(iM1094d13, iM1094d12, iM1094d11, 10, (iM1094d10 + iArr[11]) - 1120210379);
-        int iM1094d15 = m1094d(iM1094d14, iM1094d13, iM1094d12, 15, iM1094d11 + iArr[2] + 718787259);
-        int iM1094d16 = m1094d(iM1094d15, iM1094d14, iM1094d13, 21, (iM1094d12 + iArr[9]) - 343485551);
+        int iM1091a = md5Round1(i9, i10, iArr2[3], 7, (iArr2[0] + iArr[0]) - 680876936);
+        int iM1091a2 = md5Round1(iM1091a, i9, i10, 12, (iArr2[3] + iArr[1]) - 389564586);
+        int iM1091a3 = md5Round1(iM1091a2, iM1091a, i9, 17, i10 + iArr[2] + 606105819);
+        int iM1091a4 = md5Round1(iM1091a3, iM1091a2, iM1091a, 22, (i9 + iArr[3]) - 1044525330);
+        int iM1091a5 = md5Round1(iM1091a4, iM1091a3, iM1091a2, 7, (iM1091a + iArr[4]) - 176418897);
+        int iM1091a6 = md5Round1(iM1091a5, iM1091a4, iM1091a3, 12, iM1091a2 + iArr[5] + 1200080426);
+        int iM1091a7 = md5Round1(iM1091a6, iM1091a5, iM1091a4, 17, (iM1091a3 + iArr[6]) - 1473231341);
+        int iM1091a8 = md5Round1(iM1091a7, iM1091a6, iM1091a5, 22, (iM1091a4 + iArr[7]) - 45705983);
+        int iM1091a9 = md5Round1(iM1091a8, iM1091a7, iM1091a6, 7, iM1091a5 + iArr[8] + 1770035416);
+        int iM1091a10 = md5Round1(iM1091a9, iM1091a8, iM1091a7, 12, (iM1091a6 + iArr[9]) - 1958414417);
+        int iM1091a11 = md5Round1(iM1091a10, iM1091a9, iM1091a8, 17, (iM1091a7 + iArr[10]) - 42063);
+        int iM1091a12 = md5Round1(iM1091a11, iM1091a10, iM1091a9, 22, (iM1091a8 + iArr[11]) - 1990404162);
+        int iM1091a13 = md5Round1(iM1091a12, iM1091a11, iM1091a10, 7, iM1091a9 + iArr[12] + 1804603682);
+        int iM1091a14 = md5Round1(iM1091a13, iM1091a12, iM1091a11, 12, (iM1091a10 + iArr[13]) - 40341101);
+        int iM1091a15 = md5Round1(iM1091a14, iM1091a13, iM1091a12, 17, (iM1091a11 + iArr[14]) - 1502002290);
+        int iM1091a16 = md5Round1(iM1091a15, iM1091a14, iM1091a13, 22, iM1091a12 + iArr[15] + 1236535329);
+        int iM1092b = md5Round2(iM1091a16, iM1091a15, iM1091a14, 5, (iM1091a13 + iArr[1]) - 165796510);
+        int iM1092b2 = md5Round2(iM1092b, iM1091a16, iM1091a15, 9, (iM1091a14 + iArr[6]) - 1069501632);
+        int iM1092b3 = md5Round2(iM1092b2, iM1092b, iM1091a16, 14, iM1091a15 + iArr[11] + 643717713);
+        int iM1092b4 = md5Round2(iM1092b3, iM1092b2, iM1092b, 20, (iM1091a16 + iArr[0]) - 373897302);
+        int iM1092b5 = md5Round2(iM1092b4, iM1092b3, iM1092b2, 5, (iM1092b + iArr[5]) - 701558691);
+        int iM1092b6 = md5Round2(iM1092b5, iM1092b4, iM1092b3, 9, iM1092b2 + iArr[10] + 38016083);
+        int iM1092b7 = md5Round2(iM1092b6, iM1092b5, iM1092b4, 14, (iM1092b3 + iArr[15]) - 660478335);
+        int iM1092b8 = md5Round2(iM1092b7, iM1092b6, iM1092b5, 20, (iM1092b4 + iArr[4]) - 405537848);
+        int iM1092b9 = md5Round2(iM1092b8, iM1092b7, iM1092b6, 5, iM1092b5 + iArr[9] + 568446438);
+        int iM1092b10 = md5Round2(iM1092b9, iM1092b8, iM1092b7, 9, (iM1092b6 + iArr[14]) - 1019803690);
+        int iM1092b11 = md5Round2(iM1092b10, iM1092b9, iM1092b8, 14, (iM1092b7 + iArr[3]) - 187363961);
+        int iM1092b12 = md5Round2(iM1092b11, iM1092b10, iM1092b9, 20, iM1092b8 + iArr[8] + 1163531501);
+        int iM1092b13 = md5Round2(iM1092b12, iM1092b11, iM1092b10, 5, (iM1092b9 + iArr[13]) - 1444681467);
+        int iM1092b14 = md5Round2(iM1092b13, iM1092b12, iM1092b11, 9, (iM1092b10 + iArr[2]) - 51403784);
+        int iM1092b15 = md5Round2(iM1092b14, iM1092b13, iM1092b12, 14, iM1092b11 + iArr[7] + 1735328473);
+        int iM1092b16 = md5Round2(iM1092b15, iM1092b14, iM1092b13, 20, (iM1092b12 + iArr[12]) - 1926607734);
+        int iM1093c = md5Round3(iM1092b16, iM1092b15, iM1092b14, 4, (iM1092b13 + iArr[5]) - 378558);
+        int iM1093c2 = md5Round3(iM1093c, iM1092b16, iM1092b15, 11, (iM1092b14 + iArr[8]) - 2022574463);
+        int iM1093c3 = md5Round3(iM1093c2, iM1093c, iM1092b16, 16, iM1092b15 + iArr[11] + 1839030562);
+        int iM1093c4 = md5Round3(iM1093c3, iM1093c2, iM1093c, 23, (iM1092b16 + iArr[14]) - 35309556);
+        int iM1093c5 = md5Round3(iM1093c4, iM1093c3, iM1093c2, 4, (iM1093c + iArr[1]) - 1530992060);
+        int iM1093c6 = md5Round3(iM1093c5, iM1093c4, iM1093c3, 11, iM1093c2 + iArr[4] + 1272893353);
+        int iM1093c7 = md5Round3(iM1093c6, iM1093c5, iM1093c4, 16, (iM1093c3 + iArr[7]) - 155497632);
+        int iM1093c8 = md5Round3(iM1093c7, iM1093c6, iM1093c5, 23, (iM1093c4 + iArr[10]) - 1094730640);
+        int iM1093c9 = md5Round3(iM1093c8, iM1093c7, iM1093c6, 4, iM1093c5 + iArr[13] + 681279174);
+        int iM1093c10 = md5Round3(iM1093c9, iM1093c8, iM1093c7, 11, (iM1093c6 + iArr[0]) - 358537222);
+        int iM1093c11 = md5Round3(iM1093c10, iM1093c9, iM1093c8, 16, (iM1093c7 + iArr[3]) - 722521979);
+        int iM1093c12 = md5Round3(iM1093c11, iM1093c10, iM1093c9, 23, iM1093c8 + iArr[6] + 76029189);
+        int iM1093c13 = md5Round3(iM1093c12, iM1093c11, iM1093c10, 4, (iM1093c9 + iArr[9]) - 640364487);
+        int iM1093c14 = md5Round3(iM1093c13, iM1093c12, iM1093c11, 11, (iM1093c10 + iArr[12]) - 421815835);
+        int iM1093c15 = md5Round3(iM1093c14, iM1093c13, iM1093c12, 16, iM1093c11 + iArr[15] + 530742520);
+        int iM1093c16 = md5Round3(iM1093c15, iM1093c14, iM1093c13, 23, (iM1093c12 + iArr[2]) - 995338651);
+        int iM1094d = md5Round4(iM1093c16, iM1093c15, iM1093c14, 6, (iM1093c13 + iArr[0]) - 198630844);
+        int iM1094d2 = md5Round4(iM1094d, iM1093c16, iM1093c15, 10, iM1093c14 + iArr[7] + 1126891415);
+        int iM1094d3 = md5Round4(iM1094d2, iM1094d, iM1093c16, 15, (iM1093c15 + iArr[14]) - 1416354905);
+        int iM1094d4 = md5Round4(iM1094d3, iM1094d2, iM1094d, 21, (iM1093c16 + iArr[5]) - 57434055);
+        int iM1094d5 = md5Round4(iM1094d4, iM1094d3, iM1094d2, 6, iM1094d + iArr[12] + 1700485571);
+        int iM1094d6 = md5Round4(iM1094d5, iM1094d4, iM1094d3, 10, (iM1094d2 + iArr[3]) - 1894986606);
+        int iM1094d7 = md5Round4(iM1094d6, iM1094d5, iM1094d4, 15, (iM1094d3 + iArr[10]) - 1051523);
+        int iM1094d8 = md5Round4(iM1094d7, iM1094d6, iM1094d5, 21, (iM1094d4 + iArr[1]) - 2054922799);
+        int iM1094d9 = md5Round4(iM1094d8, iM1094d7, iM1094d6, 6, iM1094d5 + iArr[8] + 1873313359);
+        int iM1094d10 = md5Round4(iM1094d9, iM1094d8, iM1094d7, 10, (iM1094d6 + iArr[15]) - 30611744);
+        int iM1094d11 = md5Round4(iM1094d10, iM1094d9, iM1094d8, 15, (iM1094d7 + iArr[6]) - 1560198380);
+        int iM1094d12 = md5Round4(iM1094d11, iM1094d10, iM1094d9, 21, iM1094d8 + iArr[13] + 1309151649);
+        int iM1094d13 = md5Round4(iM1094d12, iM1094d11, iM1094d10, 6, (iM1094d9 + iArr[4]) - 145523070);
+        int iM1094d14 = md5Round4(iM1094d13, iM1094d12, iM1094d11, 10, (iM1094d10 + iArr[11]) - 1120210379);
+        int iM1094d15 = md5Round4(iM1094d14, iM1094d13, iM1094d12, 15, iM1094d11 + iArr[2] + 718787259);
+        int iM1094d16 = md5Round4(iM1094d15, iM1094d14, iM1094d13, 21, (iM1094d12 + iArr[9]) - 343485551);
         iArr2[0] = iArr2[0] + iM1094d13;
         iArr2[1] = iArr2[1] + iM1094d16;
         iArr2[2] = iArr2[2] + iM1094d15;
@@ -355,7 +355,7 @@ public final class Conversation implements ListItem {
 
     /* JADX WARN: Type inference failed for: r2v10, types: [int] */
     /* renamed from: a */
-    private static final byte[] m1097a(byte[] bArr, int[] iArr, int i) {
+    private static final byte[] md5Finalize(byte[] bArr, int[] iArr, int i) {
         int i2 = 0;
         int i3 = 0;
         do {
@@ -376,9 +376,9 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static final Vector m1098a(String str) {
+    public static final Vector parseConversation(String str) {
         Vector vectorM1213g = NetworkUtils.newVector();
-        if (m1106f(str)) {
+        if (isValidFormat(str)) {
             int i = 0;
             int i2 = 0;
             while (true) {
@@ -412,10 +412,10 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: b */
-    public static final String m1099b(String str) {
+    public static final String decodeMessage(String str) {
         try {
-            if (!m1107n(str)) {
-                if (m1108o(str)) {
+            if (!isEncodedFormat(str)) {
+                if (isSimpleFormat(str)) {
                     return AppState.getString(994);
                 }
                 return null;
@@ -427,7 +427,7 @@ public final class Conversation implements ListItem {
             if (StringUtils.m2a(strM15c, 1094795585)) {
                 return AppState.emptyStr;
             }
-            ByteBuffer c0043nM986d = ResourceManager.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
+            ByteBuffer c0043nM986d = ResourceManager.m986d(replaceText(replaceText(replaceText(str2, 200762, 65752), 200765, 65547), 200768, 65552));
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             while (c0043nM986d.length > 0) {
                 int iM1346q = c0043nM986d.readUByte();
@@ -442,12 +442,12 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: c */
-    public static final String m1100c(String str) {
+    public static final String extractFrom(String str) {
         try {
-            if (m1107n(str)) {
+            if (isEncodedFormat(str)) {
                 return StringUtils.substring(str, AppState.indexOf(str, 1031302438) + 4, AppState.indexOf(str, 1031367974));
             }
-            if (m1108o(str)) {
+            if (isSimpleFormat(str)) {
                 return StringUtils.substring(str, AppState.indexOf(str, 4028451) + 3, AppState.indexOf(str, 4028710));
             }
             return null;
@@ -457,12 +457,12 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: d */
-    public static final String m1101d(String str) {
+    public static final String extractTo(String str) {
         try {
-            if (m1107n(str)) {
+            if (isEncodedFormat(str)) {
                 return StringUtils.substring(str, AppState.indexOf(str, 1031367974) + 4, AppState.indexOf(str, 1031040294));
             }
-            if (m1108o(str)) {
+            if (isSimpleFormat(str)) {
                 return StringUtils.substring(str, AppState.indexOf(str, 4028710) + 3, AppState.indexOf(str, 4028966));
             }
             return null;
@@ -472,7 +472,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: e */
-    public static final String m1102e(String str) {
+    public static final String extractSubject(String str) {
         try {
             return StringUtils.substring(str, AppState.indexOf(str, 4028966) + 3, AppState.indexOfPool(str, 397364));
         } catch (Throwable unused) {
@@ -481,44 +481,44 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: m */
-    private static final boolean m1103m(String str) {
+    private static final boolean isFormatted(String str) {
         return AppState.indexOfPool(str, 1245774) >= 0;
     }
 
     /* renamed from: a */
-    public static final boolean m1104a(String str, int i) {
+    public static final boolean hasKey(String str, int i) {
         return AppState.indexOfPool(str, i) >= 0;
     }
 
     /* renamed from: b */
-    private static final boolean m1105b(String str, int i) {
+    private static final boolean hasFlag(String str, int i) {
         return AppState.indexOf(str, i) >= 0;
     }
 
     /* renamed from: f */
-    public static final boolean m1106f(String str) {
-        if (!m1103m(str)) {
+    public static final boolean isValidFormat(String str) {
+        if (!isFormatted(str)) {
             return false;
         }
-        if (m1105b(str, 4028451) && m1105b(str, 4028710) && m1105b(str, 4028966)) {
+        if (hasFlag(str, 4028451) && hasFlag(str, 4028710) && hasFlag(str, 4028966)) {
             return true;
         }
-        return m1105b(str, 1031302438) && m1105b(str, 1031367974) && m1105b(str, 1031040294);
+        return hasFlag(str, 1031302438) && hasFlag(str, 1031367974) && hasFlag(str, 1031040294);
     }
 
     /* renamed from: n */
-    private static boolean m1107n(String str) {
-        return m1103m(str) && m1105b(str, 4028451) && m1105b(str, 4028710) && m1105b(str, 4028966) && m1105b(str, 1031302438) && m1105b(str, 1031367974) && m1105b(str, 1031040294);
+    private static boolean isEncodedFormat(String str) {
+        return isFormatted(str) && hasFlag(str, 4028451) && hasFlag(str, 4028710) && hasFlag(str, 4028966) && hasFlag(str, 1031302438) && hasFlag(str, 1031367974) && hasFlag(str, 1031040294);
     }
 
     /* renamed from: o */
-    private static boolean m1108o(String str) {
-        return m1103m(str) && m1105b(str, 4028451) && m1105b(str, 4028710) && m1105b(str, 4028966) && !m1105b(str, 1031302438) && !m1105b(str, 1031367974) && !m1105b(str, 1031040294);
+    private static boolean isSimpleFormat(String str) {
+        return isFormatted(str) && hasFlag(str, 4028451) && hasFlag(str, 4028710) && hasFlag(str, 4028966) && !hasFlag(str, 1031302438) && !hasFlag(str, 1031367974) && !hasFlag(str, 1031040294);
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:8:0x0038 */
     /* renamed from: a */
-    public static final String m1109a(String str, int i, int i2) {
+    public static final String replaceText(String str, int i, int i2) {
         String strM584b = AppState.getString(i);
         if (str.indexOf(strM584b) < 0) {
             return str;
@@ -539,7 +539,7 @@ public final class Conversation implements ListItem {
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:13:0x00be */
     /* renamed from: a */
-    public static final void m1110a(MrimAccount c0028ba, ByteBuffer c0043n, long j) {
+    public static final void handleMessage(MrimAccount c0028ba, ByteBuffer c0043n, long j) {
         MrimContact c0035f;
         int i;
         int iIndexOf;
@@ -550,7 +550,7 @@ public final class Conversation implements ListItem {
         String strM1215a = null;
         String str = null;
         if ((iM1328e2 & 8) == 0) {
-            String strM1111p = m1111p(strM1332j);
+            String strM1111p = decodeHtmlEntities(strM1332j);
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             String strM584b = AppState.getString(658377);
             String strM584b2 = AppState.getString(396261);
@@ -676,7 +676,7 @@ public final class Conversation implements ListItem {
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:17:0x0074 */
     /* renamed from: p */
-    private static final String m1111p(String str) {
+    private static final String decodeHtmlEntities(String str) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         String strM584b = AppState.getString(854972);
         int i = 0;
@@ -710,7 +710,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static final void m1112a(MrimAccount c0028ba, ByteBuffer c0043n) {
+    public static final void parseContactList(MrimAccount c0028ba, ByteBuffer c0043n) {
         MrimContactGroup c0010aj;
         c0028ba.lastError = c0028ba.configFlags;
         c0028ba.removeAllContacts();
@@ -832,7 +832,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static final void m1113a(boolean z, MrimAccount c0028ba) {
+    public static final void createStatusReport(boolean z, MrimAccount c0028ba) {
         String strM1215a;
         String strM1215a2;
         XmlElement c0022avM550a = XmlElement.createFromState(266953);
@@ -919,7 +919,7 @@ public final class Conversation implements ListItem {
      */
     /* JADX WARN: Not initialized variable reg: 3, insn: MOVE (r2 I:??) = (r3 I:??), block:B:8:0x005d */
     /* renamed from: g */
-    public static final void m1114g(java.lang.String r7) {
+    public static final void fetchMapData(java.lang.String r7) {
         /*
             r0 = 0
             r8 = r0
@@ -950,7 +950,7 @@ public final class Conversation implements ListItem {
             r2 = 200701(0x30ffd, float:2.81242E-40)
             av r1 = r1.findChildByKey(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r9 = r1
-            boolean r0 = m1115q(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            boolean r0 = isStatusReport(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             if (r0 == 0) goto L5d
             r0 = r9
             r1 = 197037(0x301ad, float:2.76108E-40)
@@ -1017,7 +1017,7 @@ public final class Conversation implements ListItem {
             r0 = r7
             r1 = 0
             r9 = r1
-            boolean r0 = m1115q(r0)     // Catch: java.lang.Throwable -> Ldc
+            boolean r0 = isStatusReport(r0)     // Catch: java.lang.Throwable -> Ldc
             if (r0 == 0) goto Lc9
             r0 = 0
             r1 = 0
@@ -1045,26 +1045,26 @@ public final class Conversation implements ListItem {
             r0 = r10
             throw r0
         */
-        throw new UnsupportedOperationException("Method not decompiled: p000.Conversation.m1114g(java.lang.String):void");
+        throw new UnsupportedOperationException("Method not decompiled: p000.Conversation.fetchMapData(java.lang.String):void");
     }
 
     /* renamed from: q */
-    private static final boolean m1115q(String str) {
+    private static final boolean isStatusReport(String str) {
         return AppState.indexOfPool(str, 791174) > 0;
     }
 
     /* renamed from: h */
-    public static final String m1116h(String str) {
-        return m1118b(str, 959, 960);
+    public static final String encodeAlternate(String str) {
+        return encodeDecodeInternal(str, 959, 960);
     }
 
     /* renamed from: i */
-    public static final String m1117i(String str) {
-        return m1118b(str, 960, 959);
+    public static final String decodeAlternate(String str) {
+        return encodeDecodeInternal(str, 960, 959);
     }
 
     /* renamed from: b */
-    private static final String m1118b(String str, int i, int i2) {
+    private static final String encodeDecodeInternal(String str, int i, int i2) {
         String strM584b = AppState.getString(i);
         String strM584b2 = AppState.getString(i2);
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
@@ -1078,7 +1078,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static final String m1119a(Object obj) {
+    public static final String urlEncode(Object obj) {
         String string = obj.toString().toString();
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         AppState.getString(266215);
@@ -1100,7 +1100,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: b */
-    public static final String m1120b(Object obj) {
+    public static final String urlEncodeCyrillic(Object obj) {
         String string = obj.toString();
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         String strM584b = AppState.getString(266215);
@@ -1130,7 +1130,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static String m1121a(int i, int i2) {
+    public static String formatNumber(int i, int i2) {
         String strM17c = StringUtils.intern(Integer.toString(i));
         int length = strM17c.length();
         if (length >= 2) {
@@ -1145,7 +1145,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: j */
-    public static final String m1122j(String str) {
+    public static final String decodeHtmlSpecial(String str) {
         Vector vectorM512e = Utils.splitByNull(AppState.getString(1511369));
         Vector vectorM512e2 = Utils.splitByNull(AppState.getString(462816));
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
@@ -1178,7 +1178,7 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: k */
-    public static final String m1123k(String str) {
+    public static final String transliterateRussian(String str) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         Vector vectorM512e = Utils.splitByNull(AppState.getString(4788096));
         int length = str.length();
@@ -1199,12 +1199,12 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: l */
-    public static final String m1124l(String str) {
-        return m1125a(str, true);
+    public static final String percentEncode(String str) {
+        return percentEncodeInternal(str, true);
     }
 
     /* renamed from: a */
-    private static final String m1125a(String str, boolean z) {
+    private static final String percentEncodeInternal(String str, boolean z) {
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
@@ -1221,28 +1221,28 @@ public final class Conversation implements ListItem {
     }
 
     /* renamed from: a */
-    public static final void m1126a(boolean z) {
+    public static final void setMapEnabled(boolean z) {
         MapRenderer.f200h = true;
         AppState.setBool(41, z);
     }
 
     /* renamed from: a */
-    public static final void m1127a() {
+    public static final void incrementZoom() {
         MapRenderer.m651a(AppState.getInt(39) + 1);
     }
 
     /* renamed from: b */
-    public static final void m1128b() {
+    public static final void decrementZoom() {
         MapRenderer.m651a(AppState.getInt(39) - 1);
     }
 
     /* renamed from: c */
-    public static final void m1129c() {
+    public static final void loadContacts() {
         new AsyncTask(11, MmpContact.buildLocationString());
     }
 
     /* renamed from: c */
-    public static final void m1130c(int i) {
+    public static final void updateStatusText(int i) {
         AppState.setFromBuffer(1251, NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(1401).size()).append(')'));
     }
 }

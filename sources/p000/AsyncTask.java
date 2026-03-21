@@ -50,7 +50,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         this.f435c = new Object[]{c0013am, c0032c};
         String str = (String) objArr[0];
         int iIntValue = ((Integer) objArr[1]).intValue();
-        XmppContactGroup.m1025a(AppState.emptyStr, str.length() > iIntValue ? StringUtils.prefix(str, iIntValue) : str, iIntValue, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
+        XmppContactGroup.showTextInputDialog(AppState.emptyStr, str.length() > iIntValue ? StringUtils.prefix(str, iIntValue) : str, iIntValue, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
     }
 
     public final void commandAction(Command command, Displayable displayable) {
@@ -595,7 +595,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r0 = 872(0x368, float:1.222E-42)
-            java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
             ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
@@ -609,7 +609,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             java.lang.String r0 = r0.readUTFWithLen()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
-            java.util.Vector r0 = p000.XmppContactGroup.m1045a(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.XmppContactGroup.parseMapPointsFromStr(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r10 = r0
             r0 = 0
             r12 = r0
@@ -620,7 +620,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L36d:
@@ -640,7 +640,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L392:
@@ -648,7 +648,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -716,7 +716,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r0 = 1000(0x3e8, float:1.401E-42)
-            java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
             ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
@@ -802,7 +802,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L4c6:
@@ -821,7 +821,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L4e9:
@@ -829,14 +829,14 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L4fa:
             return
         L4fb:
-            p000.XmppContactGroup.m1004c()     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.periodicTimeSync()     // Catch: java.lang.Throwable -> La84
             return
         L4ff:
             r0 = r8
@@ -987,7 +987,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r0 = 370(0x172, float:5.18E-43)
-            java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
             r1 = 0
@@ -1030,7 +1030,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L65c:
@@ -1042,7 +1042,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L672:
@@ -1050,7 +1050,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -1065,7 +1065,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r0 = 505(0x1f9, float:7.08E-43)
-            java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
             r1 = 0
@@ -1091,7 +1091,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L6cf:
@@ -1103,7 +1103,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L6e5:
@@ -1111,7 +1111,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -1126,7 +1126,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r0 = 505(0x1f9, float:7.08E-43)
-            java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
             r1 = 0
@@ -1155,7 +1155,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L741:
@@ -1167,7 +1167,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L757:
@@ -1175,7 +1175,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -1190,7 +1190,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = 505(0x1f9, float:7.08E-43)
-            java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r15 = r0
             r0 = 3805583(0x3a118f, float:5.332758E-39)
             r1 = 0
@@ -1255,7 +1255,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L7fe:
@@ -1288,7 +1288,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L835:
@@ -1296,7 +1296,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
-            p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -1306,7 +1306,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 0
             r13 = r1
             java.lang.String r0 = (java.lang.String) r0     // Catch: java.lang.Throwable -> La84
-            p000.Conversation.m1114g(r0)     // Catch: java.lang.Throwable -> La84
+            p000.Conversation.fetchMapData(r0)     // Catch: java.lang.Throwable -> La84
             return
         L854:
             r0 = r8
@@ -1412,7 +1412,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.f435c     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.Conversation.m1088a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.Conversation.fetchHistory(r0)     // Catch: java.lang.Throwable -> La84
             return
         L90f:
             p000.ResourceManager.m973p()     // Catch: java.lang.Throwable -> La84

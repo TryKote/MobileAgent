@@ -277,7 +277,7 @@ public final class ScreenBuilder {
                 JsonParser.addIntToVector(vectorM1213g, 0);
                 vectorM1213g.addElement(AppState.emptyStr);
                 JsonParser.addIntToVector(vectorM1213g, 1);
-                IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g)))));
+                IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g)))));
                 return;
             case 38:
                 AppController.m402M();
@@ -322,7 +322,7 @@ public final class ScreenBuilder {
                 if (c0052wM745h == c0028ba2.getLastChatRoom()) {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(0)));
                     vectorM1213g2.addElement(c0052wM745h.participants);
-                    objArrM1147a = ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.m1216b(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.m1216b(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
                 } else {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(c0052wM745h.id)));
                     int iM586d2 = AppState.getInt(97);
@@ -339,7 +339,7 @@ public final class ScreenBuilder {
                         }
                     }
                     vectorM1213g2.addElement(vectorM1213g3);
-                    objArrM1147a = ConnectionThread.m1147a(NetworkUtils.m1216b(1050207).append('?').append(AppState.getString(722608)).append(AppState.getString(1640218)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.m1147a(NetworkUtils.m1216b(1050207).append('?').append(AppState.getString(722608)).append(AppState.getString(1640218)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
                 }
                 IOUtils.m813b(objArrM1147a);
                 return;
@@ -348,7 +348,7 @@ public final class ScreenBuilder {
                 Vector vectorM1213g4 = NetworkUtils.newVector();
                 JsonParser.addIntToVector(vectorM1213g4, AppState.getInt(1527));
                 vectorM1213g4.addElement(AppState.getVector(1356));
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g4)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g4)))));
                 return;
             case 43:
                 IOUtils.m760c();
@@ -390,7 +390,7 @@ public final class ScreenBuilder {
                     vectorM1213g5.addElement(strM584b);
                     vectorM1213g5.addElement(AppState.emptyStr);
                     vectorM1213g5.addElement(NetworkUtils.longToHex(6775156));
-                    IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g5)))));
+                    IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g5)))));
                     return;
                 }
                 return;
@@ -481,7 +481,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(4667));
                 return;
             case 63:
-                XmppContactGroup.m1025a(AppState.getCurrentContact().displayName, AppState.getString(1279), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(424), 1059, 1055, new AsyncTask());
+                XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(1279), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(424), 1059, 1055, new AsyncTask());
                 AppState.setInt(1457, 0);
                 AppState.setInt(1458, 0);
                 AppState.setInt(1459, 0);
@@ -540,7 +540,7 @@ public final class ScreenBuilder {
                     if (size7 < 0) {
                         Vector vectorM1213g7 = NetworkUtils.newVector();
                         vectorM1213g7.addElement(vectorM1213g6);
-                        IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g7)))));
+                        IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g7)))));
                         return;
                     } else {
                         Hashtable hashtable2 = new Hashtable();
@@ -580,7 +580,7 @@ public final class ScreenBuilder {
                 Vector vectorM1213g8 = NetworkUtils.newVector();
                 vectorM1213g8.addElement(AppState.getVector(1356));
                 JsonParser.addIntToVector(vectorM1213g8, AppState.getBool(1524) ? 1 : 0);
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1508975), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g8)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1508975), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g8)))));
                 return;
             case 79:
                 NetworkUtils.m1198a(79, 863);
@@ -597,14 +597,14 @@ public final class ScreenBuilder {
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1349)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1350)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1351)));
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g9)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g9)))));
                 return;
             case 82:
                 NetworkUtils.m1200b(82, 877);
                 Message c0026az3 = new Message(XmppMailRuProtocol.m871i(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
                 Vector vectorM1213g10 = NetworkUtils.newVector();
                 vectorM1213g10.addElement(c0026az3.toHashtable());
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377947), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g10)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377947), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g10)))));
                 return;
             case 83:
                 ResourceManager.m925a(4);
@@ -613,7 +613,7 @@ public final class ScreenBuilder {
                 AppController.m341r();
                 return;
             case 84:
-                String strM1026g = XmppContactGroup.m1026g();
+                String strM1026g = XmppContactGroup.getTextInputValue();
                 AppState.setObject(1279, (Object) strM1026g);
                 AppState.setBool(1456, !StringUtils.isEmpty(strM1026g));
                 ScreenManager.showScreen(ScreenManager.createScreen(2299));
@@ -733,8 +733,8 @@ public final class ScreenBuilder {
                 if (null != str2) {
                     AppController.m339e(str2);
                 } else {
-                    AppState.setInt(3834, c0042m.m1252a() ? 0 : 503);
-                    ScreenManager.showScreen(c0042m.m1293f(3830));
+                    AppState.setInt(3834, c0042m.isXmppContact() ? 0 : 503);
+                    ScreenManager.showScreen(c0042m.buildContactScreen(3830));
                 }
                 AppState.setInt(3650, 102);
                 return;
@@ -792,7 +792,7 @@ public final class ScreenBuilder {
                     return;
                 }
             case 103:
-                ScreenManager.showScreen(((ContactInfo) AppState.pool[1319]).m1293f(3878));
+                ScreenManager.showScreen(((ContactInfo) AppState.pool[1319]).buildContactScreen(3878));
                 AppState.clearIndex(1315);
                 AppState.setInt(3650, 107);
                 return;
@@ -816,7 +816,7 @@ public final class ScreenBuilder {
                 return;
             case 107:
                 ContactInfo c0042m2 = (ContactInfo) AppState.pool[1319];
-                NetworkUtils.m1199a(107, 728, c0042m2.m1255c().getResourceId((Object) c0042m2.m1290i()));
+                NetworkUtils.m1199a(107, 728, c0042m2.getAccount().getResourceId((Object) c0042m2.getEmailOrMmpId()));
                 return;
             case 108:
                 return;
@@ -878,7 +878,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(c0013amM75b13);
                 return;
             case 117:
-                Conversation.m1130c(375);
+                Conversation.updateStatusText(375);
                 ScreenManager.showScreen(ScreenManager.createScreen(1902));
                 return;
             case 118:
@@ -1139,7 +1139,7 @@ public final class ScreenBuilder {
                 return;
             case 158:
                 AppState.setInt(2122, AppState.getBool(1442) ? 407 : 408);
-                Conversation.m1130c(411);
+                Conversation.updateStatusText(411);
                 ScreenManager.showScreen(ScreenManager.createScreen(2111));
                 return;
             case 159:
@@ -1175,7 +1175,7 @@ public final class ScreenBuilder {
                 NetworkUtils.m1200b(161, 872);
                 return;
             case 162:
-                Conversation.m1130c(411);
+                Conversation.updateStatusText(411);
                 ScreenManager.showScreen(ScreenManager.createScreen(4270));
                 return;
             case 163:
@@ -1203,7 +1203,7 @@ public final class ScreenBuilder {
                 return;
             case 170:
                 Screen c0013amM75b18 = ScreenManager.createScreen(2176);
-                Vector vector2 = ((Conversation) AppState.pool[1255]).f343a;
+                Vector vector2 = ((Conversation) AppState.pool[1255]).items;
                 int size14 = vector2.size();
                 while (true) {
                     size14--;
@@ -1604,7 +1604,7 @@ public final class ScreenBuilder {
                 break;
             case 66:
                 NetworkUtils.m1195d();
-                int iMo734a = ((ContactInfo) AppState.pool[1319]).m1255c().validateGroupAdd(Utils.defaultStr(AppState.getString(1320)), Utils.defaultStr(AppState.getString(1321)), Utils.defaultStr(AppState.getString(1322)), (ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507)), AppState.getBool(1509));
+                int iMo734a = ((ContactInfo) AppState.pool[1319]).getAccount().validateGroupAdd(Utils.defaultStr(AppState.getString(1320)), Utils.defaultStr(AppState.getString(1321)), Utils.defaultStr(AppState.getString(1322)), (ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507)), AppState.getBool(1509));
                 iM460J = 0 != iMo734a ? AppController.m338l(iMo734a) : 0;
                 break;
             case 67:
@@ -1702,7 +1702,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m347f(strM67c);
                 break;
             case 96:
-                iM460J = ((ContactInfo) AppState.pool[1315]).m1253b() ? 130 : ((ContactInfo) AppState.pool[1315]).m1252a() ? -1 : AppState.getInt(3650);
+                iM460J = ((ContactInfo) AppState.pool[1315]).isMrimContact() ? 130 : ((ContactInfo) AppState.pool[1315]).isXmppContact() ? -1 : AppState.getInt(3650);
                 break;
             case 97:
                 iM460J = AppController.m398i(obj);
@@ -1723,7 +1723,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 103:
-                iM460J = ((ContactInfo) AppState.pool[1319]).m1253b() ? 130 : AppState.getInt(3650);
+                iM460J = ((ContactInfo) AppState.pool[1319]).isMrimContact() ? 130 : AppState.getInt(3650);
                 break;
             case 104:
                 iM460J = AppController.m363p(iM68d);
@@ -1774,8 +1774,8 @@ public final class ScreenBuilder {
                     MapPoint c0014an = new MapPoint(strM522f3, 0L, 0L, 0L, 0L, jMo274v, jMo275w, AppState.getInt(39));
                     c0014an.height = 4;
                     Vector vectorM614m = AppState.getVector(1401);
-                    XmppContactGroup.m1043a(vectorM614m, c0014an, 0, 50);
-                    XmppContactGroup.m1046a(vectorM614m, 226);
+                    XmppContactGroup.addMapPointIfNew(vectorM614m, c0014an, 0, 50);
+                    XmppContactGroup.saveMapPoints(vectorM614m, 226);
                     MapRenderer.m654b(c0014an);
                     iM338l7 = 0;
                 }
@@ -1895,7 +1895,7 @@ public final class ScreenBuilder {
                 if (obj == null) {
                     iM338l5 = -1;
                 } else if (obj instanceof String) {
-                    AppState.pool[1319] = ContactInfo.m1251a(AppState.getCurrentContact().account).m1262e((String) obj).m1259b((String) obj);
+                    AppState.pool[1319] = ContactInfo.createForAccount(AppState.getCurrentContact().account).setEmailAddress((String) obj).setDisplayName((String) obj);
                     iM338l5 = 66;
                 } else {
                     iM338l5 = AppController.m338l(773);
@@ -1977,7 +1977,7 @@ public final class ScreenBuilder {
                     iM338l2 = AppController.m338l(523);
                 } else {
                     MrimAccount c0028ba5 = (MrimAccount) AppState.getAccount();
-                    new AsyncTask(17, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(c0028ba5.login).writeUInt(4022822).writeRawString(c0028ba5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.m1120b((Object) strM522f6)).writeRawString(Utils.defaultStr(AppState.getBool(1468) ? AppState.getString(1285) : null)).getStringAndClear());
+                    new AsyncTask(17, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(c0028ba5.login).writeUInt(4022822).writeRawString(c0028ba5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) strM522f6)).writeRawString(Utils.defaultStr(AppState.getBool(1468) ? AppState.getString(1285) : null)).getStringAndClear());
                     AppState.addInt(282, 1);
                     iM338l2 = 0;
                 }
@@ -2016,7 +2016,7 @@ public final class ScreenBuilder {
                 long j = jMo274v2;
                 long j2 = jMo275w2;
                 if (strM584b != null) {
-                    XmppContactGroup.f310a.addElement(new Object[]{strM584b, new long[]{j, j2}, strM584b2});
+                    XmppContactGroup.sharedContactList.addElement(new Object[]{strM584b, new long[]{j, j2}, strM584b2});
                 }
                 long j3 = jMo274v2;
                 long j4 = jMo275w2;
@@ -2367,7 +2367,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 63:
-                String strM1026g = XmppContactGroup.m1026g();
+                String strM1026g = XmppContactGroup.getTextInputValue();
                 if (!StringUtils.isEmpty(strM1026g) && 0 != (iM1233b = AppState.getCurrentContact().sendMessage(strM1026g))) {
                     m549c();
                     IOUtils.m778d((Object) AppState.getString(iM1233b));

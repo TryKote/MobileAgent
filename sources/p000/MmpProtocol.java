@@ -682,7 +682,7 @@ public final class MmpProtocol extends Account {
             return 299;
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        AppState.pool[1316] = ContactInfo.m1254b(this).m1284u(c0009ai.identifier);
+        AppState.pool[1316] = ContactInfo.createAccountInfo(this).setMmpContactIdStr(c0009ai.identifier);
         return trySendData(StringUtils.m18a(this, Utils.parseInt((Object) c0009ai.identifier)));
     }
 

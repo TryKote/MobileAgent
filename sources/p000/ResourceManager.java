@@ -298,7 +298,7 @@ public final class ResourceManager {
             if (!StringUtils.m3a(476, str)) {
                 return 0;
             }
-            AppState.setObject(1279, (Object) Conversation.m1123k(strM522f));
+            AppState.setObject(1279, (Object) Conversation.transliterateRussian(strM522f));
             return 0;
         }
         String strM584b = AppState.getString(1314);
@@ -533,8 +533,8 @@ public final class ResourceManager {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         MapPoint c0014an = (MapPoint) obj;
         c0028ba.setLocationProfile(c0014an);
-        XmppContactGroup.m1043a(AppState.getVector(1400), c0014an, 0, 5);
-        XmppContactGroup.m1046a(AppState.getVector(1400), 225);
+        XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
+        XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
         AppState.setInt(1477, 0);
         c0028ba.isHighlighted = true;
         return 160;
@@ -691,16 +691,16 @@ public final class ResourceManager {
     /* renamed from: n */
     public static final int m964n() {
         try {
-            if (XmppContactGroup.m1026g().length() != 0) {
-                XmppContactGroup.m1027a(1055, 1060);
+            if (XmppContactGroup.getTextInputValue().length() != 0) {
+                XmppContactGroup.setTextInputScreen(1055, 1060);
             } else {
-                XmppContactGroup.m1027a(1060, 1055);
+                XmppContactGroup.setTextInputScreen(1060, 1055);
             }
             if (AppState.getBool(104)) {
                 int iM586d = AppState.getInt(1531);
                 if (Utils.abs(iM586d - AppState.getInt(1458)) > 5000) {
                     AppState.setInt(1458, iM586d);
-                    int length = XmppContactGroup.m1026g().length();
+                    int length = XmppContactGroup.getTextInputValue().length();
                     if (length != AppState.getInt(1459) && Utils.abs(iM586d - AppState.getInt(1457)) > 10000) {
                         Contact abstractC0041lM611g = AppState.getCurrentContact();
                         if (!abstractC0041lM611g.isOnline() && !abstractC0041lM611g.hasUnread() && !abstractC0041lM611g.isOffline()) {
@@ -726,7 +726,7 @@ public final class ResourceManager {
                 throw new Throwable();
             }
             Vector vectorM513a = Utils.m513a(new ByteBuffer(c0024axM631b).readUTFWithLen(), '\n', '\r');
-            XmppContactGroup.f310a.removeAllElements();
+            XmppContactGroup.sharedContactList.removeAllElements();
             int size = vectorM513a.size();
             while (true) {
                 size--;
@@ -738,7 +738,7 @@ public final class ResourceManager {
                 } else {
                     Vector vectorM514a = Utils.m514a((String) vectorM513a.elementAt(size), '|');
                     if (vectorM514a.size() == 5) {
-                        XmppContactGroup.f310a.addElement(new Object[]{vectorM514a.elementAt(0), new long[]{Long.parseLong((String) vectorM514a.elementAt(1)), Long.parseLong((String) vectorM514a.elementAt(2))}, vectorM514a.elementAt(4)});
+                        XmppContactGroup.sharedContactList.addElement(new Object[]{vectorM514a.elementAt(0), new long[]{Long.parseLong((String) vectorM514a.elementAt(1)), Long.parseLong((String) vectorM514a.elementAt(2))}, vectorM514a.elementAt(4)});
                     }
                     NetworkUtils.releaseVector(vectorM514a);
                 }
@@ -918,7 +918,7 @@ public final class ResourceManager {
                         c0043n.writeByte(224 + (iCharAt >> 12)).writeByte(128 + ((iCharAt >> 6) & 63)).writeByte(128 + (iCharAt & 63));
                     }
                 }
-                strM1109a = Conversation.m1109a(Conversation.m1109a(c0043n.toBase64(), 65547, 200765), 65552, 200768);
+                strM1109a = Conversation.replaceText(Conversation.replaceText(c0043n.toBase64(), 65547, 200765), 65552, 200768);
             }
             c0043nM1385u3.writeRawString(strM1109a);
         }
@@ -1014,7 +1014,7 @@ public final class ResourceManager {
         }
         ByteBuffer c0043n = new ByteBuffer();
         ByteBuffer c0043nM980a = m980a(c0028ba);
-        XmppContactGroup.m1036a(c0043nM980a.data, c0043nM980a.length, c0043nM1302a.data, c0043nM1302a.length);
+        XmppContactGroup.encryptRC4(c0043nM980a.data, c0043nM980a.length, c0043nM1302a.data, c0043nM1302a.length);
         c0043nM980a.clear();
         return c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4132, c0043n.writeBufferIntLen(c0043nM1302a)), m967e(17), abstractC0037h});
     }
@@ -1025,7 +1025,7 @@ public final class ResourceManager {
             c0043n.readInt();
             c0043n.ensureCapacity(0);
             ByteBuffer c0043nM980a = m980a(c0028ba);
-            XmppContactGroup.m1037b(c0043nM980a.data, c0043nM980a.length, c0043n.data, c0043n.length);
+            XmppContactGroup.decryptRC4(c0043nM980a.data, c0043nM980a.length, c0043n.data, c0043n.length);
             c0043nM980a.clear();
             c0043n.readInt();
             MmpProtocol c0033d = (MmpProtocol) objArr[2];

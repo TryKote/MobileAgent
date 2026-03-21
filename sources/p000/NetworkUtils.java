@@ -563,14 +563,14 @@ public final class NetworkUtils {
                 c0032cM1057D = ((ContactGroup) objElementAt).createMenuItem(-1);
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
-                if (c0042m.m1255c() instanceof MrimAccount) {
-                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).addText(Utils.m495b(c0042m.m1287f()), 1, 0).setLabel(c0042m.m1256a(3));
+                if (c0042m.getAccount() instanceof MrimAccount) {
+                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.m349a(Utils.m511a(c0042m.getString(10), 0, 4, 0), c0042m.getString(12))).addText(Utils.m495b(c0042m.getDisplayName()), 1, 0).setLabel(c0042m.getString(3));
                     c0032cM898b.data = c0042m;
                     c0032cM1057D = c0032cM898b;
                 } else {
                     MenuItem c0032cM886c = MenuItem.createDefault();
-                    int iM510a = Utils.parseInt((Object) c0042m.m1256a(61));
-                    MenuItem c0032cM898b2 = c0032cM886c.setIcon(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).setLabel(Utils.m527g(c0042m.m1256a(60))).addText(Utils.m495b(c0042m.m1287f()), 1, 0).setLabel(StringUtils.concat(Utils.m527g(c0042m.m1288g()), c0042m.m1289h()));
+                    int iM510a = Utils.parseInt((Object) c0042m.getString(61));
+                    MenuItem c0032cM898b2 = c0032cM886c.setIcon(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).setLabel(Utils.m527g(c0042m.getString(60))).addText(Utils.m495b(c0042m.getDisplayName()), 1, 0).setLabel(StringUtils.concat(Utils.m527g(c0042m.getFirstName()), c0042m.getLastName()));
                     c0032cM898b2.data = c0042m;
                     c0032cM1057D = c0032cM898b2;
                 }
@@ -710,16 +710,16 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final void m1202a(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
-        ContactInfo c0042mM1251a = ContactInfo.m1251a(c0028ba);
+        ContactInfo c0042mM1251a = ContactInfo.createForAccount(c0028ba);
         switch (i) {
             case 0:
-                c0042mM1251a.m1257a(AppState.getString(913));
+                c0042mM1251a.setContactName(AppState.getString(913));
                 break;
             case 1:
                 c0042mM1251a = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
                 break;
             default:
-                c0042mM1251a.m1257a(bufToStringCached(newStringBuffer().append(AppState.getString(914)).append(i)));
+                c0042mM1251a.setContactName(bufToStringCached(newStringBuffer().append(AppState.getString(914)).append(i)));
                 break;
         }
         AppState.pool[1315] = c0042mM1251a;
@@ -753,9 +753,9 @@ public final class NetworkUtils {
                 break;
             case 1:
                 ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
-                MrimContact c0035f = (MrimContact) c0028ba.contactMap.get(c0042m.m1290i());
+                MrimContact c0035f = (MrimContact) c0028ba.contactMap.get(c0042m.getEmailOrMmpId());
                 if (null != c0035f) {
-                    c0035f.setDisplayName(c0042m.m1292k());
+                    c0035f.setDisplayName(c0042m.getFullName());
                     return;
                 }
                 return;
@@ -771,10 +771,10 @@ public final class NetworkUtils {
         if (i == 1) {
             ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
             Hashtable hashtable = c0028ba.contactMap;
-            String strM1290i = c0042m.m1290i();
+            String strM1290i = c0042m.getEmailOrMmpId();
             MrimContact c0035f = (MrimContact) hashtable.get(strM1290i);
             if (null != c0035f) {
-                String strM1292k = c0042m.m1292k();
+                String strM1292k = c0042m.getFullName();
                 c0035f.setDisplayName(strM1292k);
                 c0028ba.validateGroupAdd(strM1290i, strM1292k, AppState.getString(741), (ContactGroup) c0028ba.getFirstContactGroup(), true);
             }
@@ -815,7 +815,7 @@ public final class NetworkUtils {
             vectorM1213g2.addElement(c0043n.readHexStr());
         }
         for (int i2 = 0; i2 < iM1328e2 && c0043n.length > 0; i2++) {
-            ContactInfo c0042mM1251a = ContactInfo.m1251a(c0028ba);
+            ContactInfo c0042mM1251a = ContactInfo.createForAccount(c0028ba);
             vectorM1213g.addElement(c0042mM1251a);
             int i3 = 0;
             while (i3 < iM1328e) {
@@ -829,42 +829,42 @@ public final class NetworkUtils {
                     }
                     switch (iM541c) {
                         case 0:
-                            c0042mM1251a.m1279q(c0043n.readWideStr());
+                            c0042mM1251a.setPhoneHome(c0043n.readWideStr());
                             break;
                         case 1:
-                            c0042mM1251a.m1280r(c0043n.readWideStr());
+                            c0042mM1251a.setPhoneMobile(c0043n.readWideStr());
                             break;
                         case 2:
-                            c0042mM1251a.m1259b(c0043n.readUTF8Str((String) null));
+                            c0042mM1251a.setDisplayName(c0043n.readUTF8Str((String) null));
                             break;
                         case 3:
-                            c0042mM1251a.m1260c(c0043n.readUTF8Str((String) null));
+                            c0042mM1251a.setFirstName(c0043n.readUTF8Str((String) null));
                             break;
                         case 4:
-                            c0042mM1251a.m1261d(c0043n.readUTF8Str((String) null));
+                            c0042mM1251a.setLastName(c0043n.readUTF8Str((String) null));
                             break;
                         case 5:
                             int iM511a = Utils.m511a(c0043n.readWideStr(), 1, 2, 0);
                             if (1 == iM511a) {
-                                c0042mM1251a.m1263d();
+                                c0042mM1251a.setMaritalMarried();
                                 break;
                             } else if (2 == iM511a) {
-                                c0042mM1251a.m1264e();
+                                c0042mM1251a.setMaritalSingle();
                                 break;
                             } else {
                                 break;
                             }
                         case 6:
-                            c0042mM1251a.m1265f(c0043n.readWideStr());
+                            c0042mM1251a.setCompany(c0043n.readWideStr());
                             break;
                         case 7:
-                            c0042mM1251a.m1281s(c0043n.readWideStr());
+                            c0042mM1251a.setWebsite(c0043n.readWideStr());
                             break;
                         case 8:
-                            c0042mM1251a.m1274o(c0043n.readUTF8Str((String) null));
+                            c0042mM1251a.setWorkPhone(c0043n.readUTF8Str((String) null));
                             break;
                         case 9:
-                            c0042mM1251a.m1278p(c0043n.readWideStr());
+                            c0042mM1251a.setBirthdayMonth(c0043n.readWideStr());
                             break;
                         case 10:
                             c0043n.readWideStr();
@@ -873,22 +873,22 @@ public final class NetworkUtils {
                             c0043n.readWideStr();
                             break;
                         case 12:
-                            c0042mM1251a.m1282t(c0043n.readWideStr());
+                            c0042mM1251a.setAltEmail(c0043n.readWideStr());
                             break;
                         case 13:
-                            c0042mM1251a.m1266g(c0043n.readWideStr());
+                            c0042mM1251a.setJobTitle(c0043n.readWideStr());
                             break;
                         case 14:
-                            c0042mM1251a.m1267h(c0043n.readWideStr());
+                            c0042mM1251a.setLocation(c0043n.readWideStr());
                             break;
                         case 15:
-                            c0042mM1251a.m1294v(c0043n.readWideStr());
+                            c0042mM1251a.setIconId(c0043n.readWideStr());
                             break;
                         case 16:
-                            c0042mM1251a.m1295w(c0043n.readUTF8Str((String) null));
+                            c0042mM1251a.setIconName(c0043n.readUTF8Str((String) null));
                             break;
                         case 17:
-                            c0042mM1251a.m1296x(c0043n.readUTF8Str((String) null));
+                            c0042mM1251a.setDescription(c0043n.readUTF8Str((String) null));
                             break;
                         default:
                             c0043n.readWideStr();
@@ -898,7 +898,7 @@ public final class NetworkUtils {
                 switch (iM541c) {
                 }
             }
-            c0042mM1251a.m1262e(bufToStringCached(newStringBuffer().append(c0042mM1251a.m1256a(50)).append('@').append(c0042mM1251a.m1256a(51))));
+            c0042mM1251a.setEmailAddress(bufToStringCached(newStringBuffer().append(c0042mM1251a.getString(50)).append('@').append(c0042mM1251a.getString(51))));
         }
         releaseVector(vectorM512e);
         releaseVector(vectorM1213g2);

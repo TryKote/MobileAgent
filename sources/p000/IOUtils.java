@@ -187,7 +187,7 @@ public final class IOUtils {
     /* renamed from: b */
     public static final void m758b() {
         ContactInfo c0042m = (ContactInfo) AppState.pool[1319];
-        Account abstractC0037hM1255c = c0042m.m1255c();
+        Account abstractC0037hM1255c = c0042m.getAccount();
         if (m757a(abstractC0037hM1255c) == 0) {
             m778d((Object) AppState.getString(743));
             return;
@@ -199,8 +199,8 @@ public final class IOUtils {
             AppState.setFromPool(1322, 741);
         }
         if (abstractC0037hM1255c.getType() == 1) {
-            AppState.setObject(1320, (Object) c0042m.m1256a(60));
-            AppState.setObject(1321, (Object) c0042m.m1291j());
+            AppState.setObject(1320, (Object) c0042m.getString(60));
+            AppState.setObject(1321, (Object) c0042m.getDisplayNameOrId());
             ScreenManager.showScreen(ScreenManager.createScreen(3920));
             return;
         }
@@ -211,8 +211,8 @@ public final class IOUtils {
             AppState.setInt(1509, 0);
             AppState.setInt(3897, 4);
         }
-        AppState.setObject(1320, (Object) c0042m.m1290i());
-        AppState.setObject(1321, (Object) c0042m.m1292k());
+        AppState.setObject(1320, (Object) c0042m.getEmailOrMmpId());
+        AppState.setObject(1321, (Object) c0042m.getFullName());
         ScreenManager.showScreen(ScreenManager.createScreen(3888));
     }
 
@@ -455,10 +455,10 @@ public final class IOUtils {
             } catch (Throwable unused) {
             }
         } else {
-            String strM1109a = Conversation.m1109a(strM522f, 1046, 199350);
+            String strM1109a = Conversation.replaceText(strM522f, 1046, 199350);
             Image imageM615n = AppState.getImage(1364);
             long j = MapRenderer.f195c;
-            new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.m1120b((Object) strM1109a)).writeCompressed(659815).writeLongAsString(j).writeCompressed(659825).writeLongAsString(MapRenderer.f196d).writeCompressed(659835).writeIntAsString(imageM615n.getWidth()).writeCompressed(659845).writeIntAsString(imageM615n.getHeight()).getStringAndClear());
+            new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) strM1109a)).writeCompressed(659815).writeLongAsString(j).writeCompressed(659825).writeLongAsString(MapRenderer.f196d).writeCompressed(659835).writeIntAsString(imageM615n.getWidth()).writeCompressed(659845).writeIntAsString(imageM615n.getHeight()).getStringAndClear());
         }
         return AppState.getBool(1477) ? 161 : 6;
     }

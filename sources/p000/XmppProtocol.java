@@ -803,7 +803,7 @@ public class XmppProtocol extends Account {
             try {
                 Object[] objArrM609l = AppState.getObjectArray(1316);
                 if (((String) objArrM609l[0]).equals(c0022av.getIntAttribute(131550))) {
-                    AppState.pool[1315] = ((ContactInfo) objArrM609l[1]).m1297y(c0022av.toString());
+                    AppState.pool[1315] = ((ContactInfo) objArrM609l[1]).setDescriptionBis(c0022av.toString());
                 }
                 return true;
             } catch (Throwable unused) {
@@ -813,7 +813,7 @@ public class XmppProtocol extends Account {
         try {
             Object[] objArrM609l2 = AppState.getObjectArray(1316);
             if (((String) objArrM609l2[0]).equals(c0022av.getIntAttribute(131550))) {
-                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).m1297y(NetworkUtils.bufToStringCached(buildContactDescription(NetworkUtils.newStringBuffer(), c0022av)));
+                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).setDescriptionBis(NetworkUtils.bufToStringCached(buildContactDescription(NetworkUtils.newStringBuffer(), c0022av)));
                 Image imageM132e = extractImageFromElement(c0022av);
                 if (imageM132e != null) {
                     c0042mM1297y.put(ResourceManager.m967e(25), imageM132e);

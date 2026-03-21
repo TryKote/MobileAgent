@@ -142,7 +142,7 @@ public final class GraphicsContext {
                     }
                     if (iM503b2 > 0) {
                         graphics.setClip(i7, i6, iM503b, iM503b2);
-                        graphics.drawImage(XmppContactGroup.m1023b(i10), i7 - i12, i6 - i13, 20);
+                        graphics.drawImage(XmppContactGroup.getOrLoadImage(i10), i7 - i12, i6 - i13, 20);
                         graphics.setClip(clipX, clipY, clipWidth, clipHeight);
                     }
                 }

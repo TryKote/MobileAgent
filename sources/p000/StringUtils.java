@@ -261,7 +261,7 @@ public final class StringUtils {
                 if (!(AppState.getVector(1398).size() == 0)) {
                     break;
                 }
-                XmppContactGroup.m1042b(objArr);
+                XmppContactGroup.removeContactInfoFromQueue(objArr);
                 try {
                     Thread.sleep(100);
                 } catch (Throwable unused) {
@@ -270,7 +270,7 @@ public final class StringUtils {
             ResourceManager c0034eM949i = ResourceManager.m949i();
             int i2 = c0034eM949i.f281a;
             objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(1548))).toString();
-            XmppContactGroup.m1041a(objArr);
+            XmppContactGroup.addContactInfoToQueue(objArr);
             try {
                 Image imageM847a = (c0034eM949i.f281a == 1 && AppState.getBool(1551)) ? XmppMailRuProtocol.m847a(c0034eM949i) : null;
                 imageM876b = imageM847a;
@@ -301,7 +301,7 @@ public final class StringUtils {
                         vectorM614m2.removeElementAt(0);
                     }
                     vectorM614m2.addElement(c0034eM949i);
-                    XmppContactGroup.m1038k();
+                    XmppContactGroup.flagSyncRequired();
                 } else {
                     m23a(c0034eM949i, AppState.getImage(1393));
                 }

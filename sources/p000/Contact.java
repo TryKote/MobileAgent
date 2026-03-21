@@ -335,12 +335,12 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: a */
     private final void addMessageLines(Screen c0013am, String str, int i) {
-        Vector vectorM1098a = Conversation.m1098a(str);
+        Vector vectorM1098a = Conversation.parseConversation(str);
         int size = vectorM1098a.size();
         for (int i2 = 0; i2 < size; i2++) {
             String str2 = (String) vectorM1098a.elementAt(i2);
-            if (Conversation.m1106f(str2)) {
-                c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{ResourceManager.m967e(0), str2});
+            if (Conversation.isValidFormat(str2)) {
+                c0013am.m250b(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.m967e(0), str2});
             } else {
                 c0013am.m225a(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }

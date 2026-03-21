@@ -45,7 +45,7 @@ public final class Message {
         this.priority = JsonParser.getIntValue(hashtable, AppState.getString(591847));
         setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(657373)) != 0);
         setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(657363)) != 0);
-        this.subject = Conversation.m1122j(JsonParser.getStringValue(hashtable, AppState.getString(460837)));
+        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, AppState.getString(460837)));
     }
 
     public Message(Vector vector, String str, String str2) {
@@ -112,7 +112,7 @@ public final class Message {
         int i6 = calendarM622k.get(5);
         calendarM622k.setTime(new Date(this.timestamp));
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        String strM527g = Utils.m527g(NetworkUtils.bufToStringCached((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
+        String strM527g = Utils.m527g(NetworkUtils.bufToStringCached((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.formatNumber(calendarM622k.get(11), 2)).append(':').append(Conversation.formatNumber(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.formatNumber(calendarM622k.get(5), 2)).append('.').append(Conversation.formatNumber(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(calendarM622k.get(1) - 2000, 2))));
         MenuItem c0032cM901a = c0032cM896a.addText(strM527g, i2, 10);
         String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(903)));
         MenuItem c0032cM901a2 = c0032cM901a.addText(strM1215a, i2, i3);

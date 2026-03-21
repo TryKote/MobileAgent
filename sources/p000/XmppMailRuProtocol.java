@@ -737,7 +737,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 if (!MapRenderer.m656d()) {
                     return 6;
                 }
-                Conversation.m1129c();
+                Conversation.loadContacts();
                 return 6;
             case 11:
                 if (MapRenderer.m656d()) {
@@ -753,7 +753,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 if (!MapRenderer.m656d()) {
                     return 6;
                 }
-                Conversation.m1129c();
+                Conversation.loadContacts();
                 return 6;
             case 12:
                 MmpContact.clearLocationData();
@@ -798,10 +798,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 ConnectionThread.m1169a((MapPoint) f257f);
                 return 6;
             case 21:
-                Conversation.m1127a();
+                Conversation.incrementZoom();
                 return 6;
             case 22:
-                Conversation.m1128b();
+                Conversation.decrementZoom();
                 return 6;
         }
     }
@@ -974,7 +974,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: b */
     public static final Vector m868b(String str, String str2) {
         Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM870k = m870k(Conversation.m1122j(str2));
+        Vector vectorM870k = m870k(Conversation.decodeHtmlSpecial(str2));
         Vector vectorM870k2 = m870k(str);
         for (int i = 0; i < Utils.m541c(vectorM870k2); i++) {
             m867a(vectorM1213g, AppController.m459a((String) vectorM870k2.elementAt(i), (String) vectorM870k.elementAt(i)));
@@ -1524,31 +1524,31 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     ContactInfo c0042m = (ContactInfo) AppState.pool[1316];
                     ContactInfo c0042mM1254b = c0042m;
                     if (c0042m == null) {
-                        c0042mM1254b = ContactInfo.m1254b(c0033d);
+                        c0042mM1254b = ContactInfo.createAccountInfo(c0033d);
                     }
                     switch (iM1354v) {
                         case 200:
                             String strM1366C = c0043n.readPascalStr();
-                            ContactInfo c0042mM1268i = c0042mM1254b.m1259b(strM1366C).m1260c(c0043n.readPascalStr()).m1261d(c0043n.readPascalStr()).m1262e(c0043n.readPascalStr()).m1268i(c0043n.readPascalStr());
+                            ContactInfo c0042mM1268i = c0042mM1254b.setDisplayName(strM1366C).setFirstName(c0043n.readPascalStr()).setLastName(c0043n.readPascalStr()).setEmailAddress(c0043n.readPascalStr()).setCustomField1(c0043n.readPascalStr());
                             c0043n.readPascalStr();
-                            c0042mM1268i.m1266g(c0043n.readPascalStr()).m1269j(c0043n.readPascalStr()).m1270k(c0043n.readPascalStr()).m1271l(c0043n.readPascalStr());
+                            c0042mM1268i.setJobTitle(c0043n.readPascalStr()).setCustomField2(c0043n.readPascalStr()).setCustomField3(c0043n.readPascalStr()).setCustomField4(c0043n.readPascalStr());
                             if (c0033d.serverId == ((Integer) objArr[2]).intValue()) {
                                 c0033d.setDisplayName(strM1366C);
                                 break;
                             }
                             break;
                         case 220:
-                            ContactInfo c0042mM1273n = c0042mM1254b.m1275b(c0043n.readShortLE()).m1277c(c0043n.readByte()).m1273n(c0043n.readPascalStr());
+                            ContactInfo c0042mM1273n = c0042mM1254b.setAge(c0043n.readShortLE()).setMaritalStatus(c0043n.readByte()).setCustomField6(c0043n.readPascalStr());
                             int iM1354v2 = c0043n.readShortLE();
                             byte bM1344o = c0043n.readByte();
                             byte bM1344o2 = c0043n.readByte();
                             if (bM1344o2 >= 0) {
-                                c0042mM1273n.m1265f(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(bM1344o2 + 1)).append('/').append(Utils.zeroPad(bM1344o)).append('/').append(iM1354v2)));
+                                c0042mM1273n.setCompany(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(bM1344o2 + 1)).append('/').append(Utils.zeroPad(bM1344o)).append('/').append(iM1354v2)));
                                 break;
                             }
                             break;
                         case 230:
-                            c0042mM1254b.m1272m(c0043n.readPascalStr());
+                            c0042mM1254b.setCustomField5(c0043n.readPascalStr());
                             break;
                     }
                     boolean z6 = (i2 & 1) == 0;
@@ -1617,9 +1617,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     int iM1354v5 = c0043n.readShortLE();
                     if ((420 == iM1354v5 || 430 == iM1354v5) && c0043n.readByte() == 10) {
                         c0043n.readShortBE();
-                        ContactInfo c0042mM1262e = ContactInfo.m1254b(c0033d).m1283d(c0043n.readInt()).m1259b(c0043n.readPascalStr()).m1260c(c0043n.readPascalStr()).m1261d(c0043n.readPascalStr()).m1262e(c0043n.readPascalStr());
+                        ContactInfo c0042mM1262e = ContactInfo.createAccountInfo(c0033d).setMmpContactId(c0043n.readInt()).setDisplayName(c0043n.readPascalStr()).setFirstName(c0043n.readPascalStr()).setLastName(c0043n.readPascalStr()).setEmailAddress(c0043n.readPascalStr());
                         c0043n.readByte();
-                        vectorM614m.addElement(c0042mM1262e.m1285e(c0043n.readShortLE()).m1277c(c0043n.readByte()).m1275b(c0043n.readShortLE()));
+                        vectorM614m.addElement(c0042mM1262e.setMmpTypeId(c0043n.readShortLE()).setMaritalStatus(c0043n.readByte()).setAge(c0043n.readShortLE()));
                     }
                     if (iM1354v5 == 430) {
                         AppState.pool[1318] = AppState.getVector(1317);
@@ -1767,12 +1767,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     int iM1354v6 = c0043n.readShortLE();
                     if ((420 == iM1354v6 || 430 == iM1354v6) && c0043n.readByte() == 10) {
                         c0043n.readShortBE();
-                        ContactInfo c0042mM1262e2 = ContactInfo.m1254b(c0033d).m1283d(c0043n.readInt()).m1259b(c0043n.readPascalStr()).m1260c(c0043n.readPascalStr()).m1261d(c0043n.readPascalStr()).m1262e(c0043n.readPascalStr());
+                        ContactInfo c0042mM1262e2 = ContactInfo.createAccountInfo(c0033d).setMmpContactId(c0043n.readInt()).setDisplayName(c0043n.readPascalStr()).setFirstName(c0043n.readPascalStr()).setLastName(c0043n.readPascalStr()).setEmailAddress(c0043n.readPascalStr());
                         c0043n.readByte();
-                        ContactInfo c0042mM1275b = c0042mM1262e2.m1285e(c0043n.readShortLE()).m1277c(c0043n.readByte()).m1275b(c0043n.readShortLE());
-                        MmpContact c0009ai8 = (MmpContact) c0033d.contactMap.get(c0042mM1275b.m1256a(60));
+                        ContactInfo c0042mM1275b = c0042mM1262e2.setMmpTypeId(c0043n.readShortLE()).setMaritalStatus(c0043n.readByte()).setAge(c0043n.readShortLE());
+                        MmpContact c0009ai8 = (MmpContact) c0033d.contactMap.get(c0042mM1275b.getString(60));
                         if (null != c0009ai8) {
-                            c0009ai8.setDisplayName(c0042mM1275b.m1291j());
+                            c0009ai8.setDisplayName(c0042mM1275b.getDisplayNameOrId());
                         }
                     }
                     z = iM1354v6 == 430;

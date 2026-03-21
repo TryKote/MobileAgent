@@ -189,7 +189,7 @@ public final class ConnectionThread {
 
     /* renamed from: q */
     private static void m1136q() {
-        XmppContactGroup.f310a = NetworkUtils.newVector();
+        XmppContactGroup.sharedContactList = NetworkUtils.newVector();
         f355f = Utils.split(AppState.getString(264), (char) 0);
         try {
             ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(265));
@@ -581,8 +581,8 @@ public final class ConnectionThread {
         int i = ScreenManager.createScreen(1578).f115r;
         AppState.setLong(1558, 4178628L);
         AppState.setLong(1560, 7482960L);
-        AppState.pool[1400] = XmppContactGroup.m1047d(225);
-        AppState.pool[1401] = XmppContactGroup.m1047d(226);
+        AppState.pool[1400] = XmppContactGroup.loadMapPoints(225);
+        AppState.pool[1401] = XmppContactGroup.loadMapPoints(226);
         AppState.setInt(1415, AppState.getInt(1528));
         AppState.setInt(1416, i);
         AppState.setLong(1410, AppState.getLong(35));
@@ -600,7 +600,7 @@ public final class ConnectionThread {
         AppState.pool[1396] = NetworkUtils.newVector();
         Object[] objArrM332c = AppController.m332c(AppState.emptyStr);
         AppState.pool[1395] = objArrM332c;
-        XmppContactGroup.m1041a(objArrM332c);
+        XmppContactGroup.addContactInfoToQueue(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
         Graphics graphics = imageCreateImage.getGraphics();
         int i2 = 0;
@@ -625,7 +625,7 @@ public final class ConnectionThread {
         MmpContact.currentTokenPair = new long[2];
         MapRenderer.f205m = NetworkUtils.newVector();
         if (AppState.getBool(253)) {
-            XmppContactGroup.m1049b(AppState.getVector(1401));
+            XmppContactGroup.stopMapAnimation(AppState.getVector(1401));
         }
         AppState.pool[1383] = NetworkUtils.newVector();
         MapRenderer.f200h = true;
@@ -689,8 +689,8 @@ public final class ConnectionThread {
     public static final void m1165a(MapPoint c0014an, boolean z) {
         m1159s();
         if (z) {
-            XmppContactGroup.m1043a(AppState.getVector(1400), c0014an, 0, 5);
-            XmppContactGroup.m1046a(AppState.getVector(1400), 225);
+            XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
+            XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
         }
         MapRenderer.f202j = c0014an;
         MapRenderer.m646a();
@@ -737,7 +737,7 @@ public final class ConnectionThread {
     public static final void m1169a(MapPoint c0014an) {
         Vector vectorM614m = AppState.getVector(1401);
         vectorM614m.removeElement(c0014an);
-        XmppContactGroup.m1046a(vectorM614m, 226);
+        XmppContactGroup.saveMapPoints(vectorM614m, 226);
     }
 
     /* renamed from: l */
@@ -759,7 +759,7 @@ public final class ConnectionThread {
         MmpContact.setFirstToken(jMo274v, jMo275w);
         MapRenderer.f200h = true;
         if (MapRenderer.m656d()) {
-            Conversation.m1129c();
+            Conversation.loadContacts();
         }
     }
 
@@ -782,7 +782,7 @@ public final class ConnectionThread {
         MmpContact.setSecondToken(jMo274v, jMo275w);
         MapRenderer.f200h = true;
         if (MapRenderer.m656d()) {
-            Conversation.m1129c();
+            Conversation.loadContacts();
         }
     }
 

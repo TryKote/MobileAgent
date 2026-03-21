@@ -208,6 +208,6 @@ public final class XmppContact extends Contact {
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
     public final ContactInfo getContactInfo() {
-        return new ContactInfo(this).m1298g(getDisplayIcon());
+        return new ContactInfo(this).setImageWidth(getDisplayIcon());
     }
 }

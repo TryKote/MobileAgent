@@ -231,7 +231,7 @@ public final class ByteBuffer {
 
     /* renamed from: c */
     public final ByteBuffer writeEncodedString(String str) {
-        return writeRawString(Conversation.m1120b((Object) str));
+        return writeRawString(Conversation.urlEncodeCyrillic((Object) str));
     }
 
     /* renamed from: d */
@@ -251,7 +251,7 @@ public final class ByteBuffer {
 
     /* renamed from: a */
     public final ByteBuffer writeConversationStr(Object obj) {
-        return writeRawString(Conversation.m1124l((String) obj));
+        return writeRawString(Conversation.percentEncode((String) obj));
     }
 
     /* renamed from: b */
@@ -771,7 +771,7 @@ public final class ByteBuffer {
     /* renamed from: B */
     public final ByteBuffer encryptMD5() {
         ensureCapacity(0);
-        byte[] bArrM1090a = Conversation.m1090a(this.data, this.length);
+        byte[] bArrM1090a = Conversation.hashData(this.data, this.length);
         clear();
         this.data = bArrM1090a;
         this.length = 16;

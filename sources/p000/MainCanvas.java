@@ -114,7 +114,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         try {
             synchronized (AppController.f150d) {
                 if (!AppController.f151e) {
-                    XmppContactGroup.m1020e();
+                    XmppContactGroup.incrementCacheCounter();
                     Vector vectorM614m = AppState.getVector(1272);
                     int size = vectorM614m.size();
                     if (size > 0) {
@@ -172,7 +172,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                             c0012al.drawIcon(16385, iM586d4, 1);
                         }
                     }
-                    XmppContactGroup.m1022f();
+                    XmppContactGroup.cleanupExpiredImages();
                 }
             }
         } catch (Throwable unused) {

@@ -346,7 +346,7 @@ public final class MrimAccount extends Account implements ListItem {
                     this.deadline = System.currentTimeMillis() + jM503b;
                     ByteBuffer c0043nM1308a = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
                     boolean zM587e = AppState.getBool(105);
-                    sendData(AppController.m321a(this, 4216, c0043nM1308a.writeIntLE(zM587e ? -1 : 22).writeStringLatin1(zM587e ? null : new ByteBuffer().writeCompressed(1642077).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(1704823).writeStringLatin1(XmppContactGroup.m1017d()).writeBuffer(XmppContactGroup.m1016a(this))));
+                    sendData(AppController.m321a(this, 4216, c0043nM1308a.writeIntLE(zM587e ? -1 : 22).writeStringLatin1(zM587e ? null : new ByteBuffer().writeCompressed(1642077).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(1704823).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
                     this.progress = 6;
                     break;
                 case 4100:
@@ -357,7 +357,7 @@ public final class MrimAccount extends Account implements ListItem {
                     AppController.m461a(this, c0043nM1349s);
                     break;
                 case 4105:
-                    Conversation.m1110a(this, c0043nM1349s, 0L);
+                    Conversation.handleMessage(this, c0043nM1349s, 0L);
                     break;
                 case 4111:
                     int iM1328e = c0043nM1349s.readInt();
@@ -460,7 +460,7 @@ public final class MrimAccount extends Account implements ListItem {
                                         strM1336h2 = ResourceManager.m986d(StringUtils.substring(strM529d, iM627a + 6, strM529d.indexOf(AppState.getString(134123), iM627a))).readAllWideStr();
                                     }
                                     if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
-                                        Conversation.m1110a(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
+                                        Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
                                     }
                                     AppState.setInt(1449, 1);
                                     break;
@@ -491,7 +491,7 @@ public final class MrimAccount extends Account implements ListItem {
                         if ((i2 & 128) != 0) {
                         }
                         if (i != -1) {
-                            Conversation.m1110a(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
+                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(strM1336h2, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(strM1336h).writeStringLatin1(str), jM491a);
                             AppState.setInt(1449, 1);
                         }
                     } catch (Throwable th) {
@@ -514,7 +514,7 @@ public final class MrimAccount extends Account implements ListItem {
                     XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4151:
-                    Conversation.m1112a(this, c0043nM1349s);
+                    Conversation.parseContactList(this, c0043nM1349s);
                     break;
                 case 4160:
                     XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
@@ -538,8 +538,8 @@ public final class MrimAccount extends Account implements ListItem {
                                     sendDeleteCommand(strM1334g4);
                                     AppController.m393a(this, strM1334g4);
                                 } else if (i11 == 2) {
-                                    ContactInfo c0042mM1251a = ContactInfo.m1251a(this);
-                                    c0042mM1251a.m1262e(strM1334g4);
+                                    ContactInfo c0042mM1251a = ContactInfo.createForAccount(this);
+                                    c0042mM1251a.setEmailAddress(strM1334g4);
                                     AppState.pool[1319] = c0042mM1251a;
                                     IOUtils.m778d(new IOUtils(5, null));
                                 }
@@ -733,7 +733,7 @@ public final class MrimAccount extends Account implements ListItem {
             return iMo125a;
         }
         this.sentCount++;
-        return trySendData(XmppContactGroup.m1001a(this, (MrimContact) abstractC0041l, str, j));
+        return trySendData(XmppContactGroup.createContactAddCommand(this, (MrimContact) abstractC0041l, str, j));
     }
 
     /* renamed from: a */
@@ -1012,7 +1012,7 @@ public final class MrimAccount extends Account implements ListItem {
         MrimContact c0035fM717f = findContactByIdentifier(str);
         if (c0035fM717f == null || c0035fM717f.isOnline()) {
             trySendData(AppController.m395b(this, str));
-            return trySendData(XmppContactGroup.m1024a(this, 0, str, str2, str3, (MrimContactGroup) abstractC0046q, z));
+            return trySendData(XmppContactGroup.createContactCommand(this, 0, str, str2, str3, (MrimContactGroup) abstractC0046q, z));
         }
         trySendData(ResourceManager.m988a(this, c0035fM717f, (MrimContactGroup) abstractC0046q));
         return trySendData(AppController.m321a(this, 4104, new ByteBuffer().writeIntLE(z ? 524300 : 12).writeStringLatin1(str).writeStringArray(new String[]{this.displayName, str3}).writeIntLE(0)));
@@ -1023,7 +1023,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final int validateContactDelete(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
         if (c0035f.isOnline()) {
-            return trySendData(XmppContactGroup.m1024a(this, 48, c0035f.simpleIdentifier, c0035f.displayName, AppState.emptyStr, getFirstContactGroup(), false));
+            return trySendData(XmppContactGroup.createContactCommand(this, 48, c0035f.simpleIdentifier, c0035f.displayName, AppState.emptyStr, getFirstContactGroup(), false));
         }
         int i = c0035f.statusFlags;
         return trySendData(ResourceManager.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
@@ -1101,7 +1101,7 @@ public final class MrimAccount extends Account implements ListItem {
             MrimContact c0035f2 = new MrimContact(this, 0, 65664, 3, str, str3, 0, 0, str5, str5, str5);
             abstractC0046q.addContact((Object) c0035f2);
             if (this.groups.size() > 0) {
-                trySendData(XmppContactGroup.m1024a(this, 128, str, str3, str5, getFirstContactGroup(), false));
+                trySendData(XmppContactGroup.createContactCommand(this, 128, str, str3, str5, getFirstContactGroup(), false));
             }
             c0035f = c0035f2;
         }

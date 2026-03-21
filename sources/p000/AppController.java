@@ -349,7 +349,7 @@ public final class AppController {
         }
         if (AppState.getString(376).equals(str)) {
             AppState.setInt(253, 1);
-            XmppContactGroup.m1049b(AppState.getVector(1401));
+            XmppContactGroup.stopMapAnimation(AppState.getVector(1401));
             MapRenderer.f200h = true;
             return 6;
         }
@@ -357,7 +357,7 @@ public final class AppController {
             return 0;
         }
         AppState.setInt(253, 0);
-        XmppContactGroup.m1048a(AppState.getVector(1401));
+        XmppContactGroup.startMapAnimation(AppState.getVector(1401));
         MapRenderer.f200h = true;
         return 6;
     }
@@ -374,7 +374,7 @@ public final class AppController {
     public static final int m322f(int i) {
         Message c0026azM1415b = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513)).getMessage(AppState.getString(1346));
         String str = c0026azM1415b.body;
-        c0026azM1415b.body = i == 0 ? Conversation.m1116h(str) : Conversation.m1117i(str);
+        c0026azM1415b.body = i == 0 ? Conversation.encodeAlternate(str) : Conversation.decodeAlternate(str);
         return 52;
     }
 
@@ -399,7 +399,7 @@ public final class AppController {
     public static final void m324n() {
         NetworkUtils.m1200b(180, 504);
         AppState.clearRange(1239, 1240);
-        Conversation.m1113a(true, (MrimAccount) AppState.getAccount());
+        Conversation.createStatusReport(true, (MrimAccount) AppState.getAccount());
     }
 
     /* renamed from: h */
@@ -464,7 +464,7 @@ public final class AppController {
     public static final int m330i(int i) {
         switch (i) {
             case 0:
-                Conversation.m1113a(false, (MrimAccount) null);
+                Conversation.createStatusReport(false, (MrimAccount) null);
                 return 12;
             case 1:
                 m331a(false, true, true);
@@ -473,10 +473,10 @@ public final class AppController {
                 m331a(true, false, true);
                 return 12;
             case 3:
-                Conversation.m1126a(true);
+                Conversation.setMapEnabled(true);
                 return 12;
             case 4:
-                Conversation.m1126a(false);
+                Conversation.setMapEnabled(false);
                 return 12;
             case 5:
                 return NetworkUtils.m1201f();
@@ -502,7 +502,7 @@ public final class AppController {
                 MapRenderer.f200h = true;
                 return;
             }
-            XmppContactGroup.m1021a(i + 18);
+            XmppContactGroup.invalidateCachedImage(i + 18);
         }
     }
 
@@ -896,10 +896,10 @@ public final class AppController {
     public static final int m364q(int i) {
         switch (i) {
             case 0:
-                Conversation.m1127a();
+                Conversation.incrementZoom();
                 break;
             case 1:
-                Conversation.m1128b();
+                Conversation.decrementZoom();
                 break;
             case 2:
                 AppState.setInt(230, 1);
@@ -1081,8 +1081,8 @@ public final class AppController {
         }
         MapPoint c0014an = (MapPoint) obj;
         ((MrimAccount) AppState.getAccount()).setLocationProfile(c0014an);
-        XmppContactGroup.m1043a(AppState.getVector(1400), c0014an, 0, 5);
-        XmppContactGroup.m1046a(AppState.getVector(1400), 225);
+        XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
+        XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
         AppState.setInt(1477, 0);
         return 160;
     }
@@ -1386,11 +1386,11 @@ public final class AppController {
         if (MapRenderer.f202j != null) {
             MapRenderer.f202j.markInactive();
         }
-        XmppContactGroup.m1048a(AppState.getVector(1401));
+        XmppContactGroup.startMapAnimation(AppState.getVector(1401));
         AppState.setInt(253, 0);
         MmpContact.clearLocationData();
         MapRenderer.f200h = true;
-        XmppContactGroup.f312c = System.currentTimeMillis();
+        XmppContactGroup.lastCheckTs = System.currentTimeMillis();
         MapRenderer.f200h = true;
         return 0;
     }
@@ -2679,10 +2679,10 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 65:
-                                                if (m307b(9, 3000L) && (textBoxM1028h = XmppContactGroup.m1028h()) != null) {
+                                                if (m307b(9, 3000L) && (textBoxM1028h = XmppContactGroup.getTextInputBox()) != null) {
                                                     String strM16a = StringUtils.m16a(textBoxM1028h);
                                                     if (AppState.getBool(106)) {
-                                                        String strM1123k = Conversation.m1123k(strM16a);
+                                                        String strM1123k = Conversation.transliterateRussian(strM16a);
                                                         if (!StringUtils.equals(strM1123k, strM16a)) {
                                                             textBoxM1028h.setString(strM1123k);
                                                         }
@@ -3291,7 +3291,7 @@ public final class AppController {
                                                 } else {
                                                     Object objElementAt2 = vectorM614m5.elementAt(0);
                                                     if (objElementAt2 instanceof String) {
-                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.m7b(5510023, Conversation.m1124l((String) vectorM614m5.lastElement())), null};
+                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.m7b(5510023, Conversation.percentEncode((String) vectorM614m5.lastElement())), null};
                                                         new AsyncTask(26, objArr2);
                                                         vectorM614m5.setElementAt(objArr2, 0);
                                                     } else {
@@ -3373,13 +3373,13 @@ public final class AppController {
                                                                     z4 = false;
                                                                 } else if (AppState.getBool(1414)) {
                                                                     if (i13 == 42) {
-                                                                        Conversation.m1127a();
+                                                                        Conversation.incrementZoom();
                                                                         z4 = true;
                                                                     } else if (i13 == 35) {
-                                                                        Conversation.m1128b();
+                                                                        Conversation.decrementZoom();
                                                                         z4 = true;
                                                                     } else if (i13 == 48) {
-                                                                        Conversation.m1113a(false, (MrimAccount) null);
+                                                                        Conversation.createStatusReport(false, (MrimAccount) null);
                                                                         ScreenBuilder.m546a(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 49) {
@@ -3388,9 +3388,9 @@ public final class AppController {
                                                                     } else if (i13 == 50) {
                                                                         boolean zM587e = AppState.getBool(41);
                                                                         if (zM587e) {
-                                                                            Conversation.m1126a(false);
+                                                                            Conversation.setMapEnabled(false);
                                                                         } else {
-                                                                            Conversation.m1126a(true);
+                                                                            Conversation.setMapEnabled(true);
                                                                         }
                                                                         AppState.setBool(41, !zM587e);
                                                                         ScreenBuilder.m546a(6);

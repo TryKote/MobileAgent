@@ -260,7 +260,7 @@ public abstract class ChatRenderer {
         for (int i19 = 0; i19 < size; i19++) {
             graphics.drawString((String) vectorM543a.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
         }
-        Image imageM1023b = XmppContactGroup.m1023b(19);
+        Image imageM1023b = XmppContactGroup.getOrLoadImage(19);
         if (buttonBounds == null) {
             int[] iArr = new int[4];
             buttonBounds = iArr;
@@ -696,14 +696,14 @@ public abstract class ChatRenderer {
                 int iM317a9 = (int) (AppController.m317a(MmpContact.lastTokenPair[0], i) - (j - (i2 / 2)));
                 int iM317a10 = (int) ((j2 + (i3 / 2)) - AppController.m317a(MmpContact.lastTokenPair[1], i));
                 if (iM317a9 > 0 && iM317a9 < i2 && iM317a10 > 0 && iM317a10 < i3) {
-                    graphics.drawImage(XmppContactGroup.m1023b(20), iM317a9, iM317a10, 36);
+                    graphics.drawImage(XmppContactGroup.getOrLoadImage(20), iM317a9, iM317a10, 36);
                 }
             }
             if (MmpContact.hasSecondToken()) {
                 int iM317a11 = (int) (AppController.m317a(MmpContact.currentTokenPair[0], i) - (j - (i2 / 2)));
                 int iM317a12 = (int) ((j2 + (i3 / 2)) - AppController.m317a(MmpContact.currentTokenPair[1], i));
                 if (iM317a11 > 0 && iM317a11 < i2 && iM317a12 > 0 && iM317a12 < i3) {
-                    graphics.drawImage(XmppContactGroup.m1023b(21), iM317a11, iM317a12, 36);
+                    graphics.drawImage(XmppContactGroup.getOrLoadImage(21), iM317a11, iM317a12, 36);
                 }
             }
         }
@@ -763,7 +763,7 @@ public abstract class ChatRenderer {
             int i30 = (i26 + (i3 / 2)) - iM317a16;
             String[] strArrM194b = MmpContact.getRouteLabelsAt(0);
             if (Utils.abs(i25 - iM317a15) >= 7 || Utils.abs(i26 - iM317a16) >= 7 || strArrM194b == null) {
-                graphics.drawImage(XmppContactGroup.m1023b(20), i29, i30, 36);
+                graphics.drawImage(XmppContactGroup.getOrLoadImage(20), i29, i30, 36);
             } else if (strArrM194b[0] != null) {
                 str2 = strArrM194b[0];
                 i27 = i29;
@@ -777,7 +777,7 @@ public abstract class ChatRenderer {
             int i32 = (i26 + (i3 / 2)) - iM317a18;
             String[] strArrM194b2 = MmpContact.getRouteLabelsAt(iM192t2 - 1);
             if (Utils.abs(i25 - iM317a17) >= 7 || Utils.abs(i26 - iM317a18) >= 7 || strArrM194b2 == null || z3) {
-                graphics.drawImage(XmppContactGroup.m1023b(21), i31, i32, 36);
+                graphics.drawImage(XmppContactGroup.getOrLoadImage(21), i31, i32, 36);
             } else if (strArrM194b2[0] != null) {
                 str2 = strArrM194b2[0];
                 i27 = i31;
