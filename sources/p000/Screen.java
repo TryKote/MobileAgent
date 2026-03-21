@@ -552,10 +552,10 @@ public final class Screen {
             int iM502a3 = Utils.m502a(iM586d9, 16);
             c0012al.m207b(13);
             int i40 = i39 - iM586d9;
-            c0012al.m210c(1, i40, ((AppState.m586d(1528) - 2) * abstractC0037h.f323s) / 100, iM502a3);
-            c0012al.m216a(abstractC0037h.mo108h(), 3, i40 + ScreenManager.m73f());
+            c0012al.m210c(1, i40, ((AppState.m586d(1528) - 2) * abstractC0037h.msgCount) / 100, iM502a3);
+            c0012al.m216a(abstractC0037h.getIconId(), 3, i40 + ScreenManager.m73f());
             c0012al.m207b(0);
-            c0012al.m213a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(abstractC0037h.f315k).append(' ').append(abstractC0037h.f323s).append('%')), 21, i39, 36);
+            c0012al.m213a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(abstractC0037h.login).append(' ').append(abstractC0037h.msgCount).append('%')), 21, i39, 36);
             iM605e3 -= iM502a2;
         }
     }

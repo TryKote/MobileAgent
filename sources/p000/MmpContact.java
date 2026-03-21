@@ -73,8 +73,8 @@ public final class MmpContact extends Contact {
         this.sortKey = StringUtils.m17c(str2.toLowerCase());
         this.f58z = z;
         this.defaultIcon = 255;
-        this.identifier = c0033d.m1050q().writeRawString(str).readAllByteStr();
-        c0033d.m1081h(this);
+        this.identifier = c0033d.encodeId().writeRawString(str).readAllByteStr();
+        c0033d.registerContact(this);
         updateRenderState();
         this.extra = str;
     }
@@ -111,8 +111,8 @@ public final class MmpContact extends Contact {
             AppController.m414a((Contact) this);
         }
         this.defaultIcon = 255;
-        this.identifier = abstractC0037h.m1050q().writeRawString(this.f57c).readAllByteStr();
-        abstractC0037h.m1081h(this);
+        this.identifier = abstractC0037h.encodeId().writeRawString(this.f57c).readAllByteStr();
+        abstractC0037h.registerContact(this);
         updateRenderState();
         this.extra = this.f57c;
     }

@@ -11,184 +11,184 @@ import javax.microedition.io.ConnectionNotFoundException;
 public abstract class Account {
 
     /* renamed from: i */
-    public final Vector f313i;
+    public final Vector groups;
 
     /* renamed from: j */
-    public int f314j;
+    public int accountId;
 
     /* renamed from: k */
-    public String f315k;
+    public String login;
 
     /* renamed from: l */
-    public String f316l;
+    public String password;
 
     /* renamed from: m */
-    public final int[] f317m;
+    public final int[] syncArray;
 
     /* renamed from: n */
-    public final ByteBuffer f318n;
+    public final ByteBuffer dataBuffer;
 
     /* renamed from: o */
-    public int f319o;
+    public int state;
 
     /* renamed from: p */
-    public ConnectionThread f320p;
+    public ConnectionThread connection;
 
     /* renamed from: q */
-    public final Hashtable f321q;
+    public final Hashtable contactMap;
 
     /* renamed from: r */
-    public int f322r;
+    public int progress;
 
     /* renamed from: s */
-    public int f323s;
+    public int msgCount;
 
     /* renamed from: t */
-    public int f324t;
+    public int lastError;
 
     /* renamed from: u */
-    public int f325u;
+    public int configFlags;
 
     /* renamed from: v */
-    public int f326v;
+    public int syncSeq;
 
     /* renamed from: w */
-    public int f327w;
+    public int sentCount;
 
     /* renamed from: x */
-    public int f328x;
+    public int recvCount;
 
     /* renamed from: y */
-    public int f329y;
+    public int reserved1;
 
     /* renamed from: z */
-    public long f330z;
+    public long timeout;
 
     /* renamed from: A */
-    public long f331A;
+    public long deadline;
 
     /* renamed from: B */
-    public int f332B;
+    public int reserved2;
 
     /* renamed from: C */
-    public final Vector f333C;
+    public final Vector extras;
 
     /* renamed from: D */
-    public ContactGroup f334D;
+    public ContactGroup defaultGroup;
 
     /* renamed from: E */
-    public final ContactGroup f335E;
+    public final ContactGroup onlineGroup;
 
     /* renamed from: F */
-    public final ContactGroup f336F;
+    public final ContactGroup offlineGroup;
 
     /* renamed from: G */
-    public final ContactGroup f337G;
+    public final ContactGroup blockedGroup;
 
     /* renamed from: H */
-    public final ContactGroup f338H;
+    public final ContactGroup specialGroup;
 
     /* renamed from: I */
-    public String f339I;
+    public String displayName;
 
     /* renamed from: J */
-    public String f340J;
+    public String shortName;
 
     /* renamed from: a */
-    private int f341a;
+    private int authMode;
 
     public Account(int i, String str, String str2) {
-        this.f313i = NetworkUtils.m1213g();
-        this.f314j = i;
-        this.f315k = str;
-        this.f339I = str;
-        this.f316l = str2;
-        this.f317m = new int[9];
-        this.f318n = new ByteBuffer();
-        this.f321q = new Hashtable();
-        this.f333C = NetworkUtils.m1213g();
-        ContactGroup abstractC0046qMo85b = mo85b();
+        this.groups = NetworkUtils.m1213g();
+        this.accountId = i;
+        this.login = str;
+        this.displayName = str;
+        this.password = str2;
+        this.syncArray = new int[9];
+        this.dataBuffer = new ByteBuffer();
+        this.contactMap = new Hashtable();
+        this.extras = NetworkUtils.m1213g();
+        ContactGroup abstractC0046qMo85b = createOnlineGroup();
         abstractC0046qMo85b.isSpecial = true;
-        this.f335E = abstractC0046qMo85b;
-        ContactGroup abstractC0046qMo87d = mo87d();
+        this.onlineGroup = abstractC0046qMo85b;
+        ContactGroup abstractC0046qMo87d = createOfflineGroup();
         abstractC0046qMo87d.isSpecial = true;
-        this.f336F = abstractC0046qMo87d;
-        ContactGroup abstractC0046qMo86c = mo86c();
+        this.offlineGroup = abstractC0046qMo87d;
+        ContactGroup abstractC0046qMo86c = createBlockedGroup();
         abstractC0046qMo86c.isSpecial = true;
-        this.f337G = abstractC0046qMo86c;
-        ContactGroup abstractC0046qMo88e = mo88e();
+        this.blockedGroup = abstractC0046qMo86c;
+        ContactGroup abstractC0046qMo88e = createSpecialGroup();
         abstractC0046qMo88e.isSpecial = true;
-        this.f338H = abstractC0046qMo88e;
-        this.f340J = Utils.m538m(str);
+        this.specialGroup = abstractC0046qMo88e;
+        this.shortName = Utils.m538m(str);
     }
 
     public Account(ByteBuffer c0043n) {
         this(c0043n.readInt(), c0043n.readHexStr(), c0043n.readWideStr());
         c0043n.readInt();
         for (int i = 2; i < 9; i++) {
-            this.f317m[i] = c0043n.readInt();
+            this.syncArray[i] = c0043n.readInt();
         }
-        this.f325u = c0043n.readInt();
-        this.f339I = c0043n.readUTF8Str((String) null);
+        this.configFlags = c0043n.readInt();
+        this.displayName = c0043n.readUTF8Str((String) null);
     }
 
     /* renamed from: q */
-    public final ByteBuffer m1050q() {
-        return new ByteBuffer().writeIntAsString(this.f314j).writeByte(95);
+    public final ByteBuffer encodeId() {
+        return new ByteBuffer().writeIntAsString(this.accountId).writeByte(95);
     }
 
     /* renamed from: A */
-    public final String m1051A() {
-        return new ByteBuffer().writeByte(35).writeIntAsString(this.f314j).writeByte(35).writeRawString(this.f315k).readAllByteStr();
+    public final String getSignature() {
+        return new ByteBuffer().writeByte(35).writeIntAsString(this.accountId).writeByte(35).writeRawString(this.login).readAllByteStr();
     }
 
     /* renamed from: b */
-    public abstract ContactGroup mo85b();
+    public abstract ContactGroup createOnlineGroup();
 
     /* renamed from: d */
-    public abstract ContactGroup mo87d();
+    public abstract ContactGroup createOfflineGroup();
 
     /* renamed from: c */
-    public abstract ContactGroup mo86c();
+    public abstract ContactGroup createBlockedGroup();
 
     /* renamed from: e */
-    public abstract ContactGroup mo88e();
+    public abstract ContactGroup createSpecialGroup();
 
     /* renamed from: h */
-    public abstract int mo108h();
+    public abstract int getIconId();
 
     /* renamed from: a */
-    public void mo715a(ByteBuffer c0043n) {
+    public void loadProperties(ByteBuffer c0043n) {
         if (c0043n.readInt() == 12) {
-            this.f326v = c0043n.readInt();
-            this.f327w = c0043n.readInt();
-            this.f328x = c0043n.readInt();
+            this.syncSeq = c0043n.readInt();
+            this.sentCount = c0043n.readInt();
+            this.recvCount = c0043n.readInt();
             c0043n.readInt();
         }
     }
 
     /* renamed from: b */
-    public void mo714b(ByteBuffer c0043n) {
-        c0043n.writeIntLE(12).writeIntLE(this.f326v).writeIntLE(this.f327w).writeIntLE(this.f328x).writeIntLE(0);
+    public void saveProperties(ByteBuffer c0043n) {
+        c0043n.writeIntLE(12).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount).writeIntLE(0);
     }
 
     /* renamed from: a */
-    public Account mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
-        c0043n.writeByte(mo80a() | 8).writeIntLE(this.f314j).writeStringLatin1(this.f315k).writeStringLatin1(this.f316l).writeIntLE(0);
+    public Account serializeAccount(ByteBuffer c0043n, boolean z, boolean z2) {
+        c0043n.writeByte(getType() | 8).writeIntLE(this.accountId).writeStringLatin1(this.login).writeStringLatin1(this.password).writeIntLE(0);
         for (int i = 2; i < 9; i++) {
-            c0043n.writeIntLE(this.f317m[i]);
+            c0043n.writeIntLE(this.syncArray[i]);
         }
-        c0043n.writeIntLE(this.f325u);
-        if (this.f339I != null) {
-            c0043n.writeStringUTF16(this.f339I);
+        c0043n.writeIntLE(this.configFlags);
+        if (this.displayName != null) {
+            c0043n.writeStringUTF16(this.displayName);
         } else {
             c0043n.writeIntLE(0);
         }
         if (z2) {
             if (!z) {
-                this.f313i.removeAllElements();
+                this.groups.removeAllElements();
             }
-            int size = this.f313i.size();
+            int size = this.groups.size();
             int i2 = size;
             c0043n.writeIntLE(size);
             while (true) {
@@ -196,28 +196,28 @@ public abstract class Account {
                 if (i2 < 0) {
                     break;
                 }
-                m1082g(i2).serialize(c0043n, true);
+                getGroup(i2).serialize(c0043n, true);
             }
-            this.f334D.serialize(c0043n, true);
-            this.f321q.clear();
+            this.defaultGroup.serialize(c0043n, true);
+            this.contactMap.clear();
         } else {
-            this.f334D.serialize(c0043n.writeIntLE(0), false);
+            this.defaultGroup.serialize(c0043n.writeIntLE(0), false);
         }
         return this;
     }
 
     /* renamed from: c */
-    public final int m1052c(ByteBuffer c0043n) {
-        if (m1056C()) {
-            return m1053d(c0043n);
+    public final int trySendData(ByteBuffer c0043n) {
+        if (isConnected()) {
+            return sendData(c0043n);
         }
         return 299;
     }
 
     /* renamed from: d */
-    public final int m1053d(ByteBuffer c0043n) {
+    public final int sendData(ByteBuffer c0043n) {
         AppController.m420b(this, c0043n.length);
-        ConnectionThread c0039j = this.f320p;
+        ConnectionThread c0039j = this.connection;
         if (c0039j.f348b != null) {
             throw new RuntimeException();
         }
@@ -232,71 +232,71 @@ public abstract class Account {
                 c0043n2.compact();
             }
         }
-        if (this.f330z <= 0) {
+        if (this.timeout <= 0) {
             return 0;
         }
-        this.f331A = System.currentTimeMillis() + this.f330z;
+        this.deadline = System.currentTimeMillis() + this.timeout;
         return 0;
     }
 
     /* renamed from: c */
-    public final Account m1054c(String str) {
-        this.f339I = Utils.m528a(str, this.f315k);
+    public final Account setDisplayName(String str) {
+        this.displayName = Utils.m528a(str, this.login);
         return this;
     }
 
     /* renamed from: B */
-    public final boolean m1055B() {
-        return this.f322r > 0;
+    public final boolean isConnecting() {
+        return this.progress > 0;
     }
 
     /* renamed from: C */
-    public final boolean m1056C() {
-        return this.f322r == 100;
+    public final boolean isConnected() {
+        return this.progress == 100;
     }
 
     /* renamed from: D */
-    public final MenuItem m1057D() {
-        MenuItem c0032cM898b = MenuItem.m887a(m1051A()).m896a(mo108h()).m898b(this.f315k);
+    public final MenuItem createMenuItem() {
+        MenuItem c0032cM898b = MenuItem.m887a(getSignature()).m896a(getIconId()).m898b(this.login);
         c0032cM898b.f265d = this;
         return c0032cM898b;
     }
 
     /* renamed from: E */
-    public final MenuItem m1058E() {
-        MenuItem c0032cM896a = MenuItem.m887a(m1051A()).m896a(mo108h()).m898b(this.f315k).m896a(244);
+    public final MenuItem createFlagMenuItem() {
+        MenuItem c0032cM896a = MenuItem.m887a(getSignature()).m896a(getIconId()).m898b(this.login).m896a(244);
         c0032cM896a.f266e = true;
         c0032cM896a.f265d = this;
         return c0032cM896a;
     }
 
     /* renamed from: a */
-    public abstract int mo80a();
+    public abstract int getType();
 
     /* renamed from: a_ */
-    public int mo914a_(int i) {
-        if (m1055B()) {
+    public int connect(int i) {
+        if (isConnecting()) {
             return 297;
         }
         if (i == 0) {
-            char cCharAt = this.f316l.charAt(0);
-            this.f341a = (cCharAt < 'A' || cCharAt > 'Z') ? 1 : 2;
+            char cCharAt = this.password.charAt(0);
+            this.authMode = (cCharAt < 'A' || cCharAt > 'Z') ? 1 : 2;
         } else {
-            this.f341a = i;
+            this.authMode = i;
         }
-        this.f323s = 0;
-        this.f322r = 1;
+        this.msgCount = 0;
+        this.progress = 1;
         return 0;
     }
 
     /* renamed from: l */
-    public int mo120l() {
-        return !m1055B() ? 298 : 0;
+    public int disconnect() {
+        return !isConnecting() ? 298 : 0;
     }
 
     /* renamed from: e */
-    public final void m1059e(int i) {
-        int[] iArr = this.f317m;
+    public final void resetSyncIfChanged(int i) {
+        int[] iArr = this.syncArray;
         int i2 = iArr[8];
         if (i != i2) {
             iArr[2] = 0;
@@ -310,78 +310,78 @@ public abstract class Account {
     }
 
     /* renamed from: a */
-    public final int m1060a(int i, int i2) {
-        return this.f317m[i + i + i2];
+    public final int getSyncValue(int i, int i2) {
+        return this.syncArray[i + i + i2];
     }
 
     /* renamed from: i */
-    public abstract void mo97i() throws Throwable;
+    public abstract void loadData() throws Throwable;
 
     /* renamed from: g */
-    public abstract int mo89g();
+    public abstract int getDefaultError();
 
     /* renamed from: F */
-    public final void m1061F() {
-        if (this.f320p != null) {
-            this.f320p.f349c = 3;
+    public final void closeConnection() {
+        if (this.connection != null) {
+            this.connection.f349c = 3;
         }
-        this.f320p = null;
-        this.f322r = 0;
+        this.connection = null;
+        this.progress = 0;
     }
 
     /* renamed from: G */
-    public final void m1062G() {
+    public final void handleConnError() {
         String strM1215a;
-        Throwable th = this.f320p.f348b;
+        Throwable th = this.connection.f348b;
         if (null == th) {
             strM1215a = AppState.m584b(951);
         } else {
             strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(th).append(AppState.m584b(946)).append(AppState.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         IOUtils.m784a(this, strM1215a);
-        m1061F();
-        this.f324t = mo89g();
+        closeConnection();
+        this.lastError = getDefaultError();
     }
 
     /* renamed from: H */
-    public final void m1063H() {
+    public final void handleTimeout() {
         IOUtils.m783a(this, 462);
-        m1061F();
-        this.f324t = mo89g();
+        closeConnection();
+        this.lastError = getDefaultError();
     }
 
     /* renamed from: I */
-    public final String m1064I() {
-        return this.f341a != 3 ? this.f316l : NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) (this.f316l.charAt(0) + ' ')).append(StringUtils.m15c(this.f316l, 1)));
+    public final String getFormattedName() {
+        return this.authMode != 3 ? this.password : NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.m15c(this.password, 1)));
     }
 
     /* renamed from: J */
-    public final void m1065J() {
-        m1061F();
-        this.f324t = mo89g();
-        if (this.f341a == 2) {
-            mo914a_(3);
+    public final void handleComplete() {
+        closeConnection();
+        this.lastError = getDefaultError();
+        if (this.authMode == 2) {
+            connect(3);
         } else {
             IOUtils.m783a(this, 461);
         }
     }
 
     /* renamed from: f */
-    public final void m1066f(int i) {
+    public final void handleError(int i) {
         IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
-        m1061F();
-        this.f324t = mo89g();
+        closeConnection();
+        this.lastError = getDefaultError();
     }
 
     /* renamed from: K */
-    public final void m1067K() {
-        int size = this.f313i.size();
+    public final void removeAllContacts() {
+        int size = this.groups.size();
         while (true) {
             size--;
             if (size < 0) {
                 return;
             }
-            ContactGroup abstractC0046qM1082g = m1082g(size);
+            ContactGroup abstractC0046qM1082g = getGroup(size);
             int size2 = abstractC0046qM1082g.contacts.size();
             while (true) {
                 size2--;
@@ -389,16 +389,16 @@ public abstract class Account {
                     break;
                 }
                 Contact abstractC0041lM1394e = abstractC0046qM1082g.getContact(size2);
-                m1074a(abstractC0041lM1394e, false);
+                removeContact(abstractC0041lM1394e, false);
                 AppController.m415b(abstractC0041lM1394e);
             }
-            m1084c(abstractC0046qM1082g);
+            removeGroup(abstractC0046qM1082g);
         }
     }
 
     /* renamed from: L */
-    public final void m1068L() {
-        Enumeration enumerationElements = this.f321q.elements();
+    public final void markAllRead() {
+        Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             ((Contact) enumerationElements.nextElement()).clearUnread();
         }
@@ -406,13 +406,13 @@ public abstract class Account {
     }
 
     /* renamed from: c */
-    public final Contact m1069c(Object obj) {
-        return (Contact) this.f321q.get(obj);
+    public final Contact getContact(Object obj) {
+        return (Contact) this.contactMap.get(obj);
     }
 
     /* renamed from: d */
-    public final void m1070d(String str) {
-        Contact abstractC0041lM1069c = m1069c((Object) str);
+    public final void deleteContact(String str) {
+        Contact abstractC0041lM1069c = getContact((Object) str);
         if (abstractC0041lM1069c == null || abstractC0041lM1069c.isOnline() || abstractC0041lM1069c.hasUnread() || abstractC0041lM1069c.isSystem()) {
             return;
         }
@@ -423,72 +423,72 @@ public abstract class Account {
     }
 
     /* renamed from: e */
-    public final void m1071e(String str) {
-        Contact abstractC0041lM1069c = m1069c((Object) str);
+    public final void markRead(String str) {
+        Contact abstractC0041lM1069c = getContact((Object) str);
         if (abstractC0041lM1069c != null) {
             AppController.m418c(abstractC0041lM1069c);
         }
     }
 
     /* renamed from: a */
-    public final void m1072a(String str, long j, String str2) {
-        Contact abstractC0041lM1069c = m1069c((Object) str);
+    public final void onMessage(String str, long j, String str2) {
+        Contact abstractC0041lM1069c = getContact((Object) str);
         Contact abstractC0041lMo107b = abstractC0041lM1069c;
         if (abstractC0041lM1069c == null) {
-            abstractC0041lMo107b = mo107b(str);
+            abstractC0041lMo107b = newContact(str);
         }
-        this.f328x++;
+        this.recvCount++;
         abstractC0041lMo107b.receiveMessageFull(j, str2, 1);
     }
 
     /* renamed from: b */
-    public abstract Contact mo107b(String str);
+    public abstract Contact newContact(String str);
 
     /* renamed from: a */
-    public final void m1073a(String str, long j, int i) {
-        Contact abstractC0041lM1069c = m1069c((Object) str);
+    public final void updateStatus(String str, long j, int i) {
+        Contact abstractC0041lM1069c = getContact((Object) str);
         if (abstractC0041lM1069c != null) {
             abstractC0041lM1069c.updateMessageFlag(j, i);
         }
     }
 
     /* renamed from: a */
-    public int mo125a(Contact abstractC0041l, String str, long j) {
-        return m1056C() ? 0 : 299;
+    public int validateSend(Contact abstractC0041l, String str, long j) {
+        return isConnected() ? 0 : 299;
     }
 
     /* renamed from: a */
-    public final int m1074a(Contact abstractC0041l, boolean z) {
+    public final int removeContact(Contact abstractC0041l, boolean z) {
         if (abstractC0041l == null) {
             return 0;
         }
-        Enumeration enumerationKeys = this.f321q.keys();
+        Enumeration enumerationKeys = this.contactMap.keys();
         while (true) {
             if (!enumerationKeys.hasMoreElements()) {
                 break;
             }
-            Hashtable hashtable = this.f321q;
+            Hashtable hashtable = this.contactMap;
             Object objNextElement = enumerationKeys.nextElement();
             if (hashtable.get(objNextElement) == abstractC0041l) {
-                this.f321q.remove(objNextElement);
+                this.contactMap.remove(objNextElement);
                 break;
             }
         }
-        int size = this.f313i.size();
+        int size = this.groups.size();
         while (true) {
             size--;
             if (size < 0) {
-                this.f334D.removeElement(abstractC0041l);
+                this.defaultGroup.removeElement(abstractC0041l);
                 AppController.m415b(abstractC0041l);
                 return 0;
             }
-            m1082g(size).removeElement(abstractC0041l);
+            getGroup(size).removeElement(abstractC0041l);
         }
     }
 
     /* renamed from: a */
-    public int mo734a(String str, String str2, String str3, ContactGroup abstractC0046q, boolean z) {
-        if (!m1056C()) {
+    public int validateGroupAdd(String str, String str2, String str3, ContactGroup abstractC0046q, boolean z) {
+        if (!isConnected()) {
             return 299;
         }
         if (StringUtils.m1a(str2)) {
@@ -498,91 +498,91 @@ public abstract class Account {
     }
 
     /* renamed from: a */
-    public int mo112a(Contact abstractC0041l, Object[] objArr) {
-        if (m1056C()) {
+    public int validateModify(Contact abstractC0041l, Object[] objArr) {
+        if (isConnected()) {
             return StringUtils.m1a((String) objArr[0]) ? 301 : 0;
         }
         return 299;
     }
 
     /* renamed from: b */
-    public abstract int mo115b(Object obj);
+    public abstract int validateObject(Object obj);
 
     /* renamed from: a */
-    public abstract int mo114a(Contact abstractC0041l);
+    public abstract int validateDelete(Contact abstractC0041l);
 
     /* renamed from: a */
-    public int mo122a(String str) {
-        if (m1056C()) {
+    public int validateGroupCreate(String str) {
+        if (isConnected()) {
             return StringUtils.m1a(str) ? 301 : 0;
         }
         return 299;
     }
 
     /* renamed from: a */
-    public int mo124a(ContactGroup abstractC0046q, String str) {
-        if (abstractC0046q == this.f334D || abstractC0046q == this.f335E || abstractC0046q == this.f338H || abstractC0046q == this.f336F) {
+    public int validateGroupRename(ContactGroup abstractC0046q, String str) {
+        if (abstractC0046q == this.defaultGroup || abstractC0046q == this.onlineGroup || abstractC0046q == this.specialGroup || abstractC0046q == this.offlineGroup) {
             return 304;
         }
-        if (m1056C()) {
+        if (isConnected()) {
             return StringUtils.m1a(str) ? 301 : 0;
         }
         return 299;
     }
 
     /* renamed from: a */
-    public int mo102a(String str, String str2) {
+    public int setCredentials(String str, String str2) {
         if (StringUtils.m1a(str)) {
             return 301;
         }
-        if (this.f315k.equals(str) && this.f316l.equals(str2)) {
+        if (this.login.equals(str) && this.password.equals(str2)) {
             return 0;
         }
-        if (m1055B()) {
+        if (isConnecting()) {
             return 300;
         }
-        this.f315k = str;
-        this.f340J = Utils.m538m(str);
-        this.f316l = str2;
+        this.login = str;
+        this.shortName = Utils.m538m(str);
+        this.password = str2;
         return 0;
     }
 
     /* renamed from: a */
-    public int mo123a(ContactGroup abstractC0046q) {
-        if (abstractC0046q == this.f334D || abstractC0046q == this.f335E) {
+    public int validateGroupDelete(ContactGroup abstractC0046q) {
+        if (abstractC0046q == this.defaultGroup || abstractC0046q == this.onlineGroup) {
             return 304;
         }
         return abstractC0046q.contacts.size() > 0 ? 303 : 0;
     }
 
     /* renamed from: b */
-    public int mo118b(Contact abstractC0041l) {
-        return (abstractC0041l.isOnline() || m1056C()) ? 0 : 299;
+    public int validateResend(Contact abstractC0041l) {
+        return (abstractC0041l.isOnline() || isConnected()) ? 0 : 299;
     }
 
     /* renamed from: d */
-    public final int m1075d(Object obj) {
+    public final int getResourceId(Object obj) {
         return ResourceManager.m969a((String) obj, this);
     }
 
     /* renamed from: c */
-    public abstract int mo104c(Contact abstractC0041l);
+    public abstract int validateContactDelete(Contact abstractC0041l);
 
     /* renamed from: d */
-    public abstract int mo105d(Contact abstractC0041l);
+    public abstract int validateContactBlock(Contact abstractC0041l);
 
     /* renamed from: e */
-    public abstract int mo106e(Contact abstractC0041l);
+    public abstract int validateContactUnblock(Contact abstractC0041l);
 
     /* renamed from: f */
-    public int mo735f(Contact abstractC0041l) {
-        return !m1056C() ? 299 : 0;
+    public int validateContactResend(Contact abstractC0041l) {
+        return !isConnected() ? 299 : 0;
     }
 
     /* renamed from: M */
-    public final Vector m1076M() {
+    public final Vector getUnreadContacts() {
         Vector vectorM1213g = NetworkUtils.m1213g();
-        Enumeration enumerationElements = this.f321q.elements();
+        Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (abstractC0041l.hasUnread()) {
@@ -593,9 +593,9 @@ public abstract class Account {
     }
 
     /* renamed from: N */
-    public final Vector m1077N() {
+    public final Vector getOfflineContacts() {
         Vector vectorM1213g = NetworkUtils.m1213g();
-        Enumeration enumerationElements = this.f321q.elements();
+        Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (abstractC0041l.isOffline()) {
@@ -606,14 +606,14 @@ public abstract class Account {
     }
 
     /* renamed from: O */
-    public Vector mo720O() {
+    public Vector getPendingContacts() {
         return NetworkUtils.m1213g();
     }
 
     /* renamed from: P */
-    public final Vector m1078P() {
+    public final Vector getAllContacts() {
         Vector vectorM1213g = NetworkUtils.m1213g();
-        Enumeration enumerationElements = this.f321q.elements();
+        Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             vectorM1213g.addElement(enumerationElements.nextElement());
         }
@@ -621,17 +621,17 @@ public abstract class Account {
     }
 
     /* renamed from: a */
-    public int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
+    public int validateMove(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         if (abstractC0046q == abstractC0046q2) {
             return 305;
         }
-        return !m1056C() ? 299 : 0;
+        return !isConnected() ? 299 : 0;
     }
 
     /* renamed from: Q */
-    public final Vector m1079Q() {
+    public final Vector getOnlineContacts() {
         Vector vectorM1213g = NetworkUtils.m1213g();
-        Enumeration enumerationElements = this.f321q.elements();
+        Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
             if (abstractC0041l.isOnline()) {
@@ -642,81 +642,81 @@ public abstract class Account {
     }
 
     /* renamed from: g */
-    public final ContactGroup m1080g(Contact abstractC0041l) {
+    public final ContactGroup findGroup(Contact abstractC0041l) {
         ContactGroup abstractC0046qM1082g;
-        if (abstractC0041l.isOnline() || this.f334D.containsContact(abstractC0041l)) {
-            return this.f334D;
+        if (abstractC0041l.isOnline() || this.defaultGroup.containsContact(abstractC0041l)) {
+            return this.defaultGroup;
         }
         if (abstractC0041l.isSystem()) {
-            return this.f338H;
+            return this.specialGroup;
         }
         if (abstractC0041l.hasUnread()) {
-            return this.f335E;
+            return this.onlineGroup;
         }
         if (abstractC0041l.isOffline()) {
-            return this.f336F;
+            return this.offlineGroup;
         }
-        int size = this.f313i.size();
+        int size = this.groups.size();
         do {
             size--;
             if (size < 0) {
                 return null;
             }
-            abstractC0046qM1082g = m1082g(size);
+            abstractC0046qM1082g = getGroup(size);
         } while (!abstractC0046qM1082g.containsContact(abstractC0041l));
         return abstractC0046qM1082g;
     }
 
     /* renamed from: h */
-    public final void m1081h(Contact abstractC0041l) {
-        Contact abstractC0041l2 = (Contact) this.f321q.get(abstractC0041l.getIdentifier());
+    public final void registerContact(Contact abstractC0041l) {
+        Contact abstractC0041l2 = (Contact) this.contactMap.get(abstractC0041l.getIdentifier());
         if (abstractC0041l2 != null && abstractC0041l2 != abstractC0041l) {
-            this.f334D.removeContact(abstractC0041l2);
-            this.f335E.removeContact(abstractC0041l2);
-            this.f336F.removeContact(abstractC0041l2);
-            this.f337G.removeContact(abstractC0041l2);
-            this.f338H.removeContact(abstractC0041l2);
+            this.defaultGroup.removeContact(abstractC0041l2);
+            this.onlineGroup.removeContact(abstractC0041l2);
+            this.offlineGroup.removeContact(abstractC0041l2);
+            this.blockedGroup.removeContact(abstractC0041l2);
+            this.specialGroup.removeContact(abstractC0041l2);
         }
-        this.f321q.put(abstractC0041l.getIdentifier(), abstractC0041l);
+        this.contactMap.put(abstractC0041l.getIdentifier(), abstractC0041l);
     }
 
     /* renamed from: g */
-    public final ContactGroup m1082g(int i) {
-        return (ContactGroup) this.f313i.elementAt(i);
+    public final ContactGroup getGroup(int i) {
+        return (ContactGroup) this.groups.elementAt(i);
     }
 
     /* renamed from: b */
-    public final void m1083b(ContactGroup abstractC0046q) {
-        this.f313i.addElement(abstractC0046q);
+    public final void addGroup(ContactGroup abstractC0046q) {
+        this.groups.addElement(abstractC0046q);
     }
 
     /* renamed from: c */
-    public final void m1084c(ContactGroup abstractC0046q) {
-        this.f313i.removeElement(abstractC0046q);
+    public final void removeGroup(ContactGroup abstractC0046q) {
+        this.groups.removeElement(abstractC0046q);
     }
 
     /* renamed from: c */
-    public abstract void mo100c(int i);
+    public abstract void onError(int i);
 
     public final String toString() {
-        return this.f315k;
+        return this.login;
     }
 
     /* renamed from: n */
-    public int mo922n() {
+    public int getExtType() {
         return -1;
     }
 
     /* renamed from: R */
-    public final void m1085R() {
-        this.f316l = m1064I();
-        this.f326v++;
+    public final void incrementSync() {
+        this.password = getFormattedName();
+        this.syncSeq++;
     }
 
     /* renamed from: o */
-    public void mo924o() {
-        this.f327w = 0;
-        this.f328x = 0;
+    public void resetCounters() {
+        this.sentCount = 0;
+        this.recvCount = 0;
     }
 
     /* renamed from: p */

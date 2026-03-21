@@ -293,7 +293,7 @@ public final class ContactInfo extends Hashtable {
         Vector vectorM512e = Utils.m512e(AppState.m584b(312));
         int size = vectorM512e.size();
         if (abstractC0037hM1255c instanceof MrimAccount) {
-            MrimContact c0035f = (MrimContact) abstractC0037hM1255c.m1069c((Object) m1256a(3));
+            MrimContact c0035f = (MrimContact) abstractC0037hM1255c.getContact((Object) m1256a(3));
             int i3 = 0;
             while (i3 < size) {
                 try {

@@ -151,7 +151,7 @@ public final class XmppContactGroup extends ContactGroup {
                         break;
                     }
                     Account abstractC0037h = (Account) vectorM443V.elementAt(size);
-                    if (abstractC0037h.m1056C()) {
+                    if (abstractC0037h.isConnected()) {
                         if (abstractC0037h instanceof MrimAccount) {
                             z = false;
                             m1003p();
@@ -231,8 +231,8 @@ public final class XmppContactGroup extends ContactGroup {
         try {
             String strM584b = AppState.m584b(655360);
             MrimAccount c0028ba = new MrimAccount(-1, strM584b, strM584b);
-            c0028ba.f320p = c0039j;
-            c0028ba.m1053d(AppController.m377a(c0028ba));
+            c0028ba.connection = c0039j;
+            c0028ba.sendData(AppController.m377a(c0028ba));
             ByteBuffer c0043n = new ByteBuffer();
             do {
                 Thread.sleep(100L);
@@ -241,7 +241,7 @@ public final class XmppContactGroup extends ContactGroup {
             } while (c0043nM1349s == null);
             if (c0043nM1349s.peekIntAt(12) == 4098) {
                 m1003p();
-                c0028ba.m1053d(AppController.m321a(c0028ba, 4216, new ByteBuffer().writeStringLatin1(c0028ba.f315k).writeStringLatin1(c0028ba.f316l).writeCompressed(1442808).writeStringLatin1(m1017d()).writeBuffer(m1016a(c0028ba))));
+                c0028ba.sendData(AppController.m321a(c0028ba, 4216, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(1442808).writeStringLatin1(m1017d()).writeBuffer(m1016a(c0028ba))));
                 Thread.sleep(5000L);
             }
         } catch (Throwable unused) {
@@ -444,7 +444,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: a */
     public static final ByteBuffer m1016a(MrimAccount c0028ba) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).writeIntMixed(300).writeStringLatin1(Utils.m522f(AppState.m584b(223))).writeIntMixed(513).writeIntLE(c0028ba.f326v).writeIntMixed(335).writeStringLatin1(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m586d(1528)).append('x').append(AppState.m586d(1529)))).writeIntMixed(592).writeIntLE(AppState.m585c(251)).writeIntMixed(573).writeIntLE(AppState.m585c(250)).writeIntMixed(636).writeIntLE(AppState.m585c(290)).writeIntMixed(514).writeIntLE(AppState.m585c(291)).writeIntMixed(638).writeIntLE(AppState.m585c(292)).writeIntMixed(639).writeIntLE(AppState.m585c(294)).writeIntMixed(640).writeIntLE(AppState.m585c(293));
+        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).writeIntMixed(300).writeStringLatin1(Utils.m522f(AppState.m584b(223))).writeIntMixed(513).writeIntLE(c0028ba.syncSeq).writeIntMixed(335).writeStringLatin1(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m586d(1528)).append('x').append(AppState.m586d(1529)))).writeIntMixed(592).writeIntLE(AppState.m585c(251)).writeIntMixed(573).writeIntLE(AppState.m585c(250)).writeIntMixed(636).writeIntLE(AppState.m585c(290)).writeIntMixed(514).writeIntLE(AppState.m585c(291)).writeIntMixed(638).writeIntLE(AppState.m585c(292)).writeIntMixed(639).writeIntLE(AppState.m585c(294)).writeIntMixed(640).writeIntLE(AppState.m585c(293));
         Vector vectorM443V = AppController.m443V();
         int size = vectorM443V.size();
         while (true) {
@@ -457,8 +457,8 @@ public final class XmppContactGroup extends ContactGroup {
             Account abstractC0037h = (Account) vectorM443V.elementAt(size);
             if (!(abstractC0037h instanceof MrimAccount)) {
                 ByteBuffer c0043nM1390v = c0043nM1360p.writeIntMixed(816);
-                ByteBuffer c0043nM1360p2 = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).writeIntMixed(300).writeStringLatin1(Utils.m522f(AppState.m584b(223))).writeIntMixed(305).writeStringLatin1(abstractC0037h.f315k).writeIntMixed(306).writeStringLatin1(AppState.m584b(abstractC0037h.mo110p())).writeIntMixed(563).writeIntLE(abstractC0037h.f326v).writeIntMixed(564).writeIntLE(abstractC0037h.f327w).writeIntMixed(565).writeIntLE(abstractC0037h.f328x);
-                abstractC0037h.mo924o();
+                ByteBuffer c0043nM1360p2 = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).writeIntMixed(300).writeStringLatin1(Utils.m522f(AppState.m584b(223))).writeIntMixed(305).writeStringLatin1(abstractC0037h.login).writeIntMixed(306).writeStringLatin1(AppState.m584b(abstractC0037h.mo110p())).writeIntMixed(563).writeIntLE(abstractC0037h.syncSeq).writeIntMixed(564).writeIntLE(abstractC0037h.sentCount).writeIntMixed(565).writeIntLE(abstractC0037h.recvCount);
+                abstractC0037h.resetCounters();
                 c0043nM1390v.writeBufferIntLen(c0043nM1360p2);
             }
         }
@@ -549,7 +549,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer m1024a(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
-        objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.f74a).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.f339I, str3}).writeIntLE(z ? 1 : 0));
+        objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.f74a).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
         objArr[1] = ResourceManager.m967e(9);
         objArr[2] = str;
         objArr[3] = str2;

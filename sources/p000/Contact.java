@@ -133,10 +133,10 @@ public abstract class Contact implements Sortable {
         AppState.m601a(1237, (Object) this.identifier);
         ResourceManager.m925a(2);
         addFlag(i);
-        this.account.m1071e(getIdentifier());
+        this.account.markRead(getIdentifier());
         clearStatus();
         appendMessage(i != 4 ? 0 : 8, str, j, 0L);
-        ContactGroup abstractC0046qM1080g = this.account.m1080g(this);
+        ContactGroup abstractC0046qM1080g = this.account.findGroup(this);
         if (abstractC0046qM1080g != null && abstractC0046qM1080g.isSpecial) {
             abstractC0046qM1080g.toggleSpecial();
         }
@@ -168,7 +168,7 @@ public abstract class Contact implements Sortable {
         }
         Account abstractC0037h = this.account;
         long jM598g = AppState.m598g(1530);
-        int iMo125a = abstractC0037h.mo125a(this, str, jM598g);
+        int iMo125a = abstractC0037h.validateSend(this, str, jM598g);
         if (0 != iMo125a) {
             return iMo125a;
         }
@@ -180,7 +180,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: D */
     public final int validateDelete() {
-        return this.account.mo104c(this);
+        return this.account.validateContactDelete(this);
     }
 
     /* renamed from: E */
@@ -188,7 +188,7 @@ public abstract class Contact implements Sortable {
         if (isOnline()) {
             return 310;
         }
-        return this.account.mo105d(this);
+        return this.account.validateContactBlock(this);
     }
 
     /* renamed from: F */
@@ -196,7 +196,7 @@ public abstract class Contact implements Sortable {
         if (isOnline()) {
             return 310;
         }
-        return this.account.mo106e(this);
+        return this.account.validateContactUnblock(this);
     }
 
     @Override // p000.Sortable
@@ -315,7 +315,7 @@ public abstract class Contact implements Sortable {
             if (bM1344o == 16) {
                 c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.displayName).append(AppState.m584b(311)).append(formatTime(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
-                if (this.account.m1056C()) {
+                if (this.account.isConnected()) {
                     c0013amM75b.m250b(-1, AppState.m584b(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
@@ -325,7 +325,7 @@ public abstract class Contact implements Sortable {
                 c0013amM75b.m251a(StringUtils.m9b(strM13b, formatTime(jM1341m, iM624l)), 8);
                 addMessageLines(c0013amM75b, strM15c, i);
             } else {
-                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(bM1344o == 0 ? this.displayName : this.account.f339I).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
+                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
                 addMessageLines(c0013amM75b, strM539n, i);
             }
         }
@@ -342,7 +342,7 @@ public abstract class Contact implements Sortable {
             if (Conversation.m1106f(str2)) {
                 c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{ResourceManager.m967e(0), str2});
             } else {
-                c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.account.mo80a()));
+                c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.account.getType()));
             }
         }
         NetworkUtils.m1212a(vectorM1098a);
@@ -385,7 +385,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: K */
     public final int getDefaultAction() {
-        if (getMessageBuffer().length > 0 || !this.account.m1056C()) {
+        if (getMessageBuffer().length > 0 || !this.account.isConnected()) {
             return 40;
         }
         if (isOffline()) {

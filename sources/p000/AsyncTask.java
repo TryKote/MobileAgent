@@ -1561,7 +1561,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             boolean r0 = p000.StringUtils.m3a(r0, r1)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             if (r0 == 0) goto La32
             r0 = r15
-            r0.m1065J()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            r0.handleComplete()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             goto La48
         La32:
             r0 = r15

@@ -30,8 +30,8 @@ public final class XmppContact extends Contact {
         this.f40d = 0;
         setDisplayName(Utils.m528a(str2, str));
         this.defaultIcon = XmppProtocol.m131d(this.f39c);
-        this.identifier = c0005ae.m1050q().writeRawString(str).getStringAndClear();
-        c0005ae.m1081h(this);
+        this.identifier = c0005ae.encodeId().writeRawString(str).getStringAndClear();
+        c0005ae.registerContact(this);
         updateRenderState();
     }
 
@@ -56,10 +56,10 @@ public final class XmppContact extends Contact {
         super(abstractC0037h);
         this.f38a = c0043n.readWideStr();
         setDisplayName(c0043n.readUTF8Str((String) null));
-        this.identifier = abstractC0037h.m1050q().writeRawString(this.f38a).getStringAndClear();
+        this.identifier = abstractC0037h.encodeId().writeRawString(this.f38a).getStringAndClear();
         this.f39c = 0;
         this.defaultIcon = XmppProtocol.m131d(0);
-        abstractC0037h.m1081h(this);
+        abstractC0037h.registerContact(this);
         updateRenderState();
         this.extra = this.f38a;
     }

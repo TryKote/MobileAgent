@@ -27,7 +27,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     @Override // p000.XmppProtocol, p000.Account
     /* renamed from: a */
-    public final int mo80a() {
+    public final int getType() {
         return 3;
     }
 
@@ -39,8 +39,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     @Override // p000.XmppProtocol, p000.Account
     /* renamed from: h */
-    public final int mo108h() {
-        int iMo108h = super.mo108h();
+    public final int getIconId() {
+        int iMo108h = super.getIconId();
         int i = iMo108h & 65535;
         return (i < 381 || i > 384) ? iMo108h : iMo108h + 4;
     }
@@ -72,35 +72,35 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: y */
     private static final int m837y() {
         Account abstractC0037hM616i = AppState.m616i();
-        return null != abstractC0037hM616i ? abstractC0037hM616i.mo80a() : AppState.m586d(1475);
+        return null != abstractC0037hM616i ? abstractC0037hM616i.getType() : AppState.m586d(1475);
     }
 
     /* renamed from: r */
     public static final void m838r() {
         if (m837y() == 1) {
             Account abstractC0037hM616i = AppState.m616i();
-            if (abstractC0037hM616i != null && abstractC0037hM616i.m1055B()) {
+            if (abstractC0037hM616i != null && abstractC0037hM616i.isConnecting()) {
                 AppController.m340m(300);
                 return;
             }
             m840t();
             if (abstractC0037hM616i != null) {
-                AppState.m601a(1292, (Object) abstractC0037hM616i.f315k);
-                AppState.m601a(1293, (Object) abstractC0037hM616i.f316l);
+                AppState.m601a(1292, (Object) abstractC0037hM616i.login);
+                AppState.m601a(1293, (Object) abstractC0037hM616i.password);
             }
             ScreenManager.m71b(ScreenManager.m75b(2803));
             return;
         }
         if (m837y() == 2) {
             XmppProtocol c0005ae = (XmppProtocol) AppState.m616i();
-            if (c0005ae != null && c0005ae.m1055B()) {
+            if (c0005ae != null && c0005ae.isConnecting()) {
                 AppController.m340m(300);
                 return;
             }
             m840t();
             AppState.m594c(1474, 0);
             if (c0005ae != null) {
-                String strM13b = c0005ae.f315k;
+                String strM13b = c0005ae.login;
                 Vector vectorM516c = Utils.m516c(AppState.m584b(696), (char) 0);
                 int iM541c = Utils.m541c(vectorM516c);
                 while (true) {
@@ -116,23 +116,23 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 AppState.m594c(1474, iM541c);
                 AppState.m601a(1292, (Object) strM13b);
-                AppState.m601a(1293, (Object) c0005ae.f316l);
-                AppState.m601a(1297, (Object) c0005ae.f339I);
+                AppState.m601a(1293, (Object) c0005ae.password);
+                AppState.m601a(1297, (Object) c0005ae.displayName);
             }
             ScreenManager.m71b(ScreenManager.m75b(3443));
             return;
         }
         if (m837y() == 3) {
             XmppMailRuProtocol c0031bd = (XmppMailRuProtocol) AppState.m616i();
-            if (c0031bd != null && c0031bd.m1055B()) {
+            if (c0031bd != null && c0031bd.isConnecting()) {
                 AppController.m340m(300);
                 return;
             }
             m840t();
             if (c0031bd != null) {
-                AppState.m601a(1292, (Object) c0031bd.f315k);
-                AppState.m601a(1293, (Object) c0031bd.f316l);
-                AppState.m601a(1297, (Object) c0031bd.f339I);
+                AppState.m601a(1292, (Object) c0031bd.login);
+                AppState.m601a(1293, (Object) c0031bd.password);
+                AppState.m601a(1297, (Object) c0031bd.displayName);
             }
             ScreenManager.m71b(ScreenManager.m75b(3463));
             return;
@@ -141,8 +141,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         AppState.m594c(1474, 0);
         Account abstractC0037hM616i2 = AppState.m616i();
         if (null != abstractC0037hM616i2) {
-            AppState.m601a(1293, (Object) abstractC0037hM616i2.f316l);
-            String str = abstractC0037hM616i2.f315k;
+            AppState.m601a(1293, (Object) abstractC0037hM616i2.password);
+            String str = abstractC0037hM616i2.login;
             Vector vectorM516c2 = Utils.m516c(AppState.m584b(694), (char) 0);
             int size = vectorM516c2.size();
             int i = 0;
@@ -809,7 +809,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: a */
     public static final void m860a(Object[] objArr) {
         try {
-            String str = ((XmppProtocol) objArr[0]).f315k;
+            String str = ((XmppProtocol) objArr[0]).login;
             String strM861j = m861j(StringUtils.m7b(1185660, StringUtils.m15c(str, str.indexOf(64) + 1)));
             if (strM861j == null || strM861j.indexOf(58) <= 0) {
                 XmppProtocol c0005ae = (XmppProtocol) objArr[0];
@@ -1279,7 +1279,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: b */
     public static final void m881b(MmpProtocol c0033d, int i) {
-        Vector vector = c0033d.f333C;
+        Vector vector = c0033d.extras;
         int size = vector.size();
         while (true) {
             size--;
@@ -1302,7 +1302,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         boolean z = false;
         boolean z2;
         MmpContactGroup c0016ap;
-        Vector vector = c0033d.f333C;
+        Vector vector = c0033d.extras;
         int size = vector.size();
         do {
             size--;
@@ -1337,8 +1337,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 2:
                 int iM1353u3 = c0043n.readShortBE();
                 if (iM1353u3 == 0) {
-                    c0033d.m1084c((ContactGroup) objArr[2]);
-                    c0033d.m1052c(ResourceManager.m963c(c0033d));
+                    c0033d.removeGroup((ContactGroup) objArr[2]);
+                    c0033d.trySendData(ResourceManager.m963c(c0033d));
                 } else {
                     IOUtils.m781c(objArr, iM1353u3);
                 }
@@ -1348,7 +1348,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 3:
                 int iM1353u4 = c0043n.readShortBE();
                 if (iM1353u4 == 0) {
-                    c0033d.m1052c(ResourceManager.m962b(c0033d));
+                    c0033d.trySendData(ResourceManager.m962b(c0033d));
                 } else {
                     IOUtils.m782b(iM1353u4);
                 }
@@ -1358,8 +1358,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 4:
                 int iM1353u5 = c0043n.readShortBE();
                 if (iM1353u5 == 0) {
-                    c0033d.m1083b(new MmpContactGroup(c0033d, ((Integer) objArr[3]).intValue(), (String) objArr[2]));
-                    c0033d.m1052c(ResourceManager.m963c(c0033d));
+                    c0033d.addGroup(new MmpContactGroup(c0033d, ((Integer) objArr[3]).intValue(), (String) objArr[2]));
+                    c0033d.trySendData(ResourceManager.m963c(c0033d));
                 } else {
                     IOUtils.m780b(objArr, iM1353u5);
                 }
@@ -1369,8 +1369,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 5:
                 int iM1353u6 = c0043n.readShortBE();
                 if (iM1353u6 == 0) {
-                    c0033d.m1074a((Contact) objArr[2], true);
-                    c0033d.m1052c(ResourceManager.m962b(c0033d));
+                    c0033d.removeContact((Contact) objArr[2], true);
+                    c0033d.trySendData(ResourceManager.m962b(c0033d));
                 } else {
                     IOUtils.m781c(objArr, iM1353u6);
                 }
@@ -1409,7 +1409,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             continue;
                         case 1:
                             if (iM1353u8 != 0) {
-                                c0033d.f313i.addElement(new MmpContactGroup(c0033d, iM1353u8, strM1364A));
+                                c0033d.groups.addElement(new MmpContactGroup(c0033d, iM1353u8, strM1364A));
                             }
                             c0043n.skip(iM1353u11);
                             continue;
@@ -1455,14 +1455,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     size2--;
                     if (size2 < 0) {
                         if (z4) {
-                            c0033d.m1053d(AppController.m464a(c0033d, 4871, (ByteBuffer) null));
+                            c0033d.sendData(AppController.m464a(c0033d, 4871, (ByteBuffer) null));
                             int i4 = c0033d.f274e;
                             if (i4 != 0) {
-                                c0033d.m1053d(m857a(c0033d, i4));
+                                c0033d.sendData(m857a(c0033d, i4));
                             }
-                            c0033d.m1053d(AppController.m464a(c0033d, 258, new ByteBuffer().writeCompressed(5245205)));
-                            c0033d.m1053d(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(c0033d.f269a).writeShortLE(60).writeShortBE(0)), ResourceManager.m967e(8)}));
-                            Enumeration enumerationElements = c0033d.f321q.elements();
+                            c0033d.sendData(AppController.m464a(c0033d, 258, new ByteBuffer().writeCompressed(5245205)));
+                            c0033d.sendData(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(c0033d.f269a).writeShortLE(60).writeShortBE(0)), ResourceManager.m967e(8)}));
+                            Enumeration enumerationElements = c0033d.contactMap.elements();
                             while (enumerationElements.hasMoreElements()) {
                                 Hashtable hashtable = c0033d.f275f;
                                 MmpContact c0009ai = (MmpContact) enumerationElements.nextElement();
@@ -1482,11 +1482,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             c0033d.f275f.clear();
                             c0033d.f276g.clear();
                             c0033d.f277h.clear();
-                            if (c0033d.f313i.size() == 0) {
-                                c0033d.m1053d(ResourceManager.m937a(c0033d, AppState.m584b(459528)));
+                            if (c0033d.groups.size() == 0) {
+                                c0033d.sendData(ResourceManager.m937a(c0033d, AppState.m584b(459528)));
                             }
-                            c0033d.f322r = 100;
-                            c0033d.f323s = 100;
+                            c0033d.progress = 100;
+                            c0033d.msgCount = 100;
                         }
                         NetworkUtils.m1212a(vectorM1213g);
                         z = z4;
@@ -1495,14 +1495,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     } else {
                         MmpContact c0009ai2 = (MmpContact) vectorM1213g.elementAt(size2);
                         int i5 = c0009ai2.f56b;
-                        int size3 = c0033d.f313i.size();
+                        int size3 = c0033d.groups.size();
                         while (true) {
                             size3--;
                             if (size3 < 0) {
                                 c0016ap = null;
                                 break;
                             } else {
-                                MmpContactGroup c0016ap2 = (MmpContactGroup) c0033d.m1082g(size3);
+                                MmpContactGroup c0016ap2 = (MmpContactGroup) c0033d.getGroup(size3);
                                 if (c0016ap2.f157a == i5) {
                                     c0016ap = c0016ap2;
                                     break;
@@ -1533,7 +1533,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             c0043n.readPascalStr();
                             c0042mM1268i.m1266g(c0043n.readPascalStr()).m1269j(c0043n.readPascalStr()).m1270k(c0043n.readPascalStr()).m1271l(c0043n.readPascalStr());
                             if (c0033d.f269a == ((Integer) objArr[2]).intValue()) {
-                                c0033d.m1054c(strM1366C);
+                                c0033d.setDisplayName(strM1366C);
                                 break;
                             }
                             break;
@@ -1565,8 +1565,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 z3 = z;
                 break;
             case 8:
-                int i6 = c0033d.f329y;
-                c0033d.f329y = i6 + 1;
+                int i6 = c0033d.reserved1;
+                c0033d.reserved1 = i6 + 1;
                 if (0 != i6) {
                     AppState.m594c(1449, 0);
                 }
@@ -1595,13 +1595,13 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                         long j = 1000 * ((86400 * i7) + (bM1344o5 * 3600) + (bM1344o6 * 60));
                         c0043n.readShortBE();
                         if (iM1328e != 1004) {
-                            c0033d.m1072a(Integer.toString(iM1328e), j, c0043n.readModifiedStr());
+                            c0033d.onMessage(Integer.toString(iM1328e), j, c0043n.readModifiedStr());
                         }
                         z = false;
                         break;
                     case 66:
                         AppState.m594c(1449, 1);
-                        c0033d.m1052c(AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(c0033d.f269a).writeShortLE(62).writeShortBE(0)));
+                        c0033d.trySendData(AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(c0033d.f269a).writeShortLE(62).writeShortBE(0)));
                         break;
                     default:
                         z = false;
@@ -1641,7 +1641,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 if (iM1353u14 == 0) {
                     MmpContact c0009ai3 = (MmpContact) objArr[2];
                     MmpContactGroup c0016ap4 = (MmpContactGroup) objArr[3];
-                    c0033d.m1052c(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0016ap4.m465a(c0016ap4.name, c0009ai3.f55a, -1)), ResourceManager.m967e(11), c0009ai3, c0016ap4, objArr[4]}));
+                    c0033d.trySendData(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0016ap4.m465a(c0016ap4.name, c0009ai3.f55a, -1)), ResourceManager.m967e(11), c0009ai3, c0016ap4, objArr[4]}));
                 } else {
                     IOUtils.m779a(objArr, iM1353u14);
                 }
@@ -1654,7 +1654,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContact c0009ai4 = (MmpContact) objArr[2];
                     Object obj4 = objArr[3];
                     MmpContactGroup c0016ap5 = (MmpContactGroup) objArr[4];
-                    c0033d.m1052c(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0009ai4.m180a(4, c0009ai4.displayName, c0016ap5.f157a)), ResourceManager.m967e(12), c0009ai4, obj4, c0016ap5}));
+                    c0033d.trySendData(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0009ai4.m180a(4, c0009ai4.displayName, c0016ap5.f157a)), ResourceManager.m967e(12), c0009ai4, obj4, c0016ap5}));
                 } else {
                     IOUtils.m779a(objArr, iM1353u15);
                 }
@@ -1667,7 +1667,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContact c0009ai5 = (MmpContact) objArr[2];
                     Object obj5 = objArr[3];
                     MmpContactGroup c0016ap6 = (MmpContactGroup) objArr[4];
-                    c0033d.m1052c(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0016ap6.m465a(c0016ap6.name, -1, c0009ai5.f55a)), ResourceManager.m967e(13), c0009ai5, obj5, c0016ap6}));
+                    c0033d.trySendData(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0016ap6.m465a(c0016ap6.name, -1, c0009ai5.f55a)), ResourceManager.m967e(13), c0009ai5, obj5, c0016ap6}));
                 } else {
                     IOUtils.m779a(objArr, iM1353u16);
                 }
@@ -1683,7 +1683,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContactGroup c0016ap8 = (MmpContactGroup) objArr[4];
                     c0016ap8.addContact((Object) c0009ai6);
                     c0009ai6.f56b = c0016ap8.f157a;
-                    c0033d.m1052c(ResourceManager.m962b(c0033d));
+                    c0033d.trySendData(ResourceManager.m962b(c0033d));
                 } else {
                     IOUtils.m779a(objArr, iM1353u17);
                 }
@@ -1694,7 +1694,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 int iM1353u18 = c0043n.readShortBE();
                 if (iM1353u18 == 0) {
                     MmpContactGroup c0016ap9 = (MmpContactGroup) objArr[4];
-                    c0033d.m1052c(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0016ap9.m465a(c0016ap9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.m967e(15), objArr[2], objArr[3], c0016ap9, objArr[5], objArr[6]}));
+                    c0033d.trySendData(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0016ap9.m465a(c0016ap9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.m967e(15), objArr[2], objArr[3], c0016ap9, objArr[5], objArr[6]}));
                 } else {
                     IOUtils.m779a(objArr, iM1353u18);
                 }
@@ -1707,10 +1707,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContactGroup c0016ap10 = (MmpContactGroup) objArr[4];
                     MmpContact c0009ai7 = new MmpContact(c0033d, ((Integer) objArr[5]).intValue(), c0016ap10.f157a, (String) objArr[2], (String) objArr[3], true);
                     c0016ap10.addContact((Object) c0009ai7);
-                    c0033d.m1052c(ResourceManager.m962b(c0033d));
-                    c0033d.m1052c(ResourceManager.m961a(c0033d));
-                    c0033d.m1052c(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0009ai7.m180a(5, c0009ai7.displayName, c0009ai7.f56b)), ResourceManager.m967e(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], c0009ai7}));
-                    c0033d.m1052c(ResourceManager.m962b(c0033d));
+                    c0033d.trySendData(ResourceManager.m962b(c0033d));
+                    c0033d.trySendData(ResourceManager.m961a(c0033d));
+                    c0033d.trySendData(c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4873, c0009ai7.m180a(5, c0009ai7.displayName, c0009ai7.f56b)), ResourceManager.m967e(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], c0009ai7}));
+                    c0033d.trySendData(ResourceManager.m962b(c0033d));
                 } else {
                     IOUtils.m779a(objArr, iM1353u19);
                 }
@@ -1720,8 +1720,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 16:
                 int iM1353u20 = c0043n.readShortBE();
                 if (iM1353u20 == 0) {
-                    c0033d.m1052c(ResourceManager.m962b(c0033d));
-                    c0033d.m1052c(IOUtils.m753a(c0033d, (MmpContact) objArr[7], (String) objArr[6]));
+                    c0033d.trySendData(ResourceManager.m962b(c0033d));
+                    c0033d.trySendData(IOUtils.m753a(c0033d, (MmpContact) objArr[7], (String) objArr[6]));
                 } else {
                     IOUtils.m779a(objArr, iM1353u20);
                 }
@@ -1729,7 +1729,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 z3 = z;
                 break;
             case 17:
-                c0033d.f324t = c0033d.f325u & 65535;
+                c0033d.lastError = c0033d.configFlags & 65535;
                 z3 = z;
                 break;
             case 18:
@@ -1770,7 +1770,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                         ContactInfo c0042mM1262e2 = ContactInfo.m1254b(c0033d).m1283d(c0043n.readInt()).m1259b(c0043n.readPascalStr()).m1260c(c0043n.readPascalStr()).m1261d(c0043n.readPascalStr()).m1262e(c0043n.readPascalStr());
                         c0043n.readByte();
                         ContactInfo c0042mM1275b = c0042mM1262e2.m1285e(c0043n.readShortLE()).m1277c(c0043n.readByte()).m1275b(c0043n.readShortLE());
-                        MmpContact c0009ai8 = (MmpContact) c0033d.f321q.get(c0042mM1275b.m1256a(60));
+                        MmpContact c0009ai8 = (MmpContact) c0033d.contactMap.get(c0042mM1275b.m1256a(60));
                         if (null != c0009ai8) {
                             c0009ai8.setDisplayName(c0042mM1275b.m1291j());
                         }
@@ -1790,7 +1790,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     public static final void m883a(MrimAccount c0028ba, ByteBuffer c0043n, int i) {
         Object[] objArr;
         int iM1328e = c0043n.readInt();
-        Vector vector = c0028ba.f333C;
+        Vector vector = c0028ba.extras;
         int size = vector.size();
         do {
             size--;
@@ -1822,7 +1822,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     IOUtils.m781c(objArr, iM1328e);
                     break;
                 } else {
-                    c0028ba.m1074a((Contact) objArr[2], true);
+                    c0028ba.removeContact((Contact) objArr[2], true);
                     break;
                 }
             case 3:
@@ -1832,14 +1832,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 } else {
                     MrimContactGroup c0010aj = (MrimContactGroup) objArr[2];
                     int i2 = c0010aj.f75b >> 24;
-                    int size2 = c0028ba.f313i.size();
+                    int size2 = c0028ba.groups.size();
                     while (true) {
                         size2--;
                         if (size2 < 0) {
-                            c0028ba.m1084c((ContactGroup) c0010aj);
+                            c0028ba.removeGroup((ContactGroup) c0010aj);
                             break;
                         } else {
-                            MrimContactGroup c0010aj2 = (MrimContactGroup) c0028ba.m1082g(size2);
+                            MrimContactGroup c0010aj2 = (MrimContactGroup) c0028ba.getGroup(size2);
                             if ((c0010aj2.f75b >> 24) > i2) {
                                 c0010aj2.f75b -= 16777216;
                             }
@@ -1851,7 +1851,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     IOUtils.m780b(objArr, iM1328e);
                     break;
                 } else {
-                    c0028ba.f313i.addElement(new MrimContactGroup(c0028ba, c0028ba.m733U(), ((Integer) objArr[3]).intValue(), (String) objArr[2]));
+                    c0028ba.groups.addElement(new MrimContactGroup(c0028ba, c0028ba.m733U(), ((Integer) objArr[3]).intValue(), (String) objArr[2]));
                     break;
                 }
             case 5:
@@ -1929,14 +1929,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MrimContact c0035f2 = (MrimContact) objArr[2];
                     MrimContactGroup c0010aj5 = (MrimContactGroup) objArr[3];
                     c0035f2.f296c = c0010aj5.f74a;
-                    int size3 = c0028ba.f313i.size();
+                    int size3 = c0028ba.groups.size();
                     while (true) {
                         size3--;
                         if (size3 < 0) {
                             c0010aj5.addContact((Object) c0035f2);
                             break;
                         } else {
-                            c0028ba.m1082g(size3).removeElement(c0035f2);
+                            c0028ba.getGroup(size3).removeElement(c0035f2);
                         }
                     }
                 }

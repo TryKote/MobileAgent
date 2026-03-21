@@ -50,7 +50,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
-        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.m1213g(), AppController.m459a(c0028ba.f315k, Utils.m522f(c0028ba.f230f)));
+        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.m1213g(), AppController.m459a(c0028ba.login, Utils.m522f(c0028ba.f230f)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;

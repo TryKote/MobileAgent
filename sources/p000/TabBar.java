@@ -59,7 +59,7 @@ public final class TabBar {
         } else {
             for (int i = 0; i < size; i++) {
                 Account abstractC0037h = (Account) vectorM614m.elementAt(i);
-                m165a(abstractC0037h.mo108h(), abstractC0037h.f340J, 4, abstractC0037h);
+                m165a(abstractC0037h.getIconId(), abstractC0037h.shortName, 4, abstractC0037h);
                 if (i == 0) {
                     f54k = abstractC0037h;
                 }

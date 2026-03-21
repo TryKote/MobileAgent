@@ -575,7 +575,7 @@ public final class NetworkUtils {
                     c0032cM1057D = c0032cM898b2;
                 }
             } else {
-                c0032cM1057D = ((Account) objElementAt).m1057D();
+                c0032cM1057D = ((Account) objElementAt).createMenuItem();
             }
             c0013am.m225a(c0032cM1057D);
         }
@@ -753,7 +753,7 @@ public final class NetworkUtils {
                 break;
             case 1:
                 ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
-                MrimContact c0035f = (MrimContact) c0028ba.f321q.get(c0042m.m1290i());
+                MrimContact c0035f = (MrimContact) c0028ba.contactMap.get(c0042m.m1290i());
                 if (null != c0035f) {
                     c0035f.setDisplayName(c0042m.m1292k());
                     return;
@@ -770,13 +770,13 @@ public final class NetworkUtils {
     public static final void m1205d(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
         if (i == 1) {
             ContactInfo c0042m = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
-            Hashtable hashtable = c0028ba.f321q;
+            Hashtable hashtable = c0028ba.contactMap;
             String strM1290i = c0042m.m1290i();
             MrimContact c0035f = (MrimContact) hashtable.get(strM1290i);
             if (null != c0035f) {
                 String strM1292k = c0042m.m1292k();
                 c0035f.setDisplayName(strM1292k);
-                c0028ba.mo734a(strM1290i, strM1292k, AppState.m584b(741), (ContactGroup) c0028ba.m718f(), true);
+                c0028ba.validateGroupAdd(strM1290i, strM1292k, AppState.m584b(741), (ContactGroup) c0028ba.m718f(), true);
             }
         }
     }

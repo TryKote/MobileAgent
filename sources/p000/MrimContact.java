@@ -200,7 +200,7 @@ public final class MrimContact extends Contact implements ListItem {
 
     /* renamed from: O */
     private void m992O() {
-        ByteBuffer c0043nM1050q = this.account.m1050q();
+        ByteBuffer c0043nM1050q = this.account.encodeId();
         String strM991N = isOffline() ? m991N() : this.f297d;
         this.extra = strM991N;
         this.identifier = c0043nM1050q.writeRawString(strM991N).readAllByteStr();
@@ -208,7 +208,7 @@ public final class MrimContact extends Contact implements ListItem {
             this.extra = Utils.m530h(this.extra);
         }
         updateRenderState();
-        this.account.m1081h(this);
+        this.account.registerContact(this);
     }
 
     /* JADX DEBUG: Possible override for method l.f()Ln; */
@@ -220,7 +220,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         this.f302y = jM598g;
         MrimAccount c0028ba = (MrimAccount) this.account;
-        int iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.f297d).writeStringUTF16(AppState.m584b(909)).writeStringLatin1(AppState.m584b(33819707))), ResourceManager.m967e(14)}));
+        int iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.f297d).writeStringUTF16(AppState.m584b(909)).writeStringLatin1(AppState.m584b(33819707))), ResourceManager.m967e(14)}));
         if (0 != iM1052c) {
             return iM1052c;
         }

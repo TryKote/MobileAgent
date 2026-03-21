@@ -410,7 +410,7 @@ public final class ConnectionThread {
         }
         objArr[8] = objArr;
         MrimAccount c0028ba2 = (MrimAccount) AppState.m616i();
-        Object[] objArrM1147a = m1147a(NetworkUtils.m1217h().append(AppState.m584b(1771076)).append(c0028ba2.f315k).append(AppState.m584b(656925)).append(c0028ba2.f316l).append(AppState.m584b(1381)));
+        Object[] objArrM1147a = m1147a(NetworkUtils.m1217h().append(AppState.m584b(1771076)).append(c0028ba2.login).append(AppState.m584b(656925)).append(c0028ba2.password).append(AppState.m584b(1381)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) m1149a(objArrM1147a)[7]).f436a.join();
         c0028ba.f225a = (String) objArrM1147a[6];

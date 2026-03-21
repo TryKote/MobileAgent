@@ -50,28 +50,28 @@ public final class MergedContactGroup extends ContactGroup {
                     break;
                 }
                 Account abstractC0037h = (Account) vectorM614m.elementAt(size);
-                int size2 = abstractC0037h.f313i.size();
+                int size2 = abstractC0037h.groups.size();
                 while (true) {
                     size2--;
                     if (size2 < 0) {
                         break;
                     }
-                    ContactGroup abstractC0046qM1082g = abstractC0037h.m1082g(size2);
+                    ContactGroup abstractC0046qM1082g = abstractC0037h.getGroup(size2);
                     if (StringUtils.m6a(str, abstractC0046qM1082g.name)) {
                         abstractC0046qM1082g.isSpecial = false;
                     }
                 }
-                if (str.equals(abstractC0037h.f334D.name)) {
-                    abstractC0037h.f334D.isSpecial = false;
+                if (str.equals(abstractC0037h.defaultGroup.name)) {
+                    abstractC0037h.defaultGroup.isSpecial = false;
                 }
-                if (str.equals(abstractC0037h.f335E.name)) {
-                    abstractC0037h.f335E.isSpecial = false;
+                if (str.equals(abstractC0037h.onlineGroup.name)) {
+                    abstractC0037h.onlineGroup.isSpecial = false;
                 }
-                if (str.equals(abstractC0037h.f338H.name)) {
-                    abstractC0037h.f338H.isSpecial = false;
+                if (str.equals(abstractC0037h.specialGroup.name)) {
+                    abstractC0037h.specialGroup.isSpecial = false;
                 }
-                if (str.equals(abstractC0037h.f336F.name)) {
-                    abstractC0037h.f336F.isSpecial = false;
+                if (str.equals(abstractC0037h.offlineGroup.name)) {
+                    abstractC0037h.offlineGroup.isSpecial = false;
                 }
             }
         } else {
@@ -84,28 +84,28 @@ public final class MergedContactGroup extends ContactGroup {
                     break;
                 }
                 Account abstractC0037h2 = (Account) vectorM614m2.elementAt(size3);
-                int size4 = abstractC0037h2.f313i.size();
+                int size4 = abstractC0037h2.groups.size();
                 while (true) {
                     size4--;
                     if (size4 < 0) {
                         break;
                     }
-                    ContactGroup abstractC0046qM1082g2 = abstractC0037h2.m1082g(size4);
+                    ContactGroup abstractC0046qM1082g2 = abstractC0037h2.getGroup(size4);
                     if (StringUtils.m6a(str2, abstractC0046qM1082g2.name)) {
                         abstractC0046qM1082g2.isSpecial = true;
                     }
                 }
-                if (str2.equals(abstractC0037h2.f334D.name)) {
-                    abstractC0037h2.f334D.isSpecial = true;
+                if (str2.equals(abstractC0037h2.defaultGroup.name)) {
+                    abstractC0037h2.defaultGroup.isSpecial = true;
                 }
-                if (str2.equals(abstractC0037h2.f335E.name)) {
-                    abstractC0037h2.f335E.isSpecial = true;
+                if (str2.equals(abstractC0037h2.onlineGroup.name)) {
+                    abstractC0037h2.onlineGroup.isSpecial = true;
                 }
-                if (str2.equals(abstractC0037h2.f338H.name)) {
-                    abstractC0037h2.f338H.isSpecial = true;
+                if (str2.equals(abstractC0037h2.specialGroup.name)) {
+                    abstractC0037h2.specialGroup.isSpecial = true;
                 }
-                if (str2.equals(abstractC0037h2.f336F.name)) {
-                    abstractC0037h2.f336F.isSpecial = true;
+                if (str2.equals(abstractC0037h2.offlineGroup.name)) {
+                    abstractC0037h2.offlineGroup.isSpecial = true;
                 }
             }
         }

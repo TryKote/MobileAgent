@@ -51,7 +51,7 @@ public abstract class ContactGroup implements Sortable {
 
     /* renamed from: f */
     public final MenuItem createMenuItem(int i) {
-        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().writeByte(35).writeIntAsString(this.account.f314j).writeByte(35).writeIntAsString(getGroupType()).readAllByteStr()).m896a(this.isSpecial ? 30 : 31);
+        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().writeByte(35).writeIntAsString(this.account.accountId).writeByte(35).writeIntAsString(getGroupType()).readAllByteStr()).m896a(this.isSpecial ? 30 : 31);
         c0032cM896a.f265d = this;
         if (isCustom()) {
             MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.name).append(' ').append('(')), 1, 0);
@@ -93,7 +93,7 @@ public abstract class ContactGroup implements Sortable {
 
     /* renamed from: m */
     public int getSortIndex() {
-        return this.account.mo123a(this);
+        return this.account.validateGroupDelete(this);
     }
 
     /* renamed from: n */
@@ -109,7 +109,7 @@ public abstract class ContactGroup implements Sortable {
 
     /* renamed from: b */
     public int rename(String str) {
-        return this.account.mo124a(this, str);
+        return this.account.validateGroupRename(this, str);
     }
 
     /* renamed from: b */
