@@ -9,7 +9,7 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:au.class */
 public final class ScreenBuilder {
     /* renamed from: a */
-    public static final void m546a(int i) {
+    public static final void openScreen(int i) {
         boolean z;
         String str;
         String[] strArrM32g;
@@ -38,7 +38,7 @@ public final class ScreenBuilder {
                     break;
                 }
             }
-            m549c();
+            onScreenClosed();
         }
         switch (i) {
             case 0:
@@ -1262,7 +1262,7 @@ public final class ScreenBuilder {
     }
 
     /* renamed from: a */
-    public static final void m547a() {
+    public static final void onMenuItemSelected() {
         int iM338l;
         int iM338l2;
         int iM338l3;
@@ -1591,7 +1591,7 @@ public final class ScreenBuilder {
             case 63:
                 AppController.f152f = true;
                 AppState.setScreen(AppState.getCanvas().updateCommands());
-                m549c();
+                onScreenClosed();
                 iM460J = 84;
                 break;
             case 64:
@@ -1649,8 +1649,8 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 79:
-                m549c();
-                m549c();
+                onScreenClosed();
+                onScreenClosed();
                 iM460J = 0;
                 break;
             case 80:
@@ -2150,11 +2150,11 @@ public final class ScreenBuilder {
         }
         if (iM460J != -1) {
             if (iM460J == 12) {
-                m549c();
+                onScreenClosed();
                 return;
             }
             if (iM460J != 0) {
-                m546a(iM460J);
+                openScreen(iM460J);
                 return;
             }
             int i8 = c0013amM66b.f120s;
@@ -2162,9 +2162,9 @@ public final class ScreenBuilder {
                 int i9 = i8 == 199 ? iM68d : i8;
                 int i10 = i9;
                 if (i9 == 12) {
-                    m549c();
+                    onScreenClosed();
                 } else if (i10 != 0) {
-                    m546a(i10);
+                    openScreen(i10);
                 }
             }
         }
@@ -2172,7 +2172,7 @@ public final class ScreenBuilder {
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* renamed from: b */
-    public static final void m548b() {
+    public static final void onMenuItemAction() {
         int iM1233b;
         AppController.f153g = true;
         AppController.f152f = true;
@@ -2369,14 +2369,14 @@ public final class ScreenBuilder {
             case 63:
                 String strM1026g = XmppContactGroup.getTextInputValue();
                 if (!StringUtils.isEmpty(strM1026g) && 0 != (iM1233b = AppState.getCurrentContact().sendMessage(strM1026g))) {
-                    m549c();
+                    onScreenClosed();
                     IOUtils.m778d((Object) AppState.getString(iM1233b));
                 }
                 AppState.setInt(1456, 0);
                 AppState.clearIndex(1279);
                 AppController.f152f = true;
                 AppState.setScreen(AppState.getCanvas());
-                m549c();
+                onScreenClosed();
                 iM308i = 40;
                 break;
             case 64:
@@ -2440,7 +2440,7 @@ public final class ScreenBuilder {
                 iM308i = AppController.m308i();
                 break;
             case 84:
-                m549c();
+                onScreenClosed();
                 iM308i = 0;
                 break;
             case 85:
@@ -2679,7 +2679,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 160:
-                m549c();
+                onScreenClosed();
                 iM308i = 0;
                 break;
             case 161:
@@ -2749,19 +2749,19 @@ public final class ScreenBuilder {
         }
         if (iM308i != -1) {
             if (iM308i == 12) {
-                m549c();
+                onScreenClosed();
                 return;
             }
             if (iM308i != 0) {
-                m546a(iM308i);
+                openScreen(iM308i);
                 return;
             }
             int i2 = c0013amM66b.f121t;
             if (i2 != 200) {
                 if (i2 == 12) {
-                    m549c();
+                    onScreenClosed();
                 } else if (i2 != 0) {
-                    m546a(i2);
+                    openScreen(i2);
                 }
             }
         }
@@ -2769,7 +2769,7 @@ public final class ScreenBuilder {
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* renamed from: c */
-    public static final void m549c() {
+    public static final void onScreenClosed() {
         AppController.f153g = true;
         switch (ScreenManager.getCurrentScreen().f94a) {
             case 2:

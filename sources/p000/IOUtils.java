@@ -56,8 +56,8 @@ public final class IOUtils {
         String strM584b3 = AppState.getString(198546);
         String str2 = AppState.emptyStr;
         if (i == 48) {
-            ScreenBuilder.m549c();
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
+            ScreenBuilder.onScreenClosed();
         }
         if (StringUtils.m3a(839, str)) {
             if (!zM587e) {
@@ -483,14 +483,14 @@ public final class IOUtils {
     /* renamed from: f */
     public static final void m772f() {
         ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.getInt(39)))).writeCompressed(393954).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.getInt(39)))).writeCompressed(393960).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.getInt(39)))).writeCompressed(393966).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.getInt(39)))).writeCompressed(1376928);
-        long jM692d = SoftFloat.m692d(4612811918334230528L, SoftFloat.m687b(((MapRenderer.f194b / 128) + 2) * ((MapRenderer.f193a / 128) + 2)));
+        long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.f194b / 128) + 2) * ((MapRenderer.f193a / 128) + 2)));
         int iM586d = AppState.getInt(39);
         long j = MapRenderer.f197e;
         int i = MapRenderer.f193a / 2;
         long jM318a = AppController.m318a((int) (j + i), iM586d) - AppController.m318a((int) (MapRenderer.f197e - i), iM586d);
         long j2 = MapRenderer.f198f;
         int i2 = MapRenderer.f194b / 2;
-        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
+        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
         VCard.staticTs1 = (int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.getInt(39));
         VCard.staticTs2 = (int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.getInt(39));
         VCard.staticTs3 = (int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.getInt(39));
@@ -586,13 +586,13 @@ public final class IOUtils {
         String str2 = ((MrimAccount) AppState.getAccount()).login;
         m815g(strM584b);
         if (StringUtils.m3a(839, str)) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             ResourceManager.m966a(XmppMailRuProtocol.m866b(vectorM668b), StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
             return 0;
         }
         if (!StringUtils.m3a(840, str)) {
             if (StringUtils.m3a(841, str)) {
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 ResourceManager.m966a(NetworkUtils.newVector(), StringUtils.concat(strM584b3, strM673d), Utils.m507d(c0026azM1415b.body));
                 return 0;
             }
@@ -602,7 +602,7 @@ public final class IOUtils {
             AppState.setInt(1527, c0028ba.findDefaultChatRoom().id);
             return 0;
         }
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         Vector vectorM865a = XmppMailRuProtocol.m865a(XmppMailRuProtocol.m864a(vectorM669c), vectorM668b);
         int iM541c = Utils.m541c(vectorM865a);
         while (true) {
@@ -713,14 +713,14 @@ public final class IOUtils {
             return AppController.m338l(299);
         }
         if (i == 54 || i == 63 || i == 85) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
         }
         if (StringUtils.m3a(717, str)) {
             int iM993f = ((MrimContact) abstractC0041lM611g).requestUserDetails();
             return 0 != iM993f ? AppController.m338l(iM993f) : i;
         }
         if (i == 65) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             return ResourceManager.m946g();
         }
         if (i == 66) {
@@ -800,12 +800,12 @@ public final class IOUtils {
 
     /* renamed from: b */
     public static final long m807b(String str) {
-        return SoftFloat.m689d(SoftFloat.m692d(4708606483430899712L, SoftFloat.m692d(SoftFloat.m697a(str), 4580687790476533044L)));
+        return SoftFloat.floatToLong(SoftFloat.multiply(4708606483430899712L, SoftFloat.multiply(SoftFloat.parseFloat(str), 4580687790476533044L)));
     }
 
     /* renamed from: c */
     public static final long m808c(String str) {
-        long jM697a = SoftFloat.m697a(str);
+        long jM697a = SoftFloat.parseFloat(str);
         long j = jM697a;
         if (jM697a > 4635963235168681984L) {
             j = 4635963235168681984L;
@@ -813,33 +813,33 @@ public final class IOUtils {
         if (j < -4587408801686093824L) {
             j = -4587408801686093824L;
         }
-        long jM692d = SoftFloat.m692d(j, 4580687790476533044L);
-        long jM692d2 = SoftFloat.m692d(4590560114707566468L, SoftFloat.m706h(jM692d));
-        return SoftFloat.m689d(SoftFloat.m691c(0L, SoftFloat.m692d(4708606483430899712L, SoftFloat.m705g(SoftFloat.m693e(SoftFloat.m707i(SoftFloat.m693e(SoftFloat.m691c(4609753056924675352L, jM692d), 4611686018427387904L)), SoftFloat.m704f(SoftFloat.m693e(SoftFloat.m691c(4607182418800017408L, jM692d2), SoftFloat.m690b(4607182418800017408L, jM692d2)), 4586056515080195972L))))));
+        long jM692d = SoftFloat.multiply(j, 4580687790476533044L);
+        long jM692d2 = SoftFloat.multiply(4590560114707566468L, SoftFloat.sin(jM692d));
+        return SoftFloat.floatToLong(SoftFloat.subtract(0L, SoftFloat.multiply(4708606483430899712L, SoftFloat.log(SoftFloat.divide(SoftFloat.cos(SoftFloat.divide(SoftFloat.subtract(4609753056924675352L, jM692d), 4611686018427387904L)), SoftFloat.pow(SoftFloat.divide(SoftFloat.subtract(4607182418800017408L, jM692d2), SoftFloat.add(4607182418800017408L, jM692d2)), 4586056515080195972L))))));
     }
 
     /* renamed from: a */
     public static final String m809a(long j) {
-        return SoftFloat.m698a(SoftFloat.m693e(SoftFloat.m693e(SoftFloat.m687b(j), 4708606483430899712L), 4580687790476533044L), 9);
+        return SoftFloat.formatFloat(SoftFloat.divide(SoftFloat.divide(SoftFloat.longToFloat(j), 4708606483430899712L), 4580687790476533044L), 9);
     }
 
     /* renamed from: b */
     public static final String m810b(long j) {
-        long jM703f = SoftFloat.m703f(SoftFloat.m693e(SoftFloat.m682a(SoftFloat.m687b(j)), 4708606483430899712L));
-        long jM693e = SoftFloat.m693e(4590560114707566468L, 4611686018427387904L);
-        long jM691c = SoftFloat.m691c(4609753056924675352L, SoftFloat.m692d(SoftFloat.m712j(jM703f), 4611686018427387904L));
+        long jM703f = SoftFloat.exp(SoftFloat.divide(SoftFloat.negate(SoftFloat.longToFloat(j)), 4708606483430899712L));
+        long jM693e = SoftFloat.divide(4590560114707566468L, 4611686018427387904L);
+        long jM691c = SoftFloat.subtract(4609753056924675352L, SoftFloat.multiply(SoftFloat.atan(jM703f), 4611686018427387904L));
         int i = 15;
         long jM691c2 = 4591870180066957722L;
         while (true) {
             i--;
-            if (i <= 0 || SoftFloat.m685a(jM691c2 & Long.MAX_VALUE, 4502148214488346440L) <= 0) {
+            if (i <= 0 || SoftFloat.compare(jM691c2 & Long.MAX_VALUE, 4502148214488346440L) <= 0) {
                 break;
             }
-            long jM692d = SoftFloat.m692d(4590560114707566468L, SoftFloat.m706h(jM691c));
-            jM691c2 = SoftFloat.m691c(SoftFloat.m691c(4609753056924675352L, SoftFloat.m692d(SoftFloat.m712j(SoftFloat.m692d(jM703f, SoftFloat.m704f(SoftFloat.m693e(SoftFloat.m691c(4607182418800017408L, jM692d), SoftFloat.m690b(4607182418800017408L, jM692d)), jM693e))), 4611686018427387904L)), jM691c);
-            jM691c = SoftFloat.m690b(jM691c, jM691c2);
+            long jM692d = SoftFloat.multiply(4590560114707566468L, SoftFloat.sin(jM691c));
+            jM691c2 = SoftFloat.subtract(SoftFloat.subtract(4609753056924675352L, SoftFloat.multiply(SoftFloat.atan(SoftFloat.multiply(jM703f, SoftFloat.pow(SoftFloat.divide(SoftFloat.subtract(4607182418800017408L, jM692d), SoftFloat.add(4607182418800017408L, jM692d)), jM693e))), 4611686018427387904L)), jM691c);
+            jM691c = SoftFloat.add(jM691c, jM691c2);
         }
-        return SoftFloat.m698a(SoftFloat.m693e(jM691c, 4580687790476533044L), 9);
+        return SoftFloat.formatFloat(SoftFloat.divide(jM691c, 4580687790476533044L), 9);
     }
 
     /* renamed from: e */
@@ -1078,7 +1078,7 @@ public final class IOUtils {
             return AppController.m338l(299);
         }
         if (i == 40 || i == 63 || i == 85) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             if (i != 85) {
                 AppController.m300h();
             }
@@ -1091,7 +1091,7 @@ public final class IOUtils {
             return 40;
         }
         if (i == 65) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             AppController.m300h();
             return ResourceManager.m946g();
         }

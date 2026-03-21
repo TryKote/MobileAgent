@@ -2,7 +2,7 @@ LIBS    = libs
 CP      = $(LIBS)/cldcapi11.jar:$(LIBS)/midpapi20.jar:$(LIBS)/jsr75.jar:$(LIBS)/nokiaui.jar
 SRC     = sources
 BUILD   = build
-JAR     = MobileAgent_3.9.jar
+JAR     = TK_MobileAgent_3.9.jar
 
 SOURCES = $(shell find $(SRC) -name '*.java')
 

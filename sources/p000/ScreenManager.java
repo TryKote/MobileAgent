@@ -74,7 +74,7 @@ public abstract class ScreenManager {
     public static final void pushScreen(Screen c0013am) {
         Vector vectorM614m = AppState.getVector(1272);
         while (vectorM614m.size() > 0) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
         }
         vectorM614m.addElement(c0013am);
     }
@@ -104,7 +104,7 @@ public abstract class ScreenManager {
                 }
             }
             while (vectorM614m.size() > size2) {
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
             }
         }
         int i4 = c0013am.f97d;
@@ -153,7 +153,7 @@ public abstract class ScreenManager {
             }
         }
         while (vectorM614m.size() > size3) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
         }
         c0013am.m235n();
         vectorM614m.addElement(c0013am);

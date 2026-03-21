@@ -467,7 +467,7 @@ public final class ResourceManager {
         if (AppState.getBool(286)) {
             return AppState.getInt(1476);
         }
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 
@@ -585,7 +585,7 @@ public final class ResourceManager {
                     return AppController.m338l(422);
                 }
                 ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(AppController.m312l().userId, 1));
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 85;
             case 1:
                 if (vectorM440S.size() <= 0) {
@@ -600,7 +600,7 @@ public final class ResourceManager {
             default:
                 AppState.setInt(4895, 0);
                 AppController.m393a((MrimAccount) null, AppController.m312l().userId);
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 0;
         }
     }
@@ -644,7 +644,7 @@ public final class ResourceManager {
         if (StringUtils.m3a(1060, str)) {
             int iM1233b = AppState.getCurrentContact().sendMessage(strM522f);
             if (0 != iM1233b) {
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return AppController.m338l(iM1233b);
             }
             AppState.setInt(1456, 0);
@@ -660,7 +660,7 @@ public final class ResourceManager {
         if (i == 93 || i == 123 || i == 95 || i == 94) {
             return 0;
         }
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 
@@ -869,7 +869,7 @@ public final class ResourceManager {
             return 0;
         }
         if (StringUtils.m3a(846, str)) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             m966a((Vector) null, (String) null, (String) null);
             return 0;
         }
@@ -878,7 +878,7 @@ public final class ResourceManager {
             return 0;
         }
         if (StringUtils.m3a(1061, str)) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             AppController.m290a(false);
             return 0;
         }

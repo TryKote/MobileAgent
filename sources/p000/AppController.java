@@ -89,7 +89,7 @@ public final class AppController {
 
     /* renamed from: a */
     public static final int m288a(int i) {
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         AppState.setInt(4895, i);
         return AppState.getInt(3650);
     }
@@ -166,7 +166,7 @@ public final class AppController {
         if (obj != null) {
             AppState.pool[267] = obj;
         }
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 
@@ -206,8 +206,8 @@ public final class AppController {
         if (i != 137) {
             return 0;
         }
-        ScreenBuilder.m549c();
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 
@@ -263,8 +263,8 @@ public final class AppController {
         if (ScreenManager.hasScreen(43)) {
             return 43;
         }
-        ScreenBuilder.m549c();
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
+        ScreenBuilder.onScreenClosed();
         return -1;
     }
 
@@ -341,7 +341,7 @@ public final class AppController {
     /* renamed from: b */
     public static final int m320b(String str) {
         if (AppState.getString(1251).equals(str)) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             if (ConnectionThread.m1168k()) {
                 return 0;
             }
@@ -606,21 +606,21 @@ public final class AppController {
         if (AppState.getBool(286)) {
             return AppState.getInt(1476);
         }
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         return 171;
     }
 
     /* renamed from: d */
     public static final int m337d(Object obj) {
         AppState.setAccount(obj);
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 
     /* renamed from: l */
     public static final int m338l(int i) {
         if (ScreenManager.getCurrentScreen().f97d == 8) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
         }
         AppState.setFromPool(1294, i);
         return 112;
@@ -748,12 +748,12 @@ public final class AppController {
     /* renamed from: o */
     public static final int m352o(int i) {
         if (i == 54) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             ResourceManager.m966a((Vector) null, (String) null, (String) null);
             return 0;
         }
         if (i == 68) {
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
             m290a(true);
             return 0;
         }
@@ -1056,16 +1056,16 @@ public final class AppController {
     /* renamed from: u */
     public static final int m381u(int i) {
         if (i != 54) {
-            ScreenBuilder.m549c();
-            ScreenBuilder.m549c();
+            ScreenBuilder.onScreenClosed();
+            ScreenBuilder.onScreenClosed();
             m300h();
             return 0;
         }
         MrimContact c0035fM612h = AppState.getCurrentMrimContact();
         AppState.setAccount(c0035fM612h.account);
         ResourceManager.m966a(XmppMailRuProtocol.m871i(c0035fM612h.simpleIdentifier), (String) null, (String) null);
-        ScreenBuilder.m549c();
-        ScreenBuilder.m549c();
+        ScreenBuilder.onScreenClosed();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 
@@ -3314,9 +3314,9 @@ public final class AppController {
                                                 break;
                                         }
                                         if (iM338l == 12) {
-                                            ScreenBuilder.m549c();
+                                            ScreenBuilder.onScreenClosed();
                                         } else if (iM338l != 0) {
-                                            ScreenBuilder.m546a(iM338l);
+                                            ScreenBuilder.openScreen(iM338l);
                                         }
                                     } else if (objM524a instanceof int[]) {
                                         int[] iArr = (int[]) objM524a;
@@ -3343,7 +3343,7 @@ public final class AppController {
                                                                 if (c0013amM66b3.m229h()) {
                                                                     TabBar c0008ahM168d = TabBar.getPreviousTab();
                                                                     if (c0008ahM168d != null) {
-                                                                        ScreenBuilder.m546a(c0008ahM168d.selectTab());
+                                                                        ScreenBuilder.openScreen(c0008ahM168d.selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3353,7 +3353,7 @@ public final class AppController {
                                                                 if (c0013amM66b3.m228g()) {
                                                                     TabBar c0008ahM167c = TabBar.getNextTab();
                                                                     if (c0008ahM167c != null) {
-                                                                        ScreenBuilder.m546a(c0008ahM167c.selectTab());
+                                                                        ScreenBuilder.openScreen(c0008ahM167c.selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3362,11 +3362,11 @@ public final class AppController {
                                                             } else if (i15 == 36) {
                                                                 AppState.setInt(1414, 0);
                                                                 if (i14 == 2) {
-                                                                    ScreenBuilder.m546a(TabBar.getPreviousTab().selectTab());
+                                                                    ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
                                                                     z4 = true;
                                                                 } else if (i14 == 5) {
                                                                     if (!z6) {
-                                                                        ScreenBuilder.m546a(TabBar.getNextTab().selectTab());
+                                                                        ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else if (i15 != 6) {
@@ -3380,10 +3380,10 @@ public final class AppController {
                                                                         z4 = true;
                                                                     } else if (i13 == 48) {
                                                                         Conversation.createStatusReport(false, (MrimAccount) null);
-                                                                        ScreenBuilder.m546a(6);
+                                                                        ScreenBuilder.openScreen(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 49) {
-                                                                        ScreenBuilder.m546a(100);
+                                                                        ScreenBuilder.openScreen(100);
                                                                         z4 = true;
                                                                     } else if (i13 == 50) {
                                                                         boolean zM587e = AppState.getBool(41);
@@ -3393,7 +3393,7 @@ public final class AppController {
                                                                             Conversation.setMapEnabled(true);
                                                                         }
                                                                         AppState.setBool(41, !zM587e);
-                                                                        ScreenBuilder.m546a(6);
+                                                                        ScreenBuilder.openScreen(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 51) {
                                                                         IOUtils.m778d(new IOUtils(7, null));
@@ -3414,11 +3414,11 @@ public final class AppController {
                                                                         z4 = true;
                                                                     }
                                                                 } else if (i14 == 2) {
-                                                                    ScreenBuilder.m546a(TabBar.getPreviousTab().selectTab());
+                                                                    ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
                                                                     z4 = true;
                                                                 } else if (i14 == 5) {
                                                                     if (!z6) {
-                                                                        ScreenBuilder.m546a(TabBar.getNextTab().selectTab());
+                                                                        ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else if (i14 == 1) {
@@ -3432,7 +3432,7 @@ public final class AppController {
                                                                 int iM456O = i13 == 42 ? m456O(AppState.getInt(205)) : i13 == 35 ? m456O(AppState.getInt(206)) : (i13 < 48 || i13 > 57) ? 0 : m456O(AppState.getInt(i13 + 159));
                                                                 int i17 = iM456O;
                                                                 if (iM456O != 0) {
-                                                                    ScreenBuilder.m546a(i17);
+                                                                    ScreenBuilder.openScreen(i17);
                                                                     break;
                                                                 } else if (i14 == 8) {
                                                                     m455ab();
@@ -3445,7 +3445,7 @@ public final class AppController {
                                                                     break;
                                                                 } else if (i14 == 2) {
                                                                     if (c0013amM66b3.f125x) {
-                                                                        ScreenBuilder.m549c();
+                                                                        ScreenBuilder.onScreenClosed();
                                                                         break;
                                                                     } else if (c0013amM66b3.f94a == 6) {
                                                                         AppState.setInt(1564, 1);
@@ -3468,10 +3468,10 @@ public final class AppController {
                                                 }
                                                 break;
                                             case 1:
-                                                ScreenBuilder.m547a();
+                                                ScreenBuilder.onMenuItemSelected();
                                                 break;
                                             case 2:
-                                                ScreenBuilder.m548b();
+                                                ScreenBuilder.onMenuItemAction();
                                                 break;
                                             case 3:
                                                 f153g = true;
@@ -3490,9 +3490,9 @@ public final class AppController {
                                                     z2 = false;
                                                 } else {
                                                     if (i19 < (AppState.getInt(1528) >> 1)) {
-                                                        ScreenBuilder.m547a();
+                                                        ScreenBuilder.onMenuItemSelected();
                                                     } else {
-                                                        ScreenBuilder.m548b();
+                                                        ScreenBuilder.onMenuItemAction();
                                                     }
                                                     z2 = true;
                                                 }
@@ -3506,7 +3506,7 @@ public final class AppController {
                                                             if (i == 4) {
                                                                 ContactListManager.clearState();
                                                             }
-                                                            ScreenBuilder.m546a(i21);
+                                                            ScreenBuilder.openScreen(i21);
                                                         }
                                                         break;
                                                     } else {
@@ -3535,7 +3535,7 @@ public final class AppController {
                                                             } else if (z8 || c0013amM66b4.f97d == 1 || c0013amM66b4.f97d == 12) {
                                                                 z3 = false;
                                                             } else {
-                                                                ScreenBuilder.m549c();
+                                                                ScreenBuilder.onScreenClosed();
                                                                 f153g = true;
                                                                 z3 = true;
                                                             }
@@ -3551,18 +3551,18 @@ public final class AppController {
                                                                         }
                                                                         if (i26 != 6 && i26 != 36 && abstractC0037h != null) {
                                                                             TabBar.findTab(4, ((TabBar) objM179a).account);
-                                                                            ScreenBuilder.m546a(4);
+                                                                            ScreenBuilder.openScreen(4);
                                                                         } else if (i != i26) {
-                                                                            ScreenBuilder.m546a(i26);
+                                                                            ScreenBuilder.openScreen(i26);
                                                                             break;
                                                                         }
                                                                     } else {
                                                                         switch (((int[]) objM179a)[1]) {
                                                                             case 246:
-                                                                                ScreenBuilder.m546a(TabBar.getNextTab().selectTab());
+                                                                                ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
                                                                                 break;
                                                                             case 248:
-                                                                                ScreenBuilder.m546a(TabBar.getPreviousTab().selectTab());
+                                                                                ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
                                                                                 break;
                                                                         }
                                                                     }
@@ -4166,8 +4166,8 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 79:
-                    ScreenBuilder.m549c();
-                    ScreenBuilder.m549c();
+                    ScreenBuilder.onScreenClosed();
+                    ScreenBuilder.onScreenClosed();
                     iM460J = 0;
                     break;
                 case 80:
@@ -4478,11 +4478,11 @@ public final class AppController {
             }
             if (iM460J != -1) {
                 if (iM460J == 12) {
-                    ScreenBuilder.m549c();
+                    ScreenBuilder.onScreenClosed();
                     return;
                 }
                 if (iM460J != 0) {
-                    ScreenBuilder.m546a(iM460J);
+                    ScreenBuilder.openScreen(iM460J);
                     return;
                 }
                 int i3 = c0013amM66b.f122u;
@@ -4490,9 +4490,9 @@ public final class AppController {
                     int i4 = i3 == 199 ? iM68d : i3;
                     int i5 = i4;
                     if (i4 == 12) {
-                        ScreenBuilder.m549c();
+                        ScreenBuilder.onScreenClosed();
                     } else if (i5 != 0) {
-                        ScreenBuilder.m546a(i5);
+                        ScreenBuilder.openScreen(i5);
                     }
                 }
             }

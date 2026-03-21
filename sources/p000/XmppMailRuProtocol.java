@@ -665,7 +665,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         switch (i) {
             case 0:
                 AppState.setCurrentEntity(interfaceC0044o);
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 63;
             case 1:
                 if (iMo276r == 8) {
@@ -674,12 +674,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 } else {
                     AppState.setCurrentEntity(f257f);
                 }
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 102;
             case 2:
                 if (iMo276r == 3) {
                     AppState.setCurrentEntity(f257f);
-                    ScreenBuilder.m549c();
+                    ScreenBuilder.onScreenClosed();
                     return 85;
                 }
                 AppState.setCurrentEntity((Object) null);
@@ -688,7 +688,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     return AppController.m338l(422);
                 }
                 ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) interfaceC0044o).userId, 1));
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 85;
             case 3:
                 Vector vectorM440S2 = AppController.m440S();
@@ -696,10 +696,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     return AppController.m338l(422);
                 }
                 ((MrimAccount) vectorM440S2.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) interfaceC0044o).userId, 2));
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 6;
             case 4:
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 AppState.pool[1255] = (Conversation) interfaceC0044o;
                 return 170;
             case 5:
@@ -707,11 +707,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 return 12;
             case 6:
                 AppState.setAccount(interfaceC0044o);
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 167;
             case 7:
                 AppState.setAccount(interfaceC0044o);
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 return 151;
             case 8:
             case 9:
@@ -785,7 +785,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 17:
                 return 114;
             case 18:
-                ScreenBuilder.m549c();
+                ScreenBuilder.onScreenClosed();
                 Vector vectorM440S3 = AppController.m440S();
                 if (vectorM440S3.size() > 1) {
                     return 172;

@@ -412,7 +412,7 @@ public final class ConnectionThread {
         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
         Object[] objArrM1147a = m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
         objArrM1147a[8] = objArrM1147a;
-        ((AsyncTask) m1149a(objArrM1147a)[7]).f436a.join();
+        ((AsyncTask) m1149a(objArrM1147a)[7]).thread.join();
         c0028ba.jabberId = (String) objArrM1147a[6];
         objArr[4] = m1151a(objArr, c0028ba);
     }
@@ -552,7 +552,7 @@ public final class ConnectionThread {
         if (AppState.getBool(281)) {
             return;
         }
-        ScreenBuilder.m546a(178);
+        ScreenBuilder.openScreen(178);
     }
 
     /* renamed from: g */
