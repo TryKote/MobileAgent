@@ -33,7 +33,7 @@ public final class XmlElement {
     }
 
     public XmlElement(int i) {
-        this(NetworkUtils.m1221a(i));
+        this(NetworkUtils.longToHex(i));
     }
 
     private XmlElement(String str) {
@@ -55,7 +55,7 @@ public final class XmlElement {
     /* renamed from: a */
     public final XmlElement addChild(XmlElement c0022av) {
         if (this.children == null) {
-            this.children = NetworkUtils.m1213g();
+            this.children = NetworkUtils.newVector();
         }
         this.children.addElement(c0022av);
         return this;
@@ -64,7 +64,7 @@ public final class XmlElement {
     /* renamed from: a */
     public final XmlElement appendText(Object obj) {
         if (this.textContent == null) {
-            this.textContent = NetworkUtils.m1217h();
+            this.textContent = NetworkUtils.newStringBuffer();
         }
         this.textContent.append(obj);
         return this;
@@ -77,7 +77,7 @@ public final class XmlElement {
 
     /* renamed from: c */
     public final String getLongKeyAttr(int i) {
-        return getAttribute(NetworkUtils.m1221a(i));
+        return getAttribute(NetworkUtils.longToHex(i));
     }
 
     /* renamed from: d */
@@ -102,7 +102,7 @@ public final class XmlElement {
 
     /* renamed from: b */
     public final XmlElement setLongKeyAttr(int i, String str) {
-        return setAttrImpl(NetworkUtils.m1221a(i), str);
+        return setAttrImpl(NetworkUtils.longToHex(i), str);
     }
 
     /* renamed from: b */
@@ -145,7 +145,7 @@ public final class XmlElement {
     }
 
     public final String toString() {
-        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('<').append(this.tagName);
+        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('<').append(this.tagName);
         if (this.attributes != null) {
             Enumeration enumerationKeys = this.attributes.keys();
             while (enumerationKeys.hasMoreElements()) {
@@ -154,17 +154,17 @@ public final class XmlElement {
                 StringBuffer stringBufferAppend3 = stringBufferAppend2.append(objNextElement).append('=').append('\"');
                 StringBuffer stringBufferM565b = m565b(this.attributes.get(objNextElement));
                 stringBufferAppend3.append((Object) stringBufferM565b).append('\"');
-                NetworkUtils.m1215a(stringBufferM565b);
+                NetworkUtils.bufToStringCached(stringBufferM565b);
             }
         }
-        StringBuffer stringBufferAppend4 = NetworkUtils.m1217h().append(NetworkUtils.m1215a(m566c() ? stringBufferAppend.append('/').append('>') : stringBufferAppend.append('>')));
+        StringBuffer stringBufferAppend4 = NetworkUtils.newStringBuffer().append(NetworkUtils.bufToStringCached(m566c() ? stringBufferAppend.append('/').append('>') : stringBufferAppend.append('>')));
         if (this.textContent != null) {
             stringBufferAppend4.append((Object) m565b(this.textContent));
         }
         for (int i = 0; i < Utils.m541c(this.children); i++) {
             stringBufferAppend4.append(this.children.elementAt(i));
         }
-        return NetworkUtils.m1215a(m566c() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.m1215a(NetworkUtils.m1217h().append('<').append('/').append(this.tagName).append('>'))));
+        return NetworkUtils.bufToStringCached(m566c() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
     }
 
     /* renamed from: b */
@@ -173,18 +173,18 @@ public final class XmlElement {
             return null;
         }
         String string = obj.toString();
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char cCharAt = string.charAt(i);
             if (cCharAt == '&') {
-                stringBufferM1217h.append(NetworkUtils.m1221a(255289286950L));
+                stringBufferM1217h.append(NetworkUtils.longToHex(255289286950L));
             } else if (cCharAt == '\"') {
-                stringBufferM1217h.append(NetworkUtils.m1221a(65371272212774L));
+                stringBufferM1217h.append(NetworkUtils.longToHex(65371272212774L));
             } else if (cCharAt == '<') {
-                stringBufferM1217h.append(NetworkUtils.m1221a(997485606));
+                stringBufferM1217h.append(NetworkUtils.longToHex(997485606));
             } else if (cCharAt == '>') {
-                stringBufferM1217h.append(NetworkUtils.m1221a(997484326));
+                stringBufferM1217h.append(NetworkUtils.longToHex(997484326));
             } else {
                 stringBufferM1217h.append(cCharAt);
             }

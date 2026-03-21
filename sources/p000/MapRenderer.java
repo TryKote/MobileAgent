@@ -156,7 +156,7 @@ public abstract class MapRenderer {
             int i12 = i8 < 0 ? (i8 / 128) - 1 : i8 / 128;
             int i13 = (int) ((((i9 << 7) + 64) - f197e) + (f193a / 2));
             int i14 = (int) (f194b - ((((i10 << 7) + 64) - f198f) + (f194b / 2)));
-            Vector vectorM1213g = NetworkUtils.m1213g();
+            Vector vectorM1213g = NetworkUtils.newVector();
             Graphics graphics = AppState.getImage(1364).getGraphics();
             int iM586d = AppState.getInt(39);
             for (int i15 = i9; i15 <= i11; i15++) {
@@ -242,7 +242,7 @@ public abstract class MapRenderer {
                 for (int i23 = 0; i23 < size5; i23++) {
                     vectorM614m3.addElement(vectorM1213g.elementAt(i23));
                 }
-                NetworkUtils.m1212a(vectorM1213g);
+                NetworkUtils.releaseVector(vectorM1213g);
             }
             Vector vectorM614m4 = AppState.getVector(1402);
             synchronized (vectorM614m4) {
@@ -488,7 +488,7 @@ public abstract class MapRenderer {
                         }
                     }
                 }
-                NetworkUtils.m1212a(vectorM448X);
+                NetworkUtils.releaseVector(vectorM448X);
             }
             long j22 = f197e;
             long j23 = f198f;
@@ -600,7 +600,7 @@ public abstract class MapRenderer {
                 }
                 if (ChatRenderer.f241a != i || ChatRenderer.f242b != i2) {
                     int i69 = i66;
-                    StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.getString(974));
+                    StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(974));
                     if (i69 < 0 || c0053x4 == null) {
                         i3 = 975;
                     } else {
@@ -609,7 +609,7 @@ public abstract class MapRenderer {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    AppState.setObject(1384, (Object) NetworkUtils.m1215a(stringBufferAppend.append(AppState.getString(i3))));
+                    AppState.setObject(1384, (Object) NetworkUtils.bufToStringCached(stringBufferAppend.append(AppState.getString(i3))));
                     ChatRenderer.f241a = i;
                     ChatRenderer.f242b = i2;
                 }

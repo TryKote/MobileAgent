@@ -72,13 +72,13 @@ public abstract class ChatRenderer {
             int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
             int i5 = (iM689d / i4) * i4;
             f245n = m835a(i5, i, j);
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             if (i5 < 1000) {
                 stringBufferM1217h.append(i5);
             } else {
                 stringBufferM1217h.append(i5 / 1000).append((char) 1082);
             }
-            f246o = NetworkUtils.m1215a(stringBufferM1217h.append((char) 1084));
+            f246o = NetworkUtils.bufToStringCached(stringBufferM1217h.append((char) 1084));
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
@@ -623,7 +623,7 @@ public abstract class ChatRenderer {
         int i6 = (int) (j3 + iM688c);
         int i7 = (int) (j4 + iM688c);
         int i8 = (int) (j4 - iM688c);
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         int size = MmpContact.f70n.size();
         for (int i9 = 0; i9 < size; i9++) {
             int[] iArr = (int[]) ((Object[]) MmpContact.f70n.elementAt(i9))[0];

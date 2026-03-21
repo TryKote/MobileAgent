@@ -29,23 +29,23 @@ public final class StringUtils {
         DataInputStream dataInputStream = null;
         try {
             try {
-                ByteArrayInputStream byteArrayInputStream2 = (ByteArrayInputStream) IOUtils.m761a((Object) new ByteArrayInputStream(bArr, i, bArr.length - i));
+                ByteArrayInputStream byteArrayInputStream2 = (ByteArrayInputStream) IOUtils.registerResource((Object) new ByteArrayInputStream(bArr, i, bArr.length - i));
                 byteArrayInputStream = byteArrayInputStream2;
-                DataInputStream dataInputStream2 = (DataInputStream) IOUtils.m761a((Object) new DataInputStream(byteArrayInputStream2));
+                DataInputStream dataInputStream2 = (DataInputStream) IOUtils.registerResource((Object) new DataInputStream(byteArrayInputStream2));
                 dataInputStream = dataInputStream2;
                 String strM17c = intern(dataInputStream2.readUTF());
-                IOUtils.m763a((InputStream) dataInputStream);
-                IOUtils.m763a((InputStream) byteArrayInputStream);
+                IOUtils.closeInput((InputStream) dataInputStream);
+                IOUtils.closeInput((InputStream) byteArrayInputStream);
                 return strM17c;
             } catch (Throwable unused) {
                 String str = AppState.emptyStr;
-                IOUtils.m763a((InputStream) dataInputStream);
-                IOUtils.m763a((InputStream) byteArrayInputStream);
+                IOUtils.closeInput((InputStream) dataInputStream);
+                IOUtils.closeInput((InputStream) byteArrayInputStream);
                 return str;
             }
         } catch (Throwable th) {
-            IOUtils.m763a((InputStream) dataInputStream);
-            IOUtils.m763a((InputStream) byteArrayInputStream);
+            IOUtils.closeInput((InputStream) dataInputStream);
+            IOUtils.closeInput((InputStream) byteArrayInputStream);
             throw th;
         }
     }
@@ -115,17 +115,17 @@ public final class StringUtils {
 
     /* renamed from: b */
     public static final String m7b(int i, String str) {
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(i)).append(str));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(str));
     }
 
     /* renamed from: a */
     public static final String m8a(int i, Object obj) {
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(i)).append(obj));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(obj));
     }
 
     /* renamed from: b */
     public static final String concat(String str, String str2) {
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(str).append(str2));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(str).append(str2));
     }
 
     /* renamed from: a */
@@ -341,7 +341,7 @@ public final class StringUtils {
 
     /* renamed from: m */
     private static final Vector m26m() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         vectorM1213g.addElement(AppState.getString(684));
         return vectorM1213g;
     }
@@ -363,8 +363,8 @@ public final class StringUtils {
     /* renamed from: e */
     public static final void m29e() {
         m30f();
-        AppState.pool[1301] = new XmlParser(new ByteBuffer(NetworkUtils.m1221a(25135), 41000)).parse().children;
-        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.getString(683));
+        AppState.pool[1301] = new XmlParser(new ByteBuffer(NetworkUtils.longToHex(25135), 41000)).parse().children;
+        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(683));
         Vector vectorM614m = AppState.getVector(1301);
         for (int i = 0; i < Utils.m541c(vectorM614m); i++) {
             stringBufferAppend.append((char) 0).append(m28b((XmlElement) vectorM614m.elementAt(i)));
@@ -631,7 +631,7 @@ public final class StringUtils {
                 AppState.setObject(223, (Object) str);
                 return;
             }
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             int i3 = 0;
             while (i3 < 2) {
                 long jCurrentTimeMillis = i3 == 0 ? System.currentTimeMillis() : (Utils.m520a() << 32) | Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)));
@@ -679,7 +679,7 @@ public final class StringUtils {
 
     /* renamed from: j */
     public static final void m41j() {
-        AppState.pool[1389] = NetworkUtils.m1213g();
+        AppState.pool[1389] = NetworkUtils.newVector();
         AppState.pool[1390] = new GeoRegion(AppState.getString(996), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
             ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(227));

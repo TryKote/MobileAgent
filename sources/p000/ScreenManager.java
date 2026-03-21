@@ -333,7 +333,7 @@ public abstract class ScreenManager {
                 return i10;
             case 1:
                 int i11 = i5 + 1;
-                MenuItem c0032cM901a = MenuItem.m889d().m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
+                MenuItem c0032cM901a = MenuItem.m889d().m901a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
                 int i12 = i11 + 1;
                 String strM522f2 = Utils.defaultStr(AppState.getString(AppState.getInt(i11)));
                 if (!StringUtils.isEmpty(strM522f2)) {

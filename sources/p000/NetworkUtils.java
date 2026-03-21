@@ -16,51 +16,51 @@ import javax.microedition.io.StreamConnection;
 public final class NetworkUtils {
 
     /* renamed from: a */
-    public final int f359a;
+    public final int type;
 
     /* renamed from: b */
-    public final int f360b;
+    public final int port;
 
     /* renamed from: c */
-    public final String f361c;
+    public final String host;
 
     /* renamed from: d */
-    public String f362d;
+    public String url;
 
     /* renamed from: e */
-    public final int f363e;
+    public final int status;
 
     /* renamed from: f */
-    public final String f364f;
+    public final String protocol;
 
     /* renamed from: g */
-    public static byte[][] f365g;
+    public static byte[][] bytePool;
 
     /* renamed from: h */
-    public static StringBuffer[] f366h;
+    public static StringBuffer[] bufferPool;
 
     /* renamed from: i */
-    public static Vector[] f367i;
+    public static Vector[] vectorPool;
 
     /* renamed from: j */
-    public static Hashtable f368j;
+    public static Hashtable stringCache;
 
     public NetworkUtils(ByteBuffer c0043n) {
-        this.f359a = c0043n.readIntBE();
-        this.f360b = c0043n.readIntBE();
-        this.f361c = c0043n.readUTF8Str((String) null);
-        this.f362d = c0043n.readWideStr();
-        this.f363e = c0043n.readIntBE();
-        this.f364f = c0043n.readWideStr();
+        this.type = c0043n.readIntBE();
+        this.port = c0043n.readIntBE();
+        this.host = c0043n.readUTF8Str((String) null);
+        this.url = c0043n.readWideStr();
+        this.status = c0043n.readIntBE();
+        this.protocol = c0043n.readWideStr();
     }
 
     public NetworkUtils(int i, String str, int i2, String str2) {
-        this.f359a = 1;
-        this.f360b = i;
-        this.f361c = str;
-        this.f362d = null;
-        this.f363e = i2;
-        this.f364f = str2;
+        this.type = 1;
+        this.port = i;
+        this.host = str;
+        this.url = null;
+        this.status = i2;
+        this.protocol = str2;
     }
 
     /* renamed from: a */
@@ -84,7 +84,7 @@ public final class NetworkUtils {
         int i4;
         byte b2;
         int i5;
-        byte[] bArrM1211a = m1211a(3000);
+        byte[] bArrM1211a = newBytes(3000);
         try {
             Thread.sleep(1000L);
             System.gc();
@@ -241,16 +241,16 @@ public final class NetworkUtils {
             }
             HttpClient.m633a(c0024ax);
             AppController.m344t();
-            m1209a(bArrM1211a);
+            releaseBytes(bArrM1211a);
         } catch (RuntimeException th) {
             HttpClient.m633a((HttpClient) null);
             AppController.m344t();
-            m1209a(bArrM1211a);
+            releaseBytes(bArrM1211a);
             throw th;
         } catch (Throwable th) {
             HttpClient.m633a((HttpClient) null);
             AppController.m344t();
-            m1209a(bArrM1211a);
+            releaseBytes(bArrM1211a);
             throw new RuntimeException(th);
         }
     }
@@ -344,7 +344,7 @@ public final class NetworkUtils {
                 i = size;
             }
         }
-        m1212a(vectorM516c);
+        releaseVector(vectorM516c);
         AppState.pool[1341] = objArr[3];
         AppState.pool[1342] = objArr[4];
         AppState.pool[1343] = objArr[5];
@@ -398,11 +398,11 @@ public final class NetworkUtils {
     /* renamed from: a */
     private static final void m1185a(Object[] objArr, boolean z) {
         if (objArr != null) {
-            IOUtils.m763a((InputStream) objArr[1]);
-            IOUtils.m764a((OutputStream) objArr[2]);
+            IOUtils.closeInput((InputStream) objArr[1]);
+            IOUtils.closeOutput((OutputStream) objArr[2]);
             Connection connection = (Connection) objArr[0];
             if (connection == null || z) {
-                IOUtils.m765a(connection);
+                IOUtils.closeConn(connection);
             } else {
                 new AsyncTask(7, connection);
             }
@@ -417,7 +417,7 @@ public final class NetworkUtils {
     public static final Object[] m1186a(String str, boolean z) throws IOException {
         Object[] objArr = new Object[z ? 5 : 3];
         try {
-            SocketConnection socketConnection = (SocketConnection) IOUtils.m761a((Object) Connector.open(str, 3));
+            SocketConnection socketConnection = (SocketConnection) IOUtils.registerResource((Object) Connector.open(str, 3));
             objArr[0] = socketConnection;
             try {
                 if (socketConnection instanceof SocketConnection) {
@@ -440,8 +440,8 @@ public final class NetworkUtils {
                 }
             } catch (Throwable unused2) {
             }
-            objArr[1] = IOUtils.m761a((Object) socketConnection.openInputStream());
-            objArr[2] = IOUtils.m761a((Object) socketConnection.openOutputStream());
+            objArr[1] = IOUtils.registerResource((Object) socketConnection.openInputStream());
+            objArr[2] = IOUtils.registerResource((Object) socketConnection.openOutputStream());
             if (z) {
                 objArr[4] = new ByteBuffer();
                 new AsyncTask(4, objArr);
@@ -544,7 +544,7 @@ public final class NetworkUtils {
                 } catch (Throwable unused) {
                 }
                 objArr[3] = th;
-                m1209a(bArr);
+                releaseBytes(bArr);
                 return;
             }
         } while (iM1191a >= 0);
@@ -661,7 +661,7 @@ public final class NetworkUtils {
 
     /* renamed from: e */
     public static final StringBuffer m1196e() {
-        StringBuffer stringBufferM1217h = m1217h();
+        StringBuffer stringBufferM1217h = newStringBuffer();
         String strM522f = Utils.defaultStr(AppState.getString(1279));
         StringBuffer stringBufferAppend = stringBufferM1217h.append(strM522f);
         int length = strM522f.length();
@@ -719,7 +719,7 @@ public final class NetworkUtils {
                 c0042mM1251a = (ContactInfo) m1206a(c0028ba, c0043n).elementAt(0);
                 break;
             default:
-                c0042mM1251a.m1257a(m1215a(m1217h().append(AppState.getString(914)).append(i)));
+                c0042mM1251a.m1257a(bufToStringCached(newStringBuffer().append(AppState.getString(914)).append(i)));
                 break;
         }
         AppState.pool[1315] = c0042mM1251a;
@@ -805,12 +805,12 @@ public final class NetworkUtils {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     private static final Vector m1206a(MrimAccount c0028ba, ByteBuffer c0043n) {
-        Vector vectorM1213g = m1213g();
+        Vector vectorM1213g = newVector();
         Vector vectorM512e = Utils.splitByNull(AppState.getString(915));
         int iM1328e = c0043n.readInt();
         int iM1328e2 = c0043n.readInt();
         c0043n.readInt();
-        Vector vectorM1213g2 = m1213g();
+        Vector vectorM1213g2 = newVector();
         for (int i = 0; i < iM1328e; i++) {
             vectorM1213g2.addElement(c0043n.readHexStr());
         }
@@ -898,30 +898,30 @@ public final class NetworkUtils {
                 switch (iM541c) {
                 }
             }
-            c0042mM1251a.m1262e(m1215a(m1217h().append(c0042mM1251a.m1256a(50)).append('@').append(c0042mM1251a.m1256a(51))));
+            c0042mM1251a.m1262e(bufToStringCached(newStringBuffer().append(c0042mM1251a.m1256a(50)).append('@').append(c0042mM1251a.m1256a(51))));
         }
-        m1212a(vectorM512e);
-        m1212a(vectorM1213g2);
+        releaseVector(vectorM512e);
+        releaseVector(vectorM1213g2);
         return vectorM1213g;
     }
 
     /* renamed from: f */
     private static String m1207f(String str) {
-        String str2 = (String) f368j.get(str);
+        String str2 = (String) stringCache.get(str);
         return str2 != null ? str2 : StringUtils.intern(str);
     }
 
     /* renamed from: b */
     public static final void m1208b(String str) {
-        f368j.put(str, str);
+        stringCache.put(str, str);
     }
 
     /* renamed from: a */
-    public static final void m1209a(byte[] bArr) {
+    public static final void releaseBytes(byte[] bArr) {
         if (bArr == null || bArr.length > 2048 || bArr.length <= 8) {
             return;
         }
-        byte[][] bArr2 = f365g;
+        byte[][] bArr2 = bytePool;
         synchronized (bArr2) {
             int i = 0;
             while (i < 20) {
@@ -940,12 +940,12 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    public static final byte[] m1210a(byte[] bArr, int i) {
+    public static final byte[] allocBytes(byte[] bArr, int i) {
         int length;
         if (i > 2048) {
             return null;
         }
-        byte[][] bArr2 = f365g;
+        byte[][] bArr2 = bytePool;
         synchronized (bArr2) {
             byte[] bArr3 = null;
             int i2 = Integer.MAX_VALUE;
@@ -966,17 +966,17 @@ public final class NetworkUtils {
                 Utils.arraycopy(bArr2, i3 + 1, bArr2, i3, 19 - i3);
             }
             bArr2[19] = null;
-            m1209a(bArr);
+            releaseBytes(bArr);
             return bArr3;
         }
     }
 
     /* renamed from: a */
-    public static final byte[] m1211a(int i) {
+    public static final byte[] newBytes(int i) {
         if (i > 2048) {
             return new byte[i];
         }
-        byte[][] bArr = f365g;
+        byte[][] bArr = bytePool;
         synchronized (bArr) {
             for (int i2 = 0; i2 < 20; i2++) {
                 byte[] bArr2 = bArr[i2];
@@ -998,11 +998,11 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    public static final void m1212a(Vector vector) {
+    public static final void releaseVector(Vector vector) {
         if (vector != null) {
             vector.removeAllElements();
             Utils.m526b(vector);
-            Vector[] vectorArr = f367i;
+            Vector[] vectorArr = vectorPool;
             synchronized (vectorArr) {
                 for (int i = 0; i < 5; i++) {
                     if (vectorArr[i] == null) {
@@ -1015,8 +1015,8 @@ public final class NetworkUtils {
     }
 
     /* renamed from: g */
-    public static final Vector m1213g() {
-        Vector[] vectorArr = f367i;
+    public static final Vector newVector() {
+        Vector[] vectorArr = vectorPool;
         synchronized (vectorArr) {
             for (int i = 0; i < 5; i++) {
                 Vector vector = vectorArr[i];
@@ -1031,9 +1031,9 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    public static final String m1214a(StringBuffer stringBuffer, boolean z) {
+    public static final String bufToString(StringBuffer stringBuffer, boolean z) {
         if (z) {
-            return m1215a(stringBuffer);
+            return bufToStringCached(stringBuffer);
         }
         String strM1207f = m1207f(stringBuffer.toString());
         stringBuffer.setLength(0);
@@ -1041,10 +1041,10 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    public static final String m1215a(StringBuffer stringBuffer) {
+    public static final String bufToStringCached(StringBuffer stringBuffer) {
         String strM1207f = m1207f(stringBuffer.toString());
         stringBuffer.setLength(0);
-        StringBuffer[] stringBufferArr = f366h;
+        StringBuffer[] stringBufferArr = bufferPool;
         synchronized (stringBufferArr) {
             int i = 0;
             while (true) {
@@ -1063,12 +1063,12 @@ public final class NetworkUtils {
 
     /* renamed from: b */
     public static final StringBuffer m1216b(int i) {
-        return m1217h().append(AppState.getString(i));
+        return newStringBuffer().append(AppState.getString(i));
     }
 
     /* renamed from: h */
-    public static final StringBuffer m1217h() {
-        StringBuffer[] stringBufferArr = f366h;
+    public static final StringBuffer newStringBuffer() {
+        StringBuffer[] stringBufferArr = bufferPool;
         synchronized (stringBufferArr) {
             int i = 0;
             do {
@@ -1085,8 +1085,8 @@ public final class NetworkUtils {
     }
 
     /* renamed from: b */
-    public static final String m1218b(byte[] bArr) {
-        StringBuffer[] stringBufferArr = f366h;
+    public static final String bytesToString(byte[] bArr) {
+        StringBuffer[] stringBufferArr = bufferPool;
         synchronized (stringBufferArr) {
             int i = 0;
             do {
@@ -1105,7 +1105,7 @@ public final class NetworkUtils {
         for (byte b : bArr) {
             stringBuffer.append(Utils.m499a((int) b));
         }
-        return m1214a(stringBuffer, z);
+        return bufToString(stringBuffer, z);
     }
 
     /* renamed from: a */
@@ -1114,12 +1114,12 @@ public final class NetworkUtils {
             stringBuffer.append((char) (j & 255));
             j >>>= 8;
         }
-        return m1214a(stringBuffer, z);
+        return bufToString(stringBuffer, z);
     }
 
     /* renamed from: a */
-    public static final String m1221a(long j) {
-        StringBuffer[] stringBufferArr = f366h;
+    public static final String longToHex(long j) {
+        StringBuffer[] stringBufferArr = bufferPool;
         synchronized (stringBufferArr) {
             int i = 0;
             do {
@@ -1134,7 +1134,7 @@ public final class NetworkUtils {
     }
 
     /* renamed from: i */
-    public static final Object[] m1222i() {
+    public static final Object[] newRequest() {
         String strM584b = AppState.getString(2950249);
         String str = AppState.emptyStr;
         Integer num = ResourceManager.f291j[0];
@@ -1144,7 +1144,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final Object[] m1223a(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return m1224a(2, m1215a(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(m1217h().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.m967e(0), str2, str3, ResourceManager.f291j[0], str4, str5, str6, str7, ResourceManager.m967e(i2), ResourceManager.m967e(i3), ResourceManager.m967e(i4), ResourceManager.m967e(i5), null, ResourceManager.m967e(i6)});
+        return m1224a(2, bufToStringCached(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.m967e(0), str2, str3, ResourceManager.f291j[0], str4, str5, str6, str7, ResourceManager.m967e(i2), ResourceManager.m967e(i3), ResourceManager.m967e(i4), ResourceManager.m967e(i5), null, ResourceManager.m967e(i6)});
     }
 
     /* renamed from: a */

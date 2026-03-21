@@ -34,7 +34,7 @@ public class XmppProtocol extends Account {
     public XmppProtocol(int i, String str, String str2) {
         super(i, str, str2);
         this.configFlags = 1;
-        this.f30a = NetworkUtils.m1213g();
+        this.f30a = NetworkUtils.newVector();
         XmppContactGroup c0036g = new XmppContactGroup(this, 0, AppState.getString(1039));
         c0036g.isSpecial = true;
         this.defaultGroup = c0036g;
@@ -50,15 +50,15 @@ public class XmppProtocol extends Account {
 
     /* renamed from: r */
     private String m81r() {
-        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('m');
+        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('m');
         int i = this.state + 1;
         this.state = i;
-        return NetworkUtils.m1215a(stringBufferAppend.append(i));
+        return NetworkUtils.bufToStringCached(stringBufferAppend.append(i));
     }
 
     public XmppProtocol(ByteBuffer c0043n) {
         super(c0043n);
-        this.f30a = NetworkUtils.m1213g();
+        this.f30a = NetworkUtils.newVector();
         int iM1328e = c0043n.readInt();
         while (true) {
             iM1328e--;
@@ -257,7 +257,7 @@ public class XmppProtocol extends Account {
             case 3:
                 this.msgCount = 30;
                 this.state = 0;
-                this.connection = new ConnectionThread(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f33b).append(':').append(this.f34c)));
+                this.connection = new ConnectionThread(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.f33b).append(':').append(this.f34c)));
                 this.progress = 4;
                 if (m96t()) {
                     new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.f291j[0]});
@@ -375,7 +375,7 @@ public class XmppProtocol extends Account {
                         } else if (StringUtils.m3a(464488, str)) {
                             String strM130h2 = m130h(c0022av.getIntAttribute(262852));
                             if (m111f(strM130h2) != null) {
-                                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+                                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                                 XmlElement c0022avM562f = c0022av.findChildByKey(464558);
                                 if (c0022avM562f != null && (strM11a2 = StringUtils.fromBuffer(c0022avM562f.textContent)) != null) {
                                     stringBufferM1217h.append(strM11a2).append('\n');
@@ -384,7 +384,7 @@ public class XmppProtocol extends Account {
                                 if (c0022avM562f2 != null && (strM11a = StringUtils.fromBuffer(c0022avM562f2.textContent)) != null) {
                                     stringBufferM1217h.append(strM11a);
                                 }
-                                String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
+                                String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
                                 if (strM1215a.length() > 0) {
                                     onMessage(strM130h2, 0L, strM1215a);
                                 }
@@ -813,7 +813,7 @@ public class XmppProtocol extends Account {
         try {
             Object[] objArrM609l2 = AppState.getObjectArray(1316);
             if (((String) objArrM609l2[0]).equals(c0022av.getIntAttribute(131550))) {
-                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).m1297y(NetworkUtils.m1215a(m133a(NetworkUtils.m1217h(), c0022av)));
+                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).m1297y(NetworkUtils.bufToStringCached(m133a(NetworkUtils.newStringBuffer(), c0022av)));
                 Image imageM132e = m132e(c0022av);
                 if (imageM132e != null) {
                     c0042mM1297y.put(ResourceManager.m967e(25), imageM132e);

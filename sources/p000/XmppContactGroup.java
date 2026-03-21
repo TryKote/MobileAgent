@@ -83,7 +83,7 @@ public final class XmppContactGroup extends ContactGroup {
             hashtable.put(strM584b, StringUtils.intern(strM584b.toLowerCase()));
         }
         String strM584b2 = AppState.getString(592860);
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         int length2 = 0;
         while (length2 < length) {
@@ -101,7 +101,7 @@ public final class XmppContactGroup extends ContactGroup {
             }
             length2++;
         }
-        objArr[0] = AppController.m321a(c0028ba, 4104, c0043nM1308a.writeStringUTF16(NetworkUtils.m1215a(stringBufferM1217h)).writeIntLE(0));
+        objArr[0] = AppController.m321a(c0028ba, 4104, c0043nM1308a.writeStringUTF16(NetworkUtils.bufToStringCached(stringBufferM1217h)).writeIntLE(0));
         objArr[1] = ResourceManager.m967e(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
@@ -160,7 +160,7 @@ public final class XmppContactGroup extends ContactGroup {
                         z = true;
                     }
                 }
-                NetworkUtils.m1212a(vectorM443V);
+                NetworkUtils.releaseVector(vectorM443V);
                 if (z) {
                     m1007b(m1005e(m1006a(m1005e(AppState.getString(1114895)))));
                 }
@@ -177,7 +177,7 @@ public final class XmppContactGroup extends ContactGroup {
             iM1131a = c0039j.m1131a();
         } while (iM1131a == 1);
         if (iM1131a != 2) {
-            c0039j.f349c = 3;
+            c0039j.state = 3;
         }
         return c0039j;
     }
@@ -194,7 +194,7 @@ public final class XmppContactGroup extends ContactGroup {
                 i = c0043n.length;
                 i2 = i;
             } while (i == 0);
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             while (true) {
                 int i3 = i2;
                 i2 = i3 - 1;
@@ -206,19 +206,19 @@ public final class XmppContactGroup extends ContactGroup {
                     stringBufferM1217h.append(cM1344o);
                 }
             }
-            String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
+            String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
             if (c0039j != null) {
-                c0039j.f349c = 3;
+                c0039j.state = 3;
             }
             return strM1215a;
         } catch (RuntimeException th) {
             if (c0039j != null) {
-                c0039j.f349c = 3;
+                c0039j.state = 3;
             }
             throw th;
         } catch (Throwable th) {
             if (c0039j != null) {
-                c0039j.f349c = 3;
+                c0039j.state = 3;
             }
             throw new RuntimeException(th);
         }
@@ -247,7 +247,7 @@ public final class XmppContactGroup extends ContactGroup {
         } catch (Throwable unused) {
         } finally {
             if (c0039j != null) {
-                c0039j.f349c = 3;
+                c0039j.state = 3;
             }
         }
     }
@@ -273,7 +273,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: r */
     private static final Object[] m1011r() {
-        Object[] objArr = {new int[10], NetworkUtils.m1211a(128)};
+        Object[] objArr = {new int[10], NetworkUtils.newBytes(128)};
         int[] iArr = (int[]) objArr[0];
         int[] iArrM1008q = m1008q();
         int i = 8;
@@ -333,7 +333,7 @@ public final class XmppContactGroup extends ContactGroup {
         while (true) {
             i6--;
             if (i6 < 0) {
-                NetworkUtils.m1209a(bArr);
+                NetworkUtils.releaseBytes(bArr);
                 return bArr2;
             }
             m1010a(iArr[i6], bArr2, i6 << 2);
@@ -404,8 +404,8 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final byte[] m1015a(byte[] bArr, int i, byte[] bArr2, int i2, int i3) {
         int i4;
-        byte[] bArrM1211a = NetworkUtils.m1211a(64);
-        byte[] bArrM1211a2 = NetworkUtils.m1211a(64);
+        byte[] bArrM1211a = NetworkUtils.newBytes(64);
+        byte[] bArrM1211a2 = NetworkUtils.newBytes(64);
         if (i == 64) {
             i4 = 64;
         } else {
@@ -430,9 +430,9 @@ public final class XmppContactGroup extends ContactGroup {
             i6--;
             if (i6 < 0) {
                 Object[] objArrM1012a = m1012a(m1011r(), bArrM1211a, 64);
-                NetworkUtils.m1209a(bArrM1211a);
+                NetworkUtils.releaseBytes(bArrM1211a);
                 Object[] objArrM1012a2 = m1012a(m1011r(), bArrM1211a2, 64);
-                NetworkUtils.m1209a(bArrM1211a2);
+                NetworkUtils.releaseBytes(bArrM1211a2);
                 Object[] objArr = {objArrM1012a, objArrM1012a2};
                 m1012a((Object[]) objArr[0], bArr2, i2);
                 return m1013c(m1012a((Object[]) objArr[1], m1013c((Object[]) objArr[0]), 32));
@@ -444,13 +444,13 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: a */
     public static final ByteBuffer m1016a(MrimAccount c0028ba) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(AppState.getString(223))).writeIntMixed(513).writeIntLE(c0028ba.syncSeq).writeIntMixed(335).writeStringLatin1(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getInt(1528)).append('x').append(AppState.getInt(1529)))).writeIntMixed(592).writeIntLE(AppState.getAndClearInt(251)).writeIntMixed(573).writeIntLE(AppState.getAndClearInt(250)).writeIntMixed(636).writeIntLE(AppState.getAndClearInt(290)).writeIntMixed(514).writeIntLE(AppState.getAndClearInt(291)).writeIntMixed(638).writeIntLE(AppState.getAndClearInt(292)).writeIntMixed(639).writeIntLE(AppState.getAndClearInt(294)).writeIntMixed(640).writeIntLE(AppState.getAndClearInt(293));
+        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(AppState.getString(223))).writeIntMixed(513).writeIntLE(c0028ba.syncSeq).writeIntMixed(335).writeStringLatin1(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getInt(1528)).append('x').append(AppState.getInt(1529)))).writeIntMixed(592).writeIntLE(AppState.getAndClearInt(251)).writeIntMixed(573).writeIntLE(AppState.getAndClearInt(250)).writeIntMixed(636).writeIntLE(AppState.getAndClearInt(290)).writeIntMixed(514).writeIntLE(AppState.getAndClearInt(291)).writeIntMixed(638).writeIntLE(AppState.getAndClearInt(292)).writeIntMixed(639).writeIntLE(AppState.getAndClearInt(294)).writeIntMixed(640).writeIntLE(AppState.getAndClearInt(293));
         Vector vectorM443V = AppController.m443V();
         int size = vectorM443V.size();
         while (true) {
             size--;
             if (size < 0) {
-                NetworkUtils.m1212a(vectorM443V);
+                NetworkUtils.releaseVector(vectorM443V);
                 AppState.saveDelta(true);
                 return c0043nM1360p;
             }
@@ -509,7 +509,7 @@ public final class XmppContactGroup extends ContactGroup {
                     if (i2 > 16) {
                         objArrM1018s[i] = null;
                         if (i2 > 32) {
-                            NetworkUtils.m1209a((byte[]) objArrM1018s[i + 29]);
+                            NetworkUtils.releaseBytes((byte[]) objArrM1018s[i + 29]);
                             objArrM1018s[i + 29] = null;
                         }
                     }
@@ -531,7 +531,7 @@ public final class XmppContactGroup extends ContactGroup {
                 byte[] bArr2 = bArr;
                 if (bArr == null) {
                     int i2 = i + 29;
-                    byte[] bArrM1339k = new ByteBuffer(NetworkUtils.m1221a(i < 26 ? 113724026151215L + (i << 8) : 29113350693019951L + (i << 16))).toByteArray();
+                    byte[] bArrM1339k = new ByteBuffer(NetworkUtils.longToHex(i < 26 ? 113724026151215L + (i << 8) : 29113350693019951L + (i << 16))).toByteArray();
                     bArr2 = bArrM1339k;
                     objArrM1018s[i2] = bArrM1339k;
                 }
@@ -675,13 +675,13 @@ public final class XmppContactGroup extends ContactGroup {
         Vector vectorM1140a = ConnectionThread.m1140a(1);
         long j = MapRenderer.f196d;
         long j2 = MapRenderer.f195c;
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int size = vectorM1140a.size();
         while (true) {
             size--;
             if (size < 0) {
                 ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(3216135).writeUInt(15713);
-                String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
+                String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
                 new AsyncTask(15, c0043nM1385u.writeRawString(strM1215a).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(strM1215a).writeCompressed(660328).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(j).writeUInt(4023334).writeLongAsString(j2).getStringAndClear());
                 return;
             } else {
@@ -700,7 +700,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: a */
     private static final int[] m1034a(byte[] bArr, int i) {
-        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.m1221a(24879), 4200);
+        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.longToHex(24879), 4200);
         int[] iArr = new int[1060];
         System.arraycopy(Utils.m536a(c0043n.data), 0, iArr, 0, 1042);
         c0043n.clear();
@@ -919,7 +919,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: a */
     public static final Vector m1045a(String str) {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         try {
             Vector vectorM513a = Utils.m513a(str, '\r', '\n');
             int size = vectorM513a.size();
@@ -930,9 +930,9 @@ public final class XmppContactGroup extends ContactGroup {
                 c0014an.f144l = Utils.parseInt(vectorM516c.elementAt(4));
                 c0014an.f145m = Utils.parseInt(vectorM516c.elementAt(5));
                 vectorM1213g.addElement(c0014an);
-                NetworkUtils.m1212a(vectorM516c);
+                NetworkUtils.releaseVector(vectorM516c);
             }
-            NetworkUtils.m1212a(vectorM513a);
+            NetworkUtils.releaseVector(vectorM513a);
             Utils.m526b(vectorM1213g);
         } catch (Throwable unused) {
         }
@@ -956,7 +956,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: d */
     public static final Vector m1047d(int i) {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         try {
             ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(i));
             if (c0043nM986d.length > 4) {

@@ -51,7 +51,7 @@ public final class TabBar {
     public static final void m163a() {
         f45b = 0;
         f54k = null;
-        AppState.pool[1246] = NetworkUtils.m1213g();
+        AppState.pool[1246] = NetworkUtils.newVector();
         Vector vectorM614m = AppState.getVector(1241);
         int size = vectorM614m.size();
         if (size == 0 || !AppState.getBool(243)) {
@@ -236,8 +236,8 @@ public final class TabBar {
         if (vectorM614m == null) {
             return;
         }
-        NetworkUtils.m1212a(AppState.getVector(1245));
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        NetworkUtils.releaseVector(AppState.getVector(1245));
+        Vector vectorM1213g = NetworkUtils.newVector();
         AppState.pool[1245] = vectorM1213g;
         int size = vectorM614m.size();
         int i2 = f45b;

@@ -41,7 +41,7 @@ public final class MenuItem {
 
     public MenuItem(int i, String str) {
         this.f258a = i;
-        this.f263i = NetworkUtils.m1213g();
+        this.f263i = NetworkUtils.newVector();
         this.f264j = new int[16];
         this.f259b = str;
         this.f260c = 200;
@@ -118,7 +118,7 @@ public final class MenuItem {
         while (true) {
             i2--;
             if (i2 < 0) {
-                NetworkUtils.m1212a(vector);
+                NetworkUtils.releaseVector(vector);
                 MenuItem c0032cM896a = m884a().m898b(Utils.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
                 c0032cM896a.f265d = new Object[]{ResourceManager.m967e(i), strArr};
                 return c0032cM896a;
@@ -218,12 +218,12 @@ public final class MenuItem {
     /* renamed from: a */
     public final MenuItem m902a(String str, int i, int i2, int i3) {
         if (str != null) {
-            Vector vectorM907a = m907a(NetworkUtils.m1213g(), str, 0, str.length(), i, i2, i3);
+            Vector vectorM907a = m907a(NetworkUtils.newVector(), str, 0, str.length(), i, i2, i3);
             int size = vectorM907a.size();
             for (int i4 = 0; i4 < size; i4++) {
                 m903a(vectorM907a.elementAt(i4));
             }
-            NetworkUtils.m1212a(vectorM907a);
+            NetworkUtils.releaseVector(vectorM907a);
         }
         return this;
     }

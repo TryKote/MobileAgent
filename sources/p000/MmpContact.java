@@ -298,7 +298,7 @@ public final class MmpContact extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.getString(979));
+                        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(979));
                         int i7 = 952;
                         int i8 = f72B;
                         int i9 = 0;
@@ -307,7 +307,7 @@ public final class MmpContact extends Contact {
                             i8 /= 1000;
                             i7 = 952 + 1;
                         }
-                        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+                        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                         stringBufferM1217h.append(i8);
                         if (i9 != 0) {
                             stringBufferM1217h.append('.');
@@ -318,16 +318,16 @@ public final class MmpContact extends Contact {
                             }
                             stringBufferM1217h.append(strM13b);
                         }
-                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(NetworkUtils.m1215a(stringBufferM1217h.append(AppState.getString(i7)))).append(AppState.getString(983));
+                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(NetworkUtils.bufToStringCached(stringBufferM1217h.append(AppState.getString(i7)))).append(AppState.getString(983));
                         int i10 = f73C;
-                        StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
+                        StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             stringBufferM1217h2.append(i11);
                         } else {
                             stringBufferM1217h2.append(i11 / 60).append(AppState.getString(954)).append(i11 % 60);
                         }
-                        r03[1] = stringBufferAppend2.append(NetworkUtils.m1215a(stringBufferM1217h2.append(AppState.getString(955)))).toString();
+                        r03[1] = stringBufferAppend2.append(NetworkUtils.bufToStringCached(stringBufferM1217h2.append(AppState.getString(955)))).toString();
                         r03[2] = AppState.emptyStr;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
                         r03[1] = AppState.getString(980);

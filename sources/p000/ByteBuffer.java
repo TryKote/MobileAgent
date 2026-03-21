@@ -25,13 +25,13 @@ public final class ByteBuffer {
     }
 
     public ByteBuffer(HttpClient c0024ax) {
-        this.data = NetworkUtils.m1211a(2048);
+        this.data = NetworkUtils.newBytes(2048);
         try {
-            byte[] bArrM1211a = NetworkUtils.m1211a(2048);
+            byte[] bArrM1211a = NetworkUtils.newBytes(2048);
             while (true) {
                 int iM638a = c0024ax.m638a(bArrM1211a);
                 if (iM638a < 0) {
-                    NetworkUtils.m1209a(bArrM1211a);
+                    NetworkUtils.releaseBytes(bArrM1211a);
                     return;
                 }
                 writeBytesAt(bArrM1211a, 0, iM638a);
@@ -45,13 +45,13 @@ public final class ByteBuffer {
     }
 
     public ByteBuffer(String str, int i) {
-        this((InputStream) IOUtils.m761a((Object) str.getClass().getResourceAsStream(str)), i);
+        this((InputStream) IOUtils.registerResource((Object) str.getClass().getResourceAsStream(str)), i);
     }
 
     private ByteBuffer(InputStream inputStream, int i) {
-        this.data = NetworkUtils.m1211a(i);
+        this.data = NetworkUtils.newBytes(i);
         try {
-            byte[] bArrM1211a = NetworkUtils.m1211a(8192);
+            byte[] bArrM1211a = NetworkUtils.newBytes(8192);
             while (true) {
                 int i2 = inputStream.read(bArrM1211a);
                 if (i2 < 0) {
@@ -60,10 +60,10 @@ public final class ByteBuffer {
                     writeBytesAt(bArrM1211a, 0, i2);
                 }
             }
-            NetworkUtils.m1209a(bArrM1211a);
+            NetworkUtils.releaseBytes(bArrM1211a);
         } catch (Throwable unused) {
         }
-        IOUtils.m763a(inputStream);
+        IOUtils.closeInput(inputStream);
     }
 
     /* renamed from: a */
@@ -75,7 +75,7 @@ public final class ByteBuffer {
             byte[] bArr = this.data;
             if (i < bArr.length) {
                 ensureCapacity(0);
-                byte[] bArrM1210a = NetworkUtils.m1210a(bArr, i);
+                byte[] bArrM1210a = NetworkUtils.allocBytes(bArr, i);
                 if (bArrM1210a != null) {
                     this.data = bArrM1210a;
                 }
@@ -92,11 +92,11 @@ public final class ByteBuffer {
         int i3 = i2 + i;
         boolean z = length < i3;
         boolean z2 = z;
-        byte[] bArrM1211a = z ? NetworkUtils.m1211a(i3 + 32) : bArr;
+        byte[] bArrM1211a = z ? NetworkUtils.newBytes(i3 + 32) : bArr;
         if (z2 || this.offset != 0) {
             Utils.arraycopy((Object) bArr, this.offset, (Object) bArrM1211a, 0, i2);
             if (z2) {
-                NetworkUtils.m1209a(bArr);
+                NetworkUtils.releaseBytes(bArr);
                 this.data = bArrM1211a;
             }
         }
@@ -106,7 +106,7 @@ public final class ByteBuffer {
 
     /* renamed from: b */
     public final ByteBuffer clear() {
-        NetworkUtils.m1209a(this.data);
+        NetworkUtils.releaseBytes(this.data);
         this.data = AppState.emptyBytes;
         this.length = 0;
         this.offset = 0;
@@ -283,7 +283,7 @@ public final class ByteBuffer {
 
     /* renamed from: d */
     public final String toBase64() {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         ensureCapacity(0);
         int i = 0;
         int i2 = this.length;
@@ -319,7 +319,7 @@ public final class ByteBuffer {
             }
         }
         clear();
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: f */
@@ -344,10 +344,10 @@ public final class ByteBuffer {
 
     /* renamed from: a */
     private ByteBuffer copyFrom(ByteBuffer c0043n, int i) {
-        byte[] bArrM1211a = NetworkUtils.m1211a(i);
+        byte[] bArrM1211a = NetworkUtils.newBytes(i);
         c0043n.readInto(bArrM1211a, 0, i);
         writeBytesAt(bArrM1211a, 0, i);
-        NetworkUtils.m1209a(bArrM1211a);
+        NetworkUtils.releaseBytes(bArrM1211a);
         return this;
     }
 
@@ -413,12 +413,12 @@ public final class ByteBuffer {
 
     /* renamed from: f */
     public final String readUnicodeStr() {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int iM1328e = readInt();
         while (true) {
             iM1328e--;
             if (iM1328e < 0) {
-                return NetworkUtils.m1215a(stringBufferM1217h);
+                return NetworkUtils.bufToStringCached(stringBufferM1217h);
             }
             stringBufferM1217h.append(Utils.m499a((int) readByte()));
         }
@@ -426,12 +426,12 @@ public final class ByteBuffer {
 
     /* renamed from: g */
     public final String readWideStr() {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int iM1328e = readInt();
         while (true) {
             iM1328e--;
             if (iM1328e < 0) {
-                return NetworkUtils.m1215a(stringBufferM1217h);
+                return NetworkUtils.bufToStringCached(stringBufferM1217h);
             }
             stringBufferM1217h.append((char) readUByte());
         }
@@ -439,7 +439,7 @@ public final class ByteBuffer {
 
     /* renamed from: e */
     public final String readUTF8Str(String str) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int iM1328e = readInt();
         while (true) {
             iM1328e -= 2;
@@ -454,27 +454,27 @@ public final class ByteBuffer {
                 return str;
             }
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: h */
     public final String readAllWideStr() {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         while (this.length > 0) {
             stringBufferM1217h.append((char) (readUByte() | (readByte() << 8)));
         }
         clear();
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: i */
     public final String readAllByteStr() {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         while (this.length > 0) {
             stringBufferM1217h.append(Utils.m499a((int) readByte()));
         }
         clear();
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: j */
@@ -530,7 +530,7 @@ public final class ByteBuffer {
 
     /* renamed from: p */
     public final Vector readBufferArray() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         readInt();
         int iM1328e = readInt();
         while (true) {
@@ -817,11 +817,11 @@ public final class ByteBuffer {
 
     /* renamed from: q */
     public final String readUnicodeChars(int i) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         while (true) {
             i -= 2;
             if (i < 0) {
-                return NetworkUtils.m1215a(stringBufferM1217h);
+                return NetworkUtils.bufToStringCached(stringBufferM1217h);
             }
             stringBufferM1217h.append((char) readShortBE());
         }
@@ -829,11 +829,11 @@ public final class ByteBuffer {
 
     /* renamed from: r */
     public final String readByteChars(int i) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         while (true) {
             i--;
             if (i < 0) {
-                return NetworkUtils.m1215a(stringBufferM1217h);
+                return NetworkUtils.bufToStringCached(stringBufferM1217h);
             }
             stringBufferM1217h.append(Utils.m499a(readUByte()));
         }
@@ -878,18 +878,18 @@ public final class ByteBuffer {
         ByteArrayOutputStream byteArrayOutputStream = null;
         DataOutputStream dataOutputStream = null;
         try {
-            ByteArrayOutputStream byteArrayOutputStream2 = (ByteArrayOutputStream) IOUtils.m761a((Object) new ByteArrayOutputStream());
+            ByteArrayOutputStream byteArrayOutputStream2 = (ByteArrayOutputStream) IOUtils.registerResource((Object) new ByteArrayOutputStream());
             byteArrayOutputStream = byteArrayOutputStream2;
-            DataOutputStream dataOutputStream2 = (DataOutputStream) IOUtils.m761a((Object) new DataOutputStream(byteArrayOutputStream2));
+            DataOutputStream dataOutputStream2 = (DataOutputStream) IOUtils.registerResource((Object) new DataOutputStream(byteArrayOutputStream2));
             dataOutputStream = dataOutputStream2;
             dataOutputStream2.writeUTF(str);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
-            IOUtils.m764a((OutputStream) dataOutputStream);
-            IOUtils.m764a((OutputStream) byteArrayOutputStream);
+            IOUtils.closeOutput((OutputStream) dataOutputStream);
+            IOUtils.closeOutput((OutputStream) byteArrayOutputStream);
             return byteArray;
         } catch (Throwable th) {
-            IOUtils.m764a((OutputStream) dataOutputStream);
-            IOUtils.m764a((OutputStream) byteArrayOutputStream);
+            IOUtils.closeOutput((OutputStream) dataOutputStream);
+            IOUtils.closeOutput((OutputStream) byteArrayOutputStream);
             if (th instanceof RuntimeException) throw (RuntimeException) th;
             if (th instanceof Error) throw (Error) th;
             throw new RuntimeException(th);
@@ -900,7 +900,7 @@ public final class ByteBuffer {
     public final ByteBuffer writeUTF(String str) {
         byte[] bArrM1375l = encodeUTF(str);
         writeBytes(bArrM1375l);
-        NetworkUtils.m1209a(bArrM1375l);
+        NetworkUtils.releaseBytes(bArrM1375l);
         return this;
     }
 
@@ -908,7 +908,7 @@ public final class ByteBuffer {
     public final ByteBuffer writeUTFNoLen(String str) {
         byte[] bArrM1375l = encodeUTF(str);
         writeBytesAt(bArrM1375l, 2, bArrM1375l.length - 2);
-        NetworkUtils.m1209a(bArrM1375l);
+        NetworkUtils.releaseBytes(bArrM1375l);
         return this;
     }
 
@@ -1008,7 +1008,7 @@ public final class ByteBuffer {
     public final String toHexString() {
         int i;
         int i2;
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int i3 = this.offset;
         int i4 = this.length;
         for (int i5 = 0; i5 < i4; i5++) {
@@ -1026,7 +1026,7 @@ public final class ByteBuffer {
             stringBufferAppend.append((char) (i + i2));
         }
         clear();
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: I */

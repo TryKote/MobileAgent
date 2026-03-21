@@ -124,7 +124,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: a */
     public final void receiveMessage(long j, StringBuffer stringBuffer) {
-        receiveMessageFull(j, NetworkUtils.m1215a(stringBuffer), 4);
+        receiveMessageFull(j, NetworkUtils.bufToStringCached(stringBuffer), 4);
     }
 
     /* renamed from: a */
@@ -313,7 +313,7 @@ public abstract class Contact implements Sortable {
             String strM539n = Utils.m539n(c0043nM1380F.readUnicodeChars(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
-                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
+                c0013amM75b.m251a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
                 if (this.account.isConnected()) {
                     c0013amM75b.m250b(-1, AppState.getString(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
@@ -325,7 +325,7 @@ public abstract class Contact implements Sortable {
                 c0013amM75b.m251a(StringUtils.concat(strM13b, formatTime(jM1341m, iM624l)), 8);
                 addMessageLines(c0013amM75b, strM15c, i);
             } else {
-                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
+                c0013amM75b.m251a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
                 addMessageLines(c0013amM75b, strM539n, i);
             }
         }
@@ -345,7 +345,7 @@ public abstract class Contact implements Sortable {
                 c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.account.getType()));
             }
         }
-        NetworkUtils.m1212a(vectorM1098a);
+        NetworkUtils.releaseVector(vectorM1098a);
     }
 
     /* renamed from: f */
@@ -373,7 +373,7 @@ public abstract class Contact implements Sortable {
             c0043nM1380F.readLong();
             String strM1369q = c0043nM1380F.readUnicodeChars(iM1353u - 17);
             if (strM1369q.length() > 50) {
-                strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.prefix(strM1369q, 50)).append((char) 8230));
+                strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.prefix(strM1369q, 50)).append((char) 8230));
             } else {
                 strM1215a = strM1369q;
             }
@@ -410,7 +410,7 @@ public abstract class Contact implements Sortable {
     private static String formatTime(long j, int i) {
         Calendar calendarM622k = AppState.getCalendar();
         calendarM622k.setTime(new Date(j));
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int i2 = calendarM622k.get(1) << 16;
         int i3 = calendarM622k.get(2);
         int i4 = i2 + (i3 << 8);
@@ -418,7 +418,7 @@ public abstract class Contact implements Sortable {
         if (i4 + i5 != i) {
             stringBufferM1217h.append(Utils.zeroPad(i5)).append('/').append(Utils.zeroPad(i3 + 1)).append(' ');
         }
-        return NetworkUtils.m1215a(stringBufferM1217h.append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(calendarM622k.get(12))));
+        return NetworkUtils.bufToStringCached(stringBufferM1217h.append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(calendarM622k.get(12))));
     }
 
     /* renamed from: a */

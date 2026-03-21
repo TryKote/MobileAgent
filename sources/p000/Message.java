@@ -50,7 +50,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.m1213g(), AppController.m459a(c0028ba.login, Utils.defaultStr(c0028ba.f230f)));
+        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.newVector(), AppController.m459a(c0028ba.login, Utils.defaultStr(c0028ba.f230f)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;
@@ -111,12 +111,12 @@ public final class Message {
         int i5 = calendarM622k.get(2);
         int i6 = calendarM622k.get(5);
         calendarM622k.setTime(new Date(this.timestamp));
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
-        String strM527g = Utils.m527g(NetworkUtils.m1215a((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        String strM527g = Utils.m527g(NetworkUtils.bufToStringCached((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
         MenuItem c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
-        String strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append('[').append(this.priority).append(AppState.getString(903)));
+        String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(903)));
         MenuItem c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);
-        int iM214a2 = AppState.getGfxContext(i2).m214a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(strM527g).append(strM1215a)));
+        int iM214a2 = AppState.getGfxContext(i2).m214a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM527g).append(strM1215a)));
         if (hasFlag(1)) {
             c0032cM901a2.m896a(221);
             iM214a2 += 20;
@@ -132,11 +132,11 @@ public final class Message {
         int i7 = iM1418a;
         boolean z3 = false;
         if ((i7 & 1) != 0 && (strArrM869c2 = XmppMailRuProtocol.m869c(getToList())) != null) {
-            c0032cM901a2.m901a(truncateText(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
+            c0032cM901a2.m901a(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
             z3 = true;
         }
         if ((i7 & 2) != 0 && (strArrM869c = XmppMailRuProtocol.m869c(getCcList())) != null) {
-            c0032cM901a2.m901a(truncateText(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
+            c0032cM901a2.m901a(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
         }
         boolean z4 = c0052w == c0028ba.m746W();
         c0032cM901a2.m900a(zM671a ? 225 : 237, truncateText(getSubject(), i2, iM586d - 22, iM214a, z4), i2, i3);
@@ -149,12 +149,12 @@ public final class Message {
 
     /* renamed from: b */
     public final Vector getToList() {
-        return this.toList == null ? NetworkUtils.m1213g() : this.toList;
+        return this.toList == null ? NetworkUtils.newVector() : this.toList;
     }
 
     /* renamed from: c */
     public final Vector getCcList() {
-        return this.ccList == null ? NetworkUtils.m1213g() : this.ccList;
+        return this.ccList == null ? NetworkUtils.newVector() : this.ccList;
     }
 
     /* renamed from: a */
@@ -195,9 +195,9 @@ public final class Message {
                 i5 = i6;
                 length = i7;
             }
-            str = NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.prefix(str, i4 + 1)).append((char) 8230));
+            str = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.prefix(str, i4 + 1)).append((char) 8230));
         }
-        return z ? NetworkUtils.m1215a(NetworkUtils.m1217h().append(str).append('\n')) : str;
+        return z ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(str).append('\n')) : str;
     }
 
     /* renamed from: d */
@@ -214,18 +214,18 @@ public final class Message {
         }
         String strM584b = AppState.getString(133118);
         Vector vector = this.ccList;
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         if (vector != null) {
             String str = AppState.emptyStr;
-            NetworkUtils.m1221a(60);
-            NetworkUtils.m1221a(62);
-            String strM1221a = NetworkUtils.m1221a(44);
+            NetworkUtils.longToHex(60);
+            NetworkUtils.longToHex(62);
+            String strM1221a = NetworkUtils.longToHex(44);
             Enumeration enumerationElements = vector.elements();
             while (enumerationElements.hasMoreElements()) {
                 stringBufferM1217h.append(stringBufferM1217h.length() > 0 ? strM1221a : str).append(str).append(((String[]) enumerationElements.nextElement())[0]).append(str);
             }
         }
-        hashtable.put(strM584b, NetworkUtils.m1215a(stringBufferM1217h));
+        hashtable.put(strM584b, NetworkUtils.bufToStringCached(stringBufferM1217h));
         hashtable.put(AppState.getString(460837), this.subject);
         hashtable.put(AppState.getString(264133), this.body);
         JsonParser.putIntValue(hashtable, AppState.getString(264258), 1);
@@ -233,7 +233,7 @@ public final class Message {
         JsonParser.putIntValue(hashtable, AppState.getString(329772), 0);
         JsonParser.putIntValue(hashtable, AppState.getString(460784), 0);
         JsonParser.putIntValue(hashtable, AppState.getString(919536), 0);
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         int length = this.attachments == null ? 0 : this.attachments.length;
         for (int i = 0; i < length; i++) {
             String[] strArr = (String[]) this.attachments[i];

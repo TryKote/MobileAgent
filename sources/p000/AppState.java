@@ -54,17 +54,17 @@ public abstract class AppState {
             }
         }
         StringUtils.internCache = new Vector(128);
-        NetworkUtils.f365g = new byte[20][];
-        NetworkUtils.f366h = new StringBuffer[5];
-        NetworkUtils.f367i = new Vector[5];
-        NetworkUtils.f368j = new Hashtable();
-        IOUtils.f237c = NetworkUtils.m1213g();
-        separator = NetworkUtils.m1221a(1819047278);
+        NetworkUtils.bytePool = new byte[20][];
+        NetworkUtils.bufferPool = new StringBuffer[5];
+        NetworkUtils.vectorPool = new Vector[5];
+        NetworkUtils.stringCache = new Hashtable();
+        IOUtils.f237c = NetworkUtils.newVector();
+        separator = NetworkUtils.longToHex(1819047278);
         emptyBytes = new byte[0];
         delta = new Object[295];
         pool = new Object[1406];
         intPool = new int[3773];
-        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.m1221a(1734763311), 45000);
+        ByteBuffer c0043n = new ByteBuffer(NetworkUtils.longToHex(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
             pool[i2] = decodeObject(c0043n, i2);
         }
@@ -92,7 +92,7 @@ public abstract class AppState {
             iArr[i4] = iM1346q;
         }
         emptyStr = (String) pool[1038];
-        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.m1221a(1164404323));
+        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.longToHex(1164404323));
         while (c0043nM851h.length > 0) {
             try {
                 delta[((Integer) decodeObject(c0043nM851h, 0)).intValue()] = decodeObject(c0043nM851h, 0);
@@ -142,7 +142,7 @@ public abstract class AppState {
         pool[1372] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
         pool[1361] = new Object[58];
         pool[1362] = new int[29];
-        pool[1266] = NetworkUtils.m1213g();
+        pool[1266] = NetworkUtils.newVector();
         pool[1267] = new int[]{1};
         pool[1268] = new int[]{2};
         pool[1269] = new int[]{3};
@@ -201,7 +201,7 @@ public abstract class AppState {
         if (objM583p == null) {
             return null;
         }
-        return objM583p instanceof byte[] ? NetworkUtils.m1218b((byte[]) objM583p) : (String) objM583p;
+        return objM583p instanceof byte[] ? NetworkUtils.bytesToString((byte[]) objM583p) : (String) objM583p;
     }
 
     /* renamed from: c */
@@ -223,7 +223,7 @@ public abstract class AppState {
 
     /* renamed from: a */
     public static final void setFromBuffer(int i, StringBuffer stringBuffer) {
-        setObject(i, (Object) NetworkUtils.m1215a(stringBuffer));
+        setObject(i, (Object) NetworkUtils.bufToStringCached(stringBuffer));
     }
 
     /* renamed from: a */
@@ -411,13 +411,13 @@ public abstract class AppState {
             if (i >= 295 && i < 1036) {
                 return bArr;
             }
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             for (byte b : bArr) {
                 stringBufferM1217h.append(Utils.m499a((int) b));
             }
-            NetworkUtils.m1209a(bArr);
+            NetworkUtils.releaseBytes(bArr);
             String str = separator;
-            String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
+            String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
             if (str.equals(strM1215a)) {
                 return null;
             }
@@ -467,14 +467,14 @@ public abstract class AppState {
                     }
                 }
             }
-            XmppMailRuProtocol.m852a(NetworkUtils.m1221a(1164404323), c0043n, z);
+            XmppMailRuProtocol.m852a(NetworkUtils.longToHex(1164404323), c0043n, z);
         } catch (Throwable unused) {
         }
     }
 
     /* renamed from: j */
     public static final String getEllipsis() {
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) 8230));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append((char) 8230));
     }
 
     /* renamed from: b */
@@ -532,12 +532,12 @@ public abstract class AppState {
 
     /* renamed from: a */
     public static final int indexOf(String str, int i) {
-        return str.indexOf(NetworkUtils.m1221a(i));
+        return str.indexOf(NetworkUtils.longToHex(i));
     }
 
     /* renamed from: a */
     public static final int indexOfLong(String str, long j) {
-        return str.indexOf(NetworkUtils.m1221a(j));
+        return str.indexOf(NetworkUtils.longToHex(j));
     }
 
     /* renamed from: b */

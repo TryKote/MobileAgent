@@ -13,13 +13,13 @@ import javax.microedition.lcdui.Image;
 public final class ConnectionThread {
 
     /* renamed from: b */
-    public Throwable f348b;
+    public Throwable exception;
 
     /* renamed from: j */
-    private Object[] f350j;
+    private Object[] connArray;
 
     /* renamed from: k */
-    private String f351k;
+    private String connUrl;
 
     /* renamed from: l */
     private static Hashtable f352l;
@@ -43,37 +43,37 @@ public final class ConnectionThread {
     public static ListItem f358h;
 
     /* renamed from: i */
-    private ByteBuffer f346i = new ByteBuffer();
+    private ByteBuffer inBuffer = new ByteBuffer();
 
     /* renamed from: a */
-    public final ByteBuffer f347a = new ByteBuffer();
+    public final ByteBuffer outBuffer = new ByteBuffer();
 
     /* renamed from: c */
-    public int f349c = 1;
+    public int state = 1;
 
     public ConnectionThread(String str) {
-        this.f351k = str;
+        this.connUrl = str;
         Vector vectorM614m = AppState.getVector(1358);
         if (vectorM614m != null) {
             synchronized (vectorM614m) {
-                vectorM614m.addElement(IOUtils.m761a(this));
+                vectorM614m.addElement(IOUtils.registerResource(this));
             }
         }
     }
 
     /* renamed from: a */
     public final int m1131a() throws Throwable {
-        if (this.f348b != null) {
-            throw this.f348b;
+        if (this.exception != null) {
+            throw this.exception;
         }
-        return this.f349c;
+        return this.state;
     }
 
     /* renamed from: a */
     public final void m1132a(ByteBuffer c0043n) throws Throwable {
-        synchronized (this.f350j) {
-            if (this.f346i.length > 0) {
-                ByteBuffer c0043n2 = this.f346i;
+        synchronized (this.connArray) {
+            if (this.inBuffer.length > 0) {
+                ByteBuffer c0043n2 = this.inBuffer;
                 int i = c0043n2.length;
                 if (i > 0) {
                     synchronized (c0043n2) {
@@ -83,27 +83,27 @@ public final class ConnectionThread {
                         c0043n2.compact();
                     }
                 }
-            } else if (this.f348b != null) {
-                throw this.f348b;
+            } else if (this.exception != null) {
+                throw this.exception;
             }
         }
     }
 
     /* renamed from: b */
     public final void m1133b() {
-        switch (this.f349c) {
+        switch (this.state) {
             case 1:
                 try {
-                    this.f350j = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeRawString(this.f351k).getStringAndClear(), AppState.getBool(112));
-                    if (this.f349c == 1) {
-                        this.f349c = 2;
+                    this.connArray = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(112));
+                    if (this.state == 1) {
+                        this.state = 2;
                     }
-                    this.f351k = null;
+                    this.connUrl = null;
                     return;
                 } catch (Throwable th) {
-                    this.f349c = -1;
-                    this.f348b = th;
-                    NetworkUtils.m1184b(this.f350j);
+                    this.state = -1;
+                    this.exception = th;
+                    NetworkUtils.m1184b(this.connArray);
                     return;
                 }
             case 2:
@@ -113,8 +113,8 @@ public final class ConnectionThread {
             case 3:
                 m1134o();
                 m1135p();
-                NetworkUtils.m1184b(this.f350j);
-                this.f349c = 0;
+                NetworkUtils.m1184b(this.connArray);
+                this.state = 0;
                 return;
             default:
                 Vector vectorM614m = AppState.getVector(1358);
@@ -122,7 +122,7 @@ public final class ConnectionThread {
                     synchronized (vectorM614m) {
                         vectorM614m.removeElement(this);
                         Utils.m526b(vectorM614m);
-                        IOUtils.m762b(this);
+                        IOUtils.unregisterResource(this);
                     }
                     return;
                 }
@@ -134,12 +134,12 @@ public final class ConnectionThread {
     private final void m1134o() {
         int iM1190a;
         try {
-            if (this.f349c == 2) {
-                ByteBuffer c0043n = this.f346i;
-                Object[] objArr = this.f350j;
+            if (this.state == 2) {
+                ByteBuffer c0043n = this.inBuffer;
+                Object[] objArr = this.connArray;
                 int iM1188c = NetworkUtils.m1188c(objArr);
                 if (iM1188c > 0) {
-                    byte[] bArrM1211a = NetworkUtils.m1211a(iM1188c);
+                    byte[] bArrM1211a = NetworkUtils.newBytes(iM1188c);
                     int i = 0;
                     do {
                         iM1190a = i + NetworkUtils.m1190a(objArr, bArrM1211a, i, iM1188c - i);
@@ -151,45 +151,45 @@ public final class ConnectionThread {
                         c0043n.length += iM1188c;
                         c0043n.compact();
                     }
-                    NetworkUtils.m1209a(bArrM1211a);
+                    NetworkUtils.releaseBytes(bArrM1211a);
                 }
             }
         } catch (Throwable th) {
-            this.f349c = -1;
-            this.f348b = th;
-            NetworkUtils.m1184b(this.f350j);
+            this.state = -1;
+            this.exception = th;
+            NetworkUtils.m1184b(this.connArray);
         }
     }
 
     /* renamed from: p */
     private final void m1135p() {
         try {
-            if (this.f349c == 2) {
-                ByteBuffer c0043n = this.f347a;
-                Object[] objArr = this.f350j;
+            if (this.state == 2) {
+                ByteBuffer c0043n = this.outBuffer;
+                Object[] objArr = this.connArray;
                 synchronized (c0043n) {
                     int i = c0043n.length;
                     if (i > 0) {
-                        byte[] bArrM1211a = NetworkUtils.m1211a(i);
+                        byte[] bArrM1211a = NetworkUtils.newBytes(i);
                         Utils.arraycopy((Object) c0043n.data, c0043n.offset, (Object) bArrM1211a, 0, i);
                         c0043n.offset += i;
                         c0043n.length -= i;
                         c0043n.compact();
                         NetworkUtils.m1189a(objArr, bArrM1211a, i);
-                        NetworkUtils.m1209a(bArrM1211a);
+                        NetworkUtils.releaseBytes(bArrM1211a);
                     }
                 }
             }
         } catch (Throwable th) {
-            this.f349c = -1;
-            this.f348b = th;
-            NetworkUtils.m1184b(this.f350j);
+            this.state = -1;
+            this.exception = th;
+            NetworkUtils.m1184b(this.connArray);
         }
     }
 
     /* renamed from: q */
     private static void m1136q() {
-        XmppContactGroup.f310a = NetworkUtils.m1213g();
+        XmppContactGroup.f310a = NetworkUtils.newVector();
         f355f = Utils.split(AppState.getString(264), (char) 0);
         try {
             ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(265));
@@ -203,7 +203,7 @@ public final class ConnectionThread {
                             break;
                         }
                         NetworkUtils c0040k = new NetworkUtils(c0043nM986d);
-                        f352l.put(StringUtils.intern(Integer.toString(c0040k.f360b)), c0040k);
+                        f352l.put(StringUtils.intern(Integer.toString(c0040k.port)), c0040k);
                     }
                 }
             } catch (Throwable unused) {
@@ -232,7 +232,7 @@ public final class ConnectionThread {
                 i3++;
                 XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);
                 if (StringUtils.m3a(263156, c0022av3.tagName)) {
-                    c0040k.f362d = StringUtils.fromBuffer(c0022av3.textContent);
+                    c0040k.url = StringUtils.fromBuffer(c0022av3.textContent);
                 }
             }
             f352l.put(strM555c, c0040k);
@@ -253,7 +253,7 @@ public final class ConnectionThread {
         if (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(obj)) == null) {
             return null;
         }
-        return c0040k.f361c;
+        return c0040k.host;
     }
 
     /* renamed from: a */
@@ -275,7 +275,7 @@ public final class ConnectionThread {
                 } catch (Throwable unused) {
                     if (f354e == null) {
                         f354e = str;
-                        new AsyncTask(14, (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(str)) == null) ? null : c0040k.f362d);
+                        new AsyncTask(14, (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(str)) == null) ? null : c0040k.url);
                     }
                 }
                 image = image3;
@@ -291,13 +291,13 @@ public final class ConnectionThread {
         if (!AppState.getBool(1576)) {
             return null;
         }
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationKeys = f352l.keys();
         while (enumerationKeys.hasMoreElements()) {
             Object objNextElement = enumerationKeys.nextElement();
             if (!m1144c(objNextElement)) {
                 NetworkUtils c0040k = (NetworkUtils) f352l.get(objNextElement);
-                if (c0040k != null && c0040k.f359a == 1) {
+                if (c0040k != null && c0040k.type == 1) {
                     vectorM1213g.addElement(objNextElement);
                 }
             }
@@ -310,7 +310,7 @@ public final class ConnectionThread {
         if (!AppState.getBool(1576)) {
             return null;
         }
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationKeys = f352l.keys();
         while (enumerationKeys.hasMoreElements()) {
             Object objNextElement = enumerationKeys.nextElement();
@@ -326,7 +326,7 @@ public final class ConnectionThread {
         if (!AppState.getBool(1576)) {
             return null;
         }
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationKeys = f352l.keys();
         while (enumerationKeys.hasMoreElements()) {
             Object objNextElement = enumerationKeys.nextElement();
@@ -343,7 +343,7 @@ public final class ConnectionThread {
             return 2;
         }
         try {
-            return ((NetworkUtils) f352l.get(obj)).f363e;
+            return ((NetworkUtils) f352l.get(obj)).status;
         } catch (Throwable unused) {
             return 2;
         }
@@ -361,7 +361,7 @@ public final class ConnectionThread {
         Enumeration enumerationKeys = f352l.keys();
         while (enumerationKeys.hasMoreElements()) {
             NetworkUtils c0040k = (NetworkUtils) f352l.get(enumerationKeys.nextElement());
-            c0043n.writeIntBE(c0040k.f359a).writeIntBE(c0040k.f360b).writeStringUTF16(c0040k.f361c).writeStringLatin1(c0040k.f362d).writeIntBE(c0040k.f363e).writeStringLatin1(c0040k.f364f);
+            c0043n.writeIntBE(c0040k.type).writeIntBE(c0040k.port).writeStringUTF16(c0040k.host).writeStringLatin1(c0040k.url).writeIntBE(c0040k.status).writeStringLatin1(c0040k.protocol);
         }
         return c0043n;
     }
@@ -374,17 +374,17 @@ public final class ConnectionThread {
     /* renamed from: a */
     public static final Object[] m1147a(StringBuffer stringBuffer) {
         Object[] objArr = new Object[9];
-        objArr[0] = NetworkUtils.m1221a(5522759);
-        objArr[2] = NetworkUtils.m1215a(stringBuffer);
+        objArr[0] = NetworkUtils.longToHex(5522759);
+        objArr[2] = NetworkUtils.bufToStringCached(stringBuffer);
         return objArr;
     }
 
     /* renamed from: a */
     public static final Object[] m1148a(String str, StringBuffer stringBuffer) {
         Object[] objArr = new Object[9];
-        objArr[0] = NetworkUtils.m1221a(1414745936);
+        objArr[0] = NetworkUtils.longToHex(1414745936);
         objArr[2] = str;
-        objArr[3] = NetworkUtils.m1215a(stringBuffer).getBytes();
+        objArr[3] = NetworkUtils.bufToStringCached(stringBuffer).getBytes();
         return objArr;
     }
 
@@ -410,7 +410,7 @@ public final class ConnectionThread {
         }
         objArr[8] = objArr;
         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1147a = m1147a(NetworkUtils.m1217h().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
+        Object[] objArrM1147a = m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) m1149a(objArrM1147a)[7]).f436a.join();
         c0028ba.f225a = (String) objArrM1147a[6];
@@ -428,7 +428,7 @@ public final class ConnectionThread {
                         AppController.m343s();
                         String str = (String) objArr[5];
                         if (str == null) {
-                            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(1115687)).append(objArr[2]));
+                            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(1115687)).append(objArr[2]));
                         } else {
                             strM1215a = str;
                         }
@@ -596,8 +596,8 @@ public final class ConnectionThread {
         MapRenderer.f198f = AppController.m317a(MapRenderer.f195c, iM586d);
         AppState.pool[1364] = Image.createImage(MapRenderer.f193a, MapRenderer.f194b);
         StringUtils.m19b();
-        AppState.pool[1398] = NetworkUtils.m1213g();
-        AppState.pool[1396] = NetworkUtils.m1213g();
+        AppState.pool[1398] = NetworkUtils.newVector();
+        AppState.pool[1396] = NetworkUtils.newVector();
         Object[] objArrM332c = AppController.m332c(AppState.emptyStr);
         AppState.pool[1395] = objArrM332c;
         XmppContactGroup.m1041a(objArrM332c);
@@ -613,21 +613,21 @@ public final class ConnectionThread {
         }
         new GraphicsContext(graphics).m216a(312, 56, 56);
         AppState.pool[1393] = imageCreateImage;
-        AppState.pool[1397] = NetworkUtils.m1213g();
+        AppState.pool[1397] = NetworkUtils.newVector();
         new AsyncTask(8);
         MapRenderer.f199g = new Object();
         StringUtils.m41j();
         MapRenderer.m646a();
-        MmpContact.f70n = NetworkUtils.m1213g();
-        MmpContact.f66k = NetworkUtils.m1213g();
-        MmpContact.f67l = NetworkUtils.m1213g();
+        MmpContact.f70n = NetworkUtils.newVector();
+        MmpContact.f66k = NetworkUtils.newVector();
+        MmpContact.f67l = NetworkUtils.newVector();
         MmpContact.f64i = new long[2];
         MmpContact.f65j = new long[2];
-        MapRenderer.f205m = NetworkUtils.m1213g();
+        MapRenderer.f205m = NetworkUtils.newVector();
         if (AppState.getBool(253)) {
             XmppContactGroup.m1049b(AppState.getVector(1401));
         }
-        AppState.pool[1383] = NetworkUtils.m1213g();
+        AppState.pool[1383] = NetworkUtils.newVector();
         MapRenderer.f200h = true;
         AppState.setLong(1556, System.currentTimeMillis() - 90);
         new AsyncTask(10);

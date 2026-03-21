@@ -365,7 +365,7 @@ public final class SoftFloat {
         if (length == 0) {
             throw new NumberFormatException(strM17c);
         }
-        if (NetworkUtils.m1221a(5136718).equals(strM17c)) {
+        if (NetworkUtils.longToHex(5136718).equals(strM17c)) {
             return 9221120237041090560L;
         }
         int i = 0;
@@ -421,11 +421,11 @@ public final class SoftFloat {
         boolean z;
         int i2;
         if (m679o(j)) {
-            return NetworkUtils.m1221a(5136718);
+            return NetworkUtils.longToHex(5136718);
         }
         boolean zM675l = m675l(j);
         if (m681q(j)) {
-            return NetworkUtils.m1221a(zM675l ? 808333357 : 3157552);
+            return NetworkUtils.longToHex(zM675l ? 808333357 : 3157552);
         }
         if (m680p(j)) {
             return AppState.getString(zM675l ? 985 : 984);
@@ -469,7 +469,7 @@ public final class SoftFloat {
         while (true) {
             int i7 = i4;
             long j3 = jM696j;
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             if (zM675l) {
                 stringBufferM1217h.append('-');
             }
@@ -503,7 +503,7 @@ public final class SoftFloat {
             if (z4) {
                 stringBufferM1217h.append('E').append(length);
             }
-            String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
+            String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
             if (strM1215a.length() <= i) {
                 return strM1215a;
             }

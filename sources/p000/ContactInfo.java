@@ -178,7 +178,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: a */
     private static final String m1276a(int i, int i2) {
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(i).append(AppState.getString(i2)));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(i).append(AppState.getString(i2)));
     }
 
     /* renamed from: c */
@@ -192,7 +192,7 @@ public final class ContactInfo extends Hashtable {
         if (iM511a != 0) {
             Vector vectorM512e = Utils.splitByNull(AppState.getString(685));
             m1258a(7, (String) vectorM512e.elementAt(iM511a));
-            NetworkUtils.m1212a(vectorM512e);
+            NetworkUtils.releaseVector(vectorM512e);
         }
         return this;
     }
@@ -297,11 +297,11 @@ public final class ContactInfo extends Hashtable {
             int i3 = 0;
             while (i3 < size) {
                 try {
-                    String strM1215a = NetworkUtils.m1215a(Utils.m497a(NetworkUtils.m1217h().append((String) vectorM512e.elementAt(i3))));
+                    String strM1215a = NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append((String) vectorM512e.elementAt(i3))));
                     String strM1256a = m1256a(i3);
                     if (null != strM1256a) {
                         if (i3 == 6) {
-                            c0013amM75b.m248a(strM1215a, NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
+                            c0013amM75b.m248a(strM1215a, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
                                 c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(m1256a(12))) : c0035f.getIcon()).m898b(Utils.defaultStr(m1256a(13))));
@@ -317,7 +317,7 @@ public final class ContactInfo extends Hashtable {
             if (c0035f != null) {
                 String strM522f = Utils.defaultStr(c0035f.f301h);
                 int i4 = Conversation.m1104a(strM522f, 927) ? 936 : Conversation.m1104a(strM522f, 926) ? 935 : Conversation.m1104a(strM522f, 929) ? 937 : Conversation.m1104a(strM522f, 928) ? 938 : Conversation.m1104a(strM522f, 930) ? 939 : Conversation.m1104a(strM522f, 931) ? 940 : Conversation.m1104a(strM522f, 932) ? 941 : Conversation.m1104a(strM522f, 933) ? 942 : 934;
-                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                 if (i4 == 934) {
                     int iM627a = AppState.indexOfLong(strM522f, 2467256188365532259L);
                     if (iM627a >= 0 && (iIndexOf3 = strM522f.indexOf(34, iM627a + 9)) >= 0) {
@@ -334,7 +334,7 @@ public final class ContactInfo extends Hashtable {
                         stringBufferM1217h.append('.').append(StringUtils.substring(strM522f, iM628b2 + 8, iIndexOf2));
                     }
                 }
-                String strM1215a2 = NetworkUtils.m1215a(stringBufferM1217h);
+                String strM1215a2 = NetworkUtils.bufToStringCached(stringBufferM1217h);
                 if (Utils.nonEmpty(strM1215a2)) {
                     MenuItem c0032cM901a = MenuItem.m889d().m901a(AppState.getString(317), 0, 6);
                     String str = c0035f.f301h;
@@ -382,7 +382,7 @@ public final class ContactInfo extends Hashtable {
                 try {
                     String strM1256a3 = m1256a(i5);
                     if (null != strM1256a3) {
-                        c0013amM75b.m248a(NetworkUtils.m1215a(Utils.m497a(NetworkUtils.m1217h().append(vectorM512e.elementAt(i5)))), strM1256a3);
+                        c0013amM75b.m248a(NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append(vectorM512e.elementAt(i5)))), strM1256a3);
                     }
                 } catch (Throwable unused2) {
                 }
@@ -415,7 +415,7 @@ public final class ContactInfo extends Hashtable {
                 c0013amM75b.m253a(strM1256a8);
             }
         }
-        NetworkUtils.m1212a(vectorM512e);
+        NetworkUtils.releaseVector(vectorM512e);
         return c0013amM75b;
     }
 

@@ -98,7 +98,7 @@ public final class ScreenBuilder {
                 AppState.setInt(1505, 1);
                 AppState.setObject(1284, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
                 AppState.setObject(1285, (Object) AppController.m298f());
-                AppState.setFromBuffer(1288, NetworkUtils.m1217h().append(AppState.getString(1375)).append(AppState.getString(511)));
+                AppState.setFromBuffer(1288, NetworkUtils.newStringBuffer().append(AppState.getString(1375)).append(AppState.getString(511)));
                 AppState.setObject(1287, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(519)).getStringAndClear());
                 ScreenManager.m71b(ScreenManager.m75b(2448));
                 return;
@@ -106,7 +106,7 @@ public final class ScreenBuilder {
                 NetworkUtils.m1198a(10, 710);
                 return;
             case 11:
-                NetworkUtils.m1197a(11, NetworkUtils.m1217h().append(AppState.getString(768)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.m1221a(16167)));
+                NetworkUtils.m1197a(11, NetworkUtils.newStringBuffer().append(AppState.getString(768)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.longToHex(16167)));
                 return;
             case 12:
                 return;
@@ -114,7 +114,7 @@ public final class ScreenBuilder {
                 NetworkUtils.m1200b(13, 505);
                 return;
             case 14:
-                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                 int iM586d = AppState.getInt(113);
                 AppState.setFromBuffer(1286, stringBufferM1217h.append(iM586d / 100).append('.').append(Utils.zeroPad(iM586d % 100)));
                 ScreenManager.m71b(ScreenManager.m75b(3183));
@@ -158,7 +158,7 @@ public final class ScreenBuilder {
                         AppState.pool[i5 + 1303] = vectorM516c.elementAt(i5);
                     }
                 }
-                NetworkUtils.m1212a(vectorM516c);
+                NetworkUtils.releaseVector(vectorM516c);
                 AppState.setInt(3510, (!(abstractC0041lM611g instanceof MrimContact) || abstractC0041lM611g.isSystem()) ? 1 : 4);
                 ScreenManager.m71b(ScreenManager.m75b(3501));
                 return;
@@ -273,11 +273,11 @@ public final class ScreenBuilder {
                     return;
                 }
                 NetworkUtils.m1200b(37, 833);
-                Vector vectorM1213g = NetworkUtils.m1213g();
+                Vector vectorM1213g = NetworkUtils.newVector();
                 JsonParser.addIntToVector(vectorM1213g, 0);
                 vectorM1213g.addElement(AppState.emptyStr);
                 JsonParser.addIntToVector(vectorM1213g, 1);
-                IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g)))));
+                IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g)))));
                 return;
             case 38:
                 AppController.m402M();
@@ -304,7 +304,7 @@ public final class ScreenBuilder {
                     c0013amM75b2.m257b(abstractC0037h2.getSignature());
                 }
                 ScreenManager.m71b(c0013amM75b2);
-                NetworkUtils.m1212a(vectorM614m3);
+                NetworkUtils.releaseVector(vectorM614m3);
                 return;
             case 40:
                 AppController.m300h();
@@ -318,7 +318,7 @@ public final class ScreenBuilder {
                 }
                 NetworkUtils.m1200b(41, 836);
                 MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-                Vector vectorM1213g2 = NetworkUtils.m1213g();
+                Vector vectorM1213g2 = NetworkUtils.newVector();
                 if (c0052wM745h == c0028ba2.m746W()) {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(0)));
                     vectorM1213g2.addElement(c0052wM745h.f418j);
@@ -329,7 +329,7 @@ public final class ScreenBuilder {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(Utils.max(iM586d2, c0052wM745h.f414f.size() + (c0052wM745h.f420l ? iM586d2 : 0)))));
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(1)));
                     vectorM1213g2.addElement(AppState.emptyStr);
-                    Vector vectorM1213g3 = NetworkUtils.m1213g();
+                    Vector vectorM1213g3 = NetworkUtils.newVector();
                     Enumeration enumerationElements = c0052wM745h.f414f.elements();
                     while (enumerationElements.hasMoreElements()) {
                         Hashtable hashtable = c0052wM745h.f416h;
@@ -345,10 +345,10 @@ public final class ScreenBuilder {
                 return;
             case 42:
                 NetworkUtils.m1200b(42, 862);
-                Vector vectorM1213g4 = NetworkUtils.m1213g();
+                Vector vectorM1213g4 = NetworkUtils.newVector();
                 JsonParser.addIntToVector(vectorM1213g4, AppState.getInt(1527));
                 vectorM1213g4.addElement(AppState.getVector(1356));
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.m1217h().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g4)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g4)))));
                 return;
             case 43:
                 IOUtils.m760c();
@@ -386,11 +386,11 @@ public final class ScreenBuilder {
                 Message c0026az2 = c0026az.body != null ? c0026az : null;
                 NetworkUtils.m1200b(48, 837);
                 if (c0026az2 == null) {
-                    Vector vectorM1213g5 = NetworkUtils.m1213g();
+                    Vector vectorM1213g5 = NetworkUtils.newVector();
                     vectorM1213g5.addElement(strM584b);
                     vectorM1213g5.addElement(AppState.emptyStr);
-                    vectorM1213g5.addElement(NetworkUtils.m1221a(6775156));
-                    IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g5)))));
+                    vectorM1213g5.addElement(NetworkUtils.longToHex(6775156));
+                    IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g5)))));
                     return;
                 }
                 return;
@@ -417,7 +417,7 @@ public final class ScreenBuilder {
                 int size5 = c0052wM745h2.f415g.size();
                 AppState.setBool(1520, size5 != 0);
                 AppState.setBool(1517, c0052wM745h2 != c0028ba3.m746W());
-                AppState.setFromBuffer(1347, NetworkUtils.m1217h().append(AppState.getString(849)).append(size5).append(')'));
+                AppState.setFromBuffer(1347, NetworkUtils.newStringBuffer().append(AppState.getString(849)).append(size5).append(')'));
                 ScreenManager.m71b(ScreenManager.m75b(4589));
                 return;
             case 52:
@@ -500,7 +500,7 @@ public final class ScreenBuilder {
                     AppController.m340m(713);
                     return;
                 }
-                StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
+                StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
                 for (int i8 = 0; i8 < size6; i8++) {
                     stringBufferM1217h2.append(Utils.m530h((String) vectorM516c2.elementAt(i8))).append((char) 0);
                 }
@@ -526,21 +526,21 @@ public final class ScreenBuilder {
                 ScreenManager.m71b(ScreenManager.m75b(3553));
                 return;
             case 71:
-                StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.getString(672));
+                StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(672));
                 Object obj3 = AppState.pool[1365];
-                NetworkUtils.m1197a(71, stringBufferAppend.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).name : ((Contact) obj3).displayName).append(NetworkUtils.m1221a(16167)));
+                NetworkUtils.m1197a(71, stringBufferAppend.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).name : ((Contact) obj3).displayName).append(NetworkUtils.longToHex(16167)));
                 return;
             case 72:
                 NetworkUtils.m1200b(72, 866);
                 Vector vectorM614m4 = AppState.getVector(1356);
-                Vector vectorM1213g6 = NetworkUtils.m1213g();
+                Vector vectorM1213g6 = NetworkUtils.newVector();
                 int size7 = vectorM614m4.size();
                 while (true) {
                     size7--;
                     if (size7 < 0) {
-                        Vector vectorM1213g7 = NetworkUtils.m1213g();
+                        Vector vectorM1213g7 = NetworkUtils.newVector();
                         vectorM1213g7.addElement(vectorM1213g6);
-                        IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377771), NetworkUtils.m1217h().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g7)))));
+                        IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g7)))));
                         return;
                     } else {
                         Hashtable hashtable2 = new Hashtable();
@@ -573,14 +573,14 @@ public final class ScreenBuilder {
                 XmppMailRuProtocol.m838r();
                 return;
             case 77:
-                NetworkUtils.m1197a(77, NetworkUtils.m1217h().append(AppState.getString(672)).append(AppState.getAccount().login).append(NetworkUtils.m1221a(16167)));
+                NetworkUtils.m1197a(77, NetworkUtils.newStringBuffer().append(AppState.getString(672)).append(AppState.getAccount().login).append(NetworkUtils.longToHex(16167)));
                 return;
             case 78:
                 NetworkUtils.m1200b(78, 861);
-                Vector vectorM1213g8 = NetworkUtils.m1213g();
+                Vector vectorM1213g8 = NetworkUtils.newVector();
                 vectorM1213g8.addElement(AppState.getVector(1356));
                 JsonParser.addIntToVector(vectorM1213g8, AppState.getBool(1524) ? 1 : 0);
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1508975), IOUtils.m817a(NetworkUtils.m1217h().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g8)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1508975), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g8)))));
                 return;
             case 79:
                 NetworkUtils.m1198a(79, 863);
@@ -590,21 +590,21 @@ public final class ScreenBuilder {
                 return;
             case 81:
                 NetworkUtils.m1200b(81, 872);
-                Vector vectorM1213g9 = NetworkUtils.m1213g();
+                Vector vectorM1213g9 = NetworkUtils.newVector();
                 vectorM1213g9.addElement(AppState.getString(AppState.getBool(1526) ? 264068 : 1038));
                 JsonParser.addIntToVector(vectorM1213g9, AppState.getInt(1513));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1348)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1349)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1350)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1351)));
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.m1217h().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g9)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g9)))));
                 return;
             case 82:
                 NetworkUtils.m1200b(82, 877);
                 Message c0026az3 = new Message(XmppMailRuProtocol.m871i(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
-                Vector vectorM1213g10 = NetworkUtils.m1213g();
+                Vector vectorM1213g10 = NetworkUtils.newVector();
                 vectorM1213g10.addElement(c0026az3.toHashtable());
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377947), IOUtils.m817a(NetworkUtils.m1217h().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g10)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377947), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g10)))));
                 return;
             case 83:
                 ResourceManager.m925a(4);
@@ -843,7 +843,7 @@ public final class ScreenBuilder {
                             AppController.m353a(vectorM445W);
                             ScreenManager.m71b(NetworkUtils.m1193a(ScreenManager.m75b(1743), vectorM445W));
                         }
-                        NetworkUtils.m1212a(vectorM445W);
+                        NetworkUtils.releaseVector(vectorM445W);
                         return;
                     }
                     if (((Contact) vectorM445W.elementAt(size10)).isOffline()) {
@@ -893,7 +893,7 @@ public final class ScreenBuilder {
                             AppController.m353a(vectorM445W2);
                             ScreenManager.m71b(NetworkUtils.m1193a(ScreenManager.m75b(1930), vectorM445W2));
                         }
-                        NetworkUtils.m1212a(vectorM445W2);
+                        NetworkUtils.releaseVector(vectorM445W2);
                         return;
                     }
                     if (((Contact) vectorM445W2.elementAt(size11)).isOffline()) {
@@ -926,7 +926,7 @@ public final class ScreenBuilder {
                 return;
             case 125:
                 Account abstractC0037hM616i3 = AppState.getAccount();
-                Vector vectorM1213g11 = NetworkUtils.m1213g();
+                Vector vectorM1213g11 = NetworkUtils.newVector();
                 Enumeration enumerationElements2 = abstractC0037hM616i3.contactMap.elements();
                 while (enumerationElements2.hasMoreElements()) {
                     Contact abstractC0041l2 = (Contact) enumerationElements2.nextElement();
@@ -939,11 +939,11 @@ public final class ScreenBuilder {
                 } else {
                     AppController.m340m(762);
                 }
-                NetworkUtils.m1212a(vectorM1213g11);
+                NetworkUtils.releaseVector(vectorM1213g11);
                 return;
             case 126:
                 Account abstractC0037hM616i4 = AppState.getAccount();
-                Vector vectorM1213g12 = NetworkUtils.m1213g();
+                Vector vectorM1213g12 = NetworkUtils.newVector();
                 Enumeration enumerationElements3 = abstractC0037hM616i4.contactMap.elements();
                 while (enumerationElements3.hasMoreElements()) {
                     Contact abstractC0041l3 = (Contact) enumerationElements3.nextElement();
@@ -956,11 +956,11 @@ public final class ScreenBuilder {
                 } else {
                     AppController.m340m(762);
                 }
-                NetworkUtils.m1212a(vectorM1213g12);
+                NetworkUtils.releaseVector(vectorM1213g12);
                 return;
             case 127:
                 Account abstractC0037hM616i5 = AppState.getAccount();
-                Vector vectorM1213g13 = NetworkUtils.m1213g();
+                Vector vectorM1213g13 = NetworkUtils.newVector();
                 Enumeration enumerationElements4 = abstractC0037hM616i5.contactMap.elements();
                 while (enumerationElements4.hasMoreElements()) {
                     Contact abstractC0041l4 = (Contact) enumerationElements4.nextElement();
@@ -973,13 +973,13 @@ public final class ScreenBuilder {
                 } else {
                     AppController.m340m(762);
                 }
-                NetworkUtils.m1212a(vectorM1213g13);
+                NetworkUtils.releaseVector(vectorM1213g13);
                 return;
             case 128:
-                NetworkUtils.m1197a(128, NetworkUtils.m1217h().append(AppState.getString(760)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.m1221a(16167)));
+                NetworkUtils.m1197a(128, NetworkUtils.newStringBuffer().append(AppState.getString(760)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.longToHex(16167)));
                 return;
             case 129:
-                StringBuffer stringBufferAppend2 = NetworkUtils.m1217h().append(AppState.getString(396));
+                StringBuffer stringBufferAppend2 = NetworkUtils.newStringBuffer().append(AppState.getString(396));
                 Vector vectorM441T = AppController.m441T();
                 int i20 = 0;
                 int size12 = vectorM441T.size();
@@ -988,7 +988,7 @@ public final class ScreenBuilder {
                     i21--;
                     if (i21 < 0) {
                         AppState.setInt(1438, i20);
-                        AppState.setObject(1252, (Object) NetworkUtils.m1215a(stringBufferAppend2));
+                        AppState.setObject(1252, (Object) NetworkUtils.bufToStringCached(stringBufferAppend2));
                         ScreenManager.m71b(ScreenManager.m75b(1990));
                         return;
                     } else {
@@ -1062,7 +1062,7 @@ public final class ScreenBuilder {
                 return;
             case 143:
                 AppState.setInt(2722, 0);
-                AppState.setFromBuffer(1292, NetworkUtils.m1217h().append(AppState.getString(771)).append(1 + (AppState.getInt(63) % 1000)));
+                AppState.setFromBuffer(1292, NetworkUtils.newStringBuffer().append(AppState.getString(771)).append(1 + (AppState.getInt(63) % 1000)));
                 ScreenManager.m71b(IOUtils.m793a(ScreenManager.m75b(4138), (MrimAccount) AppState.getAccount(), (Contact) null));
                 return;
             case 144:
@@ -1080,7 +1080,7 @@ public final class ScreenBuilder {
                 String[] strArrM452Z = AppController.m452Z();
                 if (strArrM452Z != null) {
                     AppState.setObject(1285, (Object) strArrM452Z[0]);
-                    AppState.setFromBuffer(1284, NetworkUtils.m1217h().append(AppState.getString(522)).append(strArrM452Z[1]));
+                    AppState.setFromBuffer(1284, NetworkUtils.newStringBuffer().append(AppState.getString(522)).append(strArrM452Z[1]));
                     if (AppState.getInt(282) != 0) {
                         AppState.clearIndex(524);
                         AppState.clearIndex(525);
@@ -1180,14 +1180,14 @@ public final class ScreenBuilder {
                 return;
             case 163:
                 AppState.setInt(1577, 0);
-                NetworkUtils.m1197a(163, NetworkUtils.m1217h().append(AppState.getString(1028)));
+                NetworkUtils.m1197a(163, NetworkUtils.newStringBuffer().append(AppState.getString(1028)));
                 return;
             case 164:
                 NetworkUtils.m1182b();
                 return;
             case 165:
                 NetworkUtils.m1200b(165, 505);
-                AppState.pool[1271] = NetworkUtils.m1222i();
+                AppState.pool[1271] = NetworkUtils.newRequest();
                 return;
             case 166:
                 ScreenManager.m71b(ScreenManager.m75b(4179));
@@ -1522,8 +1522,8 @@ public final class ScreenBuilder {
                 break;
             case 54:
                 NetworkUtils.m1195d();
-                Vector vectorM1213g = NetworkUtils.m1213g();
-                StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+                Vector vectorM1213g = NetworkUtils.newVector();
+                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                 String strM522f2 = Utils.defaultStr(AppState.getString(1352));
                 int length2 = strM522f2.length();
                 int i4 = 0;
@@ -2039,7 +2039,7 @@ public final class ScreenBuilder {
                 break;
             case 155:
                 Vector vectorM1141c = ConnectionThread.m1141c();
-                StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
+                StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
                 Vector vector = c0013amM66b.f108m;
                 int size3 = vector.size();
                 for (int i7 = 0; i7 < size3; i7++) {
@@ -2047,7 +2047,7 @@ public final class ScreenBuilder {
                         stringBufferM1217h2.append(vectorM1141c.elementAt(i7)).append((char) 0);
                     }
                 }
-                String strM1215a = NetworkUtils.m1215a(stringBufferM1217h2);
+                String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h2);
                 ConnectionThread.f355f = Utils.split(strM1215a, (char) 0);
                 AppState.setObject(264, (Object) strM1215a);
                 iM460J = 0;
@@ -2911,7 +2911,7 @@ public final class ScreenBuilder {
                 AppState.setInt(1443, 0);
                 break;
             case 122:
-                NetworkUtils.m1212a(AppState.getVector(1291));
+                NetworkUtils.releaseVector(AppState.getVector(1291));
                 AppState.clearIndex(1291);
                 break;
             case 138:
@@ -2960,8 +2960,8 @@ public final class ScreenBuilder {
         Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size() - 1;
         Screen c0013am = (Screen) vectorM614m.elementAt(size);
-        NetworkUtils.m1212a(c0013am.f110o);
-        NetworkUtils.m1212a(c0013am.f108m);
+        NetworkUtils.releaseVector(c0013am.f110o);
+        NetworkUtils.releaseVector(c0013am.f108m);
         vectorM614m.removeElementAt(size);
         Utils.m526b(vectorM614m);
     }

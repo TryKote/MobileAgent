@@ -14,7 +14,7 @@ public final class Conversation implements ListItem {
     private boolean f342b = true;
 
     /* renamed from: a */
-    public Vector f343a = NetworkUtils.m1213g();
+    public Vector f343a = NetworkUtils.newVector();
 
     /* renamed from: d */
     private SizeCache f345d = new SizeCache();
@@ -99,7 +99,7 @@ public final class Conversation implements ListItem {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int size = this.f343a.size();
         if (this.f344c == 5) {
             stringBufferM1217h.append(AppState.getString(445)).append(size);
@@ -107,7 +107,7 @@ public final class Conversation implements ListItem {
             int i = size - 1;
             stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.m540f(i)));
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     @Override // p000.ListItem
@@ -133,7 +133,7 @@ public final class Conversation implements ListItem {
                     c0033d.msgCount = 30;
                     AppController.f153g = true;
                     HttpClient c0024axM629a = HttpClient.m629a(AppState.getString(2755089), c0033d, 0);
-                    c0024axM629a.m635b(NetworkUtils.m1221a(1414745936));
+                    c0024axM629a.m635b(NetworkUtils.longToHex(1414745936));
                     ByteBuffer c0043nM1315a = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
                     ConnectionThread.m1153a(c0024axM629a, 788628, 2164851);
                     c0024axM629a.m637a(c0043nM1315a.data, c0043nM1315a.length);
@@ -169,7 +169,7 @@ public final class Conversation implements ListItem {
                         c0033d.msgCount = 60;
                         AppController.f153g = true;
                         XmlElement c0022avM562f2 = c0024axM642a.m644b().parseXmlStr().findChildByKey(262156);
-                        ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(c0022avM562f2.findChildByKey(395483).textContent)};
+                        ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(c0022avM562f2.findChildByKey(395483).textContent)};
                         HttpClient.m633a(c0024axM642a);
                         AppController.m344t();
                         return;
@@ -201,16 +201,16 @@ public final class Conversation implements ListItem {
         int[] iArr = new int[16];
         int[] iArrM536a = Utils.m536a(AppState.getBytes(962));
         int[] iArr2 = new int[2];
-        byte[] bArrM1211a = NetworkUtils.m1211a(64);
+        byte[] bArrM1211a = NetworkUtils.newBytes(64);
         m1095a(bArr, i, iArr, iArrM536a, iArr2, bArrM1211a);
-        byte[] bArrM1097a = m1097a(NetworkUtils.m1211a(16), iArr2, 8);
-        byte[] bArrM1211a2 = NetworkUtils.m1211a(64);
+        byte[] bArrM1097a = m1097a(NetworkUtils.newBytes(16), iArr2, 8);
+        byte[] bArrM1211a2 = NetworkUtils.newBytes(64);
         bArrM1211a2[0] = -128;
         int i2 = (iArr2[0] >>> 3) & 63;
         m1095a(bArrM1211a2, i2 < 56 ? 56 - i2 : 120 - i2, iArr, iArrM536a, iArr2, bArrM1211a);
         m1095a(bArrM1097a, 8, iArr, iArrM536a, iArr2, bArrM1211a);
-        NetworkUtils.m1209a(bArrM1211a2);
-        NetworkUtils.m1209a(bArrM1211a);
+        NetworkUtils.releaseBytes(bArrM1211a2);
+        NetworkUtils.releaseBytes(bArrM1211a);
         return m1097a(bArrM1097a, iArrM536a, 16);
     }
 
@@ -252,13 +252,13 @@ public final class Conversation implements ListItem {
         if (i >= i4) {
             Utils.arraycopy((Object) bArr, 0, (Object) bArr2, i2, i5);
             m1096a(bArr2, iArr, iArr2);
-            byte[] bArrM1211a = NetworkUtils.m1211a(64);
+            byte[] bArrM1211a = NetworkUtils.newBytes(64);
             while (i5 + 63 < i) {
                 Utils.arraycopy((Object) bArr, i5, (Object) bArrM1211a, 0, 64);
                 m1096a(bArrM1211a, iArr, iArr2);
                 i5 += 64;
             }
-            NetworkUtils.m1209a(bArrM1211a);
+            NetworkUtils.releaseBytes(bArrM1211a);
             i2 = 0;
         } else {
             i5 = 0;
@@ -377,7 +377,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     public static final Vector m1098a(String str) {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         if (m1106f(str)) {
             int i = 0;
             int i2 = 0;
@@ -421,21 +421,21 @@ public final class Conversation implements ListItem {
                 return null;
             }
             int iM626a = AppState.indexOf(str, 1031040294);
-            int iIndexOf = str.indexOf(NetworkUtils.m1221a(1031302438), AppState.indexOf(str, 1031302438) + 4);
+            int iIndexOf = str.indexOf(NetworkUtils.longToHex(1031302438), AppState.indexOf(str, 1031302438) + 4);
             String strM15c = iIndexOf < 0 ? StringUtils.suffix(str, iM626a + 4) : StringUtils.substring(str, iM626a + 4, iIndexOf);
             String str2 = strM15c;
             if (StringUtils.m2a(strM15c, 1094795585)) {
                 return AppState.emptyStr;
             }
             ByteBuffer c0043nM986d = ResourceManager.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             while (c0043nM986d.length > 0) {
                 int iM1346q = c0043nM986d.readUByte();
                 int iM1346q2 = iM1346q > 127 ? c0043nM986d.readUByte() : 0;
                 int iM1346q3 = iM1346q > 223 ? c0043nM986d.readUByte() : 0;
                 stringBufferM1217h.append(iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043nM986d.readUByte() : 0) - 128)));
             }
-            return NetworkUtils.m1215a(stringBufferM1217h);
+            return NetworkUtils.bufToStringCached(stringBufferM1217h);
         } catch (Throwable unused) {
             return null;
         }
@@ -524,13 +524,13 @@ public final class Conversation implements ListItem {
             return str;
         }
         String strM584b2 = AppState.getString(i2);
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = 0;
         while (true) {
             int i3 = length;
             int iIndexOf = str.indexOf(strM584b, i3);
             if (iIndexOf < 0) {
-                return NetworkUtils.m1215a(stringBufferM1217h.append(StringUtils.suffix(str, i3)));
+                return NetworkUtils.bufToStringCached(stringBufferM1217h.append(StringUtils.suffix(str, i3)));
             }
             stringBufferM1217h.append(StringUtils.substring(str, i3, iIndexOf)).append(strM584b2);
             length = iIndexOf + strM584b.length();
@@ -551,7 +551,7 @@ public final class Conversation implements ListItem {
         String str = null;
         if ((iM1328e2 & 8) == 0) {
             String strM1111p = m1111p(strM1332j);
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             String strM584b = AppState.getString(658377);
             String strM584b2 = AppState.getString(396261);
             String strM584b3 = AppState.getString(592851);
@@ -574,7 +574,7 @@ public final class Conversation implements ListItem {
                 stringBufferM1217h.append(StringUtils.substring(strM1111p, i, iIndexOf));
                 i2 = iIndexOf + 9;
             }
-            strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
+            strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
         } else {
             ByteBuffer c0043nM986d = ResourceManager.m986d(strM1332j);
             int i4 = iM1328e2 & 2097152;
@@ -601,7 +601,7 @@ public final class Conversation implements ListItem {
                 case 2:
                     c0043n.readUTF8Str((String) null);
                     c0043n.readInt();
-                    Vector vectorM1213g = NetworkUtils.m1213g();
+                    Vector vectorM1213g = NetworkUtils.newVector();
                     int iM1328e4 = c0043n.readInt();
                     while (true) {
                         iM1328e4--;
@@ -677,7 +677,7 @@ public final class Conversation implements ListItem {
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:17:0x0074 */
     /* renamed from: p */
     private static final String m1111p(String str) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         String strM584b = AppState.getString(854972);
         int i = 0;
         while (true) {
@@ -706,7 +706,7 @@ public final class Conversation implements ListItem {
                 break;
             }
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: a */
@@ -823,7 +823,7 @@ public final class Conversation implements ListItem {
                 }
             }
         } else {
-            IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(458)).append(iM1328e)));
+            IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(458)).append(iM1328e)));
             c0028ba.closeConnection();
             c0028ba.lastError = c0028ba.getDefaultError();
             c0028ba.markAllRead();
@@ -839,7 +839,7 @@ public final class Conversation implements ListItem {
         XmlElement c0022avM550a2 = XmlElement.createFromState(398003);
         XmlElement c0022avM552a = c0022avM550a.addChild(c0022avM550a2);
         try {
-            c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.m1221a(5067591)).setAttrValue(329117, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(529061)).append(AppController.m367C()).append(',').append(AppController.m368D()).append(',').append(AppController.m365A()).append(',').append(AppController.m366B()).append(',').append(0))));
+            c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.m367C()).append(',').append(AppController.m368D()).append(',').append(AppController.m365A()).append(',').append(AppController.m366B()).append(',').append(0))));
         } catch (Throwable unused) {
         }
         Vector vectorM439R = AppController.m439R();
@@ -859,11 +859,11 @@ public final class Conversation implements ListItem {
                 break;
             }
         }
-        NetworkUtils.m1212a(vectorM439R);
+        NetworkUtils.releaseVector(vectorM439R);
         MrimAccount c0028ba3 = c0028ba;
         if (c0028ba3 != null) {
-            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(463517)).append(c0028ba3.login));
-            strM1215a2 = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(725650)).append(c0028ba3.f226b));
+            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(463517)).append(c0028ba3.login));
+            strM1215a2 = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(725650)).append(c0028ba3.f226b));
         } else {
             String str = AppState.emptyStr;
             strM1215a = str;
@@ -1067,20 +1067,20 @@ public final class Conversation implements ListItem {
     private static final String m1118b(String str, int i, int i2) {
         String strM584b = AppState.getString(i);
         String strM584b2 = AppState.getString(i2);
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         for (int i3 = 0; i3 < length; i3++) {
             char cCharAt = str.charAt(i3);
             int iIndexOf = strM584b.indexOf(cCharAt);
             stringBufferM1217h.append(iIndexOf < 0 ? cCharAt : strM584b2.charAt(iIndexOf));
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: a */
     public static final String m1119a(Object obj) {
         String string = obj.toString().toString();
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         AppState.getString(266215);
         AppState.getString(266221);
         AppState.getString(397287);
@@ -1096,13 +1096,13 @@ public final class Conversation implements ListItem {
                 stringBufferM1217h.append(cCharAt);
             }
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: b */
     public static final String m1120b(Object obj) {
         String string = obj.toString();
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         String strM584b = AppState.getString(266215);
         String strM584b2 = AppState.getString(266221);
         String strM584b3 = AppState.getString(397287);
@@ -1126,7 +1126,7 @@ public final class Conversation implements ListItem {
                 stringBufferM1217h.append('%').append(Integer.toHexString((cCharAt >> 4) & 15)).append(Integer.toHexString(cCharAt & 15));
             }
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: a */
@@ -1136,19 +1136,19 @@ public final class Conversation implements ListItem {
         if (length >= 2) {
             return strM17c;
         }
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         for (int i3 = length; i3 < 2; i3++) {
             stringBufferM1217h.append('0');
         }
         stringBufferM1217h.append(strM17c);
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: j */
     public static final String m1122j(String str) {
         Vector vectorM512e = Utils.splitByNull(AppState.getString(1511369));
         Vector vectorM512e2 = Utils.splitByNull(AppState.getString(462816));
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         int length2 = 0;
         while (length2 < length) {
@@ -1174,12 +1174,12 @@ public final class Conversation implements ListItem {
             }
             length2++;
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: k */
     public static final String m1123k(String str) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         Vector vectorM512e = Utils.splitByNull(AppState.getString(4788096));
         int length = str.length();
         for (int i = 0; i < length; i++) {
@@ -1194,8 +1194,8 @@ public final class Conversation implements ListItem {
                 stringBufferM1217h.append(cCharAt);
             }
         }
-        NetworkUtils.m1212a(vectorM512e);
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        NetworkUtils.releaseVector(vectorM512e);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: l */
@@ -1205,7 +1205,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     private static final String m1125a(String str, boolean z) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char cCharAt = str.charAt(i);
@@ -1217,7 +1217,7 @@ public final class Conversation implements ListItem {
                 stringBufferM1217h.append('%').append(Integer.toHexString(cCharAt >> 4).toUpperCase()).append(Integer.toHexString(cCharAt & 15).toUpperCase());
             }
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     /* renamed from: a */
@@ -1243,6 +1243,6 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void m1130c(int i) {
-        AppState.setFromBuffer(1251, NetworkUtils.m1217h().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(1401).size()).append(')'));
+        AppState.setFromBuffer(1251, NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(1401).size()).append(')'));
     }
 }

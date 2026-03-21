@@ -44,8 +44,8 @@ public final class ChatRoom {
     public boolean f420l;
 
     public ChatRoom() {
-        this.f414f = NetworkUtils.m1213g();
-        this.f415g = NetworkUtils.m1213g();
+        this.f414f = NetworkUtils.newVector();
+        this.f415g = NetworkUtils.newVector();
         this.f416h = new Hashtable();
         this.f420l = true;
     }
@@ -127,11 +127,11 @@ public final class ChatRoom {
 
     public ChatRoom(int i) {
         this.f409a = i;
-        this.f414f = NetworkUtils.m1213g();
-        this.f415g = NetworkUtils.m1213g();
+        this.f414f = NetworkUtils.newVector();
+        this.f415g = NetworkUtils.newVector();
         this.f416h = new Hashtable();
         this.f417i = new Hashtable();
-        this.f418j = NetworkUtils.m1213g();
+        this.f418j = NetworkUtils.newVector();
     }
 
     /* renamed from: g */
@@ -219,6 +219,6 @@ public final class ChatRoom {
         if (this == ((MrimAccount) AppState.getAccount()).m746W()) {
             return this.f410b;
         }
-        return NetworkUtils.m1215a(NetworkUtils.m1217h().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));
     }
 }

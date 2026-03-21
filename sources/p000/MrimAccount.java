@@ -48,7 +48,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.f231g = new VCard();
         this.f232h = true;
         this.f233K = new SizeCache();
-        this.f234L = NetworkUtils.m1213g();
+        this.f234L = NetworkUtils.newVector();
     }
 
     @Override // p000.Account
@@ -87,7 +87,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         this.f230f = c0043n2.readUTF8Str((String) null);
         c0043n2.readWideStr();
-        this.f228d = NetworkUtils.m1213g();
+        this.f228d = NetworkUtils.newVector();
         int iM1328e3 = c0043n2.readInt();
         for (int i = 0; i < iM1328e3; i++) {
             this.f228d.addElement(ChatRoom.m1411b(c0043n2));
@@ -99,7 +99,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.f231g = new VCard();
         this.f232h = true;
         this.f233K = new SizeCache();
-        this.f234L = NetworkUtils.m1213g();
+        this.f234L = NetworkUtils.newVector();
     }
 
     @Override // p000.Account
@@ -289,13 +289,13 @@ public final class MrimAccount extends Account implements ListItem {
                 if (i4 > 0) {
                     AppController.m419a((Account) this, i5);
                     this.msgCount = 60;
-                    StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+                    StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                     while (true) {
                         int i6 = i5;
                         i5 = i6 - 1;
                         if (i6 <= 0) {
-                            this.connection.f349c = 3;
-                            this.connection = new ConnectionThread(NetworkUtils.m1215a(stringBufferM1217h));
+                            this.connection.state = 3;
+                            this.connection = new ConnectionThread(NetworkUtils.bufToStringCached(stringBufferM1217h));
                             this.progress = 4;
                             AppController.f153g = true;
                             break;
@@ -431,14 +431,14 @@ public final class MrimAccount extends Account implements ListItem {
                         String strM1214a = null;
                         String strM529d = Utils.m529d(c0043nM1349s.readWideStr(), '\r');
                         int length = strM529d.length();
-                        StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
+                        StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
                         boolean z = false;
                         int i9 = 0;
                         while (i9 < length) {
                             char cCharAt = strM529d.charAt(i9);
                             if (!z) {
                                 if (cCharAt == '\n' && stringBufferM1217h2.length() == 0) {
-                                    NetworkUtils.m1215a(stringBufferM1217h2);
+                                    NetworkUtils.bufToStringCached(stringBufferM1217h2);
                                     String str2 = (String) hashtable.get(AppState.getString(1379315));
                                     int i10 = str2 != null ? -1 : Integer.parseInt(str2);
                                     i = i10;
@@ -465,21 +465,21 @@ public final class MrimAccount extends Account implements ListItem {
                                     AppState.setInt(1449, 1);
                                     break;
                                 } else if (cCharAt == ':') {
-                                    strM1214a = NetworkUtils.m1214a(stringBufferM1217h2, false);
+                                    strM1214a = NetworkUtils.bufToString(stringBufferM1217h2, false);
                                     z = true;
                                     i9++;
                                 } else {
                                     stringBufferM1217h2.append(cCharAt);
                                 }
                             } else if (cCharAt == '\n') {
-                                hashtable.put(strM1214a, NetworkUtils.m1214a(stringBufferM1217h2, false));
+                                hashtable.put(strM1214a, NetworkUtils.bufToString(stringBufferM1217h2, false));
                                 z = false;
                             } else {
                                 stringBufferM1217h2.append(cCharAt);
                             }
                             i9++;
                         }
-                        NetworkUtils.m1215a(stringBufferM1217h2);
+                        NetworkUtils.bufToStringCached(stringBufferM1217h2);
                         String str22 = (String) hashtable.get(AppState.getString(1379315));
                         int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
                         i = i10_2;
@@ -699,7 +699,7 @@ public final class MrimAccount extends Account implements ListItem {
                 strM1215a = AppState.getString(i3);
                 break;
             default:
-                strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(1226)).append(this.configFlags >> 8));
+                strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(1226)).append(this.configFlags >> 8));
                 break;
         }
         switch (this.configFlags) {
@@ -839,7 +839,7 @@ public final class MrimAccount extends Account implements ListItem {
                 }
             }
         }
-        NetworkUtils.m1212a(vector);
+        NetworkUtils.releaseVector(vector);
     }
 
     /* renamed from: b */
@@ -1088,7 +1088,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: l */
     private final StringBuffer m737l(String str) {
-        return Utils.m496a(NetworkUtils.m1217h().append(m736k(str)), true).append('\n');
+        return Utils.m496a(NetworkUtils.newStringBuffer().append(m736k(str)), true).append('\n');
     }
 
     /* renamed from: a */
@@ -1194,7 +1194,7 @@ public final class MrimAccount extends Account implements ListItem {
         boolean z = true;
         if (this.f228d == null) {
             z = false;
-            this.f228d = NetworkUtils.m1213g();
+            this.f228d = NetworkUtils.newVector();
         }
         Object objM475a = JsonParser.getValue(obj, AppState.getString(329785));
         for (int i = 0; i < ((Vector) objM475a).size(); i++) {
@@ -1344,7 +1344,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final String getText() {
         String strM584b;
         int i;
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         if (this.f231g.f24l) {
             stringBufferM1217h.append(AppState.getString(489));
             String str = this.f231g.f16d;
@@ -1387,7 +1387,7 @@ public final class MrimAccount extends Account implements ListItem {
                 stringBufferM1217h.append(str3).append('.');
             }
         }
-        return NetworkUtils.m1215a(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(stringBufferM1217h);
     }
 
     @Override // p000.ListItem

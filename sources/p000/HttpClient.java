@@ -210,7 +210,7 @@ public final class HttpClient {
         int iIndexOf = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(1052310)) + 16;
         int i2 = Integer.parseInt(StringUtils.substring(str, iIndexOf, str.indexOf(13, iIndexOf)));
         ByteBuffer c0043n = new ByteBuffer();
-        byte[] bArrM1211a = NetworkUtils.m1211a(i2);
+        byte[] bArrM1211a = NetworkUtils.newBytes(i2);
         do {
             i = m639c().read(bArrM1211a, 0, i2 - c0043n.length);
             if (i > 0) {
@@ -223,7 +223,7 @@ public final class HttpClient {
                 break;
             }
         } while (i != -1);
-        NetworkUtils.m1209a(bArrM1211a);
+        NetworkUtils.releaseBytes(bArrM1211a);
         return c0043n;
     }
 

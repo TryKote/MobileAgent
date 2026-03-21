@@ -440,7 +440,7 @@ public final class AppController {
         Vector vectorM614m = AppState.getVector(1291);
         Vector vector = vectorM614m;
         if (vectorM614m == null) {
-            Vector vectorM1213g = NetworkUtils.m1213g();
+            Vector vectorM1213g = NetworkUtils.newVector();
             vector = vectorM1213g;
             AppState.pool[1291] = vectorM1213g;
         }
@@ -542,7 +542,7 @@ public final class AppController {
                     while (true) {
                         size--;
                         if (size < 0) {
-                            NetworkUtils.m1212a(vectorM439R);
+                            NetworkUtils.releaseVector(vectorM439R);
                             break;
                         } else {
                             m447a(vectorM439R, size).m725k();
@@ -559,7 +559,7 @@ public final class AppController {
                     while (true) {
                         size2--;
                         if (size2 < 0) {
-                            NetworkUtils.m1212a(vectorM439R2);
+                            NetworkUtils.releaseVector(vectorM439R2);
                             break;
                         } else {
                             m447a(vectorM439R2, size2).m726m();
@@ -576,7 +576,7 @@ public final class AppController {
                     while (true) {
                         size3--;
                         if (size3 < 0) {
-                            NetworkUtils.m1212a(vectorM439R3);
+                            NetworkUtils.releaseVector(vectorM439R3);
                             break;
                         } else {
                             m447a(vectorM439R3, size3).m728T();
@@ -593,7 +593,7 @@ public final class AppController {
                     while (true) {
                         size4--;
                         if (size4 < 0) {
-                            NetworkUtils.m1212a(vectorM439R4);
+                            NetworkUtils.releaseVector(vectorM439R4);
                             break;
                         } else {
                             m447a(vectorM439R4, size4).m727S();
@@ -1214,7 +1214,7 @@ public final class AppController {
     public static final void m392I() {
         AppState.setInt(1506, 0);
         AppState.clearIndex(1318);
-        AppState.pool[1317] = NetworkUtils.m1213g();
+        AppState.pool[1317] = NetworkUtils.newVector();
     }
 
     /* renamed from: a */
@@ -1336,7 +1336,7 @@ public final class AppController {
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
-                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(NetworkUtils.m1215a(NetworkUtils.m1217h().append(c0052w.f410b).append(' ').append('['))).m901a(StringUtils.intern(Integer.toString(c0052w.f412d)), 1, 0).m898b(NetworkUtils.m1215a(NetworkUtils.m1217h().append('/').append(c0052w.f411c).append(']')));
+                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.f410b).append(' ').append('['))).m901a(StringUtils.intern(Integer.toString(c0052w.f412d)), 1, 0).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.f411c).append(']')));
                 c0032cM898b.f265d = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
@@ -1669,8 +1669,8 @@ public final class AppController {
 
     /* renamed from: ag */
     private static void m432ag() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
-        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.m1221a(6513505));
+        Vector vectorM1213g = NetworkUtils.newVector();
+        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.longToHex(6513505));
         while (c0043nM851h.length > 0) {
             try {
                 Account abstractC0037h = null;
@@ -1738,7 +1738,7 @@ public final class AppController {
                     ((Account) vectorM614m.elementAt(i)).serializeAccount(c0043n, z, false).saveProperties(c0043n);
                 }
             }
-            XmppMailRuProtocol.m852a(NetworkUtils.m1221a(6513505), c0043n, z);
+            XmppMailRuProtocol.m852a(NetworkUtils.longToHex(6513505), c0043n, z);
         } catch (Throwable unused) {
         }
     }
@@ -1832,7 +1832,7 @@ public final class AppController {
 
     /* renamed from: R */
     public static final Vector m439R() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM614m = AppState.getVector(1241);
         int size = vectorM614m.size();
         while (true) {
@@ -1885,7 +1885,7 @@ public final class AppController {
         while (true) {
             size--;
             if (size < 0) {
-                NetworkUtils.m1212a(vectorM439R);
+                NetworkUtils.releaseVector(vectorM439R);
                 return i;
             }
             i += m447a(vectorM439R, size).syncSeq;
@@ -1894,7 +1894,7 @@ public final class AppController {
 
     /* renamed from: V */
     public static final Vector m443V() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM614m = AppState.getVector(1241);
         int size = vectorM614m.size();
         while (true) {
@@ -1937,7 +1937,7 @@ public final class AppController {
 
     /* renamed from: W */
     public static final Vector m445W() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM614m = AppState.getVector(1241);
         int iM541c = Utils.m541c(vectorM614m);
         while (true) {
@@ -1954,14 +1954,14 @@ public final class AppController {
                 }
                 vectorM1213g.addElement(vectorM1078P.elementAt(iM541c2));
             }
-            NetworkUtils.m1212a(vectorM1078P);
+            NetworkUtils.releaseVector(vectorM1078P);
         }
     }
 
     /* renamed from: d */
     public static final Vector m446d(Account abstractC0037h) {
         if (abstractC0037h == null) {
-            Vector vectorM1213g = NetworkUtils.m1213g();
+            Vector vectorM1213g = NetworkUtils.newVector();
             int iM433Q = m433Q();
             while (true) {
                 iM433Q--;
@@ -1979,7 +1979,7 @@ public final class AppController {
                 }
             }
         } else {
-            Vector vectorM1213g2 = NetworkUtils.m1213g();
+            Vector vectorM1213g2 = NetworkUtils.newVector();
             int iM433Q2 = m433Q();
             while (true) {
                 iM433Q2--;
@@ -2011,7 +2011,7 @@ public final class AppController {
 
     /* renamed from: X */
     public static final Vector m448X() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM439R = m439R();
         int size = vectorM439R.size();
         while (true) {
@@ -2031,13 +2031,13 @@ public final class AppController {
                     vectorM1213g.addElement(c0035f);
                 }
             }
-            NetworkUtils.m1212a(vectorM1078P);
+            NetworkUtils.releaseVector(vectorM1078P);
         }
     }
 
     /* renamed from: Y */
     public static final Vector m449Y() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Vector vectorM439R = m439R();
         int size = vectorM439R.size();
         while (true) {
@@ -2055,7 +2055,7 @@ public final class AppController {
     /* renamed from: a */
     public static final void m450a(String str, String str2, String str3, String str4, String str5) {
         AppState.setObject(1240, (Object) str5);
-        AppState.setFromBuffer(1239, Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(NetworkUtils.m1217h(), 262572, str), 262576, str2), 524724, str3), 590268, str4), 524741, str5));
+        AppState.setFromBuffer(1239, Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(NetworkUtils.newStringBuffer(), 262572, str), 262576, str2), 524724, str3), 590268, str4), 524741, str5));
         m304a(13, m451aj());
     }
 
@@ -2089,18 +2089,18 @@ public final class AppController {
         synchronized (obj2) {
             AppState.init(obj);
             AppState.clearRange(1022, 1023);
-            AppState.pool[1373] = NetworkUtils.m1213g();
-            AppState.pool[1272] = NetworkUtils.m1213g();
+            AppState.pool[1373] = NetworkUtils.newVector();
+            AppState.pool[1272] = NetworkUtils.newVector();
             ScreenManager.m65a();
-            AppState.pool[1243] = NetworkUtils.m1213g();
-            AppState.pool[1244] = NetworkUtils.m1213g();
-            AppState.pool[1358] = NetworkUtils.m1213g();
-            AppState.pool[1359] = NetworkUtils.m1213g();
+            AppState.pool[1243] = NetworkUtils.newVector();
+            AppState.pool[1244] = NetworkUtils.newVector();
+            AppState.pool[1358] = NetworkUtils.newVector();
+            AppState.pool[1359] = NetworkUtils.newVector();
             new AsyncTask(3);
             m432ag();
-            AppState.pool[1247] = NetworkUtils.m1213g();
+            AppState.pool[1247] = NetworkUtils.newVector();
             m458ak();
-            AppState.pool[1242] = NetworkUtils.m1213g();
+            AppState.pool[1242] = NetworkUtils.newVector();
             ResourceManager.m927a();
             ResourceManager.m940d();
             AppState.setInt(2, 0);
@@ -2111,7 +2111,7 @@ public final class AppController {
             AppState.setInt(19, 0);
             AppState.setInt(26, 0);
             AppState.setInt(27, 0);
-            AppState.pool[1402] = NetworkUtils.m1213g();
+            AppState.pool[1402] = NetworkUtils.newVector();
             XmppMailRuProtocol.m845v();
             AppState.pool[1371] = new MainCanvas(i, i2);
             AppState.clearRange(332, 333);
@@ -3285,7 +3285,7 @@ public final class AppController {
                                             case 179:
                                                 Vector vectorM614m5 = AppState.getVector(1284);
                                                 if (Utils.m541c(vectorM614m5) <= 1) {
-                                                    NetworkUtils.m1212a(vectorM614m5);
+                                                    NetworkUtils.releaseVector(vectorM614m5);
                                                     IOUtils.m778d((Object) AppState.getString(1029));
                                                     iM1181a = 4;
                                                 } else {
@@ -4025,7 +4025,7 @@ public final class AppController {
                             m299g();
                             AppState.setInt(1507, 0);
                             AppState.setObject(1287, (Object) str);
-                            AppState.setFromBuffer(1284, NetworkUtils.m1217h().append(str2).append(':'));
+                            AppState.setFromBuffer(1284, NetworkUtils.newStringBuffer().append(str2).append(':'));
                             AppState.setLong(1469, jLongValue);
                             iM338l = 115;
                         }

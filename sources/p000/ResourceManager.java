@@ -114,7 +114,7 @@ public final class ResourceManager {
         if (!AppController.m307b(4, 1000L) || (i = (calendarM622k = AppState.getCalendar()).get(12)) == f286m) {
             return;
         }
-        String strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(i)));
+        String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(i)));
         AppState.setObject(1263, (Object) strM1215a);
         f287f = AppState.getGfxContext(0).m214a(strM1215a);
         f286m = i;
@@ -262,7 +262,7 @@ public final class ResourceManager {
             }
         }
         int iM586d3 = (int) ((j * AppState.getInt(113)) / 1048576);
-        AppState.setFromBuffer(1327, NetworkUtils.m1217h().append(iM586d3 / 100).append('.').append(Utils.zeroPad(iM586d3 % 100)).append(' ').append(AppState.getString(117)));
+        AppState.setFromBuffer(1327, NetworkUtils.newStringBuffer().append(iM586d3 / 100).append('.').append(Utils.zeroPad(iM586d3 % 100)).append(' ').append(AppState.getString(117)));
         AppState.setInt(3985, iM586d + 745);
         ScreenManager.m71b(ScreenManager.m75b(3985));
         AppState.clearRange(1325, 1335);
@@ -305,14 +305,14 @@ public final class ResourceManager {
         MrimContact c0035f = (MrimContact) AppState.pool[1365];
         MrimAccount c0028ba = (MrimAccount) c0035f.account;
         if (c0028ba.isConnected()) {
-            c0035f.appendMessage(1, NetworkUtils.m1215a(Utils.m497a(NetworkUtils.m1217h().append(AppState.getString(776)).append(Utils.m530h(strM584b))).append(strM522f)), 0L, 0L);
-            StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('+');
+            c0035f.appendMessage(1, NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append(AppState.getString(776)).append(Utils.m530h(strM584b))).append(strM522f)), 0L, 0L);
+            StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('+');
             if (strM584b.charAt(0) == '8') {
                 stringBufferAppend.append('7').append(StringUtils.suffix(strM584b, 1));
             } else {
                 stringBufferAppend.append(strM584b);
             }
-            iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(NetworkUtils.m1215a(stringBufferAppend)).writeStringUTF16(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
+            iM1052c = c0028ba.trySendData(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(NetworkUtils.bufToStringCached(stringBufferAppend)).writeStringUTF16(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
         } else {
             iM1052c = 299;
         }
@@ -353,7 +353,7 @@ public final class ResourceManager {
                         str = strM11a;
                     }
                     if (z && str != null) {
-                        NetworkUtils.m1212a(vector);
+                        NetworkUtils.releaseVector(vector);
                         IOUtils.m778d((Object) AppState.getString(494));
                         HttpClient.m633a(c0024axM630a);
                         AppController.m344t();
@@ -408,7 +408,7 @@ public final class ResourceManager {
             i3++;
             jArr[i5] = j;
         }
-        NetworkUtils.m1209a(bArrM581a);
+        NetworkUtils.releaseBytes(bArrM581a);
         return jArr;
     }
 
@@ -560,7 +560,7 @@ public final class ResourceManager {
             c0013amM75b.f103i = false;
             c0013amM75b.m255a(551);
         }
-        NetworkUtils.m1212a(vectorM439R);
+        NetworkUtils.releaseVector(vectorM439R);
         ScreenManager.m70a(c0013amM75b);
         TabBar.m169e();
         TabBar.m176a(36, (Account) null);
@@ -731,7 +731,7 @@ public final class ResourceManager {
             while (true) {
                 size--;
                 if (size < 0) {
-                    NetworkUtils.m1212a(vectorM513a);
+                    NetworkUtils.releaseVector(vectorM513a);
                     HttpClient.m633a(c0024axM631b);
                     AppController.m344t();
                     return;
@@ -740,7 +740,7 @@ public final class ResourceManager {
                     if (vectorM514a.size() == 5) {
                         XmppContactGroup.f310a.addElement(new Object[]{vectorM514a.elementAt(0), new long[]{Long.parseLong((String) vectorM514a.elementAt(1)), Long.parseLong((String) vectorM514a.elementAt(2))}, vectorM514a.elementAt(4)});
                     }
-                    NetworkUtils.m1212a(vectorM514a);
+                    NetworkUtils.releaseVector(vectorM514a);
                 }
             }
         } catch (RuntimeException th) {
@@ -756,18 +756,18 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final int m966a(Vector vector, String str, String str2) {
-        StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
+        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         String str3 = AppState.emptyStr;
-        String strM1221a = NetworkUtils.m1221a(8236);
+        String strM1221a = NetworkUtils.longToHex(8236);
         int i = 0;
         while (i < Utils.m541c(vector)) {
             stringBufferM1217h.append(i > 0 ? strM1221a : str3).append(((String[]) vector.elementAt(i))[0]);
             i++;
         }
-        AppState.setObject(1352, (Object) NetworkUtils.m1215a(stringBufferM1217h));
+        AppState.setObject(1352, (Object) NetworkUtils.bufToStringCached(stringBufferM1217h));
         AppState.setObject(1353, (Object) Utils.defaultStr(str));
         String str4 = AppState.emptyStr;
-        AppState.setFromBuffer(1354, NetworkUtils.m1217h().append(AppState.getBool(92) ? NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(93)).append('\n')) : str4).append(AppState.getBool(94) ? NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(95)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(874)));
+        AppState.setFromBuffer(1354, NetworkUtils.newStringBuffer().append(AppState.getBool(92) ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(93)).append('\n')) : str4).append(AppState.getBool(94) ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(95)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(874)));
         return 54;
     }
 
@@ -792,7 +792,7 @@ public final class ResourceManager {
         } else {
             ByteBuffer c0043nM1310c2 = new ByteBuffer().writeCompressed(1704439);
             int iIndexOf2 = strM15c.indexOf(46);
-            c0043nM1310c = c0043nM1310c2.writeRawString(iIndexOf2 < 0 ? NetworkUtils.m1221a(6775139) : StringUtils.prefix(strM15c, iIndexOf2)).writeByte(47).writeRawString(iIndexOf < 0 ? str : StringUtils.prefix(str, iIndexOf)).writeCompressed(467 + AppState.getInt(4895));
+            c0043nM1310c = c0043nM1310c2.writeRawString(iIndexOf2 < 0 ? NetworkUtils.longToHex(6775139) : StringUtils.prefix(strM15c, iIndexOf2)).writeByte(47).writeRawString(iIndexOf < 0 ? str : StringUtils.prefix(str, iIndexOf)).writeCompressed(467 + AppState.getInt(4895));
         }
         objArr[0] = c0043nM1310c.getStringAndClear();
         objArr[1] = abstractC0037h;
@@ -904,7 +904,7 @@ public final class ResourceManager {
         if (str != null) {
             ByteBuffer c0043nM1385u3 = c0043nM1310c.writeUInt(1031302438).writeRawString(strM809a).writeUInt(1031367974).writeRawString(strM810b).writeUInt(1031040294);
             if (StringUtils.isEmpty(str)) {
-                strM1109a = NetworkUtils.m1221a(1094795585);
+                strM1109a = NetworkUtils.longToHex(1094795585);
             } else {
                 ByteBuffer c0043n = new ByteBuffer();
                 int length = str.length();
@@ -957,8 +957,8 @@ public final class ResourceManager {
             return;
         }
         try {
-            StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
-            StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
+            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+            StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
             ByteBuffer c0043n = (ByteBuffer) obj;
             while (c0043n.length > 0 && 32 != (iM1346q2 = c0043n.readUByte())) {
                 stringBufferM1217h.append((char) iM1346q2);

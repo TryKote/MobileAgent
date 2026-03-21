@@ -133,14 +133,14 @@ public final class Screen {
     /* renamed from: a */
     public final Screen m218a() {
         if (AppState.getBool(245)) {
-            this.f110o = NetworkUtils.m1213g();
+            this.f110o = NetworkUtils.newVector();
             m219s();
         }
         return this;
     }
 
     private Screen(int i, int i2, int i3, int i4) {
-        this.f108m = NetworkUtils.m1213g();
+        this.f108m = NetworkUtils.newVector();
         this.f109n = new int[16];
         this.f102h = i;
         this.f95b = i3;
@@ -555,7 +555,7 @@ public final class Screen {
             c0012al.m210c(1, i40, ((AppState.getInt(1528) - 2) * abstractC0037h.msgCount) / 100, iM502a3);
             c0012al.m216a(abstractC0037h.getIconId(), 3, i40 + ScreenManager.m73f());
             c0012al.m207b(0);
-            c0012al.m213a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(abstractC0037h.login).append(' ').append(abstractC0037h.msgCount).append('%')), 21, i39, 36);
+            c0012al.m213a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(abstractC0037h.login).append(' ').append(abstractC0037h.msgCount).append('%')), 21, i39, 36);
             iM605e3 -= iM502a2;
         }
     }
@@ -1229,7 +1229,7 @@ public final class Screen {
 
     /* renamed from: q */
     public final void m258q() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         int size = this.f108m.size();
         while (true) {
             size--;
@@ -1246,7 +1246,7 @@ public final class Screen {
         while (true) {
             size2--;
             if (size2 < 0) {
-                NetworkUtils.m1212a(vectorM1213g);
+                NetworkUtils.releaseVector(vectorM1213g);
                 return;
             }
             m225a((MenuItem) vectorM1213g.elementAt(size2));

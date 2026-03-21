@@ -98,7 +98,7 @@ public abstract class Account {
     private int authMode;
 
     public Account(int i, String str, String str2) {
-        this.groups = NetworkUtils.m1213g();
+        this.groups = NetworkUtils.newVector();
         this.accountId = i;
         this.login = str;
         this.displayName = str;
@@ -106,7 +106,7 @@ public abstract class Account {
         this.syncArray = new int[9];
         this.dataBuffer = new ByteBuffer();
         this.contactMap = new Hashtable();
-        this.extras = NetworkUtils.m1213g();
+        this.extras = NetworkUtils.newVector();
         ContactGroup abstractC0046qMo85b = createOnlineGroup();
         abstractC0046qMo85b.isSpecial = true;
         this.onlineGroup = abstractC0046qMo85b;
@@ -218,10 +218,10 @@ public abstract class Account {
     public final int sendData(ByteBuffer c0043n) {
         AppController.m420b(this, c0043n.length);
         ConnectionThread c0039j = this.connection;
-        if (c0039j.f348b != null) {
+        if (c0039j.exception != null) {
             throw new RuntimeException();
         }
-        ByteBuffer c0043n2 = c0039j.f347a;
+        ByteBuffer c0043n2 = c0039j.outBuffer;
         int i = c0043n.length;
         if (i > 0) {
             synchronized (c0043n2) {
@@ -323,7 +323,7 @@ public abstract class Account {
     /* renamed from: F */
     public final void closeConnection() {
         if (this.connection != null) {
-            this.connection.f349c = 3;
+            this.connection.state = 3;
         }
         this.connection = null;
         this.progress = 0;
@@ -332,11 +332,11 @@ public abstract class Account {
     /* renamed from: G */
     public final void handleConnError() {
         String strM1215a;
-        Throwable th = this.connection.f348b;
+        Throwable th = this.connection.exception;
         if (null == th) {
             strM1215a = AppState.getString(951);
         } else {
-            strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         IOUtils.m784a(this, strM1215a);
         closeConnection();
@@ -352,7 +352,7 @@ public abstract class Account {
 
     /* renamed from: I */
     public final String getFormattedName() {
-        return this.authMode != 3 ? this.password : NetworkUtils.m1215a(NetworkUtils.m1217h().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.suffix(this.password, 1)));
+        return this.authMode != 3 ? this.password : NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.suffix(this.password, 1)));
     }
 
     /* renamed from: J */
@@ -368,7 +368,7 @@ public abstract class Account {
 
     /* renamed from: f */
     public final void handleError(int i) {
-        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(459)).append(this).append(AppState.getString(460)).append(AppState.getString(457)).append(i)));
+        IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(459)).append(this).append(AppState.getString(460)).append(AppState.getString(457)).append(i)));
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -581,7 +581,7 @@ public abstract class Account {
 
     /* renamed from: M */
     public final Vector getUnreadContacts() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
@@ -594,7 +594,7 @@ public abstract class Account {
 
     /* renamed from: N */
     public final Vector getOfflineContacts() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
@@ -607,12 +607,12 @@ public abstract class Account {
 
     /* renamed from: O */
     public Vector getPendingContacts() {
-        return NetworkUtils.m1213g();
+        return NetworkUtils.newVector();
     }
 
     /* renamed from: P */
     public final Vector getAllContacts() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             vectorM1213g.addElement(enumerationElements.nextElement());
@@ -630,7 +630,7 @@ public abstract class Account {
 
     /* renamed from: Q */
     public final Vector getOnlineContacts() {
-        Vector vectorM1213g = NetworkUtils.m1213g();
+        Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = this.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();

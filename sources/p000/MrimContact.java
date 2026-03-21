@@ -82,7 +82,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         Vector vectorM516c = Utils.m516c(this.f300g, ',');
         String str = (String) vectorM516c.elementAt(0);
-        NetworkUtils.m1212a(vectorM516c);
+        NetworkUtils.releaseVector(vectorM516c);
         return str;
     }
 
@@ -144,12 +144,12 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: a */
     public final void m989a(Vector vector) {
         if (vector == null) {
-            NetworkUtils.m1212a(this.f305k);
+            NetworkUtils.releaseVector(this.f305k);
             this.f305k = null;
             return;
         }
         if (this.f305k == null) {
-            this.f305k = NetworkUtils.m1213g();
+            this.f305k = NetworkUtils.newVector();
         }
         this.f305k.removeAllElements();
         int size = vector.size();
@@ -235,11 +235,11 @@ public final class MrimContact extends Contact implements ListItem {
         do {
             size--;
             if (size < 0) {
-                NetworkUtils.m1212a(vectorM516c);
+                NetworkUtils.releaseVector(vectorM516c);
                 return false;
             }
         } while (!str.equals(vectorM516c.elementAt(size)));
-        NetworkUtils.m1212a(vectorM516c);
+        NetworkUtils.releaseVector(vectorM516c);
         return true;
     }
 
@@ -369,12 +369,12 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(this.displayName);
+        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(this.displayName);
         String str = this.f306l.f16d;
         if (str.length() > 0) {
             stringBufferAppend.append(',').append(' ').append(str).append('.');
         }
-        return NetworkUtils.m1215a(stringBufferAppend);
+        return NetworkUtils.bufToStringCached(stringBufferAppend);
     }
 
     @Override // p000.ListItem

@@ -10,7 +10,7 @@ public abstract class ContactGroup implements Sortable {
     public final Account account;
 
     /* renamed from: e */
-    public final Vector contacts = NetworkUtils.m1213g();
+    public final Vector contacts = NetworkUtils.newVector();
 
     /* renamed from: f */
     public String name;
@@ -54,7 +54,7 @@ public abstract class ContactGroup implements Sortable {
         MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().writeByte(35).writeIntAsString(this.account.accountId).writeByte(35).writeIntAsString(getGroupType()).readAllByteStr()).m896a(this.isSpecial ? 30 : 31);
         c0032cM896a.f265d = this;
         if (isCustom()) {
-            MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.name).append(' ').append('(')), 1, 0);
+            MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.name).append(' ').append('(')), 1, 0);
             int i2 = 0;
             int size = this.contacts.size();
             while (true) {
@@ -68,7 +68,7 @@ public abstract class ContactGroup implements Sortable {
                 }
             }
             MenuItem c0032cM901a2 = c0032cM901a.m901a(StringUtils.intern(Integer.toString(i2)), 1, 20);
-            StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('/');
+            StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('/');
             int size2 = this.contacts.size();
             int i3 = size2;
             int i4 = size2;
@@ -82,9 +82,9 @@ public abstract class ContactGroup implements Sortable {
                     i3--;
                 }
             }
-            c0032cM901a2.m901a(NetworkUtils.m1215a(stringBufferAppend.append(i3).append(')')), 1, 0);
+            c0032cM901a2.m901a(NetworkUtils.bufToStringCached(stringBufferAppend.append(i3).append(')')), 1, 0);
         } else if (i >= 0) {
-            c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.name).append(' ').append('(').append(i).append(')')), 1, 0);
+            c0032cM896a.m901a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.name).append(' ').append('(').append(i).append(')')), 1, 0);
         } else {
             c0032cM896a.m901a(this.name, 1, 0);
         }

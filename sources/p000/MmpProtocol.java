@@ -251,7 +251,7 @@ public final class MmpProtocol extends Account {
                         IOUtils.m778d((Object) AppState.getString(479));
                         this.progress = 0;
                     }
-                    NetworkUtils.m1212a(vectorM439R);
+                    NetworkUtils.releaseVector(vectorM439R);
                     break;
                 } else {
                     this.progress = 3;
@@ -326,7 +326,7 @@ public final class MmpProtocol extends Account {
                 this.lastError = getDefaultError();
                 return;
             }
-            NetworkUtils.m1212a(vectorM440S);
+            NetworkUtils.releaseVector(vectorM440S);
         }
         while (true) {
             ByteBuffer c0043nM1350t2 = this.dataBuffer.extractJPEG();
@@ -393,7 +393,7 @@ public final class MmpProtocol extends Account {
                                     bArr2 = bArr4;
                                 }
                                 if (iM1353u != 3) {
-                                    NetworkUtils.m1209a(bArr4);
+                                    NetworkUtils.releaseBytes(bArr4);
                                 }
                             }
                             MrimAccount c0028ba = (MrimAccount) AppController.m440S().elementAt(0);
@@ -457,7 +457,7 @@ public final class MmpProtocol extends Account {
                     case 4891:
                         String strM1363z2 = c0043nM1299a.readLenPrefixStr();
                         byte bM1344o = c0043nM1299a.readByte();
-                        onMessage(strM1363z2, 0L, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(483)).append(AppState.getString(bM1344o == 1 ? 484 : 485)).append(c0043nM1299a.readVarLenStr())));
+                        onMessage(strM1363z2, 0L, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(483)).append(AppState.getString(bM1344o == 1 ? 484 : 485)).append(c0043nM1299a.readVarLenStr())));
                         if (bM1344o == 1 && null != (abstractC0041lM1069c = getContact((Object) strM1363z2))) {
                             abstractC0041lM1069c.performAction();
                             break;
@@ -467,7 +467,7 @@ public final class MmpProtocol extends Account {
                         onMessage(c0043nM1299a.readLenPrefixStr(), 0L, AppState.getString(480));
                         break;
                     case 5377:
-                        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.getString(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.getString(482))));
+                        IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.getString(482))));
                         XmppMailRuProtocol.m881b(this, iM1356x);
                         break;
                     case 5379:
@@ -580,11 +580,11 @@ public final class MmpProtocol extends Account {
                             byte[] bArr2 = new byte[iM1353u5];
                             c0043n.readIntoBytes(bArr2);
                             String strM17c = StringUtils.intern(new String(bArr2));
-                            if (strM17c.startsWith(NetworkUtils.m1221a(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.suffix(strM17c, 7), 0, 23, -1)) >= 0) {
+                            if (strM17c.startsWith(NetworkUtils.longToHex(28270022039266153L)) && (iM511a = Utils.m511a(StringUtils.suffix(strM17c, 7), 0, 23, -1)) >= 0) {
                                 c0009ai.defaultIcon &= -65536;
                                 c0009ai.defaultIcon |= iM511a + 269;
                             }
-                            NetworkUtils.m1209a(bArr2);
+                            NetworkUtils.releaseBytes(bArr2);
                             iM1353u3 = i7 - iM1353u5;
                         } else {
                             c0043n.skip(iM1353u5);
