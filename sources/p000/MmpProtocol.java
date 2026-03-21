@@ -248,7 +248,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.m541c(vectorM439R) == 0) {
-                        IOUtils.m778d((Object) AppState.getString(479));
+                        IOUtils.postEvent((Object) AppState.getString(479));
                         this.progress = 0;
                     }
                     NetworkUtils.releaseVector(vectorM439R);
@@ -412,7 +412,7 @@ public final class MmpProtocol extends Account {
                         XmppMailRuProtocol.removeQueuedCommand(this, iM1356x);
                         break;
                     case 1031:
-                        IOUtils.m821a(this, c0043nM1299a);
+                        IOUtils.handleFileTransfer(this, c0043nM1299a);
                         break;
                     case 1035:
                         long jM1341m = c0043nM1299a.readLong();
@@ -467,7 +467,7 @@ public final class MmpProtocol extends Account {
                         onMessage(c0043nM1299a.readLenPrefixStr(), 0L, AppState.getString(480));
                         break;
                     case 5377:
-                        IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.getString(482))));
+                        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.getString(482))));
                         XmppMailRuProtocol.removeQueuedCommand(this, iM1356x);
                         break;
                     case 5379:
@@ -745,13 +745,13 @@ public final class MmpProtocol extends Account {
             return 0;
         }
         if (c0009ai.canUnblock()) {
-            trySendData(IOUtils.m792c(this, c0009ai));
+            trySendData(IOUtils.unblockContact(this, c0009ai));
         }
         if (c0009ai.canDelete()) {
-            trySendData(IOUtils.m790a(this, c0009ai));
+            trySendData(IOUtils.deleteContact(this, c0009ai));
         }
         if (c0009ai.canBlock()) {
-            trySendData(IOUtils.m791b(this, c0009ai));
+            trySendData(IOUtils.blockContact(this, c0009ai));
         }
         return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.m967e(5), c0009ai}));
     }
@@ -766,7 +766,7 @@ public final class MmpProtocol extends Account {
         trySendData(AppController.m464a(this, 4884, new ByteBuffer().writeByteLenStr(str).writeIntLE(0)));
         MmpContact c0009ai = (MmpContact) getContact((Object) str);
         if (null != c0009ai && !c0009ai.isOnline()) {
-            return trySendData(IOUtils.m753a(this, c0009ai, str3));
+            return trySendData(IOUtils.createSendMessageCmd(this, c0009ai, str3));
         }
         trySendData(ResourceManager.m961a(this));
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
@@ -834,7 +834,7 @@ public final class MmpProtocol extends Account {
         if (abstractC0041l.isOnline()) {
             return 310;
         }
-        return trySendData(IOUtils.m792c(this, (MmpContact) abstractC0041l));
+        return trySendData(IOUtils.unblockContact(this, (MmpContact) abstractC0041l));
     }
 
     @Override // p000.Account
@@ -842,9 +842,9 @@ public final class MmpProtocol extends Account {
     public final int validateContactBlock(Contact abstractC0041l) {
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         if (c0009ai.canBlock() && !c0009ai.canDelete()) {
-            trySendData(IOUtils.m791b(this, c0009ai));
+            trySendData(IOUtils.blockContact(this, c0009ai));
         }
-        return trySendData(IOUtils.m790a(this, c0009ai));
+        return trySendData(IOUtils.deleteContact(this, c0009ai));
     }
 
     @Override // p000.Account
@@ -852,9 +852,9 @@ public final class MmpProtocol extends Account {
     public final int validateContactUnblock(Contact abstractC0041l) {
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         if (!c0009ai.canBlock() && c0009ai.canDelete()) {
-            trySendData(IOUtils.m790a(this, c0009ai));
+            trySendData(IOUtils.deleteContact(this, c0009ai));
         }
-        return trySendData(IOUtils.m791b(this, c0009ai));
+        return trySendData(IOUtils.blockContact(this, c0009ai));
     }
 
     @Override // p000.Account

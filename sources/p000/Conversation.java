@@ -179,7 +179,7 @@ public final class Conversation implements ListItem {
             } catch (Throwable th) {
                 MmpProtocol c0033d2 = (MmpProtocol) objArr[0];
                 c0033d2.lastError = c0033d2.getDefaultError();
-                IOUtils.m784a(c0033d2, th.toString());
+                IOUtils.postAccountMessage(c0033d2, th.toString());
                 c0033d2.progress = 0;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.m344t();
@@ -823,7 +823,7 @@ public final class Conversation implements ListItem {
                 }
             }
         } else {
-            IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(458)).append(iM1328e)));
+            IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(458)).append(iM1328e)));
             c0028ba.closeConnection();
             c0028ba.lastError = c0028ba.getDefaultError();
             c0028ba.markAllRead();
@@ -973,13 +973,13 @@ public final class Conversation implements ListItem {
             r0 = r9
             r1 = 197037(0x301ad, float:2.76108E-40)
             java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            long r0 = p000.IOUtils.m807b(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            long r0 = p000.IOUtils.longitudeToPixel(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r1 = r0; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r13 = r1
             r1 = r9
             r2 = 197041(0x301b1, float:2.76113E-40)
             java.lang.String r1 = r1.getIntAttribute(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            long r1 = p000.IOUtils.m808c(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            long r1 = p000.IOUtils.latitudeToPixel(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = r1; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r11 = r2
             p000.MapRenderer.setPosition(r0, r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
@@ -1031,7 +1031,7 @@ public final class Conversation implements ListItem {
             r1 = 0
             r9 = r1
             java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> Ldc
-            p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> Ldc
+            p000.IOUtils.postEvent(r0)     // Catch: java.lang.Throwable -> Ldc
         Ld4:
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)

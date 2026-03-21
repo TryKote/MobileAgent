@@ -68,7 +68,7 @@ public abstract class ChatRenderer {
             scaleTimestamp = j;
             scaleZoom = i;
             int i3 = i;
-            int iM689d = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.m810b(j)))), SoftFloat.longToFloat((50 * AppController.m315d(i3)) / AppController.m316e(i3))));
+            int iM689d = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * AppController.m315d(i3)) / AppController.m316e(i3))));
             int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
             int i5 = (iM689d / i4) * i4;
             scaleBarWidth = scaleToPixels(i5, i, j);
@@ -313,7 +313,7 @@ public abstract class ChatRenderer {
 
     /* renamed from: a */
     private static int scaleToPixels(int i, int i2, long j) {
-        return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(AppController.m317a(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.m810b(j))))));
+        return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(AppController.m317a(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j))))));
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:132:0x0416, code lost:

@@ -144,7 +144,7 @@ public final class MenuItem {
                 this.data = boolM968a;
                 this.elements.setElementAt(createIconData(boolM968a.booleanValue() ? 25 : 24), 0);
             }
-            IOUtils.m778d(this);
+            IOUtils.postEvent(this);
             return 0;
         }
         if (this.id == 15) {

@@ -99,7 +99,7 @@ public final class AppController {
         int iM586d = AppState.getInt(1513);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         ChatRoom c0052wM745h = c0028ba.findChatRoomById(iM586d);
-        IOUtils.m814e(c0052wM745h.readMessages);
+        IOUtils.setSelectedItems(c0052wM745h.readMessages);
         if (StringUtils.m3a(852, str)) {
             c0052wM745h.readMessages.removeAllElements();
             return 0;
@@ -1046,7 +1046,7 @@ public final class AppController {
             int i2 = i - 500;
             i = i2;
             if (i2 < 0) {
-                IOUtils.m778d((Object) objArr);
+                IOUtils.postEvent((Object) objArr);
                 return;
             }
             Thread.sleep(500L);
@@ -1285,7 +1285,7 @@ public final class AppController {
             jMo275w = MapRenderer.currentLat;
         }
         AppState.setInt(1479, 0);
-        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.m809a(jMo274v), IOUtils.m810b(jMo275w)), jMo274v, jMo275w);
+        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.pixelToLongitude(jMo274v), IOUtils.pixelToLatitude(jMo275w)), jMo274v, jMo275w);
         return 6;
     }
 
@@ -2258,7 +2258,7 @@ public final class AppController {
                                                 if (m305K(10) && MapRenderer.crosshairVisible) {
                                                     if (AppState.getBool(276)) {
                                                         if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(39)) != VCard.staticTs5) && AppState.getBool(280)) {
-                                                            IOUtils.m772f();
+                                                            IOUtils.requestNearbyPeople();
                                                         }
                                                     }
                                                     MapRenderer.setCrosshairVisible(false);
@@ -2440,14 +2440,14 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 37:
-                                                Object[] objArrM1156c = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c != null) {
                                                     int iM586d4 = AppState.getInt(1512);
-                                                    int iM818c = IOUtils.m818c(objArrM1156c);
+                                                    int iM818c = IOUtils.validateJsonResponse(objArrM1156c);
                                                     if (iM818c != 0) {
                                                         iM1181a = iM818c;
                                                     } else {
-                                                        ((MrimAccount) AppState.getAccount()).parseChatRoomsFromJson(IOUtils.m819l());
+                                                        ((MrimAccount) AppState.getAccount()).parseChatRoomsFromJson(IOUtils.getJsonPayload());
                                                         iM1181a = iM586d4;
                                                     }
                                                 } else {
@@ -2468,13 +2468,13 @@ public final class AppController {
                                                 iM338l = (abstractC0041lM611g.flags != 0) || abstractC0041lM611g.dirty ? 40 : 0;
                                                 break;
                                             case 41:
-                                                Object[] objArrM1156c2 = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c2 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c2 != null) {
-                                                    int iM818c2 = IOUtils.m818c(objArrM1156c2);
+                                                    int iM818c2 = IOUtils.validateJsonResponse(objArrM1156c2);
                                                     if (iM818c2 != 0) {
                                                         iM1181a = iM818c2;
                                                     } else {
-                                                        Object objM819l = IOUtils.m819l();
+                                                        Object objM819l = IOUtils.getJsonPayload();
                                                         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
                                                         ChatRoom c0052wM745h2 = c0028ba2.findChatRoomById(AppState.getInt(1513));
                                                         if (c0052wM745h2 != c0028ba2.getLastChatRoom()) {
@@ -2519,13 +2519,13 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 42:
-                                                Object[] objArrM1156c3 = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c3 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c3 != null) {
-                                                    int iM818c3 = IOUtils.m818c(objArrM1156c3);
+                                                    int iM818c3 = IOUtils.validateJsonResponse(objArrM1156c3);
                                                     if (iM818c3 != 0) {
                                                         iM1181a = iM818c3;
                                                     } else {
-                                                        Object objM819l2 = IOUtils.m819l();
+                                                        Object objM819l2 = IOUtils.getJsonPayload();
                                                         MrimAccount c0028ba3 = (MrimAccount) AppState.getAccount();
                                                         int size4 = ((Vector) objM819l2).size();
                                                         for (int i6 = 0; i6 < size4; i6++) {
@@ -2734,13 +2734,13 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 72:
-                                                Object[] objArrM1156c4 = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c4 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c4 != null) {
-                                                    int iM818c4 = IOUtils.m818c(objArrM1156c4);
+                                                    int iM818c4 = IOUtils.validateJsonResponse(objArrM1156c4);
                                                     if (iM818c4 != 0) {
                                                         iM1181a = iM818c4;
                                                     } else {
-                                                        Object objM819l3 = IOUtils.m819l();
+                                                        Object objM819l3 = IOUtils.getJsonPayload();
                                                         int size5 = ((Vector) objM819l3).size();
                                                         while (true) {
                                                             size5--;
@@ -2793,13 +2793,13 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 78:
-                                                Object[] objArrM1156c5 = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c5 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c5 != null) {
-                                                    int iM818c5 = IOUtils.m818c(objArrM1156c5);
+                                                    int iM818c5 = IOUtils.validateJsonResponse(objArrM1156c5);
                                                     if (iM818c5 != 0) {
                                                         iM1181a = iM818c5;
                                                     } else {
-                                                        Object objM819l4 = IOUtils.m819l();
+                                                        Object objM819l4 = IOUtils.getJsonPayload();
                                                         Object objM476a = JsonParser.getValueByInt(objM819l4, 329636);
                                                         if (JsonParser.getIntByInt(objM819l4, 198543) == 1) {
                                                             int size6 = ((Vector) objM476a).size();
@@ -2835,14 +2835,14 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 81:
-                                                Object[] objArrM1156c6 = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c6 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c6 != null) {
-                                                    int iM818c6 = IOUtils.m818c(objArrM1156c6);
+                                                    int iM818c6 = IOUtils.validateJsonResponse(objArrM1156c6);
                                                     if (iM818c6 != 0) {
                                                         iM1181a = iM818c6;
                                                     } else {
                                                         ChatRoom c0052wM746W = ((MrimAccount) AppState.getAccount()).getLastChatRoom();
-                                                        Vector vector = (Vector) IOUtils.m819l();
+                                                        Vector vector = (Vector) IOUtils.getJsonPayload();
                                                         c0052wM746W.clear();
                                                         int size7 = vector.size();
                                                         for (int i10 = 0; i10 < size7; i10++) {
@@ -2887,10 +2887,10 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 82:
-                                                Object[] objArrM1156c7 = ConnectionThread.m1156c(IOUtils.m816k());
+                                                Object[] objArrM1156c7 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c7 != null) {
-                                                    int iM818c7 = IOUtils.m818c(objArrM1156c7);
-                                                    iM1181a = iM818c7 != 0 ? iM818c7 : StringUtils.isEmpty((String) IOUtils.m819l()) ? m338l(878) : 83;
+                                                    int iM818c7 = IOUtils.validateJsonResponse(objArrM1156c7);
+                                                    iM1181a = iM818c7 != 0 ? iM818c7 : StringUtils.isEmpty((String) IOUtils.getJsonPayload()) ? m338l(878) : 83;
                                                 } else {
                                                     iM1181a = 0;
                                                 }
@@ -3286,7 +3286,7 @@ public final class AppController {
                                                 Vector vectorM614m5 = AppState.getVector(1284);
                                                 if (Utils.m541c(vectorM614m5) <= 1) {
                                                     NetworkUtils.releaseVector(vectorM614m5);
-                                                    IOUtils.m778d((Object) AppState.getString(1029));
+                                                    IOUtils.postEvent((Object) AppState.getString(1029));
                                                     iM1181a = 4;
                                                 } else {
                                                     Object objElementAt2 = vectorM614m5.elementAt(0);
@@ -3298,7 +3298,7 @@ public final class AppController {
                                                         Object obj5 = ((Object[]) objElementAt2)[2];
                                                         if (obj5 != null) {
                                                             if (obj5 instanceof Throwable) {
-                                                                IOUtils.m778d((Object) StringUtils.m8a(1030, obj5));
+                                                                IOUtils.postEvent((Object) StringUtils.m8a(1030, obj5));
                                                             } else {
                                                                 Utils.dequeue(vectorM614m5);
                                                             }
@@ -3396,7 +3396,7 @@ public final class AppController {
                                                                         ScreenBuilder.openScreen(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 51) {
-                                                                        IOUtils.m778d(new IOUtils(7, null));
+                                                                        IOUtils.postEvent(new IOUtils(7, null));
                                                                         z4 = true;
                                                                     } else if (i13 == 53) {
                                                                         AppState.setBool(230, !AppState.getBool(230));
@@ -3680,8 +3680,8 @@ public final class AppController {
                                         }
                                     } else if (objM524a instanceof IOUtils) {
                                         IOUtils c0029bb = (IOUtils) objM524a;
-                                        int i43 = c0029bb.f235a;
-                                        Object obj6 = c0029bb.f236b;
+                                        int i43 = c0029bb.eventType;
+                                        Object obj6 = c0029bb.eventData;
                                         switch (i43) {
                                             case 3:
                                                 ResourceManager.m951j();
@@ -3716,7 +3716,7 @@ public final class AppController {
                                                 }
                                             case 5:
                                                 AppState.setInt(1508, 1);
-                                                IOUtils.m758b();
+                                                IOUtils.showAddContactScreen();
                                                 break;
                                             case 6:
                                                 ((MrimAccount) obj6).syncProfile();
@@ -3779,7 +3779,7 @@ public final class AppController {
                                     if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.getCurrentScreen())) {
                                         AppState.getCanvas().setCommands(c0013amM66b.f123v, c0013amM66b.f124w);
                                     }
-                                    IOUtils.m756a();
+                                    IOUtils.checkSoundTimer();
                                     if (m306a(f147a[0]) && (!AppState.getBool(272) || ScreenManager.getCurrentScreen().f94a != 6)) {
                                         if (AppState.getCanvas().isShown()) {
                                             m358L(0);
@@ -3892,7 +3892,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 3:
-                    iM460J = IOUtils.m824d(iM68d);
+                    iM460J = IOUtils.handleStatusChange(iM68d);
                     break;
                 case 4:
                     iM460J = ContactListManager.onContactSelected(strM67c, obj);
@@ -3905,8 +3905,8 @@ public final class AppController {
                         ConnectionThread.m1161a(c0013amM66b);
                         i2 = -1;
                     } else if (AppState.getBool(1479)) {
-                        String strM809a = IOUtils.m809a(MapRenderer.currentLon);
-                        String strM810b = IOUtils.m810b(MapRenderer.currentLat);
+                        String strM809a = IOUtils.pixelToLongitude(MapRenderer.currentLon);
+                        String strM810b = IOUtils.pixelToLatitude(MapRenderer.currentLat);
                         AppState.setInt(1479, 0);
                         ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.currentLon, MapRenderer.currentLat);
                         i2 = 0;
@@ -3982,7 +3982,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 30:
-                    iM460J = IOUtils.m823c(strM67c, iM68d);
+                    iM460J = IOUtils.handleContactGroupAction(strM67c, iM68d);
                     break;
                 case 32:
                     iM460J = ResourceManager.m933a(strM67c, c0032cM69e2);
@@ -4087,7 +4087,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 53:
-                    iM460J = IOUtils.m787a(strM67c);
+                    iM460J = IOUtils.handleMailForwardAction(strM67c);
                     break;
                 case 54:
                     iM460J = 0;
@@ -4114,7 +4114,7 @@ public final class AppController {
                     iM460J = 42;
                     break;
                 case 62:
-                    iM460J = IOUtils.m752a(strM67c, iM68d);
+                    iM460J = IOUtils.handleMailMenuAction(strM67c, iM68d);
                     break;
                 case 63:
                     iM460J = 0;
@@ -4207,7 +4207,7 @@ public final class AppController {
                     iM460J = m364q(iM68d);
                     break;
                 case 92:
-                    iM460J = IOUtils.m795b(strM67c, iM68d);
+                    iM460J = IOUtils.handleContactMenuAction(strM67c, iM68d);
                     break;
                 case 93:
                     iM460J = m374t(iM68d);
@@ -4231,7 +4231,7 @@ public final class AppController {
                     iM460J = m333d(strM67c);
                     break;
                 case 100:
-                    iM460J = IOUtils.m771c(obj);
+                    iM460J = IOUtils.handleMapPointAction(obj);
                     break;
                 case 101:
                     iM460J = m382g(obj);
@@ -4401,7 +4401,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 156:
-                    iM460J = IOUtils.m769e();
+                    iM460J = IOUtils.applyPhotoSelection();
                     break;
                 case 157:
                     iM460J = 0;
@@ -4610,7 +4610,7 @@ public final class AppController {
 
     /* renamed from: a */
     private static final void m462a(MrimAccount c0028ba, int i) {
-        IOUtils.m783a(c0028ba, i);
+        IOUtils.postAccountError(c0028ba, i);
         c0028ba.closeConnection();
         c0028ba.lastError = c0028ba.getDefaultError();
     }
@@ -4627,7 +4627,7 @@ public final class AppController {
         }
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         MapPoint c0014an = (MapPoint) obj;
-        c0028ba.setSimpleProfile(IOUtils.m809a(c0014an.longitude), IOUtils.m810b(c0014an.latitude));
+        c0028ba.setSimpleProfile(IOUtils.pixelToLongitude(c0014an.longitude), IOUtils.pixelToLatitude(c0014an.latitude));
         c0028ba.syncProfile();
         AppState.setInt(1478, 0);
         return 160;

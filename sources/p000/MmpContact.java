@@ -244,12 +244,12 @@ public final class MmpContact extends Contact {
 
     /* renamed from: o */
     public static final String buildLocationString() {
-        ByteBuffer c0043nM1314d = new ByteBuffer().writeCompressed(1442705).writeCompressed(3085016).writeRawString(IOUtils.m809a(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.m810b(lastTokenPair[1]));
+        ByteBuffer c0043nM1314d = new ByteBuffer().writeCompressed(1442705).writeCompressed(3085016).writeRawString(IOUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.pixelToLatitude(lastTokenPair[1]));
         int size = routePoints.size();
         int i = 0;
         while (i <= size) {
             int[] iArr = i < size ? (int[]) routePoints.elementAt(i) : new int[]{(int) currentTokenPair[0], (int) currentTokenPair[1]};
-            c0043nM1314d.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.m809a(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.m810b(iArr[1]));
+            c0043nM1314d.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLongitude(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLatitude(iArr[1]));
             i++;
         }
         return c0043nM1314d.getStringAndClear();

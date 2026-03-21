@@ -399,7 +399,7 @@ public final class MrimAccount extends Account implements ListItem {
                         if (StringUtils.m3a(852768, strM1334g3)) {
                             setDisplayName(c0043nM1349s.readUTF8Str((String) null));
                         } else if (StringUtils.m3a(983853, strM1334g3)) {
-                            IOUtils.m759a(this, Utils.parseInt((Object) c0043nM1349s.readUTF8Str((String) null)), (String) null, (String) null);
+                            IOUtils.notifyNewMail(this, Utils.parseInt((Object) c0043nM1349s.readUTF8Str((String) null)), (String) null, (String) null);
                         } else if (StringUtils.m3a(983868, strM1334g3)) {
                             String strM1335e = c0043nM1349s.readUTF8Str((String) null);
                             this.customDomain = StringUtils.prefix(strM1335e, strM1335e.indexOf(58));
@@ -541,14 +541,14 @@ public final class MrimAccount extends Account implements ListItem {
                                     ContactInfo c0042mM1251a = ContactInfo.createForAccount(this);
                                     c0042mM1251a.setEmailAddress(strM1334g4);
                                     AppState.pool[1319] = c0042mM1251a;
-                                    IOUtils.m778d(new IOUtils(5, null));
+                                    IOUtils.postEvent(new IOUtils(5, null));
                                 }
                             }
                         }
                     }
                     break;
                 case 4168:
-                    IOUtils.m759a(this, c0043nM1349s.readInt(), c0043nM1349s.readUnicodeStr(), c0043nM1349s.readUnicodeStr());
+                    IOUtils.notifyNewMail(this, c0043nM1349s.readInt(), c0043nM1349s.readUnicodeStr(), c0043nM1349s.readUnicodeStr());
                     break;
                 case 4180:
                     String strM1334g5 = c0043nM1349s.readWideStr();
@@ -630,7 +630,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 if (AppController.m442U() != 10) {
                                     break;
                                 } else {
-                                    IOUtils.m778d((Object) AppState.getString(786));
+                                    IOUtils.postEvent((Object) AppState.getString(786));
                                     break;
                                 }
                             } else {
@@ -859,8 +859,8 @@ public final class MrimAccount extends Account implements ListItem {
     public final void setLocationProfile(MapPoint c0014an) {
         try {
             VCard c0003ac = this.accountProfile;
-            String strM810b = IOUtils.m810b(c0014an.latitude);
-            String strM809a = IOUtils.m809a(c0014an.longitude);
+            String strM810b = IOUtils.pixelToLatitude(c0014an.latitude);
+            String strM809a = IOUtils.pixelToLongitude(c0014an.longitude);
             String strM584b = AppState.getString(590588);
             String strM267a = c0014an.getDisplayName();
             String str = AppState.emptyStr;

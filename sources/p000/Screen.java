@@ -586,7 +586,7 @@ public final class Screen {
     public final void m230i() {
         MenuItem c0032cM222d = m222d();
         if (null != c0032cM222d && c0032cM222d.enabled) {
-            IOUtils.m775i();
+            IOUtils.postSelectEvent();
             return;
         }
         if (this.f94a == 6) {

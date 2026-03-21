@@ -58,7 +58,7 @@ public abstract class AppState {
         NetworkUtils.bufferPool = new StringBuffer[5];
         NetworkUtils.vectorPool = new Vector[5];
         NetworkUtils.stringCache = new Hashtable();
-        IOUtils.f237c = NetworkUtils.newVector();
+        IOUtils.openResources = NetworkUtils.newVector();
         separator = NetworkUtils.longToHex(1819047278);
         emptyBytes = new byte[0];
         delta = new Object[295];

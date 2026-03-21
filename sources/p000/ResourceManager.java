@@ -94,7 +94,7 @@ public final class ResourceManager {
             if (i == 0 || AppState.getBool(89) || !AppController.m307b(8, 1000L)) {
                 return;
             }
-            IOUtils.m754a(i);
+            IOUtils.playSound(i);
         }
     }
 
@@ -190,7 +190,7 @@ public final class ResourceManager {
             if (length < 0) {
                 c0032c2.clear().setLabel(Utils.m527g(c0032c2.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{m967e(i), strArr};
                 c0013am.m258q();
-                IOUtils.m778d(c0032c2);
+                IOUtils.postEvent(c0032c2);
                 return 0;
             }
             if (str == strArr[length]) {
@@ -354,14 +354,14 @@ public final class ResourceManager {
                     }
                     if (z && str != null) {
                         NetworkUtils.releaseVector(vector);
-                        IOUtils.m778d((Object) AppState.getString(494));
+                        IOUtils.postEvent((Object) AppState.getString(494));
                         HttpClient.closeAndUpdateStats(c0024axM630a);
                         AppController.m344t();
                         return;
                     }
                 }
             } catch (Throwable th) {
-                IOUtils.m778d((Object) StringUtils.m8a(493, (Object) null));
+                IOUtils.postEvent((Object) StringUtils.m8a(493, (Object) null));
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.m344t();
             }
@@ -655,7 +655,7 @@ public final class ResourceManager {
             AppState.setObject(1280, (Object) strM522f);
             AppState.setBool(1460, true);
         } else if (StringUtils.m3a(478, str)) {
-            AppState.setObject(1279, (Object) IOUtils.m825d(strM522f));
+            AppState.setObject(1279, (Object) IOUtils.transliterate(strM522f));
         }
         if (i == 93 || i == 123 || i == 95 || i == 94) {
             return 0;
@@ -874,7 +874,7 @@ public final class ResourceManager {
             return 0;
         }
         if (StringUtils.m3a(1347, str)) {
-            IOUtils.m814e(c0052wM745h.readMessages);
+            IOUtils.setSelectedItems(c0052wM745h.readMessages);
             return 0;
         }
         if (StringUtils.m3a(1061, str)) {
@@ -897,9 +897,9 @@ public final class ResourceManager {
     public static final String m975a(long j, long j2, int i, String str) {
         String strM1109a;
         ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(1245774).writeUInt(1031283503);
-        String strM809a = IOUtils.m809a(j);
+        String strM809a = IOUtils.pixelToLongitude(j);
         ByteBuffer c0043nM1385u2 = c0043nM1385u.writeRawString(strM809a).writeUInt(4028710);
-        String strM810b = IOUtils.m810b(j2);
+        String strM810b = IOUtils.pixelToLatitude(j2);
         ByteBuffer c0043nM1310c = c0043nM1385u2.writeRawString(strM810b).writeUInt(4028966).writeIntAsString(i).writeCompressed(2363459);
         if (str != null) {
             ByteBuffer c0043nM1385u3 = c0043nM1310c.writeUInt(1031302438).writeRawString(strM809a).writeUInt(1031367974).writeRawString(strM810b).writeUInt(1031040294);
@@ -1043,7 +1043,7 @@ public final class ResourceManager {
     public static final int m984a(Screen c0013am) {
         NetworkUtils.m1195d();
         String[] strArrM518a = Utils.m518a(true);
-        Vector vectorM794a = IOUtils.m794a(c0013am, 1);
+        Vector vectorM794a = IOUtils.getCheckedItems(c0013am, 1);
         int length = strArrM518a.length;
         while (true) {
             length--;

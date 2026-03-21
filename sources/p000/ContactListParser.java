@@ -16,7 +16,7 @@ public abstract class ContactListParser implements ListItem {
 
     /* renamed from: a */
     public static final void parseContactsAsync(ByteBuffer c0043n, Object obj, Object obj2) {
-        IOUtils.m778d(new IOUtils(4, new Object[]{obj, parseContactsInternal(c0043n, 10, true), obj2}));
+        IOUtils.postEvent(new IOUtils(4, new Object[]{obj, parseContactsInternal(c0043n, 10, true), obj2}));
     }
 
     /* renamed from: a */
@@ -62,10 +62,10 @@ public abstract class ContactListParser implements ListItem {
                 if (str.startsWith("group_")) {
                     Hashtable hashtable2 = (Hashtable) hashtable.get(str);
                     Hashtable hashtable3 = (Hashtable) hashtable2.get("mass-center");
-                    vectorM1213g.addElement(new PhoneContact(str, (int) IOUtils.m807b((String) hashtable3.get("lon")), (int) IOUtils.m808c((String) hashtable3.get("lat")), (String) hashtable2.get("lat1"), (String) hashtable2.get("lon1"), (String) hashtable2.get("lat2"), (String) hashtable2.get("lon2"), Integer.parseInt((String) hashtable2.get("users")), iM586d));
+                    vectorM1213g.addElement(new PhoneContact(str, (int) IOUtils.longitudeToPixel((String) hashtable3.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable3.get("lat")), (String) hashtable2.get("lat1"), (String) hashtable2.get("lon1"), (String) hashtable2.get("lat2"), (String) hashtable2.get("lon2"), Integer.parseInt((String) hashtable2.get("users")), iM586d));
                 } else {
                     Hashtable hashtable4 = (Hashtable) hashtable.get(str);
-                    UserSearchResult c0045p = new UserSearchResult((int) IOUtils.m807b((String) hashtable4.get("lon")), (int) IOUtils.m808c((String) hashtable4.get("lat")), (String) hashtable4.get("object"), iM586d);
+                    UserSearchResult c0045p = new UserSearchResult((int) IOUtils.longitudeToPixel((String) hashtable4.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable4.get("lat")), (String) hashtable4.get("object"), iM586d);
                     c0045p.userId = (String) hashtable4.get("email");
                     c0045p.nickname = (String) hashtable4.get("nick");
                     String str2 = (String) hashtable4.get("age");

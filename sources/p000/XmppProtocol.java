@@ -330,7 +330,7 @@ public class XmppProtocol extends Account {
                                 sendElementWithId(c0022avM570i);
                                 this.msgCount = 60;
                             } else {
-                                IOUtils.m783a(this, 1033);
+                                IOUtils.postAccountError(this, 1033);
                                 closeConnection();
                                 this.lastError = getDefaultError();
                             }
@@ -467,7 +467,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: b */
     private void handleException(Throwable th) {
-        IOUtils.m784a(this, th.toString());
+        IOUtils.postAccountMessage(this, th.toString());
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -477,7 +477,7 @@ public class XmppProtocol extends Account {
         if (isConnected()) {
             sendXmlElement(XmlElement.createFromState(530016).setAttrValue(131590, str).addNameAttr(i == 0 ? 594926 : i == 1 ? 660462 : 791532).addChild(XmlElement.createFromState(267628).addIdAttr(2037073).appendText((Object) this.displayName)));
         } else {
-            IOUtils.m778d((Object) AppState.getString(299));
+            IOUtils.postEvent((Object) AppState.getString(299));
         }
     }
 
@@ -667,7 +667,7 @@ public class XmppProtocol extends Account {
     /* renamed from: k */
     public final int addNewContact() {
         if (!isConnected()) {
-            IOUtils.m778d((Object) AppState.getString(299));
+            IOUtils.postEvent((Object) AppState.getString(299));
             return 0;
         }
         String strM522f = Utils.defaultStr(AppState.getString(1296));
@@ -694,7 +694,7 @@ public class XmppProtocol extends Account {
             createRosterUpdate(abstractC0041l.getIdentifier(), (String) null, (String) null);
             return 0;
         }
-        IOUtils.m778d((Object) AppState.getString(299));
+        IOUtils.postEvent((Object) AppState.getString(299));
         return 0;
     }
 

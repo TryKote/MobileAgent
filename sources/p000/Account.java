@@ -338,14 +338,14 @@ public abstract class Account {
         } else {
             strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
-        IOUtils.m784a(this, strM1215a);
+        IOUtils.postAccountMessage(this, strM1215a);
         closeConnection();
         this.lastError = getDefaultError();
     }
 
     /* renamed from: H */
     public final void handleTimeout() {
-        IOUtils.m783a(this, 462);
+        IOUtils.postAccountError(this, 462);
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -362,13 +362,13 @@ public abstract class Account {
         if (this.authMode == 2) {
             connect(3);
         } else {
-            IOUtils.m783a(this, 461);
+            IOUtils.postAccountError(this, 461);
         }
     }
 
     /* renamed from: f */
     public final void handleError(int i) {
-        IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(459)).append(this).append(AppState.getString(460)).append(AppState.getString(457)).append(i)));
+        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(459)).append(this).append(AppState.getString(460)).append(AppState.getString(457)).append(i)));
         closeConnection();
         this.lastError = getDefaultError();
     }

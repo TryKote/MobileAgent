@@ -763,7 +763,7 @@ public final class NetworkUtils {
                 i2 = 914;
                 break;
         }
-        IOUtils.m778d((Object) AppState.getString(i2));
+        IOUtils.postEvent((Object) AppState.getString(i2));
     }
 
     /* renamed from: d */

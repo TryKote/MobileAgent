@@ -59,10 +59,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             AppState.setObject(1279, (Object) strM16a);
             AppState.setBool(1456, !StringUtils.isEmpty(strM16a));
             if (command.getPriority() == 0) {
-                IOUtils.m773g();
+                IOUtils.postOkEvent();
                 return;
             } else {
-                IOUtils.m774h();
+                IOUtils.postCancelEvent();
                 return;
             }
         }
@@ -817,7 +817,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r1 = 0
             r8 = r1
-            p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            p000.IOUtils.postEvent(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
@@ -1026,7 +1026,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = 3
             r3 = 0
             r1.<init>(r2, r3)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
-            p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            p000.IOUtils.postEvent(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
@@ -1251,7 +1251,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             an r1 = (p000.MapPoint) r1     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0.setLocationProfile(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r11
-            p000.IOUtils.m786a(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            p000.IOUtils.postAccountEvent(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
@@ -1284,7 +1284,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r17
             r0.setSimpleProfile(r1, r2)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r10
-            p000.IOUtils.m786a(r0)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            p000.IOUtils.postAccountEvent(r0)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
@@ -1406,7 +1406,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.IOUtils.m826d(r0)     // Catch: java.lang.Throwable -> La84
+            p000.IOUtils.performXmppAuth(r0)     // Catch: java.lang.Throwable -> La84
             return
         L904:
             r0 = r8

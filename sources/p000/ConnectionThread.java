@@ -404,7 +404,7 @@ public final class ConnectionThread {
             objArr[4] = objArrM1151a;
             return;
         }
-        if (IOUtils.m805a(objArrM1151a) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
+        if (IOUtils.isHttpSuccess(objArrM1151a) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
             objArr[4] = objArrM1151a;
             return;
         }
@@ -439,24 +439,24 @@ public final class ConnectionThread {
                         AppController.m344t();
                         return objArrM1152a;
                     } catch (ConnectionNotFoundException e) {
-                        Object[] objArrM798a = IOUtils.m798a((Throwable) null);
+                        Object[] objArrM798a = IOUtils.createConnectError((Throwable) null);
                         HttpClient.closeAndUpdateStats(c0024ax);
                         AppController.m344t();
                         return objArrM798a;
                     }
                 } catch (Throwable th) {
-                    Object[] objArrM801d = IOUtils.m801d((Throwable) null);
+                    Object[] objArrM801d = IOUtils.createReceiveError((Throwable) null);
                     HttpClient.closeAndUpdateStats(c0024ax);
                     AppController.m344t();
                     return objArrM801d;
                 }
             } catch (IllegalArgumentException e2) {
-                Object[] objArrM799b = IOUtils.m799b((Throwable) null);
+                Object[] objArrM799b = IOUtils.createAuthError((Throwable) null);
                 HttpClient.closeAndUpdateStats(c0024ax);
                 AppController.m344t();
                 return objArrM799b;
             } catch (SecurityException e3) {
-                Object[] objArrM800c = IOUtils.m800c((Throwable) null);
+                Object[] objArrM800c = IOUtils.createSendError((Throwable) null);
                 HttpClient.closeAndUpdateStats(c0024ax);
                 AppController.m344t();
                 return objArrM800c;
@@ -485,7 +485,7 @@ public final class ConnectionThread {
             M1155b = m1155b(objArr, c0024ax);
             return M1155b;
         } catch (Throwable th) {
-            return IOUtils.m802e(th);
+            return IOUtils.createProtocolError(th);
         }
     }
 
@@ -522,10 +522,10 @@ public final class ConnectionThread {
                 } catch (Throwable unused) {
                 }
             }
-            M804a = IOUtils.m804a(iM634a, StringUtils.intern(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
+            M804a = IOUtils.createHttpRequest(iM634a, StringUtils.intern(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
             return M804a;
         } catch (Throwable th) {
-            return IOUtils.m803f(th);
+            return IOUtils.createGenericError(th);
         }
     }
 
