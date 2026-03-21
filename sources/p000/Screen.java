@@ -9,260 +9,260 @@ import javax.microedition.lcdui.Graphics;
 public final class Screen {
 
     /* renamed from: a */
-    public int f94a;
+    public int screenId;
 
     /* renamed from: b */
-    public int f95b;
+    public int containerWidth;
 
     /* renamed from: c */
-    public int f96c;
+    public int containerHeight;
 
     /* renamed from: d */
-    public int f97d;
+    public int screenType;
 
     /* renamed from: e */
-    public int f98e;
+    public int offsetX;
 
     /* renamed from: f */
-    public int f99f;
+    public int offsetY;
 
     /* renamed from: g */
-    public int f100g;
+    public int screenFlags;
 
     /* renamed from: C */
-    private MenuItem f101C;
+    private MenuItem headerItem;
 
     /* renamed from: h */
-    public final int f102h;
+    public final int layoutMode;
 
     /* renamed from: i */
-    public boolean f103i;
+    public boolean selectable;
 
     /* renamed from: D */
-    private boolean f104D;
+    private boolean hasScrollbar;
 
     /* renamed from: j */
-    public int f105j;
+    public int scrollOffset;
 
     /* renamed from: k */
-    public int f106k;
+    public int selectedIndex;
 
     /* renamed from: l */
-    public int f107l;
+    public int totalHeight;
 
     /* renamed from: m */
-    public Vector f108m;
+    public Vector menuItems;
 
     /* renamed from: n */
-    public int[] f109n;
+    public int[] layoutCache;
 
     /* renamed from: o */
-    public Vector f110o;
+    public Vector tabItems;
 
     /* renamed from: E */
-    private int f111E;
+    private int innerWidth;
 
     /* renamed from: F */
-    private int f112F;
+    private int headerHeight;
 
     /* renamed from: p */
-    public int f113p;
+    public int contentTop;
 
     /* renamed from: q */
-    public int f114q;
+    public int contentWidth;
 
     /* renamed from: r */
-    public int f115r;
+    public int contentHeight;
 
     /* renamed from: G */
-    private int f116G;
+    private int borderWidth;
 
     /* renamed from: H */
-    private int f117H;
+    private int contentStart;
 
     /* renamed from: I */
-    private int f118I;
+    private int contentBottom;
 
     /* renamed from: J */
-    private int f119J;
+    private int scrollRange;
 
     /* renamed from: s */
-    public int f120s;
+    public int softKeyLeft;
 
     /* renamed from: t */
-    public int f121t;
+    public int softKeyCenter;
 
     /* renamed from: u */
-    public int f122u;
+    public int softKeyRight;
 
     /* renamed from: v */
-    public String f123v;
+    public String titleLeft;
 
     /* renamed from: w */
-    public String f124w;
+    public String titleRight;
 
     /* renamed from: x */
-    public boolean f125x;
+    public boolean showCheckboxes;
 
     /* renamed from: K */
-    private int f126K;
+    private int titleMaxWidth;
 
     /* renamed from: y */
-    public boolean f127y;
+    public boolean reverseScroll;
 
     /* renamed from: L */
-    private int f128L;
+    private int visibleExpandedIndex;
 
     /* renamed from: M */
-    private int f129M;
+    private int expandDirection;
 
     /* renamed from: z */
-    public int f130z;
+    public int marginLeft;
 
     /* renamed from: A */
-    public int f131A;
+    public int marginTop;
 
     /* renamed from: B */
-    public boolean f132B;
+    public boolean touchConsumed;
 
     public Screen() {
-        this.f102h = 2;
-        this.f94a = 63;
+        this.layoutMode = 2;
+        this.screenId = 63;
     }
 
     /* renamed from: a */
-    public final Screen m218a() {
+    public final Screen initTabs() {
         if (AppState.getBool(245)) {
-            this.f110o = NetworkUtils.newVector();
-            m219s();
+            this.tabItems = NetworkUtils.newVector();
+            recalcLayout();
         }
         return this;
     }
 
     private Screen(int i, int i2, int i3, int i4) {
-        this.f108m = NetworkUtils.newVector();
-        this.f109n = new int[16];
-        this.f102h = i;
-        this.f95b = i3;
-        this.f96c = i4;
-        this.f94a = i2;
-        this.f106k = -1;
-        m219s();
+        this.menuItems = NetworkUtils.newVector();
+        this.layoutCache = new int[16];
+        this.layoutMode = i;
+        this.containerWidth = i3;
+        this.containerHeight = i4;
+        this.screenId = i2;
+        this.selectedIndex = -1;
+        recalcLayout();
     }
 
     public Screen(int i, int i2, int i3, int i4, boolean z) {
         this(i, i2, i3, i4);
-        this.f103i = z;
+        this.selectable = z;
     }
 
     /* renamed from: s */
-    private final Screen m219s() {
-        int i = this.f95b - 4;
-        int i2 = this.f96c - 4;
-        this.f111E = this.f95b - 2;
-        if (this.f101C != null) {
-            this.f112F = this.f101C.getTotalHeight() + 2;
+    private final Screen recalcLayout() {
+        int i = this.containerWidth - 4;
+        int i2 = this.containerHeight - 4;
+        this.innerWidth = this.containerWidth - 2;
+        if (this.headerItem != null) {
+            this.headerHeight = this.headerItem.getTotalHeight() + 2;
         } else {
-            this.f112F = 0;
+            this.headerHeight = 0;
         }
-        this.f116G = this.f95b - 3;
-        this.f117H = 1 + this.f112F;
-        this.f118I = (i2 - this.f117H) + 3;
-        this.f113p = this.f117H + 1;
-        this.f114q = i - 2;
-        this.f115r = this.f118I - 2;
-        if (this.f110o != null) {
-            int i3 = this.f118I;
+        this.borderWidth = this.containerWidth - 3;
+        this.contentStart = 1 + this.headerHeight;
+        this.contentBottom = (i2 - this.contentStart) + 3;
+        this.contentTop = this.contentStart + 1;
+        this.contentWidth = i - 2;
+        this.contentHeight = this.contentBottom - 2;
+        if (this.tabItems != null) {
+            int i3 = this.contentBottom;
             int iM502a = Utils.max(AppState.getInt(1450), 16) + 3;
-            this.f118I = i3 - iM502a;
-            this.f115r -= iM502a;
+            this.contentBottom = i3 - iM502a;
+            this.contentHeight -= iM502a;
         }
         return this;
     }
 
     /* renamed from: b */
-    public final String m220b() {
-        if (!this.f103i || this.f108m.size() <= 0 || this.f106k < 0) {
+    public final String getSelectedTitle() {
+        if (!this.selectable || this.menuItems.size() <= 0 || this.selectedIndex < 0) {
             return null;
         }
-        return m239b(this.f106k).title;
+        return getItemAt(this.selectedIndex).title;
     }
 
     /* renamed from: c */
-    public final int m221c() {
-        if (!this.f103i || this.f108m.size() <= 0) {
+    public final int getSelectedWidth() {
+        if (!this.selectable || this.menuItems.size() <= 0) {
             return 200;
         }
-        return m239b(this.f106k).width;
+        return getItemAt(this.selectedIndex).width;
     }
 
     /* renamed from: d */
-    public final MenuItem m222d() {
-        if (!this.f103i || this.f108m.size() <= 0) {
+    public final MenuItem getSelectedItem() {
+        if (!this.selectable || this.menuItems.size() <= 0) {
             return null;
         }
-        return m239b(this.f106k);
+        return getItemAt(this.selectedIndex);
     }
 
     /* renamed from: e */
-    public final MenuItem m223e() {
+    public final MenuItem getHeaderItem() {
         int iM261v;
-        if (this.f97d != 9 || (iM261v = m261v()) >= this.f108m.size()) {
+        if (this.screenType != 9 || (iM261v = findVisibleExpanded()) >= this.menuItems.size()) {
             return null;
         }
-        return m239b(iM261v);
+        return getItemAt(iM261v);
     }
 
     /* renamed from: a */
-    public final Screen m224a(int i, String str) {
-        this.f101C = MenuItem.createSeparator().addText(AppState.getString(1037), 1, 0).setLabelInternal(i, str, 1, 0);
-        m219s();
+    public final Screen setHeader(int i, String str) {
+        this.headerItem = MenuItem.createSeparator().addText(AppState.getString(1037), 1, 0).setLabelInternal(i, str, 1, 0);
+        recalcLayout();
         return this;
     }
 
     /* renamed from: a */
-    public final Screen m225a(MenuItem c0032c) {
-        if (this.f102h == 0) {
-            c0032c.layout(this.f114q);
-            this.f108m.addElement(c0032c);
-            this.f109n = AppController.m302a(this.f109n, 0, this.f107l);
-            this.f107l += c0032c.getTotalHeight();
+    public final Screen addItem(MenuItem c0032c) {
+        if (this.layoutMode == 0) {
+            c0032c.layout(this.contentWidth);
+            this.menuItems.addElement(c0032c);
+            this.layoutCache = AppController.m302a(this.layoutCache, 0, this.totalHeight);
+            this.totalHeight += c0032c.getTotalHeight();
         } else {
             int iM240c = 0;
             int iM241d = 0;
-            int size = this.f108m.size() - 1;
-            if (this.f108m.size() > 0) {
-                iM240c = m240c(size) + m239b(size).getTotalWidth();
-                iM241d = m241d(size);
+            int size = this.menuItems.size() - 1;
+            if (this.menuItems.size() > 0) {
+                iM240c = getItemX(size) + getItemAt(size).getTotalWidth();
+                iM241d = getItemY(size);
             }
-            if (iM240c > 0 && iM240c + c0032c.getTotalWidth() >= this.f114q) {
+            if (iM240c > 0 && iM240c + c0032c.getTotalWidth() >= this.contentWidth) {
                 iM240c = 0;
-                iM241d = m241d(size) + m239b(size).getTotalHeight();
+                iM241d = getItemY(size) + getItemAt(size).getTotalHeight();
             }
-            this.f108m.addElement(c0032c);
-            this.f109n = AppController.m302a(this.f109n, iM240c, iM241d);
-            this.f107l = iM241d + c0032c.getTotalHeight();
+            this.menuItems.addElement(c0032c);
+            this.layoutCache = AppController.m302a(this.layoutCache, iM240c, iM241d);
+            this.totalHeight = iM241d + c0032c.getTotalHeight();
         }
-        if (this.f107l <= 0 || this.f107l < this.f115r) {
-            this.f104D = false;
+        if (this.totalHeight <= 0 || this.totalHeight < this.contentHeight) {
+            this.hasScrollbar = false;
         } else {
-            this.f119J = ((this.f118I - 4) * this.f115r) / this.f107l;
-            this.f104D = true;
+            this.scrollRange = ((this.contentBottom - 4) * this.contentHeight) / this.totalHeight;
+            this.hasScrollbar = true;
         }
-        if (this.f103i && this.f106k < 0 && c0032c.isEnabled()) {
-            this.f106k = this.f108m.size() - 1;
+        if (this.selectable && this.selectedIndex < 0 && c0032c.isEnabled()) {
+            this.selectedIndex = this.menuItems.size() - 1;
         }
         return this;
     }
 
     /* renamed from: f */
-    public final Screen m226f() {
-        if (this.f115r - this.f107l > 5 && this.f102h == 0) {
-            this.f96c = this.f112F + this.f107l + 4;
-            m219s();
+    public final Screen buildLayout() {
+        if (this.contentHeight - this.totalHeight > 5 && this.layoutMode == 0) {
+            this.containerHeight = this.headerHeight + this.totalHeight + 4;
+            recalcLayout();
         }
         int i = 0;
-        Enumeration enumerationElements = this.f108m.elements();
+        Enumeration enumerationElements = this.menuItems.elements();
         while (enumerationElements.hasMoreElements()) {
             int i2 = i;
             int iM910f = ((MenuItem) enumerationElements.nextElement()).getMaxHeight();
@@ -271,10 +271,10 @@ public final class Screen {
             }
         }
         int i3 = i + 16;
-        if (i3 < this.f95b) {
-            this.f95b = i3;
+        if (i3 < this.containerWidth) {
+            this.containerWidth = i3;
         }
-        m219s();
+        recalcLayout();
         return this;
     }
 
@@ -285,59 +285,59 @@ public final class Screen {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void m227a(GraphicsContext c0012al, boolean z, boolean z2) {
+    public final void paint(GraphicsContext c0012al, boolean z, boolean z2) {
         int iM417c;
         boolean z3 = false;
-        if (this.f102h != 2) {
-            int i = this.f98e;
-            int i2 = this.f99f;
-            int i3 = this.f95b;
-            int i4 = this.f96c;
+        if (this.layoutMode != 2) {
+            int i = this.offsetX;
+            int i2 = this.offsetY;
+            int i3 = this.containerWidth;
+            int i4 = this.containerHeight;
             int i5 = z ? 1 : 2;
             Graphics graphics = c0012al.graphics;
             c0012al.setColorFromPalette(i5);
             graphics.fillRect(i, i2, i3, i4);
             c0012al.setColorFromPalette(16);
             graphics.drawRect(i, i2, i3 - 1, i4 - 1);
-            if (this.f101C != null) {
-                int i6 = this.f98e + 1;
-                int i7 = this.f99f + 1;
-                c0012al.setClip(i6, i7, this.f111E, this.f112F);
+            if (this.headerItem != null) {
+                int i6 = this.offsetX + 1;
+                int i7 = this.offsetY + 1;
+                c0012al.setClip(i6, i7, this.innerWidth, this.headerHeight);
                 int iM586d = AppState.getInt(72);
                 int iM586d2 = AppState.getInt(5042 + iM586d);
                 if (iM586d2 != AppState.getInt(iM586d + 5082)) {
-                    for (int i8 = 1; i8 < this.f112F; i8++) {
-                        c0012al.setColor(((255 - ((i8 * (255 - (iM586d2 >> 16))) / this.f112F)) << 16) | ((255 - ((i8 * (255 - ((iM586d2 >> 8) & 255))) / this.f112F)) << 8) | (255 - ((i8 * (255 - (iM586d2 & 255))) / this.f112F)));
-                        c0012al.drawRect(i6, i7 + i8, this.f111E, 0);
+                    for (int i8 = 1; i8 < this.headerHeight; i8++) {
+                        c0012al.setColor(((255 - ((i8 * (255 - (iM586d2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((iM586d2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (iM586d2 & 255))) / this.headerHeight)));
+                        c0012al.drawRect(i6, i7 + i8, this.innerWidth, 0);
                     }
                 } else {
                     c0012al.setColor(iM586d2);
-                    c0012al.fillRect(i6, i7, this.f111E, this.f112F);
+                    c0012al.fillRect(i6, i7, this.innerWidth, this.headerHeight);
                 }
-                this.f101C.render(c0012al, i6, i7, 0);
+                this.headerItem.render(c0012al, i6, i7, 0);
             }
-            int i9 = this.f98e + 2;
-            int i10 = this.f99f + this.f113p;
-            int i11 = this.f104D ? this.f114q : this.f114q + 2;
-            int size = this.f108m.size();
-            boolean z4 = this.f102h != 0;
-            int i12 = this.f105j;
+            int i9 = this.offsetX + 2;
+            int i10 = this.offsetY + this.contentTop;
+            int i11 = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
+            int size = this.menuItems.size();
+            boolean z4 = this.layoutMode != 0;
+            int i12 = this.scrollOffset;
             for (int i13 = 0; i13 < size; i13++) {
-                int iM241d = m241d(i13);
-                if (iM241d - i12 > this.f115r) {
+                int iM241d = getItemY(i13);
+                if (iM241d - i12 > this.contentHeight) {
                     break;
                 }
-                MenuItem c0032cM239b = m239b(i13);
+                MenuItem c0032cM239b = getItemAt(i13);
                 int iM912h = c0032cM239b.getTotalHeight();
                 if (iM241d + iM912h >= i12) {
-                    int iM240c = m240c(i13);
+                    int iM240c = getItemX(i13);
                     int iM911g = c0032cM239b.getTotalWidth();
-                    c0012al.setClip(i9, i10, i11, this.f115r);
+                    c0012al.setClip(i9, i10, i11, this.contentHeight);
                     int i14 = i9 + iM240c;
                     int i15 = (i10 + iM241d) - i12;
-                    int i16 = this.f102h == 0 ? i11 : iM911g;
+                    int i16 = this.layoutMode == 0 ? i11 : iM911g;
                     int i17 = c0032cM239b.id;
-                    if (this.f103i && i13 == this.f106k && i17 != 11) {
+                    if (this.selectable && i13 == this.selectedIndex && i17 != 11) {
                         c0012al.setColorFromPalette(13);
                         c0012al.fillRect(i14, i15, i16, iM912h);
                     }
@@ -397,20 +397,20 @@ public final class Screen {
                     }
                 }
             }
-            if (this.f104D) {
-                int i26 = this.f98e + this.f116G;
-                int i27 = this.f99f + this.f117H;
-                c0012al.setClip(i26, i27, 7, this.f118I + 4);
+            if (this.hasScrollbar) {
+                int i26 = this.offsetX + this.borderWidth;
+                int i27 = this.offsetY + this.contentStart;
+                c0012al.setClip(i26, i27, 7, this.contentBottom + 4);
                 c0012al.setColorFromPalette(16);
-                c0012al.fillRect(i26 + 1, i27 + (this.f107l == 0 ? 0 : Utils.min(((this.f118I - 4) * this.f105j) / this.f107l, (this.f118I - 4) - this.f119J)), 1, this.f119J + 2);
-                c0012al.drawRect(i26, i27 - 1, 2, this.f118I + 1);
+                c0012al.fillRect(i26 + 1, i27 + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - 4) * this.scrollOffset) / this.totalHeight, (this.contentBottom - 4) - this.scrollRange)), 1, this.scrollRange + 2);
+                c0012al.drawRect(i26, i27 - 1, 2, this.contentBottom + 1);
             }
-            if (this.f110o != null) {
+            if (this.tabItems != null) {
                 int iM502a = Utils.max(AppState.getInt(1450), 16);
                 int iM605e = AppState.getHeight() - 1;
                 int iM586d3 = AppState.getInt(1528);
                 c0012al.setClip(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).setColorFromPalette(16).fillRect(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).setColorFromPalette(17).fillRect(1, (iM605e - iM502a) - 2, iM586d3 - 2, iM502a + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(0));
-                Vector vector = this.f110o;
+                Vector vector = this.tabItems;
                 int i28 = 3;
                 boolean z5 = false;
                 int iM73f = ((iM605e - iM502a) - 1) + ScreenManager.getCenterOffset();
@@ -435,18 +435,18 @@ public final class Screen {
                 c0012al.setClip(0, 0, iM586d4, 2048 + iM605e2);
                 c0012al.setFont(AppState.getGfxContext(0));
                 c0012al.setColorFromPalette(15);
-                if (this.f123v != null) {
-                    c0012al.drawString(this.f123v, 1, iM605e2, 20);
+                if (this.titleLeft != null) {
+                    c0012al.drawString(this.titleLeft, 1, iM605e2, 20);
                 }
-                if (this.f124w != null) {
-                    c0012al.drawString(this.f124w, iM586d4 - 1, iM605e2, 24);
+                if (this.titleRight != null) {
+                    c0012al.drawString(this.titleRight, iM586d4 - 1, iM605e2, 24);
                 }
-                if (ResourceManager.clockWidth + this.f126K < iM586d4 - 6) {
+                if (ResourceManager.clockWidth + this.titleMaxWidth < iM586d4 - 6) {
                     c0012al.drawString(Utils.defaultStr(AppState.getString(1263)), iM586d4 >> 1, iM605e2, 17);
                 }
             }
         }
-        if (this.f97d == 1 || this.f97d == 12) {
+        if (this.screenType == 1 || this.screenType == 12) {
             c0012al.setFont(AppState.getGfxContext(1));
             TabBar c0008ah = (TabBar) AppState.getVector(1246).elementAt(TabBar.currentIndex);
             Vector vectorM614m = AppState.getVector(1245);
@@ -487,10 +487,10 @@ public final class Screen {
                 }
             }
         }
-        if (this.f94a == 6) {
-            int i36 = this.f98e + 2;
-            int i37 = this.f99f + this.f113p;
-            c0012al.setClip(i36, i37, this.f95b, this.f115r);
+        if (this.screenId == 6) {
+            int i36 = this.offsetX + 2;
+            int i37 = this.offsetY + this.contentTop;
+            c0012al.setClip(i36, i37, this.containerWidth, this.contentHeight);
             try {
                 int iM586d5 = AppState.getInt(1415);
                 int iM586d6 = AppState.getInt(1416);
@@ -521,10 +521,10 @@ public final class Screen {
             AppState.setInt(1553, 0);
             return;
         }
-        if (this.f94a != 4) {
+        if (this.screenId != 4) {
             return;
         }
-        c0012al.setClip(this.f98e + 2, this.f99f + this.f113p, this.f95b, this.f115r);
+        c0012al.setClip(this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
         int iM586d7 = AppState.getInt(1408);
         if (iM586d7 <= 0) {
             return;
@@ -561,136 +561,136 @@ public final class Screen {
     }
 
     /* renamed from: g */
-    public final boolean m228g() {
-        int size = this.f108m.size();
+    public final boolean isAtEnd() {
+        int size = this.menuItems.size();
         if (size == 0) {
             return true;
         }
-        int i = this.f106k;
+        int i = this.selectedIndex;
         int i2 = (i + 1) % size;
-        return i2 <= i || m240c(i2) <= m240c(i);
+        return i2 <= i || getItemX(i2) <= getItemX(i);
     }
 
     /* renamed from: h */
-    public final boolean m229h() {
-        int size = this.f108m.size();
+    public final boolean isAtStart() {
+        int size = this.menuItems.size();
         if (size == 0) {
             return true;
         }
-        int i = this.f106k;
+        int i = this.selectedIndex;
         int i2 = ((i + size) - 1) % size;
-        return i2 >= i || m240c(i2) >= m240c(i);
+        return i2 >= i || getItemX(i2) >= getItemX(i);
     }
 
     /* renamed from: i */
-    public final void m230i() {
-        MenuItem c0032cM222d = m222d();
+    public final void onActionKey() {
+        MenuItem c0032cM222d = getSelectedItem();
         if (null != c0032cM222d && c0032cM222d.enabled) {
             IOUtils.postSelectEvent();
             return;
         }
-        if (this.f94a == 6) {
+        if (this.screenId == 6) {
             AppState.setInt(1564, 0);
             return;
         }
-        if (this.f94a != 4) {
-            if (this.f102h == 1) {
-                this.f106k = (this.f106k + 1) % this.f108m.size();
-                m235n();
+        if (this.screenId != 4) {
+            if (this.layoutMode == 1) {
+                this.selectedIndex = (this.selectedIndex + 1) % this.menuItems.size();
+                invalidateLayout();
                 return;
             }
             return;
         }
-        int size = this.f108m.size();
+        int size = this.menuItems.size();
         if (size == 0) {
             return;
         }
-        int i = this.f106k;
+        int i = this.selectedIndex;
         int i2 = (i + 1) % size;
-        if (i2 <= i || m240c(i2) <= m240c(i)) {
+        if (i2 <= i || getItemX(i2) <= getItemX(i)) {
             return;
         }
-        this.f106k = i2;
-        m235n();
+        this.selectedIndex = i2;
+        invalidateLayout();
     }
 
     /* renamed from: j */
-    public final int m231j() {
-        if (this.f108m.size() == 0) {
+    public final int pageUp() {
+        if (this.menuItems.size() == 0) {
             return 0;
         }
-        if (this.f103i) {
-            this.f105j -= this.f115r - 20;
-            if (this.f105j < 0) {
-                this.f105j = 0;
+        if (this.selectable) {
+            this.scrollOffset -= this.contentHeight - 20;
+            if (this.scrollOffset < 0) {
+                this.scrollOffset = 0;
             }
-            this.f106k = m244u();
-            int iM912h = m239b(this.f106k).getTotalHeight();
-            int iM241d = m241d(this.f106k);
-            if (iM912h < this.f115r && this.f105j > iM241d) {
-                this.f105j = iM241d;
+            this.selectedIndex = findFirstVisible();
+            int iM912h = getItemAt(this.selectedIndex).getTotalHeight();
+            int iM241d = getItemY(this.selectedIndex);
+            if (iM912h < this.contentHeight && this.scrollOffset > iM241d) {
+                this.scrollOffset = iM241d;
             }
         } else {
-            this.f105j -= this.f115r - 20;
-            if (this.f105j < 0) {
-                this.f105j = 0;
+            this.scrollOffset -= this.contentHeight - 20;
+            if (this.scrollOffset < 0) {
+                this.scrollOffset = 0;
             }
         }
-        m235n();
+        invalidateLayout();
         return 0;
     }
 
     /* renamed from: k */
-    public final int m232k() {
-        int size = this.f108m.size();
+    public final int pageDown() {
+        int size = this.menuItems.size();
         if (size == 0) {
             return 0;
         }
-        m238t();
-        this.f105j += this.f115r - 20;
-        if (this.f103i) {
-            MenuItem c0032cM239b = m239b(size - 1);
-            int iM241d = m241d(size - 1);
+        findLastVisible();
+        this.scrollOffset += this.contentHeight - 20;
+        if (this.selectable) {
+            MenuItem c0032cM239b = getItemAt(size - 1);
+            int iM241d = getItemY(size - 1);
             int iM912h = c0032cM239b.getTotalHeight();
-            if (this.f105j > (iM241d + iM912h) - this.f115r) {
-                this.f105j = (iM241d + iM912h) - this.f115r;
+            if (this.scrollOffset > (iM241d + iM912h) - this.contentHeight) {
+                this.scrollOffset = (iM241d + iM912h) - this.contentHeight;
             }
-            if (this.f105j < 0) {
-                this.f105j = 0;
+            if (this.scrollOffset < 0) {
+                this.scrollOffset = 0;
             }
-            this.f106k = m238t();
-            int iM912h2 = m239b(this.f106k).getTotalHeight();
-            int iM241d2 = m241d(this.f106k);
-            if (iM912h2 < this.f115r && this.f105j > iM241d2) {
-                this.f105j = iM241d2;
+            this.selectedIndex = findLastVisible();
+            int iM912h2 = getItemAt(this.selectedIndex).getTotalHeight();
+            int iM241d2 = getItemY(this.selectedIndex);
+            if (iM912h2 < this.contentHeight && this.scrollOffset > iM241d2) {
+                this.scrollOffset = iM241d2;
             }
         } else {
-            this.f105j = Utils.min(this.f107l - this.f115r, this.f105j);
-            if (this.f107l < this.f115r) {
-                this.f105j = 0;
+            this.scrollOffset = Utils.min(this.totalHeight - this.contentHeight, this.scrollOffset);
+            if (this.totalHeight < this.contentHeight) {
+                this.scrollOffset = 0;
             }
         }
-        m235n();
+        invalidateLayout();
         return 0;
     }
 
     /* renamed from: l */
-    public final int m233l() {
-        this.f105j = 0;
-        this.f106k = 0;
-        if (this.f103i) {
-            while (!m239b(this.f106k).isEnabled()) {
-                this.f106k++;
+    public final int scrollToTop() {
+        this.scrollOffset = 0;
+        this.selectedIndex = 0;
+        if (this.selectable) {
+            while (!getItemAt(this.selectedIndex).isEnabled()) {
+                this.selectedIndex++;
             }
         }
-        m235n();
+        invalidateLayout();
         return 0;
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:74:0x018c, code lost:
     
-        r5.f106k = r10;
-        m235n();
+        r5.selectedIndex = r10;
+        invalidateLayout();
      */
     /* JADX WARN: Code restructure failed: missing block: B:75:0x0196, code lost:
     
@@ -700,171 +700,171 @@ public final class Screen {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void m234m() {
+    public final void scrollUp() {
         boolean z;
-        if (this.f94a == 6) {
+        if (this.screenId == 6) {
             AppState.setInt(1564, 2);
             return;
         }
-        if (this.f108m.size() == 0) {
+        if (this.menuItems.size() == 0) {
             return;
         }
-        if (!this.f103i) {
-            if (this.f103i) {
-                if (m243f(0)) {
+        if (!this.selectable) {
+            if (this.selectable) {
+                if (isItemFullyVisible(0)) {
                     return;
                 }
-                int iM238t = m238t();
-                int iM244u = m244u();
-                if (!m243f(iM244u)) {
+                int iM238t = findLastVisible();
+                int iM244u = findFirstVisible();
+                if (!isItemFullyVisible(iM244u)) {
                     iM244u++;
                 }
                 int i = iM244u;
-                while (i > 0 && m243f(iM238t)) {
+                while (i > 0 && isItemFullyVisible(iM238t)) {
                     i--;
-                    this.f105j = m241d(i);
+                    this.scrollOffset = getItemY(i);
                 }
                 return;
             }
-            if (this.f97d != 9) {
-                this.f105j -= 20;
-                if (this.f105j < 0) {
-                    this.f105j = 0;
+            if (this.screenType != 9) {
+                this.scrollOffset -= 20;
+                if (this.scrollOffset < 0) {
+                    this.scrollOffset = 0;
                     return;
                 }
                 return;
             }
-            int iM261v = m261v();
-            if (iM261v < this.f108m.size()) {
-                ((MenuItem) this.f108m.elementAt(iM261v)).visible = false;
-                int iM262g = m262g(iM261v);
-                if (iM262g < this.f108m.size()) {
-                    ((MenuItem) this.f108m.elementAt(iM262g)).visible = true;
-                    this.f128L = iM262g;
+            int iM261v = findVisibleExpanded();
+            if (iM261v < this.menuItems.size()) {
+                ((MenuItem) this.menuItems.elementAt(iM261v)).visible = false;
+                int iM262g = findPrevExpanded(iM261v);
+                if (iM262g < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(iM262g)).visible = true;
+                    this.visibleExpandedIndex = iM262g;
                 } else {
-                    this.f105j -= 20;
-                    if (this.f105j < 0) {
-                        this.f105j = 0;
+                    this.scrollOffset -= 20;
+                    if (this.scrollOffset < 0) {
+                        this.scrollOffset = 0;
                     }
                 }
-            } else if (this.f128L < this.f108m.size()) {
-                int iM262g2 = m262g(this.f128L);
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).getTotalHeight()) - this.f105j <= this.f115r && this.f129M != 1) {
-                    iM262g2 = this.f128L;
+            } else if (this.visibleExpandedIndex < this.menuItems.size()) {
+                int iM262g2 = findPrevExpanded(this.visibleExpandedIndex);
+                if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection != 1) {
+                    iM262g2 = this.visibleExpandedIndex;
                 }
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).getTotalHeight()) - this.f105j <= this.f115r && this.f129M == 1 && m241d(this.f128L) - this.f105j <= 20) {
-                    iM262g2 = this.f128L;
+                if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection == 1 && getItemY(this.visibleExpandedIndex) - this.scrollOffset <= 20) {
+                    iM262g2 = this.visibleExpandedIndex;
                 }
-                if (iM262g2 < this.f108m.size()) {
-                    ((MenuItem) this.f108m.elementAt(iM262g2)).visible = true;
-                    this.f128L = iM262g2;
+                if (iM262g2 < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(iM262g2)).visible = true;
+                    this.visibleExpandedIndex = iM262g2;
                 } else {
-                    this.f105j -= 20;
-                    if (this.f105j < 0) {
-                        this.f105j = 0;
+                    this.scrollOffset -= 20;
+                    if (this.scrollOffset < 0) {
+                        this.scrollOffset = 0;
                     }
                 }
             } else {
-                int iM264w = m264w();
-                if (iM264w < this.f108m.size()) {
-                    ((MenuItem) this.f108m.elementAt(iM264w)).visible = true;
-                    this.f128L = iM264w;
+                int iM264w = findAnyExpanded();
+                if (iM264w < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(iM264w)).visible = true;
+                    this.visibleExpandedIndex = iM264w;
                 } else {
-                    this.f105j -= 20;
-                    if (this.f105j < 0) {
-                        this.f105j = 0;
+                    this.scrollOffset -= 20;
+                    if (this.scrollOffset < 0) {
+                        this.scrollOffset = 0;
                     }
                 }
             }
-            this.f129M = 1;
+            this.expandDirection = 1;
             return;
         }
-        int iM240c = m240c(this.f106k);
-        int iM241d = m241d(this.f106k);
-        if (this.f102h == 0) {
-            if (iM241d < this.f105j) {
-                this.f105j -= 20;
+        int iM240c = getItemX(this.selectedIndex);
+        int iM241d = getItemY(this.selectedIndex);
+        if (this.layoutMode == 0) {
+            if (iM241d < this.scrollOffset) {
+                this.scrollOffset -= 20;
                 return;
             }
-            if (this.f106k == 0) {
+            if (this.selectedIndex == 0) {
                 z = true;
             } else {
-                int i2 = this.f106k;
+                int i2 = this.selectedIndex;
                 while (true) {
                     i2--;
                     if (i2 < 0) {
                         z = true;
                         break;
-                    } else if (m239b(i2).isEnabled()) {
+                    } else if (getItemAt(i2).isEnabled()) {
                         z = false;
                         break;
                     }
                 }
             }
             if (!z) {
-                int i3 = this.f106k;
+                int i3 = this.selectedIndex;
                 while (true) {
                     i3--;
                     if (i3 < 0) {
                         break;
-                    } else if (m239b(i3).isEnabled()) {
-                        this.f106k = i3;
+                    } else if (getItemAt(i3).isEnabled()) {
+                        this.selectedIndex = i3;
                         break;
                     }
                 }
-                this.f105j = Utils.min(this.f105j, m241d(this.f106k));
+                this.scrollOffset = Utils.min(this.scrollOffset, getItemY(this.selectedIndex));
                 return;
             }
-            if (this.f105j != 0) {
-                this.f105j = 0;
+            if (this.scrollOffset != 0) {
+                this.scrollOffset = 0;
                 return;
             }
-            if (this.f127y) {
+            if (this.reverseScroll) {
                 return;
             }
-            if (this.f103i) {
-                this.f106k = this.f108m.size() - 1;
-                this.f105j = this.f107l - this.f115r;
-                if (this.f105j < 0) {
-                    this.f105j = 0;
+            if (this.selectable) {
+                this.selectedIndex = this.menuItems.size() - 1;
+                this.scrollOffset = this.totalHeight - this.contentHeight;
+                if (this.scrollOffset < 0) {
+                    this.scrollOffset = 0;
                     return;
                 }
                 return;
             }
-            if (this.f107l < this.f115r) {
-                this.f105j = 0;
+            if (this.totalHeight < this.contentHeight) {
+                this.scrollOffset = 0;
                 return;
-            } else if (((MenuItem) this.f108m.lastElement()).getTotalHeight() < this.f115r) {
-                this.f105j = this.f107l - this.f115r;
+            } else if (((MenuItem) this.menuItems.lastElement()).getTotalHeight() < this.contentHeight) {
+                this.scrollOffset = this.totalHeight - this.contentHeight;
                 return;
             } else {
-                int[] iArr = this.f109n;
-                this.f105j = iArr[iArr[0]];
+                int[] iArr = this.layoutCache;
+                this.scrollOffset = iArr[iArr[0]];
                 return;
             }
         }
         int i4 = -1;
         int i5 = 0;
-        int i6 = this.f106k;
+        int i6 = this.selectedIndex;
         while (true) {
             i6--;
             if (i6 < 0) {
-                this.f106k = this.f108m.size() - 1;
-                m235n();
+                this.selectedIndex = this.menuItems.size() - 1;
+                invalidateLayout();
                 return;
             }
-            int iM241d2 = m241d(i6);
+            int iM241d2 = getItemY(i6);
             if (iM241d2 != iM241d) {
                 if (i4 == -1) {
                     i4 = i6;
                     i5 = iM241d2;
                 } else if (iM241d2 < i5) {
-                    this.f106k = i4;
-                    m235n();
+                    this.selectedIndex = i4;
+                    invalidateLayout();
                     return;
                 }
             }
-            int iM240c2 = m240c(i6);
+            int iM240c2 = getItemX(i6);
             if (iM240c2 == iM240c || (iM240c2 == 0 && iM241d2 != iM241d)) {
                 break;
             }
@@ -872,152 +872,152 @@ public final class Screen {
     }
 
     /* renamed from: n */
-    public final void m235n() {
-        if (!this.f103i || this.f108m.size() <= 0) {
+    public final void invalidateLayout() {
+        if (!this.selectable || this.menuItems.size() <= 0) {
             return;
         }
-        int iM912h = m239b(this.f106k).getTotalHeight();
-        int iM241d = m241d(this.f106k);
-        if (iM241d < this.f105j) {
-            this.f105j = iM241d;
+        int iM912h = getItemAt(this.selectedIndex).getTotalHeight();
+        int iM241d = getItemY(this.selectedIndex);
+        if (iM241d < this.scrollOffset) {
+            this.scrollOffset = iM241d;
         }
-        if (this.f105j < (iM241d + iM912h) - this.f115r) {
-            this.f105j = (iM241d + iM912h) - this.f115r;
+        if (this.scrollOffset < (iM241d + iM912h) - this.contentHeight) {
+            this.scrollOffset = (iM241d + iM912h) - this.contentHeight;
         }
-        if (this.f105j < 0) {
-            this.f105j = 0;
+        if (this.scrollOffset < 0) {
+            this.scrollOffset = 0;
         }
     }
 
     /* renamed from: o */
-    public final Screen m236o() {
-        this.f105j = Utils.max(0, this.f107l - this.f115r);
-        int size = this.f108m.size();
+    public final Screen measureContent() {
+        this.scrollOffset = Utils.max(0, this.totalHeight - this.contentHeight);
+        int size = this.menuItems.size();
         if (size > 1) {
-            this.f105j = Utils.min(this.f105j, m241d(size - 2));
+            this.scrollOffset = Utils.min(this.scrollOffset, getItemY(size - 2));
         }
-        if (this.f97d == 9) {
-            int iM264w = m264w();
-            if (iM264w < this.f108m.size()) {
-                ((MenuItem) this.f108m.elementAt(iM264w)).visible = true;
-                this.f128L = iM264w;
+        if (this.screenType == 9) {
+            int iM264w = findAnyExpanded();
+            if (iM264w < this.menuItems.size()) {
+                ((MenuItem) this.menuItems.elementAt(iM264w)).visible = true;
+                this.visibleExpandedIndex = iM264w;
             } else {
-                this.f128L = 1000000;
+                this.visibleExpandedIndex = 1000000;
             }
-            this.f129M = 2;
+            this.expandDirection = 2;
         }
         return this;
     }
 
     /* renamed from: p */
-    public final void m237p() {
-        if (this.f94a == 6) {
+    public final void scrollDown() {
+        if (this.screenId == 6) {
             ConnectionThread.m1163c(this);
             return;
         }
-        int size = this.f108m.size();
+        int size = this.menuItems.size();
         if (size == 0) {
             return;
         }
-        if (!this.f103i) {
-            if (this.f97d != 9) {
-                if (this.f105j + this.f115r < this.f107l) {
-                    this.f105j += 20;
+        if (!this.selectable) {
+            if (this.screenType != 9) {
+                if (this.scrollOffset + this.contentHeight < this.totalHeight) {
+                    this.scrollOffset += 20;
                     return;
                 }
                 return;
             }
-            int iM261v = m261v();
-            if (iM261v < this.f108m.size()) {
-                ((MenuItem) this.f108m.elementAt(iM261v)).visible = false;
-                int iM263h = m263h(iM261v);
-                if (iM263h < this.f108m.size()) {
-                    ((MenuItem) this.f108m.elementAt(iM263h)).visible = true;
-                    this.f128L = iM263h;
-                } else if (this.f105j + this.f115r < this.f107l) {
-                    this.f105j += 20;
+            int iM261v = findVisibleExpanded();
+            if (iM261v < this.menuItems.size()) {
+                ((MenuItem) this.menuItems.elementAt(iM261v)).visible = false;
+                int iM263h = findNextExpanded(iM261v);
+                if (iM263h < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(iM263h)).visible = true;
+                    this.visibleExpandedIndex = iM263h;
+                } else if (this.scrollOffset + this.contentHeight < this.totalHeight) {
+                    this.scrollOffset += 20;
                 }
-            } else if (this.f128L < this.f108m.size()) {
-                int iM263h2 = m263h(this.f128L);
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).getTotalHeight()) - this.f105j <= this.f115r && this.f129M != 2) {
-                    iM263h2 = this.f128L;
+            } else if (this.visibleExpandedIndex < this.menuItems.size()) {
+                int iM263h2 = findNextExpanded(this.visibleExpandedIndex);
+                if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection != 2) {
+                    iM263h2 = this.visibleExpandedIndex;
                 }
-                if (m241d(this.f128L) > this.f105j && (m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).getTotalHeight()) - this.f105j <= this.f115r && this.f129M == 2 && this.f115r - ((m241d(this.f128L) + ((MenuItem) this.f108m.elementAt(this.f128L)).getTotalHeight()) - this.f105j) <= 20) {
-                    iM263h2 = this.f128L;
+                if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection == 2 && this.contentHeight - ((getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset) <= 20) {
+                    iM263h2 = this.visibleExpandedIndex;
                 }
-                if (iM263h2 < this.f108m.size()) {
-                    ((MenuItem) this.f108m.elementAt(iM263h2)).visible = true;
-                    this.f128L = iM263h2;
-                } else if (this.f105j + this.f115r < this.f107l) {
-                    this.f105j += 20;
+                if (iM263h2 < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(iM263h2)).visible = true;
+                    this.visibleExpandedIndex = iM263h2;
+                } else if (this.scrollOffset + this.contentHeight < this.totalHeight) {
+                    this.scrollOffset += 20;
                 }
             } else {
-                int iM264w = m264w();
-                if (iM264w < this.f108m.size()) {
-                    ((MenuItem) this.f108m.elementAt(iM264w)).visible = true;
-                    this.f128L = iM264w;
-                } else if (this.f105j + this.f115r < this.f107l) {
-                    this.f105j += 20;
+                int iM264w = findAnyExpanded();
+                if (iM264w < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(iM264w)).visible = true;
+                    this.visibleExpandedIndex = iM264w;
+                } else if (this.scrollOffset + this.contentHeight < this.totalHeight) {
+                    this.scrollOffset += 20;
                 }
             }
-            this.f129M = 2;
+            this.expandDirection = 2;
             return;
         }
-        if (this.f102h != 0) {
-            int iM240c = m240c(this.f106k);
-            int iM241d = m241d(this.f106k);
+        if (this.layoutMode != 0) {
+            int iM240c = getItemX(this.selectedIndex);
+            int iM241d = getItemY(this.selectedIndex);
             int i = -1;
             int i2 = 0;
-            int i3 = this.f106k;
+            int i3 = this.selectedIndex;
             do {
                 i3++;
                 if (i3 >= size) {
-                    this.f106k = 0;
-                    m235n();
+                    this.selectedIndex = 0;
+                    invalidateLayout();
                     return;
                 }
-                int iM241d2 = m241d(i3);
+                int iM241d2 = getItemY(i3);
                 if (iM241d2 != iM241d) {
                     if (i == -1) {
                         i = i3;
                         i2 = iM241d2;
                     } else if (iM241d2 > i2) {
-                        this.f106k = i;
-                        m235n();
+                        this.selectedIndex = i;
+                        invalidateLayout();
                         return;
                     }
                 }
-            } while (m240c(i3) != iM240c);
-            this.f106k = i3;
-            m235n();
+            } while (getItemX(i3) != iM240c);
+            this.selectedIndex = i3;
+            invalidateLayout();
             return;
         }
-        if (this.f106k >= size - 1) {
-            int i4 = this.f105j;
-            this.f105j += 20;
-            int iM912h = m239b(this.f106k).getTotalHeight();
-            int iM241d3 = m241d(this.f106k);
-            if (this.f105j > (iM241d3 + iM912h) - this.f115r) {
-                this.f105j -= this.f105j - ((iM241d3 + iM912h) - this.f115r);
+        if (this.selectedIndex >= size - 1) {
+            int i4 = this.scrollOffset;
+            this.scrollOffset += 20;
+            int iM912h = getItemAt(this.selectedIndex).getTotalHeight();
+            int iM241d3 = getItemY(this.selectedIndex);
+            if (this.scrollOffset > (iM241d3 + iM912h) - this.contentHeight) {
+                this.scrollOffset -= this.scrollOffset - ((iM241d3 + iM912h) - this.contentHeight);
             }
-            if (this.f105j < 0) {
-                this.f105j = 0;
+            if (this.scrollOffset < 0) {
+                this.scrollOffset = 0;
             }
-            if (this.f105j != i4 || this.f127y) {
+            if (this.scrollOffset != i4 || this.reverseScroll) {
                 return;
             }
-            this.f105j = 0;
-            this.f106k = 0;
-            if (this.f103i) {
-                while (!m239b(this.f106k).isEnabled()) {
-                    this.f106k++;
+            this.scrollOffset = 0;
+            this.selectedIndex = 0;
+            if (this.selectable) {
+                while (!getItemAt(this.selectedIndex).isEnabled()) {
+                    this.selectedIndex++;
                 }
                 return;
             }
             return;
         }
         MenuItem c0032c = null;
-        int i5 = this.f106k;
+        int i5 = this.selectedIndex;
         while (true) {
             i5++;
             if (i5 > size) {
@@ -1026,29 +1026,29 @@ public final class Screen {
             if (i5 == size) {
                 return;
             }
-            MenuItem c0032cM239b = m239b(i5);
+            MenuItem c0032cM239b = getItemAt(i5);
             c0032c = c0032cM239b;
             if (c0032cM239b.isEnabled()) {
-                this.f106k = i5;
+                this.selectedIndex = i5;
                 break;
             }
         }
         int iM912h2 = c0032c.getTotalHeight();
-        int iM241d4 = m241d(this.f106k);
-        if (iM241d4 + iM912h2 >= this.f105j + this.f115r) {
-            if (iM912h2 <= this.f115r) {
-                this.f105j = (iM241d4 + iM912h2) - this.f115r;
+        int iM241d4 = getItemY(this.selectedIndex);
+        if (iM241d4 + iM912h2 >= this.scrollOffset + this.contentHeight) {
+            if (iM912h2 <= this.contentHeight) {
+                this.scrollOffset = (iM241d4 + iM912h2) - this.contentHeight;
             } else {
-                this.f105j += 20;
+                this.scrollOffset += 20;
             }
         }
     }
 
     /* renamed from: t */
-    private final int m238t() {
+    private final int findLastVisible() {
         int i;
-        int i2 = this.f103i ? this.f106k : 0;
-        int size = this.f108m.size() - 1;
+        int i2 = this.selectable ? this.selectedIndex : 0;
+        int size = this.menuItems.size() - 1;
         int i3 = i2;
         int i4 = -1;
         while (true) {
@@ -1058,56 +1058,56 @@ public final class Screen {
                 break;
             }
             i4 = i;
-            if (m241d(i) > this.f105j + this.f115r) {
+            if (getItemY(i) > this.scrollOffset + this.contentHeight) {
                 size = i - 1;
             } else {
                 i3 = i;
             }
         }
-        if (i < this.f108m.size() - 1 && m242e(i + 1)) {
+        if (i < this.menuItems.size() - 1 && isItemVisible(i + 1)) {
             i++;
         }
         int i6 = i;
-        if (!m243f(i6) && !m239b(i6).isEnabled()) {
+        if (!isItemFullyVisible(i6) && !getItemAt(i6).isEnabled()) {
             i6--;
         }
         return i6;
     }
 
     /* renamed from: b */
-    private final MenuItem m239b(int i) {
+    private final MenuItem getItemAt(int i) {
         if (i >= 0) {
-            return (MenuItem) this.f108m.elementAt(i);
+            return (MenuItem) this.menuItems.elementAt(i);
         }
         return null;
     }
 
     /* renamed from: c */
-    private final int m240c(int i) {
-        return this.f109n[(i << 1) + 1];
+    private final int getItemX(int i) {
+        return this.layoutCache[(i << 1) + 1];
     }
 
     /* renamed from: d */
-    private final int m241d(int i) {
-        return this.f109n[(i << 1) + 1 + 1];
+    private final int getItemY(int i) {
+        return this.layoutCache[(i << 1) + 1 + 1];
     }
 
     /* renamed from: e */
-    private final boolean m242e(int i) {
-        int iM241d = m241d(i);
-        return iM241d < this.f105j + this.f115r && iM241d + m239b(i).getTotalHeight() > this.f105j;
+    private final boolean isItemVisible(int i) {
+        int iM241d = getItemY(i);
+        return iM241d < this.scrollOffset + this.contentHeight && iM241d + getItemAt(i).getTotalHeight() > this.scrollOffset;
     }
 
     /* renamed from: f */
-    private final boolean m243f(int i) {
-        int iM241d = m241d(i);
-        return iM241d >= this.f105j && (iM241d + m239b(i).getTotalHeight()) - 1 <= this.f105j + this.f115r;
+    private final boolean isItemFullyVisible(int i) {
+        int iM241d = getItemY(i);
+        return iM241d >= this.scrollOffset && (iM241d + getItemAt(i).getTotalHeight()) - 1 <= this.scrollOffset + this.contentHeight;
     }
 
     /* renamed from: u */
-    private final int m244u() {
+    private final int findFirstVisible() {
         int i;
-        int size = this.f103i ? this.f106k : this.f108m.size() - 1;
+        int size = this.selectable ? this.selectedIndex : this.menuItems.size() - 1;
         int i2 = 0;
         int i3 = -1;
         while (true) {
@@ -1117,82 +1117,82 @@ public final class Screen {
                 break;
             }
             i3 = i;
-            if (m241d(i) + m239b(i).getTotalHeight() < this.f105j) {
+            if (getItemY(i) + getItemAt(i).getTotalHeight() < this.scrollOffset) {
                 i2 = i + 1;
             } else {
                 size = i;
             }
         }
-        if (!m242e(i)) {
+        if (!isItemVisible(i)) {
             i++;
-        } else if (i > 0 && m242e(i - 1)) {
+        } else if (i > 0 && isItemVisible(i - 1)) {
             i--;
         }
         return i;
     }
 
     /* renamed from: a */
-    public final Screen m245a(String str, String str2, int i) {
-        return m256a(-1, str, str2, i, (Object) null);
+    public final Screen addTextPair(String str, String str2, int i) {
+        return addFullItem(-1, str, str2, i, (Object) null);
     }
 
     /* renamed from: a */
-    public final Screen m246a(int i, String str, int i2) {
-        return m256a(i, (String) null, str, i2, (Object) null);
+    public final Screen addIconItem(int i, String str, int i2) {
+        return addFullItem(i, (String) null, str, i2, (Object) null);
     }
 
     /* renamed from: a */
-    public final Screen m247a(int i, String str, int i2, Object obj) {
-        return m256a(i, (String) null, str, i2, obj);
+    public final Screen addIconItemWithData(int i, String str, int i2, Object obj) {
+        return addFullItem(i, (String) null, str, i2, obj);
     }
 
     /* renamed from: a */
-    public final Screen m248a(String str, String str2) {
-        return m245a(str, str2, 200);
+    public final Screen addLabelValue(String str, String str2) {
+        return addTextPair(str, str2, 200);
     }
 
     /* renamed from: a */
-    public final Screen m249a(int i, int i2, int i3) {
-        return m246a(i, AppState.getString(i2), i3);
+    public final Screen addIconById(int i, int i2, int i3) {
+        return addIconItem(i, AppState.getString(i2), i3);
     }
 
     /* renamed from: b */
-    public final Screen m250b(int i, String str, int i2, Object obj) {
+    public final Screen addExpandableItem(int i, String str, int i2, Object obj) {
         MenuItem c0032cM901a = new MenuItem(13, AppState.emptyStr).setIcon(i).addText(str, 5, i2);
         c0032cM901a.data = obj;
-        return m225a(c0032cM901a);
+        return addItem(c0032cM901a);
     }
 
     /* renamed from: a */
-    public final Screen m251a(String str, int i) {
-        return m225a(MenuItem.createSeparator().addText(str, 1, i));
+    public final Screen addSeparator(String str, int i) {
+        return addItem(MenuItem.createSeparator().addText(str, 1, i));
     }
 
     /* renamed from: b */
-    public final Screen m252b(int i, int i2, int i3) {
+    public final Screen addActionById(int i, int i2, int i3) {
         String strM584b = AppState.getString(i2);
         MenuItem c0032cM896a = MenuItem.createWithWidth(strM584b, i3).setIcon(i).setLabel(strM584b).setIcon(244);
         c0032cM896a.enabled = true;
-        return m225a(c0032cM896a);
+        return addItem(c0032cM896a);
     }
 
     /* renamed from: a */
-    public final Screen m253a(String str) {
-        return m246a(-1, str, 200);
+    public final Screen addTextItem(String str) {
+        return addIconItem(-1, str, 200);
     }
 
     /* renamed from: b */
-    public final Screen m254b(int i, String str, int i2) {
-        return m225a(MenuItem.createWithWidth(str, i2).setIcon(i));
+    public final Screen addIconTextItem(int i, String str, int i2) {
+        return addItem(MenuItem.createWithWidth(str, i2).setIcon(i));
     }
 
     /* renamed from: a */
-    public final Screen m255a(int i) {
-        return m225a(MenuItem.createSeparator().setLabel(AppState.getString(i)));
+    public final Screen addLabelById(int i) {
+        return addItem(MenuItem.createSeparator().setLabel(AppState.getString(i)));
     }
 
     /* renamed from: a */
-    public final Screen m256a(int i, String str, String str2, int i2, Object obj) {
+    public final Screen addFullItem(int i, String str, String str2, int i2, Object obj) {
         MenuItem c0032cM888a = MenuItem.createWithWidth(str2, i2);
         if (i >= 0) {
             c0032cM888a.setIcon(i);
@@ -1205,20 +1205,20 @@ public final class Screen {
             c0032cM888a.setLabel(iIndexOf < 0 ? str2 : StringUtils.prefix(str2, iIndexOf));
         }
         c0032cM888a.data = obj;
-        return m225a(c0032cM888a);
+        return addItem(c0032cM888a);
     }
 
     /* renamed from: b */
-    public final Screen m257b(String str) {
+    public final Screen selectByTitle(String str) {
         if (str != null) {
             int i = 0;
-            Enumeration enumerationElements = this.f108m.elements();
+            Enumeration enumerationElements = this.menuItems.elements();
             while (true) {
                 if (!enumerationElements.hasMoreElements()) {
                     break;
                 }
                 if (str.equals(((MenuItem) enumerationElements.nextElement()).title)) {
-                    this.f106k = i;
+                    this.selectedIndex = i;
                     break;
                 }
                 i++;
@@ -1228,20 +1228,20 @@ public final class Screen {
     }
 
     /* renamed from: q */
-    public final void m258q() {
+    public final void rebuildItems() {
         Vector vectorM1213g = NetworkUtils.newVector();
-        int size = this.f108m.size();
+        int size = this.menuItems.size();
         while (true) {
             size--;
             if (size < 0) {
                 break;
             } else {
-                vectorM1213g.addElement(this.f108m.elementAt(size));
+                vectorM1213g.addElement(this.menuItems.elementAt(size));
             }
         }
-        this.f108m.removeAllElements();
-        this.f109n[0] = 0;
-        this.f107l = 0;
+        this.menuItems.removeAllElements();
+        this.layoutCache[0] = 0;
+        this.totalHeight = 0;
         int size2 = vectorM1213g.size();
         while (true) {
             size2--;
@@ -1249,60 +1249,60 @@ public final class Screen {
                 NetworkUtils.releaseVector(vectorM1213g);
                 return;
             }
-            m225a((MenuItem) vectorM1213g.elementAt(size2));
+            addItem((MenuItem) vectorM1213g.elementAt(size2));
         }
     }
 
     /* renamed from: a */
-    public final Screen m259a(String str, String str2, int i, int i2, int i3) {
+    public final Screen setSoftKeys(String str, String str2, int i, int i2, int i3) {
         GraphicsContext c0012alM608k = AppState.getGfxContext(0);
-        this.f123v = str;
+        this.titleLeft = str;
         int iM214a = c0012alM608k.stringWidth(str);
-        this.f124w = str2;
-        this.f126K = Utils.max(iM214a, c0012alM608k.stringWidth(str2)) << 1;
-        this.f120s = i;
-        this.f121t = i2;
-        this.f122u = i3;
+        this.titleRight = str2;
+        this.titleMaxWidth = Utils.max(iM214a, c0012alM608k.stringWidth(str2)) << 1;
+        this.softKeyLeft = i;
+        this.softKeyCenter = i2;
+        this.softKeyRight = i3;
         return this;
     }
 
     /* renamed from: a */
-    public final boolean m260a(int i, int i2, int i3, int i4, boolean z) {
+    public final boolean onPointerEvent(int i, int i2, int i3, int i4, boolean z) {
         int iM240c;
         int iM241d;
         boolean z2;
         int iM240c2;
         int iM241d2;
-        if (!this.f132B) {
+        if (!this.touchConsumed) {
             return true;
         }
         AppController.f153g = true;
-        this.f132B = false;
-        int i5 = i - this.f98e;
-        int i6 = i2 - this.f99f;
-        int i7 = i3 - this.f98e;
-        int i8 = i4 - this.f99f;
-        if (this.f94a == 6) {
+        this.touchConsumed = false;
+        int i5 = i - this.offsetX;
+        int i6 = i2 - this.offsetY;
+        int i7 = i3 - this.offsetX;
+        int i8 = i4 - this.offsetY;
+        if (this.screenId == 6) {
             ConnectionThread.m1161a(this);
-            MapRenderer.onTap(i5, i6 - this.f113p);
+            MapRenderer.onTap(i5, i6 - this.contentTop);
             return true;
         }
-        if (this.f103i) {
+        if (this.selectable) {
             int i9 = (z ? i7 : i5) - 2;
-            int i10 = ((z ? i8 : i6) + this.f105j) - this.f113p;
-            int size = this.f108m.size();
-            int i11 = this.f104D ? this.f114q : this.f114q + 2;
+            int i10 = ((z ? i8 : i6) + this.scrollOffset) - this.contentTop;
+            int size = this.menuItems.size();
+            int i11 = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
             int i12 = 0;
             while (true) {
                 if (i12 >= size) {
                     z2 = false;
                     break;
                 }
-                MenuItem c0032cM239b = m239b(i12);
-                if (c0032cM239b.isEnabled() && i9 > (iM240c2 = m240c(i12)) && i10 > (iM241d2 = m241d(i12))) {
-                    if (i9 < iM240c2 + (this.f102h == 0 ? i11 : c0032cM239b.getTotalWidth()) && i10 < iM241d2 + c0032cM239b.getTotalHeight()) {
-                        if (this.f106k != i12 || z) {
-                            this.f106k = i12;
+                MenuItem c0032cM239b = getItemAt(i12);
+                if (c0032cM239b.isEnabled() && i9 > (iM240c2 = getItemX(i12)) && i10 > (iM241d2 = getItemY(i12))) {
+                    if (i9 < iM240c2 + (this.layoutMode == 0 ? i11 : c0032cM239b.getTotalWidth()) && i10 < iM241d2 + c0032cM239b.getTotalHeight()) {
+                        if (this.selectedIndex != i12 || z) {
+                            this.selectedIndex = i12;
                         } else {
                             AppController.m455ab();
                         }
@@ -1318,26 +1318,26 @@ public final class Screen {
         if (z) {
             return false;
         }
-        if (this.f97d != 9) {
-            if (this.f97d == 0 || this.f97d == 1) {
+        if (this.screenType != 9) {
+            if (this.screenType == 0 || this.screenType == 1) {
                 return true;
             }
             AppController.m455ab();
             return true;
         }
         int i13 = i5 - 2;
-        int i14 = (i6 + this.f105j) - this.f113p;
-        int i15 = this.f104D ? this.f114q : this.f114q + 2;
-        int iM261v = m261v();
-        if (iM261v < this.f108m.size()) {
-            ((MenuItem) this.f108m.elementAt(iM261v)).visible = false;
+        int i14 = (i6 + this.scrollOffset) - this.contentTop;
+        int i15 = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
+        int iM261v = findVisibleExpanded();
+        if (iM261v < this.menuItems.size()) {
+            ((MenuItem) this.menuItems.elementAt(iM261v)).visible = false;
         }
-        int size2 = this.f108m.size();
+        int size2 = this.menuItems.size();
         while (true) {
             size2--;
             if (size2 >= 0) {
-                MenuItem c0032cM239b2 = m239b(size2);
-                if (c0032cM239b2.id == 13 && i13 > (iM240c = m240c(size2)) && i14 > (iM241d = m241d(size2)) && i13 < iM240c + i15 && i14 < iM241d + c0032cM239b2.getTotalHeight()) {
+                MenuItem c0032cM239b2 = getItemAt(size2);
+                if (c0032cM239b2.id == 13 && i13 > (iM240c = getItemX(size2)) && i14 > (iM241d = getItemY(size2)) && i13 < iM240c + i15 && i14 < iM241d + c0032cM239b2.getTotalHeight()) {
                     c0032cM239b2.visible = true;
                     break;
                 }
@@ -1350,11 +1350,11 @@ public final class Screen {
     }
 
     /* renamed from: v */
-    private int m261v() {
-        int size = this.f108m.size() + 1;
-        for (int i = 0; i < this.f108m.size(); i++) {
-            MenuItem c0032c = (MenuItem) this.f108m.elementAt(i);
-            if (c0032c.id == 13 && c0032c.visible && m241d(i) > this.f105j && (m241d(i) + c0032c.getTotalHeight()) - this.f105j <= this.f115r) {
+    private int findVisibleExpanded() {
+        int size = this.menuItems.size() + 1;
+        for (int i = 0; i < this.menuItems.size(); i++) {
+            MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i);
+            if (c0032c.id == 13 && c0032c.visible && getItemY(i) > this.scrollOffset && (getItemY(i) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
                 size = i;
             }
         }
@@ -1362,11 +1362,11 @@ public final class Screen {
     }
 
     /* renamed from: g */
-    private int m262g(int i) {
-        int size = this.f108m.size() + 1;
-        for (int i2 = 0; i2 < this.f108m.size(); i2++) {
-            MenuItem c0032c = (MenuItem) this.f108m.elementAt(i2);
-            if (c0032c.id == 13 && !c0032c.visible && m241d(i2) > this.f105j && (m241d(i2) + c0032c.getTotalHeight()) - this.f105j <= this.f115r && m241d(i2) < m241d(i)) {
+    private int findPrevExpanded(int i) {
+        int size = this.menuItems.size() + 1;
+        for (int i2 = 0; i2 < this.menuItems.size(); i2++) {
+            MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i2);
+            if (c0032c.id == 13 && !c0032c.visible && getItemY(i2) > this.scrollOffset && (getItemY(i2) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(i2) < getItemY(i)) {
                 size = i2;
             }
         }
@@ -1374,13 +1374,13 @@ public final class Screen {
     }
 
     /* renamed from: h */
-    private int m263h(int i) {
-        int size = this.f108m.size() + 1;
+    private int findNextExpanded(int i) {
+        int size = this.menuItems.size() + 1;
         int i2 = 0;
         while (true) {
-            if (i2 < this.f108m.size()) {
-                MenuItem c0032c = (MenuItem) this.f108m.elementAt(i2);
-                if (c0032c.id == 13 && !c0032c.visible && m241d(i2) > this.f105j && (m241d(i2) + c0032c.getTotalHeight()) - this.f105j <= this.f115r && m241d(i2) > m241d(i)) {
+            if (i2 < this.menuItems.size()) {
+                MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i2);
+                if (c0032c.id == 13 && !c0032c.visible && getItemY(i2) > this.scrollOffset && (getItemY(i2) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(i2) > getItemY(i)) {
                     size = i2;
                     break;
                 }
@@ -1393,11 +1393,11 @@ public final class Screen {
     }
 
     /* renamed from: w */
-    private int m264w() {
-        int size = this.f108m.size() + 1;
-        for (int i = 0; i < this.f108m.size(); i++) {
-            MenuItem c0032c = (MenuItem) this.f108m.elementAt(i);
-            if (c0032c.id == 13 && !c0032c.visible && m241d(i) > this.f105j && (m241d(i) + c0032c.getTotalHeight()) - this.f105j <= this.f115r) {
+    private int findAnyExpanded() {
+        int size = this.menuItems.size() + 1;
+        for (int i = 0; i < this.menuItems.size(); i++) {
+            MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i);
+            if (c0032c.id == 13 && !c0032c.visible && getItemY(i) > this.scrollOffset && (getItemY(i) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
                 size = i;
             }
         }
@@ -1405,18 +1405,18 @@ public final class Screen {
     }
 
     /* renamed from: r */
-    public final int m265r() {
+    public final int getSelectedY() {
         int iM241d = 0;
-        if (this.f106k > 0) {
-            iM241d = m241d(this.f106k);
+        if (this.selectedIndex > 0) {
+            iM241d = getItemY(this.selectedIndex);
         }
-        return this.f99f + iM241d;
+        return this.offsetY + iM241d;
     }
 
     /* renamed from: a */
-    public final Screen m266a(int i, int i2) {
-        this.f98e = i;
-        this.f99f = i2;
+    public final Screen setOffset(int i, int i2) {
+        this.offsetX = i;
+        this.offsetY = i2;
         return this;
     }
 }

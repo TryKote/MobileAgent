@@ -124,7 +124,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                             if (i < 0) {
                                 break;
                             }
-                        } while (((Screen) vectorM614m.elementAt(i)).f99f != 0);
+                        } while (((Screen) vectorM614m.elementAt(i)).offsetY != 0);
                         int iM586d = AppState.getInt(1528);
                         int iM586d2 = AppState.getInt(1529);
                         c0012al.setClip(0, 0, iM586d, iM586d2);
@@ -156,7 +156,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                                     }
                                 }
                             }
-                            ((Screen) vectorM614m.elementAt(i)).m227a(c0012al, z2, false);
+                            ((Screen) vectorM614m.elementAt(i)).paint(c0012al, z2, false);
                             c0012al.setClip(0, 0, iM586d, iM586d2);
                             i++;
                         }

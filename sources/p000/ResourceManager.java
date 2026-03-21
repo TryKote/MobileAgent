@@ -189,7 +189,7 @@ public final class ResourceManager {
             length--;
             if (length < 0) {
                 c0032c2.clear().setLabel(Utils.m527g(c0032c2.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{integerOf(i), strArr};
-                c0013am.m258q();
+                c0013am.rebuildItems();
                 IOUtils.postEvent(c0032c2);
                 return 0;
             }
@@ -523,7 +523,7 @@ public final class ResourceManager {
                 return;
             } else {
                 MapPoint c0014an = (MapPoint) vector.elementAt(size);
-                c0013amM75b.m247a(-1, c0014an.name, 6, c0014an);
+                c0013amM75b.addIconItemWithData(-1, c0014an.name, 6, c0014an);
             }
         }
     }
@@ -552,13 +552,13 @@ public final class ResourceManager {
         Vector vectorM439R = AppController.m439R();
         int size = vectorM439R.size();
         if (size > 0) {
-            c0013amM75b.m255a(832);
+            c0013amM75b.addLabelById(832);
             for (int i = 0; i < size; i++) {
-                c0013amM75b.m225a(((MrimAccount) vectorM439R.elementAt(i)).createMenuItem());
+                c0013amM75b.addItem(((MrimAccount) vectorM439R.elementAt(i)).createMenuItem());
             }
         } else {
-            c0013amM75b.f103i = false;
-            c0013amM75b.m255a(551);
+            c0013amM75b.selectable = false;
+            c0013amM75b.addLabelById(551);
         }
         NetworkUtils.releaseVector(vectorM439R);
         ScreenManager.pushScreen(c0013amM75b);
@@ -627,7 +627,7 @@ public final class ResourceManager {
                 return;
             } else {
                 Object objElementAt = vectorM1142d.elementAt(i);
-                c0013amM75b.m247a(-1, ConnectionThread.m1138a(objElementAt), 6, objElementAt);
+                c0013amM75b.addIconItemWithData(-1, ConnectionThread.m1138a(objElementAt), 6, objElementAt);
             }
         }
     }

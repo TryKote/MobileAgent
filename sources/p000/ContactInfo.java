@@ -301,13 +301,13 @@ public final class ContactInfo extends Hashtable {
                     String strM1256a = getString(i3);
                     if (null != strM1256a) {
                         if (i3 == 6) {
-                            c0013amM75b.m248a(strM1215a, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
+                            c0013amM75b.addLabelValue(strM1215a, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.m225a(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
+                                c0013amM75b.addItem(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
                                 break;
                             }
-                            c0013amM75b.m248a(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);
+                            c0013amM75b.addLabelValue(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);
                         }
                     }
                 } catch (Throwable unused) {
@@ -340,7 +340,7 @@ public final class ContactInfo extends Hashtable {
                     String str = c0035f.statusMessage;
                     if (str == null) {
                         i2 = -1;
-                        c0013amM75b.m225a(c0032cM901a.setIcon(i2).setLabel(strM1215a2));
+                        c0013amM75b.addItem(c0032cM901a.setIcon(i2).setLabel(strM1215a2));
                     } else {
                         if (Conversation.hasKey(str, 927)) {
                             i2 = 357;
@@ -357,62 +357,62 @@ public final class ContactInfo extends Hashtable {
                         } else if (Conversation.hasKey(str, 933)) {
                             i2 = 307;
                         }
-                        c0013amM75b.m225a(c0032cM901a.setIcon(i2).setLabel(strM1215a2));
+                        c0013amM75b.addItem(c0032cM901a.setIcon(i2).setLabel(strM1215a2));
                     }
                 }
                 String str2 = c0035f.customLink;
                 if (Utils.nonEmpty(str2)) {
-                    c0013amM75b.m225a(MenuItem.createSeparator().addText(AppState.getString(324), 0, 6).setIcon(242).setLabel(str2));
+                    c0013amM75b.addItem(MenuItem.createSeparator().addText(AppState.getString(324), 0, 6).setIcon(242).setLabel(str2));
                 }
                 String str3 = c0035f.customNote;
                 if (Utils.nonEmpty(str3)) {
-                    c0013amM75b.m225a(MenuItem.createSeparator().addText(AppState.getString(325), 0, 6).setIcon(2).setLabel(str3));
+                    c0013amM75b.addItem(MenuItem.createSeparator().addText(AppState.getString(325), 0, 6).setIcon(2).setLabel(str3));
                 }
                 String strM998o = c0035f.getVCardDescription();
                 if (Utils.nonEmpty(strM998o)) {
-                    c0013amM75b.m225a(MenuItem.createSeparator().addText(AppState.getString(326), 0, 6).setIcon(365).setLabel(strM998o));
+                    c0013amM75b.addItem(MenuItem.createSeparator().addText(AppState.getString(326), 0, 6).setIcon(365).setLabel(strM998o));
                 }
             }
         } else if (abstractC0037hM1255c instanceof MmpProtocol) {
             String strM1256a2 = getString(60);
             if (null != strM1256a2) {
-                c0013amM75b.m248a(Utils.m527g(AppState.getString(263250)), strM1256a2);
+                c0013amM75b.addLabelValue(Utils.m527g(AppState.getString(263250)), strM1256a2);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
                     String strM1256a3 = getString(i5);
                     if (null != strM1256a3) {
-                        c0013amM75b.m248a(NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append(vectorM512e.elementAt(i5)))), strM1256a3);
+                        c0013amM75b.addLabelValue(NetworkUtils.bufToStringCached(Utils.m497a(NetworkUtils.newStringBuffer().append(vectorM512e.elementAt(i5)))), strM1256a3);
                     }
                 } catch (Throwable unused2) {
                 }
             }
             String strM1256a4 = getString(5);
             if (null != strM1256a4) {
-                c0013amM75b.m248a(AppState.getString(315), strM1256a4);
+                c0013amM75b.addLabelValue(AppState.getString(315), strM1256a4);
             }
             String strM1256a5 = getString(32);
             if (null != strM1256a5) {
-                c0013amM75b.m248a(AppState.getString(313), strM1256a5);
+                c0013amM75b.addLabelValue(AppState.getString(313), strM1256a5);
             }
             String strM1256a6 = getString(37);
             if (null != strM1256a6) {
-                c0013amM75b.m248a(AppState.getString(314), strM1256a6);
+                c0013amM75b.addLabelValue(AppState.getString(314), strM1256a6);
             }
             String strM1256a7 = getString(36);
             if (null != strM1256a7) {
-                c0013amM75b.m248a(AppState.getString(316), strM1256a7);
+                c0013amM75b.addLabelValue(AppState.getString(316), strM1256a7);
             }
         } else if (abstractC0037hM1255c instanceof XmppProtocol) {
             Image image = (Image) get(ResourceManager.integerOf(25));
             if (image != null) {
-                c0013amM75b.m225a(MenuItem.createGraphics(new GraphicsContext(image)));
+                c0013amM75b.addItem(MenuItem.createGraphics(new GraphicsContext(image)));
             }
-            c0013amM75b.m246a(Utils.parseInt((Object) getString(24)), getFieldDefault(0), 0);
-            c0013amM75b.m245a(AppState.getString(744), getString(26), 0);
+            c0013amM75b.addIconItem(Utils.parseInt((Object) getString(24)), getFieldDefault(0), 0);
+            c0013amM75b.addTextPair(AppState.getString(744), getString(26), 0);
             String strM1256a8 = getString(11);
             if (null != strM1256a8) {
-                c0013amM75b.m253a(strM1256a8);
+                c0013amM75b.addTextItem(strM1256a8);
             }
         }
         NetworkUtils.releaseVector(vectorM512e);

@@ -313,19 +313,19 @@ public abstract class Contact implements Sortable {
             String strM539n = Utils.m539n(c0043nM1380F.readUnicodeChars(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
-                c0013amM75b.m251a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
-                c0013amM75b.m246a(2, strM539n, 0);
+                c0013amM75b.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
+                c0013amM75b.addIconItem(2, strM539n, 0);
                 if (this.account.isConnected()) {
-                    c0013amM75b.m250b(-1, AppState.getString(839), i, new Object[]{ResourceManager.integerOf(1), strM539n, str, new Long(jM1341m2)});
+                    c0013amM75b.addExpandableItem(-1, AppState.getString(839), i, new Object[]{ResourceManager.integerOf(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
                 int iIndexOf = strM539n.indexOf(10);
                 String strM13b = StringUtils.prefix(strM539n, iIndexOf);
                 String strM15c = StringUtils.suffix(strM539n, iIndexOf + 1);
-                c0013amM75b.m251a(StringUtils.concat(strM13b, formatTime(jM1341m, iM624l)), 8);
+                c0013amM75b.addSeparator(StringUtils.concat(strM13b, formatTime(jM1341m, iM624l)), 8);
                 addMessageLines(c0013amM75b, strM15c, i);
             } else {
-                c0013amM75b.m251a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
+                c0013amM75b.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
                 addMessageLines(c0013amM75b, strM539n, i);
             }
         }
@@ -340,9 +340,9 @@ public abstract class Contact implements Sortable {
         for (int i2 = 0; i2 < size; i2++) {
             String str2 = (String) vectorM1098a.elementAt(i2);
             if (Conversation.isValidFormat(str2)) {
-                c0013am.m250b(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.integerOf(0), str2});
+                c0013am.addExpandableItem(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.integerOf(0), str2});
             } else {
-                c0013am.m225a(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
+                c0013am.addItem(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }
         }
         NetworkUtils.releaseVector(vectorM1098a);
@@ -377,7 +377,7 @@ public abstract class Contact implements Sortable {
             } else {
                 strM1215a = strM1369q;
             }
-            c0013amM75b.m256a(-1, (String) null, strM1215a, 200, strM1369q);
+            c0013amM75b.addFullItem(-1, (String) null, strM1215a, 200, strM1369q);
         }
         c0043nM1380F.clear();
         return c0013amM75b;

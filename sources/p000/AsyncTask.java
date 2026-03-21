@@ -86,7 +86,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                 } else {
                     c0032c.setDefaultFont();
                 }
-                c0013am.m258q();
+                c0013am.rebuildItems();
             }
         }
         AppState.setScreen(AppState.getCanvas().updateCommands());

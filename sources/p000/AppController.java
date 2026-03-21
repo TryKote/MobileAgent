@@ -194,7 +194,7 @@ public final class AppController {
         abstractC0041lM611g.flags = (byte) 0;
         abstractC0041lM611g.dirty = true;
         abstractC0041lM611g.updateRenderState();
-        ScreenManager.showScreen(abstractC0041lM611g.showMessages().m236o());
+        ScreenManager.showScreen(abstractC0041lM611g.showMessages().measureContent());
     }
 
     /* renamed from: b */
@@ -619,7 +619,7 @@ public final class AppController {
 
     /* renamed from: l */
     public static final int m338l(int i) {
-        if (ScreenManager.getCurrentScreen().f97d == 8) {
+        if (ScreenManager.getCurrentScreen().screenType == 8) {
             ScreenBuilder.onScreenClosed();
         }
         AppState.setFromPool(1294, i);
@@ -733,7 +733,7 @@ public final class AppController {
             if (c0052w != c0028ba.getLastChatRoom()) {
                 MenuItem c0032cM898b = MenuItem.createDefault().setIcon(234).setLabel(c0052w.name);
                 c0032cM898b.data = c0052w;
-                c0013amM75b.m225a(c0032cM898b);
+                c0013amM75b.addItem(c0032cM898b);
             }
         }
         ScreenManager.showScreen(c0013amM75b);
@@ -1338,7 +1338,7 @@ public final class AppController {
             if (c0052w != c0028ba.getLastChatRoom()) {
                 MenuItem c0032cM898b = MenuItem.createDefault().setIcon(234).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(c0052w.unreadCount)), 1, 0).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.memberCount).append(']')));
                 c0032cM898b.data = c0052w;
-                c0013amM75b.m225a(c0032cM898b);
+                c0013amM75b.addItem(c0032cM898b);
             }
         }
         ScreenManager.showScreen(c0013amM75b);
@@ -2215,7 +2215,7 @@ public final class AppController {
                             while (true) {
                                 size2--;
                                 if (size2 < 0) {
-                                    if (f152f && ScreenManager.getCurrentScreen().f94a == 4 && m305K(1)) {
+                                    if (f152f && ScreenManager.getCurrentScreen().screenId == 4 && m305K(1)) {
                                         f152f = false;
                                         AppState.getString(1237);
                                         ContactListManager.refreshList();
@@ -2229,7 +2229,7 @@ public final class AppController {
                                         Object obj = c0032cM69e == null ? null : c0032cM69e.data;
                                         String str = c0032cM69e == null ? null : c0032cM69e.title;
                                         int iM338l = 0;
-                                        switch (ScreenManager.getCurrentScreen().f94a) {
+                                        switch (ScreenManager.getCurrentScreen().screenId) {
                                             case 1:
                                                 iM1181a = 0;
                                                 iM338l = iM1181a;
@@ -2561,7 +2561,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 43:
-                                                AppState.setInt(1514, c0013amM66b2.f105j);
+                                                AppState.setInt(1514, c0013amM66b2.scrollOffset);
                                                 AppState.setObject(1345, (Object) str);
                                                 if (str == null || (c0052wM745h = (c0028ba = (MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513))) == c0028ba.getLastChatRoom() || str.equals(c0052wM745h.subject)) {
                                                     i3 = 0;
@@ -3326,12 +3326,12 @@ public final class AppController {
                                                 if (c0013amM66b3 == null) {
                                                     break;
                                                 } else {
-                                                    if (c0013amM66b3.f94a != 6) {
+                                                    if (c0013amM66b3.screenId != 6) {
                                                         f153g = true;
                                                     }
                                                     int i13 = iArr[1];
                                                     int i14 = iArr[2];
-                                                    int i15 = ScreenManager.getCurrentScreen().f94a;
+                                                    int i15 = ScreenManager.getCurrentScreen().screenId;
                                                     int i16 = TabBar.currentIndex;
                                                     int size9 = AppState.getVector(1246).size();
                                                     boolean z6 = i16 == size9 - 1;
@@ -3340,7 +3340,7 @@ public final class AppController {
                                                         if (size9 > 1) {
                                                             AppState.setInt(1414, 0);
                                                             if (i14 == 2) {
-                                                                if (c0013amM66b3.m229h()) {
+                                                                if (c0013amM66b3.isAtStart()) {
                                                                     TabBar c0008ahM168d = TabBar.getPreviousTab();
                                                                     if (c0008ahM168d != null) {
                                                                         ScreenBuilder.openScreen(c0008ahM168d.selectTab());
@@ -3350,7 +3350,7 @@ public final class AppController {
                                                                     z4 = false;
                                                                 }
                                                             } else if (i14 == 5) {
-                                                                if (c0013amM66b3.m228g()) {
+                                                                if (c0013amM66b3.isAtEnd()) {
                                                                     TabBar c0008ahM167c = TabBar.getNextTab();
                                                                     if (c0008ahM167c != null) {
                                                                         ScreenBuilder.openScreen(c0008ahM167c.selectTab());
@@ -3438,29 +3438,29 @@ public final class AppController {
                                                                     m455ab();
                                                                     break;
                                                                 } else if (i14 == 1) {
-                                                                    c0013amM66b3.m234m();
+                                                                    c0013amM66b3.scrollUp();
                                                                     break;
                                                                 } else if (i14 == 6) {
-                                                                    c0013amM66b3.m237p();
+                                                                    c0013amM66b3.scrollDown();
                                                                     break;
                                                                 } else if (i14 == 2) {
-                                                                    if (c0013amM66b3.f125x) {
+                                                                    if (c0013amM66b3.showCheckboxes) {
                                                                         ScreenBuilder.onScreenClosed();
                                                                         break;
-                                                                    } else if (c0013amM66b3.f94a == 6) {
+                                                                    } else if (c0013amM66b3.screenId == 6) {
                                                                         AppState.setInt(1564, 1);
                                                                         break;
                                                                     } else {
-                                                                        if (c0013amM66b3.f102h == 1) {
-                                                                            int i18 = c0013amM66b3.f106k;
-                                                                            int size10 = c0013amM66b3.f108m.size();
-                                                                            c0013amM66b3.f106k = ((i18 + size10) - 1) % size10;
-                                                                            c0013amM66b3.m235n();
+                                                                        if (c0013amM66b3.layoutMode == 1) {
+                                                                            int i18 = c0013amM66b3.selectedIndex;
+                                                                            int size10 = c0013amM66b3.menuItems.size();
+                                                                            c0013amM66b3.selectedIndex = ((i18 + size10) - 1) % size10;
+                                                                            c0013amM66b3.invalidateLayout();
                                                                         }
                                                                         break;
                                                                     }
                                                                 } else if (i14 == 5) {
-                                                                    c0013amM66b3.m230i();
+                                                                    c0013amM66b3.onActionKey();
                                                                 }
                                                             }
                                                         }
@@ -3478,7 +3478,7 @@ public final class AppController {
                                                 m455ab();
                                                 break;
                                             case 4:
-                                                if (ScreenManager.getCurrentScreen().f94a == 6) {
+                                                if (ScreenManager.getCurrentScreen().screenId == 6) {
                                                     f153g = true;
                                                     AppState.setInt(1564, -1);
                                                 }
@@ -3496,7 +3496,7 @@ public final class AppController {
                                                     }
                                                     z2 = true;
                                                 }
-                                                if (z2 || (i = ScreenManager.getCurrentScreen().f94a) == 137) {
+                                                if (z2 || (i = ScreenManager.getCurrentScreen().screenId) == 137) {
                                                     break;
                                                 } else if (i20 > 17 || !ScreenManager.hasModal()) {
                                                     i2 = 0;
@@ -3512,15 +3512,15 @@ public final class AppController {
                                                     } else {
                                                         Screen c0013amM66b4 = ScreenManager.getCurrentScreen();
                                                         if (c0013amM66b4 != null) {
-                                                            c0013amM66b4.f132B = true;
-                                                            c0013amM66b4.f130z = 0;
-                                                            c0013amM66b4.f131A = 0;
-                                                            int i22 = i19 - c0013amM66b4.f98e;
-                                                            int i23 = i20 - c0013amM66b4.f99f;
-                                                            boolean z7 = i22 >= 2 && i22 < 2 + c0013amM66b4.f114q && i23 >= c0013amM66b4.f113p && i23 < c0013amM66b4.f113p + c0013amM66b4.f115r;
+                                                            c0013amM66b4.touchConsumed = true;
+                                                            c0013amM66b4.marginLeft = 0;
+                                                            c0013amM66b4.marginTop = 0;
+                                                            int i22 = i19 - c0013amM66b4.offsetX;
+                                                            int i23 = i20 - c0013amM66b4.offsetY;
+                                                            boolean z7 = i22 >= 2 && i22 < 2 + c0013amM66b4.contentWidth && i23 >= c0013amM66b4.contentTop && i23 < c0013amM66b4.contentTop + c0013amM66b4.contentHeight;
                                                             boolean z8 = z7;
-                                                            if (z7 && c0013amM66b4.f94a == 6) {
-                                                                int i24 = i23 - c0013amM66b4.f113p;
+                                                            if (z7 && c0013amM66b4.screenId == 6) {
+                                                                int i24 = i23 - c0013amM66b4.contentTop;
                                                                 if (i24 > 0) {
                                                                     ConnectionThread.m1161a(c0013amM66b4);
                                                                     MapRenderer.dragActive = false;
@@ -3532,7 +3532,7 @@ public final class AppController {
                                                                 } else {
                                                                     z3 = false;
                                                                 }
-                                                            } else if (z8 || c0013amM66b4.f97d == 1 || c0013amM66b4.f97d == 12) {
+                                                            } else if (z8 || c0013amM66b4.screenType == 1 || c0013amM66b4.screenType == 12) {
                                                                 z3 = false;
                                                             } else {
                                                                 ScreenBuilder.onScreenClosed();
@@ -3540,7 +3540,7 @@ public final class AppController {
                                                                 z3 = true;
                                                             }
                                                             if (!z3) {
-                                                                int i25 = c0013amM66b4.f97d;
+                                                                int i25 = c0013amM66b4.screenType;
                                                                 if ((i25 == 1 || i25 == 12) && (objM179a = TabBar.hitTest(i19, i20)) != null) {
                                                                     if (!(objM179a instanceof int[])) {
                                                                         int i26 = ((TabBar) objM179a).type;
@@ -3599,20 +3599,20 @@ public final class AppController {
                                                 int i27 = iArr[1];
                                                 int i28 = iArr[2];
                                                 Screen c0013amM66b5 = ScreenManager.getCurrentScreen();
-                                                if (c0013amM66b5 == null || !c0013amM66b5.f132B) {
+                                                if (c0013amM66b5 == null || !c0013amM66b5.touchConsumed) {
                                                     break;
                                                 } else {
-                                                    int i29 = i27 - c0013amM66b5.f98e;
-                                                    int i30 = i28 - (c0013amM66b5.f99f + c0013amM66b5.f113p);
-                                                    if (c0013amM66b5.f130z == 0 && c0013amM66b5.f131A == 0) {
-                                                        c0013amM66b5.f130z = i29;
-                                                        c0013amM66b5.f131A = i30;
+                                                    int i29 = i27 - c0013amM66b5.offsetX;
+                                                    int i30 = i28 - (c0013amM66b5.offsetY + c0013amM66b5.contentTop);
+                                                    if (c0013amM66b5.marginLeft == 0 && c0013amM66b5.marginTop == 0) {
+                                                        c0013amM66b5.marginLeft = i29;
+                                                        c0013amM66b5.marginTop = i30;
                                                     }
-                                                    int i31 = i29 - c0013amM66b5.f130z;
-                                                    int i32 = i30 - c0013amM66b5.f131A;
-                                                    c0013amM66b5.f130z = i29;
-                                                    c0013amM66b5.f131A = i30;
-                                                    if (c0013amM66b5.f94a == 6) {
+                                                    int i31 = i29 - c0013amM66b5.marginLeft;
+                                                    int i32 = i30 - c0013amM66b5.marginTop;
+                                                    c0013amM66b5.marginLeft = i29;
+                                                    c0013amM66b5.marginTop = i30;
+                                                    if (c0013amM66b5.screenId == 6) {
                                                         ConnectionThread.m1161a(c0013amM66b5);
                                                         MapRenderer.dragActive = true;
                                                         MapRenderer.rippleTimestamp = 0L;
@@ -3621,15 +3621,15 @@ public final class AppController {
                                                         MapRenderer.needsRedraw = true;
                                                         break;
                                                     } else {
-                                                        c0013amM66b5.f105j -= i32;
-                                                        if (c0013amM66b5.f107l < c0013amM66b5.f115r) {
-                                                            c0013amM66b5.f105j = 0;
+                                                        c0013amM66b5.scrollOffset -= i32;
+                                                        if (c0013amM66b5.totalHeight < c0013amM66b5.contentHeight) {
+                                                            c0013amM66b5.scrollOffset = 0;
                                                         }
-                                                        if (c0013amM66b5.f105j > c0013amM66b5.f107l - c0013amM66b5.f115r) {
-                                                            c0013amM66b5.f105j = c0013amM66b5.f107l - c0013amM66b5.f115r;
+                                                        if (c0013amM66b5.scrollOffset > c0013amM66b5.totalHeight - c0013amM66b5.contentHeight) {
+                                                            c0013amM66b5.scrollOffset = c0013amM66b5.totalHeight - c0013amM66b5.contentHeight;
                                                         }
-                                                        if (c0013amM66b5.f105j < 0) {
-                                                            c0013amM66b5.f105j = 0;
+                                                        if (c0013amM66b5.scrollOffset < 0) {
+                                                            c0013amM66b5.scrollOffset = 0;
                                                         }
                                                         f153g = true;
                                                     }
@@ -3643,7 +3643,7 @@ public final class AppController {
                                                 int i37 = iArr[5];
                                                 Screen c0013amM66b6 = ScreenManager.getCurrentScreen();
                                                 if (c0013amM66b6 != null) {
-                                                    c0013amM66b6.m260a(i33, i34, i35, i36, i37 != 0);
+                                                    c0013amM66b6.onPointerEvent(i33, i34, i35, i36, i37 != 0);
                                                 }
                                                 break;
                                             case 8:
@@ -3651,11 +3651,11 @@ public final class AppController {
                                                 int i39 = iArr[2];
                                                 Screen c0013amM66b7 = ScreenManager.getCurrentScreen();
                                                 if (c0013amM66b7 != null) {
-                                                    int i40 = i38 - c0013amM66b7.f98e;
-                                                    int i41 = i39 - c0013amM66b7.f99f;
-                                                    c0013amM66b7.f132B = false;
-                                                    if (c0013amM66b7.f94a == 6) {
-                                                        int i42 = i41 - c0013amM66b7.f113p;
+                                                    int i40 = i38 - c0013amM66b7.offsetX;
+                                                    int i41 = i39 - c0013amM66b7.offsetY;
+                                                    c0013amM66b7.touchConsumed = false;
+                                                    if (c0013amM66b7.screenId == 6) {
+                                                        int i42 = i41 - c0013amM66b7.contentTop;
                                                         ConnectionThread.m1161a(c0013amM66b7);
                                                         MapRenderer.onDrag(i40, i42);
                                                     }
@@ -3696,14 +3696,14 @@ public final class AppController {
                                                 AppState.setInt(1444, iIntValue);
                                                 Screen c0013amM75b = ScreenManager.createScreen(2237);
                                                 if (iIntValue >= 10) {
-                                                    c0013amM75b.m247a(6, AppState.getString(421), 1, null);
+                                                    c0013amM75b.addIconItemWithData(6, AppState.getString(421), 1, null);
                                                 }
                                                 int size11 = vector4.size();
                                                 while (true) {
                                                     size11--;
                                                     if (size11 < 0) {
                                                         if (iIntValue < c0020at.userCount - 10) {
-                                                            c0013amM75b.m247a(6, AppState.getString(420), 2, null);
+                                                            c0013amM75b.addIconItemWithData(6, AppState.getString(420), 2, null);
                                                         }
                                                         AppState.setBool(1445, iIntValue < c0020at.userCount - 10);
                                                         AppState.setBool(1446, iIntValue >= 10);
@@ -3711,7 +3711,7 @@ public final class AppController {
                                                         break;
                                                     } else {
                                                         UserSearchResult c0045p = (UserSearchResult) vector4.elementAt(size11);
-                                                        c0013amM75b.m247a(c0045p.gender == 1 ? 377 : c0045p.gender == 2 ? 378 : 379, c0045p.getText(), 0, c0045p);
+                                                        c0013amM75b.addIconItemWithData(c0045p.gender == 1 ? 377 : c0045p.gender == 2 ? 378 : 379, c0045p.getText(), 0, c0045p);
                                                     }
                                                 }
                                             case 5:
@@ -3727,7 +3727,7 @@ public final class AppController {
                                         f153g = true;
                                         f152f = true;
                                         Screen c0013amM66b8 = ScreenManager.getCurrentScreen();
-                                        int i44 = ScreenManager.getCurrentScreen().f94a;
+                                        int i44 = ScreenManager.getCurrentScreen().screenId;
                                         if (objM524a != null && (objM524a instanceof MenuItem)) {
                                             MenuItem c0032c = (MenuItem) objM524a;
                                             if (c0032c.id == 2) {
@@ -3747,7 +3747,7 @@ public final class AppController {
                                             int iIntValue2 = ((Integer) objArr4[0]).intValue();
                                             String[] strArr = (String[]) objArr4[1];
                                             MenuItem c0032c3 = null;
-                                            Vector vector5 = c0013amM66b8.f108m;
+                                            Vector vector5 = c0013amM66b8.menuItems;
                                             int size12 = vector5.size();
                                             while (true) {
                                                 size12--;
@@ -3758,7 +3758,7 @@ public final class AppController {
                                                         Object[] objArr5 = (Object[]) c0032c4.data;
                                                         c0032c4.clear().setAction(objArr5[4], strM522f, objArr5[1], objArr5[2], objArr5[3]);
                                                     }
-                                                    c0013amM66b8.m258q();
+                                                    c0013amM66b8.rebuildItems();
                                                 } else {
                                                     MenuItem c0032c5 = (MenuItem) vector5.elementAt(size12);
                                                     if (c0032c5.id == 15 && c0032c5.title.startsWith(AppState.getString(811))) {
@@ -3777,10 +3777,10 @@ public final class AppController {
                                         }
                                     }
                                     if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.getCurrentScreen())) {
-                                        AppState.getCanvas().setCommands(c0013amM66b.f123v, c0013amM66b.f124w);
+                                        AppState.getCanvas().setCommands(c0013amM66b.titleLeft, c0013amM66b.titleRight);
                                     }
                                     IOUtils.checkSoundTimer();
-                                    if (m306a(f147a[0]) && (!AppState.getBool(272) || ScreenManager.getCurrentScreen().f94a != 6)) {
+                                    if (m306a(f147a[0]) && (!AppState.getBool(272) || ScreenManager.getCurrentScreen().screenId != 6)) {
                                         if (AppState.getCanvas().isShown()) {
                                             m358L(0);
                                         } else {
@@ -3880,11 +3880,11 @@ public final class AppController {
             String strM67c = ScreenManager.getCurrentTitle();
             int iM68d = ScreenManager.getCurrentWidth();
             MenuItem c0032cM69e2 = ScreenManager.getCurrentMenuItem();
-            MenuItem c0032cM223e = AppState.getVector(1272).size() > 0 ? ScreenManager.getCurrentScreen().m223e() : null;
+            MenuItem c0032cM223e = AppState.getVector(1272).size() > 0 ? ScreenManager.getCurrentScreen().getHeaderItem() : null;
             Object obj = c0032cM69e2 == null ? null : c0032cM69e2.data;
             Object obj2 = c0032cM223e == null ? null : c0032cM223e.data;
             int iM460J = 0;
-            switch (ScreenManager.getCurrentScreen().f94a) {
+            switch (ScreenManager.getCurrentScreen().screenId) {
                 case 1:
                     iM460J = m408B(iM68d);
                     break;
@@ -4043,7 +4043,7 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 43:
-                    AppState.setInt(1514, c0013amM66b.f105j);
+                    AppState.setInt(1514, c0013amM66b.scrollOffset);
                     AppState.setObject(1345, (Object) strM67c);
                     Message c0026az = (Message) obj;
                     if (c0026az == null) {
@@ -4485,7 +4485,7 @@ public final class AppController {
                     ScreenBuilder.openScreen(iM460J);
                     return;
                 }
-                int i3 = c0013amM66b.f122u;
+                int i3 = c0013amM66b.softKeyRight;
                 if (i3 != 200) {
                     int i4 = i3 == 199 ? iM68d : i3;
                     int i5 = i4;
@@ -4501,30 +4501,30 @@ public final class AppController {
 
     /* renamed from: O */
     private static final int m456O(int i) {
-        if (ScreenManager.getCurrentScreen().f94a == 137) {
+        if (ScreenManager.getCurrentScreen().screenId == 137) {
             return 0;
         }
         Screen c0013amM66b = ScreenManager.getCurrentScreen();
-        int i2 = ScreenManager.getCurrentScreen().f94a;
+        int i2 = ScreenManager.getCurrentScreen().screenId;
         switch (i) {
             case 4:
                 break;
             case 8:
-                if (c0013amM66b.f103i) {
-                    c0013amM66b.f106k = c0013amM66b.f108m.size() - 1;
-                    c0013amM66b.f105j = c0013amM66b.f107l - c0013amM66b.f115r;
-                    if (c0013amM66b.f105j < 0) {
-                        c0013amM66b.f105j = 0;
+                if (c0013amM66b.selectable) {
+                    c0013amM66b.selectedIndex = c0013amM66b.menuItems.size() - 1;
+                    c0013amM66b.scrollOffset = c0013amM66b.totalHeight - c0013amM66b.contentHeight;
+                    if (c0013amM66b.scrollOffset < 0) {
+                        c0013amM66b.scrollOffset = 0;
                     }
-                } else if (c0013amM66b.f107l < c0013amM66b.f115r) {
-                    c0013amM66b.f105j = 0;
-                } else if (((MenuItem) c0013amM66b.f108m.lastElement()).getTotalHeight() < c0013amM66b.f115r) {
-                    c0013amM66b.f105j = c0013amM66b.f107l - c0013amM66b.f115r;
+                } else if (c0013amM66b.totalHeight < c0013amM66b.contentHeight) {
+                    c0013amM66b.scrollOffset = 0;
+                } else if (((MenuItem) c0013amM66b.menuItems.lastElement()).getTotalHeight() < c0013amM66b.contentHeight) {
+                    c0013amM66b.scrollOffset = c0013amM66b.totalHeight - c0013amM66b.contentHeight;
                 } else {
-                    int[] iArr = c0013amM66b.f109n;
-                    c0013amM66b.f105j = iArr[iArr[0]];
+                    int[] iArr = c0013amM66b.layoutCache;
+                    c0013amM66b.scrollOffset = iArr[iArr[0]];
                 }
-                c0013amM66b.m235n();
+                c0013amM66b.invalidateLayout();
                 break;
             case 11:
                 AppState.toggleBool(98);
@@ -4540,7 +4540,7 @@ public final class AppController {
                         break;
                     }
                 } else {
-                    AppState.pool[1319] = c0013amM66b.m222d().data;
+                    AppState.pool[1319] = c0013amM66b.getSelectedItem().data;
                     break;
                 }
                 break;

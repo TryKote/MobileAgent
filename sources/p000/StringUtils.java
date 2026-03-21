@@ -406,7 +406,7 @@ public final class StringUtils {
         MenuItem c0032c5 = null;
         MenuItem c0032c6 = null;
         int iIntValue2 = 0;
-        Vector vector = c0013am.f108m;
+        Vector vector = c0013am.menuItems;
         int iM541c = Utils.m541c(vector);
         while (true) {
             iM541c--;
@@ -453,7 +453,7 @@ public final class StringUtils {
         } else if (equals(str, strM584b5) || equals(str, strM584b6)) {
             c0032c4.setChoices(Utils.splitByNull(AppState.getString(685)), 0, strM584b4);
         }
-        c0013am.m258q();
+        c0013am.rebuildItems();
     }
 
     /* renamed from: g */

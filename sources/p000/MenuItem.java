@@ -170,9 +170,9 @@ public final class MenuItem {
         for (String str : strArr) {
             MenuItem c0032cM898b = new MenuItem(13, str).setLabel(str);
             c0032cM898b.data = objArr2;
-            c0013amM75b.m225a(c0032cM898b);
+            c0013amM75b.addItem(c0032cM898b);
         }
-        c0013amM75b.m257b(strArr[iIntValue]);
+        c0013amM75b.selectByTitle(strArr[iIntValue]);
         ScreenManager.showScreen(c0013amM75b);
         return 0;
     }

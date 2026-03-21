@@ -13,10 +13,10 @@ public abstract class ContactListManager {
         TabBar.findTab(4, TabBar.currentAccount);
         Screen c0013amM161g = buildContactList();
         TabBar c0008ahM175i = TabBar.getCurrentTab();
-        Screen c0013amM257b = c0013amM161g.m257b(c0008ahM175i.selectedTitle);
+        Screen c0013amM257b = c0013amM161g.selectByTitle(c0008ahM175i.selectedTitle);
         ScreenManager.pushScreen(c0013amM257b);
-        c0013amM257b.f105j = c0008ahM175i.selectedIndex;
-        c0013amM257b.m235n();
+        c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
+        c0013amM257b.invalidateLayout();
     }
 
     /* renamed from: b */
@@ -31,8 +31,8 @@ public abstract class ContactListManager {
     private static final void updateState() {
         TabBar c0008ahM175i = TabBar.getCurrentTab();
         Screen c0013amM66b = ScreenManager.getCurrentScreen();
-        c0008ahM175i.selectedIndex = c0013amM66b.f105j;
-        c0008ahM175i.selectedTitle = c0013amM66b.m220b();
+        c0008ahM175i.selectedIndex = c0013amM66b.scrollOffset;
+        c0008ahM175i.selectedTitle = c0013amM66b.getSelectedTitle();
     }
 
     /* renamed from: c */
@@ -46,10 +46,10 @@ public abstract class ContactListManager {
     public static final void refreshList() {
         clearState();
         TabBar c0008ahM175i = TabBar.getCurrentTab();
-        Screen c0013amM257b = buildContactList().m257b(c0008ahM175i.selectedTitle);
+        Screen c0013amM257b = buildContactList().selectByTitle(c0008ahM175i.selectedTitle);
         ScreenManager.pushScreen(c0013amM257b);
-        c0013amM257b.f105j = c0008ahM175i.selectedIndex;
-        c0013amM257b.m235n();
+        c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
+        c0013amM257b.invalidateLayout();
         TabBar.findTab(4, TabBar.currentAccount);
         AppController.f153g = true;
     }
@@ -115,7 +115,7 @@ public abstract class ContactListManager {
             }
         }
         updateState();
-        Vector vector = c0013am.f110o;
+        Vector vector = c0013am.tabItems;
         if (obj != null) {
             Contact abstractC0041l = null;
             ContactGroup abstractC0046q = null;
@@ -206,7 +206,7 @@ public abstract class ContactListManager {
         int iM586d = 1 + AppState.getInt(242);
         AppState.setInt(2573, iM586d == 1 ? 1 : 12);
         Screen c0013amM75b = ScreenManager.createScreen(2571);
-        int i = c0013amM75b.f114q - 1;
+        int i = c0013amM75b.contentWidth - 1;
         if (!AppState.getBool(99)) {
             boolean z = !AppState.getBool(98);
             Account abstractC0037h = TabBar.currentAccount;
@@ -216,7 +216,7 @@ public abstract class ContactListManager {
             for (int i2 = 0; i2 < iM353a; i2++) {
                 Contact abstractC0041l = (Contact) vector.elementAt(i2);
                 if (!abstractC0041l.canUnblock() && (abstractC0041l.hasMessages() || abstractC0041l.isOnline() || (!abstractC0041l.canUnblock() && (z || (((zM1056C = abstractC0041l.account.isConnected()) && abstractC0041l.highlighted) || (!zM1056C && abstractC0041l.isOffline())))))) {
-                    c0013amM75b.m225a(abstractC0041l.createMenuItem().setLayout(iM586d, i / iM586d));
+                    c0013amM75b.addItem(abstractC0041l.createMenuItem().setLayout(iM586d, i / iM586d));
                 }
             }
             NetworkUtils.releaseVector(vector);
@@ -269,7 +269,7 @@ public abstract class ContactListManager {
                 ContactGroup abstractC0046q2 = (ContactGroup) vectorM1213g.elementAt(i4);
                 boolean z3 = false;
                 if (zM587e || !abstractC0046q2.isNotSpecial()) {
-                    c0013amM75b.m225a(abstractC0046q2.createMenuItem(-1).setLayout(iM586d, i));
+                    c0013amM75b.addItem(abstractC0046q2.createMenuItem(-1).setLayout(iM586d, i));
                     z3 = true;
                 }
                 if (abstractC0046q2.isNotSpecial()) {
@@ -279,10 +279,10 @@ public abstract class ContactListManager {
                         Contact abstractC0041l2 = (Contact) vector3.elementAt(i5);
                         if (shouldDisplayContact(z2, abstractC0041l2)) {
                             if (!z3) {
-                                c0013amM75b.m225a(abstractC0046q2.createMenuItem(-1).setLayout(iM586d, i));
+                                c0013amM75b.addItem(abstractC0046q2.createMenuItem(-1).setLayout(iM586d, i));
                                 z3 = true;
                             }
-                            c0013amM75b.m225a(abstractC0041l2.createMenuItem().setLayout(iM586d, i3));
+                            c0013amM75b.addItem(abstractC0041l2.createMenuItem().setLayout(iM586d, i3));
                         }
                     }
                 }
@@ -370,10 +370,10 @@ public abstract class ContactListManager {
             if (c0054y8 != null) {
                 Vector vector4 = c0054y8.contacts;
                 int iM353a4 = AppController.m353a(vector4);
-                c0013amM75b.m225a(c0054y8.createMenuItem(iM353a4).setLayout(iM586d, i));
+                c0013amM75b.addItem(c0054y8.createMenuItem(iM353a4).setLayout(iM586d, i));
                 if (c0054y8.isNotSpecial()) {
                     for (int i10 = 0; i10 < iM353a4; i10++) {
-                        c0013amM75b.m225a(((Contact) vector4.elementAt(i10)).createMenuItem().setLayout(iM586d, i3));
+                        c0013amM75b.addItem(((Contact) vector4.elementAt(i10)).createMenuItem().setLayout(iM586d, i3));
                     }
                     NetworkUtils.releaseVector(vector4);
                 }
@@ -381,10 +381,10 @@ public abstract class ContactListManager {
             if (c0054y5 != null) {
                 Vector vector5 = c0054y5.contacts;
                 int iM353a5 = AppController.m353a(vector5);
-                c0013amM75b.m225a(c0054y5.createMenuItem(iM353a5).setLayout(iM586d, i));
+                c0013amM75b.addItem(c0054y5.createMenuItem(iM353a5).setLayout(iM586d, i));
                 if (c0054y5.isNotSpecial()) {
                     for (int i11 = 0; i11 < iM353a5; i11++) {
-                        c0013amM75b.m225a(((Contact) vector5.elementAt(i11)).createMenuItem().setLayout(iM586d, i3));
+                        c0013amM75b.addItem(((Contact) vector5.elementAt(i11)).createMenuItem().setLayout(iM586d, i3));
                     }
                     NetworkUtils.releaseVector(vector5);
                 }
@@ -392,10 +392,10 @@ public abstract class ContactListManager {
             if (c0054y7 != null) {
                 Vector vector6 = c0054y7.contacts;
                 int iM353a6 = AppController.m353a(vector6);
-                c0013amM75b.m225a(c0054y7.createMenuItem(iM353a6).setLayout(iM586d, i));
+                c0013amM75b.addItem(c0054y7.createMenuItem(iM353a6).setLayout(iM586d, i));
                 if (c0054y7.isNotSpecial()) {
                     for (int i12 = 0; i12 < iM353a6; i12++) {
-                        c0013amM75b.m225a(((Contact) vector6.elementAt(i12)).createMenuItem().setLayout(iM586d, i3));
+                        c0013amM75b.addItem(((Contact) vector6.elementAt(i12)).createMenuItem().setLayout(iM586d, i3));
                     }
                     NetworkUtils.releaseVector(vector6);
                 }
@@ -403,10 +403,10 @@ public abstract class ContactListManager {
             if (c0054y6 != null) {
                 Vector vector7 = c0054y6.contacts;
                 int iM353a7 = AppController.m353a(vector7);
-                c0013amM75b.m225a(c0054y6.createMenuItem(iM353a7).setLayout(iM586d, i));
+                c0013amM75b.addItem(c0054y6.createMenuItem(iM353a7).setLayout(iM586d, i));
                 if (c0054y6.isNotSpecial()) {
                     for (int i13 = 0; i13 < iM353a7; i13++) {
-                        c0013amM75b.m225a(((Contact) vector7.elementAt(i13)).createMenuItem().setLayout(iM586d, i3));
+                        c0013amM75b.addItem(((Contact) vector7.elementAt(i13)).createMenuItem().setLayout(iM586d, i3));
                     }
                     NetworkUtils.releaseVector(vector7);
                 }
@@ -421,7 +421,7 @@ public abstract class ContactListManager {
                 ContactGroup abstractC0046q3 = (ContactGroup) vectorM446d2.elementAt(i15);
                 boolean z5 = false;
                 if (zM587e2 || !abstractC0046q3.isNotSpecial()) {
-                    c0013amM75b.m225a(abstractC0046q3.createMenuItem(-1).setLayout(iM586d, i));
+                    c0013amM75b.addItem(abstractC0046q3.createMenuItem(-1).setLayout(iM586d, i));
                     z5 = true;
                 }
                 if (abstractC0046q3.isNotSpecial()) {
@@ -431,10 +431,10 @@ public abstract class ContactListManager {
                         Contact abstractC0041l3 = (Contact) vector8.elementAt(i16);
                         if (shouldDisplayContact(z4, abstractC0041l3)) {
                             if (!z5) {
-                                c0013amM75b.m225a(abstractC0046q3.createMenuItem(-1).setLayout(iM586d, i));
+                                c0013amM75b.addItem(abstractC0046q3.createMenuItem(-1).setLayout(iM586d, i));
                                 z5 = true;
                             }
-                            c0013amM75b.m225a(abstractC0041l3.createMenuItem().setLayout(iM586d, i14));
+                            c0013amM75b.addItem(abstractC0041l3.createMenuItem().setLayout(iM586d, i14));
                         }
                     }
                 }
@@ -454,11 +454,11 @@ public abstract class ContactListManager {
                     Vector vectorMo720O2 = abstractC0037hM434I2.getPendingContacts();
                     int size8 = vectorMo720O2.size();
                     if (size8 > 0) {
-                        c0013amM75b.m225a(abstractC0046q4.createMenuItem(size8).setLayout(iM586d, i));
+                        c0013amM75b.addItem(abstractC0046q4.createMenuItem(size8).setLayout(iM586d, i));
                         if (abstractC0046q4.isNotSpecial()) {
                             AppController.m353a(vectorMo720O2);
                             for (int i18 = 0; i18 < size8; i18++) {
-                                c0013amM75b.m225a(((Contact) vectorMo720O2.elementAt(i18)).createMenuItem().setLayout(iM586d, i14));
+                                c0013amM75b.addItem(((Contact) vectorMo720O2.elementAt(i18)).createMenuItem().setLayout(iM586d, i14));
                             }
                         }
                     }
@@ -478,11 +478,11 @@ public abstract class ContactListManager {
                     Vector vectorM1077N2 = abstractC0037hM434I3.getOfflineContacts();
                     int size9 = vectorM1077N2.size();
                     if (size9 > 0) {
-                        c0013amM75b.m225a(abstractC0046q5.createMenuItem(size9).setLayout(iM586d, i));
+                        c0013amM75b.addItem(abstractC0046q5.createMenuItem(size9).setLayout(iM586d, i));
                         if (abstractC0046q5.isNotSpecial()) {
                             AppController.m353a(vectorM1077N2);
                             for (int i20 = 0; i20 < size9; i20++) {
-                                c0013amM75b.m225a(((Contact) vectorM1077N2.elementAt(i20)).createMenuItem().setLayout(iM586d, i14));
+                                c0013amM75b.addItem(((Contact) vectorM1077N2.elementAt(i20)).createMenuItem().setLayout(iM586d, i14));
                             }
                         }
                     }
@@ -502,11 +502,11 @@ public abstract class ContactListManager {
                     Vector vectorM1079Q2 = abstractC0037hM434I4.getOnlineContacts();
                     int size10 = vectorM1079Q2.size();
                     if (size10 > 0) {
-                        c0013amM75b.m225a(abstractC0046q6.createMenuItem(size10).setLayout(iM586d, i));
+                        c0013amM75b.addItem(abstractC0046q6.createMenuItem(size10).setLayout(iM586d, i));
                         if (abstractC0046q6.isNotSpecial()) {
                             AppController.m353a(vectorM1079Q2);
                             for (int i22 = 0; i22 < size10; i22++) {
-                                c0013amM75b.m225a(((Contact) vectorM1079Q2.elementAt(i22)).createMenuItem().setLayout(iM586d, i14));
+                                c0013amM75b.addItem(((Contact) vectorM1079Q2.elementAt(i22)).createMenuItem().setLayout(iM586d, i14));
                             }
                         }
                     }
@@ -526,11 +526,11 @@ public abstract class ContactListManager {
                     Vector vectorM1076M2 = abstractC0037hM434I5.getUnreadContacts();
                     int size11 = vectorM1076M2.size();
                     if (size11 > 0) {
-                        c0013amM75b.m225a(abstractC0046q7.createMenuItem(size11).setLayout(iM586d, i));
+                        c0013amM75b.addItem(abstractC0046q7.createMenuItem(size11).setLayout(iM586d, i));
                         if (abstractC0046q7.isNotSpecial()) {
                             AppController.m353a(vectorM1076M2);
                             for (int i24 = 0; i24 < size11; i24++) {
-                                c0013amM75b.m225a(((Contact) vectorM1076M2.elementAt(i24)).createMenuItem().setLayout(iM586d, i14));
+                                c0013amM75b.addItem(((Contact) vectorM1076M2.elementAt(i24)).createMenuItem().setLayout(iM586d, i14));
                             }
                         }
                     }
@@ -539,7 +539,7 @@ public abstract class ContactListManager {
             }
         }
         TabBar.layout();
-        return c0013amM75b.m218a();
+        return c0013amM75b.initTabs();
     }
 
     /* renamed from: a */

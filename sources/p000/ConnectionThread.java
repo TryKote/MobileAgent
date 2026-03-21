@@ -561,7 +561,7 @@ public final class ConnectionThread {
             if (AppState.getBool(1409) || f357m == null) {
                 return;
             }
-            f357m.m259a(AppState.getString(330), AppState.getString(1055), 167, 4, 167);
+            f357m.setSoftKeys(AppState.getString(330), AppState.getString(1055), 167, 4, 167);
             AppState.setInt(1409, 1);
             return;
         }
@@ -578,7 +578,7 @@ public final class ConnectionThread {
             return;
         }
         f356g = true;
-        int i = ScreenManager.createScreen(1578).f115r;
+        int i = ScreenManager.createScreen(1578).contentHeight;
         AppState.setLong(1558, 4178628L);
         AppState.setLong(1560, 7482960L);
         AppState.pool[1400] = XmppContactGroup.loadMapPoints(225);
@@ -636,7 +636,7 @@ public final class ConnectionThread {
 
     /* renamed from: d */
     private static final void m1160d(Screen c0013am) {
-        c0013am.m259a(AppState.getString(1062), AppState.getString(AppState.getBool(1414) ? 1050 : 328), 20, 0, 0);
+        c0013am.setSoftKeys(AppState.getString(1062), AppState.getString(AppState.getBool(1414) ? 1050 : 328), 20, 0, 0);
     }
 
     /* renamed from: a */
@@ -717,7 +717,7 @@ public final class ConnectionThread {
         Screen c0013amM75b = ScreenManager.createScreen(1717);
         for (int i = 0; i < size; i++) {
             MapPoint c0014an = (MapPoint) vectorM614m.elementAt(i);
-            c0013amM75b.m247a(-1, c0014an.name, 6, c0014an);
+            c0013amM75b.addIconItemWithData(-1, c0014an.name, 6, c0014an);
         }
         ScreenManager.showScreen(c0013amM75b);
         return 0;

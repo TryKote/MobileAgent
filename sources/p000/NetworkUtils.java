@@ -577,7 +577,7 @@ public final class NetworkUtils {
             } else {
                 c0032cM1057D = ((Account) objElementAt).createMenuItem();
             }
-            c0013am.m225a(c0032cM1057D);
+            c0013am.addItem(c0032cM1057D);
         }
         return c0013am;
     }
@@ -649,8 +649,8 @@ public final class NetworkUtils {
     /* renamed from: d */
     public static final int m1195d() {
         Screen c0013amM66b = ScreenManager.getCurrentScreen();
-        int i = c0013amM66b.f100g + 9;
-        Vector vector = c0013amM66b.f108m;
+        int i = c0013amM66b.screenFlags + 9;
+        Vector vector = c0013amM66b.menuItems;
         int iM1194a = i + 1;
         int iM586d = AppState.getInt(i);
         for (int i2 = 0; i2 < iM586d; i2++) {

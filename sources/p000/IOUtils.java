@@ -253,7 +253,7 @@ public final class IOUtils {
     public static final void showChatRoomMessages() {
         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
         Screen c0013amM75b = ScreenManager.createScreen(4527);
-        c0013amM75b.m224a(234, c0052wM745h.getDisplayName());
+        c0013amM75b.setHeader(234, c0052wM745h.getDisplayName());
         Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = c0052wM745h.messageIds.elements();
         while (enumerationElements.hasMoreElements()) {
@@ -265,17 +265,17 @@ public final class IOUtils {
         }
         Enumeration enumerationElements2 = vectorM1213g.elements();
         while (enumerationElements2.hasMoreElements()) {
-            c0013amM75b.m225a(((Message) enumerationElements2.nextElement()).createMenuItem(c0052wM745h));
+            c0013amM75b.addItem(((Message) enumerationElements2.nextElement()).createMenuItem(c0052wM745h));
         }
-        if (c0013amM75b.f108m.size() == 0) {
-            c0013amM75b.f103i = false;
-            c0013amM75b.m255a(835);
+        if (c0013amM75b.menuItems.size() == 0) {
+            c0013amM75b.selectable = false;
+            c0013amM75b.addLabelById(835);
         } else {
-            c0013amM75b.f105j = AppState.getInt(1514);
-            c0013amM75b.m257b(AppState.getString(1345));
-            c0013amM75b.m235n();
+            c0013amM75b.scrollOffset = AppState.getInt(1514);
+            c0013amM75b.selectByTitle(AppState.getString(1345));
+            c0013amM75b.invalidateLayout();
         }
-        c0013amM75b.f127y = true;
+        c0013amM75b.reverseScroll = true;
         ScreenManager.showScreen(c0013amM75b);
     }
 
@@ -377,7 +377,7 @@ public final class IOUtils {
                     break;
                 }
             }
-            c0013amM75b.m225a(MenuItem.createCheckbox(str, z));
+            c0013amM75b.addItem(MenuItem.createCheckbox(str, z));
             contactIdList.addElement(strMo135a);
         }
         selectionScreen = c0013amM75b;
@@ -386,7 +386,7 @@ public final class IOUtils {
 
     /* renamed from: e */
     public static final int applyPhotoSelection() {
-        Vector vector = selectionScreen.f108m;
+        Vector vector = selectionScreen.menuItems;
         Vector vectorM1213g = NetworkUtils.newVector();
         int size = vector.size();
         for (int i = 0; i < size; i++) {
@@ -679,7 +679,7 @@ public final class IOUtils {
                 c0032cM899a = c0035f3.groupsList != null && c0035f3.groupsList.contains(str) ? new MenuItem(2, str2).setIconAndLabel(375, str2) : MenuItem.createCheckbox(str2, false);
             }
             c0032cM899a.title = str;
-            c0013am.m225a(c0032cM899a);
+            c0013am.addItem(c0032cM899a);
         }
         NetworkUtils.releaseVector(vectorM1078P);
         return c0013am;
@@ -688,7 +688,7 @@ public final class IOUtils {
     /* renamed from: a */
     public static final Vector getCheckedItems(Screen c0013am, int i) {
         Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vector = c0013am.f108m;
+        Vector vector = c0013am.menuItems;
         int size = vector.size();
         while (true) {
             size--;
