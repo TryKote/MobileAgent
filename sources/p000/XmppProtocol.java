@@ -35,9 +35,9 @@ public class XmppProtocol extends Account {
         super(i, str, str2);
         this.configFlags = 1;
         this.elementQueue = NetworkUtils.newVector();
-        XmppContactGroup c0036g = new XmppContactGroup(this, 0, AppState.getString(1039));
-        c0036g.isSpecial = true;
-        this.defaultGroup = c0036g;
+        XmppContactGroup defaultGrp = new XmppContactGroup(this, 0, AppState.getString(1039));
+        defaultGrp.isSpecial = true;
+        this.defaultGroup = defaultGrp;
         this.serverAddress = AppState.emptyStr;
         this.serverResourceId = AppState.emptyStr;
     }
@@ -50,45 +50,45 @@ public class XmppProtocol extends Account {
 
     /* renamed from: r */
     private String generateMessageId() {
-        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('m');
+        StringBuffer sb = NetworkUtils.newStringBuffer().append('m');
         int i = this.state + 1;
         this.state = i;
-        return NetworkUtils.bufToStringCached(stringBufferAppend.append(i));
+        return NetworkUtils.bufToStringCached(sb.append(i));
     }
 
-    public XmppProtocol(ByteBuffer c0043n) {
-        super(c0043n);
+    public XmppProtocol(ByteBuffer buffer) {
+        super(buffer);
         this.elementQueue = NetworkUtils.newVector();
-        int iM1328e = c0043n.readInt();
+        int groupCount = buffer.readInt();
         while (true) {
-            iM1328e--;
-            if (iM1328e < 0) {
+            groupCount--;
+            if (groupCount < 0) {
                 break;
             } else {
-                addGroup((ContactGroup) new XmppContactGroup(this, c0043n));
+                addGroup((ContactGroup) new XmppContactGroup(this, buffer));
             }
         }
-        XmppContactGroup c0036g = new XmppContactGroup(this, c0043n);
-        int iM541c = Utils.vectorSize(c0036g.contacts);
+        XmppContactGroup defaultGrp = new XmppContactGroup(this, buffer);
+        int contactIdx = Utils.vectorSize(defaultGrp.contacts);
         while (true) {
-            iM541c--;
-            if (iM541c < 0) {
-                c0036g.isSpecial = true;
-                this.defaultGroup = c0036g;
-                this.serverAddress = c0043n.readWideStr();
-                this.serverPort = c0043n.readShortBE();
-                this.serverResourceId = c0043n.readWideStr();
+            contactIdx--;
+            if (contactIdx < 0) {
+                defaultGrp.isSpecial = true;
+                this.defaultGroup = defaultGrp;
+                this.serverAddress = buffer.readWideStr();
+                this.serverPort = buffer.readShortBE();
+                this.serverResourceId = buffer.readWideStr();
                 return;
             }
-            ((XmppContact) c0036g.contacts.elementAt(iM541c)).online = true;
+            ((XmppContact) defaultGrp.contacts.elementAt(contactIdx)).online = true;
         }
     }
 
     @Override // p000.Account
     /* renamed from: a */
-    public final Account serializeAccount(ByteBuffer c0043n, boolean z, boolean z2) {
-        super.serializeAccount(c0043n, z, z2);
-        c0043n.writeStringLatin1(this.serverAddress).writeShortBE(this.serverPort).writeStringLatin1(this.serverResourceId);
+    public final Account serializeAccount(ByteBuffer buffer, boolean z, boolean z2) {
+        super.serializeAccount(buffer, z, z2);
+        buffer.writeStringLatin1(this.serverAddress).writeShortBE(this.serverPort).writeStringLatin1(this.serverResourceId);
         return this;
     }
 
@@ -145,23 +145,23 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: a */
-    private int sendXmlElement(XmlElement c0022av) {
-        return sendData(new ByteBuffer().writeUTFNoLen(c0022av.toString()));
+    private int sendXmlElement(XmlElement element) {
+        return sendData(new ByteBuffer().writeUTFNoLen(element.toString()));
     }
 
     /* renamed from: b */
-    private int sendElementWithId(XmlElement c0022av) {
-        return sendXmlElement(c0022av.setAttrValue(131550, generateMessageId()));
+    private int sendElementWithId(XmlElement element) {
+        return sendXmlElement(element.setAttrValue(131550, generateMessageId()));
     }
 
     /* renamed from: s */
     private final void clearParserState() {
         this.dataBuffer.clear();
-        Object[] objArr = this.parserState;
-        if (objArr != null) {
-            objArr[2] = null;
-            objArr[1] = null;
-            objArr[0] = null;
+        Object[] state = this.parserState;
+        if (state != null) {
+            state[2] = null;
+            state[1] = null;
+            state[0] = null;
         }
     }
 
@@ -192,20 +192,20 @@ public class XmppProtocol extends Account {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public final void loadData() throws Throwable {
-        boolean z;
-        boolean z2;
-        boolean z3;
-        boolean z4;
-        XmlElement c0022avM576d;
-        String strM11a;
-        String strM11a2;
-        Object[] objArr;
+        boolean handledPing;
+        boolean handledSession;
+        boolean handledBind;
+        boolean handledDiscoInfo;
+        XmlElement rosterElement;
+        String bodyText;
+        String subjectText;
+        Object[] taskArgs;
         switch (this.progress) {
             case 0:
                 clearParserState();
-                Object[] objArr2 = this.authState;
-                if (objArr2 != null) {
-                    objArr2[0] = null;
+                Object[] prevAuthState = this.authState;
+                if (prevAuthState != null) {
+                    prevAuthState[0] = null;
                 }
                 this.authState = null;
                 this.lastException = null;
@@ -220,22 +220,22 @@ public class XmppProtocol extends Account {
                         this.progress = 2;
                         if (this.login.indexOf(64) <= 0) {
                             ((XmppMailRuProtocol) this).serverResourceId = this.login;
-                            objArr = null;
+                            taskArgs = null;
                         } else {
-                            String strM13b = StringUtils.prefix(Utils.generateRandomHash(), 16);
-                            Object[] objArr3 = {this, strM13b, new ByteBuffer().writeCompressed(5249005).writeRawString(strM13b).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
-                            new AsyncTask(34, objArr3);
-                            objArr = objArr3;
+                            String hashPrefix = StringUtils.prefix(Utils.generateRandomHash(), 16);
+                            Object[] authArgs = {this, hashPrefix, new ByteBuffer().writeCompressed(5249005).writeRawString(hashPrefix).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
+                            new AsyncTask(34, authArgs);
+                            taskArgs = authArgs;
                         }
-                        this.authState = objArr;
+                        this.authState = taskArgs;
                     }
                 } else if (Utils.nonEmpty(this.serverAddress)) {
                     this.progress = 3;
                 } else {
                     this.progress = 2;
-                    Object[] objArr4 = {this};
-                    new AsyncTask(33, objArr4);
-                    this.authState = objArr4;
+                    Object[] resolveArgs = {this};
+                    new AsyncTask(33, resolveArgs);
+                    this.authState = resolveArgs;
                 }
                 AppController.needsRepaint = true;
                 break;
@@ -271,13 +271,13 @@ public class XmppProtocol extends Account {
                     if (this.connection.getState() == 2) {
                         this.msgCount = 50;
                         this.progress = 5;
-                        Object[] objArr5 = new Object[3];
-                        objArr5[0] = this;
-                        objArr5[1] = new ByteBuffer();
-                        objArr5[2] = null;
-                        objArr5[2] = new XmlParser(objArr5);
-                        new AsyncTask(29, objArr5);
-                        this.parserState = objArr5;
+                        Object[] parserArgs = new Object[3];
+                        parserArgs[0] = this;
+                        parserArgs[1] = new ByteBuffer();
+                        parserArgs[2] = null;
+                        parserArgs[2] = new XmlParser(parserArgs);
+                        new AsyncTask(29, parserArgs);
+                        this.parserState = parserArgs;
                         AppController.needsRepaint = true;
                         sendPresenceSubscription();
                     } else if (this.connection.getState() <= 0) {
@@ -295,146 +295,146 @@ public class XmppProtocol extends Account {
             default:
                 this.connection.drainInput(this.dataBuffer);
                 AppController.updateAccountStatus(this, this.dataBuffer.length);
-                Object[] objArr6 = this.parserState;
-                ByteBuffer c0043n = this.dataBuffer;
-                ByteBuffer c0043n2 = (ByteBuffer) objArr6[1];
-                synchronized (c0043n2) {
-                    c0043n2.writeBytesAt(c0043n.data, c0043n.offset, c0043n.length);
-                    c0043n.clear();
+                Object[] state = this.parserState;
+                ByteBuffer inputBuffer = this.dataBuffer;
+                ByteBuffer parserBuffer = (ByteBuffer) state[1];
+                synchronized (parserBuffer) {
+                    parserBuffer.writeBytesAt(inputBuffer.data, inputBuffer.offset, inputBuffer.length);
+                    inputBuffer.clear();
                 }
-                XmlElement c0022av = (XmlElement) Utils.dequeue(this.elementQueue);
-                if (c0022av != null) {
-                    String str = c0022av.tagName;
-                    if (!StringUtils.matchesKey(857301, str)) {
-                        if (StringUtils.matchesKey(988737, str)) {
-                            XmlElement c0022avM568b = c0022av.findByName(AppState.getString(660472));
-                            if (c0022avM568b != null) {
-                                XmlElement c0022avM569h = XmlElement.createFromState(263757).addIdAttr(2102710);
-                                String strM584b = AppState.getString(660501);
-                                if (c0022avM568b.findChildByText(strM584b) != null) {
-                                    sendXmlElement(c0022avM569h.setAttrValue(594936, strM584b));
+                XmlElement element = (XmlElement) Utils.dequeue(this.elementQueue);
+                if (element != null) {
+                    String tagName = element.tagName;
+                    if (!StringUtils.matchesKey(857301, tagName)) {
+                        if (StringUtils.matchesKey(988737, tagName)) {
+                            XmlElement mechanisms = element.findByName(AppState.getString(660472));
+                            if (mechanisms != null) {
+                                XmlElement authElement = XmlElement.createFromState(263757).addIdAttr(2102710);
+                                String plainMech = AppState.getString(660501);
+                                if (mechanisms.findChildByText(plainMech) != null) {
+                                    sendXmlElement(authElement.setAttrValue(594936, plainMech));
                                 } else {
-                                    String strM584b2 = AppState.getString(922626);
-                                    if (c0022avM568b.findChildByText(strM584b2) != null) {
-                                        sendXmlElement(c0022avM569h.setAttrValue(594936, strM584b2).appendText((Object) new ByteBuffer().writeByte(0).writeRawString(this.shortName).writeByte(0).writeRawString((String) this.authResult).toBase64()));
+                                    String xTokenMech = AppState.getString(922626);
+                                    if (mechanisms.findChildByText(xTokenMech) != null) {
+                                        sendXmlElement(authElement.setAttrValue(594936, xTokenMech).appendText((Object) new ByteBuffer().writeByte(0).writeRawString(this.shortName).writeByte(0).writeRawString((String) this.authResult).toBase64()));
                                     } else {
-                                        String strM584b3 = AppState.getString(332816);
-                                        if (c0022avM568b.findChildByText(strM584b3) != null) {
-                                            sendXmlElement(c0022avM569h.setAttrValue(594936, strM584b3).appendText((Object) new ByteBuffer().writeUTFNoLen(new ByteBuffer().writeRawString(this.shortName).writeByte(64).writeRawString(this.serverAddress).readAllByteStr()).writeByte(0).writeUTFNoLen(this.shortName).writeByte(0).writeUTFNoLen(this.password).toBase64()));
+                                        String digestMech = AppState.getString(332816);
+                                        if (mechanisms.findChildByText(digestMech) != null) {
+                                            sendXmlElement(authElement.setAttrValue(594936, digestMech).appendText((Object) new ByteBuffer().writeUTFNoLen(new ByteBuffer().writeRawString(this.shortName).writeByte(64).writeRawString(this.serverAddress).readAllByteStr()).writeByte(0).writeUTFNoLen(this.shortName).writeByte(0).writeUTFNoLen(this.password).toBase64()));
                                         }
                                     }
                                 }
-                            } else if (c0022av.findByName(AppState.getString(267762)) != null) {
-                                XmlElement c0022avM570i = XmlElement.createFromState(136604).addNameAttr(198841);
-                                c0022avM570i.addChildWithId(267762, 2102742).addTextChild(AppState.getString(530129), AppState.getString(264455));
-                                sendElementWithId(c0022avM570i);
+                            } else if (element.findByName(AppState.getString(267762)) != null) {
+                                XmlElement bindRequest = XmlElement.createFromState(136604).addNameAttr(198841);
+                                bindRequest.addChildWithId(267762, 2102742).addTextChild(AppState.getString(530129), AppState.getString(264455));
+                                sendElementWithId(bindRequest);
                                 this.msgCount = 60;
                             } else {
                                 IOUtils.postAccountError(this, 1033);
                                 closeConnection();
                                 this.lastError = getDefaultError();
                             }
-                        } else if (StringUtils.matchesKey(595536, str)) {
-                            XmlElement c0022avM569h2 = XmlElement.createFromState(529537).addIdAttr(2102710);
-                            String strM1317c = ResourceManager.decodeBase64(StringUtils.fromBuffer(c0022av.textContent)).getStringAndClear();
-                            int iIndexOf = strM1317c.indexOf(AppState.getString(398406));
-                            if (iIndexOf >= 0) {
-                                int i = iIndexOf + 7;
-                                String strMo128m = mo128m();
-                                String str2 = this.password;
-                                String str3 = this.serverAddress;
-                                String strM12a = StringUtils.substring(strM1317c, i, strM1317c.indexOf(34, i));
-                                ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(660529).writeRawString(strMo128m).writeCompressed(595003).writeRawString(str3).writeCompressed(595012).writeRawString(strM12a).writeCompressed(1446989);
-                                String strM544b = Utils.generateRandomHash();
-                                c0022avM569h2.appendText((Object) c0043nM1310c.writeRawString(strM544b).writeCompressed(1840227).writeRawString(str3).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(strMo128m).writeByte(58).writeRawString(str3).writeByte(58).writeRawString(str2).encryptMD5().writeByte(58).writeRawString(strM12a).writeByte(58).writeRawString(strM544b).encryptMD5().toHexString()).writeByte(58).writeRawString(strM12a).writeCompressed(660619).writeRawString(strM544b).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(str3).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
+                        } else if (StringUtils.matchesKey(595536, tagName)) {
+                            XmlElement challengeResponse = XmlElement.createFromState(529537).addIdAttr(2102710);
+                            String decoded = ResourceManager.decodeBase64(StringUtils.fromBuffer(element.textContent)).getStringAndClear();
+                            int idx = decoded.indexOf(AppState.getString(398406));
+                            if (idx >= 0) {
+                                int nonceStart = idx + 7;
+                                String username = mo128m();
+                                String password = this.password;
+                                String realm = this.serverAddress;
+                                String nonce = StringUtils.substring(decoded, nonceStart, decoded.indexOf(34, nonceStart));
+                                ByteBuffer digestBuffer = new ByteBuffer().writeCompressed(660529).writeRawString(username).writeCompressed(595003).writeRawString(realm).writeCompressed(595012).writeRawString(nonce).writeCompressed(1446989);
+                                String cnonce = Utils.generateRandomHash();
+                                challengeResponse.appendText((Object) digestBuffer.writeRawString(cnonce).writeCompressed(1840227).writeRawString(realm).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(username).writeByte(58).writeRawString(realm).writeByte(58).writeRawString(password).encryptMD5().writeByte(58).writeRawString(nonce).writeByte(58).writeRawString(cnonce).encryptMD5().toHexString()).writeByte(58).writeRawString(nonce).writeCompressed(660619).writeRawString(cnonce).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(realm).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
                             }
-                            sendXmlElement(c0022avM569h2);
-                        } else if (StringUtils.matchesKey(464473, str)) {
+                            sendXmlElement(challengeResponse);
+                        } else if (StringUtils.matchesKey(464473, tagName)) {
                             sendPresenceSubscription();
-                        } else if (StringUtils.matchesKey(530016, str)) {
-                            String strM574a = c0022av.getNameAttr();
-                            String strM584b4 = strM574a != null ? strM574a : AppState.getString(594984);
-                            String strM130h = extractBareJid(c0022av.getIntAttribute(262852));
-                            if (strM130h != null) {
-                                XmppContact c0006afM111f = findContactByJid(strM130h);
-                                if (StringUtils.matchesKey(594926, strM584b4)) {
-                                    if (c0006afM111f == null) {
-                                        ContactGroup abstractC0046q = this.defaultGroup;
-                                        XmppContact c0006af = new XmppContact(this, strM130h, extractDisplayName(c0022av, strM130h), null);
-                                        c0006af.online = true;
-                                        c0006afM111f = c0006af;
-                                        abstractC0046q.addContact((Object) c0006af);
+                        } else if (StringUtils.matchesKey(530016, tagName)) {
+                            String nameAttr = element.getNameAttr();
+                            String presenceType = nameAttr != null ? nameAttr : AppState.getString(594984);
+                            String jid = extractBareJid(element.getIntAttribute(262852));
+                            if (jid != null) {
+                                XmppContact contact = findContactByJid(jid);
+                                if (StringUtils.matchesKey(594926, presenceType)) {
+                                    if (contact == null) {
+                                        ContactGroup group = this.defaultGroup;
+                                        XmppContact newContact = new XmppContact(this, jid, extractDisplayName(element, jid), null);
+                                        newContact.online = true;
+                                        contact = newContact;
+                                        group.addContact((Object) newContact);
                                     }
-                                    c0006afM111f.updateFromPresence(strM584b4, c0022av);
+                                    contact.updateFromPresence(presenceType, element);
                                     ResourceManager.playNotificationSound(3);
-                                    onMessage(strM130h, 0L, AppState.getString(1031));
-                                } else if (c0006afM111f != null) {
-                                    c0006afM111f.updateFromPresence(strM584b4, c0022av);
+                                    onMessage(jid, 0L, AppState.getString(1031));
+                                } else if (contact != null) {
+                                    contact.updateFromPresence(presenceType, element);
                                 }
                             }
-                        } else if (StringUtils.matchesKey(464488, str)) {
-                            String strM130h2 = extractBareJid(c0022av.getIntAttribute(262852));
-                            if (findContactByJid(strM130h2) != null) {
-                                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-                                XmlElement c0022avM562f = c0022av.findChildByKey(464558);
-                                if (c0022avM562f != null && (strM11a2 = StringUtils.fromBuffer(c0022avM562f.textContent)) != null) {
-                                    stringBufferM1217h.append(strM11a2).append('\n');
+                        } else if (StringUtils.matchesKey(464488, tagName)) {
+                            String senderJid = extractBareJid(element.getIntAttribute(262852));
+                            if (findContactByJid(senderJid) != null) {
+                                StringBuffer sb = NetworkUtils.newStringBuffer();
+                                XmlElement subjectChild = element.findChildByKey(464558);
+                                if (subjectChild != null && (subjectText = StringUtils.fromBuffer(subjectChild.textContent)) != null) {
+                                    sb.append(subjectText).append('\n');
                                 }
-                                XmlElement c0022avM562f2 = c0022av.findChildByKey(267946);
-                                if (c0022avM562f2 != null && (strM11a = StringUtils.fromBuffer(c0022avM562f2.textContent)) != null) {
-                                    stringBufferM1217h.append(strM11a);
+                                XmlElement bodyChild = element.findChildByKey(267946);
+                                if (bodyChild != null && (bodyText = StringUtils.fromBuffer(bodyChild.textContent)) != null) {
+                                    sb.append(bodyText);
                                 }
-                                String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
-                                if (strM1215a.length() > 0) {
-                                    onMessage(strM130h2, 0L, strM1215a);
+                                String messageText = NetworkUtils.bufToStringCached(sb);
+                                if (messageText.length() > 0) {
+                                    onMessage(senderJid, 0L, messageText);
                                 }
                             }
-                        } else if (StringUtils.matchesKey(464495, str)) {
+                        } else if (StringUtils.matchesKey(464495, tagName)) {
                             handleComplete();
-                        } else if (StringUtils.matchesKey(136604, c0022av.tagName)) {
-                            if (c0022av.findByAttrs(267810, 857625) == null || !StringUtils.matchesKey(196633, c0022av.getNameAttr())) {
-                                z = false;
+                        } else if (StringUtils.matchesKey(136604, element.tagName)) {
+                            if (element.findByAttrs(267810, 857625) == null || !StringUtils.matchesKey(196633, element.getNameAttr())) {
+                                handledPing = false;
                             } else {
-                                XmlElement c0022avM577b = c0022av.cloneElement();
-                                c0022avM577b.children = null;
-                                sendXmlElement(c0022avM577b);
-                                z = true;
+                                XmlElement pingReply = element.cloneElement();
+                                pingReply.children = null;
+                                sendXmlElement(pingReply);
+                                handledPing = true;
                             }
-                            if (!z && !processRosterUpdate(c0022av)) {
-                                if (c0022av.findByAttrs(267762, 2102742) == null || !StringUtils.matchesKey(398982, c0022av.getNameAttr())) {
-                                    z2 = false;
+                            if (!handledPing && !processRosterUpdate(element)) {
+                                if (element.findByAttrs(267762, 2102742) == null || !StringUtils.matchesKey(398982, element.getNameAttr())) {
+                                    handledSession = false;
                                 } else {
                                     sendElementWithId(XmlElement.createFromState(136604).addNameAttr(198841).addSimpleChild(461668, 2299382));
                                     this.msgCount = 70;
-                                    z2 = true;
+                                    handledSession = true;
                                 }
-                                if (!z2) {
-                                    if (this.msgCount == 70 && StringUtils.matchesKey(398982, c0022av.getNameAttr())) {
+                                if (!handledSession) {
+                                    if (this.msgCount == 70 && StringUtils.matchesKey(398982, element.getNameAttr())) {
                                         sendElementWithId(XmlElement.createFromState(136604).addNameAttr(196633).addSimpleChild(333360, 1054101));
                                         this.msgCount = 80;
-                                        z3 = true;
+                                        handledBind = true;
                                     } else {
-                                        z3 = false;
+                                        handledBind = false;
                                     }
-                                    if (!z3) {
-                                        XmlElement c0022avM576d2 = c0022av.findByAttrs(333360, 1119653);
-                                        if (c0022avM576d2 == null || !StringUtils.matchesKey(196633, c0022av.getNameAttr())) {
-                                            z4 = false;
+                                    if (!handledBind) {
+                                        XmlElement discoInfoElement = element.findByAttrs(333360, 1119653);
+                                        if (discoInfoElement == null || !StringUtils.matchesKey(196633, element.getNameAttr())) {
+                                            handledDiscoInfo = false;
                                         } else {
-                                            c0022avM576d2.setIntAttribute(262601, 1119195).setIntAttribute(459728, 1375).setIntAttribute(133230, 264455);
-                                            sendXmlElement(c0022av.cloneElement());
-                                            z4 = true;
+                                            discoInfoElement.setIntAttribute(262601, 1119195).setIntAttribute(459728, 1375).setIntAttribute(133230, 264455);
+                                            sendXmlElement(element.cloneElement());
+                                            handledDiscoInfo = true;
                                         }
-                                        if (!z4 && (c0022avM576d = c0022av.findByAttrs(333360, 1054101)) != null) {
-                                            String strM574a2 = c0022av.getNameAttr();
-                                            if (StringUtils.matchesKey(198841, strM574a2)) {
-                                                parseRosterItems(c0022avM576d);
-                                                XmlElement c0022avM577b2 = c0022av.cloneElement();
-                                                c0022avM577b2.children = null;
-                                                sendXmlElement(c0022avM577b2);
-                                            } else if (StringUtils.matchesKey(398982, strM574a2)) {
+                                        if (!handledDiscoInfo && (rosterElement = element.findByAttrs(333360, 1054101)) != null) {
+                                            String iqType = element.getNameAttr();
+                                            if (StringUtils.matchesKey(198841, iqType)) {
+                                                parseRosterItems(rosterElement);
+                                                XmlElement ackElement = element.cloneElement();
+                                                ackElement.children = null;
+                                                sendXmlElement(ackElement);
+                                            } else if (StringUtils.matchesKey(398982, iqType)) {
                                                 removeAllContacts();
-                                                parseRosterItems(c0022avM576d);
+                                                parseRosterItems(rosterElement);
                                                 if (Utils.vectorSize(this.groups) == 0) {
                                                     this.groups.addElement(new XmppContactGroup(this, 1, AppState.getString(459528)));
                                                 }
@@ -484,32 +484,32 @@ public class XmppProtocol extends Account {
     @Override // p000.Account
     /* renamed from: c */
     public final void onError(int i) {
-        int i2;
+        int statusMode;
         switch (i) {
             case 0:
-                i2 = 1;
+                statusMode = 1;
                 break;
             case 1:
-                i2 = 4;
+                statusMode = 4;
                 break;
             case 2:
-                i2 = 2;
+                statusMode = 2;
                 break;
             case 3:
-                i2 = 5;
+                statusMode = 5;
                 break;
             case 4:
-                i2 = 3;
+                statusMode = 3;
                 break;
             default:
                 disconnect();
                 return;
         }
         if (isConnected()) {
-            sendError(i2);
+            sendError(statusMode);
             return;
         }
-        this.configFlags = i2;
+        this.configFlags = statusMode;
         if (isConnecting()) {
             return;
         }
@@ -522,46 +522,46 @@ public class XmppProtocol extends Account {
             i = 1;
         }
         this.lastError = i;
-        XmlElement c0022avM550a = XmlElement.createFromState(530016);
-        int i2 = 0;
+        XmlElement presence = XmlElement.createFromState(530016);
+        int statusStringId = 0;
         switch (i) {
             case 1:
-                i2 = 642;
+                statusStringId = 642;
                 break;
             case 2:
-                c0022avM550a.setIntAttribute(267927, 267829);
-                i2 = 644;
+                presence.setIntAttribute(267927, 267829);
+                statusStringId = 644;
                 break;
             case 3:
-                c0022avM550a.addNameAttr(594975);
+                presence.addNameAttr(594975);
                 break;
             case 4:
-                c0022avM550a.setIntAttribute(267927, 265215);
-                i2 = 643;
+                presence.setIntAttribute(267927, 265215);
+                statusStringId = 643;
                 break;
             case 5:
-                c0022avM550a.setIntAttribute(267927, 202299);
-                i2 = 645;
+                presence.setIntAttribute(267927, 202299);
+                statusStringId = 645;
                 break;
             case 6:
-                c0022avM550a.setIntAttribute(267927, 136761);
-                i2 = 648;
+                presence.setIntAttribute(267927, 136761);
+                statusStringId = 648;
                 break;
         }
-        if (i2 != 0) {
-            c0022avM550a.addTextChild(AppState.getString(530137), AppState.getString(65747));
-            c0022avM550a.setIntAttribute(394658, i2);
-            c0022avM550a.addChildWithId(267628, 2037073).appendText((Object) this.displayName);
+        if (statusStringId != 0) {
+            presence.addTextChild(AppState.getString(530137), AppState.getString(65747));
+            presence.setIntAttribute(394658, statusStringId);
+            presence.addChildWithId(267628, 2037073).appendText((Object) this.displayName);
         }
-        sendXmlElement(c0022avM550a);
+        sendXmlElement(presence);
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int setCredentials(String str, String str2) {
-        int iMo102a = super.setCredentials(str, str2);
-        if (iMo102a != 0) {
-            return iMo102a;
+        int result = super.setCredentials(str, str2);
+        if (result != 0) {
+            return result;
         }
         if (mo83f()) {
             this.serverResourceId = AppState.emptyStr;
@@ -586,19 +586,19 @@ public class XmppProtocol extends Account {
 
     @Override // p000.Account
     /* renamed from: c */
-    public final int validateContactDelete(Contact abstractC0041l) {
+    public final int validateContactDelete(Contact contact) {
         return 1032;
     }
 
     @Override // p000.Account
     /* renamed from: d */
-    public final int validateContactBlock(Contact abstractC0041l) {
+    public final int validateContactBlock(Contact contact) {
         return 1032;
     }
 
     @Override // p000.Account
     /* renamed from: e */
-    public final int validateContactUnblock(Contact abstractC0041l) {
+    public final int validateContactUnblock(Contact contact) {
         return 1032;
     }
 
@@ -635,27 +635,27 @@ public class XmppProtocol extends Account {
 
     @Override // p000.Account
     /* renamed from: a */
-    public final int validateModify(Contact abstractC0041l, Object[] objArr) {
-        int iMo112a = super.validateModify(abstractC0041l, objArr);
-        return 0 != iMo112a ? iMo112a : createRosterUpdate(((XmppContact) abstractC0041l).jabberId, (String) objArr[0], findGroup(abstractC0041l).name);
+    public final int validateModify(Contact contact, Object[] params) {
+        int result = super.validateModify(contact, params);
+        return 0 != result ? result : createRosterUpdate(((XmppContact) contact).jabberId, (String) params[0], findGroup(contact).name);
     }
 
     @Override // p000.Account
     /* renamed from: a */
-    public final int validateMove(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
-        int iMo113a = super.validateMove(abstractC0041l, abstractC0046q, abstractC0046q2);
-        return 0 != iMo113a ? iMo113a : createRosterUpdate(((XmppContact) abstractC0041l).jabberId, abstractC0041l.displayName, abstractC0046q2.name);
+    public final int validateMove(Contact contact, ContactGroup fromGroup, ContactGroup toGroup) {
+        int result = super.validateMove(contact, fromGroup, toGroup);
+        return 0 != result ? result : createRosterUpdate(((XmppContact) contact).jabberId, contact.displayName, toGroup.name);
     }
 
     @Override // p000.Account
     /* renamed from: a */
-    public final int validateDelete(Contact abstractC0041l) {
+    public final int validateDelete(Contact contact) {
         if (!isConnected()) {
             return 299;
         }
-        AppState.pool[1316] = new Object[]{generateMessageId(), ((XmppContact) abstractC0041l).getContactInfo()};
+        AppState.pool[1316] = new Object[]{generateMessageId(), ((XmppContact) contact).getContactInfo()};
         this.state--;
-        return sendElementWithId(XmlElement.createFromState(136604).addNameAttr(196633).setAttrValue(131590, abstractC0041l.getIdentifier()).addSimpleChild(333452, 661030));
+        return sendElementWithId(XmlElement.createFromState(136604).addNameAttr(196633).setAttrValue(131590, contact.getIdentifier()).addSimpleChild(333452, 661030));
     }
 
     @Override // p000.Account
@@ -670,28 +670,28 @@ public class XmppProtocol extends Account {
             IOUtils.postEvent((Object) AppState.getString(299));
             return 0;
         }
-        String strM522f = Utils.defaultStr(AppState.getString(1296));
-        createRosterUpdate(strM522f, Utils.defaultStr(AppState.getString(1297)), ((ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507))).name);
-        updatePresenceStatus(strM522f, 0);
-        updatePresenceStatus(strM522f, 1);
+        String contactJid = Utils.defaultStr(AppState.getString(1296));
+        createRosterUpdate(contactJid, Utils.defaultStr(AppState.getString(1297)), ((ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507))).name);
+        updatePresenceStatus(contactJid, 0);
+        updatePresenceStatus(contactJid, 1);
         return 0;
     }
 
     /* renamed from: a */
     private final int createRosterUpdate(String str, String str2, String str3) {
-        XmlElement c0022avM569h = XmlElement.createFromState(333360).addIdAttr(1054101);
-        XmlElement c0022avM559a = XmlElement.createFromState(267942).setAttrValue(202421, str).setAttrValue(262601, str2).setAttrValue(792248, str2 == null ? AppState.getString(399049) : null);
+        XmlElement queryElement = XmlElement.createFromState(333360).addIdAttr(1054101);
+        XmlElement itemElement = XmlElement.createFromState(267942).setAttrValue(202421, str).setAttrValue(262601, str2).setAttrValue(792248, str2 == null ? AppState.getString(399049) : null);
         if (str3 != null && !StringUtils.matchesKey(459528, str3)) {
-            c0022avM559a.addTextChild(AppState.getString(333508), str3);
+            itemElement.addTextChild(AppState.getString(333508), str3);
         }
-        return sendElementWithId(XmlElement.createFromState(136604).addNameAttr(198841).addChild(c0022avM569h.addChild(c0022avM559a)));
+        return sendElementWithId(XmlElement.createFromState(136604).addNameAttr(198841).addChild(queryElement.addChild(itemElement)));
     }
 
     @Override // p000.Account
     /* renamed from: b */
-    public final int validateResend(Contact abstractC0041l) {
+    public final int validateResend(Contact contact) {
         if (isConnected()) {
-            createRosterUpdate(abstractC0041l.getIdentifier(), (String) null, (String) null);
+            createRosterUpdate(contact.getIdentifier(), (String) null, (String) null);
             return 0;
         }
         IOUtils.postEvent((Object) AppState.getString(299));
@@ -699,23 +699,23 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: a */
-    public final int updateContactPresence(XmppContact c0006af, int i) {
+    public final int updateContactPresence(XmppContact contact, int i) {
         if (!isConnected()) {
             return 299;
         }
-        String str = c0006af.jabberId;
-        String str2 = c0006af.displayName;
-        ContactGroup abstractC0046qM1080g = findGroup(c0006af);
-        createRosterUpdate(str, str2, (abstractC0046qM1080g == this.onlineGroup || c0006af.online) ? AppState.getString(459528) : abstractC0046qM1080g.name);
+        String jid = contact.jabberId;
+        String name = contact.displayName;
+        ContactGroup group = findGroup(contact);
+        createRosterUpdate(jid, name, (group == this.onlineGroup || contact.online) ? AppState.getString(459528) : group.name);
         return i;
     }
 
     @Override // p000.Account
     /* renamed from: l */
     public final int disconnect() {
-        int iMo120l = super.disconnect();
-        if (0 != iMo120l) {
-            return iMo120l;
+        int result = super.disconnect();
+        if (0 != result) {
+            return result;
         }
         closeConnection();
         this.lastError = getDefaultError();
@@ -728,25 +728,25 @@ public class XmppProtocol extends Account {
 
     /* renamed from: g */
     private XmppContactGroup findGroupByName(String str) {
-        XmppContactGroup c0036g;
-        Vector vector = this.groups;
-        int iM541c = Utils.vectorSize(vector);
+        XmppContactGroup group;
+        Vector groups = this.groups;
+        int i = Utils.vectorSize(groups);
         do {
-            iM541c--;
-            if (iM541c < 0) {
+            i--;
+            if (i < 0) {
                 return null;
             }
-            c0036g = (XmppContactGroup) vector.elementAt(iM541c);
-        } while (!StringUtils.equals(str, c0036g.name));
-        return c0036g;
+            group = (XmppContactGroup) groups.elementAt(i);
+        } while (!StringUtils.equals(str, group.name));
+        return group;
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int validateGroupCreate(String str) {
-        int iMo122a = super.validateGroupCreate(str);
-        if (0 != iMo122a) {
-            return iMo122a;
+        int result = super.validateGroupCreate(str);
+        if (0 != result) {
+            return result;
         }
         if (findGroupByName(str) != null) {
             return 0;
@@ -757,53 +757,53 @@ public class XmppProtocol extends Account {
 
     @Override // p000.Account
     /* renamed from: a */
-    public final int validateGroupDelete(ContactGroup abstractC0046q) {
-        int iMo123a = super.validateGroupDelete(abstractC0046q);
-        if (0 != iMo123a) {
-            return iMo123a;
+    public final int validateGroupDelete(ContactGroup group) {
+        int result = super.validateGroupDelete(group);
+        if (0 != result) {
+            return result;
         }
-        this.groups.removeElement(abstractC0046q);
+        this.groups.removeElement(group);
         return 0;
     }
 
     @Override // p000.Account
     /* renamed from: a */
-    public final int validateGroupRename(ContactGroup abstractC0046q, String str) {
-        int iMo124a = super.validateGroupRename(abstractC0046q, str);
-        if (0 != iMo124a) {
-            return iMo124a;
+    public final int validateGroupRename(ContactGroup group, String str) {
+        int result = super.validateGroupRename(group, str);
+        if (0 != result) {
+            return result;
         }
-        if (Utils.vectorSize(abstractC0046q.contacts) != 0) {
+        if (Utils.vectorSize(group.contacts) != 0) {
             return 1032;
         }
-        abstractC0046q.setNameIfChanged(str);
+        group.setNameIfChanged(str);
         return 0;
     }
 
     @Override // p000.Account
     /* renamed from: a */
-    public final int validateSend(Contact abstractC0041l, String str, long j) {
-        int iMo125a = super.validateSend(abstractC0041l, str, j);
-        if (0 != iMo125a) {
-            return iMo125a;
+    public final int validateSend(Contact contact, String str, long j) {
+        int result = super.validateSend(contact, str, j);
+        if (0 != result) {
+            return result;
         }
         this.sentCount++;
-        return sendXmlElement(XmlElement.createFromState(464488).setAttrValue(131590, abstractC0041l.getIdentifier()).addNameAttr(265215).addChild(XmlElement.createFromState(267946).appendText((Object) str)).addSimpleChild(398993, 2430320));
+        return sendXmlElement(XmlElement.createFromState(464488).setAttrValue(131590, contact.getIdentifier()).addNameAttr(265215).addChild(XmlElement.createFromState(267946).appendText((Object) str)).addSimpleChild(398993, 2430320));
     }
 
     /* renamed from: c */
-    private final boolean processRosterUpdate(XmlElement c0022av) {
-        if (c0022av.findByAttrs(333350, 661030) == null) {
+    private final boolean processRosterUpdate(XmlElement element) {
+        if (element.findByAttrs(333350, 661030) == null) {
             return false;
         }
-        if (!StringUtils.matchesKey(398982, c0022av.getNameAttr())) {
-            if (!StringUtils.matchesKey(333441, c0022av.getNameAttr())) {
+        if (!StringUtils.matchesKey(398982, element.getNameAttr())) {
+            if (!StringUtils.matchesKey(333441, element.getNameAttr())) {
                 return false;
             }
             try {
-                Object[] objArrM609l = AppState.getObjectArray(1316);
-                if (((String) objArrM609l[0]).equals(c0022av.getIntAttribute(131550))) {
-                    AppState.pool[1315] = ((ContactInfo) objArrM609l[1]).setDescriptionBis(c0022av.toString());
+                Object[] pendingRequest = AppState.getObjectArray(1316);
+                if (((String) pendingRequest[0]).equals(element.getIntAttribute(131550))) {
+                    AppState.pool[1315] = ((ContactInfo) pendingRequest[1]).setDescriptionBis(element.toString());
                 }
                 return true;
             } catch (Throwable unused) {
@@ -811,14 +811,14 @@ public class XmppProtocol extends Account {
             }
         }
         try {
-            Object[] objArrM609l2 = AppState.getObjectArray(1316);
-            if (((String) objArrM609l2[0]).equals(c0022av.getIntAttribute(131550))) {
-                ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).setDescriptionBis(NetworkUtils.bufToStringCached(buildContactDescription(NetworkUtils.newStringBuffer(), c0022av)));
-                Image imageM132e = extractImageFromElement(c0022av);
-                if (imageM132e != null) {
-                    c0042mM1297y.put(ResourceManager.integerOf(25), imageM132e);
+            Object[] pendingRequest = AppState.getObjectArray(1316);
+            if (((String) pendingRequest[0]).equals(element.getIntAttribute(131550))) {
+                ContactInfo contactInfo = ((ContactInfo) pendingRequest[1]).setDescriptionBis(NetworkUtils.bufToStringCached(buildContactDescription(NetworkUtils.newStringBuffer(), element)));
+                Image avatar = extractImageFromElement(element);
+                if (avatar != null) {
+                    contactInfo.put(ResourceManager.integerOf(25), avatar);
                 }
-                AppState.pool[1315] = c0042mM1297y;
+                AppState.pool[1315] = contactInfo;
             }
             return true;
         } catch (Throwable unused2) {
@@ -827,43 +827,43 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: d */
-    private final void parseRosterItems(XmlElement c0022av) {
-        Vector vector = this.groups;
-        Vector vector2 = c0022av.children;
-        int iM541c = Utils.vectorSize(vector2);
+    private final void parseRosterItems(XmlElement element) {
+        Vector groups = this.groups;
+        Vector children = element.children;
+        int i = Utils.vectorSize(children);
         while (true) {
-            iM541c--;
-            if (iM541c < 0) {
+            i--;
+            if (i < 0) {
                 return;
             }
-            XmlElement c0022av2 = (XmlElement) vector2.elementAt(iM541c);
-            if (StringUtils.matchesKey(267942, c0022av2.tagName)) {
-                String strM554b = c0022av2.getIntAttribute(202421);
-                String strM554b2 = c0022av2.getIntAttribute(792248);
-                c0022av2.getIntAttribute(202403);
-                String strM554b3 = c0022av2.getIntAttribute(262601);
-                boolean zM3a = StringUtils.matchesKey(399049, strM554b2);
-                if (strM554b3 == null) {
-                    strM554b3 = strM554b;
+            XmlElement itemElement = (XmlElement) children.elementAt(i);
+            if (StringUtils.matchesKey(267942, itemElement.tagName)) {
+                String jid = itemElement.getIntAttribute(202421);
+                String subscription = itemElement.getIntAttribute(792248);
+                itemElement.getIntAttribute(202403);
+                String displayName = itemElement.getIntAttribute(262601);
+                boolean isRemoved = StringUtils.matchesKey(399049, subscription);
+                if (displayName == null) {
+                    displayName = jid;
                 }
-                String strM575c = c0022av2.getChildText(AppState.getString(333508));
-                String strM584b = strM575c;
-                if (!Utils.nonEmpty(strM575c)) {
-                    strM584b = AppState.getString(459528);
+                String groupName = itemElement.getChildText(AppState.getString(333508));
+                String resolvedGroupName = groupName;
+                if (!Utils.nonEmpty(groupName)) {
+                    resolvedGroupName = AppState.getString(459528);
                 }
-                XmppContact c0006af = (XmppContact) getContact((Object) strM554b);
-                removeContact(c0006af, zM3a);
-                if (!zM3a) {
-                    XmppContactGroup c0036gM121g = findGroupByName(strM584b);
-                    XmppContactGroup c0036g = c0036gM121g;
-                    if (c0036gM121g == null) {
-                        XmppContactGroup c0036g2 = new XmppContactGroup(this, 1, strM584b);
-                        c0036g = c0036g2;
-                        vector.addElement(c0036g2);
+                XmppContact existingContact = (XmppContact) getContact((Object) jid);
+                removeContact(existingContact, isRemoved);
+                if (!isRemoved) {
+                    XmppContactGroup foundGroup = findGroupByName(resolvedGroupName);
+                    XmppContactGroup targetGroup = foundGroup;
+                    if (foundGroup == null) {
+                        XmppContactGroup newGroup = new XmppContactGroup(this, 1, resolvedGroupName);
+                        targetGroup = newGroup;
+                        groups.addElement(newGroup);
                     }
-                    XmppContact c0006af2 = new XmppContact(this, strM554b, strM554b3, strM554b2);
-                    c0036g.addContact((Object) c0006af2);
-                    c0006af2.updateFromContact(c0006af);
+                    XmppContact newContact = new XmppContact(this, jid, displayName, subscription);
+                    targetGroup.addContact((Object) newContact);
+                    newContact.updateFromContact(existingContact);
                 }
             }
         }
@@ -875,9 +875,9 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: a */
-    private static String extractDisplayName(XmlElement c0022av, String str) {
+    private static String extractDisplayName(XmlElement element, String str) {
         try {
-            return StringUtils.fromBuffer(c0022av.findChildByKey(267628).textContent);
+            return StringUtils.fromBuffer(element.findChildByKey(267628).textContent);
         } catch (Throwable unused) {
             return str;
         }
@@ -888,8 +888,8 @@ public class XmppProtocol extends Account {
         if (str == null) {
             return null;
         }
-        int iIndexOf = str.indexOf(47);
-        return iIndexOf <= 0 ? str : StringUtils.prefix(str, iIndexOf);
+        int idx = str.indexOf(47);
+        return idx <= 0 ? str : StringUtils.prefix(str, idx);
     }
 
     /* renamed from: d */
@@ -913,43 +913,43 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: e */
-    private final Image extractImageFromElement(XmlElement c0022av) {
-        Image imageM132e;
-        String strM11a;
-        if (StringUtils.matchesKey(398966, c0022av.tagName) && (strM11a = StringUtils.fromBuffer(c0022av.textContent)) != null) {
-            String strM534k = Utils.trimAll(strM11a);
-            if (Utils.nonEmpty(strM534k)) {
+    private final Image extractImageFromElement(XmlElement element) {
+        Image image;
+        String text;
+        if (StringUtils.matchesKey(398966, element.tagName) && (text = StringUtils.fromBuffer(element.textContent)) != null) {
+            String trimmed = Utils.trimAll(text);
+            if (Utils.nonEmpty(trimmed)) {
                 try {
-                    return ResourceManager.decodeBase64(strM534k).toImage();
+                    return ResourceManager.decodeBase64(trimmed).toImage();
                 } catch (Throwable unused) {
                 }
             }
         }
-        int iM541c = Utils.vectorSize(c0022av.children);
+        int i = Utils.vectorSize(element.children);
         do {
-            iM541c--;
-            if (iM541c < 0) {
+            i--;
+            if (i < 0) {
                 return null;
             }
-            imageM132e = extractImageFromElement(c0022av.getChildAt(iM541c));
-        } while (imageM132e == null);
-        return imageM132e;
+            image = extractImageFromElement(element.getChildAt(i));
+        } while (image == null);
+        return image;
     }
 
     /* renamed from: a */
-    private final StringBuffer buildContactDescription(StringBuffer stringBuffer, XmlElement c0022av) {
-        if (!StringUtils.matchesKey(333436, c0022av.tagName)) {
-            String strM11a = StringUtils.fromBuffer(c0022av.textContent);
-            if (strM11a != null) {
-                String strM534k = Utils.trimAll(strM11a);
-                if (Utils.nonEmpty(strM534k)) {
-                    stringBuffer.append(strM534k).append('\n');
+    private final StringBuffer buildContactDescription(StringBuffer sb, XmlElement element) {
+        if (!StringUtils.matchesKey(333436, element.tagName)) {
+            String text = StringUtils.fromBuffer(element.textContent);
+            if (text != null) {
+                String trimmed = Utils.trimAll(text);
+                if (Utils.nonEmpty(trimmed)) {
+                    sb.append(trimmed).append('\n');
                 }
             }
-            for (int i = 0; i < Utils.vectorSize(c0022av.children); i++) {
-                buildContactDescription(stringBuffer, c0022av.getChildAt(i));
+            for (int i = 0; i < Utils.vectorSize(element.children); i++) {
+                buildContactDescription(sb, element.getChildAt(i));
             }
         }
-        return stringBuffer;
+        return sb;
     }
 }
