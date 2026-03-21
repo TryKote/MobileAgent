@@ -21,16 +21,16 @@ public final class SoftFloat {
     /* renamed from: a */
     private static long packFloat(boolean z, int i, long j) {
         if (j != 0) {
-            int iM360b = AppController.countLeadingZeros(j);
-            long j2 = j << iM360b;
-            int i2 = i - iM360b;
+            int leadingZeros = AppController.countLeadingZeros(j);
+            long j2 = j << leadingZeros;
+            int i2 = i - leadingZeros;
             int i3 = i2;
             if (i2 < -1085) {
                 j = AppController.roundedShiftRight(j2, (-1074) - i3);
             } else {
-                long jM362c = AppController.roundedShiftRight(j2, 11);
-                long j3 = jM362c;
-                if (jM362c == 9007199254740992L) {
+                long rounded = AppController.roundedShiftRight(j2, 11);
+                long j3 = rounded;
+                if (rounded == 9007199254740992L) {
                     j3 = 4503599627370496L;
                     i3++;
                 }
@@ -84,15 +84,15 @@ public final class SoftFloat {
 
     /* renamed from: a */
     public static final int compare(long j, long j2) {
-        boolean zM679o = isNaN(j);
-        boolean zM679o2 = isNaN(j2);
-        if (!zM679o && !zM679o2) {
+        boolean aNaN = isNaN(j);
+        boolean aNaN2 = isNaN(j2);
+        if (!aNaN && !aNaN2) {
             return compareRaw(j, j2);
         }
-        if (zM679o && zM679o2) {
+        if (aNaN && aNaN2) {
             return 0;
         }
-        return zM679o ? 1 : -1;
+        return aNaN ? 1 : -1;
     }
 
     /* renamed from: i */
@@ -110,14 +110,14 @@ public final class SoftFloat {
 
     /* renamed from: c */
     public static final int floatToInt(long j) {
-        long jM689d = floatToLong(j);
-        if (jM689d >= 2147483647L) {
+        long longValue = floatToLong(j);
+        if (longValue >= 2147483647L) {
             return Integer.MAX_VALUE;
         }
-        if (jM689d <= -2147483648L) {
+        if (longValue <= -2147483648L) {
             return Integer.MIN_VALUE;
         }
-        return (int) jM689d;
+        return (int) longValue;
     }
 
     /* renamed from: d */
@@ -126,21 +126,21 @@ public final class SoftFloat {
         if (isNaN(j)) {
             return 0L;
         }
-        boolean zM675l = isNegative(j);
-        int iM676m = getExponent(j);
-        long jM677n = getMantissa(j);
-        if (iM676m > 0) {
-            if (iM676m >= 63 || (jM677n >> (63 - iM676m)) != 0) {
-                return zM675l ? Long.MIN_VALUE : Long.MAX_VALUE;
+        boolean negative = isNegative(j);
+        int exponent = getExponent(j);
+        long mantissa = getMantissa(j);
+        if (exponent > 0) {
+            if (exponent >= 63 || (mantissa >> (63 - exponent)) != 0) {
+                return negative ? Long.MIN_VALUE : Long.MAX_VALUE;
             }
-            j2 = jM677n << iM676m;
+            j2 = mantissa << exponent;
         } else {
-            if (iM676m <= -53) {
+            if (exponent <= -53) {
                 return 0L;
             }
-            j2 = jM677n >>> (-iM676m);
+            j2 = mantissa >>> (-exponent);
         }
-        return zM675l ? -j2 : j2;
+        return negative ? -j2 : j2;
     }
 
     /* renamed from: b */
@@ -148,54 +148,54 @@ public final class SoftFloat {
         if (isNaN(j) || isNaN(j2)) {
             return 9221120237041090560L;
         }
-        boolean zM675l = isNegative(j);
-        boolean zM675l2 = isNegative(j2);
-        boolean zM680p = isInfinite(j);
-        boolean zM680p2 = isInfinite(j2);
-        if (zM680p || zM680p2) {
-            if (!zM680p || !zM680p2) {
-                return zM680p ? j : j2;
+        boolean negative = isNegative(j);
+        boolean negative2 = isNegative(j2);
+        boolean infinite = isInfinite(j);
+        boolean infinite2 = isInfinite(j2);
+        if (infinite || infinite2) {
+            if (!infinite || !infinite2) {
+                return infinite ? j : j2;
             }
-            if (zM675l != zM675l2) {
+            if (negative != negative2) {
                 return 9221120237041090560L;
             }
             return j;
         }
-        boolean zM681q = isZero(j);
-        boolean zM681q2 = isZero(j2);
-        if (zM681q || zM681q2) {
-            if (!zM681q || !zM681q2) {
-                return zM681q ? j2 : j;
+        boolean zero = isZero(j);
+        boolean zero2 = isZero(j2);
+        if (zero || zero2) {
+            if (!zero || !zero2) {
+                return zero ? j2 : j;
             }
-            if (zM675l != zM675l2) {
+            if (negative != negative2) {
                 return 0L;
             }
             return j;
         }
-        long jM677n = getMantissa(j) << 3;
-        int iM676m = getExponent(j) - 3;
-        long jM677n2 = getMantissa(j2) << 3;
-        int iM676m2 = getExponent(j2) - 3;
-        int i = iM676m - iM676m2;
+        long mantissa = getMantissa(j) << 3;
+        int exponent = getExponent(j) - 3;
+        long mantissa2 = getMantissa(j2) << 3;
+        int exponent2 = getExponent(j2) - 3;
+        int i = exponent - exponent2;
         if (i > 0) {
-            jM677n2 = AppController.shiftRightSticky(jM677n2, i);
+            mantissa2 = AppController.shiftRightSticky(mantissa2, i);
         } else if (i < 0) {
-            jM677n = AppController.shiftRightSticky(jM677n, -i);
-            iM676m = iM676m2;
+            mantissa = AppController.shiftRightSticky(mantissa, -i);
+            exponent = exponent2;
         }
-        if (zM675l ^ zM675l2) {
-            if (jM677n > jM677n2) {
-                jM677n2 = -jM677n2;
+        if (negative ^ negative2) {
+            if (mantissa > mantissa2) {
+                mantissa2 = -mantissa2;
             } else {
-                jM677n = -jM677n;
-                zM675l = zM675l2;
+                mantissa = -mantissa;
+                negative = negative2;
             }
         }
-        long jM678a = packFloat(zM675l, iM676m, jM677n + jM677n2);
-        if (jM678a == Long.MIN_VALUE) {
+        long result = packFloat(negative, exponent, mantissa + mantissa2);
+        if (result == Long.MIN_VALUE) {
             return 0L;
         }
-        return jM678a;
+        return result;
     }
 
     /* renamed from: c */
@@ -208,21 +208,21 @@ public final class SoftFloat {
         if (isNaN(j) || isNaN(j2)) {
             return 9221120237041090560L;
         }
-        boolean zM675l = isNegative(j) ^ isNegative(j2);
+        boolean negative = isNegative(j) ^ isNegative(j2);
         if (isInfinite(j) || isInfinite(j2)) {
             if (isZero(j) || isZero(j2)) {
                 return 9221120237041090560L;
             }
-            return zM675l ? -4503599627370496L : 9218868437227405312L;
+            return negative ? -4503599627370496L : 9218868437227405312L;
         }
-        long jM677n = getMantissa(j);
-        int iM676m = getExponent(j);
-        long jM677n2 = getMantissa(j2);
-        int iM676m2 = iM676m + getExponent(j2);
-        long j3 = jM677n & 268435455;
-        long j4 = jM677n >> 28;
-        long j5 = jM677n2 & 268435455;
-        long j6 = jM677n2 >> 28;
+        long mantissa = getMantissa(j);
+        int exponent = getExponent(j);
+        long mantissa2 = getMantissa(j2);
+        int exponent2 = exponent + getExponent(j2);
+        long j3 = mantissa & 268435455;
+        long j4 = mantissa >> 28;
+        long j5 = mantissa2 & 268435455;
+        long j6 = mantissa2 >> 28;
         long j7 = j3 * j5;
         long j8 = (j3 * j6) + (j4 * j5);
         long j9 = j4 * j6;
@@ -230,15 +230,15 @@ public final class SoftFloat {
         long j11 = j9 + (j8 >>> 28) + (j10 >>> 56);
         long j12 = j10 << 8;
         if (j11 == 0) {
-            return packFloat(zM675l, iM676m2, j12);
+            return packFloat(negative, exponent2, j12);
         }
-        int iM360b = AppController.countLeadingZeros(j11);
-        int i = iM676m2 + (56 - iM360b);
-        long j13 = (j11 << iM360b) | (j12 >>> (64 - iM360b));
-        if ((j12 << iM360b) != 0) {
+        int leadingZeros = AppController.countLeadingZeros(j11);
+        int i = exponent2 + (56 - leadingZeros);
+        long j13 = (j11 << leadingZeros) | (j12 >>> (64 - leadingZeros));
+        if ((j12 << leadingZeros) != 0) {
             j13 |= 1;
         }
-        return packFloat(zM675l, i, j13);
+        return packFloat(negative, i, j13);
     }
 
     /* renamed from: e */
@@ -246,75 +246,75 @@ public final class SoftFloat {
         if (isNaN(j) || isNaN(j2)) {
             return 9221120237041090560L;
         }
-        boolean zM675l = isNegative(j) ^ isNegative(j2);
-        boolean zM680p = isInfinite(j);
-        boolean zM680p2 = isInfinite(j2);
-        if (zM680p || zM680p2) {
-            if (zM680p && zM680p2) {
+        boolean negative = isNegative(j) ^ isNegative(j2);
+        boolean infinite = isInfinite(j);
+        boolean infinite2 = isInfinite(j2);
+        if (infinite || infinite2) {
+            if (infinite && infinite2) {
                 return 9221120237041090560L;
             }
-            return zM680p ? zM675l ? -4503599627370496L : 9218868437227405312L : zM675l ? Long.MIN_VALUE : 0L;
+            return infinite ? negative ? -4503599627370496L : 9218868437227405312L : negative ? Long.MIN_VALUE : 0L;
         }
-        boolean zM681q = isZero(j);
-        boolean zM681q2 = isZero(j2);
-        if (zM681q || zM681q2) {
-            if (zM681q && zM681q2) {
+        boolean zero = isZero(j);
+        boolean zero2 = isZero(j2);
+        if (zero || zero2) {
+            if (zero && zero2) {
                 return 9221120237041090560L;
             }
-            return zM681q ? zM675l ? Long.MIN_VALUE : 0L : zM675l ? -4503599627370496L : 9218868437227405312L;
+            return zero ? negative ? Long.MIN_VALUE : 0L : negative ? -4503599627370496L : 9218868437227405312L;
         }
-        long jM677n = getMantissa(j);
-        int iM676m = getExponent(j);
-        long jM677n2 = getMantissa(j2);
+        long mantissa = getMantissa(j);
+        int exponent = getExponent(j);
+        long mantissa2 = getMantissa(j2);
         long j3 = 0;
-        int iM676m2 = iM676m - getExponent(j2);
+        int exponent2 = exponent - getExponent(j2);
         while (true) {
-            int iM503b = Utils.min(AppController.countLeadingZeros(jM677n) - 1, AppController.countLeadingZeros(j3));
-            if (iM503b <= 8) {
+            int shiftAmount = Utils.min(AppController.countLeadingZeros(mantissa) - 1, AppController.countLeadingZeros(j3));
+            if (shiftAmount <= 8) {
                 break;
             }
-            long j4 = jM677n << iM503b;
-            iM676m2 -= iM503b;
-            j3 = (j3 << iM503b) | (j4 / jM677n2);
-            jM677n = j4 % jM677n2;
+            long j4 = mantissa << shiftAmount;
+            exponent2 -= shiftAmount;
+            j3 = (j3 << shiftAmount) | (j4 / mantissa2);
+            mantissa = j4 % mantissa2;
         }
-        if (jM677n != 0) {
+        if (mantissa != 0) {
             j3 |= 1;
         }
-        return packFloat(zM675l, iM676m2, j3);
+        return packFloat(negative, exponent2, j3);
     }
 
     /* renamed from: a */
     private static long roundToInt(long j, boolean z, boolean z2) {
         long j2;
-        long jM362c;
+        long rounded;
         if (isNaN(j)) {
             return 9221120237041090560L;
         }
         if (isZero(j) || isInfinite(j)) {
             return j;
         }
-        int iM676m = getExponent(j);
-        if (iM676m >= 0) {
+        int exponent = getExponent(j);
+        if (exponent >= 0) {
             return j;
         }
-        boolean zM675l = isNegative(j);
-        long jM677n = getMantissa(j);
+        boolean negative = isNegative(j);
+        long mantissa = getMantissa(j);
         if (z) {
-            jM362c = AppController.roundedShiftRight(jM677n, -iM676m);
+            rounded = AppController.roundedShiftRight(mantissa, -exponent);
         } else {
-            if (iM676m <= -64) {
-                j2 = jM677n;
-                jM362c = 0;
+            if (exponent <= -64) {
+                j2 = mantissa;
+                rounded = 0;
             } else {
-                j2 = jM677n << (iM676m + 64);
-                jM362c = jM677n >>> (-iM676m);
+                j2 = mantissa << (exponent + 64);
+                rounded = mantissa >>> (-exponent);
             }
-            if (zM675l && j2 != 0) {
-                jM362c++;
+            if (negative && j2 != 0) {
+                rounded++;
             }
         }
-        return packFloat(zM675l, 0, jM362c);
+        return packFloat(negative, 0, rounded);
     }
 
     /* renamed from: b */
@@ -335,18 +335,18 @@ public final class SoftFloat {
             return z ? -4503599627370496L : 9218868437227405312L;
         }
         short s = ((short[]) AppState.pool[988])[i3];
-        int iM360b = AppController.countLeadingZeros(j);
-        int i4 = s - iM360b;
-        long jM696j = multiplyHigh(j << iM360b, ((long[]) AppState.pool[987])[i3]);
+        int leadingZeros = AppController.countLeadingZeros(j);
+        int i4 = s - leadingZeros;
+        long product = multiplyHigh(j << leadingZeros, ((long[]) AppState.pool[987])[i3]);
         for (int i5 = i2 % 3; i5 > 0; i5--) {
-            if (jM696j < 0) {
-                jM696j >>>= 1;
+            if (product < 0) {
+                product >>>= 1;
                 i4++;
             }
-            jM696j += jM696j >>> 2;
+            product += product >>> 2;
             i4 += 3;
         }
-        return packFloat(z, i4, jM696j);
+        return packFloat(z, i4, product);
     }
 
     /* renamed from: j */
@@ -359,23 +359,23 @@ public final class SoftFloat {
 
     /* renamed from: a */
     public static final long parseFloat(String str) {
-        char cCharAt;
-        String strM17c = StringUtils.intern(str.trim().toUpperCase());
-        int length = strM17c.length();
+        char ch;
+        String normalized = StringUtils.intern(str.trim().toUpperCase());
+        int length = normalized.length();
         if (length == 0) {
-            throw new NumberFormatException(strM17c);
+            throw new NumberFormatException(normalized);
         }
-        if (NetworkUtils.longToHex(5136718).equals(strM17c)) {
+        if (NetworkUtils.longToHex(5136718).equals(normalized)) {
             return 9221120237041090560L;
         }
         int i = 0;
-        char cCharAt2 = strM17c.charAt(0);
-        boolean z = cCharAt2 == '-';
+        char firstChar = normalized.charAt(0);
+        boolean z = firstChar == '-';
         boolean z2 = z;
-        if (z || cCharAt2 == '+') {
+        if (z || firstChar == '+') {
             i = 1;
         }
-        if (i < length && (((cCharAt = strM17c.charAt(i)) == 'I' || cCharAt == 'i') && StringUtils.equals(AppState.getString(984), StringUtils.intern(StringUtils.suffix(strM17c, i).toUpperCase())))) {
+        if (i < length && (((ch = normalized.charAt(i)) == 'I' || ch == 'i') && StringUtils.equals(AppState.getString(984), StringUtils.intern(StringUtils.suffix(normalized, i).toUpperCase())))) {
             return z2 ? -4503599627370496L : 9218868437227405312L;
         }
         long j = 0;
@@ -383,19 +383,19 @@ public final class SoftFloat {
         int i3 = 0;
         boolean z3 = false;
         while (i < length) {
-            char cCharAt3 = strM17c.charAt(i);
-            if (cCharAt3 == '.') {
+            char digit = normalized.charAt(i);
+            if (digit == '.') {
                 if (z3) {
-                    throw new NumberFormatException(strM17c);
+                    throw new NumberFormatException(normalized);
                 }
                 z3 = true;
             } else {
-                if (cCharAt3 < '0' || cCharAt3 > '9') {
+                if (digit < '0' || digit > '9') {
                     break;
                 }
                 i3++;
                 if (j <= 1844674407370955160L) {
-                    j = (j << 3) + (j << 1) + (cCharAt3 - '0');
+                    j = (j << 3) + (j << 1) + (digit - '0');
                     if (z3) {
                         i2--;
                     }
@@ -406,12 +406,12 @@ public final class SoftFloat {
             i++;
         }
         if (i3 == 0) {
-            throw new NumberFormatException(strM17c);
+            throw new NumberFormatException(normalized);
         }
-        if (i + 1 < length && (strM17c.charAt(i) == 'E' || strM17c.charAt(i) == 'e')) {
-            i2 += Integer.parseInt(StringUtils.suffix(strM17c, i + 1));
+        if (i + 1 < length && (normalized.charAt(i) == 'E' || normalized.charAt(i) == 'e')) {
+            i2 += Integer.parseInt(StringUtils.suffix(normalized, i + 1));
         } else if (i != length) {
-            throw new NumberFormatException(strM17c);
+            throw new NumberFormatException(normalized);
         }
         return decimalToFloat(z2, i2, j);
     }
@@ -423,29 +423,29 @@ public final class SoftFloat {
         if (isNaN(j)) {
             return NetworkUtils.longToHex(5136718);
         }
-        boolean zM675l = isNegative(j);
+        boolean negative = isNegative(j);
         if (isZero(j)) {
-            return NetworkUtils.longToHex(zM675l ? 808333357 : 3157552);
+            return NetworkUtils.longToHex(negative ? 808333357 : 3157552);
         }
         if (isInfinite(j)) {
-            return AppState.getString(zM675l ? 985 : 984);
+            return AppState.getString(negative ? 985 : 984);
         }
         if (i < 9) {
             i = 9;
         }
-        int iM676m = getExponent(j) + 1075;
-        long jM677n = getMantissa(j) << (iM676m % 11);
-        int i3 = iM676m / 11;
+        int exponent = getExponent(j) + 1075;
+        long mantissa = getMantissa(j) << (exponent % 11);
+        int i3 = exponent / 11;
         int i4 = ((short[]) AppState.pool[989])[i3];
-        while (jM677n <= 922337203685477580L) {
-            jM677n = (jM677n << 3) + (jM677n << 1);
+        while (mantissa <= 922337203685477580L) {
+            mantissa = (mantissa << 3) + (mantissa << 1);
             i4--;
         }
-        long jM696j = multiplyHigh(jM677n, ((long[]) AppState.pool[986])[i3]);
+        long product = multiplyHigh(mantissa, ((long[]) AppState.pool[986])[i3]);
         boolean z2 = false;
         while (true) {
-            int i5 = (int) (jM696j % 10);
-            long j2 = jM696j / 10;
+            int i5 = (int) (product % 10);
+            long j2 = product / 10;
             int i6 = i4 + 1;
             if (i5 != 0) {
                 if (i5 > 5 || (i5 == 5 && !z2)) {
@@ -454,24 +454,24 @@ public final class SoftFloat {
                 } else {
                     z = false;
                 }
-                if (decimalToFloat(zM675l, i6, j2) != j) {
+                if (decimalToFloat(negative, i6, j2) != j) {
                     j2 = z ? j2 - 1 : j2 + 1;
                     z = !z;
-                    if (decimalToFloat(zM675l, i6, j2) != j) {
+                    if (decimalToFloat(negative, i6, j2) != j) {
                         break;
                     }
                 }
                 z2 = z;
             }
-            jM696j = j2;
+            product = j2;
             i4 = i6;
         }
         while (true) {
             int i7 = i4;
-            long j3 = jM696j;
-            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-            if (zM675l) {
-                stringBufferM1217h.append('-');
+            long j3 = product;
+            StringBuffer buf = NetworkUtils.newStringBuffer();
+            if (negative) {
+                buf.append('-');
             }
             String string = Long.toString(j3);
             int length = i7 + (string.length() - 1);
@@ -483,41 +483,41 @@ public final class SoftFloat {
                 int i8 = length + 1;
                 i2 = i8;
                 if (i8 < 1) {
-                    stringBufferM1217h.append('0');
+                    buf.append('0');
                 }
             }
             int i9 = 0;
             while (i9 < i2) {
-                stringBufferM1217h.append(i9 < string.length() ? string.charAt(i9) : '0');
+                buf.append(i9 < string.length() ? string.charAt(i9) : '0');
                 i9++;
             }
-            stringBufferM1217h.append('.');
+            buf.append('.');
             if (i2 >= string.length()) {
-                stringBufferM1217h.append('0');
+                buf.append('0');
             } else {
                 while (i2 < string.length()) {
-                    stringBufferM1217h.append(i2 < 0 ? '0' : string.charAt(i2));
+                    buf.append(i2 < 0 ? '0' : string.charAt(i2));
                     i2++;
                 }
             }
             if (z4) {
-                stringBufferM1217h.append('E').append(length);
+                buf.append('E').append(length);
             }
-            String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
-            if (strM1215a.length() <= i) {
-                return strM1215a;
+            String formatted = NetworkUtils.bufToStringCached(buf);
+            if (formatted.length() <= i) {
+                return formatted;
             }
-            int i10 = (int) (jM696j % 10);
-            jM696j /= 10;
+            int i10 = (int) (product % 10);
+            product /= 10;
             i4++;
             if (i10 > 5 || (i10 == 5 && !z2)) {
                 z2 = true;
-                jM696j++;
+                product++;
             } else {
                 z2 = false;
             }
-            while (jM696j % 10 == 0) {
-                jM696j /= 10;
+            while (product % 10 == 0) {
+                product /= 10;
                 i4++;
             }
         }
@@ -559,47 +559,47 @@ public final class SoftFloat {
 
     /* renamed from: f */
     public static final long exp(long j) {
-        int iM688c;
-        long jM691c = j;
+        int intPart;
+        long lo = j;
         if (isNaN(j)) {
             return 9221120237041090560L;
         }
-        if (isZero(jM691c)) {
+        if (isZero(lo)) {
             return 4607182418800017408L;
         }
-        if (lessOrEqual(jM691c, -4573606559926636463L)) {
+        if (lessOrEqual(lo, -4573606559926636463L)) {
             return 0L;
         }
-        if (greaterOrEqual(jM691c, 4649454530587146735L)) {
+        if (greaterOrEqual(lo, 4649454530587146735L)) {
             return 9218868437227405312L;
         }
-        long jM691c2 = 0;
-        long jM692d = 0;
-        int i = ((int) (jM691c >> 32)) & Integer.MAX_VALUE;
+        long lo2 = 0;
+        long t = 0;
+        int i = ((int) (lo >> 32)) & Integer.MAX_VALUE;
         if (i > 1071001154) {
             if (i >= 1072734898) {
-                iM688c = floatToInt(roundToInt(multiply(4609176140021203710L, jM691c), true, false));
-                jM691c2 = subtract(jM691c, multiply(0L, 4604418534311723008L));
-                jM692d = multiply(0L, 4461442080421002358L);
-            } else if (isNegative(jM691c)) {
-                jM691c2 = add(jM691c, 4604418534311723008L);
-                jM692d = -4761929956433773450L;
-                iM688c = -1;
+                intPart = floatToInt(roundToInt(multiply(4609176140021203710L, lo), true, false));
+                lo2 = subtract(lo, multiply(0L, 4604418534311723008L));
+                t = multiply(0L, 4461442080421002358L);
+            } else if (isNegative(lo)) {
+                lo2 = add(lo, 4604418534311723008L);
+                t = -4761929956433773450L;
+                intPart = -1;
             } else {
-                jM691c2 = subtract(jM691c, 4604418534311723008L);
-                jM692d = 4461442080421002358L;
-                iM688c = 1;
+                lo2 = subtract(lo, 4604418534311723008L);
+                t = 4461442080421002358L;
+                intPart = 1;
             }
-            jM691c = subtract(jM691c2, jM692d);
+            lo = subtract(lo2, t);
         } else {
             if (i < 1043333120) {
-                return add(jM691c, 4607182418800017408L);
+                return add(lo, 4607182418800017408L);
             }
-            iM688c = 0;
+            intPart = 0;
         }
-        long jM692d2 = multiply(jM691c, jM691c);
-        long jM691c3 = subtract(jM691c, multiply(jM692d2, add(4595172819793696062L, multiply(jM692d2, add(-4654820494858601069L, multiply(jM692d2, add(4544508515198557740L, multiply(jM692d2, add(-4702957295668925455L, multiply(jM692d2, 4496342204012209360L))))))))));
-        return iM688c == 0 ? subtract(4607182418800017408L, subtract(divide(multiply(jM691c, jM691c3), subtract(jM691c3, 4611686018427387904L)), jM691c)) : scalb(subtract(4607182418800017408L, subtract(subtract(jM692d, divide(multiply(jM691c, jM691c3), subtract(4611686018427387904L, jM691c3))), jM691c2)), iM688c);
+        long t2 = multiply(lo, lo);
+        long lo3 = subtract(lo, multiply(t2, add(4595172819793696062L, multiply(t2, add(-4654820494858601069L, multiply(t2, add(4544508515198557740L, multiply(t2, add(-4702957295668925455L, multiply(t2, 4496342204012209360L))))))))));
+        return intPart == 0 ? subtract(4607182418800017408L, subtract(divide(multiply(lo, lo3), subtract(lo3, 4611686018427387904L)), lo)) : scalb(subtract(4607182418800017408L, subtract(subtract(t, divide(multiply(lo, lo3), subtract(4611686018427387904L, lo3))), lo2)), intPart);
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:93:0x01f1 */
@@ -613,9 +613,9 @@ public final class SoftFloat {
     */
     public static long pow(long j, long j2) {
         int i;
-        long jM692d;
-        long jM690b;
-        long jM691c;
+        long t;
+        long s;
+        long lo;
         if (isZero(j2)) {
             return 4607182418800017408L;
         }
@@ -673,17 +673,17 @@ public final class SoftFloat {
                 if (j == 9218868437227405312L) {
                     return j;
                 }
-                int iM676m = getExponent(j);
-                long jM677n = getMantissa(j);
-                while (jM677n < 4503599627370496L) {
-                    jM677n <<= 1;
-                    iM676m--;
+                int exponent = getExponent(j);
+                long mantissa = getMantissa(j);
+                while (mantissa < 4503599627370496L) {
+                    mantissa <<= 1;
+                    exponent--;
                 }
-                if ((iM676m & 1) != 0) {
-                    jM677n <<= 1;
+                if ((exponent & 1) != 0) {
+                    mantissa <<= 1;
                 }
-                int i12 = (iM676m >> 1) - 26;
-                long j3 = jM677n << 1;
+                int i12 = (exponent >> 1) - 26;
+                long j3 = mantissa << 1;
                 long j4 = 0;
                 long j5 = 0;
                 long j6 = 9007199254740992L;
@@ -707,20 +707,20 @@ public final class SoftFloat {
                 return ((i12 + 1075) << 52) | ((j4 >> 1) & 4503599627370495L);
             }
         }
-        long jM702c = j & Long.MAX_VALUE;
+        long ax = j & Long.MAX_VALUE;
         if (i3 == 0 && (i6 == 2146435072 || i6 == 0 || i6 == 1072693248)) {
-            long jM682a = jM702c;
+            long val = ax;
             if (i4 < 0) {
-                jM682a = divide(4607182418800017408L, jM682a);
+                val = divide(4607182418800017408L, val);
             }
             if (i2 < 0) {
                 if (((i6 - 1072693248) | i8) == 0) {
-                    jM682a = 9221120237041090560L;
+                    val = 9221120237041090560L;
                 } else if (i8 == 1) {
-                    jM682a = negate(jM682a);
+                    val = negate(val);
                 }
             }
-            return jM682a;
+            return val;
         }
         int i13 = (i2 >> 31) + 1;
         if ((i13 | i8) == 0) {
@@ -730,9 +730,9 @@ public final class SoftFloat {
         if (i7 <= 1105199104) {
             int i14 = 0;
             if (i6 < 1048576) {
-                jM702c = scalb(jM702c, 53);
+                ax = scalb(ax, 53);
                 i14 = 0 - 53;
-                i6 = (int) (jM702c >> 32);
+                i6 = (int) (ax >> 32);
             }
             int i15 = i14 + ((i6 >> 20) - 1023);
             int i16 = i6 & 1048575;
@@ -746,27 +746,27 @@ public final class SoftFloat {
                 i15++;
                 i17 -= 1048576;
             }
-            long jM700b = packLowInt(jM702c, i17);
-            long jM691c2 = subtract(jM700b, jArr[i]);
-            long jM693e = divide(4607182418800017408L, add(jM700b, jArr[i]));
-            long jM692d2 = multiply(jM691c2, jM693e);
-            long j9 = jM692d2 & (-4294967296L);
-            long jM700b2 = packLowInt(0L, ((i17 >> 1) | 536870912) + 524288 + (i << 18));
-            long jM692d3 = multiply(jM693e, subtract(subtract(jM691c2, multiply(j9, jM700b2)), multiply(j9, subtract(jM700b, subtract(jM700b2, jArr[i])))));
-            jM692d = multiply(jM692d2, jM692d2);
-            long jM690b2 = add(multiply(multiply(jM692d, jM692d), add(4603579539098120963L, multiply(jM692d, add(4601392076422097919L, multiply(jM692d, add(4599676419357746765L, multiply(jM692d, add(4598584653024936193L, multiply(jM692d, add(4597478449480325989L, multiply(jM692d, 4596625081194860271L))))))))))), multiply(jM692d3, add(j9, jM692d2)));
-            long jM692d4 = multiply(j9, j9);
-            long jM690b3 = add(add(4613937818241073152L, jM692d4), jM690b2) & (-4294967296L);
-            long jM691c3 = subtract(jM690b2, subtract(subtract(jM690b3, 4613937818241073152L), jM692d4));
-            long jM692d5 = multiply(j9, jM690b3);
-            long jM690b4 = add(multiply(jM692d3, jM690b3), multiply(jM691c3, jM692d2));
-            long jM690b5 = add(jM692d5, jM690b4) & (-4294967296L);
-            long jM691c4 = subtract(jM690b4, subtract(jM690b5, jM692d5));
-            long jM692d6 = multiply(4606838314073325568L, jM690b5);
-            long jM690b6 = add(add(multiply(-4738297118486494731L, jM690b5), multiply(jM691c4, 4606838314010018813L)), jArr3[i]);
-            long jM687b = longToFloat(i15);
-            jM690b = add(add(add(jM692d6, jM690b6), jArr2[i]), jM687b) & (-4294967296L);
-            jM691c = subtract(jM690b6, subtract(subtract(subtract(jM690b, jM687b), jArr2[i]), jM692d6));
+            long packed = packLowInt(ax, i17);
+            long lo2 = subtract(packed, jArr[i]);
+            long inv = divide(4607182418800017408L, add(packed, jArr[i]));
+            long t2 = multiply(lo2, inv);
+            long j9 = t2 & (-4294967296L);
+            long packed2 = packLowInt(0L, ((i17 >> 1) | 536870912) + 524288 + (i << 18));
+            long t3 = multiply(inv, subtract(subtract(lo2, multiply(j9, packed2)), multiply(j9, subtract(packed, subtract(packed2, jArr[i])))));
+            t = multiply(t2, t2);
+            long s2 = add(multiply(multiply(t, t), add(4603579539098120963L, multiply(t, add(4601392076422097919L, multiply(t, add(4599676419357746765L, multiply(t, add(4598584653024936193L, multiply(t, add(4597478449480325989L, multiply(t, 4596625081194860271L))))))))))), multiply(t3, add(j9, t2)));
+            long t4 = multiply(j9, j9);
+            long s3 = add(add(4613937818241073152L, t4), s2) & (-4294967296L);
+            long lo3 = subtract(s2, subtract(subtract(s3, 4613937818241073152L), t4));
+            long t5 = multiply(j9, s3);
+            long s4 = add(multiply(t3, s3), multiply(lo3, t2));
+            long s5 = add(t5, s4) & (-4294967296L);
+            long lo4 = subtract(s4, subtract(s5, t5));
+            long t6 = multiply(4606838314073325568L, s5);
+            long s6 = add(add(multiply(-4738297118486494731L, s5), multiply(lo4, 4606838314010018813L)), jArr3[i]);
+            long floatK = longToFloat(i15);
+            s = add(add(add(t6, s6), jArr2[i]), floatK) & (-4294967296L);
+            lo = subtract(s6, subtract(subtract(subtract(s, floatK), jArr2[i]), t6));
         } else {
             if (i7 > 1139802112) {
                 return i6 <= 1072693247 ? i4 < 0 ? 9218868437227405312L : 0L : i4 > 0 ? 9218868437227405312L : 0L;
@@ -777,58 +777,58 @@ public final class SoftFloat {
             if (i6 > 1072693248) {
                 return z ? i4 > 0 ? -4503599627370496L : Long.MIN_VALUE : i4 > 0 ? 9218868437227405312L : 0L;
             }
-            jM692d = subtract(jM702c, 4607182418800017408L);
-            long jM692d7 = multiply(multiply(jM692d, jM692d), subtract(4602678819172646912L, multiply(jM692d, subtract(4599676419421066581L, multiply(jM692d, 4598175219545276416L)))));
-            long jM692d8 = multiply(4609176139934466048L, jM692d);
-            long jM691c5 = subtract(multiply(jM692d, 4491406094830001988L), multiply(jM692d7, 4609176140021203710L));
-            jM690b = add(jM692d8, jM691c5) & (-4294967296L);
-            jM691c = subtract(jM691c5, subtract(jM690b, jM692d8));
+            t = subtract(ax, 4607182418800017408L);
+            long t7 = multiply(multiply(t, t), subtract(4602678819172646912L, multiply(t, subtract(4599676419421066581L, multiply(t, 4598175219545276416L)))));
+            long t8 = multiply(4609176139934466048L, t);
+            long lo5 = subtract(multiply(t, 4491406094830001988L), multiply(t7, 4609176140021203710L));
+            s = add(t8, lo5) & (-4294967296L);
+            lo = subtract(lo5, subtract(s, t8));
         }
         long j10 = j2 & (-4294967296L);
-        long jM690b7 = add(multiply(subtract(j2, j10), jM690b), multiply(j2, jM691c));
-        long jM692d9 = multiply(j10, jM690b);
-        long j11 = jM692d;
-        int iM690b = (int) (add(jM690b7, jM692d9) >> 32);
+        long s7 = add(multiply(subtract(j2, j10), s), multiply(j2, lo));
+        long t9 = multiply(j10, s);
+        long j11 = t;
+        int highWord = (int) (add(s7, t9) >> 32);
         int i18 = (int) j11;
-        if (iM690b >= 1083179008) {
-            if (((iM690b - 1083179008) | i18) == 0) {
-                long jM690b8 = add(jM690b7, 4365981760143196926L);
-                long jM691c6 = subtract(j11, jM692d9);
-                if (!isNaN(jM690b8) && !isNaN(jM691c6)) {
-                    boolean z2 = compareRaw((jM690b8 > 0L ? 1 : (jM690b8 == 0L ? 0 : -1)) == 0 ? Long.MIN_VALUE : jM690b8, jM691c6) > 0;
+        if (highWord >= 1083179008) {
+            if (((highWord - 1083179008) | i18) == 0) {
+                long s8 = add(s7, 4365981760143196926L);
+                long lo6 = subtract(j11, t9);
+                if (!isNaN(s8) && !isNaN(lo6)) {
+                    boolean z2 = compareRaw((s8 > 0L ? 1 : (s8 == 0L ? 0 : -1)) == 0 ? Long.MIN_VALUE : s8, lo6) > 0;
                 }
             }
             return z ? -4503599627370496L : 9218868437227405312L;
         }
-        if ((iM690b & Integer.MAX_VALUE) >= 1083231232 && (((iM690b - (-1064252416)) | i18) != 0 || lessOrEqual(jM690b7, subtract(j11, jM692d9)))) {
+        if ((highWord & Integer.MAX_VALUE) >= 1083231232 && (((highWord - (-1064252416)) | i18) != 0 || lessOrEqual(s7, subtract(j11, t9)))) {
             return z ? Long.MIN_VALUE : 0L;
         }
-        int i19 = iM690b & Integer.MAX_VALUE;
+        int i19 = highWord & Integer.MAX_VALUE;
         int i20 = (i19 >> 20) - 1023;
         int i21 = 0;
         if (i19 > 1071644672) {
-            int i22 = iM690b + (1048576 >> (i20 + 1));
+            int i22 = highWord + (1048576 >> (i20 + 1));
             int i23 = ((i22 & Integer.MAX_VALUE) >> 20) - 1023;
-            long jM700b3 = packLowInt(0L, i22 & ((1048575 >> i23) ^ (-1)));
+            long packed3 = packLowInt(0L, i22 & ((1048575 >> i23) ^ (-1)));
             i21 = ((i22 & 1048575) | 1048576) >> (20 - i23);
-            if (iM690b < 0) {
+            if (highWord < 0) {
                 i21 = -i21;
             }
-            jM692d9 = subtract(jM692d9, jM700b3);
+            t9 = subtract(t9, packed3);
         }
-        long j12 = jM692d;
-        long jM692d10 = multiply(add(jM690b7, jM692d9) & (-4294967296L), 4604418534330597376L);
-        long jM690b9 = add(multiply(subtract(jM690b7, subtract(j12, jM692d9)), 4604418534313441775L), multiply(j12, -4746692435354555335L));
-        long jM690b10 = add(jM692d10, jM690b9);
-        long jM691c7 = subtract(jM690b9, subtract(jM690b10, jM692d10));
-        long jM692d11 = multiply(jM690b10, jM690b10);
-        long jM691c8 = subtract(jM690b10, multiply(jM692d11, add(4595172819793696062L, multiply(jM692d11, add(-4654820494858601069L, multiply(jM692d11, add(4544508515198557740L, multiply(jM692d11, add(-4702957295668925455L, multiply(jM692d11, 4496342204012209360L))))))))));
-        long j13 = jM692d;
-        long jM702c2 = ((((int) (subtract(4607182418800017408L, subtract(subtract(divide(multiply(jM690b10, jM691c8), subtract(jM691c8, 4611686018427387904L)), add(jM691c7, multiply(jM690b10, jM691c7))), jM690b10)) >> 32)) + (i21 << 20)) >> 20) <= 0 ? scalb(j13, i21) : packLowInt(j13, ((int) (j13 >> 32)) + (i21 << 20));
+        long j12 = t;
+        long t10 = multiply(add(s7, t9) & (-4294967296L), 4604418534330597376L);
+        long s9 = add(multiply(subtract(s7, subtract(j12, t9)), 4604418534313441775L), multiply(j12, -4746692435354555335L));
+        long s10 = add(t10, s9);
+        long lo7 = subtract(s9, subtract(s10, t10));
+        long t11 = multiply(s10, s10);
+        long lo8 = subtract(s10, multiply(t11, add(4595172819793696062L, multiply(t11, add(-4654820494858601069L, multiply(t11, add(4544508515198557740L, multiply(t11, add(-4702957295668925455L, multiply(t11, 4496342204012209360L))))))))));
+        long j13 = t;
+        long ax2 = ((((int) (subtract(4607182418800017408L, subtract(subtract(divide(multiply(s10, lo8), subtract(lo8, 4611686018427387904L)), add(lo7, multiply(s10, lo7))), s10)) >> 32)) + (i21 << 20)) >> 20) <= 0 ? scalb(j13, i21) : packLowInt(j13, ((int) (j13 >> 32)) + (i21 << 20));
         if (z) {
-            jM702c2 = negate(jM702c2);
+            ax2 = negate(ax2);
         }
-        return jM702c2;
+        return ax2;
     }
 
     /* renamed from: g */
@@ -846,38 +846,38 @@ public final class SoftFloat {
         int i2 = 0;
         if (i < 1048576) {
             i2 = 0 - 54;
-            long jM702c = scalb(j, 54);
-            j = jM702c;
-            i = (int) (jM702c >> 32);
+            long ax = scalb(j, 54);
+            j = ax;
+            i = (int) (ax >> 32);
         }
         int i3 = i & 1048575;
         int i4 = (i3 + 614244) & 1048576;
-        long jM700b = packLowInt(j, i3 | (i4 ^ 1072693248));
+        long packed = packLowInt(j, i3 | (i4 ^ 1072693248));
         int i5 = i2 + ((i >> 20) - 1023) + (i4 >> 20);
-        long jM691c = subtract(jM700b, 4607182418800017408L);
+        long lo = subtract(packed, 4607182418800017408L);
         if ((1048575 & (i3 + 2)) >= 3) {
-            long jM687b = longToFloat(i5);
-            long jM693e = divide(jM691c, add(4611686018427387904L, jM691c));
-            long jM690b = add(multiply(multiply(multiply(jM693e, jM693e), jM693e), add(4600877379321592324L, multiply(jM693e, add(4597174411056806063L, multiply(jM693e, 4594685411790997151L))))), multiply(jM693e, add(4604180019048437139L, multiply(jM693e, add(4598818590951641945L, multiply(jM693e, add(4595719342595441630L, multiply(jM693e, 4594499633228436036L))))))));
+            long floatK = longToFloat(i5);
+            long inv = divide(lo, add(4611686018427387904L, lo));
+            long s = add(multiply(multiply(multiply(inv, inv), inv), add(4600877379321592324L, multiply(inv, add(4597174411056806063L, multiply(inv, 4594685411790997151L))))), multiply(inv, add(4604180019048437139L, multiply(inv, add(4598818590951641945L, multiply(inv, add(4595719342595441630L, multiply(inv, 4594499633228436036L))))))));
             if (((i3 - 398458) | (440401 - i3)) <= 0) {
-                return i5 == 0 ? subtract(jM691c, multiply(jM693e, subtract(jM691c, jM690b))) : subtract(multiply(jM687b, 4604418534311723008L), subtract(subtract(multiply(jM693e, subtract(jM691c, jM690b)), multiply(jM687b, 4461442080421002358L)), jM691c));
+                return i5 == 0 ? subtract(lo, multiply(inv, subtract(lo, s))) : subtract(multiply(floatK, 4604418534311723008L), subtract(subtract(multiply(inv, subtract(lo, s)), multiply(floatK, 4461442080421002358L)), lo));
             }
-            long jM692d = multiply(scalb(jM691c, -1), jM691c);
-            return i5 == 0 ? subtract(jM691c, subtract(jM692d, multiply(jM693e, add(jM692d, jM690b)))) : subtract(multiply(jM687b, 4604418534311723008L), subtract(subtract(jM692d, add(multiply(jM693e, add(jM692d, jM690b)), multiply(jM687b, 4461442080421002358L))), jM691c));
+            long t = multiply(scalb(lo, -1), lo);
+            return i5 == 0 ? subtract(lo, subtract(t, multiply(inv, add(t, s)))) : subtract(multiply(floatK, 4604418534311723008L), subtract(subtract(t, add(multiply(inv, add(t, s)), multiply(floatK, 4461442080421002358L))), lo));
         }
-        if (isZero(jM691c)) {
+        if (isZero(lo)) {
             if (i5 == 0) {
                 return 0L;
             }
-            long jM687b2 = longToFloat(i5);
-            return add(multiply(jM687b2, 4604418534311723008L), multiply(jM687b2, 4461442080421002358L));
+            long floatK2 = longToFloat(i5);
+            return add(multiply(floatK2, 4604418534311723008L), multiply(floatK2, 4461442080421002358L));
         }
-        long jM692d2 = multiply(multiply(jM691c, jM691c), subtract(4602678819172646912L, multiply(4599676419421066581L, jM691c)));
+        long t2 = multiply(multiply(lo, lo), subtract(4602678819172646912L, multiply(4599676419421066581L, lo)));
         if (i5 == 0) {
-            return subtract(jM691c, jM692d2);
+            return subtract(lo, t2);
         }
-        long jM687b3 = longToFloat(i5);
-        return subtract(multiply(jM687b3, 4604418534311723008L), subtract(subtract(jM692d2, multiply(jM687b3, 4461442080421002358L)), jM691c));
+        long floatK3 = longToFloat(i5);
+        return subtract(multiply(floatK3, 4604418534311723008L), subtract(subtract(t2, multiply(floatK3, 4461442080421002358L)), lo));
     }
 
     /* renamed from: h */
@@ -926,12 +926,12 @@ public final class SoftFloat {
             if (i == 1) {
                 return j;
             }
-            long jM690b = add(j, j2);
-            long j3 = jM690b & (-4294967296L);
-            long jM691c = subtract(j2, subtract(j3, j));
-            long jM693e = divide(-4616189618054758400L, jM690b);
-            long j4 = jM693e & (-4294967296L);
-            return add(j4, multiply(jM693e, add(add(4607182418800017408L, multiply(j4, j3)), multiply(j4, jM691c))));
+            long s = add(j, j2);
+            long j3 = s & (-4294967296L);
+            long lo = subtract(j2, subtract(j3, j));
+            long inv = divide(-4616189618054758400L, s);
+            long j4 = inv & (-4294967296L);
+            return add(j4, multiply(inv, add(add(4607182418800017408L, multiply(j4, j3)), multiply(j4, lo))));
         }
         if (i3 >= 1072010280) {
             if (i2 < 0) {
@@ -941,24 +941,24 @@ public final class SoftFloat {
             j = add(subtract(4605249457297304856L, j), subtract(4359948597267291143L, j2));
             j2 = 0;
         }
-        long jM692d = multiply(j, j);
-        long jM692d2 = multiply(jM692d, jM692d);
-        long jM690b2 = add(4593971859893059194L, multiply(jM692d2, add(4581960672245896759L, multiply(jM692d2, add(4570429193025094440L, multiply(jM692d2, add(4558562946408670465L, multiply(jM692d2, add(4545397049192321702L, multiply(jM692d2, -4687273268743220365L))))))))));
-        long jM692d3 = multiply(jM692d, add(4587938466107703806L, multiply(jM692d2, add(4576262931677611155L, multiply(jM692d2, add(4564358403679355669L, multiply(jM692d2, add(4553182066015801448L, multiply(jM692d2, add(4544897349388904425L, multiply(jM692d2, 4538267711989316308L)))))))))));
-        long jM692d4 = multiply(jM692d, j);
-        long jM690b3 = add(add(j2, multiply(jM692d, add(multiply(jM692d4, add(jM690b2, jM692d3)), j2))), multiply(4599676419421066595L, jM692d4));
-        long jM690b4 = add(j, jM690b3);
+        long t = multiply(j, j);
+        long t2 = multiply(t, t);
+        long s2 = add(4593971859893059194L, multiply(t2, add(4581960672245896759L, multiply(t2, add(4570429193025094440L, multiply(t2, add(4558562946408670465L, multiply(t2, add(4545397049192321702L, multiply(t2, -4687273268743220365L))))))))));
+        long t3 = multiply(t, add(4587938466107703806L, multiply(t2, add(4576262931677611155L, multiply(t2, add(4564358403679355669L, multiply(t2, add(4553182066015801448L, multiply(t2, add(4544897349388904425L, multiply(t2, 4538267711989316308L)))))))))));
+        long t4 = multiply(t, j);
+        long s3 = add(add(j2, multiply(t, add(multiply(t4, add(s2, t3)), j2))), multiply(4599676419421066595L, t4));
+        long s4 = add(j, s3);
         if (i3 >= 1072010280) {
-            long jM687b = longToFloat(i);
-            return multiply(longToFloat(1 - ((i2 >> 30) & 2)), subtract(jM687b, multiply(4611686018427387904L, subtract(j, subtract(divide(multiply(jM690b4, jM690b4), add(jM690b4, jM687b)), jM690b3)))));
+            long floatK = longToFloat(i);
+            return multiply(longToFloat(1 - ((i2 >> 30) & 2)), subtract(floatK, multiply(4611686018427387904L, subtract(j, subtract(divide(multiply(s4, s4), add(s4, floatK)), s3)))));
         }
         if (i == 1) {
-            return jM690b4;
+            return s4;
         }
-        long j5 = jM690b4 & (-4294967296L);
-        long jM691c2 = subtract(jM690b3, subtract(j5, j));
-        long jM693e2 = divide(-4616189618054758400L, jM690b4) & (-4294967296L);
-        return add(jM693e2, multiply(jM692d, add(add(4607182418800017408L, multiply(jM693e2, j5)), multiply(jM693e2, jM691c2))));
+        long j5 = s4 & (-4294967296L);
+        long lo2 = subtract(s3, subtract(j5, j));
+        long inv2 = divide(-4616189618054758400L, s4) & (-4294967296L);
+        return add(inv2, multiply(t, add(add(4607182418800017408L, multiply(inv2, j5)), multiply(inv2, lo2))));
     }
 
     /* renamed from: b */
@@ -966,10 +966,10 @@ public final class SoftFloat {
         if ((((int) (j >> 32)) & Integer.MAX_VALUE) < 1044381696) {
             return j;
         }
-        long jM692d = multiply(j, j);
-        long jM692d2 = multiply(jM692d, j);
-        long jM690b = add(4575957461383575718L, multiply(jM692d, add(-4671919876304969259L, multiply(jM692d, add(4523617212983017085L, multiply(jM692d, add(-4730215680275931925L, multiply(jM692d, 4460209850635244924L))))))));
-        return i == 0 ? add(j, multiply(jM692d2, add(-4628199217061079735L, multiply(jM692d, jM690b)))) : subtract(j, subtract(subtract(multiply(jM692d, subtract(multiply(4602678819172646912L, j2), multiply(jM692d2, jM690b))), j2), multiply(jM692d2, -4628199217061079735L)));
+        long t = multiply(j, j);
+        long t2 = multiply(t, j);
+        long s = add(4575957461383575718L, multiply(t, add(-4671919876304969259L, multiply(t, add(4523617212983017085L, multiply(t, add(-4730215680275931925L, multiply(t, 4460209850635244924L))))))));
+        return i == 0 ? add(j, multiply(t2, add(-4628199217061079735L, multiply(t, s)))) : subtract(j, subtract(subtract(multiply(t, subtract(multiply(4602678819172646912L, j2), multiply(t2, s))), j2), multiply(t2, -4628199217061079735L)));
     }
 
     /* renamed from: l */
@@ -978,13 +978,13 @@ public final class SoftFloat {
         if (i < 1044381696) {
             return 4607182418800017408L;
         }
-        long jM692d = multiply(j, j);
-        long jM692d2 = multiply(jM692d, add(4586165620538955084L, multiply(jM692d, add(-4659324094485802633L, multiply(jM692d, add(4537941361668330896L, multiply(jM692d, add(-4714566979978243411L, multiply(jM692d, add(4477121870137962948L, multiply(jM692d, -4780295122622859052L)))))))))));
+        long t = multiply(j, j);
+        long t2 = multiply(t, add(4586165620538955084L, multiply(t, add(-4659324094485802633L, multiply(t, add(4537941361668330896L, multiply(t, add(-4714566979978243411L, multiply(t, add(4477121870137962948L, multiply(t, -4780295122622859052L)))))))))));
         if (i < 1070805811) {
-            return subtract(4607182418800017408L, subtract(multiply(4602678819172646912L, jM692d), subtract(multiply(jM692d, jM692d2), multiply(j, j2))));
+            return subtract(4607182418800017408L, subtract(multiply(4602678819172646912L, t), subtract(multiply(t, t2), multiply(j, j2))));
         }
         long j3 = i > 1072234496 ? 4598738169498697728L : (i - 2097152) << 32;
-        return subtract(subtract(4607182418800017408L, j3), subtract(subtract(multiply(4602678819172646912L, jM692d), j3), subtract(multiply(jM692d, jM692d2), multiply(j, j2))));
+        return subtract(subtract(4607182418800017408L, j3), subtract(subtract(multiply(4602678819172646912L, t), j3), subtract(multiply(t, t2), multiply(j, j2))));
     }
 
     /* JADX WARN: Removed duplicated region for block: B:28:0x00de  */
@@ -994,8 +994,8 @@ public final class SoftFloat {
     */
     private static int reduceArg(long j, long[] jArr) {
         boolean z;
-        int iM688c;
-        long jM691c;
+        int intPart;
+        long lo;
         int i;
         int i2 = (int) (j >> 32);
         int i3 = i2 & Integer.MAX_VALUE;
@@ -1005,49 +1005,49 @@ public final class SoftFloat {
             return 0;
         }
         if (i3 < 1073928572) {
-            long jM682a = 4609753056924401664L;
-            long jM682a2 = i3 == 1073291771 ? 4297306550709743731L : 4454258360616903473L;
+            long val = 4609753056924401664L;
+            long val2 = i3 == 1073291771 ? 4297306550709743731L : 4454258360616903473L;
             if (i2 > 0) {
-                jM682a = negate(4609753056924401664L);
-                jM682a2 = negate(jM682a2);
+                val = negate(4609753056924401664L);
+                val2 = negate(val2);
             }
-            long jM690b = add(j, jM682a);
-            jArr[0] = add(jM690b, jM682a2);
-            jArr[1] = add(subtract(jM690b, jArr[0]), jM682a2);
+            long s = add(j, val);
+            jArr[0] = add(s, val2);
+            jArr[1] = add(subtract(s, jArr[0]), val2);
             return i2 > 0 ? 1 : -1;
         }
         if (i3 <= 1094263291) {
             long j2 = j & Long.MAX_VALUE;
-            int iM688c2 = floatToInt(roundToInt(multiply(j2, 4603909380684499075L), true, false));
-            long jM691c2 = subtract(j2, multiply(0L, 4609753056924401664L));
-            long jM692d = multiply(0L, 4454258360616903473L);
-            if (iM688c2 < 32) {
-                if (i3 != ((int[]) AppState.pool[993])[iM688c2 - 1]) {
-                    jArr[0] = subtract(jM691c2, jM692d);
+            int intPart2 = floatToInt(roundToInt(multiply(j2, 4603909380684499075L), true, false));
+            long lo2 = subtract(j2, multiply(0L, 4609753056924401664L));
+            long t = multiply(0L, 4454258360616903473L);
+            if (intPart2 < 32) {
+                if (i3 != ((int[]) AppState.pool[993])[intPart2 - 1]) {
+                    jArr[0] = subtract(lo2, t);
                 } else {
                     int i4 = i3 >> 20;
-                    jArr[0] = subtract(jM691c2, jM692d);
+                    jArr[0] = subtract(lo2, t);
                     if (i4 - ((((int) (jArr[0] >> 32)) >> 20) & 2047) > 16) {
-                        long jM692d2 = multiply(0L, 4454258360616747008L);
-                        jM691c2 = subtract(jM691c2, jM692d2);
-                        jM692d = subtract(multiply(0L, 4297306550709743731L), subtract(subtract(jM691c2, jM691c2), jM692d2));
-                        jArr[0] = subtract(jM691c2, jM692d);
+                        long t2 = multiply(0L, 4454258360616747008L);
+                        lo2 = subtract(lo2, t2);
+                        t = subtract(multiply(0L, 4297306550709743731L), subtract(subtract(lo2, lo2), t2));
+                        jArr[0] = subtract(lo2, t);
                         if (i4 - ((((int) (jArr[0] >> 32)) >> 20) & 2047) > 49) {
-                            long jM692d3 = multiply(0L, 4297306550709518336L);
-                            jM691c2 = subtract(jM691c2, jM692d3);
-                            jM692d = subtract(multiply(0L, 4142048980368378305L), subtract(subtract(jM691c2, jM691c2), jM692d3));
-                            jArr[0] = subtract(jM691c2, jM692d);
+                            long t3 = multiply(0L, 4297306550709518336L);
+                            lo2 = subtract(lo2, t3);
+                            t = subtract(multiply(0L, 4142048980368378305L), subtract(subtract(lo2, lo2), t3));
+                            jArr[0] = subtract(lo2, t);
                         }
                     }
                 }
             }
-            jArr[1] = subtract(subtract(jM691c2, jArr[0]), jM692d);
+            jArr[1] = subtract(subtract(lo2, jArr[0]), t);
             if (i2 >= 0) {
-                return iM688c2;
+                return intPart2;
             }
             jArr[0] = negate(jArr[0]);
             jArr[1] = negate(jArr[1]);
-            return -iM688c2;
+            return -intPart2;
         }
         if (i3 >= 2146435072) {
             jArr[1] = 9221120237041090560L;
@@ -1055,13 +1055,13 @@ public final class SoftFloat {
             return 0;
         }
         int i5 = (i3 >> 20) - 1046;
-        long jM700b = packLowInt((int) j, i3 - (i5 << 20));
+        long packed = packLowInt((int) j, i3 - (i5 << 20));
         long[] jArr2 = new long[3];
         for (int i6 = 0; i6 < 2; i6++) {
-            jArr2[i6] = longToFloat(floatToInt(jM700b));
-            jM700b = scalb(subtract(jM700b, jArr2[i6]), 24);
+            jArr2[i6] = longToFloat(floatToInt(packed));
+            packed = scalb(subtract(packed, jArr2[i6]), 24);
         }
-        jArr2[2] = jM700b;
+        jArr2[2] = packed;
         int i7 = 3;
         while (isZero(jArr2[i7 - 1])) {
             i7--;
@@ -1084,43 +1084,43 @@ public final class SoftFloat {
         }
         long[] jArr4 = new long[20];
         for (int i15 = 0; i15 <= 4; i15++) {
-            long jM690b2 = 0;
+            long s2 = 0;
             for (int i16 = 0; i16 <= i8; i16++) {
-                jM690b2 = add(jM690b2, multiply(jArr2[i16], jArr3[(i8 + i15) - i16]));
+                s2 = add(s2, multiply(jArr2[i16], jArr3[(i8 + i15) - i16]));
             }
-            jArr4[i15] = jM690b2;
+            jArr4[i15] = s2;
         }
         int i17 = 4;
         int[] iArr = new int[20];
         do {
             z = false;
             int i18 = 0;
-            long jM690b3 = jArr4[i17];
+            long s3 = jArr4[i17];
             for (int i19 = i17; i19 > 0; i19--) {
-                long jM687b = longToFloat(floatToInt(scalb(jM690b3, -24)));
-                iArr[i18] = floatToInt(subtract(jM690b3, scalb(jM687b, 24)));
-                jM690b3 = add(jArr4[i19 - 1], jM687b);
+                long floatK = longToFloat(floatToInt(scalb(s3, -24)));
+                iArr[i18] = floatToInt(subtract(s3, scalb(floatK, 24)));
+                s3 = add(jArr4[i19 - 1], floatK);
                 i18++;
             }
-            long jM702c = scalb(jM690b3, i11);
-            long jM691c3 = subtract(jM702c, scalb(roundToInt(scalb(jM702c, -3), false, false), 3));
-            long jM691c4 = subtract(jM691c3, multiply(4620693217682128896L, roundToInt(multiply(jM691c3, 4593671619917905920L), false, false)));
-            iM688c = floatToInt(jM691c4);
-            jM691c = subtract(jM691c4, longToFloat(iM688c));
+            long ax = scalb(s3, i11);
+            long lo3 = subtract(ax, scalb(roundToInt(scalb(ax, -3), false, false), 3));
+            long lo4 = subtract(lo3, multiply(4620693217682128896L, roundToInt(multiply(lo3, 4593671619917905920L), false, false)));
+            intPart = floatToInt(lo4);
+            lo = subtract(lo4, longToFloat(intPart));
             i = 0;
             if (i11 > 0) {
                 int i20 = iArr[i17 - 1] >> (24 - i11);
-                iM688c += i20;
+                intPart += i20;
                 int i21 = i17 - 1;
                 iArr[i21] = iArr[i21] - (i20 << (24 - i11));
                 i = iArr[i17 - 1] >> (23 - i11);
             } else if (i11 == 0) {
                 i = iArr[i17 - 1] >> 23;
-            } else if (greaterOrEqual(jM691c, 4602678819172646912L)) {
+            } else if (greaterOrEqual(lo, 4602678819172646912L)) {
                 i = 2;
             }
             if (i > 0) {
-                iM688c++;
+                intPart++;
                 boolean z2 = false;
                 for (int i22 = 0; i22 < i17; i22++) {
                     int i23 = iArr[i22];
@@ -1144,13 +1144,13 @@ public final class SoftFloat {
                     }
                 }
                 if (i == 2) {
-                    jM691c = subtract(4607182418800017408L, jM691c);
+                    lo = subtract(4607182418800017408L, lo);
                     if (z2) {
-                        jM691c = subtract(jM691c, scalb(4607182418800017408L, i11));
+                        lo = subtract(lo, scalb(4607182418800017408L, i11));
                     }
                 }
             }
-            if (isZero(jM691c)) {
+            if (isZero(lo)) {
                 int i26 = 0;
                 for (int i27 = i17 - 1; i27 >= 4; i27--) {
                     i26 |= iArr[i27];
@@ -1162,58 +1162,58 @@ public final class SoftFloat {
                     }
                     for (int i29 = i17 + 1; i29 <= i17 + i28; i29++) {
                         jArr3[i8 + i29] = longToFloat(ResourceManager.getPiMultiple(i10 + i29));
-                        long jM690b4 = 0;
+                        long s4 = 0;
                         for (int i30 = 0; i30 <= i8; i30++) {
-                            jM690b4 = add(jM690b4, multiply(jArr2[i30], jArr3[(i8 + i29) - i30]));
+                            s4 = add(s4, multiply(jArr2[i30], jArr3[(i8 + i29) - i30]));
                         }
-                        jArr4[i29] = jM690b4;
+                        jArr4[i29] = s4;
                     }
                     i17 += i28;
                     z = true;
                 }
             }
         } while (z);
-        if (isZero(jM691c)) {
+        if (isZero(lo)) {
             do {
                 i17--;
                 i11 -= 24;
             } while (iArr[i17] == 0);
         } else {
-            long jM702c2 = scalb(jM691c, -i11);
-            if (greaterOrEqual(jM702c2, 4715268809856909312L)) {
-                long jM687b2 = longToFloat(floatToInt(scalb(jM702c2, -24)));
-                iArr[i17] = floatToInt(subtract(jM702c2, scalb(jM687b2, 24)));
+            long ax2 = scalb(lo, -i11);
+            if (greaterOrEqual(ax2, 4715268809856909312L)) {
+                long floatK2 = longToFloat(floatToInt(scalb(ax2, -24)));
+                iArr[i17] = floatToInt(subtract(ax2, scalb(floatK2, 24)));
                 i17++;
                 i11 += 24;
-                iArr[i17] = floatToInt(jM687b2);
+                iArr[i17] = floatToInt(floatK2);
             } else {
-                iArr[i17] = floatToInt(jM702c2);
+                iArr[i17] = floatToInt(ax2);
             }
         }
-        long jM702c3 = scalb(4607182418800017408L, i11);
+        long ax3 = scalb(4607182418800017408L, i11);
         for (int i31 = i17; i31 >= 0; i31--) {
-            jArr4[i31] = multiply(jM702c3, longToFloat(iArr[i31]));
-            jM702c3 = scalb(jM702c3, -24);
+            jArr4[i31] = multiply(ax3, longToFloat(iArr[i31]));
+            ax3 = scalb(ax3, -24);
         }
         long[] jArr5 = new long[20];
         for (int i32 = i17; i32 >= 0; i32--) {
-            long jM690b5 = 0;
+            long s5 = 0;
             for (int i33 = 0; i33 <= 4 && i33 <= i17 - i32; i33++) {
-                jM690b5 = add(jM690b5, multiply(((long[]) AppState.pool[990])[i33], jArr4[i32 + i33]));
+                s5 = add(s5, multiply(((long[]) AppState.pool[990])[i33], jArr4[i32 + i33]));
             }
-            jArr5[i17 - i32] = jM690b5;
+            jArr5[i17 - i32] = s5;
         }
-        long jM690b6 = 0;
+        long s6 = 0;
         for (int i34 = i17; i34 >= 0; i34--) {
-            jM690b6 = add(jM690b6, jArr5[i34]);
+            s6 = add(s6, jArr5[i34]);
         }
-        jArr[0] = i == 0 ? jM690b6 : negate(jM690b6);
-        long jM691c5 = subtract(jArr5[0], jM690b6);
+        jArr[0] = i == 0 ? s6 : negate(s6);
+        long lo5 = subtract(jArr5[0], s6);
         for (int i35 = 1; i35 <= i17; i35++) {
-            jM691c5 = add(jM691c5, jArr5[i35]);
+            lo5 = add(lo5, jArr5[i35]);
         }
-        jArr[1] = i == 0 ? jM691c5 : negate(jM691c5);
-        int i36 = iM688c & 7;
+        jArr[1] = i == 0 ? lo5 : negate(lo5);
+        int i36 = intPart & 7;
         if (i2 >= 0) {
             return i36;
         }
@@ -1259,15 +1259,15 @@ public final class SoftFloat {
             }
             i = -1;
         }
-        long jM692d = multiply(j, j);
-        long jM692d2 = multiply(jM692d, jM692d);
-        long jM692d3 = multiply(jM692d, add(4599676419421066509L, multiply(jM692d2, add(4594314991288484863L, multiply(jM692d2, add(4591215095208222830L, multiply(jM692d2, add(4589464229703073105L, multiply(jM692d2, add(4587333258118041067L, multiply(jM692d2, 4580351289466214929L)))))))))));
-        long jM692d4 = multiply(jM692d2, add(-4626998257160492092L, multiply(jM692d2, add(-4630701217362536847L, multiply(jM692d2, add(-4633165035261879699L, multiply(jM692d2, add(-4634804155249132134L, multiply(jM692d2, -4637946461342241745L)))))))));
+        long t = multiply(j, j);
+        long t2 = multiply(t, t);
+        long t3 = multiply(t, add(4599676419421066509L, multiply(t2, add(4594314991288484863L, multiply(t2, add(4591215095208222830L, multiply(t2, add(4589464229703073105L, multiply(t2, add(4587333258118041067L, multiply(t2, 4580351289466214929L)))))))))));
+        long t4 = multiply(t2, add(-4626998257160492092L, multiply(t2, add(-4630701217362536847L, multiply(t2, add(-4633165035261879699L, multiply(t2, add(-4634804155249132134L, multiply(t2, -4637946461342241745L)))))))));
         if (i < 0) {
-            return subtract(j, multiply(j, add(jM692d3, jM692d4)));
+            return subtract(j, multiply(j, add(t3, t4)));
         }
-        long jM691c = subtract(ResourceManager.getTrigConstant(i), subtract(subtract(multiply(j, add(jM692d3, jM692d4)), ResourceManager.getTrigConstant(i + 4)), j));
-        return i2 < 0 ? negate(jM691c) : jM691c;
+        long lo = subtract(ResourceManager.getTrigConstant(i), subtract(subtract(multiply(j, add(t3, t4)), ResourceManager.getTrigConstant(i + 4)), j));
+        return i2 < 0 ? negate(lo) : lo;
     }
 
     public final String toString() {
