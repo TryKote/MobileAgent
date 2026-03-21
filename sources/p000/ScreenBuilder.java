@@ -825,7 +825,7 @@ public final class ScreenBuilder {
                 return;
             case 110:
                 AppState.setObject(1249, (Object) AppState.emptyStr);
-                String strM655c = MapRenderer.m655c();
+                String strM655c = MapRenderer.getTooltipText();
                 if (strM655c != null) {
                     AppState.setObject(1249, (Object) strM655c);
                 }
@@ -858,7 +858,7 @@ public final class ScreenBuilder {
                 return;
             case 114:
                 AppState.setObject(1250, (Object) AppState.emptyStr);
-                String strM655c2 = MapRenderer.m655c();
+                String strM655c2 = MapRenderer.getTooltipText();
                 if (strM655c2 != null) {
                     AppState.setObject(1250, (Object) strM655c2);
                 }
@@ -1763,9 +1763,9 @@ public final class ScreenBuilder {
                 if (StringUtils.isEmpty(strM522f3)) {
                     iM338l7 = AppController.m338l(372);
                 } else {
-                    long jMo274v = MapRenderer.f196d;
-                    long jMo275w = MapRenderer.f195c;
-                    ListItem interfaceC0044o = MapRenderer.f203k;
+                    long jMo274v = MapRenderer.currentLon;
+                    long jMo275w = MapRenderer.currentLat;
+                    ListItem interfaceC0044o = MapRenderer.tooltipItem;
                     if (interfaceC0044o != null && interfaceC0044o.isSelected()) {
                         jMo274v = interfaceC0044o.getWidth();
                         jMo275w = interfaceC0044o.getBaseHeight();
@@ -1776,7 +1776,7 @@ public final class ScreenBuilder {
                     Vector vectorM614m = AppState.getVector(1401);
                     XmppContactGroup.addMapPointIfNew(vectorM614m, c0014an, 0, 50);
                     XmppContactGroup.saveMapPoints(vectorM614m, 226);
-                    MapRenderer.m654b(c0014an);
+                    MapRenderer.navigateToMapPoint(c0014an);
                     iM338l7 = 0;
                 }
                 iM460J = iM338l7;
@@ -2004,9 +2004,9 @@ public final class ScreenBuilder {
             case 154:
                 NetworkUtils.m1195d();
                 String strM584b = AppState.getString(1253);
-                long jMo274v2 = MapRenderer.f196d;
-                long jMo275w2 = MapRenderer.f195c;
-                ListItem interfaceC0044o2 = MapRenderer.f203k;
+                long jMo274v2 = MapRenderer.currentLon;
+                long jMo275w2 = MapRenderer.currentLat;
+                ListItem interfaceC0044o2 = MapRenderer.tooltipItem;
                 if (interfaceC0044o2 != null && interfaceC0044o2.isSelected()) {
                     jMo274v2 = interfaceC0044o2.getWidth();
                     jMo275w2 = interfaceC0044o2.getBaseHeight();
@@ -2034,7 +2034,7 @@ public final class ScreenBuilder {
                     }
                     new AsyncTask(16, c0043nM1314d.getStringAndClear());
                 }
-                MapRenderer.f200h = true;
+                MapRenderer.needsRedraw = true;
                 iM460J = 0;
                 break;
             case 155:

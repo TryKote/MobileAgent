@@ -350,7 +350,7 @@ public final class AppController {
         if (AppState.getString(376).equals(str)) {
             AppState.setInt(253, 1);
             XmppContactGroup.stopMapAnimation(AppState.getVector(1401));
-            MapRenderer.f200h = true;
+            MapRenderer.needsRedraw = true;
             return 6;
         }
         if (!AppState.getString(377).equals(str)) {
@@ -358,7 +358,7 @@ public final class AppController {
         }
         AppState.setInt(253, 0);
         XmppContactGroup.startMapAnimation(AppState.getVector(1401));
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
         return 6;
     }
 
@@ -499,7 +499,7 @@ public final class AppController {
                 MmpContact.clearLocationData();
                 StringUtils.m19b();
                 ConnectionThread.m1146e();
-                MapRenderer.f200h = true;
+                MapRenderer.needsRedraw = true;
                 return;
             }
             XmppContactGroup.invalidateCachedImage(i + 18);
@@ -910,7 +910,7 @@ public final class AppController {
             default:
                 return 0;
         }
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
         return 6;
     }
 
@@ -1072,7 +1072,7 @@ public final class AppController {
     /* renamed from: g */
     public static final int m382g(Object obj) {
         if (AppState.getBool(1443)) {
-            MapRenderer.m653a((MapPoint) obj);
+            MapRenderer.confirmMapPoint((MapPoint) obj);
             return 0;
         }
         if (!AppState.getBool(1477)) {
@@ -1153,7 +1153,7 @@ public final class AppController {
             return m338l(354);
         }
         if (i == 6) {
-            MapRenderer.m654b(f156j);
+            MapRenderer.navigateToMapPoint(f156j);
             return 0;
         }
         if (i == 118) {
@@ -1265,10 +1265,10 @@ public final class AppController {
 
     /* renamed from: i */
     public static final int m398i(Object obj) {
-        MapRenderer.m646a();
+        MapRenderer.invalidate();
         GeoRegion c0053x = (GeoRegion) obj;
-        MapRenderer.m649a(c0053x.centerLat, c0053x.centerLon);
-        MapRenderer.m651a(c0053x == StringUtils.getGeoRegion() ? 3 : 11);
+        MapRenderer.setPosition(c0053x.centerLat, c0053x.centerLon);
+        MapRenderer.setZoom(c0053x == StringUtils.getGeoRegion() ? 3 : 11);
         return 0;
     }
 
@@ -1276,13 +1276,13 @@ public final class AppController {
     public static final int m399K() {
         long jMo274v;
         long jMo275w;
-        ListItem interfaceC0044o = MapRenderer.f203k;
+        ListItem interfaceC0044o = MapRenderer.tooltipItem;
         if (interfaceC0044o != null) {
             jMo274v = interfaceC0044o.getWidth();
             jMo275w = interfaceC0044o.getBaseHeight();
         } else {
-            jMo274v = MapRenderer.f196d;
-            jMo275w = MapRenderer.f195c;
+            jMo274v = MapRenderer.currentLon;
+            jMo275w = MapRenderer.currentLat;
         }
         AppState.setInt(1479, 0);
         ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.m809a(jMo274v), IOUtils.m810b(jMo275w)), jMo274v, jMo275w);
@@ -1357,10 +1357,10 @@ public final class AppController {
         long jMo275w;
         Contact abstractC0041l = (Contact) obj;
         String strM584b = AppState.getString(1249);
-        ListItem interfaceC0044o = MapRenderer.f203k;
+        ListItem interfaceC0044o = MapRenderer.tooltipItem;
         if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
-            jMo274v = MapRenderer.f196d;
-            jMo275w = MapRenderer.f195c;
+            jMo274v = MapRenderer.currentLon;
+            jMo275w = MapRenderer.currentLat;
         } else {
             jMo274v = interfaceC0044o.getWidth();
             jMo275w = interfaceC0044o.getBaseHeight();
@@ -1383,15 +1383,15 @@ public final class AppController {
         if (!AppState.getString(402).equals(str)) {
             return 0;
         }
-        if (MapRenderer.f202j != null) {
-            MapRenderer.f202j.markInactive();
+        if (MapRenderer.selectedMapPoint != null) {
+            MapRenderer.selectedMapPoint.markInactive();
         }
         XmppContactGroup.startMapAnimation(AppState.getVector(1401));
         AppState.setInt(253, 0);
         MmpContact.clearLocationData();
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
         XmppContactGroup.lastCheckTs = System.currentTimeMillis();
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
         return 0;
     }
 
@@ -2255,18 +2255,18 @@ public final class AppController {
                                                 if (jCurrentTimeMillis - AppState.getLong(1556) > 45) {
                                                     AppState.setLong(1556, jCurrentTimeMillis);
                                                 }
-                                                if (m305K(10) && MapRenderer.f201i) {
+                                                if (m305K(10) && MapRenderer.crosshairVisible) {
                                                     if (AppState.getBool(276)) {
-                                                        if ((MapRenderer.f196d < VCard.staticTs1 || MapRenderer.f196d > VCard.staticTs3 || MapRenderer.f195c > VCard.staticTs4 || MapRenderer.f195c < VCard.staticTs2 || ((long) AppState.getInt(39)) != VCard.staticTs5) && AppState.getBool(280)) {
+                                                        if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(39)) != VCard.staticTs5) && AppState.getBool(280)) {
                                                             IOUtils.m772f();
                                                         }
                                                     }
-                                                    MapRenderer.m652a(false);
+                                                    MapRenderer.setCrosshairVisible(false);
                                                 }
                                                 int iM586d2 = AppState.getInt(1564);
                                                 if (iM586d2 >= 0 && AppState.getLong(1556) == jCurrentTimeMillis && !AppState.getBool(1553)) {
-                                                    AppState.setLong(1558, MapRenderer.f196d);
-                                                    AppState.setLong(1560, MapRenderer.f195c);
+                                                    AppState.setLong(1558, MapRenderer.currentLon);
+                                                    AppState.setLong(1560, MapRenderer.currentLat);
                                                     int iM586d3 = AppState.getInt(39);
                                                     long jM315d = (m315d(iM586d3) / m316e(iM586d3)) * 9;
                                                     switch (iM586d2) {
@@ -2283,12 +2283,12 @@ public final class AppController {
                                                             AppState.setLong(1560, AppState.getLong(1560) - jM315d);
                                                             break;
                                                     }
-                                                    MapRenderer.m649a(AppState.getLong(1558), AppState.getLong(1560));
+                                                    MapRenderer.setPosition(AppState.getLong(1558), AppState.getLong(1560));
                                                     m304a(10, 500L);
-                                                    MapRenderer.m661e();
+                                                    MapRenderer.resetInteraction();
                                                 }
                                                 if (AppState.getLong(1556) == jCurrentTimeMillis) {
-                                                    MapRenderer.m648b();
+                                                    MapRenderer.render();
                                                 }
                                                 if (AppState.getBool(277) && m307b(7, 300000L)) {
                                                     m304a(7, 300000L);
@@ -2298,7 +2298,7 @@ public final class AppController {
                                                     while (true) {
                                                         size3--;
                                                         if (size3 < 0) {
-                                                            MapRenderer.f200h = true;
+                                                            MapRenderer.needsRedraw = true;
                                                             new AsyncTask(6);
                                                         } else if (3 == ((ResourceManager) vectorM614m4.elementAt(size3)).f281a) {
                                                             vectorM614m4.removeElementAt(size3);
@@ -2308,8 +2308,8 @@ public final class AppController {
                                                 if (AppState.getBool(1553)) {
                                                     f153g = true;
                                                 }
-                                                if (MapRenderer.f212q) {
-                                                    MapRenderer.f212q = false;
+                                                if (MapRenderer.tapConsumed) {
+                                                    MapRenderer.tapConsumed = false;
                                                     z5 = true;
                                                 } else {
                                                     z5 = false;
@@ -3400,16 +3400,16 @@ public final class AppController {
                                                                         z4 = true;
                                                                     } else if (i13 == 53) {
                                                                         AppState.setBool(230, !AppState.getBool(230));
-                                                                        MapRenderer.f200h = true;
+                                                                        MapRenderer.needsRedraw = true;
                                                                         z4 = true;
                                                                     } else if (i13 == 55) {
                                                                         if (MmpContact.locationEnabled && (iArrM191s = MmpContact.getPrevRoutePoint()) != null) {
-                                                                            MapRenderer.m657b(iArrM191s[0], iArrM191s[1]);
+                                                                            MapRenderer.animateTo(iArrM191s[0], iArrM191s[1]);
                                                                         }
                                                                         z4 = true;
                                                                     } else if (i13 == 57) {
                                                                         if (MmpContact.locationEnabled && (iArrM190r = MmpContact.getNextRoutePoint()) != null) {
-                                                                            MapRenderer.m657b(iArrM190r[0], iArrM190r[1]);
+                                                                            MapRenderer.animateTo(iArrM190r[0], iArrM190r[1]);
                                                                         }
                                                                         z4 = true;
                                                                     }
@@ -3523,11 +3523,11 @@ public final class AppController {
                                                                 int i24 = i23 - c0013amM66b4.f113p;
                                                                 if (i24 > 0) {
                                                                     ConnectionThread.m1161a(c0013amM66b4);
-                                                                    MapRenderer.f211p = false;
-                                                                    MapRenderer.f213r = System.currentTimeMillis();
-                                                                    MapRenderer.f214s = i22;
-                                                                    MapRenderer.f215t = i24;
-                                                                    MapRenderer.f200h = true;
+                                                                    MapRenderer.dragActive = false;
+                                                                    MapRenderer.rippleTimestamp = System.currentTimeMillis();
+                                                                    MapRenderer.rippleX = i22;
+                                                                    MapRenderer.rippleY = i24;
+                                                                    MapRenderer.needsRedraw = true;
                                                                     z3 = true;
                                                                 } else {
                                                                     z3 = false;
@@ -3614,11 +3614,11 @@ public final class AppController {
                                                     c0013amM66b5.f131A = i30;
                                                     if (c0013amM66b5.f94a == 6) {
                                                         ConnectionThread.m1161a(c0013amM66b5);
-                                                        MapRenderer.f211p = true;
-                                                        MapRenderer.f213r = 0L;
+                                                        MapRenderer.dragActive = true;
+                                                        MapRenderer.rippleTimestamp = 0L;
                                                         int iM586d7 = AppState.getInt(39);
-                                                        MapRenderer.m649a(MapRenderer.f196d - ((int) m318a(i31, iM586d7)), MapRenderer.f195c + ((int) m318a(i32, iM586d7)));
-                                                        MapRenderer.f200h = true;
+                                                        MapRenderer.setPosition(MapRenderer.currentLon - ((int) m318a(i31, iM586d7)), MapRenderer.currentLat + ((int) m318a(i32, iM586d7)));
+                                                        MapRenderer.needsRedraw = true;
                                                         break;
                                                     } else {
                                                         c0013amM66b5.f105j -= i32;
@@ -3657,7 +3657,7 @@ public final class AppController {
                                                     if (c0013amM66b7.f94a == 6) {
                                                         int i42 = i41 - c0013amM66b7.f113p;
                                                         ConnectionThread.m1161a(c0013amM66b7);
-                                                        MapRenderer.m665b(i40, i42);
+                                                        MapRenderer.onDrag(i40, i42);
                                                     }
                                                 }
                                                 break;
@@ -3905,10 +3905,10 @@ public final class AppController {
                         ConnectionThread.m1161a(c0013amM66b);
                         i2 = -1;
                     } else if (AppState.getBool(1479)) {
-                        String strM809a = IOUtils.m809a(MapRenderer.f196d);
-                        String strM810b = IOUtils.m810b(MapRenderer.f195c);
+                        String strM809a = IOUtils.m809a(MapRenderer.currentLon);
+                        String strM810b = IOUtils.m810b(MapRenderer.currentLat);
                         AppState.setInt(1479, 0);
-                        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.f196d, MapRenderer.f195c);
+                        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.currentLon, MapRenderer.currentLat);
                         i2 = 0;
                     } else {
                         i2 = 113;
@@ -4618,7 +4618,7 @@ public final class AppController {
     /* renamed from: n */
     public static final int m463n(Object obj) {
         if (AppState.getBool(1443)) {
-            MapRenderer.m653a((MapPoint) obj);
+            MapRenderer.confirmMapPoint((MapPoint) obj);
             return 6;
         }
         if (!AppState.getBool(1478)) {

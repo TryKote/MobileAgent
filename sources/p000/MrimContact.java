@@ -312,7 +312,7 @@ public final class MrimContact extends Contact implements ListItem {
     public final void clearVCard() {
         this.vCardInfo = null;
         ChatRenderer.mapItems = null;
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
     }
 
     /* renamed from: q */

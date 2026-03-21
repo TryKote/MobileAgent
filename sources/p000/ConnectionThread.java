@@ -587,14 +587,14 @@ public final class ConnectionThread {
         AppState.setInt(1416, i);
         AppState.setLong(1410, AppState.getLong(35));
         AppState.setLong(1412, AppState.getLong(37));
-        MapRenderer.f193a = AppState.getInt(1415);
-        MapRenderer.f194b = AppState.getInt(1416);
-        MapRenderer.f195c = AppState.getLong(1412);
-        MapRenderer.f196d = AppState.getLong(1410);
+        MapRenderer.viewportWidth = AppState.getInt(1415);
+        MapRenderer.viewportHeight = AppState.getInt(1416);
+        MapRenderer.currentLat = AppState.getLong(1412);
+        MapRenderer.currentLon = AppState.getLong(1410);
         int iM586d = AppState.getInt(39);
-        MapRenderer.f197e = AppController.m317a(MapRenderer.f196d, iM586d);
-        MapRenderer.f198f = AppController.m317a(MapRenderer.f195c, iM586d);
-        AppState.pool[1364] = Image.createImage(MapRenderer.f193a, MapRenderer.f194b);
+        MapRenderer.currentPixelX = AppController.m317a(MapRenderer.currentLon, iM586d);
+        MapRenderer.currentPixelY = AppController.m317a(MapRenderer.currentLat, iM586d);
+        AppState.pool[1364] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
         StringUtils.m19b();
         AppState.pool[1398] = NetworkUtils.newVector();
         AppState.pool[1396] = NetworkUtils.newVector();
@@ -615,20 +615,20 @@ public final class ConnectionThread {
         AppState.pool[1393] = imageCreateImage;
         AppState.pool[1397] = NetworkUtils.newVector();
         new AsyncTask(8);
-        MapRenderer.f199g = new Object();
+        MapRenderer.syncLock = new Object();
         StringUtils.m41j();
-        MapRenderer.m646a();
+        MapRenderer.invalidate();
         MmpContact.routeRegions = NetworkUtils.newVector();
         MmpContact.routePoints = NetworkUtils.newVector();
         MmpContact.nearestPoints = NetworkUtils.newVector();
         MmpContact.lastTokenPair = new long[2];
         MmpContact.currentTokenPair = new long[2];
-        MapRenderer.f205m = NetworkUtils.newVector();
+        MapRenderer.animationSteps = NetworkUtils.newVector();
         if (AppState.getBool(253)) {
             XmppContactGroup.stopMapAnimation(AppState.getVector(1401));
         }
         AppState.pool[1383] = NetworkUtils.newVector();
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
         AppState.setLong(1556, System.currentTimeMillis() - 90);
         new AsyncTask(10);
         m1136q();
@@ -653,7 +653,7 @@ public final class ConnectionThread {
         MrimAccount c0028ba;
         if (AppState.getBool(1547)) {
             ((MrimAccount) AppState.getAccount()).isHighlighted = false;
-            MapRenderer.f200h = true;
+            MapRenderer.needsRedraw = true;
             m1164h();
             return 0;
         }
@@ -692,12 +692,12 @@ public final class ConnectionThread {
             XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
             XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
         }
-        MapRenderer.f202j = c0014an;
-        MapRenderer.m646a();
-        MapRenderer.m649a(MapRenderer.f202j.longitude, MapRenderer.f202j.latitude);
-        MapRenderer.m651a(MapRenderer.f202j.zoomLevel);
-        MapRenderer.f202j.markActive();
-        MapRenderer.m661e();
+        MapRenderer.selectedMapPoint = c0014an;
+        MapRenderer.invalidate();
+        MapRenderer.setPosition(MapRenderer.selectedMapPoint.longitude, MapRenderer.selectedMapPoint.latitude);
+        MapRenderer.setZoom(MapRenderer.selectedMapPoint.zoomLevel);
+        MapRenderer.selectedMapPoint.markActive();
+        MapRenderer.resetInteraction();
     }
 
     /* renamed from: i */
@@ -744,21 +744,21 @@ public final class ConnectionThread {
     public static final void m1170l() {
         long jMo274v;
         long jMo275w;
-        if (MapRenderer.m656d()) {
+        if (MapRenderer.hasRouteEndpoints()) {
             MmpContact.clearRouteProgress();
         }
-        ListItem interfaceC0044o = MapRenderer.f203k;
+        ListItem interfaceC0044o = MapRenderer.tooltipItem;
         if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
-            jMo274v = MapRenderer.f196d;
-            jMo275w = MapRenderer.f195c;
+            jMo274v = MapRenderer.currentLon;
+            jMo275w = MapRenderer.currentLat;
         } else {
             jMo274v = interfaceC0044o.getWidth();
             jMo275w = interfaceC0044o.getBaseHeight();
             interfaceC0044o.select();
         }
         MmpContact.setFirstToken(jMo274v, jMo275w);
-        MapRenderer.f200h = true;
-        if (MapRenderer.m656d()) {
+        MapRenderer.needsRedraw = true;
+        if (MapRenderer.hasRouteEndpoints()) {
             Conversation.loadContacts();
         }
     }
@@ -767,21 +767,21 @@ public final class ConnectionThread {
     public static final void m1171m() {
         long jMo274v;
         long jMo275w;
-        if (MapRenderer.m656d()) {
+        if (MapRenderer.hasRouteEndpoints()) {
             MmpContact.clearRouteProgress();
         }
-        ListItem interfaceC0044o = MapRenderer.f203k;
+        ListItem interfaceC0044o = MapRenderer.tooltipItem;
         if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
-            jMo274v = MapRenderer.f196d;
-            jMo275w = MapRenderer.f195c;
+            jMo274v = MapRenderer.currentLon;
+            jMo275w = MapRenderer.currentLat;
         } else {
             jMo274v = interfaceC0044o.getWidth();
             jMo275w = interfaceC0044o.getBaseHeight();
             interfaceC0044o.select();
         }
         MmpContact.setSecondToken(jMo274v, jMo275w);
-        MapRenderer.f200h = true;
-        if (MapRenderer.m656d()) {
+        MapRenderer.needsRedraw = true;
+        if (MapRenderer.hasRouteEndpoints()) {
             Conversation.loadContacts();
         }
     }
@@ -790,8 +790,8 @@ public final class ConnectionThread {
     public static final void m1172a(ListItem interfaceC0044o) {
         if (interfaceC0044o.isSelected()) {
             m1173n();
-            MapRenderer.m649a(interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
-            MapRenderer.m651a(interfaceC0044o.getCommandCount());
+            MapRenderer.setPosition(interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
+            MapRenderer.setZoom(interfaceC0044o.getCommandCount());
             f358h = interfaceC0044o;
         }
     }
@@ -800,6 +800,6 @@ public final class ConnectionThread {
     public static final void m1173n() {
         m1159s();
         AppState.setInt(1414, 1);
-        MapRenderer.m646a();
+        MapRenderer.invalidate();
     }
 }

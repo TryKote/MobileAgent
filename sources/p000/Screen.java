@@ -1284,7 +1284,7 @@ public final class Screen {
         int i8 = i4 - this.f99f;
         if (this.f94a == 6) {
             ConnectionThread.m1161a(this);
-            MapRenderer.m664a(i5, i6 - this.f113p);
+            MapRenderer.onTap(i5, i6 - this.f113p);
             return true;
         }
         if (this.f103i) {

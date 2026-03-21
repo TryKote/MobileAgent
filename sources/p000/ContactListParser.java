@@ -25,7 +25,7 @@ public abstract class ContactListParser implements ListItem {
         if (vectorM489a != null && vectorM489a.size() > 0) {
             AppState.pool[1404] = vectorM489a;
         }
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
     }
 
     /* renamed from: a */

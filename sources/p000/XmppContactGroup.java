@@ -673,8 +673,8 @@ public final class XmppContactGroup extends ContactGroup {
     public static final void initializeMapData() {
         lastUpdateTs = System.currentTimeMillis();
         Vector vectorM1140a = ConnectionThread.m1140a(1);
-        long j = MapRenderer.f196d;
-        long j2 = MapRenderer.f195c;
+        long j = MapRenderer.currentLon;
+        long j2 = MapRenderer.currentLat;
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int size = vectorM1140a.size();
         while (true) {

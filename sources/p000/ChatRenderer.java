@@ -238,12 +238,12 @@ public abstract class ChatRenderer {
         }
         int i17 = (i10 - i12) - i16;
         if (i17 < 10) {
-            if (!(MapRenderer.f208n > 0)) {
+            if (!(MapRenderer.autoScrollCount > 0)) {
                 int iM504c = Utils.abs(i17) + 20;
-                if (MapRenderer.f208n <= 0) {
-                    MapRenderer.f208n = iM504c;
-                    MapRenderer.f209o = System.currentTimeMillis();
-                    MapRenderer.f204l = true;
+                if (MapRenderer.autoScrollCount <= 0) {
+                    MapRenderer.autoScrollCount = iM504c;
+                    MapRenderer.autoScrollTimestamp = System.currentTimeMillis();
+                    MapRenderer.tooltipLocked = true;
                 }
             }
         }

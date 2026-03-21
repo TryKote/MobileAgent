@@ -318,7 +318,7 @@ public final class StringUtils {
     private static final void m23a(ResourceManager c0034e, Image image) {
         try {
             m25l().put(c0034e, image, 1);
-            MapRenderer.f200h = true;
+            MapRenderer.needsRedraw = true;
         } catch (Throwable unused) {
         }
     }

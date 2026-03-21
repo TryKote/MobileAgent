@@ -609,7 +609,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (f257f != null) {
             interfaceC0044o = f257f;
         } else {
-            interfaceC0044o = MapRenderer.f203k;
+            interfaceC0044o = MapRenderer.tooltipItem;
             f257f = interfaceC0044o;
         }
         ListItem interfaceC0044o2 = interfaceC0044o;
@@ -718,13 +718,13 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             default:
                 return 6;
             case 10:
-                if (MapRenderer.m656d()) {
+                if (MapRenderer.hasRouteEndpoints()) {
                     MmpContact.clearRouteProgress();
                 }
-                ListItem interfaceC0044o2 = MapRenderer.f203k;
+                ListItem interfaceC0044o2 = MapRenderer.tooltipItem;
                 if (interfaceC0044o2 == null || !interfaceC0044o2.isSelected()) {
-                    jMo274v = MapRenderer.f196d;
-                    jMo275w = MapRenderer.f195c;
+                    jMo274v = MapRenderer.currentLon;
+                    jMo275w = MapRenderer.currentLat;
                 } else {
                     jMo274v = interfaceC0044o2.getWidth();
                     jMo275w = interfaceC0044o2.getBaseHeight();
@@ -733,14 +733,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 int[] iArr = {(int) jMo274v, (int) jMo275w};
                 MmpContact.routePoints.addElement(iArr);
                 MmpContact.nearestPoints.addElement(new Object[]{null, iArr});
-                MapRenderer.f200h = true;
-                if (!MapRenderer.m656d()) {
+                MapRenderer.needsRedraw = true;
+                if (!MapRenderer.hasRouteEndpoints()) {
                     return 6;
                 }
                 Conversation.loadContacts();
                 return 6;
             case 11:
-                if (MapRenderer.m656d()) {
+                if (MapRenderer.hasRouteEndpoints()) {
                     MmpContact.clearRouteProgress();
                 }
                 if (MmpContact.mapDataCache != null) {
@@ -749,22 +749,22 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 AppState.setInt(1575, 0);
                 AppState.setBool(1574, AppState.getBool(1573));
-                MapRenderer.f200h = true;
-                if (!MapRenderer.m656d()) {
+                MapRenderer.needsRedraw = true;
+                if (!MapRenderer.hasRouteEndpoints()) {
                     return 6;
                 }
                 Conversation.loadContacts();
                 return 6;
             case 12:
                 MmpContact.clearLocationData();
-                MapRenderer.f200h = true;
+                MapRenderer.needsRedraw = true;
                 return 6;
             case 13:
-                ListItem interfaceC0044o3 = MapRenderer.f203k;
+                ListItem interfaceC0044o3 = MapRenderer.tooltipItem;
                 if (interfaceC0044o3 != null && interfaceC0044o3.isSelected()) {
                     interfaceC0044o3.select();
                 }
-                MapRenderer.f200h = true;
+                MapRenderer.needsRedraw = true;
                 return 6;
             case 14:
                 ConnectionThread.m1170l();

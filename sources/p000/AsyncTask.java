@@ -797,7 +797,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L4b5:
             r1 = 0
         L4b6:
-            p000.MapRenderer.m649a(r0, r1)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            p000.MapRenderer.setPosition(r0, r1)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
         L4b9:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
@@ -884,7 +884,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = 0
             p000.ConnectionThread.f354e = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = 1
-            p000.MapRenderer.f200h = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            p000.MapRenderer.needsRedraw = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = r10
             monitor-exit(r0)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             goto L566

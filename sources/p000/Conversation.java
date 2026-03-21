@@ -982,14 +982,14 @@ public final class Conversation implements ListItem {
             long r1 = p000.IOUtils.m808c(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = r1; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r11 = r2
-            p000.MapRenderer.m649a(r0, r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.MapRenderer.setPosition(r0, r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r9
             r1 = 725709(0xb12cd, float:1.016935E-39)
             java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             int r0 = p000.Utils.parseInt(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            p000.MapRenderer.m651a(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.MapRenderer.setZoom(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = 1
-            p000.MapRenderer.f200h = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.MapRenderer.needsRedraw = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r13
             r1 = r11
             r2 = r9
@@ -1222,18 +1222,18 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     public static final void setMapEnabled(boolean z) {
-        MapRenderer.f200h = true;
+        MapRenderer.needsRedraw = true;
         AppState.setBool(41, z);
     }
 
     /* renamed from: a */
     public static final void incrementZoom() {
-        MapRenderer.m651a(AppState.getInt(39) + 1);
+        MapRenderer.setZoom(AppState.getInt(39) + 1);
     }
 
     /* renamed from: b */
     public static final void decrementZoom() {
-        MapRenderer.m651a(AppState.getInt(39) - 1);
+        MapRenderer.setZoom(AppState.getInt(39) - 1);
     }
 
     /* renamed from: c */

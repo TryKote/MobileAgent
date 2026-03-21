@@ -450,15 +450,15 @@ public final class IOUtils {
             try {
                 long jM807b = m807b(m812f(strM522f));
                 long jM808c = m808c(m811e(strM522f));
-                MapRenderer.m649a(jM807b, jM808c);
-                MapRenderer.m651a(StringUtils.m43a(jM807b, jM808c) ? 13 : 10);
+                MapRenderer.setPosition(jM807b, jM808c);
+                MapRenderer.setZoom(StringUtils.m43a(jM807b, jM808c) ? 13 : 10);
             } catch (Throwable unused) {
             }
         } else {
             String strM1109a = Conversation.replaceText(strM522f, 1046, 199350);
             Image imageM615n = AppState.getImage(1364);
-            long j = MapRenderer.f195c;
-            new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) strM1109a)).writeCompressed(659815).writeLongAsString(j).writeCompressed(659825).writeLongAsString(MapRenderer.f196d).writeCompressed(659835).writeIntAsString(imageM615n.getWidth()).writeCompressed(659845).writeIntAsString(imageM615n.getHeight()).getStringAndClear());
+            long j = MapRenderer.currentLat;
+            new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) strM1109a)).writeCompressed(659815).writeLongAsString(j).writeCompressed(659825).writeLongAsString(MapRenderer.currentLon).writeCompressed(659835).writeIntAsString(imageM615n.getWidth()).writeCompressed(659845).writeIntAsString(imageM615n.getHeight()).getStringAndClear());
         }
         return AppState.getBool(1477) ? 161 : 6;
     }
@@ -466,7 +466,7 @@ public final class IOUtils {
     /* renamed from: c */
     public static final int m771c(Object obj) {
         if (AppState.getBool(1443)) {
-            MapRenderer.m653a((MapPoint) obj);
+            MapRenderer.confirmMapPoint((MapPoint) obj);
             return 6;
         }
         if (!AppState.getBool(1477)) {
@@ -482,19 +482,19 @@ public final class IOUtils {
 
     /* renamed from: f */
     public static final void m772f() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.getInt(39)))).writeCompressed(393954).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.getInt(39)))).writeCompressed(393960).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.getInt(39)))).writeCompressed(393966).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.getInt(39)))).writeCompressed(1376928);
-        long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.f194b / 128) + 2) * ((MapRenderer.f193a / 128) + 2)));
+        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393954).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(393960).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393966).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(1376928);
+        long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
         int iM586d = AppState.getInt(39);
-        long j = MapRenderer.f197e;
-        int i = MapRenderer.f193a / 2;
-        long jM318a = AppController.m318a((int) (j + i), iM586d) - AppController.m318a((int) (MapRenderer.f197e - i), iM586d);
-        long j2 = MapRenderer.f198f;
-        int i2 = MapRenderer.f194b / 2;
-        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
-        VCard.staticTs1 = (int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.getInt(39));
-        VCard.staticTs2 = (int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.getInt(39));
-        VCard.staticTs3 = (int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.getInt(39));
-        VCard.staticTs4 = (int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.getInt(39));
+        long j = MapRenderer.currentPixelX;
+        int i = MapRenderer.viewportWidth / 2;
+        long jM318a = AppController.m318a((int) (j + i), iM586d) - AppController.m318a((int) (MapRenderer.currentPixelX - i), iM586d);
+        long j2 = MapRenderer.currentPixelY;
+        int i2 = MapRenderer.viewportHeight / 2;
+        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.currentPixelY - i2), iM586d)))), 100));
+        VCard.staticTs1 = (int) AppController.m318a((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
+        VCard.staticTs2 = (int) AppController.m318a((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
+        VCard.staticTs3 = (int) AppController.m318a((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
+        VCard.staticTs4 = (int) AppController.m318a((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
         VCard.staticTs5 = AppState.getInt(39);
         new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.m967e(AppState.getInt(39))});
     }
