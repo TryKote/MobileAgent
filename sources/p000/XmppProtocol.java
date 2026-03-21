@@ -36,7 +36,7 @@ public class XmppProtocol extends Account {
         this.f325u = 1;
         this.f30a = NetworkUtils.m1213g();
         XmppContactGroup c0036g = new XmppContactGroup(this, 0, AppState.m584b(1039));
-        c0036g.f399g = true;
+        c0036g.isSpecial = true;
         this.f334D = c0036g;
         this.f33b = AppState.f181d;
         this.f37e = AppState.f181d;
@@ -69,18 +69,18 @@ public class XmppProtocol extends Account {
             }
         }
         XmppContactGroup c0036g = new XmppContactGroup(this, c0043n);
-        int iM541c = Utils.m541c(c0036g.f397e);
+        int iM541c = Utils.m541c(c0036g.contacts);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
-                c0036g.f399g = true;
+                c0036g.isSpecial = true;
                 this.f334D = c0036g;
                 this.f33b = c0043n.readWideStr();
                 this.f34c = c0043n.readShortBE();
                 this.f37e = c0043n.readWideStr();
                 return;
             }
-            ((XmppContact) c0036g.f397e.elementAt(iM541c)).f43b = true;
+            ((XmppContact) c0036g.contacts.elementAt(iM541c)).f43b = true;
         }
     }
 
@@ -363,7 +363,7 @@ public class XmppProtocol extends Account {
                                         XmppContact c0006af = new XmppContact(this, strM130h, m129a(c0022av, strM130h), null);
                                         c0006af.f43b = true;
                                         c0006afM111f = c0006af;
-                                        abstractC0046q.m1401b((Object) c0006af);
+                                        abstractC0046q.addContact((Object) c0006af);
                                     }
                                     c0006afM111f.m146a(strM584b4, c0022av);
                                     ResourceManager.m925a(3);
@@ -637,14 +637,14 @@ public class XmppProtocol extends Account {
     /* renamed from: a */
     public final int mo112a(Contact abstractC0041l, Object[] objArr) {
         int iMo112a = super.mo112a(abstractC0041l, objArr);
-        return 0 != iMo112a ? iMo112a : m117a(((XmppContact) abstractC0041l).f38a, (String) objArr[0], m1080g(abstractC0041l).f398f);
+        return 0 != iMo112a ? iMo112a : m117a(((XmppContact) abstractC0041l).f38a, (String) objArr[0], m1080g(abstractC0041l).name);
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         int iMo113a = super.mo113a(abstractC0041l, abstractC0046q, abstractC0046q2);
-        return 0 != iMo113a ? iMo113a : m117a(((XmppContact) abstractC0041l).f38a, abstractC0041l.f376u, abstractC0046q2.f398f);
+        return 0 != iMo113a ? iMo113a : m117a(((XmppContact) abstractC0041l).f38a, abstractC0041l.displayName, abstractC0046q2.name);
     }
 
     @Override // p000.Account
@@ -655,7 +655,7 @@ public class XmppProtocol extends Account {
         }
         AppState.f177b[1316] = new Object[]{m81r(), ((XmppContact) abstractC0041l).m151f()};
         this.f319o--;
-        return m92b(XmlElement.createFromState(136604).addNameAttr(196633).setAttrValue(131590, abstractC0041l.mo135a()).addSimpleChild(333452, 661030));
+        return m92b(XmlElement.createFromState(136604).addNameAttr(196633).setAttrValue(131590, abstractC0041l.getIdentifier()).addSimpleChild(333452, 661030));
     }
 
     @Override // p000.Account
@@ -671,7 +671,7 @@ public class XmppProtocol extends Account {
             return 0;
         }
         String strM522f = Utils.m522f(AppState.m584b(1296));
-        m117a(strM522f, Utils.m522f(AppState.m584b(1297)), ((ContactGroup) AppState.m614m(1324).elementAt(AppState.m586d(1507))).f398f);
+        m117a(strM522f, Utils.m522f(AppState.m584b(1297)), ((ContactGroup) AppState.m614m(1324).elementAt(AppState.m586d(1507))).name);
         m99b(strM522f, 0);
         m99b(strM522f, 1);
         return 0;
@@ -691,7 +691,7 @@ public class XmppProtocol extends Account {
     /* renamed from: b */
     public final int mo118b(Contact abstractC0041l) {
         if (m1056C()) {
-            m117a(abstractC0041l.mo135a(), (String) null, (String) null);
+            m117a(abstractC0041l.getIdentifier(), (String) null, (String) null);
             return 0;
         }
         IOUtils.m778d((Object) AppState.m584b(299));
@@ -704,9 +704,9 @@ public class XmppProtocol extends Account {
             return 299;
         }
         String str = c0006af.f38a;
-        String str2 = c0006af.f376u;
+        String str2 = c0006af.displayName;
         ContactGroup abstractC0046qM1080g = m1080g(c0006af);
-        m117a(str, str2, (abstractC0046qM1080g == this.f335E || c0006af.f43b) ? AppState.m584b(459528) : abstractC0046qM1080g.f398f);
+        m117a(str, str2, (abstractC0046qM1080g == this.f335E || c0006af.f43b) ? AppState.m584b(459528) : abstractC0046qM1080g.name);
         return i;
     }
 
@@ -737,7 +737,7 @@ public class XmppProtocol extends Account {
                 return null;
             }
             c0036g = (XmppContactGroup) vector.elementAt(iM541c);
-        } while (!StringUtils.m6a(str, c0036g.f398f));
+        } while (!StringUtils.m6a(str, c0036g.name));
         return c0036g;
     }
 
@@ -773,10 +773,10 @@ public class XmppProtocol extends Account {
         if (0 != iMo124a) {
             return iMo124a;
         }
-        if (Utils.m541c(abstractC0046q.f397e) != 0) {
+        if (Utils.m541c(abstractC0046q.contacts) != 0) {
             return 1032;
         }
-        abstractC0046q.m1403c(str);
+        abstractC0046q.setNameIfChanged(str);
         return 0;
     }
 
@@ -788,7 +788,7 @@ public class XmppProtocol extends Account {
             return iMo125a;
         }
         this.f327w++;
-        return m91a(XmlElement.createFromState(464488).setAttrValue(131590, abstractC0041l.mo135a()).addNameAttr(265215).addChild(XmlElement.createFromState(267946).appendText((Object) str)).addSimpleChild(398993, 2430320));
+        return m91a(XmlElement.createFromState(464488).setAttrValue(131590, abstractC0041l.getIdentifier()).addNameAttr(265215).addChild(XmlElement.createFromState(267946).appendText((Object) str)).addSimpleChild(398993, 2430320));
     }
 
     /* renamed from: c */
@@ -862,7 +862,7 @@ public class XmppProtocol extends Account {
                         vector.addElement(c0036g2);
                     }
                     XmppContact c0006af2 = new XmppContact(this, strM554b, strM554b3, strM554b2);
-                    c0036g.m1401b((Object) c0006af2);
+                    c0036g.addContact((Object) c0006af2);
                     c0006af2.m147a(c0006af);
                 }
             }

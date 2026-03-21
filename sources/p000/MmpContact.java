@@ -69,28 +69,28 @@ public final class MmpContact extends Contact {
         this.f55a = i;
         this.f56b = i2;
         this.f57c = str;
-        this.f376u = str2;
-        this.f377v = StringUtils.m17c(str2.toLowerCase());
+        this.displayName = str2;
+        this.sortKey = StringUtils.m17c(str2.toLowerCase());
         this.f58z = z;
-        this.f373r = 255;
-        this.f380w = c0033d.m1050q().writeRawString(str).readAllByteStr();
+        this.defaultIcon = 255;
+        this.identifier = c0033d.m1050q().writeRawString(str).readAllByteStr();
         c0033d.m1081h(this);
-        m1228A();
-        this.f381x = str;
+        updateRenderState();
+        this.extra = str;
     }
 
     @Override // p000.Contact
     /* renamed from: c */
-    public final void mo134c() {
-        this.f373r = 255;
+    public final void clearUnread() {
+        this.defaultIcon = 255;
         this.f62g = false;
         this.f63h = false;
-        super.mo134c();
+        super.clearUnread();
     }
 
     @Override // p000.Contact
     /* renamed from: a */
-    public final String mo135a() {
+    public final String getIdentifier() {
         return this.f57c;
     }
 
@@ -99,46 +99,46 @@ public final class MmpContact extends Contact {
         this.f55a = c0043n.readInt();
         this.f56b = c0043n.readInt();
         this.f57c = c0043n.readWideStr();
-        m1249c(c0043n.readUTF8Str((String) null));
+        setDisplayName(c0043n.readUTF8Str((String) null));
         this.f58z = c0043n.readBoolean();
         c0043n.readBoolean();
         this.f59d = c0043n.readShortBE();
         this.f60e = c0043n.readShortBE();
         this.f61f = c0043n.readShortBE();
         byte bM1344o = c0043n.readByte();
-        this.f374s = bM1344o;
+        this.flags = bM1344o;
         if (bM1344o != 0) {
             AppController.m414a((Contact) this);
         }
-        this.f373r = 255;
-        this.f380w = abstractC0037h.m1050q().writeRawString(this.f57c).readAllByteStr();
+        this.defaultIcon = 255;
+        this.identifier = abstractC0037h.m1050q().writeRawString(this.f57c).readAllByteStr();
         abstractC0037h.m1081h(this);
-        m1228A();
-        this.f381x = this.f57c;
+        updateRenderState();
+        this.extra = this.f57c;
     }
 
     @Override // p000.Contact
     /* renamed from: a */
-    public final void mo136a(ByteBuffer c0043n) {
-        c0043n.writeIntLE(this.f55a).writeIntLE(this.f56b).writeStringLatin1(this.f57c).writeStringUTF16(this.f376u).writeBoolean(this.f58z).writeBoolean(false).writeShortBE(this.f59d).writeShortBE(this.f60e).writeShortBE(this.f61f).writeByte(this.f374s);
+    public final void deserialize(ByteBuffer c0043n) {
+        c0043n.writeIntLE(this.f55a).writeIntLE(this.f56b).writeStringLatin1(this.f57c).writeStringUTF16(this.displayName).writeBoolean(this.f58z).writeBoolean(false).writeShortBE(this.f59d).writeShortBE(this.f60e).writeShortBE(this.f61f).writeByte(this.flags);
     }
 
     @Override // p000.Contact
     /* renamed from: b */
-    public final MenuItem mo138b() {
-        MenuItem c0032cM901a = MenuItem.m887a(this.f380w).m896a(mo139e()).m901a(this.f376u, mo141j() ? 3 : mo140i() ? 2 : 0, this.f373r == 255 ? 0 : mo140i() ? 4 : mo141j() ? 5 : 3);
+    public final MenuItem createMenuItem() {
+        MenuItem c0032cM901a = MenuItem.m887a(this.identifier).m896a(getIcon()).m901a(this.displayName, canBlock() ? 3 : canDelete() ? 2 : 0, this.defaultIcon == 255 ? 0 : canDelete() ? 4 : canBlock() ? 5 : 3);
         c0032cM901a.f265d = this;
         return c0032cM901a;
     }
 
     @Override // p000.Contact
     /* renamed from: e */
-    public final int mo139e() {
-        int iMo139e = super.mo139e();
+    public final int getIcon() {
+        int iMo139e = super.getIcon();
         if (iMo139e == 16384 || iMo139e == 26) {
             return iMo139e;
         }
-        if (mo144l() || mo143m()) {
+        if (hasUnread() || isOnline()) {
             return 263;
         }
         return iMo139e;
@@ -158,42 +158,42 @@ public final class MmpContact extends Contact {
 
     @Override // p000.Contact
     /* renamed from: i */
-    public final boolean mo140i() {
+    public final boolean canDelete() {
         return this.f59d != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: j */
-    public final boolean mo141j() {
+    public final boolean canBlock() {
         return this.f60e != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: k */
-    public final boolean mo142k() {
+    public final boolean canUnblock() {
         return this.f61f != 0;
     }
 
     @Override // p000.Contact
     /* renamed from: m */
-    public final boolean mo143m() {
+    public final boolean isOnline() {
         return this.f55a == -1;
     }
 
     @Override // p000.Contact
     /* renamed from: l */
-    public final boolean mo144l() {
+    public final boolean hasUnread() {
         return this.f58z && this.f55a != -1;
     }
 
     @Override // p000.Contact
     /* renamed from: h */
-    public final void mo145h() {
-        if (mo143m()) {
+    public final void performAction() {
+        if (isOnline()) {
             return;
         }
         this.f58z = false;
-        m1228A();
+        updateRenderState();
     }
 
     /* renamed from: a */

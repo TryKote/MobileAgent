@@ -641,7 +641,7 @@ public final class Conversation implements ListItem {
             }
             MrimContact c0035f3 = c0035f;
             if (c0035f != null) {
-                c0035f3.m1232a(0L, strM1215a, 1);
+                c0035f3.receiveMessageFull(0L, strM1215a, 1);
                 return;
             }
             return;
@@ -653,7 +653,7 @@ public final class Conversation implements ListItem {
                 c0028ba.m1072a(strM1338j, 0L, str);
                 return;
             } else if ((c0035fM717f.f295b & 65536) == 0) {
-                c0035fM717f.mo145h();
+                c0035fM717f.performAction();
                 c0028ba.m1052c(AppController.m395b(c0028ba, strM1338j));
                 return;
             } else {
@@ -662,7 +662,7 @@ public final class Conversation implements ListItem {
                 return;
             }
         }
-        if ((c0035fM717f == null || c0035fM717f.mo144l() || c0035fM717f.mo143m()) && !((iM1328e2 & 1024) == 0 && (iM1328e2 & 16384) == 0)) {
+        if ((c0035fM717f == null || c0035fM717f.hasUnread() || c0035fM717f.isOnline()) && !((iM1328e2 & 1024) == 0 && (iM1328e2 & 16384) == 0)) {
             return;
         }
         if ((iM1328e2 & 16384) != 0) {
@@ -796,7 +796,7 @@ public final class Conversation implements ListItem {
                     if (c0010aj == null) {
                         c0010ajM718f = c0028ba.m718f();
                     }
-                    c0010ajM718f.m1401b((Object) new MrimContact(c0028ba, i3, i5, iM1328e5, str, strM1335e2, iM1328e6, iM1328e7, strM1317c, strM1334g4, strM1334g5));
+                    c0010ajM718f.addContact((Object) new MrimContact(c0028ba, i3, i5, iM1328e5, str, strM1335e2, iM1328e6, iM1328e7, strM1317c, strM1334g4, strM1334g5));
                 }
                 i3++;
                 for (int i6 = 12; i6 < length2; i6++) {

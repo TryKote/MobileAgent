@@ -68,15 +68,15 @@ public final class ChatRoom {
             String strM521a = Utils.m521a(this.f414f, i);
             c0043n.writeStringLatin1(strM521a);
             Message c0026azM1415b = m1415b(strM521a);
-            c0043n.writeLong(c0026azM1415b.f217b);
-            XmppMailRuProtocol.m862a(c0026azM1415b.f218c, c0043n);
-            XmppMailRuProtocol.m862a(c0026azM1415b.f219d, c0043n);
-            c0043n.writeIntLE(c0026azM1415b.f220e).writeIntLE(c0026azM1415b.f221f).writeStringUTF16(Utils.m522f(c0026azM1415b.f222g));
-            if (c0026azM1415b.f223h == null || c0026azM1415b.f223h.length() > 3072) {
+            c0043n.writeLong(c0026azM1415b.timestamp);
+            XmppMailRuProtocol.m862a(c0026azM1415b.toList, c0043n);
+            XmppMailRuProtocol.m862a(c0026azM1415b.ccList, c0043n);
+            c0043n.writeIntLE(c0026azM1415b.priority).writeIntLE(c0026azM1415b.flags).writeStringUTF16(Utils.m522f(c0026azM1415b.subject));
+            if (c0026azM1415b.body == null || c0026azM1415b.body.length() > 3072) {
                 c0043n.writeIntLE(0).writeIntLE(0);
             } else {
-                c0043n.writeIntLE(1).writeStringUTF16(c0026azM1415b.f223h).writeIntLE(1);
-                Object[] objArr = c0026azM1415b.f224i;
+                c0043n.writeIntLE(1).writeStringUTF16(c0026azM1415b.body).writeIntLE(1);
+                Object[] objArr = c0026azM1415b.attachments;
                 if (objArr == null) {
                     c0043n.writeIntLE(0);
                 } else {
@@ -89,11 +89,11 @@ public final class ChatRoom {
                     }
                 }
             }
-            c0026azM1415b.f218c = null;
-            c0026azM1415b.f219d = null;
-            c0026azM1415b.f222g = null;
-            c0026azM1415b.f223h = null;
-            c0026azM1415b.f224i = null;
+            c0026azM1415b.toList = null;
+            c0026azM1415b.ccList = null;
+            c0026azM1415b.subject = null;
+            c0026azM1415b.body = null;
+            c0026azM1415b.attachments = null;
         }
     }
 

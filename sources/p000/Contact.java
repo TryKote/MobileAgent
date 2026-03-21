@@ -9,140 +9,140 @@ import java.util.Vector;
 public abstract class Contact implements Sortable {
 
     /* renamed from: o */
-    public final Account f369o;
+    public final Account account;
 
     /* renamed from: a */
-    private ByteBuffer f370a;
+    private ByteBuffer messageBuffer;
 
     /* renamed from: p */
-    public boolean f371p;
+    public boolean highlighted;
 
     /* renamed from: q */
-    public int f372q;
+    public int statusCode;
 
     /* renamed from: r */
-    public int f373r;
+    public int defaultIcon;
 
     /* renamed from: s */
-    public byte f374s;
+    public byte flags;
 
     /* renamed from: t */
-    public boolean f375t;
+    public boolean dirty;
 
     /* renamed from: u */
-    public String f376u;
+    public String displayName;
 
     /* renamed from: v */
-    public String f377v;
+    public String sortKey;
 
     /* renamed from: b */
-    private int f378b;
+    private int renderState;
 
     /* renamed from: c */
-    private long f379c;
+    private long lastMessageTime;
 
     /* renamed from: w */
-    public String f380w;
+    public String identifier;
 
     /* renamed from: x */
-    public String f381x;
+    public String extra;
 
     public Contact(Account abstractC0037h) {
-        this.f369o = abstractC0037h;
+        this.account = abstractC0037h;
     }
 
     /* renamed from: a */
-    public abstract void mo136a(ByteBuffer c0043n);
+    public abstract void deserialize(ByteBuffer c0043n);
 
     /* renamed from: e */
-    public int mo139e() {
-        if (this.f374s != 0) {
-            return (this.f374s & 1) != 0 ? 16384 : 16386;
+    public int getIcon() {
+        if (this.flags != 0) {
+            return (this.flags & 1) != 0 ? 16384 : 16386;
         }
-        if (this.f372q != 0) {
+        if (this.statusCode != 0) {
             return 26;
         }
-        return this.f373r;
+        return this.defaultIcon;
     }
 
     /* renamed from: c */
-    public final void m1227c(int i) {
-        this.f374s = (byte) (this.f374s | i);
+    public final void addFlag(int i) {
+        this.flags = (byte) (this.flags | i);
         AppController.m414a(this);
-        this.f375t = true;
-        this.f379c = AppState.m598g(1530);
-        m1228A();
+        this.dirty = true;
+        this.lastMessageTime = AppState.m598g(1530);
+        updateRenderState();
     }
 
     /* renamed from: g */
-    public String mo995g() {
+    public String getDefaultName() {
         return AppState.f181d;
     }
 
     /* renamed from: A */
-    public final void m1228A() {
-        int i = this.f374s != 0 ? 1073741824 : 0;
-        if (this.f379c != 0) {
+    public final void updateRenderState() {
+        int i = this.flags != 0 ? 1073741824 : 0;
+        if (this.lastMessageTime != 0) {
             i |= 268435456;
         }
-        if (this.f371p) {
+        if (this.highlighted) {
             i |= 536870912;
         }
-        if (!mo144l()) {
+        if (!hasUnread()) {
             i |= 67108864;
         }
-        int i2 = !mo990d() ? i | 33554432 : i & (-1912602625);
-        int i3 = !mo143m() ? i2 | 134217728 : i2 & (-100663297);
-        if (i3 != this.f378b) {
-            this.f378b = i3;
+        int i2 = !isOffline() ? i | 33554432 : i & (-1912602625);
+        int i3 = !isOnline() ? i2 | 134217728 : i2 & (-100663297);
+        if (i3 != this.renderState) {
+            this.renderState = i3;
             AppController.f152f = true;
         }
     }
 
     /* renamed from: B */
-    public final void m1229B() {
-        this.f370a = new ByteBuffer();
-        m1245o();
+    public final void initMessageBuffer() {
+        this.messageBuffer = new ByteBuffer();
+        saveMessageBuffer();
     }
 
     /* renamed from: m */
-    public abstract boolean mo143m();
+    public abstract boolean isOnline();
 
     /* renamed from: l */
-    public abstract boolean mo144l();
+    public abstract boolean hasUnread();
 
     /* renamed from: n */
-    public boolean mo996n() {
+    public boolean isSystem() {
         return false;
     }
 
     /* renamed from: C */
-    public final void m1230C() {
-        this.f372q = 0;
-        this.f375t = true;
+    public final void clearStatus() {
+        this.statusCode = 0;
+        this.dirty = true;
     }
 
     /* renamed from: a */
-    public final void m1231a(long j, StringBuffer stringBuffer) {
-        m1232a(j, NetworkUtils.m1215a(stringBuffer), 4);
+    public final void receiveMessage(long j, StringBuffer stringBuffer) {
+        receiveMessageFull(j, NetworkUtils.m1215a(stringBuffer), 4);
     }
 
     /* renamed from: a */
-    public final void m1232a(long j, String str, int i) {
+    public final void receiveMessageFull(long j, String str, int i) {
         TabBar c0008ah;
-        AppState.m601a(1237, (Object) this.f380w);
+        AppState.m601a(1237, (Object) this.identifier);
         ResourceManager.m925a(2);
-        m1227c(i);
-        this.f369o.m1071e(mo135a());
-        m1230C();
-        m1239a(i != 4 ? 0 : 8, str, j, 0L);
-        ContactGroup abstractC0046qM1080g = this.f369o.m1080g(this);
-        if (abstractC0046qM1080g != null && abstractC0046qM1080g.f399g) {
-            abstractC0046qM1080g.mo1397n();
+        addFlag(i);
+        this.account.m1071e(getIdentifier());
+        clearStatus();
+        appendMessage(i != 4 ? 0 : 8, str, j, 0L);
+        ContactGroup abstractC0046qM1080g = this.account.m1080g(this);
+        if (abstractC0046qM1080g != null && abstractC0046qM1080g.isSpecial) {
+            abstractC0046qM1080g.toggleSpecial();
         }
-        m1228A();
-        Account abstractC0037h = this.f369o;
-        String str2 = this.f380w;
+        updateRenderState();
+        Account abstractC0037h = this.account;
+        String str2 = this.identifier;
         if (abstractC0037h == null || str2 == null) {
             return;
         }
@@ -161,77 +161,77 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: b */
-    public final int m1233b(String str) {
+    public final int sendMessage(String str) {
         ResourceManager.m925a(4);
         if (StringUtils.m1a(str)) {
             return 309;
         }
-        Account abstractC0037h = this.f369o;
+        Account abstractC0037h = this.account;
         long jM598g = AppState.m598g(1530);
         int iMo125a = abstractC0037h.mo125a(this, str, jM598g);
         if (0 != iMo125a) {
             return iMo125a;
         }
-        m1239a(1, str, jM598g, jM598g);
-        this.f379c = AppState.m598g(1530);
-        m1228A();
+        appendMessage(1, str, jM598g, jM598g);
+        this.lastMessageTime = AppState.m598g(1530);
+        updateRenderState();
         return 0;
     }
 
     /* renamed from: D */
-    public final int m1234D() {
-        return this.f369o.mo104c(this);
+    public final int validateDelete() {
+        return this.account.mo104c(this);
     }
 
     /* renamed from: E */
-    public final int m1235E() {
-        if (mo143m()) {
+    public final int validateBlock() {
+        if (isOnline()) {
             return 310;
         }
-        return this.f369o.mo105d(this);
+        return this.account.mo105d(this);
     }
 
     /* renamed from: F */
-    public final int m1236F() {
-        if (mo143m()) {
+    public final int validateUnblock() {
+        if (isOnline()) {
             return 310;
         }
-        return this.f369o.mo106e(this);
+        return this.account.mo106e(this);
     }
 
     @Override // p000.Sortable
     /* renamed from: a */
     public final int compareTo(Object obj) {
         Contact abstractC0041l = (Contact) obj;
-        int i = abstractC0041l.f378b - this.f378b;
+        int i = abstractC0041l.renderState - this.renderState;
         if (i != 0) {
             return i;
         }
-        long j = abstractC0041l.f379c - this.f379c;
-        return j != 0 ? j < 0 ? -1 : 1 : this.f377v.compareTo(abstractC0041l.f377v);
+        long j = abstractC0041l.lastMessageTime - this.lastMessageTime;
+        return j != 0 ? j < 0 ? -1 : 1 : this.sortKey.compareTo(abstractC0041l.sortKey);
     }
 
     /* renamed from: c */
-    public void mo134c() {
-        if (mo143m()) {
-            this.f379c = 0L;
+    public void clearUnread() {
+        if (isOnline()) {
+            this.lastMessageTime = 0L;
         }
-        this.f371p = false;
-        m1228A();
+        this.highlighted = false;
+        updateRenderState();
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:11:0x0097 */
     /* renamed from: a */
-    public final void m1238a(long j, int i) {
-        this.f375t = true;
-        ByteBuffer c0043nM851h = this.f370a == null ? XmppMailRuProtocol.m851h(this.f380w) : this.f370a;
-        this.f370a = c0043nM851h;
+    public final void updateMessageFlag(long j, int i) {
+        this.dirty = true;
+        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.m851h(this.identifier) : this.messageBuffer;
+        this.messageBuffer = c0043nM851h;
         int i2 = c0043nM851h.length;
         int i3 = 0;
         while (true) {
             int i4 = i3;
             if (i4 >= i2) {
-                m1245o();
+                saveMessageBuffer();
                 return;
             }
             int iM1351l = c0043nM851h.peekShortBE(i4);
@@ -244,12 +244,12 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: a */
-    public final void m1239a(int i, String str, long j, long j2) {
-        this.f375t = true;
-        ByteBuffer c0043nM851h = this.f370a == null ? XmppMailRuProtocol.m851h(this.f380w) : this.f370a;
-        this.f370a = c0043nM851h;
+    public final void appendMessage(int i, String str, long j, long j2) {
+        this.dirty = true;
+        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.m851h(this.identifier) : this.messageBuffer;
+        this.messageBuffer = c0043nM851h;
         int iM586d = AppState.m586d(102) - 1;
-        ByteBuffer c0043n = this.f370a;
+        ByteBuffer c0043n = this.messageBuffer;
         int i2 = 0;
         int i3 = 0;
         int i4 = c0043n.length;
@@ -264,20 +264,20 @@ public abstract class Contact implements Sortable {
             i2--;
         }
         c0043nM851h.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.m586d(246) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
-        m1245o();
-        this.f379c = AppState.m598g(1530);
-        m1228A();
+        saveMessageBuffer();
+        this.lastMessageTime = AppState.m598g(1530);
+        updateRenderState();
     }
 
     /* renamed from: G */
-    public final boolean m1240G() {
-        return this.f379c != 0;
+    public final boolean hasMessages() {
+        return this.lastMessageTime != 0;
     }
 
     /* renamed from: H */
-    public final long m1241H() {
+    public final long getLastSentTime() {
         long j = 0;
-        ByteBuffer c0043nM1380F = m1244f().duplicate();
+        ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
         while (c0043nM1380F.length > 0) {
             int iM1353u = c0043nM1380F.readShortBE();
             byte bM1344o = c0043nM1380F.readByte();
@@ -293,17 +293,17 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: I */
-    public final Screen m1242I() {
-        this.f375t = false;
-        String str = this.f376u;
+    public final Screen showMessages() {
+        this.dirty = false;
+        String str = this.displayName;
         AppState.m601a(1290, (Object) str);
-        int iMo139e = mo139e();
-        if ((this instanceof XmppContact) && ((XmppProtocol) this.f369o).mo83f() && iMo139e >= 381 && iMo139e <= 384) {
+        int iMo139e = getIcon();
+        if ((this instanceof XmppContact) && ((XmppProtocol) this.account).mo83f() && iMo139e >= 381 && iMo139e <= 384) {
             iMo139e += 4;
         }
         AppState.m594c(2594, iMo139e);
         Screen c0013amM75b = ScreenManager.m75b(2591);
-        ByteBuffer c0043nM1380F = m1244f().duplicate();
+        ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
         int iM624l = AppState.m624l();
         while (c0043nM1380F.length > 0) {
             int iM1353u = c0043nM1380F.readShortBE();
@@ -313,20 +313,20 @@ public abstract class Contact implements Sortable {
             String strM539n = Utils.m539n(c0043nM1380F.readUnicodeChars(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
-                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f376u).append(AppState.m584b(311)).append(m1248b(jM1341m, iM624l))), 8);
+                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.displayName).append(AppState.m584b(311)).append(formatTime(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
-                if (this.f369o.m1056C()) {
+                if (this.account.m1056C()) {
                     c0013amM75b.m250b(-1, AppState.m584b(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
                 int iIndexOf = strM539n.indexOf(10);
                 String strM13b = StringUtils.m13b(strM539n, iIndexOf);
                 String strM15c = StringUtils.m15c(strM539n, iIndexOf + 1);
-                c0013amM75b.m251a(StringUtils.m9b(strM13b, m1248b(jM1341m, iM624l)), 8);
-                m1243a(c0013amM75b, strM15c, i);
+                c0013amM75b.m251a(StringUtils.m9b(strM13b, formatTime(jM1341m, iM624l)), 8);
+                addMessageLines(c0013amM75b, strM15c, i);
             } else {
-                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(bM1344o == 0 ? this.f376u : this.f369o.f339I).append(',').append(' ').append(m1248b(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
-                m1243a(c0013amM75b, strM539n, i);
+                c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(bM1344o == 0 ? this.displayName : this.account.f339I).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
+                addMessageLines(c0013amM75b, strM539n, i);
             }
         }
         c0043nM1380F.clear();
@@ -334,7 +334,7 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: a */
-    private final void m1243a(Screen c0013am, String str, int i) {
+    private final void addMessageLines(Screen c0013am, String str, int i) {
         Vector vectorM1098a = Conversation.m1098a(str);
         int size = vectorM1098a.size();
         for (int i2 = 0; i2 < size; i2++) {
@@ -342,30 +342,30 @@ public abstract class Contact implements Sortable {
             if (Conversation.m1106f(str2)) {
                 c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{ResourceManager.m967e(0), str2});
             } else {
-                c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.f369o.mo80a()));
+                c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.account.mo80a()));
             }
         }
         NetworkUtils.m1212a(vectorM1098a);
     }
 
     /* renamed from: f */
-    private final ByteBuffer m1244f() {
-        if (this.f370a == null) {
-            this.f370a = XmppMailRuProtocol.m851h(this.f380w);
+    private final ByteBuffer getMessageBuffer() {
+        if (this.messageBuffer == null) {
+            this.messageBuffer = XmppMailRuProtocol.m851h(this.identifier);
         }
-        return this.f370a;
+        return this.messageBuffer;
     }
 
     /* renamed from: o */
-    private final void m1245o() {
-        XmppMailRuProtocol.m853a(this.f380w, m1244f().duplicate());
+    private final void saveMessageBuffer() {
+        XmppMailRuProtocol.m853a(this.identifier, getMessageBuffer().duplicate());
     }
 
     /* renamed from: J */
-    public final Screen m1246J() {
+    public final Screen showMessageSummary() {
         String strM1215a;
         Screen c0013amM75b = ScreenManager.m75b(2631);
-        ByteBuffer c0043nM1380F = m1244f().duplicate();
+        ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
         while (c0043nM1380F.length > 0) {
             int iM1353u = c0043nM1380F.readShortBE();
             c0043nM1380F.readByte();
@@ -384,30 +384,30 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: K */
-    public final int m1247K() {
-        if (m1244f().length > 0 || !this.f369o.m1056C()) {
+    public final int getDefaultAction() {
+        if (getMessageBuffer().length > 0 || !this.account.m1056C()) {
             return 40;
         }
-        if (mo990d()) {
+        if (isOffline()) {
             return ResourceManager.m946g();
         }
         return 63;
     }
 
     /* renamed from: b */
-    public abstract MenuItem mo138b();
+    public abstract MenuItem createMenuItem();
 
     /* renamed from: i */
-    public abstract boolean mo140i();
+    public abstract boolean canDelete();
 
     /* renamed from: j */
-    public abstract boolean mo141j();
+    public abstract boolean canBlock();
 
     /* renamed from: k */
-    public abstract boolean mo142k();
+    public abstract boolean canUnblock();
 
     /* renamed from: b */
-    private static String m1248b(long j, int i) {
+    private static String formatTime(long j, int i) {
         Calendar calendarM622k = AppState.m622k();
         calendarM622k.setTime(new Date(j));
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
@@ -422,28 +422,28 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: a */
-    public abstract String mo135a();
+    public abstract String getIdentifier();
 
     /* renamed from: d */
-    public boolean mo990d() {
+    public boolean isOffline() {
         return false;
     }
 
     /* renamed from: h */
-    public abstract void mo145h();
+    public abstract void performAction();
 
     /* renamed from: c */
-    public final void m1249c(String str) {
-        if (StringUtils.m6a(str, this.f376u)) {
+    public final void setDisplayName(String str) {
+        if (StringUtils.m6a(str, this.displayName)) {
             return;
         }
-        this.f376u = str;
-        this.f377v = StringUtils.m17c(str.toLowerCase());
+        this.displayName = str;
+        this.sortKey = StringUtils.m17c(str.toLowerCase());
         AppController.f152f = true;
     }
 
     public final String toString() {
-        return this.f376u;
+        return this.displayName;
     }
 
     /* renamed from: L */
@@ -451,10 +451,10 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: M */
-    public final int m1250M() {
-        if (mo140i()) {
+    public final int getContextAction() {
+        if (canDelete()) {
             return 267;
         }
-        return mo141j() ? 266 : -1;
+        return canBlock() ? 266 : -1;
     }
 }

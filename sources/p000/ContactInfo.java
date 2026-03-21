@@ -8,8 +8,8 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:m.class */
 public final class ContactInfo extends Hashtable {
     public ContactInfo(Contact abstractC0041l) {
-        put(ResourceManager.m967e(-2), abstractC0041l.f369o);
-        m1258a(0, abstractC0041l.f376u);
+        put(ResourceManager.m967e(-2), abstractC0041l.account);
+        m1258a(0, abstractC0041l.displayName);
         if (abstractC0041l instanceof MrimContact) {
             m1258a(3, ((MrimContact) abstractC0041l).f297d);
         } else if (abstractC0041l instanceof MmpContact) {
@@ -304,7 +304,7 @@ public final class ContactInfo extends Hashtable {
                             c0013amM75b.m248a(strM1215a, NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m12a(strM1256a, 8, 10)).append('/').append(StringUtils.m12a(strM1256a, 5, 7)).append('/').append(StringUtils.m13b(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.mo139e()).m898b(Utils.m522f(m1256a(13))));
+                                c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.getIcon()).m898b(Utils.m522f(m1256a(13))));
                                 break;
                             }
                             c0013amM75b.m248a(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);

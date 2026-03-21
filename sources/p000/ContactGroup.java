@@ -7,69 +7,69 @@ import java.util.Vector;
 public abstract class ContactGroup implements Sortable {
 
     /* renamed from: d */
-    public final Account f396d;
+    public final Account account;
 
     /* renamed from: e */
-    public final Vector f397e = NetworkUtils.m1213g();
+    public final Vector contacts = NetworkUtils.m1213g();
 
     /* renamed from: f */
-    public String f398f;
+    public String name;
 
     /* renamed from: g */
-    public boolean f399g;
+    public boolean isSpecial;
 
     /* renamed from: a */
-    private String f400a;
+    private String nameLower;
 
     public ContactGroup(Account abstractC0037h) {
-        this.f396d = abstractC0037h;
+        this.account = abstractC0037h;
     }
 
     /* renamed from: a */
-    public final void m1393a(Contact abstractC0041l) {
-        this.f397e.removeElement(abstractC0041l);
+    public final void removeContact(Contact abstractC0041l) {
+        this.contacts.removeElement(abstractC0041l);
     }
 
     /* renamed from: e */
-    public final Contact m1394e(int i) {
-        return (Contact) this.f397e.elementAt(i);
+    public final Contact getContact(int i) {
+        return (Contact) this.contacts.elementAt(i);
     }
 
     /* renamed from: a */
-    public void mo196a(ByteBuffer c0043n, boolean z) {
-        int size = this.f397e.size();
+    public void serialize(ByteBuffer c0043n, boolean z) {
+        int size = this.contacts.size();
         c0043n.writeIntLE(size);
         for (int i = 0; i < size; i++) {
-            m1394e(i).mo136a(c0043n);
+            getContact(i).deserialize(c0043n);
         }
-        c0043n.writeBoolean(this.f399g);
+        c0043n.writeBoolean(this.isSpecial);
         if (z) {
-            this.f397e.removeAllElements();
+            this.contacts.removeAllElements();
         }
-        Utils.m526b(this.f397e);
+        Utils.m526b(this.contacts);
     }
 
     /* renamed from: f */
-    public final MenuItem m1395f(int i) {
-        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().writeByte(35).writeIntAsString(this.f396d.f314j).writeByte(35).writeIntAsString(mo197b()).readAllByteStr()).m896a(this.f399g ? 30 : 31);
+    public final MenuItem createMenuItem(int i) {
+        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().writeByte(35).writeIntAsString(this.account.f314j).writeByte(35).writeIntAsString(getGroupType()).readAllByteStr()).m896a(this.isSpecial ? 30 : 31);
         c0032cM896a.f265d = this;
-        if (mo198a()) {
-            MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);
+        if (isCustom()) {
+            MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.name).append(' ').append('(')), 1, 0);
             int i2 = 0;
-            int size = this.f397e.size();
+            int size = this.contacts.size();
             while (true) {
                 size--;
                 if (size < 0) {
                     break;
                 }
-                Contact abstractC0041lM1394e = m1394e(size);
-                if (abstractC0041lM1394e.f371p && !abstractC0041lM1394e.mo144l() && !abstractC0041lM1394e.mo142k() && !abstractC0041lM1394e.mo990d() && !abstractC0041lM1394e.mo996n()) {
+                Contact abstractC0041lM1394e = getContact(size);
+                if (abstractC0041lM1394e.highlighted && !abstractC0041lM1394e.hasUnread() && !abstractC0041lM1394e.canUnblock() && !abstractC0041lM1394e.isOffline() && !abstractC0041lM1394e.isSystem()) {
                     i2++;
                 }
             }
             MenuItem c0032cM901a2 = c0032cM901a.m901a(StringUtils.m17c(Integer.toString(i2)), 1, 20);
             StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('/');
-            int size2 = this.f397e.size();
+            int size2 = this.contacts.size();
             int i3 = size2;
             int i4 = size2;
             while (true) {
@@ -77,84 +77,84 @@ public abstract class ContactGroup implements Sortable {
                 if (i4 < 0) {
                     break;
                 }
-                Contact abstractC0041lM1394e2 = m1394e(i4);
-                if (abstractC0041lM1394e2.mo990d() || abstractC0041lM1394e2.mo144l() || abstractC0041lM1394e2.mo142k() || abstractC0041lM1394e2.mo996n()) {
+                Contact abstractC0041lM1394e2 = getContact(i4);
+                if (abstractC0041lM1394e2.isOffline() || abstractC0041lM1394e2.hasUnread() || abstractC0041lM1394e2.canUnblock() || abstractC0041lM1394e2.isSystem()) {
                     i3--;
                 }
             }
             c0032cM901a2.m901a(NetworkUtils.m1215a(stringBufferAppend.append(i3).append(')')), 1, 0);
         } else if (i >= 0) {
-            c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(').append(i).append(')')), 1, 0);
+            c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.name).append(' ').append('(').append(i).append(')')), 1, 0);
         } else {
-            c0032cM896a.m901a(this.f398f, 1, 0);
+            c0032cM896a.m901a(this.name, 1, 0);
         }
         return c0032cM896a;
     }
 
     /* renamed from: m */
-    public int mo1396m() {
-        return this.f396d.mo123a(this);
+    public int getSortIndex() {
+        return this.account.mo123a(this);
     }
 
     /* renamed from: n */
-    public int mo1397n() {
-        this.f399g = !this.f399g;
+    public int toggleSpecial() {
+        this.isSpecial = !this.isSpecial;
         return 4;
     }
 
     /* renamed from: o */
-    public final boolean m1398o() {
-        return !this.f399g;
+    public final boolean isNotSpecial() {
+        return !this.isSpecial;
     }
 
     /* renamed from: b */
-    public int mo1399b(String str) {
-        return this.f396d.mo124a(this, str);
+    public int rename(String str) {
+        return this.account.mo124a(this, str);
     }
 
     /* renamed from: b */
-    public final boolean m1400b(Contact abstractC0041l) {
-        return this.f397e.contains(abstractC0041l);
+    public final boolean containsContact(Contact abstractC0041l) {
+        return this.contacts.contains(abstractC0041l);
     }
 
     /* renamed from: a */
-    public abstract boolean mo198a();
+    public abstract boolean isCustom();
 
     @Override // p000.Sortable
     /* renamed from: a */
     public final int compareTo(Object obj) {
-        return this.f400a.compareTo(((ContactGroup) obj).f400a);
+        return this.nameLower.compareTo(((ContactGroup) obj).nameLower);
     }
 
     /* renamed from: b */
-    public final void m1401b(Object obj) {
-        this.f397e.addElement(obj);
+    public final void addContact(Object obj) {
+        this.contacts.addElement(obj);
     }
 
     /* renamed from: c */
-    public final void m1402c(Object obj) {
-        this.f397e.removeElement(obj);
+    public final void removeElement(Object obj) {
+        this.contacts.removeElement(obj);
     }
 
     /* renamed from: c */
-    public final void m1403c(String str) {
-        if (StringUtils.m6a(str, this.f398f)) {
+    public final void setNameIfChanged(String str) {
+        if (StringUtils.m6a(str, this.name)) {
             return;
         }
-        m1404d(str);
+        setName(str);
         AppController.f152f = true;
     }
 
     /* renamed from: d */
-    public final void m1404d(String str) {
-        this.f398f = str;
-        this.f400a = StringUtils.m17c(str.toLowerCase());
+    public final void setName(String str) {
+        this.name = str;
+        this.nameLower = StringUtils.m17c(str.toLowerCase());
     }
 
     /* renamed from: b */
-    public abstract int mo197b();
+    public abstract int getGroupType();
 
     public final String toString() {
-        return this.f398f;
+        return this.name;
     }
 }

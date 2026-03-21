@@ -108,16 +108,16 @@ public abstract class Account {
         this.f321q = new Hashtable();
         this.f333C = NetworkUtils.m1213g();
         ContactGroup abstractC0046qMo85b = mo85b();
-        abstractC0046qMo85b.f399g = true;
+        abstractC0046qMo85b.isSpecial = true;
         this.f335E = abstractC0046qMo85b;
         ContactGroup abstractC0046qMo87d = mo87d();
-        abstractC0046qMo87d.f399g = true;
+        abstractC0046qMo87d.isSpecial = true;
         this.f336F = abstractC0046qMo87d;
         ContactGroup abstractC0046qMo86c = mo86c();
-        abstractC0046qMo86c.f399g = true;
+        abstractC0046qMo86c.isSpecial = true;
         this.f337G = abstractC0046qMo86c;
         ContactGroup abstractC0046qMo88e = mo88e();
-        abstractC0046qMo88e.f399g = true;
+        abstractC0046qMo88e.isSpecial = true;
         this.f338H = abstractC0046qMo88e;
         this.f340J = Utils.m538m(str);
     }
@@ -196,12 +196,12 @@ public abstract class Account {
                 if (i2 < 0) {
                     break;
                 }
-                m1082g(i2).mo196a(c0043n, true);
+                m1082g(i2).serialize(c0043n, true);
             }
-            this.f334D.mo196a(c0043n, true);
+            this.f334D.serialize(c0043n, true);
             this.f321q.clear();
         } else {
-            this.f334D.mo196a(c0043n.writeIntLE(0), false);
+            this.f334D.serialize(c0043n.writeIntLE(0), false);
         }
         return this;
     }
@@ -382,13 +382,13 @@ public abstract class Account {
                 return;
             }
             ContactGroup abstractC0046qM1082g = m1082g(size);
-            int size2 = abstractC0046qM1082g.f397e.size();
+            int size2 = abstractC0046qM1082g.contacts.size();
             while (true) {
                 size2--;
                 if (size2 < 0) {
                     break;
                 }
-                Contact abstractC0041lM1394e = abstractC0046qM1082g.m1394e(size2);
+                Contact abstractC0041lM1394e = abstractC0046qM1082g.getContact(size2);
                 m1074a(abstractC0041lM1394e, false);
                 AppController.m415b(abstractC0041lM1394e);
             }
@@ -400,7 +400,7 @@ public abstract class Account {
     public final void m1068L() {
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
-            ((Contact) enumerationElements.nextElement()).mo134c();
+            ((Contact) enumerationElements.nextElement()).clearUnread();
         }
         AppController.f152f = true;
     }
@@ -413,13 +413,13 @@ public abstract class Account {
     /* renamed from: d */
     public final void m1070d(String str) {
         Contact abstractC0041lM1069c = m1069c((Object) str);
-        if (abstractC0041lM1069c == null || abstractC0041lM1069c.mo143m() || abstractC0041lM1069c.mo144l() || abstractC0041lM1069c.mo996n()) {
+        if (abstractC0041lM1069c == null || abstractC0041lM1069c.isOnline() || abstractC0041lM1069c.hasUnread() || abstractC0041lM1069c.isSystem()) {
             return;
         }
         AppController.m418c(abstractC0041lM1069c);
         AppState.m614m(1242).addElement(abstractC0041lM1069c);
-        abstractC0041lM1069c.f372q = AppState.m586d(1531);
-        abstractC0041lM1069c.f375t = true;
+        abstractC0041lM1069c.statusCode = AppState.m586d(1531);
+        abstractC0041lM1069c.dirty = true;
     }
 
     /* renamed from: e */
@@ -438,7 +438,7 @@ public abstract class Account {
             abstractC0041lMo107b = mo107b(str);
         }
         this.f328x++;
-        abstractC0041lMo107b.m1232a(j, str2, 1);
+        abstractC0041lMo107b.receiveMessageFull(j, str2, 1);
     }
 
     /* renamed from: b */
@@ -448,7 +448,7 @@ public abstract class Account {
     public final void m1073a(String str, long j, int i) {
         Contact abstractC0041lM1069c = m1069c((Object) str);
         if (abstractC0041lM1069c != null) {
-            abstractC0041lM1069c.m1238a(j, i);
+            abstractC0041lM1069c.updateMessageFlag(j, i);
         }
     }
 
@@ -478,11 +478,11 @@ public abstract class Account {
         while (true) {
             size--;
             if (size < 0) {
-                this.f334D.m1402c(abstractC0041l);
+                this.f334D.removeElement(abstractC0041l);
                 AppController.m415b(abstractC0041l);
                 return 0;
             }
-            m1082g(size).m1402c(abstractC0041l);
+            m1082g(size).removeElement(abstractC0041l);
         }
     }
 
@@ -552,12 +552,12 @@ public abstract class Account {
         if (abstractC0046q == this.f334D || abstractC0046q == this.f335E) {
             return 304;
         }
-        return abstractC0046q.f397e.size() > 0 ? 303 : 0;
+        return abstractC0046q.contacts.size() > 0 ? 303 : 0;
     }
 
     /* renamed from: b */
     public int mo118b(Contact abstractC0041l) {
-        return (abstractC0041l.mo143m() || m1056C()) ? 0 : 299;
+        return (abstractC0041l.isOnline() || m1056C()) ? 0 : 299;
     }
 
     /* renamed from: d */
@@ -585,7 +585,7 @@ public abstract class Account {
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
-            if (abstractC0041l.mo144l()) {
+            if (abstractC0041l.hasUnread()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
         }
@@ -598,7 +598,7 @@ public abstract class Account {
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
-            if (abstractC0041l.mo990d()) {
+            if (abstractC0041l.isOffline()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
         }
@@ -634,7 +634,7 @@ public abstract class Account {
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             Contact abstractC0041l = (Contact) enumerationElements.nextElement();
-            if (abstractC0041l.mo143m()) {
+            if (abstractC0041l.isOnline()) {
                 vectorM1213g.addElement(abstractC0041l);
             }
         }
@@ -644,16 +644,16 @@ public abstract class Account {
     /* renamed from: g */
     public final ContactGroup m1080g(Contact abstractC0041l) {
         ContactGroup abstractC0046qM1082g;
-        if (abstractC0041l.mo143m() || this.f334D.m1400b(abstractC0041l)) {
+        if (abstractC0041l.isOnline() || this.f334D.containsContact(abstractC0041l)) {
             return this.f334D;
         }
-        if (abstractC0041l.mo996n()) {
+        if (abstractC0041l.isSystem()) {
             return this.f338H;
         }
-        if (abstractC0041l.mo144l()) {
+        if (abstractC0041l.hasUnread()) {
             return this.f335E;
         }
-        if (abstractC0041l.mo990d()) {
+        if (abstractC0041l.isOffline()) {
             return this.f336F;
         }
         int size = this.f313i.size();
@@ -663,21 +663,21 @@ public abstract class Account {
                 return null;
             }
             abstractC0046qM1082g = m1082g(size);
-        } while (!abstractC0046qM1082g.m1400b(abstractC0041l));
+        } while (!abstractC0046qM1082g.containsContact(abstractC0041l));
         return abstractC0046qM1082g;
     }
 
     /* renamed from: h */
     public final void m1081h(Contact abstractC0041l) {
-        Contact abstractC0041l2 = (Contact) this.f321q.get(abstractC0041l.mo135a());
+        Contact abstractC0041l2 = (Contact) this.f321q.get(abstractC0041l.getIdentifier());
         if (abstractC0041l2 != null && abstractC0041l2 != abstractC0041l) {
-            this.f334D.m1393a(abstractC0041l2);
-            this.f335E.m1393a(abstractC0041l2);
-            this.f336F.m1393a(abstractC0041l2);
-            this.f337G.m1393a(abstractC0041l2);
-            this.f338H.m1393a(abstractC0041l2);
+            this.f334D.removeContact(abstractC0041l2);
+            this.f335E.removeContact(abstractC0041l2);
+            this.f336F.removeContact(abstractC0041l2);
+            this.f337G.removeContact(abstractC0041l2);
+            this.f338H.removeContact(abstractC0041l2);
         }
-        this.f321q.put(abstractC0041l.mo135a(), abstractC0041l);
+        this.f321q.put(abstractC0041l.getIdentifier(), abstractC0041l);
     }
 
     /* renamed from: g */

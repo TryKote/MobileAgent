@@ -43,7 +43,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.f324t = 0;
         this.f325u = 1;
         MrimContactGroup c0010aj = new MrimContactGroup(this, -1, 102, AppState.m584b(1039));
-        c0010aj.f399g = true;
+        c0010aj.isSpecial = true;
         this.f334D = c0010aj;
         this.f231g = new VCard();
         this.f232h = true;
@@ -69,7 +69,7 @@ public final class MrimAccount extends Account implements ListItem {
             }
         }
         MrimContactGroup c0010aj = new MrimContactGroup(this, c0043n);
-        c0010aj.f399g = true;
+        c0010aj.isSpecial = true;
         this.f334D = c0010aj;
         ByteBuffer c0043n2 = new ByteBuffer();
         int iM1328e2 = c0043n.readInt();
@@ -365,19 +365,19 @@ public final class MrimAccount extends Account implements ListItem {
                     c0043nM1349s.readUTF8Str((String) null);
                     c0043nM1349s.readUTF8Str((String) null);
                     MrimContact c0035fM717f = m717f(c0043nM1349s.readHexStr());
-                    if (c0035fM717f != null && !c0035fM717f.mo143m()) {
+                    if (c0035fM717f != null && !c0035fM717f.isOnline()) {
                         c0043nM1349s.readInt();
                         String strM1334g2 = c0043nM1349s.readWideStr();
                         int i7 = c0035fM717f.f299f;
                         c0035fM717f.f299f = iM1328e;
                         c0035fM717f.f301h = strM1334g2;
-                        c0035fM717f.f373r = AppController.m349a(iM1328e, strM1334g);
-                        c0035fM717f.f371p = iM1328e != 0;
+                        c0035fM717f.defaultIcon = AppController.m349a(iM1328e, strM1334g);
+                        c0035fM717f.highlighted = iM1328e != 0;
                         if (iM1328e == 0) {
                             c0035fM717f.m999p();
                         }
-                        c0035fM717f.f375t = true;
-                        c0035fM717f.m1228A();
+                        c0035fM717f.dirty = true;
+                        c0035fM717f.updateRenderState();
                         if (i7 == 0 && iM1328e != 0) {
                             ResourceManager.m925a(1);
                             break;
@@ -570,19 +570,19 @@ public final class MrimAccount extends Account implements ListItem {
                     int iM1328e3 = c0043nM1349s.readInt();
                     String strM1335e2 = c0043nM1349s.readUTF8Str((String) null);
                     MrimContact c0035fM717f3 = m717f(strM17c);
-                    if (c0035fM717f3 != null && !c0035fM717f3.mo143m()) {
+                    if (c0035fM717f3 != null && !c0035fM717f3.isOnline()) {
                         if ((iM1328e2 & 2) == 0) {
                             if ((iM1328e2 & 5) != 0) {
-                                if (AppState.m587e(244) && !StringUtils.m6a(strM1335e2, c0035fM717f3.f303i) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.m1241H() != jM1341m) {
-                                    AppState.m601a(1237, (Object) c0035fM717f3.f380w);
+                                if (AppState.m587e(244) && !StringUtils.m6a(strM1335e2, c0035fM717f3.f303i) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.getLastSentTime() != jM1341m) {
+                                    AppState.m601a(1237, (Object) c0035fM717f3.identifier);
                                     ResourceManager.m925a(6);
-                                    c0035fM717f3.m1227c(2);
-                                    c0035fM717f3.m1239a(16, strM1335e2, 0L, jM1341m);
-                                    ContactGroup abstractC0046qM1080g = c0035fM717f3.f369o.m1080g(c0035fM717f3);
-                                    if (abstractC0046qM1080g != null && abstractC0046qM1080g.f399g) {
-                                        abstractC0046qM1080g.mo1397n();
+                                    c0035fM717f3.addFlag(2);
+                                    c0035fM717f3.appendMessage(16, strM1335e2, 0L, jM1341m);
+                                    ContactGroup abstractC0046qM1080g = c0035fM717f3.account.m1080g(c0035fM717f3);
+                                    if (abstractC0046qM1080g != null && abstractC0046qM1080g.isSpecial) {
+                                        abstractC0046qM1080g.toggleSpecial();
                                     }
-                                    c0035fM717f3.m1228A();
+                                    c0035fM717f3.updateRenderState();
                                 }
                                 c0035fM717f3.f303i = strM1335e2;
                                 break;
@@ -665,7 +665,7 @@ public final class MrimAccount extends Account implements ListItem {
         Enumeration enumerationElements = this.f321q.elements();
         while (enumerationElements.hasMoreElements()) {
             MrimContact c0035f = (MrimContact) enumerationElements.nextElement();
-            if (c0035f.mo996n() && !c0035f.mo142k()) {
+            if (c0035f.isSystem() && !c0035f.canUnblock()) {
                 vectorMo720O.addElement(c0035f);
             }
         }
@@ -903,7 +903,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         MrimContactGroup c0010aj = (MrimContactGroup) abstractC0046q;
         ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(c0010aj.f74a).writeIntLE(c0010aj.f75b | 1).writeIntLE(0);
-        String str = c0010aj.f398f;
+        String str = c0010aj.name;
         return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, c0043nM1360p.writeStringUTF16(str).writeStringUTF16(str).writeIntLE(0)), ResourceManager.m967e(3), c0010aj}));
     }
 
@@ -914,11 +914,11 @@ public final class MrimAccount extends Account implements ListItem {
         if (0 != iMo118b) {
             return iMo118b;
         }
-        if (abstractC0041l.mo143m()) {
+        if (abstractC0041l.isOnline()) {
             return m1074a(abstractC0041l, true);
         }
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b | 1).writeIntLE(c0035f.f296c).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.f376u).writeStringLatin1(c0035f.f300g)), ResourceManager.m967e(2), c0035f}));
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b | 1).writeIntLE(c0035f.f296c).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.f300g)), ResourceManager.m967e(2), c0035f}));
     }
 
     @Override // p000.Account
@@ -965,7 +965,7 @@ public final class MrimAccount extends Account implements ListItem {
             strArr[i] = Utils.m532i((String) objArr[i + 1]);
         }
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        if (c0035f.mo990d() && length == 0) {
+        if (c0035f.isOffline() && length == 0) {
             return 709;
         }
         Enumeration enumerationElements = this.f321q.elements();
@@ -1010,7 +1010,7 @@ public final class MrimAccount extends Account implements ListItem {
             return iMo734a;
         }
         MrimContact c0035fM717f = m717f(str);
-        if (c0035fM717f == null || c0035fM717f.mo143m()) {
+        if (c0035fM717f == null || c0035fM717f.isOnline()) {
             m1052c(AppController.m395b(this, str));
             return m1052c(XmppContactGroup.m1024a(this, 0, str, str2, str3, (MrimContactGroup) abstractC0046q, z));
         }
@@ -1022,8 +1022,8 @@ public final class MrimAccount extends Account implements ListItem {
     /* renamed from: c */
     public final int mo104c(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        if (c0035f.mo143m()) {
-            return m1052c(XmppContactGroup.m1024a(this, 48, c0035f.f297d, c0035f.f376u, AppState.f181d, m718f(), false));
+        if (c0035f.isOnline()) {
+            return m1052c(XmppContactGroup.m1024a(this, 48, c0035f.f297d, c0035f.displayName, AppState.f181d, m718f(), false));
         }
         int i = c0035f.f295b;
         return m1052c(ResourceManager.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
@@ -1083,7 +1083,7 @@ public final class MrimAccount extends Account implements ListItem {
     /* renamed from: k */
     private final String m736k(String str) {
         MrimContact c0035fM717f = m717f(str);
-        return c0035fM717f != null ? c0035fM717f.f376u : str;
+        return c0035fM717f != null ? c0035fM717f.displayName : str;
     }
 
     /* renamed from: l */
@@ -1099,14 +1099,14 @@ public final class MrimAccount extends Account implements ListItem {
             String str5 = AppState.f181d;
             ContactGroup abstractC0046q = this.f334D;
             MrimContact c0035f2 = new MrimContact(this, 0, 65664, 3, str, str3, 0, 0, str5, str5, str5);
-            abstractC0046q.m1401b((Object) c0035f2);
+            abstractC0046q.addContact((Object) c0035f2);
             if (this.f313i.size() > 0) {
                 m1052c(XmppContactGroup.m1024a(this, 128, str, str3, str5, m718f(), false));
             }
             c0035f = c0035f2;
         }
         this.f328x++;
-        c0035f.m1231a(j, m737l(str4).append(str2));
+        c0035f.receiveMessage(j, m737l(str4).append(str2));
     }
 
     /* renamed from: a */
@@ -1122,7 +1122,7 @@ public final class MrimAccount extends Account implements ListItem {
         while (true) {
             iM1328e--;
             if (iM1328e < 0) {
-                c0035fM717f.m1231a(j, stringBufferAppend);
+                c0035fM717f.receiveMessage(j, stringBufferAppend);
                 return;
             }
             Utils.m496a(stringBufferAppend.append(m736k(c0043n.readWideStr())), iM1328e != 0);
@@ -1148,7 +1148,7 @@ public final class MrimAccount extends Account implements ListItem {
         String str2 = AppState.f181d;
         ContactGroup abstractC0046q = this.f334D;
         MrimContact c0035f = new MrimContact(this, 0, 65536, 3, str, str, 0, 0, str2, str2, str2);
-        abstractC0046q.m1401b((Object) c0035f);
+        abstractC0046q.addContact((Object) c0035f);
         m1052c(AppController.m403a(this, str, i));
         return c0035f;
     }

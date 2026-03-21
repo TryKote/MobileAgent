@@ -26,21 +26,21 @@ public final class XmppContactGroup extends ContactGroup {
     public XmppContactGroup(XmppProtocol c0005ae, int i, String str) {
         super(c0005ae);
         this.f309h = i;
-        m1403c(str);
+        setNameIfChanged(str);
     }
 
     public XmppContactGroup(XmppProtocol c0005ae, ByteBuffer c0043n) {
         super(c0005ae);
-        m1403c(c0043n.readUTF8Str((String) null));
+        setNameIfChanged(c0043n.readUTF8Str((String) null));
         this.f309h = c0043n.readInt();
         int iM1328e = c0043n.readInt();
         while (true) {
             iM1328e--;
             if (iM1328e < 0) {
-                this.f399g = c0043n.readBoolean();
+                this.isSpecial = c0043n.readBoolean();
                 return;
             }
-            m1401b((Object) new XmppContact(c0005ae, c0043n));
+            addContact((Object) new XmppContact(c0005ae, c0043n));
         }
     }
 
@@ -50,21 +50,21 @@ public final class XmppContactGroup extends ContactGroup {
 
     @Override // p000.ContactGroup
     /* renamed from: a */
-    public final void mo196a(ByteBuffer c0043n, boolean z) {
-        c0043n.writeStringUTF16(this.f398f);
+    public final void serialize(ByteBuffer c0043n, boolean z) {
+        c0043n.writeStringUTF16(this.name);
         c0043n.writeIntLE(this.f309h);
-        super.mo196a(c0043n, z);
+        super.serialize(c0043n, z);
     }
 
     @Override // p000.ContactGroup
     /* renamed from: a */
-    public final boolean mo198a() {
+    public final boolean isCustom() {
         return this.f309h <= 0;
     }
 
     @Override // p000.ContactGroup
     /* renamed from: b */
-    public final int mo197b() {
+    public final int getGroupType() {
         return this.f309h;
     }
 
