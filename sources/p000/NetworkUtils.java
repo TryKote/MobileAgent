@@ -91,9 +91,9 @@ public final class NetworkUtils {
             Thread.sleep(1000L);
             AppController.m343s();
             if (str == null) {
-                HttpClient c0024axM631b = HttpClient.m631b((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
+                HttpClient c0024axM631b = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
                 c0024ax = c0024axM631b;
-                if (c0024axM631b.m634a() == 200) {
+                if (c0024axM631b.getResponseCode() == 200) {
                     Vector vector = new ByteBuffer(c0024ax).parseXmlStr().children;
                     XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.m298f()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.m968a(false).toString()));
                     for (int i6 = 0; i6 < vector.size(); i6++) {
@@ -235,20 +235,20 @@ public final class NetworkUtils {
                     c0043nM1310c.writeBytesAt(bArrM1211a, 0, i9);
                 }
                 c0043nM1377k.clear();
-                HttpClient c0024axM632a = HttpClient.m632a(new ByteBuffer().writeCompressed(1311655).writeCompressed(524300).writeCompressed(720924).getStringAndClear());
+                HttpClient c0024axM632a = HttpClient.createMockClient(new ByteBuffer().writeCompressed(1311655).writeCompressed(524300).writeCompressed(720924).getStringAndClear());
                 c0024ax = c0024axM632a;
-                c0024axM632a.m642a(c0043nM1310c.length, 1414745936, 1038).m641a(c0043nM1310c).m634a();
+                c0024axM632a.sendHttpRequest(c0043nM1310c.length, 1414745936, 1038).writeBuffer(c0043nM1310c).getResponseCode();
             }
-            HttpClient.m633a(c0024ax);
+            HttpClient.closeAndUpdateStats(c0024ax);
             AppController.m344t();
             releaseBytes(bArrM1211a);
         } catch (RuntimeException th) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             releaseBytes(bArrM1211a);
             throw th;
         } catch (Throwable th) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             releaseBytes(bArrM1211a);
             throw new RuntimeException(th);
@@ -1161,24 +1161,24 @@ public final class NetworkUtils {
         try {
             try {
                 AppController.m343s();
-                HttpClient c0024axM630a = HttpClient.m630a(objArr[2]);
-                int iM634a = c0024axM630a.m634a();
+                HttpClient c0024axM630a = HttpClient.createWithType3(objArr[2]);
+                int iM634a = c0024axM630a.getResponseCode();
                 if (iM634a == 200) {
                     ByteBuffer c0043n = new ByteBuffer(c0024axM630a);
                     switch (((Integer) objArr[1]).intValue()) {
                         case 0:
                             m1226a(objArr, c0043n.parseXmlStr());
-                            HttpClient.m633a(c0024axM630a);
+                            HttpClient.closeAndUpdateStats(c0024axM630a);
                             AppController.m344t();
                             return;
                         case 1:
                             objArr[3] = c0043n.toImage();
-                            HttpClient.m633a(c0024axM630a);
+                            HttpClient.closeAndUpdateStats(c0024axM630a);
                             AppController.m344t();
                             return;
                         case 2:
                             m1226a(objArr, c0043n.parseXmlStr());
-                            HttpClient.m633a(c0024axM630a);
+                            HttpClient.closeAndUpdateStats(c0024axM630a);
                             AppController.m344t();
                             return;
                     }
@@ -1186,11 +1186,11 @@ public final class NetworkUtils {
                 throw new Throwable(StringUtils.intern(Integer.toString(iM634a)));
             } catch (Throwable th) {
                 objArr[0] = th;
-                HttpClient.m633a((HttpClient) null);
+                HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.m344t();
             }
         } catch (Throwable th2) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             throw th2;
         }

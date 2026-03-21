@@ -231,10 +231,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             r1 = 0
             r0 = r0[r1]     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m630a(r0)     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType3(r0)     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto Ld3
             n r0 = new n     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
@@ -250,7 +250,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r0
         Lda:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
@@ -262,7 +262,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.Integer r0 = p000.ResourceManager.m967e(r0)     // Catch: java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r10 = r0
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
@@ -272,7 +272,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         Lfa:
             r12 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
@@ -296,10 +296,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r13 = r1
             r1 = 0
             r2 = 3
-            ax r0 = p000.HttpClient.m629a(r0, r1, r2)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createHttpClient(r0, r1, r2)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L13f
             r0 = r8
@@ -318,7 +318,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0[r1] = r2     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
         L148:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L150:
@@ -328,13 +328,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.Integer r2 = p000.ResourceManager.m967e(r2)     // Catch: java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0[r1] = r2     // Catch: java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L162:
             r11 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r11
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -439,10 +439,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 987652(0xf1204, float:1.383995E-39)
             n r0 = r0.writeCompressed(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             java.lang.String r0 = r0.getStringAndClear()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r0
             r8 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L2d0
             n r0 = new n     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
@@ -527,7 +527,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r10
             if (r0 >= 0) goto L246
             r0 = r8
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L2d0:
@@ -537,13 +537,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
         L2d8:
             r0 = r8
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L2e1:
             r9 = move-exception
             r0 = r8
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r9
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -598,10 +598,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L36d
             n r0 = new n     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
@@ -618,7 +618,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r10
             r0[r1] = r2     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -638,7 +638,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r10
             r0[r1] = r2     // Catch: java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -646,7 +646,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L392:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -668,10 +668,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 254(0xfe, float:3.56E-43)
             n r0 = r0.writeEncodedInt(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             java.lang.String r0 = r0.getStringAndClear()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = r0
             r8 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L3ed
             n r0 = new n     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
@@ -683,7 +683,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             av r0 = r0.parseXml()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             p000.StringUtils.m44a(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r0 = r8
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L3ed:
@@ -693,13 +693,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
         L3f5:
             r0 = r8
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L3fe:
             r9 = move-exception
             r0 = r8
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r9
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -719,10 +719,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.Object[] r0 = p000.XmppContactGroup.m1040c(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L4c6
             n r0 = new n     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
@@ -800,7 +800,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.MapRenderer.m649a(r0, r1)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
         L4b9:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -819,7 +819,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r8 = r1
             p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -827,7 +827,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L4e9:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -849,10 +849,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = r8
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L56e
             n r0 = new n     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
@@ -896,7 +896,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
         L566:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L56e:
@@ -906,13 +906,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
         L576:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L57f:
             r15 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r15
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -935,17 +935,17 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             p000.AppController.m343s()     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r0 = r8
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L5c7
             n r0 = new n     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r1 = r9
             r0.<init>(r1)     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L5c7:
@@ -955,13 +955,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
         L5cf:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         L5d8:
             r11 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r11
             throw r0     // Catch: java.lang.Throwable -> La84
@@ -992,10 +992,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             r1 = 0
             r0 = r0[r1]     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L65c
             n r0 = new n     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
@@ -1019,7 +1019,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r11 = r1
             r1 = r17
             r2 = r19
-            java.util.Vector r0 = p000.VCard.m64a(r0, r1, r2)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.VCard.parseMapPointsFromJson(r0, r1, r2)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             p000.ResourceManager.f289h = r0     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             bb r0 = new bb     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r1 = r0
@@ -1028,7 +1028,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1.<init>(r2, r3)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1040,7 +1040,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
         L664:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1048,7 +1048,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L672:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1070,10 +1070,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             r1 = 0
             r0 = r0[r1]     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L6cf
             n r0 = new n     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
@@ -1089,7 +1089,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r2
             p000.ContactListParser.parseContactsSync(r0, r1)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1101,7 +1101,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
         L6d7:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1109,7 +1109,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L6e5:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1131,10 +1131,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             r1 = 0
             r0 = r0[r1]     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L741
             n r0 = new n     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
@@ -1153,7 +1153,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r11
             p000.ContactListParser.parseContactsAsync(r0, r1, r2)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1165,7 +1165,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
         L749:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1173,7 +1173,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L757:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1215,10 +1215,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.String r1 = p000.AppState.getString(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.String r0 = p000.NetworkUtils.bufToStringCached(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
-            ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = 200(0xc8, float:2.8E-43)
             if (r0 != r1) goto L7fe
             n r0 = new n     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
@@ -1243,7 +1243,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r18
             r3 = 1
             r2 = r2[r3]     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
-            java.util.Vector r0 = p000.VCard.m64a(r0, r1, r2)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.VCard.parseMapPointsFromJson(r0, r1, r2)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r10 = r0
             r0 = r11
             r1 = r10
@@ -1253,7 +1253,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r11
             p000.IOUtils.m786a(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1286,7 +1286,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r10
             p000.IOUtils.m786a(r0)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1294,7 +1294,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L835:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.m1042b(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
@@ -1442,10 +1442,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r1[r2]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             h r1 = (p000.Account) r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r2 = 0
-            ax r0 = p000.HttpClient.m629a(r0, r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            ax r0 = p000.HttpClient.createHttpClient(r0, r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
-            int r0 = r0.m634a()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r1 = r0
             r15 = r1
             r1 = 200(0xc8, float:2.8E-43)
@@ -1575,7 +1575,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0.f37e = r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
         La48:
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         La50:
@@ -1597,13 +1597,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r10
             r0.m94a(r1)     // Catch: java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             return
         La77:
             r16 = move-exception
             r0 = r9
-            p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84

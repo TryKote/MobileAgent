@@ -168,7 +168,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void m931a(PhoneContact c0020at, int i) {
-        m932a(VCard.m63a(c0020at, i), c0020at, i);
+        m932a(VCard.formatPhoneContactUrl(c0020at, i), c0020at, i);
     }
 
     /* renamed from: a */
@@ -331,8 +331,8 @@ public final class ResourceManager {
         try {
             try {
                 AppController.m343s();
-                HttpClient c0024axM630a = HttpClient.m630a(obj);
-                if (c0024axM630a.m634a() != 200) {
+                HttpClient c0024axM630a = HttpClient.createWithType3(obj);
+                if (c0024axM630a.getResponseCode() != 200) {
                     throw new Throwable();
                 }
                 String str = null;
@@ -355,18 +355,18 @@ public final class ResourceManager {
                     if (z && str != null) {
                         NetworkUtils.releaseVector(vector);
                         IOUtils.m778d((Object) AppState.getString(494));
-                        HttpClient.m633a(c0024axM630a);
+                        HttpClient.closeAndUpdateStats(c0024axM630a);
                         AppController.m344t();
                         return;
                     }
                 }
             } catch (Throwable th) {
                 IOUtils.m778d((Object) StringUtils.m8a(493, (Object) null));
-                HttpClient.m633a((HttpClient) null);
+                HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.m344t();
             }
         } catch (Throwable th2) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             throw th2;
         }
@@ -721,8 +721,8 @@ public final class ResourceManager {
     public static final void m965b(String str) {
         try {
             AppController.m343s();
-            HttpClient c0024axM631b = HttpClient.m631b((Object) str);
-            if (c0024axM631b.m634a() != 200) {
+            HttpClient c0024axM631b = HttpClient.createWithType2((Object) str);
+            if (c0024axM631b.getResponseCode() != 200) {
                 throw new Throwable();
             }
             Vector vectorM513a = Utils.m513a(new ByteBuffer(c0024axM631b).readUTFWithLen(), '\n', '\r');
@@ -732,7 +732,7 @@ public final class ResourceManager {
                 size--;
                 if (size < 0) {
                     NetworkUtils.releaseVector(vectorM513a);
-                    HttpClient.m633a(c0024axM631b);
+                    HttpClient.closeAndUpdateStats(c0024axM631b);
                     AppController.m344t();
                     return;
                 } else {
@@ -744,11 +744,11 @@ public final class ResourceManager {
                 }
             }
         } catch (RuntimeException th) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             throw th;
         } catch (Throwable th) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             throw new RuntimeException(th);
         }
@@ -832,8 +832,8 @@ public final class ResourceManager {
     public static final void m973p() {
         try {
             AppController.m343s();
-            HttpClient c0024axM629a = HttpClient.m629a(AppState.getString(3607418), (Account) null, 3);
-            if (c0024axM629a.m634a() != 200) {
+            HttpClient c0024axM629a = HttpClient.createHttpClient(AppState.getString(3607418), (Account) null, 3);
+            if (c0024axM629a.getResponseCode() != 200) {
                 throw new Throwable();
             }
             ByteBuffer c0043n = new ByteBuffer(c0024axM629a);
@@ -843,12 +843,12 @@ public final class ResourceManager {
             synchronized (AppState.pool[1357]) {
                 m970a((byte) 0);
             }
-            HttpClient.m633a(c0024axM629a);
+            HttpClient.closeAndUpdateStats(c0024axM629a);
             AppController.m344t();
         } catch (Throwable unused) {
             synchronized (AppState.pool[1357]) {
                 m970a((byte) 0);
-                HttpClient.m633a((HttpClient) null);
+                HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.m344t();
             }
         }
@@ -861,11 +861,11 @@ public final class ResourceManager {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         ChatRoom c0052wM745h = c0028ba.m745h(iM586d);
         if (StringUtils.m3a(848, str)) {
-            c0052wM745h.f415g.addElement(strM584b);
+            c0052wM745h.readMessages.addElement(strM584b);
             return 0;
         }
         if (StringUtils.m3a(847, str)) {
-            c0052wM745h.m1417d(strM584b);
+            c0052wM745h.markMessageRead(strM584b);
             return 0;
         }
         if (StringUtils.m3a(846, str)) {
@@ -874,7 +874,7 @@ public final class ResourceManager {
             return 0;
         }
         if (StringUtils.m3a(1347, str)) {
-            IOUtils.m814e(c0052wM745h.f415g);
+            IOUtils.m814e(c0052wM745h.readMessages);
             return 0;
         }
         if (StringUtils.m3a(1061, str)) {
@@ -888,7 +888,7 @@ public final class ResourceManager {
         AppState.setInt(1514, 0);
         AppState.clearIndex(1345);
         c0028ba.f229e = true;
-        c0052wM745h.m1424a(false);
+        c0052wM745h.setActive(false);
         AppState.setInt(1512, 41);
         return 0;
     }

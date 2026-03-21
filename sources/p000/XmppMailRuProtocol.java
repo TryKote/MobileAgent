@@ -703,7 +703,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.pool[1255] = (Conversation) interfaceC0044o;
                 return 170;
             case 5:
-                ResourceManager.m932a(VCard.m63a((PhoneContact) interfaceC0044o, 0), (PhoneContact) interfaceC0044o, 0);
+                ResourceManager.m932a(VCard.formatPhoneContactUrl((PhoneContact) interfaceC0044o, 0), (PhoneContact) interfaceC0044o, 0);
                 return 12;
             case 6:
                 AppState.setAccount(interfaceC0044o);
@@ -1059,7 +1059,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
         String strM584b = AppState.getString(1346);
         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513));
-        Message c0026azM1415b = c0052wM745h.m1415b(strM584b);
+        Message c0026azM1415b = c0052wM745h.getMessage(strM584b);
         boolean zM671a = c0026azM1415b.hasFlag(4);
         Object objM819l = IOUtils.m819l();
         Object objM476a = JsonParser.getValueByInt(objM819l, 722874);
@@ -1102,7 +1102,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         c0026azM1415b.body = strM1215a;
         if (zM671a) {
             c0026azM1415b.setFlag(4, false);
-            c0052wM745h.m1419b();
+            c0052wM745h.decrementUnread();
         }
         return m874T();
     }
@@ -1111,7 +1111,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     private static final int m874T() {
         int iM586d = AppState.getInt(1515);
         if (iM586d == 54) {
-            Message c0026azM1415b = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513)).m1415b(AppState.getString(1346));
+            Message c0026azM1415b = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513)).getMessage(AppState.getString(1346));
             Vector vectorM668b = c0026azM1415b.getToList();
             Vector vectorM669c = c0026azM1415b.getCcList();
             m869c(vectorM668b);

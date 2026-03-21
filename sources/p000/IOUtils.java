@@ -46,7 +46,7 @@ public final class IOUtils {
         m815g(strM584b);
         int iM586d = AppState.getInt(1513);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        Message c0026azM1415b = c0028ba.m745h(iM586d).m1415b(strM584b);
+        Message c0026azM1415b = c0028ba.m745h(iM586d).getMessage(strM584b);
         String strM673d = c0026azM1415b.getSubject();
         Vector vectorM668b = c0026azM1415b.getToList();
         Vector vectorM669c = c0026azM1415b.getCcList();
@@ -91,7 +91,7 @@ public final class IOUtils {
         if (!StringUtils.m3a(845, str)) {
             return 0;
         }
-        AppState.setInt(1527, c0028ba.m749X().f409a);
+        AppState.setInt(1527, c0028ba.m749X().id);
         return 0;
     }
 
@@ -253,14 +253,14 @@ public final class IOUtils {
     public static final void m760c() {
         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513));
         Screen c0013amM75b = ScreenManager.m75b(4527);
-        c0013amM75b.m224a(234, c0052wM745h.m1425f());
+        c0013amM75b.m224a(234, c0052wM745h.getDisplayName());
         Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationElements = c0052wM745h.f414f.elements();
+        Enumeration enumerationElements = c0052wM745h.messageIds.elements();
         while (enumerationElements.hasMoreElements()) {
-            Hashtable hashtable = c0052wM745h.f416h;
+            Hashtable hashtable = c0052wM745h.messages;
             Object objNextElement = enumerationElements.nextElement();
             if (hashtable.containsKey(objNextElement)) {
-                vectorM1213g.addElement(c0052wM745h.f416h.get(objNextElement));
+                vectorM1213g.addElement(c0052wM745h.messages.get(objNextElement));
             }
         }
         Enumeration enumerationElements2 = vectorM1213g.elements();
@@ -347,7 +347,7 @@ public final class IOUtils {
     public static final void m768d() {
         boolean z;
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        f239e = c0028ba.f231g.f22j;
+        f239e = c0028ba.f231g.photoUrls;
         Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = c0028ba.contactMap.elements();
         while (enumerationElements.hasMoreElements()) {
@@ -396,13 +396,13 @@ public final class IOUtils {
         }
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         VCard c0003ac = c0028ba.f231g;
-        c0003ac.f23k = c0003ac.f22j;
+        c0003ac.prevPhotoUrls = c0003ac.photoUrls;
         int size2 = vectorM1213g.size();
-        c0003ac.f22j = new String[size2];
+        c0003ac.photoUrls = new String[size2];
         for (int i2 = 0; i2 < size2; i2++) {
-            c0003ac.f22j[i2] = (String) vectorM1213g.elementAt(i2);
+            c0003ac.photoUrls[i2] = (String) vectorM1213g.elementAt(i2);
         }
-        String[] strArr = c0028ba.f231g.f22j;
+        String[] strArr = c0028ba.f231g.photoUrls;
         XmlElement c0022av = new XmlElement(114);
         XmlElement c0022av2 = new XmlElement("visible", c0022av, null);
         c0022av.addChild(c0022av2);
@@ -412,7 +412,7 @@ public final class IOUtils {
             c0022av2.addChild(c0022av3);
         }
         c0028ba.trySendData(AppController.m321a(c0028ba, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(c0022av.toString())));
-        if (c0028ba.f231g.f21i != 3) {
+        if (c0028ba.f231g.gender != 3) {
             return 0;
         }
         c0028ba.m728T();
@@ -491,11 +491,11 @@ public final class IOUtils {
         long j2 = MapRenderer.f198f;
         int i2 = MapRenderer.f194b / 2;
         ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
-        VCard.f25m = (int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.getInt(39));
-        VCard.f26n = (int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.getInt(39));
-        VCard.f27o = (int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.getInt(39));
-        VCard.f28p = (int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.getInt(39));
-        VCard.f29q = AppState.getInt(39);
+        VCard.staticTs1 = (int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.getInt(39));
+        VCard.staticTs2 = (int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.getInt(39));
+        VCard.staticTs3 = (int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.getInt(39));
+        VCard.staticTs4 = (int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.getInt(39));
+        VCard.staticTs5 = AppState.getInt(39);
         new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.m967e(AppState.getInt(39))});
     }
 
@@ -577,7 +577,7 @@ public final class IOUtils {
         String strM584b = AppState.getString(1346);
         int iM586d = AppState.getInt(1513);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        Message c0026azM1415b = c0028ba.m745h(iM586d).m1415b(strM584b);
+        Message c0026azM1415b = c0028ba.m745h(iM586d).getMessage(strM584b);
         Vector vectorM668b = c0026azM1415b.getToList();
         Vector vectorM669c = c0026azM1415b.getCcList();
         String strM673d = c0026azM1415b.getSubject();
@@ -599,7 +599,7 @@ public final class IOUtils {
             if (!StringUtils.m3a(845, str)) {
                 return 0;
             }
-            AppState.setInt(1527, c0028ba.m749X().f409a);
+            AppState.setInt(1527, c0028ba.m749X().id);
             return 0;
         }
         ScreenBuilder.m549c();
@@ -1240,8 +1240,8 @@ public final class IOUtils {
         try {
             try {
                 AppController.m343s();
-                HttpClient c0024axM629a = HttpClient.m629a((String) objArr[1], (Account) objArr[0], 0);
-                int iM634a = c0024axM629a.m634a();
+                HttpClient c0024axM629a = HttpClient.createHttpClient((String) objArr[1], (Account) objArr[0], 0);
+                int iM634a = c0024axM629a.getResponseCode();
                 if (iM634a == 200) {
                     Vector vectorM516c = Utils.m516c(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
@@ -1258,15 +1258,15 @@ public final class IOUtils {
                     }
                     ((XmppProtocol) objArr[0]).handleComplete();
                 }
-                HttpClient.m633a(c0024axM629a);
+                HttpClient.closeAndUpdateStats(c0024axM629a);
                 AppController.m344t();
             } catch (Throwable th) {
                 m827a(objArr, th);
-                HttpClient.m633a((HttpClient) null);
+                HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.m344t();
             }
         } catch (Throwable th2) {
-            HttpClient.m633a((HttpClient) null);
+            HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.m344t();
             throw th2;
         }

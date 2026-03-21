@@ -99,7 +99,7 @@ public final class Message {
                 z = false;
                 break;
             }
-            if (((ChatRoom) enumerationElements.nextElement()).m1414a(str)) {
+            if (((ChatRoom) enumerationElements.nextElement()).isMessageRead(str)) {
                 z = true;
                 break;
             }
@@ -125,9 +125,9 @@ public final class Message {
             iM214a2 += 20;
         }
         if (c0052w == c0028ba.m746W()) {
-            iM1418a = c0028ba.m745h(c0052w.m1423e(this.from)).m1418a();
+            iM1418a = c0028ba.m745h(c0052w.getPriority(this.from)).getType();
         } else {
-            iM1418a = (c0052w == c0028ba.m746W() || !c0052w.m1416c(this.from)) ? 3 : c0052w.m1418a();
+            iM1418a = (c0052w == c0028ba.m746W() || !c0052w.hasMessage(this.from)) ? 3 : c0052w.getType();
         }
         int i7 = iM1418a;
         boolean z3 = false;
@@ -142,7 +142,7 @@ public final class Message {
         c0032cM901a2.m900a(zM671a ? 225 : 237, truncateText(getSubject(), i2, iM586d - 22, iM214a, z4), i2, i3);
         if (z4) {
             c0032cM901a2.m896a(234);
-            c0032cM901a2.m901a(truncateText(c0028ba.m745h(c0052w.m1423e(this.from)).f410b, i2, iM586d - 22, iM214a, false), i2, i3);
+            c0032cM901a2.m901a(truncateText(c0028ba.m745h(c0052w.getPriority(this.from)).name, i2, iM586d - 22, iM214a, false), i2, i3);
         }
         return c0032cM901a2;
     }

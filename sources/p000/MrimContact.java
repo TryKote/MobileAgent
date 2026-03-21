@@ -302,7 +302,7 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: o */
     public final String getVCardDescription() {
         try {
-            return this.vCardInfo.f16d;
+            return this.vCardInfo.phone;
         } catch (Throwable unused) {
             return null;
         }
@@ -329,7 +329,7 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: s */
     public final boolean isSelected() {
-        return this.isSelected && this.vCardInfo != null && this.vCardInfo.m59c();
+        return this.isSelected && this.vCardInfo != null && this.vCardInfo.hasCoordinates();
     }
 
     @Override // p000.ListItem
@@ -348,7 +348,7 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: v */
     public final int getWidth() {
         try {
-            return (int) this.vCardInfo.m56a();
+            return (int) this.vCardInfo.getLongitude();
         } catch (Throwable unused) {
             clearVCard();
             return 0;
@@ -359,7 +359,7 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: w */
     public final int getBaseHeight() {
         try {
-            return (int) this.vCardInfo.m57b();
+            return (int) this.vCardInfo.getLatitude();
         } catch (Throwable unused) {
             clearVCard();
             return 0;
@@ -370,7 +370,7 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: x */
     public final String getText() {
         StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(this.displayName);
-        String str = this.vCardInfo.f16d;
+        String str = this.vCardInfo.phone;
         if (str.length() > 0) {
             stringBufferAppend.append(',').append(' ').append(str).append('.');
         }
@@ -381,7 +381,7 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: y */
     public final int getCommandCount() {
         if (this.vCardInfo != null) {
-            return this.vCardInfo.m60d();
+            return this.vCardInfo.getCommandCount();
         }
         return 10;
     }
@@ -389,7 +389,7 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: z */
     public final boolean isHighlighted() {
-        return this.vCardInfo.m59c() && !this.vCardInfo.f24l;
+        return this.vCardInfo.hasCoordinates() && !this.vCardInfo.dirty;
     }
 
     @Override // p000.ListItem

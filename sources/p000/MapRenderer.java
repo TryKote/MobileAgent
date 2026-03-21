@@ -518,7 +518,7 @@ public abstract class MapRenderer {
                     if (!m658g()) {
                         if (c0028ba != null) {
                             m659a(c0028ba);
-                            if (c0028ba.f231g.f24l) {
+                            if (c0028ba.f231g.dirty) {
                                 AppState.setInt(1547, 1);
                             }
                             AppState.setAccount(c0028ba);

@@ -99,9 +99,9 @@ public final class AppController {
         int iM586d = AppState.getInt(1513);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         ChatRoom c0052wM745h = c0028ba.m745h(iM586d);
-        IOUtils.m814e(c0052wM745h.f415g);
+        IOUtils.m814e(c0052wM745h.readMessages);
         if (StringUtils.m3a(852, str)) {
-            c0052wM745h.f415g.removeAllElements();
+            c0052wM745h.readMessages.removeAllElements();
             return 0;
         }
         if (StringUtils.m3a(853, str)) {
@@ -115,7 +115,7 @@ public final class AppController {
         if (!StringUtils.m3a(845, str)) {
             return 0;
         }
-        AppState.setInt(1527, c0028ba.m749X().f409a);
+        AppState.setInt(1527, c0028ba.m749X().id);
         return 0;
     }
 
@@ -148,7 +148,7 @@ public final class AppController {
 
     /* renamed from: ad */
     private static final void m294ad() {
-        ((MrimAccount) AppState.getAccount()).m746W().m1422e();
+        ((MrimAccount) AppState.getAccount()).m746W().clear();
     }
 
     /* renamed from: d */
@@ -372,7 +372,7 @@ public final class AppController {
 
     /* renamed from: f */
     public static final int m322f(int i) {
-        Message c0026azM1415b = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513)).m1415b(AppState.getString(1346));
+        Message c0026azM1415b = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513)).getMessage(AppState.getString(1346));
         String str = c0026azM1415b.body;
         c0026azM1415b.body = i == 0 ? Conversation.m1116h(str) : Conversation.m1117i(str);
         return 52;
@@ -731,7 +731,7 @@ public final class AppController {
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
-                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(c0052w.f410b);
+                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(c0052w.name);
                 c0032cM898b.f265d = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
@@ -741,7 +741,7 @@ public final class AppController {
 
     /* renamed from: e */
     public static final int m351e(Object obj) {
-        AppState.setInt(1527, ((ChatRoom) obj).f409a);
+        AppState.setInt(1527, ((ChatRoom) obj).id);
         return 0;
     }
 
@@ -1285,7 +1285,7 @@ public final class AppController {
             jMo275w = MapRenderer.f195c;
         }
         AppState.setInt(1479, 0);
-        ResourceManager.m953a(VCard.m62a(AppState.getInt(39), IOUtils.m809a(jMo274v), IOUtils.m810b(jMo275w)), jMo274v, jMo275w);
+        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.m809a(jMo274v), IOUtils.m810b(jMo275w)), jMo274v, jMo275w);
         return 6;
     }
 
@@ -1336,7 +1336,7 @@ public final class AppController {
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.m746W()) {
-                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.f410b).append(' ').append('['))).m901a(StringUtils.intern(Integer.toString(c0052w.f412d)), 1, 0).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.f411c).append(']')));
+                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.name).append(' ').append('['))).m901a(StringUtils.intern(Integer.toString(c0052w.unreadCount)), 1, 0).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.memberCount).append(']')));
                 c0032cM898b.f265d = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
@@ -2046,7 +2046,7 @@ public final class AppController {
                 return vectorM1213g;
             }
             MrimAccount c0028baM447a = m447a(vectorM439R, size);
-            if (c0028baM447a.f231g.m59c()) {
+            if (c0028baM447a.f231g.hasCoordinates()) {
                 vectorM1213g.addElement(c0028baM447a);
             }
         }
@@ -2257,7 +2257,7 @@ public final class AppController {
                                                 }
                                                 if (m305K(10) && MapRenderer.f201i) {
                                                     if (AppState.getBool(276)) {
-                                                        if ((MapRenderer.f196d < VCard.f25m || MapRenderer.f196d > VCard.f27o || MapRenderer.f195c > VCard.f28p || MapRenderer.f195c < VCard.f26n || ((long) AppState.getInt(39)) != VCard.f29q) && AppState.getBool(280)) {
+                                                        if ((MapRenderer.f196d < VCard.staticTs1 || MapRenderer.f196d > VCard.staticTs3 || MapRenderer.f195c > VCard.staticTs4 || MapRenderer.f195c < VCard.staticTs2 || ((long) AppState.getInt(39)) != VCard.staticTs5) && AppState.getBool(280)) {
                                                             IOUtils.m772f();
                                                         }
                                                     }
@@ -2478,37 +2478,37 @@ public final class AppController {
                                                         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
                                                         ChatRoom c0052wM745h2 = c0028ba2.m745h(AppState.getInt(1513));
                                                         if (c0052wM745h2 != c0028ba2.m746W()) {
-                                                            c0052wM745h2.f413e = JsonParser.getStringValue(objM819l, AppState.getString(591768));
-                                                            c0052wM745h2.f414f.removeAllElements();
+                                                            c0052wM745h2.subject = JsonParser.getStringValue(objM819l, AppState.getString(591768));
+                                                            c0052wM745h2.messageIds.removeAllElements();
                                                             Enumeration enumerationElements = ((Vector) JsonParser.getValue(objM819l, AppState.getString(526244))).elements();
                                                             while (enumerationElements.hasMoreElements()) {
-                                                                c0052wM745h2.f414f.addElement(enumerationElements.nextElement());
+                                                                c0052wM745h2.messageIds.addElement(enumerationElements.nextElement());
                                                             }
                                                             Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(objM819l, AppState.getString(329636))).elements();
                                                             while (enumerationElements2.hasMoreElements()) {
                                                                 Message c0026az = new Message((Hashtable) enumerationElements2.nextElement());
-                                                                c0052wM745h2.f416h.put(c0026az.from, c0026az);
+                                                                c0052wM745h2.messages.put(c0026az.from, c0026az);
                                                             }
-                                                            Enumeration enumerationKeys = c0052wM745h2.f416h.keys();
+                                                            Enumeration enumerationKeys = c0052wM745h2.messages.keys();
                                                             while (enumerationKeys.hasMoreElements()) {
                                                                 String str3 = (String) enumerationKeys.nextElement();
-                                                                if (!c0052wM745h2.f414f.contains(str3)) {
-                                                                    c0052wM745h2.f416h.remove(str3);
+                                                                if (!c0052wM745h2.messageIds.contains(str3)) {
+                                                                    c0052wM745h2.messages.remove(str3);
                                                                 }
                                                             }
-                                                            Enumeration enumerationElements3 = c0052wM745h2.f415g.elements();
+                                                            Enumeration enumerationElements3 = c0052wM745h2.readMessages.elements();
                                                             while (enumerationElements3.hasMoreElements()) {
                                                                 String str4 = (String) enumerationElements3.nextElement();
-                                                                if (!c0052wM745h2.f414f.contains(str4)) {
-                                                                    c0052wM745h2.f415g.removeElement(str4);
+                                                                if (!c0052wM745h2.messageIds.contains(str4)) {
+                                                                    c0052wM745h2.readMessages.removeElement(str4);
                                                                 }
                                                             }
-                                                            c0052wM745h2.f419k = false;
+                                                            c0052wM745h2.isInitialized = false;
                                                         } else {
                                                             Enumeration enumerationElements4 = ((Vector) objM819l).elements();
                                                             while (enumerationElements4.hasMoreElements()) {
                                                                 Message c0026az2 = new Message((Hashtable) enumerationElements4.nextElement());
-                                                                c0052wM745h2.f416h.put(c0026az2.from, c0026az2);
+                                                                c0052wM745h2.messages.put(c0026az2.from, c0026az2);
                                                             }
                                                         }
                                                         iM1181a = 43;
@@ -2534,22 +2534,22 @@ public final class AppController {
                                                                 String str5 = (String) enumerationKeys2.nextElement();
                                                                 ChatRoom c0052wM747i = c0028ba3.m747i(str5);
                                                                 ChatRoom c0052wM745h3 = c0028ba3.m745h(AppState.getInt(1527));
-                                                                if (c0052wM747i != null && (c0026azM1415b2 = c0052wM747i.m1415b(str5)) != null && c0052wM745h3 != null) {
+                                                                if (c0052wM747i != null && (c0026azM1415b2 = c0052wM747i.getMessage(str5)) != null && c0052wM745h3 != null) {
                                                                     if (c0026azM1415b2.hasFlag(4)) {
                                                                         if (c0052wM745h3 == c0028ba3.m749X()) {
                                                                             c0026azM1415b2.setFlag(4, false);
                                                                         }
-                                                                        c0052wM747i.m1419b();
+                                                                        c0052wM747i.decrementUnread();
                                                                     }
-                                                                    c0052wM747i.m1421d();
+                                                                    c0052wM747i.decrementMembers();
                                                                     if (!c0026azM1415b2.isRead()) {
-                                                                        c0052wM745h3.m1420c();
+                                                                        c0052wM745h3.incrementUnread();
                                                                     }
-                                                                    c0052wM745h3.f411c++;
+                                                                    c0052wM745h3.memberCount++;
                                                                 }
                                                                 if (c0052wM747i != c0052wM745h3) {
                                                                     c0028ba3.m748j(str5);
-                                                                    c0052wM745h3.m1424a(false);
+                                                                    c0052wM745h3.setActive(false);
                                                                 }
                                                             }
                                                         }
@@ -2563,22 +2563,22 @@ public final class AppController {
                                             case 43:
                                                 AppState.setInt(1514, c0013amM66b2.f105j);
                                                 AppState.setObject(1345, (Object) str);
-                                                if (str == null || (c0052wM745h = (c0028ba = (MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513))) == c0028ba.m746W() || str.equals(c0052wM745h.f413e)) {
+                                                if (str == null || (c0052wM745h = (c0028ba = (MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513))) == c0028ba.m746W() || str.equals(c0052wM745h.subject)) {
                                                     i3 = 0;
                                                     iM338l = i3;
                                                     break;
                                                 } else {
                                                     Object obj3 = null;
-                                                    Enumeration enumerationElements5 = c0052wM745h.f414f.elements();
+                                                    Enumeration enumerationElements5 = c0052wM745h.messageIds.elements();
                                                     while (enumerationElements5.hasMoreElements()) {
-                                                        Hashtable hashtable = c0052wM745h.f416h;
+                                                        Hashtable hashtable = c0052wM745h.messages;
                                                         Object objNextElement = enumerationElements5.nextElement();
                                                         if (hashtable.containsKey(objNextElement)) {
-                                                            obj3 = c0052wM745h.f416h.get(objNextElement);
+                                                            obj3 = c0052wM745h.messages.get(objNextElement);
                                                         }
                                                     }
                                                     if (str == (obj3 != null ? ((Message) obj3).from : null)) {
-                                                        c0052wM745h.m1424a(true);
+                                                        c0052wM745h.setActive(true);
                                                         i3 = 41;
                                                     }
                                                     iM338l = i3;
@@ -2751,18 +2751,18 @@ public final class AppController {
                                                                 int iM510a = Utils.parseInt((Object) JsonParser.getStringByInt(objM482e, 263673));
                                                                 String strM480c = JsonParser.getStringByInt(objM482e, 329240);
                                                                 ChatRoom c0052wM747i2 = ((MrimAccount) AppState.getAccount()).m747i(strM480c);
-                                                                Message c0026azM1415b3 = c0052wM747i2.m1415b(strM480c);
+                                                                Message c0026azM1415b3 = c0052wM747i2.getMessage(strM480c);
                                                                 if (c0052wM747i2 != null) {
-                                                                    c0052wM747i2.m1417d(strM480c);
+                                                                    c0052wM747i2.markMessageRead(strM480c);
                                                                 }
                                                                 if (iM510a == 1) {
                                                                     if (c0026azM1415b3 != null && !c0026azM1415b3.hasFlag(4)) {
                                                                         c0026azM1415b3.setFlag(4, true);
-                                                                        c0052wM747i2.m1420c();
+                                                                        c0052wM747i2.incrementUnread();
                                                                     }
                                                                 } else if (c0026azM1415b3 != null && c0026azM1415b3.hasFlag(4)) {
                                                                     c0026azM1415b3.setFlag(4, false);
-                                                                    c0052wM747i2.m1419b();
+                                                                    c0052wM747i2.decrementUnread();
                                                                 }
                                                             }
                                                         }
@@ -2809,11 +2809,11 @@ public final class AppController {
                                                                     String strM483f = JsonParser.getVectorString(objM476a, size6);
                                                                     MrimAccount c0028ba4 = (MrimAccount) AppState.getAccount();
                                                                     ChatRoom c0052wM747i3 = c0028ba4.m747i(strM483f);
-                                                                    if (c0052wM747i3 != null && (c0026azM1415b = c0052wM747i3.m1415b(strM483f)) != null) {
+                                                                    if (c0052wM747i3 != null && (c0026azM1415b = c0052wM747i3.getMessage(strM483f)) != null) {
                                                                         if (c0026azM1415b.hasFlag(4)) {
-                                                                            c0052wM747i3.m1419b();
+                                                                            c0052wM747i3.decrementUnread();
                                                                         }
-                                                                        c0052wM747i3.m1421d();
+                                                                        c0052wM747i3.decrementMembers();
                                                                     }
                                                                     c0028ba4.m748j(strM483f);
                                                                 }
@@ -2843,7 +2843,7 @@ public final class AppController {
                                                     } else {
                                                         ChatRoom c0052wM746W = ((MrimAccount) AppState.getAccount()).m746W();
                                                         Vector vector = (Vector) IOUtils.m819l();
-                                                        c0052wM746W.m1422e();
+                                                        c0052wM746W.clear();
                                                         int size7 = vector.size();
                                                         for (int i10 = 0; i10 < size7; i10++) {
                                                             Hashtable hashtable2 = (Hashtable) vector.elementAt(i10);
@@ -2851,33 +2851,33 @@ public final class AppController {
                                                             String strM480c2 = JsonParser.getStringByInt(hashtable2, 198561);
                                                             int size8 = vector2.size();
                                                             for (int i11 = 0; i11 < size8; i11++) {
-                                                                Vector vector3 = c0052wM746W.f414f;
+                                                                Vector vector3 = c0052wM746W.messageIds;
                                                                 Object objElementAt = vector2.elementAt(i11);
                                                                 vector3.addElement(objElementAt);
-                                                                c0052wM746W.f417i.put(objElementAt, strM480c2);
+                                                                c0052wM746W.metadata.put(objElementAt, strM480c2);
                                                             }
                                                         }
-                                                        c0052wM746W.f419k = false;
-                                                        int iM541c = Utils.m541c(c0052wM746W.f414f);
+                                                        c0052wM746W.isInitialized = false;
+                                                        int iM541c = Utils.m541c(c0052wM746W.messageIds);
                                                         if (iM541c > 0) {
-                                                            c0052wM746W.f413e = (String) c0052wM746W.f414f.lastElement();
+                                                            c0052wM746W.subject = (String) c0052wM746W.messageIds.lastElement();
                                                             MrimAccount c0028ba5 = (MrimAccount) AppState.getAccount();
                                                             for (int i12 = 0; i12 < iM541c; i12++) {
-                                                                String strM521a = Utils.m521a(c0052wM746W.f414f, i12);
-                                                                Message c0026azM1415b4 = c0028ba5.m745h(Utils.parseInt(c0052wM746W.f417i.get(strM521a))).m1415b(strM521a);
+                                                                String strM521a = Utils.m521a(c0052wM746W.messageIds, i12);
+                                                                Message c0026azM1415b4 = c0028ba5.m745h(Utils.parseInt(c0052wM746W.metadata.get(strM521a))).getMessage(strM521a);
                                                                 if (c0026azM1415b4 != null) {
-                                                                    c0052wM746W.f416h.put(strM521a, c0026azM1415b4);
+                                                                    c0052wM746W.messages.put(strM521a, c0026azM1415b4);
                                                                 } else {
-                                                                    c0052wM746W.f418j.addElement(strM521a);
-                                                                    c0052wM746W.f419k = true;
+                                                                    c0052wM746W.participants.addElement(strM521a);
+                                                                    c0052wM746W.isInitialized = true;
                                                                 }
                                                             }
-                                                            c0052wM746W.f410b = new StringBuffer().append(AppState.getString(901)).append(c0052wM746W.f414f.size()).toString();
+                                                            c0052wM746W.name = new StringBuffer().append(AppState.getString(901)).append(c0052wM746W.messageIds.size()).toString();
                                                         }
-                                                        if (c0052wM746W.f414f.size() == 0) {
+                                                        if (c0052wM746W.messageIds.size() == 0) {
                                                             iM1181a = m338l(736);
                                                         } else {
-                                                            AppState.setInt(1513, c0052wM746W.f409a);
+                                                            AppState.setInt(1513, c0052wM746W.id);
                                                             iM1181a = 41;
                                                         }
                                                     }
@@ -3908,7 +3908,7 @@ public final class AppController {
                         String strM809a = IOUtils.m809a(MapRenderer.f196d);
                         String strM810b = IOUtils.m810b(MapRenderer.f195c);
                         AppState.setInt(1479, 0);
-                        ResourceManager.m953a(VCard.m62a(AppState.getInt(39), strM809a, strM810b), MapRenderer.f196d, MapRenderer.f195c);
+                        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.f196d, MapRenderer.f195c);
                         i2 = 0;
                     } else {
                         i2 = 113;
@@ -4003,7 +4003,7 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 38:
-                    AppState.setInt(1513, ((ChatRoom) obj).f409a);
+                    AppState.setInt(1513, ((ChatRoom) obj).id);
                     iM460J = 0;
                     break;
                 case 39:
@@ -4051,7 +4051,7 @@ public final class AppController {
                     } else {
                         AppState.setObject(1346, (Object) c0026az.from);
                         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513));
-                        if (StringUtils.m3a(894, c0052wM745h.f410b) || StringUtils.m3a(899, c0052wM745h.f410b)) {
+                        if (StringUtils.m3a(894, c0052wM745h.name) || StringUtils.m3a(899, c0052wM745h.name)) {
                             XmppMailRuProtocol.m872b(54, 3);
                         } else {
                             XmppMailRuProtocol.m872b(52, 0);

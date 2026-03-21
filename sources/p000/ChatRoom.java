@@ -8,66 +8,66 @@ import java.util.Vector;
 public final class ChatRoom {
 
     /* renamed from: a */
-    public int f409a;
+    public int id;
 
     /* renamed from: b */
-    public String f410b;
+    public String name;
 
     /* renamed from: c */
-    public int f411c;
+    public int memberCount;
 
     /* renamed from: d */
-    public int f412d;
+    public int unreadCount;
 
     /* renamed from: e */
-    public String f413e;
+    public String subject;
 
     /* renamed from: f */
-    public final Vector f414f;
+    public final Vector messageIds;
 
     /* renamed from: g */
-    public final Vector f415g;
+    public final Vector readMessages;
 
     /* renamed from: h */
-    public final Hashtable f416h;
+    public final Hashtable messages;
 
     /* renamed from: i */
-    public Hashtable f417i;
+    public Hashtable metadata;
 
     /* renamed from: j */
-    public Vector f418j;
+    public Vector participants;
 
     /* renamed from: k */
-    public boolean f419k;
+    public boolean isInitialized;
 
     /* renamed from: l */
-    public boolean f420l;
+    public boolean isActive;
 
     public ChatRoom() {
-        this.f414f = NetworkUtils.newVector();
-        this.f415g = NetworkUtils.newVector();
-        this.f416h = new Hashtable();
-        this.f420l = true;
+        this.messageIds = NetworkUtils.newVector();
+        this.readMessages = NetworkUtils.newVector();
+        this.messages = new Hashtable();
+        this.isActive = true;
     }
 
     public ChatRoom(Object obj) {
         this();
-        m1412a(obj);
-        this.f420l = true;
+        parseJson(obj);
+        this.isActive = true;
     }
 
     /* renamed from: a */
-    public final void m1410a(ByteBuffer c0043n) {
-        c0043n.writeStringUTF16(this.f410b).writeIntLE(this.f411c).writeIntLE(this.f409a).writeIntLE(this.f412d).writeStringLatin1(this.f413e);
-        if (this.f414f.size() > 20) {
-            this.f414f.setSize(20);
+    public final void serialize(ByteBuffer c0043n) {
+        c0043n.writeStringUTF16(this.name).writeIntLE(this.memberCount).writeIntLE(this.id).writeIntLE(this.unreadCount).writeStringLatin1(this.subject);
+        if (this.messageIds.size() > 20) {
+            this.messageIds.setSize(20);
         }
-        int size = this.f414f.size();
+        int size = this.messageIds.size();
         c0043n.writeIntLE(size);
         for (int i = 0; i < size; i++) {
-            String strM521a = Utils.m521a(this.f414f, i);
+            String strM521a = Utils.m521a(this.messageIds, i);
             c0043n.writeStringLatin1(strM521a);
-            Message c0026azM1415b = m1415b(strM521a);
+            Message c0026azM1415b = getMessage(strM521a);
             c0043n.writeLong(c0026azM1415b.timestamp);
             XmppMailRuProtocol.m862a(c0026azM1415b.toList, c0043n);
             XmppMailRuProtocol.m862a(c0026azM1415b.ccList, c0043n);
@@ -98,80 +98,80 @@ public final class ChatRoom {
     }
 
     /* renamed from: b */
-    public static final ChatRoom m1411b(ByteBuffer c0043n) {
+    public static final ChatRoom deserialize(ByteBuffer c0043n) {
         ChatRoom c0052w = new ChatRoom();
-        c0052w.f410b = c0043n.readUTF8Str((String) null);
-        c0052w.f411c = c0043n.readInt();
-        c0052w.f409a = c0043n.readInt();
-        c0052w.f412d = c0043n.readInt();
-        c0052w.f413e = c0043n.readWideStr();
+        c0052w.name = c0043n.readUTF8Str((String) null);
+        c0052w.memberCount = c0043n.readInt();
+        c0052w.id = c0043n.readInt();
+        c0052w.unreadCount = c0043n.readInt();
+        c0052w.subject = c0043n.readWideStr();
         int iM1328e = c0043n.readInt();
         for (int i = 0; i < iM1328e; i++) {
-            Vector vector = c0052w.f414f;
+            Vector vector = c0052w.messageIds;
             String strM1334g = c0043n.readWideStr();
             vector.addElement(strM1334g);
-            c0052w.f416h.put(strM1334g, new Message(c0043n, strM1334g));
+            c0052w.messages.put(strM1334g, new Message(c0043n, strM1334g));
         }
         return c0052w;
     }
 
     /* renamed from: a */
-    public final void m1412a(Object obj) {
-        this.f410b = JsonParser.getStringByInt(obj, 263472);
-        this.f411c = JsonParser.getIntByInt(obj, 526252);
-        this.f409a = JsonParser.getIntByInt(obj, 132297);
-        this.f412d = JsonParser.getIntByInt(obj, 395188);
-        this.f413e = AppState.emptyStr;
-        this.f419k = true;
+    public final void parseJson(Object obj) {
+        this.name = JsonParser.getStringByInt(obj, 263472);
+        this.memberCount = JsonParser.getIntByInt(obj, 526252);
+        this.id = JsonParser.getIntByInt(obj, 132297);
+        this.unreadCount = JsonParser.getIntByInt(obj, 395188);
+        this.subject = AppState.emptyStr;
+        this.isInitialized = true;
     }
 
     public ChatRoom(int i) {
-        this.f409a = i;
-        this.f414f = NetworkUtils.newVector();
-        this.f415g = NetworkUtils.newVector();
-        this.f416h = new Hashtable();
-        this.f417i = new Hashtable();
-        this.f418j = NetworkUtils.newVector();
+        this.id = i;
+        this.messageIds = NetworkUtils.newVector();
+        this.readMessages = NetworkUtils.newVector();
+        this.messages = new Hashtable();
+        this.metadata = new Hashtable();
+        this.participants = NetworkUtils.newVector();
     }
 
     /* renamed from: g */
-    private String m1413g() {
+    private String getFormattedName() {
         int i = 5;
         do {
             i--;
             if (i < 0) {
-                return this.f410b;
+                return this.name;
             }
-        } while (!this.f410b.equals(AppState.getString(i + 891)));
+        } while (!this.name.equals(AppState.getString(i + 891)));
         return AppState.getString(i + 896);
     }
 
     /* renamed from: a */
-    public final boolean m1414a(String str) {
-        return this.f415g.contains(str);
+    public final boolean isMessageRead(String str) {
+        return this.readMessages.contains(str);
     }
 
     /* renamed from: b */
-    public final Message m1415b(String str) {
+    public final Message getMessage(String str) {
         if (str != null) {
-            return (Message) this.f416h.get(str);
+            return (Message) this.messages.get(str);
         }
         return null;
     }
 
     /* renamed from: c */
-    public final boolean m1416c(String str) {
-        return this.f414f.contains(str);
+    public final boolean hasMessage(String str) {
+        return this.messageIds.contains(str);
     }
 
     /* renamed from: d */
-    public final void m1417d(String str) {
-        this.f415g.removeElement(str);
+    public final void markMessageRead(String str) {
+        this.readMessages.removeElement(str);
     }
 
     /* renamed from: a */
-    public final int m1418a() {
-        String strM1413g = m1413g();
+    public final int getType() {
+        String strM1413g = getFormattedName();
         if (StringUtils.m3a(896, strM1413g) || StringUtils.m3a(900, strM1413g)) {
             return 1;
         }
@@ -179,46 +179,46 @@ public final class ChatRoom {
     }
 
     /* renamed from: b */
-    public final void m1419b() {
-        this.f412d--;
+    public final void decrementUnread() {
+        this.unreadCount--;
     }
 
     /* renamed from: c */
-    public final void m1420c() {
-        this.f412d++;
+    public final void incrementUnread() {
+        this.unreadCount++;
     }
 
     /* renamed from: d */
-    public final void m1421d() {
-        this.f411c--;
+    public final void decrementMembers() {
+        this.memberCount--;
     }
 
     /* renamed from: e */
-    public final void m1422e() {
-        this.f413e = null;
-        this.f414f.removeAllElements();
-        this.f415g.removeAllElements();
-        this.f418j.removeAllElements();
-        this.f416h.clear();
-        this.f417i.clear();
+    public final void clear() {
+        this.subject = null;
+        this.messageIds.removeAllElements();
+        this.readMessages.removeAllElements();
+        this.participants.removeAllElements();
+        this.messages.clear();
+        this.metadata.clear();
     }
 
     /* renamed from: e */
-    public final int m1423e(String str) {
-        return Integer.parseInt((String) this.f417i.get(str));
+    public final int getPriority(String str) {
+        return Integer.parseInt((String) this.metadata.get(str));
     }
 
     /* renamed from: a */
-    public final void m1424a(boolean z) {
-        this.f420l = z;
-        this.f419k = true;
+    public final void setActive(boolean z) {
+        this.isActive = z;
+        this.isInitialized = true;
     }
 
     /* renamed from: f */
-    public final String m1425f() {
+    public final String getDisplayName() {
         if (this == ((MrimAccount) AppState.getAccount()).m746W()) {
-            return this.f410b;
+            return this.name;
         }
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(m1413g()).append(' ').append('[').append(this.f412d).append('/').append(this.f411c).append(']'));
+        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));
     }
 }

@@ -29,7 +29,7 @@ public final class ByteBuffer {
         try {
             byte[] bArrM1211a = NetworkUtils.newBytes(2048);
             while (true) {
-                int iM638a = c0024ax.m638a(bArrM1211a);
+                int iM638a = c0024ax.readData(bArrM1211a);
                 if (iM638a < 0) {
                     NetworkUtils.releaseBytes(bArrM1211a);
                     return;

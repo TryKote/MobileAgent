@@ -8,77 +8,77 @@ import java.util.Vector;
 public final class VCard {
 
     /* renamed from: a */
-    public String f13a = AppState.emptyStr;
+    public String latStr = AppState.emptyStr;
 
     /* renamed from: b */
-    public String f14b = AppState.emptyStr;
+    public String lonStr = AppState.emptyStr;
 
     /* renamed from: c */
-    public String f15c = AppState.emptyStr;
+    public String mapTypeStr = AppState.emptyStr;
 
     /* renamed from: d */
-    public String f16d = AppState.emptyStr;
+    public String phone = AppState.emptyStr;
 
     /* renamed from: e */
-    public String f17e = AppState.emptyStr;
+    public String email = AppState.emptyStr;
 
     /* renamed from: f */
-    public String f18f = AppState.emptyStr;
+    public String nickname = AppState.emptyStr;
 
     /* renamed from: g */
-    public String f19g = AppState.emptyStr;
+    public String zoomStr = AppState.emptyStr;
 
     /* renamed from: h */
-    public String f20h = AppState.emptyStr;
+    public String address = AppState.emptyStr;
 
     /* renamed from: i */
-    public int f21i = 2;
+    public int gender = 2;
 
     /* renamed from: j */
-    public String[] f22j = new String[0];
+    public String[] photoUrls = new String[0];
 
     /* renamed from: k */
-    public String[] f23k = new String[0];
+    public String[] prevPhotoUrls = new String[0];
 
     /* renamed from: l */
-    public boolean f24l;
+    public boolean dirty;
 
     /* renamed from: m */
-    public static long f25m;
+    public static long staticTs1;
 
     /* renamed from: n */
-    public static long f26n;
+    public static long staticTs2;
 
     /* renamed from: o */
-    public static long f27o;
+    public static long staticTs3;
 
     /* renamed from: p */
-    public static long f28p;
+    public static long staticTs4;
 
     /* renamed from: q */
-    public static long f29q;
+    public static long staticTs5;
 
     /* renamed from: a */
-    public final void m53a(String str, String str2, String str3, String str4, String str5, String str6, String str7, String str8) {
-        this.f13a = str;
-        this.f14b = str2;
-        this.f15c = str3;
-        this.f16d = str4;
-        this.f17e = str5;
-        this.f18f = str6;
-        this.f19g = str8;
-        this.f20h = str7;
-        this.f24l = false;
+    public final void setCardData(String str, String str2, String str3, String str4, String str5, String str6, String str7, String str8) {
+        this.latStr = str;
+        this.lonStr = str2;
+        this.mapTypeStr = str3;
+        this.phone = str4;
+        this.email = str5;
+        this.nickname = str6;
+        this.zoomStr = str8;
+        this.address = str7;
+        this.dirty = false;
     }
 
     /* renamed from: a */
-    public final void m54a(XmlElement c0022av) {
+    public final void updatePhotos(XmlElement c0022av) {
         Vector vector;
         String[] strArr;
         if (c0022av == null) {
             return;
         }
-        this.f23k = this.f22j;
+        this.prevPhotoUrls = this.photoUrls;
         String[] strArr2 = new String[0];
         if (c0022av.children == null || (vector = ((XmlElement) c0022av.children.elementAt(0)).children) == null) {
             strArr = strArr2;
@@ -90,11 +90,11 @@ public final class VCard {
             }
             strArr = strArr3;
         }
-        this.f22j = strArr;
+        this.photoUrls = strArr;
     }
 
     /* renamed from: a */
-    public static final String[] m55a(ByteBuffer c0043n) {
+    public static final String[] parseCardFromBuffer(ByteBuffer c0043n) {
         if (c0043n.length == 0 || c0043n.readInt() == 0) {
             return null;
         }
@@ -116,25 +116,25 @@ public final class VCard {
     }
 
     /* renamed from: a */
-    public final long m56a() {
-        return IOUtils.m807b(this.f14b);
+    public final long getLongitude() {
+        return IOUtils.m807b(this.lonStr);
     }
 
     /* renamed from: b */
-    public final long m57b() {
-        return IOUtils.m808c(this.f13a);
+    public final long getLatitude() {
+        return IOUtils.m808c(this.latStr);
     }
 
     /* renamed from: b */
-    public static final VCard m58b(ByteBuffer c0043n) {
+    public static final VCard deserializeFromBuffer(ByteBuffer c0043n) {
         VCard c0003ac = new VCard();
         if (c0043n.readBoolean()) {
             try {
-                c0003ac.m53a(c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr());
-                c0003ac.f21i = c0043n.readIntBE();
-                c0003ac.f23k = c0003ac.f22j;
-                c0003ac.f22j = new String[0];
-                c0003ac.f24l = c0043n.readBoolean();
+                c0003ac.setCardData(c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr());
+                c0003ac.gender = c0043n.readIntBE();
+                c0003ac.prevPhotoUrls = c0003ac.photoUrls;
+                c0003ac.photoUrls = new String[0];
+                c0003ac.dirty = c0043n.readBoolean();
             } catch (Throwable unused) {
                 return null;
             }
@@ -143,15 +143,15 @@ public final class VCard {
     }
 
     /* renamed from: c */
-    public final boolean m59c() {
-        return (StringUtils.isEmpty(this.f13a) || StringUtils.isEmpty(this.f14b)) ? false : true;
+    public final boolean hasCoordinates() {
+        return (StringUtils.isEmpty(this.latStr) || StringUtils.isEmpty(this.lonStr)) ? false : true;
     }
 
     /* renamed from: d */
-    public final int m60d() {
+    public final int getCommandCount() {
         try {
-            if (StringUtils.m3a(590588, this.f15c)) {
-                return MapPoint.getMarkerType(Integer.parseInt(this.f19g));
+            if (StringUtils.m3a(590588, this.mapTypeStr)) {
+                return MapPoint.getMarkerType(Integer.parseInt(this.zoomStr));
             }
             return 10;
         } catch (Throwable unused) {
@@ -160,25 +160,25 @@ public final class VCard {
     }
 
     /* renamed from: e */
-    public final void m61e() {
+    public final void clearCoordinates() {
         String str = AppState.emptyStr;
-        this.f14b = str;
-        this.f13a = str;
-        this.f24l = false;
+        this.lonStr = str;
+        this.latStr = str;
+        this.dirty = false;
     }
 
     /* renamed from: a */
-    public static final String m62a(int i, String str, String str2) {
+    public static final String formatLocationUrl(int i, String str, String str2) {
         return new ByteBuffer().writeCompressed(3473998).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(1311433).writeIntAsString(Utils.m520a()).getStringAndClear();
     }
 
     /* renamed from: a */
-    public static final String m63a(PhoneContact c0020at, int i) {
+    public static final String formatPhoneContactUrl(PhoneContact c0020at, int i) {
         return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.surname).writeCompressed(393954).writeRawString(c0020at.firstName).writeCompressed(393960).writeRawString(c0020at.address).writeCompressed(393966).writeRawString(c0020at.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.m520a()).getStringAndClear();
     }
 
     /* renamed from: a */
-    public static final Vector m64a(ByteBuffer c0043n, long j, long j2) throws NumberFormatException {
+    public static final Vector parseMapPointsFromJson(ByteBuffer c0043n, long j, long j2) throws NumberFormatException {
         Vector vector = null;
         Vector vectorM1213g = null;
         try {

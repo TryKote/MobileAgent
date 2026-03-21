@@ -432,37 +432,37 @@ public final class ConnectionThread {
                         } else {
                             strM1215a = str;
                         }
-                        HttpClient c0024axM629a = HttpClient.m629a(strM1215a, c0028ba, 1);
+                        HttpClient c0024axM629a = HttpClient.createHttpClient(strM1215a, c0028ba, 1);
                         c0024ax = c0024axM629a;
                         Object[] objArrM1152a = m1152a(objArr, c0024axM629a);
-                        HttpClient.m633a(c0024ax);
+                        HttpClient.closeAndUpdateStats(c0024ax);
                         AppController.m344t();
                         return objArrM1152a;
                     } catch (ConnectionNotFoundException e) {
                         Object[] objArrM798a = IOUtils.m798a((Throwable) null);
-                        HttpClient.m633a(c0024ax);
+                        HttpClient.closeAndUpdateStats(c0024ax);
                         AppController.m344t();
                         return objArrM798a;
                     }
                 } catch (Throwable th) {
                     Object[] objArrM801d = IOUtils.m801d((Throwable) null);
-                    HttpClient.m633a(c0024ax);
+                    HttpClient.closeAndUpdateStats(c0024ax);
                     AppController.m344t();
                     return objArrM801d;
                 }
             } catch (IllegalArgumentException e2) {
                 Object[] objArrM799b = IOUtils.m799b((Throwable) null);
-                HttpClient.m633a(c0024ax);
+                HttpClient.closeAndUpdateStats(c0024ax);
                 AppController.m344t();
                 return objArrM799b;
             } catch (SecurityException e3) {
                 Object[] objArrM800c = IOUtils.m800c((Throwable) null);
-                HttpClient.m633a(c0024ax);
+                HttpClient.closeAndUpdateStats(c0024ax);
                 AppController.m344t();
                 return objArrM800c;
             }
         } catch (Throwable th2) {
-            HttpClient.m633a(c0024ax);
+            HttpClient.closeAndUpdateStats(c0024ax);
             AppController.m344t();
             throw th2;
         }
@@ -473,14 +473,14 @@ public final class ConnectionThread {
     private static final Object[] m1152a(Object[] objArr, HttpClient c0024ax) {
         Object[] M1155b;
         try {
-            c0024ax.m635b((String) objArr[0]);
+            c0024ax.setRequestMethod((String) objArr[0]);
             m1153a(c0024ax, 919726, 788668);
             m1153a(c0024ax, 657608, 329938);
             m1154a(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).f225a);
             byte[] bArr = (byte[]) objArr[3];
             if (bArr != null) {
                 m1153a(c0024ax, 788628, 2164851);
-                c0024ax.m637a(bArr, bArr.length);
+                c0024ax.writeData(bArr, bArr.length);
             }
             M1155b = m1155b(objArr, c0024ax);
             return M1155b;
@@ -497,7 +497,7 @@ public final class ConnectionThread {
     /* renamed from: a */
     private static void m1154a(HttpClient c0024ax, int i, String str) throws IOException {
         if (str != null) {
-            c0024ax.m636a(AppState.getString(i), str);
+            c0024ax.setRequestProperty(AppState.getString(i), str);
         }
     }
 
@@ -506,12 +506,12 @@ public final class ConnectionThread {
     private static final Object[] m1155b(Object[] objArr, HttpClient c0024ax) {
         Object[] M804a;
         try {
-            int iM634a = c0024ax.m634a();
+            int iM634a = c0024ax.getResponseCode();
             int i = 0;
             while (true) {
                 try {
-                    String headerFieldKey = ((javax.microedition.io.HttpConnection) c0024ax.f183a).getHeaderFieldKey(i);
-                    String headerField = ((javax.microedition.io.HttpConnection) c0024ax.f183a).getHeaderField(i);
+                    String headerFieldKey = ((javax.microedition.io.HttpConnection) c0024ax.connection).getHeaderFieldKey(i);
+                    String headerField = ((javax.microedition.io.HttpConnection) c0024ax.connection).getHeaderField(i);
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }

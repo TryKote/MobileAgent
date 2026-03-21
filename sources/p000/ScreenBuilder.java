@@ -312,7 +312,7 @@ public final class ScreenBuilder {
             case 41:
                 AppState.clearIndex(1271);
                 ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513));
-                if (!c0052wM745h.f419k) {
+                if (!c0052wM745h.isInitialized) {
                     IOUtils.m760c();
                     return;
                 }
@@ -321,18 +321,18 @@ public final class ScreenBuilder {
                 Vector vectorM1213g2 = NetworkUtils.newVector();
                 if (c0052wM745h == c0028ba2.m746W()) {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(0)));
-                    vectorM1213g2.addElement(c0052wM745h.f418j);
+                    vectorM1213g2.addElement(c0052wM745h.participants);
                     objArrM1147a = ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.m1216b(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g2))));
                 } else {
-                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(c0052wM745h.f409a)));
+                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(c0052wM745h.id)));
                     int iM586d2 = AppState.getInt(97);
-                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(Utils.max(iM586d2, c0052wM745h.f414f.size() + (c0052wM745h.f420l ? iM586d2 : 0)))));
+                    vectorM1213g2.addElement(StringUtils.intern(Integer.toString(Utils.max(iM586d2, c0052wM745h.messageIds.size() + (c0052wM745h.isActive ? iM586d2 : 0)))));
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(1)));
                     vectorM1213g2.addElement(AppState.emptyStr);
                     Vector vectorM1213g3 = NetworkUtils.newVector();
-                    Enumeration enumerationElements = c0052wM745h.f414f.elements();
+                    Enumeration enumerationElements = c0052wM745h.messageIds.elements();
                     while (enumerationElements.hasMoreElements()) {
-                        Hashtable hashtable = c0052wM745h.f416h;
+                        Hashtable hashtable = c0052wM745h.messages;
                         Object objNextElement = enumerationElements.nextElement();
                         if (hashtable.containsKey(objNextElement)) {
                             vectorM1213g3.addElement(objNextElement);
@@ -382,7 +382,7 @@ public final class ScreenBuilder {
             case 48:
                 AppState.clearIndex(1271);
                 String strM584b = AppState.getString(1346);
-                Message c0026az = (Message) ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513)).f416h.get(strM584b);
+                Message c0026az = (Message) ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513)).messages.get(strM584b);
                 Message c0026az2 = c0026az.body != null ? c0026az : null;
                 NetworkUtils.m1200b(48, 837);
                 if (c0026az2 == null) {
@@ -408,13 +408,13 @@ public final class ScreenBuilder {
                 boolean z6 = z5;
                 AppState.setBool(1521, z5);
                 ChatRoom c0052wM745h2 = c0028ba3.m745h(iM586d4);
-                boolean zM1414a = c0052wM745h2.m1414a(strM584b2);
+                boolean zM1414a = c0052wM745h2.isMessageRead(strM584b2);
                 AppState.setBool(1518, z6 && zM1414a);
                 AppState.setBool(1519, z6 && !zM1414a);
-                Message c0026azM1415b = c0052wM745h2.m1415b(strM584b2);
+                Message c0026azM1415b = c0052wM745h2.getMessage(strM584b2);
                 AppState.setBool(1522, z6 && !c0026azM1415b.isRead());
                 AppState.setBool(1523, z6 && c0026azM1415b.isRead());
-                int size5 = c0052wM745h2.f415g.size();
+                int size5 = c0052wM745h2.readMessages.size();
                 AppState.setBool(1520, size5 != 0);
                 AppState.setBool(1517, c0052wM745h2 != c0028ba3.m746W());
                 AppState.setFromBuffer(1347, NetworkUtils.newStringBuffer().append(AppState.getString(849)).append(size5).append(')'));
@@ -423,8 +423,8 @@ public final class ScreenBuilder {
             case 52:
                 String strM584b3 = AppState.getString(1346);
                 ChatRoom c0052wM745h3 = ((MrimAccount) AppState.getAccount()).m745h(AppState.getInt(1513));
-                int iM1418a = c0052wM745h3.m1418a();
-                Message c0026azM1415b2 = c0052wM745h3.m1415b(strM584b3);
+                int iM1418a = c0052wM745h3.getType();
+                Message c0026azM1415b2 = c0052wM745h3.getMessage(strM584b3);
                 if (iM1418a == 2) {
                     String[] strArrM869c = XmppMailRuProtocol.m869c(c0026azM1415b2.ccList);
                     str = strArrM869c != null ? strArrM869c[1] : AppState.emptyStr;
@@ -1166,7 +1166,7 @@ public final class ScreenBuilder {
                 return;
             case 160:
                 StringBuffer stringBuffer = new StringBuffer(AppState.getString(780));
-                stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).f231g.f21i + 780));
+                stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).f231g.gender + 780));
                 AppState.setFromBuffer(1337, stringBuffer);
                 ResourceManager.f288g = System.currentTimeMillis();
                 ScreenManager.m71b(ScreenManager.m75b(4258));
