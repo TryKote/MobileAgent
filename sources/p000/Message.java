@@ -40,8 +40,8 @@ public final class Message {
     public Message(Hashtable hashtable) {
         this.from = JsonParser.getStringValue(hashtable, AppState.getString(591892));
         this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(264254)) * 1000;
-        this.toList = XmppMailRuProtocol.m868b(JsonParser.getStringValue(hashtable, AppState.getString(591883)), JsonParser.getStringValue(hashtable, AppState.getString(526365)));
-        this.ccList = XmppMailRuProtocol.m868b(JsonParser.getStringValue(hashtable, AppState.getString(460804)), JsonParser.getStringValue(hashtable, AppState.getString(395262)));
+        this.toList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(591883)), JsonParser.getStringValue(hashtable, AppState.getString(526365)));
+        this.ccList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(460804)), JsonParser.getStringValue(hashtable, AppState.getString(395262)));
         this.priority = JsonParser.getIntValue(hashtable, AppState.getString(591847));
         setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(657373)) != 0);
         setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(657363)) != 0);
@@ -50,7 +50,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.newVector(), AppController.m459a(c0028ba.login, Utils.defaultStr(c0028ba.accountNickname)));
+        this.toList = XmppMailRuProtocol.addUniqueAddress(NetworkUtils.newVector(), AppController.m459a(c0028ba.login, Utils.defaultStr(c0028ba.accountNickname)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;
@@ -59,8 +59,8 @@ public final class Message {
     public Message(ByteBuffer c0043n, String str) {
         this.from = str;
         this.timestamp = c0043n.readLong();
-        this.toList = XmppMailRuProtocol.m863e(c0043n);
-        this.ccList = XmppMailRuProtocol.m863e(c0043n);
+        this.toList = XmppMailRuProtocol.readAddressPairs(c0043n);
+        this.ccList = XmppMailRuProtocol.readAddressPairs(c0043n);
         this.priority = c0043n.readInt();
         this.flags = c0043n.readInt();
         this.subject = c0043n.readUTF8Str((String) null);
@@ -131,11 +131,11 @@ public final class Message {
         }
         int i7 = iM1418a;
         boolean z3 = false;
-        if ((i7 & 1) != 0 && (strArrM869c2 = XmppMailRuProtocol.m869c(getToList())) != null) {
+        if ((i7 & 1) != 0 && (strArrM869c2 = XmppMailRuProtocol.getFirstRecipient(getToList())) != null) {
             c0032cM901a2.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
             z3 = true;
         }
-        if ((i7 & 2) != 0 && (strArrM869c = XmppMailRuProtocol.m869c(getCcList())) != null) {
+        if ((i7 & 2) != 0 && (strArrM869c = XmppMailRuProtocol.getFirstRecipient(getCcList())) != null) {
             c0032cM901a2.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
         }
         boolean z4 = c0052w == c0028ba.getLastChatRoom();
@@ -208,7 +208,7 @@ public final class Message {
     /* renamed from: e */
     public final Object toHashtable() {
         Hashtable hashtable = new Hashtable();
-        String[] strArrM869c = XmppMailRuProtocol.m869c(this.toList);
+        String[] strArrM869c = XmppMailRuProtocol.getFirstRecipient(this.toList);
         if (strArrM869c != null) {
             hashtable.put(AppState.getString(264203), strArrM869c[1]);
         }

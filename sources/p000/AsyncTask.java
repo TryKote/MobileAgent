@@ -872,7 +872,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r17
             java.lang.String r0 = p000.StringUtils.concat(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r16
-            p000.XmppMailRuProtocol.m853a(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            p000.XmppMailRuProtocol.writeChunkedRecord(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             java.util.Hashtable r0 = p000.ConnectionThread.f353d     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r11
             r2 = r16
@@ -1421,7 +1421,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.XmppMailRuProtocol.m860a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.XmppMailRuProtocol.resolveXmppServer(r0)     // Catch: java.lang.Throwable -> La84
             return
         L91e:
             r0 = r8

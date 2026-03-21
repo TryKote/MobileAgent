@@ -1035,7 +1035,7 @@ public final class AppController {
 
     /* renamed from: f */
     public static final int m379f(Object obj) {
-        XmppMailRuProtocol.f257f = (ListItem) obj;
+        XmppMailRuProtocol.mapContextItem = (ListItem) obj;
         return 0;
     }
 
@@ -1063,7 +1063,7 @@ public final class AppController {
         }
         MrimContact c0035fM612h = AppState.getCurrentMrimContact();
         AppState.setAccount(c0035fM612h.account);
-        ResourceManager.m966a(XmppMailRuProtocol.m871i(c0035fM612h.simpleIdentifier), (String) null, (String) null);
+        ResourceManager.m966a(XmppMailRuProtocol.parseRecipientList(c0035fM612h.simpleIdentifier), (String) null, (String) null);
         ScreenBuilder.onScreenClosed();
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -1670,7 +1670,7 @@ public final class AppController {
     /* renamed from: ag */
     private static void m432ag() {
         Vector vectorM1213g = NetworkUtils.newVector();
-        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.longToHex(6513505));
+        ByteBuffer c0043nM851h = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(6513505));
         while (c0043nM851h.length > 0) {
             try {
                 Account abstractC0037h = null;
@@ -1738,7 +1738,7 @@ public final class AppController {
                     ((Account) vectorM614m.elementAt(i)).serializeAccount(c0043n, z, false).saveProperties(c0043n);
                 }
             }
-            XmppMailRuProtocol.m852a(NetworkUtils.longToHex(6513505), c0043n, z);
+            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(6513505), c0043n, z);
         } catch (Throwable unused) {
         }
     }
@@ -2112,7 +2112,7 @@ public final class AppController {
             AppState.setInt(26, 0);
             AppState.setInt(27, 0);
             AppState.pool[1402] = NetworkUtils.newVector();
-            XmppMailRuProtocol.m845v();
+            XmppMailRuProtocol.calculateCacheSize();
             AppState.pool[1371] = new MainCanvas(i, i2);
             AppState.clearRange(332, 333);
             TabBar.initialize();
@@ -2601,7 +2601,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 48:
-                                                iM1181a = XmppMailRuProtocol.m873x();
+                                                iM1181a = XmppMailRuProtocol.processMailResponse();
                                                 iM338l = iM1181a;
                                                 break;
                                             case 49:
@@ -4052,9 +4052,9 @@ public final class AppController {
                         AppState.setObject(1346, (Object) c0026az.from);
                         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
                         if (StringUtils.m3a(894, c0052wM745h.name) || StringUtils.m3a(899, c0052wM745h.name)) {
-                            XmppMailRuProtocol.m872b(54, 3);
+                            XmppMailRuProtocol.setMailAction(54, 3);
                         } else {
-                            XmppMailRuProtocol.m872b(52, 0);
+                            XmppMailRuProtocol.setMailAction(52, 0);
                         }
                         i = 0;
                     }
@@ -4270,7 +4270,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 113:
-                    iM460J = XmppMailRuProtocol.m859h(iM68d);
+                    iM460J = XmppMailRuProtocol.handleMapAction(iM68d);
                     break;
                 case 114:
                     iM460J = 0;

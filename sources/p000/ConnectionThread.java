@@ -269,7 +269,7 @@ public final class ConnectionThread {
             if (image2 == null) {
                 try {
                     Hashtable hashtable = f353d;
-                    Image imageM1348r = XmppMailRuProtocol.m851h(StringUtils.concat("upi", str)).toImage();
+                    Image imageM1348r = XmppMailRuProtocol.readChunkedRecord(StringUtils.concat("upi", str)).toImage();
                     image3 = imageM1348r;
                     hashtable.put(str, imageM1348r);
                 } catch (Throwable unused) {

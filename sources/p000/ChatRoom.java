@@ -69,8 +69,8 @@ public final class ChatRoom {
             c0043n.writeStringLatin1(strM521a);
             Message c0026azM1415b = getMessage(strM521a);
             c0043n.writeLong(c0026azM1415b.timestamp);
-            XmppMailRuProtocol.m862a(c0026azM1415b.toList, c0043n);
-            XmppMailRuProtocol.m862a(c0026azM1415b.ccList, c0043n);
+            XmppMailRuProtocol.writeAddressPairs(c0026azM1415b.toList, c0043n);
+            XmppMailRuProtocol.writeAddressPairs(c0026azM1415b.ccList, c0043n);
             c0043n.writeIntLE(c0026azM1415b.priority).writeIntLE(c0026azM1415b.flags).writeStringUTF16(Utils.defaultStr(c0026azM1415b.subject));
             if (c0026azM1415b.body == null || c0026azM1415b.body.length() > 3072) {
                 c0043n.writeIntLE(0).writeIntLE(0);

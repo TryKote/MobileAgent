@@ -50,7 +50,7 @@ public final class IOUtils {
         String strM673d = c0026azM1415b.getSubject();
         Vector vectorM668b = c0026azM1415b.getToList();
         Vector vectorM669c = c0026azM1415b.getCcList();
-        XmppMailRuProtocol.m869c(vectorM668b);
+        XmppMailRuProtocol.getFirstRecipient(vectorM668b);
         boolean zM587e = AppState.getBool(96);
         String strM584b2 = AppState.getString(198549);
         String strM584b3 = AppState.getString(198546);
@@ -61,23 +61,23 @@ public final class IOUtils {
         }
         if (StringUtils.m3a(839, str)) {
             if (!zM587e) {
-                return ResourceManager.m966a(XmppMailRuProtocol.m866b(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
+                return ResourceManager.m966a(XmppMailRuProtocol.getFirstAddress(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
-            XmppMailRuProtocol.m872b(54, 0);
+            XmppMailRuProtocol.setMailAction(54, 0);
             return 0;
         }
         if (StringUtils.m3a(840, str)) {
             if (!zM587e) {
-                return ResourceManager.m966a(XmppMailRuProtocol.m865a(XmppMailRuProtocol.m864a(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
+                return ResourceManager.m966a(XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
-            XmppMailRuProtocol.m872b(54, 1);
+            XmppMailRuProtocol.setMailAction(54, 1);
             return 0;
         }
         if (StringUtils.m3a(841, str)) {
             if (!zM587e) {
                 return ResourceManager.m966a(NetworkUtils.newVector(), new StringBuffer().append(strM584b3).append(strM673d).toString(), str2);
             }
-            XmppMailRuProtocol.m872b(54, 2);
+            XmppMailRuProtocol.setMailAction(54, 2);
             return 0;
         }
         if (StringUtils.m3a(855, str)) {
@@ -587,7 +587,7 @@ public final class IOUtils {
         m815g(strM584b);
         if (StringUtils.m3a(839, str)) {
             ScreenBuilder.onScreenClosed();
-            ResourceManager.m966a(XmppMailRuProtocol.m866b(vectorM668b), StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
+            ResourceManager.m966a(XmppMailRuProtocol.getFirstAddress(vectorM668b), StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
             return 0;
         }
         if (!StringUtils.m3a(840, str)) {
@@ -603,7 +603,7 @@ public final class IOUtils {
             return 0;
         }
         ScreenBuilder.onScreenClosed();
-        Vector vectorM865a = XmppMailRuProtocol.m865a(XmppMailRuProtocol.m864a(vectorM669c), vectorM668b);
+        Vector vectorM865a = XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(vectorM669c), vectorM668b);
         int iM541c = Utils.m541c(vectorM865a);
         while (true) {
             iM541c--;
@@ -730,7 +730,7 @@ public final class IOUtils {
             AppState.pool[1319] = new ContactInfo(abstractC0041lM611g);
         } else if (i == 54) {
             AppState.setAccount(abstractC0041lM611g.account);
-            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) abstractC0041lM611g).simpleIdentifier), (String) null, (String) null);
+            ResourceManager.m966a(XmppMailRuProtocol.parseRecipientList(((MrimContact) abstractC0041lM611g).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
             interfaceC0044o.deselect();
@@ -919,7 +919,7 @@ public final class IOUtils {
     /* renamed from: c */
     public static final int m820c(int i) {
         String strM522f = Utils.defaultStr(AppState.getString(1293));
-        String strM843u = XmppMailRuProtocol.m843u();
+        String strM843u = XmppMailRuProtocol.getLoginLowerCase();
         String strM1215a = strM843u;
         if (StringUtils.isEmpty(strM843u)) {
             return AppController.m338l(301);
@@ -1102,7 +1102,7 @@ public final class IOUtils {
             AppState.pool[1319] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
-            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
+            ResourceManager.m966a(XmppMailRuProtocol.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.deselect();

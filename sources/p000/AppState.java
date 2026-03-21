@@ -92,7 +92,7 @@ public abstract class AppState {
             iArr[i4] = iM1346q;
         }
         emptyStr = (String) pool[1038];
-        ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.longToHex(1164404323));
+        ByteBuffer c0043nM851h = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(1164404323));
         while (c0043nM851h.length > 0) {
             try {
                 delta[((Integer) decodeObject(c0043nM851h, 0)).intValue()] = decodeObject(c0043nM851h, 0);
@@ -467,7 +467,7 @@ public abstract class AppState {
                     }
                 }
             }
-            XmppMailRuProtocol.m852a(NetworkUtils.longToHex(1164404323), c0043n, z);
+            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(1164404323), c0043n, z);
         } catch (Throwable unused) {
         }
     }

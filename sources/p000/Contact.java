@@ -224,7 +224,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void updateMessageFlag(long j, int i) {
         this.dirty = true;
-        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.m851h(this.identifier) : this.messageBuffer;
+        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = c0043nM851h;
         int i2 = c0043nM851h.length;
         int i3 = 0;
@@ -246,7 +246,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void appendMessage(int i, String str, long j, long j2) {
         this.dirty = true;
-        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.m851h(this.identifier) : this.messageBuffer;
+        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = c0043nM851h;
         int iM586d = AppState.getInt(102) - 1;
         ByteBuffer c0043n = this.messageBuffer;
@@ -351,14 +351,14 @@ public abstract class Contact implements Sortable {
     /* renamed from: f */
     private final ByteBuffer getMessageBuffer() {
         if (this.messageBuffer == null) {
-            this.messageBuffer = XmppMailRuProtocol.m851h(this.identifier);
+            this.messageBuffer = XmppMailRuProtocol.readChunkedRecord(this.identifier);
         }
         return this.messageBuffer;
     }
 
     /* renamed from: o */
     private final void saveMessageBuffer() {
-        XmppMailRuProtocol.m853a(this.identifier, getMessageBuffer().duplicate());
+        XmppMailRuProtocol.writeChunkedRecord(this.identifier, getMessageBuffer().duplicate());
     }
 
     /* renamed from: J */

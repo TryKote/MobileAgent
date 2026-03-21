@@ -361,7 +361,7 @@ public final class MmpProtocol extends Account {
                         while (true) {
                             size--;
                             if (size < 0) {
-                                XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, 0);
+                                XmppMailRuProtocol.handleMmpResponse(this, c0043nM1299a, iM1356x, 0);
                                 break;
                             } else {
                                 Object[] objArr = (Object[]) vector.elementAt(size);
@@ -409,7 +409,7 @@ public final class MmpProtocol extends Account {
                         parseContactStatus(c0043nM1299a.readLenPrefixStr(), c0043nM1299a);
                         break;
                     case 1025:
-                        XmppMailRuProtocol.m881b(this, iM1356x);
+                        XmppMailRuProtocol.removeQueuedCommand(this, iM1356x);
                         break;
                     case 1031:
                         IOUtils.m821a(this, c0043nM1299a);
@@ -438,10 +438,10 @@ public final class MmpProtocol extends Account {
                         if (this.contactListIndex == 0) {
                             removeAllContacts();
                         }
-                        XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, iM1351l);
+                        XmppMailRuProtocol.handleMmpResponse(this, c0043nM1299a, iM1356x, iM1351l);
                         break;
                     case 4878:
-                        XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, 0);
+                        XmppMailRuProtocol.handleMmpResponse(this, c0043nM1299a, iM1356x, 0);
                         break;
                     case 4885:
                         Contact abstractC0041lM1069c2 = getContact((Object) c0043nM1299a.readLenPrefixStr());
@@ -468,10 +468,10 @@ public final class MmpProtocol extends Account {
                         break;
                     case 5377:
                         IOUtils.m778d((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(481)).append(1501).append('/').append(c0043nM1299a.readShortBE()).append(AppState.getString(482))));
-                        XmppMailRuProtocol.m881b(this, iM1356x);
+                        XmppMailRuProtocol.removeQueuedCommand(this, iM1356x);
                         break;
                     case 5379:
-                        XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, iM1351l);
+                        XmppMailRuProtocol.handleMmpResponse(this, c0043nM1299a, iM1356x, iM1351l);
                         break;
                 }
                 AppController.f152f = true;
@@ -665,7 +665,7 @@ public final class MmpProtocol extends Account {
         }
         this.configFlags = i;
         if (isConnected()) {
-            trySendData(XmppMailRuProtocol.m857a(this, this.groupSequenceId));
+            trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
             trySendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.m967e(17)}));
             return trySendData(AppController.m375a(this));
         }
@@ -949,7 +949,7 @@ public final class MmpProtocol extends Account {
         if (!isConnected()) {
             return 0;
         }
-        trySendData(XmppMailRuProtocol.m857a(this, this.groupSequenceId));
+        trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
         return 4;
     }
 

@@ -272,10 +272,10 @@ public final class StringUtils {
             objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(1548))).toString();
             XmppContactGroup.addContactInfoToQueue(objArr);
             try {
-                Image imageM847a = (c0034eM949i.f281a == 1 && AppState.getBool(1551)) ? XmppMailRuProtocol.m847a(c0034eM949i) : null;
+                Image imageM847a = (c0034eM949i.f281a == 1 && AppState.getBool(1551)) ? XmppMailRuProtocol.loadTileFromCache(c0034eM949i) : null;
                 imageM876b = imageM847a;
                 if (imageM847a == null) {
-                    imageM876b = XmppMailRuProtocol.m876b(c0034eM949i);
+                    imageM876b = XmppMailRuProtocol.fetchTileImage(c0034eM949i);
                 }
             } catch (IOException unused2) {
                 int i3 = i;

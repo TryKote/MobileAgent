@@ -388,7 +388,7 @@ public final class MrimAccount extends Account implements ListItem {
                         break;
                     }
                 case 4114:
-                    XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
+                    XmppMailRuProtocol.handleMrimResponse(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4115:
                     handleTimeout();
@@ -414,10 +414,10 @@ public final class MrimAccount extends Account implements ListItem {
                     }
                     break;
                 case 4122:
-                    XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
+                    XmppMailRuProtocol.handleMrimResponse(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4124:
-                    XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
+                    XmppMailRuProtocol.handleMrimResponse(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4125:
                     trySendData(AppController.m321a(this, 4126, new ByteBuffer().writeIntLE(c0043nM1349s.readInt()).writeIntLE(c0043nM1349s.readInt())));
@@ -508,16 +508,16 @@ public final class MrimAccount extends Account implements ListItem {
                         break;
                     }
                 case 4133:
-                    XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
+                    XmppMailRuProtocol.handleMrimResponse(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4136:
-                    XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
+                    XmppMailRuProtocol.handleMrimResponse(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4151:
                     Conversation.parseContactList(this, c0043nM1349s);
                     break;
                 case 4160:
-                    XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
+                    XmppMailRuProtocol.handleMrimResponse(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4163:
                     if (c0043nM1349s.readInt() != 1 || c0043nM1349s.readInt() <= 0) {

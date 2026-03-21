@@ -426,10 +426,10 @@ public final class ScreenBuilder {
                 int iM1418a = c0052wM745h3.getType();
                 Message c0026azM1415b2 = c0052wM745h3.getMessage(strM584b3);
                 if (iM1418a == 2) {
-                    String[] strArrM869c = XmppMailRuProtocol.m869c(c0026azM1415b2.ccList);
+                    String[] strArrM869c = XmppMailRuProtocol.getFirstRecipient(c0026azM1415b2.ccList);
                     str = strArrM869c != null ? strArrM869c[1] : AppState.emptyStr;
                 } else {
-                    String[] strArrM869c2 = XmppMailRuProtocol.m869c(c0026azM1415b2.toList);
+                    String[] strArrM869c2 = XmppMailRuProtocol.getFirstRecipient(c0026azM1415b2.toList);
                     str = strArrM869c2 != null ? strArrM869c2[1] : AppState.emptyStr;
                 }
                 AppState.setObject(1284, (Object) str);
@@ -570,7 +570,7 @@ public final class ScreenBuilder {
             case 75:
                 return;
             case 76:
-                XmppMailRuProtocol.m838r();
+                XmppMailRuProtocol.showLoginScreen();
                 return;
             case 77:
                 NetworkUtils.m1197a(77, NetworkUtils.newStringBuffer().append(AppState.getString(672)).append(AppState.getAccount().login).append(NetworkUtils.longToHex(16167)));
@@ -601,7 +601,7 @@ public final class ScreenBuilder {
                 return;
             case 82:
                 NetworkUtils.m1200b(82, 877);
-                Message c0026az3 = new Message(XmppMailRuProtocol.m871i(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
+                Message c0026az3 = new Message(XmppMailRuProtocol.parseRecipientList(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
                 Vector vectorM1213g10 = NetworkUtils.newVector();
                 vectorM1213g10.addElement(c0026az3.toHashtable());
                 IOUtils.m813b(ConnectionThread.m1148a(AppState.getString(1377947), IOUtils.m817a(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g10)))));
@@ -800,7 +800,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(4204));
                 return;
             case 105:
-                XmppMailRuProtocol.m838r();
+                XmppMailRuProtocol.showLoginScreen();
                 ScreenManager.getCurrentScreen().f94a = 105;
                 return;
             case 106:
@@ -854,7 +854,7 @@ public final class ScreenBuilder {
                 AppController.m341r();
                 return;
             case 113:
-                XmppMailRuProtocol.m858w();
+                XmppMailRuProtocol.showMapContextMenu();
                 return;
             case 114:
                 AppState.setObject(1250, (Object) AppState.emptyStr);
@@ -1640,7 +1640,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 76:
-                iM460J = XmppMailRuProtocol.m839s();
+                iM460J = XmppMailRuProtocol.performLogin();
                 break;
             case 77:
                 iM460J = AppController.m400L();
@@ -1729,7 +1729,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m363p(iM68d);
                 break;
             case 105:
-                int iM839s = XmppMailRuProtocol.m839s();
+                int iM839s = XmppMailRuProtocol.performLogin();
                 iM460J = 0 == iM839s ? 4 : iM839s;
                 break;
             case 106:
@@ -1755,7 +1755,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 113:
-                iM460J = XmppMailRuProtocol.m859h(iM68d);
+                iM460J = XmppMailRuProtocol.handleMapAction(iM68d);
                 break;
             case 114:
                 NetworkUtils.m1195d();
@@ -2078,12 +2078,12 @@ public final class ScreenBuilder {
                 break;
             case 164:
                 NetworkUtils.m1195d();
-                String strM843u = XmppMailRuProtocol.m843u();
+                String strM843u = XmppMailRuProtocol.getLoginLowerCase();
                 String strM9b = strM843u;
-                if (!XmppMailRuProtocol.m841f(strM843u)) {
+                if (!XmppMailRuProtocol.isMailRuDomain(strM843u)) {
                     strM9b = StringUtils.concat(strM9b, Utils.m542c(694, AppState.getInt(1474)));
                 }
-                if (XmppMailRuProtocol.m844g(strM9b)) {
+                if (XmppMailRuProtocol.isValidUsername(strM9b)) {
                     String str2 = strM9b;
                     String strM522f8 = Utils.defaultStr(AppState.getString(1293));
                     String strM522f9 = Utils.defaultStr(AppState.getString(1284));
@@ -2870,7 +2870,7 @@ public final class ScreenBuilder {
                 AppController.m391H();
                 break;
             case 76:
-                XmppMailRuProtocol.m840t();
+                XmppMailRuProtocol.clearLoginFields();
                 break;
             case 78:
                 AppState.clearIndex(1271);
@@ -2898,14 +2898,14 @@ public final class ScreenBuilder {
                 AppState.setInt(1477, 0);
                 break;
             case 105:
-                XmppMailRuProtocol.m840t();
+                XmppMailRuProtocol.clearLoginFields();
                 break;
             case 108:
                 AppController.m412O();
                 AppState.clearIndex(1282);
                 break;
             case 113:
-                XmppMailRuProtocol.f257f = null;
+                XmppMailRuProtocol.mapContextItem = null;
                 break;
             case 120:
                 AppState.setInt(1443, 0);
