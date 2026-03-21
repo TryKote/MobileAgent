@@ -15,7 +15,7 @@ public final class ScreenBuilder {
         String[] strArrM32g;
         Object[] objArrM1147a;
         int i2;
-        AppController.m356y();
+        AppController.markScreenDirty();
         AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
@@ -52,7 +52,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(2361));
                 return;
             case 2:
-                AppController.m390G();
+                AppController.showSettingsScreen();
                 return;
             case 3:
                 Screen c0013amM76c = ScreenManager.createDialogScreen(3);
@@ -149,7 +149,7 @@ public final class ScreenBuilder {
             case 18:
                 return;
             case 19:
-                AppController.m378F();
+                AppController.clearFormFields();
                 Contact abstractC0041lM611g = AppState.getCurrentContact();
                 AppState.setObject(1302, (Object) abstractC0041lM611g.displayName);
                 Vector vectorM516c = Utils.m516c(abstractC0041lM611g.getDefaultName(), ',');
@@ -269,7 +269,7 @@ public final class ScreenBuilder {
                 AppState.clearIndex(1271);
                 MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
                 if (c0028ba.getChatRoomCount() != 0 && !c0028ba.chatRoomsLoaded) {
-                    AppController.m402M();
+                    AppController.initChatRoomList();
                     return;
                 }
                 NetworkUtils.m1200b(37, 833);
@@ -280,7 +280,7 @@ public final class ScreenBuilder {
                 IOUtils.sendChatRoomRequest(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g)))));
                 return;
             case 38:
-                AppController.m402M();
+                AppController.initChatRoomList();
                 return;
             case 39:
                 Vector vectorM614m3 = AppState.getVector(1283);
@@ -354,7 +354,7 @@ public final class ScreenBuilder {
                 IOUtils.showChatRoomMessages();
                 return;
             case 44:
-                AppController.m392I();
+                AppController.prepareFormData();
                 Account abstractC0037hM616i2 = AppState.getAccount();
                 if (AppState.getAccount().getType() == 0) {
                     strArrM32g = StringUtils.m32g();
@@ -552,7 +552,7 @@ public final class ScreenBuilder {
             case 73:
                 int iM586d5 = AppState.getInt(1506);
                 if (0 != iM586d5) {
-                    AppController.m391H();
+                    AppController.clearSearchResults2();
                     AppController.showMessageById(iM586d5);
                     return;
                 }
@@ -561,7 +561,7 @@ public final class ScreenBuilder {
                     ScreenManager.showScreen(NetworkUtils.m1193a(ScreenManager.createScreen(3868), vectorM614m5));
                     return;
                 } else {
-                    AppController.m391H();
+                    AppController.clearSearchResults2();
                     AppController.showMessageById(736);
                     return;
                 }
@@ -788,7 +788,7 @@ public final class ScreenBuilder {
                 } else {
                     NetworkUtils.m1199a(102, 728, 0);
                     ResourceManager.loadUserProfile(AppController.pendingUrl, AppController.pendingAccount);
-                    AppController.m394J();
+                    AppController.clearMapPoints();
                     return;
                 }
             case 103:
@@ -1022,7 +1022,7 @@ public final class ScreenBuilder {
             case 137:
                 ScreenManager.showScreen(ScreenManager.createScreen(4369));
                 if (AppState.getBool(269)) {
-                    AppController.m355x();
+                    AppController.processBackgroundTasks();
                     return;
                 }
                 return;
@@ -1099,7 +1099,7 @@ public final class ScreenBuilder {
             case 149:
                 return;
             case 150:
-                AppController.m392I();
+                AppController.prepareFormData();
                 MrimContact c0035f3 = (MrimContact) AppState.getCurrentContact();
                 MrimAccount c0028ba5 = (MrimAccount) c0035f3.account;
                 NetworkUtils.m1199a(150, 504, c0028ba5.trySendData(c0028ba5.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), c0035f3, new Long(1L)})));
@@ -1288,7 +1288,7 @@ public final class ScreenBuilder {
         int iM460J = 0;
         switch (ScreenManager.getCurrentScreen().screenId) {
             case 1:
-                iM460J = AppController.m408B(iM68d);
+                iM460J = AppController.handleMapMenuOption(iM68d);
                 break;
             case 2:
                 iM460J = 0;
@@ -1300,7 +1300,7 @@ public final class ScreenBuilder {
                 iM460J = ContactListManager.getSelectedContact();
                 break;
             case 5:
-                iM460J = AppController.m389z(iM68d);
+                iM460J = AppController.handleChatSettingsOption(iM68d);
                 break;
             case 6:
                 if (!AppState.getBool(1547)) {
@@ -1410,7 +1410,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 25:
-                iM460J = AppController.m373a(iM68d, obj);
+                iM460J = AppController.handleInputAction(iM68d, obj);
                 break;
             case 26:
                 NetworkUtils.m1195d();
@@ -1566,7 +1566,7 @@ public final class ScreenBuilder {
             case 56:
                 NetworkUtils.m1195d();
                 if (AppState.getBool(90)) {
-                    AppController.m412O();
+                    AppController.updateTabBar();
                 }
                 iM460J = 0;
                 break;
@@ -1580,7 +1580,7 @@ public final class ScreenBuilder {
                 iM460J = ResourceManager.applyVersionLabel();
                 break;
             case 60:
-                iM460J = AppController.m372g(strM67c);
+                iM460J = AppController.processInputText(strM67c);
                 break;
             case 61:
                 iM460J = 42;
@@ -1595,7 +1595,7 @@ public final class ScreenBuilder {
                 iM460J = 84;
                 break;
             case 64:
-                iM460J = AppController.m401A(iM68d);
+                iM460J = AppController.handleAccountSwitchOption(iM68d);
                 break;
             case 65:
                 NetworkUtils.m1195d();
@@ -1643,7 +1643,7 @@ public final class ScreenBuilder {
                 iM460J = XmppMailRuProtocol.performLogin();
                 break;
             case 77:
-                iM460J = AppController.m400L();
+                iM460J = AppController.handleInviteResult();
                 break;
             case 78:
                 iM460J = -1;
@@ -1672,13 +1672,13 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 86:
-                iM460J = AppController.m397h(obj);
+                iM460J = AppController.handleSearchAction(obj);
                 break;
             case 87:
                 iM460J = ResourceManager.handleChatInputAction(strM67c);
                 break;
             case 88:
-                iM460J = AppController.m371s(iM68d);
+                iM460J = AppController.handleThemeOption(iM68d);
                 break;
             case 89:
                 iM460J = -1;
@@ -1687,16 +1687,16 @@ public final class ScreenBuilder {
                 iM460J = AppController.handleEventObject(obj);
                 break;
             case 91:
-                iM460J = AppController.m364q(iM68d);
+                iM460J = AppController.getThemeBackground(iM68d);
                 break;
             case 92:
                 iM460J = IOUtils.handleContactMenuAction(strM67c, iM68d);
                 break;
             case 93:
-                iM460J = AppController.m374t(iM68d);
+                iM460J = AppController.handleSoundOption(iM68d);
                 break;
             case 94:
-                iM460J = AppController.m396h(strM67c);
+                iM460J = AppController.processPhoneInput(strM67c);
                 break;
             case 95:
                 iM460J = AppController.validateServerAddress(strM67c);
@@ -1705,10 +1705,10 @@ public final class ScreenBuilder {
                 iM460J = ((ContactInfo) AppState.pool[1315]).isMrimContact() ? 130 : ((ContactInfo) AppState.pool[1315]).isXmppContact() ? -1 : AppState.getInt(3650);
                 break;
             case 97:
-                iM460J = AppController.m398i(obj);
+                iM460J = AppController.handleSearchResultAction(obj);
                 break;
             case 98:
-                iM460J = AppController.m396h(strM67c);
+                iM460J = AppController.processPhoneInput(strM67c);
                 break;
             case 99:
                 iM460J = AppController.openUrl(strM67c);
@@ -1717,7 +1717,7 @@ public final class ScreenBuilder {
                 iM460J = IOUtils.handleMapSearch(iM68d, obj);
                 break;
             case 101:
-                iM460J = AppController.m382g(obj);
+                iM460J = AppController.handleConversationAction(obj);
                 break;
             case 102:
                 iM460J = -1;
@@ -1726,7 +1726,7 @@ public final class ScreenBuilder {
                 iM460J = ((ContactInfo) AppState.pool[1319]).isMrimContact() ? 130 : AppState.getInt(3650);
                 break;
             case 104:
-                iM460J = AppController.m363p(iM68d);
+                iM460J = AppController.getThemeColor(iM68d);
                 break;
             case 105:
                 int iM839s = XmppMailRuProtocol.performLogin();
@@ -1749,7 +1749,7 @@ public final class ScreenBuilder {
                 iM460J = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(1249))) ? AppController.showError(352) : 0;
                 break;
             case 111:
-                iM460J = AppController.m404j(obj);
+                iM460J = AppController.handleMapSearchAction(obj);
                 break;
             case 112:
                 iM460J = -1;
@@ -1801,28 +1801,28 @@ public final class ScreenBuilder {
                 iM460J = iM338l6;
                 break;
             case 116:
-                iM460J = AppController.m405k(obj);
+                iM460J = AppController.handleMapResultAction(obj);
                 break;
             case 117:
                 iM460J = AppController.processLoginField(strM67c);
                 break;
             case 118:
-                iM460J = AppController.m409m(obj);
+                iM460J = AppController.handleFileAction(obj);
                 break;
             case 119:
-                iM460J = AppController.m384v(iM68d);
+                iM460J = AppController.handleChatRoomOption(iM68d);
                 break;
             case 120:
                 iM460J = AppController.m463n(obj);
                 break;
             case 121:
-                iM460J = AppController.m387x(iM68d);
+                iM460J = AppController.handleChatListOption(iM68d);
                 break;
             case 122:
                 iM460J = AppController.handlePresenceAction();
                 break;
             case 123:
-                iM460J = AppController.m407l(obj);
+                iM460J = AppController.handleLocationAction(obj);
                 break;
             case 124:
                 iM460J = 0;
@@ -1859,7 +1859,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.handleScreenAction(iM68d);
                 break;
             case 131:
-                iM460J = AppController.m406i(strM67c);
+                iM460J = AppController.processSearchQuery(strM67c);
                 break;
             case 132:
                 iM460J = AppController.mapKeyToAction(iM68d);
@@ -2059,7 +2059,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 158:
-                iM460J = AppController.m370r(iM68d);
+                iM460J = AppController.handleViewOption(iM68d);
                 break;
             case 159:
                 iM460J = AppController.handleItemAction(obj);
@@ -2071,7 +2071,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 162:
-                iM460J = AppController.m388y(iM68d);
+                iM460J = AppController.handleChatDetailOption(iM68d);
                 break;
             case 163:
                 iM460J = AppController.handleSendKey();
@@ -2099,10 +2099,10 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 166:
-                iM460J = AppController.m381u(iM68d);
+                iM460J = AppController.handleChatOption(iM68d);
                 break;
             case 167:
-                iM460J = AppController.m385w(iM68d);
+                iM460J = AppController.handleMailboxOption(iM68d);
                 break;
             case 168:
                 iM460J = ResourceManager.collectInvitees(c0013amM66b);
@@ -2111,7 +2111,7 @@ public final class ScreenBuilder {
                 iM460J = ResourceManager.applyLocationProfile(obj);
                 break;
             case 170:
-                iM460J = AppController.m379f(obj);
+                iM460J = AppController.handleFormSubmit(obj);
                 break;
             case 171:
                 iM460J = AppController.handleRightKey();
@@ -2120,7 +2120,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.handleObjectAction(obj);
                 break;
             case 173:
-                iM460J = AppController.m399K();
+                iM460J = AppController.handleInviteAction();
                 break;
             case 174:
                 iM460J = 0;
@@ -2444,7 +2444,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 85:
-                AppController.m394J();
+                AppController.clearMapPoints();
                 iM308i = 0;
                 break;
             case 86:
@@ -2478,7 +2478,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 96:
-                AppController.m394J();
+                AppController.clearMapPoints();
                 iM308i = 0;
                 break;
             case 97:
@@ -2788,7 +2788,7 @@ public final class ScreenBuilder {
                 AppState.clearIndex(1286);
                 break;
             case 19:
-                AppController.m378F();
+                AppController.clearFormFields();
                 break;
             case 21:
                 int iMo80a = AppState.getAccount().getType();
@@ -2806,7 +2806,7 @@ public final class ScreenBuilder {
                     break;
                 }
             case 22:
-                AppController.m378F();
+                AppController.clearFormFields();
                 break;
             case 25:
                 AppState.clearIndex(1281);
@@ -2867,7 +2867,7 @@ public final class ScreenBuilder {
                 AppState.clearIndex(1271);
                 break;
             case 73:
-                AppController.m391H();
+                AppController.clearSearchResults2();
                 break;
             case 76:
                 XmppMailRuProtocol.clearLoginFields();
@@ -2901,7 +2901,7 @@ public final class ScreenBuilder {
                 XmppMailRuProtocol.clearLoginFields();
                 break;
             case 108:
-                AppController.m412O();
+                AppController.updateTabBar();
                 AppState.clearIndex(1282);
                 break;
             case 113:
@@ -2945,7 +2945,7 @@ public final class ScreenBuilder {
                 StringUtils.m30f();
                 break;
             case 168:
-                AppController.m378F();
+                AppController.clearFormFields();
                 break;
             case 176:
                 AppState.clearRange(1256, 1258);

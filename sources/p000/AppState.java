@@ -333,7 +333,7 @@ public abstract class AppState {
     /* renamed from: b */
     public static final void setScreen(Object obj) {
         currentScreen = obj;
-        AppController.setTimer(0, AppController.m376E());
+        AppController.setTimer(0, AppController.getSessionTimestamp());
     }
 
     /* renamed from: e */

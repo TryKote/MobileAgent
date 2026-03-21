@@ -83,7 +83,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     public final void showNotify() {
         this.isShown = true;
         IOUtils.postBackEvent();
-        AppController.setTimer(0, AppController.m376E());
+        AppController.setTimer(0, AppController.getSessionTimestamp());
     }
 
     public final boolean isShown() {
@@ -164,11 +164,11 @@ public final class MainCanvas extends Canvas implements CommandListener {
                     if (ScreenManager.hasModal()) {
                         c0012al.setClip(0, 0, 2048, 2048);
                         int iM586d4 = AppState.getInt(1528) - 17;
-                        if (AppController.m413P() != 0) {
+                        if (AppController.handleTabAction() != 0) {
                             c0012al.drawIcon(16384, iM586d4, 1);
                             iM586d4 -= 17;
                         }
-                        if (AppController.m410N()) {
+                        if (AppController.hasActiveConnection()) {
                             c0012al.drawIcon(16385, iM586d4, 1);
                         }
                     }
@@ -206,8 +206,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     /* renamed from: a */
     private final void handleKeyInput(int i, int i2) {
-        AppController.m357z();
-        AppController.setTimer(0, AppController.m376E());
+        AppController.processTimers();
+        AppController.setTimer(0, AppController.getSessionTimestamp());
         AppController.setTimer(3, 10000L);
         int gameAction = 0;
         boolean zM587e = AppState.getBool(1511);
@@ -263,14 +263,14 @@ public final class MainCanvas extends Canvas implements CommandListener {
         pointerDownX = i;
         pointerDownY = i2;
         AppController.setTimer(3, 10000L);
-        AppController.setTimer(0, AppController.m376E());
+        AppController.setTimer(0, AppController.getSessionTimestamp());
         Vector vectorM614m = AppState.getVector(1266);
         synchronized (vectorM614m) {
             vectorM614m.addElement(new int[]{5, i, i2});
         }
         pointerDownTime = System.currentTimeMillis();
         pointerDragged = false;
-        AppController.m357z();
+        AppController.processTimers();
     }
 
     public final void pointerDragged(int i, int i2) {

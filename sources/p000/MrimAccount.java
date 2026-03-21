@@ -287,7 +287,7 @@ public final class MrimAccount extends Account implements ListItem {
                 int i4 = this.dataBuffer.length;
                 int i5 = i4;
                 if (i4 > 0) {
-                    AppController.m419a((Account) this, i5);
+                    AppController.updateAccountStatus((Account) this, i5);
                     this.msgCount = 60;
                     StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                     while (true) {
@@ -311,7 +311,7 @@ public final class MrimAccount extends Account implements ListItem {
             case 4:
                 if (this.connection.m1131a() == 2) {
                     this.msgCount = 80;
-                    sendData(AppController.m377a(this));
+                    sendData(AppController.createMrimAuthPacket(this));
                     this.progress = 5;
                     AppController.needsRepaint = true;
                     break;
@@ -335,7 +335,7 @@ public final class MrimAccount extends Account implements ListItem {
                 trySendData(AppController.createMrimPacket(this, 4102, (ByteBuffer) null));
                 return;
             }
-            AppController.m421a((Account) this, c0043nM1349s);
+            AppController.processAccountData((Account) this, c0043nM1349s);
             int iM1330h = c0043nM1349s.peekIntAt(12);
             int iM1330h2 = c0043nM1349s.peekIntAt(8);
             c0043nM1349s.skip(44);
@@ -536,7 +536,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 int i11 = c0050u.type;
                                 if (i11 == 1) {
                                     sendDeleteCommand(strM1334g4);
-                                    AppController.m393a(this, strM1334g4);
+                                    AppController.openUserProfile(this, strM1334g4);
                                 } else if (i11 == 2) {
                                     ContactInfo c0042mM1251a = ContactInfo.createForAccount(this);
                                     c0042mM1251a.setEmailAddress(strM1334g4);
@@ -929,7 +929,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: g */
     public final int sendDeleteCommand(String str) {
-        return trySendData(AppController.m403a(this, str, 7));
+        return trySendData(AppController.createChatRoomCmd(this, str, 7));
     }
 
     @Override // p000.Account
@@ -1011,7 +1011,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         MrimContact c0035fM717f = findContactByIdentifier(str);
         if (c0035fM717f == null || c0035fM717f.isOnline()) {
-            trySendData(AppController.m395b(this, str));
+            trySendData(AppController.createPasswordAuthCmd(this, str));
             return trySendData(XmppContactGroup.createContactCommand(this, 0, str, str2, str3, (MrimContactGroup) abstractC0046q, z));
         }
         trySendData(ResourceManager.createAddToGroupCmd(this, c0035fM717f, (MrimContactGroup) abstractC0046q));
@@ -1149,7 +1149,7 @@ public final class MrimAccount extends Account implements ListItem {
         ContactGroup abstractC0046q = this.defaultGroup;
         MrimContact c0035f = new MrimContact(this, 0, 65536, 3, str, str, 0, 0, str2, str2, str2);
         abstractC0046q.addContact((Object) c0035f);
-        trySendData(AppController.m403a(this, str, i));
+        trySendData(AppController.createChatRoomCmd(this, str, i));
         return c0035f;
     }
 

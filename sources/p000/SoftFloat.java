@@ -21,14 +21,14 @@ public final class SoftFloat {
     /* renamed from: a */
     private static long packFloat(boolean z, int i, long j) {
         if (j != 0) {
-            int iM360b = AppController.m360b(j);
+            int iM360b = AppController.countLeadingZeros(j);
             long j2 = j << iM360b;
             int i2 = i - iM360b;
             int i3 = i2;
             if (i2 < -1085) {
-                j = AppController.m362c(j2, (-1074) - i3);
+                j = AppController.roundedShiftRight(j2, (-1074) - i3);
             } else {
-                long jM362c = AppController.m362c(j2, 11);
+                long jM362c = AppController.roundedShiftRight(j2, 11);
                 long j3 = jM362c;
                 if (jM362c == 9007199254740992L) {
                     j3 = 4503599627370496L;
@@ -178,9 +178,9 @@ public final class SoftFloat {
         int iM676m2 = getExponent(j2) - 3;
         int i = iM676m - iM676m2;
         if (i > 0) {
-            jM677n2 = AppController.m361b(jM677n2, i);
+            jM677n2 = AppController.shiftRightSticky(jM677n2, i);
         } else if (i < 0) {
-            jM677n = AppController.m361b(jM677n, -i);
+            jM677n = AppController.shiftRightSticky(jM677n, -i);
             iM676m = iM676m2;
         }
         if (zM675l ^ zM675l2) {
@@ -232,7 +232,7 @@ public final class SoftFloat {
         if (j11 == 0) {
             return packFloat(zM675l, iM676m2, j12);
         }
-        int iM360b = AppController.m360b(j11);
+        int iM360b = AppController.countLeadingZeros(j11);
         int i = iM676m2 + (56 - iM360b);
         long j13 = (j11 << iM360b) | (j12 >>> (64 - iM360b));
         if ((j12 << iM360b) != 0) {
@@ -269,7 +269,7 @@ public final class SoftFloat {
         long j3 = 0;
         int iM676m2 = iM676m - getExponent(j2);
         while (true) {
-            int iM503b = Utils.min(AppController.m360b(jM677n) - 1, AppController.m360b(j3));
+            int iM503b = Utils.min(AppController.countLeadingZeros(jM677n) - 1, AppController.countLeadingZeros(j3));
             if (iM503b <= 8) {
                 break;
             }
@@ -301,7 +301,7 @@ public final class SoftFloat {
         boolean zM675l = isNegative(j);
         long jM677n = getMantissa(j);
         if (z) {
-            jM362c = AppController.m362c(jM677n, -iM676m);
+            jM362c = AppController.roundedShiftRight(jM677n, -iM676m);
         } else {
             if (iM676m <= -64) {
                 j2 = jM677n;
@@ -335,7 +335,7 @@ public final class SoftFloat {
             return z ? -4503599627370496L : 9218868437227405312L;
         }
         short s = ((short[]) AppState.pool[988])[i3];
-        int iM360b = AppController.m360b(j);
+        int iM360b = AppController.countLeadingZeros(j);
         int i4 = s - iM360b;
         long jM696j = multiplyHigh(j << iM360b, ((long[]) AppState.pool[987])[i3]);
         for (int i5 = i2 % 3; i5 > 0; i5--) {

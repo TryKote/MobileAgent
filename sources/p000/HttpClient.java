@@ -66,17 +66,17 @@ public final class HttpClient {
     public static final void closeAndUpdateStats(HttpClient c0024ax) {
         try {
             if (c0024ax.account != null && c0024ax.requestType == 0) {
-                AppController.m419a(c0024ax.account, c0024ax.bytesReceived);
-                AppController.m420b(c0024ax.account, c0024ax.bytesSent);
+                AppController.updateAccountStatus(c0024ax.account, c0024ax.bytesReceived);
+                AppController.setAccountOption(c0024ax.account, c0024ax.bytesSent);
             } else if (c0024ax.requestType == 1) {
-                AppController.m422C(c0024ax.bytesReceived);
-                AppController.m423D(c0024ax.bytesSent);
+                AppController.addSentBytes(c0024ax.bytesReceived);
+                AppController.addReceivedBytes(c0024ax.bytesSent);
             } else if (c0024ax.requestType == 2) {
-                AppController.m424E(c0024ax.bytesReceived);
-                AppController.m425F(c0024ax.bytesSent);
+                AppController.addDownloadBytes(c0024ax.bytesReceived);
+                AppController.addUploadBytes(c0024ax.bytesSent);
             } else {
-                AppController.m426G(c0024ax.bytesReceived);
-                AppController.m427H(c0024ax.bytesSent);
+                AppController.addConnectionBytes(c0024ax.bytesReceived);
+                AppController.addProtocolBytes(c0024ax.bytesSent);
             }
             if (c0024ax.mockMode == 0) {
                 try {

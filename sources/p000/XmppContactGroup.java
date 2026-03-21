@@ -232,7 +232,7 @@ public final class XmppContactGroup extends ContactGroup {
             String strM584b = AppState.getString(655360);
             MrimAccount c0028ba = new MrimAccount(-1, strM584b, strM584b);
             c0028ba.connection = c0039j;
-            c0028ba.sendData(AppController.m377a(c0028ba));
+            c0028ba.sendData(AppController.createMrimAuthPacket(c0028ba));
             ByteBuffer c0043n = new ByteBuffer();
             do {
                 Thread.sleep(100L);

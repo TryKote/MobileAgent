@@ -670,7 +670,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 1:
                 if (iMo276r == 8) {
                     AppState.setInt(4895, 0);
-                    AppController.m393a((MrimAccount) null, ((UserSearchResult) interfaceC0044o).userId);
+                    AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) interfaceC0044o).userId);
                 } else {
                     AppState.setCurrentEntity(mapContextItem);
                 }
@@ -1161,7 +1161,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             byte[] bArr = c0043nM1310c.data;
             int i = c0043nM1310c.length;
             NetworkUtils.m1189a(objArrM609l, bArr, i);
-            AppController.m425F(i);
+            AppController.addUploadBytes(i);
         } catch (Throwable unused) {
             if (!reconnectHttp()) {
                 throw new IOException();
@@ -1170,7 +1170,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             byte[] bArr2 = c0043nM1310c.data;
             int i2 = c0043nM1310c.length;
             NetworkUtils.m1189a(objArrM609l2, bArr2, i2);
-            AppController.m425F(i2);
+            AppController.addUploadBytes(i2);
         } finally {
             c0043nM1310c.clear();
         }
@@ -1204,7 +1204,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (AppState.getBool(1551)) {
             saveTileToCache(c0034e, bArr3, 0, i3);
         }
-        AppController.m424E(c0043nM878i.length + 255);
+        AppController.addDownloadBytes(c0043nM878i.length + 255);
         return c0043nM878i.toImage();
     }
 

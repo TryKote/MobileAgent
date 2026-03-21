@@ -599,7 +599,7 @@ public final class ResourceManager {
                 return AppController.showPeopleSearch();
             default:
                 AppState.setInt(4895, 0);
-                AppController.m393a((MrimAccount) null, AppController.getCurrentSearchResult().userId);
+                AppController.openUserProfile((MrimAccount) null, AppController.getCurrentSearchResult().userId);
                 ScreenBuilder.onScreenClosed();
                 return 0;
         }

@@ -294,7 +294,7 @@ public final class MmpProtocol extends Account {
                 if (c0043nM1350t != null) {
                     AppController.needsRepaint = true;
                     this.msgCount = 85;
-                    AppController.m421a((Account) this, c0043nM1350t);
+                    AppController.processAccountData((Account) this, c0043nM1350t);
                     if (c0043nM1350t.peekByteAt(1) == 1) {
                         long j = AppState.getBool(1536) ? 25000L : 60000L;
                         this.timeout = j;
@@ -303,7 +303,7 @@ public final class MmpProtocol extends Account {
                         byte[] bArr = this.encryptionKey;
                         sendData(AppController.createPingPacket(this, 1).writeIntBE(1).writeShortBE(6).writeShortBE(bArr.length).writeBytes(bArr).updateLength());
                         this.encryptionKey = null;
-                        sendData(AppController.m375a(this));
+                        sendData(AppController.createAuthData(this));
                         sendData(AppController.m464a(this, 1026, new ByteBuffer().writeCompressed(1051079)));
                         sendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.integerOf(17)}));
                         this.contactListIndex = 0;
@@ -342,7 +342,7 @@ public final class MmpProtocol extends Account {
                 }
                 return;
             }
-            AppController.m421a((Account) this, c0043nM1299a);
+            AppController.processAccountData((Account) this, c0043nM1299a);
             this.msgCount = 90;
             if (c0043nM1299a.peekByteAt(1) == 2) {
                 int iM1331i = (c0043nM1299a.peekByteAt(6) << 24) | (c0043nM1299a.peekByteAt(8) << 16) | (c0043nM1299a.peekByteAt(7) << 8) | c0043nM1299a.peekByteAt(9);
@@ -477,7 +477,7 @@ public final class MmpProtocol extends Account {
                 AppController.needsLayoutUpdate = true;
             } else {
                 if (c0043nM1299a.peekByteAt(1) == 4) {
-                    AppController.m386a(this, c0043nM1299a);
+                    AppController.handleMmpPacket(this, c0043nM1299a);
                     AppController.needsLayoutUpdate = true;
                 }
             }
@@ -667,7 +667,7 @@ public final class MmpProtocol extends Account {
         if (isConnected()) {
             trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
             trySendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.integerOf(17)}));
-            return trySendData(AppController.m375a(this));
+            return trySendData(AppController.createAuthData(this));
         }
         if (isConnecting()) {
             return 487;

@@ -190,7 +190,7 @@ public final class AppController {
     /* renamed from: h */
     public static final void clearSearchState() {
         Contact abstractC0041lM611g = AppState.getCurrentContact();
-        m415b(abstractC0041lM611g);
+        markContactUnread(abstractC0041lM611g);
         abstractC0041lM611g.flags = (byte) 0;
         abstractC0041lM611g.dirty = true;
         abstractC0041lM611g.updateRenderState();
@@ -295,13 +295,13 @@ public final class AppController {
     public static final int handleAccountOption(int i) {
         Account abstractC0037hM616i = AppState.getAccount();
         if (!(abstractC0037hM616i instanceof MmpProtocol)) {
-            return m383c((i + 161) - 4, (i + 155) - 4, 4);
+            return interpolateColor((i + 161) - 4, (i + 155) - 4, 4);
         }
         ((MmpProtocol) abstractC0037hM616i).reserved2 = i;
         if (i == 0) {
             return 3;
         }
-        return m383c(i + 268, i + 118, 3);
+        return interpolateColor(i + 268, i + 118, 3);
     }
 
     /* renamed from: m */
@@ -801,25 +801,25 @@ public final class AppController {
     }
 
     /* renamed from: x */
-    public static final void m355x() {
-        m358L(0);
+    public static final void processBackgroundTasks() {
+        updateTimerSlot(0);
     }
 
     /* renamed from: y */
-    public static final void m356y() {
+    public static final void markScreenDirty() {
         if (AppState.getBool(270)) {
-            m358L(Integer.MAX_VALUE);
-            setTimer(0, m376E());
+            updateTimerSlot(Integer.MAX_VALUE);
+            setTimer(0, getSessionTimestamp());
         }
     }
 
     /* renamed from: z */
-    public static final void m357z() {
-        m358L(Integer.MAX_VALUE);
+    public static final void processTimers() {
+        updateTimerSlot(Integer.MAX_VALUE);
     }
 
     /* renamed from: L */
-    private static final void m358L(int i) {
+    private static final void updateTimerSlot(int i) {
         if (AppState.getBool(268)) {
             try {
                 Display.getDisplay(AppState.getMidlet()).flashBacklight(i);
@@ -829,7 +829,7 @@ public final class AppController {
     }
 
     /* renamed from: M */
-    private static int m359M(int i) {
+    private static int computeTimerValue(int i) {
         if (i == 0) {
             return 32;
         }
@@ -853,18 +853,18 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final int m360b(long j) {
-        int iM359M = m359M((int) (j >> 32));
-        return iM359M == 32 ? m359M((int) j) + 32 : iM359M;
+    public static final int countLeadingZeros(long j) {
+        int iM359M = computeTimerValue((int) (j >> 32));
+        return iM359M == 32 ? computeTimerValue((int) j) + 32 : iM359M;
     }
 
     /* renamed from: b */
-    public static final long m361b(long j, int i) {
+    public static final long shiftRightSticky(long j, int i) {
         return i >= 64 ? j == 0 ? 0L : 1L : (j << (64 - i)) == 0 ? j >>> i : (j >>> i) | 1;
     }
 
     /* renamed from: c */
-    public static final long m362c(long j, int i) {
+    public static final long roundedShiftRight(long j, int i) {
         long j2;
         long j3;
         if (i > 64) {
@@ -881,7 +881,7 @@ public final class AppController {
     }
 
     /* renamed from: p */
-    public static final int m363p(int i) {
+    public static final int getThemeColor(int i) {
         int size = AppState.getVector(1241).size();
         while (true) {
             size--;
@@ -893,7 +893,7 @@ public final class AppController {
     }
 
     /* renamed from: q */
-    public static final int m364q(int i) {
+    public static final int getThemeBackground(int i) {
         switch (i) {
             case 0:
                 Conversation.incrementZoom();
@@ -915,32 +915,32 @@ public final class AppController {
     }
 
     /* renamed from: A */
-    public static final int m365A() {
-        return m369N(1004);
+    public static final int getScreenMode1() {
+        return computeLayoutParam(1004);
     }
 
     /* renamed from: B */
-    public static final int m366B() {
-        return m369N(1005);
+    public static final int getScreenMode2() {
+        return computeLayoutParam(1005);
     }
 
     /* renamed from: C */
-    public static final int m367C() {
+    public static final int getScreenMode3() {
         return Integer.parseInt(StringUtils.getSystemProp(1006));
     }
 
     /* renamed from: D */
-    public static final int m368D() {
+    public static final int getScreenMode4() {
         return Integer.parseInt(StringUtils.getSystemProp(1007));
     }
 
     /* renamed from: N */
-    private static final int m369N(int i) {
+    private static final int computeLayoutParam(int i) {
         return Integer.parseInt(StringUtils.getSystemProp(i), 16);
     }
 
     /* renamed from: r */
-    public static final int m370r(int i) {
+    public static final int handleViewOption(int i) {
         if (i == 120) {
             if (!ConnectionThread.m1168k()) {
                 return showError(354);
@@ -956,7 +956,7 @@ public final class AppController {
     }
 
     /* renamed from: s */
-    public static final int m371s(int i) {
+    public static final int handleThemeOption(int i) {
         if (i == 10) {
             return NetworkUtils.m1201f();
         }
@@ -964,13 +964,13 @@ public final class AppController {
     }
 
     /* renamed from: g */
-    public static final int m372g(String str) {
+    public static final int processInputText(String str) {
         AppState.setBool(1524, StringUtils.m3a(859, str));
         return 0;
     }
 
     /* renamed from: a */
-    public static final int m373a(int i, Object obj) {
+    public static final int handleInputAction(int i, Object obj) {
         AppState.setAccount(obj);
         if (obj != null) {
             return 47;
@@ -983,13 +983,13 @@ public final class AppController {
     }
 
     /* renamed from: t */
-    public static final int m374t(int i) {
+    public static final int handleSoundOption(int i) {
         AppState.setFromBuffer(1279, NetworkUtils.m1196e().append(AppState.getString(i + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
         return 63;
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m375a(MmpProtocol c0033d) {
+    public static final ByteBuffer createAuthData(MmpProtocol c0033d) {
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(5);
         int i = c0033d.reserved2;
         ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE(64 + (i == 0 ? 0 : 16));
@@ -1008,7 +1008,7 @@ public final class AppController {
     }
 
     /* renamed from: E */
-    public static final long m376E() {
+    public static final long getSessionTimestamp() {
         switch (AppState.getInt(271)) {
             case 1:
                 return 15000L;
@@ -1024,23 +1024,23 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m377a(MrimAccount c0028ba) {
+    public static final ByteBuffer createMrimAuthPacket(MrimAccount c0028ba) {
         return createMrimPacket(c0028ba, 4097, new ByteBuffer().writeIntLE(120));
     }
 
     /* renamed from: F */
-    public static final void m378F() {
+    public static final void clearFormFields() {
         AppState.clearRange(1302, 1305);
     }
 
     /* renamed from: f */
-    public static final int m379f(Object obj) {
+    public static final int handleFormSubmit(Object obj) {
         XmppMailRuProtocol.mapContextItem = (ListItem) obj;
         return 0;
     }
 
     /* renamed from: a */
-    public static final void m380a(Object[] objArr) throws InterruptedException {
+    public static final void waitForCompletion(Object[] objArr) throws InterruptedException {
         int i = 15000;
         do {
             int i2 = i - 500;
@@ -1054,7 +1054,7 @@ public final class AppController {
     }
 
     /* renamed from: u */
-    public static final int m381u(int i) {
+    public static final int handleChatOption(int i) {
         if (i != 54) {
             ScreenBuilder.onScreenClosed();
             ScreenBuilder.onScreenClosed();
@@ -1070,7 +1070,7 @@ public final class AppController {
     }
 
     /* renamed from: g */
-    public static final int m382g(Object obj) {
+    public static final int handleConversationAction(Object obj) {
         if (AppState.getBool(1443)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
             return 0;
@@ -1088,7 +1088,7 @@ public final class AppController {
     }
 
     /* renamed from: c */
-    private static int m383c(int i, int i2, int i3) {
+    private static int interpolateColor(int i, int i2, int i3) {
         AppState.setInt(4305, i);
         AppState.setInt(4313, i);
         AppState.setInt(4317, i2);
@@ -1097,7 +1097,7 @@ public final class AppController {
     }
 
     /* renamed from: v */
-    public static final int m384v(int i) {
+    public static final int handleChatRoomOption(int i) {
         if (i == 0) {
             ConnectionThread.m1170l();
             if (MmpContact.hasSecondToken()) {
@@ -1115,7 +1115,7 @@ public final class AppController {
     }
 
     /* renamed from: w */
-    public static final int m385w(int i) {
+    public static final int handleMailboxOption(int i) {
         if (i != 0) {
             AppState.setInt(1477, 1);
             return 100;
@@ -1126,7 +1126,7 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void m386a(MmpProtocol c0033d, ByteBuffer c0043n) {
+    public static final void handleMmpPacket(MmpProtocol c0033d, ByteBuffer c0043n) {
         c0043n.skip(6);
         while (c0043n.length > 0) {
             int iM1353u = c0043n.readShortBE();
@@ -1147,7 +1147,7 @@ public final class AppController {
     }
 
     /* renamed from: x */
-    public static final int m387x(int i) {
+    public static final int handleChatListOption(int i) {
         MapPoint c0014an = pendingMapPoint;
         if (c0014an == null) {
             return showError(354);
@@ -1168,7 +1168,7 @@ public final class AppController {
     }
 
     /* renamed from: y */
-    public static final int m388y(int i) {
+    public static final int handleChatDetailOption(int i) {
         ConnectionThread.m1173n();
         if (i == 6) {
             applyViewMode(true, false, !AppState.getBool(276));
@@ -1188,7 +1188,7 @@ public final class AppController {
     }
 
     /* renamed from: z */
-    public static final int m389z(int i) {
+    public static final int handleChatSettingsOption(int i) {
         if (i == 22 || i == 143 || i == 24 || i == 23) {
             return showAccountList(m439R(), i, false);
         }
@@ -1199,43 +1199,43 @@ public final class AppController {
     }
 
     /* renamed from: G */
-    public static final void m390G() {
+    public static final void showSettingsScreen() {
         AppState.setInt(217, 0);
         AppState.setInt(1511, 1);
         ScreenManager.pushScreen(ScreenManager.createScreen(4038));
     }
 
     /* renamed from: H */
-    public static final void m391H() {
+    public static final void clearSearchResults2() {
         AppState.clearRange(1317, 1319);
     }
 
     /* renamed from: I */
-    public static final void m392I() {
+    public static final void prepareFormData() {
         AppState.setInt(1506, 0);
         AppState.clearIndex(1318);
         AppState.pool[1317] = NetworkUtils.newVector();
     }
 
     /* renamed from: a */
-    public static final void m393a(MrimAccount c0028ba, String str) {
+    public static final void openUserProfile(MrimAccount c0028ba, String str) {
         pendingAccount = c0028ba;
         pendingUrl = str;
     }
 
     /* renamed from: J */
-    public static final void m394J() {
+    public static final void clearMapPoints() {
         pendingAccount = null;
         pendingUrl = null;
     }
 
     /* renamed from: b */
-    public static final ByteBuffer m395b(MrimAccount c0028ba, String str) {
+    public static final ByteBuffer createPasswordAuthCmd(MrimAccount c0028ba, String str) {
         return createMrimPacket(c0028ba, 4128, new ByteBuffer().writeStringLatin1(str));
     }
 
     /* renamed from: h */
-    public static final int m396h(String str) {
+    public static final int processPhoneInput(String str) {
         String strM584b = AppState.getString(1279);
         int i = 15;
         do {
@@ -1249,7 +1249,7 @@ public final class AppController {
     }
 
     /* renamed from: h */
-    public static final int m397h(Object obj) {
+    public static final int handleSearchAction(Object obj) {
         ContactGroup abstractC0046q = (ContactGroup) obj;
         if (null == abstractC0046q) {
             return 4;
@@ -1264,7 +1264,7 @@ public final class AppController {
     }
 
     /* renamed from: i */
-    public static final int m398i(Object obj) {
+    public static final int handleSearchResultAction(Object obj) {
         MapRenderer.invalidate();
         GeoRegion c0053x = (GeoRegion) obj;
         MapRenderer.setPosition(c0053x.centerLat, c0053x.centerLon);
@@ -1273,7 +1273,7 @@ public final class AppController {
     }
 
     /* renamed from: K */
-    public static final int m399K() {
+    public static final int handleInviteAction() {
         long jMo274v;
         long jMo275w;
         ListItem interfaceC0044o = MapRenderer.tooltipItem;
@@ -1290,7 +1290,7 @@ public final class AppController {
     }
 
     /* renamed from: L */
-    public static final int m400L() {
+    public static final int handleInviteResult() {
         char c;
         Account abstractC0037hM616i = AppState.getAccount();
         if (abstractC0037hM616i.isConnecting()) {
@@ -1308,7 +1308,7 @@ public final class AppController {
     }
 
     /* renamed from: A */
-    public static final int m401A(int i) {
+    public static final int handleAccountSwitchOption(int i) {
         Contact abstractC0041lM611g = AppState.getCurrentContact();
         switch (i) {
             case 0:
@@ -1329,7 +1329,7 @@ public final class AppController {
     }
 
     /* renamed from: M */
-    public static final void m402M() {
+    public static final void initChatRoomList() {
         Screen c0013amM75b = ScreenManager.createScreen(4517);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
@@ -1345,14 +1345,14 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m403a(MrimAccount c0028ba, String str, int i) {
+    public static final ByteBuffer createChatRoomCmd(MrimAccount c0028ba, String str, int i) {
         ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(0);
         int iIndexOf = str.indexOf(64);
         return c0028ba.createAndQueueCommand(new Object[]{createMrimPacket(c0028ba, 4137, c0043nM1360p.writeStringLatin1(StringUtils.prefix(str, iIndexOf)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, iIndexOf + 1))), ResourceManager.integerOf(i)});
     }
 
     /* renamed from: j */
-    public static final int m404j(Object obj) {
+    public static final int handleMapSearchAction(Object obj) {
         long jMo274v;
         long jMo275w;
         Contact abstractC0041l = (Contact) obj;
@@ -1373,13 +1373,13 @@ public final class AppController {
     }
 
     /* renamed from: k */
-    public static final int m405k(Object obj) {
+    public static final int handleMapResultAction(Object obj) {
         AppState.setObject(43, (Object) ((MapPoint) obj).getResourceUrl());
         return 0;
     }
 
     /* renamed from: i */
-    public static final int m406i(String str) {
+    public static final int processSearchQuery(String str) {
         if (!AppState.getString(402).equals(str)) {
             return 0;
         }
@@ -1396,7 +1396,7 @@ public final class AppController {
     }
 
     /* renamed from: l */
-    public static final int m407l(Object obj) {
+    public static final int handleLocationAction(Object obj) {
         if (obj == null) {
             return 0;
         }
@@ -1405,7 +1405,7 @@ public final class AppController {
     }
 
     /* renamed from: B */
-    public static final int m408B(int i) {
+    public static final int handleMapMenuOption(int i) {
         int iM433Q = m433Q();
         if (i == 15) {
             if (iM433Q == 0) {
@@ -1440,7 +1440,7 @@ public final class AppController {
     }
 
     /* renamed from: m */
-    public static final int m409m(Object obj) {
+    public static final int handleFileAction(Object obj) {
         int iM1233b = ((Contact) obj).sendMessage(AppState.getString(43));
         if (0 != iM1233b) {
             return showError(iM1233b);
@@ -1449,24 +1449,24 @@ public final class AppController {
     }
 
     /* renamed from: N */
-    public static final boolean m410N() {
+    public static final boolean hasActiveConnection() {
         return AppState.getVector(1244).size() != 0;
     }
 
     /* renamed from: b */
-    public static final void m411b(MrimAccount c0028ba) {
+    public static final void markAccountHighlighted(MrimAccount c0028ba) {
         AppState.getVector(1244).removeElement(c0028ba);
         TabBar.layout();
     }
 
     /* renamed from: O */
-    public static final void m412O() {
+    public static final void updateTabBar() {
         AppState.getVector(1244).removeAllElements();
         TabBar.layout();
     }
 
     /* renamed from: P */
-    public static final int m413P() {
+    public static final int handleTabAction() {
         int i = 0;
         Vector vectorM614m = AppState.getVector(1243);
         int size = vectorM614m.size();
@@ -1480,8 +1480,8 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void m414a(Contact abstractC0041l) {
-        m356y();
+    public static final void markContactRead(Contact abstractC0041l) {
+        markScreenDirty();
         Vector vectorM614m = AppState.getVector(1243);
         if (vectorM614m.contains(abstractC0041l)) {
             return;
@@ -1491,7 +1491,7 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final void m415b(Contact abstractC0041l) {
+    public static final void markContactUnread(Contact abstractC0041l) {
         Vector vectorM614m = AppState.getVector(1243);
         if (vectorM614m.contains(abstractC0041l)) {
             Utils.removeFrom(vectorM614m, abstractC0041l);
@@ -1500,7 +1500,7 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final boolean m416b(Account abstractC0037h) {
+    public static final boolean isAccountOnline(Account abstractC0037h) {
         if (abstractC0037h == null) {
             return false;
         }
@@ -1516,7 +1516,7 @@ public final class AppController {
     }
 
     /* renamed from: c */
-    public static final int m417c(Account abstractC0037h) {
+    public static final int getAccountStatus(Account abstractC0037h) {
         if (abstractC0037h == null) {
             return 16384;
         }
@@ -1532,14 +1532,14 @@ public final class AppController {
     }
 
     /* renamed from: c */
-    public static final void m418c(Contact abstractC0041l) {
+    public static final void deleteContact(Contact abstractC0041l) {
         abstractC0041l.clearStatus();
         AppState.getVector(1242).removeElement(abstractC0041l);
         needsLayoutUpdate = true;
     }
 
     /* renamed from: a */
-    public static final void m419a(Account abstractC0037h, int i) {
+    public static final void updateAccountStatus(Account abstractC0037h, int i) {
         abstractC0037h.resetSyncIfChanged(m431af());
         int[] iArr = abstractC0037h.syncArray;
         iArr[0] = iArr[0] + i;
@@ -1554,7 +1554,7 @@ public final class AppController {
     }
 
     /* renamed from: b */
-    public static final void m420b(Account abstractC0037h, int i) {
+    public static final void setAccountOption(Account abstractC0037h, int i) {
         abstractC0037h.resetSyncIfChanged(m431af());
         int[] iArr = abstractC0037h.syncArray;
         iArr[1] = iArr[1] + i;
@@ -1569,12 +1569,12 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void m421a(Account abstractC0037h, ByteBuffer c0043n) {
-        m419a(abstractC0037h, c0043n.length);
+    public static final void processAccountData(Account abstractC0037h, ByteBuffer c0043n) {
+        updateAccountStatus(abstractC0037h, c0043n.length);
     }
 
     /* renamed from: C */
-    public static final void m422C(int i) {
+    public static final void addSentBytes(int i) {
         m431af();
         AppState.addInt(10, i);
         AppState.addInt(12, i);
@@ -1584,7 +1584,7 @@ public final class AppController {
     }
 
     /* renamed from: D */
-    public static final void m423D(int i) {
+    public static final void addReceivedBytes(int i) {
         m431af();
         AppState.addInt(11, i);
         AppState.addInt(13, i);
@@ -1594,7 +1594,7 @@ public final class AppController {
     }
 
     /* renamed from: E */
-    public static final void m424E(int i) {
+    public static final void addDownloadBytes(int i) {
         m431af();
         AppState.addInt(18, i);
         AppState.addInt(20, i);
@@ -1604,7 +1604,7 @@ public final class AppController {
     }
 
     /* renamed from: F */
-    public static final void m425F(int i) {
+    public static final void addUploadBytes(int i) {
         m431af();
         AppState.addInt(19, i);
         AppState.addInt(21, i);
@@ -1614,7 +1614,7 @@ public final class AppController {
     }
 
     /* renamed from: G */
-    public static final void m426G(int i) {
+    public static final void addConnectionBytes(int i) {
         m431af();
         AppState.addInt(26, i);
         AppState.addInt(28, i);
@@ -1624,7 +1624,7 @@ public final class AppController {
     }
 
     /* renamed from: H */
-    public static final void m427H(int i) {
+    public static final void addProtocolBytes(int i) {
         m431af();
         AppState.addInt(27, i);
         AppState.addInt(29, i);
@@ -2119,18 +2119,18 @@ public final class AppController {
             AppState.pool[430] = Utils.m536a(AppState.getBytes(430));
             AppState.pool[1357] = new byte[1];
             try {
-                m369N(1004);
-                m369N(1005);
-                m367C();
-                m368D();
+                computeLayoutParam(1004);
+                computeLayoutParam(1005);
+                getScreenMode3();
+                getScreenMode4();
             } catch (Throwable unused) {
                 AppState.clearRange(1004, 1007);
             }
-            setTimer(0, m376E());
+            setTimer(0, getSessionTimestamp());
             AppState.addInt(291, 1);
             AppState.saveDelta(true);
             if (AppState.getBool(217)) {
-                m390G();
+                showSettingsScreen();
             } else {
                 int iM433Q = m433Q();
                 int i3 = iM433Q;
@@ -3572,8 +3572,8 @@ public final class AppController {
                                                     }
                                                 } else {
                                                     int iM586d6 = AppState.getInt(1528) - 17;
-                                                    if (m413P() == 0) {
-                                                        if (!m410N() && i19 > iM586d6) {
+                                                    if (handleTabAction() == 0) {
+                                                        if (!hasActiveConnection() && i19 > iM586d6) {
                                                             i2 = 36;
                                                         }
                                                         int i212 = i2;
@@ -3586,7 +3586,7 @@ public final class AppController {
                                                         }
                                                     } else {
                                                         iM586d6 -= 17;
-                                                        if (!m410N()) {
+                                                        if (!hasActiveConnection()) {
                                                             i2 = 0;
                                                             int i21222 = i2;
                                                             if (i2 <= 0) {
@@ -3782,15 +3782,15 @@ public final class AppController {
                                     IOUtils.checkSoundTimer();
                                     if (isTimerExpired(timers[0]) && (!AppState.getBool(272) || ScreenManager.getCurrentScreen().screenId != 6)) {
                                         if (AppState.getCanvas().isShown()) {
-                                            m358L(0);
+                                            updateTimerSlot(0);
                                         } else {
-                                            setTimer(0, m376E());
+                                            setTimer(0, getSessionTimestamp());
                                         }
                                     }
                                 } else {
                                     Contact abstractC0041l = (Contact) vectorM614m3.elementAt(size2);
                                     if (Utils.abs(iM586d - abstractC0041l.statusCode) > 10000) {
-                                        m418c(abstractC0041l);
+                                        deleteContact(abstractC0041l);
                                     }
                                 }
                             }
@@ -3833,7 +3833,7 @@ public final class AppController {
                 isShuttingDown = true;
                 throw new RuntimeException();
             }
-            if ((m413P() != 0 || m410N()) && isTimerType(5)) {
+            if ((handleTabAction() != 0 || hasActiveConnection()) && isTimerType(5)) {
                 needsRepaint = true;
             }
             MainCanvas c0011akM582c = AppState.getCanvas();
@@ -3844,7 +3844,7 @@ public final class AppController {
                         AppState.getCanvas().updateFullScreenMode();
                     }
                     Display.getDisplay(AppState.getMidlet()).setCurrent(obj7 instanceof Displayable ? (Displayable) obj7 : null);
-                    setTimer(0, m376E());
+                    setTimer(0, getSessionTimestamp());
                     AppState.currentScreen = null;
                     z = true;
                 } else {
@@ -3886,7 +3886,7 @@ public final class AppController {
             int iM460J = 0;
             switch (ScreenManager.getCurrentScreen().screenId) {
                 case 1:
-                    iM460J = m408B(iM68d);
+                    iM460J = handleMapMenuOption(iM68d);
                     break;
                 case 2:
                     iM460J = 0;
@@ -3898,7 +3898,7 @@ public final class AppController {
                     iM460J = ContactListManager.onContactSelected(strM67c, obj);
                     break;
                 case 5:
-                    iM460J = m389z(iM68d);
+                    iM460J = handleChatSettingsOption(iM68d);
                     break;
                 case 6:
                     if (!AppState.getBool(1414)) {
@@ -3967,7 +3967,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 25:
-                    iM460J = m373a(iM68d, obj);
+                    iM460J = handleInputAction(iM68d, obj);
                     break;
                 case 26:
                     iM460J = 0;
@@ -4108,7 +4108,7 @@ public final class AppController {
                     iM460J = ResourceManager.applyVersionLabel();
                     break;
                 case 60:
-                    iM460J = m372g(strM67c);
+                    iM460J = processInputText(strM67c);
                     break;
                 case 61:
                     iM460J = 42;
@@ -4120,7 +4120,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 64:
-                    iM460J = m401A(iM68d);
+                    iM460J = handleAccountSwitchOption(iM68d);
                     break;
                 case 65:
                     iM460J = 0;
@@ -4160,7 +4160,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 77:
-                    iM460J = m400L();
+                    iM460J = handleInviteResult();
                     break;
                 case 78:
                     iM460J = -1;
@@ -4189,13 +4189,13 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 86:
-                    iM460J = m397h(obj);
+                    iM460J = handleSearchAction(obj);
                     break;
                 case 87:
                     iM460J = ResourceManager.handleChatInputAction(strM67c);
                     break;
                 case 88:
-                    iM460J = m371s(iM68d);
+                    iM460J = handleThemeOption(iM68d);
                     break;
                 case 89:
                     iM460J = -1;
@@ -4204,16 +4204,16 @@ public final class AppController {
                     iM460J = handleEventObject(obj);
                     break;
                 case 91:
-                    iM460J = m364q(iM68d);
+                    iM460J = getThemeBackground(iM68d);
                     break;
                 case 92:
                     iM460J = IOUtils.handleContactMenuAction(strM67c, iM68d);
                     break;
                 case 93:
-                    iM460J = m374t(iM68d);
+                    iM460J = handleSoundOption(iM68d);
                     break;
                 case 94:
-                    iM460J = m396h(strM67c);
+                    iM460J = processPhoneInput(strM67c);
                     break;
                 case 95:
                     iM460J = validateServerAddress(strM67c);
@@ -4222,10 +4222,10 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 97:
-                    iM460J = m398i(obj);
+                    iM460J = handleSearchResultAction(obj);
                     break;
                 case 98:
-                    iM460J = m396h(strM67c);
+                    iM460J = processPhoneInput(strM67c);
                     break;
                 case 99:
                     iM460J = openUrl(strM67c);
@@ -4234,7 +4234,7 @@ public final class AppController {
                     iM460J = IOUtils.handleMapPointAction(obj);
                     break;
                 case 101:
-                    iM460J = m382g(obj);
+                    iM460J = handleConversationAction(obj);
                     break;
                 case 102:
                     iM460J = -1;
@@ -4243,7 +4243,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 104:
-                    iM460J = m363p(iM68d);
+                    iM460J = getThemeColor(iM68d);
                     break;
                 case 105:
                     iM460J = 0;
@@ -4264,7 +4264,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 111:
-                    iM460J = m404j(obj);
+                    iM460J = handleMapSearchAction(obj);
                     break;
                 case 112:
                     iM460J = 0;
@@ -4279,28 +4279,28 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 116:
-                    iM460J = m405k(obj);
+                    iM460J = handleMapResultAction(obj);
                     break;
                 case 117:
                     iM460J = processLoginField(strM67c);
                     break;
                 case 118:
-                    iM460J = m409m(obj);
+                    iM460J = handleFileAction(obj);
                     break;
                 case 119:
-                    iM460J = m384v(iM68d);
+                    iM460J = handleChatRoomOption(iM68d);
                     break;
                 case 120:
                     iM460J = m463n(obj);
                     break;
                 case 121:
-                    iM460J = m387x(iM68d);
+                    iM460J = handleChatListOption(iM68d);
                     break;
                 case 122:
                     iM460J = handlePresenceAction();
                     break;
                 case 123:
-                    iM460J = m407l(obj);
+                    iM460J = handleLocationAction(obj);
                     break;
                 case 124:
                     iM460J = 0;
@@ -4325,7 +4325,7 @@ public final class AppController {
                     iM460J = handleScreenAction(iM68d);
                     break;
                 case 131:
-                    iM460J = m406i(strM67c);
+                    iM460J = processSearchQuery(strM67c);
                     break;
                 case 132:
                     iM460J = mapKeyToAction(iM68d);
@@ -4407,7 +4407,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 158:
-                    iM460J = m370r(iM68d);
+                    iM460J = handleViewOption(iM68d);
                     break;
                 case 159:
                     iM460J = handleItemAction(obj);
@@ -4419,7 +4419,7 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 162:
-                    iM460J = m388y(iM68d);
+                    iM460J = handleChatDetailOption(iM68d);
                     break;
                 case 163:
                     iM460J = handleSendKey();
@@ -4431,10 +4431,10 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 166:
-                    iM460J = m381u(iM68d);
+                    iM460J = handleChatOption(iM68d);
                     break;
                 case 167:
-                    iM460J = m385w(iM68d);
+                    iM460J = handleMailboxOption(iM68d);
                     break;
                 case 168:
                     iM460J = 0;
@@ -4443,7 +4443,7 @@ public final class AppController {
                     iM460J = ResourceManager.applyLocationProfile(obj);
                     break;
                 case 170:
-                    iM460J = m379f(obj);
+                    iM460J = handleFormSubmit(obj);
                     break;
                 case 171:
                     iM460J = handleRightKey();
@@ -4452,7 +4452,7 @@ public final class AppController {
                     iM460J = handleObjectAction(obj);
                     break;
                 case 173:
-                    iM460J = m399K();
+                    iM460J = handleInviteAction();
                     break;
                 case 174:
                     iM460J = 0;

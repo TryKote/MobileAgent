@@ -238,8 +238,8 @@ public final class IOUtils {
             }
             if (zM587e2) {
                 if (i > 0 || !(str2 == null || str == null)) {
-                    AppController.m356y();
-                    AppController.m411b(c0028ba);
+                    AppController.markScreenDirty();
+                    AppController.markAccountHighlighted(c0028ba);
                     if (AppState.getBool(90)) {
                         AppState.getVector(1244).addElement(c0028ba);
                     }
@@ -862,7 +862,7 @@ public final class IOUtils {
 
     /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
-        AppController.m411b((MrimAccount) AppState.getAccount());
+        AppController.markAccountHighlighted((MrimAccount) AppState.getAccount());
         AppState.pool[1271] = ConnectionThread.m1149a(objArr);
     }
 

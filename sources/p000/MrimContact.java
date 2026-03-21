@@ -98,7 +98,7 @@ public final class MrimContact extends Contact implements ListItem {
         byte bM1344o = c0043n.readByte();
         this.flags = bM1344o;
         if (bM1344o != 0) {
-            AppController.m414a((Contact) this);
+            AppController.markContactRead((Contact) this);
         }
         this.statusMessage = str;
         this.defaultIcon = 155;

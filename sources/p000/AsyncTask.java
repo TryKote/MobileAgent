@@ -1392,7 +1392,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m380a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.AppController.waitForCompletion(r0)     // Catch: java.lang.Throwable -> La84
             return
         L8ed:
             return

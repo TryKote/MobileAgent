@@ -473,9 +473,9 @@ public final class Screen {
                     }
                     if (c0008ah2.account == null) {
                         int i34 = c0008ah2.iconId;
-                        iM417c = (i34 == 240 && AppController.m410N()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(1243).size() <= 0) ? i34 : 16384;
+                        iM417c = (i34 == 240 && AppController.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(1243).size() <= 0) ? i34 : 16384;
                     } else {
-                        iM417c = AppController.m417c(c0008ah2.account);
+                        iM417c = AppController.getAccountStatus(c0008ah2.account);
                     }
                     c0012al.drawIcon(iM417c, c0008ah2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(c0008ah2.xOffset, 2, c0008ah2.width - 3, iM623o - 2).drawString(c0008ah2.title, c0008ah2.xOffset + 6 + 16, 4, 20);
                 } else {

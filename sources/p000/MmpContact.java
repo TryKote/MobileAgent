@@ -108,7 +108,7 @@ public final class MmpContact extends Contact {
         byte bM1344o = c0043n.readByte();
         this.flags = bM1344o;
         if (bM1344o != 0) {
-            AppController.m414a((Contact) this);
+            AppController.markContactRead((Contact) this);
         }
         this.defaultIcon = 255;
         this.identifier = abstractC0037h.encodeId().writeRawString(this.identifier).readAllByteStr();

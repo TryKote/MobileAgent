@@ -294,7 +294,7 @@ public class XmppProtocol extends Account {
                 break;
             default:
                 this.connection.m1132a(this.dataBuffer);
-                AppController.m419a(this, this.dataBuffer.length);
+                AppController.updateAccountStatus(this, this.dataBuffer.length);
                 Object[] objArr6 = this.parserState;
                 ByteBuffer c0043n = this.dataBuffer;
                 ByteBuffer c0043n2 = (ByteBuffer) objArr6[1];

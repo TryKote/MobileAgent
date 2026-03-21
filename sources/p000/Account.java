@@ -216,7 +216,7 @@ public abstract class Account {
 
     /* renamed from: d */
     public final int sendData(ByteBuffer c0043n) {
-        AppController.m420b(this, c0043n.length);
+        AppController.setAccountOption(this, c0043n.length);
         ConnectionThread c0039j = this.connection;
         if (c0039j.exception != null) {
             throw new RuntimeException();
@@ -390,7 +390,7 @@ public abstract class Account {
                 }
                 Contact abstractC0041lM1394e = abstractC0046qM1082g.getContact(size2);
                 removeContact(abstractC0041lM1394e, false);
-                AppController.m415b(abstractC0041lM1394e);
+                AppController.markContactUnread(abstractC0041lM1394e);
             }
             removeGroup(abstractC0046qM1082g);
         }
@@ -416,7 +416,7 @@ public abstract class Account {
         if (abstractC0041lM1069c == null || abstractC0041lM1069c.isOnline() || abstractC0041lM1069c.hasUnread() || abstractC0041lM1069c.isSystem()) {
             return;
         }
-        AppController.m418c(abstractC0041lM1069c);
+        AppController.deleteContact(abstractC0041lM1069c);
         AppState.getVector(1242).addElement(abstractC0041lM1069c);
         abstractC0041lM1069c.statusCode = AppState.getInt(1531);
         abstractC0041lM1069c.dirty = true;
@@ -426,7 +426,7 @@ public abstract class Account {
     public final void markRead(String str) {
         Contact abstractC0041lM1069c = getContact((Object) str);
         if (abstractC0041lM1069c != null) {
-            AppController.m418c(abstractC0041lM1069c);
+            AppController.deleteContact(abstractC0041lM1069c);
         }
     }
 
@@ -479,7 +479,7 @@ public abstract class Account {
             size--;
             if (size < 0) {
                 this.defaultGroup.removeElement(abstractC0041l);
-                AppController.m415b(abstractC0041l);
+                AppController.markContactUnread(abstractC0041l);
                 return 0;
             }
             getGroup(size).removeElement(abstractC0041l);

@@ -654,7 +654,7 @@ public final class Conversation implements ListItem {
                 return;
             } else if ((c0035fM717f.statusFlags & 65536) == 0) {
                 c0035fM717f.performAction();
-                c0028ba.trySendData(AppController.m395b(c0028ba, strM1338j));
+                c0028ba.trySendData(AppController.createPasswordAuthCmd(c0028ba, strM1338j));
                 return;
             } else {
                 ResourceManager.playNotificationSound(3);
@@ -839,7 +839,7 @@ public final class Conversation implements ListItem {
         XmlElement c0022avM550a2 = XmlElement.createFromState(398003);
         XmlElement c0022avM552a = c0022avM550a.addChild(c0022avM550a2);
         try {
-            c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.m367C()).append(',').append(AppController.m368D()).append(',').append(AppController.m365A()).append(',').append(AppController.m366B()).append(',').append(0))));
+            c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
         } catch (Throwable unused) {
         }
         Vector vectorM439R = AppController.m439R();
