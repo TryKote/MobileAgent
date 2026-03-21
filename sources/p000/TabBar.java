@@ -72,7 +72,7 @@ public final class TabBar {
             m165a(264, AppState.m584b(1045), 6, null);
         }
         m178j();
-        C0015ao.f153g = true;
+        AppController.f153g = true;
     }
 
     /* renamed from: a */
@@ -89,7 +89,7 @@ public final class TabBar {
         c0008ah2.f52i = str2;
         c0008ah2.f53j = i2;
         m178j();
-        C0015ao.f153g = true;
+        AppController.f153g = true;
     }
 
     /* renamed from: a */
@@ -174,7 +174,7 @@ public final class TabBar {
         } while (c0008ah.f50g != i2);
         vectorM614m.removeElement(c0008ah);
         m178j();
-        C0015ao.f153g = true;
+        AppController.f153g = true;
     }
 
     /* renamed from: k */
@@ -283,7 +283,7 @@ public final class TabBar {
                 vectorM1213g.insertElementAt(iArr3, 0);
                 i9 -= 16;
             }
-            if (c0008ah3.f50g == 36 && C0015ao.m410N()) {
+            if (c0008ah3.f50g == 36 && AppController.m410N()) {
                 if (iArr2[1] == 248) {
                     vectorM1213g.insertElementAt(new int[]{20, 16385}, 0);
                     int[] iArr4 = iArr2;
@@ -297,8 +297,8 @@ public final class TabBar {
             }
             if (c0008ah3.f50g == 4) {
                 Account abstractC0037h = c0008ah3.f51h;
-                if (C0015ao.m416b(abstractC0037h) && AppState.m587e(67) && iArr2[1] == 248) {
-                    vectorM1213g.insertElementAt(new int[]{20, C0015ao.m417c(abstractC0037h)}, 0);
+                if (AppController.m416b(abstractC0037h) && AppState.m587e(67) && iArr2[1] == 248) {
+                    vectorM1213g.insertElementAt(new int[]{20, AppController.m417c(abstractC0037h)}, 0);
                     int[] iArr6 = iArr2;
                     iArr6[0] = iArr6[0] + 16;
                     i9 -= 16;
@@ -370,21 +370,21 @@ public final class TabBar {
                     vectorM1213g.addElement(iArr9);
                     i14 -= 16;
                 }
-                if (c0008ah4.f50g == 36 && C0015ao.m410N() && AppState.m587e(67)) {
+                if (c0008ah4.f50g == 36 && AppController.m410N() && AppState.m587e(67)) {
                     vectorM1213g.addElement(new int[]{i15 + 16, 16385});
                     i14 -= 16;
                 }
                 if (c0008ah4.f50g == 4) {
                     Account abstractC0037h2 = c0008ah4.f51h;
-                    if (C0015ao.m416b(abstractC0037h2)) {
+                    if (AppController.m416b(abstractC0037h2)) {
                         if (iArr[1] == 246) {
-                            vectorM1213g.addElement(new int[]{i15 + 16, C0015ao.m417c(abstractC0037h2)});
+                            vectorM1213g.addElement(new int[]{i15 + 16, AppController.m417c(abstractC0037h2)});
                             i14 -= 16;
                         } else {
                             int size4 = vectorM1213g.size() - 2;
                             int i16 = ((int[]) vectorM1213g.elementAt(size4))[1];
                             if (i16 != 16384 && i16 != 16386) {
-                                vectorM1213g.insertElementAt(new int[]{i15 + 16, C0015ao.m417c(abstractC0037h2)}, size4 + 1);
+                                vectorM1213g.insertElementAt(new int[]{i15 + 16, AppController.m417c(abstractC0037h2)}, size4 + 1);
                                 int[] iArr10 = iArr;
                                 iArr10[0] = iArr10[0] + 16;
                                 i14 -= 16;

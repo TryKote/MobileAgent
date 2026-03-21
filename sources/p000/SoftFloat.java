@@ -21,14 +21,14 @@ public final class SoftFloat {
     /* renamed from: a */
     private static long m678a(boolean z, int i, long j) {
         if (j != 0) {
-            int iM360b = C0015ao.m360b(j);
+            int iM360b = AppController.m360b(j);
             long j2 = j << iM360b;
             int i2 = i - iM360b;
             int i3 = i2;
             if (i2 < -1085) {
-                j = C0015ao.m362c(j2, (-1074) - i3);
+                j = AppController.m362c(j2, (-1074) - i3);
             } else {
-                long jM362c = C0015ao.m362c(j2, 11);
+                long jM362c = AppController.m362c(j2, 11);
                 long j3 = jM362c;
                 if (jM362c == 9007199254740992L) {
                     j3 = 4503599627370496L;
@@ -178,9 +178,9 @@ public final class SoftFloat {
         int iM676m2 = m676m(j2) - 3;
         int i = iM676m - iM676m2;
         if (i > 0) {
-            jM677n2 = C0015ao.m361b(jM677n2, i);
+            jM677n2 = AppController.m361b(jM677n2, i);
         } else if (i < 0) {
-            jM677n = C0015ao.m361b(jM677n, -i);
+            jM677n = AppController.m361b(jM677n, -i);
             iM676m = iM676m2;
         }
         if (zM675l ^ zM675l2) {
@@ -232,7 +232,7 @@ public final class SoftFloat {
         if (j11 == 0) {
             return m678a(zM675l, iM676m2, j12);
         }
-        int iM360b = C0015ao.m360b(j11);
+        int iM360b = AppController.m360b(j11);
         int i = iM676m2 + (56 - iM360b);
         long j13 = (j11 << iM360b) | (j12 >>> (64 - iM360b));
         if ((j12 << iM360b) != 0) {
@@ -269,7 +269,7 @@ public final class SoftFloat {
         long j3 = 0;
         int iM676m2 = iM676m - m676m(j2);
         while (true) {
-            int iM503b = Utils.m503b(C0015ao.m360b(jM677n) - 1, C0015ao.m360b(j3));
+            int iM503b = Utils.m503b(AppController.m360b(jM677n) - 1, AppController.m360b(j3));
             if (iM503b <= 8) {
                 break;
             }
@@ -301,7 +301,7 @@ public final class SoftFloat {
         boolean zM675l = m675l(j);
         long jM677n = m677n(j);
         if (z) {
-            jM362c = C0015ao.m362c(jM677n, -iM676m);
+            jM362c = AppController.m362c(jM677n, -iM676m);
         } else {
             if (iM676m <= -64) {
                 j2 = jM677n;
@@ -335,7 +335,7 @@ public final class SoftFloat {
             return z ? -4503599627370496L : 9218868437227405312L;
         }
         short s = ((short[]) AppState.f177b[988])[i3];
-        int iM360b = C0015ao.m360b(j);
+        int iM360b = AppController.m360b(j);
         int i4 = s - iM360b;
         long jM696j = m696j(j << iM360b, ((long[]) AppState.f177b[987])[i3]);
         for (int i5 = i2 % 3; i5 > 0; i5--) {
@@ -1078,7 +1078,7 @@ public final class SoftFloat {
         long[] jArr3 = new long[20];
         int i14 = 0;
         while (i14 <= i13) {
-            jArr3[i14] = i12 < 0 ? 0L : m687b(C0034e.m944c(i12));
+            jArr3[i14] = i12 < 0 ? 0L : m687b(ResourceManager.m944c(i12));
             i14++;
             i12++;
         }
@@ -1161,7 +1161,7 @@ public final class SoftFloat {
                         i28++;
                     }
                     for (int i29 = i17 + 1; i29 <= i17 + i28; i29++) {
-                        jArr3[i8 + i29] = m687b(C0034e.m944c(i10 + i29));
+                        jArr3[i8 + i29] = m687b(ResourceManager.m944c(i10 + i29));
                         long jM690b4 = 0;
                         for (int i30 = 0; i30 <= i8; i30++) {
                             jM690b4 = m690b(jM690b4, m692d(jArr2[i30], jArr3[(i8 + i29) - i30]));
@@ -1232,7 +1232,7 @@ public final class SoftFloat {
                 return 9221120237041090560L;
             }
             if (i3 != 2146435072 || ((int) j) == 0) {
-                return i2 > 0 ? C0034e.m943b(3) : m682a(C0034e.m943b(3));
+                return i2 > 0 ? ResourceManager.m943b(3) : m682a(ResourceManager.m943b(3));
             }
             return 9221120237041090560L;
         }
@@ -1266,7 +1266,7 @@ public final class SoftFloat {
         if (i < 0) {
             return m691c(j, m692d(j, m690b(jM692d3, jM692d4)));
         }
-        long jM691c = m691c(C0034e.m943b(i), m691c(m691c(m692d(j, m690b(jM692d3, jM692d4)), C0034e.m943b(i + 4)), j));
+        long jM691c = m691c(ResourceManager.m943b(i), m691c(m691c(m692d(j, m690b(jM692d3, jM692d4)), ResourceManager.m943b(i + 4)), j));
         return i2 < 0 ? m682a(jM691c) : jM691c;
     }
 

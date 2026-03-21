@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: y */
 /* loaded from: MobileAgent_3.9.jar:y.class */
-public final class C0054y extends ContactGroup {
+public final class MergedContactGroup extends ContactGroup {
 
     /* renamed from: a */
     private ContactGroup f432a;
@@ -12,7 +12,7 @@ public final class C0054y extends ContactGroup {
     /* renamed from: b */
     private int f433b;
 
-    public C0054y(ContactGroup abstractC0046q, int i) {
+    public MergedContactGroup(ContactGroup abstractC0046q, int i) {
         super(abstractC0046q.f396d);
         this.f433b = i;
         this.f432a = abstractC0046q;
@@ -20,7 +20,7 @@ public final class C0054y extends ContactGroup {
         this.f399g = abstractC0046q.f399g;
     }
 
-    public C0054y() {
+    public MergedContactGroup() {
         super(null);
         this.f432a = null;
     }

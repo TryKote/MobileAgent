@@ -2,18 +2,18 @@ package p000;
 
 /* renamed from: ap */
 /* loaded from: MobileAgent_3.9.jar:ap.class */
-public final class C0016ap extends ContactGroup {
+public final class MmpContactGroup extends ContactGroup {
 
     /* renamed from: a */
     public int f157a;
 
-    public C0016ap(MmpProtocol c0033d, int i, String str) {
+    public MmpContactGroup(MmpProtocol c0033d, int i, String str) {
         super(c0033d);
         this.f157a = i;
         m1403c(str);
     }
 
-    public C0016ap(MmpProtocol c0033d, ByteBuffer c0043n) {
+    public MmpContactGroup(MmpProtocol c0033d, ByteBuffer c0043n) {
         super(c0033d);
         this.f157a = c0043n.m1328e();
         m1403c(c0043n.m1335e((String) null));
@@ -28,7 +28,7 @@ public final class C0016ap extends ContactGroup {
         }
     }
 
-    public C0016ap() {
+    public MmpContactGroup() {
         super(null);
     }
 

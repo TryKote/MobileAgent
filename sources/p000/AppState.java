@@ -40,17 +40,17 @@ public abstract class AppState {
     /* renamed from: a */
     public static final void m578a(Object obj) {
         int iM1346q;
-        C0034e.f292k = new Boolean(true);
-        C0034e.f293l = new Boolean(false);
-        C0034e.f290i = new Object();
-        C0034e.f291j = new Integer[32];
+        ResourceManager.f292k = new Boolean(true);
+        ResourceManager.f293l = new Boolean(false);
+        ResourceManager.f290i = new Object();
+        ResourceManager.f291j = new Integer[32];
         int i = 32;
         while (true) {
             i--;
             if (i < 0) {
                 break;
             } else {
-                C0034e.f291j[i] = new Integer(i);
+                ResourceManager.f291j[i] = new Integer(i);
             }
         }
         StringUtils.f0a = new Vector(128);
@@ -58,7 +58,7 @@ public abstract class AppState {
         NetworkUtils.f366h = new StringBuffer[5];
         NetworkUtils.f367i = new Vector[5];
         NetworkUtils.f368j = new Hashtable();
-        C0029bb.f237c = NetworkUtils.m1213g();
+        IOUtils.f237c = NetworkUtils.m1213g();
         f182g = NetworkUtils.m1221a(1819047278);
         f176a = new byte[0];
         f178e = new Object[295];
@@ -148,7 +148,7 @@ public abstract class AppState {
         f177b[1269] = new int[]{3};
         f177b[1270] = new int[]{4};
         StringUtils.m34h();
-        C0015ao.f147a = new long[14];
+        AppController.f147a = new long[14];
         f177b[1238] = new Object[1];
         NetworkUtils.m1208b(f182g);
         NetworkUtils.m1208b(m620j());
@@ -157,7 +157,7 @@ public abstract class AppState {
         NetworkUtils.m1208b(m584b(1038));
         NetworkUtils.m1208b(m584b(525044));
         NetworkUtils.m1208b(m584b(590588));
-        f177b[112] = C0034e.m967e(!StringUtils.f1b && !StringUtils.f2c ? 1 : 0);
+        f177b[112] = ResourceManager.m967e(!StringUtils.f1b && !StringUtils.f2c ? 1 : 0);
         try {
             m599a(1535, Display.getDisplay(m602d()).numAlphaLevels() > 2);
         } catch (Throwable unused5) {
@@ -262,7 +262,7 @@ public abstract class AppState {
     /* renamed from: c */
     public static final void m594c(int i, int i2) {
         if (i < 1406) {
-            m601a(i, C0034e.m967e(i2));
+            m601a(i, ResourceManager.m967e(i2));
         } else {
             f179f[i - 1406] = i2;
         }
@@ -333,7 +333,7 @@ public abstract class AppState {
     /* renamed from: b */
     public static final void m604b(Object obj) {
         f180c = obj;
-        C0015ao.m304a(0, C0015ao.m376E());
+        AppController.m304a(0, AppController.m376E());
     }
 
     /* renamed from: e */
@@ -424,17 +424,17 @@ public abstract class AppState {
             return strM1215a;
         }
         if ((bM1344o & 64) != 0) {
-            return C0034e.m967e(bM1344o & 63);
+            return ResourceManager.m967e(bM1344o & 63);
         }
         if ((bM1344o & 32) != 0) {
-            return C0034e.m967e(((bM1344o & 31) << 8) + c0043n.m1346q());
+            return ResourceManager.m967e(((bM1344o & 31) << 8) + c0043n.m1346q());
         }
         int iM1346q = 0;
         int i2 = bM1344o & 7;
         while (true) {
             i2--;
             if (i2 < 0) {
-                return C0034e.m967e(iM1346q);
+                return ResourceManager.m967e(iM1346q);
             }
             iM1346q = (iM1346q << 8) + c0043n.m1346q();
         }

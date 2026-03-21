@@ -68,7 +68,7 @@ public final class NetworkUtils {
         long jCurrentTimeMillis = System.currentTimeMillis();
         if (jCurrentTimeMillis > AppState.m598g(274) + 7776000000L) {
             AppState.m597a(274, jCurrentTimeMillis);
-            new RunnableC0055z(18);
+            new AsyncTask(18);
         }
     }
 
@@ -89,13 +89,13 @@ public final class NetworkUtils {
             Thread.sleep(1000L);
             System.gc();
             Thread.sleep(1000L);
-            C0015ao.m343s();
+            AppController.m343s();
             if (str == null) {
                 HttpClient c0024axM631b = HttpClient.m631b((Object) new ByteBuffer().m1310c(1442705).m1310c(524308).m1310c(720924).m1317c());
                 c0024ax = c0024axM631b;
                 if (c0024axM631b.m634a() == 200) {
                     Vector vector = new ByteBuffer(c0024ax).m1389J().f172b;
-                    XmlElement c0022avM560b = new XmlElement(103).m560b(103, AppState.m584b(223)).m560b(102, C0015ao.m298f()).m560b(116, StringUtils.m17c(Long.toString(Runtime.getRuntime().totalMemory()))).m560b(112, StringUtils.m17c(Integer.toString(0))).m560b(115, StringUtils.m17c(C0034e.m968a(false).toString()));
+                    XmlElement c0022avM560b = new XmlElement(103).m560b(103, AppState.m584b(223)).m560b(102, AppController.m298f()).m560b(116, StringUtils.m17c(Long.toString(Runtime.getRuntime().totalMemory()))).m560b(112, StringUtils.m17c(Integer.toString(0))).m560b(115, StringUtils.m17c(ResourceManager.m968a(false).toString()));
                     for (int i6 = 0; i6 < vector.size(); i6++) {
                         XmlElement c0022av = (XmlElement) vector.elementAt(i6);
                         String str2 = c0022av.f171a;
@@ -108,7 +108,7 @@ public final class NetworkUtils {
                             c0022avM560b.m552a(m1176a('e', strM11a, (Object) m1178c(strM11a)));
                         }
                     }
-                    new RunnableC0055z(18, c0022avM560b.toString());
+                    new AsyncTask(18, c0022avM560b.toString());
                 }
             } else {
                 ByteBuffer c0043nM1310c = new ByteBuffer().m1310c(131082);
@@ -240,16 +240,16 @@ public final class NetworkUtils {
                 c0024axM632a.m642a(c0043nM1310c.f384b, 1414745936, 1038).m641a(c0043nM1310c).m634a();
             }
             HttpClient.m633a(c0024ax);
-            C0015ao.m344t();
+            AppController.m344t();
             m1209a(bArrM1211a);
         } catch (RuntimeException th) {
             HttpClient.m633a((HttpClient) null);
-            C0015ao.m344t();
+            AppController.m344t();
             m1209a(bArrM1211a);
             throw th;
         } catch (Throwable th) {
             HttpClient.m633a((HttpClient) null);
-            C0015ao.m344t();
+            AppController.m344t();
             m1209a(bArrM1211a);
             throw new RuntimeException(th);
         }
@@ -269,9 +269,9 @@ public final class NetworkUtils {
     private static final Boolean m1178c(String str) {
         try {
             Class.forName(str);
-            return C0034e.f292k;
+            return ResourceManager.f292k;
         } catch (Throwable unused) {
-            return C0034e.f293l;
+            return ResourceManager.f293l;
         }
     }
 
@@ -304,15 +304,15 @@ public final class NetworkUtils {
         if (str != null) {
             if (Utils.m510a((Object) str) == 0) {
                 String str2 = (String) objArr[7];
-                int iM437a = C0015ao.m437a(0, (Account) null, str2, (String) objArr[9]);
+                int iM437a = AppController.m437a(0, (Account) null, str2, (String) objArr[9]);
                 if (0 != iM437a) {
-                    return C0015ao.m338l(iM437a);
+                    return AppController.m338l(iM437a);
                 }
-                C0015ao.m328a(C0015ao.m438b(0, str2));
+                AppController.m328a(AppController.m438b(0, str2));
                 return 4;
             }
             if (Utils.m510a((Object) str) == 4004) {
-                objArr[21] = C0034e.m967e(-1);
+                objArr[21] = ResourceManager.m967e(-1);
             }
         }
         AppState.f177b[1271] = objArr;
@@ -366,14 +366,14 @@ public final class NetworkUtils {
         ScreenManager.m71b(ScreenManager.m75b(4399));
         String strM584b = AppState.m584b(1297);
         if (strM584b == null) {
-            C0015ao.m334q();
+            AppController.m334q();
             return;
         }
         int iM510a = Utils.m510a((Object) strM584b);
         int i2 = iM510a == 78 ? 818 : iM510a == 101 ? 819 : iM510a == 114 ? 820 : iM510a == 150 ? 821 : iM510a == 152 ? 822 : iM510a == 154 ? 823 : iM510a == 155 ? 824 : iM510a == 175 ? 825 : iM510a == 555 ? 826 : iM510a == 573 ? 827 : iM510a == 4003 ? 828 : iM510a == 4004 ? 829 : iM510a == 5005 ? 830 : 831;
         int i3 = i2;
         String strM584b2 = AppState.m584b(i2);
-        C0015ao.m339e(i3 != 831 ? strM584b2 : new StringBuffer().append(strM584b2).append(iM510a).toString());
+        AppController.m339e(i3 != 831 ? strM584b2 : new StringBuffer().append(strM584b2).append(iM510a).toString());
     }
 
     /* renamed from: c */
@@ -398,13 +398,13 @@ public final class NetworkUtils {
     /* renamed from: a */
     private static final void m1185a(Object[] objArr, boolean z) {
         if (objArr != null) {
-            C0029bb.m763a((InputStream) objArr[1]);
-            C0029bb.m764a((OutputStream) objArr[2]);
+            IOUtils.m763a((InputStream) objArr[1]);
+            IOUtils.m764a((OutputStream) objArr[2]);
             Connection connection = (Connection) objArr[0];
             if (connection == null || z) {
-                C0029bb.m765a(connection);
+                IOUtils.m765a(connection);
             } else {
-                new RunnableC0055z(7, connection);
+                new AsyncTask(7, connection);
             }
             objArr[0] = null;
             objArr[1] = null;
@@ -417,7 +417,7 @@ public final class NetworkUtils {
     public static final Object[] m1186a(String str, boolean z) throws IOException {
         Object[] objArr = new Object[z ? 5 : 3];
         try {
-            SocketConnection socketConnection = (SocketConnection) C0029bb.m761a((Object) Connector.open(str, 3));
+            SocketConnection socketConnection = (SocketConnection) IOUtils.m761a((Object) Connector.open(str, 3));
             objArr[0] = socketConnection;
             try {
                 if (socketConnection instanceof SocketConnection) {
@@ -440,11 +440,11 @@ public final class NetworkUtils {
                 }
             } catch (Throwable unused2) {
             }
-            objArr[1] = C0029bb.m761a((Object) socketConnection.openInputStream());
-            objArr[2] = C0029bb.m761a((Object) socketConnection.openOutputStream());
+            objArr[1] = IOUtils.m761a((Object) socketConnection.openInputStream());
+            objArr[2] = IOUtils.m761a((Object) socketConnection.openOutputStream());
             if (z) {
                 objArr[4] = new ByteBuffer();
-                new RunnableC0055z(4, objArr);
+                new AsyncTask(4, objArr);
             }
             AppState.m614m(1373).addElement(objArr);
             return objArr;
@@ -564,7 +564,7 @@ public final class NetworkUtils {
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
                 if (c0042m.m1255c() instanceof MrimAccount) {
-                    MenuItem c0032cM898b = MenuItem.m886c().m896a(C0015ao.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
+                    MenuItem c0032cM898b = MenuItem.m886c().m896a(AppController.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
                     c0032cM898b.f265d = c0042m;
                     c0032cM1057D = c0032cM898b;
                 } else {
@@ -690,7 +690,7 @@ public final class NetworkUtils {
     /* renamed from: a */
     public static final void m1199a(int i, int i2, int i3) {
         if (i3 != 0) {
-            C0015ao.m340m(i3);
+            AppController.m340m(i3);
         } else {
             m1200b(i, i2);
         }
@@ -763,7 +763,7 @@ public final class NetworkUtils {
                 i2 = 914;
                 break;
         }
-        C0029bb.m778d((Object) AppState.m584b(i2));
+        IOUtils.m778d((Object) AppState.m584b(i2));
     }
 
     /* renamed from: d */
@@ -1137,22 +1137,22 @@ public final class NetworkUtils {
     public static final Object[] m1222i() {
         String strM584b = AppState.m584b(2950249);
         String str = AppState.f181d;
-        Integer num = C0034e.f291j[0];
-        Integer numM967e = C0034e.m967e(-1);
+        Integer num = ResourceManager.f291j[0];
+        Integer numM967e = ResourceManager.m967e(-1);
         return m1224a(0, strM584b, new Object[]{null, null, null, null, null, null, null, str, num, str, str, num, str, str, str, str, num, num, numM967e, num, null, numM967e});
     }
 
     /* renamed from: a */
     public static final Object[] m1223a(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return m1224a(2, m1215a(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(m1217h().append(AppState.m584b(2163862)), 1311927, str8), 1115339, StringUtils.m13b(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.m584b(817))), new Object[]{null, null, null, null, null, null, null, str, C0034e.m967e(0), str2, str3, C0034e.f291j[0], str4, str5, str6, str7, C0034e.m967e(i2), C0034e.m967e(i3), C0034e.m967e(i4), C0034e.m967e(i5), null, C0034e.m967e(i6)});
+        return m1224a(2, m1215a(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(m1217h().append(AppState.m584b(2163862)), 1311927, str8), 1115339, StringUtils.m13b(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.m584b(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.m967e(0), str2, str3, ResourceManager.f291j[0], str4, str5, str6, str7, ResourceManager.m967e(i2), ResourceManager.m967e(i3), ResourceManager.m967e(i4), ResourceManager.m967e(i5), null, ResourceManager.m967e(i6)});
     }
 
     /* renamed from: a */
     private static final Object[] m1224a(int i, String str, Object[] objArr) {
         objArr[0] = null;
-        objArr[1] = C0034e.m967e(i);
+        objArr[1] = ResourceManager.m967e(i);
         objArr[2] = str;
-        new RunnableC0055z(24, objArr);
+        new AsyncTask(24, objArr);
         return objArr;
     }
 
@@ -1160,7 +1160,7 @@ public final class NetworkUtils {
     public static final void m1225e(Object[] objArr) {
         try {
             try {
-                C0015ao.m343s();
+                AppController.m343s();
                 HttpClient c0024axM630a = HttpClient.m630a(objArr[2]);
                 int iM634a = c0024axM630a.m634a();
                 if (iM634a == 200) {
@@ -1169,17 +1169,17 @@ public final class NetworkUtils {
                         case 0:
                             m1226a(objArr, c0043n.m1389J());
                             HttpClient.m633a(c0024axM630a);
-                            C0015ao.m344t();
+                            AppController.m344t();
                             return;
                         case 1:
                             objArr[3] = c0043n.m1348r();
                             HttpClient.m633a(c0024axM630a);
-                            C0015ao.m344t();
+                            AppController.m344t();
                             return;
                         case 2:
                             m1226a(objArr, c0043n.m1389J());
                             HttpClient.m633a(c0024axM630a);
-                            C0015ao.m344t();
+                            AppController.m344t();
                             return;
                     }
                 }
@@ -1187,11 +1187,11 @@ public final class NetworkUtils {
             } catch (Throwable th) {
                 objArr[0] = th;
                 HttpClient.m633a((HttpClient) null);
-                C0015ao.m344t();
+                AppController.m344t();
             }
         } catch (Throwable th2) {
             HttpClient.m633a((HttpClient) null);
-            C0015ao.m344t();
+            AppController.m344t();
             throw th2;
         }
     }

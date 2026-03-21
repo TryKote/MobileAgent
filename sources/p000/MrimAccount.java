@@ -42,7 +42,7 @@ public final class MrimAccount extends Account implements ListItem {
         super(i, str, str2);
         this.f324t = 0;
         this.f325u = 1;
-        C0010aj c0010aj = new C0010aj(this, -1, 102, AppState.m584b(1039));
+        MrimContactGroup c0010aj = new MrimContactGroup(this, -1, 102, AppState.m584b(1039));
         c0010aj.f399g = true;
         this.f334D = c0010aj;
         this.f231g = new VCard();
@@ -65,10 +65,10 @@ public final class MrimAccount extends Account implements ListItem {
             if (iM1328e < 0) {
                 break;
             } else {
-                this.f313i.addElement(new C0010aj(this, c0043n));
+                this.f313i.addElement(new MrimContactGroup(this, c0043n));
             }
         }
-        C0010aj c0010aj = new C0010aj(this, c0043n);
+        MrimContactGroup c0010aj = new MrimContactGroup(this, c0043n);
         c0010aj.f399g = true;
         this.f334D = c0010aj;
         ByteBuffer c0043n2 = new ByteBuffer();
@@ -180,30 +180,30 @@ public final class MrimAccount extends Account implements ListItem {
     @Override // p000.Account
     /* renamed from: b */
     public final ContactGroup mo85b() {
-        return new C0010aj(this, -1, 101, AppState.m584b(1040));
+        return new MrimContactGroup(this, -1, 101, AppState.m584b(1040));
     }
 
     @Override // p000.Account
     /* renamed from: c */
     public final ContactGroup mo86c() {
-        return new C0010aj(this, -1, 104, AppState.m584b(1042));
+        return new MrimContactGroup(this, -1, 104, AppState.m584b(1042));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final ContactGroup mo87d() {
-        return new C0010aj(this, -1, 103, AppState.m584b(1041));
+        return new MrimContactGroup(this, -1, 103, AppState.m584b(1041));
     }
 
     @Override // p000.Account
     /* renamed from: e */
     public final ContactGroup mo88e() {
-        return new C0010aj(this, -1, 105, AppState.m584b(1043));
+        return new MrimContactGroup(this, -1, 105, AppState.m584b(1043));
     }
 
     /* renamed from: f */
-    public final C0010aj m718f() {
-        return (C0010aj) this.f313i.elementAt(0);
+    public final MrimContactGroup m718f() {
+        return (MrimContactGroup) this.f313i.elementAt(0);
     }
 
     @Override // p000.Account
@@ -271,14 +271,14 @@ public final class MrimAccount extends Account implements ListItem {
                 this.f319o = 0;
                 this.f320p = new ConnectionThread(AppState.m584b(1114895));
                 this.f322r = 2;
-                C0015ao.f153g = true;
+                AppController.f153g = true;
                 break;
             case 2:
                 this.f323s = 30;
                 if (this.f320p.m1131a() == 2) {
                     this.f323s = 40;
                     this.f322r = 3;
-                    C0015ao.f153g = true;
+                    AppController.f153g = true;
                     break;
                 }
                 break;
@@ -287,7 +287,7 @@ public final class MrimAccount extends Account implements ListItem {
                 int i4 = this.f318n.f384b;
                 int i5 = i4;
                 if (i4 > 0) {
-                    C0015ao.m419a((Account) this, i5);
+                    AppController.m419a((Account) this, i5);
                     this.f323s = 60;
                     StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                     while (true) {
@@ -297,7 +297,7 @@ public final class MrimAccount extends Account implements ListItem {
                             this.f320p.f349c = 3;
                             this.f320p = new ConnectionThread(NetworkUtils.m1215a(stringBufferM1217h));
                             this.f322r = 4;
-                            C0015ao.f153g = true;
+                            AppController.f153g = true;
                             break;
                         } else {
                             char cM1344o = (char) this.f318n.m1344o();
@@ -311,9 +311,9 @@ public final class MrimAccount extends Account implements ListItem {
             case 4:
                 if (this.f320p.m1131a() == 2) {
                     this.f323s = 80;
-                    m1053d(C0015ao.m377a(this));
+                    m1053d(AppController.m377a(this));
                     this.f322r = 5;
-                    C0015ao.f153g = true;
+                    AppController.f153g = true;
                     break;
                 }
                 break;
@@ -329,13 +329,13 @@ public final class MrimAccount extends Account implements ListItem {
                     m1061F();
                     this.f324t = mo89g();
                 }
-                if (this.f330z <= 0 || !C0015ao.m306a(this.f331A)) {
+                if (this.f330z <= 0 || !AppController.m306a(this.f331A)) {
                     return;
                 }
-                m1052c(C0015ao.m321a(this, 4102, (ByteBuffer) null));
+                m1052c(AppController.m321a(this, 4102, (ByteBuffer) null));
                 return;
             }
-            C0015ao.m421a((Account) this, c0043nM1349s);
+            AppController.m421a((Account) this, c0043nM1349s);
             int iM1330h = c0043nM1349s.m1330h(12);
             int iM1330h2 = c0043nM1349s.m1330h(8);
             c0043nM1349s.m1329g(44);
@@ -346,7 +346,7 @@ public final class MrimAccount extends Account implements ListItem {
                     this.f331A = System.currentTimeMillis() + jM503b;
                     ByteBuffer c0043nM1308a = new ByteBuffer().m1308a(this.f315k).m1308a(m1064I());
                     boolean zM587e = AppState.m587e(105);
-                    m1053d(C0015ao.m321a(this, 4216, c0043nM1308a.m1360p(zM587e ? -1 : 22).m1308a(zM587e ? null : new ByteBuffer().m1310c(1642077).m1312e(2229599).m1317c()).m1310c(1704823).m1308a(C0036g.m1017d()).m1325a(C0036g.m1016a(this))));
+                    m1053d(AppController.m321a(this, 4216, c0043nM1308a.m1360p(zM587e ? -1 : 22).m1308a(zM587e ? null : new ByteBuffer().m1310c(1642077).m1312e(2229599).m1317c()).m1310c(1704823).m1308a(XmppContactGroup.m1017d()).m1325a(XmppContactGroup.m1016a(this))));
                     this.f322r = 6;
                     break;
                 case 4100:
@@ -354,7 +354,7 @@ public final class MrimAccount extends Account implements ListItem {
                     m1085R();
                     break;
                 case 4101:
-                    C0015ao.m461a(this, c0043nM1349s);
+                    AppController.m461a(this, c0043nM1349s);
                     break;
                 case 4105:
                     Conversation.m1110a(this, c0043nM1349s, 0L);
@@ -371,7 +371,7 @@ public final class MrimAccount extends Account implements ListItem {
                         int i7 = c0035fM717f.f299f;
                         c0035fM717f.f299f = iM1328e;
                         c0035fM717f.f301h = strM1334g2;
-                        c0035fM717f.f373r = C0015ao.m349a(iM1328e, strM1334g);
+                        c0035fM717f.f373r = AppController.m349a(iM1328e, strM1334g);
                         c0035fM717f.f371p = iM1328e != 0;
                         if (iM1328e == 0) {
                             c0035fM717f.m999p();
@@ -379,7 +379,7 @@ public final class MrimAccount extends Account implements ListItem {
                         c0035fM717f.f375t = true;
                         c0035fM717f.m1228A();
                         if (i7 == 0 && iM1328e != 0) {
-                            C0034e.m925a(1);
+                            ResourceManager.m925a(1);
                             break;
                         } else {
                             break;
@@ -399,7 +399,7 @@ public final class MrimAccount extends Account implements ListItem {
                         if (StringUtils.m3a(852768, strM1334g3)) {
                             m1054c(c0043nM1349s.m1335e((String) null));
                         } else if (StringUtils.m3a(983853, strM1334g3)) {
-                            C0029bb.m759a(this, Utils.m510a((Object) c0043nM1349s.m1335e((String) null)), (String) null, (String) null);
+                            IOUtils.m759a(this, Utils.m510a((Object) c0043nM1349s.m1335e((String) null)), (String) null, (String) null);
                         } else if (StringUtils.m3a(983868, strM1334g3)) {
                             String strM1335e = c0043nM1349s.m1335e((String) null);
                             this.f226b = StringUtils.m13b(strM1335e, strM1335e.indexOf(58));
@@ -420,7 +420,7 @@ public final class MrimAccount extends Account implements ListItem {
                     XmppMailRuProtocol.m883a(this, c0043nM1349s, iM1330h2);
                     break;
                 case 4125:
-                    m1052c(C0015ao.m321a(this, 4126, new ByteBuffer().m1360p(c0043nM1349s.m1328e()).m1360p(c0043nM1349s.m1328e())));
+                    m1052c(AppController.m321a(this, 4126, new ByteBuffer().m1360p(c0043nM1349s.m1328e()).m1360p(c0043nM1349s.m1328e())));
                     try {
                         int i8 = this.f329y;
                         this.f329y = i8 + 1;
@@ -442,7 +442,7 @@ public final class MrimAccount extends Account implements ListItem {
                                     String str2 = (String) hashtable.get(AppState.m584b(1379315));
                                     int i10 = str2 != null ? -1 : Integer.parseInt(str2);
                                     i = i10;
-                                    strM1336h = i10 >= 0 ? null : C0034e.m986d(StringUtils.m15c((String) hashtable.get(AppState.m584b(460837)), 13)).m1336h();
+                                    strM1336h = i10 >= 0 ? null : ResourceManager.m986d(StringUtils.m15c((String) hashtable.get(AppState.m584b(460837)), 13)).m1336h();
                                     str = (String) hashtable.get(AppState.m584b(396269));
                                     i2 = Integer.parseInt((String) hashtable.get(AppState.m584b(789512)), 16);
                                     jM491a = Utils.m491a((String) hashtable.get(AppState.m584b(264254)));
@@ -450,14 +450,14 @@ public final class MrimAccount extends Account implements ListItem {
                                     if ((i2 & 128) != 0) {
                                         String strM15c = StringUtils.m15c(strM529d, i9);
                                         if ((i2 & 2097160) == 0) {
-                                            strM1336h2 = C0034e.m986d(strM15c).m1336h();
+                                            strM1336h2 = ResourceManager.m986d(strM15c).m1336h();
                                         } else {
                                             strM1336h2 = strM15c;
                                             i3 = 0;
                                         }
                                     } else {
                                         int iM627a = AppState.m627a(strM529d, 57408234938722L);
-                                        strM1336h2 = C0034e.m986d(StringUtils.m12a(strM529d, iM627a + 6, strM529d.indexOf(AppState.m584b(134123), iM627a))).m1336h();
+                                        strM1336h2 = ResourceManager.m986d(StringUtils.m12a(strM529d, iM627a + 6, strM529d.indexOf(AppState.m584b(134123), iM627a))).m1336h();
                                     }
                                     if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
                                         Conversation.m1110a(this, new ByteBuffer().m1360p(0).m1360p(i2 | 4 | 128).m1308a((String) hashtable.get(AppState.m584b(264203))).m1307a(strM1336h2, i3).m1360p(0).m1360p(0).m1360p(i).m1309b(strM1336h).m1308a(str), jM491a);
@@ -483,7 +483,7 @@ public final class MrimAccount extends Account implements ListItem {
                         String str22 = (String) hashtable.get(AppState.m584b(1379315));
                         int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
                         i = i10_2;
-                        strM1336h = i10_2 >= 0 ? null : C0034e.m986d(StringUtils.m15c((String) hashtable.get(AppState.m584b(460837)), 13)).m1336h();
+                        strM1336h = i10_2 >= 0 ? null : ResourceManager.m986d(StringUtils.m15c((String) hashtable.get(AppState.m584b(460837)), 13)).m1336h();
                         str = (String) hashtable.get(AppState.m584b(396269));
                         i2 = Integer.parseInt((String) hashtable.get(AppState.m584b(789512)), 16);
                         jM491a = Utils.m491a((String) hashtable.get(AppState.m584b(264254)));
@@ -536,19 +536,19 @@ public final class MrimAccount extends Account implements ListItem {
                                 int i11 = c0050u.f408c;
                                 if (i11 == 1) {
                                     m732g(strM1334g4);
-                                    C0015ao.m393a(this, strM1334g4);
+                                    AppController.m393a(this, strM1334g4);
                                 } else if (i11 == 2) {
                                     ContactInfo c0042mM1251a = ContactInfo.m1251a(this);
                                     c0042mM1251a.m1262e(strM1334g4);
                                     AppState.f177b[1319] = c0042mM1251a;
-                                    C0029bb.m778d(new C0029bb(5, null));
+                                    IOUtils.m778d(new IOUtils(5, null));
                                 }
                             }
                         }
                     }
                     break;
                 case 4168:
-                    C0029bb.m759a(this, c0043nM1349s.m1328e(), c0043nM1349s.m1333f(), c0043nM1349s.m1333f());
+                    IOUtils.m759a(this, c0043nM1349s.m1328e(), c0043nM1349s.m1333f(), c0043nM1349s.m1333f());
                     break;
                 case 4180:
                     String strM1334g5 = c0043nM1349s.m1334g();
@@ -575,7 +575,7 @@ public final class MrimAccount extends Account implements ListItem {
                             if ((iM1328e2 & 5) != 0) {
                                 if (AppState.m587e(244) && !StringUtils.m6a(strM1335e2, c0035fM717f3.f303i) && ((int) (System.currentTimeMillis() / 1000)) - iM1328e3 < 172800 && c0035fM717f3.m1241H() != jM1341m) {
                                     AppState.m601a(1237, (Object) c0035fM717f3.f380w);
-                                    C0034e.m925a(6);
+                                    ResourceManager.m925a(6);
                                     c0035fM717f3.m1227c(2);
                                     c0035fM717f3.m1239a(16, strM1335e2, 0L, jM1341m);
                                     ContactGroup abstractC0046qM1080g = c0035fM717f3.f369o.m1080g(c0035fM717f3);
@@ -627,10 +627,10 @@ public final class MrimAccount extends Account implements ListItem {
                                     this.f231g.f16d = strArrM55a[3];
                                 }
                                 this.f231g.f24l = true;
-                                if (C0015ao.m442U() != 10) {
+                                if (AppController.m442U() != 10) {
                                     break;
                                 } else {
-                                    C0029bb.m778d((Object) AppState.m584b(786));
+                                    IOUtils.m778d((Object) AppState.m584b(786));
                                     break;
                                 }
                             } else {
@@ -642,7 +642,7 @@ public final class MrimAccount extends Account implements ListItem {
                     }
             }
             c0043nM1349s.m1301b();
-            C0015ao.f152f = true;
+            AppController.f152f = true;
         }
     }
 
@@ -653,7 +653,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         Object[] objArr = (Object[]) obj;
         ByteBuffer c0043n = (ByteBuffer) objArr[0];
-        objArr[0] = C0034e.m967e(c0043n.m1330h(8));
+        objArr[0] = ResourceManager.m967e(c0043n.m1330h(8));
         this.f333C.addElement(obj);
         return c0043n;
     }
@@ -722,7 +722,7 @@ public final class MrimAccount extends Account implements ListItem {
                 strM584b = AppState.m584b(151 + (this.f325u >> 8));
                 break;
         }
-        return m1052c(C0015ao.m321a(this, 4130, new ByteBuffer().m1360p(i2 != 3 ? i2 : -2147483647).m1308a(strM1215a).m1309b(strM584b).m1309b(AppState.f181d).m1360p(AppState.m587e(105) ? -1 : 22)));
+        return m1052c(AppController.m321a(this, 4130, new ByteBuffer().m1360p(i2 != 3 ? i2 : -2147483647).m1308a(strM1215a).m1309b(strM584b).m1309b(AppState.f181d).m1360p(AppState.m587e(105) ? -1 : 22)));
     }
 
     @Override // p000.Account
@@ -733,7 +733,7 @@ public final class MrimAccount extends Account implements ListItem {
             return iMo125a;
         }
         this.f327w++;
-        return m1052c(C0036g.m1001a(this, (MrimContact) abstractC0041l, str, j));
+        return m1052c(XmppContactGroup.m1001a(this, (MrimContact) abstractC0041l, str, j));
     }
 
     /* renamed from: a */
@@ -742,13 +742,13 @@ public final class MrimAccount extends Account implements ListItem {
             return 0;
         }
         String[] strArr2 = {c0003ac.f13a, c0003ac.f14b, c0003ac.f15c, c0003ac.f16d, c0003ac.f17e, c0003ac.f18f, c0003ac.f20h, c0003ac.f19g};
-        m1052c(C0015ao.m321a(this, 4213, new ByteBuffer().m1360p(i).m1391b(strArr).m1308a(AppState.m584b(590694)).m1325a(new ByteBuffer().m1327c(new ByteBuffer().m1308a(strArr2[0]).m1308a(strArr2[1]).m1308a(strArr2[2]).m1309b(strArr2[3]).m1308a(strArr2[4]).m1308a(strArr2[5]).m1308a(strArr2[6]).m1308a(strArr2[7])))));
+        m1052c(AppController.m321a(this, 4213, new ByteBuffer().m1360p(i).m1391b(strArr).m1308a(AppState.m584b(590694)).m1325a(new ByteBuffer().m1327c(new ByteBuffer().m1308a(strArr2[0]).m1308a(strArr2[1]).m1308a(strArr2[2]).m1309b(strArr2[3]).m1308a(strArr2[4]).m1308a(strArr2[5]).m1308a(strArr2[6]).m1308a(strArr2[7])))));
         return 0;
     }
 
     /* renamed from: a */
     private int m723a(String[] strArr, String str) {
-        return m1052c(C0015ao.m321a(this, 4214, new ByteBuffer().m1391b(strArr).m1308a(str)));
+        return m1052c(AppController.m321a(this, 4214, new ByteBuffer().m1391b(strArr).m1308a(str)));
     }
 
     /* renamed from: j */
@@ -856,11 +856,11 @@ public final class MrimAccount extends Account implements ListItem {
     }
 
     /* renamed from: a */
-    public final void m731a(C0014an c0014an) {
+    public final void m731a(MapPoint c0014an) {
         try {
             VCard c0003ac = this.f231g;
-            String strM810b = C0029bb.m810b(c0014an.f139g);
-            String strM809a = C0029bb.m809a(c0014an.f138f);
+            String strM810b = IOUtils.m810b(c0014an.f139g);
+            String strM809a = IOUtils.m809a(c0014an.f138f);
             String strM584b = AppState.m584b(590588);
             String strM267a = c0014an.m267a();
             String str = AppState.f181d;
@@ -878,8 +878,8 @@ public final class MrimAccount extends Account implements ListItem {
         if (0 != iMo124a) {
             return iMo124a;
         }
-        C0010aj c0010aj = (C0010aj) abstractC0046q;
-        return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, new ByteBuffer().m1360p(c0010aj.f74a).m1360p(c0010aj.f75b).m1360p(0).m1309b(str).m1309b(str).m1360p(0)), C0034e.m967e(1), c0010aj, str}));
+        MrimContactGroup c0010aj = (MrimContactGroup) abstractC0046q;
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().m1360p(c0010aj.f74a).m1360p(c0010aj.f75b).m1360p(0).m1309b(str).m1309b(str).m1360p(0)), ResourceManager.m967e(1), c0010aj, str}));
     }
 
     @Override // p000.Account
@@ -891,7 +891,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         ByteBuffer c0043n = new ByteBuffer();
         int size = (this.f313i.size() << 24) | 2;
-        return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4121, c0043n.m1360p(size).m1306b(8).m1309b(str).m1306b(12)), C0034e.m967e(4), str, C0034e.m967e(size)}));
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4121, c0043n.m1360p(size).m1306b(8).m1309b(str).m1306b(12)), ResourceManager.m967e(4), str, ResourceManager.m967e(size)}));
     }
 
     @Override // p000.Account
@@ -901,10 +901,10 @@ public final class MrimAccount extends Account implements ListItem {
         if (0 != iMo123a) {
             return iMo123a;
         }
-        C0010aj c0010aj = (C0010aj) abstractC0046q;
+        MrimContactGroup c0010aj = (MrimContactGroup) abstractC0046q;
         ByteBuffer c0043nM1360p = new ByteBuffer().m1360p(c0010aj.f74a).m1360p(c0010aj.f75b | 1).m1360p(0);
         String str = c0010aj.f398f;
-        return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, c0043nM1360p.m1309b(str).m1309b(str).m1360p(0)), C0034e.m967e(3), c0010aj}));
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, c0043nM1360p.m1309b(str).m1309b(str).m1360p(0)), ResourceManager.m967e(3), c0010aj}));
     }
 
     @Override // p000.Account
@@ -918,7 +918,7 @@ public final class MrimAccount extends Account implements ListItem {
             return m1074a(abstractC0041l, true);
         }
         MrimContact c0035f = (MrimContact) abstractC0041l;
-        return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b | 1).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), C0034e.m967e(2), c0035f}));
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b | 1).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), ResourceManager.m967e(2), c0035f}));
     }
 
     @Override // p000.Account
@@ -929,7 +929,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: g */
     public final int m732g(String str) {
-        return m1052c(C0015ao.m403a(this, str, 7));
+        return m1052c(AppController.m403a(this, str, 7));
     }
 
     @Override // p000.Account
@@ -948,7 +948,7 @@ public final class MrimAccount extends Account implements ListItem {
         if (Utils.m535l(strArr[9])) {
             c0043n.m1360p(9).m1308a(strArr[9]);
         }
-        return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4137, c0043n), C0034e.m967e(8)}));
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4137, c0043n), ResourceManager.m967e(8)}));
     }
 
     @Override // p000.Account
@@ -983,7 +983,7 @@ public final class MrimAccount extends Account implements ListItem {
             }
         }
         String strM519a = Utils.m519a(strArr);
-        return m1052c(m719a(new Object[]{C0015ao.m321a(this, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(str).m1308a(strM519a)), C0034e.m967e(0), c0035f, str, strM519a}));
+        return m1052c(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(str).m1308a(strM519a)), ResourceManager.m967e(0), c0035f, str, strM519a}));
     }
 
     /* renamed from: U */
@@ -996,7 +996,7 @@ public final class MrimAccount extends Account implements ListItem {
                 if (i == size) {
                     return i2;
                 }
-                i = ((C0010aj) vector.elementAt(i)).f74a != i2 ? i + 1 : 0;
+                i = ((MrimContactGroup) vector.elementAt(i)).f74a != i2 ? i + 1 : 0;
             }
         }
         return 0;
@@ -1011,11 +1011,11 @@ public final class MrimAccount extends Account implements ListItem {
         }
         MrimContact c0035fM717f = m717f(str);
         if (c0035fM717f == null || c0035fM717f.mo143m()) {
-            m1052c(C0015ao.m395b(this, str));
-            return m1052c(C0036g.m1024a(this, 0, str, str2, str3, (C0010aj) abstractC0046q, z));
+            m1052c(AppController.m395b(this, str));
+            return m1052c(XmppContactGroup.m1024a(this, 0, str, str2, str3, (MrimContactGroup) abstractC0046q, z));
         }
-        m1052c(C0034e.m988a(this, c0035fM717f, (C0010aj) abstractC0046q));
-        return m1052c(C0015ao.m321a(this, 4104, new ByteBuffer().m1360p(z ? 524300 : 12).m1308a(str).m1318a(new String[]{this.f339I, str3}).m1360p(0)));
+        m1052c(ResourceManager.m988a(this, c0035fM717f, (MrimContactGroup) abstractC0046q));
+        return m1052c(AppController.m321a(this, 4104, new ByteBuffer().m1360p(z ? 524300 : 12).m1308a(str).m1318a(new String[]{this.f339I, str3}).m1360p(0)));
     }
 
     @Override // p000.Account
@@ -1023,10 +1023,10 @@ public final class MrimAccount extends Account implements ListItem {
     public final int mo104c(Contact abstractC0041l) {
         MrimContact c0035f = (MrimContact) abstractC0041l;
         if (c0035f.mo143m()) {
-            return m1052c(C0036g.m1024a(this, 48, c0035f.f297d, c0035f.f376u, AppState.f181d, m718f(), false));
+            return m1052c(XmppContactGroup.m1024a(this, 48, c0035f.f297d, c0035f.f376u, AppState.f181d, m718f(), false));
         }
         int i = c0035f.f295b;
-        return m1052c(C0034e.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
+        return m1052c(ResourceManager.m987a(this, c0035f, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
     }
 
     @Override // p000.Account
@@ -1038,7 +1038,7 @@ public final class MrimAccount extends Account implements ListItem {
         if ((i & 8) != 0) {
             i2 &= -5;
         }
-        return m1052c(C0034e.m987a(this, c0035f, i2));
+        return m1052c(ResourceManager.m987a(this, c0035f, i2));
     }
 
     @Override // p000.Account
@@ -1050,21 +1050,21 @@ public final class MrimAccount extends Account implements ListItem {
         if ((i & 4) != 0) {
             i2 &= -9;
         }
-        return m1052c(C0034e.m987a(this, c0035f, i2));
+        return m1052c(ResourceManager.m987a(this, c0035f, i2));
     }
 
     @Override // p000.Account
     /* renamed from: f */
     public final int mo735f(Contact abstractC0041l) {
         int iMo735f = super.mo735f(abstractC0041l);
-        return 0 != iMo735f ? iMo735f : m1052c(C0015ao.m321a(this, 4104, new ByteBuffer().m1360p(1024).m1308a(((MrimContact) abstractC0041l).f297d).m1360p(0).m1360p(0)));
+        return 0 != iMo735f ? iMo735f : m1052c(AppController.m321a(this, 4104, new ByteBuffer().m1360p(1024).m1308a(((MrimContact) abstractC0041l).f297d).m1360p(0).m1360p(0)));
     }
 
     @Override // p000.Account
     /* renamed from: a */
     public final int mo113a(Contact abstractC0041l, ContactGroup abstractC0046q, ContactGroup abstractC0046q2) {
         int iMo113a = super.mo113a(abstractC0041l, abstractC0046q, abstractC0046q2);
-        return 0 != iMo113a ? iMo113a : m1052c(C0034e.m988a(this, (MrimContact) abstractC0041l, (C0010aj) abstractC0046q2));
+        return 0 != iMo113a ? iMo113a : m1052c(ResourceManager.m988a(this, (MrimContact) abstractC0041l, (MrimContactGroup) abstractC0046q2));
     }
 
     @Override // p000.Account
@@ -1074,7 +1074,7 @@ public final class MrimAccount extends Account implements ListItem {
         if (0 != iMo120l) {
             return iMo120l;
         }
-        m1052c(C0015ao.m321a(this, 4194, (ByteBuffer) null));
+        m1052c(AppController.m321a(this, 4194, (ByteBuffer) null));
         m1061F();
         this.f324t = mo89g();
         return 0;
@@ -1101,7 +1101,7 @@ public final class MrimAccount extends Account implements ListItem {
             MrimContact c0035f2 = new MrimContact(this, 0, 65664, 3, str, str3, 0, 0, str5, str5, str5);
             abstractC0046q.m1401b((Object) c0035f2);
             if (this.f313i.size() > 0) {
-                m1052c(C0036g.m1024a(this, 128, str, str3, str5, m718f(), false));
+                m1052c(XmppContactGroup.m1024a(this, 128, str, str3, str5, m718f(), false));
             }
             c0035f = c0035f2;
         }
@@ -1149,7 +1149,7 @@ public final class MrimAccount extends Account implements ListItem {
         ContactGroup abstractC0046q = this.f334D;
         MrimContact c0035f = new MrimContact(this, 0, 65536, 3, str, str, 0, 0, str2, str2, str2);
         abstractC0046q.m1401b((Object) c0035f);
-        m1052c(C0015ao.m403a(this, str, i));
+        m1052c(AppController.m403a(this, str, i));
         return c0035f;
     }
 
@@ -1354,7 +1354,7 @@ public final class MrimAccount extends Account implements ListItem {
             stringBufferM1217h.append("Уточнить?");
         } else {
             stringBufferM1217h.append(AppState.m584b(488));
-            if (C0015ao.m439R().size() > 1) {
+            if (AppController.m439R().size() > 1) {
                 stringBufferM1217h.append(' ').append('(').append(this.f315k).append(')').append('.').append(' ');
             }
             String str2 = this.f231g.f16d;
@@ -1418,7 +1418,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final void m751a(SearchEntry c0050u) {
         if (m1056C()) {
             c0050u.f406a = this.f319o;
-            m1053d(C0015ao.m321a(this, 4162, new ByteBuffer().m1360p(1).m1308a(c0050u.f407b)));
+            m1053d(AppController.m321a(this, 4162, new ByteBuffer().m1360p(1).m1308a(c0050u.f407b)));
             this.f234L.addElement(c0050u);
         }
     }

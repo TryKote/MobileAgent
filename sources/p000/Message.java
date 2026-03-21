@@ -50,7 +50,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
-        this.f218c = XmppMailRuProtocol.m867a(NetworkUtils.m1213g(), C0015ao.m459a(c0028ba.f315k, Utils.m522f(c0028ba.f230f)));
+        this.f218c = XmppMailRuProtocol.m867a(NetworkUtils.m1213g(), AppController.m459a(c0028ba.f315k, Utils.m522f(c0028ba.f230f)));
         this.f219d = vector;
         this.f222g = str;
         this.f223h = str2;
@@ -68,7 +68,7 @@ public final class Message {
             this.f223h = c0043n.m1335e((String) null);
         }
         if (c0043n.m1328e() != 0) {
-            this.f224i = C0034e.m934a(c0043n);
+            this.f224i = ResourceManager.m934a(c0043n);
         }
     }
 

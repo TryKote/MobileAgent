@@ -24,7 +24,7 @@ public abstract class ContactListManager {
         m154f();
         MenuItem c0032cM69e = ScreenManager.m69e();
         AppState.m613c(c0032cM69e == null ? null : c0032cM69e.f265d);
-        return C0015ao.m457ac();
+        return AppController.m457ac();
     }
 
     /* renamed from: f */
@@ -51,7 +51,7 @@ public abstract class ContactListManager {
         c0013amM257b.f105j = c0008ahM175i.f53j;
         c0013amM257b.m235n();
         TabBar.m176a(4, TabBar.f54k);
-        C0015ao.f153g = true;
+        AppController.f153g = true;
     }
 
     /* renamed from: e */
@@ -71,14 +71,14 @@ public abstract class ContactListManager {
             return 0;
         }
         if (obj instanceof ContactGroup) {
-            C0015ao.f152f = true;
+            AppController.f152f = true;
             return ((ContactGroup) obj).mo1397n();
         }
         if (!(obj instanceof Contact)) {
             return 0;
         }
         AppState.m591f(1279);
-        C0015ao.m300h();
+        AppController.m300h();
         return ((Contact) obj).m1247K();
     }
 
@@ -176,7 +176,7 @@ public abstract class ContactListManager {
                             if (abstractC0041l != null) {
                                 int iM1250M2 = abstractC0041l.m1250M();
                                 if (iM1250M2 >= 0) {
-                                    vector.addElement(C0034e.m967e(iM1250M2));
+                                    vector.addElement(ResourceManager.m967e(iM1250M2));
                                 }
                                 vector.addElement(abstractC0041l.f381x);
                             }
@@ -185,16 +185,16 @@ public abstract class ContactListManager {
                             }
                             int iMo922n2 = abstractC0037h2.mo922n();
                             if (iMo922n2 >= 0) {
-                                vector.addElement(C0034e.m967e(iMo922n2));
+                                vector.addElement(ResourceManager.m967e(iMo922n2));
                             }
-                            C0015ao.f153g = true;
+                            AppController.f153g = true;
                         }
                     }
                 }
             }
         } else if (vector != null && vector.size() > 0) {
             vector.removeAllElements();
-            C0015ao.f153g = true;
+            AppController.f153g = true;
         }
         return AppState.m587e(1577) ? 163 : 0;
     }
@@ -202,7 +202,7 @@ public abstract class ContactListManager {
     /* renamed from: g */
     private static final Screen m161g() {
         boolean zM1056C;
-        C0054y c0054y;
+        MergedContactGroup c0054y;
         int iM586d = 1 + AppState.m586d(242);
         AppState.m594c(2573, iM586d == 1 ? 1 : 12);
         Screen c0013amM75b = ScreenManager.m75b(2571);
@@ -210,9 +210,9 @@ public abstract class ContactListManager {
         if (!AppState.m587e(99)) {
             boolean z = !AppState.m587e(98);
             Account abstractC0037h = TabBar.f54k;
-            Vector vectorM445W = abstractC0037h == null ? C0015ao.m445W() : abstractC0037h.m1078P();
+            Vector vectorM445W = abstractC0037h == null ? AppController.m445W() : abstractC0037h.m1078P();
             Vector vector = vectorM445W;
-            int iM353a = C0015ao.m353a(vectorM445W);
+            int iM353a = AppController.m353a(vectorM445W);
             for (int i2 = 0; i2 < iM353a; i2++) {
                 Contact abstractC0041l = (Contact) vector.elementAt(i2);
                 if (!abstractC0041l.mo142k() && (abstractC0041l.m1240G() || abstractC0041l.mo143m() || (!abstractC0041l.mo142k() && (z || (((zM1056C = abstractC0041l.f369o.m1056C()) && abstractC0041l.f371p) || (!zM1056C && abstractC0041l.mo990d())))))) {
@@ -225,7 +225,7 @@ public abstract class ContactListManager {
             boolean zM587e = AppState.m587e(101);
             boolean z2 = !AppState.m587e(98);
             Vector vectorM1213g = NetworkUtils.m1213g();
-            Vector vectorM446d = C0015ao.m446d(TabBar.f54k);
+            Vector vectorM446d = AppController.m446d(TabBar.f54k);
             int size = vectorM446d.size();
             while (true) {
                 size--;
@@ -241,15 +241,15 @@ public abstract class ContactListManager {
                         c0054y = null;
                         break;
                     }
-                    C0054y c0054y2 = (C0054y) vectorM1213g.elementAt(size2);
+                    MergedContactGroup c0054y2 = (MergedContactGroup) vectorM1213g.elementAt(size2);
                     if (c0054y2.f398f.equals(str)) {
                         c0054y = c0054y2;
                         break;
                     }
                 }
-                C0054y c0054y3 = c0054y;
+                MergedContactGroup c0054y3 = c0054y;
                 if (c0054y == null) {
-                    C0054y c0054y4 = new C0054y(abstractC0046q, vectorM1213g.size());
+                    MergedContactGroup c0054y4 = new MergedContactGroup(abstractC0046q, vectorM1213g.size());
                     c0054y3 = c0054y4;
                     vectorM1213g.addElement(c0054y4);
                 }
@@ -264,7 +264,7 @@ public abstract class ContactListManager {
                 }
             }
             NetworkUtils.m1212a(vectorM446d);
-            int iM353a2 = C0015ao.m353a(vectorM1213g);
+            int iM353a2 = AppController.m353a(vectorM1213g);
             for (int i4 = 0; i4 < iM353a2; i4++) {
                 ContactGroup abstractC0046q2 = (ContactGroup) vectorM1213g.elementAt(i4);
                 boolean z3 = false;
@@ -274,7 +274,7 @@ public abstract class ContactListManager {
                 }
                 if (abstractC0046q2.m1398o()) {
                     Vector vector3 = abstractC0046q2.f397e;
-                    int iM353a3 = C0015ao.m353a(vector3);
+                    int iM353a3 = AppController.m353a(vector3);
                     for (int i5 = 0; i5 < iM353a3; i5++) {
                         Contact abstractC0041l2 = (Contact) vector3.elementAt(i5);
                         if (m162a(z2, abstractC0041l2)) {
@@ -288,17 +288,17 @@ public abstract class ContactListManager {
                 }
             }
             NetworkUtils.m1212a(vectorM1213g);
-            C0054y c0054y5 = null;
-            C0054y c0054y6 = null;
-            C0054y c0054y7 = null;
-            C0054y c0054y8 = null;
-            int iM433Q = C0015ao.m433Q();
+            MergedContactGroup c0054y5 = null;
+            MergedContactGroup c0054y6 = null;
+            MergedContactGroup c0054y7 = null;
+            MergedContactGroup c0054y8 = null;
+            int iM433Q = AppController.m433Q();
             while (true) {
                 iM433Q--;
                 if (iM433Q < 0) {
                     break;
                 }
-                Account abstractC0037hM434I = C0015ao.m434I(iM433Q);
+                Account abstractC0037hM434I = AppController.m434I(iM433Q);
                 Account abstractC0037h2 = TabBar.f54k;
                 if (abstractC0037h2 == null || abstractC0037h2 == abstractC0037hM434I) {
                     Vector vectorMo720O = abstractC0037hM434I.mo720O();
@@ -306,7 +306,7 @@ public abstract class ContactListManager {
                     int i6 = size4;
                     if (size4 > 0) {
                         if (c0054y8 == null) {
-                            c0054y8 = new C0054y(abstractC0037hM434I.f338H, -4);
+                            c0054y8 = new MergedContactGroup(abstractC0037hM434I.f338H, -4);
                         }
                         while (true) {
                             i6--;
@@ -322,7 +322,7 @@ public abstract class ContactListManager {
                     int i7 = size5;
                     if (size5 > 0) {
                         if (c0054y5 == null) {
-                            c0054y5 = new C0054y(abstractC0037hM434I.f336F, -1);
+                            c0054y5 = new MergedContactGroup(abstractC0037hM434I.f336F, -1);
                         }
                         while (true) {
                             i7--;
@@ -338,7 +338,7 @@ public abstract class ContactListManager {
                     int i8 = size6;
                     if (size6 > 0) {
                         if (c0054y6 == null) {
-                            c0054y6 = new C0054y(abstractC0037hM434I.f334D, -2);
+                            c0054y6 = new MergedContactGroup(abstractC0037hM434I.f334D, -2);
                         }
                         while (true) {
                             i8--;
@@ -354,7 +354,7 @@ public abstract class ContactListManager {
                     int i9 = size7;
                     if (size7 > 0) {
                         if (c0054y7 == null) {
-                            c0054y7 = new C0054y(abstractC0037hM434I.f335E, -3);
+                            c0054y7 = new MergedContactGroup(abstractC0037hM434I.f335E, -3);
                         }
                         while (true) {
                             i9--;
@@ -369,7 +369,7 @@ public abstract class ContactListManager {
             }
             if (c0054y8 != null) {
                 Vector vector4 = c0054y8.f397e;
-                int iM353a4 = C0015ao.m353a(vector4);
+                int iM353a4 = AppController.m353a(vector4);
                 c0013amM75b.m225a(c0054y8.m1395f(iM353a4).m908a(iM586d, i));
                 if (c0054y8.m1398o()) {
                     for (int i10 = 0; i10 < iM353a4; i10++) {
@@ -380,7 +380,7 @@ public abstract class ContactListManager {
             }
             if (c0054y5 != null) {
                 Vector vector5 = c0054y5.f397e;
-                int iM353a5 = C0015ao.m353a(vector5);
+                int iM353a5 = AppController.m353a(vector5);
                 c0013amM75b.m225a(c0054y5.m1395f(iM353a5).m908a(iM586d, i));
                 if (c0054y5.m1398o()) {
                     for (int i11 = 0; i11 < iM353a5; i11++) {
@@ -391,7 +391,7 @@ public abstract class ContactListManager {
             }
             if (c0054y7 != null) {
                 Vector vector6 = c0054y7.f397e;
-                int iM353a6 = C0015ao.m353a(vector6);
+                int iM353a6 = AppController.m353a(vector6);
                 c0013amM75b.m225a(c0054y7.m1395f(iM353a6).m908a(iM586d, i));
                 if (c0054y7.m1398o()) {
                     for (int i12 = 0; i12 < iM353a6; i12++) {
@@ -402,7 +402,7 @@ public abstract class ContactListManager {
             }
             if (c0054y6 != null) {
                 Vector vector7 = c0054y6.f397e;
-                int iM353a7 = C0015ao.m353a(vector7);
+                int iM353a7 = AppController.m353a(vector7);
                 c0013amM75b.m225a(c0054y6.m1395f(iM353a7).m908a(iM586d, i));
                 if (c0054y6.m1398o()) {
                     for (int i13 = 0; i13 < iM353a7; i13++) {
@@ -413,8 +413,8 @@ public abstract class ContactListManager {
             }
         } else {
             int i14 = i / iM586d;
-            Vector vectorM446d2 = C0015ao.m446d(TabBar.f54k);
-            int iM353a8 = C0015ao.m353a(vectorM446d2);
+            Vector vectorM446d2 = AppController.m446d(TabBar.f54k);
+            int iM353a8 = AppController.m353a(vectorM446d2);
             boolean zM587e2 = AppState.m587e(101);
             boolean z4 = !AppState.m587e(98);
             for (int i15 = 0; i15 < iM353a8; i15++) {
@@ -426,7 +426,7 @@ public abstract class ContactListManager {
                 }
                 if (abstractC0046q3.m1398o()) {
                     Vector vector8 = abstractC0046q3.f397e;
-                    int iM353a9 = C0015ao.m353a(vector8);
+                    int iM353a9 = AppController.m353a(vector8);
                     for (int i16 = 0; i16 < iM353a9; i16++) {
                         Contact abstractC0041l3 = (Contact) vector8.elementAt(i16);
                         if (m162a(z4, abstractC0041l3)) {
@@ -440,14 +440,14 @@ public abstract class ContactListManager {
                 }
             }
             NetworkUtils.m1212a(vectorM446d2);
-            int iM433Q2 = C0015ao.m433Q();
+            int iM433Q2 = AppController.m433Q();
             int i17 = iM433Q2;
             while (true) {
                 i17--;
                 if (i17 < 0) {
                     break;
                 }
-                Account abstractC0037hM434I2 = C0015ao.m434I(i17);
+                Account abstractC0037hM434I2 = AppController.m434I(i17);
                 Account abstractC0037h3 = TabBar.f54k;
                 if (abstractC0037h3 == null || abstractC0037h3 == abstractC0037hM434I2) {
                     ContactGroup abstractC0046q4 = abstractC0037hM434I2.f338H;
@@ -456,7 +456,7 @@ public abstract class ContactListManager {
                     if (size8 > 0) {
                         c0013amM75b.m225a(abstractC0046q4.m1395f(size8).m908a(iM586d, i));
                         if (abstractC0046q4.m1398o()) {
-                            C0015ao.m353a(vectorMo720O2);
+                            AppController.m353a(vectorMo720O2);
                             for (int i18 = 0; i18 < size8; i18++) {
                                 c0013amM75b.m225a(((Contact) vectorMo720O2.elementAt(i18)).mo138b().m908a(iM586d, i14));
                             }
@@ -471,7 +471,7 @@ public abstract class ContactListManager {
                 if (i19 < 0) {
                     break;
                 }
-                Account abstractC0037hM434I3 = C0015ao.m434I(i19);
+                Account abstractC0037hM434I3 = AppController.m434I(i19);
                 Account abstractC0037h4 = TabBar.f54k;
                 if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037hM434I3) {
                     ContactGroup abstractC0046q5 = abstractC0037hM434I3.f336F;
@@ -480,7 +480,7 @@ public abstract class ContactListManager {
                     if (size9 > 0) {
                         c0013amM75b.m225a(abstractC0046q5.m1395f(size9).m908a(iM586d, i));
                         if (abstractC0046q5.m1398o()) {
-                            C0015ao.m353a(vectorM1077N2);
+                            AppController.m353a(vectorM1077N2);
                             for (int i20 = 0; i20 < size9; i20++) {
                                 c0013amM75b.m225a(((Contact) vectorM1077N2.elementAt(i20)).mo138b().m908a(iM586d, i14));
                             }
@@ -495,7 +495,7 @@ public abstract class ContactListManager {
                 if (i21 < 0) {
                     break;
                 }
-                Account abstractC0037hM434I4 = C0015ao.m434I(i21);
+                Account abstractC0037hM434I4 = AppController.m434I(i21);
                 Account abstractC0037h5 = TabBar.f54k;
                 if (abstractC0037h5 == null || abstractC0037h5 == abstractC0037hM434I4) {
                     ContactGroup abstractC0046q6 = abstractC0037hM434I4.f334D;
@@ -504,7 +504,7 @@ public abstract class ContactListManager {
                     if (size10 > 0) {
                         c0013amM75b.m225a(abstractC0046q6.m1395f(size10).m908a(iM586d, i));
                         if (abstractC0046q6.m1398o()) {
-                            C0015ao.m353a(vectorM1079Q2);
+                            AppController.m353a(vectorM1079Q2);
                             for (int i22 = 0; i22 < size10; i22++) {
                                 c0013amM75b.m225a(((Contact) vectorM1079Q2.elementAt(i22)).mo138b().m908a(iM586d, i14));
                             }
@@ -519,7 +519,7 @@ public abstract class ContactListManager {
                 if (i23 < 0) {
                     break;
                 }
-                Account abstractC0037hM434I5 = C0015ao.m434I(i23);
+                Account abstractC0037hM434I5 = AppController.m434I(i23);
                 Account abstractC0037h6 = TabBar.f54k;
                 if (abstractC0037h6 == null || abstractC0037h6 == abstractC0037hM434I5) {
                     ContactGroup abstractC0046q7 = abstractC0037hM434I5.f335E;
@@ -528,7 +528,7 @@ public abstract class ContactListManager {
                     if (size11 > 0) {
                         c0013amM75b.m225a(abstractC0046q7.m1395f(size11).m908a(iM586d, i));
                         if (abstractC0046q7.m1398o()) {
-                            C0015ao.m353a(vectorM1076M2);
+                            AppController.m353a(vectorM1076M2);
                             for (int i24 = 0; i24 < size11; i24++) {
                                 c0013amM75b.m225a(((Contact) vectorM1076M2.elementAt(i24)).mo138b().m908a(iM586d, i14));
                             }

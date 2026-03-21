@@ -117,12 +117,12 @@ public final class VCard {
 
     /* renamed from: a */
     public final long m56a() {
-        return C0029bb.m807b(this.f14b);
+        return IOUtils.m807b(this.f14b);
     }
 
     /* renamed from: b */
     public final long m57b() {
-        return C0029bb.m808c(this.f13a);
+        return IOUtils.m808c(this.f13a);
     }
 
     /* renamed from: b */
@@ -151,7 +151,7 @@ public final class VCard {
     public final int m60d() {
         try {
             if (StringUtils.m3a(590588, this.f15c)) {
-                return C0014an.m284e(Integer.parseInt(this.f19g));
+                return MapPoint.m284e(Integer.parseInt(this.f19g));
             }
             return 10;
         } catch (Throwable unused) {
@@ -173,7 +173,7 @@ public final class VCard {
     }
 
     /* renamed from: a */
-    public static final String m63a(C0020at c0020at, int i) {
+    public static final String m63a(PhoneContact c0020at, int i) {
         return new ByteBuffer().m1310c(1901187).m1314d(c0020at.f164b).m1310c(393954).m1314d(c0020at.f163a).m1310c(393960).m1314d(c0020at.f166d).m1310c(393966).m1314d(c0020at.f165c).m1310c(1311413).m1382s(i).m1310c(393943).m1382s(Utils.m520a()).m1317c();
     }
 
@@ -198,7 +198,7 @@ public final class VCard {
                 Hashtable hashtable = (Hashtable) vector.elementAt(size);
                 String str = (String) hashtable.get("Path");
                 int i = Integer.parseInt((String) hashtable.get("TypeCode"));
-                C0014an c0014an = new C0014an(str, j, j2, C0014an.m284e(i));
+                MapPoint c0014an = new MapPoint(str, j, j2, MapPoint.m284e(i));
                 c0014an.f143k = 1;
                 c0014an.f144l = i;
                 c0014an.f145m = Integer.parseInt((String) hashtable.get("ObjCode"));

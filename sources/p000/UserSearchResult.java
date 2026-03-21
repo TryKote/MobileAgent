@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: p */
 /* loaded from: MobileAgent_3.9.jar:p.class */
-public final class C0045p implements ListItem, Identifiable {
+public final class UserSearchResult implements ListItem, Identifiable {
 
     /* renamed from: e */
     private boolean f386e;
@@ -34,10 +34,10 @@ public final class C0045p implements ListItem, Identifiable {
     /* renamed from: j */
     private SizeCache f395j;
 
-    private C0045p() {
+    private UserSearchResult() {
     }
 
-    public C0045p(int i, int i2, String str, int i3) {
+    public UserSearchResult(int i, int i2, String str, int i3) {
         this.f387f = i;
         this.f388g = i2;
         this.f389h = str;

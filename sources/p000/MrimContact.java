@@ -62,7 +62,7 @@ public final class MrimContact extends Contact implements ListItem {
         this.f300g = str3;
         this.f301h = str5;
         m1249c(Utils.m528a(str2, str));
-        this.f373r = C0015ao.m349a(i5, str4);
+        this.f373r = AppController.m349a(i5, str4);
         this.f371p = i5 != 0;
         m992O();
         this.f308n = new SizeCache();
@@ -98,7 +98,7 @@ public final class MrimContact extends Contact implements ListItem {
         byte bM1344o = c0043n.m1344o();
         this.f374s = bM1344o;
         if (bM1344o != 0) {
-            C0015ao.m414a((Contact) this);
+            AppController.m414a((Contact) this);
         }
         this.f301h = str;
         this.f373r = 155;
@@ -220,7 +220,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         this.f302y = jM598g;
         MrimAccount c0028ba = (MrimAccount) this.f369o;
-        int iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4104, new ByteBuffer().m1360p(16512).m1308a(this.f297d).m1309b(AppState.m584b(909)).m1308a(AppState.m584b(33819707))), C0034e.m967e(14)}));
+        int iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().m1360p(16512).m1308a(this.f297d).m1309b(AppState.m584b(909)).m1308a(AppState.m584b(33819707))), ResourceManager.m967e(14)}));
         if (0 != iM1052c) {
             return iM1052c;
         }

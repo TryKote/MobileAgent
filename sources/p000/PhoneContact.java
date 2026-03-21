@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: at */
 /* loaded from: MobileAgent_3.9.jar:at.class */
-public final class C0020at implements ListItem, Identifiable {
+public final class PhoneContact implements ListItem, Identifiable {
 
     /* renamed from: g */
     private int f161g;
@@ -37,7 +37,7 @@ public final class C0020at implements ListItem, Identifiable {
     /* renamed from: k */
     private SizeCache f170k = new SizeCache();
 
-    public C0020at(String str, int i, int i2, String str2, String str3, String str4, String str5, int i3, int i4) {
+    public PhoneContact(String str, int i, int i2, String str2, String str3, String str4, String str5, int i3, int i4) {
         this.f168i = str;
         this.f162h = i2;
         this.f161g = i;

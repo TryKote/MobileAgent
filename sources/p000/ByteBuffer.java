@@ -45,7 +45,7 @@ public final class ByteBuffer {
     }
 
     public ByteBuffer(String str, int i) {
-        this((InputStream) C0029bb.m761a((Object) str.getClass().getResourceAsStream(str)), i);
+        this((InputStream) IOUtils.m761a((Object) str.getClass().getResourceAsStream(str)), i);
     }
 
     private ByteBuffer(InputStream inputStream, int i) {
@@ -63,7 +63,7 @@ public final class ByteBuffer {
             NetworkUtils.m1209a(bArrM1211a);
         } catch (Throwable unused) {
         }
-        C0029bb.m763a(inputStream);
+        IOUtils.m763a(inputStream);
     }
 
     /* renamed from: a */
@@ -878,18 +878,18 @@ public final class ByteBuffer {
         ByteArrayOutputStream byteArrayOutputStream = null;
         DataOutputStream dataOutputStream = null;
         try {
-            ByteArrayOutputStream byteArrayOutputStream2 = (ByteArrayOutputStream) C0029bb.m761a((Object) new ByteArrayOutputStream());
+            ByteArrayOutputStream byteArrayOutputStream2 = (ByteArrayOutputStream) IOUtils.m761a((Object) new ByteArrayOutputStream());
             byteArrayOutputStream = byteArrayOutputStream2;
-            DataOutputStream dataOutputStream2 = (DataOutputStream) C0029bb.m761a((Object) new DataOutputStream(byteArrayOutputStream2));
+            DataOutputStream dataOutputStream2 = (DataOutputStream) IOUtils.m761a((Object) new DataOutputStream(byteArrayOutputStream2));
             dataOutputStream = dataOutputStream2;
             dataOutputStream2.writeUTF(str);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
-            C0029bb.m764a((OutputStream) dataOutputStream);
-            C0029bb.m764a((OutputStream) byteArrayOutputStream);
+            IOUtils.m764a((OutputStream) dataOutputStream);
+            IOUtils.m764a((OutputStream) byteArrayOutputStream);
             return byteArray;
         } catch (Throwable th) {
-            C0029bb.m764a((OutputStream) dataOutputStream);
-            C0029bb.m764a((OutputStream) byteArrayOutputStream);
+            IOUtils.m764a((OutputStream) dataOutputStream);
+            IOUtils.m764a((OutputStream) byteArrayOutputStream);
             if (th instanceof RuntimeException) throw (RuntimeException) th;
             if (th instanceof Error) throw (Error) th;
             throw new RuntimeException(th);

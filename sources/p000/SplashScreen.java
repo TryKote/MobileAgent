@@ -27,7 +27,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
             new Thread(this).start();
         } else {
             try {
-                new RunnableC0055z(null, 0, 0);
+                new AsyncTask(null, 0, 0);
             } catch (Throwable unused) {
             }
         }
@@ -45,7 +45,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
                     repaint();
                     serviceRepaints();
                 } else if (i >= 3 && System.currentTimeMillis() - jCurrentTimeMillis >= 200) {
-                    new RunnableC0055z(this.f404a, getWidth(), getHeight());
+                    new AsyncTask(this.f404a, getWidth(), getHeight());
                     return;
                 }
                 System.gc();

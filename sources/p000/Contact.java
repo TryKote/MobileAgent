@@ -68,7 +68,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: c */
     public final void m1227c(int i) {
         this.f374s = (byte) (this.f374s | i);
-        C0015ao.m414a(this);
+        AppController.m414a(this);
         this.f375t = true;
         this.f379c = AppState.m598g(1530);
         m1228A();
@@ -95,7 +95,7 @@ public abstract class Contact implements Sortable {
         int i3 = !mo143m() ? i2 | 134217728 : i2 & (-100663297);
         if (i3 != this.f378b) {
             this.f378b = i3;
-            C0015ao.f152f = true;
+            AppController.f152f = true;
         }
     }
 
@@ -131,7 +131,7 @@ public abstract class Contact implements Sortable {
     public final void m1232a(long j, String str, int i) {
         TabBar c0008ah;
         AppState.m601a(1237, (Object) this.f380w);
-        C0034e.m925a(2);
+        ResourceManager.m925a(2);
         m1227c(i);
         this.f369o.m1071e(mo135a());
         m1230C();
@@ -162,7 +162,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: b */
     public final int m1233b(String str) {
-        C0034e.m925a(4);
+        ResourceManager.m925a(4);
         if (StringUtils.m1a(str)) {
             return 309;
         }
@@ -316,7 +316,7 @@ public abstract class Contact implements Sortable {
                 c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f376u).append(AppState.m584b(311)).append(m1248b(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
                 if (this.f369o.m1056C()) {
-                    c0013amM75b.m250b(-1, AppState.m584b(839), i, new Object[]{C0034e.m967e(1), strM539n, str, new Long(jM1341m2)});
+                    c0013amM75b.m250b(-1, AppState.m584b(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
                 int iIndexOf = strM539n.indexOf(10);
@@ -340,7 +340,7 @@ public abstract class Contact implements Sortable {
         for (int i2 = 0; i2 < size; i2++) {
             String str2 = (String) vectorM1098a.elementAt(i2);
             if (Conversation.m1106f(str2)) {
-                c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{C0034e.m967e(0), str2});
+                c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{ResourceManager.m967e(0), str2});
             } else {
                 c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.f369o.mo80a()));
             }
@@ -389,7 +389,7 @@ public abstract class Contact implements Sortable {
             return 40;
         }
         if (mo990d()) {
-            return C0034e.m946g();
+            return ResourceManager.m946g();
         }
         return 63;
     }
@@ -439,7 +439,7 @@ public abstract class Contact implements Sortable {
         }
         this.f376u = str;
         this.f377v = StringUtils.m17c(str.toLowerCase());
-        C0015ao.f152f = true;
+        AppController.f152f = true;
     }
 
     public final String toString() {

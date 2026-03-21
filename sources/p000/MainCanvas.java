@@ -76,14 +76,14 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     public final void hideNotify() {
         this.f81j = false;
-        C0029bb.m776j();
-        C0015ao.f147a[0] = 0;
+        IOUtils.m776j();
+        AppController.f147a[0] = 0;
     }
 
     public final void showNotify() {
         this.f81j = true;
-        C0029bb.m776j();
-        C0015ao.m304a(0, C0015ao.m376E());
+        IOUtils.m776j();
+        AppController.m304a(0, AppController.m376E());
     }
 
     public final boolean isShown() {
@@ -112,9 +112,9 @@ public final class MainCanvas extends Canvas implements CommandListener {
         GraphicsContext c0012al = this.f78g;
         c0012al.f92b = graphics;
         try {
-            synchronized (C0015ao.f150d) {
-                if (!C0015ao.f151e) {
-                    C0036g.m1020e();
+            synchronized (AppController.f150d) {
+                if (!AppController.f151e) {
+                    XmppContactGroup.m1020e();
                     Vector vectorM614m = AppState.m614m(1272);
                     int size = vectorM614m.size();
                     if (size > 0) {
@@ -164,20 +164,20 @@ public final class MainCanvas extends Canvas implements CommandListener {
                     if (ScreenManager.m77h()) {
                         c0012al.m208a(0, 0, 2048, 2048);
                         int iM586d4 = AppState.m586d(1528) - 17;
-                        if (C0015ao.m413P() != 0) {
+                        if (AppController.m413P() != 0) {
                             c0012al.m216a(16384, iM586d4, 1);
                             iM586d4 -= 17;
                         }
-                        if (C0015ao.m410N()) {
+                        if (AppController.m410N()) {
                             c0012al.m216a(16385, iM586d4, 1);
                         }
                     }
-                    C0036g.m1022f();
+                    XmppContactGroup.m1022f();
                 }
             }
         } catch (Throwable unused) {
         }
-        C0015ao.f153g = false;
+        AppController.f153g = false;
     }
 
     public final void keyPressed(int i) {
@@ -191,8 +191,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void keyReleased(int i) {
-        C0015ao.m304a(3, 10000L);
-        C0029bb.m776j();
+        AppController.m304a(3, 10000L);
+        IOUtils.m776j();
     }
 
     /* renamed from: a */
@@ -206,9 +206,9 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     /* renamed from: a */
     private final void m203a(int i, int i2) {
-        C0015ao.m357z();
-        C0015ao.m304a(0, C0015ao.m376E());
-        C0015ao.m304a(3, 10000L);
+        AppController.m357z();
+        AppController.m304a(0, AppController.m376E());
+        AppController.m304a(3, 10000L);
         int gameAction = 0;
         boolean zM587e = AppState.m587e(1511);
         try {
@@ -216,7 +216,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         } catch (Throwable unused) {
         }
         if (gameAction == 1 || gameAction == 2 || gameAction == 5 || gameAction == 6) {
-            C0029bb.m777a(i, gameAction, i2);
+            IOUtils.m777a(i, gameAction, i2);
             return;
         }
         if (gameAction == 8 && (i == -6 || i == -7 || i == -1 || i == -4)) {
@@ -224,16 +224,16 @@ public final class MainCanvas extends Canvas implements CommandListener {
         }
         if (gameAction == 8) {
             if (!zM587e) {
-                C0029bb.m775i();
+                IOUtils.m775i();
                 return;
             } else {
                 AppState.m599a(218, false);
-                C0029bb.m773g();
+                IOUtils.m773g();
                 return;
             }
         }
         if ((i >= 48 && i <= 57) || i == 42 || i == 35) {
-            C0029bb.m777a(i, gameAction, i2);
+            IOUtils.m777a(i, gameAction, i2);
             return;
         }
         if (i2 == 0) {
@@ -241,17 +241,17 @@ public final class MainCanvas extends Canvas implements CommandListener {
                 if (AppState.m587e(71)) {
                     String strM202a = m202a(i);
                     if (i == -6 || strM202a.indexOf("SEND") >= 0 || strM202a.indexOf("SOFT1") >= 0 || strM202a.equals("SOFTKEY 1")) {
-                        C0029bb.m773g();
+                        IOUtils.m773g();
                         return;
                     }
                     if (i == -7 || i == 11 || strM202a.indexOf("CLEAR") >= 0 || strM202a.indexOf("SOFT2") >= 0 || strM202a.equals("SOFTKEY 4")) {
                         if (zM587e) {
                             AppState.m599a(218, false);
                         }
-                        C0029bb.m774h();
+                        IOUtils.m774h();
                     } else if (zM587e) {
                         AppState.m599a(218, false);
-                        C0029bb.m773g();
+                        IOUtils.m773g();
                     }
                 }
             } catch (Throwable unused2) {
@@ -262,15 +262,15 @@ public final class MainCanvas extends Canvas implements CommandListener {
     public final void pointerPressed(int i, int i2) {
         f86a = i;
         f87b = i2;
-        C0015ao.m304a(3, 10000L);
-        C0015ao.m304a(0, C0015ao.m376E());
+        AppController.m304a(3, 10000L);
+        AppController.m304a(0, AppController.m376E());
         Vector vectorM614m = AppState.m614m(1266);
         synchronized (vectorM614m) {
             vectorM614m.addElement(new int[]{5, i, i2});
         }
         f89c = System.currentTimeMillis();
         f90d = false;
-        C0015ao.m357z();
+        AppController.m357z();
     }
 
     public final void pointerDragged(int i, int i2) {
@@ -320,12 +320,12 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void commandAction(Command command, Displayable displayable) {
-        C0015ao.m304a(3, 10000L);
+        AppController.m304a(3, 10000L);
         if (command != null) {
             if (command == this.f76e) {
-                C0029bb.m773g();
+                IOUtils.m773g();
             } else if (command == this.f77f) {
-                C0029bb.m774h();
+                IOUtils.m774h();
             }
         }
     }
@@ -365,6 +365,6 @@ public final class MainCanvas extends Canvas implements CommandListener {
             addCommand(command2);
         }
         setCommandListener(this);
-        C0015ao.f153g = true;
+        AppController.f153g = true;
     }
 }

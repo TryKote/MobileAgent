@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: an */
 /* loaded from: MobileAgent_3.9.jar:an.class */
-public final class C0014an implements ListItem {
+public final class MapPoint implements ListItem {
 
     /* renamed from: a */
     public String f133a;
@@ -46,11 +46,11 @@ public final class C0014an implements ListItem {
     /* renamed from: n */
     private SizeCache f146n;
 
-    public C0014an() {
+    public MapPoint() {
         this.f146n = new SizeCache();
     }
 
-    public C0014an(String str, long j, long j2, long j3, long j4, long j5, long j6, int i) {
+    public MapPoint(String str, long j, long j2, long j3, long j4, long j5, long j6, int i) {
         this.f133a = str;
         this.f134b = 0L;
         this.f135c = 0L;
@@ -62,7 +62,7 @@ public final class C0014an implements ListItem {
         this.f146n = new SizeCache();
     }
 
-    public C0014an(String str, long j, long j2, int i) {
+    public MapPoint(String str, long j, long j2, int i) {
         this.f133a = str;
         this.f138f = j;
         this.f139g = j2;
@@ -70,18 +70,18 @@ public final class C0014an implements ListItem {
         this.f146n = new SizeCache();
     }
 
-    public C0014an(String str) {
+    public MapPoint(String str) {
         try {
             this.f133a = Conversation.m1099b(str);
-            this.f138f = C0029bb.m807b(Conversation.m1100c(str));
-            this.f139g = C0029bb.m808c(Conversation.m1101d(str));
+            this.f138f = IOUtils.m807b(Conversation.m1100c(str));
+            this.f139g = IOUtils.m808c(Conversation.m1101d(str));
             this.f140h = Integer.parseInt(Conversation.m1102e(str));
         } catch (Throwable unused) {
         }
         this.f146n = new SizeCache();
     }
 
-    public C0014an(ByteBuffer c0043n) {
+    public MapPoint(ByteBuffer c0043n) {
         this.f133a = c0043n.m1335e((String) null);
         this.f134b = c0043n.m1341m();
         this.f135c = c0043n.m1341m();
@@ -121,17 +121,17 @@ public final class C0014an implements ListItem {
 
     /* renamed from: c */
     public final long m270c(int i) {
-        return C0015ao.m317a(this.f138f, i);
+        return AppController.m317a(this.f138f, i);
     }
 
     /* renamed from: d */
     public final long m271d(int i) {
-        return C0015ao.m317a(this.f139g, i);
+        return AppController.m317a(this.f139g, i);
     }
 
     /* renamed from: d */
     public final String m272d() {
-        return C0034e.m975a(this.f138f, this.f139g, this.f140h, this.f133a);
+        return ResourceManager.m975a(this.f138f, this.f139g, this.f140h, this.f133a);
     }
 
     @Override // p000.ListItem

@@ -26,7 +26,7 @@ public final class XmlParser {
     private final int m45b() {
         if (!(this.f5c instanceof String)) {
             if (!(this.f5c instanceof ByteBuffer)) {
-                return C0034e.m930b((Object[]) this.f5c);
+                return ResourceManager.m930b((Object[]) this.f5c);
             }
             ByteBuffer c0043n = (ByteBuffer) this.f5c;
             if (c0043n.f384b == 0) {

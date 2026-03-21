@@ -216,7 +216,7 @@ public abstract class Account {
 
     /* renamed from: d */
     public final int m1053d(ByteBuffer c0043n) {
-        C0015ao.m420b(this, c0043n.f384b);
+        AppController.m420b(this, c0043n.f384b);
         ConnectionThread c0039j = this.f320p;
         if (c0039j.f348b != null) {
             throw new RuntimeException();
@@ -338,14 +338,14 @@ public abstract class Account {
         } else {
             strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(th).append(AppState.m584b(946)).append(AppState.m584b(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
-        C0029bb.m784a(this, strM1215a);
+        IOUtils.m784a(this, strM1215a);
         m1061F();
         this.f324t = mo89g();
     }
 
     /* renamed from: H */
     public final void m1063H() {
-        C0029bb.m783a(this, 462);
+        IOUtils.m783a(this, 462);
         m1061F();
         this.f324t = mo89g();
     }
@@ -362,13 +362,13 @@ public abstract class Account {
         if (this.f341a == 2) {
             mo914a_(3);
         } else {
-            C0029bb.m783a(this, 461);
+            IOUtils.m783a(this, 461);
         }
     }
 
     /* renamed from: f */
     public final void m1066f(int i) {
-        C0029bb.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
+        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(459)).append(this).append(AppState.m584b(460)).append(AppState.m584b(457)).append(i)));
         m1061F();
         this.f324t = mo89g();
     }
@@ -390,7 +390,7 @@ public abstract class Account {
                 }
                 Contact abstractC0041lM1394e = abstractC0046qM1082g.m1394e(size2);
                 m1074a(abstractC0041lM1394e, false);
-                C0015ao.m415b(abstractC0041lM1394e);
+                AppController.m415b(abstractC0041lM1394e);
             }
             m1084c(abstractC0046qM1082g);
         }
@@ -402,7 +402,7 @@ public abstract class Account {
         while (enumerationElements.hasMoreElements()) {
             ((Contact) enumerationElements.nextElement()).mo134c();
         }
-        C0015ao.f152f = true;
+        AppController.f152f = true;
     }
 
     /* renamed from: c */
@@ -416,7 +416,7 @@ public abstract class Account {
         if (abstractC0041lM1069c == null || abstractC0041lM1069c.mo143m() || abstractC0041lM1069c.mo144l() || abstractC0041lM1069c.mo996n()) {
             return;
         }
-        C0015ao.m418c(abstractC0041lM1069c);
+        AppController.m418c(abstractC0041lM1069c);
         AppState.m614m(1242).addElement(abstractC0041lM1069c);
         abstractC0041lM1069c.f372q = AppState.m586d(1531);
         abstractC0041lM1069c.f375t = true;
@@ -426,7 +426,7 @@ public abstract class Account {
     public final void m1071e(String str) {
         Contact abstractC0041lM1069c = m1069c((Object) str);
         if (abstractC0041lM1069c != null) {
-            C0015ao.m418c(abstractC0041lM1069c);
+            AppController.m418c(abstractC0041lM1069c);
         }
     }
 
@@ -479,7 +479,7 @@ public abstract class Account {
             size--;
             if (size < 0) {
                 this.f334D.m1402c(abstractC0041l);
-                C0015ao.m415b(abstractC0041l);
+                AppController.m415b(abstractC0041l);
                 return 0;
             }
             m1082g(size).m1402c(abstractC0041l);
@@ -562,7 +562,7 @@ public abstract class Account {
 
     /* renamed from: d */
     public final int m1075d(Object obj) {
-        return C0034e.m969a((String) obj, this);
+        return ResourceManager.m969a((String) obj, this);
     }
 
     /* renamed from: c */

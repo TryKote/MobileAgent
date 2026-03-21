@@ -9,7 +9,7 @@ import javax.microedition.lcdui.TextBox;
 
 /* renamed from: g */
 /* loaded from: MobileAgent_3.9.jar:g.class */
-public final class C0036g extends ContactGroup {
+public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: h */
     private int f309h;
@@ -23,13 +23,13 @@ public final class C0036g extends ContactGroup {
     /* renamed from: c */
     public static long f312c;
 
-    public C0036g(XmppProtocol c0005ae, int i, String str) {
+    public XmppContactGroup(XmppProtocol c0005ae, int i, String str) {
         super(c0005ae);
         this.f309h = i;
         m1403c(str);
     }
 
-    public C0036g(XmppProtocol c0005ae, ByteBuffer c0043n) {
+    public XmppContactGroup(XmppProtocol c0005ae, ByteBuffer c0043n) {
         super(c0005ae);
         m1403c(c0043n.m1335e((String) null));
         this.f309h = c0043n.m1328e();
@@ -44,7 +44,7 @@ public final class C0036g extends ContactGroup {
         }
     }
 
-    public C0036g() {
+    public XmppContactGroup() {
         super(null);
     }
 
@@ -101,8 +101,8 @@ public final class C0036g extends ContactGroup {
             }
             length2++;
         }
-        objArr[0] = C0015ao.m321a(c0028ba, 4104, c0043nM1308a.m1309b(NetworkUtils.m1215a(stringBufferM1217h)).m1360p(0));
-        objArr[1] = C0034e.m967e(10);
+        objArr[0] = AppController.m321a(c0028ba, 4104, c0043nM1308a.m1309b(NetworkUtils.m1215a(stringBufferM1217h)).m1360p(0));
+        objArr[1] = ResourceManager.m967e(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
         return c0028ba.m719a(objArr);
@@ -138,12 +138,12 @@ public final class C0036g extends ContactGroup {
     public static final void m1004c() throws Throwable {
         while (true) {
             Thread.sleep(3072L);
-            if (C0015ao.f151e) {
+            if (AppController.f151e) {
                 throw new Throwable();
             }
             if (System.currentTimeMillis() - AppState.m598g(236) >= 7200000) {
                 boolean z = false;
-                Vector vectorM443V = C0015ao.m443V();
+                Vector vectorM443V = AppController.m443V();
                 int size = vectorM443V.size();
                 while (true) {
                     size--;
@@ -232,7 +232,7 @@ public final class C0036g extends ContactGroup {
             String strM584b = AppState.m584b(655360);
             MrimAccount c0028ba = new MrimAccount(-1, strM584b, strM584b);
             c0028ba.f320p = c0039j;
-            c0028ba.m1053d(C0015ao.m377a(c0028ba));
+            c0028ba.m1053d(AppController.m377a(c0028ba));
             ByteBuffer c0043n = new ByteBuffer();
             do {
                 Thread.sleep(100L);
@@ -241,7 +241,7 @@ public final class C0036g extends ContactGroup {
             } while (c0043nM1349s == null);
             if (c0043nM1349s.m1330h(12) == 4098) {
                 m1003p();
-                c0028ba.m1053d(C0015ao.m321a(c0028ba, 4216, new ByteBuffer().m1308a(c0028ba.f315k).m1308a(c0028ba.f316l).m1310c(1442808).m1308a(m1017d()).m1325a(m1016a(c0028ba))));
+                c0028ba.m1053d(AppController.m321a(c0028ba, 4216, new ByteBuffer().m1308a(c0028ba.f315k).m1308a(c0028ba.f316l).m1310c(1442808).m1308a(m1017d()).m1325a(m1016a(c0028ba))));
                 Thread.sleep(5000L);
             }
         } catch (Throwable unused) {
@@ -445,7 +445,7 @@ public final class C0036g extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer m1016a(MrimAccount c0028ba) {
         ByteBuffer c0043nM1360p = new ByteBuffer().m1390v(515).m1360p(Utils.m510a((Object) Utils.m522f(AppState.m584b(222)))).m1390v(300).m1308a(Utils.m522f(AppState.m584b(223))).m1390v(513).m1360p(c0028ba.f326v).m1390v(335).m1308a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m586d(1528)).append('x').append(AppState.m586d(1529)))).m1390v(592).m1360p(AppState.m585c(251)).m1390v(573).m1360p(AppState.m585c(250)).m1390v(636).m1360p(AppState.m585c(290)).m1390v(514).m1360p(AppState.m585c(291)).m1390v(638).m1360p(AppState.m585c(292)).m1390v(639).m1360p(AppState.m585c(294)).m1390v(640).m1360p(AppState.m585c(293));
-        Vector vectorM443V = C0015ao.m443V();
+        Vector vectorM443V = AppController.m443V();
         int size = vectorM443V.size();
         while (true) {
             size--;
@@ -547,14 +547,14 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    public static final ByteBuffer m1024a(MrimAccount c0028ba, int i, String str, String str2, String str3, C0010aj c0010aj, boolean z) {
+    public static final ByteBuffer m1024a(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
-        objArr[0] = C0015ao.m321a(c0028ba, 4121, new ByteBuffer().m1360p(i).m1360p(c0010aj.f74a).m1308a(str).m1309b(str2).m1360p(0).m1318a(new String[]{c0028ba.f339I, str3}).m1360p(z ? 1 : 0));
-        objArr[1] = C0034e.m967e(9);
+        objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().m1360p(i).m1360p(c0010aj.f74a).m1308a(str).m1309b(str2).m1360p(0).m1318a(new String[]{c0028ba.f339I, str3}).m1360p(z ? 1 : 0));
+        objArr[1] = ResourceManager.m967e(9);
         objArr[2] = str;
         objArr[3] = str2;
         objArr[4] = c0010aj;
-        objArr[5] = C0034e.m967e(i);
+        objArr[5] = ResourceManager.m967e(i);
         return c0028ba.m719a(objArr);
     }
 
@@ -682,7 +682,7 @@ public final class C0036g extends ContactGroup {
             if (size < 0) {
                 ByteBuffer c0043nM1385u = new ByteBuffer().m1310c(3216135).m1385u(15713);
                 String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
-                new RunnableC0055z(15, c0043nM1385u.m1314d(strM1215a).m1385u(4022822).m1314d(new ByteBuffer().m1314d(strM1215a).m1310c(660328).m1365B().m1387H()).m1385u(4023078).m1383b(j).m1385u(4023334).m1383b(j2).m1317c());
+                new AsyncTask(15, c0043nM1385u.m1314d(strM1215a).m1385u(4022822).m1314d(new ByteBuffer().m1314d(strM1215a).m1310c(660328).m1365B().m1387H()).m1385u(4023078).m1383b(j).m1385u(4023334).m1383b(j2).m1317c());
                 return;
             } else {
                 stringBufferM1217h.append(vectorM1140a.elementAt(size));
@@ -855,7 +855,7 @@ public final class C0036g extends ContactGroup {
 
     /* renamed from: c */
     public static final Object[] m1040c(int i) {
-        return m1041a(C0015ao.m332c(AppState.m584b(i)));
+        return m1041a(AppController.m332c(AppState.m584b(i)));
     }
 
     /* renamed from: a */
@@ -886,7 +886,7 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    public static final void m1043a(Vector vector, C0014an c0014an, int i, int i2) {
+    public static final void m1043a(Vector vector, MapPoint c0014an, int i, int i2) {
         if (c0014an == null || vector.contains(c0014an)) {
             return;
         }
@@ -900,8 +900,8 @@ public final class C0036g extends ContactGroup {
     }
 
     /* renamed from: a */
-    private static C0014an m1044a(Vector vector, String str) {
-        C0014an c0014an;
+    private static MapPoint m1044a(Vector vector, String str) {
+        MapPoint c0014an;
         try {
             int size = vector.size();
             do {
@@ -909,7 +909,7 @@ public final class C0036g extends ContactGroup {
                 if (size < 0) {
                     return null;
                 }
-                c0014an = (C0014an) vector.elementAt(size);
+                c0014an = (MapPoint) vector.elementAt(size);
             } while (!str.equals(c0014an.f133a));
             return c0014an;
         } catch (Exception unused) {
@@ -925,7 +925,7 @@ public final class C0036g extends ContactGroup {
             int size = vectorM513a.size();
             for (int i = 0; i < size; i++) {
                 Vector vectorM516c = Utils.m516c((String) vectorM513a.elementAt(i), '|');
-                C0014an c0014an = new C0014an((String) vectorM516c.elementAt(0), Long.parseLong((String) vectorM516c.elementAt(2)), Long.parseLong((String) vectorM516c.elementAt(1)), Utils.m510a(vectorM516c.elementAt(3)));
+                MapPoint c0014an = new MapPoint((String) vectorM516c.elementAt(0), Long.parseLong((String) vectorM516c.elementAt(2)), Long.parseLong((String) vectorM516c.elementAt(1)), Utils.m510a(vectorM516c.elementAt(3)));
                 c0014an.f143k = 1;
                 c0014an.f144l = Utils.m510a(vectorM516c.elementAt(4));
                 c0014an.f145m = Utils.m510a(vectorM516c.elementAt(5));
@@ -946,7 +946,7 @@ public final class C0036g extends ContactGroup {
             int size = vector.size();
             c0043n.m1360p(size);
             for (int i2 = 0; i2 < size; i2++) {
-                C0014an c0014an = (C0014an) vector.elementAt(i2);
+                MapPoint c0014an = (MapPoint) vector.elementAt(i2);
                 c0043n.m1309b(c0014an.f133a).m1323a(c0014an.f134b).m1323a(c0014an.f135c).m1323a(c0014an.f136d).m1323a(c0014an.f137e).m1323a(c0014an.f138f).m1323a(c0014an.f139g).m1360p(c0014an.f140h).m1360p(c0014an.f143k).m1360p(c0014an.f145m).m1360p(c0014an.f144l);
             }
             AppState.m601a(i, (Object) c0043n.m1320d());
@@ -958,11 +958,11 @@ public final class C0036g extends ContactGroup {
     public static final Vector m1047d(int i) {
         Vector vectorM1213g = NetworkUtils.m1213g();
         try {
-            ByteBuffer c0043nM986d = C0034e.m986d(AppState.m584b(i));
+            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.m584b(i));
             if (c0043nM986d.f384b > 4) {
                 int iM1328e = c0043nM986d.m1328e();
                 for (int i2 = 0; i2 < iM1328e; i2++) {
-                    vectorM1213g.addElement(new C0014an(c0043nM986d));
+                    vectorM1213g.addElement(new MapPoint(c0043nM986d));
                 }
             }
             Utils.m526b(vectorM1213g);
@@ -979,7 +979,7 @@ public final class C0036g extends ContactGroup {
             if (size < 0) {
                 return;
             } else {
-                ((C0014an) vector.elementAt(size)).m269c();
+                ((MapPoint) vector.elementAt(size)).m269c();
             }
         }
     }
@@ -992,7 +992,7 @@ public final class C0036g extends ContactGroup {
             if (size < 0) {
                 return;
             } else {
-                ((C0014an) vector.elementAt(size)).m268b();
+                ((MapPoint) vector.elementAt(size)).m268b();
             }
         }
     }

@@ -225,7 +225,7 @@ public final class Screen {
         if (this.f102h == 0) {
             c0032c.m909b(this.f114q);
             this.f108m.addElement(c0032c);
-            this.f109n = C0015ao.m302a(this.f109n, 0, this.f107l);
+            this.f109n = AppController.m302a(this.f109n, 0, this.f107l);
             this.f107l += c0032c.m912h();
         } else {
             int iM240c = 0;
@@ -240,7 +240,7 @@ public final class Screen {
                 iM241d = m241d(size) + m239b(size).m912h();
             }
             this.f108m.addElement(c0032c);
-            this.f109n = C0015ao.m302a(this.f109n, iM240c, iM241d);
+            this.f109n = AppController.m302a(this.f109n, iM240c, iM241d);
             this.f107l = iM241d + c0032c.m912h();
         }
         if (this.f107l <= 0 || this.f107l < this.f115r) {
@@ -441,7 +441,7 @@ public final class Screen {
                 if (this.f124w != null) {
                     c0012al.m213a(this.f124w, iM586d4 - 1, iM605e2, 24);
                 }
-                if (C0034e.f287f + this.f126K < iM586d4 - 6) {
+                if (ResourceManager.f287f + this.f126K < iM586d4 - 6) {
                     c0012al.m213a(Utils.m522f(AppState.m584b(1263)), iM586d4 >> 1, iM605e2, 17);
                 }
             }
@@ -473,9 +473,9 @@ public final class Screen {
                     }
                     if (c0008ah2.f51h == null) {
                         int i34 = c0008ah2.f47d;
-                        iM417c = (i34 == 240 && C0015ao.m410N()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.m614m(1243).size() <= 0) ? i34 : 16384;
+                        iM417c = (i34 == 240 && AppController.m410N()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.m614m(1243).size() <= 0) ? i34 : 16384;
                     } else {
-                        iM417c = C0015ao.m417c(c0008ah2.f51h);
+                        iM417c = AppController.m417c(c0008ah2.f51h);
                     }
                     c0012al.m216a(iM417c, c0008ah2.f49f + 4, 4 + ScreenManager.m73f()).m207b(0).m208a(c0008ah2.f49f, 2, c0008ah2.f48e - 3, iM623o - 2).m213a(c0008ah2.f46c, c0008ah2.f49f + 6 + 16, 4, 20);
                 } else {
@@ -586,7 +586,7 @@ public final class Screen {
     public final void m230i() {
         MenuItem c0032cM222d = m222d();
         if (null != c0032cM222d && c0032cM222d.f266e) {
-            C0029bb.m775i();
+            IOUtils.m775i();
             return;
         }
         if (this.f94a == 6) {
@@ -1276,7 +1276,7 @@ public final class Screen {
         if (!this.f132B) {
             return true;
         }
-        C0015ao.f153g = true;
+        AppController.f153g = true;
         this.f132B = false;
         int i5 = i - this.f98e;
         int i6 = i2 - this.f99f;
@@ -1304,7 +1304,7 @@ public final class Screen {
                         if (this.f106k != i12 || z) {
                             this.f106k = i12;
                         } else {
-                            C0015ao.m455ab();
+                            AppController.m455ab();
                         }
                         z2 = true;
                     }
@@ -1322,7 +1322,7 @@ public final class Screen {
             if (this.f97d == 0 || this.f97d == 1) {
                 return true;
             }
-            C0015ao.m455ab();
+            AppController.m455ab();
             return true;
         }
         int i13 = i5 - 2;
@@ -1345,7 +1345,7 @@ public final class Screen {
                 break;
             }
         }
-        C0015ao.m455ab();
+        AppController.m455ab();
         return true;
     }
 

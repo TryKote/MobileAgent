@@ -15,7 +15,7 @@ import javax.microedition.rms.RecordStoreException;
 
 /* renamed from: bb */
 /* loaded from: MobileAgent_3.9.jar:bb.class */
-public final class C0029bb {
+public final class IOUtils {
 
     /* renamed from: a */
     public int f235a;
@@ -35,7 +35,7 @@ public final class C0029bb {
     /* renamed from: f */
     private static Screen f240f;
 
-    public C0029bb(int i, Object obj) {
+    public IOUtils(int i, Object obj) {
         this.f235a = i;
         this.f236b = obj;
     }
@@ -61,21 +61,21 @@ public final class C0029bb {
         }
         if (StringUtils.m3a(839, str)) {
             if (!zM587e) {
-                return C0034e.m966a(XmppMailRuProtocol.m866b(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
+                return ResourceManager.m966a(XmppMailRuProtocol.m866b(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.m872b(54, 0);
             return 0;
         }
         if (StringUtils.m3a(840, str)) {
             if (!zM587e) {
-                return C0034e.m966a(XmppMailRuProtocol.m865a(XmppMailRuProtocol.m864a(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
+                return ResourceManager.m966a(XmppMailRuProtocol.m865a(XmppMailRuProtocol.m864a(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.m872b(54, 1);
             return 0;
         }
         if (StringUtils.m3a(841, str)) {
             if (!zM587e) {
-                return C0034e.m966a(NetworkUtils.m1213g(), new StringBuffer().append(strM584b3).append(strM673d).toString(), str2);
+                return ResourceManager.m966a(NetworkUtils.m1213g(), new StringBuffer().append(strM584b3).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.m872b(54, 2);
             return 0;
@@ -97,7 +97,7 @@ public final class C0029bb {
 
     /* renamed from: a */
     public static final ByteBuffer m753a(MmpProtocol c0033d, MmpContact c0009ai, String str) {
-        return C0015ao.m464a(c0033d, 4888, new ByteBuffer().m1373h(c0009ai.f57c).m1376j(str).m1357m(0));
+        return AppController.m464a(c0033d, 4888, new ByteBuffer().m1373h(c0009ai.f57c).m1376j(str).m1357m(0));
     }
 
     /* renamed from: a */
@@ -128,7 +128,7 @@ public final class C0029bb {
                     playerCreatePlayer.start();
                 } catch (Throwable unused4) {
                 }
-                C0015ao.m304a(6, 10000L);
+                AppController.m304a(6, 10000L);
             }
         } catch (Throwable unused5) {
         }
@@ -155,7 +155,7 @@ public final class C0029bb {
     /* renamed from: a */
     public static final void m756a() {
         boolean z;
-        long[] jArr = C0015ao.f147a;
+        long[] jArr = AppController.f147a;
         long j = jArr[6];
         if (j == 0 || j >= System.currentTimeMillis()) {
             z = false;
@@ -226,9 +226,9 @@ public final class C0029bb {
                 if (str.length() > 30 && iLastIndexOf > 1) {
                     StringUtils.m13b(str, iLastIndexOf - 1);
                 }
-                C0034e.m925a(0);
+                ResourceManager.m925a(0);
             }
-            if (zM587e && (C0015ao.m442U() != 10 || !AppState.m579a())) {
+            if (zM587e && (AppController.m442U() != 10 || !AppState.m579a())) {
                 StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
                 if (str2 != null && str != null) {
                     m785b(c0028ba, NetworkUtils.m1215a(stringBufferM1217h.append(AppState.m584b(917)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.m584b(918)).append(i).append(AppState.m584b(919 + Utils.m540f(i))).append('\n').toString() : AppState.f181d).append(AppState.m584b(916)).toString())));
@@ -238,8 +238,8 @@ public final class C0029bb {
             }
             if (zM587e2) {
                 if (i > 0 || !(str2 == null || str == null)) {
-                    C0015ao.m356y();
-                    C0015ao.m411b(c0028ba);
+                    AppController.m356y();
+                    AppController.m411b(c0028ba);
                     if (AppState.m587e(90)) {
                         AppState.m614m(1244).addElement(c0028ba);
                     }
@@ -411,7 +411,7 @@ public final class C0029bb {
             c0022av3.m559a(328413, str);
             c0022av2.m552a(c0022av3);
         }
-        c0028ba.m1052c(C0015ao.m321a(c0028ba, 4181, new ByteBuffer().m1308a("geo-list").m1308a(c0022av.toString())));
+        c0028ba.m1052c(AppController.m321a(c0028ba, 4181, new ByteBuffer().m1308a("geo-list").m1308a(c0022av.toString())));
         if (c0028ba.f231g.f21i != 3) {
             return 0;
         }
@@ -427,7 +427,7 @@ public final class C0029bb {
         NetworkUtils.m1195d();
         String strM522f = Utils.m522f(AppState.m584b(1248));
         if (StringUtils.m1a(strM522f)) {
-            return C0015ao.m338l(351);
+            return AppController.m338l(351);
         }
         boolean z = true;
         int i2 = 0;
@@ -458,7 +458,7 @@ public final class C0029bb {
             String strM1109a = Conversation.m1109a(strM522f, 1046, 199350);
             Image imageM615n = AppState.m615n(1364);
             long j = MapRenderer.f195c;
-            new RunnableC0055z(9, new ByteBuffer().m1310c(1442705).m1310c(1511760).m1314d(Conversation.m1120b((Object) strM1109a)).m1310c(659815).m1383b(j).m1310c(659825).m1383b(MapRenderer.f196d).m1310c(659835).m1382s(imageM615n.getWidth()).m1310c(659845).m1382s(imageM615n.getHeight()).m1317c());
+            new AsyncTask(9, new ByteBuffer().m1310c(1442705).m1310c(1511760).m1314d(Conversation.m1120b((Object) strM1109a)).m1310c(659815).m1383b(j).m1310c(659825).m1383b(MapRenderer.f196d).m1310c(659835).m1382s(imageM615n.getWidth()).m1310c(659845).m1382s(imageM615n.getHeight()).m1317c());
         }
         return AppState.m587e(1477) ? 161 : 6;
     }
@@ -466,15 +466,15 @@ public final class C0029bb {
     /* renamed from: c */
     public static final int m771c(Object obj) {
         if (AppState.m587e(1443)) {
-            MapRenderer.m653a((C0014an) obj);
+            MapRenderer.m653a((MapPoint) obj);
             return 6;
         }
         if (!AppState.m587e(1477)) {
-            ConnectionThread.m1165a((C0014an) obj, true);
+            ConnectionThread.m1165a((MapPoint) obj, true);
             return 6;
         }
         MrimAccount c0028ba = (MrimAccount) AppState.m616i();
-        c0028ba.m731a((C0014an) obj);
+        c0028ba.m731a((MapPoint) obj);
         c0028ba.m724j();
         AppState.m594c(1477, 0);
         return 160;
@@ -482,21 +482,21 @@ public final class C0029bb {
 
     /* renamed from: f */
     public static final void m772f() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().m1310c(1901187).m1314d(m810b((int) C0015ao.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39)))).m1310c(393954).m1314d(m809a((int) C0015ao.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39)))).m1310c(393960).m1314d(m810b((int) C0015ao.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39)))).m1310c(393966).m1314d(m809a((int) C0015ao.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39)))).m1310c(1376928);
+        ByteBuffer c0043nM1310c = new ByteBuffer().m1310c(1901187).m1314d(m810b((int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39)))).m1310c(393954).m1314d(m809a((int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39)))).m1310c(393960).m1314d(m810b((int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39)))).m1310c(393966).m1314d(m809a((int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39)))).m1310c(1376928);
         long jM692d = SoftFloat.m692d(4612811918334230528L, SoftFloat.m687b(((MapRenderer.f194b / 128) + 2) * ((MapRenderer.f193a / 128) + 2)));
         int iM586d = AppState.m586d(39);
         long j = MapRenderer.f197e;
         int i = MapRenderer.f193a / 2;
-        long jM318a = C0015ao.m318a((int) (j + i), iM586d) - C0015ao.m318a((int) (MapRenderer.f197e - i), iM586d);
+        long jM318a = AppController.m318a((int) (j + i), iM586d) - AppController.m318a((int) (MapRenderer.f197e - i), iM586d);
         long j2 = MapRenderer.f198f;
         int i2 = MapRenderer.f194b / 2;
-        ByteBuffer c0043nM1314d = c0043nM1310c.m1314d(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (C0015ao.m318a((int) (j2 + i2), iM586d) - C0015ao.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
-        VCard.f25m = (int) C0015ao.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39));
-        VCard.f26n = (int) C0015ao.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39));
-        VCard.f27o = (int) C0015ao.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39));
-        VCard.f28p = (int) C0015ao.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39));
+        ByteBuffer c0043nM1314d = c0043nM1310c.m1314d(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
+        VCard.f25m = (int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39));
+        VCard.f26n = (int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39));
+        VCard.f27o = (int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39));
+        VCard.f28p = (int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39));
         VCard.f29q = AppState.m586d(39);
-        new RunnableC0055z(20, new Object[]{c0043nM1314d.m1317c(), C0034e.m967e(AppState.m586d(39))});
+        new AsyncTask(20, new Object[]{c0043nM1314d.m1317c(), ResourceManager.m967e(AppState.m586d(39))});
     }
 
     /* renamed from: g */
@@ -569,7 +569,7 @@ public final class C0029bb {
 
     /* renamed from: a */
     public static final void m786a(MrimAccount c0028ba) {
-        m778d(new C0029bb(6, c0028ba));
+        m778d(new IOUtils(6, c0028ba));
     }
 
     /* renamed from: a */
@@ -587,13 +587,13 @@ public final class C0029bb {
         m815g(strM584b);
         if (StringUtils.m3a(839, str)) {
             ScreenBuilder.m549c();
-            C0034e.m966a(XmppMailRuProtocol.m866b(vectorM668b), StringUtils.m9b(strM584b2, strM673d), Utils.m507d(c0026azM1415b.f223h));
+            ResourceManager.m966a(XmppMailRuProtocol.m866b(vectorM668b), StringUtils.m9b(strM584b2, strM673d), Utils.m507d(c0026azM1415b.f223h));
             return 0;
         }
         if (!StringUtils.m3a(840, str)) {
             if (StringUtils.m3a(841, str)) {
                 ScreenBuilder.m549c();
-                C0034e.m966a(NetworkUtils.m1213g(), StringUtils.m9b(strM584b3, strM673d), Utils.m507d(c0026azM1415b.f223h));
+                ResourceManager.m966a(NetworkUtils.m1213g(), StringUtils.m9b(strM584b3, strM673d), Utils.m507d(c0026azM1415b.f223h));
                 return 0;
             }
             if (!StringUtils.m3a(845, str)) {
@@ -616,7 +616,7 @@ public final class C0029bb {
                 break;
             }
         }
-        C0034e.m966a(vectorM865a, StringUtils.m9b(strM584b2, strM673d), Utils.m507d(c0026azM1415b.f223h));
+        ResourceManager.m966a(vectorM865a, StringUtils.m9b(strM584b2, strM673d), Utils.m507d(c0026azM1415b.f223h));
         return 0;
     }
 
@@ -624,12 +624,12 @@ public final class C0029bb {
     private static final ByteBuffer m788a(MmpProtocol c0033d, MmpContact c0009ai, int i) {
         ByteBuffer c0043nM1357m = new ByteBuffer().m1361f(c0009ai.f57c).m1357m(0);
         int iM920k = c0033d.m920k();
-        return c0033d.m916a(new Object[]{C0015ao.m464a(c0033d, 4872, c0043nM1357m.m1357m(iM920k).m1357m(i).m1357m(0)), C0034e.m967e(18), c0009ai, C0034e.m967e(i), C0034e.m967e(iM920k)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.m1357m(iM920k).m1357m(i).m1357m(0)), ResourceManager.m967e(18), c0009ai, ResourceManager.m967e(i), ResourceManager.m967e(iM920k)});
     }
 
     /* renamed from: a */
     private static final ByteBuffer m789a(MmpProtocol c0033d, MmpContact c0009ai, int i, int i2) {
-        return c0033d.m916a(new Object[]{C0015ao.m464a(c0033d, 4874, new ByteBuffer().m1361f(c0009ai.f57c).m1357m(0).m1357m(i).m1357m(i2).m1357m(0)), C0034e.m967e(19), c0009ai, C0034e.m967e(i2)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().m1361f(c0009ai.f57c).m1357m(0).m1357m(i).m1357m(i2).m1357m(0)), ResourceManager.m967e(19), c0009ai, ResourceManager.m967e(i2)});
     }
 
     /* renamed from: a */
@@ -669,7 +669,7 @@ public final class C0029bb {
                 vectorM1078P.removeElementAt(size);
             }
         }
-        C0015ao.m353a(vectorM1078P);
+        AppController.m353a(vectorM1078P);
         for (int i = 0; i < vectorM1078P.size(); i++) {
             MrimContact c0035f2 = (MrimContact) vectorM1078P.elementAt(i);
             String str = c0035f2.f297d;
@@ -710,18 +710,18 @@ public final class C0029bb {
         AppState.m591f(1281);
         Contact abstractC0041lM611g = AppState.m611g();
         if (i == 63 && !abstractC0041lM611g.f369o.m1056C()) {
-            return C0015ao.m338l(299);
+            return AppController.m338l(299);
         }
         if (i == 54 || i == 63 || i == 85) {
             ScreenBuilder.m549c();
         }
         if (StringUtils.m3a(717, str)) {
             int iM993f = ((MrimContact) abstractC0041lM611g).m993f();
-            return 0 != iM993f ? C0015ao.m338l(iM993f) : i;
+            return 0 != iM993f ? AppController.m338l(iM993f) : i;
         }
         if (i == 65) {
             ScreenBuilder.m549c();
-            return C0034e.m946g();
+            return ResourceManager.m946g();
         }
         if (i == 66) {
             if (abstractC0041lM611g instanceof XmppContact) {
@@ -730,7 +730,7 @@ public final class C0029bb {
             AppState.f177b[1319] = new ContactInfo(abstractC0041lM611g);
         } else if (i == 54) {
             AppState.m617d(abstractC0041lM611g.f369o);
-            C0034e.m966a(XmppMailRuProtocol.m871i(((MrimContact) abstractC0041lM611g).f297d), (String) null, (String) null);
+            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) abstractC0041lM611g).f297d), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
             interfaceC0044o.mo279u();
@@ -741,7 +741,7 @@ public final class C0029bb {
 
     /* renamed from: a */
     private static final Object[] m796a(int i, Object obj, int i2, ByteBuffer c0043n) {
-        return new Object[]{C0034e.m967e(i), C0034e.m967e(i2), obj.toString(), c0043n};
+        return new Object[]{ResourceManager.m967e(i), ResourceManager.m967e(i2), obj.toString(), c0043n};
     }
 
     /* renamed from: a */
@@ -862,7 +862,7 @@ public final class C0029bb {
 
     /* renamed from: b */
     public static final void m813b(Object[] objArr) {
-        C0015ao.m411b((MrimAccount) AppState.m616i());
+        AppController.m411b((MrimAccount) AppState.m616i());
         AppState.f177b[1271] = ConnectionThread.m1149a(objArr);
     }
 
@@ -896,14 +896,14 @@ public final class C0029bb {
     public static final int m818c(Object[] objArr) {
         AppState.m591f(1355);
         if (!m805a(objArr)) {
-            return C0015ao.m338l(888);
+            return AppController.m338l(888);
         }
         Object objM806e = m806e(objArr);
         if (objM806e == null) {
-            return C0015ao.m338l(889);
+            return AppController.m338l(889);
         }
         if (!JsonParser.m486b(objM806e)) {
-            return C0015ao.m338l(890);
+            return AppController.m338l(890);
         }
         AppState.f177b[1355] = objM806e;
         return 0;
@@ -922,20 +922,20 @@ public final class C0029bb {
         String strM843u = XmppMailRuProtocol.m843u();
         String strM1215a = strM843u;
         if (StringUtils.m1a(strM843u)) {
-            return C0015ao.m338l(301);
+            return AppController.m338l(301);
         }
         int iM586d = AppState.m586d(1474);
         if (iM586d != 0 && strM1215a.indexOf(64) < 0) {
             strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(strM1215a).append(Utils.m512e(AppState.m584b(696)).elementAt(iM586d)));
         }
         if (i == 2 && strM1215a.indexOf(64) < 0) {
-            return C0015ao.m338l(699);
+            return AppController.m338l(699);
         }
-        int iM437a = C0015ao.m437a(i, AppState.m616i(), strM1215a, strM522f);
+        int iM437a = AppController.m437a(i, AppState.m616i(), strM1215a, strM522f);
         if (0 != iM437a) {
-            return C0015ao.m338l(iM437a);
+            return AppController.m338l(iM437a);
         }
-        C0015ao.m328a(C0015ao.m438b(i, strM1215a).m1054c(Utils.m522f(AppState.m584b(1297))));
+        AppController.m328a(AppController.m438b(i, strM1215a).m1054c(Utils.m522f(AppState.m584b(1297))));
         return 0;
     }
 
@@ -1027,7 +1027,7 @@ public final class C0029bb {
                             }
                             strM1370r = strM1368E;
                             if (strM1368E != null && strM1370r.length() > 0) {
-                                c0033d.m1052c(C0015ao.m464a(c0033d, 1035, new ByteBuffer().m1323a(jM1341m).m1357m(2).m1373h(strM1363z).m1310c(3213669).m1358n(c0033d.m919j()).m1310c(3213718)));
+                                c0033d.m1052c(AppController.m464a(c0033d, 1035, new ByteBuffer().m1323a(jM1341m).m1357m(2).m1373h(strM1363z).m1310c(3213669).m1358n(c0033d.m919j()).m1310c(3213718)));
                                 break;
                             }
                         } else {
@@ -1037,7 +1037,7 @@ public final class C0029bb {
                     strM1368E = null;
                     strM1370r = strM1368E;
                     if (strM1368E != null) {
-                        c0033d.m1052c(C0015ao.m464a(c0033d, 1035, new ByteBuffer().m1323a(jM1341m).m1357m(2).m1373h(strM1363z).m1310c(3213669).m1358n(c0033d.m919j()).m1310c(3213718)));
+                        c0033d.m1052c(AppController.m464a(c0033d, 1035, new ByteBuffer().m1323a(jM1341m).m1357m(2).m1373h(strM1363z).m1310c(3213669).m1358n(c0033d.m919j()).m1310c(3213718)));
                     }
                 } else {
                     strM1368E = null;
@@ -1075,25 +1075,25 @@ public final class C0029bb {
         AppState.m591f(1281);
         Object obj = AppState.f177b[1365];
         if (i == 63 && !((Contact) obj).f369o.m1056C()) {
-            return C0015ao.m338l(299);
+            return AppController.m338l(299);
         }
         if (i == 40 || i == 63 || i == 85) {
             ScreenBuilder.m549c();
             if (i != 85) {
-                C0015ao.m300h();
+                AppController.m300h();
             }
         }
         if (StringUtils.m3a(717, str)) {
             int iM993f = ((MrimContact) obj).m993f();
             if (0 != iM993f) {
-                return C0015ao.m338l(iM993f);
+                return AppController.m338l(iM993f);
             }
             return 40;
         }
         if (i == 65) {
             ScreenBuilder.m549c();
-            C0015ao.m300h();
-            return C0034e.m946g();
+            AppController.m300h();
+            return ResourceManager.m946g();
         }
         if (i == 66) {
             if (obj instanceof XmppContact) {
@@ -1102,12 +1102,12 @@ public final class C0029bb {
             AppState.f177b[1319] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.m617d(((MrimContact) obj).f369o);
-            C0034e.m966a(XmppMailRuProtocol.m871i(((MrimContact) obj).f297d), (String) null, (String) null);
+            ResourceManager.m966a(XmppMailRuProtocol.m871i(((MrimContact) obj).f297d), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.mo279u();
             ConnectionThread.m1172a(interfaceC0044o);
-            C0015ao.m331a(true, false, !AppState.m587e(276));
+            AppController.m331a(true, false, !AppState.m587e(276));
             AppState.m594c(281, 1);
         }
         return i;
@@ -1125,13 +1125,13 @@ public final class C0029bb {
                 if (i == 5) {
                     int iMo120l = c0028ba.mo120l();
                     if (0 != iMo120l) {
-                        return C0015ao.m338l(iMo120l);
+                        return AppController.m338l(iMo120l);
                     }
                     return 4;
                 }
                 int iM721d = c0028ba.m721d(new int[]{1, 260, 2, 516, 3}[i]);
                 if (0 != iM721d) {
-                    return C0015ao.m338l(iM721d);
+                    return AppController.m338l(iM721d);
                 }
                 return 4;
             case 1:
@@ -1145,13 +1145,13 @@ public final class C0029bb {
                 if (i == 12) {
                     int iMo120l2 = c0033d.mo120l();
                     if (0 != iMo120l2) {
-                        return C0015ao.m338l(iMo120l2);
+                        return AppController.m338l(iMo120l2);
                     }
                     return 4;
                 }
                 int iM918b = c0033d.m918b(new int[]{0, 32, 256, 2, 1, 4, 16, 24576, 20480, 16384, 12288, 8193}[i]);
                 if (0 != iM918b) {
-                    return C0015ao.m338l(iM918b);
+                    return AppController.m338l(iM918b);
                 }
                 return 4;
             default:
@@ -1159,13 +1159,13 @@ public final class C0029bb {
                 if (i == 0) {
                     int iMo120l3 = c0005ae.mo120l();
                     if (0 != iMo120l3) {
-                        return C0015ao.m338l(iMo120l3);
+                        return AppController.m338l(iMo120l3);
                     }
                     return 4;
                 }
                 int iM103b = c0005ae.m103b(i);
                 if (0 != iM103b) {
-                    return C0015ao.m338l(iM103b);
+                    return AppController.m338l(iM103b);
                 }
                 return 4;
         }
@@ -1239,15 +1239,15 @@ public final class C0029bb {
     public static final void m826d(Object[] objArr) {
         try {
             try {
-                C0015ao.m343s();
+                AppController.m343s();
                 HttpClient c0024axM629a = HttpClient.m629a((String) objArr[1], (Account) objArr[0], 0);
                 int iM634a = c0024axM629a.m634a();
                 if (iM634a == 200) {
                     Vector vectorM516c = Utils.m516c(new ByteBuffer(c0024axM629a).m1317c(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
-                        objArr[2] = C0034e.m967e(1);
+                        objArr[2] = ResourceManager.m967e(1);
                         objArr[1] = new ByteBuffer().m1310c(2365173).m1310c(2692947).m1316b(vectorM516c.elementAt(0)).m1321f(38).m1316b(vectorM516c.elementAt(1)).m1337i();
-                        new RunnableC0055z(30, objArr);
+                        new AsyncTask(30, objArr);
                     } else {
                         m827a(objArr, vectorM516c.elementAt(0));
                     }
@@ -1259,15 +1259,15 @@ public final class C0029bb {
                     ((XmppProtocol) objArr[0]).m1065J();
                 }
                 HttpClient.m633a(c0024axM629a);
-                C0015ao.m344t();
+                AppController.m344t();
             } catch (Throwable th) {
                 m827a(objArr, th);
                 HttpClient.m633a((HttpClient) null);
-                C0015ao.m344t();
+                AppController.m344t();
             }
         } catch (Throwable th2) {
             HttpClient.m633a((HttpClient) null);
-            C0015ao.m344t();
+            AppController.m344t();
             throw th2;
         }
     }

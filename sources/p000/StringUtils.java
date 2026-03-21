@@ -29,23 +29,23 @@ public final class StringUtils {
         DataInputStream dataInputStream = null;
         try {
             try {
-                ByteArrayInputStream byteArrayInputStream2 = (ByteArrayInputStream) C0029bb.m761a((Object) new ByteArrayInputStream(bArr, i, bArr.length - i));
+                ByteArrayInputStream byteArrayInputStream2 = (ByteArrayInputStream) IOUtils.m761a((Object) new ByteArrayInputStream(bArr, i, bArr.length - i));
                 byteArrayInputStream = byteArrayInputStream2;
-                DataInputStream dataInputStream2 = (DataInputStream) C0029bb.m761a((Object) new DataInputStream(byteArrayInputStream2));
+                DataInputStream dataInputStream2 = (DataInputStream) IOUtils.m761a((Object) new DataInputStream(byteArrayInputStream2));
                 dataInputStream = dataInputStream2;
                 String strM17c = m17c(dataInputStream2.readUTF());
-                C0029bb.m763a((InputStream) dataInputStream);
-                C0029bb.m763a((InputStream) byteArrayInputStream);
+                IOUtils.m763a((InputStream) dataInputStream);
+                IOUtils.m763a((InputStream) byteArrayInputStream);
                 return strM17c;
             } catch (Throwable unused) {
                 String str = AppState.f181d;
-                C0029bb.m763a((InputStream) dataInputStream);
-                C0029bb.m763a((InputStream) byteArrayInputStream);
+                IOUtils.m763a((InputStream) dataInputStream);
+                IOUtils.m763a((InputStream) byteArrayInputStream);
                 return str;
             }
         } catch (Throwable th) {
-            C0029bb.m763a((InputStream) dataInputStream);
-            C0029bb.m763a((InputStream) byteArrayInputStream);
+            IOUtils.m763a((InputStream) dataInputStream);
+            IOUtils.m763a((InputStream) byteArrayInputStream);
             throw th;
         }
     }
@@ -212,7 +212,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final ByteBuffer m18a(MmpProtocol c0033d, int i) {
-        return c0033d.m916a(new Object[]{C0015ao.m464a(c0033d, 5378, new ByteBuffer().m1357m(1).m1357m(16).m1358n(14).m1360p(c0033d.f269a).m1358n(2000).m1357m(0).m1358n(1202).m1360p(i)), C0034e.m967e(7), C0034e.m967e(i)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().m1357m(1).m1357m(16).m1358n(14).m1360p(c0033d.f269a).m1358n(2000).m1357m(0).m1358n(1202).m1360p(i)), ResourceManager.m967e(7), ResourceManager.m967e(i)});
     }
 
     /* renamed from: b */
@@ -223,10 +223,10 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final Image m20a(C0034e c0034e) {
+    public static final Image m20a(ResourceManager c0034e) {
         Image image = (Image) m25l().m50a(c0034e);
         if (image == null && !AppState.m614m(1396).contains(c0034e)) {
-            C0034e.m950b(c0034e);
+            ResourceManager.m950b(c0034e);
         }
         return image;
     }
@@ -261,16 +261,16 @@ public final class StringUtils {
                 if (!(AppState.m614m(1398).size() == 0)) {
                     break;
                 }
-                C0036g.m1042b(objArr);
+                XmppContactGroup.m1042b(objArr);
                 try {
                     Thread.sleep(100);
                 } catch (Throwable unused) {
                 }
             }
-            C0034e c0034eM949i = C0034e.m949i();
+            ResourceManager c0034eM949i = ResourceManager.m949i();
             int i2 = c0034eM949i.f281a;
             objArr[1] = new StringBuffer().append(AppState.m584b(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.m523d(AppState.m586d(1548))).toString();
-            C0036g.m1041a(objArr);
+            XmppContactGroup.m1041a(objArr);
             try {
                 Image imageM847a = (c0034eM949i.f281a == 1 && AppState.m587e(1551)) ? XmppMailRuProtocol.m847a(c0034eM949i) : null;
                 imageM876b = imageM847a;
@@ -285,14 +285,14 @@ public final class StringUtils {
                     Vector vectorM614m = AppState.m614m(1398);
                     synchronized (vectorM614m) {
                         if (vectorM614m.removeElement(c0034eM949i)) {
-                            C0034e.m950b(c0034eM949i);
+                            ResourceManager.m950b(c0034eM949i);
                         }
                     }
                 } else {
                     AppState.m594c(1549, 1);
                 }
             } catch (Throwable unused3) {
-                C0034e.m948a(c0034eM949i);
+                ResourceManager.m948a(c0034eM949i);
             }
             if (imageM876b == null) {
                 if (i2 == 3) {
@@ -301,7 +301,7 @@ public final class StringUtils {
                         vectorM614m2.removeElementAt(0);
                     }
                     vectorM614m2.addElement(c0034eM949i);
-                    C0036g.m1038k();
+                    XmppContactGroup.m1038k();
                 } else {
                     m23a(c0034eM949i, AppState.m615n(1393));
                 }
@@ -309,13 +309,13 @@ public final class StringUtils {
             }
             i = 4;
             m23a(c0034eM949i, imageM876b);
-            C0034e.m948a(c0034eM949i);
+            ResourceManager.m948a(c0034eM949i);
             m21k();
         }
     }
 
     /* renamed from: a */
-    private static final void m23a(C0034e c0034e, Image image) {
+    private static final void m23a(ResourceManager c0034e, Image image) {
         try {
             m25l().m49a(c0034e, image, 1);
             MapRenderer.f200h = true;
@@ -327,7 +327,7 @@ public final class StringUtils {
     public static final void m24d() {
         Enumeration enumerationM52a = m25l().m52a();
         while (enumerationM52a.hasMoreElements()) {
-            C0034e c0034e = (C0034e) enumerationM52a.nextElement();
+            ResourceManager c0034e = (ResourceManager) enumerationM52a.nextElement();
             if (c0034e.f281a == 3) {
                 m25l().m51b(c0034e);
             }
@@ -682,7 +682,7 @@ public final class StringUtils {
         AppState.f177b[1389] = NetworkUtils.m1213g();
         AppState.f177b[1390] = new GeoRegion(AppState.m584b(996), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
-            ByteBuffer c0043nM986d = C0034e.m986d(AppState.m584b(227));
+            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.m584b(227));
             AppState.m614m(1389).removeAllElements();
             if (c0043nM986d.f384b > 0) {
                 int iM1355w = c0043nM986d.m1355w();

@@ -89,7 +89,7 @@ public final class MenuItem {
     /* renamed from: a */
     public static final MenuItem m890a(String str, boolean z) {
         MenuItem c0032cM899a = new MenuItem(2, str).m899a(z ? 25 : 24, str);
-        c0032cM899a.f265d = C0034e.m968a(z);
+        c0032cM899a.f265d = ResourceManager.m968a(z);
         return c0032cM899a;
     }
 
@@ -120,7 +120,7 @@ public final class MenuItem {
             if (i2 < 0) {
                 NetworkUtils.m1212a(vector);
                 MenuItem c0032cM896a = m884a().m898b(Utils.m527g(str)).m901a(strArr[i], 1, 7).m896a(247);
-                c0032cM896a.f265d = new Object[]{C0034e.m967e(i), strArr};
+                c0032cM896a.f265d = new Object[]{ResourceManager.m967e(i), strArr};
                 return c0032cM896a;
             }
             strArr[i2] = (String) vector.elementAt(i2);
@@ -140,26 +140,26 @@ public final class MenuItem {
     public final int m894a(Screen c0013am) {
         if (this.f258a == 2) {
             if (this.f265d != null) {
-                Boolean boolM968a = C0034e.m968a(!((Boolean) this.f265d).booleanValue());
+                Boolean boolM968a = ResourceManager.m968a(!((Boolean) this.f265d).booleanValue());
                 this.f265d = boolM968a;
                 this.f263i.setElementAt(m897c(boolM968a.booleanValue() ? 25 : 24), 0);
             }
-            C0029bb.m778d(this);
+            IOUtils.m778d(this);
             return 0;
         }
         if (this.f258a == 15) {
-            new RunnableC0055z(c0013am, this);
+            new AsyncTask(c0013am, this);
             return 0;
         }
         if (this.f258a != 9) {
             if (this.f258a == 4) {
-                C0015ao.m340m(Utils.m522f(AppState.m584b(1379)).length() > 0 ? 427 : 428);
+                AppController.m340m(Utils.m522f(AppState.m584b(1379)).length() > 0 ? 427 : 428);
                 return 0;
             }
             if (this.f258a != 5) {
                 return -1;
             }
-            C0015ao.m340m(429);
+            AppController.m340m(429);
             return 0;
         }
         Screen c0013amM75b = ScreenManager.m75b(2351);
@@ -231,7 +231,7 @@ public final class MenuItem {
     /* renamed from: a */
     private MenuItem m903a(Object obj) {
         this.f263i.addElement(obj);
-        this.f264j = C0015ao.m302a(this.f264j, this.f261g, 0);
+        this.f264j = AppController.m302a(this.f264j, this.f261g, 0);
         this.f261g += m904b(obj);
         int i = this.f262h;
         int iM905c = m905c(obj);
@@ -423,7 +423,7 @@ public final class MenuItem {
                     this.f262h += iM502a;
                     iM502a = 0;
                 }
-                this.f264j = C0015ao.m302a(this.f264j, i2, i3);
+                this.f264j = AppController.m302a(this.f264j, i2, i3);
                 iM502a = Utils.m502a(iM502a, iM905c);
                 i2 += iM904b;
             } else {
@@ -431,7 +431,7 @@ public final class MenuItem {
                 i3 += iM502a;
                 this.f262h += iM502a;
                 iM502a = 0;
-                this.f264j = C0015ao.m302a(this.f264j, 0, 0);
+                this.f264j = AppController.m302a(this.f264j, 0, 0);
             }
         }
         this.f262h += iM502a;

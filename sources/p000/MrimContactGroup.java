@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: aj */
 /* loaded from: MobileAgent_3.9.jar:aj.class */
-public final class C0010aj extends ContactGroup {
+public final class MrimContactGroup extends ContactGroup {
 
     /* renamed from: a */
     public int f74a;
@@ -10,14 +10,14 @@ public final class C0010aj extends ContactGroup {
     /* renamed from: b */
     public int f75b;
 
-    public C0010aj(Account abstractC0037h, int i, int i2, String str) {
+    public MrimContactGroup(Account abstractC0037h, int i, int i2, String str) {
         super(abstractC0037h);
         this.f74a = i;
         this.f75b = i2;
         m1403c(str);
     }
 
-    public C0010aj(Account abstractC0037h, ByteBuffer c0043n) {
+    public MrimContactGroup(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
         this.f75b = c0043n.m1328e();
         m1403c(c0043n.m1335e((String) null));
@@ -32,7 +32,7 @@ public final class C0010aj extends ContactGroup {
         }
     }
 
-    public C0010aj() {
+    public MrimContactGroup() {
         super(null);
     }
 

@@ -128,10 +128,10 @@ public final class Conversation implements ListItem {
         MmpProtocol c0033d = (MmpProtocol) objArr[0];
         try {
             try {
-                C0015ao.m343s();
+                AppController.m343s();
                 if (((Integer) objArr[1]).intValue() == 0) {
                     c0033d.f323s = 30;
-                    C0015ao.f153g = true;
+                    AppController.f153g = true;
                     HttpClient c0024axM629a = HttpClient.m629a(AppState.m584b(2755089), c0033d, 0);
                     c0024axM629a.m635b(NetworkUtils.m1221a(1414745936));
                     ByteBuffer c0043nM1315a = new ByteBuffer().m1310c(2755131).m1315a(objArr[2]).m1310c(330609).m1315a(objArr[3]);
@@ -141,7 +141,7 @@ public final class Conversation implements ListItem {
                     i = iM634a;
                     if (iM634a == 200) {
                         c0033d.f323s = 40;
-                        C0015ao.f153g = true;
+                        AppController.f153g = true;
                         XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).m1389J();
                         int i2 = Integer.parseInt(StringUtils.m11a(c0022avM1389J.m562f(658246).f173c));
                         if (i2 != 200) {
@@ -152,14 +152,14 @@ public final class Conversation implements ListItem {
                             throw new RuntimeException(StringUtils.m17c(Integer.toString(i2)));
                         }
                         XmlElement c0022avM562f = c0022avM1389J.m562f(262156);
-                        new RunnableC0055z(31, new Object[]{objArr[0], C0034e.m967e(1), StringUtils.m11a(c0022avM562f.m562f(461648).f173c), StringUtils.m11a(c0022avM562f.m562f(330583).m562f(65538).f173c), StringUtils.m11a(c0022avM562f.m562f(527196).f173c), StringUtils.m11a(c0022avM562f.m562f(854884).f173c), objArr[3]});
+                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.m967e(1), StringUtils.m11a(c0022avM562f.m562f(461648).f173c), StringUtils.m11a(c0022avM562f.m562f(330583).m562f(65538).f173c), StringUtils.m11a(c0022avM562f.m562f(527196).f173c), StringUtils.m11a(c0022avM562f.m562f(854884).f173c), objArr[3]});
                         HttpClient.m633a(c0024axM629a);
-                        C0015ao.m344t();
+                        AppController.m344t();
                         return;
                     }
                 } else {
                     c0033d.f323s = 50;
-                    C0015ao.f153g = true;
+                    AppController.f153g = true;
                     ByteBuffer c0043nM1321f = new ByteBuffer().m1310c(2951781).m1321f(63);
                     String strM1337i = new ByteBuffer().m1310c(132058).m1315a(objArr[3]).m1310c(11012754).m1316b(objArr[4]).m1337i();
                     HttpClient c0024axM642a = HttpClient.m632a(c0043nM1321f.m1314d(strM1337i).m1310c(789306).m1314d(m1089a(new ByteBuffer().m1310c(265078).m1314d(m1125a(AppState.m584b(2951781), false)).m1321f(38).m1314d(m1125a(strM1337i, false)).m1337i(), m1089a((String) objArr[5], (String) objArr[6]))).m1337i()).m642a(0, 5522759, 330359);
@@ -167,11 +167,11 @@ public final class Conversation implements ListItem {
                     i = iM634a2;
                     if (iM634a2 == 200) {
                         c0033d.f323s = 60;
-                        C0015ao.f153g = true;
+                        AppController.f153g = true;
                         XmlElement c0022avM562f2 = c0024axM642a.m644b().m1389J().m562f(262156);
                         ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m11a(c0022avM562f2.m562f(265052).f173c)).append(':').append(StringUtils.m11a(c0022avM562f2.m562f(265005).f173c))), StringUtils.m11a(c0022avM562f2.m562f(395483).f173c)};
                         HttpClient.m633a(c0024axM642a);
-                        C0015ao.m344t();
+                        AppController.m344t();
                         return;
                     }
                 }
@@ -179,21 +179,21 @@ public final class Conversation implements ListItem {
             } catch (Throwable th) {
                 MmpProtocol c0033d2 = (MmpProtocol) objArr[0];
                 c0033d2.f324t = c0033d2.mo89g();
-                C0029bb.m784a(c0033d2, th.toString());
+                IOUtils.m784a(c0033d2, th.toString());
                 c0033d2.f322r = 0;
                 HttpClient.m633a((HttpClient) null);
-                C0015ao.m344t();
+                AppController.m344t();
             }
         } catch (Throwable th2) {
             HttpClient.m633a((HttpClient) null);
-            C0015ao.m344t();
+            AppController.m344t();
             throw th2;
         }
     }
 
     /* renamed from: a */
     private static final String m1089a(String str, String str2) {
-        return new ByteBuffer().m1304b(C0036g.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).m1320d();
+        return new ByteBuffer().m1304b(XmppContactGroup.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).m1320d();
     }
 
     /* renamed from: a */
@@ -427,7 +427,7 @@ public final class Conversation implements ListItem {
             if (StringUtils.m2a(strM15c, 1094795585)) {
                 return AppState.f181d;
             }
-            ByteBuffer c0043nM986d = C0034e.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
+            ByteBuffer c0043nM986d = ResourceManager.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
             StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
             while (c0043nM986d.f384b > 0) {
                 int iM1346q = c0043nM986d.m1346q();
@@ -576,7 +576,7 @@ public final class Conversation implements ListItem {
             }
             strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
         } else {
-            ByteBuffer c0043nM986d = C0034e.m986d(strM1332j);
+            ByteBuffer c0043nM986d = ResourceManager.m986d(strM1332j);
             int i4 = iM1328e2 & 2097152;
             int iM1328e3 = c0043nM986d.m1328e();
             String[] strArr = new String[iM1328e3];
@@ -624,7 +624,7 @@ public final class Conversation implements ListItem {
         boolean z = (iM1328e2 & 2048) != 0;
         boolean z2 = (iM1328e2 & 8192) != 0;
         if ((iM1328e2 & 4) == 0) {
-            c0028ba.m1052c(C0015ao.m321a(c0028ba, 4113, new ByteBuffer().m1308a((z2 || z) ? AppState.m584b(1052223) : strM1338j).m1360p(iM1328e)));
+            c0028ba.m1052c(AppController.m321a(c0028ba, 4113, new ByteBuffer().m1308a((z2 || z) ? AppState.m584b(1052223) : strM1338j).m1360p(iM1328e)));
         }
         if (z2) {
             Enumeration enumerationElements = c0028ba.f321q.elements();
@@ -649,15 +649,15 @@ public final class Conversation implements ListItem {
         MrimContact c0035fM717f = c0028ba.m717f(strM1338j);
         if ((iM1328e2 & 8) != 0) {
             if (c0035fM717f == null) {
-                C0034e.m925a(3);
+                ResourceManager.m925a(3);
                 c0028ba.m1072a(strM1338j, 0L, str);
                 return;
             } else if ((c0035fM717f.f295b & 65536) == 0) {
                 c0035fM717f.mo145h();
-                c0028ba.m1052c(C0015ao.m395b(c0028ba, strM1338j));
+                c0028ba.m1052c(AppController.m395b(c0028ba, strM1338j));
                 return;
             } else {
-                C0034e.m925a(3);
+                ResourceManager.m925a(3);
                 c0028ba.m1072a(strM1338j, 0L, str);
                 return;
             }
@@ -711,7 +711,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     public static final void m1112a(MrimAccount c0028ba, ByteBuffer c0043n) {
-        C0010aj c0010aj;
+        MrimContactGroup c0010aj;
         c0028ba.f324t = c0028ba.f325u;
         c0028ba.m1067K();
         int iM1328e = c0043n.m1328e();
@@ -725,7 +725,7 @@ public final class Conversation implements ListItem {
                 int iM1328e3 = c0043n.m1328e();
                 String strM1335e = c0043n.m1335e((String) null);
                 if ((iM1328e3 & 1) == 0) {
-                    vector.addElement(new C0010aj(c0028ba, i, iM1328e3, strM1335e));
+                    vector.addElement(new MrimContactGroup(c0028ba, i, iM1328e3, strM1335e));
                 }
                 for (int i2 = 2; i2 < length; i2++) {
                     if (strM1334g.charAt(i2) == 'u') {
@@ -786,13 +786,13 @@ public final class Conversation implements ListItem {
                             c0010aj = null;
                             break;
                         }
-                        C0010aj c0010aj2 = (C0010aj) vector3.elementAt(size);
+                        MrimContactGroup c0010aj2 = (MrimContactGroup) vector3.elementAt(size);
                         if (c0010aj2.f74a == iM1328e5) {
                             c0010aj = c0010aj2;
                             break;
                         }
                     }
-                    C0010aj c0010ajM718f = c0010aj;
+                    MrimContactGroup c0010ajM718f = c0010aj;
                     if (c0010aj == null) {
                         c0010ajM718f = c0028ba.m718f();
                     }
@@ -812,18 +812,18 @@ public final class Conversation implements ListItem {
             c0028ba.f322r = 100;
             c0028ba.f323s = 100;
             c0028ba.m721d(c0028ba.f325u);
-            c0028ba.m1052c(C0015ao.m321a(c0028ba, 4228, new ByteBuffer().m1392a((Vector) null).m1392a((Vector) null)));
+            c0028ba.m1052c(AppController.m321a(c0028ba, 4228, new ByteBuffer().m1392a((Vector) null).m1392a((Vector) null)));
             if (c0028ba.f326v == 1) {
                 String strM17c = StringUtils.m17c(Utils.m522f(AppState.m584b(1382)).toLowerCase());
                 if (!StringUtils.m1a(strM17c)) {
-                    new RunnableC0055z(27, new Object[]{strM17c, c0028ba});
+                    new AsyncTask(27, new Object[]{strM17c, c0028ba});
                 }
-                if (C0015ao.m442U() == 1) {
+                if (AppController.m442U() == 1) {
                     AppState.m594c(1577, 1);
                 }
             }
         } else {
-            C0029bb.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(458)).append(iM1328e)));
+            IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(458)).append(iM1328e)));
             c0028ba.m1061F();
             c0028ba.f324t = c0028ba.mo89g();
             c0028ba.m1068L();
@@ -839,10 +839,10 @@ public final class Conversation implements ListItem {
         XmlElement c0022avM550a2 = XmlElement.m550a(398003);
         XmlElement c0022avM552a = c0022avM550a.m552a(c0022avM550a2);
         try {
-            c0022avM550a2.m552a(new XmlElement(99).m559a(262589, NetworkUtils.m1221a(5067591)).m559a(329117, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(529061)).append(C0015ao.m367C()).append(',').append(C0015ao.m368D()).append(',').append(C0015ao.m365A()).append(',').append(C0015ao.m366B()).append(',').append(0))));
+            c0022avM550a2.m552a(new XmlElement(99).m559a(262589, NetworkUtils.m1221a(5067591)).m559a(329117, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(529061)).append(AppController.m367C()).append(',').append(AppController.m368D()).append(',').append(AppController.m365A()).append(',').append(AppController.m366B()).append(',').append(0))));
         } catch (Throwable unused) {
         }
-        Vector vectorM439R = C0015ao.m439R();
+        Vector vectorM439R = AppController.m439R();
         if (c0028ba != null) {
             vectorM439R.addElement(c0028ba);
             c0028ba = null;
@@ -869,7 +869,7 @@ public final class Conversation implements ListItem {
             strM1215a = str;
             strM1215a2 = str;
         }
-        new RunnableC0055z(23, new ByteBuffer().m1310c(5771795).m1315a((Object) new ByteBuffer().m1314d(c0022avM552a.toString()).m1320d()).m1311d(z ? 791174 : 1038).m1314d(strM1215a2).m1314d(strM1215a).m1310c(397997).m1311d(223).m1310c(594539).m1311d(1375).m1317c());
+        new AsyncTask(23, new ByteBuffer().m1310c(5771795).m1315a((Object) new ByteBuffer().m1314d(c0022avM552a.toString()).m1320d()).m1311d(z ? 791174 : 1038).m1314d(strM1215a2).m1314d(strM1215a).m1310c(397997).m1311d(223).m1310c(594539).m1311d(1375).m1317c());
     }
 
     /*  JADX ERROR: Types fix failed
@@ -923,7 +923,7 @@ public final class Conversation implements ListItem {
         /*
             r0 = 0
             r8 = r0
-            p000.C0015ao.m343s()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.AppController.m343s()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r7
             r1 = 0
             r9 = r1
@@ -967,19 +967,19 @@ public final class Conversation implements ListItem {
             r4 = r9
             r5 = 397788(0x611dc, float:5.5742E-40)
             java.lang.String r4 = r4.m554b(r5)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            p000.C0015ao.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.AppController.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             goto La4
         L5d:
             r0 = r9
             r1 = 197037(0x301ad, float:2.76108E-40)
             java.lang.String r0 = r0.m554b(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            long r0 = p000.C0029bb.m807b(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            long r0 = p000.IOUtils.m807b(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r1 = r0; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r13 = r1
             r1 = r9
             r2 = 197041(0x301b1, float:2.76113E-40)
             java.lang.String r1 = r1.m554b(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            long r1 = p000.C0029bb.m808c(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            long r1 = p000.IOUtils.m808c(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = r1; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r11 = r2
             p000.MapRenderer.m649a(r0, r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
@@ -1006,7 +1006,7 @@ public final class Conversation implements ListItem {
         La4:
             r0 = r8
             p000.HttpClient.m633a(r0)
-            p000.C0015ao.m344t()
+            p000.AppController.m344t()
             return
         Lac:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
@@ -1024,24 +1024,24 @@ public final class Conversation implements ListItem {
             r2 = 0
             r3 = 0
             r4 = 0
-            p000.C0015ao.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Ldc
+            p000.AppController.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Ldc
             goto Ld4
         Lc9:
             r0 = 308(0x134, float:4.32E-43)
             r1 = 0
             r9 = r1
             java.lang.String r0 = p000.AppState.m584b(r0)     // Catch: java.lang.Throwable -> Ldc
-            p000.C0029bb.m778d(r0)     // Catch: java.lang.Throwable -> Ldc
+            p000.IOUtils.m778d(r0)     // Catch: java.lang.Throwable -> Ldc
         Ld4:
             r0 = r8
             p000.HttpClient.m633a(r0)
-            p000.C0015ao.m344t()
+            p000.AppController.m344t()
             return
         Ldc:
             r10 = move-exception
             r0 = r8
             p000.HttpClient.m633a(r0)
-            p000.C0015ao.m344t()
+            p000.AppController.m344t()
             r0 = r10
             throw r0
         */
@@ -1238,7 +1238,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void m1129c() {
-        new RunnableC0055z(11, MmpContact.m186o());
+        new AsyncTask(11, MmpContact.m186o());
     }
 
     /* renamed from: c */

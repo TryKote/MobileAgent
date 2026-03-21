@@ -108,7 +108,7 @@ public final class MmpContact extends Contact {
         byte bM1344o = c0043n.m1344o();
         this.f374s = bM1344o;
         if (bM1344o != 0) {
-            C0015ao.m414a((Contact) this);
+            AppController.m414a((Contact) this);
         }
         this.f373r = 255;
         this.f380w = abstractC0037h.m1050q().m1314d(this.f57c).m1337i();
@@ -244,12 +244,12 @@ public final class MmpContact extends Contact {
 
     /* renamed from: o */
     public static final String m186o() {
-        ByteBuffer c0043nM1314d = new ByteBuffer().m1310c(1442705).m1310c(3085016).m1314d(C0029bb.m809a(f64i[0])).m1385u(1026586918).m1314d(C0029bb.m810b(f64i[1]));
+        ByteBuffer c0043nM1314d = new ByteBuffer().m1310c(1442705).m1310c(3085016).m1314d(IOUtils.m809a(f64i[0])).m1385u(1026586918).m1314d(IOUtils.m810b(f64i[1]));
         int size = f66k.size();
         int i = 0;
         while (i <= size) {
             int[] iArr = i < size ? (int[]) f66k.elementAt(i) : new int[]{(int) f65j[0], (int) f65j[1]};
-            c0043nM1314d.m1385u(30758).m1382s(i + 1).m1321f(61).m1314d(C0029bb.m809a(iArr[0])).m1385u(31014).m1382s(i + 1).m1321f(61).m1314d(C0029bb.m810b(iArr[1]));
+            c0043nM1314d.m1385u(30758).m1382s(i + 1).m1321f(61).m1314d(IOUtils.m809a(iArr[0])).m1385u(31014).m1382s(i + 1).m1321f(61).m1314d(IOUtils.m810b(iArr[1]));
             i++;
         }
         return c0043nM1314d.m1317c();
@@ -363,16 +363,16 @@ public final class MmpContact extends Contact {
             }
             int i13 = 0;
             int[] iArrM193a = m193a(0);
-            int iM319a = C0015ao.m319a(iArrM193a[0], iArrM193a[1], i, i2);
+            int iM319a = AppController.m319a(iArrM193a[0], iArrM193a[1], i, i2);
             for (int i14 = 1; i14 < iM192t; i14++) {
                 int[] iArrM193a2 = m193a(i14);
-                int iM319a2 = C0015ao.m319a(iArrM193a2[0], iArrM193a2[1], i, i2);
+                int iM319a2 = AppController.m319a(iArrM193a2[0], iArrM193a2[1], i, i2);
                 if (iM319a2 < iM319a) {
                     iM319a = iM319a2;
                     i13 = i14;
                 }
             }
-            f67l.addElement(new Object[]{C0034e.m967e(i13), iArr});
+            f67l.addElement(new Object[]{ResourceManager.m967e(i13), iArr});
         }
     }
 
@@ -391,12 +391,12 @@ public final class MmpContact extends Contact {
         int iM192t = m192t();
         int iM586d = AppState.m586d(39);
         int[] iArrM193a = m193a(f69A);
-        int iM317a = (int) C0015ao.m317a(iArrM193a[0], iM586d);
-        int iM317a2 = (int) C0015ao.m317a(iArrM193a[1], iM586d);
+        int iM317a = (int) AppController.m317a(iArrM193a[0], iM586d);
+        int iM317a2 = (int) AppController.m317a(iArrM193a[1], iM586d);
         for (int i = f69A + 1; i < iM192t; i++) {
             if (m194b(i) != null) {
                 int[] iArrM193a2 = m193a(i);
-                if (ChatRenderer.m833a(iM317a, (int) C0015ao.m317a(iArrM193a2[0], iM586d), iM317a2, (int) C0015ao.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
+                if (ChatRenderer.m833a(iM317a, (int) AppController.m317a(iArrM193a2[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
                     f69A = i;
                     break;
                 }
@@ -413,8 +413,8 @@ public final class MmpContact extends Contact {
         }
         int iM586d = AppState.m586d(39);
         int[] iArrM193a2 = m193a(f69A);
-        int iM317a = (int) C0015ao.m317a(iArrM193a2[0], iM586d);
-        int iM317a2 = (int) C0015ao.m317a(iArrM193a2[1], iM586d);
+        int iM317a = (int) AppController.m317a(iArrM193a2[0], iM586d);
+        int iM317a2 = (int) AppController.m317a(iArrM193a2[1], iM586d);
         int i = f69A;
         while (true) {
             i--;
@@ -423,7 +423,7 @@ public final class MmpContact extends Contact {
             }
             if (m194b(i) != null) {
                 iArrM193a = m193a(i);
-                if (ChatRenderer.m833a(iM317a, (int) C0015ao.m317a(iArrM193a[0], iM586d), iM317a2, (int) C0015ao.m317a(iArrM193a[1], iM586d)) || i == 0) {
+                if (ChatRenderer.m833a(iM317a, (int) AppController.m317a(iArrM193a[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a[1], iM586d)) || i == 0) {
                     break;
                 }
             }

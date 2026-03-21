@@ -48,7 +48,7 @@ public final class MmpProtocol extends Account {
         this.f324t = -1;
         this.f325u = 0;
         this.f278L = 4;
-        C0016ap c0016ap = new C0016ap(this, 0, AppState.m584b(1039));
+        MmpContactGroup c0016ap = new MmpContactGroup(this, 0, AppState.m584b(1039));
         c0016ap.f399g = true;
         this.f334D = c0016ap;
         this.f275f = new Hashtable();
@@ -83,7 +83,7 @@ public final class MmpProtocol extends Account {
         while (true) {
             iM1328e--;
             if (iM1328e < 0) {
-                C0016ap c0016ap = new C0016ap(this, c0043n);
+                MmpContactGroup c0016ap = new MmpContactGroup(this, c0043n);
                 c0016ap.f399g = true;
                 this.f334D = c0016ap;
                 this.f275f = new Hashtable();
@@ -91,7 +91,7 @@ public final class MmpProtocol extends Account {
                 this.f277h = new Hashtable();
                 return;
             }
-            m1083b((ContactGroup) new C0016ap(this, c0043n));
+            m1083b((ContactGroup) new MmpContactGroup(this, c0043n));
         }
     }
 
@@ -105,25 +105,25 @@ public final class MmpProtocol extends Account {
     @Override // p000.Account
     /* renamed from: b */
     public final ContactGroup mo85b() {
-        return new C0016ap(this, -1, AppState.m584b(1040));
+        return new MmpContactGroup(this, -1, AppState.m584b(1040));
     }
 
     @Override // p000.Account
     /* renamed from: c */
     public final ContactGroup mo86c() {
-        return new C0016ap(this, -2, AppState.m584b(1042));
+        return new MmpContactGroup(this, -2, AppState.m584b(1042));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final ContactGroup mo87d() {
-        return new C0016ap(this, -3, AppState.m584b(1041));
+        return new MmpContactGroup(this, -3, AppState.m584b(1041));
     }
 
     @Override // p000.Account
     /* renamed from: e */
     public final ContactGroup mo88e() {
-        return new C0016ap(this, -4, AppState.m584b(1043));
+        return new MmpContactGroup(this, -4, AppState.m584b(1043));
     }
 
     @Override // p000.Account
@@ -199,7 +199,7 @@ public final class MmpProtocol extends Account {
         }
         Object[] objArr = (Object[]) obj;
         ByteBuffer c0043n = (ByteBuffer) objArr[0];
-        objArr[0] = C0034e.m967e(c0043n.m1356x());
+        objArr[0] = ResourceManager.m967e(c0043n.m1356x());
         this.f333C.addElement(obj);
         return c0043n;
     }
@@ -222,9 +222,9 @@ public final class MmpProtocol extends Account {
                 this.f323s = 0;
                 break;
             case 1:
-                C0015ao.f153g = true;
+                AppController.f153g = true;
                 this.f323s = 10;
-                this.f280N = C0034e.m972o();
+                this.f280N = ResourceManager.m972o();
                 if (this.f280N != -1 || this.f280N == 1) {
                     this.f322r = 2;
                     break;
@@ -232,7 +232,7 @@ public final class MmpProtocol extends Account {
                 break;
             case 2:
                 if (this.f280N != 0) {
-                    Vector vectorM439R = C0015ao.m439R();
+                    Vector vectorM439R = AppController.m439R();
                     int iM541c = Utils.m541c(vectorM439R);
                     while (true) {
                         iM541c--;
@@ -248,7 +248,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.m541c(vectorM439R) == 0) {
-                        C0029bb.m778d((Object) AppState.m584b(479));
+                        IOUtils.m778d((Object) AppState.m584b(479));
                         this.f322r = 0;
                     }
                     NetworkUtils.m1212a(vectorM439R);
@@ -258,17 +258,17 @@ public final class MmpProtocol extends Account {
                     break;
                 }
             case 3:
-                new RunnableC0055z(31, new Object[]{this, C0034e.m967e(0), this.f315k, m1064I()});
+                new AsyncTask(31, new Object[]{this, ResourceManager.m967e(0), this.f315k, m1064I()});
                 this.f323s = 20;
                 this.f322r = 5;
-                C0015ao.f153g = true;
+                AppController.f153g = true;
                 break;
             case 5:
                 if (this.f272c != null) {
                     this.f323s = 70;
-                    C0015ao.f153g = true;
+                    AppController.f153g = true;
                     this.f319o = 28179;
-                    this.f271K = C0034e.m986d(this.f272c[2]).m1339k();
+                    this.f271K = ResourceManager.m986d(this.f272c[2]).m1339k();
                     this.f269a = Integer.parseInt(this.f272c[0]);
                     this.f320p = new ConnectionThread(this.f272c[1]);
                     this.f322r = 6;
@@ -292,22 +292,22 @@ public final class MmpProtocol extends Account {
                 this.f320p.m1132a(this.f318n);
                 ByteBuffer c0043nM1350t = this.f318n.m1350t();
                 if (c0043nM1350t != null) {
-                    C0015ao.f153g = true;
+                    AppController.f153g = true;
                     this.f323s = 85;
-                    C0015ao.m421a((Account) this, c0043nM1350t);
+                    AppController.m421a((Account) this, c0043nM1350t);
                     if (c0043nM1350t.m1331i(1) == 1) {
                         long j = AppState.m587e(1536) ? 25000L : 60000L;
                         this.f330z = j;
                         this.f331A = System.currentTimeMillis() + j;
                         m1085R();
                         byte[] bArr = this.f271K;
-                        m1053d(C0015ao.m326a(this, 1).m1359o(1).m1357m(6).m1357m(bArr.length).m1302a(bArr).m1362y());
+                        m1053d(AppController.m326a(this, 1).m1359o(1).m1357m(6).m1357m(bArr.length).m1302a(bArr).m1362y());
                         this.f271K = null;
-                        m1053d(C0015ao.m375a(this));
-                        m1053d(C0015ao.m464a(this, 1026, new ByteBuffer().m1310c(1051079)));
-                        m1053d(m916a(new Object[]{C0015ao.m464a(this, 286, new ByteBuffer().m1357m(6).m1357m(4).m1359o(268435456 | m919j()).m1310c(2689260)), C0034e.m967e(17)}));
+                        m1053d(AppController.m375a(this));
+                        m1053d(AppController.m464a(this, 1026, new ByteBuffer().m1310c(1051079)));
+                        m1053d(m916a(new Object[]{AppController.m464a(this, 286, new ByteBuffer().m1357m(6).m1357m(4).m1359o(268435456 | m919j()).m1310c(2689260)), ResourceManager.m967e(17)}));
                         this.f273d = 0;
-                        m1053d(m916a(new Object[]{C0015ao.m464a(this, 4868, (ByteBuffer) null), C0034e.m967e(6)}));
+                        m1053d(m916a(new Object[]{AppController.m464a(this, 4868, (ByteBuffer) null), ResourceManager.m967e(6)}));
                         m1053d(StringUtils.m18a(this, this.f269a));
                         this.f322r = 8;
                         break;
@@ -320,7 +320,7 @@ public final class MmpProtocol extends Account {
         }
         this.f320p.m1132a(this.f318n);
         if (this.f280N == 1) {
-            Vector vectorM440S = C0015ao.m440S();
+            Vector vectorM440S = AppController.m440S();
             if (Utils.m541c(vectorM440S) == 0) {
                 m1061F();
                 this.f324t = mo89g();
@@ -336,13 +336,13 @@ public final class MmpProtocol extends Account {
                     m1061F();
                     this.f324t = mo89g();
                 }
-                if (this.f330z > 0 && m1056C() && C0015ao.m306a(this.f331A)) {
-                    m1052c(C0015ao.m326a(this, 5));
+                if (this.f330z > 0 && m1056C() && AppController.m306a(this.f331A)) {
+                    m1052c(AppController.m326a(this, 5));
                     return;
                 }
                 return;
             }
-            C0015ao.m421a((Account) this, c0043nM1299a);
+            AppController.m421a((Account) this, c0043nM1299a);
             this.f323s = 90;
             if (c0043nM1299a.m1331i(1) == 2) {
                 int iM1331i = (c0043nM1299a.m1331i(6) << 24) | (c0043nM1299a.m1331i(8) << 16) | (c0043nM1299a.m1331i(7) << 8) | c0043nM1299a.m1331i(9);
@@ -366,7 +366,7 @@ public final class MmpProtocol extends Account {
                             } else {
                                 Object[] objArr = (Object[]) vector.elementAt(size);
                                 if (((Integer) objArr[1]).intValue() == 17) {
-                                    objArr[0] = C0034e.m967e(iM1356x);
+                                    objArr[0] = ResourceManager.m967e(iM1356x);
                                 }
                             }
                         }
@@ -396,8 +396,8 @@ public final class MmpProtocol extends Account {
                                     NetworkUtils.m1209a(bArr4);
                                 }
                             }
-                            MrimAccount c0028ba = (MrimAccount) C0015ao.m440S().elementAt(0);
-                            c0028ba.m1052c(C0034e.m981a(c0028ba, this, iM1355w, iM1355w2, strM17c, z, bArr2));
+                            MrimAccount c0028ba = (MrimAccount) AppController.m440S().elementAt(0);
+                            c0028ba.m1052c(ResourceManager.m981a(c0028ba, this, iM1355w, iM1355w2, strM17c, z, bArr2));
                             break;
                         } catch (Throwable unused) {
                             break;
@@ -412,7 +412,7 @@ public final class MmpProtocol extends Account {
                         XmppMailRuProtocol.m881b(this, iM1356x);
                         break;
                     case 1031:
-                        C0029bb.m821a(this, c0043nM1299a);
+                        IOUtils.m821a(this, c0043nM1299a);
                         break;
                     case 1035:
                         long jM1341m = c0043nM1299a.m1341m();
@@ -451,7 +451,7 @@ public final class MmpProtocol extends Account {
                         }
                         break;
                     case 4889:
-                        C0034e.m925a(3);
+                        ResourceManager.m925a(3);
                         m1072a(c0043nM1299a.m1363z(), 0L, c0043nM1299a.m1364A());
                         break;
                     case 4891:
@@ -467,18 +467,18 @@ public final class MmpProtocol extends Account {
                         m1072a(c0043nM1299a.m1363z(), 0L, AppState.m584b(480));
                         break;
                     case 5377:
-                        C0029bb.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(481)).append(1501).append('/').append(c0043nM1299a.m1353u()).append(AppState.m584b(482))));
+                        IOUtils.m778d((Object) NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(481)).append(1501).append('/').append(c0043nM1299a.m1353u()).append(AppState.m584b(482))));
                         XmppMailRuProtocol.m881b(this, iM1356x);
                         break;
                     case 5379:
                         XmppMailRuProtocol.m882a(this, c0043nM1299a, iM1356x, iM1351l);
                         break;
                 }
-                C0015ao.f152f = true;
+                AppController.f152f = true;
             } else {
                 if (c0043nM1299a.m1331i(1) == 4) {
-                    C0015ao.m386a(this, c0043nM1299a);
-                    C0015ao.f152f = true;
+                    AppController.m386a(this, c0043nM1299a);
+                    AppController.f152f = true;
                 }
             }
             c0043nM1299a.m1301b();
@@ -600,7 +600,7 @@ public final class MmpProtocol extends Account {
         if (z || !c0009ai.f371p) {
             return;
         }
-        C0034e.m925a(1);
+        ResourceManager.m925a(1);
     }
 
     @Override // p000.Account
@@ -629,7 +629,7 @@ public final class MmpProtocol extends Account {
             } else {
                 c0043nM1373h.m1321f(1);
             }
-            c0043nM464a = C0015ao.m464a(this, 1030, c0043nM1373h.m1357m(257).m1326b(c0043n).m1357m(6).m1357m(0));
+            c0043nM464a = AppController.m464a(this, 1030, c0043nM1373h.m1357m(257).m1326b(c0043n).m1357m(6).m1357m(0));
         } else {
             if (i == 1) {
                 c0043n.m1377k(str);
@@ -639,7 +639,7 @@ public final class MmpProtocol extends Account {
             c0043n.m1321f(0);
             int i3 = c0043n.f384b;
             int i4 = i3 - (i == 1 ? 0 : 42);
-            c0043nM464a = C0015ao.m464a(this, 1030, c0043nM1373h.m1357m(5).m1357m(i4 + 143).m1357m(0).m1323a(j).m1310c(906).m1357m(10).m1357m(2).m1357m(1).m1357m(15).m1357m(0).m1357m(10001).m1357m(i4 + 103).m1358n(27).m1358n(8).m1360p(0).m1360p(0).m1360p(0).m1360p(0).m1357m(0).m1360p(3).m1321f(0).m1357m(0).m1360p(14).m1360p(0).m1360p(0).m1360p(0).m1358n(1).m1358n(m919j()).m1358n(1).m1358n(i3).m1325a(c0043n).m1310c(i == 0 ? 526807 : 3279327).m1357m(3).m1357m(0));
+            c0043nM464a = AppController.m464a(this, 1030, c0043nM1373h.m1357m(5).m1357m(i4 + 143).m1357m(0).m1323a(j).m1310c(906).m1357m(10).m1357m(2).m1357m(1).m1357m(15).m1357m(0).m1357m(10001).m1357m(i4 + 103).m1358n(27).m1358n(8).m1360p(0).m1360p(0).m1360p(0).m1360p(0).m1357m(0).m1360p(3).m1321f(0).m1357m(0).m1360p(14).m1360p(0).m1360p(0).m1360p(0).m1358n(1).m1358n(m919j()).m1358n(1).m1358n(i3).m1325a(c0043n).m1310c(i == 0 ? 526807 : 3279327).m1357m(3).m1357m(0));
         }
         return m1052c(c0043nM464a);
     }
@@ -653,7 +653,7 @@ public final class MmpProtocol extends Account {
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         String str = (String) objArr[0];
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4873, c0009ai.m180a(3, str, c0009ai.f56b)), C0034e.m967e(0), c0009ai, str}));
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 4873, c0009ai.m180a(3, str, c0009ai.f56b)), ResourceManager.m967e(0), c0009ai, str}));
     }
 
     /* renamed from: b */
@@ -666,8 +666,8 @@ public final class MmpProtocol extends Account {
         this.f325u = i;
         if (m1056C()) {
             m1052c(XmppMailRuProtocol.m857a(this, this.f274e));
-            m1052c(m916a(new Object[]{C0015ao.m464a(this, 286, new ByteBuffer().m1357m(6).m1357m(4).m1359o(268435456 | m919j())), C0034e.m967e(17)}));
-            return m1052c(C0015ao.m375a(this));
+            m1052c(m916a(new Object[]{AppController.m464a(this, 286, new ByteBuffer().m1357m(6).m1357m(4).m1359o(268435456 | m919j())), ResourceManager.m967e(17)}));
+            return m1052c(AppController.m375a(this));
         }
         if (m1055B()) {
             return 487;
@@ -693,9 +693,9 @@ public final class MmpProtocol extends Account {
         if (0 != iMo113a) {
             return iMo113a;
         }
-        m1052c(C0034e.m961a(this));
+        m1052c(ResourceManager.m961a(this));
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), C0034e.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), ResourceManager.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
     }
 
     @Override // p000.Account
@@ -705,8 +705,8 @@ public final class MmpProtocol extends Account {
         if (iMo124a != 0) {
             return iMo124a;
         }
-        C0016ap c0016ap = (C0016ap) abstractC0046q;
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4873, c0016ap.m465a(str, -1, -1)), C0034e.m967e(1), c0016ap, str}));
+        MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 4873, c0016ap.m465a(str, -1, -1)), ResourceManager.m967e(1), c0016ap, str}));
     }
 
     @Override // p000.Account
@@ -716,8 +716,8 @@ public final class MmpProtocol extends Account {
         if (iMo122a != 0) {
             return iMo122a;
         }
-        m1052c(C0034e.m961a(this));
-        return m1052c(C0034e.m937a(this, str));
+        m1052c(ResourceManager.m961a(this));
+        return m1052c(ResourceManager.m937a(this, str));
     }
 
     @Override // p000.Account
@@ -727,9 +727,9 @@ public final class MmpProtocol extends Account {
         if (0 != iMo123a) {
             return iMo123a;
         }
-        m1052c(C0034e.m961a(this));
-        C0016ap c0016ap = (C0016ap) abstractC0046q;
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0016ap.m465a(c0016ap.f398f, -1, -1)), C0034e.m967e(2), c0016ap}));
+        m1052c(ResourceManager.m961a(this));
+        MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 4874, c0016ap.m465a(c0016ap.f398f, -1, -1)), ResourceManager.m967e(2), c0016ap}));
     }
 
     @Override // p000.Account
@@ -745,15 +745,15 @@ public final class MmpProtocol extends Account {
             return 0;
         }
         if (c0009ai.mo142k()) {
-            m1052c(C0029bb.m792c(this, c0009ai));
+            m1052c(IOUtils.m792c(this, c0009ai));
         }
         if (c0009ai.mo140i()) {
-            m1052c(C0029bb.m790a(this, c0009ai));
+            m1052c(IOUtils.m790a(this, c0009ai));
         }
         if (c0009ai.mo141j()) {
-            m1052c(C0029bb.m791b(this, c0009ai));
+            m1052c(IOUtils.m791b(this, c0009ai));
         }
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), C0034e.m967e(5), c0009ai}));
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 4874, c0009ai.m180a(2, c0009ai.f376u, c0009ai.f56b)), ResourceManager.m967e(5), c0009ai}));
     }
 
     @Override // p000.Account
@@ -763,16 +763,16 @@ public final class MmpProtocol extends Account {
         if (0 != iMo734a) {
             return iMo734a;
         }
-        m1052c(C0015ao.m464a(this, 4884, new ByteBuffer().m1373h(str).m1360p(0)));
+        m1052c(AppController.m464a(this, 4884, new ByteBuffer().m1373h(str).m1360p(0)));
         MmpContact c0009ai = (MmpContact) m1069c((Object) str);
         if (null != c0009ai && !c0009ai.mo143m()) {
-            return m1052c(C0029bb.m753a(this, c0009ai, str3));
+            return m1052c(IOUtils.m753a(this, c0009ai, str3));
         }
-        m1052c(C0034e.m961a(this));
-        C0016ap c0016ap = (C0016ap) abstractC0046q;
+        m1052c(ResourceManager.m961a(this));
+        MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
         ByteBuffer c0043nM1357m = new ByteBuffer().m1361f(str).m1357m(c0016ap.f157a);
         int iM920k = m920k();
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 4872, c0043nM1357m.m1357m(iM920k).m1357m(0).m1326b(new ByteBuffer().m1357m(102).m1357m(0).m1357m(347).m1357m(1).m1321f(32).m1357m(305).m1376j(str2))), C0034e.m967e(14), str, str2, c0016ap, C0034e.m967e(iM920k), str3}));
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 4872, c0043nM1357m.m1357m(iM920k).m1357m(0).m1326b(new ByteBuffer().m1357m(102).m1357m(0).m1357m(347).m1357m(1).m1321f(32).m1357m(305).m1376j(str2))), ResourceManager.m967e(14), str, str2, c0016ap, ResourceManager.m967e(iM920k), str3}));
     }
 
     /* renamed from: j */
@@ -806,7 +806,7 @@ public final class MmpProtocol extends Account {
                     if (size < 0) {
                         break;
                     }
-                    C0016ap c0016ap = (C0016ap) vector.elementAt(size);
+                    MmpContactGroup c0016ap = (MmpContactGroup) vector.elementAt(size);
                     if (c0016ap.f157a == iM520a) {
                         z = true;
                     }
@@ -834,7 +834,7 @@ public final class MmpProtocol extends Account {
         if (abstractC0041l.mo143m()) {
             return 310;
         }
-        return m1052c(C0029bb.m792c(this, (MmpContact) abstractC0041l));
+        return m1052c(IOUtils.m792c(this, (MmpContact) abstractC0041l));
     }
 
     @Override // p000.Account
@@ -842,9 +842,9 @@ public final class MmpProtocol extends Account {
     public final int mo105d(Contact abstractC0041l) {
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         if (c0009ai.mo141j() && !c0009ai.mo140i()) {
-            m1052c(C0029bb.m791b(this, c0009ai));
+            m1052c(IOUtils.m791b(this, c0009ai));
         }
-        return m1052c(C0029bb.m790a(this, c0009ai));
+        return m1052c(IOUtils.m790a(this, c0009ai));
     }
 
     @Override // p000.Account
@@ -852,9 +852,9 @@ public final class MmpProtocol extends Account {
     public final int mo106e(Contact abstractC0041l) {
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         if (!c0009ai.mo141j() && c0009ai.mo140i()) {
-            m1052c(C0029bb.m790a(this, c0009ai));
+            m1052c(IOUtils.m790a(this, c0009ai));
         }
-        return m1052c(C0029bb.m791b(this, c0009ai));
+        return m1052c(IOUtils.m791b(this, c0009ai));
     }
 
     @Override // p000.Account
@@ -868,7 +868,7 @@ public final class MmpProtocol extends Account {
         if (0 != iMo120l) {
             return iMo120l;
         }
-        m1052c(C0015ao.m326a(this, 4));
+        m1052c(AppController.m326a(this, 4));
         m1061F();
         this.f324t = mo89g();
         return 0;
@@ -887,7 +887,7 @@ public final class MmpProtocol extends Account {
         }
         ByteBuffer c0043nM1357m = new ByteBuffer().m1357m(1);
         int i = c0043nM1358n.f384b;
-        return m1052c(m916a(new Object[]{C0015ao.m464a(this, 5378, c0043nM1357m.m1357m(i + 2).m1358n(i).m1325a(c0043nM1358n)), C0034e.m967e(9)}));
+        return m1052c(m916a(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.m1357m(i + 2).m1358n(i).m1325a(c0043nM1358n)), ResourceManager.m967e(9)}));
     }
 
     @Override // p000.Account
@@ -899,7 +899,7 @@ public final class MmpProtocol extends Account {
         ByteBuffer c0043nM1360p = new ByteBuffer().m1360p(this.f269a).m1358n(2000).m1357m(0).m1358n(1375).m1357m(13825).m1358n(4).m1360p(Utils.m510a((Object) str));
         ByteBuffer c0043nM1357m = new ByteBuffer().m1357m(1);
         int i = c0043nM1360p.f384b;
-        m1052c(m916a(new Object[]{C0015ao.m464a(this, 5378, c0043nM1357m.m1357m(i + 2).m1358n(i).m1325a(c0043nM1360p)), C0034e.m967e(21)}));
+        m1052c(m916a(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.m1357m(i + 2).m1358n(i).m1325a(c0043nM1360p)), ResourceManager.m967e(21)}));
         return c0009ai;
     }
 

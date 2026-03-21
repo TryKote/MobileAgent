@@ -8,7 +8,7 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:m.class */
 public final class ContactInfo extends Hashtable {
     public ContactInfo(Contact abstractC0041l) {
-        put(C0034e.m967e(-2), abstractC0041l.f369o);
+        put(ResourceManager.m967e(-2), abstractC0041l.f369o);
         m1258a(0, abstractC0041l.f376u);
         if (abstractC0041l instanceof MrimContact) {
             m1258a(3, ((MrimContact) abstractC0041l).f297d);
@@ -23,7 +23,7 @@ public final class ContactInfo extends Hashtable {
     }
 
     private ContactInfo(Account abstractC0037h) {
-        put(C0034e.m967e(-2), abstractC0037h);
+        put(ResourceManager.m967e(-2), abstractC0037h);
     }
 
     /* renamed from: a */
@@ -57,12 +57,12 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: c */
     public final Account m1255c() {
-        return (Account) get(C0034e.m967e(-2));
+        return (Account) get(ResourceManager.m967e(-2));
     }
 
     /* renamed from: a */
     public final String m1256a(int i) {
-        return (String) get(C0034e.m967e(i));
+        return (String) get(ResourceManager.m967e(i));
     }
 
     /* renamed from: a */
@@ -73,7 +73,7 @@ public final class ContactInfo extends Hashtable {
     /* renamed from: a */
     private final ContactInfo m1258a(int i, String str) {
         if (Utils.m535l(str)) {
-            put(C0034e.m967e(i), str);
+            put(ResourceManager.m967e(i), str);
         }
         return this;
     }
@@ -304,7 +304,7 @@ public final class ContactInfo extends Hashtable {
                             c0013amM75b.m248a(strM1215a, NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m12a(strM1256a, 8, 10)).append('/').append(StringUtils.m12a(strM1256a, 5, 7)).append('/').append(StringUtils.m13b(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? C0015ao.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.mo139e()).m898b(Utils.m522f(m1256a(13))));
+                                c0013amM75b.m225a(MenuItem.m889d().m901a(strM1215a, 0, 6).m896a(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.m522f(m1256a(12))) : c0035f.mo139e()).m898b(Utils.m522f(m1256a(13))));
                                 break;
                             }
                             c0013amM75b.m248a(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);
@@ -404,7 +404,7 @@ public final class ContactInfo extends Hashtable {
                 c0013amM75b.m248a(AppState.m584b(316), strM1256a7);
             }
         } else if (abstractC0037hM1255c instanceof XmppProtocol) {
-            Image image = (Image) get(C0034e.m967e(25));
+            Image image = (Image) get(ResourceManager.m967e(25));
             if (image != null) {
                 c0013amM75b.m225a(MenuItem.m893a(new GraphicsContext(image)));
             }

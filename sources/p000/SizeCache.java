@@ -33,8 +33,8 @@ public final class SizeCache {
 
     /* renamed from: a */
     private final void m1407a(int i, int i2, int i3) {
-        this.f401b = (int) C0015ao.m317a(i2, i);
-        this.f402c = (int) C0015ao.m317a(i3, i);
+        this.f401b = (int) AppController.m317a(i2, i);
+        this.f402c = (int) AppController.m317a(i3, i);
         this.f403a = i;
     }
 

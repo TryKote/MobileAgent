@@ -66,17 +66,17 @@ public final class HttpClient {
     public static final void m633a(HttpClient c0024ax) {
         try {
             if (c0024ax.f186d != null && c0024ax.f187e == 0) {
-                C0015ao.m419a(c0024ax.f186d, c0024ax.f190h);
-                C0015ao.m420b(c0024ax.f186d, c0024ax.f189g);
+                AppController.m419a(c0024ax.f186d, c0024ax.f190h);
+                AppController.m420b(c0024ax.f186d, c0024ax.f189g);
             } else if (c0024ax.f187e == 1) {
-                C0015ao.m422C(c0024ax.f190h);
-                C0015ao.m423D(c0024ax.f189g);
+                AppController.m422C(c0024ax.f190h);
+                AppController.m423D(c0024ax.f189g);
             } else if (c0024ax.f187e == 2) {
-                C0015ao.m424E(c0024ax.f190h);
-                C0015ao.m425F(c0024ax.f189g);
+                AppController.m424E(c0024ax.f190h);
+                AppController.m425F(c0024ax.f189g);
             } else {
-                C0015ao.m426G(c0024ax.f190h);
-                C0015ao.m427H(c0024ax.f189g);
+                AppController.m426G(c0024ax.f190h);
+                AppController.m427H(c0024ax.f189g);
             }
             if (c0024ax.f188f == 0) {
                 try {
