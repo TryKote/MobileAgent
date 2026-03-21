@@ -176,7 +176,7 @@ public abstract class ContactListManager {
                             if (abstractC0041l != null) {
                                 int iM1250M2 = abstractC0041l.getContextAction();
                                 if (iM1250M2 >= 0) {
-                                    vector.addElement(ResourceManager.m967e(iM1250M2));
+                                    vector.addElement(ResourceManager.integerOf(iM1250M2));
                                 }
                                 vector.addElement(abstractC0041l.extra);
                             }
@@ -185,7 +185,7 @@ public abstract class ContactListManager {
                             }
                             int iMo922n2 = abstractC0037h2.getExtType();
                             if (iMo922n2 >= 0) {
-                                vector.addElement(ResourceManager.m967e(iMo922n2));
+                                vector.addElement(ResourceManager.integerOf(iMo922n2));
                             }
                             AppController.f153g = true;
                         }

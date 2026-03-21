@@ -61,21 +61,21 @@ public final class IOUtils {
         }
         if (StringUtils.m3a(839, str)) {
             if (!zM587e) {
-                return ResourceManager.m966a(XmppMailRuProtocol.getFirstAddress(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
+                return ResourceManager.composeEmail(XmppMailRuProtocol.getFirstAddress(vectorM668b), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.setMailAction(54, 0);
             return 0;
         }
         if (StringUtils.m3a(840, str)) {
             if (!zM587e) {
-                return ResourceManager.m966a(XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
+                return ResourceManager.composeEmail(XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(vectorM668b), vectorM669c), new StringBuffer().append(strM584b2).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.setMailAction(54, 1);
             return 0;
         }
         if (StringUtils.m3a(841, str)) {
             if (!zM587e) {
-                return ResourceManager.m966a(NetworkUtils.newVector(), new StringBuffer().append(strM584b3).append(strM673d).toString(), str2);
+                return ResourceManager.composeEmail(NetworkUtils.newVector(), new StringBuffer().append(strM584b3).append(strM673d).toString(), str2);
             }
             XmppMailRuProtocol.setMailAction(54, 2);
             return 0;
@@ -226,7 +226,7 @@ public final class IOUtils {
                 if (str.length() > 30 && iLastIndexOf > 1) {
                     StringUtils.prefix(str, iLastIndexOf - 1);
                 }
-                ResourceManager.m925a(0);
+                ResourceManager.playNotificationSound(0);
             }
             if (zM587e && (AppController.m442U() != 10 || !AppState.hasMemory())) {
                 StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
@@ -496,7 +496,7 @@ public final class IOUtils {
         VCard.staticTs3 = (int) AppController.m318a((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
         VCard.staticTs4 = (int) AppController.m318a((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
         VCard.staticTs5 = AppState.getInt(39);
-        new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.m967e(AppState.getInt(39))});
+        new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(39))});
     }
 
     /* renamed from: g */
@@ -587,13 +587,13 @@ public final class IOUtils {
         wrapInVector(strM584b);
         if (StringUtils.m3a(839, str)) {
             ScreenBuilder.onScreenClosed();
-            ResourceManager.m966a(XmppMailRuProtocol.getFirstAddress(vectorM668b), StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
+            ResourceManager.composeEmail(XmppMailRuProtocol.getFirstAddress(vectorM668b), StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
             return 0;
         }
         if (!StringUtils.m3a(840, str)) {
             if (StringUtils.m3a(841, str)) {
                 ScreenBuilder.onScreenClosed();
-                ResourceManager.m966a(NetworkUtils.newVector(), StringUtils.concat(strM584b3, strM673d), Utils.m507d(c0026azM1415b.body));
+                ResourceManager.composeEmail(NetworkUtils.newVector(), StringUtils.concat(strM584b3, strM673d), Utils.m507d(c0026azM1415b.body));
                 return 0;
             }
             if (!StringUtils.m3a(845, str)) {
@@ -616,7 +616,7 @@ public final class IOUtils {
                 break;
             }
         }
-        ResourceManager.m966a(vectorM865a, StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
+        ResourceManager.composeEmail(vectorM865a, StringUtils.concat(strM584b2, strM673d), Utils.m507d(c0026azM1415b.body));
         return 0;
     }
 
@@ -624,12 +624,12 @@ public final class IOUtils {
     private static final ByteBuffer createContactCommand(MmpProtocol c0033d, MmpContact c0009ai, int i) {
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0);
         int iM920k = c0033d.generateUniqueGroupId();
-        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.m967e(18), c0009ai, ResourceManager.m967e(i), ResourceManager.m967e(iM920k)});
+        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.integerOf(18), c0009ai, ResourceManager.integerOf(i), ResourceManager.integerOf(iM920k)});
     }
 
     /* renamed from: a */
     private static final ByteBuffer updateContactCommand(MmpProtocol c0033d, MmpContact c0009ai, int i, int i2) {
-        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.m967e(19), c0009ai, ResourceManager.m967e(i2)});
+        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.integerOf(19), c0009ai, ResourceManager.integerOf(i2)});
     }
 
     /* renamed from: a */
@@ -721,7 +721,7 @@ public final class IOUtils {
         }
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
-            return ResourceManager.m946g();
+            return ResourceManager.clearSmsFields();
         }
         if (i == 66) {
             if (abstractC0041lM611g instanceof XmppContact) {
@@ -730,7 +730,7 @@ public final class IOUtils {
             AppState.pool[1319] = new ContactInfo(abstractC0041lM611g);
         } else if (i == 54) {
             AppState.setAccount(abstractC0041lM611g.account);
-            ResourceManager.m966a(XmppMailRuProtocol.parseRecipientList(((MrimContact) abstractC0041lM611g).simpleIdentifier), (String) null, (String) null);
+            ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(((MrimContact) abstractC0041lM611g).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
             interfaceC0044o.deselect();
@@ -741,7 +741,7 @@ public final class IOUtils {
 
     /* renamed from: a */
     private static final Object[] createHttpResult(int i, Object obj, int i2, ByteBuffer c0043n) {
-        return new Object[]{ResourceManager.m967e(i), ResourceManager.m967e(i2), obj.toString(), c0043n};
+        return new Object[]{ResourceManager.integerOf(i), ResourceManager.integerOf(i2), obj.toString(), c0043n};
     }
 
     /* renamed from: a */
@@ -1093,7 +1093,7 @@ public final class IOUtils {
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
             AppController.m300h();
-            return ResourceManager.m946g();
+            return ResourceManager.clearSmsFields();
         }
         if (i == 66) {
             if (obj instanceof XmppContact) {
@@ -1102,7 +1102,7 @@ public final class IOUtils {
             AppState.pool[1319] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
-            ResourceManager.m966a(XmppMailRuProtocol.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
+            ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.deselect();
@@ -1245,7 +1245,7 @@ public final class IOUtils {
                 if (iM634a == 200) {
                     Vector vectorM516c = Utils.m516c(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
-                        objArr[2] = ResourceManager.m967e(1);
+                        objArr[2] = ResourceManager.integerOf(1);
                         objArr[1] = new ByteBuffer().writeCompressed(2365173).writeCompressed(2692947).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
                         new AsyncTask(30, objArr);
                     } else {

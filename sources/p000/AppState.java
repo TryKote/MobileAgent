@@ -40,17 +40,17 @@ public abstract class AppState {
     /* renamed from: a */
     public static final void init(Object obj) {
         int iM1346q;
-        ResourceManager.f292k = new Boolean(true);
-        ResourceManager.f293l = new Boolean(false);
-        ResourceManager.f290i = new Object();
-        ResourceManager.f291j = new Integer[32];
+        ResourceManager.boolTrue = new Boolean(true);
+        ResourceManager.boolFalse = new Boolean(false);
+        ResourceManager.syncObject = new Object();
+        ResourceManager.integerCache = new Integer[32];
         int i = 32;
         while (true) {
             i--;
             if (i < 0) {
                 break;
             } else {
-                ResourceManager.f291j[i] = new Integer(i);
+                ResourceManager.integerCache[i] = new Integer(i);
             }
         }
         StringUtils.internCache = new Vector(128);
@@ -157,7 +157,7 @@ public abstract class AppState {
         NetworkUtils.m1208b(getString(1038));
         NetworkUtils.m1208b(getString(525044));
         NetworkUtils.m1208b(getString(590588));
-        pool[112] = ResourceManager.m967e(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
+        pool[112] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
         try {
             setBool(1535, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
         } catch (Throwable unused5) {
@@ -262,7 +262,7 @@ public abstract class AppState {
     /* renamed from: c */
     public static final void setInt(int i, int i2) {
         if (i < 1406) {
-            setObject(i, ResourceManager.m967e(i2));
+            setObject(i, ResourceManager.integerOf(i2));
         } else {
             intPool[i - 1406] = i2;
         }
@@ -424,17 +424,17 @@ public abstract class AppState {
             return strM1215a;
         }
         if ((bM1344o & 64) != 0) {
-            return ResourceManager.m967e(bM1344o & 63);
+            return ResourceManager.integerOf(bM1344o & 63);
         }
         if ((bM1344o & 32) != 0) {
-            return ResourceManager.m967e(((bM1344o & 31) << 8) + c0043n.readUByte());
+            return ResourceManager.integerOf(((bM1344o & 31) << 8) + c0043n.readUByte());
         }
         int iM1346q = 0;
         int i2 = bM1344o & 7;
         while (true) {
             i2--;
             if (i2 < 0) {
-                return ResourceManager.m967e(iM1346q);
+                return ResourceManager.integerOf(iM1346q);
             }
             iM1346q = (iM1346q << 8) + c0043n.readUByte();
         }

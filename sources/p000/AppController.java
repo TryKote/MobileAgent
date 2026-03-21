@@ -276,13 +276,13 @@ public final class AppController {
 
     /* renamed from: j */
     public static final int m310j() {
-        ResourceManager.m931a((PhoneContact) AppState.pool[1256], AppState.getInt(1444) + 10);
+        ResourceManager.dialPhoneContact((PhoneContact) AppState.pool[1256], AppState.getInt(1444) + 10);
         return 6;
     }
 
     /* renamed from: k */
     public static final int m311k() {
-        ResourceManager.m931a((PhoneContact) AppState.pool[1256], AppState.getInt(1444) - 10);
+        ResourceManager.dialPhoneContact((PhoneContact) AppState.pool[1256], AppState.getInt(1444) - 10);
         return 6;
     }
 
@@ -429,7 +429,7 @@ public final class AppController {
     /* renamed from: o */
     public static final int m327o() {
         MrimAccount c0028ba = (MrimAccount) AppState.pool[1282];
-        ResourceManager.m954k();
+        ResourceManager.showMailAccountList();
         AppState.setAccount(c0028ba);
         AppState.setInt(1512, 38);
         return 37;
@@ -508,7 +508,7 @@ public final class AppController {
 
     /* renamed from: c */
     public static final Object[] m332c(String str) {
-        return new Object[]{ResourceManager.m967e(20), str};
+        return new Object[]{ResourceManager.integerOf(20), str};
     }
 
     /* renamed from: d */
@@ -642,7 +642,7 @@ public final class AppController {
 
     /* renamed from: r */
     public static final void m341r() {
-        ResourceManager.m925a(5);
+        ResourceManager.playNotificationSound(5);
         ScreenManager.showScreen(ScreenManager.createScreen(3328));
         AppState.clearIndex(1294);
     }
@@ -749,7 +749,7 @@ public final class AppController {
     public static final int m352o(int i) {
         if (i == 54) {
             ScreenBuilder.onScreenClosed();
-            ResourceManager.m966a((Vector) null, (String) null, (String) null);
+            ResourceManager.composeEmail((Vector) null, (String) null, (String) null);
             return 0;
         }
         if (i == 68) {
@@ -1063,7 +1063,7 @@ public final class AppController {
         }
         MrimContact c0035fM612h = AppState.getCurrentMrimContact();
         AppState.setAccount(c0035fM612h.account);
-        ResourceManager.m966a(XmppMailRuProtocol.parseRecipientList(c0035fM612h.simpleIdentifier), (String) null, (String) null);
+        ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(c0035fM612h.simpleIdentifier), (String) null, (String) null);
         ScreenBuilder.onScreenClosed();
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -1285,7 +1285,7 @@ public final class AppController {
             jMo275w = MapRenderer.currentLat;
         }
         AppState.setInt(1479, 0);
-        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.pixelToLongitude(jMo274v), IOUtils.pixelToLatitude(jMo275w)), jMo274v, jMo275w);
+        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(39), IOUtils.pixelToLongitude(jMo274v), IOUtils.pixelToLatitude(jMo275w)), jMo274v, jMo275w);
         return 6;
     }
 
@@ -1348,7 +1348,7 @@ public final class AppController {
     public static final ByteBuffer m403a(MrimAccount c0028ba, String str, int i) {
         ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(0);
         int iIndexOf = str.indexOf(64);
-        return c0028ba.createAndQueueCommand(new Object[]{m321a(c0028ba, 4137, c0043nM1360p.writeStringLatin1(StringUtils.prefix(str, iIndexOf)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, iIndexOf + 1))), ResourceManager.m967e(i)});
+        return c0028ba.createAndQueueCommand(new Object[]{m321a(c0028ba, 4137, c0043nM1360p.writeStringLatin1(StringUtils.prefix(str, iIndexOf)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, iIndexOf + 1))), ResourceManager.integerOf(i)});
     }
 
     /* renamed from: j */
@@ -1365,7 +1365,7 @@ public final class AppController {
             jMo274v = interfaceC0044o.getWidth();
             jMo275w = interfaceC0044o.getBaseHeight();
         }
-        int iM1233b = abstractC0041l.sendMessage(ResourceManager.m975a(jMo274v, jMo275w, AppState.getInt(39), strM584b));
+        int iM1233b = abstractC0041l.sendMessage(ResourceManager.buildTileRequestUrl(jMo274v, jMo275w, AppState.getInt(39), strM584b));
         if (0 != iM1233b) {
             return m338l(iM1233b);
         }
@@ -2101,8 +2101,8 @@ public final class AppController {
             AppState.pool[1247] = NetworkUtils.newVector();
             m458ak();
             AppState.pool[1242] = NetworkUtils.newVector();
-            ResourceManager.m927a();
-            ResourceManager.m940d();
+            ResourceManager.resetClock();
+            ResourceManager.initMathTables();
             AppState.setInt(2, 0);
             AppState.setInt(3, 0);
             AppState.setInt(10, 0);
@@ -2194,7 +2194,7 @@ public final class AppController {
             synchronized (f150d) {
                 if (!f151e) {
                     AppState.updateTime();
-                    ResourceManager.m928b();
+                    ResourceManager.updateClock();
                     if (!MainCanvas.pointerDragged && MainCanvas.pointerDownTime != 0 && System.currentTimeMillis() - MainCanvas.pointerDownTime > 600) {
                         int i4 = MainCanvas.pointerDownX;
                         int i5 = MainCanvas.pointerDownY;
@@ -2300,7 +2300,7 @@ public final class AppController {
                                                         if (size3 < 0) {
                                                             MapRenderer.needsRedraw = true;
                                                             new AsyncTask(6);
-                                                        } else if (3 == ((ResourceManager) vectorM614m4.elementAt(size3)).f281a) {
+                                                        } else if (3 == ((ResourceManager) vectorM614m4.elementAt(size3)).tileType) {
                                                             vectorM614m4.removeElementAt(size3);
                                                         }
                                                     }
@@ -2630,8 +2630,8 @@ public final class AppController {
                                                 break;
                                             case 55:
                                                 NetworkUtils.m1183c();
-                                                ResourceManager.m957l();
-                                                ResourceManager.m941e();
+                                                ResourceManager.clearImageCache();
+                                                ResourceManager.clearMathTables();
                                                 System.gc();
                                                 try {
                                                     Thread.sleep(50);
@@ -2671,7 +2671,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 63:
-                                                iM1181a = ResourceManager.m964n();
+                                                iM1181a = ResourceManager.updateMessageInput();
                                                 iM338l = iM1181a;
                                                 break;
                                             case 64:
@@ -3200,7 +3200,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 160:
-                                                iM1181a = System.currentTimeMillis() - ResourceManager.f288g > 5000 ? ResourceManager.m947h() : 0;
+                                                iM1181a = System.currentTimeMillis() - ResourceManager.lastTileLoadTime > 5000 ? ResourceManager.syncAndReturn() : 0;
                                                 iM338l = iM1181a;
                                                 break;
                                             case 161:
@@ -3684,7 +3684,7 @@ public final class AppController {
                                         Object obj6 = c0029bb.eventData;
                                         switch (i43) {
                                             case 3:
-                                                ResourceManager.m951j();
+                                                ResourceManager.showSavedLocations();
                                                 break;
                                             case 4:
                                                 Object[] objArr3 = (Object[]) obj6;
@@ -3773,7 +3773,7 @@ public final class AppController {
                                                 AppState.setInt(72, ((Integer) objArr6[0]).intValue());
                                             }
                                         } else if (i44 == 28) {
-                                            ResourceManager.m926a(((Integer) ((Object[]) ((MenuItem) objM524a).data)[0]).intValue(), false);
+                                            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) ((MenuItem) objM524a).data)[0]).intValue(), false);
                                         }
                                     }
                                     if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.getCurrentScreen())) {
@@ -3908,7 +3908,7 @@ public final class AppController {
                         String strM809a = IOUtils.pixelToLongitude(MapRenderer.currentLon);
                         String strM810b = IOUtils.pixelToLatitude(MapRenderer.currentLat);
                         AppState.setInt(1479, 0);
-                        ResourceManager.m953a(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.currentLon, MapRenderer.currentLat);
+                        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.currentLon, MapRenderer.currentLat);
                         i2 = 0;
                     } else {
                         i2 = 113;
@@ -3985,7 +3985,7 @@ public final class AppController {
                     iM460J = IOUtils.handleContactGroupAction(strM67c, iM68d);
                     break;
                 case 32:
-                    iM460J = ResourceManager.m933a(strM67c, c0032cM69e2);
+                    iM460J = ResourceManager.handleDropdownSelect(strM67c, c0032cM69e2);
                     break;
                 case 33:
                     iM460J = 0;
@@ -3997,7 +3997,7 @@ public final class AppController {
                     iM460J = m346n(iM68d);
                     break;
                 case 36:
-                    iM460J = ResourceManager.m955c(obj);
+                    iM460J = ResourceManager.selectMailAccount(obj);
                     break;
                 case 37:
                     iM460J = -1;
@@ -4032,7 +4032,7 @@ public final class AppController {
                     } else {
                         AppState.clearIndex(1279);
                         Contact abstractC0041lM611g = AppState.getCurrentContact();
-                        iM338l = !abstractC0041lM611g.account.isConnected() ? m338l(299) : abstractC0041lM611g.isOffline() ? ResourceManager.m946g() : 63;
+                        iM338l = !abstractC0041lM611g.account.isConnected() ? m338l(299) : abstractC0041lM611g.isOffline() ? ResourceManager.clearSmsFields() : 63;
                     }
                     iM460J = iM338l;
                     break;
@@ -4082,7 +4082,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 51:
-                    ResourceManager.m974c(strM67c);
+                    ResourceManager.handleChatRoomAction(strM67c);
                 case 52:
                     iM460J = 0;
                     break;
@@ -4105,7 +4105,7 @@ public final class AppController {
                     iM460J = m322f(iM68d);
                     break;
                 case 59:
-                    iM460J = ResourceManager.m978s();
+                    iM460J = ResourceManager.applyVersionLabel();
                     break;
                 case 60:
                     iM460J = m372g(strM67c);
@@ -4141,7 +4141,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 71:
-                    iM460J = ResourceManager.m976q();
+                    iM460J = ResourceManager.deleteSelectedEntity();
                     break;
                 case 72:
                     iM460J = -1;
@@ -4183,7 +4183,7 @@ public final class AppController {
                     iM460J = m308i();
                     break;
                 case 84:
-                    iM460J = ResourceManager.m960a(strM67c, iM68d);
+                    iM460J = ResourceManager.handleMessageInputAction(strM67c, iM68d);
                     break;
                 case 85:
                     iM460J = -1;
@@ -4192,7 +4192,7 @@ public final class AppController {
                     iM460J = m397h(obj);
                     break;
                 case 87:
-                    iM460J = ResourceManager.m938a(strM67c);
+                    iM460J = ResourceManager.handleChatInputAction(strM67c);
                     break;
                 case 88:
                     iM460J = m371s(iM68d);
@@ -4392,7 +4392,7 @@ public final class AppController {
                     iM460J = m325h(iM68d);
                     break;
                 case 153:
-                    iM460J = ResourceManager.m959d(obj);
+                    iM460J = ResourceManager.setSelectedObject(obj);
                     break;
                 case 154:
                     iM460J = 0;
@@ -4413,7 +4413,7 @@ public final class AppController {
                     iM460J = m296b(obj);
                     break;
                 case 160:
-                    iM460J = ResourceManager.m947h();
+                    iM460J = ResourceManager.syncAndReturn();
                     break;
                 case 161:
                     iM460J = -1;
@@ -4440,7 +4440,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 169:
-                    iM460J = ResourceManager.m952b(obj);
+                    iM460J = ResourceManager.applyLocationProfile(obj);
                     break;
                 case 170:
                     iM460J = m379f(obj);
@@ -4464,7 +4464,7 @@ public final class AppController {
                     iM460J = iM68d == 1 ? m311k() : iM68d == 2 ? m310j() : m309c(obj);
                     break;
                 case 177:
-                    iM460J = ResourceManager.m956d(iM68d);
+                    iM460J = ResourceManager.handleSearchResultAction(iM68d);
                     break;
                 case 178:
                     iM460J = m460J(iM68d);

@@ -95,7 +95,7 @@ public final class NetworkUtils {
                 c0024ax = c0024axM631b;
                 if (c0024axM631b.getResponseCode() == 200) {
                     Vector vector = new ByteBuffer(c0024ax).parseXmlStr().children;
-                    XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.m298f()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.m968a(false).toString()));
+                    XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.m298f()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
                     for (int i6 = 0; i6 < vector.size(); i6++) {
                         XmlElement c0022av = (XmlElement) vector.elementAt(i6);
                         String str2 = c0022av.tagName;
@@ -269,9 +269,9 @@ public final class NetworkUtils {
     private static final Boolean m1178c(String str) {
         try {
             Class.forName(str);
-            return ResourceManager.f292k;
+            return ResourceManager.boolTrue;
         } catch (Throwable unused) {
-            return ResourceManager.f293l;
+            return ResourceManager.boolFalse;
         }
     }
 
@@ -312,7 +312,7 @@ public final class NetworkUtils {
                 return 4;
             }
             if (Utils.parseInt((Object) str) == 4004) {
-                objArr[21] = ResourceManager.m967e(-1);
+                objArr[21] = ResourceManager.integerOf(-1);
             }
         }
         AppState.pool[1271] = objArr;
@@ -1137,20 +1137,20 @@ public final class NetworkUtils {
     public static final Object[] newRequest() {
         String strM584b = AppState.getString(2950249);
         String str = AppState.emptyStr;
-        Integer num = ResourceManager.f291j[0];
-        Integer numM967e = ResourceManager.m967e(-1);
+        Integer num = ResourceManager.integerCache[0];
+        Integer numM967e = ResourceManager.integerOf(-1);
         return m1224a(0, strM584b, new Object[]{null, null, null, null, null, null, null, str, num, str, str, num, str, str, str, str, num, num, numM967e, num, null, numM967e});
     }
 
     /* renamed from: a */
     public static final Object[] m1223a(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return m1224a(2, bufToStringCached(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.m967e(0), str2, str3, ResourceManager.f291j[0], str4, str5, str6, str7, ResourceManager.m967e(i2), ResourceManager.m967e(i3), ResourceManager.m967e(i4), ResourceManager.m967e(i5), null, ResourceManager.m967e(i6)});
+        return m1224a(2, bufToStringCached(Utils.m493a(Utils.m494a(Utils.m493a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m494a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(Utils.m493a(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.m5b(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
     }
 
     /* renamed from: a */
     private static final Object[] m1224a(int i, String str, Object[] objArr) {
         objArr[0] = null;
-        objArr[1] = ResourceManager.m967e(i);
+        objArr[1] = ResourceManager.integerOf(i);
         objArr[2] = str;
         new AsyncTask(24, objArr);
         return objArr;

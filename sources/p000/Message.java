@@ -68,7 +68,7 @@ public final class Message {
             this.body = c0043n.readUTF8Str((String) null);
         }
         if (c0043n.readInt() != 0) {
-            this.attachments = ResourceManager.m934a(c0043n);
+            this.attachments = ResourceManager.readAttachmentArray(c0043n);
         }
     }
 

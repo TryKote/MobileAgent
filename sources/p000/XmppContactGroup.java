@@ -102,7 +102,7 @@ public final class XmppContactGroup extends ContactGroup {
             length2++;
         }
         objArr[0] = AppController.m321a(c0028ba, 4104, c0043nM1308a.writeStringUTF16(NetworkUtils.bufToStringCached(stringBufferM1217h)).writeIntLE(0));
-        objArr[1] = ResourceManager.m967e(10);
+        objArr[1] = ResourceManager.integerOf(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
         return c0028ba.createAndQueueCommand(objArr);
@@ -550,11 +550,11 @@ public final class XmppContactGroup extends ContactGroup {
     public static final ByteBuffer createContactCommand(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
         objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
-        objArr[1] = ResourceManager.m967e(9);
+        objArr[1] = ResourceManager.integerOf(9);
         objArr[2] = str;
         objArr[3] = str2;
         objArr[4] = c0010aj;
-        objArr[5] = ResourceManager.m967e(i);
+        objArr[5] = ResourceManager.integerOf(i);
         return c0028ba.createAndQueueCommand(objArr);
     }
 
@@ -958,7 +958,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final Vector loadMapPoints(int i) {
         Vector vectorM1213g = NetworkUtils.newVector();
         try {
-            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(i));
+            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(i));
             if (c0043nM986d.length > 4) {
                 int iM1328e = c0043nM986d.readInt();
                 for (int i2 = 0; i2 < iM1328e; i2++) {

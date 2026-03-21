@@ -8,7 +8,7 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:m.class */
 public final class ContactInfo extends Hashtable {
     public ContactInfo(Contact abstractC0041l) {
-        put(ResourceManager.m967e(-2), abstractC0041l.account);
+        put(ResourceManager.integerOf(-2), abstractC0041l.account);
         setContactField(0, abstractC0041l.displayName);
         if (abstractC0041l instanceof MrimContact) {
             setContactField(3, ((MrimContact) abstractC0041l).simpleIdentifier);
@@ -23,7 +23,7 @@ public final class ContactInfo extends Hashtable {
     }
 
     private ContactInfo(Account abstractC0037h) {
-        put(ResourceManager.m967e(-2), abstractC0037h);
+        put(ResourceManager.integerOf(-2), abstractC0037h);
     }
 
     /* renamed from: a */
@@ -57,12 +57,12 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: c */
     public final Account getAccount() {
-        return (Account) get(ResourceManager.m967e(-2));
+        return (Account) get(ResourceManager.integerOf(-2));
     }
 
     /* renamed from: a */
     public final String getString(int i) {
-        return (String) get(ResourceManager.m967e(i));
+        return (String) get(ResourceManager.integerOf(i));
     }
 
     /* renamed from: a */
@@ -73,7 +73,7 @@ public final class ContactInfo extends Hashtable {
     /* renamed from: a */
     private final ContactInfo setContactField(int i, String str) {
         if (Utils.nonEmpty(str)) {
-            put(ResourceManager.m967e(i), str);
+            put(ResourceManager.integerOf(i), str);
         }
         return this;
     }
@@ -404,7 +404,7 @@ public final class ContactInfo extends Hashtable {
                 c0013amM75b.m248a(AppState.getString(316), strM1256a7);
             }
         } else if (abstractC0037hM1255c instanceof XmppProtocol) {
-            Image image = (Image) get(ResourceManager.m967e(25));
+            Image image = (Image) get(ResourceManager.integerOf(25));
             if (image != null) {
                 c0013amM75b.m225a(MenuItem.createGraphics(new GraphicsContext(image)));
             }

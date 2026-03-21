@@ -441,7 +441,7 @@ public final class Screen {
                 if (this.f124w != null) {
                     c0012al.drawString(this.f124w, iM586d4 - 1, iM605e2, 24);
                 }
-                if (ResourceManager.f287f + this.f126K < iM586d4 - 6) {
+                if (ResourceManager.clockWidth + this.f126K < iM586d4 - 6) {
                     c0012al.drawString(Utils.defaultStr(AppState.getString(1263)), iM586d4 >> 1, iM605e2, 17);
                 }
             }

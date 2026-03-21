@@ -223,7 +223,7 @@ public class XmppProtocol extends Account {
                             objArr = null;
                         } else {
                             String strM13b = StringUtils.prefix(Utils.m544b(), 16);
-                            Object[] objArr3 = {this, strM13b, new ByteBuffer().writeCompressed(5249005).writeRawString(strM13b).readAllByteStr(), ResourceManager.f291j[0], this.login, this.password};
+                            Object[] objArr3 = {this, strM13b, new ByteBuffer().writeCompressed(5249005).writeRawString(strM13b).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
                             new AsyncTask(34, objArr3);
                             objArr = objArr3;
                         }
@@ -260,7 +260,7 @@ public class XmppProtocol extends Account {
                 this.connection = new ConnectionThread(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
                 this.progress = 4;
                 if (isMailRuXmpp()) {
-                    new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.f291j[0]});
+                    new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
                 }
                 AppController.f153g = true;
                 break;
@@ -336,7 +336,7 @@ public class XmppProtocol extends Account {
                             }
                         } else if (StringUtils.m3a(595536, str)) {
                             XmlElement c0022avM569h2 = XmlElement.createFromState(529537).addIdAttr(2102710);
-                            String strM1317c = ResourceManager.m986d(StringUtils.fromBuffer(c0022av.textContent)).getStringAndClear();
+                            String strM1317c = ResourceManager.decodeBase64(StringUtils.fromBuffer(c0022av.textContent)).getStringAndClear();
                             int iIndexOf = strM1317c.indexOf(AppState.getString(398406));
                             if (iIndexOf >= 0) {
                                 int i = iIndexOf + 7;
@@ -366,7 +366,7 @@ public class XmppProtocol extends Account {
                                         abstractC0046q.addContact((Object) c0006af);
                                     }
                                     c0006afM111f.updateFromPresence(strM584b4, c0022av);
-                                    ResourceManager.m925a(3);
+                                    ResourceManager.playNotificationSound(3);
                                     onMessage(strM130h, 0L, AppState.getString(1031));
                                 } else if (c0006afM111f != null) {
                                     c0006afM111f.updateFromPresence(strM584b4, c0022av);
@@ -816,7 +816,7 @@ public class XmppProtocol extends Account {
                 ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).setDescriptionBis(NetworkUtils.bufToStringCached(buildContactDescription(NetworkUtils.newStringBuffer(), c0022av)));
                 Image imageM132e = extractImageFromElement(c0022av);
                 if (imageM132e != null) {
-                    c0042mM1297y.put(ResourceManager.m967e(25), imageM132e);
+                    c0042mM1297y.put(ResourceManager.integerOf(25), imageM132e);
                 }
                 AppState.pool[1315] = c0042mM1297y;
             }
@@ -920,7 +920,7 @@ public class XmppProtocol extends Account {
             String strM534k = Utils.m534k(strM11a);
             if (Utils.nonEmpty(strM534k)) {
                 try {
-                    return ResourceManager.m986d(strM534k).toImage();
+                    return ResourceManager.decodeBase64(strM534k).toImage();
                 } catch (Throwable unused) {
                 }
             }

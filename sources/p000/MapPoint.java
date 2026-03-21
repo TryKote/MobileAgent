@@ -131,7 +131,7 @@ public final class MapPoint implements ListItem {
 
     /* renamed from: d */
     public final String getResourceUrl() {
-        return ResourceManager.m975a(this.longitude, this.latitude, this.zoomLevel, this.name);
+        return ResourceManager.buildTileRequestUrl(this.longitude, this.latitude, this.zoomLevel, this.name);
     }
 
     @Override // p000.ListItem

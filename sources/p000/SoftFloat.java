@@ -1078,7 +1078,7 @@ public final class SoftFloat {
         long[] jArr3 = new long[20];
         int i14 = 0;
         while (i14 <= i13) {
-            jArr3[i14] = i12 < 0 ? 0L : longToFloat(ResourceManager.m944c(i12));
+            jArr3[i14] = i12 < 0 ? 0L : longToFloat(ResourceManager.getPiMultiple(i12));
             i14++;
             i12++;
         }
@@ -1161,7 +1161,7 @@ public final class SoftFloat {
                         i28++;
                     }
                     for (int i29 = i17 + 1; i29 <= i17 + i28; i29++) {
-                        jArr3[i8 + i29] = longToFloat(ResourceManager.m944c(i10 + i29));
+                        jArr3[i8 + i29] = longToFloat(ResourceManager.getPiMultiple(i10 + i29));
                         long jM690b4 = 0;
                         for (int i30 = 0; i30 <= i8; i30++) {
                             jM690b4 = add(jM690b4, multiply(jArr2[i30], jArr3[(i8 + i29) - i30]));
@@ -1232,7 +1232,7 @@ public final class SoftFloat {
                 return 9221120237041090560L;
             }
             if (i3 != 2146435072 || ((int) j) == 0) {
-                return i2 > 0 ? ResourceManager.m943b(3) : negate(ResourceManager.m943b(3));
+                return i2 > 0 ? ResourceManager.getTrigConstant(3) : negate(ResourceManager.getTrigConstant(3));
             }
             return 9221120237041090560L;
         }
@@ -1266,7 +1266,7 @@ public final class SoftFloat {
         if (i < 0) {
             return subtract(j, multiply(j, add(jM692d3, jM692d4)));
         }
-        long jM691c = subtract(ResourceManager.m943b(i), subtract(subtract(multiply(j, add(jM692d3, jM692d4)), ResourceManager.m943b(i + 4)), j));
+        long jM691c = subtract(ResourceManager.getTrigConstant(i), subtract(subtract(multiply(j, add(jM692d3, jM692d4)), ResourceManager.getTrigConstant(i + 4)), j));
         return i2 < 0 ? negate(jM691c) : jM691c;
     }
 

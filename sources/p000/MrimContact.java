@@ -220,7 +220,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         this.lastStatusCheckTime = jM598g;
         MrimAccount c0028ba = (MrimAccount) this.account;
-        int iM1052c = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(909)).writeStringLatin1(AppState.getString(33819707))), ResourceManager.m967e(14)}));
+        int iM1052c = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(909)).writeStringLatin1(AppState.getString(33819707))), ResourceManager.integerOf(14)}));
         if (0 != iM1052c) {
             return iM1052c;
         }

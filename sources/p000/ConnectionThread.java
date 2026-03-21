@@ -192,7 +192,7 @@ public final class ConnectionThread {
         XmppContactGroup.sharedContactList = NetworkUtils.newVector();
         f355f = Utils.split(AppState.getString(264), (char) 0);
         try {
-            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(265));
+            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(265));
             f352l = new Hashtable();
             try {
                 if (c0043nM986d.length > 0) {

@@ -562,7 +562,7 @@ public abstract class Account {
 
     /* renamed from: d */
     public final int getResourceId(Object obj) {
-        return ResourceManager.m969a((String) obj, this);
+        return ResourceManager.loadUserProfile((String) obj, this);
     }
 
     /* renamed from: c */

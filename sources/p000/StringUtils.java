@@ -212,7 +212,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final ByteBuffer m18a(MmpProtocol c0033d, int i) {
-        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(c0033d.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.m967e(7), ResourceManager.m967e(i)});
+        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(c0033d.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.integerOf(7), ResourceManager.integerOf(i)});
     }
 
     /* renamed from: b */
@@ -226,7 +226,7 @@ public final class StringUtils {
     public static final Image m20a(ResourceManager c0034e) {
         Image image = (Image) m25l().get(c0034e);
         if (image == null && !AppState.getVector(1396).contains(c0034e)) {
-            ResourceManager.m950b(c0034e);
+            ResourceManager.enqueueTileRequest(c0034e);
         }
         return image;
     }
@@ -267,12 +267,12 @@ public final class StringUtils {
                 } catch (Throwable unused) {
                 }
             }
-            ResourceManager c0034eM949i = ResourceManager.m949i();
-            int i2 = c0034eM949i.f281a;
+            ResourceManager c0034eM949i = ResourceManager.peekTileRequest();
+            int i2 = c0034eM949i.tileType;
             objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(1548))).toString();
             XmppContactGroup.addContactInfoToQueue(objArr);
             try {
-                Image imageM847a = (c0034eM949i.f281a == 1 && AppState.getBool(1551)) ? XmppMailRuProtocol.loadTileFromCache(c0034eM949i) : null;
+                Image imageM847a = (c0034eM949i.tileType == 1 && AppState.getBool(1551)) ? XmppMailRuProtocol.loadTileFromCache(c0034eM949i) : null;
                 imageM876b = imageM847a;
                 if (imageM847a == null) {
                     imageM876b = XmppMailRuProtocol.fetchTileImage(c0034eM949i);
@@ -285,14 +285,14 @@ public final class StringUtils {
                     Vector vectorM614m = AppState.getVector(1398);
                     synchronized (vectorM614m) {
                         if (vectorM614m.removeElement(c0034eM949i)) {
-                            ResourceManager.m950b(c0034eM949i);
+                            ResourceManager.enqueueTileRequest(c0034eM949i);
                         }
                     }
                 } else {
                     AppState.setInt(1549, 1);
                 }
             } catch (Throwable unused3) {
-                ResourceManager.m948a(c0034eM949i);
+                ResourceManager.removeTileRequest(c0034eM949i);
             }
             if (imageM876b == null) {
                 if (i2 == 3) {
@@ -309,7 +309,7 @@ public final class StringUtils {
             }
             i = 4;
             m23a(c0034eM949i, imageM876b);
-            ResourceManager.m948a(c0034eM949i);
+            ResourceManager.removeTileRequest(c0034eM949i);
             m21k();
         }
     }
@@ -328,7 +328,7 @@ public final class StringUtils {
         Enumeration enumerationM52a = m25l().keys();
         while (enumerationM52a.hasMoreElements()) {
             ResourceManager c0034e = (ResourceManager) enumerationM52a.nextElement();
-            if (c0034e.f281a == 3) {
+            if (c0034e.tileType == 3) {
                 m25l().remove(c0034e);
             }
         }
@@ -682,7 +682,7 @@ public final class StringUtils {
         AppState.pool[1389] = NetworkUtils.newVector();
         AppState.pool[1390] = new GeoRegion(AppState.getString(996), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
-            ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.getString(227));
+            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(227));
             AppState.getVector(1389).removeAllElements();
             if (c0043nM986d.length > 0) {
                 int iM1355w = c0043nM986d.readIntBE();

@@ -157,7 +157,7 @@ public abstract class JsonParser {
         }
         stringBuffer.append(cM472c);
         String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
-        return StringUtils.m3a(264068, strM1215a) ? ResourceManager.f292k : StringUtils.m3a(329608, strM1215a) ? ResourceManager.f293l : StringUtils.m3a(1369, strM1215a) ? ResourceManager.f290i : ResourceManager.m967e(Utils.parseInt((Object) strM1215a));
+        return StringUtils.m3a(264068, strM1215a) ? ResourceManager.boolTrue : StringUtils.m3a(329608, strM1215a) ? ResourceManager.boolFalse : StringUtils.m3a(1369, strM1215a) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) strM1215a));
     }
 
     /* renamed from: c */
@@ -178,7 +178,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final void putIntValue(Hashtable hashtable, String str, int i) {
-        hashtable.put(str, ResourceManager.m967e(i));
+        hashtable.put(str, ResourceManager.integerOf(i));
     }
 
     /* renamed from: a */
@@ -213,7 +213,7 @@ public abstract class JsonParser {
 
     /* renamed from: d */
     public static final void addIntToVector(Object obj, int i) {
-        ((Vector) obj).addElement(ResourceManager.m967e(i));
+        ((Vector) obj).addElement(ResourceManager.integerOf(i));
     }
 
     /* renamed from: e */
@@ -233,7 +233,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
-        if (obj == null || obj == ResourceManager.f290i) {
+        if (obj == null || obj == ResourceManager.syncObject) {
             stringBuffer.append(AppState.getString(1369));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);

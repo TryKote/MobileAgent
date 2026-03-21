@@ -131,7 +131,7 @@ public abstract class Contact implements Sortable {
     public final void receiveMessageFull(long j, String str, int i) {
         TabBar c0008ah;
         AppState.setObject(1237, (Object) this.identifier);
-        ResourceManager.m925a(2);
+        ResourceManager.playNotificationSound(2);
         addFlag(i);
         this.account.markRead(getIdentifier());
         clearStatus();
@@ -162,7 +162,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: b */
     public final int sendMessage(String str) {
-        ResourceManager.m925a(4);
+        ResourceManager.playNotificationSound(4);
         if (StringUtils.isEmpty(str)) {
             return 309;
         }
@@ -316,7 +316,7 @@ public abstract class Contact implements Sortable {
                 c0013amM75b.m251a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
                 c0013amM75b.m246a(2, strM539n, 0);
                 if (this.account.isConnected()) {
-                    c0013amM75b.m250b(-1, AppState.getString(839), i, new Object[]{ResourceManager.m967e(1), strM539n, str, new Long(jM1341m2)});
+                    c0013amM75b.m250b(-1, AppState.getString(839), i, new Object[]{ResourceManager.integerOf(1), strM539n, str, new Long(jM1341m2)});
                 }
             } else if (bM1344o == 8) {
                 int iIndexOf = strM539n.indexOf(10);
@@ -340,7 +340,7 @@ public abstract class Contact implements Sortable {
         for (int i2 = 0; i2 < size; i2++) {
             String str2 = (String) vectorM1098a.elementAt(i2);
             if (Conversation.isValidFormat(str2)) {
-                c0013am.m250b(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.m967e(0), str2});
+                c0013am.m250b(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.integerOf(0), str2});
             } else {
                 c0013am.m225a(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }
@@ -389,7 +389,7 @@ public abstract class Contact implements Sortable {
             return 40;
         }
         if (isOffline()) {
-            return ResourceManager.m946g();
+            return ResourceManager.clearSmsFields();
         }
         return 63;
     }

@@ -199,7 +199,7 @@ public final class MmpProtocol extends Account {
         }
         Object[] objArr = (Object[]) obj;
         ByteBuffer c0043n = (ByteBuffer) objArr[0];
-        objArr[0] = ResourceManager.m967e(c0043n.readIntBEAt());
+        objArr[0] = ResourceManager.integerOf(c0043n.readIntBEAt());
         this.extras.addElement(obj);
         return c0043n;
     }
@@ -224,7 +224,7 @@ public final class MmpProtocol extends Account {
             case 1:
                 AppController.f153g = true;
                 this.msgCount = 10;
-                this.networkResourceMode = ResourceManager.m972o();
+                this.networkResourceMode = ResourceManager.checkForUpdates();
                 if (this.networkResourceMode != -1 || this.networkResourceMode == 1) {
                     this.progress = 2;
                     break;
@@ -258,7 +258,7 @@ public final class MmpProtocol extends Account {
                     break;
                 }
             case 3:
-                new AsyncTask(31, new Object[]{this, ResourceManager.m967e(0), this.login, getFormattedName()});
+                new AsyncTask(31, new Object[]{this, ResourceManager.integerOf(0), this.login, getFormattedName()});
                 this.msgCount = 20;
                 this.progress = 5;
                 AppController.f153g = true;
@@ -268,7 +268,7 @@ public final class MmpProtocol extends Account {
                     this.msgCount = 70;
                     AppController.f153g = true;
                     this.state = 28179;
-                    this.encryptionKey = ResourceManager.m986d(this.connectionData[2]).toByteArray();
+                    this.encryptionKey = ResourceManager.decodeBase64(this.connectionData[2]).toByteArray();
                     this.serverId = Integer.parseInt(this.connectionData[0]);
                     this.connection = new ConnectionThread(this.connectionData[1]);
                     this.progress = 6;
@@ -305,9 +305,9 @@ public final class MmpProtocol extends Account {
                         this.encryptionKey = null;
                         sendData(AppController.m375a(this));
                         sendData(AppController.m464a(this, 1026, new ByteBuffer().writeCompressed(1051079)));
-                        sendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.m967e(17)}));
+                        sendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.integerOf(17)}));
                         this.contactListIndex = 0;
-                        sendData(queueCommand(new Object[]{AppController.m464a(this, 4868, (ByteBuffer) null), ResourceManager.m967e(6)}));
+                        sendData(queueCommand(new Object[]{AppController.m464a(this, 4868, (ByteBuffer) null), ResourceManager.integerOf(6)}));
                         sendData(StringUtils.m18a(this, this.serverId));
                         this.progress = 8;
                         break;
@@ -366,7 +366,7 @@ public final class MmpProtocol extends Account {
                             } else {
                                 Object[] objArr = (Object[]) vector.elementAt(size);
                                 if (((Integer) objArr[1]).intValue() == 17) {
-                                    objArr[0] = ResourceManager.m967e(iM1356x);
+                                    objArr[0] = ResourceManager.integerOf(iM1356x);
                                 }
                             }
                         }
@@ -397,7 +397,7 @@ public final class MmpProtocol extends Account {
                                 }
                             }
                             MrimAccount c0028ba = (MrimAccount) AppController.m440S().elementAt(0);
-                            c0028ba.trySendData(ResourceManager.m981a(c0028ba, this, iM1355w, iM1355w2, strM17c, z, bArr2));
+                            c0028ba.trySendData(ResourceManager.createAuthPacket(c0028ba, this, iM1355w, iM1355w2, strM17c, z, bArr2));
                             break;
                         } catch (Throwable unused) {
                             break;
@@ -451,7 +451,7 @@ public final class MmpProtocol extends Account {
                         }
                         break;
                     case 4889:
-                        ResourceManager.m925a(3);
+                        ResourceManager.playNotificationSound(3);
                         onMessage(c0043nM1299a.readLenPrefixStr(), 0L, c0043nM1299a.readVarLenStr());
                         break;
                     case 4891:
@@ -600,7 +600,7 @@ public final class MmpProtocol extends Account {
         if (z || !c0009ai.highlighted) {
             return;
         }
-        ResourceManager.m925a(1);
+        ResourceManager.playNotificationSound(1);
     }
 
     @Override // p000.Account
@@ -653,7 +653,7 @@ public final class MmpProtocol extends Account {
         }
         MmpContact c0009ai = (MmpContact) abstractC0041l;
         String str = (String) objArr[0];
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4873, c0009ai.encodeContactUpdate(3, str, c0009ai.onlineSemaphore)), ResourceManager.m967e(0), c0009ai, str}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4873, c0009ai.encodeContactUpdate(3, str, c0009ai.onlineSemaphore)), ResourceManager.integerOf(0), c0009ai, str}));
     }
 
     /* renamed from: b */
@@ -666,7 +666,7 @@ public final class MmpProtocol extends Account {
         this.configFlags = i;
         if (isConnected()) {
             trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
-            trySendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.m967e(17)}));
+            trySendData(queueCommand(new Object[]{AppController.m464a(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.integerOf(17)}));
             return trySendData(AppController.m375a(this));
         }
         if (isConnecting()) {
@@ -693,9 +693,9 @@ public final class MmpProtocol extends Account {
         if (0 != iMo113a) {
             return iMo113a;
         }
-        trySendData(ResourceManager.m961a(this));
+        trySendData(ResourceManager.createGetContactsCmd(this));
         MmpContact c0009ai = (MmpContact) abstractC0041l;
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.m967e(10), c0009ai, abstractC0046q, abstractC0046q2}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.integerOf(10), c0009ai, abstractC0046q, abstractC0046q2}));
     }
 
     @Override // p000.Account
@@ -706,7 +706,7 @@ public final class MmpProtocol extends Account {
             return iMo124a;
         }
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4873, c0016ap.createUpdatePacket(str, -1, -1)), ResourceManager.m967e(1), c0016ap, str}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4873, c0016ap.createUpdatePacket(str, -1, -1)), ResourceManager.integerOf(1), c0016ap, str}));
     }
 
     @Override // p000.Account
@@ -716,8 +716,8 @@ public final class MmpProtocol extends Account {
         if (iMo122a != 0) {
             return iMo122a;
         }
-        trySendData(ResourceManager.m961a(this));
-        return trySendData(ResourceManager.m937a(this, str));
+        trySendData(ResourceManager.createGetContactsCmd(this));
+        return trySendData(ResourceManager.sendAddGroupCommand(this, str));
     }
 
     @Override // p000.Account
@@ -727,9 +727,9 @@ public final class MmpProtocol extends Account {
         if (0 != iMo123a) {
             return iMo123a;
         }
-        trySendData(ResourceManager.m961a(this));
+        trySendData(ResourceManager.createGetContactsCmd(this));
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0016ap.createUpdatePacket(c0016ap.name, -1, -1)), ResourceManager.m967e(2), c0016ap}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0016ap.createUpdatePacket(c0016ap.name, -1, -1)), ResourceManager.integerOf(2), c0016ap}));
     }
 
     @Override // p000.Account
@@ -753,7 +753,7 @@ public final class MmpProtocol extends Account {
         if (c0009ai.canBlock()) {
             trySendData(IOUtils.blockContact(this, c0009ai));
         }
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.m967e(5), c0009ai}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4874, c0009ai.encodeContactUpdate(2, c0009ai.displayName, c0009ai.onlineSemaphore)), ResourceManager.integerOf(5), c0009ai}));
     }
 
     @Override // p000.Account
@@ -768,11 +768,11 @@ public final class MmpProtocol extends Account {
         if (null != c0009ai && !c0009ai.isOnline()) {
             return trySendData(IOUtils.createSendMessageCmd(this, c0009ai, str3));
         }
-        trySendData(ResourceManager.m961a(this));
+        trySendData(ResourceManager.createGetContactsCmd(this));
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(str).writeShortBE(c0016ap.groupId);
         int iM920k = generateUniqueGroupId();
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ResourceManager.m967e(14), str, str2, c0016ap, ResourceManager.m967e(iM920k), str3}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ResourceManager.integerOf(14), str, str2, c0016ap, ResourceManager.integerOf(iM920k), str3}));
     }
 
     /* renamed from: j */
@@ -887,7 +887,7 @@ public final class MmpProtocol extends Account {
         }
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(1);
         int i = c0043nM1358n.length;
-        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.writeShortBE(i + 2).writeShortLE(i).writeBuffer(c0043nM1358n)), ResourceManager.m967e(9)}));
+        return trySendData(queueCommand(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.writeShortBE(i + 2).writeShortLE(i).writeBuffer(c0043nM1358n)), ResourceManager.integerOf(9)}));
     }
 
     @Override // p000.Account
@@ -899,7 +899,7 @@ public final class MmpProtocol extends Account {
         ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(this.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1375).writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.parseInt((Object) str));
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(1);
         int i = c0043nM1360p.length;
-        trySendData(queueCommand(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.writeShortBE(i + 2).writeShortLE(i).writeBuffer(c0043nM1360p)), ResourceManager.m967e(21)}));
+        trySendData(queueCommand(new Object[]{AppController.m464a(this, 5378, c0043nM1357m.writeShortBE(i + 2).writeShortLE(i).writeBuffer(c0043nM1360p)), ResourceManager.integerOf(21)}));
         return c0009ai;
     }
 

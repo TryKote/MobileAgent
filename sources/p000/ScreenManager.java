@@ -363,7 +363,7 @@ public abstract class ScreenManager {
                 if (i2 == 49) {
                     i3 = i5 + 1;
                     int iM586d5 = AppState.getInt(i5);
-                    objM522f = (iM586d5 < 268 || iM586d5 > 304) ? (iM586d5 < 161 || iM586d5 > 210) ? AppState.getString(iM586d5) : ResourceManager.m967e(iM586d5) : ResourceManager.m967e(iM586d5);
+                    objM522f = (iM586d5 < 268 || iM586d5 > 304) ? (iM586d5 < 161 || iM586d5 > 210) ? AppState.getString(iM586d5) : ResourceManager.integerOf(iM586d5) : ResourceManager.integerOf(iM586d5);
                 } else {
                     i3 = i5 + 1;
                     objM522f = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
@@ -385,7 +385,7 @@ public abstract class ScreenManager {
                     i4 = i22 + 1;
                     strM522f = Utils.defaultStr(Utils.defaultStr(AppState.getString(AppState.getInt(i22))));
                 }
-                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, strM522f, ResourceManager.m967e(iM586d6), ResourceManager.m967e(iM586d7), strM522f5));
+                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, strM522f, ResourceManager.integerOf(iM586d6), ResourceManager.integerOf(iM586d7), strM522f5));
                 return i4;
             case 6:
                 int i24 = i5 + 1;

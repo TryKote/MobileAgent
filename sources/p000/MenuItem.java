@@ -89,7 +89,7 @@ public final class MenuItem {
     /* renamed from: a */
     public static final MenuItem createCheckbox(String str, boolean z) {
         MenuItem c0032cM899a = new MenuItem(2, str).setIconAndLabel(z ? 25 : 24, str);
-        c0032cM899a.data = ResourceManager.m968a(z);
+        c0032cM899a.data = ResourceManager.booleanOf(z);
         return c0032cM899a;
     }
 
@@ -120,7 +120,7 @@ public final class MenuItem {
             if (i2 < 0) {
                 NetworkUtils.releaseVector(vector);
                 MenuItem c0032cM896a = clear().setLabel(Utils.m527g(str)).addText(strArr[i], 1, 7).setIcon(247);
-                c0032cM896a.data = new Object[]{ResourceManager.m967e(i), strArr};
+                c0032cM896a.data = new Object[]{ResourceManager.integerOf(i), strArr};
                 return c0032cM896a;
             }
             strArr[i2] = (String) vector.elementAt(i2);
@@ -140,7 +140,7 @@ public final class MenuItem {
     public final int execute(Screen c0013am) {
         if (this.id == 2) {
             if (this.data != null) {
-                Boolean boolM968a = ResourceManager.m968a(!((Boolean) this.data).booleanValue());
+                Boolean boolM968a = ResourceManager.booleanOf(!((Boolean) this.data).booleanValue());
                 this.data = boolM968a;
                 this.elements.setElementAt(createIconData(boolM968a.booleanValue() ? 25 : 24), 0);
             }

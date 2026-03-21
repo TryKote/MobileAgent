@@ -152,7 +152,7 @@ public final class Conversation implements ListItem {
                             throw new RuntimeException(StringUtils.intern(Integer.toString(i2)));
                         }
                         XmlElement c0022avM562f = c0022avM1389J.findChildByKey(262156);
-                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.m967e(1), StringUtils.fromBuffer(c0022avM562f.findChildByKey(461648).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(527196).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(854884).textContent), objArr[3]});
+                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(c0022avM562f.findChildByKey(461648).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(527196).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(854884).textContent), objArr[3]});
                         HttpClient.closeAndUpdateStats(c0024axM629a);
                         AppController.m344t();
                         return;
@@ -427,7 +427,7 @@ public final class Conversation implements ListItem {
             if (StringUtils.m2a(strM15c, 1094795585)) {
                 return AppState.emptyStr;
             }
-            ByteBuffer c0043nM986d = ResourceManager.m986d(replaceText(replaceText(replaceText(str2, 200762, 65752), 200765, 65547), 200768, 65552));
+            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(replaceText(replaceText(replaceText(str2, 200762, 65752), 200765, 65547), 200768, 65552));
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             while (c0043nM986d.length > 0) {
                 int iM1346q = c0043nM986d.readUByte();
@@ -576,7 +576,7 @@ public final class Conversation implements ListItem {
             }
             strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
         } else {
-            ByteBuffer c0043nM986d = ResourceManager.m986d(strM1332j);
+            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(strM1332j);
             int i4 = iM1328e2 & 2097152;
             int iM1328e3 = c0043nM986d.readInt();
             String[] strArr = new String[iM1328e3];
@@ -649,7 +649,7 @@ public final class Conversation implements ListItem {
         MrimContact c0035fM717f = c0028ba.findContactByIdentifier(strM1338j);
         if ((iM1328e2 & 8) != 0) {
             if (c0035fM717f == null) {
-                ResourceManager.m925a(3);
+                ResourceManager.playNotificationSound(3);
                 c0028ba.onMessage(strM1338j, 0L, str);
                 return;
             } else if ((c0035fM717f.statusFlags & 65536) == 0) {
@@ -657,7 +657,7 @@ public final class Conversation implements ListItem {
                 c0028ba.trySendData(AppController.m395b(c0028ba, strM1338j));
                 return;
             } else {
-                ResourceManager.m925a(3);
+                ResourceManager.playNotificationSound(3);
                 c0028ba.onMessage(strM1338j, 0L, str);
                 return;
             }

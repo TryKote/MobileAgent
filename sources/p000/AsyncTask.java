@@ -27,8 +27,8 @@ public final class AsyncTask implements Runnable, CommandListener {
         if (AppController.f150d != null) {
             synchronized (AppController.f150d) {
                 AppController.f151e = true;
-                ResourceManager.m941e();
-                ResourceManager.m957l();
+                ResourceManager.clearMathTables();
+                ResourceManager.clearImageCache();
                 Vector vectorM614m = AppState.getVector(1358);
                 if (vectorM614m != null) {
                     synchronized (vectorM614m) {
@@ -246,7 +246,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             goto Lda
         Ld3:
             r0 = 465(0x1d1, float:6.52E-43)
-            java.lang.Integer r0 = p000.ResourceManager.m967e(r0)     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
+            java.lang.Integer r0 = p000.ResourceManager.integerOf(r0)     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r10 = r0
         Lda:
             r0 = r9
@@ -259,7 +259,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             return
         Le6:
             r0 = 466(0x1d2, float:6.53E-43)
-            java.lang.Integer r0 = p000.ResourceManager.m967e(r0)     // Catch: java.lang.Throwable -> Lfa java.lang.Throwable -> La84
+            java.lang.Integer r0 = p000.ResourceManager.integerOf(r0)     // Catch: java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r10 = r0
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
@@ -314,7 +314,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             r1 = 0
             r2 = 731(0x2db, float:1.024E-42)
-            java.lang.Integer r2 = p000.ResourceManager.m967e(r2)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
+            java.lang.Integer r2 = p000.ResourceManager.integerOf(r2)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0[r1] = r2     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
         L148:
             r0 = r9
@@ -325,7 +325,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             r1 = 0
             r2 = 731(0x2db, float:1.024E-42)
-            java.lang.Integer r2 = p000.ResourceManager.m967e(r2)     // Catch: java.lang.Throwable -> L162 java.lang.Throwable -> La84
+            java.lang.Integer r2 = p000.ResourceManager.integerOf(r2)     // Catch: java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0[r1] = r2     // Catch: java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
@@ -922,7 +922,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 0
             r13 = r1
             java.lang.String r0 = (java.lang.String) r0     // Catch: java.lang.Throwable -> La84
-            p000.ResourceManager.m965b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.ResourceManager.fetchSharedContacts(r0)     // Catch: java.lang.Throwable -> La84
             return
         L599:
             r0 = r8
@@ -968,7 +968,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L5e2:
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
-            p000.ResourceManager.m939a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.ResourceManager.sendSmsRequest(r0)     // Catch: java.lang.Throwable -> La84
             return
         L5ea:
             r0 = r8
@@ -1020,7 +1020,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r17
             r2 = r19
             java.util.Vector r0 = p000.VCard.parseMapPointsFromJson(r0, r1, r2)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
-            p000.ResourceManager.f289h = r0     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            p000.ResourceManager.savedLocations = r0     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             bb r0 = new bb     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r1 = r0
             r2 = 3
@@ -1400,7 +1400,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.ResourceManager.m929a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.ResourceManager.processXmppStream(r0)     // Catch: java.lang.Throwable -> La84
             return
         L8f9:
             r0 = r8
@@ -1415,7 +1415,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.Conversation.fetchHistory(r0)     // Catch: java.lang.Throwable -> La84
             return
         L90f:
-            p000.ResourceManager.m973p()     // Catch: java.lang.Throwable -> La84
+            p000.ResourceManager.fetchUpdateStatus()     // Catch: java.lang.Throwable -> La84
             return
         L913:
             r0 = r8
@@ -1540,7 +1540,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r15
             r1 = 3
             r2 = 1
-            java.lang.Integer r2 = p000.ResourceManager.m967e(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.Integer r2 = p000.ResourceManager.integerOf(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0[r1] = r2     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             z r0 = new z     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r1 = 34

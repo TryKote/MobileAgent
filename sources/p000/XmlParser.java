@@ -26,7 +26,7 @@ public final class XmlParser {
     private final int nextChar() {
         if (!(this.source instanceof String)) {
             if (!(this.source instanceof ByteBuffer)) {
-                return ResourceManager.m930b((Object[]) this.source);
+                return ResourceManager.readUtf8Char((Object[]) this.source);
             }
             ByteBuffer c0043n = (ByteBuffer) this.source;
             if (c0043n.length == 0) {

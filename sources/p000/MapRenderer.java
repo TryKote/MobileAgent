@@ -217,7 +217,7 @@ public abstract class MapRenderer {
             for (int i21 = 0; i21 < size3; i21++) {
                 ResourceManager c0034e4 = (ResourceManager) vectorM1213g.elementAt(i21);
                 if (!vectorM614m2.contains(c0034e4)) {
-                    int i22 = c0034e4.f281a;
+                    int i22 = c0034e4.tileType;
                     if (i22 == 1) {
                         AppState.addInt(250, 1);
                     } else if (i22 == 3) {
