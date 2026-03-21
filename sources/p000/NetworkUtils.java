@@ -45,13 +45,13 @@ public final class NetworkUtils {
     /* renamed from: j */
     public static Hashtable stringCache;
 
-    public NetworkUtils(ByteBuffer c0043n) {
-        this.type = c0043n.readIntBE();
-        this.port = c0043n.readIntBE();
-        this.host = c0043n.readUTF8Str((String) null);
-        this.url = c0043n.readWideStr();
-        this.status = c0043n.readIntBE();
-        this.protocol = c0043n.readWideStr();
+    public NetworkUtils(ByteBuffer buffer) {
+        this.type = buffer.readIntBE();
+        this.port = buffer.readIntBE();
+        this.host = buffer.readUTF8Str((String) null);
+        this.url = buffer.readWideStr();
+        this.status = buffer.readIntBE();
+        this.protocol = buffer.readWideStr();
     }
 
     public NetworkUtils(int i, String str, int i2, String str2) {
@@ -74,183 +74,183 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final void sendDiagnosticReport(String str) {
-        HttpClient c0024ax;
-        byte[] bArr;
-        int i;
-        int i2;
-        byte b;
-        byte[] bArr2;
-        int i3;
-        int i4;
-        byte b2;
-        int i5;
-        byte[] bArrM1211a = newBytes(3000);
+        HttpClient httpClient;
+        byte[] outArr;
+        int outIdx;
+        int nextIdx;
+        byte encodedByte;
+        byte[] outArr2;
+        int outIdx2;
+        int nextIdx2;
+        byte encodedByte2;
+        int writePos;
+        byte[] outputBuffer = newBytes(3000);
         try {
             Thread.sleep(1000L);
             System.gc();
             Thread.sleep(1000L);
             AppController.acquireNetworkLock();
             if (str == null) {
-                HttpClient c0024axM631b = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
-                c0024ax = c0024axM631b;
-                if (c0024axM631b.getResponseCode() == 200) {
-                    Vector vector = new ByteBuffer(c0024ax).parseXmlStr().children;
-                    XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.getAppVersion()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
-                    for (int i6 = 0; i6 < vector.size(); i6++) {
-                        XmlElement c0022av = (XmlElement) vector.elementAt(i6);
-                        String str2 = c0022av.tagName;
-                        String strM11a = StringUtils.fromBuffer(c0022av.textContent);
-                        if (startsWithChar(str2, 'p')) {
-                            c0022avM560b.addChild(createDiagElement('p', strM11a, getSystemPropertySafe(strM11a)));
-                        } else if (startsWithChar(str2, 'j')) {
-                            c0022avM560b.addChild(createDiagElement('j', strM11a, getAppPropertySafe(strM11a)));
-                        } else if (startsWithChar(str2, 'e')) {
-                            c0022avM560b.addChild(createDiagElement('e', strM11a, (Object) classExists(strM11a)));
+                HttpClient diagClient = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
+                httpClient = diagClient;
+                if (diagClient.getResponseCode() == 200) {
+                    Vector children = new ByteBuffer(httpClient).parseXmlStr().children;
+                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.getAppVersion()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
+                    for (int i6 = 0; i6 < children.size(); i6++) {
+                        XmlElement element = (XmlElement) children.elementAt(i6);
+                        String tag = element.tagName;
+                        String propName = StringUtils.fromBuffer(element.textContent);
+                        if (startsWithChar(tag, 'p')) {
+                            report.addChild(createDiagElement('p', propName, getSystemPropertySafe(propName)));
+                        } else if (startsWithChar(tag, 'j')) {
+                            report.addChild(createDiagElement('j', propName, getAppPropertySafe(propName)));
+                        } else if (startsWithChar(tag, 'e')) {
+                            report.addChild(createDiagElement('e', propName, (Object) classExists(propName)));
                         }
                     }
-                    new AsyncTask(18, c0022avM560b.toString());
+                    new AsyncTask(18, report.toString());
                 }
             } else {
-                ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(131082);
-                ByteBuffer c0043nM1377k = new ByteBuffer().writeUTFNoLen(str);
-                for (int i7 = 0; i7 < c0043nM1377k.length; i7 += 600) {
-                    int i8 = i7;
-                    int iM503b = Utils.min(i8 + 600, c0043nM1377k.length);
-                    byte[] bArrM581a = AppState.getBytes(961);
-                    int i9 = 0;
+                ByteBuffer urlBuffer = new ByteBuffer().writeCompressed(131082);
+                ByteBuffer dataBuffer = new ByteBuffer().writeUTFNoLen(str);
+                for (int i7 = 0; i7 < dataBuffer.length; i7 += 600) {
+                    int pos = i7;
+                    int limit = Utils.min(pos + 600, dataBuffer.length);
+                    byte[] base64Table = AppState.getBytes(961);
+                    int outPos = 0;
                     boolean z = true;
                     while (z) {
-                        int i10 = 0;
-                        int i11 = 0;
-                        int i12 = 0;
-                        int i13 = 0;
-                        if (i8 < iM503b) {
-                            int i14 = i8;
-                            i8++;
-                            i10 = c0043nM1377k.data[i14] & 255;
-                            i13 = 0 + 1;
+                        int byte1 = 0;
+                        int byte2 = 0;
+                        int byte3 = 0;
+                        int byteCount = 0;
+                        if (pos < limit) {
+                            int idx = pos;
+                            pos++;
+                            byte1 = dataBuffer.data[idx] & 255;
+                            byteCount = 0 + 1;
                         }
-                        if (i8 < iM503b) {
-                            int i15 = i8;
-                            i8++;
-                            i11 = c0043nM1377k.data[i15] & 255;
-                            i13++;
+                        if (pos < limit) {
+                            int idx = pos;
+                            pos++;
+                            byte2 = dataBuffer.data[idx] & 255;
+                            byteCount++;
                         }
-                        if (i8 < iM503b) {
-                            int i16 = i8;
-                            i8++;
-                            i12 = c0043nM1377k.data[i16] & 255;
-                            i13++;
+                        if (pos < limit) {
+                            int idx = pos;
+                            pos++;
+                            byte3 = dataBuffer.data[idx] & 255;
+                            byteCount++;
                         } else {
                             z = false;
                         }
-                        if (i13 > 0) {
-                            int i17 = (i10 << 16) | (i11 << 8) | i12;
-                            int i18 = (i17 >> 18) & 63;
-                            if (i18 < 62) {
-                                bArr = bArrM1211a;
-                                i = i9;
-                                i2 = i9 + 1;
-                                b = bArrM581a[i18];
+                        if (byteCount > 0) {
+                            int triplet = (byte1 << 16) | (byte2 << 8) | byte3;
+                            int sextet0 = (triplet >> 18) & 63;
+                            if (sextet0 < 62) {
+                                outArr = outputBuffer;
+                                outIdx = outPos;
+                                nextIdx = outPos + 1;
+                                encodedByte = base64Table[sextet0];
                             } else {
-                                int i19 = i9;
-                                int i20 = i9 + 1;
-                                bArrM1211a[i19] = 37;
-                                int i21 = i20 + 1;
-                                bArrM1211a[i20] = 50;
-                                bArr = bArrM1211a;
-                                i = i21;
-                                i2 = i21 + 1;
-                                b = i18 == 62 ? (byte) 66 : (byte) 70;
+                                int curIdx = outPos;
+                                int nextPos = outPos + 1;
+                                outputBuffer[curIdx] = 37;
+                                int nextPos2 = nextPos + 1;
+                                outputBuffer[nextPos] = 50;
+                                outArr = outputBuffer;
+                                outIdx = nextPos2;
+                                nextIdx = nextPos2 + 1;
+                                encodedByte = sextet0 == 62 ? (byte) 66 : (byte) 70;
                             }
-                            bArr[i] = b;
-                            int i22 = (i17 >> 12) & 63;
-                            if (i22 < 62) {
-                                bArr2 = bArrM1211a;
-                                i3 = i2;
-                                i4 = i2 + 1;
-                                b2 = bArrM581a[i22];
+                            outArr[outIdx] = encodedByte;
+                            int sextet1 = (triplet >> 12) & 63;
+                            if (sextet1 < 62) {
+                                outArr2 = outputBuffer;
+                                outIdx2 = nextIdx;
+                                nextIdx2 = nextIdx + 1;
+                                encodedByte2 = base64Table[sextet1];
                             } else {
-                                int i23 = i2;
-                                int i24 = i2 + 1;
-                                bArrM1211a[i23] = 37;
-                                int i25 = i24 + 1;
-                                bArrM1211a[i24] = 50;
-                                bArr2 = bArrM1211a;
-                                i3 = i25;
-                                i4 = i25 + 1;
-                                b2 = i22 == 62 ? (byte) 66 : (byte) 70;
+                                int curIdx = nextIdx;
+                                int nextPos = nextIdx + 1;
+                                outputBuffer[curIdx] = 37;
+                                int nextPos2 = nextPos + 1;
+                                outputBuffer[nextPos] = 50;
+                                outArr2 = outputBuffer;
+                                outIdx2 = nextPos2;
+                                nextIdx2 = nextPos2 + 1;
+                                encodedByte2 = sextet1 == 62 ? (byte) 66 : (byte) 70;
                             }
-                            bArr2[i3] = b2;
-                            if (i13 > 1) {
-                                int i26 = (i17 >> 6) & 63;
-                                if (i26 < 62) {
-                                    int i27 = i4;
-                                    i5 = i4 + 1;
-                                    bArrM1211a[i27] = bArrM581a[i26];
+                            outArr2[outIdx2] = encodedByte2;
+                            if (byteCount > 1) {
+                                int sextet2 = (triplet >> 6) & 63;
+                                if (sextet2 < 62) {
+                                    int curIdx = nextIdx2;
+                                    writePos = nextIdx2 + 1;
+                                    outputBuffer[curIdx] = base64Table[sextet2];
                                 } else {
-                                    int i28 = i4;
-                                    int i29 = i4 + 1;
-                                    bArrM1211a[i28] = 37;
-                                    int i30 = i29 + 1;
-                                    bArrM1211a[i29] = 50;
-                                    i5 = i30 + 1;
-                                    bArrM1211a[i30] = i26 == 62 ? (byte) 66 : (byte) 70;
+                                    int curIdx = nextIdx2;
+                                    int nextPos = nextIdx2 + 1;
+                                    outputBuffer[curIdx] = 37;
+                                    int nextPos2 = nextPos + 1;
+                                    outputBuffer[nextPos] = 50;
+                                    writePos = nextPos2 + 1;
+                                    outputBuffer[nextPos2] = sextet2 == 62 ? (byte) 66 : (byte) 70;
                                 }
                             } else {
-                                int i31 = i4;
-                                int i32 = i4 + 1;
-                                bArrM1211a[i31] = 37;
-                                int i33 = i32 + 1;
-                                bArrM1211a[i32] = 51;
-                                i5 = i33 + 1;
-                                bArrM1211a[i33] = 68;
+                                int curIdx = nextIdx2;
+                                int nextPos = nextIdx2 + 1;
+                                outputBuffer[curIdx] = 37;
+                                int nextPos2 = nextPos + 1;
+                                outputBuffer[nextPos] = 51;
+                                writePos = nextPos2 + 1;
+                                outputBuffer[nextPos2] = 68;
                             }
-                            if (i13 > 2) {
-                                int i34 = i17 & 63;
-                                if (i34 < 62) {
-                                    int i35 = i5;
-                                    i9 = i5 + 1;
-                                    bArrM1211a[i35] = bArrM581a[i34];
+                            if (byteCount > 2) {
+                                int sextet3 = triplet & 63;
+                                if (sextet3 < 62) {
+                                    int curIdx = writePos;
+                                    outPos = writePos + 1;
+                                    outputBuffer[curIdx] = base64Table[sextet3];
                                 } else {
-                                    int i36 = i5;
-                                    int i37 = i5 + 1;
-                                    bArrM1211a[i36] = 37;
-                                    int i38 = i37 + 1;
-                                    bArrM1211a[i37] = 50;
-                                    i9 = i38 + 1;
-                                    bArrM1211a[i38] = i34 == 62 ? (byte) 66 : (byte) 70;
+                                    int curIdx = writePos;
+                                    int nextPos = writePos + 1;
+                                    outputBuffer[curIdx] = 37;
+                                    int nextPos2 = nextPos + 1;
+                                    outputBuffer[nextPos] = 50;
+                                    outPos = nextPos2 + 1;
+                                    outputBuffer[nextPos2] = sextet3 == 62 ? (byte) 66 : (byte) 70;
                                 }
                             } else {
-                                int i39 = i5;
-                                int i40 = i5 + 1;
-                                bArrM1211a[i39] = 37;
-                                int i41 = i40 + 1;
-                                bArrM1211a[i40] = 51;
-                                i9 = i41 + 1;
-                                bArrM1211a[i41] = 68;
+                                int curIdx = writePos;
+                                int nextPos = writePos + 1;
+                                outputBuffer[curIdx] = 37;
+                                int nextPos2 = nextPos + 1;
+                                outputBuffer[nextPos] = 51;
+                                outPos = nextPos2 + 1;
+                                outputBuffer[nextPos2] = 68;
                             }
                         }
                     }
-                    c0043nM1310c.writeBytesAt(bArrM1211a, 0, i9);
+                    urlBuffer.writeBytesAt(outputBuffer, 0, outPos);
                 }
-                c0043nM1377k.clear();
-                HttpClient c0024axM632a = HttpClient.createMockClient(new ByteBuffer().writeCompressed(1311655).writeCompressed(524300).writeCompressed(720924).getStringAndClear());
-                c0024ax = c0024axM632a;
-                c0024axM632a.sendHttpRequest(c0043nM1310c.length, 1414745936, 1038).writeBuffer(c0043nM1310c).getResponseCode();
+                dataBuffer.clear();
+                HttpClient uploadClient = HttpClient.createMockClient(new ByteBuffer().writeCompressed(1311655).writeCompressed(524300).writeCompressed(720924).getStringAndClear());
+                httpClient = uploadClient;
+                uploadClient.sendHttpRequest(urlBuffer.length, 1414745936, 1038).writeBuffer(urlBuffer).getResponseCode();
             }
-            HttpClient.closeAndUpdateStats(c0024ax);
+            HttpClient.closeAndUpdateStats(httpClient);
             AppController.releaseNetworkLock();
-            releaseBytes(bArrM1211a);
+            releaseBytes(outputBuffer);
         } catch (RuntimeException th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.releaseNetworkLock();
-            releaseBytes(bArrM1211a);
+            releaseBytes(outputBuffer);
             throw th;
         } catch (Throwable th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             AppController.releaseNetworkLock();
-            releaseBytes(bArrM1211a);
+            releaseBytes(outputBuffer);
             throw new RuntimeException(th);
         }
     }
@@ -277,41 +277,41 @@ public final class NetworkUtils {
 
     /* renamed from: d */
     private static final Object getSystemPropertySafe(String str) {
-        String strM17c = null;
+        String result = null;
         try {
-            strM17c = StringUtils.intern(System.getProperty(str));
-            return strM17c;
+            result = StringUtils.intern(System.getProperty(str));
+            return result;
         } catch (Throwable th) {
-            return strM17c;
+            return result;
         }
     }
 
     /* renamed from: e */
     private static final Object getAppPropertySafe(String str) {
-        String strM17c = null;
+        String result = null;
         try {
-            strM17c = StringUtils.intern(AppState.getMidlet().getAppProperty(str));
-            return strM17c;
+            result = StringUtils.intern(AppState.getMidlet().getAppProperty(str));
+            return result;
         } catch (Throwable th) {
-            return strM17c;
+            return result;
         }
     }
 
     /* renamed from: a */
     public static final int handleRegSubmit(Object[] objArr) {
         AppState.clearIndex(1271);
-        String str = (String) objArr[20];
-        if (str != null) {
-            if (Utils.parseInt((Object) str) == 0) {
-                String str2 = (String) objArr[7];
-                int iM437a = AppController.validateCredentials(0, (Account) null, str2, (String) objArr[9]);
-                if (0 != iM437a) {
-                    return AppController.showError(iM437a);
+        String statusCode = (String) objArr[20];
+        if (statusCode != null) {
+            if (Utils.parseInt((Object) statusCode) == 0) {
+                String email = (String) objArr[7];
+                int errorCode = AppController.validateCredentials(0, (Account) null, email, (String) objArr[9]);
+                if (0 != errorCode) {
+                    return AppController.showError(errorCode);
                 }
-                AppController.setCurrentAccount(AppController.createAccount(0, str2));
+                AppController.setCurrentAccount(AppController.createAccount(0, email));
                 return 4;
             }
-            if (Utils.parseInt((Object) str) == 4004) {
+            if (Utils.parseInt((Object) statusCode) == 4004) {
                 objArr[21] = ResourceManager.integerOf(-1);
             }
         }
@@ -321,34 +321,34 @@ public final class NetworkUtils {
 
     /* renamed from: b */
     public static final void processRegForm() {
-        String strM15c;
+        String domain;
         Object[] objArr = (Object[]) AppState.pool[1271];
         AppState.clearIndex(1271);
-        String str = (String) objArr[7];
-        String strM13b = str;
-        int iIndexOf = str.indexOf(64);
-        if (iIndexOf >= 0) {
-            strM15c = StringUtils.suffix(strM13b, iIndexOf);
-            strM13b = StringUtils.prefix(strM13b, iIndexOf);
+        String email = (String) objArr[7];
+        String login = email;
+        int atIndex = email.indexOf(64);
+        if (atIndex >= 0) {
+            domain = StringUtils.suffix(login, atIndex);
+            login = StringUtils.prefix(login, atIndex);
         } else {
-            strM15c = AppState.emptyStr;
+            domain = AppState.emptyStr;
         }
         int i = 0;
-        Vector vectorM516c = Utils.splitNonEmpty(AppState.getString(694), (char) 0);
-        int size = vectorM516c.size();
+        Vector domains = Utils.splitNonEmpty(AppState.getString(694), (char) 0);
+        int size = domains.size();
         while (true) {
             size--;
             if (size < 0) {
                 break;
-            } else if (StringUtils.equalsObj(strM15c, vectorM516c.elementAt(size))) {
+            } else if (StringUtils.equalsObj(domain, domains.elementAt(size))) {
                 i = size;
             }
         }
-        releaseVector(vectorM516c);
+        releaseVector(domains);
         AppState.pool[1341] = objArr[3];
         AppState.pool[1342] = objArr[4];
         AppState.pool[1343] = objArr[5];
-        AppState.pool[1292] = strM13b;
+        AppState.pool[1292] = login;
         AppState.setInt(1474, i);
         AppState.pool[1293] = objArr[9];
         AppState.pool[1284] = objArr[10];
@@ -364,28 +364,28 @@ public final class NetworkUtils {
         AppState.pool[1297] = objArr[20];
         AppState.setInt(1480, ((Integer) objArr[21]).intValue());
         ScreenManager.showScreen(ScreenManager.createScreen(4399));
-        String strM584b = AppState.getString(1297);
-        if (strM584b == null) {
+        String statusStr = AppState.getString(1297);
+        if (statusStr == null) {
             AppController.refreshContactList();
             return;
         }
-        int iM510a = Utils.parseInt((Object) strM584b);
-        int i2 = iM510a == 78 ? 818 : iM510a == 101 ? 819 : iM510a == 114 ? 820 : iM510a == 150 ? 821 : iM510a == 152 ? 822 : iM510a == 154 ? 823 : iM510a == 155 ? 824 : iM510a == 175 ? 825 : iM510a == 555 ? 826 : iM510a == 573 ? 827 : iM510a == 4003 ? 828 : iM510a == 4004 ? 829 : iM510a == 5005 ? 830 : 831;
-        int i3 = i2;
-        String strM584b2 = AppState.getString(i2);
-        AppController.showNotification(i3 != 831 ? strM584b2 : new StringBuffer().append(strM584b2).append(iM510a).toString());
+        int statusCode = Utils.parseInt((Object) statusStr);
+        int messageId = statusCode == 78 ? 818 : statusCode == 101 ? 819 : statusCode == 114 ? 820 : statusCode == 150 ? 821 : statusCode == 152 ? 822 : statusCode == 154 ? 823 : statusCode == 155 ? 824 : statusCode == 175 ? 825 : statusCode == 555 ? 826 : statusCode == 573 ? 827 : statusCode == 4003 ? 828 : statusCode == 4004 ? 829 : statusCode == 5005 ? 830 : 831;
+        int msgIdx = messageId;
+        String message = AppState.getString(messageId);
+        AppController.showNotification(msgIdx != 831 ? message : new StringBuffer().append(message).append(statusCode).toString());
     }
 
     /* renamed from: c */
     public static final void closeAllConnections() {
-        Vector vectorM614m = AppState.getVector(1373);
-        int size = vectorM614m.size();
+        Vector connections = AppState.getVector(1373);
+        int size = connections.size();
         while (true) {
             size--;
             if (size < 0) {
                 return;
             } else {
-                closeConnectionImpl((Object[]) vectorM614m.elementAt(size), true);
+                closeConnectionImpl((Object[]) connections.elementAt(size), true);
             }
         }
     }
@@ -430,9 +430,9 @@ public final class NetworkUtils {
                         }
                         SocketConnection socketConnection2 = socketConnection;
                         try {
-                            int iM586d = AppState.getInt(b + 107);
-                            if (iM586d >= 0) {
-                                socketConnection2.setSocketOption(b, iM586d);
+                            int optionValue = AppState.getInt(b + 107);
+                            if (optionValue >= 0) {
+                                socketConnection2.setSocketOption(b, optionValue);
                             }
                         } catch (Throwable unused) {
                         }
@@ -525,17 +525,17 @@ public final class NetworkUtils {
 
     /* renamed from: d */
     public static final void asyncReaderLoop(Object[] objArr) {
-        int iM1191a;
+        int bytesRead;
         byte[] bArr = new byte[1024];
         do {
             try {
-                iM1191a = readWithTimeout(objArr, bArr);
-                if (iM1191a > 0) {
+                bytesRead = readWithTimeout(objArr, bArr);
+                if (bytesRead > 0) {
                     synchronized (objArr) {
-                        ((ByteBuffer) objArr[4]).writeBytesAt(bArr, 0, iM1191a);
+                        ((ByteBuffer) objArr[4]).writeBytesAt(bArr, 0, bytesRead);
                     }
                 }
-                if (iM1191a < 1024) {
+                if (bytesRead < 1024) {
                     Thread.sleep(100L);
                 }
             } catch (Throwable th) {
@@ -547,128 +547,128 @@ public final class NetworkUtils {
                 releaseBytes(bArr);
                 return;
             }
-        } while (iM1191a >= 0);
+        } while (bytesRead >= 0);
         throw new RuntimeException(new EOFException());
     }
 
     /* renamed from: a */
-    public static final Screen addContactItems(Screen c0013am, Vector vector) {
-        MenuItem c0032cM1057D;
-        int iM541c = Utils.vectorSize(vector);
-        for (int i = 0; i < iM541c; i++) {
-            Object objElementAt = vector.elementAt(i);
-            if (objElementAt instanceof Contact) {
-                c0032cM1057D = ((Contact) objElementAt).createMenuItem();
-            } else if (objElementAt instanceof ContactGroup) {
-                c0032cM1057D = ((ContactGroup) objElementAt).createMenuItem(-1);
-            } else if (objElementAt instanceof ContactInfo) {
-                ContactInfo c0042m = (ContactInfo) objElementAt;
-                if (c0042m.getAccount() instanceof MrimAccount) {
-                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.handleServerAction(Utils.parseIntBounded(c0042m.getString(10), 0, 4, 0), c0042m.getString(12))).addText(Utils.withComma(c0042m.getDisplayName()), 1, 0).setLabel(c0042m.getString(3));
-                    c0032cM898b.data = c0042m;
-                    c0032cM1057D = c0032cM898b;
+    public static final Screen addContactItems(Screen screen, Vector vector) {
+        MenuItem menuItem;
+        int count = Utils.vectorSize(vector);
+        for (int i = 0; i < count; i++) {
+            Object item = vector.elementAt(i);
+            if (item instanceof Contact) {
+                menuItem = ((Contact) item).createMenuItem();
+            } else if (item instanceof ContactGroup) {
+                menuItem = ((ContactGroup) item).createMenuItem(-1);
+            } else if (item instanceof ContactInfo) {
+                ContactInfo contactInfo = (ContactInfo) item;
+                if (contactInfo.getAccount() instanceof MrimAccount) {
+                    MenuItem entry = MenuItem.createDefault().setIcon(AppController.handleServerAction(Utils.parseIntBounded(contactInfo.getString(10), 0, 4, 0), contactInfo.getString(12))).addText(Utils.withComma(contactInfo.getDisplayName()), 1, 0).setLabel(contactInfo.getString(3));
+                    entry.data = contactInfo;
+                    menuItem = entry;
                 } else {
-                    MenuItem c0032cM886c = MenuItem.createDefault();
-                    int iM510a = Utils.parseInt((Object) c0042m.getString(61));
-                    MenuItem c0032cM898b2 = c0032cM886c.setIcon(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).setLabel(Utils.appendSpace(c0042m.getString(60))).addText(Utils.withComma(c0042m.getDisplayName()), 1, 0).setLabel(StringUtils.concat(Utils.appendSpace(c0042m.getFirstName()), c0042m.getLastName()));
-                    c0032cM898b2.data = c0042m;
-                    c0032cM1057D = c0032cM898b2;
+                    MenuItem entry = MenuItem.createDefault();
+                    int gender = Utils.parseInt((Object) contactInfo.getString(61));
+                    MenuItem entry2 = entry.setIcon(gender == 0 ? 255 : gender == 1 ? 256 : 263).setLabel(Utils.appendSpace(contactInfo.getString(60))).addText(Utils.withComma(contactInfo.getDisplayName()), 1, 0).setLabel(StringUtils.concat(Utils.appendSpace(contactInfo.getFirstName()), contactInfo.getLastName()));
+                    entry2.data = contactInfo;
+                    menuItem = entry2;
                 }
             } else {
-                c0032cM1057D = ((Account) objElementAt).createMenuItem();
+                menuItem = ((Account) item).createMenuItem();
             }
-            c0013am.addItem(c0032cM1057D);
+            screen.addItem(menuItem);
         }
-        return c0013am;
+        return screen;
     }
 
     /* renamed from: a */
     private static final int processFormField(int i, Object obj) {
-        int i2;
-        int i3 = i + 1;
+        int nextIdx;
+        int idx = i + 1;
         switch (AppState.getInt(i)) {
             case 1:
-                i3 += 2;
+                idx += 2;
                 break;
             case 2:
-                AppState.setBool(AppState.getInt(i3 + 1), ((Boolean) obj).booleanValue());
-                i3 += 2;
+                AppState.setBool(AppState.getInt(idx + 1), ((Boolean) obj).booleanValue());
+                idx += 2;
                 break;
             case 3:
-                AppState.setIntInd(i3 + 2, ((Integer) ((Object[]) obj)[0]).intValue());
-                i3 += 3;
+                AppState.setIntInd(idx + 2, ((Integer) ((Object[]) obj)[0]).intValue());
+                idx += 3;
                 break;
             case 4:
-                i3++;
+                idx++;
                 break;
             case 5:
-                int i4 = i3 + 3;
-                String str = (String) ((Object[]) obj)[0];
-                int i5 = i4 + 1;
-                if (AppState.getInt(i4) == 2) {
-                    int i6 = i5 + 1;
-                    int iM586d = AppState.getInt(i5);
-                    int i7 = i6 + 1;
-                    int iM586d2 = AppState.getInt(i6);
-                    int i8 = i7 + 1;
-                    int iM511a = Utils.parseIntBounded(str, iM586d, iM586d2, AppState.getInt(i7));
-                    i2 = i8 + 1;
-                    AppState.setIntInd(i8, iM511a);
+                int baseIdx = idx + 3;
+                String value = (String) ((Object[]) obj)[0];
+                int curIdx = baseIdx + 1;
+                if (AppState.getInt(baseIdx) == 2) {
+                    int minIdx = curIdx + 1;
+                    int minValue = AppState.getInt(curIdx);
+                    int maxIdx = minIdx + 1;
+                    int maxValue = AppState.getInt(minIdx);
+                    int defIdx = maxIdx + 1;
+                    int parsedValue = Utils.parseIntBounded(value, minValue, maxValue, AppState.getInt(maxIdx));
+                    nextIdx = defIdx + 1;
+                    AppState.setIntInd(defIdx, parsedValue);
                 } else {
-                    i2 = i5 + 1;
-                    AppState.setStringInd(i5, str);
+                    nextIdx = curIdx + 1;
+                    AppState.setStringInd(curIdx, value);
                 }
-                i3 += i2 - i3;
+                idx += nextIdx - idx;
                 break;
             case 6:
-                i3++;
+                idx++;
                 break;
             case 7:
             case 8:
-                i3 += 3;
+                idx += 3;
                 break;
             case 9:
-                AppState.setStringInd(i3 + 1, ((String[]) obj)[1]);
-                i3 += 2;
+                AppState.setStringInd(idx + 1, ((String[]) obj)[1]);
+                idx += 2;
                 break;
             case 10:
-                AppState.setStringInd(i3, (String) obj);
-                i3++;
+                AppState.setStringInd(idx, (String) obj);
+                idx++;
                 break;
             case 11:
-                i3++;
+                idx++;
                 break;
             case 12:
-                processFormField(AppState.getInt(i3), obj);
-                i3++;
+                processFormField(AppState.getInt(idx), obj);
+                idx++;
                 break;
         }
-        return i3;
+        return idx;
     }
 
     /* renamed from: d */
     public static final int processScreenForm() {
-        Screen c0013amM66b = ScreenManager.getCurrentScreen();
-        int i = c0013amM66b.screenFlags + 9;
-        Vector vector = c0013amM66b.menuItems;
-        int iM1194a = i + 1;
-        int iM586d = AppState.getInt(i);
-        for (int i2 = 0; i2 < iM586d; i2++) {
-            iM1194a = processFormField(iM1194a, ((MenuItem) vector.elementAt(i2)).data);
+        Screen screen = ScreenManager.getCurrentScreen();
+        int i = screen.screenFlags + 9;
+        Vector items = screen.menuItems;
+        int fieldIdx = i + 1;
+        int fieldCount = AppState.getInt(i);
+        for (int i2 = 0; i2 < fieldCount; i2++) {
+            fieldIdx = processFormField(fieldIdx, ((MenuItem) items.elementAt(i2)).data);
         }
         return 0;
     }
 
     /* renamed from: e */
     public static final StringBuffer getMessageBuffer() {
-        StringBuffer stringBufferM1217h = newStringBuffer();
-        String strM522f = Utils.defaultStr(AppState.getString(1279));
-        StringBuffer stringBufferAppend = stringBufferM1217h.append(strM522f);
-        int length = strM522f.length();
-        if (length != 0 && strM522f.charAt(length - 1) != ' ') {
-            stringBufferAppend.append(' ');
+        StringBuffer sb = newStringBuffer();
+        String prefix = Utils.defaultStr(AppState.getString(1279));
+        StringBuffer result = sb.append(prefix);
+        int length = prefix.length();
+        if (length != 0 && prefix.charAt(length - 1) != ' ') {
+            result.append(' ');
         }
-        return stringBufferAppend;
+        return result;
     }
 
     /* renamed from: a */
@@ -709,74 +709,74 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    public static final void createSingleContact(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
-        ContactInfo c0042mM1251a = ContactInfo.createForAccount(c0028ba);
+    public static final void createSingleContact(MrimAccount account, int i, ByteBuffer buffer) {
+        ContactInfo contactInfo = ContactInfo.createForAccount(account);
         switch (i) {
             case 0:
-                c0042mM1251a.setContactName(AppState.getString(913));
+                contactInfo.setContactName(AppState.getString(913));
                 break;
             case 1:
-                c0042mM1251a = (ContactInfo) parseMrimContacts(c0028ba, c0043n).elementAt(0);
+                contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
                 break;
             default:
-                c0042mM1251a.setContactName(bufToStringCached(newStringBuffer().append(AppState.getString(914)).append(i)));
+                contactInfo.setContactName(bufToStringCached(newStringBuffer().append(AppState.getString(914)).append(i)));
                 break;
         }
-        AppState.pool[1315] = c0042mM1251a;
+        AppState.pool[1315] = contactInfo;
     }
 
     /* renamed from: b */
-    public static final void parseContactInfoResponse(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
-        int i2 = 0;
-        Vector vectorM1206a = null;
+    public static final void parseContactInfoResponse(MrimAccount account, int i, ByteBuffer buffer) {
+        int nameIndex = 0;
+        Vector contacts = null;
         switch (i) {
             case 0:
-                i2 = 913;
+                nameIndex = 913;
                 break;
             case 1:
-                vectorM1206a = parseMrimContacts(c0028ba, c0043n);
+                contacts = parseMrimContacts(account, buffer);
                 break;
             default:
-                i2 = 914;
+                nameIndex = 914;
                 break;
         }
-        AppState.setInt(1506, i2);
-        AppState.pool[1318] = vectorM1206a;
+        AppState.setInt(1506, nameIndex);
+        AppState.pool[1318] = contacts;
     }
 
     /* renamed from: c */
-    public static final void updateContactName(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
-        int i2;
+    public static final void updateContactName(MrimAccount account, int i, ByteBuffer buffer) {
+        int nameIndex;
         switch (i) {
             case 0:
-                i2 = 913;
+                nameIndex = 913;
                 break;
             case 1:
-                ContactInfo c0042m = (ContactInfo) parseMrimContacts(c0028ba, c0043n).elementAt(0);
-                MrimContact c0035f = (MrimContact) c0028ba.contactMap.get(c0042m.getEmailOrMmpId());
-                if (null != c0035f) {
-                    c0035f.setDisplayName(c0042m.getFullName());
+                ContactInfo contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
+                MrimContact contact = (MrimContact) account.contactMap.get(contactInfo.getEmailOrMmpId());
+                if (null != contact) {
+                    contact.setDisplayName(contactInfo.getFullName());
                     return;
                 }
                 return;
             default:
-                i2 = 914;
+                nameIndex = 914;
                 break;
         }
-        IOUtils.postEvent((Object) AppState.getString(i2));
+        IOUtils.postEvent((Object) AppState.getString(nameIndex));
     }
 
     /* renamed from: d */
-    public static final void addContactToGroup(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
+    public static final void addContactToGroup(MrimAccount account, int i, ByteBuffer buffer) {
         if (i == 1) {
-            ContactInfo c0042m = (ContactInfo) parseMrimContacts(c0028ba, c0043n).elementAt(0);
-            Hashtable hashtable = c0028ba.contactMap;
-            String strM1290i = c0042m.getEmailOrMmpId();
-            MrimContact c0035f = (MrimContact) hashtable.get(strM1290i);
-            if (null != c0035f) {
-                String strM1292k = c0042m.getFullName();
-                c0035f.setDisplayName(strM1292k);
-                c0028ba.validateGroupAdd(strM1290i, strM1292k, AppState.getString(741), (ContactGroup) c0028ba.getFirstContactGroup(), true);
+            ContactInfo contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
+            Hashtable contactMap = account.contactMap;
+            String email = contactInfo.getEmailOrMmpId();
+            MrimContact contact = (MrimContact) contactMap.get(email);
+            if (null != contact) {
+                String fullName = contactInfo.getFullName();
+                contact.setDisplayName(fullName);
+                account.validateGroupAdd(email, fullName, AppState.getString(741), (ContactGroup) account.getFirstContactGroup(), true);
             }
         }
     }
@@ -804,105 +804,105 @@ public final class NetworkUtils {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private static final Vector parseMrimContacts(MrimAccount c0028ba, ByteBuffer c0043n) {
-        Vector vectorM1213g = newVector();
-        Vector vectorM512e = Utils.splitByNull(AppState.getString(915));
-        int iM1328e = c0043n.readInt();
-        int iM1328e2 = c0043n.readInt();
-        c0043n.readInt();
-        Vector vectorM1213g2 = newVector();
-        for (int i = 0; i < iM1328e; i++) {
-            vectorM1213g2.addElement(c0043n.readHexStr());
+    private static final Vector parseMrimContacts(MrimAccount account, ByteBuffer buffer) {
+        Vector result = newVector();
+        Vector fieldNames = Utils.splitByNull(AppState.getString(915));
+        int fieldCount = buffer.readInt();
+        int contactCount = buffer.readInt();
+        buffer.readInt();
+        Vector fieldTypes = newVector();
+        for (int i = 0; i < fieldCount; i++) {
+            fieldTypes.addElement(buffer.readHexStr());
         }
-        for (int i2 = 0; i2 < iM1328e2 && c0043n.length > 0; i2++) {
-            ContactInfo c0042mM1251a = ContactInfo.createForAccount(c0028ba);
-            vectorM1213g.addElement(c0042mM1251a);
+        for (int i2 = 0; i2 < contactCount && buffer.length > 0; i2++) {
+            ContactInfo contactInfo = ContactInfo.createForAccount(account);
+            result.addElement(contactInfo);
             int i3 = 0;
-            while (i3 < iM1328e) {
+            while (i3 < fieldCount) {
                 int i4 = i3;
                 i3++;
-                String str = (String) vectorM1213g2.elementAt(i4);
-                int iM541c = Utils.vectorSize(vectorM512e);
+                String fieldType = (String) fieldTypes.elementAt(i4);
+                int fieldIdx = Utils.vectorSize(fieldNames);
                 do {
-                    iM541c--;
-                    if (iM541c < 0) {
+                    fieldIdx--;
+                    if (fieldIdx < 0) {
                     }
-                    switch (iM541c) {
+                    switch (fieldIdx) {
                         case 0:
-                            c0042mM1251a.setPhoneHome(c0043n.readWideStr());
+                            contactInfo.setPhoneHome(buffer.readWideStr());
                             break;
                         case 1:
-                            c0042mM1251a.setPhoneMobile(c0043n.readWideStr());
+                            contactInfo.setPhoneMobile(buffer.readWideStr());
                             break;
                         case 2:
-                            c0042mM1251a.setDisplayName(c0043n.readUTF8Str((String) null));
+                            contactInfo.setDisplayName(buffer.readUTF8Str((String) null));
                             break;
                         case 3:
-                            c0042mM1251a.setFirstName(c0043n.readUTF8Str((String) null));
+                            contactInfo.setFirstName(buffer.readUTF8Str((String) null));
                             break;
                         case 4:
-                            c0042mM1251a.setLastName(c0043n.readUTF8Str((String) null));
+                            contactInfo.setLastName(buffer.readUTF8Str((String) null));
                             break;
                         case 5:
-                            int iM511a = Utils.parseIntBounded(c0043n.readWideStr(), 1, 2, 0);
-                            if (1 == iM511a) {
-                                c0042mM1251a.setMaritalMarried();
+                            int maritalStatus = Utils.parseIntBounded(buffer.readWideStr(), 1, 2, 0);
+                            if (1 == maritalStatus) {
+                                contactInfo.setMaritalMarried();
                                 break;
-                            } else if (2 == iM511a) {
-                                c0042mM1251a.setMaritalSingle();
+                            } else if (2 == maritalStatus) {
+                                contactInfo.setMaritalSingle();
                                 break;
                             } else {
                                 break;
                             }
                         case 6:
-                            c0042mM1251a.setCompany(c0043n.readWideStr());
+                            contactInfo.setCompany(buffer.readWideStr());
                             break;
                         case 7:
-                            c0042mM1251a.setWebsite(c0043n.readWideStr());
+                            contactInfo.setWebsite(buffer.readWideStr());
                             break;
                         case 8:
-                            c0042mM1251a.setWorkPhone(c0043n.readUTF8Str((String) null));
+                            contactInfo.setWorkPhone(buffer.readUTF8Str((String) null));
                             break;
                         case 9:
-                            c0042mM1251a.setBirthdayMonth(c0043n.readWideStr());
+                            contactInfo.setBirthdayMonth(buffer.readWideStr());
                             break;
                         case 10:
-                            c0043n.readWideStr();
+                            buffer.readWideStr();
                             break;
                         case 11:
-                            c0043n.readWideStr();
+                            buffer.readWideStr();
                             break;
                         case 12:
-                            c0042mM1251a.setAltEmail(c0043n.readWideStr());
+                            contactInfo.setAltEmail(buffer.readWideStr());
                             break;
                         case 13:
-                            c0042mM1251a.setJobTitle(c0043n.readWideStr());
+                            contactInfo.setJobTitle(buffer.readWideStr());
                             break;
                         case 14:
-                            c0042mM1251a.setLocation(c0043n.readWideStr());
+                            contactInfo.setLocation(buffer.readWideStr());
                             break;
                         case 15:
-                            c0042mM1251a.setIconId(c0043n.readWideStr());
+                            contactInfo.setIconId(buffer.readWideStr());
                             break;
                         case 16:
-                            c0042mM1251a.setIconName(c0043n.readUTF8Str((String) null));
+                            contactInfo.setIconName(buffer.readUTF8Str((String) null));
                             break;
                         case 17:
-                            c0042mM1251a.setDescription(c0043n.readUTF8Str((String) null));
+                            contactInfo.setDescription(buffer.readUTF8Str((String) null));
                             break;
                         default:
-                            c0043n.readWideStr();
+                            buffer.readWideStr();
                             break;
                     }
-                } while (!StringUtils.equals(str, (String) vectorM512e.elementAt(iM541c)));
-                switch (iM541c) {
+                } while (!StringUtils.equals(fieldType, (String) fieldNames.elementAt(fieldIdx)));
+                switch (fieldIdx) {
                 }
             }
-            c0042mM1251a.setEmailAddress(bufToStringCached(newStringBuffer().append(c0042mM1251a.getString(50)).append('@').append(c0042mM1251a.getString(51))));
+            contactInfo.setEmailAddress(bufToStringCached(newStringBuffer().append(contactInfo.getString(50)).append('@').append(contactInfo.getString(51))));
         }
-        releaseVector(vectorM512e);
-        releaseVector(vectorM1213g2);
-        return vectorM1213g;
+        releaseVector(fieldNames);
+        releaseVector(fieldTypes);
+        return result;
     }
 
     /* renamed from: f */
@@ -1035,14 +1035,14 @@ public final class NetworkUtils {
         if (z) {
             return bufToStringCached(stringBuffer);
         }
-        String strM1207f = getCachedString(stringBuffer.toString());
+        String result = getCachedString(stringBuffer.toString());
         stringBuffer.setLength(0);
-        return strM1207f;
+        return result;
     }
 
     /* renamed from: a */
     public static final String bufToStringCached(StringBuffer stringBuffer) {
-        String strM1207f = getCachedString(stringBuffer.toString());
+        String result = getCachedString(stringBuffer.toString());
         stringBuffer.setLength(0);
         StringBuffer[] stringBufferArr = bufferPool;
         synchronized (stringBufferArr) {
@@ -1058,7 +1058,7 @@ public final class NetworkUtils {
                 i++;
             }
         }
-        return strM1207f;
+        return result;
     }
 
     /* renamed from: b */
@@ -1135,11 +1135,11 @@ public final class NetworkUtils {
 
     /* renamed from: i */
     public static final Object[] newRequest() {
-        String strM584b = AppState.getString(2950249);
-        String str = AppState.emptyStr;
-        Integer num = ResourceManager.integerCache[0];
-        Integer numM967e = ResourceManager.integerOf(-1);
-        return startAsyncRequest(0, strM584b, new Object[]{null, null, null, null, null, null, null, str, num, str, str, num, str, str, str, str, num, num, numM967e, num, null, numM967e});
+        String url = AppState.getString(2950249);
+        String empty = AppState.emptyStr;
+        Integer zero = ResourceManager.integerCache[0];
+        Integer minusOne = ResourceManager.integerOf(-1);
+        return startAsyncRequest(0, url, new Object[]{null, null, null, null, null, null, null, empty, zero, empty, empty, zero, empty, empty, empty, empty, zero, zero, minusOne, zero, null, minusOne});
     }
 
     /* renamed from: a */
@@ -1161,29 +1161,29 @@ public final class NetworkUtils {
         try {
             try {
                 AppController.acquireNetworkLock();
-                HttpClient c0024axM630a = HttpClient.createWithType3(objArr[2]);
-                int iM634a = c0024axM630a.getResponseCode();
-                if (iM634a == 200) {
-                    ByteBuffer c0043n = new ByteBuffer(c0024axM630a);
+                HttpClient httpClient = HttpClient.createWithType3(objArr[2]);
+                int responseCode = httpClient.getResponseCode();
+                if (responseCode == 200) {
+                    ByteBuffer buffer = new ByteBuffer(httpClient);
                     switch (((Integer) objArr[1]).intValue()) {
                         case 0:
-                            parseRegResponse(objArr, c0043n.parseXmlStr());
-                            HttpClient.closeAndUpdateStats(c0024axM630a);
+                            parseRegResponse(objArr, buffer.parseXmlStr());
+                            HttpClient.closeAndUpdateStats(httpClient);
                             AppController.releaseNetworkLock();
                             return;
                         case 1:
-                            objArr[3] = c0043n.toImage();
-                            HttpClient.closeAndUpdateStats(c0024axM630a);
+                            objArr[3] = buffer.toImage();
+                            HttpClient.closeAndUpdateStats(httpClient);
                             AppController.releaseNetworkLock();
                             return;
                         case 2:
-                            parseRegResponse(objArr, c0043n.parseXmlStr());
-                            HttpClient.closeAndUpdateStats(c0024axM630a);
+                            parseRegResponse(objArr, buffer.parseXmlStr());
+                            HttpClient.closeAndUpdateStats(httpClient);
                             AppController.releaseNetworkLock();
                             return;
                     }
                 }
-                throw new Throwable(StringUtils.intern(Integer.toString(iM634a)));
+                throw new Throwable(StringUtils.intern(Integer.toString(responseCode)));
             } catch (Throwable th) {
                 objArr[0] = th;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
@@ -1197,9 +1197,9 @@ public final class NetworkUtils {
     }
 
     /* renamed from: a */
-    private static final void parseRegResponse(Object[] objArr, XmlElement c0022av) {
-        Vector vector = c0022av.children;
-        int size = vector.size();
+    private static final void parseRegResponse(Object[] objArr, XmlElement element) {
+        Vector children = element.children;
+        int size = children.size();
         while (true) {
             size--;
             if (size < 0) {
@@ -1210,18 +1210,18 @@ public final class NetworkUtils {
                 startAsyncRequest(1, new ByteBuffer().writeCompressed(2163862).writeObjectStr(objArr[6]).getStringAndClear(), objArr);
                 return;
             }
-            XmlElement c0022av2 = (XmlElement) vector.elementAt(size);
-            String strM554b = c0022av2.getIntAttribute(329117);
-            String strM554b2 = c0022av2.getIntAttribute(262601);
-            if (StringUtils.matchesKey(132297, strM554b2)) {
-                objArr[4] = strM554b;
-            } else if (StringUtils.matchesKey(1115488, strM554b2)) {
-                objArr[5] = strM554b;
-            } else if (StringUtils.matchesKey(1246602, strM554b2)) {
-                objArr[6] = strM554b;
-            } else if (StringUtils.matchesKey(394658, strM554b2)) {
-                objArr[20] = strM554b;
-                if (Integer.parseInt(strM554b) == 0) {
+            XmlElement child = (XmlElement) children.elementAt(size);
+            String attrValue = child.getIntAttribute(329117);
+            String attrName = child.getIntAttribute(262601);
+            if (StringUtils.matchesKey(132297, attrName)) {
+                objArr[4] = attrValue;
+            } else if (StringUtils.matchesKey(1115488, attrName)) {
+                objArr[5] = attrValue;
+            } else if (StringUtils.matchesKey(1246602, attrName)) {
+                objArr[6] = attrValue;
+            } else if (StringUtils.matchesKey(394658, attrName)) {
+                objArr[20] = attrValue;
+                if (Integer.parseInt(attrValue) == 0) {
                     return;
                 }
             } else {
