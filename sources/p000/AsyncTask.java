@@ -372,7 +372,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             throw r0     // Catch: java.lang.Throwable -> La84
         L19a:
             r0 = r15
-            r0.m1133b()     // Catch: java.lang.Throwable -> La84
+            r0.process()     // Catch: java.lang.Throwable -> La84
             int r9 = r9 + 1
             goto L171
         L1a5:
@@ -423,7 +423,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.ConnectionThread.m1150b(r0)     // Catch: java.lang.Throwable -> La84
+            p000.ConnectionThread.executeWithReauth(r0)     // Catch: java.lang.Throwable -> La84
             return
         L1fa:
             r0 = 0
@@ -860,11 +860,11 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r16 = r0
-            java.util.Hashtable r0 = p000.ConnectionThread.f353d     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.util.Hashtable r0 = p000.ConnectionThread.photoCache     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r0
             r10 = r1
             monitor-enter(r0)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
-            java.lang.String r0 = p000.ConnectionThread.f354e     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.lang.String r0 = p000.ConnectionThread.pendingPhotoKey     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r0
             r11 = r1
             r17 = r0
@@ -873,7 +873,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.String r0 = p000.StringUtils.concat(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r16
             p000.XmppMailRuProtocol.writeChunkedRecord(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
-            java.util.Hashtable r0 = p000.ConnectionThread.f353d     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.util.Hashtable r0 = p000.ConnectionThread.photoCache     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r11
             r2 = r16
             javax.microedition.lcdui.Image r2 = r2.toImage()     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
@@ -882,7 +882,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L551:
         L552:
             r0 = 0
-            p000.ConnectionThread.f354e = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            p000.ConnectionThread.pendingPhotoKey = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = 1
             p000.MapRenderer.needsRedraw = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = r10

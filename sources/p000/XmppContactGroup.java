@@ -174,7 +174,7 @@ public final class XmppContactGroup extends ContactGroup {
         ConnectionThread c0039j = new ConnectionThread(str);
         do {
             Thread.sleep(100L);
-            iM1131a = c0039j.m1131a();
+            iM1131a = c0039j.getState();
         } while (iM1131a == 1);
         if (iM1131a != 2) {
             c0039j.state = 3;
@@ -190,7 +190,7 @@ public final class XmppContactGroup extends ContactGroup {
             ByteBuffer c0043n = new ByteBuffer();
             do {
                 Thread.sleep(100L);
-                c0039j.m1132a(c0043n);
+                c0039j.drainInput(c0043n);
                 i = c0043n.length;
                 i2 = i;
             } while (i == 0);
@@ -236,7 +236,7 @@ public final class XmppContactGroup extends ContactGroup {
             ByteBuffer c0043n = new ByteBuffer();
             do {
                 Thread.sleep(100L);
-                c0039j.m1132a(c0043n);
+                c0039j.drainInput(c0043n);
                 c0043nM1349s = c0043n.extractPNG();
             } while (c0043nM1349s == null);
             if (c0043nM1349s.peekIntAt(12) == 4098) {
@@ -672,7 +672,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: i */
     public static final void initializeMapData() {
         lastUpdateTs = System.currentTimeMillis();
-        Vector vectorM1140a = ConnectionThread.m1140a(1);
+        Vector vectorM1140a = ConnectionThread.getServiceContactIds(1);
         long j = MapRenderer.currentLon;
         long j2 = MapRenderer.currentLat;
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();

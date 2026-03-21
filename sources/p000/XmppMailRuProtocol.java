@@ -767,14 +767,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 MapRenderer.needsRedraw = true;
                 return 6;
             case 14:
-                ConnectionThread.m1170l();
+                ConnectionThread.setRouteStart();
                 if (MmpContact.hasSecondToken()) {
                     return 6;
                 }
                 AppState.setInt(1442, 1);
                 return 158;
             case 15:
-                ConnectionThread.m1171m();
+                ConnectionThread.setRouteEnd();
                 if (MmpContact.hasFirstToken()) {
                     return 6;
                 }
@@ -795,7 +795,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 19:
                 return 110;
             case 20:
-                ConnectionThread.m1169a((MapPoint) mapContextItem);
+                ConnectionThread.removeRoutePoint((MapPoint) mapContextItem);
                 return 6;
             case 21:
                 Conversation.incrementZoom();
@@ -1049,7 +1049,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (objArrM816k == null) {
             return handleMailRedirect();
         }
-        Object[] objArrM1156c = ConnectionThread.m1156c(objArrM816k);
+        Object[] objArrM1156c = ConnectionThread.getAsyncResult(objArrM816k);
         if (objArrM1156c == null) {
             return 0;
         }

@@ -754,7 +754,7 @@ public final class StringUtils {
                     addGeoRegion(c0053x);
                 }
             } else if (matchesKey(397424, str)) {
-                ConnectionThread.m1137a(1, c0022av2, true);
+                ConnectionThread.parseServiceConfig(1, c0022av2, true);
             }
         }
         try {

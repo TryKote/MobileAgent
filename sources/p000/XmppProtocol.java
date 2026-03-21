@@ -268,7 +268,7 @@ public class XmppProtocol extends Account {
                 clearParserState();
                 this.msgCount = 40;
                 if (!isMailRuXmpp()) {
-                    if (this.connection.m1131a() == 2) {
+                    if (this.connection.getState() == 2) {
                         this.msgCount = 50;
                         this.progress = 5;
                         Object[] objArr5 = new Object[3];
@@ -280,7 +280,7 @@ public class XmppProtocol extends Account {
                         this.parserState = objArr5;
                         AppController.needsRepaint = true;
                         sendPresenceSubscription();
-                    } else if (this.connection.m1131a() <= 0) {
+                    } else if (this.connection.getState() <= 0) {
                         closeConnection();
                     }
                     AppController.needsRepaint = true;
@@ -293,7 +293,7 @@ public class XmppProtocol extends Account {
                 }
                 break;
             default:
-                this.connection.m1132a(this.dataBuffer);
+                this.connection.drainInput(this.dataBuffer);
                 AppController.updateAccountStatus(this, this.dataBuffer.length);
                 Object[] objArr6 = this.parserState;
                 ByteBuffer c0043n = this.dataBuffer;
@@ -454,7 +454,7 @@ public class XmppProtocol extends Account {
                 }
                 break;
         }
-        if (this.lastError != 0 && this.connection != null && this.connection.m1131a() == 0) {
+        if (this.lastError != 0 && this.connection != null && this.connection.getState() == 0) {
             this.progress = 0;
             closeConnection();
             this.lastError = getDefaultError();

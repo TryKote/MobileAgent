@@ -275,7 +275,7 @@ public final class MrimAccount extends Account implements ListItem {
                 break;
             case 2:
                 this.msgCount = 30;
-                if (this.connection.m1131a() == 2) {
+                if (this.connection.getState() == 2) {
                     this.msgCount = 40;
                     this.progress = 3;
                     AppController.needsRepaint = true;
@@ -283,7 +283,7 @@ public final class MrimAccount extends Account implements ListItem {
                 }
                 break;
             case 3:
-                this.connection.m1132a(this.dataBuffer);
+                this.connection.drainInput(this.dataBuffer);
                 int i4 = this.dataBuffer.length;
                 int i5 = i4;
                 if (i4 > 0) {
@@ -309,7 +309,7 @@ public final class MrimAccount extends Account implements ListItem {
                 }
                 break;
             case 4:
-                if (this.connection.m1131a() == 2) {
+                if (this.connection.getState() == 2) {
                     this.msgCount = 80;
                     sendData(AppController.createMrimAuthPacket(this));
                     this.progress = 5;
@@ -321,11 +321,11 @@ public final class MrimAccount extends Account implements ListItem {
         if (this.progress < 5) {
             return;
         }
-        this.connection.m1132a(this.dataBuffer);
+        this.connection.drainInput(this.dataBuffer);
         while (true) {
             ByteBuffer c0043nM1349s = this.dataBuffer.extractPNG();
             if (c0043nM1349s == null) {
-                if (c0043nM1349s == null && this.lastError != 0 && this.connection != null && this.connection.m1131a() == 0) {
+                if (c0043nM1349s == null && this.lastError != 0 && this.connection != null && this.connection.getState() == 0) {
                     closeConnection();
                     this.lastError = getDefaultError();
                 }

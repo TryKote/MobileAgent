@@ -173,7 +173,7 @@ public final class AppController {
     /* renamed from: e */
     public static final int handleRightKey() {
         AppState.setInt(285, 1);
-        ConnectionThread.m1164h();
+        ConnectionThread.toggleScrollMode();
         return 6;
     }
 
@@ -342,7 +342,7 @@ public final class AppController {
     public static final int processLoginField(String str) {
         if (AppState.getString(1251).equals(str)) {
             ScreenBuilder.onScreenClosed();
-            if (ConnectionThread.m1168k()) {
+            if (ConnectionThread.hasRoutePoints()) {
                 return 0;
             }
             return showError(354);
@@ -414,7 +414,7 @@ public final class AppController {
         }
         applyViewMode(true, false, !AppState.getBool(276));
         AppState.setInt(281, 1);
-        ConnectionThread.m1172a((ListItem) c0028ba);
+        ConnectionThread.selectMapItem((ListItem) c0028ba);
         return 0;
     }
 
@@ -489,7 +489,7 @@ public final class AppController {
     public static final void applyViewMode(boolean z, boolean z2, boolean z3) {
         AppState.setBool(276, z);
         AppState.setBool(277, z2);
-        if (!z3 || !ConnectionThread.f356g) {
+        if (!z3 || !ConnectionThread.mapInitialized) {
             return;
         }
         int i = 11;
@@ -498,7 +498,7 @@ public final class AppController {
             if (i < 0) {
                 MmpContact.clearLocationData();
                 StringUtils.initTileCache();
-                ConnectionThread.m1146e();
+                ConnectionThread.clearPhotoCache();
                 MapRenderer.needsRedraw = true;
                 return;
             }
@@ -942,7 +942,7 @@ public final class AppController {
     /* renamed from: r */
     public static final int handleViewOption(int i) {
         if (i == 120) {
-            if (!ConnectionThread.m1168k()) {
+            if (!ConnectionThread.hasRoutePoints()) {
                 return showError(354);
             }
             AppState.setInt(1443, 1);
@@ -1076,7 +1076,7 @@ public final class AppController {
             return 0;
         }
         if (!AppState.getBool(1477)) {
-            ConnectionThread.m1165a((MapPoint) obj, true);
+            ConnectionThread.navigateToPoint((MapPoint) obj, true);
             return 0;
         }
         MapPoint c0014an = (MapPoint) obj;
@@ -1099,14 +1099,14 @@ public final class AppController {
     /* renamed from: v */
     public static final int handleChatRoomOption(int i) {
         if (i == 0) {
-            ConnectionThread.m1170l();
+            ConnectionThread.setRouteStart();
             if (MmpContact.hasSecondToken()) {
                 return 6;
             }
             AppState.setInt(1442, 1);
             return 158;
         }
-        ConnectionThread.m1171m();
+        ConnectionThread.setRouteEnd();
         if (MmpContact.hasFirstToken()) {
             return 6;
         }
@@ -1163,13 +1163,13 @@ public final class AppController {
         if (i != 120) {
             return 0;
         }
-        ConnectionThread.m1169a(c0014an);
+        ConnectionThread.removeRoutePoint(c0014an);
         return 0;
     }
 
     /* renamed from: y */
     public static final int handleChatDetailOption(int i) {
-        ConnectionThread.m1173n();
+        ConnectionThread.showMapView();
         if (i == 6) {
             applyViewMode(true, false, !AppState.getBool(276));
             AppState.setInt(281, 1);
@@ -1180,7 +1180,7 @@ public final class AppController {
             AppState.setInt(1477, 1);
             return 0;
         }
-        if (!ConnectionThread.m1168k()) {
+        if (!ConnectionThread.hasRoutePoints()) {
             return showError(354);
         }
         AppState.setInt(1478, 1);
@@ -2314,7 +2314,7 @@ public final class AppController {
                                                 } else {
                                                     z5 = false;
                                                 }
-                                                iM338l = z5 ? 113 : ConnectionThread.m1166i();
+                                                iM338l = z5 ? 113 : ConnectionThread.showMapSearchResults();
                                                 break;
                                             case 7:
                                                 iM1181a = 0;
@@ -2440,7 +2440,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 37:
-                                                Object[] objArrM1156c = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c != null) {
                                                     int iM586d4 = AppState.getInt(1512);
                                                     int iM818c = IOUtils.validateJsonResponse(objArrM1156c);
@@ -2468,7 +2468,7 @@ public final class AppController {
                                                 iM338l = (abstractC0041lM611g.flags != 0) || abstractC0041lM611g.dirty ? 40 : 0;
                                                 break;
                                             case 41:
-                                                Object[] objArrM1156c2 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c2 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c2 != null) {
                                                     int iM818c2 = IOUtils.validateJsonResponse(objArrM1156c2);
                                                     if (iM818c2 != 0) {
@@ -2519,7 +2519,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 42:
-                                                Object[] objArrM1156c3 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c3 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c3 != null) {
                                                     int iM818c3 = IOUtils.validateJsonResponse(objArrM1156c3);
                                                     if (iM818c3 != 0) {
@@ -2734,7 +2734,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 72:
-                                                Object[] objArrM1156c4 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c4 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c4 != null) {
                                                     int iM818c4 = IOUtils.validateJsonResponse(objArrM1156c4);
                                                     if (iM818c4 != 0) {
@@ -2793,7 +2793,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 78:
-                                                Object[] objArrM1156c5 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c5 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c5 != null) {
                                                     int iM818c5 = IOUtils.validateJsonResponse(objArrM1156c5);
                                                     if (iM818c5 != 0) {
@@ -2835,7 +2835,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 81:
-                                                Object[] objArrM1156c6 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c6 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c6 != null) {
                                                     int iM818c6 = IOUtils.validateJsonResponse(objArrM1156c6);
                                                     if (iM818c6 != 0) {
@@ -2887,7 +2887,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 82:
-                                                Object[] objArrM1156c7 = ConnectionThread.m1156c(IOUtils.pollAsyncResult());
+                                                Object[] objArrM1156c7 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
                                                 if (objArrM1156c7 != null) {
                                                     int iM818c7 = IOUtils.validateJsonResponse(objArrM1156c7);
                                                     iM1181a = iM818c7 != 0 ? iM818c7 : StringUtils.isEmpty((String) IOUtils.getJsonPayload()) ? showError(878) : 83;
@@ -3204,7 +3204,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 161:
-                                                iM1181a = ConnectionThread.m1166i();
+                                                iM1181a = ConnectionThread.showMapSearchResults();
                                                 iM338l = iM1181a;
                                                 break;
                                             case 162:
@@ -3424,7 +3424,7 @@ public final class AppController {
                                                                 } else if (i14 == 1) {
                                                                     z4 = true;
                                                                 } else if (i14 == 6) {
-                                                                    ConnectionThread.m1163c(c0013amM66b3);
+                                                                    ConnectionThread.handleMapSwitch(c0013amM66b3);
                                                                     z4 = true;
                                                                 }
                                                             }
@@ -3522,7 +3522,7 @@ public final class AppController {
                                                             if (z7 && c0013amM66b4.screenId == 6) {
                                                                 int i24 = i23 - c0013amM66b4.contentTop;
                                                                 if (i24 > 0) {
-                                                                    ConnectionThread.m1161a(c0013amM66b4);
+                                                                    ConnectionThread.toggleMapControls(c0013amM66b4);
                                                                     MapRenderer.dragActive = false;
                                                                     MapRenderer.rippleTimestamp = System.currentTimeMillis();
                                                                     MapRenderer.rippleX = i22;
@@ -3613,7 +3613,7 @@ public final class AppController {
                                                     c0013amM66b5.marginLeft = i29;
                                                     c0013amM66b5.marginTop = i30;
                                                     if (c0013amM66b5.screenId == 6) {
-                                                        ConnectionThread.m1161a(c0013amM66b5);
+                                                        ConnectionThread.toggleMapControls(c0013amM66b5);
                                                         MapRenderer.dragActive = true;
                                                         MapRenderer.rippleTimestamp = 0L;
                                                         int iM586d7 = AppState.getInt(39);
@@ -3656,7 +3656,7 @@ public final class AppController {
                                                     c0013amM66b7.touchConsumed = false;
                                                     if (c0013amM66b7.screenId == 6) {
                                                         int i42 = i41 - c0013amM66b7.contentTop;
-                                                        ConnectionThread.m1161a(c0013amM66b7);
+                                                        ConnectionThread.toggleMapControls(c0013amM66b7);
                                                         MapRenderer.onDrag(i40, i42);
                                                     }
                                                 }
@@ -3902,7 +3902,7 @@ public final class AppController {
                     break;
                 case 6:
                     if (!AppState.getBool(1414)) {
-                        ConnectionThread.m1161a(c0013amM66b);
+                        ConnectionThread.toggleMapControls(c0013amM66b);
                         i2 = -1;
                     } else if (AppState.getBool(1479)) {
                         String strM809a = IOUtils.pixelToLongitude(MapRenderer.currentLon);
@@ -4015,7 +4015,7 @@ public final class AppController {
                         if (((Integer) objArr[0]).intValue() == 0) {
                             MapPoint c0014an = new MapPoint((String) objArr[1]);
                             c0014an.height = 2;
-                            ConnectionThread.m1165a(c0014an, false);
+                            ConnectionThread.navigateToPoint(c0014an, false);
                             AppState.setInt(1414, 1);
                             iM338l = 6;
                         } else {

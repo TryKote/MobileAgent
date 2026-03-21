@@ -470,7 +470,7 @@ public final class IOUtils {
             return 6;
         }
         if (!AppState.getBool(1477)) {
-            ConnectionThread.m1165a((MapPoint) obj, true);
+            ConnectionThread.navigateToPoint((MapPoint) obj, true);
             return 6;
         }
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
@@ -734,7 +734,7 @@ public final class IOUtils {
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
             interfaceC0044o.deselect();
-            ConnectionThread.m1172a(interfaceC0044o);
+            ConnectionThread.selectMapItem(interfaceC0044o);
         }
         return i;
     }
@@ -863,7 +863,7 @@ public final class IOUtils {
     /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
         AppController.markAccountHighlighted((MrimAccount) AppState.getAccount());
-        AppState.pool[1271] = ConnectionThread.m1149a(objArr);
+        AppState.pool[1271] = ConnectionThread.submitAsync(objArr);
     }
 
     /* renamed from: e */
@@ -881,7 +881,7 @@ public final class IOUtils {
     /* renamed from: k */
     public static final Object[] pollAsyncResult() {
         Object[] objArrM609l = AppState.getObjectArray(1271);
-        if (objArrM609l != null && ConnectionThread.m1156c(objArrM609l) != null) {
+        if (objArrM609l != null && ConnectionThread.getAsyncResult(objArrM609l) != null) {
             AppState.clearIndex(1271);
         }
         return objArrM609l;
@@ -1106,7 +1106,7 @@ public final class IOUtils {
         } else if (i == 6) {
             ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.deselect();
-            ConnectionThread.m1172a(interfaceC0044o);
+            ConnectionThread.selectMapItem(interfaceC0044o);
             AppController.applyViewMode(true, false, !AppState.getBool(276));
             AppState.setInt(281, 1);
         }

@@ -612,7 +612,7 @@ public final class ResourceManager {
 
     /* renamed from: m */
     public static final void showWiFiNetworks() {
-        Vector vectorM1142d = ConnectionThread.m1142d();
+        Vector vectorM1142d = ConnectionThread.getActiveContactIds();
         int size = vectorM1142d == null ? 0 : vectorM1142d.size();
         int i = size;
         if (size == 0) {
@@ -627,7 +627,7 @@ public final class ResourceManager {
                 return;
             } else {
                 Object objElementAt = vectorM1142d.elementAt(i);
-                c0013amM75b.addIconItemWithData(-1, ConnectionThread.m1138a(objElementAt), 6, objElementAt);
+                c0013amM75b.addIconItemWithData(-1, ConnectionThread.getPhotoHost(objElementAt), 6, objElementAt);
             }
         }
     }

@@ -912,7 +912,7 @@ public final class Screen {
     /* renamed from: p */
     public final void scrollDown() {
         if (this.screenId == 6) {
-            ConnectionThread.m1163c(this);
+            ConnectionThread.handleMapSwitch(this);
             return;
         }
         int size = this.menuItems.size();
@@ -1283,7 +1283,7 @@ public final class Screen {
         int i7 = i3 - this.offsetX;
         int i8 = i4 - this.offsetY;
         if (this.screenId == 6) {
-            ConnectionThread.m1161a(this);
+            ConnectionThread.toggleMapControls(this);
             MapRenderer.onTap(i5, i6 - this.contentTop);
             return true;
         }

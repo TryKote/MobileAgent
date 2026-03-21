@@ -22,25 +22,25 @@ public final class ConnectionThread {
     private String connUrl;
 
     /* renamed from: l */
-    private static Hashtable f352l;
+    private static Hashtable photoRegistry;
 
     /* renamed from: d */
-    public static Hashtable f353d;
+    public static Hashtable photoCache;
 
     /* renamed from: e */
-    public static String f354e;
+    public static String pendingPhotoKey;
 
     /* renamed from: f */
-    public static Vector f355f;
+    public static Vector hiddenContacts;
 
     /* renamed from: g */
-    public static boolean f356g;
+    public static boolean mapInitialized;
 
     /* renamed from: m */
-    private static Screen f357m;
+    private static Screen mapScreen;
 
     /* renamed from: h */
-    public static ListItem f358h;
+    public static ListItem activeMapItem;
 
     /* renamed from: i */
     private ByteBuffer inBuffer = new ByteBuffer();
@@ -62,7 +62,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public final int m1131a() throws Throwable {
+    public final int getState() throws Throwable {
         if (this.exception != null) {
             throw this.exception;
         }
@@ -70,7 +70,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public final void m1132a(ByteBuffer c0043n) throws Throwable {
+    public final void drainInput(ByteBuffer c0043n) throws Throwable {
         synchronized (this.connArray) {
             if (this.inBuffer.length > 0) {
                 ByteBuffer c0043n2 = this.inBuffer;
@@ -90,7 +90,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: b */
-    public final void m1133b() {
+    public final void process() {
         switch (this.state) {
             case 1:
                 try {
@@ -107,12 +107,12 @@ public final class ConnectionThread {
                     return;
                 }
             case 2:
-                m1134o();
-                m1135p();
+                readFromSocket();
+                writeToSocket();
                 return;
             case 3:
-                m1134o();
-                m1135p();
+                readFromSocket();
+                writeToSocket();
                 NetworkUtils.m1184b(this.connArray);
                 this.state = 0;
                 return;
@@ -131,7 +131,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: o */
-    private final void m1134o() {
+    private final void readFromSocket() {
         int iM1190a;
         try {
             if (this.state == 2) {
@@ -162,7 +162,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: p */
-    private final void m1135p() {
+    private final void writeToSocket() {
         try {
             if (this.state == 2) {
                 ByteBuffer c0043n = this.outBuffer;
@@ -188,12 +188,12 @@ public final class ConnectionThread {
     }
 
     /* renamed from: q */
-    private static void m1136q() {
+    private static void loadSavedMapData() {
         XmppContactGroup.sharedContactList = NetworkUtils.newVector();
-        f355f = Utils.split(AppState.getString(264), (char) 0);
+        hiddenContacts = Utils.split(AppState.getString(264), (char) 0);
         try {
             ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(265));
-            f352l = new Hashtable();
+            photoRegistry = new Hashtable();
             try {
                 if (c0043nM986d.length > 0) {
                     int iM1355w = c0043nM986d.readIntBE();
@@ -203,20 +203,20 @@ public final class ConnectionThread {
                             break;
                         }
                         NetworkUtils c0040k = new NetworkUtils(c0043nM986d);
-                        f352l.put(StringUtils.intern(Integer.toString(c0040k.port)), c0040k);
+                        photoRegistry.put(StringUtils.intern(Integer.toString(c0040k.port)), c0040k);
                     }
                 }
             } catch (Throwable unused) {
             }
-            m1146e();
+            clearPhotoCache();
             AppState.setInt(1576, 1);
         } catch (Throwable unused2) {
         }
     }
 
     /* renamed from: a */
-    public static final void m1137a(int i, XmlElement c0022av, boolean z) {
-        f352l = new Hashtable();
+    public static final void parseServiceConfig(int i, XmlElement c0022av, boolean z) {
+        photoRegistry = new Hashtable();
         Vector vector = c0022av.children;
         if (vector == null) {
             return;
@@ -235,47 +235,47 @@ public final class ConnectionThread {
                     c0040k.url = StringUtils.fromBuffer(c0022av3.textContent);
                 }
             }
-            f352l.put(strM555c, c0040k);
+            photoRegistry.put(strM555c, c0040k);
         }
-        f353d = new Hashtable();
+        photoCache = new Hashtable();
         AppState.setInt(1576, 1);
         try {
             AppState.setObject(265, (Object) AppState.emptyStr);
-            AppState.setObject(265, (Object) m1145r().toBase64());
+            AppState.setObject(265, (Object) serializeRegistry().toBase64());
         } catch (Throwable unused) {
             AppState.setObject(254, (Object) AppState.emptyStr);
         }
     }
 
     /* renamed from: a */
-    public static final String m1138a(Object obj) {
+    public static final String getPhotoHost(Object obj) {
         NetworkUtils c0040k;
-        if (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(obj)) == null) {
+        if (!AppState.getBool(1576) || (c0040k = (NetworkUtils) photoRegistry.get(obj)) == null) {
             return null;
         }
         return c0040k.host;
     }
 
     /* renamed from: a */
-    public static final Image m1139a(String str) {
+    public static final Image getProfileImage(String str) {
         NetworkUtils c0040k;
         Image image;
         if (!AppState.getBool(1576)) {
             return null;
         }
-        synchronized (f353d) {
-            Image image2 = (Image) f353d.get(str);
+        synchronized (photoCache) {
+            Image image2 = (Image) photoCache.get(str);
             Image image3 = image2;
             if (image2 == null) {
                 try {
-                    Hashtable hashtable = f353d;
+                    Hashtable hashtable = photoCache;
                     Image imageM1348r = XmppMailRuProtocol.readChunkedRecord(StringUtils.concat("upi", str)).toImage();
                     image3 = imageM1348r;
                     hashtable.put(str, imageM1348r);
                 } catch (Throwable unused) {
-                    if (f354e == null) {
-                        f354e = str;
-                        new AsyncTask(14, (!AppState.getBool(1576) || (c0040k = (NetworkUtils) f352l.get(str)) == null) ? null : c0040k.url);
+                    if (pendingPhotoKey == null) {
+                        pendingPhotoKey = str;
+                        new AsyncTask(14, (!AppState.getBool(1576) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
                     }
                 }
                 image = image3;
@@ -287,16 +287,16 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public static final Vector m1140a(int i) {
+    public static final Vector getServiceContactIds(int i) {
         if (!AppState.getBool(1576)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationKeys = f352l.keys();
+        Enumeration enumerationKeys = photoRegistry.keys();
         while (enumerationKeys.hasMoreElements()) {
             Object objNextElement = enumerationKeys.nextElement();
-            if (!m1144c(objNextElement)) {
-                NetworkUtils c0040k = (NetworkUtils) f352l.get(objNextElement);
+            if (!isContactOffline(objNextElement)) {
+                NetworkUtils c0040k = (NetworkUtils) photoRegistry.get(objNextElement);
                 if (c0040k != null && c0040k.type == 1) {
                     vectorM1213g.addElement(objNextElement);
                 }
@@ -306,15 +306,15 @@ public final class ConnectionThread {
     }
 
     /* renamed from: c */
-    public static final Vector m1141c() {
+    public static final Vector getAllContactIds() {
         if (!AppState.getBool(1576)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationKeys = f352l.keys();
+        Enumeration enumerationKeys = photoRegistry.keys();
         while (enumerationKeys.hasMoreElements()) {
             Object objNextElement = enumerationKeys.nextElement();
-            if (!m1144c(objNextElement)) {
+            if (!isContactOffline(objNextElement)) {
                 vectorM1213g.addElement(objNextElement);
             }
         }
@@ -322,15 +322,15 @@ public final class ConnectionThread {
     }
 
     /* renamed from: d */
-    public static final Vector m1142d() {
+    public static final Vector getActiveContactIds() {
         if (!AppState.getBool(1576)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.newVector();
-        Enumeration enumerationKeys = f352l.keys();
+        Enumeration enumerationKeys = photoRegistry.keys();
         while (enumerationKeys.hasMoreElements()) {
             Object objNextElement = enumerationKeys.nextElement();
-            if (!(m1143b(objNextElement) == 2)) {
+            if (!(getContactStatus(objNextElement) == 2)) {
                 vectorM1213g.addElement(objNextElement);
             }
         }
@@ -338,41 +338,41 @@ public final class ConnectionThread {
     }
 
     /* renamed from: b */
-    private static final int m1143b(Object obj) {
+    private static final int getContactStatus(Object obj) {
         if (!AppState.getBool(1576)) {
             return 2;
         }
         try {
-            return ((NetworkUtils) f352l.get(obj)).status;
+            return ((NetworkUtils) photoRegistry.get(obj)).status;
         } catch (Throwable unused) {
             return 2;
         }
     }
 
     /* renamed from: c */
-    private static final boolean m1144c(Object obj) {
-        return m1143b(obj) == 0;
+    private static final boolean isContactOffline(Object obj) {
+        return getContactStatus(obj) == 0;
     }
 
     /* renamed from: r */
-    private static ByteBuffer m1145r() {
+    private static ByteBuffer serializeRegistry() {
         ByteBuffer c0043n = new ByteBuffer();
-        c0043n.writeIntBE(f352l.size());
-        Enumeration enumerationKeys = f352l.keys();
+        c0043n.writeIntBE(photoRegistry.size());
+        Enumeration enumerationKeys = photoRegistry.keys();
         while (enumerationKeys.hasMoreElements()) {
-            NetworkUtils c0040k = (NetworkUtils) f352l.get(enumerationKeys.nextElement());
+            NetworkUtils c0040k = (NetworkUtils) photoRegistry.get(enumerationKeys.nextElement());
             c0043n.writeIntBE(c0040k.type).writeIntBE(c0040k.port).writeStringUTF16(c0040k.host).writeStringLatin1(c0040k.url).writeIntBE(c0040k.status).writeStringLatin1(c0040k.protocol);
         }
         return c0043n;
     }
 
     /* renamed from: e */
-    public static final void m1146e() {
-        f353d = new Hashtable();
+    public static final void clearPhotoCache() {
+        photoCache = new Hashtable();
     }
 
     /* renamed from: a */
-    public static final Object[] m1147a(StringBuffer stringBuffer) {
+    public static final Object[] createAuthRequest(StringBuffer stringBuffer) {
         Object[] objArr = new Object[9];
         objArr[0] = NetworkUtils.longToHex(5522759);
         objArr[2] = NetworkUtils.bufToStringCached(stringBuffer);
@@ -380,7 +380,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public static final Object[] m1148a(String str, StringBuffer stringBuffer) {
+    public static final Object[] createUploadRequest(String str, StringBuffer stringBuffer) {
         Object[] objArr = new Object[9];
         objArr[0] = NetworkUtils.longToHex(1414745936);
         objArr[2] = str;
@@ -389,7 +389,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public static final Object[] m1149a(Object[] objArr) {
+    public static final Object[] submitAsync(Object[] objArr) {
         objArr[7] = new AsyncTask(5, objArr);
         return objArr;
     }
@@ -397,9 +397,9 @@ public final class ConnectionThread {
     /* JADX DEBUG: Multi-variable search result rejected for r1v19, resolved type: java.lang.Object[] */
     /* JADX WARN: Multi-variable type inference failed */
     /* renamed from: b */
-    public static final void m1150b(Object[] objArr) throws InterruptedException {
+    public static final void executeWithReauth(Object[] objArr) throws InterruptedException {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1151a = m1151a(objArr, c0028ba);
+        Object[] objArrM1151a = executeHttpRequest(objArr, c0028ba);
         if (objArr[8] != null) {
             objArr[4] = objArrM1151a;
             return;
@@ -410,15 +410,15 @@ public final class ConnectionThread {
         }
         objArr[8] = objArr;
         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1147a = m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
+        Object[] objArrM1147a = createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
         objArrM1147a[8] = objArrM1147a;
-        ((AsyncTask) m1149a(objArrM1147a)[7]).thread.join();
+        ((AsyncTask) submitAsync(objArrM1147a)[7]).thread.join();
         c0028ba.jabberId = (String) objArrM1147a[6];
-        objArr[4] = m1151a(objArr, c0028ba);
+        objArr[4] = executeHttpRequest(objArr, c0028ba);
     }
 
     /* renamed from: a */
-    private static final Object[] m1151a(Object[] objArr, MrimAccount c0028ba) {
+    private static final Object[] executeHttpRequest(Object[] objArr, MrimAccount c0028ba) {
         String strM1215a;
         HttpClient c0024ax = null;
         try {
@@ -434,7 +434,7 @@ public final class ConnectionThread {
                         }
                         HttpClient c0024axM629a = HttpClient.createHttpClient(strM1215a, c0028ba, 1);
                         c0024ax = c0024axM629a;
-                        Object[] objArrM1152a = m1152a(objArr, c0024axM629a);
+                        Object[] objArrM1152a = sendHttpRequest(objArr, c0024axM629a);
                         HttpClient.closeAndUpdateStats(c0024ax);
                         AppController.releaseNetworkLock();
                         return objArrM1152a;
@@ -470,19 +470,19 @@ public final class ConnectionThread {
 
     /* JADX WARN: Type inference failed for: r0v10, types: [java.lang.Object[], java.lang.Throwable] */
     /* renamed from: a */
-    private static final Object[] m1152a(Object[] objArr, HttpClient c0024ax) {
+    private static final Object[] sendHttpRequest(Object[] objArr, HttpClient c0024ax) {
         Object[] M1155b;
         try {
             c0024ax.setRequestMethod((String) objArr[0]);
-            m1153a(c0024ax, 919726, 788668);
-            m1153a(c0024ax, 657608, 329938);
-            m1154a(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).jabberId);
+            setHeaderFromState(c0024ax, 919726, 788668);
+            setHeaderFromState(c0024ax, 657608, 329938);
+            setOptionalHeader(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).jabberId);
             byte[] bArr = (byte[]) objArr[3];
             if (bArr != null) {
-                m1153a(c0024ax, 788628, 2164851);
+                setHeaderFromState(c0024ax, 788628, 2164851);
                 c0024ax.writeData(bArr, bArr.length);
             }
-            M1155b = m1155b(objArr, c0024ax);
+            M1155b = readHttpResponse(objArr, c0024ax);
             return M1155b;
         } catch (Throwable th) {
             return IOUtils.createProtocolError(th);
@@ -490,12 +490,12 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public static final void m1153a(HttpClient c0024ax, int i, int i2) throws IOException {
-        m1154a(c0024ax, i, AppState.getString(i2));
+    public static final void setHeaderFromState(HttpClient c0024ax, int i, int i2) throws IOException {
+        setOptionalHeader(c0024ax, i, AppState.getString(i2));
     }
 
     /* renamed from: a */
-    private static void m1154a(HttpClient c0024ax, int i, String str) throws IOException {
+    private static void setOptionalHeader(HttpClient c0024ax, int i, String str) throws IOException {
         if (str != null) {
             c0024ax.setRequestProperty(AppState.getString(i), str);
         }
@@ -503,7 +503,7 @@ public final class ConnectionThread {
 
     /* JADX WARN: Type inference failed for: r0v7, types: [java.lang.Object[], java.lang.Throwable] */
     /* renamed from: b */
-    private static final Object[] m1155b(Object[] objArr, HttpClient c0024ax) {
+    private static final Object[] readHttpResponse(Object[] objArr, HttpClient c0024ax) {
         Object[] M804a;
         try {
             int iM634a = c0024ax.getResponseCode();
@@ -530,7 +530,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: c */
-    public static final Object[] m1156c(Object[] objArr) {
+    public static final Object[] getAsyncResult(Object[] objArr) {
         Object[] objArr2 = (Object[]) objArr[4];
         if (objArr2 != null) {
             return objArr2;
@@ -539,12 +539,12 @@ public final class ConnectionThread {
     }
 
     /* renamed from: f */
-    public static final void m1157f() {
-        m1159s();
+    public static final void showMapScreen() {
+        initMapState();
         AppState.setInt(1476, 6);
         Screen c0013amM75b = ScreenManager.createScreen(1578);
-        f357m = c0013amM75b;
-        m1160d(c0013amM75b);
+        mapScreen = c0013amM75b;
+        setMapSoftKeys(c0013amM75b);
         ScreenManager.pushScreen(c0013amM75b);
         TabBar.ensureSearchTab();
         TabBar.findTab(6, (Account) null);
@@ -556,28 +556,28 @@ public final class ConnectionThread {
     }
 
     /* renamed from: g */
-    public static final void m1158g() {
+    public static final void updateMapSoftKeys() {
         if (AppState.getBool(1547)) {
-            if (AppState.getBool(1409) || f357m == null) {
+            if (AppState.getBool(1409) || mapScreen == null) {
                 return;
             }
-            f357m.setSoftKeys(AppState.getString(330), AppState.getString(1055), 167, 4, 167);
+            mapScreen.setSoftKeys(AppState.getString(330), AppState.getString(1055), 167, 4, 167);
             AppState.setInt(1409, 1);
             return;
         }
-        if (!AppState.getBool(1409) || f357m == null) {
+        if (!AppState.getBool(1409) || mapScreen == null) {
             return;
         }
-        m1160d(f357m);
+        setMapSoftKeys(mapScreen);
         AppState.setInt(1409, 0);
     }
 
     /* renamed from: s */
-    private static final void m1159s() {
-        if (f356g) {
+    private static final void initMapState() {
+        if (mapInitialized) {
             return;
         }
-        f356g = true;
+        mapInitialized = true;
         int i = ScreenManager.createScreen(1578).contentHeight;
         AppState.setLong(1558, 4178628L);
         AppState.setLong(1560, 7482960L);
@@ -631,51 +631,51 @@ public final class ConnectionThread {
         MapRenderer.needsRedraw = true;
         AppState.setLong(1556, System.currentTimeMillis() - 90);
         new AsyncTask(10);
-        m1136q();
+        loadSavedMapData();
     }
 
     /* renamed from: d */
-    private static final void m1160d(Screen c0013am) {
+    private static final void setMapSoftKeys(Screen c0013am) {
         c0013am.setSoftKeys(AppState.getString(1062), AppState.getString(AppState.getBool(1414) ? 1050 : 328), 20, 0, 0);
     }
 
     /* renamed from: a */
-    public static final void m1161a(Screen c0013am) {
+    public static final void toggleMapControls(Screen c0013am) {
         if (AppState.getBool(1414)) {
             return;
         }
-        m1164h();
-        m1160d(c0013am);
+        toggleScrollMode();
+        setMapSoftKeys(c0013am);
     }
 
     /* renamed from: b */
-    public static final int m1162b(Screen c0013am) {
+    public static final int handleMapBack(Screen c0013am) {
         MrimAccount c0028ba;
         if (AppState.getBool(1547)) {
             ((MrimAccount) AppState.getAccount()).isHighlighted = false;
             MapRenderer.needsRedraw = true;
-            m1164h();
+            toggleScrollMode();
             return 0;
         }
         if (AppState.getBool(1479) && (c0028ba = (MrimAccount) AppState.getAccount()) != null) {
             c0028ba.deselect();
         }
-        m1164h();
-        m1160d(c0013am);
+        toggleScrollMode();
+        setMapSoftKeys(c0013am);
         return 0;
     }
 
     /* renamed from: c */
-    public static final void m1163c(Screen c0013am) {
+    public static final void handleMapSwitch(Screen c0013am) {
         if (AppState.getBool(1414)) {
             AppState.setInt(1564, 3);
         } else {
-            m1161a(c0013am);
+            toggleMapControls(c0013am);
         }
     }
 
     /* renamed from: h */
-    public static final void m1164h() {
+    public static final void toggleScrollMode() {
         boolean z = !AppState.getBool(1414);
         boolean z2 = z;
         AppState.setBool(1414, z);
@@ -686,8 +686,8 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public static final void m1165a(MapPoint c0014an, boolean z) {
-        m1159s();
+    public static final void navigateToPoint(MapPoint c0014an, boolean z) {
+        initMapState();
         if (z) {
             XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
             XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
@@ -701,7 +701,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: i */
-    public static final int m1166i() {
+    public static final int showMapSearchResults() {
         Vector vectorM614m = AppState.getVector(1399);
         if (vectorM614m != null) {
             AppState.clearIndex(1399);
@@ -724,24 +724,24 @@ public final class ConnectionThread {
     }
 
     /* renamed from: j */
-    public static final Enumeration m1167j() {
+    public static final Enumeration getRouteElements() {
         return AppState.getVector(1401).elements();
     }
 
     /* renamed from: k */
-    public static final boolean m1168k() {
+    public static final boolean hasRoutePoints() {
         return AppState.getVector(1401).size() > 0;
     }
 
     /* renamed from: a */
-    public static final void m1169a(MapPoint c0014an) {
+    public static final void removeRoutePoint(MapPoint c0014an) {
         Vector vectorM614m = AppState.getVector(1401);
         vectorM614m.removeElement(c0014an);
         XmppContactGroup.saveMapPoints(vectorM614m, 226);
     }
 
     /* renamed from: l */
-    public static final void m1170l() {
+    public static final void setRouteStart() {
         long jMo274v;
         long jMo275w;
         if (MapRenderer.hasRouteEndpoints()) {
@@ -764,7 +764,7 @@ public final class ConnectionThread {
     }
 
     /* renamed from: m */
-    public static final void m1171m() {
+    public static final void setRouteEnd() {
         long jMo274v;
         long jMo275w;
         if (MapRenderer.hasRouteEndpoints()) {
@@ -787,18 +787,18 @@ public final class ConnectionThread {
     }
 
     /* renamed from: a */
-    public static final void m1172a(ListItem interfaceC0044o) {
+    public static final void selectMapItem(ListItem interfaceC0044o) {
         if (interfaceC0044o.isSelected()) {
-            m1173n();
+            showMapView();
             MapRenderer.setPosition(interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
             MapRenderer.setZoom(interfaceC0044o.getCommandCount());
-            f358h = interfaceC0044o;
+            activeMapItem = interfaceC0044o;
         }
     }
 
     /* renamed from: n */
-    public static final void m1173n() {
-        m1159s();
+    public static final void showMapView() {
+        initMapState();
         AppState.setInt(1414, 1);
         MapRenderer.invalidate();
     }

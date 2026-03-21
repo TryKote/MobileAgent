@@ -277,8 +277,8 @@ public final class MmpProtocol extends Account {
                 }
                 break;
             case 6:
-                if (this.connection.m1131a() != 2) {
-                    if (this.connection.m1131a() <= 0) {
+                if (this.connection.getState() != 2) {
+                    if (this.connection.getState() <= 0) {
                         closeConnection();
                         this.lastError = getDefaultError();
                         break;
@@ -289,7 +289,7 @@ public final class MmpProtocol extends Account {
                 }
                 break;
             case 7:
-                this.connection.m1132a(this.dataBuffer);
+                this.connection.drainInput(this.dataBuffer);
                 ByteBuffer c0043nM1350t = this.dataBuffer.extractJPEG();
                 if (c0043nM1350t != null) {
                     AppController.needsRepaint = true;
@@ -318,7 +318,7 @@ public final class MmpProtocol extends Account {
         if (this.progress < 8) {
             return;
         }
-        this.connection.m1132a(this.dataBuffer);
+        this.connection.drainInput(this.dataBuffer);
         if (this.networkResourceMode == 1) {
             Vector vectorM440S = AppController.getOnlineMrimAccounts();
             if (Utils.vectorSize(vectorM440S) == 0) {
@@ -332,7 +332,7 @@ public final class MmpProtocol extends Account {
             ByteBuffer c0043nM1350t2 = this.dataBuffer.extractJPEG();
             ByteBuffer c0043nM1299a = c0043nM1350t2;
             if (c0043nM1350t2 == null) {
-                if (this.lastError != -1 && this.connection != null && this.connection.m1131a() == 0) {
+                if (this.lastError != -1 && this.connection != null && this.connection.getState() == 0) {
                     closeConnection();
                     this.lastError = getDefaultError();
                 }

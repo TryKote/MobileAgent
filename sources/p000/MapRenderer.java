@@ -295,14 +295,14 @@ public abstract class MapRenderer {
                 int height = 0;
                 for (int i30 = 0; i30 < size2; i30++) {
                     Object[] objArr2 = (Object[]) vector.elementAt(i30);
-                    if (!ConnectionThread.f355f.contains((String) objArr2[0])) {
+                    if (!ConnectionThread.hiddenContacts.contains((String) objArr2[0])) {
                         long j8 = ((long[]) objArr2[1])[0];
                         long j9 = ((long[]) objArr2[1])[1];
                         long jM317a = AppController.coordToPixel(j8, iM586d);
                         long jM317a2 = AppController.coordToPixel(j9, iM586d);
                         int i31 = (int) (jM317a / 32);
                         int i32 = (int) (jM317a2 / 32);
-                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (imageM1139a = ConnectionThread.m1139a((String) objArr2[0])) != null) {
+                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (imageM1139a = ConnectionThread.getProfileImage((String) objArr2[0])) != null) {
                             int i33 = (int) (i31 - j4);
                             int i34 = (int) (i32 - j5);
                             if (iArr2[(i34 * i28) + i33] == 0) {
@@ -353,7 +353,7 @@ public abstract class MapRenderer {
             long j13 = currentPixelY;
             int i39 = viewportWidth;
             int i40 = viewportHeight;
-            Enumeration enumerationM1167j = ConnectionThread.m1167j();
+            Enumeration enumerationM1167j = ConnectionThread.getRouteElements();
             boolean z2 = false;
             MapPoint c0014an3 = null;
             while (enumerationM1167j.hasMoreElements()) {
@@ -421,7 +421,7 @@ public abstract class MapRenderer {
                     long j19 = (j17 - (i47 / 2)) / 32;
                     long j20 = (j16 + (i47 / 2)) / 32;
                     long j21 = (j17 + (i47 / 2)) / 32;
-                    ListItem interfaceC0044o4 = ConnectionThread.f358h;
+                    ListItem interfaceC0044o4 = ConnectionThread.activeMapItem;
                     if (ChatRenderer.mapItems == null || j18 < ChatRenderer.coord1 || j19 < ChatRenderer.coord2 || j20 > ChatRenderer.coord3 || j21 > ChatRenderer.coord4) {
                         ChatRenderer.coord1 = j18 - 10;
                         ChatRenderer.coord2 = j19 - 10;
@@ -526,14 +526,14 @@ public abstract class MapRenderer {
                             hideTooltip();
                         }
                     }
-                    ConnectionThread.m1158g();
+                    ConnectionThread.updateMapSoftKeys();
                 }
             }
             long j24 = currentPixelX;
             long j25 = currentPixelY;
             int i62 = viewportWidth;
             int i63 = viewportHeight;
-            if (AppState.getBool(276) && !XmppContactGroup.isMapDataRecent() && (interfaceC0044o = ConnectionThread.f358h) != null) {
+            if (AppState.getBool(276) && !XmppContactGroup.isMapDataRecent() && (interfaceC0044o = ConnectionThread.activeMapItem) != null) {
                 long jMo282a5 = interfaceC0044o.getCommandId(iM586d);
                 long jMo283b5 = interfaceC0044o.executeCommand(iM586d);
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);

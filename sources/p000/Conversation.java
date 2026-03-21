@@ -135,7 +135,7 @@ public final class Conversation implements ListItem {
                     HttpClient c0024axM629a = HttpClient.createHttpClient(AppState.getString(2755089), c0033d, 0);
                     c0024axM629a.setRequestMethod(NetworkUtils.longToHex(1414745936));
                     ByteBuffer c0043nM1315a = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
-                    ConnectionThread.m1153a(c0024axM629a, 788628, 2164851);
+                    ConnectionThread.setHeaderFromState(c0024axM629a, 788628, 2164851);
                     c0024axM629a.writeData(c0043nM1315a.data, c0043nM1315a.length);
                     int iM634a = c0024axM629a.getResponseCode();
                     i = iM634a;

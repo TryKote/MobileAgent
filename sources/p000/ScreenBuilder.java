@@ -86,7 +86,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(2733));
                 return;
             case 6:
-                ConnectionThread.m1157f();
+                ConnectionThread.showMapScreen();
                 return;
             case 7:
                 ScreenManager.showScreen(ScreenManager.createScreen(2641));
@@ -277,7 +277,7 @@ public final class ScreenBuilder {
                 JsonParser.addIntToVector(vectorM1213g, 0);
                 vectorM1213g.addElement(AppState.emptyStr);
                 JsonParser.addIntToVector(vectorM1213g, 1);
-                IOUtils.sendChatRoomRequest(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g)))));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1050207)).append('?').append(AppState.getString(722608)).append(AppState.getString(2098635)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g)))));
                 return;
             case 38:
                 AppController.initChatRoomList();
@@ -322,7 +322,7 @@ public final class ScreenBuilder {
                 if (c0052wM745h == c0028ba2.getLastChatRoom()) {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(0)));
                     vectorM1213g2.addElement(c0052wM745h.participants);
-                    objArrM1147a = ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.m1216b(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.m1216b(722608).append(AppState.getString(2950868)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
                 } else {
                     vectorM1213g2.addElement(StringUtils.intern(Integer.toString(c0052wM745h.id)));
                     int iM586d2 = AppState.getInt(97);
@@ -339,7 +339,7 @@ public final class ScreenBuilder {
                         }
                     }
                     vectorM1213g2.addElement(vectorM1213g3);
-                    objArrM1147a = ConnectionThread.m1147a(NetworkUtils.m1216b(1050207).append('?').append(AppState.getString(722608)).append(AppState.getString(1640218)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.createAuthRequest(NetworkUtils.m1216b(1050207).append('?').append(AppState.getString(722608)).append(AppState.getString(1640218)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g2))));
                 }
                 IOUtils.sendChatRoomRequest(objArrM1147a);
                 return;
@@ -348,7 +348,7 @@ public final class ScreenBuilder {
                 Vector vectorM1213g4 = NetworkUtils.newVector();
                 JsonParser.addIntToVector(vectorM1213g4, AppState.getInt(1527));
                 vectorM1213g4.addElement(AppState.getVector(1356));
-                IOUtils.sendChatRoomRequest(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g4)))));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640193)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g4)))));
                 return;
             case 43:
                 IOUtils.showChatRoomMessages();
@@ -390,7 +390,7 @@ public final class ScreenBuilder {
                     vectorM1213g5.addElement(strM584b);
                     vectorM1213g5.addElement(AppState.emptyStr);
                     vectorM1213g5.addElement(NetworkUtils.longToHex(6775156));
-                    IOUtils.sendChatRoomRequest(ConnectionThread.m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g5)))));
+                    IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1377926)).append('?').append(AppState.getString(722608)).append(AppState.getString(1836851)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g5)))));
                     return;
                 }
                 return;
@@ -540,7 +540,7 @@ public final class ScreenBuilder {
                     if (size7 < 0) {
                         Vector vectorM1213g7 = NetworkUtils.newVector();
                         vectorM1213g7.addElement(vectorM1213g6);
-                        IOUtils.sendChatRoomRequest(ConnectionThread.m1148a(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g7)))));
+                        IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1377771), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574400)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g7)))));
                         return;
                     } else {
                         Hashtable hashtable2 = new Hashtable();
@@ -580,7 +580,7 @@ public final class ScreenBuilder {
                 Vector vectorM1213g8 = NetworkUtils.newVector();
                 vectorM1213g8.addElement(AppState.getVector(1356));
                 JsonParser.addIntToVector(vectorM1213g8, AppState.getBool(1524) ? 1 : 0);
-                IOUtils.sendChatRoomRequest(ConnectionThread.m1148a(AppState.getString(1508975), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g8)))));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1508975), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1640123)), Conversation.urlEncode((Object) JsonParser.toJson(vectorM1213g8)))));
                 return;
             case 79:
                 NetworkUtils.m1198a(79, 863);
@@ -597,14 +597,14 @@ public final class ScreenBuilder {
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1349)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1350)));
                 vectorM1213g9.addElement(Utils.defaultStr(AppState.getString(1351)));
-                IOUtils.sendChatRoomRequest(ConnectionThread.m1148a(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g9)))));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1050207), NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1509223)).append(AppState.getString(1381)).append(AppState.getString(395134)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g9)))));
                 return;
             case 82:
                 NetworkUtils.m1200b(82, 877);
                 Message c0026az3 = new Message(XmppMailRuProtocol.parseRecipientList(Utils.defaultStr(AppState.getString(1352))), Utils.defaultStr(AppState.getString(1353)), Utils.defaultStr(AppState.getString(1354)));
                 Vector vectorM1213g10 = NetworkUtils.newVector();
                 vectorM1213g10.addElement(c0026az3.toHashtable());
-                IOUtils.sendChatRoomRequest(ConnectionThread.m1148a(AppState.getString(1377947), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g10)))));
+                IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(1377947), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(722608)).append(AppState.getString(1574735)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(vectorM1213g10)))));
                 return;
             case 83:
                 ResourceManager.playNotificationSound(4);
@@ -870,7 +870,7 @@ public final class ScreenBuilder {
                 return;
             case 116:
                 Screen c0013amM75b13 = ScreenManager.createScreen(1892);
-                Enumeration enumerationM1167j = ConnectionThread.m1167j();
+                Enumeration enumerationM1167j = ConnectionThread.getRouteElements();
                 while (enumerationM1167j.hasMoreElements()) {
                     MapPoint c0014an2 = (MapPoint) enumerationM1167j.nextElement();
                     c0013amM75b13.addIconItemWithData(-1, c0014an2.name, 118, c0014an2);
@@ -905,7 +905,7 @@ public final class ScreenBuilder {
                 return;
             case 120:
                 Screen c0013amM75b14 = ScreenManager.createScreen(1958);
-                Enumeration enumerationM1167j2 = ConnectionThread.m1167j();
+                Enumeration enumerationM1167j2 = ConnectionThread.getRouteElements();
                 while (enumerationM1167j2.hasMoreElements()) {
                     MapPoint c0014an3 = (MapPoint) enumerationM1167j2.nextElement();
                     c0013amM75b14.addIconItemWithData(-1, c0014an3.name, 6, c0014an3);
@@ -1108,7 +1108,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(3272));
                 return;
             case 152:
-                ConnectionThread.m1173n();
+                ConnectionThread.showMapView();
                 ScreenManager.showScreen(ScreenManager.createScreen(3302));
                 return;
             case 153:
@@ -1118,7 +1118,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(2085));
                 return;
             case 155:
-                Vector vectorM1141c = ConnectionThread.m1141c();
+                Vector vectorM1141c = ConnectionThread.getAllContactIds();
                 int iM541c = Utils.vectorSize(vectorM1141c);
                 if (iM541c == 0) {
                     AppController.showMessageById(404);
@@ -1127,7 +1127,7 @@ public final class ScreenBuilder {
                 Screen c0013amM75b16 = ScreenManager.createScreen(2101);
                 for (int i23 = 0; i23 < iM541c; i23++) {
                     Object objElementAt2 = vectorM1141c.elementAt(i23);
-                    c0013amM75b16.addItem(MenuItem.createCheckbox(ConnectionThread.m1138a(objElementAt2), !ConnectionThread.f355f.contains(objElementAt2)));
+                    c0013amM75b16.addItem(MenuItem.createCheckbox(ConnectionThread.getPhotoHost(objElementAt2), !ConnectionThread.hiddenContacts.contains(objElementAt2)));
                 }
                 ScreenManager.showScreen(c0013amM75b16);
                 return;
@@ -1304,7 +1304,7 @@ public final class ScreenBuilder {
                 break;
             case 6:
                 if (!AppState.getBool(1547)) {
-                    ConnectionThread.m1161a(c0013amM66b);
+                    ConnectionThread.toggleMapControls(c0013amM66b);
                 }
                 iM460J = 0;
                 break;
@@ -2038,7 +2038,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 155:
-                Vector vectorM1141c = ConnectionThread.m1141c();
+                Vector vectorM1141c = ConnectionThread.getAllContactIds();
                 StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
                 Vector vector = c0013amM66b.menuItems;
                 int size3 = vector.size();
@@ -2048,7 +2048,7 @@ public final class ScreenBuilder {
                     }
                 }
                 String strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h2);
-                ConnectionThread.f355f = Utils.split(strM1215a, (char) 0);
+                ConnectionThread.hiddenContacts = Utils.split(strM1215a, (char) 0);
                 AppState.setObject(264, (Object) strM1215a);
                 iM460J = 0;
                 break;
@@ -2199,7 +2199,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 6:
-                iM308i = ConnectionThread.m1162b(c0013amM66b);
+                iM308i = ConnectionThread.handleMapBack(c0013amM66b);
                 break;
             case 7:
                 iM308i = 0;
@@ -2715,7 +2715,7 @@ public final class ScreenBuilder {
                 break;
             case 171:
                 AppState.setInt(285, 0);
-                ConnectionThread.m1164h();
+                ConnectionThread.toggleScrollMode();
                 iM308i = 6;
                 break;
             case 172:
