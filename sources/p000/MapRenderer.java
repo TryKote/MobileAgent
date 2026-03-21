@@ -87,12 +87,12 @@ public abstract class MapRenderer {
 
     /* renamed from: f */
     private static final Image createCheckerboard() {
-        Image imageM615n = AppState.getImage(1363);
-        if (imageM615n != null) {
-            return imageM615n;
+        Image cachedImage = AppState.getImage(1363);
+        if (cachedImage != null) {
+            return cachedImage;
         }
-        Image imageCreateImage = Image.createImage(128, 128);
-        Graphics graphics = imageCreateImage.getGraphics();
+        Image image = Image.createImage(128, 128);
+        Graphics graphics = image.getGraphics();
         graphics.setColor(13158600);
         int i = 0;
         int i2 = 0;
@@ -103,8 +103,8 @@ public abstract class MapRenderer {
             i2 += 2;
             i ^= 2;
         }
-        AppState.pool[1363] = imageCreateImage;
-        return imageCreateImage;
+        AppState.pool[1363] = image;
+        return image;
     }
 
     /* JADX DEBUG: Multi-variable search result rejected for r0v435, resolved type: p */
@@ -119,21 +119,21 @@ public abstract class MapRenderer {
         int i;
         int i2;
         int i3 = 0;
-        ListItem interfaceC0044o;
-        Vector vectorM614m;
+        ListItem item;
+        Vector poiVector;
         int size;
-        Image imageM1023b;
-        int iM271d;
-        Image imageM1023b2;
+        Image markerIcon;
+        int deltaY;
+        Image pinIcon;
         int i4;
         Vector vector;
         int size2;
-        Image imageM1139a;
+        Image profileImage;
         boolean z;
         if (selectedMapPoint != null) {
-            MapPoint c0014an = selectedMapPoint;
-            if (c0014an.dirty) {
-                c0014an.dirty = false;
+            MapPoint mapPoint = selectedMapPoint;
+            if (mapPoint.dirty) {
+                mapPoint.dirty = false;
                 z = true;
             } else {
                 z = false;
@@ -156,29 +156,29 @@ public abstract class MapRenderer {
             int i12 = i8 < 0 ? (i8 / 128) - 1 : i8 / 128;
             int i13 = (int) ((((i9 << 7) + 64) - currentPixelX) + (viewportWidth / 2));
             int i14 = (int) (viewportHeight - ((((i10 << 7) + 64) - currentPixelY) + (viewportHeight / 2)));
-            Vector vectorM1213g = NetworkUtils.newVector();
+            Vector visibleTiles = NetworkUtils.newVector();
             Graphics graphics = AppState.getImage(1364).getGraphics();
-            int iM586d = AppState.getInt(39);
+            int zoomLevel = AppState.getInt(39);
             for (int i15 = i9; i15 <= i11; i15++) {
                 for (int i16 = i10; i16 <= i12; i16++) {
-                    ResourceManager c0034e = new ResourceManager(1, iM586d, i15, i16);
-                    ResourceManager c0034e2 = null;
-                    vectorM1213g.addElement(c0034e);
-                    if (AppState.getBool(277) && iM586d > 8 && AppState.getBool(41) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
-                        ResourceManager c0034e3 = new ResourceManager(3, iM586d, i15, i16);
-                        c0034e2 = c0034e3;
-                        vectorM1213g.addElement(c0034e3);
+                    ResourceManager tile = new ResourceManager(1, zoomLevel, i15, i16);
+                    ResourceManager overlayTile = null;
+                    visibleTiles.addElement(tile);
+                    if (AppState.getBool(277) && zoomLevel > 8 && AppState.getBool(41) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
+                        ResourceManager newOverlayTile = new ResourceManager(3, zoomLevel, i15, i16);
+                        overlayTile = newOverlayTile;
+                        visibleTiles.addElement(newOverlayTile);
                     }
-                    Image imageM20a = StringUtils.getTileImage(c0034e);
-                    Image imageM20a2 = c0034e2 != null ? StringUtils.getTileImage(c0034e2) : null;
-                    if (imageM20a == null) {
-                        imageM20a = createCheckerboard();
+                    Image tileImage = StringUtils.getTileImage(tile);
+                    Image overlayImage = overlayTile != null ? StringUtils.getTileImage(overlayTile) : null;
+                    if (tileImage == null) {
+                        tileImage = createCheckerboard();
                     }
-                    graphics.drawImage(imageM20a, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
-                    if (c0034e2 != null && imageM20a != createCheckerboard()) {
-                        if (imageM20a2 != null) {
-                            graphics.drawImage(imageM20a2, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
-                        } else if (imageM20a2 == null && !AppState.getVector(1396).contains(c0034e2)) {
+                    graphics.drawImage(tileImage, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
+                    if (overlayTile != null && tileImage != createCheckerboard()) {
+                        if (overlayImage != null) {
+                            graphics.drawImage(overlayImage, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
+                        } else if (overlayImage == null && !AppState.getVector(1396).contains(overlayTile)) {
                             int i17 = i13 + (128 * (i15 - i9));
                             int i18 = i14 - (128 * (i16 - i10));
                             int color = graphics.getColor();
@@ -212,41 +212,41 @@ public abstract class MapRenderer {
                     }
                 }
             }
-            Vector vectorM614m2 = AppState.getVector(1383);
-            int size3 = vectorM1213g.size();
+            Vector loadedTiles = AppState.getVector(1383);
+            int size3 = visibleTiles.size();
             for (int i21 = 0; i21 < size3; i21++) {
-                ResourceManager c0034e4 = (ResourceManager) vectorM1213g.elementAt(i21);
-                if (!vectorM614m2.contains(c0034e4)) {
-                    int i22 = c0034e4.tileType;
+                ResourceManager visibleTile = (ResourceManager) visibleTiles.elementAt(i21);
+                if (!loadedTiles.contains(visibleTile)) {
+                    int i22 = visibleTile.tileType;
                     if (i22 == 1) {
                         AppState.addInt(250, 1);
                     } else if (i22 == 3) {
                         AppState.addInt(251, 1);
                     }
-                    vectorM614m2.addElement(c0034e4);
+                    loadedTiles.addElement(visibleTile);
                 }
             }
-            int size4 = vectorM614m2.size();
+            int size4 = loadedTiles.size();
             while (true) {
                 size4--;
                 if (size4 < 0) {
                     break;
-                } else if (!vectorM1213g.contains(vectorM614m2.elementAt(size4))) {
-                    vectorM614m2.removeElementAt(size4);
+                } else if (!visibleTiles.contains(loadedTiles.elementAt(size4))) {
+                    loadedTiles.removeElementAt(size4);
                 }
             }
-            Vector vectorM614m3 = AppState.getVector(1397);
-            synchronized (vectorM614m3) {
-                vectorM614m3.removeAllElements();
-                int size5 = vectorM1213g.size();
+            Vector currentTiles = AppState.getVector(1397);
+            synchronized (currentTiles) {
+                currentTiles.removeAllElements();
+                int size5 = visibleTiles.size();
                 for (int i23 = 0; i23 < size5; i23++) {
-                    vectorM614m3.addElement(vectorM1213g.elementAt(i23));
+                    currentTiles.addElement(visibleTiles.elementAt(i23));
                 }
-                NetworkUtils.releaseVector(vectorM1213g);
+                NetworkUtils.releaseVector(visibleTiles);
             }
-            Vector vectorM614m4 = AppState.getVector(1402);
-            synchronized (vectorM614m4) {
-                int size6 = vectorM614m4.size();
+            Vector infoLabels = AppState.getVector(1402);
+            synchronized (infoLabels) {
+                int size6 = infoLabels.size();
                 if (size6 > 0) {
                     String str = null;
                     int i24 = 0;
@@ -256,24 +256,24 @@ public abstract class MapRenderer {
                         if (i25 < 0) {
                             break;
                         }
-                        Object[] objArr = (Object[]) vectorM614m4.elementAt(i25);
-                        int iIntValue = ((Integer) objArr[0]).intValue();
-                        if (iIntValue > i24) {
-                            i24 = iIntValue;
+                        Object[] objArr = (Object[]) infoLabels.elementAt(i25);
+                        int priority = ((Integer) objArr[0]).intValue();
+                        if (priority > i24) {
+                            i24 = priority;
                             str = (String) objArr[1];
                         }
                     }
                     Font font = graphics.getFont();
                     int color2 = graphics.getColor();
-                    Font fontM625m = AppState.getFont();
-                    graphics.setFont(fontM625m);
-                    int iM586d2 = AppState.getInt(72);
-                    graphics.setColor(AppState.getInt(5050 + iM586d2));
-                    int iStringWidth = fontM625m.stringWidth(str) + 10;
-                    int iM586d3 = AppState.getInt(1450);
-                    graphics.fillRoundRect(5, 5, iStringWidth, iM586d3, 10, 10);
-                    graphics.setColor(AppState.getInt(iM586d2 + 4914));
-                    graphics.drawRoundRect(5, 5, iStringWidth, iM586d3, 10, 10);
+                    Font labelFont = AppState.getFont();
+                    graphics.setFont(labelFont);
+                    int colorScheme = AppState.getInt(72);
+                    graphics.setColor(AppState.getInt(5050 + colorScheme));
+                    int labelWidth = labelFont.stringWidth(str) + 10;
+                    int labelHeight = AppState.getInt(1450);
+                    graphics.fillRoundRect(5, 5, labelWidth, labelHeight, 10, 10);
+                    graphics.setColor(AppState.getInt(colorScheme + 4914));
+                    graphics.drawRoundRect(5, 5, labelWidth, labelHeight, 10, 10);
                     graphics.drawString(str, 10, 5, 20);
                     graphics.setFont(font);
                     graphics.setColor(color2);
@@ -283,7 +283,7 @@ public abstract class MapRenderer {
             long j3 = currentPixelY;
             int i26 = viewportWidth;
             int i27 = viewportHeight;
-            if (AppState.getBool(277) && !XmppContactGroup.isMapDataRecent() && iM586d >= 9 && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
+            if (AppState.getBool(277) && !XmppContactGroup.isMapDataRecent() && zoomLevel >= 9 && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
                 long j4 = (j2 - (i26 / 2)) / 32;
                 long j5 = (j3 - (i26 / 2)) / 32;
                 long j6 = (j2 + (i26 / 2)) / 32;
@@ -298,24 +298,24 @@ public abstract class MapRenderer {
                     if (!ConnectionThread.hiddenContacts.contains((String) objArr2[0])) {
                         long j8 = ((long[]) objArr2[1])[0];
                         long j9 = ((long[]) objArr2[1])[1];
-                        long jM317a = AppController.coordToPixel(j8, iM586d);
-                        long jM317a2 = AppController.coordToPixel(j9, iM586d);
-                        int i31 = (int) (jM317a / 32);
-                        int i32 = (int) (jM317a2 / 32);
-                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (imageM1139a = ConnectionThread.getProfileImage((String) objArr2[0])) != null) {
+                        long pixelX = AppController.coordToPixel(j8, zoomLevel);
+                        long pixelY = AppController.coordToPixel(j9, zoomLevel);
+                        int i31 = (int) (pixelX / 32);
+                        int i32 = (int) (pixelY / 32);
+                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (profileImage = ConnectionThread.getProfileImage((String) objArr2[0])) != null) {
                             int i33 = (int) (i31 - j4);
                             int i34 = (int) (i32 - j5);
                             if (iArr2[(i34 * i28) + i33] == 0) {
-                                int i35 = (int) ((i26 / 2) + (jM317a - j2));
-                                int i36 = (int) ((i27 / 2) + (j3 - jM317a2));
-                                graphics.drawImage(imageM1139a, i35, i36, 3);
+                                int i35 = (int) ((i26 / 2) + (pixelX - j2));
+                                int i36 = (int) ((i27 / 2) + (j3 - pixelY));
+                                graphics.drawImage(profileImage, i35, i36, 3);
                                 iArr2[(i34 * i28) + i33] = 1;
-                                if (str2 == null && Utils.absLong(j2 - jM317a) < 20 && Utils.absLong(j3 - jM317a2) < 20) {
+                                if (str2 == null && Utils.absLong(j2 - pixelX) < 20 && Utils.absLong(j3 - pixelY) < 20) {
                                     String str3 = (String) objArr2[2];
                                     if (Utils.nonEmpty(str3)) {
                                         str2 = str3;
                                         i29 = i35;
-                                        height = (i36 - (imageM1139a.getHeight() / 2)) + 2;
+                                        height = (i36 - (profileImage.getHeight() / 2)) + 2;
                                     }
                                 }
                             }
@@ -326,49 +326,49 @@ public abstract class MapRenderer {
                     ChatRenderer.renderTooltip(graphics, str2, AppState.getFont(), i26 - 40, i29, height);
                 }
             }
-            MapPoint c0014an2 = selectedMapPoint;
+            MapPoint selectedPoint = selectedMapPoint;
             long j10 = currentPixelX;
             long j11 = currentPixelY;
             int i37 = viewportWidth;
             int i38 = viewportHeight;
             hideTooltip();
-            if (c0014an2 != null && c0014an2.selected && c0014an2.getDisplayName() != null && Utils.absLong(j10 - c0014an2.getLonAtZoom(iM586d)) <= i37 / 2 && Utils.absLong(j11 - c0014an2.getLatAtZoom(iM586d)) <= i38 / 2) {
-                int iM270c = (int) ((i37 / 2) + (c0014an2.getLonAtZoom(iM586d) - j10));
-                int iM271d2 = (int) ((i38 / 2) + (j11 - c0014an2.getLatAtZoom(iM586d)));
-                if (c0014an2.height == 2) {
-                    imageM1023b2 = XmppContactGroup.getOrLoadImage(25);
+            if (selectedPoint != null && selectedPoint.selected && selectedPoint.getDisplayName() != null && Utils.absLong(j10 - selectedPoint.getLonAtZoom(zoomLevel)) <= i37 / 2 && Utils.absLong(j11 - selectedPoint.getLatAtZoom(zoomLevel)) <= i38 / 2) {
+                int pinX = (int) ((i37 / 2) + (selectedPoint.getLonAtZoom(zoomLevel) - j10));
+                int pinY = (int) ((i38 / 2) + (j11 - selectedPoint.getLatAtZoom(zoomLevel)));
+                if (selectedPoint.height == 2) {
+                    pinIcon = XmppContactGroup.getOrLoadImage(25);
                     i4 = 1;
                 } else {
-                    imageM1023b2 = XmppContactGroup.getOrLoadImage(24);
+                    pinIcon = XmppContactGroup.getOrLoadImage(24);
                     i4 = 4;
                 }
-                graphics.drawImage(imageM1023b2, iM270c, iM271d2, 32 | i4);
-                if (Utils.absLong(j10 - c0014an2.getLonAtZoom(iM586d)) >= 20 || Utils.absLong(j11 - c0014an2.getLatAtZoom(iM586d)) >= 20) {
+                graphics.drawImage(pinIcon, pinX, pinY, 32 | i4);
+                if (Utils.absLong(j10 - selectedPoint.getLonAtZoom(zoomLevel)) >= 20 || Utils.absLong(j11 - selectedPoint.getLatAtZoom(zoomLevel)) >= 20) {
                     hideTooltip();
                 } else {
-                    showTooltip((ListItem) c0014an2);
+                    showTooltip((ListItem) selectedPoint);
                 }
             }
             long j12 = currentPixelX;
             long j13 = currentPixelY;
             int i39 = viewportWidth;
             int i40 = viewportHeight;
-            Enumeration enumerationM1167j = ConnectionThread.getRouteElements();
+            Enumeration routeElements = ConnectionThread.getRouteElements();
             boolean z2 = false;
-            MapPoint c0014an3 = null;
-            while (enumerationM1167j.hasMoreElements()) {
-                MapPoint c0014an4 = (MapPoint) enumerationM1167j.nextElement();
-                if (Utils.absLong(j12 - c0014an4.getLonAtZoom(iM586d)) < i39 / 2 && Utils.absLong(j13 - c0014an4.getLatAtZoom(iM586d)) < i40 / 2 && c0014an4.selected) {
-                    graphics.drawImage(XmppContactGroup.getOrLoadImage(18), (int) ((i39 / 2) + (c0014an4.getLonAtZoom(iM586d) - j12)), (int) ((i40 / 2) + (j13 - c0014an4.getLatAtZoom(iM586d))), 36);
-                    if (Utils.absLong(j12 - c0014an4.getLonAtZoom(iM586d)) < 20 && (iM271d = (int) (j13 - c0014an4.getLatAtZoom(iM586d))) < 20 && iM271d > -10 && !z2) {
-                        c0014an3 = c0014an4;
+            MapPoint nearestRoute = null;
+            while (routeElements.hasMoreElements()) {
+                MapPoint routePoint = (MapPoint) routeElements.nextElement();
+                if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < i39 / 2 && Utils.absLong(j13 - routePoint.getLatAtZoom(zoomLevel)) < i40 / 2 && routePoint.selected) {
+                    graphics.drawImage(XmppContactGroup.getOrLoadImage(18), (int) ((i39 / 2) + (routePoint.getLonAtZoom(zoomLevel) - j12)), (int) ((i40 / 2) + (j13 - routePoint.getLatAtZoom(zoomLevel))), 36);
+                    if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < 20 && (deltaY = (int) (j13 - routePoint.getLatAtZoom(zoomLevel))) < 20 && deltaY > -10 && !z2) {
+                        nearestRoute = routePoint;
                         z2 = true;
                     }
                 }
             }
             if (!hasTooltip()) {
                 if (z2) {
-                    showTooltip((ListItem) c0014an3);
+                    showTooltip((ListItem) nearestRoute);
                 } else {
                     hideTooltip();
                 }
@@ -377,33 +377,33 @@ public abstract class MapRenderer {
             long j15 = currentPixelY;
             int i41 = viewportWidth;
             int i42 = viewportHeight;
-            if (AppState.getBool(276) && AppState.getBool(280) && !XmppContactGroup.isMapDataRecent() && (vectorM614m = AppState.getVector(1404)) != null && (size = vectorM614m.size()) != 0) {
-                ListItem interfaceC0044o2 = null;
-                int iM586d4 = AppState.getInt(39);
+            if (AppState.getBool(276) && AppState.getBool(280) && !XmppContactGroup.isMapDataRecent() && (poiVector = AppState.getVector(1404)) != null && (size = poiVector.size()) != 0) {
+                ListItem nearestPoi = null;
+                int currentZoom = AppState.getInt(39);
                 for (int i43 = 0; i43 < size; i43++) {
-                    ListItem interfaceC0044o3 = (ListItem) vectorM614m.elementAt(i43);
-                    if (interfaceC0044o3.isSelected() && iM586d4 == interfaceC0044o3.getCommandCount()) {
-                        long jMo282a = interfaceC0044o3.getCommandId(iM586d);
-                        long jMo283b = interfaceC0044o3.executeCommand(iM586d);
-                        int i44 = (int) ((i41 / 2) + (jMo282a - j14));
-                        int i45 = (int) ((i42 / 2) + (j15 - jMo283b));
+                    ListItem poiItem = (ListItem) poiVector.elementAt(i43);
+                    if (poiItem.isSelected() && currentZoom == poiItem.getCommandCount()) {
+                        long poiPixelX = poiItem.getCommandId(zoomLevel);
+                        long poiPixelY = poiItem.executeCommand(zoomLevel);
+                        int i44 = (int) ((i41 / 2) + (poiPixelX - j14));
+                        int i45 = (int) ((i42 / 2) + (j15 - poiPixelY));
                         if (i44 > 0 && i44 < i41 && i45 > 0 && i45 < i42) {
-                            if (interfaceC0044o3.getHeight() == 8) {
-                                int i46 = ((UserSearchResult) interfaceC0044o3).gender;
-                                imageM1023b = (i46 == 1 || i46 == 0) ? XmppContactGroup.getOrLoadImage(27) : XmppContactGroup.getOrLoadImage(28);
+                            if (poiItem.getHeight() == 8) {
+                                int i46 = ((UserSearchResult) poiItem).gender;
+                                markerIcon = (i46 == 1 || i46 == 0) ? XmppContactGroup.getOrLoadImage(27) : XmppContactGroup.getOrLoadImage(28);
                             } else {
-                                imageM1023b = XmppContactGroup.getOrLoadImage(23);
+                                markerIcon = XmppContactGroup.getOrLoadImage(23);
                             }
-                            graphics.drawImage(imageM1023b, i44, i45, 3);
+                            graphics.drawImage(markerIcon, i44, i45, 3);
                         }
-                        if (Utils.absLong(j14 - jMo282a) < 20 && Utils.absLong(j15 - jMo283b) < 20 && interfaceC0044o2 == null) {
-                            interfaceC0044o2 = interfaceC0044o3;
+                        if (Utils.absLong(j14 - poiPixelX) < 20 && Utils.absLong(j15 - poiPixelY) < 20 && nearestPoi == null) {
+                            nearestPoi = poiItem;
                         }
                     }
                 }
                 if (!hasTooltip()) {
-                    if (interfaceC0044o2 != null) {
-                        showTooltip(interfaceC0044o2);
+                    if (nearestPoi != null) {
+                        showTooltip(nearestPoi);
                     } else {
                         hideTooltip();
                     }
@@ -414,81 +414,81 @@ public abstract class MapRenderer {
             int i47 = viewportWidth;
             int i48 = viewportHeight;
             if (AppState.getBool(276) && AppState.getBool(279) && !XmppContactGroup.isMapDataRecent()) {
-                Vector vectorM448X = AppController.getMapContacts();
-                int size7 = vectorM448X.size();
+                Vector mapContacts = AppController.getMapContacts();
+                int size7 = mapContacts.size();
                 if (size7 > 0) {
                     long j18 = (j16 - (i47 / 2)) / 32;
                     long j19 = (j17 - (i47 / 2)) / 32;
                     long j20 = (j16 + (i47 / 2)) / 32;
                     long j21 = (j17 + (i47 / 2)) / 32;
-                    ListItem interfaceC0044o4 = ConnectionThread.activeMapItem;
+                    ListItem activeContact = ConnectionThread.activeMapItem;
                     if (ChatRenderer.mapItems == null || j18 < ChatRenderer.coord1 || j19 < ChatRenderer.coord2 || j20 > ChatRenderer.coord3 || j21 > ChatRenderer.coord4) {
                         ChatRenderer.coord1 = j18 - 10;
                         ChatRenderer.coord2 = j19 - 10;
                         ChatRenderer.coord3 = j20 + 10;
                         ChatRenderer.coord4 = j21 + 10;
                         int i49 = ((int) (ChatRenderer.coord3 - ChatRenderer.coord1)) + 1;
-                        ListItem[] interfaceC0044oArr = new ListItem[i49 * (((int) (ChatRenderer.coord4 - ChatRenderer.coord2)) + 1)];
-                        ChatRenderer.mapItems = interfaceC0044oArr;
+                        ListItem[] gridItems = new ListItem[i49 * (((int) (ChatRenderer.coord4 - ChatRenderer.coord2)) + 1)];
+                        ChatRenderer.mapItems = gridItems;
                         for (int i50 = 0; i50 < size7; i50++) {
-                            ListItem interfaceC0044o5 = (ListItem) vectorM448X.elementAt(i50);
-                            if (interfaceC0044o5.isSelected() && interfaceC0044o4 != interfaceC0044o5) {
-                                long jMo282a2 = interfaceC0044o5.getCommandId(iM586d);
-                                long jMo283b2 = interfaceC0044o5.executeCommand(iM586d);
-                                int i51 = (int) (jMo282a2 / 32);
-                                int i52 = (int) (jMo283b2 / 32);
+                            ListItem contactItem = (ListItem) mapContacts.elementAt(i50);
+                            if (contactItem.isSelected() && activeContact != contactItem) {
+                                long contactPixelX = contactItem.getCommandId(zoomLevel);
+                                long contactPixelY = contactItem.executeCommand(zoomLevel);
+                                int i51 = (int) (contactPixelX / 32);
+                                int i52 = (int) (contactPixelY / 32);
                                 if (i51 >= ChatRenderer.coord1 && i51 <= ChatRenderer.coord3 && i52 >= ChatRenderer.coord2 && i52 <= ChatRenderer.coord4) {
                                     int i53 = (int) (i51 - ChatRenderer.coord1);
                                     int i54 = (int) (i52 - ChatRenderer.coord2);
-                                    ListItem interfaceC0044o6 = interfaceC0044oArr[(i54 * i49) + i53];
-                                    if (interfaceC0044o6 == null) {
-                                        interfaceC0044oArr[(i54 * i49) + i53] = interfaceC0044o5;
-                                    } else if (interfaceC0044o6.getHeight() == 5) {
-                                        ((Conversation) interfaceC0044o6).addItem(interfaceC0044o5);
-                                    } else if (interfaceC0044o6.getHeight() == 3) {
-                                        Conversation c0038i = new Conversation();
-                                        c0038i.addItem(interfaceC0044o5);
-                                        c0038i.addItem(interfaceC0044o6);
-                                        interfaceC0044oArr[(i54 * i49) + i53] = c0038i;
+                                    ListItem existingItem = gridItems[(i54 * i49) + i53];
+                                    if (existingItem == null) {
+                                        gridItems[(i54 * i49) + i53] = contactItem;
+                                    } else if (existingItem.getHeight() == 5) {
+                                        ((Conversation) existingItem).addItem(contactItem);
+                                    } else if (existingItem.getHeight() == 3) {
+                                        Conversation cluster = new Conversation();
+                                        cluster.addItem(contactItem);
+                                        cluster.addItem(existingItem);
+                                        gridItems[(i54 * i49) + i53] = cluster;
                                     }
                                 }
                             }
                         }
                     }
-                    ListItem[] interfaceC0044oArr2 = ChatRenderer.mapItems;
-                    ListItem interfaceC0044o7 = null;
-                    int length = interfaceC0044oArr2.length;
+                    ListItem[] mapItemGrid = ChatRenderer.mapItems;
+                    ListItem nearestContact = null;
+                    int length = mapItemGrid.length;
                     while (true) {
                         length--;
                         if (length < 0) {
                             break;
                         }
-                        ListItem interfaceC0044o8 = interfaceC0044oArr2[length];
-                        if (interfaceC0044o8 != null) {
-                            long jMo282a3 = interfaceC0044o8.getCommandId(iM586d);
-                            long jMo283b3 = interfaceC0044o8.executeCommand(iM586d);
-                            int i55 = (int) ((i47 / 2) + (jMo282a3 - j16));
-                            int i56 = (int) ((i48 / 2) + (j17 - jMo283b3));
-                            int iMo276r = interfaceC0044o8.getHeight();
-                            Image imageM1023b3 = iMo276r == 3 ? XmppContactGroup.getOrLoadImage(26) : iMo276r == 5 ? XmppContactGroup.getOrLoadImage(23) : null;
-                            Image image = imageM1023b3;
-                            if (imageM1023b3 != null) {
+                        ListItem gridItem = mapItemGrid[length];
+                        if (gridItem != null) {
+                            long gridPixelX = gridItem.getCommandId(zoomLevel);
+                            long gridPixelY = gridItem.executeCommand(zoomLevel);
+                            int i55 = (int) ((i47 / 2) + (gridPixelX - j16));
+                            int i56 = (int) ((i48 / 2) + (j17 - gridPixelY));
+                            int itemType = gridItem.getHeight();
+                            Image contactIcon = itemType == 3 ? XmppContactGroup.getOrLoadImage(26) : itemType == 5 ? XmppContactGroup.getOrLoadImage(23) : null;
+                            Image image = contactIcon;
+                            if (contactIcon != null) {
                                 graphics.drawImage(image, i55, i56, 3);
                             }
-                            if (Utils.absLong(j16 - jMo282a3) < 20 && Utils.absLong(j17 - jMo283b3) < 20 && interfaceC0044o7 == null) {
-                                interfaceC0044o7 = interfaceC0044o8;
+                            if (Utils.absLong(j16 - gridPixelX) < 20 && Utils.absLong(j17 - gridPixelY) < 20 && nearestContact == null) {
+                                nearestContact = gridItem;
                             }
                         }
                     }
                     if (!hasTooltip()) {
-                        if (interfaceC0044o7 != null) {
-                            showTooltip(interfaceC0044o7);
+                        if (nearestContact != null) {
+                            showTooltip(nearestContact);
                         } else {
                             hideTooltip();
                         }
                     }
                 }
-                NetworkUtils.releaseVector(vectorM448X);
+                NetworkUtils.releaseVector(mapContacts);
             }
             long j22 = currentPixelX;
             long j23 = currentPixelY;
@@ -496,32 +496,32 @@ public abstract class MapRenderer {
             int i58 = viewportHeight;
             if (AppState.getBool(276) && AppState.getBool(278) && !XmppContactGroup.isMapDataRecent()) {
                 AppState.setInt(1547, 0);
-                Vector vectorM449Y = AppController.getMapProfiles();
-                int size8 = vectorM449Y.size();
+                Vector mapProfiles = AppController.getMapProfiles();
+                int size8 = mapProfiles.size();
                 if (size8 != 0) {
-                    MrimAccount c0028ba = null;
+                    MrimAccount nearestProfile = null;
                     for (int i59 = 0; i59 < size8; i59++) {
-                        MrimAccount c0028ba2 = (MrimAccount) vectorM449Y.elementAt(i59);
-                        if (c0028ba2.isSelected()) {
-                            long jMo282a4 = c0028ba2.getCommandId(iM586d);
-                            long jMo283b4 = c0028ba2.executeCommand(iM586d);
-                            int i60 = (int) ((i57 / 2) + (jMo282a4 - j22));
-                            int i61 = (int) ((i58 / 2) + (j23 - jMo283b4));
+                        MrimAccount profile = (MrimAccount) mapProfiles.elementAt(i59);
+                        if (profile.isSelected()) {
+                            long profilePixelX = profile.getCommandId(zoomLevel);
+                            long profilePixelY = profile.executeCommand(zoomLevel);
+                            int i60 = (int) ((i57 / 2) + (profilePixelX - j22));
+                            int i61 = (int) ((i58 / 2) + (j23 - profilePixelY));
                             if (i60 > 0 && i60 < i57 && i61 > 0 && i61 < i58) {
                                 graphics.drawImage(XmppContactGroup.getOrLoadImage(22), i60, i61, 3);
                             }
-                            if (Utils.absLong(j22 - jMo282a4) < 20 && Utils.absLong(j23 - jMo283b4) < 20 && c0028ba == null) {
-                                c0028ba = c0028ba2;
+                            if (Utils.absLong(j22 - profilePixelX) < 20 && Utils.absLong(j23 - profilePixelY) < 20 && nearestProfile == null) {
+                                nearestProfile = profile;
                             }
                         }
                     }
                     if (!hasTooltip()) {
-                        if (c0028ba != null) {
-                            showTooltip(c0028ba);
-                            if (c0028ba.accountProfile.dirty) {
+                        if (nearestProfile != null) {
+                            showTooltip(nearestProfile);
+                            if (nearestProfile.accountProfile.dirty) {
                                 AppState.setInt(1547, 1);
                             }
-                            AppState.setAccount(c0028ba);
+                            AppState.setAccount(nearestProfile);
                         } else {
                             hideTooltip();
                         }
@@ -533,17 +533,17 @@ public abstract class MapRenderer {
             long j25 = currentPixelY;
             int i62 = viewportWidth;
             int i63 = viewportHeight;
-            if (AppState.getBool(276) && !XmppContactGroup.isMapDataRecent() && (interfaceC0044o = ConnectionThread.activeMapItem) != null) {
-                long jMo282a5 = interfaceC0044o.getCommandId(iM586d);
-                long jMo283b5 = interfaceC0044o.executeCommand(iM586d);
-                graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (jMo282a5 - j24)), (int) ((i63 / 2) + (j25 - jMo283b5)), 3);
-                if (Utils.absLong(j24 - jMo282a5) < 20 && Utils.absLong(j25 - jMo283b5) < 20) {
-                    showTooltip(interfaceC0044o);
+            if (AppState.getBool(276) && !XmppContactGroup.isMapDataRecent() && (item = ConnectionThread.activeMapItem) != null) {
+                long activePixelX = item.getCommandId(zoomLevel);
+                long activePixelY = item.executeCommand(zoomLevel);
+                graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (activePixelX - j24)), (int) ((i63 / 2) + (j25 - activePixelY)), 3);
+                if (Utils.absLong(j24 - activePixelX) < 20 && Utils.absLong(j25 - activePixelY) < 20) {
+                    showTooltip(item);
                 }
             }
-            ChatRenderer.renderMapOverlay(graphics, currentPixelX, currentPixelY, currentLon, currentLat, iM586d, viewportWidth, viewportHeight);
-            ChatRenderer.renderBubble(graphics, viewportWidth, viewportHeight, iM586d, currentPixelX, currentPixelY, tooltipItem);
-            ChatRenderer.renderMarker(graphics, currentPixelX, currentPixelY, iM586d, viewportWidth, viewportHeight, currentLat);
+            ChatRenderer.renderMapOverlay(graphics, currentPixelX, currentPixelY, currentLon, currentLat, zoomLevel, viewportWidth, viewportHeight);
+            ChatRenderer.renderBubble(graphics, viewportWidth, viewportHeight, zoomLevel, currentPixelX, currentPixelY, tooltipItem);
+            ChatRenderer.renderMarker(graphics, currentPixelX, currentPixelY, zoomLevel, viewportWidth, viewportHeight, currentLat);
             int i64 = viewportWidth / 2;
             int i65 = viewportHeight / 2;
             if (crosshairVisible || AppState.getBool(1479)) {
@@ -557,78 +557,78 @@ public abstract class MapRenderer {
             }
             long j26 = currentLon;
             long j27 = currentLat;
-            GeoRegion c0053x = null;
-            Vector vectorM614m5 = AppState.getVector(1389);
-            int size9 = vectorM614m5.size();
+            GeoRegion bestRegion = null;
+            Vector regions = AppState.getVector(1389);
+            int size9 = regions.size();
             while (true) {
                 size9--;
                 if (size9 < 0) {
                     break;
                 }
-                GeoRegion c0053x2 = (GeoRegion) vectorM614m5.elementAt(size9);
-                if (c0053x2.containsPoint(j26, j27) && c0053x2.zoomLevel != -1) {
-                    if (c0053x != null) {
-                        GeoRegion c0053x3 = c0053x;
-                        if (c0053x2.maxLat - c0053x2.minLat < c0053x3.maxLat - c0053x3.minLat && c0053x2.maxLon - c0053x2.minLon < c0053x3.maxLon - c0053x3.minLon) {
+                GeoRegion region = (GeoRegion) regions.elementAt(size9);
+                if (region.containsPoint(j26, j27) && region.zoomLevel != -1) {
+                    if (bestRegion != null) {
+                        GeoRegion currentBest = bestRegion;
+                        if (region.maxLat - region.minLat < currentBest.maxLat - currentBest.minLat && region.maxLon - region.minLon < currentBest.maxLon - currentBest.minLon) {
                         }
                     }
-                    c0053x = c0053x2;
+                    bestRegion = region;
                 }
             }
-            GeoRegion c0053x4 = c0053x;
+            GeoRegion activeRegion = bestRegion;
             if (AppState.getBool(277)) {
-                boolean zM587e = AppState.getBool(230);
-                int clipWidth = zM587e ? graphics.getClipWidth() - 4 : 18;
+                boolean showDetails = AppState.getBool(230);
+                int clipWidth = showDetails ? graphics.getClipWidth() - 4 : 18;
                 int i66 = -1;
                 int i67 = 0;
                 boolean z3 = false;
                 int i68 = 0;
-                if (c0053x4 != null) {
-                    i66 = c0053x4.zoomLevel;
-                    i67 = c0053x4.mapType;
+                if (activeRegion != null) {
+                    i66 = activeRegion.zoomLevel;
+                    i67 = activeRegion.mapType;
                     if (i66 >= 0) {
                         z3 = true;
                         i68 = i66 <= 45 ? 65280 : (i66 <= 45 || i66 >= 75) ? 16711680 : 16361985;
                     }
                 }
-                if (c0053x4 != null) {
-                    i = c0053x4.zoomLevel;
-                    i2 = c0053x4.mapType;
+                if (activeRegion != null) {
+                    i = activeRegion.zoomLevel;
+                    i2 = activeRegion.mapType;
                 } else {
                     i = -1;
                     i2 = -1;
                 }
                 if (ChatRenderer.offsetX != i || ChatRenderer.offsetY != i2) {
                     int i69 = i66;
-                    StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(974));
-                    if (i69 < 0 || c0053x4 == null) {
+                    StringBuffer sb = NetworkUtils.newStringBuffer().append(AppState.getString(974));
+                    if (i69 < 0 || activeRegion == null) {
                         i3 = 975;
                     } else {
-                        stringBufferAppend.append(i69);
+                        sb.append(i69);
                         if (i69 <= 4 || i69 >= 21) {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    AppState.setObject(1384, (Object) NetworkUtils.bufToStringCached(stringBufferAppend.append(AppState.getString(i3))));
+                    AppState.setObject(1384, (Object) NetworkUtils.bufToStringCached(sb.append(AppState.getString(i3))));
                     ChatRenderer.offsetX = i;
                     ChatRenderer.offsetY = i2;
                 }
-                String strM584b = AppState.getString(1384);
+                String zoomText = AppState.getString(1384);
                 Font font2 = graphics.getFont();
                 int color4 = graphics.getColor();
-                Font fontM625m2 = AppState.getFont();
-                graphics.setFont(fontM625m2);
-                int iM586d5 = AppState.getInt(1450);
-                int iM586d6 = AppState.getInt(72);
-                int iM586d7 = AppState.getInt(iM586d6 + 4914);
-                int i70 = iM586d5 > 18 ? iM586d5 : 18;
+                Font zoomFont = AppState.getFont();
+                graphics.setFont(zoomFont);
+                int fontHeight = AppState.getInt(1450);
+                int schemeIndex = AppState.getInt(72);
+                int borderColor = AppState.getInt(schemeIndex + 4914);
+                int i70 = fontHeight > 18 ? fontHeight : 18;
                 int clipHeight = (graphics.getClipHeight() - i70) - 1;
-                if (zM587e) {
-                    graphics.setColor(AppState.getInt(iM586d6 + 5050));
+                if (showDetails) {
+                    graphics.setColor(AppState.getInt(schemeIndex + 5050));
                     graphics.fillRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
                 }
-                graphics.setColor(iM586d7);
-                if (zM587e) {
+                graphics.setColor(borderColor);
+                if (showDetails) {
                     graphics.drawRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
                 }
                 int i71 = 0;
@@ -636,29 +636,29 @@ public abstract class MapRenderer {
                     graphics.setColor(i68);
                     graphics.fillRoundRect(6, clipHeight + ((i70 - 10) / 2), 10, 10, 5, 5);
                     i71 = 10;
-                    graphics.setColor(iM586d7);
+                    graphics.setColor(borderColor);
                     graphics.drawRoundRect(6, clipHeight + ((i70 - 10) / 2), 10, 10, 5, 5);
-                    if (i67 > 0 && zM587e) {
-                        new GraphicsContext(graphics).drawIcon(i67 == 1 ? 212 : 211, 20 + fontM625m2.stringWidth(strM584b) + 4, clipHeight + ((i70 - 16) / 2));
+                    if (i67 > 0 && showDetails) {
+                        new GraphicsContext(graphics).drawIcon(i67 == 1 ? 212 : 211, 20 + zoomFont.stringWidth(zoomText) + 4, clipHeight + ((i70 - 16) / 2));
                     }
-                    graphics.setColor(iM586d7);
+                    graphics.setColor(borderColor);
                 }
-                if (zM587e) {
-                    graphics.drawString(strM584b, i71 + 10, clipHeight + ((i70 - iM586d5) / 2), 20);
+                if (showDetails) {
+                    graphics.drawString(zoomText, i71 + 10, clipHeight + ((i70 - fontHeight) / 2), 20);
                 }
                 graphics.setColor(color4);
                 graphics.setFont(font2);
             }
-            ChatRenderer.renderScaleBar(graphics, iM586d, currentLat);
+            ChatRenderer.renderScaleBar(graphics, zoomLevel, currentLat);
             int i72 = rippleX;
             int i73 = rippleY;
             long j28 = rippleTimestamp;
             j = j28;
             if (j28 != 0) {
-                int iCurrentTimeMillis = (int) (System.currentTimeMillis() - j28);
+                int elapsed = (int) (System.currentTimeMillis() - j28);
                 j = j28;
-                if (iCurrentTimeMillis >= 200) {
-                    int i74 = iCurrentTimeMillis < 300 ? 40 : iCurrentTimeMillis < 400 ? 80 : iCurrentTimeMillis < 500 ? 120 : 140;
+                if (elapsed >= 200) {
+                    int i74 = elapsed < 300 ? 40 : elapsed < 400 ? 80 : elapsed < 500 ? 120 : 140;
                     int color5 = graphics.getColor();
                     graphics.setColor(AppState.getInt(5050 + AppState.getInt(72)));
                     int i75 = i74;
@@ -678,22 +678,22 @@ public abstract class MapRenderer {
         Vector vector2 = animationSteps;
         synchronized (vector2) {
             if (animationIndex <= 5 && vector2.size() > 0) {
-                long jCurrentTimeMillis = System.currentTimeMillis();
+                long now = System.currentTimeMillis();
                 if (j - animationTimestamp > 80) {
                     long[] jArr = (long[]) vector2.elementAt(animationIndex);
                     setPosition(jArr[0], jArr[1]);
                     animationIndex++;
-                    animationTimestamp = jCurrentTimeMillis;
+                    animationTimestamp = now;
                 }
             }
         }
         if (autoScrollCount > 0 && !crosshairVisible) {
-            long jCurrentTimeMillis2 = System.currentTimeMillis();
-            if (jCurrentTimeMillis2 - autoScrollTimestamp > 80) {
-                int iM586d8 = AppState.getInt(39);
-                setPosition(currentLon, currentLat + ((AppController.getZoomNumerator(iM586d8) / AppController.getZoomDenominator(iM586d8)) * 9));
+            long scrollNow = System.currentTimeMillis();
+            if (scrollNow - autoScrollTimestamp > 80) {
+                int scrollZoom = AppState.getInt(39);
+                setPosition(currentLon, currentLat + ((AppController.getZoomNumerator(scrollZoom) / AppController.getZoomDenominator(scrollZoom)) * 9));
                 autoScrollCount -= 9;
-                autoScrollTimestamp = jCurrentTimeMillis2;
+                autoScrollTimestamp = scrollNow;
             }
         }
         if (AppState.getBool(277) && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > 600000 && AppState.getBool(1576) && AppState.getBool(1414) && !AppController.isNetworkBusy()) {
@@ -703,41 +703,41 @@ public abstract class MapRenderer {
 
     /* renamed from: a */
     public static final void setPosition(long j, long j2) {
-        GeoRegion c0053x;
+        GeoRegion bestRegion;
         if (j2 == currentLat && j == currentLon) {
             return;
         }
-        int iM586d = AppState.getInt(39);
+        int zoomLevel = AppState.getInt(39);
         synchronized (syncLock) {
             currentLat = j2;
             AppState.setLong(37, 37L);
             currentLon = j;
             AppState.setLong(35, j);
-            currentPixelX = AppController.coordToPixel(j, iM586d);
-            currentPixelY = AppController.coordToPixel(j2, iM586d);
-            GeoRegion c0053x2 = currentRegion;
-            Vector vectorM614m = AppState.getVector(1389);
-            int iM541c = Utils.vectorSize(vectorM614m);
+            currentPixelX = AppController.coordToPixel(j, zoomLevel);
+            currentPixelY = AppController.coordToPixel(j2, zoomLevel);
+            GeoRegion prevRegion = currentRegion;
+            Vector regionList = AppState.getVector(1389);
+            int idx = Utils.vectorSize(regionList);
             while (true) {
-                iM541c--;
-                if (iM541c < 0) {
-                    c0053x = null;
+                idx--;
+                if (idx < 0) {
+                    bestRegion = null;
                     break;
                 }
-                GeoRegion c0053x3 = (GeoRegion) vectorM614m.elementAt(iM541c);
-                if (c0053x3.containsPoint(j, j2)) {
-                    c0053x = c0053x3;
+                GeoRegion candidate = (GeoRegion) regionList.elementAt(idx);
+                if (candidate.containsPoint(j, j2)) {
+                    bestRegion = candidate;
                     break;
                 }
             }
-            GeoRegion c0053x4 = c0053x;
-            if (c0053x2 != c0053x) {
+            GeoRegion activeRegion = bestRegion;
+            if (prevRegion != bestRegion) {
                 if (AppState.getBool(277)) {
                     XmppContactGroup.initializeMapData();
                 }
-                currentRegion = c0053x4;
+                currentRegion = activeRegion;
             }
-            setZoom(clampZoom(iM586d));
+            setZoom(clampZoom(zoomLevel));
         }
         needsRedraw = true;
     }
@@ -753,12 +753,12 @@ public abstract class MapRenderer {
 
     /* renamed from: a */
     public static final void setZoom(int i) {
-        int iM586d = AppState.getInt(39);
-        if (i == iM586d || i < 3 || i > 17) {
+        int zoomLevel = AppState.getInt(39);
+        if (i == zoomLevel || i < 3 || i > 17) {
             return;
         }
-        int iM650b = clampZoom(i);
-        int i2 = iM650b != 8 ? iM650b : iM586d < iM650b ? 9 : 7;
+        int clampedZoom = clampZoom(i);
+        int i2 = clampedZoom != 8 ? clampedZoom : zoomLevel < clampedZoom ? 9 : 7;
         AppState.setInt(39, i2);
         currentPixelX = AppController.coordToPixel(currentLon, i2);
         currentPixelY = AppController.coordToPixel(currentLat, i2);
@@ -775,26 +775,26 @@ public abstract class MapRenderer {
     }
 
     /* renamed from: a */
-    public static final void confirmMapPoint(MapPoint c0014an) {
+    public static final void confirmMapPoint(MapPoint mapPoint) {
         if (AppState.getBool(1442)) {
-            MmpContact.setSecondToken(c0014an.longitude, c0014an.latitude);
+            MmpContact.setSecondToken(mapPoint.longitude, mapPoint.latitude);
         } else {
-            MmpContact.setFirstToken(c0014an.longitude, c0014an.latitude);
+            MmpContact.setFirstToken(mapPoint.longitude, mapPoint.latitude);
         }
         needsRedraw = true;
         if (hasRouteEndpoints()) {
             Conversation.loadContacts();
         }
-        c0014an.markInactive();
+        mapPoint.markInactive();
         AppState.setInt(1443, 0);
     }
 
     /* renamed from: b */
-    public static final void navigateToMapPoint(MapPoint c0014an) {
+    public static final void navigateToMapPoint(MapPoint mapPoint) {
         invalidate();
-        setPosition(c0014an.longitude, c0014an.latitude);
-        setZoom(c0014an.zoomLevel);
-        c0014an.markActive();
+        setPosition(mapPoint.longitude, mapPoint.latitude);
+        setZoom(mapPoint.zoomLevel);
+        mapPoint.markActive();
         resetInteraction();
     }
 
@@ -834,11 +834,11 @@ public abstract class MapRenderer {
     }
 
     /* renamed from: a */
-    private static void showTooltip(ListItem interfaceC0044o) {
+    private static void showTooltip(ListItem item) {
         if (tooltipLocked) {
             return;
         }
-        tooltipItem = interfaceC0044o;
+        tooltipItem = item;
     }
 
     /* renamed from: h */
@@ -875,8 +875,8 @@ public abstract class MapRenderer {
                 tapConsumed = true;
                 return;
             } else {
-                int iM586d = AppState.getInt(39);
-                animateTo((int) AppController.pixelToCoord(screenToTileX(i), iM586d), (int) AppController.pixelToCoord(screenToTileY(i2), iM586d));
+                int zoomLevel = AppState.getInt(39);
+                animateTo((int) AppController.pixelToCoord(screenToTileX(i), zoomLevel), (int) AppController.pixelToCoord(screenToTileY(i2), zoomLevel));
             }
         }
         needsRedraw = true;
@@ -886,8 +886,8 @@ public abstract class MapRenderer {
     public static final void onDrag(int i, int i2) {
         tapConsumed = true;
         rippleTimestamp = 0L;
-        int iM586d = AppState.getInt(39);
-        setPosition((int) AppController.pixelToCoord(screenToTileX(i), iM586d), (int) AppController.pixelToCoord(screenToTileY(i2), iM586d));
+        int zoomLevel = AppState.getInt(39);
+        setPosition((int) AppController.pixelToCoord(screenToTileX(i), zoomLevel), (int) AppController.pixelToCoord(screenToTileY(i2), zoomLevel));
         needsRedraw = true;
     }
 }
