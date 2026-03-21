@@ -173,9 +173,9 @@ public final class Screen {
         this.contentHeight = this.contentBottom - 2;
         if (this.tabItems != null) {
             int i3 = this.contentBottom;
-            int iM502a = Utils.max(AppState.getInt(1450), 16) + 3;
-            this.contentBottom = i3 - iM502a;
-            this.contentHeight -= iM502a;
+            int barHeight = Utils.max(AppState.getInt(1450), 16) + 3;
+            this.contentBottom = i3 - barHeight;
+            this.contentHeight -= barHeight;
         }
         return this;
     }
@@ -206,11 +206,11 @@ public final class Screen {
 
     /* renamed from: e */
     public final MenuItem getHeaderItem() {
-        int iM261v;
-        if (this.screenType != 9 || (iM261v = findVisibleExpanded()) >= this.menuItems.size()) {
+        int expandedIdx;
+        if (this.screenType != 9 || (expandedIdx = findVisibleExpanded()) >= this.menuItems.size()) {
             return null;
         }
-        return getItemAt(iM261v);
+        return getItemAt(expandedIdx);
     }
 
     /* renamed from: a */
@@ -221,27 +221,27 @@ public final class Screen {
     }
 
     /* renamed from: a */
-    public final Screen addItem(MenuItem c0032c) {
+    public final Screen addItem(MenuItem menuItem) {
         if (this.layoutMode == 0) {
-            c0032c.layout(this.contentWidth);
-            this.menuItems.addElement(c0032c);
+            menuItem.layout(this.contentWidth);
+            this.menuItems.addElement(menuItem);
             this.layoutCache = AppController.resizeArray(this.layoutCache, 0, this.totalHeight);
-            this.totalHeight += c0032c.getTotalHeight();
+            this.totalHeight += menuItem.getTotalHeight();
         } else {
-            int iM240c = 0;
-            int iM241d = 0;
+            int itemX = 0;
+            int itemY = 0;
             int size = this.menuItems.size() - 1;
             if (this.menuItems.size() > 0) {
-                iM240c = getItemX(size) + getItemAt(size).getTotalWidth();
-                iM241d = getItemY(size);
+                itemX = getItemX(size) + getItemAt(size).getTotalWidth();
+                itemY = getItemY(size);
             }
-            if (iM240c > 0 && iM240c + c0032c.getTotalWidth() >= this.contentWidth) {
-                iM240c = 0;
-                iM241d = getItemY(size) + getItemAt(size).getTotalHeight();
+            if (itemX > 0 && itemX + menuItem.getTotalWidth() >= this.contentWidth) {
+                itemX = 0;
+                itemY = getItemY(size) + getItemAt(size).getTotalHeight();
             }
-            this.menuItems.addElement(c0032c);
-            this.layoutCache = AppController.resizeArray(this.layoutCache, iM240c, iM241d);
-            this.totalHeight = iM241d + c0032c.getTotalHeight();
+            this.menuItems.addElement(menuItem);
+            this.layoutCache = AppController.resizeArray(this.layoutCache, itemX, itemY);
+            this.totalHeight = itemY + menuItem.getTotalHeight();
         }
         if (this.totalHeight <= 0 || this.totalHeight < this.contentHeight) {
             this.hasScrollbar = false;
@@ -249,7 +249,7 @@ public final class Screen {
             this.scrollRange = ((this.contentBottom - 4) * this.contentHeight) / this.totalHeight;
             this.hasScrollbar = true;
         }
-        if (this.selectable && this.selectedIndex < 0 && c0032c.isEnabled()) {
+        if (this.selectable && this.selectedIndex < 0 && menuItem.isEnabled()) {
             this.selectedIndex = this.menuItems.size() - 1;
         }
         return this;
@@ -262,12 +262,12 @@ public final class Screen {
             recalcLayout();
         }
         int i = 0;
-        Enumeration enumerationElements = this.menuItems.elements();
-        while (enumerationElements.hasMoreElements()) {
+        Enumeration elements = this.menuItems.elements();
+        while (elements.hasMoreElements()) {
             int i2 = i;
-            int iM910f = ((MenuItem) enumerationElements.nextElement()).getMaxHeight();
-            if (i2 < iM910f) {
-                i = iM910f;
+            int maxHeight = ((MenuItem) elements.nextElement()).getMaxHeight();
+            if (i2 < maxHeight) {
+                i = maxHeight;
             }
         }
         int i3 = i + 16;
@@ -285,8 +285,8 @@ public final class Screen {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final void paint(GraphicsContext c0012al, boolean z, boolean z2) {
-        int iM417c;
+    public final void paint(GraphicsContext g, boolean z, boolean z2) {
+        int paintMode;
         boolean z3 = false;
         if (this.layoutMode != 2) {
             int i = this.offsetX;
@@ -294,27 +294,27 @@ public final class Screen {
             int i3 = this.containerWidth;
             int i4 = this.containerHeight;
             int i5 = z ? 1 : 2;
-            Graphics graphics = c0012al.graphics;
-            c0012al.setColorFromPalette(i5);
+            Graphics graphics = g.graphics;
+            g.setColorFromPalette(i5);
             graphics.fillRect(i, i2, i3, i4);
-            c0012al.setColorFromPalette(16);
+            g.setColorFromPalette(16);
             graphics.drawRect(i, i2, i3 - 1, i4 - 1);
             if (this.headerItem != null) {
                 int i6 = this.offsetX + 1;
                 int i7 = this.offsetY + 1;
-                c0012al.setClip(i6, i7, this.innerWidth, this.headerHeight);
-                int iM586d = AppState.getInt(72);
-                int iM586d2 = AppState.getInt(5042 + iM586d);
-                if (iM586d2 != AppState.getInt(iM586d + 5082)) {
+                g.setClip(i6, i7, this.innerWidth, this.headerHeight);
+                int stateVal = AppState.getInt(72);
+                int stateVal2 = AppState.getInt(5042 + stateVal);
+                if (stateVal2 != AppState.getInt(stateVal + 5082)) {
                     for (int i8 = 1; i8 < this.headerHeight; i8++) {
-                        c0012al.setColor(((255 - ((i8 * (255 - (iM586d2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((iM586d2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (iM586d2 & 255))) / this.headerHeight)));
-                        c0012al.drawRect(i6, i7 + i8, this.innerWidth, 0);
+                        g.setColor(((255 - ((i8 * (255 - (stateVal2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((stateVal2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (stateVal2 & 255))) / this.headerHeight)));
+                        g.drawRect(i6, i7 + i8, this.innerWidth, 0);
                     }
                 } else {
-                    c0012al.setColor(iM586d2);
-                    c0012al.fillRect(i6, i7, this.innerWidth, this.headerHeight);
+                    g.setColor(stateVal2);
+                    g.fillRect(i6, i7, this.innerWidth, this.headerHeight);
                 }
-                this.headerItem.render(c0012al, i6, i7, 0);
+                this.headerItem.render(g, i6, i7, 0);
             }
             int i9 = this.offsetX + 2;
             int i10 = this.offsetY + this.contentTop;
@@ -323,35 +323,35 @@ public final class Screen {
             boolean z4 = this.layoutMode != 0;
             int i12 = this.scrollOffset;
             for (int i13 = 0; i13 < size; i13++) {
-                int iM241d = getItemY(i13);
-                if (iM241d - i12 > this.contentHeight) {
+                int itemY = getItemY(i13);
+                if (itemY - i12 > this.contentHeight) {
                     break;
                 }
-                MenuItem c0032cM239b = getItemAt(i13);
-                int iM912h = c0032cM239b.getTotalHeight();
-                if (iM241d + iM912h >= i12) {
-                    int iM240c = getItemX(i13);
-                    int iM911g = c0032cM239b.getTotalWidth();
-                    c0012al.setClip(i9, i10, i11, this.contentHeight);
-                    int i14 = i9 + iM240c;
-                    int i15 = (i10 + iM241d) - i12;
-                    int i16 = this.layoutMode == 0 ? i11 : iM911g;
-                    int i17 = c0032cM239b.id;
+                MenuItem menuItem = getItemAt(i13);
+                int itemHeight = menuItem.getTotalHeight();
+                if (itemY + itemHeight >= i12) {
+                    int itemX = getItemX(i13);
+                    int itemWidth = menuItem.getTotalWidth();
+                    g.setClip(i9, i10, i11, this.contentHeight);
+                    int i14 = i9 + itemX;
+                    int i15 = (i10 + itemY) - i12;
+                    int i16 = this.layoutMode == 0 ? i11 : itemWidth;
+                    int i17 = menuItem.id;
                     if (this.selectable && i13 == this.selectedIndex && i17 != 11) {
-                        c0012al.setColorFromPalette(13);
-                        c0012al.fillRect(i14, i15, i16, iM912h);
+                        g.setColorFromPalette(13);
+                        g.fillRect(i14, i15, i16, itemHeight);
                     }
-                    if (i17 == 13 && c0032cM239b.visible) {
-                        c0012al.setColorFromPalette(13);
-                        c0012al.fillRect(i14, i15, i16, iM912h);
+                    if (i17 == 13 && menuItem.visible) {
+                        g.setColorFromPalette(13);
+                        g.fillRect(i14, i15, i16, itemHeight);
                     }
                     if (z4) {
-                        int i18 = iM912h;
+                        int i18 = itemHeight;
                         int i19 = i16;
                         int i20 = i15;
                         int i21 = i14;
                         int i22 = i21 + i19;
-                        Graphics graphics2 = c0012al.graphics;
+                        Graphics graphics2 = g.graphics;
                         int clipX = graphics2.getClipX();
                         if (i22 >= clipX) {
                             int i23 = i20 + i18;
@@ -363,7 +363,7 @@ public final class Screen {
                                     if (i20 > clipY + clipHeight) {
                                         z3 = false;
                                         if (!z3) {
-                                            c0032cM239b.render(c0012al, i14, i15, i11);
+                                            menuItem.render(g, i14, i15, i11);
                                         }
                                     } else {
                                         if (clipX + clipWidth < i21 + i19) {
@@ -400,105 +400,105 @@ public final class Screen {
             if (this.hasScrollbar) {
                 int i26 = this.offsetX + this.borderWidth;
                 int i27 = this.offsetY + this.contentStart;
-                c0012al.setClip(i26, i27, 7, this.contentBottom + 4);
-                c0012al.setColorFromPalette(16);
-                c0012al.fillRect(i26 + 1, i27 + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - 4) * this.scrollOffset) / this.totalHeight, (this.contentBottom - 4) - this.scrollRange)), 1, this.scrollRange + 2);
-                c0012al.drawRect(i26, i27 - 1, 2, this.contentBottom + 1);
+                g.setClip(i26, i27, 7, this.contentBottom + 4);
+                g.setColorFromPalette(16);
+                g.fillRect(i26 + 1, i27 + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - 4) * this.scrollOffset) / this.totalHeight, (this.contentBottom - 4) - this.scrollRange)), 1, this.scrollRange + 2);
+                g.drawRect(i26, i27 - 1, 2, this.contentBottom + 1);
             }
             if (this.tabItems != null) {
-                int iM502a = Utils.max(AppState.getInt(1450), 16);
-                int iM605e = AppState.getHeight() - 1;
-                int iM586d3 = AppState.getInt(1528);
-                c0012al.setClip(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).setColorFromPalette(16).fillRect(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).setColorFromPalette(17).fillRect(1, (iM605e - iM502a) - 2, iM586d3 - 2, iM502a + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(0));
+                int barHeight = Utils.max(AppState.getInt(1450), 16);
+                int screenHeight = AppState.getHeight() - 1;
+                int stateVal3 = AppState.getInt(1528);
+                g.setClip(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, stateVal3 - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(0));
                 Vector vector = this.tabItems;
                 int i28 = 3;
                 boolean z5 = false;
-                int iM73f = ((iM605e - iM502a) - 1) + ScreenManager.getCenterOffset();
+                int centerY = ((screenHeight - barHeight) - 1) + ScreenManager.getCenterOffset();
                 for (int i29 = 0; i29 < vector.size(); i29++) {
                     Object objElementAt = vector.elementAt(i29);
                     if (!(objElementAt instanceof Integer)) {
                         z5 = true;
-                        c0012al.drawString((String) objElementAt, i28, (iM605e - iM502a) - 1, 20);
-                        i28 = iM586d3;
+                        g.drawString((String) objElementAt, i28, (screenHeight - barHeight) - 1, 20);
+                        i28 = stateVal3;
                     } else if (z5) {
                         i28 -= 18;
-                        c0012al.drawIcon(((Integer) objElementAt).intValue(), i28, iM73f);
+                        g.drawIcon(((Integer) objElementAt).intValue(), i28, centerY);
                     } else {
-                        c0012al.drawIcon(((Integer) objElementAt).intValue(), 3, iM73f);
+                        g.drawIcon(((Integer) objElementAt).intValue(), 3, centerY);
                         i28 += 18;
                     }
                 }
             }
             if (z && AppState.getBool(71)) {
-                int iM586d4 = AppState.getInt(1528);
-                int iM605e2 = AppState.getHeight();
-                c0012al.setClip(0, 0, iM586d4, 2048 + iM605e2);
-                c0012al.setFont(AppState.getGfxContext(0));
-                c0012al.setColorFromPalette(15);
+                int stateVal4 = AppState.getInt(1528);
+                int screenHeight2 = AppState.getHeight();
+                g.setClip(0, 0, stateVal4, 2048 + screenHeight2);
+                g.setFont(AppState.getGfxContext(0));
+                g.setColorFromPalette(15);
                 if (this.titleLeft != null) {
-                    c0012al.drawString(this.titleLeft, 1, iM605e2, 20);
+                    g.drawString(this.titleLeft, 1, screenHeight2, 20);
                 }
                 if (this.titleRight != null) {
-                    c0012al.drawString(this.titleRight, iM586d4 - 1, iM605e2, 24);
+                    g.drawString(this.titleRight, stateVal4 - 1, screenHeight2, 24);
                 }
-                if (ResourceManager.clockWidth + this.titleMaxWidth < iM586d4 - 6) {
-                    c0012al.drawString(Utils.defaultStr(AppState.getString(1263)), iM586d4 >> 1, iM605e2, 17);
+                if (ResourceManager.clockWidth + this.titleMaxWidth < stateVal4 - 6) {
+                    g.drawString(Utils.defaultStr(AppState.getString(1263)), stateVal4 >> 1, screenHeight2, 17);
                 }
             }
         }
         if (this.screenType == 1 || this.screenType == 12) {
-            c0012al.setFont(AppState.getGfxContext(1));
-            TabBar c0008ah = (TabBar) AppState.getVector(1246).elementAt(TabBar.currentIndex);
-            Vector vectorM614m = AppState.getVector(1245);
-            int size2 = vectorM614m.size();
+            g.setFont(AppState.getGfxContext(1));
+            TabBar tab = (TabBar) AppState.getVector(1246).elementAt(TabBar.currentIndex);
+            Vector tabs = AppState.getVector(1245);
+            int size2 = tabs.size();
             while (true) {
                 size2--;
                 if (size2 < 0) {
                     break;
                 }
-                Object objElementAt2 = vectorM614m.elementAt(size2);
+                Object objElementAt2 = tabs.elementAt(size2);
                 if (objElementAt2 instanceof TabBar) {
-                    TabBar c0008ah2 = (TabBar) objElementAt2;
-                    boolean z6 = objElementAt2 == c0008ah && !TabBar.scrollEnabled;
-                    GraphicsContext c0012alM207b = c0012al.setColorFromPalette(16);
-                    int i30 = c0008ah2.xOffset;
-                    int i31 = c0008ah2.width;
-                    int iM623o = AppState.getIntOffset(1) + 7;
-                    c0012alM207b.setClip(i30, 2, i31, iM623o - 2).drawLine(c0008ah2.xOffset, iM623o, c0008ah2.xOffset, 6).drawLine(c0008ah2.xOffset, 6, c0008ah2.xOffset + 4, 2).drawLine(c0008ah2.xOffset + 4, 2, (c0008ah2.xOffset + c0008ah2.width) - 2, 2).drawLine((c0008ah2.xOffset + c0008ah2.width) - 2, 2, (c0008ah2.xOffset + c0008ah2.width) - 2, iM623o).setColorFromPalette(z6 ? 1 : 17);
-                    int i32 = z6 ? iM623o : iM623o - 1;
+                    TabBar tab2 = (TabBar) objElementAt2;
+                    boolean z6 = objElementAt2 == tab && !TabBar.scrollEnabled;
+                    GraphicsContext gfx = g.setColorFromPalette(16);
+                    int i30 = tab2.xOffset;
+                    int i31 = tab2.width;
+                    int textOffset = AppState.getIntOffset(1) + 7;
+                    gfx.setClip(i30, 2, i31, textOffset - 2).drawLine(tab2.xOffset, textOffset, tab2.xOffset, 6).drawLine(tab2.xOffset, 6, tab2.xOffset + 4, 2).drawLine(tab2.xOffset + 4, 2, (tab2.xOffset + tab2.width) - 2, 2).drawLine((tab2.xOffset + tab2.width) - 2, 2, (tab2.xOffset + tab2.width) - 2, textOffset).setColorFromPalette(z6 ? 1 : 17);
+                    int i32 = z6 ? textOffset : textOffset - 1;
                     int i33 = 3;
                     while (i33 < i32) {
-                        c0012al.drawLine(c0008ah2.xOffset + 1 + (i33 < 6 ? 6 - i33 : 0), i33, (c0008ah2.xOffset + c0008ah2.width) - 3, i33);
+                        g.drawLine(tab2.xOffset + 1 + (i33 < 6 ? 6 - i33 : 0), i33, (tab2.xOffset + tab2.width) - 3, i33);
                         i33++;
                     }
-                    if (c0008ah2.account == null) {
-                        int i34 = c0008ah2.iconId;
-                        iM417c = (i34 == 240 && AppController.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(1243).size() <= 0) ? i34 : 16384;
+                    if (tab2.account == null) {
+                        int i34 = tab2.iconId;
+                        paintMode = (i34 == 240 && AppController.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(1243).size() <= 0) ? i34 : 16384;
                     } else {
-                        iM417c = AppController.getAccountStatus(c0008ah2.account);
+                        paintMode = AppController.getAccountStatus(tab2.account);
                     }
-                    c0012al.drawIcon(iM417c, c0008ah2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(c0008ah2.xOffset, 2, c0008ah2.width - 3, iM623o - 2).drawString(c0008ah2.title, c0008ah2.xOffset + 6 + 16, 4, 20);
+                    g.drawIcon(paintMode, tab2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(tab2.xOffset, 2, tab2.width - 3, textOffset - 2).drawString(tab2.title, tab2.xOffset + 6 + 16, 4, 20);
                 } else {
                     int[] iArr = (int[]) objElementAt2;
                     int i35 = iArr[0];
-                    int iM73f2 = 4 + ScreenManager.getCenterOffset();
-                    c0012al.setClip(i35, iM73f2, 16, 16);
-                    c0012al.drawIcon(iArr[1], i35, iM73f2);
+                    int centerY2 = 4 + ScreenManager.getCenterOffset();
+                    g.setClip(i35, centerY2, 16, 16);
+                    g.drawIcon(iArr[1], i35, centerY2);
                 }
             }
         }
         if (this.screenId == 6) {
             int i36 = this.offsetX + 2;
             int i37 = this.offsetY + this.contentTop;
-            c0012al.setClip(i36, i37, this.containerWidth, this.contentHeight);
+            g.setClip(i36, i37, this.containerWidth, this.contentHeight);
             try {
-                int iM586d5 = AppState.getInt(1415);
-                int iM586d6 = AppState.getInt(1416);
-                Graphics graphics3 = c0012al.graphics;
-                graphics3.drawImage(AppState.getImage(1364), iM586d5 >> 1, i37 + (iM586d6 >> 1), 3);
+                int stateVal5 = AppState.getInt(1415);
+                int stateVal6 = AppState.getInt(1416);
+                Graphics graphics3 = g.graphics;
+                graphics3.drawImage(AppState.getImage(1364), stateVal5 >> 1, i37 + (stateVal6 >> 1), 3);
                 if (!AppState.getBool(1414) && AppState.getBool(1535)) {
-                    int[] iArr2 = new int[iM586d5];
-                    int i38 = iM586d5;
+                    int[] iArr2 = new int[stateVal5];
+                    int i38 = stateVal5;
                     while (true) {
                         i38--;
                         if (i38 < 0) {
@@ -508,11 +508,11 @@ public final class Screen {
                         }
                     }
                     while (true) {
-                        iM586d6--;
-                        if (iM586d6 < 0) {
+                        stateVal6--;
+                        if (stateVal6 < 0) {
                             break;
                         } else {
-                            graphics3.drawRGB(iArr2, 0, iM586d5, 0, i37 + iM586d6, iM586d5, 1, true);
+                            graphics3.drawRGB(iArr2, 0, stateVal5, 0, i37 + stateVal6, stateVal5, 1, true);
                         }
                     }
                 }
@@ -524,39 +524,39 @@ public final class Screen {
         if (this.screenId != 4) {
             return;
         }
-        c0012al.setClip(this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
-        int iM586d7 = AppState.getInt(1408);
-        if (iM586d7 <= 0) {
+        g.setClip(this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
+        int stateVal7 = AppState.getInt(1408);
+        if (stateVal7 <= 0) {
             return;
         }
-        c0012al.setFont(AppState.getGfxContext(0));
-        int iM605e3 = AppState.getHeight() - 1;
-        int iM586d8 = AppState.getInt(1528);
-        c0012al.setClip(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
-        c0012al.setColorFromPalette(16);
-        c0012al.fillRect(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
-        c0012al.setClip(1, iM605e3 - iM586d7, iM586d8 - 2, iM586d7);
-        c0012al.setColorFromPalette(1);
-        c0012al.fillRect(0, 0, 2048, 2048);
-        int iM502a2 = Utils.max(AppState.getInt(1450), 16);
-        Vector vectorM614m2 = AppState.getVector(1247);
-        int size3 = vectorM614m2.size();
+        g.setFont(AppState.getGfxContext(0));
+        int screenHeight3 = AppState.getHeight() - 1;
+        int stateVal8 = AppState.getInt(1528);
+        g.setClip(0, (screenHeight3 - stateVal7) - 1, stateVal8, stateVal7 + 1);
+        g.setColorFromPalette(16);
+        g.fillRect(0, (screenHeight3 - stateVal7) - 1, stateVal8, stateVal7 + 1);
+        g.setClip(1, screenHeight3 - stateVal7, stateVal8 - 2, stateVal7);
+        g.setColorFromPalette(1);
+        g.fillRect(0, 0, 2048, 2048);
+        int barHeight2 = Utils.max(AppState.getInt(1450), 16);
+        Vector tabs2 = AppState.getVector(1247);
+        int size3 = tabs2.size();
         while (true) {
             size3--;
             if (size3 < 0) {
                 return;
             }
-            Account abstractC0037h = (Account) vectorM614m2.elementAt(size3);
-            int i39 = iM605e3;
-            int iM586d9 = AppState.getInt(1450);
-            int iM502a3 = Utils.max(iM586d9, 16);
-            c0012al.setColorFromPalette(13);
-            int i40 = i39 - iM586d9;
-            c0012al.fillRect(1, i40, ((AppState.getInt(1528) - 2) * abstractC0037h.msgCount) / 100, iM502a3);
-            c0012al.drawIcon(abstractC0037h.getIconId(), 3, i40 + ScreenManager.getCenterOffset());
-            c0012al.setColorFromPalette(0);
-            c0012al.drawString(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(abstractC0037h.login).append(' ').append(abstractC0037h.msgCount).append('%')), 21, i39, 36);
-            iM605e3 -= iM502a2;
+            Account account = (Account) tabs2.elementAt(size3);
+            int i39 = screenHeight3;
+            int stateVal9 = AppState.getInt(1450);
+            int barHeight3 = Utils.max(stateVal9, 16);
+            g.setColorFromPalette(13);
+            int i40 = i39 - stateVal9;
+            g.fillRect(1, i40, ((AppState.getInt(1528) - 2) * account.msgCount) / 100, barHeight3);
+            g.drawIcon(account.getIconId(), 3, i40 + ScreenManager.getCenterOffset());
+            g.setColorFromPalette(0);
+            g.drawString(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, i39, 36);
+            screenHeight3 -= barHeight2;
         }
     }
 
@@ -584,8 +584,8 @@ public final class Screen {
 
     /* renamed from: i */
     public final void onActionKey() {
-        MenuItem c0032cM222d = getSelectedItem();
-        if (null != c0032cM222d && c0032cM222d.enabled) {
+        MenuItem selectedItem = getSelectedItem();
+        if (null != selectedItem && selectedItem.enabled) {
             IOUtils.postSelectEvent();
             return;
         }
@@ -625,10 +625,10 @@ public final class Screen {
                 this.scrollOffset = 0;
             }
             this.selectedIndex = findFirstVisible();
-            int iM912h = getItemAt(this.selectedIndex).getTotalHeight();
-            int iM241d = getItemY(this.selectedIndex);
-            if (iM912h < this.contentHeight && this.scrollOffset > iM241d) {
-                this.scrollOffset = iM241d;
+            int itemHeight = getItemAt(this.selectedIndex).getTotalHeight();
+            int itemY = getItemY(this.selectedIndex);
+            if (itemHeight < this.contentHeight && this.scrollOffset > itemY) {
+                this.scrollOffset = itemY;
             }
         } else {
             this.scrollOffset -= this.contentHeight - 20;
@@ -649,20 +649,20 @@ public final class Screen {
         findLastVisible();
         this.scrollOffset += this.contentHeight - 20;
         if (this.selectable) {
-            MenuItem c0032cM239b = getItemAt(size - 1);
-            int iM241d = getItemY(size - 1);
-            int iM912h = c0032cM239b.getTotalHeight();
-            if (this.scrollOffset > (iM241d + iM912h) - this.contentHeight) {
-                this.scrollOffset = (iM241d + iM912h) - this.contentHeight;
+            MenuItem menuItem = getItemAt(size - 1);
+            int itemY = getItemY(size - 1);
+            int itemHeight = menuItem.getTotalHeight();
+            if (this.scrollOffset > (itemY + itemHeight) - this.contentHeight) {
+                this.scrollOffset = (itemY + itemHeight) - this.contentHeight;
             }
             if (this.scrollOffset < 0) {
                 this.scrollOffset = 0;
             }
             this.selectedIndex = findLastVisible();
-            int iM912h2 = getItemAt(this.selectedIndex).getTotalHeight();
-            int iM241d2 = getItemY(this.selectedIndex);
-            if (iM912h2 < this.contentHeight && this.scrollOffset > iM241d2) {
-                this.scrollOffset = iM241d2;
+            int itemHeight2 = getItemAt(this.selectedIndex).getTotalHeight();
+            int itemY2 = getItemY(this.selectedIndex);
+            if (itemHeight2 < this.contentHeight && this.scrollOffset > itemY2) {
+                this.scrollOffset = itemY2;
             }
         } else {
             this.scrollOffset = Utils.min(this.totalHeight - this.contentHeight, this.scrollOffset);
@@ -714,13 +714,13 @@ public final class Screen {
                 if (isItemFullyVisible(0)) {
                     return;
                 }
-                int iM238t = findLastVisible();
-                int iM244u = findFirstVisible();
-                if (!isItemFullyVisible(iM244u)) {
-                    iM244u++;
+                int lastVisible = findLastVisible();
+                int firstVisible = findFirstVisible();
+                if (!isItemFullyVisible(firstVisible)) {
+                    firstVisible++;
                 }
-                int i = iM244u;
-                while (i > 0 && isItemFullyVisible(iM238t)) {
+                int i = firstVisible;
+                while (i > 0 && isItemFullyVisible(lastVisible)) {
                     i--;
                     this.scrollOffset = getItemY(i);
                 }
@@ -734,13 +734,13 @@ public final class Screen {
                 }
                 return;
             }
-            int iM261v = findVisibleExpanded();
-            if (iM261v < this.menuItems.size()) {
-                ((MenuItem) this.menuItems.elementAt(iM261v)).visible = false;
-                int iM262g = findPrevExpanded(iM261v);
-                if (iM262g < this.menuItems.size()) {
-                    ((MenuItem) this.menuItems.elementAt(iM262g)).visible = true;
-                    this.visibleExpandedIndex = iM262g;
+            int expandedIdx = findVisibleExpanded();
+            if (expandedIdx < this.menuItems.size()) {
+                ((MenuItem) this.menuItems.elementAt(expandedIdx)).visible = false;
+                int prevExpanded = findPrevExpanded(expandedIdx);
+                if (prevExpanded < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(prevExpanded)).visible = true;
+                    this.visibleExpandedIndex = prevExpanded;
                 } else {
                     this.scrollOffset -= 20;
                     if (this.scrollOffset < 0) {
@@ -748,16 +748,16 @@ public final class Screen {
                     }
                 }
             } else if (this.visibleExpandedIndex < this.menuItems.size()) {
-                int iM262g2 = findPrevExpanded(this.visibleExpandedIndex);
+                int prevExpanded2 = findPrevExpanded(this.visibleExpandedIndex);
                 if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection != 1) {
-                    iM262g2 = this.visibleExpandedIndex;
+                    prevExpanded2 = this.visibleExpandedIndex;
                 }
                 if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection == 1 && getItemY(this.visibleExpandedIndex) - this.scrollOffset <= 20) {
-                    iM262g2 = this.visibleExpandedIndex;
+                    prevExpanded2 = this.visibleExpandedIndex;
                 }
-                if (iM262g2 < this.menuItems.size()) {
-                    ((MenuItem) this.menuItems.elementAt(iM262g2)).visible = true;
-                    this.visibleExpandedIndex = iM262g2;
+                if (prevExpanded2 < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(prevExpanded2)).visible = true;
+                    this.visibleExpandedIndex = prevExpanded2;
                 } else {
                     this.scrollOffset -= 20;
                     if (this.scrollOffset < 0) {
@@ -765,10 +765,10 @@ public final class Screen {
                     }
                 }
             } else {
-                int iM264w = findAnyExpanded();
-                if (iM264w < this.menuItems.size()) {
-                    ((MenuItem) this.menuItems.elementAt(iM264w)).visible = true;
-                    this.visibleExpandedIndex = iM264w;
+                int anyExpanded = findAnyExpanded();
+                if (anyExpanded < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(anyExpanded)).visible = true;
+                    this.visibleExpandedIndex = anyExpanded;
                 } else {
                     this.scrollOffset -= 20;
                     if (this.scrollOffset < 0) {
@@ -779,10 +779,10 @@ public final class Screen {
             this.expandDirection = 1;
             return;
         }
-        int iM240c = getItemX(this.selectedIndex);
-        int iM241d = getItemY(this.selectedIndex);
+        int itemX = getItemX(this.selectedIndex);
+        int itemY = getItemY(this.selectedIndex);
         if (this.layoutMode == 0) {
-            if (iM241d < this.scrollOffset) {
+            if (itemY < this.scrollOffset) {
                 this.scrollOffset -= 20;
                 return;
             }
@@ -853,19 +853,19 @@ public final class Screen {
                 invalidateLayout();
                 return;
             }
-            int iM241d2 = getItemY(i6);
-            if (iM241d2 != iM241d) {
+            int itemY2 = getItemY(i6);
+            if (itemY2 != itemY) {
                 if (i4 == -1) {
                     i4 = i6;
-                    i5 = iM241d2;
-                } else if (iM241d2 < i5) {
+                    i5 = itemY2;
+                } else if (itemY2 < i5) {
                     this.selectedIndex = i4;
                     invalidateLayout();
                     return;
                 }
             }
-            int iM240c2 = getItemX(i6);
-            if (iM240c2 == iM240c || (iM240c2 == 0 && iM241d2 != iM241d)) {
+            int itemX2 = getItemX(i6);
+            if (itemX2 == itemX || (itemX2 == 0 && itemY2 != itemY)) {
                 break;
             }
         }
@@ -876,13 +876,13 @@ public final class Screen {
         if (!this.selectable || this.menuItems.size() <= 0) {
             return;
         }
-        int iM912h = getItemAt(this.selectedIndex).getTotalHeight();
-        int iM241d = getItemY(this.selectedIndex);
-        if (iM241d < this.scrollOffset) {
-            this.scrollOffset = iM241d;
+        int itemHeight = getItemAt(this.selectedIndex).getTotalHeight();
+        int itemY = getItemY(this.selectedIndex);
+        if (itemY < this.scrollOffset) {
+            this.scrollOffset = itemY;
         }
-        if (this.scrollOffset < (iM241d + iM912h) - this.contentHeight) {
-            this.scrollOffset = (iM241d + iM912h) - this.contentHeight;
+        if (this.scrollOffset < (itemY + itemHeight) - this.contentHeight) {
+            this.scrollOffset = (itemY + itemHeight) - this.contentHeight;
         }
         if (this.scrollOffset < 0) {
             this.scrollOffset = 0;
@@ -897,10 +897,10 @@ public final class Screen {
             this.scrollOffset = Utils.min(this.scrollOffset, getItemY(size - 2));
         }
         if (this.screenType == 9) {
-            int iM264w = findAnyExpanded();
-            if (iM264w < this.menuItems.size()) {
-                ((MenuItem) this.menuItems.elementAt(iM264w)).visible = true;
-                this.visibleExpandedIndex = iM264w;
+            int anyExpanded = findAnyExpanded();
+            if (anyExpanded < this.menuItems.size()) {
+                ((MenuItem) this.menuItems.elementAt(anyExpanded)).visible = true;
+                this.visibleExpandedIndex = anyExpanded;
             } else {
                 this.visibleExpandedIndex = 1000000;
             }
@@ -927,35 +927,35 @@ public final class Screen {
                 }
                 return;
             }
-            int iM261v = findVisibleExpanded();
-            if (iM261v < this.menuItems.size()) {
-                ((MenuItem) this.menuItems.elementAt(iM261v)).visible = false;
-                int iM263h = findNextExpanded(iM261v);
-                if (iM263h < this.menuItems.size()) {
-                    ((MenuItem) this.menuItems.elementAt(iM263h)).visible = true;
-                    this.visibleExpandedIndex = iM263h;
+            int expandedIdx = findVisibleExpanded();
+            if (expandedIdx < this.menuItems.size()) {
+                ((MenuItem) this.menuItems.elementAt(expandedIdx)).visible = false;
+                int nextExpanded = findNextExpanded(expandedIdx);
+                if (nextExpanded < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(nextExpanded)).visible = true;
+                    this.visibleExpandedIndex = nextExpanded;
                 } else if (this.scrollOffset + this.contentHeight < this.totalHeight) {
                     this.scrollOffset += 20;
                 }
             } else if (this.visibleExpandedIndex < this.menuItems.size()) {
-                int iM263h2 = findNextExpanded(this.visibleExpandedIndex);
+                int nextExpanded2 = findNextExpanded(this.visibleExpandedIndex);
                 if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection != 2) {
-                    iM263h2 = this.visibleExpandedIndex;
+                    nextExpanded2 = this.visibleExpandedIndex;
                 }
                 if (getItemY(this.visibleExpandedIndex) > this.scrollOffset && (getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset <= this.contentHeight && this.expandDirection == 2 && this.contentHeight - ((getItemY(this.visibleExpandedIndex) + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight()) - this.scrollOffset) <= 20) {
-                    iM263h2 = this.visibleExpandedIndex;
+                    nextExpanded2 = this.visibleExpandedIndex;
                 }
-                if (iM263h2 < this.menuItems.size()) {
-                    ((MenuItem) this.menuItems.elementAt(iM263h2)).visible = true;
-                    this.visibleExpandedIndex = iM263h2;
+                if (nextExpanded2 < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(nextExpanded2)).visible = true;
+                    this.visibleExpandedIndex = nextExpanded2;
                 } else if (this.scrollOffset + this.contentHeight < this.totalHeight) {
                     this.scrollOffset += 20;
                 }
             } else {
-                int iM264w = findAnyExpanded();
-                if (iM264w < this.menuItems.size()) {
-                    ((MenuItem) this.menuItems.elementAt(iM264w)).visible = true;
-                    this.visibleExpandedIndex = iM264w;
+                int anyExpanded = findAnyExpanded();
+                if (anyExpanded < this.menuItems.size()) {
+                    ((MenuItem) this.menuItems.elementAt(anyExpanded)).visible = true;
+                    this.visibleExpandedIndex = anyExpanded;
                 } else if (this.scrollOffset + this.contentHeight < this.totalHeight) {
                     this.scrollOffset += 20;
                 }
@@ -964,8 +964,8 @@ public final class Screen {
             return;
         }
         if (this.layoutMode != 0) {
-            int iM240c = getItemX(this.selectedIndex);
-            int iM241d = getItemY(this.selectedIndex);
+            int itemX = getItemX(this.selectedIndex);
+            int itemY = getItemY(this.selectedIndex);
             int i = -1;
             int i2 = 0;
             int i3 = this.selectedIndex;
@@ -976,18 +976,18 @@ public final class Screen {
                     invalidateLayout();
                     return;
                 }
-                int iM241d2 = getItemY(i3);
-                if (iM241d2 != iM241d) {
+                int itemY2 = getItemY(i3);
+                if (itemY2 != itemY) {
                     if (i == -1) {
                         i = i3;
-                        i2 = iM241d2;
-                    } else if (iM241d2 > i2) {
+                        i2 = itemY2;
+                    } else if (itemY2 > i2) {
                         this.selectedIndex = i;
                         invalidateLayout();
                         return;
                     }
                 }
-            } while (getItemX(i3) != iM240c);
+            } while (getItemX(i3) != itemX);
             this.selectedIndex = i3;
             invalidateLayout();
             return;
@@ -995,10 +995,10 @@ public final class Screen {
         if (this.selectedIndex >= size - 1) {
             int i4 = this.scrollOffset;
             this.scrollOffset += 20;
-            int iM912h = getItemAt(this.selectedIndex).getTotalHeight();
-            int iM241d3 = getItemY(this.selectedIndex);
-            if (this.scrollOffset > (iM241d3 + iM912h) - this.contentHeight) {
-                this.scrollOffset -= this.scrollOffset - ((iM241d3 + iM912h) - this.contentHeight);
+            int itemHeight = getItemAt(this.selectedIndex).getTotalHeight();
+            int itemY3 = getItemY(this.selectedIndex);
+            if (this.scrollOffset > (itemY3 + itemHeight) - this.contentHeight) {
+                this.scrollOffset -= this.scrollOffset - ((itemY3 + itemHeight) - this.contentHeight);
             }
             if (this.scrollOffset < 0) {
                 this.scrollOffset = 0;
@@ -1016,7 +1016,7 @@ public final class Screen {
             }
             return;
         }
-        MenuItem c0032c = null;
+        MenuItem currentItem = null;
         int i5 = this.selectedIndex;
         while (true) {
             i5++;
@@ -1026,18 +1026,17 @@ public final class Screen {
             if (i5 == size) {
                 return;
             }
-            MenuItem c0032cM239b = getItemAt(i5);
-            c0032c = c0032cM239b;
-            if (c0032cM239b.isEnabled()) {
+            currentItem = getItemAt(i5);
+            if (currentItem.isEnabled()) {
                 this.selectedIndex = i5;
                 break;
             }
         }
-        int iM912h2 = c0032c.getTotalHeight();
-        int iM241d4 = getItemY(this.selectedIndex);
-        if (iM241d4 + iM912h2 >= this.scrollOffset + this.contentHeight) {
-            if (iM912h2 <= this.contentHeight) {
-                this.scrollOffset = (iM241d4 + iM912h2) - this.contentHeight;
+        int itemHeight2 = currentItem.getTotalHeight();
+        int itemY4 = getItemY(this.selectedIndex);
+        if (itemY4 + itemHeight2 >= this.scrollOffset + this.contentHeight) {
+            if (itemHeight2 <= this.contentHeight) {
+                this.scrollOffset = (itemY4 + itemHeight2) - this.contentHeight;
             } else {
                 this.scrollOffset += 20;
             }
@@ -1094,14 +1093,14 @@ public final class Screen {
 
     /* renamed from: e */
     private final boolean isItemVisible(int i) {
-        int iM241d = getItemY(i);
-        return iM241d < this.scrollOffset + this.contentHeight && iM241d + getItemAt(i).getTotalHeight() > this.scrollOffset;
+        int itemY = getItemY(i);
+        return itemY < this.scrollOffset + this.contentHeight && itemY + getItemAt(i).getTotalHeight() > this.scrollOffset;
     }
 
     /* renamed from: f */
     private final boolean isItemFullyVisible(int i) {
-        int iM241d = getItemY(i);
-        return iM241d >= this.scrollOffset && (iM241d + getItemAt(i).getTotalHeight()) - 1 <= this.scrollOffset + this.contentHeight;
+        int itemY = getItemY(i);
+        return itemY >= this.scrollOffset && (itemY + getItemAt(i).getTotalHeight()) - 1 <= this.scrollOffset + this.contentHeight;
     }
 
     /* renamed from: u */
@@ -1158,9 +1157,9 @@ public final class Screen {
 
     /* renamed from: b */
     public final Screen addExpandableItem(int i, String str, int i2, Object obj) {
-        MenuItem c0032cM901a = new MenuItem(13, AppState.emptyStr).setIcon(i).addText(str, 5, i2);
-        c0032cM901a.data = obj;
-        return addItem(c0032cM901a);
+        MenuItem expandItem = new MenuItem(13, AppState.emptyStr).setIcon(i).addText(str, 5, i2);
+        expandItem.data = obj;
+        return addItem(expandItem);
     }
 
     /* renamed from: a */
@@ -1170,10 +1169,10 @@ public final class Screen {
 
     /* renamed from: b */
     public final Screen addActionById(int i, int i2, int i3) {
-        String strM584b = AppState.getString(i2);
-        MenuItem c0032cM896a = MenuItem.createWithWidth(strM584b, i3).setIcon(i).setLabel(strM584b).setIcon(244);
-        c0032cM896a.enabled = true;
-        return addItem(c0032cM896a);
+        String labelStr = AppState.getString(i2);
+        MenuItem actionItem = MenuItem.createWithWidth(labelStr, i3).setIcon(i).setLabel(labelStr).setIcon(244);
+        actionItem.enabled = true;
+        return addItem(actionItem);
     }
 
     /* renamed from: a */
@@ -1193,31 +1192,31 @@ public final class Screen {
 
     /* renamed from: a */
     public final Screen addFullItem(int i, String str, String str2, int i2, Object obj) {
-        MenuItem c0032cM888a = MenuItem.createWithWidth(str2, i2);
+        MenuItem newItem = MenuItem.createWithWidth(str2, i2);
         if (i >= 0) {
-            c0032cM888a.setIcon(i);
+            newItem.setIcon(i);
         }
         if (str != null) {
-            c0032cM888a.addText(str, 0, 6);
+            newItem.addText(str, 0, 6);
         }
         if (str2 != null) {
-            int iIndexOf = str2.indexOf(0);
-            c0032cM888a.setLabel(iIndexOf < 0 ? str2 : StringUtils.prefix(str2, iIndexOf));
+            int separatorIdx = str2.indexOf(0);
+            newItem.setLabel(separatorIdx < 0 ? str2 : StringUtils.prefix(str2, separatorIdx));
         }
-        c0032cM888a.data = obj;
-        return addItem(c0032cM888a);
+        newItem.data = obj;
+        return addItem(newItem);
     }
 
     /* renamed from: b */
     public final Screen selectByTitle(String str) {
         if (str != null) {
             int i = 0;
-            Enumeration enumerationElements = this.menuItems.elements();
+            Enumeration elements = this.menuItems.elements();
             while (true) {
-                if (!enumerationElements.hasMoreElements()) {
+                if (!elements.hasMoreElements()) {
                     break;
                 }
-                if (str.equals(((MenuItem) enumerationElements.nextElement()).title)) {
+                if (str.equals(((MenuItem) elements.nextElement()).title)) {
                     this.selectedIndex = i;
                     break;
                 }
@@ -1229,37 +1228,37 @@ public final class Screen {
 
     /* renamed from: q */
     public final void rebuildItems() {
-        Vector vectorM1213g = NetworkUtils.newVector();
+        Vector newItems = NetworkUtils.newVector();
         int size = this.menuItems.size();
         while (true) {
             size--;
             if (size < 0) {
                 break;
             } else {
-                vectorM1213g.addElement(this.menuItems.elementAt(size));
+                newItems.addElement(this.menuItems.elementAt(size));
             }
         }
         this.menuItems.removeAllElements();
         this.layoutCache[0] = 0;
         this.totalHeight = 0;
-        int size2 = vectorM1213g.size();
+        int size2 = newItems.size();
         while (true) {
             size2--;
             if (size2 < 0) {
-                NetworkUtils.releaseVector(vectorM1213g);
+                NetworkUtils.releaseVector(newItems);
                 return;
             }
-            addItem((MenuItem) vectorM1213g.elementAt(size2));
+            addItem((MenuItem) newItems.elementAt(size2));
         }
     }
 
     /* renamed from: a */
     public final Screen setSoftKeys(String str, String str2, int i, int i2, int i3) {
-        GraphicsContext c0012alM608k = AppState.getGfxContext(0);
+        GraphicsContext gfxCtx = AppState.getGfxContext(0);
         this.titleLeft = str;
-        int iM214a = c0012alM608k.stringWidth(str);
+        int textWidth = gfxCtx.stringWidth(str);
         this.titleRight = str2;
-        this.titleMaxWidth = Utils.max(iM214a, c0012alM608k.stringWidth(str2)) << 1;
+        this.titleMaxWidth = Utils.max(textWidth, gfxCtx.stringWidth(str2)) << 1;
         this.softKeyLeft = i;
         this.softKeyCenter = i2;
         this.softKeyRight = i3;
@@ -1268,11 +1267,11 @@ public final class Screen {
 
     /* renamed from: a */
     public final boolean onPointerEvent(int i, int i2, int i3, int i4, boolean z) {
-        int iM240c;
-        int iM241d;
+        int itemX;
+        int itemY;
         boolean z2;
-        int iM240c2;
-        int iM241d2;
+        int itemX2;
+        int itemY2;
         if (!this.touchConsumed) {
             return true;
         }
@@ -1298,9 +1297,9 @@ public final class Screen {
                     z2 = false;
                     break;
                 }
-                MenuItem c0032cM239b = getItemAt(i12);
-                if (c0032cM239b.isEnabled() && i9 > (iM240c2 = getItemX(i12)) && i10 > (iM241d2 = getItemY(i12))) {
-                    if (i9 < iM240c2 + (this.layoutMode == 0 ? i11 : c0032cM239b.getTotalWidth()) && i10 < iM241d2 + c0032cM239b.getTotalHeight()) {
+                MenuItem menuItem = getItemAt(i12);
+                if (menuItem.isEnabled() && i9 > (itemX2 = getItemX(i12)) && i10 > (itemY2 = getItemY(i12))) {
+                    if (i9 < itemX2 + (this.layoutMode == 0 ? i11 : menuItem.getTotalWidth()) && i10 < itemY2 + menuItem.getTotalHeight()) {
                         if (this.selectedIndex != i12 || z) {
                             this.selectedIndex = i12;
                         } else {
@@ -1328,17 +1327,17 @@ public final class Screen {
         int i13 = i5 - 2;
         int i14 = (i6 + this.scrollOffset) - this.contentTop;
         int i15 = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
-        int iM261v = findVisibleExpanded();
-        if (iM261v < this.menuItems.size()) {
-            ((MenuItem) this.menuItems.elementAt(iM261v)).visible = false;
+        int expandedIdx = findVisibleExpanded();
+        if (expandedIdx < this.menuItems.size()) {
+            ((MenuItem) this.menuItems.elementAt(expandedIdx)).visible = false;
         }
         int size2 = this.menuItems.size();
         while (true) {
             size2--;
             if (size2 >= 0) {
-                MenuItem c0032cM239b2 = getItemAt(size2);
-                if (c0032cM239b2.id == 13 && i13 > (iM240c = getItemX(size2)) && i14 > (iM241d = getItemY(size2)) && i13 < iM240c + i15 && i14 < iM241d + c0032cM239b2.getTotalHeight()) {
-                    c0032cM239b2.visible = true;
+                MenuItem menuItem2 = getItemAt(size2);
+                if (menuItem2.id == 13 && i13 > (itemX = getItemX(size2)) && i14 > (itemY = getItemY(size2)) && i13 < itemX + i15 && i14 < itemY + menuItem2.getTotalHeight()) {
+                    menuItem2.visible = true;
                     break;
                 }
             } else {
@@ -1353,8 +1352,8 @@ public final class Screen {
     private int findVisibleExpanded() {
         int size = this.menuItems.size() + 1;
         for (int i = 0; i < this.menuItems.size(); i++) {
-            MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i);
-            if (c0032c.id == 13 && c0032c.visible && getItemY(i) > this.scrollOffset && (getItemY(i) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
+            MenuItem menuItem = (MenuItem) this.menuItems.elementAt(i);
+            if (menuItem.id == 13 && menuItem.visible && getItemY(i) > this.scrollOffset && (getItemY(i) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
                 size = i;
             }
         }
@@ -1365,8 +1364,8 @@ public final class Screen {
     private int findPrevExpanded(int i) {
         int size = this.menuItems.size() + 1;
         for (int i2 = 0; i2 < this.menuItems.size(); i2++) {
-            MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i2);
-            if (c0032c.id == 13 && !c0032c.visible && getItemY(i2) > this.scrollOffset && (getItemY(i2) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(i2) < getItemY(i)) {
+            MenuItem menuItem = (MenuItem) this.menuItems.elementAt(i2);
+            if (menuItem.id == 13 && !menuItem.visible && getItemY(i2) > this.scrollOffset && (getItemY(i2) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(i2) < getItemY(i)) {
                 size = i2;
             }
         }
@@ -1379,8 +1378,8 @@ public final class Screen {
         int i2 = 0;
         while (true) {
             if (i2 < this.menuItems.size()) {
-                MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i2);
-                if (c0032c.id == 13 && !c0032c.visible && getItemY(i2) > this.scrollOffset && (getItemY(i2) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(i2) > getItemY(i)) {
+                MenuItem menuItem = (MenuItem) this.menuItems.elementAt(i2);
+                if (menuItem.id == 13 && !menuItem.visible && getItemY(i2) > this.scrollOffset && (getItemY(i2) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(i2) > getItemY(i)) {
                     size = i2;
                     break;
                 }
@@ -1396,8 +1395,8 @@ public final class Screen {
     private int findAnyExpanded() {
         int size = this.menuItems.size() + 1;
         for (int i = 0; i < this.menuItems.size(); i++) {
-            MenuItem c0032c = (MenuItem) this.menuItems.elementAt(i);
-            if (c0032c.id == 13 && !c0032c.visible && getItemY(i) > this.scrollOffset && (getItemY(i) + c0032c.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
+            MenuItem menuItem = (MenuItem) this.menuItems.elementAt(i);
+            if (menuItem.id == 13 && !menuItem.visible && getItemY(i) > this.scrollOffset && (getItemY(i) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
                 size = i;
             }
         }
@@ -1406,11 +1405,11 @@ public final class Screen {
 
     /* renamed from: r */
     public final int getSelectedY() {
-        int iM241d = 0;
+        int itemY = 0;
         if (this.selectedIndex > 0) {
-            iM241d = getItemY(this.selectedIndex);
+            itemY = getItemY(this.selectedIndex);
         }
-        return this.offsetY + iM241d;
+        return this.offsetY + itemY;
     }
 
     /* renamed from: a */
