@@ -370,7 +370,7 @@ public final class StringUtils {
             stringBufferAppend.append((char) 0).append(m28b((XmlElement) vectorM614m.elementAt(i)));
         }
         AppState.setFromBuffer(1300, stringBufferAppend);
-        ScreenManager.m71b(ScreenManager.m75b(3356));
+        ScreenManager.showScreen(ScreenManager.createScreen(3356));
     }
 
     /* renamed from: f */
@@ -392,8 +392,8 @@ public final class StringUtils {
     /* renamed from: a */
     public static final void m31a(Screen c0013am, Object obj) {
         MenuItem c0032c = (MenuItem) obj;
-        int iIntValue = ((Integer) ((Object[]) c0032c.f265d)[0]).intValue();
-        String str = c0032c.f259b;
+        int iIntValue = ((Integer) ((Object[]) c0032c.data)[0]).intValue();
+        String str = c0032c.title;
         String strM584b = AppState.getString(689);
         String strM584b2 = AppState.getString(690);
         String strM584b3 = AppState.getString(691);
@@ -414,12 +414,12 @@ public final class StringUtils {
                 break;
             }
             MenuItem c0032c7 = (MenuItem) vector.elementAt(iM541c);
-            if (c0032c7.f258a == 9) {
-                String str2 = c0032c7.f259b;
+            if (c0032c7.id == 9) {
+                String str2 = c0032c7.title;
                 if (str2.startsWith(strM584b4)) {
                     c0032c4 = c0032c7;
                 } else if (str2.startsWith(strM584b)) {
-                    iIntValue2 = ((Integer) ((Object[]) c0032c7.f265d)[0]).intValue();
+                    iIntValue2 = ((Integer) ((Object[]) c0032c7.data)[0]).intValue();
                 } else if (str2.startsWith(strM584b2)) {
                     c0032c2 = c0032c7;
                 } else if (str2.startsWith(strM584b3)) {
@@ -437,8 +437,8 @@ public final class StringUtils {
             if (iIntValue > 0) {
                 m27a(vectorM26m, AppState.getVector(1301).elementAt(iIntValue - 1));
             }
-            c0032c8.m892a(vectorM26m, 0, strM584b2);
-            c0032c3.m892a(Utils.splitByNull(AppState.getString(684)), 0, strM584b3);
+            c0032c8.setChoices(vectorM26m, 0, strM584b2);
+            c0032c3.setChoices(Utils.splitByNull(AppState.getString(684)), 0, strM584b3);
         } else if (equals(str, strM584b2)) {
             MenuItem c0032c9 = c0032c3;
             int i = iIntValue2;
@@ -446,12 +446,12 @@ public final class StringUtils {
             if (iIntValue > 0) {
                 m27a(vectorM26m2, ((XmlElement) AppState.getVector(1301).elementAt(i - 1)).children.elementAt(iIntValue - 1));
             }
-            c0032c9.m892a(vectorM26m2, 0, strM584b3);
+            c0032c9.setChoices(vectorM26m2, 0, strM584b3);
         } else if (equals(str, strM584b4)) {
-            c0032c5.m892a(Utils.splitByNull(AppState.getString(687)), 0, strM584b5);
-            c0032c6.m892a(Utils.splitByNull(AppState.getString(686)), 0, strM584b6);
+            c0032c5.setChoices(Utils.splitByNull(AppState.getString(687)), 0, strM584b5);
+            c0032c6.setChoices(Utils.splitByNull(AppState.getString(686)), 0, strM584b6);
         } else if (equals(str, strM584b5) || equals(str, strM584b6)) {
-            c0032c4.m892a(Utils.splitByNull(AppState.getString(685)), 0, strM584b4);
+            c0032c4.setChoices(Utils.splitByNull(AppState.getString(685)), 0, strM584b4);
         }
         c0013am.m258q();
     }

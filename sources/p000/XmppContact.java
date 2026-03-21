@@ -80,8 +80,8 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: b */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM901a = MenuItem.m887a(this.identifier).m896a(getDisplayIcon()).m901a(this.displayName, 0, this.unreadCount);
-        c0032cM901a.f265d = this;
+        MenuItem c0032cM901a = MenuItem.create(this.identifier).setIcon(getDisplayIcon()).addText(this.displayName, 0, this.unreadCount);
+        c0032cM901a.data = this;
         return c0032cM901a;
     }
 

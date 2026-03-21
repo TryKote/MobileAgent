@@ -46,7 +46,7 @@ public final class AsyncTask implements Runnable, CommandListener {
     }
 
     public AsyncTask(Screen c0013am, MenuItem c0032c) {
-        Object[] objArr = (Object[]) c0032c.f265d;
+        Object[] objArr = (Object[]) c0032c.data;
         this.f435c = new Object[]{c0013am, c0032c};
         String str = (String) objArr[0];
         int iIntValue = ((Integer) objArr[1]).intValue();
@@ -70,21 +70,21 @@ public final class AsyncTask implements Runnable, CommandListener {
             String strM17c = StringUtils.intern(((TextBox) displayable).getString());
             Screen c0013am = (Screen) ((Object[]) this.f435c)[0];
             MenuItem c0032c = (MenuItem) ((Object[]) this.f435c)[1];
-            Object[] objArr = (Object[]) c0032c.f265d;
+            Object[] objArr = (Object[]) c0032c.data;
             if (!StringUtils.m4a(strM17c, objArr[0])) {
                 objArr[0] = strM17c;
                 String strM506c = ((Integer) objArr[2]).intValue() != 327680 ? strM17c : Utils.m506c(strM17c);
                 String str = StringUtils.isEmpty(strM506c) ? null : strM506c;
-                c0032c.m884a();
+                c0032c.clear();
                 if (objArr[4] instanceof String) {
-                    c0032c.m898b(Utils.m527g((String) objArr[4]));
+                    c0032c.setLabel(Utils.m527g((String) objArr[4]));
                 } else {
-                    c0032c.m896a(((Integer) objArr[4]).intValue());
+                    c0032c.setIcon(((Integer) objArr[4]).intValue());
                 }
                 if (str != null) {
-                    c0032c.m901a(str, 1, 7);
+                    c0032c.addText(str, 1, 7);
                 } else {
-                    c0032c.m895e();
+                    c0032c.setDefaultFont();
                 }
                 c0013am.m258q();
             }

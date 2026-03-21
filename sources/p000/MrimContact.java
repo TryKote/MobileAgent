@@ -109,18 +109,18 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.Contact
     /* renamed from: b */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM896a = MenuItem.m887a(this.identifier).m896a(getIcon());
+        MenuItem c0032cM896a = MenuItem.create(this.identifier).setIcon(getIcon());
         String str = this.displayName;
         int i = canBlock() ? 3 : canDelete() ? 2 : 0;
         int i2 = this.statusFlags;
-        c0032cM896a.m901a(str, i, (i2 & 1048576) != 0 ? 0 : (i2 & 8) != 0 ? 4 : (i2 & 4) != 0 ? 5 : this.unreadCount == 0 ? 0 : 3).f265d = this;
+        c0032cM896a.addText(str, i, (i2 & 1048576) != 0 ? 0 : (i2 & 8) != 0 ? 4 : (i2 & 4) != 0 ? 5 : this.unreadCount == 0 ? 0 : 3).data = this;
         if (!isOffline() && Utils.nonEmpty(this.contactGroupsStr)) {
-            c0032cM896a.m896a(27);
+            c0032cM896a.setIcon(27);
         }
         if (Utils.nonEmpty(this.customLink)) {
-            c0032cM896a.m896a(242);
+            c0032cM896a.setIcon(242);
         }
-        c0032cM896a.f265d = this;
+        c0032cM896a.data = this;
         return c0032cM896a;
     }
 

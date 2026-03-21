@@ -7,7 +7,7 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:ad.class */
 public abstract class ScreenManager {
     /* renamed from: a */
-    public static final void m65a() {
+    public static final void initializeFonts() {
         int iM586d = AppState.getInt(73);
         int i = iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16;
         GraphicsContext c0012al = new GraphicsContext(0, i);
@@ -38,7 +38,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: b */
-    public static final Screen m66b() {
+    public static final Screen getCurrentScreen() {
         Vector vectorM614m = AppState.getVector(1272);
         if (vectorM614m.isEmpty()) {
             return null;
@@ -47,31 +47,31 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: c */
-    public static final String m67c() {
+    public static final String getCurrentTitle() {
         if (AppState.getVector(1272).size() > 0) {
-            return m66b().m220b();
+            return getCurrentScreen().m220b();
         }
         return null;
     }
 
     /* renamed from: d */
-    public static final int m68d() {
+    public static final int getCurrentWidth() {
         if (AppState.getVector(1272).size() > 0) {
-            return m66b().m221c();
+            return getCurrentScreen().m221c();
         }
         return 200;
     }
 
     /* renamed from: e */
-    public static final MenuItem m69e() {
+    public static final MenuItem getCurrentMenuItem() {
         if (AppState.getVector(1272).size() > 0) {
-            return m66b().m222d();
+            return getCurrentScreen().m222d();
         }
         return null;
     }
 
     /* renamed from: a */
-    public static final void m70a(Screen c0013am) {
+    public static final void pushScreen(Screen c0013am) {
         Vector vectorM614m = AppState.getVector(1272);
         while (vectorM614m.size() > 0) {
             ScreenBuilder.m549c();
@@ -85,7 +85,7 @@ public abstract class ScreenManager {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final void m71b(Screen c0013am) {
+    public static final void showScreen(Screen c0013am) {
         Screen c0013am2 = null;
         Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size() - 1;
@@ -128,7 +128,7 @@ public abstract class ScreenManager {
                 c0013am.m266a(iM586d, iM605e);
                 break;
             case 10:
-                Screen c0013amM66b = m66b();
+                Screen c0013amM66b = getCurrentScreen();
                 if (c0013amM66b != null) {
                     int iM586d2 = c0013amM66b.f98e + c0013amM66b.f95b;
                     int iM265r = c0013amM66b.m265r();
@@ -163,7 +163,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: a */
-    public static final boolean m72a(int i) {
+    public static final boolean hasScreen(int i) {
         Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size();
         do {
@@ -176,12 +176,12 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: f */
-    public static final int m73f() {
+    public static final int getCenterOffset() {
         return Utils.max(0, (AppState.getInt(1450) - 16) >> 1);
     }
 
     /* renamed from: g */
-    public static final int m74g() {
+    public static final int handleScreenClose() {
         if (!AppState.getBool(1543)) {
             return AppController.m338l(470);
         }
@@ -190,7 +190,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: b */
-    public static final Screen m75b(int i) {
+    public static final Screen createScreen(int i) {
         Screen c0013am;
         int i2 = i + 1;
         String strM522f = Utils.defaultStr(AppState.getString(AppState.getInt(i)));
@@ -248,13 +248,13 @@ public abstract class ScreenManager {
             if (i5 != 7) {
                 c0013am.m224a(iM586d3, strM522f);
             } else {
-                c0013am.m225a(new MenuItem(0, strM522f).m901a(strM522f, 1, 0));
+                c0013am.m225a(new MenuItem(0, strM522f).addText(strM522f, 1, 0));
             }
         }
         c0013am.f125x = z;
         c0013am.f100g = i;
         for (int i12 = 0; i12 < iM586d9; i12++) {
-            iM79a = m79a(c0013am, iM79a, iM586d);
+            iM79a = parseScreenItem(c0013am, iM79a, iM586d);
         }
         Screen c0013amM259a = c0013am.m259a(iM586d4 > 0 ? AppState.getString(iM586d4) : null, iM586d5 > 0 ? AppState.getString(iM586d5) : null, iM586d6, iM586d7, iM586d8);
         c0013amM259a.f97d = i5;
@@ -262,7 +262,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: c */
-    public static final Screen m76c(int i) {
+    public static final Screen createDialogScreen(int i) {
         Screen c0013am = new Screen(0, i, (AppState.getInt(1528) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
         c0013am.f97d = 2;
         c0013am.f125x = true;
@@ -270,7 +270,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: h */
-    public static final boolean m77h() {
+    public static final boolean hasModal() {
         Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size();
         do {
@@ -283,7 +283,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: a */
-    private static final int m78a(boolean z, Screen c0013am, int i, boolean z2) {
+    private static final int addItemToScreen(boolean z, Screen c0013am, int i, boolean z2) {
         int i2 = i + 1;
         int iM586d = AppState.getInt(i);
         int i3 = i2 + 1;
@@ -301,7 +301,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: a */
-    private static final int m79a(Screen c0013am, int i, int i2) {
+    private static final int parseScreenItem(Screen c0013am, int i, int i2) {
         int i3;
         Object objM522f;
         int i4;
@@ -333,11 +333,11 @@ public abstract class ScreenManager {
                 return i10;
             case 1:
                 int i11 = i5 + 1;
-                MenuItem c0032cM901a = MenuItem.m889d().m901a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
+                MenuItem c0032cM901a = MenuItem.createSeparator().addText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
                 int i12 = i11 + 1;
                 String strM522f2 = Utils.defaultStr(AppState.getString(AppState.getInt(i11)));
                 if (!StringUtils.isEmpty(strM522f2)) {
-                    c0032cM901a.m901a(strM522f2, 0, 6);
+                    c0032cM901a.addText(strM522f2, 0, 6);
                 }
                 c0013am.m225a(c0032cM901a);
                 return i12;
@@ -345,7 +345,7 @@ public abstract class ScreenManager {
                 int i13 = i5 + 1;
                 String strM522f3 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 int i14 = i13 + 1;
-                c0013am.m225a(MenuItem.m890a(strM522f3, AppState.getBool(AppState.getInt(i13))));
+                c0013am.m225a(MenuItem.createCheckbox(strM522f3, AppState.getBool(AppState.getInt(i13))));
                 return i14;
             case 3:
                 int i15 = i5 + 1;
@@ -353,11 +353,11 @@ public abstract class ScreenManager {
                 int i16 = i15 + 1;
                 Vector vectorM512e = Utils.splitByNull(Utils.defaultStr(AppState.getString(AppState.getInt(i15))));
                 int i17 = i16 + 1;
-                c0013am.m225a(new MenuItem(9, strM522f4).m892a(vectorM512e, AppState.getInt(AppState.getInt(i16)), strM522f4));
+                c0013am.m225a(new MenuItem(9, strM522f4).setChoices(vectorM512e, AppState.getInt(AppState.getInt(i16)), strM522f4));
                 return i17;
             case 4:
                 int i18 = i5 + 1;
-                c0013am.m225a(MenuItem.m889d().m901a(Utils.defaultStr(AppState.getString(AppState.getInt(i5))), 1, 0));
+                c0013am.m225a(MenuItem.createSeparator().addText(Utils.defaultStr(AppState.getString(AppState.getInt(i5))), 1, 0));
                 return i18;
             case 5:
                 if (i2 == 49) {
@@ -385,42 +385,42 @@ public abstract class ScreenManager {
                     i4 = i22 + 1;
                     strM522f = Utils.defaultStr(Utils.defaultStr(AppState.getString(AppState.getInt(i22))));
                 }
-                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).m891a(obj, strM522f, ResourceManager.m967e(iM586d6), ResourceManager.m967e(iM586d7), strM522f5));
+                c0013am.m225a(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, strM522f, ResourceManager.m967e(iM586d6), ResourceManager.m967e(iM586d7), strM522f5));
                 return i4;
             case 6:
                 int i24 = i5 + 1;
-                c0013am.m225a(MenuItem.m889d().m898b(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))));
+                c0013am.m225a(MenuItem.createSeparator().setLabel(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))));
                 return i24;
             case 7:
-                return m78a(AppState.getBool(AppState.getInt(i5)), c0013am, i5 + 1, z);
+                return addItemToScreen(AppState.getBool(AppState.getInt(i5)), c0013am, i5 + 1, z);
             case 8:
-                return m78a(!AppState.getBool(AppState.getInt(i5)), c0013am, i5 + 1, z);
+                return addItemToScreen(!AppState.getBool(AppState.getInt(i5)), c0013am, i5 + 1, z);
             case 9:
                 String strM522f6 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 String strM522f7 = Utils.defaultStr(AppState.getString(AppState.getInt(i5 + 1)));
-                MenuItem c0032cM901a2 = new MenuItem(4, (String) null).m884a().m896a(221).m901a(Utils.nonEmpty(strM522f7) ? strM522f7 : strM522f6, 1, 7);
-                c0032cM901a2.f265d = new String[]{strM522f6, strM522f7};
+                MenuItem c0032cM901a2 = new MenuItem(4, (String) null).clear().setIcon(221).addText(Utils.nonEmpty(strM522f7) ? strM522f7 : strM522f6, 1, 7);
+                c0032cM901a2.data = new String[]{strM522f6, strM522f7};
                 c0013am.m225a(c0032cM901a2);
                 return i5 + 2;
             case 10:
                 String strM522f8 = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
                 MenuItem c0032c = new MenuItem(5, (String) null);
-                c0032c.m884a();
-                c0032c.m896a(219);
+                c0032c.clear();
+                c0032c.setIcon(219);
                 if (Utils.nonEmpty(strM522f8)) {
                     int iIndexOf = strM522f8.indexOf(0);
-                    c0032c.m901a(iIndexOf < 0 ? strM522f8 : StringUtils.prefix(strM522f8, iIndexOf), 1, 7);
+                    c0032c.addText(iIndexOf < 0 ? strM522f8 : StringUtils.prefix(strM522f8, iIndexOf), 1, 7);
                 } else {
-                    c0032c.m895e();
+                    c0032c.setDefaultFont();
                 }
-                c0032c.f265d = strM522f8;
+                c0032c.data = strM522f8;
                 c0013am.m225a(c0032c);
                 return i5 + 1;
             case 11:
-                c0013am.m225a(MenuItem.m893a(new GraphicsContext((Image) AppState.pool[AppState.getInt(i5)])));
+                c0013am.m225a(MenuItem.createGraphics(new GraphicsContext((Image) AppState.pool[AppState.getInt(i5)])));
                 return i5 + 1;
             default:
-                m79a(c0013am, AppState.getInt(i5), i2);
+                parseScreenItem(c0013am, AppState.getInt(i5), i2);
                 return i5 + 1;
         }
     }

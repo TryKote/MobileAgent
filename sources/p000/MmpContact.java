@@ -126,8 +126,8 @@ public final class MmpContact extends Contact {
     @Override // p000.Contact
     /* renamed from: b */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM901a = MenuItem.m887a(this.identifier).m896a(getIcon()).m901a(this.displayName, canBlock() ? 3 : canDelete() ? 2 : 0, this.defaultIcon == 255 ? 0 : canDelete() ? 4 : canBlock() ? 5 : 3);
-        c0032cM901a.f265d = this;
+        MenuItem c0032cM901a = MenuItem.create(this.identifier).setIcon(getIcon()).addText(this.displayName, canBlock() ? 3 : canDelete() ? 2 : 0, this.defaultIcon == 255 ? 0 : canDelete() ? 4 : canBlock() ? 5 : 3);
+        c0032cM901a.data = this;
         return c0032cM901a;
     }
 

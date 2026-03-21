@@ -201,7 +201,7 @@ public final class IOUtils {
         if (abstractC0037hM1255c.getType() == 1) {
             AppState.setObject(1320, (Object) c0042m.m1256a(60));
             AppState.setObject(1321, (Object) c0042m.m1291j());
-            ScreenManager.m71b(ScreenManager.m75b(3920));
+            ScreenManager.showScreen(ScreenManager.createScreen(3920));
             return;
         }
         if (((MrimAccount) abstractC0037hM1255c).hasCustomDomain) {
@@ -213,7 +213,7 @@ public final class IOUtils {
         }
         AppState.setObject(1320, (Object) c0042m.m1290i());
         AppState.setObject(1321, (Object) c0042m.m1292k());
-        ScreenManager.m71b(ScreenManager.m75b(3888));
+        ScreenManager.showScreen(ScreenManager.createScreen(3888));
     }
 
     /* renamed from: a */
@@ -252,7 +252,7 @@ public final class IOUtils {
     /* renamed from: c */
     public static final void m760c() {
         ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
-        Screen c0013amM75b = ScreenManager.m75b(4527);
+        Screen c0013amM75b = ScreenManager.createScreen(4527);
         c0013amM75b.m224a(234, c0052wM745h.getDisplayName());
         Vector vectorM1213g = NetworkUtils.newVector();
         Enumeration enumerationElements = c0052wM745h.messageIds.elements();
@@ -276,7 +276,7 @@ public final class IOUtils {
             c0013amM75b.m235n();
         }
         c0013amM75b.f127y = true;
-        ScreenManager.m71b(c0013amM75b);
+        ScreenManager.showScreen(c0013amM75b);
     }
 
     /* renamed from: a */
@@ -357,7 +357,7 @@ public final class IOUtils {
             }
         }
         int size = vectorM1213g.size();
-        Screen c0013amM75b = ScreenManager.m75b(4248);
+        Screen c0013amM75b = ScreenManager.createScreen(4248);
         f238d = NetworkUtils.newVector();
         for (int i = 0; i < size; i++) {
             MrimContact c0035f = (MrimContact) vectorM1213g.elementAt(i);
@@ -377,11 +377,11 @@ public final class IOUtils {
                     break;
                 }
             }
-            c0013amM75b.m225a(MenuItem.m890a(str, z));
+            c0013amM75b.m225a(MenuItem.createCheckbox(str, z));
             f238d.addElement(strMo135a);
         }
         f240f = c0013amM75b;
-        ScreenManager.m71b(c0013amM75b);
+        ScreenManager.showScreen(c0013amM75b);
     }
 
     /* renamed from: e */
@@ -390,7 +390,7 @@ public final class IOUtils {
         Vector vectorM1213g = NetworkUtils.newVector();
         int size = vector.size();
         for (int i = 0; i < size; i++) {
-            if (((Boolean) ((MenuItem) vector.elementAt(i)).f265d).booleanValue()) {
+            if (((Boolean) ((MenuItem) vector.elementAt(i)).data).booleanValue()) {
                 vectorM1213g.addElement(f238d.elementAt(i));
             }
         }
@@ -676,9 +676,9 @@ public final class IOUtils {
             String str2 = c0035f2.displayName;
             if (abstractC0041l != null) {
                 MrimContact c0035f3 = (MrimContact) abstractC0041l;
-                c0032cM899a = c0035f3.groupsList != null && c0035f3.groupsList.contains(str) ? new MenuItem(2, str2).m899a(375, str2) : MenuItem.m890a(str2, false);
+                c0032cM899a = c0035f3.groupsList != null && c0035f3.groupsList.contains(str) ? new MenuItem(2, str2).setIconAndLabel(375, str2) : MenuItem.createCheckbox(str2, false);
             }
-            c0032cM899a.f259b = str;
+            c0032cM899a.title = str;
             c0013am.m225a(c0032cM899a);
         }
         NetworkUtils.releaseVector(vectorM1078P);
@@ -696,9 +696,9 @@ public final class IOUtils {
                 return vectorM1213g;
             }
             MenuItem c0032c = (MenuItem) vector.elementAt(size);
-            Object obj = c0032c.f265d;
+            Object obj = c0032c.data;
             if (obj != null && ((Boolean) obj).booleanValue()) {
-                vectorM1213g.addElement(c0032c.f259b);
+                vectorM1213g.addElement(c0032c.title);
             }
         }
     }

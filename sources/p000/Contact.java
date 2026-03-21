@@ -302,7 +302,7 @@ public abstract class Contact implements Sortable {
             iMo139e += 4;
         }
         AppState.setInt(2594, iMo139e);
-        Screen c0013amM75b = ScreenManager.m75b(2591);
+        Screen c0013amM75b = ScreenManager.createScreen(2591);
         ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
         int iM624l = AppState.getDateCode();
         while (c0043nM1380F.length > 0) {
@@ -342,7 +342,7 @@ public abstract class Contact implements Sortable {
             if (Conversation.m1106f(str2)) {
                 c0013am.m250b(264, Conversation.m1099b(str2), i, new Object[]{ResourceManager.m967e(0), str2});
             } else {
-                c0013am.m225a(MenuItem.m889d().m902a(str2, 0, i, this.account.getType()));
+                c0013am.m225a(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }
         }
         NetworkUtils.releaseVector(vectorM1098a);
@@ -364,7 +364,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: J */
     public final Screen showMessageSummary() {
         String strM1215a;
-        Screen c0013amM75b = ScreenManager.m75b(2631);
+        Screen c0013amM75b = ScreenManager.createScreen(2631);
         ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
         while (c0043nM1380F.length > 0) {
             int iM1353u = c0043nM1380F.readShortBE();

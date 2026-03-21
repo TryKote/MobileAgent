@@ -363,7 +363,7 @@ public final class NetworkUtils {
         AppState.setInt(1481, ((Integer) objArr[19]).intValue());
         AppState.pool[1297] = objArr[20];
         AppState.setInt(1480, ((Integer) objArr[21]).intValue());
-        ScreenManager.m71b(ScreenManager.m75b(4399));
+        ScreenManager.showScreen(ScreenManager.createScreen(4399));
         String strM584b = AppState.getString(1297);
         if (strM584b == null) {
             AppController.m334q();
@@ -564,14 +564,14 @@ public final class NetworkUtils {
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
                 if (c0042m.m1255c() instanceof MrimAccount) {
-                    MenuItem c0032cM898b = MenuItem.m886c().m896a(AppController.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(c0042m.m1256a(3));
-                    c0032cM898b.f265d = c0042m;
+                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.m349a(Utils.m511a(c0042m.m1256a(10), 0, 4, 0), c0042m.m1256a(12))).addText(Utils.m495b(c0042m.m1287f()), 1, 0).setLabel(c0042m.m1256a(3));
+                    c0032cM898b.data = c0042m;
                     c0032cM1057D = c0032cM898b;
                 } else {
-                    MenuItem c0032cM886c = MenuItem.m886c();
+                    MenuItem c0032cM886c = MenuItem.createDefault();
                     int iM510a = Utils.parseInt((Object) c0042m.m1256a(61));
-                    MenuItem c0032cM898b2 = c0032cM886c.m896a(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).m898b(Utils.m527g(c0042m.m1256a(60))).m901a(Utils.m495b(c0042m.m1287f()), 1, 0).m898b(StringUtils.concat(Utils.m527g(c0042m.m1288g()), c0042m.m1289h()));
-                    c0032cM898b2.f265d = c0042m;
+                    MenuItem c0032cM898b2 = c0032cM886c.setIcon(iM510a == 0 ? 255 : iM510a == 1 ? 256 : 263).setLabel(Utils.m527g(c0042m.m1256a(60))).addText(Utils.m495b(c0042m.m1287f()), 1, 0).setLabel(StringUtils.concat(Utils.m527g(c0042m.m1288g()), c0042m.m1289h()));
+                    c0032cM898b2.data = c0042m;
                     c0032cM1057D = c0032cM898b2;
                 }
             } else {
@@ -648,13 +648,13 @@ public final class NetworkUtils {
 
     /* renamed from: d */
     public static final int m1195d() {
-        Screen c0013amM66b = ScreenManager.m66b();
+        Screen c0013amM66b = ScreenManager.getCurrentScreen();
         int i = c0013amM66b.f100g + 9;
         Vector vector = c0013amM66b.f108m;
         int iM1194a = i + 1;
         int iM586d = AppState.getInt(i);
         for (int i2 = 0; i2 < iM586d; i2++) {
-            iM1194a = m1194a(iM1194a, ((MenuItem) vector.elementAt(i2)).f265d);
+            iM1194a = m1194a(iM1194a, ((MenuItem) vector.elementAt(i2)).data);
         }
         return 0;
     }
@@ -675,7 +675,7 @@ public final class NetworkUtils {
     public static final void m1197a(int i, StringBuffer stringBuffer) {
         AppState.setInt(4486, i);
         AppState.setFromBuffer(1344, stringBuffer);
-        ScreenManager.m71b(ScreenManager.m75b(4485));
+        ScreenManager.showScreen(ScreenManager.createScreen(4485));
         AppState.clearIndex(1344);
     }
 
@@ -683,7 +683,7 @@ public final class NetworkUtils {
     public static final void m1198a(int i, int i2) {
         AppState.setInt(4486, i);
         AppState.setFromPool(1344, i2);
-        ScreenManager.m71b(ScreenManager.m75b(4485));
+        ScreenManager.showScreen(ScreenManager.createScreen(4485));
         AppState.clearIndex(1344);
     }
 
@@ -700,7 +700,7 @@ public final class NetworkUtils {
     public static final void m1200b(int i, int i2) {
         AppState.setInt(4498, i);
         AppState.setInt(4497, i2);
-        ScreenManager.m71b(ScreenManager.m75b(4497));
+        ScreenManager.showScreen(ScreenManager.createScreen(4497));
     }
 
     /* renamed from: f */

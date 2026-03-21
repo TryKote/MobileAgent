@@ -194,13 +194,13 @@ public final class AppController {
         abstractC0041lM611g.flags = (byte) 0;
         abstractC0041lM611g.dirty = true;
         abstractC0041lM611g.updateRenderState();
-        ScreenManager.m71b(abstractC0041lM611g.showMessages().m236o());
+        ScreenManager.showScreen(abstractC0041lM611g.showMessages().m236o());
     }
 
     /* renamed from: b */
     public static final int m301b(int i) {
         if (i == 4) {
-            ScreenManager.m74g();
+            ScreenManager.handleScreenClose();
             return 0;
         }
         if (i != 137) {
@@ -260,7 +260,7 @@ public final class AppController {
 
     /* renamed from: i */
     public static final int m308i() {
-        if (ScreenManager.m72a(43)) {
+        if (ScreenManager.hasScreen(43)) {
             return 43;
         }
         ScreenBuilder.m549c();
@@ -619,7 +619,7 @@ public final class AppController {
 
     /* renamed from: l */
     public static final int m338l(int i) {
-        if (ScreenManager.m66b().f97d == 8) {
+        if (ScreenManager.getCurrentScreen().f97d == 8) {
             ScreenBuilder.m549c();
         }
         AppState.setFromPool(1294, i);
@@ -643,7 +643,7 @@ public final class AppController {
     /* renamed from: r */
     public static final void m341r() {
         ResourceManager.m925a(5);
-        ScreenManager.m71b(ScreenManager.m75b(3328));
+        ScreenManager.showScreen(ScreenManager.createScreen(3328));
         AppState.clearIndex(1294);
     }
 
@@ -725,18 +725,18 @@ public final class AppController {
 
     /* renamed from: w */
     public static final void m350w() {
-        Screen c0013amM75b = ScreenManager.m75b(4852);
+        Screen c0013amM75b = ScreenManager.createScreen(4852);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.getLastChatRoom()) {
-                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(c0052w.name);
-                c0032cM898b.f265d = c0052w;
+                MenuItem c0032cM898b = MenuItem.createDefault().setIcon(234).setLabel(c0052w.name);
+                c0032cM898b.data = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
         }
-        ScreenManager.m71b(c0013amM75b);
+        ScreenManager.showScreen(c0013amM75b);
     }
 
     /* renamed from: e */
@@ -1202,7 +1202,7 @@ public final class AppController {
     public static final void m390G() {
         AppState.setInt(217, 0);
         AppState.setInt(1511, 1);
-        ScreenManager.m70a(ScreenManager.m75b(4038));
+        ScreenManager.pushScreen(ScreenManager.createScreen(4038));
     }
 
     /* renamed from: H */
@@ -1330,18 +1330,18 @@ public final class AppController {
 
     /* renamed from: M */
     public static final void m402M() {
-        Screen c0013amM75b = ScreenManager.m75b(4517);
+        Screen c0013amM75b = ScreenManager.createScreen(4517);
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
         while (enumerationElements.hasMoreElements()) {
             ChatRoom c0052w = (ChatRoom) enumerationElements.nextElement();
             if (c0052w != c0028ba.getLastChatRoom()) {
-                MenuItem c0032cM898b = MenuItem.m886c().m896a(234).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.name).append(' ').append('['))).m901a(StringUtils.intern(Integer.toString(c0052w.unreadCount)), 1, 0).m898b(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.memberCount).append(']')));
-                c0032cM898b.f265d = c0052w;
+                MenuItem c0032cM898b = MenuItem.createDefault().setIcon(234).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(c0052w.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(c0052w.unreadCount)), 1, 0).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(c0052w.memberCount).append(']')));
+                c0032cM898b.data = c0052w;
                 c0013amM75b.m225a(c0032cM898b);
             }
         }
-        ScreenManager.m71b(c0013amM75b);
+        ScreenManager.showScreen(c0013amM75b);
     }
 
     /* renamed from: a */
@@ -2091,7 +2091,7 @@ public final class AppController {
             AppState.clearRange(1022, 1023);
             AppState.pool[1373] = NetworkUtils.newVector();
             AppState.pool[1272] = NetworkUtils.newVector();
-            ScreenManager.m65a();
+            ScreenManager.initializeFonts();
             AppState.pool[1243] = NetworkUtils.newVector();
             AppState.pool[1244] = NetworkUtils.newVector();
             AppState.pool[1358] = NetworkUtils.newVector();
@@ -2135,7 +2135,7 @@ public final class AppController {
                 int iM433Q = m433Q();
                 int i3 = iM433Q;
                 if (iM433Q == 0) {
-                    ScreenManager.m70a(ScreenManager.m75b(4381));
+                    ScreenManager.pushScreen(ScreenManager.createScreen(4381));
                     m334q();
                 } else {
                     while (true) {
@@ -2146,7 +2146,7 @@ public final class AppController {
                             m328a(m434I(i3));
                         }
                     }
-                    ContactListManager.m152a();
+                    ContactListManager.showContactList();
                     m334q();
                 }
             }
@@ -2215,21 +2215,21 @@ public final class AppController {
                             while (true) {
                                 size2--;
                                 if (size2 < 0) {
-                                    if (f152f && ScreenManager.m66b().f94a == 4 && m305K(1)) {
+                                    if (f152f && ScreenManager.getCurrentScreen().f94a == 4 && m305K(1)) {
                                         f152f = false;
                                         AppState.getString(1237);
-                                        ContactListManager.m156d();
+                                        ContactListManager.refreshList();
                                         AppState.clearIndex(1237);
                                         m304a(1, 1000L);
                                     }
                                     Object objM524a = Utils.dequeue(AppState.getVector(1266));
                                     if (objM524a == null) {
-                                        Screen c0013amM66b2 = ScreenManager.m66b();
-                                        MenuItem c0032cM69e = ScreenManager.m69e();
-                                        Object obj = c0032cM69e == null ? null : c0032cM69e.f265d;
-                                        String str = c0032cM69e == null ? null : c0032cM69e.f259b;
+                                        Screen c0013amM66b2 = ScreenManager.getCurrentScreen();
+                                        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
+                                        Object obj = c0032cM69e == null ? null : c0032cM69e.data;
+                                        String str = c0032cM69e == null ? null : c0032cM69e.title;
                                         int iM338l = 0;
-                                        switch (ScreenManager.m66b().f94a) {
+                                        switch (ScreenManager.getCurrentScreen().f94a) {
                                             case 1:
                                                 iM1181a = 0;
                                                 iM338l = iM1181a;
@@ -2243,7 +2243,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 4:
-                                                iM1181a = ContactListManager.m160a(c0013amM66b2, obj);
+                                                iM1181a = ContactListManager.updateContextMenu(c0013amM66b2, obj);
                                                 iM338l = iM1181a;
                                                 break;
                                             case 5:
@@ -3322,7 +3322,7 @@ public final class AppController {
                                         int[] iArr = (int[]) objM524a;
                                         switch (iArr[0]) {
                                             case 0:
-                                                Screen c0013amM66b3 = ScreenManager.m66b();
+                                                Screen c0013amM66b3 = ScreenManager.getCurrentScreen();
                                                 if (c0013amM66b3 == null) {
                                                     break;
                                                 } else {
@@ -3331,12 +3331,12 @@ public final class AppController {
                                                     }
                                                     int i13 = iArr[1];
                                                     int i14 = iArr[2];
-                                                    int i15 = ScreenManager.m66b().f94a;
+                                                    int i15 = ScreenManager.getCurrentScreen().f94a;
                                                     int i16 = TabBar.currentIndex;
                                                     int size9 = AppState.getVector(1246).size();
                                                     boolean z6 = i16 == size9 - 1;
                                                     if (i15 == 4) {
-                                                        ContactListManager.m155c();
+                                                        ContactListManager.clearState();
                                                         if (size9 > 1) {
                                                             AppState.setInt(1414, 0);
                                                             if (i14 == 2) {
@@ -3478,7 +3478,7 @@ public final class AppController {
                                                 m455ab();
                                                 break;
                                             case 4:
-                                                if (ScreenManager.m66b().f94a == 6) {
+                                                if (ScreenManager.getCurrentScreen().f94a == 6) {
                                                     f153g = true;
                                                     AppState.setInt(1564, -1);
                                                 }
@@ -3496,21 +3496,21 @@ public final class AppController {
                                                     }
                                                     z2 = true;
                                                 }
-                                                if (z2 || (i = ScreenManager.m66b().f94a) == 137) {
+                                                if (z2 || (i = ScreenManager.getCurrentScreen().f94a) == 137) {
                                                     break;
-                                                } else if (i20 > 17 || !ScreenManager.m77h()) {
+                                                } else if (i20 > 17 || !ScreenManager.hasModal()) {
                                                     i2 = 0;
                                                     int i21 = i2;
                                                     if (i2 <= 0) {
                                                         if (i != i21) {
                                                             if (i == 4) {
-                                                                ContactListManager.m155c();
+                                                                ContactListManager.clearState();
                                                             }
                                                             ScreenBuilder.m546a(i21);
                                                         }
                                                         break;
                                                     } else {
-                                                        Screen c0013amM66b4 = ScreenManager.m66b();
+                                                        Screen c0013amM66b4 = ScreenManager.getCurrentScreen();
                                                         if (c0013amM66b4 != null) {
                                                             c0013amM66b4.f132B = true;
                                                             c0013amM66b4.f130z = 0;
@@ -3547,7 +3547,7 @@ public final class AppController {
                                                                         Account abstractC0037h = ((TabBar) objM179a).account;
                                                                         AppState.setInt(1414, 0);
                                                                         if (i == 4) {
-                                                                            ContactListManager.m155c();
+                                                                            ContactListManager.clearState();
                                                                         }
                                                                         if (i26 != 6 && i26 != 36 && abstractC0037h != null) {
                                                                             TabBar.findTab(4, ((TabBar) objM179a).account);
@@ -3598,7 +3598,7 @@ public final class AppController {
                                             case 6:
                                                 int i27 = iArr[1];
                                                 int i28 = iArr[2];
-                                                Screen c0013amM66b5 = ScreenManager.m66b();
+                                                Screen c0013amM66b5 = ScreenManager.getCurrentScreen();
                                                 if (c0013amM66b5 == null || !c0013amM66b5.f132B) {
                                                     break;
                                                 } else {
@@ -3641,7 +3641,7 @@ public final class AppController {
                                                 int i35 = iArr[3];
                                                 int i36 = iArr[4];
                                                 int i37 = iArr[5];
-                                                Screen c0013amM66b6 = ScreenManager.m66b();
+                                                Screen c0013amM66b6 = ScreenManager.getCurrentScreen();
                                                 if (c0013amM66b6 != null) {
                                                     c0013amM66b6.m260a(i33, i34, i35, i36, i37 != 0);
                                                 }
@@ -3649,7 +3649,7 @@ public final class AppController {
                                             case 8:
                                                 int i38 = iArr[1];
                                                 int i39 = iArr[2];
-                                                Screen c0013amM66b7 = ScreenManager.m66b();
+                                                Screen c0013amM66b7 = ScreenManager.getCurrentScreen();
                                                 if (c0013amM66b7 != null) {
                                                     int i40 = i38 - c0013amM66b7.f98e;
                                                     int i41 = i39 - c0013amM66b7.f99f;
@@ -3672,7 +3672,7 @@ public final class AppController {
                                             MrimAccount c0028ba6 = (MrimAccount) ((Object[]) objM524a)[0];
                                             c0028ba6.chatRoomsLoaded = true;
                                             AppState.pool[1282] = c0028ba6;
-                                            ScreenManager.m71b(ScreenManager.m75b(4485));
+                                            ScreenManager.showScreen(ScreenManager.createScreen(4485));
                                             AppState.clearIndex(1344);
                                             f153g = true;
                                         } else {
@@ -3694,7 +3694,7 @@ public final class AppController {
                                                 AppState.pool[1257] = vector4;
                                                 int iIntValue = ((Integer) objArr3[2]).intValue();
                                                 AppState.setInt(1444, iIntValue);
-                                                Screen c0013amM75b = ScreenManager.m75b(2237);
+                                                Screen c0013amM75b = ScreenManager.createScreen(2237);
                                                 if (iIntValue >= 10) {
                                                     c0013amM75b.m247a(6, AppState.getString(421), 1, null);
                                                 }
@@ -3707,7 +3707,7 @@ public final class AppController {
                                                         }
                                                         AppState.setBool(1445, iIntValue < c0020at.userCount - 10);
                                                         AppState.setBool(1446, iIntValue >= 10);
-                                                        ScreenManager.m71b(c0013amM75b);
+                                                        ScreenManager.showScreen(c0013amM75b);
                                                         break;
                                                     } else {
                                                         UserSearchResult c0045p = (UserSearchResult) vector4.elementAt(size11);
@@ -3726,12 +3726,12 @@ public final class AppController {
                                     } else {
                                         f153g = true;
                                         f152f = true;
-                                        Screen c0013amM66b8 = ScreenManager.m66b();
-                                        int i44 = ScreenManager.m66b().f94a;
+                                        Screen c0013amM66b8 = ScreenManager.getCurrentScreen();
+                                        int i44 = ScreenManager.getCurrentScreen().f94a;
                                         if (objM524a != null && (objM524a instanceof MenuItem)) {
                                             MenuItem c0032c = (MenuItem) objM524a;
-                                            if (c0032c.f258a == 2) {
-                                                if (i44 == 147 && AppState.setBool(1468, ((Boolean) c0032c.f265d).booleanValue())) {
+                                            if (c0032c.id == 2) {
+                                                if (i44 == 147 && AppState.setBool(1468, ((Boolean) c0032c.data).booleanValue())) {
                                                     NetworkUtils.m1195d();
                                                     AppState.setFromPool(1289, 1286);
                                                     m324n();
@@ -3743,7 +3743,7 @@ public final class AppController {
                                             }
                                         } else if (i44 == 164) {
                                             MenuItem c0032c2 = (MenuItem) objM524a;
-                                            Object[] objArr4 = (Object[]) c0032c2.f265d;
+                                            Object[] objArr4 = (Object[]) c0032c2.data;
                                             int iIntValue2 = ((Integer) objArr4[0]).intValue();
                                             String[] strArr = (String[]) objArr4[1];
                                             MenuItem c0032c3 = null;
@@ -3752,35 +3752,35 @@ public final class AppController {
                                             while (true) {
                                                 size12--;
                                                 if (size12 < 0) {
-                                                    if (c0032c2.f259b.equals(AppState.getString(809))) {
+                                                    if (c0032c2.title.equals(AppState.getString(809))) {
                                                         MenuItem c0032c4 = c0032c3;
                                                         String strM522f = iIntValue2 == 0 ? Utils.defaultStr(AppState.getString(1287)) : strArr[iIntValue2];
-                                                        Object[] objArr5 = (Object[]) c0032c4.f265d;
-                                                        c0032c4.m884a().m891a(objArr5[4], strM522f, objArr5[1], objArr5[2], objArr5[3]);
+                                                        Object[] objArr5 = (Object[]) c0032c4.data;
+                                                        c0032c4.clear().setAction(objArr5[4], strM522f, objArr5[1], objArr5[2], objArr5[3]);
                                                     }
                                                     c0013amM66b8.m258q();
                                                 } else {
                                                     MenuItem c0032c5 = (MenuItem) vector5.elementAt(size12);
-                                                    if (c0032c5.f258a == 15 && c0032c5.f259b.startsWith(AppState.getString(811))) {
+                                                    if (c0032c5.id == 15 && c0032c5.title.startsWith(AppState.getString(811))) {
                                                         c0032c3 = c0032c5;
                                                     }
                                                 }
                                             }
                                         } else if (i44 == 26) {
                                             MenuItem c0032c6 = (MenuItem) objM524a;
-                                            Object[] objArr6 = (Object[]) c0032c6.f265d;
-                                            if (AppState.getString(560).equals(c0032c6.f259b)) {
+                                            Object[] objArr6 = (Object[]) c0032c6.data;
+                                            if (AppState.getString(560).equals(c0032c6.title)) {
                                                 AppState.setInt(72, ((Integer) objArr6[0]).intValue());
                                             }
                                         } else if (i44 == 28) {
-                                            ResourceManager.m926a(((Integer) ((Object[]) ((MenuItem) objM524a).f265d)[0]).intValue(), false);
+                                            ResourceManager.m926a(((Integer) ((Object[]) ((MenuItem) objM524a).data)[0]).intValue(), false);
                                         }
                                     }
-                                    if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.m66b())) {
+                                    if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.getCurrentScreen())) {
                                         AppState.getCanvas().setCommands(c0013amM66b.f123v, c0013amM66b.f124w);
                                     }
                                     IOUtils.m756a();
-                                    if (m306a(f147a[0]) && (!AppState.getBool(272) || ScreenManager.m66b().f94a != 6)) {
+                                    if (m306a(f147a[0]) && (!AppState.getBool(272) || ScreenManager.getCurrentScreen().f94a != 6)) {
                                         if (AppState.getCanvas().isShown()) {
                                             m358L(0);
                                         } else {
@@ -3874,17 +3874,17 @@ public final class AppController {
         int i;
         int iM338l;
         int i2;
-        MenuItem c0032cM69e = ScreenManager.m69e();
-        if (c0032cM69e == null || c0032cM69e.m894a(ScreenManager.m66b()) == -1) {
-            Screen c0013amM66b = ScreenManager.m66b();
-            String strM67c = ScreenManager.m67c();
-            int iM68d = ScreenManager.m68d();
-            MenuItem c0032cM69e2 = ScreenManager.m69e();
-            MenuItem c0032cM223e = AppState.getVector(1272).size() > 0 ? ScreenManager.m66b().m223e() : null;
-            Object obj = c0032cM69e2 == null ? null : c0032cM69e2.f265d;
-            Object obj2 = c0032cM223e == null ? null : c0032cM223e.f265d;
+        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
+        if (c0032cM69e == null || c0032cM69e.execute(ScreenManager.getCurrentScreen()) == -1) {
+            Screen c0013amM66b = ScreenManager.getCurrentScreen();
+            String strM67c = ScreenManager.getCurrentTitle();
+            int iM68d = ScreenManager.getCurrentWidth();
+            MenuItem c0032cM69e2 = ScreenManager.getCurrentMenuItem();
+            MenuItem c0032cM223e = AppState.getVector(1272).size() > 0 ? ScreenManager.getCurrentScreen().m223e() : null;
+            Object obj = c0032cM69e2 == null ? null : c0032cM69e2.data;
+            Object obj2 = c0032cM223e == null ? null : c0032cM223e.data;
             int iM460J = 0;
-            switch (ScreenManager.m66b().f94a) {
+            switch (ScreenManager.getCurrentScreen().f94a) {
                 case 1:
                     iM460J = m408B(iM68d);
                     break;
@@ -3895,7 +3895,7 @@ public final class AppController {
                     iM460J = IOUtils.m824d(iM68d);
                     break;
                 case 4:
-                    iM460J = ContactListManager.m158a(strM67c, obj);
+                    iM460J = ContactListManager.onContactSelected(strM67c, obj);
                     break;
                 case 5:
                     iM460J = m389z(iM68d);
@@ -4501,11 +4501,11 @@ public final class AppController {
 
     /* renamed from: O */
     private static final int m456O(int i) {
-        if (ScreenManager.m66b().f94a == 137) {
+        if (ScreenManager.getCurrentScreen().f94a == 137) {
             return 0;
         }
-        Screen c0013amM66b = ScreenManager.m66b();
-        int i2 = ScreenManager.m66b().f94a;
+        Screen c0013amM66b = ScreenManager.getCurrentScreen();
+        int i2 = ScreenManager.getCurrentScreen().f94a;
         switch (i) {
             case 4:
                 break;
@@ -4518,7 +4518,7 @@ public final class AppController {
                     }
                 } else if (c0013amM66b.f107l < c0013amM66b.f115r) {
                     c0013amM66b.f105j = 0;
-                } else if (((MenuItem) c0013amM66b.f108m.lastElement()).m912h() < c0013amM66b.f115r) {
+                } else if (((MenuItem) c0013amM66b.f108m.lastElement()).getTotalHeight() < c0013amM66b.f115r) {
                     c0013amM66b.f105j = c0013amM66b.f107l - c0013amM66b.f115r;
                 } else {
                     int[] iArr = c0013amM66b.f109n;
@@ -4540,7 +4540,7 @@ public final class AppController {
                         break;
                     }
                 } else {
-                    AppState.pool[1319] = c0013amM66b.m222d().f265d;
+                    AppState.pool[1319] = c0013amM66b.m222d().data;
                     break;
                 }
                 break;

@@ -90,8 +90,8 @@ public final class Message {
         int iM586d = (((AppState.getInt(1528) - iM214a) - 240) + 227) - 10;
         int i3 = zM671a ? 0 : 19;
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        MenuItem c0032cM887a = MenuItem.m887a(this.from);
-        c0032cM887a.f265d = this;
+        MenuItem c0032cM887a = MenuItem.create(this.from);
+        c0032cM887a.data = this;
         String str = this.from;
         Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
         while (true) {
@@ -105,7 +105,7 @@ public final class Message {
             }
         }
         boolean z2 = z;
-        MenuItem c0032cM896a = c0032cM887a.m896a(z ? 25 : -1);
+        MenuItem c0032cM896a = c0032cM887a.setIcon(z ? 25 : -1);
         Calendar calendarM622k = AppState.getCalendar();
         int i4 = calendarM622k.get(1);
         int i5 = calendarM622k.get(2);
@@ -113,12 +113,12 @@ public final class Message {
         calendarM622k.setTime(new Date(this.timestamp));
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         String strM527g = Utils.m527g(NetworkUtils.bufToStringCached((i4 == calendarM622k.get(1) && i5 == calendarM622k.get(2) && i6 == calendarM622k.get(5)) ? stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(11), 2)).append(':').append(Conversation.m1121a(calendarM622k.get(12), 2)) : stringBufferM1217h.append(Conversation.m1121a(calendarM622k.get(5), 2)).append('.').append(Conversation.m1121a(calendarM622k.get(2) + 1, 2)).append('.').append(Conversation.m1121a(calendarM622k.get(1) - 2000, 2))));
-        MenuItem c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
+        MenuItem c0032cM901a = c0032cM896a.addText(strM527g, i2, 10);
         String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(903)));
-        MenuItem c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);
+        MenuItem c0032cM901a2 = c0032cM901a.addText(strM1215a, i2, i3);
         int iM214a2 = AppState.getGfxContext(i2).stringWidth(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM527g).append(strM1215a)));
         if (hasFlag(1)) {
-            c0032cM901a2.m896a(221);
+            c0032cM901a2.setIcon(221);
             iM214a2 += 20;
         }
         if (z2) {
@@ -132,17 +132,17 @@ public final class Message {
         int i7 = iM1418a;
         boolean z3 = false;
         if ((i7 & 1) != 0 && (strArrM869c2 = XmppMailRuProtocol.m869c(getToList())) != null) {
-            c0032cM901a2.m901a(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
+            c0032cM901a2.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(867)).append(' ').append(strArrM869c2[1])), i2, iM586d - iM214a2, iM214a, true), i2, i3);
             z3 = true;
         }
         if ((i7 & 2) != 0 && (strArrM869c = XmppMailRuProtocol.m869c(getCcList())) != null) {
-            c0032cM901a2.m901a(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
+            c0032cM901a2.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
         }
         boolean z4 = c0052w == c0028ba.getLastChatRoom();
-        c0032cM901a2.m900a(zM671a ? 225 : 237, truncateText(getSubject(), i2, iM586d - 22, iM214a, z4), i2, i3);
+        c0032cM901a2.setLabelInternal(zM671a ? 225 : 237, truncateText(getSubject(), i2, iM586d - 22, iM214a, z4), i2, i3);
         if (z4) {
-            c0032cM901a2.m896a(234);
-            c0032cM901a2.m901a(truncateText(c0028ba.findChatRoomById(c0052w.getPriority(this.from)).name, i2, iM586d - 22, iM214a, false), i2, i3);
+            c0032cM901a2.setIcon(234);
+            c0032cM901a2.addText(truncateText(c0028ba.findChatRoomById(c0052w.getPriority(this.from)).name, i2, iM586d - 22, iM214a, false), i2, i3);
         }
         return c0032cM901a2;
     }

@@ -88,7 +88,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setObject(1292, (Object) abstractC0037hM616i.login);
                 AppState.setObject(1293, (Object) abstractC0037hM616i.password);
             }
-            ScreenManager.m71b(ScreenManager.m75b(2803));
+            ScreenManager.showScreen(ScreenManager.createScreen(2803));
             return;
         }
         if (m837y() == 2) {
@@ -119,7 +119,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setObject(1293, (Object) c0005ae.password);
                 AppState.setObject(1297, (Object) c0005ae.displayName);
             }
-            ScreenManager.m71b(ScreenManager.m75b(3443));
+            ScreenManager.showScreen(ScreenManager.createScreen(3443));
             return;
         }
         if (m837y() == 3) {
@@ -134,7 +134,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setObject(1293, (Object) c0031bd.password);
                 AppState.setObject(1297, (Object) c0031bd.displayName);
             }
-            ScreenManager.m71b(ScreenManager.m75b(3463));
+            ScreenManager.showScreen(ScreenManager.createScreen(3463));
             return;
         }
         m840t();
@@ -163,7 +163,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 i++;
             }
         }
-        ScreenManager.m71b(ScreenManager.m75b(2777));
+        ScreenManager.showScreen(ScreenManager.createScreen(2777));
     }
 
     /* renamed from: s */
@@ -646,7 +646,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         while (true) {
             int i4 = i3;
             if (i4 >= 16384) {
-                ScreenManager.m71b(ScreenManager.m75b(1753));
+                ScreenManager.showScreen(ScreenManager.createScreen(1753));
                 return;
             }
             int i5 = i2;

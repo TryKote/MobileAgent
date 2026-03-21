@@ -542,10 +542,10 @@ public final class ConnectionThread {
     public static final void m1157f() {
         m1159s();
         AppState.setInt(1476, 6);
-        Screen c0013amM75b = ScreenManager.m75b(1578);
+        Screen c0013amM75b = ScreenManager.createScreen(1578);
         f357m = c0013amM75b;
         m1160d(c0013amM75b);
-        ScreenManager.m70a(c0013amM75b);
+        ScreenManager.pushScreen(c0013amM75b);
         TabBar.ensureSearchTab();
         TabBar.findTab(6, (Account) null);
         TabBar.scrollEnabled = AppState.getBool(1414);
@@ -578,7 +578,7 @@ public final class ConnectionThread {
             return;
         }
         f356g = true;
-        int i = ScreenManager.m75b(1578).f115r;
+        int i = ScreenManager.createScreen(1578).f115r;
         AppState.setLong(1558, 4178628L);
         AppState.setLong(1560, 7482960L);
         AppState.pool[1400] = XmppContactGroup.m1047d(225);
@@ -714,12 +714,12 @@ public final class ConnectionThread {
         if (size == 0) {
             return AppController.m338l(327);
         }
-        Screen c0013amM75b = ScreenManager.m75b(1717);
+        Screen c0013amM75b = ScreenManager.createScreen(1717);
         for (int i = 0; i < size; i++) {
             MapPoint c0014an = (MapPoint) vectorM614m.elementAt(i);
             c0013amM75b.m247a(-1, c0014an.name, 6, c0014an);
         }
-        ScreenManager.m71b(c0013amM75b);
+        ScreenManager.showScreen(c0013amM75b);
         return 0;
     }
 

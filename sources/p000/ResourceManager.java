@@ -178,7 +178,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final int m933a(String str, MenuItem c0032c) {
-        Object[] objArr = (Object[]) c0032c.f265d;
+        Object[] objArr = (Object[]) c0032c.data;
         Object[] objArr2 = (Object[]) objArr[0];
         MenuItem c0032c2 = (MenuItem) objArr[1];
         Screen c0013am = (Screen) objArr[2];
@@ -188,7 +188,7 @@ public final class ResourceManager {
         while (true) {
             length--;
             if (length < 0) {
-                c0032c2.m884a().m898b(Utils.m527g(c0032c2.f259b)).m901a(strArr[i], 1, 7).m896a(247).f265d = new Object[]{m967e(i), strArr};
+                c0032c2.clear().setLabel(Utils.m527g(c0032c2.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{m967e(i), strArr};
                 c0013am.m258q();
                 IOUtils.m778d(c0032c2);
                 return 0;
@@ -264,7 +264,7 @@ public final class ResourceManager {
         int iM586d3 = (int) ((j * AppState.getInt(113)) / 1048576);
         AppState.setFromBuffer(1327, NetworkUtils.newStringBuffer().append(iM586d3 / 100).append('.').append(Utils.zeroPad(iM586d3 % 100)).append(' ').append(AppState.getString(117)));
         AppState.setInt(3985, iM586d + 745);
-        ScreenManager.m71b(ScreenManager.m75b(3985));
+        ScreenManager.showScreen(ScreenManager.createScreen(3985));
         AppState.clearRange(1325, 1335);
     }
 
@@ -513,12 +513,12 @@ public final class ResourceManager {
         if (vector == null) {
             return;
         }
-        Screen c0013amM75b = ScreenManager.m75b(4292);
+        Screen c0013amM75b = ScreenManager.createScreen(4292);
         int size = vector.size();
         while (true) {
             size--;
             if (size < 0) {
-                ScreenManager.m71b(c0013amM75b);
+                ScreenManager.showScreen(c0013amM75b);
                 AppController.f153g = true;
                 return;
             } else {
@@ -548,7 +548,7 @@ public final class ResourceManager {
     /* renamed from: k */
     public static final void m954k() {
         AppState.clearIndex(1281);
-        Screen c0013amM75b = ScreenManager.m75b(4507);
+        Screen c0013amM75b = ScreenManager.createScreen(4507);
         Vector vectorM439R = AppController.m439R();
         int size = vectorM439R.size();
         if (size > 0) {
@@ -561,7 +561,7 @@ public final class ResourceManager {
             c0013amM75b.m255a(551);
         }
         NetworkUtils.releaseVector(vectorM439R);
-        ScreenManager.m70a(c0013amM75b);
+        ScreenManager.pushScreen(c0013amM75b);
         TabBar.ensureSettingsTab();
         TabBar.findTab(36, (Account) null);
     }
@@ -619,11 +619,11 @@ public final class ResourceManager {
             AppController.m340m(404);
             return;
         }
-        Screen c0013amM75b = ScreenManager.m75b(2075);
+        Screen c0013amM75b = ScreenManager.createScreen(2075);
         while (true) {
             i--;
             if (i < 0) {
-                ScreenManager.m71b(c0013amM75b);
+                ScreenManager.showScreen(c0013amM75b);
                 return;
             } else {
                 Object objElementAt = vectorM1142d.elementAt(i);
@@ -971,7 +971,7 @@ public final class ResourceManager {
             if (m979e(AppState.getString(1375)) >= m979e(AppState.getString(1284))) {
                 throw new Throwable();
             }
-            ScreenManager.m71b(ScreenManager.m75b(3850));
+            ScreenManager.showScreen(ScreenManager.createScreen(3850));
         } catch (Throwable unused) {
             if (zM587e) {
                 AppController.m340m(731);
@@ -1035,7 +1035,7 @@ public final class ResourceManager {
 
     /* renamed from: t */
     public static final void m983t() {
-        ScreenManager.m71b(ScreenManager.m75b(5141));
+        ScreenManager.showScreen(ScreenManager.createScreen(5141));
         AppController.m340m(1027);
     }
 

@@ -161,7 +161,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                             i++;
                         }
                     }
-                    if (ScreenManager.m77h()) {
+                    if (ScreenManager.hasModal()) {
                         c0012al.setClip(0, 0, 2048, 2048);
                         int iM586d4 = AppState.getInt(1528) - 17;
                         if (AppController.m413P() != 0) {

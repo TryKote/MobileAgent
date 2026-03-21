@@ -257,16 +257,16 @@ public abstract class Account {
 
     /* renamed from: D */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM898b = MenuItem.m887a(getSignature()).m896a(getIconId()).m898b(this.login);
-        c0032cM898b.f265d = this;
+        MenuItem c0032cM898b = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login);
+        c0032cM898b.data = this;
         return c0032cM898b;
     }
 
     /* renamed from: E */
     public final MenuItem createFlagMenuItem() {
-        MenuItem c0032cM896a = MenuItem.m887a(getSignature()).m896a(getIconId()).m898b(this.login).m896a(244);
-        c0032cM896a.f266e = true;
-        c0032cM896a.f265d = this;
+        MenuItem c0032cM896a = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login).setIcon(244);
+        c0032cM896a.enabled = true;
+        c0032cM896a.data = this;
         return c0032cM896a;
     }
 
