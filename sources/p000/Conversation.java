@@ -20,8 +20,8 @@ public final class Conversation implements ListItem {
     private SizeCache sizeCache = new SizeCache();
 
     /* renamed from: a */
-    public final void addItem(ListItem interfaceC0044o) {
-        this.items.addElement(interfaceC0044o);
+    public final void addItem(ListItem item) {
+        this.items.addElement(item);
         this.sizeCache.lastScale = -1;
     }
 
@@ -57,30 +57,30 @@ public final class Conversation implements ListItem {
     @Override // p000.ListItem
     /* renamed from: v */
     public final int getWidth() {
-        long jMo274v = 0;
+        long sum = 0;
         int size = this.items.size();
         int i = size;
         while (true) {
             i--;
             if (i < 0) {
-                return (int) (jMo274v / size);
+                return (int) (sum / size);
             }
-            jMo274v += getItem(i).getWidth();
+            sum += getItem(i).getWidth();
         }
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
     public final int getBaseHeight() {
-        long jMo275w = 0;
+        long sum = 0;
         int size = this.items.size();
         int i = size;
         while (true) {
             i--;
             if (i < 0) {
-                return (int) (jMo275w / size);
+                return (int) (sum / size);
             }
-            jMo275w += getItem(i).getBaseHeight();
+            sum += getItem(i).getBaseHeight();
         }
     }
 
@@ -99,15 +99,15 @@ public final class Conversation implements ListItem {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         int size = this.items.size();
         if (this.height == 5) {
-            stringBufferM1217h.append(AppState.getString(445)).append(size);
+            sb.append(AppState.getString(445)).append(size);
         } else {
             int i = size - 1;
-            stringBufferM1217h.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.pluralForm(i)));
+            sb.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.pluralForm(i)));
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     @Override // p000.ListItem
@@ -125,62 +125,62 @@ public final class Conversation implements ListItem {
     /* renamed from: a */
     public static final void fetchHistory(Object[] objArr) {
         int i;
-        MmpProtocol c0033d = (MmpProtocol) objArr[0];
+        MmpProtocol protocol = (MmpProtocol) objArr[0];
         try {
             try {
                 AppController.acquireNetworkLock();
                 if (((Integer) objArr[1]).intValue() == 0) {
-                    c0033d.msgCount = 30;
+                    protocol.msgCount = 30;
                     AppController.needsRepaint = true;
-                    HttpClient c0024axM629a = HttpClient.createHttpClient(AppState.getString(2755089), c0033d, 0);
-                    c0024axM629a.setRequestMethod(NetworkUtils.longToHex(1414745936));
-                    ByteBuffer c0043nM1315a = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
-                    ConnectionThread.setHeaderFromState(c0024axM629a, 788628, 2164851);
-                    c0024axM629a.writeData(c0043nM1315a.data, c0043nM1315a.length);
-                    int iM634a = c0024axM629a.getResponseCode();
-                    i = iM634a;
-                    if (iM634a == 200) {
-                        c0033d.msgCount = 40;
+                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(2755089), protocol, 0);
+                    httpClient.setRequestMethod(NetworkUtils.longToHex(1414745936));
+                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
+                    ConnectionThread.setHeaderFromState(httpClient, 788628, 2164851);
+                    httpClient.writeData(requestBody.data, requestBody.length);
+                    int responseCode = httpClient.getResponseCode();
+                    i = responseCode;
+                    if (responseCode == 200) {
+                        protocol.msgCount = 40;
                         AppController.needsRepaint = true;
-                        XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).parseXmlStr();
-                        int i2 = Integer.parseInt(StringUtils.fromBuffer(c0022avM1389J.findChildByKey(658246).textContent));
-                        if (i2 != 200) {
-                            if (i2 == 330) {
+                        XmlElement responseXml = new ByteBuffer(httpClient).parseXmlStr();
+                        int statusCode = Integer.parseInt(StringUtils.fromBuffer(responseXml.findChildByKey(658246).textContent));
+                        if (statusCode != 200) {
+                            if (statusCode == 330) {
                                 ((MmpProtocol) objArr[0]).handleComplete();
                                 objArr[0] = null;
                             }
-                            throw new RuntimeException(StringUtils.intern(Integer.toString(i2)));
+                            throw new RuntimeException(StringUtils.intern(Integer.toString(statusCode)));
                         }
-                        XmlElement c0022avM562f = c0022avM1389J.findChildByKey(262156);
-                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(c0022avM562f.findChildByKey(461648).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(527196).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(854884).textContent), objArr[3]});
-                        HttpClient.closeAndUpdateStats(c0024axM629a);
+                        XmlElement resultElement = responseXml.findChildByKey(262156);
+                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(461648).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(527196).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(854884).textContent), objArr[3]});
+                        HttpClient.closeAndUpdateStats(httpClient);
                         AppController.releaseNetworkLock();
                         return;
                     }
                 } else {
-                    c0033d.msgCount = 50;
+                    protocol.msgCount = 50;
                     AppController.needsRepaint = true;
-                    ByteBuffer c0043nM1321f = new ByteBuffer().writeCompressed(2951781).writeByte(63);
-                    String strM1337i = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
-                    HttpClient c0024axM642a = HttpClient.createMockClient(c0043nM1321f.writeRawString(strM1337i).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(2951781), false)).writeByte(38).writeRawString(percentEncodeInternal(strM1337i, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
-                    int iM634a2 = c0024axM642a.getResponseCode();
-                    i = iM634a2;
-                    if (iM634a2 == 200) {
-                        c0033d.msgCount = 60;
+                    ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(2951781).writeByte(63);
+                    String queryStr = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
+                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(2951781), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    int responseCode2 = httpClient2.getResponseCode();
+                    i = responseCode2;
+                    if (responseCode2 == 200) {
+                        protocol.msgCount = 60;
                         AppController.needsRepaint = true;
-                        XmlElement c0022avM562f2 = c0024axM642a.readChunkedResponse().parseXmlStr().findChildByKey(262156);
-                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(c0022avM562f2.findChildByKey(395483).textContent)};
-                        HttpClient.closeAndUpdateStats(c0024axM642a);
+                        XmlElement resultElement2 = httpClient2.readChunkedResponse().parseXmlStr().findChildByKey(262156);
+                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(395483).textContent)};
+                        HttpClient.closeAndUpdateStats(httpClient2);
                         AppController.releaseNetworkLock();
                         return;
                     }
                 }
                 throw new Throwable(StringUtils.intern(Integer.toString(i)));
             } catch (Throwable th) {
-                MmpProtocol c0033d2 = (MmpProtocol) objArr[0];
-                c0033d2.lastError = c0033d2.getDefaultError();
-                IOUtils.postAccountMessage(c0033d2, th.toString());
-                c0033d2.progress = 0;
+                MmpProtocol protocol2 = (MmpProtocol) objArr[0];
+                protocol2.lastError = protocol2.getDefaultError();
+                IOUtils.postAccountMessage(protocol2, th.toString());
+                protocol2.progress = 0;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 AppController.releaseNetworkLock();
             }
@@ -198,20 +198,20 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     public static final byte[] hashData(byte[] bArr, int i) {
-        int[] iArr = new int[16];
-        int[] iArrM536a = Utils.bytesToInts(AppState.getBytes(962));
-        int[] iArr2 = new int[2];
-        byte[] bArrM1211a = NetworkUtils.newBytes(64);
-        md5ProcessBuffer(bArr, i, iArr, iArrM536a, iArr2, bArrM1211a);
-        byte[] bArrM1097a = md5Finalize(NetworkUtils.newBytes(16), iArr2, 8);
-        byte[] bArrM1211a2 = NetworkUtils.newBytes(64);
-        bArrM1211a2[0] = -128;
-        int i2 = (iArr2[0] >>> 3) & 63;
-        md5ProcessBuffer(bArrM1211a2, i2 < 56 ? 56 - i2 : 120 - i2, iArr, iArrM536a, iArr2, bArrM1211a);
-        md5ProcessBuffer(bArrM1097a, 8, iArr, iArrM536a, iArr2, bArrM1211a);
-        NetworkUtils.releaseBytes(bArrM1211a2);
-        NetworkUtils.releaseBytes(bArrM1211a);
-        return md5Finalize(bArrM1097a, iArrM536a, 16);
+        int[] blockBuf = new int[16];
+        int[] state = Utils.bytesToInts(AppState.getBytes(962));
+        int[] bitCount = new int[2];
+        byte[] tempBuf = NetworkUtils.newBytes(64);
+        md5ProcessBuffer(bArr, i, blockBuf, state, bitCount, tempBuf);
+        byte[] lengthBytes = md5Finalize(NetworkUtils.newBytes(16), bitCount, 8);
+        byte[] padBuf = NetworkUtils.newBytes(64);
+        padBuf[0] = -128;
+        int bufIdx = (bitCount[0] >>> 3) & 63;
+        md5ProcessBuffer(padBuf, bufIdx < 56 ? 56 - bufIdx : 120 - bufIdx, blockBuf, state, bitCount, tempBuf);
+        md5ProcessBuffer(lengthBytes, 8, blockBuf, state, bitCount, tempBuf);
+        NetworkUtils.releaseBytes(padBuf);
+        NetworkUtils.releaseBytes(tempBuf);
+        return md5Finalize(lengthBytes, state, 16);
     }
 
     /* renamed from: a */
@@ -252,13 +252,13 @@ public final class Conversation implements ListItem {
         if (i >= i4) {
             Utils.arraycopy((Object) bArr, 0, (Object) bArr2, i2, i5);
             md5ProcessBlock(bArr2, iArr, iArr2);
-            byte[] bArrM1211a = NetworkUtils.newBytes(64);
+            byte[] tempBlock = NetworkUtils.newBytes(64);
             while (i5 + 63 < i) {
-                Utils.arraycopy((Object) bArr, i5, (Object) bArrM1211a, 0, 64);
-                md5ProcessBlock(bArrM1211a, iArr, iArr2);
+                Utils.arraycopy((Object) bArr, i5, (Object) tempBlock, 0, 64);
+                md5ProcessBlock(tempBlock, iArr, iArr2);
                 i5 += 64;
             }
-            NetworkUtils.releaseBytes(bArrM1211a);
+            NetworkUtils.releaseBytes(tempBlock);
             i2 = 0;
         } else {
             i5 = 0;
@@ -283,74 +283,74 @@ public final class Conversation implements ListItem {
         } while (i < 16);
         int i9 = iArr2[1];
         int i10 = iArr2[2];
-        int iM1091a = md5Round1(i9, i10, iArr2[3], 7, (iArr2[0] + iArr[0]) - 680876936);
-        int iM1091a2 = md5Round1(iM1091a, i9, i10, 12, (iArr2[3] + iArr[1]) - 389564586);
-        int iM1091a3 = md5Round1(iM1091a2, iM1091a, i9, 17, i10 + iArr[2] + 606105819);
-        int iM1091a4 = md5Round1(iM1091a3, iM1091a2, iM1091a, 22, (i9 + iArr[3]) - 1044525330);
-        int iM1091a5 = md5Round1(iM1091a4, iM1091a3, iM1091a2, 7, (iM1091a + iArr[4]) - 176418897);
-        int iM1091a6 = md5Round1(iM1091a5, iM1091a4, iM1091a3, 12, iM1091a2 + iArr[5] + 1200080426);
-        int iM1091a7 = md5Round1(iM1091a6, iM1091a5, iM1091a4, 17, (iM1091a3 + iArr[6]) - 1473231341);
-        int iM1091a8 = md5Round1(iM1091a7, iM1091a6, iM1091a5, 22, (iM1091a4 + iArr[7]) - 45705983);
-        int iM1091a9 = md5Round1(iM1091a8, iM1091a7, iM1091a6, 7, iM1091a5 + iArr[8] + 1770035416);
-        int iM1091a10 = md5Round1(iM1091a9, iM1091a8, iM1091a7, 12, (iM1091a6 + iArr[9]) - 1958414417);
-        int iM1091a11 = md5Round1(iM1091a10, iM1091a9, iM1091a8, 17, (iM1091a7 + iArr[10]) - 42063);
-        int iM1091a12 = md5Round1(iM1091a11, iM1091a10, iM1091a9, 22, (iM1091a8 + iArr[11]) - 1990404162);
-        int iM1091a13 = md5Round1(iM1091a12, iM1091a11, iM1091a10, 7, iM1091a9 + iArr[12] + 1804603682);
-        int iM1091a14 = md5Round1(iM1091a13, iM1091a12, iM1091a11, 12, (iM1091a10 + iArr[13]) - 40341101);
-        int iM1091a15 = md5Round1(iM1091a14, iM1091a13, iM1091a12, 17, (iM1091a11 + iArr[14]) - 1502002290);
-        int iM1091a16 = md5Round1(iM1091a15, iM1091a14, iM1091a13, 22, iM1091a12 + iArr[15] + 1236535329);
-        int iM1092b = md5Round2(iM1091a16, iM1091a15, iM1091a14, 5, (iM1091a13 + iArr[1]) - 165796510);
-        int iM1092b2 = md5Round2(iM1092b, iM1091a16, iM1091a15, 9, (iM1091a14 + iArr[6]) - 1069501632);
-        int iM1092b3 = md5Round2(iM1092b2, iM1092b, iM1091a16, 14, iM1091a15 + iArr[11] + 643717713);
-        int iM1092b4 = md5Round2(iM1092b3, iM1092b2, iM1092b, 20, (iM1091a16 + iArr[0]) - 373897302);
-        int iM1092b5 = md5Round2(iM1092b4, iM1092b3, iM1092b2, 5, (iM1092b + iArr[5]) - 701558691);
-        int iM1092b6 = md5Round2(iM1092b5, iM1092b4, iM1092b3, 9, iM1092b2 + iArr[10] + 38016083);
-        int iM1092b7 = md5Round2(iM1092b6, iM1092b5, iM1092b4, 14, (iM1092b3 + iArr[15]) - 660478335);
-        int iM1092b8 = md5Round2(iM1092b7, iM1092b6, iM1092b5, 20, (iM1092b4 + iArr[4]) - 405537848);
-        int iM1092b9 = md5Round2(iM1092b8, iM1092b7, iM1092b6, 5, iM1092b5 + iArr[9] + 568446438);
-        int iM1092b10 = md5Round2(iM1092b9, iM1092b8, iM1092b7, 9, (iM1092b6 + iArr[14]) - 1019803690);
-        int iM1092b11 = md5Round2(iM1092b10, iM1092b9, iM1092b8, 14, (iM1092b7 + iArr[3]) - 187363961);
-        int iM1092b12 = md5Round2(iM1092b11, iM1092b10, iM1092b9, 20, iM1092b8 + iArr[8] + 1163531501);
-        int iM1092b13 = md5Round2(iM1092b12, iM1092b11, iM1092b10, 5, (iM1092b9 + iArr[13]) - 1444681467);
-        int iM1092b14 = md5Round2(iM1092b13, iM1092b12, iM1092b11, 9, (iM1092b10 + iArr[2]) - 51403784);
-        int iM1092b15 = md5Round2(iM1092b14, iM1092b13, iM1092b12, 14, iM1092b11 + iArr[7] + 1735328473);
-        int iM1092b16 = md5Round2(iM1092b15, iM1092b14, iM1092b13, 20, (iM1092b12 + iArr[12]) - 1926607734);
-        int iM1093c = md5Round3(iM1092b16, iM1092b15, iM1092b14, 4, (iM1092b13 + iArr[5]) - 378558);
-        int iM1093c2 = md5Round3(iM1093c, iM1092b16, iM1092b15, 11, (iM1092b14 + iArr[8]) - 2022574463);
-        int iM1093c3 = md5Round3(iM1093c2, iM1093c, iM1092b16, 16, iM1092b15 + iArr[11] + 1839030562);
-        int iM1093c4 = md5Round3(iM1093c3, iM1093c2, iM1093c, 23, (iM1092b16 + iArr[14]) - 35309556);
-        int iM1093c5 = md5Round3(iM1093c4, iM1093c3, iM1093c2, 4, (iM1093c + iArr[1]) - 1530992060);
-        int iM1093c6 = md5Round3(iM1093c5, iM1093c4, iM1093c3, 11, iM1093c2 + iArr[4] + 1272893353);
-        int iM1093c7 = md5Round3(iM1093c6, iM1093c5, iM1093c4, 16, (iM1093c3 + iArr[7]) - 155497632);
-        int iM1093c8 = md5Round3(iM1093c7, iM1093c6, iM1093c5, 23, (iM1093c4 + iArr[10]) - 1094730640);
-        int iM1093c9 = md5Round3(iM1093c8, iM1093c7, iM1093c6, 4, iM1093c5 + iArr[13] + 681279174);
-        int iM1093c10 = md5Round3(iM1093c9, iM1093c8, iM1093c7, 11, (iM1093c6 + iArr[0]) - 358537222);
-        int iM1093c11 = md5Round3(iM1093c10, iM1093c9, iM1093c8, 16, (iM1093c7 + iArr[3]) - 722521979);
-        int iM1093c12 = md5Round3(iM1093c11, iM1093c10, iM1093c9, 23, iM1093c8 + iArr[6] + 76029189);
-        int iM1093c13 = md5Round3(iM1093c12, iM1093c11, iM1093c10, 4, (iM1093c9 + iArr[9]) - 640364487);
-        int iM1093c14 = md5Round3(iM1093c13, iM1093c12, iM1093c11, 11, (iM1093c10 + iArr[12]) - 421815835);
-        int iM1093c15 = md5Round3(iM1093c14, iM1093c13, iM1093c12, 16, iM1093c11 + iArr[15] + 530742520);
-        int iM1093c16 = md5Round3(iM1093c15, iM1093c14, iM1093c13, 23, (iM1093c12 + iArr[2]) - 995338651);
-        int iM1094d = md5Round4(iM1093c16, iM1093c15, iM1093c14, 6, (iM1093c13 + iArr[0]) - 198630844);
-        int iM1094d2 = md5Round4(iM1094d, iM1093c16, iM1093c15, 10, iM1093c14 + iArr[7] + 1126891415);
-        int iM1094d3 = md5Round4(iM1094d2, iM1094d, iM1093c16, 15, (iM1093c15 + iArr[14]) - 1416354905);
-        int iM1094d4 = md5Round4(iM1094d3, iM1094d2, iM1094d, 21, (iM1093c16 + iArr[5]) - 57434055);
-        int iM1094d5 = md5Round4(iM1094d4, iM1094d3, iM1094d2, 6, iM1094d + iArr[12] + 1700485571);
-        int iM1094d6 = md5Round4(iM1094d5, iM1094d4, iM1094d3, 10, (iM1094d2 + iArr[3]) - 1894986606);
-        int iM1094d7 = md5Round4(iM1094d6, iM1094d5, iM1094d4, 15, (iM1094d3 + iArr[10]) - 1051523);
-        int iM1094d8 = md5Round4(iM1094d7, iM1094d6, iM1094d5, 21, (iM1094d4 + iArr[1]) - 2054922799);
-        int iM1094d9 = md5Round4(iM1094d8, iM1094d7, iM1094d6, 6, iM1094d5 + iArr[8] + 1873313359);
-        int iM1094d10 = md5Round4(iM1094d9, iM1094d8, iM1094d7, 10, (iM1094d6 + iArr[15]) - 30611744);
-        int iM1094d11 = md5Round4(iM1094d10, iM1094d9, iM1094d8, 15, (iM1094d7 + iArr[6]) - 1560198380);
-        int iM1094d12 = md5Round4(iM1094d11, iM1094d10, iM1094d9, 21, iM1094d8 + iArr[13] + 1309151649);
-        int iM1094d13 = md5Round4(iM1094d12, iM1094d11, iM1094d10, 6, (iM1094d9 + iArr[4]) - 145523070);
-        int iM1094d14 = md5Round4(iM1094d13, iM1094d12, iM1094d11, 10, (iM1094d10 + iArr[11]) - 1120210379);
-        int iM1094d15 = md5Round4(iM1094d14, iM1094d13, iM1094d12, 15, iM1094d11 + iArr[2] + 718787259);
-        int iM1094d16 = md5Round4(iM1094d15, iM1094d14, iM1094d13, 21, (iM1094d12 + iArr[9]) - 343485551);
-        iArr2[0] = iArr2[0] + iM1094d13;
-        iArr2[1] = iArr2[1] + iM1094d16;
-        iArr2[2] = iArr2[2] + iM1094d15;
-        iArr2[3] = iArr2[3] + iM1094d14;
+        int a = md5Round1(i9, i10, iArr2[3], 7, (iArr2[0] + iArr[0]) - 680876936);
+        int a2 = md5Round1(a, i9, i10, 12, (iArr2[3] + iArr[1]) - 389564586);
+        int a3 = md5Round1(a2, a, i9, 17, i10 + iArr[2] + 606105819);
+        int a4 = md5Round1(a3, a2, a, 22, (i9 + iArr[3]) - 1044525330);
+        int a5 = md5Round1(a4, a3, a2, 7, (a + iArr[4]) - 176418897);
+        int a6 = md5Round1(a5, a4, a3, 12, a2 + iArr[5] + 1200080426);
+        int a7 = md5Round1(a6, a5, a4, 17, (a3 + iArr[6]) - 1473231341);
+        int a8 = md5Round1(a7, a6, a5, 22, (a4 + iArr[7]) - 45705983);
+        int a9 = md5Round1(a8, a7, a6, 7, a5 + iArr[8] + 1770035416);
+        int a10 = md5Round1(a9, a8, a7, 12, (a6 + iArr[9]) - 1958414417);
+        int a11 = md5Round1(a10, a9, a8, 17, (a7 + iArr[10]) - 42063);
+        int a12 = md5Round1(a11, a10, a9, 22, (a8 + iArr[11]) - 1990404162);
+        int a13 = md5Round1(a12, a11, a10, 7, a9 + iArr[12] + 1804603682);
+        int a14 = md5Round1(a13, a12, a11, 12, (a10 + iArr[13]) - 40341101);
+        int a15 = md5Round1(a14, a13, a12, 17, (a11 + iArr[14]) - 1502002290);
+        int a16 = md5Round1(a15, a14, a13, 22, a12 + iArr[15] + 1236535329);
+        int b = md5Round2(a16, a15, a14, 5, (a13 + iArr[1]) - 165796510);
+        int b2 = md5Round2(b, a16, a15, 9, (a14 + iArr[6]) - 1069501632);
+        int b3 = md5Round2(b2, b, a16, 14, a15 + iArr[11] + 643717713);
+        int b4 = md5Round2(b3, b2, b, 20, (a16 + iArr[0]) - 373897302);
+        int b5 = md5Round2(b4, b3, b2, 5, (b + iArr[5]) - 701558691);
+        int b6 = md5Round2(b5, b4, b3, 9, b2 + iArr[10] + 38016083);
+        int b7 = md5Round2(b6, b5, b4, 14, (b3 + iArr[15]) - 660478335);
+        int b8 = md5Round2(b7, b6, b5, 20, (b4 + iArr[4]) - 405537848);
+        int b9 = md5Round2(b8, b7, b6, 5, b5 + iArr[9] + 568446438);
+        int b10 = md5Round2(b9, b8, b7, 9, (b6 + iArr[14]) - 1019803690);
+        int b11 = md5Round2(b10, b9, b8, 14, (b7 + iArr[3]) - 187363961);
+        int b12 = md5Round2(b11, b10, b9, 20, b8 + iArr[8] + 1163531501);
+        int b13 = md5Round2(b12, b11, b10, 5, (b9 + iArr[13]) - 1444681467);
+        int b14 = md5Round2(b13, b12, b11, 9, (b10 + iArr[2]) - 51403784);
+        int b15 = md5Round2(b14, b13, b12, 14, b11 + iArr[7] + 1735328473);
+        int b16 = md5Round2(b15, b14, b13, 20, (b12 + iArr[12]) - 1926607734);
+        int c = md5Round3(b16, b15, b14, 4, (b13 + iArr[5]) - 378558);
+        int c2 = md5Round3(c, b16, b15, 11, (b14 + iArr[8]) - 2022574463);
+        int c3 = md5Round3(c2, c, b16, 16, b15 + iArr[11] + 1839030562);
+        int c4 = md5Round3(c3, c2, c, 23, (b16 + iArr[14]) - 35309556);
+        int c5 = md5Round3(c4, c3, c2, 4, (c + iArr[1]) - 1530992060);
+        int c6 = md5Round3(c5, c4, c3, 11, c2 + iArr[4] + 1272893353);
+        int c7 = md5Round3(c6, c5, c4, 16, (c3 + iArr[7]) - 155497632);
+        int c8 = md5Round3(c7, c6, c5, 23, (c4 + iArr[10]) - 1094730640);
+        int c9 = md5Round3(c8, c7, c6, 4, c5 + iArr[13] + 681279174);
+        int c10 = md5Round3(c9, c8, c7, 11, (c6 + iArr[0]) - 358537222);
+        int c11 = md5Round3(c10, c9, c8, 16, (c7 + iArr[3]) - 722521979);
+        int c12 = md5Round3(c11, c10, c9, 23, c8 + iArr[6] + 76029189);
+        int c13 = md5Round3(c12, c11, c10, 4, (c9 + iArr[9]) - 640364487);
+        int c14 = md5Round3(c13, c12, c11, 11, (c10 + iArr[12]) - 421815835);
+        int c15 = md5Round3(c14, c13, c12, 16, c11 + iArr[15] + 530742520);
+        int c16 = md5Round3(c15, c14, c13, 23, (c12 + iArr[2]) - 995338651);
+        int d = md5Round4(c16, c15, c14, 6, (c13 + iArr[0]) - 198630844);
+        int d2 = md5Round4(d, c16, c15, 10, c14 + iArr[7] + 1126891415);
+        int d3 = md5Round4(d2, d, c16, 15, (c15 + iArr[14]) - 1416354905);
+        int d4 = md5Round4(d3, d2, d, 21, (c16 + iArr[5]) - 57434055);
+        int d5 = md5Round4(d4, d3, d2, 6, d + iArr[12] + 1700485571);
+        int d6 = md5Round4(d5, d4, d3, 10, (d2 + iArr[3]) - 1894986606);
+        int d7 = md5Round4(d6, d5, d4, 15, (d3 + iArr[10]) - 1051523);
+        int d8 = md5Round4(d7, d6, d5, 21, (d4 + iArr[1]) - 2054922799);
+        int d9 = md5Round4(d8, d7, d6, 6, d5 + iArr[8] + 1873313359);
+        int d10 = md5Round4(d9, d8, d7, 10, (d6 + iArr[15]) - 30611744);
+        int d11 = md5Round4(d10, d9, d8, 15, (d7 + iArr[6]) - 1560198380);
+        int d12 = md5Round4(d11, d10, d9, 21, d8 + iArr[13] + 1309151649);
+        int d13 = md5Round4(d12, d11, d10, 6, (d9 + iArr[4]) - 145523070);
+        int d14 = md5Round4(d13, d12, d11, 10, (d10 + iArr[11]) - 1120210379);
+        int d15 = md5Round4(d14, d13, d12, 15, d11 + iArr[2] + 718787259);
+        int d16 = md5Round4(d15, d14, d13, 21, (d12 + iArr[9]) - 343485551);
+        iArr2[0] = iArr2[0] + d13;
+        iArr2[1] = iArr2[1] + d16;
+        iArr2[2] = iArr2[2] + d15;
+        iArr2[3] = iArr2[3] + d14;
     }
 
     /* JADX WARN: Type inference failed for: r2v10, types: [int] */
@@ -377,38 +377,38 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     public static final Vector parseConversation(String str) {
-        Vector vectorM1213g = NetworkUtils.newVector();
+        Vector parts = NetworkUtils.newVector();
         if (isValidFormat(str)) {
             int i = 0;
             int i2 = 0;
             while (true) {
                 try {
-                    int iIndexOf = str.indexOf(AppState.getString(1245774), i);
-                    if (iIndexOf < 0) {
+                    int idx = str.indexOf(AppState.getString(1245774), i);
+                    if (idx < 0) {
                         break;
                     }
-                    i2 = iIndexOf;
-                    if (i != iIndexOf) {
-                        vectorM1213g.addElement(StringUtils.substring(str, i, iIndexOf));
+                    i2 = idx;
+                    if (i != idx) {
+                        parts.addElement(StringUtils.substring(str, i, idx));
                     }
-                    int iIndexOf2 = str.indexOf(32, iIndexOf);
-                    i = iIndexOf2;
-                    if (iIndexOf2 < 0) {
-                        vectorM1213g.addElement(StringUtils.suffix(str, iIndexOf));
+                    int idx2 = str.indexOf(32, idx);
+                    i = idx2;
+                    if (idx2 < 0) {
+                        parts.addElement(StringUtils.suffix(str, idx));
                         break;
                     }
-                    vectorM1213g.addElement(StringUtils.substring(str, iIndexOf, i));
+                    parts.addElement(StringUtils.substring(str, idx, i));
                 } catch (Throwable unused) {
                 }
             }
-            int iIndexOf3 = str.indexOf(32, i2);
-            if (iIndexOf3 >= 0) {
-                vectorM1213g.addElement(StringUtils.suffix(str, iIndexOf3));
+            int idx3 = str.indexOf(32, i2);
+            if (idx3 >= 0) {
+                parts.addElement(StringUtils.suffix(str, idx3));
             }
         } else {
-            vectorM1213g.addElement(str);
+            parts.addElement(str);
         }
-        return vectorM1213g;
+        return parts;
     }
 
     /* renamed from: b */
@@ -420,22 +420,21 @@ public final class Conversation implements ListItem {
                 }
                 return null;
             }
-            int iM626a = AppState.indexOf(str, 1031040294);
-            int iIndexOf = str.indexOf(NetworkUtils.longToHex(1031302438), AppState.indexOf(str, 1031302438) + 4);
-            String strM15c = iIndexOf < 0 ? StringUtils.suffix(str, iM626a + 4) : StringUtils.substring(str, iM626a + 4, iIndexOf);
-            String str2 = strM15c;
-            if (StringUtils.matchesEncoded(strM15c, 1094795585)) {
+            int bodyStart = AppState.indexOf(str, 1031040294);
+            int idx = str.indexOf(NetworkUtils.longToHex(1031302438), AppState.indexOf(str, 1031302438) + 4);
+            String encoded = idx < 0 ? StringUtils.suffix(str, bodyStart + 4) : StringUtils.substring(str, bodyStart + 4, idx);
+            if (StringUtils.matchesEncoded(encoded, 1094795585)) {
                 return AppState.emptyStr;
             }
-            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(replaceText(replaceText(replaceText(str2, 200762, 65752), 200765, 65547), 200768, 65552));
-            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-            while (c0043nM986d.length > 0) {
-                int iM1346q = c0043nM986d.readUByte();
-                int iM1346q2 = iM1346q > 127 ? c0043nM986d.readUByte() : 0;
-                int iM1346q3 = iM1346q > 223 ? c0043nM986d.readUByte() : 0;
-                stringBufferM1217h.append(iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043nM986d.readUByte() : 0) - 128)));
+            ByteBuffer decodeBuffer = ResourceManager.decodeBase64(replaceText(replaceText(replaceText(encoded, 200762, 65752), 200765, 65547), 200768, 65552));
+            StringBuffer sb = NetworkUtils.newStringBuffer();
+            while (decodeBuffer.length > 0) {
+                int b1 = decodeBuffer.readUByte();
+                int b2 = b1 > 127 ? decodeBuffer.readUByte() : 0;
+                int b3 = b1 > 223 ? decodeBuffer.readUByte() : 0;
+                sb.append(b1 < 128 ? (char) b1 : b1 < 224 ? (char) (((b1 - 192) << 6) + (b2 - 128)) : b1 < 240 ? (char) (((b1 - 224) << 12) + ((b2 - 128) << 6) + (b3 - 128)) : (char) (((b1 - 240) << 18) + ((b2 - 128) << 12) + ((b3 - 128) << 6) + ((b1 > 239 ? decodeBuffer.readUByte() : 0) - 128)));
             }
-            return NetworkUtils.bufToStringCached(stringBufferM1217h);
+            return NetworkUtils.bufToStringCached(sb);
         } catch (Throwable unused) {
             return null;
         }
@@ -519,357 +518,357 @@ public final class Conversation implements ListItem {
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:8:0x0038 */
     /* renamed from: a */
     public static final String replaceText(String str, int i, int i2) {
-        String strM584b = AppState.getString(i);
-        if (str.indexOf(strM584b) < 0) {
+        String searchStr = AppState.getString(i);
+        if (str.indexOf(searchStr) < 0) {
             return str;
         }
-        String strM584b2 = AppState.getString(i2);
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        String replaceStr = AppState.getString(i2);
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         int length = 0;
         while (true) {
             int i3 = length;
-            int iIndexOf = str.indexOf(strM584b, i3);
-            if (iIndexOf < 0) {
-                return NetworkUtils.bufToStringCached(stringBufferM1217h.append(StringUtils.suffix(str, i3)));
+            int idx = str.indexOf(searchStr, i3);
+            if (idx < 0) {
+                return NetworkUtils.bufToStringCached(sb.append(StringUtils.suffix(str, i3)));
             }
-            stringBufferM1217h.append(StringUtils.substring(str, i3, iIndexOf)).append(strM584b2);
-            length = iIndexOf + strM584b.length();
+            sb.append(StringUtils.substring(str, i3, idx)).append(replaceStr);
+            length = idx + searchStr.length();
         }
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:13:0x00be */
     /* renamed from: a */
-    public static final void handleMessage(MrimAccount c0028ba, ByteBuffer c0043n, long j) {
-        MrimContact c0035f;
+    public static final void handleMessage(MrimAccount account, ByteBuffer buffer, long j) {
+        MrimContact contact;
         int i;
-        int iIndexOf;
-        int iM1328e = c0043n.readInt();
-        int iM1328e2 = c0043n.readInt();
-        String strM1338j = c0043n.readHexStr();
-        String strM1332j = c0043n.readStringByMode(iM1328e2 & 2097160);
-        String strM1215a = null;
+        int idx;
+        int msgId = buffer.readInt();
+        int flags = buffer.readInt();
+        String sender = buffer.readHexStr();
+        String rawBody = buffer.readStringByMode(flags & 2097160);
+        String messageText = null;
         String str = null;
-        if ((iM1328e2 & 8) == 0) {
-            String strM1111p = decodeHtmlEntities(strM1332j);
-            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-            String strM584b = AppState.getString(658377);
-            String strM584b2 = AppState.getString(396261);
-            String strM584b3 = AppState.getString(592851);
+        if ((flags & 8) == 0) {
+            String decoded = decodeHtmlEntities(rawBody);
+            StringBuffer sb = NetworkUtils.newStringBuffer();
+            String openTag = AppState.getString(658377);
+            String midTag = AppState.getString(396261);
+            String closeTag = AppState.getString(592851);
             int i2 = 0;
             while (true) {
                 int i3 = i2;
-                if (i3 >= strM1111p.length()) {
+                if (i3 >= decoded.length()) {
                     break;
                 }
-                int iIndexOf2 = strM1111p.indexOf(strM584b, i3);
-                if (iIndexOf2 < 0) {
-                    stringBufferM1217h.append(StringUtils.suffix(strM1111p, i3));
+                int idx2 = decoded.indexOf(openTag, i3);
+                if (idx2 < 0) {
+                    sb.append(StringUtils.suffix(decoded, i3));
                     break;
                 }
-                stringBufferM1217h.append(StringUtils.substring(strM1111p, i3, iIndexOf2));
-                int iIndexOf3 = strM1111p.indexOf(strM584b2, iIndexOf2 + 10);
-                if (iIndexOf3 < 0 || (iIndexOf = strM1111p.indexOf(strM584b3, (i = iIndexOf3 + 6))) < 0) {
+                sb.append(StringUtils.substring(decoded, i3, idx2));
+                int idx3 = decoded.indexOf(midTag, idx2 + 10);
+                if (idx3 < 0 || (idx = decoded.indexOf(closeTag, (i = idx3 + 6))) < 0) {
                     break;
                 }
-                stringBufferM1217h.append(StringUtils.substring(strM1111p, i, iIndexOf));
-                i2 = iIndexOf + 9;
+                sb.append(StringUtils.substring(decoded, i, idx));
+                i2 = idx + 9;
             }
-            strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
+            messageText = NetworkUtils.bufToStringCached(sb);
         } else {
-            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(strM1332j);
-            int i4 = iM1328e2 & 2097152;
-            int iM1328e3 = c0043nM986d.readInt();
-            String[] strArr = new String[iM1328e3];
-            for (int i5 = 0; i5 < iM1328e3; i5++) {
-                strArr[i5] = c0043nM986d.readStringByMode(i4);
+            ByteBuffer decodeBuffer = ResourceManager.decodeBase64(rawBody);
+            int encodingFlag = flags & 2097152;
+            int partCount = decodeBuffer.readInt();
+            String[] strArr = new String[partCount];
+            for (int i5 = 0; i5 < partCount; i5++) {
+                strArr[i5] = decodeBuffer.readStringByMode(encodingFlag);
             }
-            c0043nM986d.clear();
+            decodeBuffer.clear();
             str = strArr[1];
         }
-        if ((iM1328e2 & 128) != 0) {
-            c0043n.readWideStr();
+        if ((flags & 128) != 0) {
+            buffer.readWideStr();
         }
-        if ((iM1328e2 & 4194304) != 0) {
-            if ((iM1328e2 & 17408) != 0) {
+        if ((flags & 4194304) != 0) {
+            if ((flags & 17408) != 0) {
                 return;
             }
-            c0043n.readInt();
-            switch (c0043n.readInt()) {
+            buffer.readInt();
+            switch (buffer.readInt()) {
                 case 0:
-                    c0028ba.receivePrivateMessage(strM1338j, strM1215a, c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
+                    account.receivePrivateMessage(sender, messageText, buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
                     break;
                 case 2:
-                    c0043n.readUTF8Str((String) null);
-                    c0043n.readInt();
-                    Vector vectorM1213g = NetworkUtils.newVector();
-                    int iM1328e4 = c0043n.readInt();
+                    buffer.readUTF8Str((String) null);
+                    buffer.readInt();
+                    Vector members = NetworkUtils.newVector();
+                    int memberCount = buffer.readInt();
                     while (true) {
-                        iM1328e4--;
-                        if (iM1328e4 < 0) {
-                            AppState.pool[1318] = vectorM1213g;
+                        memberCount--;
+                        if (memberCount < 0) {
+                            AppState.pool[1318] = members;
                             break;
                         } else {
-                            vectorM1213g.addElement(c0043n.readWideStr());
+                            members.addElement(buffer.readWideStr());
                         }
                     }
                 case 3:
-                    c0028ba.receiveGroupMessage(strM1338j, AppState.getString(911), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n, j);
+                    account.receiveGroupMessage(sender, AppState.getString(911), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, j);
                     break;
                 case 5:
-                    c0028ba.receivePrivateMessage(strM1338j, AppState.getString(912), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
+                    account.receivePrivateMessage(sender, AppState.getString(912), buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
                     break;
             }
             return;
         }
-        boolean z = (iM1328e2 & 2048) != 0;
-        boolean z2 = (iM1328e2 & 8192) != 0;
-        if ((iM1328e2 & 4) == 0) {
-            c0028ba.trySendData(AppController.createMrimPacket(c0028ba, 4113, new ByteBuffer().writeStringLatin1((z2 || z) ? AppState.getString(1052223) : strM1338j).writeIntLE(iM1328e)));
+        boolean isNotify = (flags & 2048) != 0;
+        boolean isGroupMsg = (flags & 8192) != 0;
+        if ((flags & 4) == 0) {
+            account.trySendData(AppController.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(1052223) : sender).writeIntLE(msgId)));
         }
-        if (z2) {
-            Enumeration enumerationElements = c0028ba.contactMap.elements();
+        if (isGroupMsg) {
+            Enumeration elements = account.contactMap.elements();
             while (true) {
-                if (!enumerationElements.hasMoreElements()) {
-                    c0035f = null;
+                if (!elements.hasMoreElements()) {
+                    contact = null;
                     break;
                 }
-                MrimContact c0035f2 = (MrimContact) enumerationElements.nextElement();
-                if (c0035f2.isInGroup(strM1338j) && c0035f2 != null) {
-                    c0035f = c0035f2;
+                MrimContact candidate = (MrimContact) elements.nextElement();
+                if (candidate.isInGroup(sender) && candidate != null) {
+                    contact = candidate;
                     break;
                 }
             }
-            MrimContact c0035f3 = c0035f;
-            if (c0035f != null) {
-                c0035f3.receiveMessageFull(0L, strM1215a, 1);
+            MrimContact groupContact = contact;
+            if (contact != null) {
+                groupContact.receiveMessageFull(0L, messageText, 1);
                 return;
             }
             return;
         }
-        MrimContact c0035fM717f = c0028ba.findContactByIdentifier(strM1338j);
-        if ((iM1328e2 & 8) != 0) {
-            if (c0035fM717f == null) {
+        MrimContact foundContact = account.findContactByIdentifier(sender);
+        if ((flags & 8) != 0) {
+            if (foundContact == null) {
                 ResourceManager.playNotificationSound(3);
-                c0028ba.onMessage(strM1338j, 0L, str);
+                account.onMessage(sender, 0L, str);
                 return;
-            } else if ((c0035fM717f.statusFlags & 65536) == 0) {
-                c0035fM717f.performAction();
-                c0028ba.trySendData(AppController.createPasswordAuthCmd(c0028ba, strM1338j));
+            } else if ((foundContact.statusFlags & 65536) == 0) {
+                foundContact.performAction();
+                account.trySendData(AppController.createPasswordAuthCmd(account, sender));
                 return;
             } else {
                 ResourceManager.playNotificationSound(3);
-                c0028ba.onMessage(strM1338j, 0L, str);
+                account.onMessage(sender, 0L, str);
                 return;
             }
         }
-        if ((c0035fM717f == null || c0035fM717f.hasUnread() || c0035fM717f.isOnline()) && !((iM1328e2 & 1024) == 0 && (iM1328e2 & 16384) == 0)) {
+        if ((foundContact == null || foundContact.hasUnread() || foundContact.isOnline()) && !((flags & 1024) == 0 && (flags & 16384) == 0)) {
             return;
         }
-        if ((iM1328e2 & 16384) != 0) {
-            c0028ba.onMessage(strM1338j, j, AppState.getString(910));
-        } else if ((iM1328e2 & 1024) != 0) {
-            c0028ba.deleteContact(strM1338j);
+        if ((flags & 16384) != 0) {
+            account.onMessage(sender, j, AppState.getString(910));
+        } else if ((flags & 1024) != 0) {
+            account.deleteContact(sender);
         } else {
-            c0028ba.onMessage(strM1338j, j, strM1215a);
+            account.onMessage(sender, j, messageText);
         }
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:17:0x0074 */
     /* renamed from: p */
     private static final String decodeHtmlEntities(String str) {
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        String strM584b = AppState.getString(854972);
+        StringBuffer sb = NetworkUtils.newStringBuffer();
+        String entityPrefix = AppState.getString(854972);
         int i = 0;
         while (true) {
             int i2 = i;
             if (i2 >= str.length()) {
                 break;
             }
-            int iIndexOf = str.indexOf(strM584b, i2);
-            if (iIndexOf >= 0) {
-                stringBufferM1217h.append(StringUtils.substring(str, i2, iIndexOf));
-                int i3 = iIndexOf + 13;
-                int iIndexOf2 = str.indexOf(62, i3);
-                if (iIndexOf2 < 0) {
+            int idx = str.indexOf(entityPrefix, i2);
+            if (idx >= 0) {
+                sb.append(StringUtils.substring(str, i2, idx));
+                int i3 = idx + 13;
+                int idx2 = str.indexOf(62, i3);
+                if (idx2 < 0) {
                     break;
                 }
                 try {
-                    int i4 = Integer.parseInt(StringUtils.substring(str, i3, iIndexOf2));
-                    if (i4 < 42 && i4 >= 0) {
-                        stringBufferM1217h.append(AppState.getString(i4 + 1063));
+                    int entityId = Integer.parseInt(StringUtils.substring(str, i3, idx2));
+                    if (entityId < 42 && entityId >= 0) {
+                        sb.append(AppState.getString(entityId + 1063));
                     }
                 } catch (Throwable unused) {
                 }
-                i = iIndexOf2 + 1;
+                i = idx2 + 1;
             } else {
-                stringBufferM1217h.append(StringUtils.suffix(str, i2));
+                sb.append(StringUtils.suffix(str, i2));
                 break;
             }
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: a */
-    public static final void parseContactList(MrimAccount c0028ba, ByteBuffer c0043n) {
-        MrimContactGroup c0010aj;
-        c0028ba.lastError = c0028ba.configFlags;
-        c0028ba.removeAllContacts();
-        int iM1328e = c0043n.readInt();
-        if (iM1328e == 0) {
-            int iM1328e2 = c0043n.readInt();
-            String strM1334g = c0043n.readWideStr();
-            String strM1334g2 = c0043n.readWideStr();
-            Vector vector = c0028ba.groups;
-            int length = strM1334g.length();
-            for (int i = 0; i < iM1328e2; i++) {
-                int iM1328e3 = c0043n.readInt();
-                String strM1335e = c0043n.readUTF8Str((String) null);
-                if ((iM1328e3 & 1) == 0) {
-                    vector.addElement(new MrimContactGroup(c0028ba, i, iM1328e3, strM1335e));
+    public static final void parseContactList(MrimAccount account, ByteBuffer buffer) {
+        MrimContactGroup group;
+        account.lastError = account.configFlags;
+        account.removeAllContacts();
+        int status = buffer.readInt();
+        if (status == 0) {
+            int groupCount = buffer.readInt();
+            String groupFormat = buffer.readWideStr();
+            String contactFormat = buffer.readWideStr();
+            Vector groups = account.groups;
+            int formatLen = groupFormat.length();
+            for (int i = 0; i < groupCount; i++) {
+                int groupFlags = buffer.readInt();
+                String groupName = buffer.readUTF8Str((String) null);
+                if ((groupFlags & 1) == 0) {
+                    groups.addElement(new MrimContactGroup(account, i, groupFlags, groupName));
                 }
-                for (int i2 = 2; i2 < length; i2++) {
-                    if (strM1334g.charAt(i2) == 'u') {
-                        c0043n.readInt();
+                for (int i2 = 2; i2 < formatLen; i2++) {
+                    if (groupFormat.charAt(i2) == 'u') {
+                        buffer.readInt();
                     } else {
-                        c0043n.readWideStr();
+                        buffer.readWideStr();
                     }
                 }
             }
-            int i3 = 20;
-            Vector vector2 = c0028ba.groups;
-            int length2 = strM1334g2.length();
-            vector2.size();
-            String strM584b = AppState.getString(1233);
-            String strM584b2 = AppState.getString(923);
-            while (c0043n.length > 0) {
-                int iM1328e4 = c0043n.readInt();
-                int iM1328e5 = c0043n.readInt();
-                String strM1338j = c0043n.readHexStr();
-                String str = strM1338j;
-                String strM1335e2 = c0043n.readUTF8Str(strM1338j);
-                int iM1328e6 = c0043n.readInt();
-                int iM1328e7 = c0043n.readInt();
-                String strM1334g3 = c0043n.readWideStr();
-                ByteBuffer c0043n2 = new ByteBuffer();
-                if (strM1334g3 != null) {
-                    for (int i4 = 0; i4 < strM1334g3.length(); i4++) {
-                        char cCharAt = strM1334g3.charAt(i4);
-                        if ((cCharAt == ',' && c0043n2.length > 0) || (cCharAt >= '0' && cCharAt <= '9')) {
-                            c0043n2.writeByte(cCharAt);
+            int contactId = 20;
+            Vector groups2 = account.groups;
+            int contactFormatLen = contactFormat.length();
+            groups2.size();
+            String phoneSuffix = AppState.getString(1233);
+            String botSuffix = AppState.getString(923);
+            while (buffer.length > 0) {
+                int contactFlags = buffer.readInt();
+                int groupId = buffer.readInt();
+                String contactAddr = buffer.readHexStr();
+                String addr = contactAddr;
+                String nickname = buffer.readUTF8Str(contactAddr);
+                int serverFlags = buffer.readInt();
+                int statusVal = buffer.readInt();
+                String phonesRaw = buffer.readWideStr();
+                ByteBuffer phoneBuf = new ByteBuffer();
+                if (phonesRaw != null) {
+                    for (int i4 = 0; i4 < phonesRaw.length(); i4++) {
+                        char ch = phonesRaw.charAt(i4);
+                        if ((ch == ',' && phoneBuf.length > 0) || (ch >= '0' && ch <= '9')) {
+                            phoneBuf.writeByte(ch);
                         }
                     }
                 }
-                String strM1317c = c0043n2.getStringAndClear();
-                String strM1334g4 = c0043n.readWideStr();
-                c0043n.readUTF8Str((String) null);
-                c0043n.readUTF8Str((String) null);
-                c0043n.readInt();
-                String strM1334g5 = c0043n.readWideStr();
-                if (StringUtils.equals(str, strM584b) || (iM1328e4 & 1048576) != 0) {
-                    str = strM584b;
-                    iM1328e4 = (iM1328e4 | 1048576) & (-29);
-                    if (StringUtils.isEmpty(strM1317c)) {
-                        iM1328e4 |= 1;
+                String phones = phoneBuf.getStringAndClear();
+                String statusText = buffer.readWideStr();
+                buffer.readUTF8Str((String) null);
+                buffer.readUTF8Str((String) null);
+                buffer.readInt();
+                String clientId = buffer.readWideStr();
+                if (StringUtils.equals(addr, phoneSuffix) || (contactFlags & 1048576) != 0) {
+                    addr = phoneSuffix;
+                    contactFlags = (contactFlags | 1048576) & (-29);
+                    if (StringUtils.isEmpty(phones)) {
+                        contactFlags |= 1;
                     }
                 }
-                if (str.endsWith(strM584b2)) {
-                    iM1328e4 |= 128;
-                    strM1317c = AppState.emptyStr;
+                if (addr.endsWith(botSuffix)) {
+                    contactFlags |= 128;
+                    phones = AppState.emptyStr;
                 }
-                int i5 = iM1328e4 & (-65537);
-                if (0 == (i5 & 1)) {
-                    Vector vector3 = c0028ba.groups;
-                    int size = vector3.size();
+                int cleanFlags = contactFlags & (-65537);
+                if (0 == (cleanFlags & 1)) {
+                    Vector groupList = account.groups;
+                    int size = groupList.size();
                     while (true) {
                         size--;
                         if (size < 0) {
-                            c0010aj = null;
+                            group = null;
                             break;
                         }
-                        MrimContactGroup c0010aj2 = (MrimContactGroup) vector3.elementAt(size);
-                        if (c0010aj2.serverId == iM1328e5) {
-                            c0010aj = c0010aj2;
+                        MrimContactGroup candidate = (MrimContactGroup) groupList.elementAt(size);
+                        if (candidate.serverId == groupId) {
+                            group = candidate;
                             break;
                         }
                     }
-                    MrimContactGroup c0010ajM718f = c0010aj;
-                    if (c0010aj == null) {
-                        c0010ajM718f = c0028ba.getFirstContactGroup();
+                    MrimContactGroup targetGroup = group;
+                    if (group == null) {
+                        targetGroup = account.getFirstContactGroup();
                     }
-                    c0010ajM718f.addContact((Object) new MrimContact(c0028ba, i3, i5, iM1328e5, str, strM1335e2, iM1328e6, iM1328e7, strM1317c, strM1334g4, strM1334g5));
+                    targetGroup.addContact((Object) new MrimContact(account, contactId, cleanFlags, groupId, addr, nickname, serverFlags, statusVal, phones, statusText, clientId));
                 }
-                i3++;
-                for (int i6 = 12; i6 < length2; i6++) {
+                contactId++;
+                for (int i6 = 12; i6 < contactFormatLen; i6++) {
                     if (i6 == 18) {
-                        c0028ba.receiveProfileData(str, c0043n.readBufferArray());
-                    } else if (strM1334g2.charAt(i6) == 'u') {
-                        c0043n.readInt();
+                        account.receiveProfileData(addr, buffer.readBufferArray());
+                    } else if (contactFormat.charAt(i6) == 'u') {
+                        buffer.readInt();
                     } else {
-                        c0043n.readWideStr();
+                        buffer.readWideStr();
                     }
                 }
             }
-            c0028ba.progress = 100;
-            c0028ba.msgCount = 100;
-            c0028ba.setConfiguration(c0028ba.configFlags);
-            c0028ba.trySendData(AppController.createMrimPacket(c0028ba, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
-            if (c0028ba.syncSeq == 1) {
-                String strM17c = StringUtils.intern(Utils.defaultStr(AppState.getString(1382)).toLowerCase());
-                if (!StringUtils.isEmpty(strM17c)) {
-                    new AsyncTask(27, new Object[]{strM17c, c0028ba});
+            account.progress = 100;
+            account.msgCount = 100;
+            account.setConfiguration(account.configFlags);
+            account.trySendData(AppController.createMrimPacket(account, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
+            if (account.syncSeq == 1) {
+                String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(1382)).toLowerCase());
+                if (!StringUtils.isEmpty(searchQuery)) {
+                    new AsyncTask(27, new Object[]{searchQuery, account});
                 }
                 if (AppController.getActiveScreenId() == 1) {
                     AppState.setInt(1577, 1);
                 }
             }
         } else {
-            IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(458)).append(iM1328e)));
-            c0028ba.closeConnection();
-            c0028ba.lastError = c0028ba.getDefaultError();
-            c0028ba.markAllRead();
+            IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(458)).append(status)));
+            account.closeConnection();
+            account.lastError = account.getDefaultError();
+            account.markAllRead();
         }
         NetworkUtils.checkCrashReport();
     }
 
     /* renamed from: a */
-    public static final void createStatusReport(boolean z, MrimAccount c0028ba) {
-        String strM1215a;
-        String strM1215a2;
-        XmlElement c0022avM550a = XmlElement.createFromState(266953);
-        XmlElement c0022avM550a2 = XmlElement.createFromState(398003);
-        XmlElement c0022avM552a = c0022avM550a.addChild(c0022avM550a2);
+    public static final void createStatusReport(boolean z, MrimAccount account) {
+        String loginParam;
+        String domainParam;
+        XmlElement rootElement = XmlElement.createFromState(266953);
+        XmlElement childElement = XmlElement.createFromState(398003);
+        XmlElement reportElement = rootElement.addChild(childElement);
         try {
-            c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
+            childElement.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
         } catch (Throwable unused) {
         }
-        Vector vectorM439R = AppController.getMrimAccountList();
-        if (c0028ba != null) {
-            vectorM439R.addElement(c0028ba);
-            c0028ba = null;
+        Vector accounts = AppController.getMrimAccountList();
+        if (account != null) {
+            accounts.addElement(account);
+            account = null;
         }
-        int iM541c = Utils.vectorSize(vectorM439R);
+        int count = Utils.vectorSize(accounts);
         while (true) {
-            iM541c--;
-            if (iM541c < 0) {
+            count--;
+            if (count < 0) {
                 break;
             }
-            MrimAccount c0028ba2 = (MrimAccount) vectorM439R.elementAt(iM541c);
-            if (c0028ba2.isConnected()) {
-                c0028ba = c0028ba2;
+            MrimAccount candidate = (MrimAccount) accounts.elementAt(count);
+            if (candidate.isConnected()) {
+                account = candidate;
                 break;
             }
         }
-        NetworkUtils.releaseVector(vectorM439R);
-        MrimAccount c0028ba3 = c0028ba;
-        if (c0028ba3 != null) {
-            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(463517)).append(c0028ba3.login));
-            strM1215a2 = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(725650)).append(c0028ba3.customDomain));
+        NetworkUtils.releaseVector(accounts);
+        MrimAccount connectedAccount = account;
+        if (connectedAccount != null) {
+            loginParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(463517)).append(connectedAccount.login));
+            domainParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(725650)).append(connectedAccount.customDomain));
         } else {
             String str = AppState.emptyStr;
-            strM1215a = str;
-            strM1215a2 = str;
+            loginParam = str;
+            domainParam = str;
         }
-        new AsyncTask(23, new ByteBuffer().writeCompressed(5771795).writeConversationStr((Object) new ByteBuffer().writeRawString(c0022avM552a.toString()).toBase64()).writeEncodedInt(z ? 791174 : 1038).writeRawString(strM1215a2).writeRawString(strM1215a).writeCompressed(397997).writeEncodedInt(223).writeCompressed(594539).writeEncodedInt(1375).getStringAndClear());
+        new AsyncTask(23, new ByteBuffer().writeCompressed(5771795).writeConversationStr((Object) new ByteBuffer().writeRawString(reportElement.toString()).toBase64()).writeEncodedInt(z ? 791174 : 1038).writeRawString(domainParam).writeRawString(loginParam).writeCompressed(397997).writeEncodedInt(223).writeCompressed(594539).writeEncodedInt(1375).getStringAndClear());
     }
 
     /*  JADX ERROR: Types fix failed
@@ -1065,137 +1064,136 @@ public final class Conversation implements ListItem {
 
     /* renamed from: b */
     private static final String encodeDecodeInternal(String str, int i, int i2) {
-        String strM584b = AppState.getString(i);
-        String strM584b2 = AppState.getString(i2);
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        String sourceChars = AppState.getString(i);
+        String targetChars = AppState.getString(i2);
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         int length = str.length();
         for (int i3 = 0; i3 < length; i3++) {
-            char cCharAt = str.charAt(i3);
-            int iIndexOf = strM584b.indexOf(cCharAt);
-            stringBufferM1217h.append(iIndexOf < 0 ? cCharAt : strM584b2.charAt(iIndexOf));
+            char ch = str.charAt(i3);
+            int idx = sourceChars.indexOf(ch);
+            sb.append(idx < 0 ? ch : targetChars.charAt(idx));
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: a */
     public static final String urlEncode(Object obj) {
         String string = obj.toString().toString();
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         AppState.getString(266215);
         AppState.getString(266221);
         AppState.getString(397287);
         AppState.getString(397293);
         int length = string.length();
         for (int i = 0; i < length; i++) {
-            char cCharAt = string.charAt(i);
-            if (cCharAt <= '(' || cCharAt >= 128) {
-                stringBufferM1217h.append('%').append(Integer.toHexString(cCharAt));
-            } else if (cCharAt == '[' || cCharAt == ']') {
-                stringBufferM1217h.append('%').append(Integer.toHexString(cCharAt));
+            char ch = string.charAt(i);
+            if (ch <= '(' || ch >= 128) {
+                sb.append('%').append(Integer.toHexString(ch));
+            } else if (ch == '[' || ch == ']') {
+                sb.append('%').append(Integer.toHexString(ch));
             } else {
-                stringBufferM1217h.append(cCharAt);
+                sb.append(ch);
             }
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: b */
     public static final String urlEncodeCyrillic(Object obj) {
         String string = obj.toString();
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        String strM584b = AppState.getString(266215);
-        String strM584b2 = AppState.getString(266221);
-        String strM584b3 = AppState.getString(397287);
-        String strM584b4 = AppState.getString(397293);
+        StringBuffer sb = NetworkUtils.newStringBuffer();
+        String hexPrefixLo = AppState.getString(266215);
+        String hexPrefixHi = AppState.getString(266221);
+        String yoUpper = AppState.getString(397287);
+        String yoLower = AppState.getString(397293);
         int length = string.length();
         for (int i = 0; i < length; i++) {
-            char cCharAt = string.charAt(i);
-            if (cCharAt == 1025) {
-                stringBufferM1217h.append(strM584b3);
-            } else if (cCharAt == 1105) {
-                stringBufferM1217h.append(strM584b4);
-            } else if (cCharAt >= 1040 && cCharAt <= 1071) {
-                stringBufferM1217h.append(strM584b).append(Integer.toHexString(cCharAt - 896));
-            } else if (cCharAt >= 1072 && cCharAt <= 1087) {
-                stringBufferM1217h.append(strM584b).append(Integer.toHexString(cCharAt - 896));
-            } else if (cCharAt >= 1088 && cCharAt <= 1103) {
-                stringBufferM1217h.append(strM584b2).append(Integer.toHexString(cCharAt - 960));
-            } else if ((cCharAt >= '0' && cCharAt <= '9') || (cCharAt >= 'a' && cCharAt <= 'z') || ((cCharAt >= 'A' && cCharAt <= 'Z') || cCharAt == '.')) {
-                stringBufferM1217h.append(cCharAt);
+            char ch = string.charAt(i);
+            if (ch == 1025) {
+                sb.append(yoUpper);
+            } else if (ch == 1105) {
+                sb.append(yoLower);
+            } else if (ch >= 1040 && ch <= 1071) {
+                sb.append(hexPrefixLo).append(Integer.toHexString(ch - 896));
+            } else if (ch >= 1072 && ch <= 1087) {
+                sb.append(hexPrefixLo).append(Integer.toHexString(ch - 896));
+            } else if (ch >= 1088 && ch <= 1103) {
+                sb.append(hexPrefixHi).append(Integer.toHexString(ch - 960));
+            } else if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z') || ((ch >= 'A' && ch <= 'Z') || ch == '.')) {
+                sb.append(ch);
             } else {
-                stringBufferM1217h.append('%').append(Integer.toHexString((cCharAt >> 4) & 15)).append(Integer.toHexString(cCharAt & 15));
+                sb.append('%').append(Integer.toHexString((ch >> 4) & 15)).append(Integer.toHexString(ch & 15));
             }
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: a */
     public static String formatNumber(int i, int i2) {
-        String strM17c = StringUtils.intern(Integer.toString(i));
-        int length = strM17c.length();
+        String numStr = StringUtils.intern(Integer.toString(i));
+        int length = numStr.length();
         if (length >= 2) {
-            return strM17c;
+            return numStr;
         }
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         for (int i3 = length; i3 < 2; i3++) {
-            stringBufferM1217h.append('0');
+            sb.append('0');
         }
-        stringBufferM1217h.append(strM17c);
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        sb.append(numStr);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: j */
     public static final String decodeHtmlSpecial(String str) {
-        Vector vectorM512e = Utils.splitByNull(AppState.getString(1511369));
-        Vector vectorM512e2 = Utils.splitByNull(AppState.getString(462816));
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        Vector entityNames = Utils.splitByNull(AppState.getString(1511369));
+        Vector entityValues = Utils.splitByNull(AppState.getString(462816));
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         int length = str.length();
         int length2 = 0;
         while (length2 < length) {
-            char cCharAt = str.charAt(length2);
-            if (cCharAt == '&') {
-                boolean z = false;
-                for (int i = 0; i < 4 && !z; i++) {
+            char ch = str.charAt(length2);
+            if (ch == '&') {
+                boolean found = false;
+                for (int i = 0; i < 4 && !found; i++) {
                     try {
-                        String str2 = (String) vectorM512e.elementAt(i);
-                        if (str.startsWith(str2, length2)) {
-                            length2 += str2.length() - 1;
-                            stringBufferM1217h.append(vectorM512e2.elementAt(i));
-                            z = true;
+                        String entityName = (String) entityNames.elementAt(i);
+                        if (str.startsWith(entityName, length2)) {
+                            length2 += entityName.length() - 1;
+                            sb.append(entityValues.elementAt(i));
+                            found = true;
                         }
                     } catch (Throwable unused) {
                     }
                 }
-                if (!z) {
-                    stringBufferM1217h.append(cCharAt);
+                if (!found) {
+                    sb.append(ch);
                 }
             } else {
-                stringBufferM1217h.append(cCharAt);
+                sb.append(ch);
             }
             length2++;
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: k */
     public static final String transliterateRussian(String str) {
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        Vector vectorM512e = Utils.splitByNull(AppState.getString(4788096));
+        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Vector translitTable = Utils.splitByNull(AppState.getString(4788096));
         int length = str.length();
         for (int i = 0; i < length; i++) {
-            char cCharAt = str.charAt(i);
-            int i2 = (cCharAt < 1072 || cCharAt > 1103) ? cCharAt == 1105 ? 32 : (cCharAt < 1040 || cCharAt > 1071) ? cCharAt == 1025 ? 72 : -1 : (cCharAt - 1040) + 40 : cCharAt - 1072;
-            int i3 = i2;
-            if (i2 >= 40) {
-                stringBufferM1217h.append(Utils.getVectorString(vectorM512e, i3 - 40).toUpperCase());
-            } else if (i3 >= 0) {
-                stringBufferM1217h.append(vectorM512e.elementAt(i3));
+            char ch = str.charAt(i);
+            int tableIdx = (ch < 1072 || ch > 1103) ? ch == 1105 ? 32 : (ch < 1040 || ch > 1071) ? ch == 1025 ? 72 : -1 : (ch - 1040) + 40 : ch - 1072;
+            if (tableIdx >= 40) {
+                sb.append(Utils.getVectorString(translitTable, tableIdx - 40).toUpperCase());
+            } else if (tableIdx >= 0) {
+                sb.append(translitTable.elementAt(tableIdx));
             } else {
-                stringBufferM1217h.append(cCharAt);
+                sb.append(ch);
             }
         }
-        NetworkUtils.releaseVector(vectorM512e);
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        NetworkUtils.releaseVector(translitTable);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: l */
@@ -1205,19 +1203,19 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     private static final String percentEncodeInternal(String str, boolean z) {
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
-            char cCharAt = str.charAt(i);
-            if ((cCharAt >= 'A' && cCharAt <= 'Z') || ((cCharAt >= 'a' && cCharAt <= 'z') || ((cCharAt >= '0' && cCharAt <= '9') || cCharAt == '.' || (cCharAt == '-' && !z)))) {
-                stringBufferM1217h.append(cCharAt);
+            char ch = str.charAt(i);
+            if ((ch >= 'A' && ch <= 'Z') || ((ch >= 'a' && ch <= 'z') || ((ch >= '0' && ch <= '9') || ch == '.' || (ch == '-' && !z)))) {
+                sb.append(ch);
             } else if (z) {
-                stringBufferM1217h.append('%').append(Integer.toHexString(cCharAt >> 4)).append(Integer.toHexString(cCharAt & 15));
+                sb.append('%').append(Integer.toHexString(ch >> 4)).append(Integer.toHexString(ch & 15));
             } else {
-                stringBufferM1217h.append('%').append(Integer.toHexString(cCharAt >> 4).toUpperCase()).append(Integer.toHexString(cCharAt & 15).toUpperCase());
+                sb.append('%').append(Integer.toHexString(ch >> 4).toUpperCase()).append(Integer.toHexString(ch & 15).toUpperCase());
             }
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* renamed from: a */
