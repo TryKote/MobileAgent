@@ -5,17 +5,17 @@ package p000;
 public final class MmpContactGroup extends ContactGroup {
 
     /* renamed from: a */
-    public int f157a;
+    public int groupId;
 
     public MmpContactGroup(MmpProtocol c0033d, int i, String str) {
         super(c0033d);
-        this.f157a = i;
+        this.groupId = i;
         setNameIfChanged(str);
     }
 
     public MmpContactGroup(MmpProtocol c0033d, ByteBuffer c0043n) {
         super(c0033d);
-        this.f157a = c0043n.readInt();
+        this.groupId = c0043n.readInt();
         setNameIfChanged(c0043n.readUTF8Str((String) null));
         int iM1328e = c0043n.readInt();
         while (true) {
@@ -35,7 +35,7 @@ public final class MmpContactGroup extends ContactGroup {
     @Override // p000.ContactGroup
     /* renamed from: a */
     public final void serialize(ByteBuffer c0043n, boolean z) {
-        c0043n.writeIntLE(this.f157a);
+        c0043n.writeIntLE(this.groupId);
         c0043n.writeStringUTF16(this.name);
         super.serialize(c0043n, z);
     }
@@ -43,11 +43,11 @@ public final class MmpContactGroup extends ContactGroup {
     @Override // p000.ContactGroup
     /* renamed from: b */
     public final int getGroupType() {
-        return this.f157a;
+        return this.groupId;
     }
 
     /* renamed from: a */
-    public final ByteBuffer m465a(String str, int i, int i2) {
+    public final ByteBuffer createUpdatePacket(String str, int i, int i2) {
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(200);
         int i3 = (i2 != -1 ? 2 : 0) - (i != -1 ? 2 : 0);
         int size = this.contacts.size();
@@ -61,12 +61,12 @@ public final class MmpContactGroup extends ContactGroup {
         if (i2 != -1) {
             c0043nM1357m2.writeShortBE(i2);
         }
-        return new ByteBuffer().writeUTF(str).writeShortBE(this.f157a).writeIntBE(1).writeBufferShortLen(c0043nM1357m2);
+        return new ByteBuffer().writeUTF(str).writeShortBE(this.groupId).writeIntBE(1).writeBufferShortLen(c0043nM1357m2);
     }
 
     @Override // p000.ContactGroup
     /* renamed from: a */
     public final boolean isCustom() {
-        return this.f157a >= 0;
+        return this.groupId >= 0;
     }
 }

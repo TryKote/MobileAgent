@@ -16,13 +16,13 @@ import p001main.Midlet;
 public final class SplashScreen extends Canvas implements Runnable, CommandListener {
 
     /* renamed from: a */
-    private Midlet f404a;
+    private Midlet midlet;
 
     /* renamed from: b */
-    private Image f405b;
+    private Image splashImage;
 
     public SplashScreen(Midlet midlet) {
-        this.f404a = midlet;
+        this.midlet = midlet;
         if (midlet != null) {
             new Thread(this).start();
         } else {
@@ -37,7 +37,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
     public final void run() {
         try {
             setFullScreenMode(true);
-            Display.getDisplay(this.f404a).setCurrent(this);
+            Display.getDisplay(this.midlet).setCurrent(this);
             long jCurrentTimeMillis = System.currentTimeMillis();
             int i = 0;
             while (true) {
@@ -45,7 +45,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
                     repaint();
                     serviceRepaints();
                 } else if (i >= 3 && System.currentTimeMillis() - jCurrentTimeMillis >= 200) {
-                    new AsyncTask(this.f404a, getWidth(), getHeight());
+                    new AsyncTask(this.midlet, getWidth(), getHeight());
                     return;
                 }
                 System.gc();
@@ -53,7 +53,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
                 i++;
             }
         } catch (Throwable th) {
-            new SplashScreen(this.f404a, th);
+            new SplashScreen(this.midlet, th);
         }
     }
 
@@ -63,11 +63,11 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
             int width = getWidth();
             int height = getHeight();
             graphics.fillRect(0, 0, width, height);
-            if (this.f405b == null) {
-                this.f405b = Image.createImage("/splash.png");
+            if (this.splashImage == null) {
+                this.splashImage = Image.createImage("/splash.png");
             }
             int i = width >> 1;
-            graphics.drawImage(this.f405b, i, height >> 1, 3);
+            graphics.drawImage(this.splashImage, i, height >> 1, 3);
             graphics.setColor(0);
             graphics.drawString("Версия: 3.9", i, height - 2, 33);
             graphics.setColor(16777215);
@@ -77,14 +77,14 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
     }
 
     private SplashScreen(Midlet midlet, Throwable th) {
-        this.f404a = midlet;
+        this.midlet = midlet;
         try {
             Form form = new Form("Ошибка");
             form.append(new StringBuffer().append("При запуске программы произошла ошибка.\nПереустановите программу с сайта m.mail.ru или обратитесь к разработчику.\nДетали ошибки:\n").append(th).append("\nВерсия: ").append(midlet.getAppProperty("MIDlet-Version")).append("\nПамять: ").append(Runtime.getRuntime().freeMemory()).append(" / ").append(Runtime.getRuntime().totalMemory()).append("\nМодули: ").append(midlet.getAppProperty("Agent-Modules")).append("\n").toString());
             form.addCommand(new Command("OK", 4, 0));
             form.setCommandListener(this);
             Display.getDisplay(midlet).setCurrent(form);
-            m1409a();
+            clearRecordStores();
         } catch (Throwable unused) {
         }
     }
@@ -93,14 +93,14 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
         try {
             switch (command.getPriority()) {
                 case 0:
-                    this.f404a.destroyApp(true);
+                    this.midlet.destroyApp(true);
                     break;
                 case 1:
-                    this.f404a.platformRequest("http://m.mail.ru");
-                    this.f404a.destroyApp(true);
+                    this.midlet.platformRequest("http://m.mail.ru");
+                    this.midlet.destroyApp(true);
                     break;
                 case 2:
-                    new SplashScreen(this.f404a);
+                    new SplashScreen(this.midlet);
                     break;
             }
         } catch (Throwable unused) {
@@ -108,7 +108,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
     }
 
     /* renamed from: a */
-    private static void m1409a() {
+    private static void clearRecordStores() {
         try {
             String[] strArrListRecordStores = RecordStore.listRecordStores();
             int length = strArrListRecordStores.length;

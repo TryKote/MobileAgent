@@ -694,9 +694,9 @@ public final class ConnectionThread {
         }
         MapRenderer.f202j = c0014an;
         MapRenderer.m646a();
-        MapRenderer.m649a(MapRenderer.f202j.f138f, MapRenderer.f202j.f139g);
-        MapRenderer.m651a(MapRenderer.f202j.f140h);
-        MapRenderer.f202j.m268b();
+        MapRenderer.m649a(MapRenderer.f202j.longitude, MapRenderer.f202j.latitude);
+        MapRenderer.m651a(MapRenderer.f202j.zoomLevel);
+        MapRenderer.f202j.markActive();
         MapRenderer.m661e();
     }
 
@@ -717,7 +717,7 @@ public final class ConnectionThread {
         Screen c0013amM75b = ScreenManager.m75b(1717);
         for (int i = 0; i < size; i++) {
             MapPoint c0014an = (MapPoint) vectorM614m.elementAt(i);
-            c0013amM75b.m247a(-1, c0014an.f133a, 6, c0014an);
+            c0013amM75b.m247a(-1, c0014an.name, 6, c0014an);
         }
         ScreenManager.m71b(c0013amM75b);
         return 0;

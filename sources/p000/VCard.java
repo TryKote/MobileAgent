@@ -151,7 +151,7 @@ public final class VCard {
     public final int m60d() {
         try {
             if (StringUtils.m3a(590588, this.f15c)) {
-                return MapPoint.m284e(Integer.parseInt(this.f19g));
+                return MapPoint.getMarkerType(Integer.parseInt(this.f19g));
             }
             return 10;
         } catch (Throwable unused) {
@@ -174,7 +174,7 @@ public final class VCard {
 
     /* renamed from: a */
     public static final String m63a(PhoneContact c0020at, int i) {
-        return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.f164b).writeCompressed(393954).writeRawString(c0020at.f163a).writeCompressed(393960).writeRawString(c0020at.f166d).writeCompressed(393966).writeRawString(c0020at.f165c).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.m520a()).getStringAndClear();
+        return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.surname).writeCompressed(393954).writeRawString(c0020at.firstName).writeCompressed(393960).writeRawString(c0020at.address).writeCompressed(393966).writeRawString(c0020at.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.m520a()).getStringAndClear();
     }
 
     /* renamed from: a */
@@ -198,10 +198,10 @@ public final class VCard {
                 Hashtable hashtable = (Hashtable) vector.elementAt(size);
                 String str = (String) hashtable.get("Path");
                 int i = Integer.parseInt((String) hashtable.get("TypeCode"));
-                MapPoint c0014an = new MapPoint(str, j, j2, MapPoint.m284e(i));
-                c0014an.f143k = 1;
-                c0014an.f144l = i;
-                c0014an.f145m = Integer.parseInt((String) hashtable.get("ObjCode"));
+                MapPoint c0014an = new MapPoint(str, j, j2, MapPoint.getMarkerType(i));
+                c0014an.height = 1;
+                c0014an.typeCode = i;
+                c0014an.objectCode = Integer.parseInt((String) hashtable.get("ObjCode"));
                 vectorM1213g.addElement(c0014an);
             }
         }

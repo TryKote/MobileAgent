@@ -859,12 +859,12 @@ public final class MrimAccount extends Account implements ListItem {
     public final void m731a(MapPoint c0014an) {
         try {
             VCard c0003ac = this.f231g;
-            String strM810b = IOUtils.m810b(c0014an.f139g);
-            String strM809a = IOUtils.m809a(c0014an.f138f);
+            String strM810b = IOUtils.m810b(c0014an.latitude);
+            String strM809a = IOUtils.m809a(c0014an.longitude);
             String strM584b = AppState.getString(590588);
-            String strM267a = c0014an.m267a();
+            String strM267a = c0014an.getDisplayName();
             String str = AppState.emptyStr;
-            c0003ac.m53a(strM810b, strM809a, strM584b, strM267a, str, str, StringUtils.intern(Integer.toString(c0014an.f145m)), StringUtils.intern(Integer.toString(c0014an.f144l)));
+            c0003ac.m53a(strM810b, strM809a, strM584b, strM267a, str, str, StringUtils.intern(Integer.toString(c0014an.objectCode)), StringUtils.intern(Integer.toString(c0014an.typeCode)));
         } catch (Throwable unused) {
             this.f231g.m61e();
         }
@@ -879,7 +879,7 @@ public final class MrimAccount extends Account implements ListItem {
             return iMo124a;
         }
         MrimContactGroup c0010aj = (MrimContactGroup) abstractC0046q;
-        return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0010aj.f74a).writeIntLE(c0010aj.f75b).writeIntLE(0).writeStringUTF16(str).writeStringUTF16(str).writeIntLE(0)), ResourceManager.m967e(1), c0010aj, str}));
+        return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, new ByteBuffer().writeIntLE(c0010aj.serverId).writeIntLE(c0010aj.groupId).writeIntLE(0).writeStringUTF16(str).writeStringUTF16(str).writeIntLE(0)), ResourceManager.m967e(1), c0010aj, str}));
     }
 
     @Override // p000.Account
@@ -902,7 +902,7 @@ public final class MrimAccount extends Account implements ListItem {
             return iMo123a;
         }
         MrimContactGroup c0010aj = (MrimContactGroup) abstractC0046q;
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(c0010aj.f74a).writeIntLE(c0010aj.f75b | 1).writeIntLE(0);
+        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(c0010aj.serverId).writeIntLE(c0010aj.groupId | 1).writeIntLE(0);
         String str = c0010aj.name;
         return trySendData(m719a(new Object[]{AppController.m321a(this, 4123, c0043nM1360p.writeStringUTF16(str).writeStringUTF16(str).writeIntLE(0)), ResourceManager.m967e(3), c0010aj}));
     }
@@ -996,7 +996,7 @@ public final class MrimAccount extends Account implements ListItem {
                 if (i == size) {
                     return i2;
                 }
-                i = ((MrimContactGroup) vector.elementAt(i)).f74a != i2 ? i + 1 : 0;
+                i = ((MrimContactGroup) vector.elementAt(i)).serverId != i2 ? i + 1 : 0;
             }
         }
         return 0;

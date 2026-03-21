@@ -706,7 +706,7 @@ public final class MmpProtocol extends Account {
             return iMo124a;
         }
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
-        return trySendData(m916a(new Object[]{AppController.m464a(this, 4873, c0016ap.m465a(str, -1, -1)), ResourceManager.m967e(1), c0016ap, str}));
+        return trySendData(m916a(new Object[]{AppController.m464a(this, 4873, c0016ap.createUpdatePacket(str, -1, -1)), ResourceManager.m967e(1), c0016ap, str}));
     }
 
     @Override // p000.Account
@@ -729,7 +729,7 @@ public final class MmpProtocol extends Account {
         }
         trySendData(ResourceManager.m961a(this));
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
-        return trySendData(m916a(new Object[]{AppController.m464a(this, 4874, c0016ap.m465a(c0016ap.name, -1, -1)), ResourceManager.m967e(2), c0016ap}));
+        return trySendData(m916a(new Object[]{AppController.m464a(this, 4874, c0016ap.createUpdatePacket(c0016ap.name, -1, -1)), ResourceManager.m967e(2), c0016ap}));
     }
 
     @Override // p000.Account
@@ -770,7 +770,7 @@ public final class MmpProtocol extends Account {
         }
         trySendData(ResourceManager.m961a(this));
         MmpContactGroup c0016ap = (MmpContactGroup) abstractC0046q;
-        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(str).writeShortBE(c0016ap.f157a);
+        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(str).writeShortBE(c0016ap.groupId);
         int iM920k = m920k();
         return trySendData(m916a(new Object[]{AppController.m464a(this, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ResourceManager.m967e(14), str, str2, c0016ap, ResourceManager.m967e(iM920k), str3}));
     }
@@ -807,7 +807,7 @@ public final class MmpProtocol extends Account {
                         break;
                     }
                     MmpContactGroup c0016ap = (MmpContactGroup) vector.elementAt(size);
-                    if (c0016ap.f157a == iM520a) {
+                    if (c0016ap.groupId == iM520a) {
                         z = true;
                     }
                     Vector vector2 = c0016ap.contacts;

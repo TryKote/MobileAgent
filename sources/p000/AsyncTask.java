@@ -1087,7 +1087,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             int r1 = r1.intValue()     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r2 = 0
             r10 = r2
-            p000.ContactListParser.m488a(r0, r1)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
+            p000.ContactListParser.parseContactsSync(r0, r1)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
@@ -1151,7 +1151,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = 0
             r10 = r2
             r2 = r11
-            p000.ContactListParser.m487a(r0, r1, r2)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
+            p000.ContactListParser.parseContactsAsync(r0, r1, r2)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15

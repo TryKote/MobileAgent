@@ -7,34 +7,34 @@ import java.util.Vector;
 public final class MergedContactGroup extends ContactGroup {
 
     /* renamed from: a */
-    private ContactGroup f432a;
+    private ContactGroup sourceGroup;
 
     /* renamed from: b */
-    private int f433b;
+    private int groupType;
 
     public MergedContactGroup(ContactGroup abstractC0046q, int i) {
         super(abstractC0046q.account);
-        this.f433b = i;
-        this.f432a = abstractC0046q;
+        this.groupType = i;
+        this.sourceGroup = abstractC0046q;
         setName(abstractC0046q.name);
         this.isSpecial = abstractC0046q.isSpecial;
     }
 
     public MergedContactGroup() {
         super(null);
-        this.f432a = null;
+        this.sourceGroup = null;
     }
 
     @Override // p000.ContactGroup
     /* renamed from: m */
     public final int getSortIndex() {
-        return this.f432a.getSortIndex();
+        return this.sourceGroup.getSortIndex();
     }
 
     @Override // p000.ContactGroup
     /* renamed from: b */
     public final int rename(String str) {
-        return this.f432a.rename(str);
+        return this.sourceGroup.rename(str);
     }
 
     @Override // p000.ContactGroup
@@ -115,12 +115,12 @@ public final class MergedContactGroup extends ContactGroup {
     @Override // p000.ContactGroup
     /* renamed from: a */
     public final boolean isCustom() {
-        return this.f433b >= 0 || this.f433b < -4;
+        return this.groupType >= 0 || this.groupType < -4;
     }
 
     @Override // p000.ContactGroup
     /* renamed from: b */
     public final int getGroupType() {
-        return this.f433b + 8323072;
+        return this.groupType + 8323072;
     }
 }

@@ -202,7 +202,7 @@ public abstract class ChatRenderer {
             i5 = 4;
         }
         if (iMo276r == 8) {
-            int i7 = ((UserSearchResult) interfaceC0044o).f393d;
+            int i7 = ((UserSearchResult) interfaceC0044o).gender;
             i6 = i7 == 1 ? 377 : i7 == 2 ? 378 : 379;
             i4 = 0;
             i5 = 4;

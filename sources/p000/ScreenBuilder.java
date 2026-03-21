@@ -773,7 +773,7 @@ public final class ScreenBuilder {
                 Vector vectorM614m7 = AppState.getVector(1400);
                 for (int i19 = 0; i19 < vectorM614m7.size(); i19++) {
                     MapPoint c0014an = (MapPoint) vectorM614m7.elementAt(i19);
-                    c0013amM75b11.m247a(-1, c0014an.f133a, 6, c0014an);
+                    c0013amM75b11.m247a(-1, c0014an.name, 6, c0014an);
                 }
                 ScreenManager.m71b(c0013amM75b11);
                 return;
@@ -873,7 +873,7 @@ public final class ScreenBuilder {
                 Enumeration enumerationM1167j = ConnectionThread.m1167j();
                 while (enumerationM1167j.hasMoreElements()) {
                     MapPoint c0014an2 = (MapPoint) enumerationM1167j.nextElement();
-                    c0013amM75b13.m247a(-1, c0014an2.f133a, 118, c0014an2);
+                    c0013amM75b13.m247a(-1, c0014an2.name, 118, c0014an2);
                 }
                 ScreenManager.m71b(c0013amM75b13);
                 return;
@@ -908,7 +908,7 @@ public final class ScreenBuilder {
                 Enumeration enumerationM1167j2 = ConnectionThread.m1167j();
                 while (enumerationM1167j2.hasMoreElements()) {
                     MapPoint c0014an3 = (MapPoint) enumerationM1167j2.nextElement();
-                    c0013amM75b14.m247a(-1, c0014an3.f133a, 6, c0014an3);
+                    c0013amM75b14.m247a(-1, c0014an3.name, 6, c0014an3);
                 }
                 ScreenManager.m71b(c0013amM75b14);
                 return;
@@ -1772,7 +1772,7 @@ public final class ScreenBuilder {
                         interfaceC0044o.select();
                     }
                     MapPoint c0014an = new MapPoint(strM522f3, 0L, 0L, 0L, 0L, jMo274v, jMo275w, AppState.getInt(39));
-                    c0014an.f143k = 4;
+                    c0014an.height = 4;
                     Vector vectorM614m = AppState.getVector(1401);
                     XmppContactGroup.m1043a(vectorM614m, c0014an, 0, 50);
                     XmppContactGroup.m1046a(vectorM614m, 226);

@@ -549,7 +549,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer m1024a(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
-        objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.f74a).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
+        objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
         objArr[1] = ResourceManager.m967e(9);
         objArr[2] = str;
         objArr[3] = str2;
@@ -890,7 +890,7 @@ public final class XmppContactGroup extends ContactGroup {
         if (c0014an == null || vector.contains(c0014an)) {
             return;
         }
-        if (null != m1044a(vector, c0014an.f133a)) {
+        if (null != m1044a(vector, c0014an.name)) {
             return;
         }
         if (i2 > 0 && vector.size() >= i2) {
@@ -910,7 +910,7 @@ public final class XmppContactGroup extends ContactGroup {
                     return null;
                 }
                 c0014an = (MapPoint) vector.elementAt(size);
-            } while (!str.equals(c0014an.f133a));
+            } while (!str.equals(c0014an.name));
             return c0014an;
         } catch (Exception unused) {
             return null;
@@ -926,9 +926,9 @@ public final class XmppContactGroup extends ContactGroup {
             for (int i = 0; i < size; i++) {
                 Vector vectorM516c = Utils.m516c((String) vectorM513a.elementAt(i), '|');
                 MapPoint c0014an = new MapPoint((String) vectorM516c.elementAt(0), Long.parseLong((String) vectorM516c.elementAt(2)), Long.parseLong((String) vectorM516c.elementAt(1)), Utils.parseInt(vectorM516c.elementAt(3)));
-                c0014an.f143k = 1;
-                c0014an.f144l = Utils.parseInt(vectorM516c.elementAt(4));
-                c0014an.f145m = Utils.parseInt(vectorM516c.elementAt(5));
+                c0014an.height = 1;
+                c0014an.typeCode = Utils.parseInt(vectorM516c.elementAt(4));
+                c0014an.objectCode = Utils.parseInt(vectorM516c.elementAt(5));
                 vectorM1213g.addElement(c0014an);
                 NetworkUtils.releaseVector(vectorM516c);
             }
@@ -947,7 +947,7 @@ public final class XmppContactGroup extends ContactGroup {
             c0043n.writeIntLE(size);
             for (int i2 = 0; i2 < size; i2++) {
                 MapPoint c0014an = (MapPoint) vector.elementAt(i2);
-                c0043n.writeStringUTF16(c0014an.f133a).writeLong(c0014an.f134b).writeLong(c0014an.f135c).writeLong(c0014an.f136d).writeLong(c0014an.f137e).writeLong(c0014an.f138f).writeLong(c0014an.f139g).writeIntLE(c0014an.f140h).writeIntLE(c0014an.f143k).writeIntLE(c0014an.f145m).writeIntLE(c0014an.f144l);
+                c0043n.writeStringUTF16(c0014an.name).writeLong(c0014an.boundsMinLon).writeLong(c0014an.boundsMinLat).writeLong(c0014an.boundsMaxLon).writeLong(c0014an.boundsMaxLat).writeLong(c0014an.longitude).writeLong(c0014an.latitude).writeIntLE(c0014an.zoomLevel).writeIntLE(c0014an.height).writeIntLE(c0014an.objectCode).writeIntLE(c0014an.typeCode);
             }
             AppState.setObject(i, (Object) c0043n.toBase64());
         } catch (Throwable unused) {
@@ -979,7 +979,7 @@ public final class XmppContactGroup extends ContactGroup {
             if (size < 0) {
                 return;
             } else {
-                ((MapPoint) vector.elementAt(size)).m269c();
+                ((MapPoint) vector.elementAt(size)).markInactive();
             }
         }
     }
@@ -992,7 +992,7 @@ public final class XmppContactGroup extends ContactGroup {
             if (size < 0) {
                 return;
             } else {
-                ((MapPoint) vector.elementAt(size)).m268b();
+                ((MapPoint) vector.elementAt(size)).markActive();
             }
         }
     }

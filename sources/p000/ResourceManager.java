@@ -523,7 +523,7 @@ public final class ResourceManager {
                 return;
             } else {
                 MapPoint c0014an = (MapPoint) vector.elementAt(size);
-                c0013amM75b.m247a(-1, c0014an.f133a, 6, c0014an);
+                c0013amM75b.m247a(-1, c0014an.name, 6, c0014an);
             }
         }
     }
@@ -584,14 +584,14 @@ public final class ResourceManager {
                 if (vectorM440S.size() <= 0) {
                     return AppController.m338l(422);
                 }
-                ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(AppController.m312l().f390a, 1));
+                ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(AppController.m312l().userId, 1));
                 ScreenBuilder.m549c();
                 return 85;
             case 1:
                 if (vectorM440S.size() <= 0) {
                     return AppController.m338l(422);
                 }
-                ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(AppController.m312l().f390a, 2));
+                ((MrimAccount) vectorM440S.firstElement()).m751a(new SearchEntry(AppController.m312l().userId, 2));
                 return 6;
             case 2:
                 return AppController.m310j();
@@ -599,7 +599,7 @@ public final class ResourceManager {
                 return AppController.m311k();
             default:
                 AppState.setInt(4895, 0);
-                AppController.m393a((MrimAccount) null, AppController.m312l().f390a);
+                AppController.m393a((MrimAccount) null, AppController.m312l().userId);
                 ScreenBuilder.m549c();
                 return 0;
         }
@@ -681,7 +681,7 @@ public final class ResourceManager {
         int size = c0033d.groups.size();
         ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE((size << 1) + 4).writeShortBE(200).writeShortBE(size << 1);
         for (int i = 0; i < size; i++) {
-            c0043nM1357m2.writeShortBE(((MmpContactGroup) c0033d.getGroup(i)).f157a);
+            c0043nM1357m2.writeShortBE(((MmpContactGroup) c0033d.getGroup(i)).groupId);
         }
         objArr[0] = AppController.m464a(c0033d, 4873, c0043nM1357m2);
         objArr[1] = m967e(3);
@@ -1160,6 +1160,6 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer m988a(MrimAccount c0028ba, MrimContact c0035f, MrimContactGroup c0010aj) {
-        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b).writeIntLE(c0010aj.f74a).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.f300g)), m967e(12), c0035f, c0010aj});
+        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b).writeIntLE(c0010aj.serverId).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.f300g)), m967e(12), c0035f, c0010aj});
     }
 }

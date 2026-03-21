@@ -5,182 +5,182 @@ package p000;
 public final class MapPoint implements ListItem {
 
     /* renamed from: a */
-    public String f133a;
+    public String name;
 
     /* renamed from: b */
-    public long f134b;
+    public long boundsMinLon;
 
     /* renamed from: c */
-    public long f135c;
+    public long boundsMinLat;
 
     /* renamed from: d */
-    public long f136d;
+    public long boundsMaxLon;
 
     /* renamed from: e */
-    public long f137e;
+    public long boundsMaxLat;
 
     /* renamed from: f */
-    public long f138f;
+    public long longitude;
 
     /* renamed from: g */
-    public long f139g;
+    public long latitude;
 
     /* renamed from: h */
-    public int f140h;
+    public int zoomLevel;
 
     /* renamed from: i */
-    public boolean f141i;
+    public boolean selected;
 
     /* renamed from: j */
-    public boolean f142j;
+    public boolean dirty;
 
     /* renamed from: k */
-    public int f143k;
+    public int height;
 
     /* renamed from: l */
-    public int f144l;
+    public int typeCode;
 
     /* renamed from: m */
-    public int f145m;
+    public int objectCode;
 
     /* renamed from: n */
-    private SizeCache f146n;
+    private SizeCache sizeCache;
 
     public MapPoint() {
-        this.f146n = new SizeCache();
+        this.sizeCache = new SizeCache();
     }
 
     public MapPoint(String str, long j, long j2, long j3, long j4, long j5, long j6, int i) {
-        this.f133a = str;
-        this.f134b = 0L;
-        this.f135c = 0L;
-        this.f136d = 0L;
-        this.f137e = 0L;
-        this.f138f = j5;
-        this.f139g = j6;
-        this.f140h = i;
-        this.f146n = new SizeCache();
+        this.name = str;
+        this.boundsMinLon = 0L;
+        this.boundsMinLat = 0L;
+        this.boundsMaxLon = 0L;
+        this.boundsMaxLat = 0L;
+        this.longitude = j5;
+        this.latitude = j6;
+        this.zoomLevel = i;
+        this.sizeCache = new SizeCache();
     }
 
     public MapPoint(String str, long j, long j2, int i) {
-        this.f133a = str;
-        this.f138f = j;
-        this.f139g = j2;
-        this.f140h = i;
-        this.f146n = new SizeCache();
+        this.name = str;
+        this.longitude = j;
+        this.latitude = j2;
+        this.zoomLevel = i;
+        this.sizeCache = new SizeCache();
     }
 
     public MapPoint(String str) {
         try {
-            this.f133a = Conversation.m1099b(str);
-            this.f138f = IOUtils.m807b(Conversation.m1100c(str));
-            this.f139g = IOUtils.m808c(Conversation.m1101d(str));
-            this.f140h = Integer.parseInt(Conversation.m1102e(str));
+            this.name = Conversation.m1099b(str);
+            this.longitude = IOUtils.m807b(Conversation.m1100c(str));
+            this.latitude = IOUtils.m808c(Conversation.m1101d(str));
+            this.zoomLevel = Integer.parseInt(Conversation.m1102e(str));
         } catch (Throwable unused) {
         }
-        this.f146n = new SizeCache();
+        this.sizeCache = new SizeCache();
     }
 
     public MapPoint(ByteBuffer c0043n) {
-        this.f133a = c0043n.readUTF8Str((String) null);
-        this.f134b = c0043n.readLong();
-        this.f135c = c0043n.readLong();
-        this.f136d = c0043n.readLong();
-        this.f137e = c0043n.readLong();
-        this.f138f = c0043n.readLong();
-        this.f139g = c0043n.readLong();
-        this.f140h = c0043n.readInt();
-        this.f143k = c0043n.readInt();
-        this.f145m = c0043n.readInt();
-        this.f144l = c0043n.readInt();
-        this.f146n = new SizeCache();
+        this.name = c0043n.readUTF8Str((String) null);
+        this.boundsMinLon = c0043n.readLong();
+        this.boundsMinLat = c0043n.readLong();
+        this.boundsMaxLon = c0043n.readLong();
+        this.boundsMaxLat = c0043n.readLong();
+        this.longitude = c0043n.readLong();
+        this.latitude = c0043n.readLong();
+        this.zoomLevel = c0043n.readInt();
+        this.height = c0043n.readInt();
+        this.objectCode = c0043n.readInt();
+        this.typeCode = c0043n.readInt();
+        this.sizeCache = new SizeCache();
     }
 
     /* renamed from: a */
-    public final String m267a() {
+    public final String getDisplayName() {
         int iIndexOf;
         try {
-            int iIndexOf2 = this.f133a.indexOf(59);
-            return (iIndexOf2 < 0 || (iIndexOf = this.f133a.indexOf(59, iIndexOf2 + 1)) < 0) ? this.f133a : StringUtils.prefix(this.f133a, iIndexOf);
+            int iIndexOf2 = this.name.indexOf(59);
+            return (iIndexOf2 < 0 || (iIndexOf = this.name.indexOf(59, iIndexOf2 + 1)) < 0) ? this.name : StringUtils.prefix(this.name, iIndexOf);
         } catch (Throwable unused) {
-            return this.f133a;
+            return this.name;
         }
     }
 
     /* renamed from: b */
-    public final void m268b() {
-        this.f141i = true;
-        this.f142j = true;
+    public final void markActive() {
+        this.selected = true;
+        this.dirty = true;
     }
 
     /* renamed from: c */
-    public final void m269c() {
-        this.f141i = false;
-        this.f142j = true;
+    public final void markInactive() {
+        this.selected = false;
+        this.dirty = true;
     }
 
     /* renamed from: c */
-    public final long m270c(int i) {
-        return AppController.m317a(this.f138f, i);
+    public final long getLonAtZoom(int i) {
+        return AppController.m317a(this.longitude, i);
     }
 
     /* renamed from: d */
-    public final long m271d(int i) {
-        return AppController.m317a(this.f139g, i);
+    public final long getLatAtZoom(int i) {
+        return AppController.m317a(this.latitude, i);
     }
 
     /* renamed from: d */
-    public final String m272d() {
-        return ResourceManager.m975a(this.f138f, this.f139g, this.f140h, this.f133a);
+    public final String getResourceUrl() {
+        return ResourceManager.m975a(this.longitude, this.latitude, this.zoomLevel, this.name);
     }
 
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        return m267a();
+        return getDisplayName();
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
     public final int getWidth() {
-        return (int) this.f138f;
+        return (int) this.longitude;
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
     public final int getBaseHeight() {
-        return (int) this.f139g;
+        return (int) this.latitude;
     }
 
     @Override // p000.ListItem
     /* renamed from: r */
     public final int getHeight() {
-        return this.f143k;
+        return this.height;
     }
 
     @Override // p000.ListItem
     /* renamed from: s */
     public final boolean isSelected() {
-        return this.f141i;
+        return this.selected;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
     public final void select() {
-        this.f141i = false;
+        this.selected = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
     public final void deselect() {
-        this.f141i = true;
+        this.selected = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: y */
     public final int getCommandCount() {
-        if (this.f144l != 0) {
-            return m284e(this.f144l);
+        if (this.typeCode != 0) {
+            return getMarkerType(this.typeCode);
         }
         return 10;
     }
@@ -194,17 +194,17 @@ public final class MapPoint implements ListItem {
     @Override // p000.ListItem
     /* renamed from: a */
     public final int getCommandId(int i) {
-        return this.f146n.getWidth(i, this);
+        return this.sizeCache.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
     public final int executeCommand(int i) {
-        return this.f146n.getHeight(i, this);
+        return this.sizeCache.getHeight(i, this);
     }
 
     /* renamed from: e */
-    public static final int m284e(int i) {
+    public static final int getMarkerType(int i) {
         switch (i) {
             case 1:
             case 2:

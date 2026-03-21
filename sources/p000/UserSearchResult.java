@@ -5,45 +5,45 @@ package p000;
 public final class UserSearchResult implements ListItem, Identifiable {
 
     /* renamed from: e */
-    private boolean f386e;
+    private boolean selected;
 
     /* renamed from: f */
-    private int f387f;
+    private int width;
 
     /* renamed from: g */
-    private int f388g;
+    private int baseHeight;
 
     /* renamed from: h */
-    private String f389h;
+    private String description;
 
     /* renamed from: a */
-    public String f390a;
+    public String userId;
 
     /* renamed from: b */
-    public String f391b;
+    public String nickname;
 
     /* renamed from: c */
-    public int f392c;
+    public int age;
 
     /* renamed from: d */
-    public int f393d;
+    public int gender;
 
     /* renamed from: i */
-    private int f394i;
+    private int commandCount;
 
     /* renamed from: j */
-    private SizeCache f395j;
+    private SizeCache sizeCache;
 
     private UserSearchResult() {
     }
 
     public UserSearchResult(int i, int i2, String str, int i3) {
-        this.f387f = i;
-        this.f388g = i2;
-        this.f389h = str;
-        this.f394i = i3;
-        this.f386e = true;
-        this.f395j = new SizeCache();
+        this.width = i;
+        this.baseHeight = i2;
+        this.description = str;
+        this.commandCount = i3;
+        this.selected = true;
+        this.sizeCache = new SizeCache();
     }
 
     @Override // p000.ListItem
@@ -55,31 +55,31 @@ public final class UserSearchResult implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: s */
     public final boolean isSelected() {
-        return this.f386e;
+        return this.selected;
     }
 
     @Override // p000.ListItem
     /* renamed from: t */
     public final void select() {
-        this.f386e = false;
+        this.selected = false;
     }
 
     @Override // p000.ListItem
     /* renamed from: u */
     public final void deselect() {
-        this.f386e = true;
+        this.selected = true;
     }
 
     @Override // p000.ListItem
     /* renamed from: v */
     public final int getWidth() {
-        return this.f387f;
+        return this.width;
     }
 
     @Override // p000.ListItem
     /* renamed from: w */
     public final int getBaseHeight() {
-        return this.f388g;
+        return this.baseHeight;
     }
 
     /* JADX WARN: Removed duplicated region for block: B:23:0x007c  */
@@ -90,21 +90,21 @@ public final class UserSearchResult implements ListItem, Identifiable {
     */
     public final String getText() {
         int i;
-        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(Utils.nonEmpty(this.f391b) ? this.f391b : AppState.getString(451));
-        if (this.f392c > 0) {
-            StringBuffer stringBufferAppend2 = stringBufferAppend.append(',').append(' ').append(this.f392c);
-            if (this.f392c >= 100) {
+        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(451));
+        if (this.age > 0) {
+            StringBuffer stringBufferAppend2 = stringBufferAppend.append(',').append(' ').append(this.age);
+            if (this.age >= 100) {
                 i = 323;
-            } else if (this.f392c < 5 || this.f392c > 20) {
-                int i2 = this.f392c % 10;
+            } else if (this.age < 5 || this.age > 20) {
+                int i2 = this.age % 10;
                 i = i2 == 1 ? 321 : (i2 < 2 || i2 > 4) ? 320 : 322;
             } else {
                 i = 320;
             }
             stringBufferAppend2.append(AppState.getString(i));
         }
-        if (Utils.nonEmpty(this.f389h)) {
-            stringBufferAppend.append(',').append(' ').append(this.f389h);
+        if (Utils.nonEmpty(this.description)) {
+            stringBufferAppend.append(',').append(' ').append(this.description);
         }
         return NetworkUtils.bufToStringCached(stringBufferAppend);
     }
@@ -112,7 +112,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: y */
     public final int getCommandCount() {
-        return this.f394i;
+        return this.commandCount;
     }
 
     @Override // p000.ListItem
@@ -124,18 +124,18 @@ public final class UserSearchResult implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: a */
     public final int getCommandId(int i) {
-        return this.f395j.getWidth(i, this);
+        return this.sizeCache.getWidth(i, this);
     }
 
     @Override // p000.ListItem
     /* renamed from: b */
     public final int executeCommand(int i) {
-        return this.f395j.getHeight(i, this);
+        return this.sizeCache.getHeight(i, this);
     }
 
     @Override // p000.Identifiable
     /* renamed from: a */
     public final String getId() {
-        return this.f390a;
+        return this.userId;
     }
 }

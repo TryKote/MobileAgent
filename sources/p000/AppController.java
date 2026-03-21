@@ -1157,7 +1157,7 @@ public final class AppController {
             return 0;
         }
         if (i == 118) {
-            AppState.setObject(43, (Object) c0014an.m272d());
+            AppState.setObject(43, (Object) c0014an.getResourceUrl());
             return 0;
         }
         if (i != 120) {
@@ -1374,7 +1374,7 @@ public final class AppController {
 
     /* renamed from: k */
     public static final int m405k(Object obj) {
-        AppState.setObject(43, (Object) ((MapPoint) obj).m272d());
+        AppState.setObject(43, (Object) ((MapPoint) obj).getResourceUrl());
         return 0;
     }
 
@@ -1384,7 +1384,7 @@ public final class AppController {
             return 0;
         }
         if (MapRenderer.f202j != null) {
-            MapRenderer.f202j.m269c();
+            MapRenderer.f202j.markInactive();
         }
         XmppContactGroup.m1048a(AppState.getVector(1401));
         AppState.setInt(253, 0);
@@ -3702,16 +3702,16 @@ public final class AppController {
                                                 while (true) {
                                                     size11--;
                                                     if (size11 < 0) {
-                                                        if (iIntValue < c0020at.f167e - 10) {
+                                                        if (iIntValue < c0020at.userCount - 10) {
                                                             c0013amM75b.m247a(6, AppState.getString(420), 2, null);
                                                         }
-                                                        AppState.setBool(1445, iIntValue < c0020at.f167e - 10);
+                                                        AppState.setBool(1445, iIntValue < c0020at.userCount - 10);
                                                         AppState.setBool(1446, iIntValue >= 10);
                                                         ScreenManager.m71b(c0013amM75b);
                                                         break;
                                                     } else {
                                                         UserSearchResult c0045p = (UserSearchResult) vector4.elementAt(size11);
-                                                        c0013amM75b.m247a(c0045p.f393d == 1 ? 377 : c0045p.f393d == 2 ? 378 : 379, c0045p.getText(), 0, c0045p);
+                                                        c0013amM75b.m247a(c0045p.gender == 1 ? 377 : c0045p.gender == 2 ? 378 : 379, c0045p.getText(), 0, c0045p);
                                                     }
                                                 }
                                             case 5:
@@ -4014,7 +4014,7 @@ public final class AppController {
                         Object[] objArr = (Object[]) obj2;
                         if (((Integer) objArr[0]).intValue() == 0) {
                             MapPoint c0014an = new MapPoint((String) objArr[1]);
-                            c0014an.f143k = 2;
+                            c0014an.height = 2;
                             ConnectionThread.m1165a(c0014an, false);
                             AppState.setInt(1414, 1);
                             iM338l = 6;
@@ -4627,7 +4627,7 @@ public final class AppController {
         }
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
         MapPoint c0014an = (MapPoint) obj;
-        c0028ba.m730b(IOUtils.m809a(c0014an.f138f), IOUtils.m810b(c0014an.f139g));
+        c0028ba.m730b(IOUtils.m809a(c0014an.longitude), IOUtils.m810b(c0014an.latitude));
         c0028ba.m724j();
         AppState.setInt(1478, 0);
         return 160;

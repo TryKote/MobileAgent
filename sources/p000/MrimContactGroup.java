@@ -5,21 +5,21 @@ package p000;
 public final class MrimContactGroup extends ContactGroup {
 
     /* renamed from: a */
-    public int f74a;
+    public int serverId;
 
     /* renamed from: b */
-    public int f75b;
+    public int groupId;
 
     public MrimContactGroup(Account abstractC0037h, int i, int i2, String str) {
         super(abstractC0037h);
-        this.f74a = i;
-        this.f75b = i2;
+        this.serverId = i;
+        this.groupId = i2;
         setNameIfChanged(str);
     }
 
     public MrimContactGroup(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
-        this.f75b = c0043n.readInt();
+        this.groupId = c0043n.readInt();
         setNameIfChanged(c0043n.readUTF8Str((String) null));
         int iM1328e = c0043n.readInt();
         while (true) {
@@ -39,7 +39,7 @@ public final class MrimContactGroup extends ContactGroup {
     @Override // p000.ContactGroup
     /* renamed from: a */
     public final void serialize(ByteBuffer c0043n, boolean z) {
-        c0043n.writeIntLE(this.f75b);
+        c0043n.writeIntLE(this.groupId);
         c0043n.writeStringUTF16(this.name);
         super.serialize(c0043n, z);
     }
@@ -47,12 +47,12 @@ public final class MrimContactGroup extends ContactGroup {
     @Override // p000.ContactGroup
     /* renamed from: b */
     public final int getGroupType() {
-        return this.f75b;
+        return this.groupId;
     }
 
     @Override // p000.ContactGroup
     /* renamed from: a */
     public final boolean isCustom() {
-        return this.f74a != -1;
+        return this.serverId != -1;
     }
 }

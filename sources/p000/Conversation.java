@@ -787,7 +787,7 @@ public final class Conversation implements ListItem {
                             break;
                         }
                         MrimContactGroup c0010aj2 = (MrimContactGroup) vector3.elementAt(size);
-                        if (c0010aj2.f74a == iM1328e5) {
+                        if (c0010aj2.serverId == iM1328e5) {
                             c0010aj = c0010aj2;
                             break;
                         }
