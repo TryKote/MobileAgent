@@ -212,7 +212,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final ByteBuffer m18a(MmpProtocol c0033d, int i) {
-        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(c0033d.f269a).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.m967e(7), ResourceManager.m967e(i)});
+        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(c0033d.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.m967e(7), ResourceManager.m967e(i)});
     }
 
     /* renamed from: b */

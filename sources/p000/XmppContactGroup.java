@@ -105,7 +105,7 @@ public final class XmppContactGroup extends ContactGroup {
         objArr[1] = ResourceManager.m967e(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
-        return c0028ba.m719a(objArr);
+        return c0028ba.createAndQueueCommand(objArr);
     }
 
     /* renamed from: a */
@@ -555,7 +555,7 @@ public final class XmppContactGroup extends ContactGroup {
         objArr[3] = str2;
         objArr[4] = c0010aj;
         objArr[5] = ResourceManager.m967e(i);
-        return c0028ba.m719a(objArr);
+        return c0028ba.createAndQueueCommand(objArr);
     }
 
     /* JADX WARN: Removed duplicated region for block: B:30:0x00dc  */

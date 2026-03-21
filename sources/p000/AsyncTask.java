@@ -1249,7 +1249,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r10
             java.lang.Object r1 = r1.firstElement()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             an r1 = (p000.MapPoint) r1     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
-            r0.m731a(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            r0.setLocationProfile(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r11
             p000.IOUtils.m786a(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r9
@@ -1282,7 +1282,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r1
             r1 = r11
             r2 = r17
-            r0.m730b(r1, r2)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            r0.setSimpleProfile(r1, r2)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r10
             p000.IOUtils.m786a(r0)     // Catch: java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = r9
@@ -1572,7 +1572,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.StringBuffer r2 = r2.textContent     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.String r2 = p000.StringUtils.fromBuffer(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             java.lang.String r1 = p000.StringUtils.m7b(r1, r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            r0.f37e = r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            r0.serverResourceId = r1     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
         La48:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
@@ -1595,7 +1595,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r0[r1]     // Catch: java.lang.Throwable -> La77 java.lang.Throwable -> La84
             ae r0 = (p000.XmppProtocol) r0     // Catch: java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r1 = r10
-            r0.m94a(r1)     // Catch: java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            r0.setException(r1)     // Catch: java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84

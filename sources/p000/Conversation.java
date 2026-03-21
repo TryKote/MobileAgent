@@ -169,7 +169,7 @@ public final class Conversation implements ListItem {
                         c0033d.msgCount = 60;
                         AppController.f153g = true;
                         XmlElement c0022avM562f2 = c0024axM642a.readChunkedResponse().parseXmlStr().findChildByKey(262156);
-                        ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(c0022avM562f2.findChildByKey(395483).textContent)};
+                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(c0022avM562f2.findChildByKey(395483).textContent)};
                         HttpClient.closeAndUpdateStats(c0024axM642a);
                         AppController.m344t();
                         return;
@@ -596,7 +596,7 @@ public final class Conversation implements ListItem {
             c0043n.readInt();
             switch (c0043n.readInt()) {
                 case 0:
-                    c0028ba.m738a(strM1338j, strM1215a, c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
+                    c0028ba.receivePrivateMessage(strM1338j, strM1215a, c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
                     break;
                 case 2:
                     c0043n.readUTF8Str((String) null);
@@ -613,10 +613,10 @@ public final class Conversation implements ListItem {
                         }
                     }
                 case 3:
-                    c0028ba.m739a(strM1338j, AppState.getString(911), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n, j);
+                    c0028ba.receiveGroupMessage(strM1338j, AppState.getString(911), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n, j);
                     break;
                 case 5:
-                    c0028ba.m738a(strM1338j, AppState.getString(912), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
+                    c0028ba.receivePrivateMessage(strM1338j, AppState.getString(912), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
                     break;
             }
             return;
@@ -646,7 +646,7 @@ public final class Conversation implements ListItem {
             }
             return;
         }
-        MrimContact c0035fM717f = c0028ba.m717f(strM1338j);
+        MrimContact c0035fM717f = c0028ba.findContactByIdentifier(strM1338j);
         if ((iM1328e2 & 8) != 0) {
             if (c0035fM717f == null) {
                 ResourceManager.m925a(3);
@@ -794,14 +794,14 @@ public final class Conversation implements ListItem {
                     }
                     MrimContactGroup c0010ajM718f = c0010aj;
                     if (c0010aj == null) {
-                        c0010ajM718f = c0028ba.m718f();
+                        c0010ajM718f = c0028ba.getFirstContactGroup();
                     }
                     c0010ajM718f.addContact((Object) new MrimContact(c0028ba, i3, i5, iM1328e5, str, strM1335e2, iM1328e6, iM1328e7, strM1317c, strM1334g4, strM1334g5));
                 }
                 i3++;
                 for (int i6 = 12; i6 < length2; i6++) {
                     if (i6 == 18) {
-                        c0028ba.m729a(str, c0043n.readBufferArray());
+                        c0028ba.receiveProfileData(str, c0043n.readBufferArray());
                     } else if (strM1334g2.charAt(i6) == 'u') {
                         c0043n.readInt();
                     } else {
@@ -811,7 +811,7 @@ public final class Conversation implements ListItem {
             }
             c0028ba.progress = 100;
             c0028ba.msgCount = 100;
-            c0028ba.m721d(c0028ba.configFlags);
+            c0028ba.setConfiguration(c0028ba.configFlags);
             c0028ba.trySendData(AppController.m321a(c0028ba, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
             if (c0028ba.syncSeq == 1) {
                 String strM17c = StringUtils.intern(Utils.defaultStr(AppState.getString(1382)).toLowerCase());
@@ -863,7 +863,7 @@ public final class Conversation implements ListItem {
         MrimAccount c0028ba3 = c0028ba;
         if (c0028ba3 != null) {
             strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(463517)).append(c0028ba3.login));
-            strM1215a2 = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(725650)).append(c0028ba3.f226b));
+            strM1215a2 = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(725650)).append(c0028ba3.customDomain));
         } else {
             String str = AppState.emptyStr;
             strM1215a = str;

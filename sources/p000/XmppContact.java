@@ -29,7 +29,7 @@ public final class XmppContact extends Contact {
         this.statusMessage = str3;
         this.unreadCount = 0;
         setDisplayName(Utils.m528a(str2, str));
-        this.defaultIcon = XmppProtocol.m131d(this.status);
+        this.defaultIcon = XmppProtocol.getIconForError(this.status);
         this.identifier = c0005ae.encodeId().writeRawString(str).getStringAndClear();
         c0005ae.registerContact(this);
         updateRenderState();
@@ -58,7 +58,7 @@ public final class XmppContact extends Contact {
         setDisplayName(c0043n.readUTF8Str((String) null));
         this.identifier = abstractC0037h.encodeId().writeRawString(this.jabberId).getStringAndClear();
         this.status = 0;
-        this.defaultIcon = XmppProtocol.m131d(0);
+        this.defaultIcon = XmppProtocol.getIconForError(0);
         abstractC0037h.registerContact(this);
         updateRenderState();
         this.extra = this.jabberId;
@@ -177,7 +177,7 @@ public final class XmppContact extends Contact {
         this.status = c0006af != null ? c0006af.status : 0;
         this.vCardHash = c0006af != null ? c0006af.vCardHash : null;
         this.highlighted = this.status != 0;
-        this.defaultIcon = XmppProtocol.m131d(this.status);
+        this.defaultIcon = XmppProtocol.getIconForError(this.status);
         this.unreadCount = this.status == 0 ? 0 : 3;
         this.dirty = true;
         updateRenderState();
@@ -191,7 +191,7 @@ public final class XmppContact extends Contact {
 
     /* renamed from: a */
     public final int sendPresence(int i) {
-        int iM119a = ((XmppProtocol) this.account).m119a(this, i);
+        int iM119a = ((XmppProtocol) this.account).updateContactPresence(this, i);
         if (iM119a != i) {
             return iM119a;
         }
@@ -202,7 +202,7 @@ public final class XmppContact extends Contact {
 
     /* renamed from: b */
     public final void setPresenceFeature(int i) {
-        ((XmppProtocol) this.account).m99b(this.jabberId, i);
+        ((XmppProtocol) this.account).updatePresenceStatus(this.jabberId, i);
     }
 
     /* JADX DEBUG: Possible override for method l.f()Ln; */

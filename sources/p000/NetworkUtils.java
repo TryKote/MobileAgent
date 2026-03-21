@@ -776,7 +776,7 @@ public final class NetworkUtils {
             if (null != c0035f) {
                 String strM1292k = c0042m.m1292k();
                 c0035f.setDisplayName(strM1292k);
-                c0028ba.validateGroupAdd(strM1290i, strM1292k, AppState.getString(741), (ContactGroup) c0028ba.m718f(), true);
+                c0028ba.validateGroupAdd(strM1290i, strM1292k, AppState.getString(741), (ContactGroup) c0028ba.getFirstContactGroup(), true);
             }
         }
     }

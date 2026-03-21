@@ -413,7 +413,7 @@ public final class ConnectionThread {
         Object[] objArrM1147a = m1147a(NetworkUtils.newStringBuffer().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) m1149a(objArrM1147a)[7]).f436a.join();
-        c0028ba.f225a = (String) objArrM1147a[6];
+        c0028ba.jabberId = (String) objArrM1147a[6];
         objArr[4] = m1151a(objArr, c0028ba);
     }
 
@@ -476,7 +476,7 @@ public final class ConnectionThread {
             c0024ax.setRequestMethod((String) objArr[0]);
             m1153a(c0024ax, 919726, 788668);
             m1153a(c0024ax, 657608, 329938);
-            m1154a(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).f225a);
+            m1154a(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).jabberId);
             byte[] bArr = (byte[]) objArr[3];
             if (bArr != null) {
                 m1153a(c0024ax, 788628, 2164851);
@@ -652,7 +652,7 @@ public final class ConnectionThread {
     public static final int m1162b(Screen c0013am) {
         MrimAccount c0028ba;
         if (AppState.getBool(1547)) {
-            ((MrimAccount) AppState.getAccount()).f232h = false;
+            ((MrimAccount) AppState.getAccount()).isHighlighted = false;
             MapRenderer.f200h = true;
             m1164h();
             return 0;

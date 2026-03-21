@@ -50,7 +50,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.newVector(), AppController.m459a(c0028ba.login, Utils.defaultStr(c0028ba.f230f)));
+        this.toList = XmppMailRuProtocol.m867a(NetworkUtils.newVector(), AppController.m459a(c0028ba.login, Utils.defaultStr(c0028ba.accountNickname)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;
@@ -93,7 +93,7 @@ public final class Message {
         MenuItem c0032cM887a = MenuItem.m887a(this.from);
         c0032cM887a.f265d = this;
         String str = this.from;
-        Enumeration enumerationElements = c0028ba.f228d.elements();
+        Enumeration enumerationElements = c0028ba.chatRoomsList.elements();
         while (true) {
             if (!enumerationElements.hasMoreElements()) {
                 z = false;
@@ -124,10 +124,10 @@ public final class Message {
         if (z2) {
             iM214a2 += 20;
         }
-        if (c0052w == c0028ba.m746W()) {
-            iM1418a = c0028ba.m745h(c0052w.getPriority(this.from)).getType();
+        if (c0052w == c0028ba.getLastChatRoom()) {
+            iM1418a = c0028ba.findChatRoomById(c0052w.getPriority(this.from)).getType();
         } else {
-            iM1418a = (c0052w == c0028ba.m746W() || !c0052w.hasMessage(this.from)) ? 3 : c0052w.getType();
+            iM1418a = (c0052w == c0028ba.getLastChatRoom() || !c0052w.hasMessage(this.from)) ? 3 : c0052w.getType();
         }
         int i7 = iM1418a;
         boolean z3 = false;
@@ -138,11 +138,11 @@ public final class Message {
         if ((i7 & 2) != 0 && (strArrM869c = XmppMailRuProtocol.m869c(getCcList())) != null) {
             c0032cM901a2.m901a(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(868)).append(' ').append(strArrM869c[1])), i2, iM586d - (z3 ? 0 : iM214a2), iM214a, true), i2, i3);
         }
-        boolean z4 = c0052w == c0028ba.m746W();
+        boolean z4 = c0052w == c0028ba.getLastChatRoom();
         c0032cM901a2.m900a(zM671a ? 225 : 237, truncateText(getSubject(), i2, iM586d - 22, iM214a, z4), i2, i3);
         if (z4) {
             c0032cM901a2.m896a(234);
-            c0032cM901a2.m901a(truncateText(c0028ba.m745h(c0052w.getPriority(this.from)).name, i2, iM586d - 22, iM214a, false), i2, i3);
+            c0032cM901a2.m901a(truncateText(c0028ba.findChatRoomById(c0052w.getPriority(this.from)).name, i2, iM586d - 22, iM214a, false), i2, i3);
         }
         return c0032cM901a2;
     }
