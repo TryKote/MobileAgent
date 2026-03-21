@@ -15,45 +15,45 @@ public abstract class ContactListParser implements ListItem {
     private static int updateCounter;
 
     /* renamed from: a */
-    public static final void parseContactsAsync(ByteBuffer c0043n, Object obj, Object obj2) {
-        IOUtils.postEvent(new IOUtils(4, new Object[]{obj, parseContactsInternal(c0043n, 10, true), obj2}));
+    public static final void parseContactsAsync(ByteBuffer buffer, Object obj, Object obj2) {
+        IOUtils.postEvent(new IOUtils(4, new Object[]{obj, parseContactsInternal(buffer, 10, true), obj2}));
     }
 
     /* renamed from: a */
-    public static final void parseContactsSync(ByteBuffer c0043n, int i) {
-        Vector vectorM489a = parseContactsInternal(c0043n, i, false);
-        if (vectorM489a != null && vectorM489a.size() > 0) {
-            AppState.pool[1404] = vectorM489a;
+    public static final void parseContactsSync(ByteBuffer buffer, int i) {
+        Vector contacts = parseContactsInternal(buffer, i, false);
+        if (contacts != null && contacts.size() > 0) {
+            AppState.pool[1404] = contacts;
         }
         MapRenderer.needsRedraw = true;
     }
 
     /* renamed from: a */
-    private static final Vector parseContactsInternal(ByteBuffer c0043n, int i, boolean z) {
+    private static final Vector parseContactsInternal(ByteBuffer buffer, int i, boolean z) {
         boolean z2;
-        Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(c0043n, 2);
-        Vector vectorM1213g = NetworkUtils.newVector();
-        Vector vectorM614m = AppState.getVector(1404);
-        if (vectorM614m != null && !z) {
+        Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(buffer, 2);
+        Vector result = NetworkUtils.newVector();
+        Vector existing = AppState.getVector(1404);
+        if (existing != null && !z) {
             int i2 = updateCounter;
             updateCounter = i2 + 1;
-            for (int i3 = i2 <= 4 ? 0 : addedCount; i3 < vectorM614m.size(); i3++) {
-                vectorM1213g.addElement(vectorM614m.elementAt(i3));
+            for (int i3 = i2 <= 4 ? 0 : addedCount; i3 < existing.size(); i3++) {
+                result.addElement(existing.elementAt(i3));
             }
         }
-        int iM586d = AppState.getInt(39);
+        int zoomLevel = AppState.getInt(39);
         addedCount = 0;
-        Enumeration enumerationKeys = hashtable.keys();
-        while (enumerationKeys.hasMoreElements()) {
-            String str = (String) enumerationKeys.nextElement();
-            int size = vectorM1213g.size();
+        Enumeration keys = hashtable.keys();
+        while (keys.hasMoreElements()) {
+            String str = (String) keys.nextElement();
+            int size = result.size();
             while (true) {
                 size--;
                 if (size < 0) {
                     z2 = false;
                     break;
                 }
-                if (StringUtils.equals(str, ((Identifiable) vectorM1213g.elementAt(size)).getId()) && i == ((ListItem) vectorM1213g.elementAt(size)).getCommandCount()) {
+                if (StringUtils.equals(str, ((Identifiable) result.elementAt(size)).getId()) && i == ((ListItem) result.elementAt(size)).getCommandCount()) {
                     z2 = true;
                     break;
                 }
@@ -62,26 +62,26 @@ public abstract class ContactListParser implements ListItem {
                 if (str.startsWith("group_")) {
                     Hashtable hashtable2 = (Hashtable) hashtable.get(str);
                     Hashtable hashtable3 = (Hashtable) hashtable2.get("mass-center");
-                    vectorM1213g.addElement(new PhoneContact(str, (int) IOUtils.longitudeToPixel((String) hashtable3.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable3.get("lat")), (String) hashtable2.get("lat1"), (String) hashtable2.get("lon1"), (String) hashtable2.get("lat2"), (String) hashtable2.get("lon2"), Integer.parseInt((String) hashtable2.get("users")), iM586d));
+                    result.addElement(new PhoneContact(str, (int) IOUtils.longitudeToPixel((String) hashtable3.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable3.get("lat")), (String) hashtable2.get("lat1"), (String) hashtable2.get("lon1"), (String) hashtable2.get("lat2"), (String) hashtable2.get("lon2"), Integer.parseInt((String) hashtable2.get("users")), zoomLevel));
                 } else {
                     Hashtable hashtable4 = (Hashtable) hashtable.get(str);
-                    UserSearchResult c0045p = new UserSearchResult((int) IOUtils.longitudeToPixel((String) hashtable4.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable4.get("lat")), (String) hashtable4.get("object"), iM586d);
-                    c0045p.userId = (String) hashtable4.get("email");
-                    c0045p.nickname = (String) hashtable4.get("nick");
+                    UserSearchResult searchResult = new UserSearchResult((int) IOUtils.longitudeToPixel((String) hashtable4.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable4.get("lat")), (String) hashtable4.get("object"), zoomLevel);
+                    searchResult.userId = (String) hashtable4.get("email");
+                    searchResult.nickname = (String) hashtable4.get("nick");
                     String str2 = (String) hashtable4.get("age");
                     if (Utils.nonEmpty(str2)) {
-                        c0045p.age = Integer.parseInt(str2);
+                        searchResult.age = Integer.parseInt(str2);
                     }
                     String str3 = (String) hashtable4.get("sex");
                     if (Utils.nonEmpty(str3)) {
-                        c0045p.gender = str3.equals("male") ? 1 : 2;
+                        searchResult.gender = str3.equals("male") ? 1 : 2;
                     }
-                    vectorM1213g.addElement(c0045p);
+                    result.addElement(searchResult);
                 }
                 addedCount++;
             }
         }
-        return vectorM1213g;
+        return result;
     }
 
     @Override // p000.ListItem

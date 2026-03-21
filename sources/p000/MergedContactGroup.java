@@ -12,12 +12,12 @@ public final class MergedContactGroup extends ContactGroup {
     /* renamed from: b */
     private int groupType;
 
-    public MergedContactGroup(ContactGroup abstractC0046q, int i) {
-        super(abstractC0046q.account);
+    public MergedContactGroup(ContactGroup group, int i) {
+        super(group.account);
         this.groupType = i;
-        this.sourceGroup = abstractC0046q;
-        setName(abstractC0046q.name);
-        this.isSpecial = abstractC0046q.isSpecial;
+        this.sourceGroup = group;
+        setName(group.name);
+        this.isSpecial = group.isSpecial;
     }
 
     public MergedContactGroup() {
@@ -42,70 +42,70 @@ public final class MergedContactGroup extends ContactGroup {
     public final int toggleSpecial() {
         if (this.isSpecial) {
             String str = this.name;
-            Vector vectorM614m = AppState.getVector(1241);
-            int size = vectorM614m.size();
+            Vector accounts = AppState.getVector(1241);
+            int size = accounts.size();
             while (true) {
                 size--;
                 if (size < 0) {
                     break;
                 }
-                Account abstractC0037h = (Account) vectorM614m.elementAt(size);
-                int size2 = abstractC0037h.groups.size();
+                Account acct = (Account) accounts.elementAt(size);
+                int size2 = acct.groups.size();
                 while (true) {
                     size2--;
                     if (size2 < 0) {
                         break;
                     }
-                    ContactGroup abstractC0046qM1082g = abstractC0037h.getGroup(size2);
-                    if (StringUtils.equals(str, abstractC0046qM1082g.name)) {
-                        abstractC0046qM1082g.isSpecial = false;
+                    ContactGroup groupM1082g = acct.getGroup(size2);
+                    if (StringUtils.equals(str, groupM1082g.name)) {
+                        groupM1082g.isSpecial = false;
                     }
                 }
-                if (str.equals(abstractC0037h.defaultGroup.name)) {
-                    abstractC0037h.defaultGroup.isSpecial = false;
+                if (str.equals(acct.defaultGroup.name)) {
+                    acct.defaultGroup.isSpecial = false;
                 }
-                if (str.equals(abstractC0037h.onlineGroup.name)) {
-                    abstractC0037h.onlineGroup.isSpecial = false;
+                if (str.equals(acct.onlineGroup.name)) {
+                    acct.onlineGroup.isSpecial = false;
                 }
-                if (str.equals(abstractC0037h.specialGroup.name)) {
-                    abstractC0037h.specialGroup.isSpecial = false;
+                if (str.equals(acct.specialGroup.name)) {
+                    acct.specialGroup.isSpecial = false;
                 }
-                if (str.equals(abstractC0037h.offlineGroup.name)) {
-                    abstractC0037h.offlineGroup.isSpecial = false;
+                if (str.equals(acct.offlineGroup.name)) {
+                    acct.offlineGroup.isSpecial = false;
                 }
             }
         } else {
             String str2 = this.name;
-            Vector vectorM614m2 = AppState.getVector(1241);
-            int size3 = vectorM614m2.size();
+            Vector accounts2 = AppState.getVector(1241);
+            int size3 = accounts2.size();
             while (true) {
                 size3--;
                 if (size3 < 0) {
                     break;
                 }
-                Account abstractC0037h2 = (Account) vectorM614m2.elementAt(size3);
-                int size4 = abstractC0037h2.groups.size();
+                Account acct2 = (Account) accounts2.elementAt(size3);
+                int size4 = acct2.groups.size();
                 while (true) {
                     size4--;
                     if (size4 < 0) {
                         break;
                     }
-                    ContactGroup abstractC0046qM1082g2 = abstractC0037h2.getGroup(size4);
-                    if (StringUtils.equals(str2, abstractC0046qM1082g2.name)) {
-                        abstractC0046qM1082g2.isSpecial = true;
+                    ContactGroup groupM1082g2 = acct2.getGroup(size4);
+                    if (StringUtils.equals(str2, groupM1082g2.name)) {
+                        groupM1082g2.isSpecial = true;
                     }
                 }
-                if (str2.equals(abstractC0037h2.defaultGroup.name)) {
-                    abstractC0037h2.defaultGroup.isSpecial = true;
+                if (str2.equals(acct2.defaultGroup.name)) {
+                    acct2.defaultGroup.isSpecial = true;
                 }
-                if (str2.equals(abstractC0037h2.onlineGroup.name)) {
-                    abstractC0037h2.onlineGroup.isSpecial = true;
+                if (str2.equals(acct2.onlineGroup.name)) {
+                    acct2.onlineGroup.isSpecial = true;
                 }
-                if (str2.equals(abstractC0037h2.specialGroup.name)) {
-                    abstractC0037h2.specialGroup.isSpecial = true;
+                if (str2.equals(acct2.specialGroup.name)) {
+                    acct2.specialGroup.isSpecial = true;
                 }
-                if (str2.equals(abstractC0037h2.offlineGroup.name)) {
-                    abstractC0037h2.offlineGroup.isSpecial = true;
+                if (str2.equals(acct2.offlineGroup.name)) {
+                    acct2.offlineGroup.isSpecial = true;
                 }
             }
         }

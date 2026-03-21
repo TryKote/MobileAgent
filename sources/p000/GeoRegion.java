@@ -51,12 +51,12 @@ public final class GeoRegion {
         this.minLon = j4;
     }
 
-    public GeoRegion(ByteBuffer c0043n) {
-        this(c0043n.readUTF8Str((String) null), c0043n.readLong(), c0043n.readLong(), c0043n.readLong(), c0043n.readLong());
-        this.description = c0043n.readUTF8Str((String) null);
-        this.centerLat = c0043n.readLong();
-        this.centerLon = c0043n.readLong();
-        this.precision = c0043n.readInt();
+    public GeoRegion(ByteBuffer buffer) {
+        this(buffer.readUTF8Str((String) null), buffer.readLong(), buffer.readLong(), buffer.readLong(), buffer.readLong());
+        this.description = buffer.readUTF8Str((String) null);
+        this.centerLat = buffer.readLong();
+        this.centerLon = buffer.readLong();
+        this.precision = buffer.readInt();
     }
 
     /* renamed from: a */

@@ -43,8 +43,8 @@ public final class HttpClient {
     private ByteBuffer responseBuffer;
 
     /* renamed from: a */
-    public static final HttpClient createHttpClient(String str, Account abstractC0037h, int i) throws IOException {
-        return new HttpClient(str, abstractC0037h, i);
+    public static final HttpClient createHttpClient(String str, Account account, int i) throws IOException {
+        return new HttpClient(str, account, i);
     }
 
     /* renamed from: a */
@@ -63,36 +63,36 @@ public final class HttpClient {
     }
 
     /* renamed from: a */
-    public static final void closeAndUpdateStats(HttpClient c0024ax) {
+    public static final void closeAndUpdateStats(HttpClient client) {
         try {
-            if (c0024ax.account != null && c0024ax.requestType == 0) {
-                AppController.updateAccountStatus(c0024ax.account, c0024ax.bytesReceived);
-                AppController.setAccountOption(c0024ax.account, c0024ax.bytesSent);
-            } else if (c0024ax.requestType == 1) {
-                AppController.addSentBytes(c0024ax.bytesReceived);
-                AppController.addReceivedBytes(c0024ax.bytesSent);
-            } else if (c0024ax.requestType == 2) {
-                AppController.addDownloadBytes(c0024ax.bytesReceived);
-                AppController.addUploadBytes(c0024ax.bytesSent);
+            if (client.account != null && client.requestType == 0) {
+                AppController.updateAccountStatus(client.account, client.bytesReceived);
+                AppController.setAccountOption(client.account, client.bytesSent);
+            } else if (client.requestType == 1) {
+                AppController.addSentBytes(client.bytesReceived);
+                AppController.addReceivedBytes(client.bytesSent);
+            } else if (client.requestType == 2) {
+                AppController.addDownloadBytes(client.bytesReceived);
+                AppController.addUploadBytes(client.bytesSent);
             } else {
-                AppController.addConnectionBytes(c0024ax.bytesReceived);
-                AppController.addProtocolBytes(c0024ax.bytesSent);
+                AppController.addConnectionBytes(client.bytesReceived);
+                AppController.addProtocolBytes(client.bytesSent);
             }
-            if (c0024ax.mockMode == 0) {
+            if (client.mockMode == 0) {
                 try {
-                    if (c0024ax.inputStream != null) {
-                        c0024ax.inputStream.close();
+                    if (client.inputStream != null) {
+                        client.inputStream.close();
                     }
                 } catch (Throwable unused) {
                 }
                 try {
-                    if (c0024ax.outputStream != null) {
-                        c0024ax.outputStream.close();
+                    if (client.outputStream != null) {
+                        client.outputStream.close();
                     }
                 } catch (Throwable unused2) {
                 }
                 try {
-                    c0024ax.connection.close();
+                    client.connection.close();
                 } catch (Throwable unused3) {
                 }
             }
@@ -106,9 +106,9 @@ public final class HttpClient {
         this.url = str.startsWith(AppState.getString(459255)) ? StringUtils.suffix(str, 7) : str;
     }
 
-    private HttpClient(String str, Account abstractC0037h, int i) throws IOException {
+    private HttpClient(String str, Account account, int i) throws IOException {
         this.connection = Connector.open(str, 3);
-        this.account = abstractC0037h;
+        this.account = account;
         this.requestType = i;
         this.url = str;
     }
@@ -164,9 +164,9 @@ public final class HttpClient {
         if (this.inputStream != null) {
             return this.inputStream;
         }
-        InputStream inputStreamOpenInputStream = ((HttpConnection) this.connection).openInputStream();
-        this.inputStream = inputStreamOpenInputStream;
-        return inputStreamOpenInputStream;
+        InputStream is = ((HttpConnection) this.connection).openInputStream();
+        this.inputStream = is;
+        return is;
     }
 
     /* renamed from: d */
@@ -174,14 +174,14 @@ public final class HttpClient {
         if (this.outputStream != null) {
             return this.outputStream;
         }
-        OutputStream outputStreamOpenOutputStream = ((HttpConnection) this.connection).openOutputStream();
-        this.outputStream = outputStreamOpenOutputStream;
-        return outputStreamOpenOutputStream;
+        OutputStream os = ((HttpConnection) this.connection).openOutputStream();
+        this.outputStream = os;
+        return os;
     }
 
     /* renamed from: a */
-    public final HttpClient writeBuffer(ByteBuffer c0043n) throws IOException {
-        writeData(c0043n.data, c0043n.length);
+    public final HttpClient writeBuffer(ByteBuffer buffer) throws IOException {
+        writeData(buffer.data, buffer.length);
         return this;
     }
 
@@ -205,26 +205,26 @@ public final class HttpClient {
     /* renamed from: b */
     public final ByteBuffer readChunkedResponse() throws IOException, NumberFormatException {
         int i;
-        ByteBuffer c0043nM645e = readHeaders();
-        String str = new String(c0043nM645e.data, 0, c0043nM645e.length);
-        int iIndexOf = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(1052310)) + 16;
-        int i2 = Integer.parseInt(StringUtils.substring(str, iIndexOf, str.indexOf(13, iIndexOf)));
-        ByteBuffer c0043n = new ByteBuffer();
-        byte[] bArrM1211a = NetworkUtils.newBytes(i2);
+        ByteBuffer headerBuf = readHeaders();
+        String str = new String(headerBuf.data, 0, headerBuf.length);
+        int idx = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(1052310)) + 16;
+        int i2 = Integer.parseInt(StringUtils.substring(str, idx, str.indexOf(13, idx)));
+        ByteBuffer buffer = new ByteBuffer();
+        byte[] readBuf = NetworkUtils.newBytes(i2);
         do {
-            i = getInputStream().read(bArrM1211a, 0, i2 - c0043n.length);
+            i = getInputStream().read(readBuf, 0, i2 - buffer.length);
             if (i > 0) {
                 this.bytesReceived += i;
             }
             if (i > 0) {
-                c0043n.writeBytesAt(bArrM1211a, 0, i);
+                buffer.writeBytesAt(readBuf, 0, i);
             }
-            if (c0043n.length == i2) {
+            if (buffer.length == i2) {
                 break;
             }
         } while (i != -1);
-        NetworkUtils.releaseBytes(bArrM1211a);
-        return c0043n;
+        NetworkUtils.releaseBytes(readBuf);
+        return buffer;
     }
 
     /* renamed from: e */

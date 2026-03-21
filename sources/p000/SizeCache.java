@@ -14,20 +14,20 @@ public final class SizeCache {
     public int lastScale = -1;
 
     /* renamed from: a */
-    public final int getWidth(int i, ListItem interfaceC0044o) {
+    public final int getWidth(int i, ListItem item) {
         if (isCached(i)) {
             return this.cachedWidth;
         }
-        updateCache(i, interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
+        updateCache(i, item.getWidth(), item.getBaseHeight());
         return this.cachedWidth;
     }
 
     /* renamed from: b */
-    public final int getHeight(int i, ListItem interfaceC0044o) {
+    public final int getHeight(int i, ListItem item) {
         if (isCached(i)) {
             return this.cachedHeight;
         }
-        updateCache(i, interfaceC0044o.getWidth(), interfaceC0044o.getBaseHeight());
+        updateCache(i, item.getWidth(), item.getBaseHeight());
         return this.cachedHeight;
     }
 

@@ -57,62 +57,62 @@ public final class ChatRoom {
     }
 
     /* renamed from: a */
-    public final void serialize(ByteBuffer c0043n) {
-        c0043n.writeStringUTF16(this.name).writeIntLE(this.memberCount).writeIntLE(this.id).writeIntLE(this.unreadCount).writeStringLatin1(this.subject);
+    public final void serialize(ByteBuffer buffer) {
+        buffer.writeStringUTF16(this.name).writeIntLE(this.memberCount).writeIntLE(this.id).writeIntLE(this.unreadCount).writeStringLatin1(this.subject);
         if (this.messageIds.size() > 20) {
             this.messageIds.setSize(20);
         }
         int size = this.messageIds.size();
-        c0043n.writeIntLE(size);
+        buffer.writeIntLE(size);
         for (int i = 0; i < size; i++) {
-            String strM521a = Utils.getVectorString(this.messageIds, i);
-            c0043n.writeStringLatin1(strM521a);
-            Message c0026azM1415b = getMessage(strM521a);
-            c0043n.writeLong(c0026azM1415b.timestamp);
-            XmppMailRuProtocol.writeAddressPairs(c0026azM1415b.toList, c0043n);
-            XmppMailRuProtocol.writeAddressPairs(c0026azM1415b.ccList, c0043n);
-            c0043n.writeIntLE(c0026azM1415b.priority).writeIntLE(c0026azM1415b.flags).writeStringUTF16(Utils.defaultStr(c0026azM1415b.subject));
-            if (c0026azM1415b.body == null || c0026azM1415b.body.length() > 3072) {
-                c0043n.writeIntLE(0).writeIntLE(0);
+            String msgId = Utils.getVectorString(this.messageIds, i);
+            buffer.writeStringLatin1(msgId);
+            Message msg = getMessage(msgId);
+            buffer.writeLong(msg.timestamp);
+            XmppMailRuProtocol.writeAddressPairs(msg.toList, buffer);
+            XmppMailRuProtocol.writeAddressPairs(msg.ccList, buffer);
+            buffer.writeIntLE(msg.priority).writeIntLE(msg.flags).writeStringUTF16(Utils.defaultStr(msg.subject));
+            if (msg.body == null || msg.body.length() > 3072) {
+                buffer.writeIntLE(0).writeIntLE(0);
             } else {
-                c0043n.writeIntLE(1).writeStringUTF16(c0026azM1415b.body).writeIntLE(1);
-                Object[] objArr = c0026azM1415b.attachments;
+                buffer.writeIntLE(1).writeStringUTF16(msg.body).writeIntLE(1);
+                Object[] objArr = msg.attachments;
                 if (objArr == null) {
-                    c0043n.writeIntLE(0);
+                    buffer.writeIntLE(0);
                 } else {
-                    c0043n.writeIntLE(objArr.length);
+                    buffer.writeIntLE(objArr.length);
                     for (Object obj : objArr) {
                         String[] strArr = (String[]) obj;
                         for (int i2 = 0; i2 < 6; i2++) {
-                            c0043n.writeStringUTF16(strArr[i2]);
+                            buffer.writeStringUTF16(strArr[i2]);
                         }
                     }
                 }
             }
-            c0026azM1415b.toList = null;
-            c0026azM1415b.ccList = null;
-            c0026azM1415b.subject = null;
-            c0026azM1415b.body = null;
-            c0026azM1415b.attachments = null;
+            msg.toList = null;
+            msg.ccList = null;
+            msg.subject = null;
+            msg.body = null;
+            msg.attachments = null;
         }
     }
 
     /* renamed from: b */
-    public static final ChatRoom deserialize(ByteBuffer c0043n) {
-        ChatRoom c0052w = new ChatRoom();
-        c0052w.name = c0043n.readUTF8Str((String) null);
-        c0052w.memberCount = c0043n.readInt();
-        c0052w.id = c0043n.readInt();
-        c0052w.unreadCount = c0043n.readInt();
-        c0052w.subject = c0043n.readWideStr();
-        int iM1328e = c0043n.readInt();
-        for (int i = 0; i < iM1328e; i++) {
-            Vector vector = c0052w.messageIds;
-            String strM1334g = c0043n.readWideStr();
-            vector.addElement(strM1334g);
-            c0052w.messages.put(strM1334g, new Message(c0043n, strM1334g));
+    public static final ChatRoom deserialize(ByteBuffer buffer) {
+        ChatRoom room = new ChatRoom();
+        room.name = buffer.readUTF8Str((String) null);
+        room.memberCount = buffer.readInt();
+        room.id = buffer.readInt();
+        room.unreadCount = buffer.readInt();
+        room.subject = buffer.readWideStr();
+        int count = buffer.readInt();
+        for (int i = 0; i < count; i++) {
+            Vector vector = room.messageIds;
+            String msgKey = buffer.readWideStr();
+            vector.addElement(msgKey);
+            room.messages.put(msgKey, new Message(buffer, msgKey));
         }
-        return c0052w;
+        return room;
     }
 
     /* renamed from: a */
@@ -171,11 +171,11 @@ public final class ChatRoom {
 
     /* renamed from: a */
     public final int getType() {
-        String strM1413g = getFormattedName();
-        if (StringUtils.matchesKey(896, strM1413g) || StringUtils.matchesKey(900, strM1413g)) {
+        String formatted = getFormattedName();
+        if (StringUtils.matchesKey(896, formatted) || StringUtils.matchesKey(900, formatted)) {
             return 1;
         }
-        return (StringUtils.matchesKey(898, strM1413g) || StringUtils.matchesKey(899, strM1413g)) ? 2 : 3;
+        return (StringUtils.matchesKey(898, formatted) || StringUtils.matchesKey(899, formatted)) ? 2 : 3;
     }
 
     /* renamed from: b */

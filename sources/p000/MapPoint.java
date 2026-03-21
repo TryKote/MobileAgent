@@ -81,18 +81,18 @@ public final class MapPoint implements ListItem {
         this.sizeCache = new SizeCache();
     }
 
-    public MapPoint(ByteBuffer c0043n) {
-        this.name = c0043n.readUTF8Str((String) null);
-        this.boundsMinLon = c0043n.readLong();
-        this.boundsMinLat = c0043n.readLong();
-        this.boundsMaxLon = c0043n.readLong();
-        this.boundsMaxLat = c0043n.readLong();
-        this.longitude = c0043n.readLong();
-        this.latitude = c0043n.readLong();
-        this.zoomLevel = c0043n.readInt();
-        this.height = c0043n.readInt();
-        this.objectCode = c0043n.readInt();
-        this.typeCode = c0043n.readInt();
+    public MapPoint(ByteBuffer buffer) {
+        this.name = buffer.readUTF8Str((String) null);
+        this.boundsMinLon = buffer.readLong();
+        this.boundsMinLat = buffer.readLong();
+        this.boundsMaxLon = buffer.readLong();
+        this.boundsMaxLat = buffer.readLong();
+        this.longitude = buffer.readLong();
+        this.latitude = buffer.readLong();
+        this.zoomLevel = buffer.readInt();
+        this.height = buffer.readInt();
+        this.objectCode = buffer.readInt();
+        this.typeCode = buffer.readInt();
         this.sizeCache = new SizeCache();
     }
 

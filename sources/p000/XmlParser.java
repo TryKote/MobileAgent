@@ -28,11 +28,11 @@ public final class XmlParser {
             if (!(this.source instanceof ByteBuffer)) {
                 return ResourceManager.readUtf8Char((Object[]) this.source);
             }
-            ByteBuffer c0043n = (ByteBuffer) this.source;
-            if (c0043n.length == 0) {
+            ByteBuffer buffer = (ByteBuffer) this.source;
+            if (buffer.length == 0) {
                 return -1;
             }
-            return Utils.win1251ToChar(c0043n.readUByte());
+            return Utils.win1251ToChar(buffer.readUByte());
         }
         int i = this.position;
         String str = (String) this.source;
@@ -47,17 +47,17 @@ public final class XmlParser {
     /* renamed from: a */
     private final String parseTagOrContent(int i) {
         boolean z;
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer sb = NetworkUtils.newStringBuffer();
         boolean z2 = false;
-        int iM45b = nextChar();
-        int iM45b2 = iM45b;
-        if (iM45b == -1) {
+        int ch = nextChar();
+        int ch2 = ch;
+        if (ch == -1) {
             throw new RuntimeException();
         }
         int i2 = 0;
-        while (iM45b2 != -1) {
+        while (ch2 != -1) {
             if (!z2) {
-                int i3 = iM45b2;
+                int i3 = ch2;
                 if (i == 1) {
                     z = i3 == 60;
                 } else {
@@ -70,18 +70,18 @@ public final class XmlParser {
                     break;
                 }
             }
-            if ((iM45b2 == 34 || iM45b2 == 39) && (i2 == 0 || i2 == iM45b2)) {
+            if ((ch2 == 34 || ch2 == 39) && (i2 == 0 || i2 == ch2)) {
                 z2 = !z2;
-                i2 = iM45b2;
+                i2 = ch2;
             } else {
-                stringBufferM1217h.append((char) iM45b2);
+                sb.append((char) ch2);
             }
-            iM45b2 = nextChar();
+            ch2 = nextChar();
         }
-        if (iM45b2 != 60 && iM45b2 != 62) {
-            stringBufferM1217h.append((char) iM45b2);
+        if (ch2 != 60 && ch2 != 62) {
+            sb.append((char) ch2);
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     /* JADX WARN: Removed duplicated region for block: B:106:0x0261 A[Catch: Throwable -> 0x03cb, TryCatch #0 {Throwable -> 0x03cb, blocks: (B:3:0x000a, B:5:0x001b, B:88:0x01e8, B:8:0x0030, B:9:0x0042, B:11:0x0051, B:13:0x005a, B:15:0x0067, B:17:0x0072, B:19:0x007f, B:21:0x008a, B:29:0x00ae, B:84:0x01d9, B:32:0x00c3, B:33:0x00d1, B:35:0x00da, B:45:0x0105, B:46:0x0113, B:48:0x011c, B:60:0x014d, B:67:0x0170, B:82:0x01ad, B:83:0x01d1, B:87:0x01e3, B:90:0x01fb, B:136:0x032b, B:138:0x0336, B:140:0x0344, B:142:0x034b, B:143:0x0351, B:145:0x037a, B:146:0x0381, B:151:0x038a, B:153:0x0394, B:155:0x03a2, B:156:0x03b4, B:158:0x03c0, B:159:0x03c7, B:95:0x0222, B:100:0x0238, B:101:0x023d, B:103:0x024b, B:104:0x0250, B:106:0x0261, B:107:0x0264, B:109:0x0274, B:112:0x0286, B:113:0x028f, B:118:0x02ab, B:120:0x02c3, B:121:0x02d1, B:126:0x02ee, B:132:0x0312, B:133:0x0315, B:125:0x02eb), top: B:163:0x000a }] */
@@ -95,115 +95,115 @@ public final class XmlParser {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public final XmlElement parse() {
-        boolean zEndsWith;
+        boolean endTag;
         boolean z;
-        XmlElement c0022av;
-        String strM1215a;
+        XmlElement parentEl;
+        String decoded;
         this.rootTagName = null;
         this.rootElement = null;
         while (true) {
             try {
-                String strM46a = parseTagOrContent(1);
+                String text = parseTagOrContent(1);
                 if (this.rootElement != null) {
-                    XmlElement c0022av2 = this.rootElement;
-                    if (strM46a.indexOf(38) < 0) {
-                        strM1215a = strM46a;
+                    XmlElement parentEl2 = this.rootElement;
+                    if (text.indexOf(38) < 0) {
+                        decoded = text;
                     } else {
-                        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-                        int length = strM46a.length();
+                        StringBuffer sb = NetworkUtils.newStringBuffer();
+                        int length = text.length();
                         int i = 0;
                         while (i < length) {
-                            char cCharAt = strM46a.charAt(i);
-                            if (cCharAt != '&') {
-                                stringBufferM1217h.append(cCharAt);
+                            char c = text.charAt(i);
+                            if (c != '&') {
+                                sb.append(c);
                             } else {
-                                char cCharAt2 = i + 1 < length ? strM46a.charAt(i + 1) : (char) 0;
-                                char cCharAt3 = i + 2 < length ? strM46a.charAt(i + 2) : (char) 0;
-                                char cCharAt4 = i + 3 < length ? strM46a.charAt(i + 3) : (char) 0;
-                                if (cCharAt3 != 't' || cCharAt4 != ';') {
-                                    char cCharAt5 = i + 4 < length ? strM46a.charAt(i + 4) : (char) 0;
-                                    if (cCharAt2 == 'a' && cCharAt3 == 'm' && cCharAt4 == 'p' && cCharAt5 == ';') {
-                                        stringBufferM1217h.append('&');
+                                char c2 = i + 1 < length ? text.charAt(i + 1) : (char) 0;
+                                char c3 = i + 2 < length ? text.charAt(i + 2) : (char) 0;
+                                char c4 = i + 3 < length ? text.charAt(i + 3) : (char) 0;
+                                if (c3 != 't' || c4 != ';') {
+                                    char c5 = i + 4 < length ? text.charAt(i + 4) : (char) 0;
+                                    if (c2 == 'a' && c3 == 'm' && c4 == 'p' && c5 == ';') {
+                                        sb.append('&');
                                         i += 4;
                                     } else {
-                                        if ((i + 5 < length ? strM46a.charAt(i + 5) : (char) 0) == ';') {
-                                            if (cCharAt4 != 'o') {
-                                                if (cCharAt2 == '#' && cCharAt3 >= '0' && cCharAt3 <= '9' && cCharAt4 >= 0 && cCharAt4 <= '9' && cCharAt5 >= '0' && cCharAt5 <= '9') {
-                                                    stringBufferM1217h.append((char) ((cCharAt5 - '0') + ((cCharAt4 - '0') * 10) + ((cCharAt3 - '0') * 100)));
+                                        if ((i + 5 < length ? text.charAt(i + 5) : (char) 0) == ';') {
+                                            if (c4 != 'o') {
+                                                if (c2 == '#' && c3 >= '0' && c3 <= '9' && c4 >= 0 && c4 <= '9' && c5 >= '0' && c5 <= '9') {
+                                                    sb.append((char) ((c5 - '0') + ((c4 - '0') * 10) + ((c3 - '0') * 100)));
                                                     i += 5;
                                                 }
-                                            } else if (cCharAt2 == 'q' && cCharAt3 == 'u' && cCharAt5 == 't') {
-                                                stringBufferM1217h.append('\"');
+                                            } else if (c2 == 'q' && c3 == 'u' && c5 == 't') {
+                                                sb.append('\"');
                                                 i += 5;
-                                            } else if (cCharAt2 == 'a' && cCharAt3 == 'p' && cCharAt5 == 's') {
-                                                stringBufferM1217h.append('\'');
+                                            } else if (c2 == 'a' && c3 == 'p' && c5 == 's') {
+                                                sb.append('\'');
                                                 i += 5;
                                             }
                                         }
                                     }
-                                } else if (cCharAt2 == 'l') {
-                                    stringBufferM1217h.append('<');
+                                } else if (c2 == 'l') {
+                                    sb.append('<');
                                     i += 3;
-                                } else if (cCharAt2 == 'g') {
-                                    stringBufferM1217h.append('>');
+                                } else if (c2 == 'g') {
+                                    sb.append('>');
                                     i += 3;
                                 }
                             }
                             i++;
                         }
-                        strM1215a = NetworkUtils.bufToStringCached(stringBufferM1217h);
+                        decoded = NetworkUtils.bufToStringCached(sb);
                     }
-                    c0022av2.appendText((Object) strM1215a);
+                    parentEl2.appendText((Object) decoded);
                 }
                 boolean z2 = true;
                 boolean z3 = false;
-                String strM17c = null;
+                String tagName = null;
                 Hashtable hashtable = null;
                 while (true) {
-                    String strM46a2 = parseTagOrContent(2);
+                    String text2 = parseTagOrContent(2);
                     int i2 = 0;
-                    int length2 = strM46a2.length();
-                    if (StringUtils.matchesKey(1046, strM46a2)) {
+                    int length2 = text2.length();
+                    if (StringUtils.matchesKey(1046, text2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        zEndsWith = strM46a2.endsWith(AppState.getString(1046));
-                        z = zEndsWith;
-                        if (zEndsWith) {
+                        endTag = text2.endsWith(AppState.getString(1046));
+                        z = endTag;
+                        if (endTag) {
                             length2--;
                         }
-                        String strM12a = StringUtils.substring(strM46a2, i2, length2);
-                        if (strM17c != null) {
-                            strM17c = StringUtils.intern(strM12a.toLowerCase());
+                        String token = StringUtils.substring(text2, i2, length2);
+                        if (tagName != null) {
+                            tagName = StringUtils.intern(token.toLowerCase());
                         } else {
                             if (hashtable == null) {
                                 hashtable = new Hashtable();
                             }
-                            int length3 = strM12a.length();
-                            int iIndexOf = strM12a.indexOf(61);
-                            if (iIndexOf >= 0) {
-                                String strM13b = StringUtils.prefix(strM12a, iIndexOf);
-                                int i3 = iIndexOf + 1;
-                                if (i3 >= strM12a.length()) {
-                                    hashtable.put(strM13b, AppState.emptyStr);
+                            int length3 = token.length();
+                            int eqIdx = token.indexOf(61);
+                            if (eqIdx >= 0) {
+                                String attrName = StringUtils.prefix(token, eqIdx);
+                                int i3 = eqIdx + 1;
+                                if (i3 >= token.length()) {
+                                    hashtable.put(attrName, AppState.emptyStr);
                                 } else {
                                     int i4 = i3;
-                                    char cCharAt6 = strM12a.charAt(i4);
-                                    if (cCharAt6 == '\"' || cCharAt6 == '\'') {
+                                    char c6 = token.charAt(i4);
+                                    if (c6 == '\"' || c6 == '\'') {
                                         i4++;
                                     }
                                     int i5 = length3;
-                                    char cCharAt7 = strM12a.charAt(i5 - 1);
-                                    if ((i5 > i4 && cCharAt7 == '\"') || cCharAt7 == '\'') {
+                                    char c7 = token.charAt(i5 - 1);
+                                    if ((i5 > i4 && c7 == '\"') || c7 == '\'') {
                                         i5--;
                                     }
-                                    hashtable.put(strM13b, StringUtils.substring(strM12a, i4, i5));
+                                    hashtable.put(attrName, StringUtils.substring(token, i4, i5));
                                 }
                             } else if (!z) {
                                 break;
                             }
                         }
                     } else {
-                        if (strM46a2.charAt(0) == '/') {
+                        if (text2.charAt(0) == '/') {
                             if (length2 == 1) {
                                 z3 = true;
                                 break;
@@ -211,39 +211,39 @@ public final class XmlParser {
                             z2 = false;
                             i2 = 0 + 1;
                         }
-                        if (strM46a2.charAt(length2 - 1) == '/') {
+                        if (text2.charAt(length2 - 1) == '/') {
                             z3 = true;
                             length2--;
                         }
-                        zEndsWith = strM46a2.endsWith(AppState.getString(1046));
-                        z = zEndsWith;
-                        if (zEndsWith) {
+                        endTag = text2.endsWith(AppState.getString(1046));
+                        z = endTag;
+                        if (endTag) {
                         }
-                        String strM12a2 = StringUtils.substring(strM46a2, i2, length2);
-                        if (strM17c != null) {
+                        String token2 = StringUtils.substring(text2, i2, length2);
+                        if (tagName != null) {
                         }
                     }
                     if (!z) {
                         break;
                     }
                 }
-                if (strM17c.charAt(0) != '?') {
-                    String strM17c2 = StringUtils.intern(strM17c.toLowerCase());
+                if (tagName.charAt(0) != '?') {
+                    String tagName2 = StringUtils.intern(tagName.toLowerCase());
                     if (z2) {
                         if (this.rootTagName == null) {
-                            this.rootTagName = strM17c2;
+                            this.rootTagName = tagName2;
                         }
-                        this.rootElement = new XmlElement(strM17c2, this.rootElement, hashtable);
-                        if (StringUtils.matchesKey(857301, strM17c2)) {
+                        this.rootElement = new XmlElement(tagName2, this.rootElement, hashtable);
+                        if (StringUtils.matchesKey(857301, tagName2)) {
                             throw new RuntimeException();
                         }
                     }
                     if (z3 || !z2) {
-                        if (this.rootElement != null && (c0022av = this.rootElement.parent) != null) {
-                            c0022av.addChild(this.rootElement);
-                            this.rootElement = c0022av;
+                        if (this.rootElement != null && (parentEl = this.rootElement.parent) != null) {
+                            parentEl.addChild(this.rootElement);
+                            this.rootElement = parentEl;
                         }
-                        if (StringUtils.equals(strM17c2, this.rootTagName)) {
+                        if (StringUtils.equals(tagName2, this.rootTagName)) {
                             throw new RuntimeException();
                         }
                     }

@@ -7,24 +7,24 @@ public final class MmpContactGroup extends ContactGroup {
     /* renamed from: a */
     public int groupId;
 
-    public MmpContactGroup(MmpProtocol c0033d, int i, String str) {
-        super(c0033d);
+    public MmpContactGroup(MmpProtocol protocol, int i, String str) {
+        super(protocol);
         this.groupId = i;
         setNameIfChanged(str);
     }
 
-    public MmpContactGroup(MmpProtocol c0033d, ByteBuffer c0043n) {
-        super(c0033d);
-        this.groupId = c0043n.readInt();
-        setNameIfChanged(c0043n.readUTF8Str((String) null));
-        int iM1328e = c0043n.readInt();
+    public MmpContactGroup(MmpProtocol protocol, ByteBuffer buffer) {
+        super(protocol);
+        this.groupId = buffer.readInt();
+        setNameIfChanged(buffer.readUTF8Str((String) null));
+        int count = buffer.readInt();
         while (true) {
-            iM1328e--;
-            if (iM1328e < 0) {
-                this.isSpecial = c0043n.readBoolean();
+            count--;
+            if (count < 0) {
+                this.isSpecial = buffer.readBoolean();
                 return;
             }
-            addContact((Object) new MmpContact(c0033d, c0043n));
+            addContact((Object) new MmpContact(protocol, buffer));
         }
     }
 
@@ -34,10 +34,10 @@ public final class MmpContactGroup extends ContactGroup {
 
     @Override // p000.ContactGroup
     /* renamed from: a */
-    public final void serialize(ByteBuffer c0043n, boolean z) {
-        c0043n.writeIntLE(this.groupId);
-        c0043n.writeStringUTF16(this.name);
-        super.serialize(c0043n, z);
+    public final void serialize(ByteBuffer buffer, boolean z) {
+        buffer.writeIntLE(this.groupId);
+        buffer.writeStringUTF16(this.name);
+        super.serialize(buffer, z);
     }
 
     @Override // p000.ContactGroup
@@ -48,20 +48,20 @@ public final class MmpContactGroup extends ContactGroup {
 
     /* renamed from: a */
     public final ByteBuffer createUpdatePacket(String str, int i, int i2) {
-        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(200);
+        ByteBuffer header = new ByteBuffer().writeShortBE(200);
         int i3 = (i2 != -1 ? 2 : 0) - (i != -1 ? 2 : 0);
         int size = this.contacts.size();
-        ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE(i3 + (size << 1));
+        ByteBuffer packet = header.writeShortBE(i3 + (size << 1));
         for (int i4 = 0; i4 < size; i4++) {
             int i5 = ((MmpContact) getContact(i4)).userId;
             if (i != i5) {
-                c0043nM1357m2.writeShortBE(i5);
+                packet.writeShortBE(i5);
             }
         }
         if (i2 != -1) {
-            c0043nM1357m2.writeShortBE(i2);
+            packet.writeShortBE(i2);
         }
-        return new ByteBuffer().writeUTF(str).writeShortBE(this.groupId).writeIntBE(1).writeBufferShortLen(c0043nM1357m2);
+        return new ByteBuffer().writeUTF(str).writeShortBE(this.groupId).writeIntBE(1).writeBufferShortLen(packet);
     }
 
     @Override // p000.ContactGroup

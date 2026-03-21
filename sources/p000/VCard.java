@@ -72,15 +72,15 @@ public final class VCard {
     }
 
     /* renamed from: a */
-    public final void updatePhotos(XmlElement c0022av) {
+    public final void updatePhotos(XmlElement element) {
         Vector vector;
         String[] strArr;
-        if (c0022av == null) {
+        if (element == null) {
             return;
         }
         this.prevPhotoUrls = this.photoUrls;
         String[] strArr2 = new String[0];
-        if (c0022av.children == null || (vector = ((XmlElement) c0022av.children.elementAt(0)).children) == null) {
+        if (element.children == null || (vector = ((XmlElement) element.children.elementAt(0)).children) == null) {
             strArr = strArr2;
         } else {
             int size = vector.size();
@@ -94,20 +94,20 @@ public final class VCard {
     }
 
     /* renamed from: a */
-    public static final String[] parseCardFromBuffer(ByteBuffer c0043n) {
-        if (c0043n.length == 0 || c0043n.readInt() == 0) {
+    public static final String[] parseCardFromBuffer(ByteBuffer buffer) {
+        if (buffer.length == 0 || buffer.readInt() == 0) {
             return null;
         }
         String[] strArr = new String[8];
-        strArr[0] = c0043n.readWideStr();
-        strArr[1] = c0043n.readWideStr();
-        strArr[2] = c0043n.readWideStr();
-        strArr[3] = c0043n.readUTF8Str((String) null);
-        strArr[4] = c0043n.readWideStr();
-        strArr[5] = c0043n.readWideStr();
+        strArr[0] = buffer.readWideStr();
+        strArr[1] = buffer.readWideStr();
+        strArr[2] = buffer.readWideStr();
+        strArr[3] = buffer.readUTF8Str((String) null);
+        strArr[4] = buffer.readWideStr();
+        strArr[5] = buffer.readWideStr();
         if (StringUtils.matchesKey(590588, strArr[2])) {
-            strArr[6] = c0043n.readWideStr();
-            strArr[7] = c0043n.readWideStr();
+            strArr[6] = buffer.readWideStr();
+            strArr[7] = buffer.readWideStr();
         } else {
             strArr[6] = AppState.emptyStr;
             strArr[7] = AppState.emptyStr;
@@ -126,20 +126,20 @@ public final class VCard {
     }
 
     /* renamed from: b */
-    public static final VCard deserializeFromBuffer(ByteBuffer c0043n) {
-        VCard c0003ac = new VCard();
-        if (c0043n.readBoolean()) {
+    public static final VCard deserializeFromBuffer(ByteBuffer buffer) {
+        VCard vcard = new VCard();
+        if (buffer.readBoolean()) {
             try {
-                c0003ac.setCardData(c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr());
-                c0003ac.gender = c0043n.readIntBE();
-                c0003ac.prevPhotoUrls = c0003ac.photoUrls;
-                c0003ac.photoUrls = new String[0];
-                c0003ac.dirty = c0043n.readBoolean();
+                vcard.setCardData(buffer.readWideStr(), buffer.readWideStr(), buffer.readWideStr(), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer.readWideStr(), buffer.readWideStr(), buffer.readWideStr());
+                vcard.gender = buffer.readIntBE();
+                vcard.prevPhotoUrls = vcard.photoUrls;
+                vcard.photoUrls = new String[0];
+                vcard.dirty = buffer.readBoolean();
             } catch (Throwable unused) {
                 return null;
             }
         }
-        return c0003ac;
+        return vcard;
     }
 
     /* renamed from: c */
@@ -173,21 +173,21 @@ public final class VCard {
     }
 
     /* renamed from: a */
-    public static final String formatPhoneContactUrl(PhoneContact c0020at, int i) {
-        return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.surname).writeCompressed(393954).writeRawString(c0020at.firstName).writeCompressed(393960).writeRawString(c0020at.address).writeCompressed(393966).writeRawString(c0020at.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+    public static final String formatPhoneContactUrl(PhoneContact phoneContact, int i) {
+        return new ByteBuffer().writeCompressed(1901187).writeRawString(phoneContact.surname).writeCompressed(393954).writeRawString(phoneContact.firstName).writeCompressed(393960).writeRawString(phoneContact.address).writeCompressed(393966).writeRawString(phoneContact.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     /* renamed from: a */
-    public static final Vector parseMapPointsFromJson(ByteBuffer c0043n, long j, long j2) throws NumberFormatException {
+    public static final Vector parseMapPointsFromJson(ByteBuffer buffer, long j, long j2) throws NumberFormatException {
         Vector vector = null;
-        Vector vectorM1213g = null;
+        Vector points = null;
         try {
-            vector = (Vector) JsonParser.parseUTF8(c0043n, 2);
+            vector = (Vector) JsonParser.parseUTF8(buffer, 2);
         } catch (Throwable unused) {
         }
         if (vector != null) {
             if (!vector.isEmpty()) {
-                vectorM1213g = NetworkUtils.newVector();
+                points = NetworkUtils.newVector();
             }
             int size = vector.size();
             while (true) {
@@ -198,13 +198,13 @@ public final class VCard {
                 Hashtable hashtable = (Hashtable) vector.elementAt(size);
                 String str = (String) hashtable.get("Path");
                 int i = Integer.parseInt((String) hashtable.get("TypeCode"));
-                MapPoint c0014an = new MapPoint(str, j, j2, MapPoint.getMarkerType(i));
-                c0014an.height = 1;
-                c0014an.typeCode = i;
-                c0014an.objectCode = Integer.parseInt((String) hashtable.get("ObjCode"));
-                vectorM1213g.addElement(c0014an);
+                MapPoint mapPoint = new MapPoint(str, j, j2, MapPoint.getMarkerType(i));
+                mapPoint.height = 1;
+                mapPoint.typeCode = i;
+                mapPoint.objectCode = Integer.parseInt((String) hashtable.get("ObjCode"));
+                points.addElement(mapPoint);
             }
         }
-        return vectorM1213g;
+        return points;
     }
 }

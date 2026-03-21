@@ -69,8 +69,8 @@ public final class GraphicsContext {
     }
 
     /* renamed from: a */
-    public final GraphicsContext setFont(GraphicsContext c0012al) {
-        this.graphics.setFont(c0012al.font);
+    public final GraphicsContext setFont(GraphicsContext other) {
+        this.graphics.setFont(other.font);
         return this;
     }
 
@@ -119,8 +119,8 @@ public final class GraphicsContext {
         if (clipX - i7 < 16) {
             int clipY = graphics.getClipY();
             if (clipY - i6 < 16 && (clipWidth2 = (clipX - i7) + (clipWidth = graphics.getClipWidth())) > 0 && (clipHeight2 = (clipY - i6) + (clipHeight = graphics.getClipHeight())) > 0) {
-                int iM503b = Utils.min(clipWidth2, 16);
-                int iM503b2 = Utils.min(clipHeight2, 16);
+                int drawW = Utils.min(clipWidth2, 16);
+                int drawW2 = Utils.min(clipHeight2, 16);
                 int i8 = i5 <= 354 ? 255 & AppState.getBytes(295)[i5 + 39] : 256 + AppState.getBytes(295)[i5 + 39];
                 int i9 = i8;
                 int i10 = i8 >> 4;
@@ -129,19 +129,19 @@ public final class GraphicsContext {
                 int i13 = (i11 >> 2) << 4;
                 int i14 = clipX - i7;
                 if (i14 > 0) {
-                    iM503b -= i14;
+                    drawW -= i14;
                     i7 = clipX;
                     i12 += i14;
                 }
-                if (iM503b > 0) {
+                if (drawW > 0) {
                     int i15 = clipY - i6;
                     if (i15 > 0) {
-                        iM503b2 -= i15;
+                        drawW2 -= i15;
                         i6 = clipY;
                         i13 += i15;
                     }
-                    if (iM503b2 > 0) {
-                        graphics.setClip(i7, i6, iM503b, iM503b2);
+                    if (drawW2 > 0) {
+                        graphics.setClip(i7, i6, drawW, drawW2);
                         graphics.drawImage(XmppContactGroup.getOrLoadImage(i10), i7 - i12, i6 - i13, 20);
                         graphics.setClip(clipX, clipY, clipWidth, clipHeight);
                     }

@@ -64,8 +64,8 @@ public final class MmpContact extends Contact {
     /* renamed from: C */
     private static int totalRouteDuration;
 
-    public MmpContact(MmpProtocol c0033d, int i, int i2, String str, String str2, boolean z) {
-        super(c0033d);
+    public MmpContact(MmpProtocol protocol, int i, int i2, String str, String str2, boolean z) {
+        super(protocol);
         this.userId = i;
         this.onlineSemaphore = i2;
         this.identifier = str;
@@ -73,8 +73,8 @@ public final class MmpContact extends Contact {
         this.sortKey = StringUtils.intern(str2.toLowerCase());
         this.hasUnread = z;
         this.defaultIcon = 255;
-        this.identifier = c0033d.encodeId().writeRawString(str).readAllByteStr();
-        c0033d.registerContact(this);
+        this.identifier = protocol.encodeId().writeRawString(str).readAllByteStr();
+        protocol.registerContact(this);
         updateRenderState();
         this.extra = str;
     }
@@ -94,66 +94,66 @@ public final class MmpContact extends Contact {
         return this.identifier;
     }
 
-    public MmpContact(Account abstractC0037h, ByteBuffer c0043n) {
-        super(abstractC0037h);
-        this.userId = c0043n.readInt();
-        this.onlineSemaphore = c0043n.readInt();
-        this.identifier = c0043n.readWideStr();
-        setDisplayName(c0043n.readUTF8Str((String) null));
-        this.hasUnread = c0043n.readBoolean();
-        c0043n.readBoolean();
-        this.canDelete = c0043n.readShortBE();
-        this.canBlock = c0043n.readShortBE();
-        this.canUnblock = c0043n.readShortBE();
-        byte bM1344o = c0043n.readByte();
-        this.flags = bM1344o;
-        if (bM1344o != 0) {
+    public MmpContact(Account account, ByteBuffer buffer) {
+        super(account);
+        this.userId = buffer.readInt();
+        this.onlineSemaphore = buffer.readInt();
+        this.identifier = buffer.readWideStr();
+        setDisplayName(buffer.readUTF8Str((String) null));
+        this.hasUnread = buffer.readBoolean();
+        buffer.readBoolean();
+        this.canDelete = buffer.readShortBE();
+        this.canBlock = buffer.readShortBE();
+        this.canUnblock = buffer.readShortBE();
+        byte savedFlags = buffer.readByte();
+        this.flags = savedFlags;
+        if (savedFlags != 0) {
             AppController.markContactRead((Contact) this);
         }
         this.defaultIcon = 255;
-        this.identifier = abstractC0037h.encodeId().writeRawString(this.identifier).readAllByteStr();
-        abstractC0037h.registerContact(this);
+        this.identifier = account.encodeId().writeRawString(this.identifier).readAllByteStr();
+        account.registerContact(this);
         updateRenderState();
         this.extra = this.identifier;
     }
 
     @Override // p000.Contact
     /* renamed from: a */
-    public final void deserialize(ByteBuffer c0043n) {
-        c0043n.writeIntLE(this.userId).writeIntLE(this.onlineSemaphore).writeStringLatin1(this.identifier).writeStringUTF16(this.displayName).writeBoolean(this.hasUnread).writeBoolean(false).writeShortBE(this.canDelete).writeShortBE(this.canBlock).writeShortBE(this.canUnblock).writeByte(this.flags);
+    public final void deserialize(ByteBuffer buffer) {
+        buffer.writeIntLE(this.userId).writeIntLE(this.onlineSemaphore).writeStringLatin1(this.identifier).writeStringUTF16(this.displayName).writeBoolean(this.hasUnread).writeBoolean(false).writeShortBE(this.canDelete).writeShortBE(this.canBlock).writeShortBE(this.canUnblock).writeByte(this.flags);
     }
 
     @Override // p000.Contact
     /* renamed from: b */
     public final MenuItem createMenuItem() {
-        MenuItem c0032cM901a = MenuItem.create(this.identifier).setIcon(getIcon()).addText(this.displayName, canBlock() ? 3 : canDelete() ? 2 : 0, this.defaultIcon == 255 ? 0 : canDelete() ? 4 : canBlock() ? 5 : 3);
-        c0032cM901a.data = this;
-        return c0032cM901a;
+        MenuItem menuItem = MenuItem.create(this.identifier).setIcon(getIcon()).addText(this.displayName, canBlock() ? 3 : canDelete() ? 2 : 0, this.defaultIcon == 255 ? 0 : canDelete() ? 4 : canBlock() ? 5 : 3);
+        menuItem.data = this;
+        return menuItem;
     }
 
     @Override // p000.Contact
     /* renamed from: e */
     public final int getIcon() {
-        int iMo139e = super.getIcon();
-        if (iMo139e == 16384 || iMo139e == 26) {
-            return iMo139e;
+        int icon = super.getIcon();
+        if (icon == 16384 || icon == 26) {
+            return icon;
         }
         if (hasUnread() || isOnline()) {
             return 263;
         }
-        return iMo139e;
+        return icon;
     }
 
     /* renamed from: a */
     public final ByteBuffer encodeContactUpdate(int i, String str, int i2) {
-        ByteBuffer c0043n = new ByteBuffer();
+        ByteBuffer buffer = new ByteBuffer();
         if (i != 2) {
-            c0043n.writeShortBE(305).writeUTF(str);
+            buffer.writeShortBE(305).writeUTF(str);
         }
         if (i == 5) {
-            c0043n.writeShortBE(102).writeShortBE(0);
+            buffer.writeShortBE(102).writeShortBE(0);
         }
-        return new ByteBuffer().writeUTF(this.identifier).writeShortBE(i2).writeShortBE(this.userId).writeShortBE(0).writeBufferShortLen(c0043n);
+        return new ByteBuffer().writeUTF(this.identifier).writeShortBE(i2).writeShortBE(this.userId).writeShortBE(0).writeBufferShortLen(buffer);
     }
 
     @Override // p000.Contact
@@ -244,15 +244,15 @@ public final class MmpContact extends Contact {
 
     /* renamed from: o */
     public static final String buildLocationString() {
-        ByteBuffer c0043nM1314d = new ByteBuffer().writeCompressed(1442705).writeCompressed(3085016).writeRawString(IOUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.pixelToLatitude(lastTokenPair[1]));
+        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(1442705).writeCompressed(3085016).writeRawString(IOUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.pixelToLatitude(lastTokenPair[1]));
         int size = routePoints.size();
         int i = 0;
         while (i <= size) {
             int[] iArr = i < size ? (int[]) routePoints.elementAt(i) : new int[]{(int) currentTokenPair[0], (int) currentTokenPair[1]};
-            c0043nM1314d.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLongitude(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLatitude(iArr[1]));
+            urlBuf.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLongitude(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLatitude(iArr[1]));
             i++;
         }
-        return c0043nM1314d.getStringAndClear();
+        return urlBuf.getStringAndClear();
     }
 
     /* JADX WARN: Multi-variable type inference failed */
@@ -262,17 +262,17 @@ public final class MmpContact extends Contact {
     /* JADX WARN: Type inference failed for: r0v90, types: [java.lang.Object[]] */
     /* JADX WARN: Type inference failed for: r2v9 */
     /* renamed from: b */
-    public static final void parseRouteFromJson(ByteBuffer c0043n) {
+    public static final void parseRouteFromJson(ByteBuffer buffer) {
         int[] iArr = null;
         int i = 0;
         int i2 = 0;
-        int iM192t = 0;
+        int totalPoints = 0;
         Object z = Boolean.FALSE;
         int i3 = 0;
         routeRegions.removeAllElements();
         totalRouteLength = 0;
         totalRouteDuration = 0;
-        Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(c0043n, 2);
+        Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(buffer, 2);
         totalRouteLength = ((Integer) hashtable.get("totalLength")).intValue();
         totalRouteDuration = ((Integer) hashtable.get("totalTime")).intValue();
         Vector vector = (Vector) hashtable.get("regions");
@@ -298,7 +298,7 @@ public final class MmpContact extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(AppState.getString(979));
+                        StringBuffer routeInfo = NetworkUtils.newStringBuffer().append(AppState.getString(979));
                         int i7 = 952;
                         int i8 = totalRouteLength;
                         int i9 = 0;
@@ -307,27 +307,27 @@ public final class MmpContact extends Contact {
                             i8 /= 1000;
                             i7 = 952 + 1;
                         }
-                        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-                        stringBufferM1217h.append(i8);
+                        StringBuffer distBuf = NetworkUtils.newStringBuffer();
+                        distBuf.append(i8);
                         if (i9 != 0) {
-                            stringBufferM1217h.append('.');
-                            String strM17c = StringUtils.intern(Integer.toString(i9));
-                            String strM13b = strM17c;
-                            if (strM17c.length() > 2) {
-                                strM13b = StringUtils.prefix(strM13b, 2);
+                            distBuf.append('.');
+                            String fracStr = StringUtils.intern(Integer.toString(i9));
+                            String trimmed = fracStr;
+                            if (fracStr.length() > 2) {
+                                trimmed = StringUtils.prefix(trimmed, 2);
                             }
-                            stringBufferM1217h.append(strM13b);
+                            distBuf.append(trimmed);
                         }
-                        StringBuffer stringBufferAppend2 = stringBufferAppend.append(NetworkUtils.bufToStringCached(stringBufferM1217h.append(AppState.getString(i7)))).append(AppState.getString(983));
+                        StringBuffer routeInfo2 = routeInfo.append(NetworkUtils.bufToStringCached(distBuf.append(AppState.getString(i7)))).append(AppState.getString(983));
                         int i10 = totalRouteDuration;
-                        StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
+                        StringBuffer distBuf2 = NetworkUtils.newStringBuffer();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
-                            stringBufferM1217h2.append(i11);
+                            distBuf2.append(i11);
                         } else {
-                            stringBufferM1217h2.append(i11 / 60).append(AppState.getString(954)).append(i11 % 60);
+                            distBuf2.append(i11 / 60).append(AppState.getString(954)).append(i11 % 60);
                         }
-                        r03[1] = stringBufferAppend2.append(NetworkUtils.bufToStringCached(stringBufferM1217h2.append(AppState.getString(955)))).toString();
+                        r03[1] = routeInfo2.append(NetworkUtils.bufToStringCached(distBuf2.append(AppState.getString(955)))).toString();
                         r03[2] = AppState.emptyStr;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
                         r03[1] = AppState.getString(980);
@@ -355,20 +355,20 @@ public final class MmpContact extends Contact {
                 iArr = (int[]) routePoints.elementAt(i12);
                 i = iArr[0];
                 i2 = iArr[1];
-                iM192t = getTotalRoutePoints();
+                totalPoints = getTotalRoutePoints();
             } catch (Throwable unused) {
             }
-            if (iM192t == 0) {
+            if (totalPoints == 0) {
                 throw new RuntimeException();
             }
             int i13 = 0;
-            int[] iArrM193a = getRoutePointAt(0);
-            int iM319a = AppController.computeColor(iArrM193a[0], iArrM193a[1], i, i2);
-            for (int i14 = 1; i14 < iM192t; i14++) {
-                int[] iArrM193a2 = getRoutePointAt(i14);
-                int iM319a2 = AppController.computeColor(iArrM193a2[0], iArrM193a2[1], i, i2);
-                if (iM319a2 < iM319a) {
-                    iM319a = iM319a2;
+            int[] coords = getRoutePointAt(0);
+            int minDist = AppController.computeColor(coords[0], coords[1], i, i2);
+            for (int i14 = 1; i14 < totalPoints; i14++) {
+                int[] coords2 = getRoutePointAt(i14);
+                int minDist2 = AppController.computeColor(coords2[0], coords2[1], i, i2);
+                if (minDist2 < minDist) {
+                    minDist = minDist2;
                     i13 = i14;
                 }
             }
@@ -388,15 +388,15 @@ public final class MmpContact extends Contact {
 
     /* renamed from: r */
     public static final int[] getNextRoutePoint() {
-        int iM192t = getTotalRoutePoints();
-        int iM586d = AppState.getInt(39);
-        int[] iArrM193a = getRoutePointAt(currentRouteIndex);
-        int iM317a = (int) AppController.coordToPixel(iArrM193a[0], iM586d);
-        int iM317a2 = (int) AppController.coordToPixel(iArrM193a[1], iM586d);
-        for (int i = currentRouteIndex + 1; i < iM192t; i++) {
+        int totalPoints = getTotalRoutePoints();
+        int zoom = AppState.getInt(39);
+        int[] coords = getRoutePointAt(currentRouteIndex);
+        int px = (int) AppController.coordToPixel(coords[0], zoom);
+        int px2 = (int) AppController.coordToPixel(coords[1], zoom);
+        for (int i = currentRouteIndex + 1; i < totalPoints; i++) {
             if (getRouteLabelsAt(i) != null) {
-                int[] iArrM193a2 = getRoutePointAt(i);
-                if (ChatRenderer.isDistant(iM317a, (int) AppController.coordToPixel(iArrM193a2[0], iM586d), iM317a2, (int) AppController.coordToPixel(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
+                int[] coords2 = getRoutePointAt(i);
+                if (ChatRenderer.isDistant(px, (int) AppController.coordToPixel(coords2[0], zoom), px2, (int) AppController.coordToPixel(coords2[1], zoom)) || i == totalPoints - 1) {
                     currentRouteIndex = i;
                     break;
                 }
@@ -407,14 +407,14 @@ public final class MmpContact extends Contact {
 
     /* renamed from: s */
     public static final int[] getPrevRoutePoint() {
-        int[] iArrM193a;
+        int[] coords;
         if (currentRouteIndex == 0 && getRouteLabelsAt(currentRouteIndex) != null) {
             return getRoutePointAt(currentRouteIndex);
         }
-        int iM586d = AppState.getInt(39);
-        int[] iArrM193a2 = getRoutePointAt(currentRouteIndex);
-        int iM317a = (int) AppController.coordToPixel(iArrM193a2[0], iM586d);
-        int iM317a2 = (int) AppController.coordToPixel(iArrM193a2[1], iM586d);
+        int zoom = AppState.getInt(39);
+        int[] coords2 = getRoutePointAt(currentRouteIndex);
+        int px = (int) AppController.coordToPixel(coords2[0], zoom);
+        int px2 = (int) AppController.coordToPixel(coords2[1], zoom);
         int i = currentRouteIndex;
         while (true) {
             i--;
@@ -422,14 +422,14 @@ public final class MmpContact extends Contact {
                 return null;
             }
             if (getRouteLabelsAt(i) != null) {
-                iArrM193a = getRoutePointAt(i);
-                if (ChatRenderer.isDistant(iM317a, (int) AppController.coordToPixel(iArrM193a[0], iM586d), iM317a2, (int) AppController.coordToPixel(iArrM193a[1], iM586d)) || i == 0) {
+                coords = getRoutePointAt(i);
+                if (ChatRenderer.isDistant(px, (int) AppController.coordToPixel(coords[0], zoom), px2, (int) AppController.coordToPixel(coords[1], zoom)) || i == 0) {
                     break;
                 }
             }
         }
         currentRouteIndex = i;
-        return iArrM193a;
+        return coords;
     }
 
     /* renamed from: t */
