@@ -98,10 +98,10 @@ public final class MapPoint implements ListItem {
 
     /* renamed from: a */
     public final String getDisplayName() {
-        int iIndexOf;
+        int endIdx;
         try {
-            int iIndexOf2 = this.name.indexOf(59);
-            return (iIndexOf2 < 0 || (iIndexOf = this.name.indexOf(59, iIndexOf2 + 1)) < 0) ? this.name : StringUtils.prefix(this.name, iIndexOf);
+            int startIdx = this.name.indexOf(59);
+            return (startIdx < 0 || (endIdx = this.name.indexOf(59, startIdx + 1)) < 0) ? this.name : StringUtils.prefix(this.name, endIdx);
         } catch (Throwable unused) {
             return this.name;
         }

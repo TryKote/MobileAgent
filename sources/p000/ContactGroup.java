@@ -62,13 +62,13 @@ public abstract class ContactGroup implements Sortable {
                 if (size < 0) {
                     break;
                 }
-                Contact contactM1394e = getContact(size);
-                if (contactM1394e.highlighted && !contactM1394e.hasUnread() && !contactM1394e.canUnblock() && !contactM1394e.isOffline() && !contactM1394e.isSystem()) {
+                Contact contact = getContact(size);
+                if (contact.highlighted && !contact.hasUnread() && !contact.canUnblock() && !contact.isOffline() && !contact.isSystem()) {
                     i2++;
                 }
             }
             MenuItem nameText2 = nameText.addText(StringUtils.intern(Integer.toString(i2)), 1, 20);
-            StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append('/');
+            StringBuffer sb = NetworkUtils.newStringBuffer().append('/');
             int size2 = this.contacts.size();
             int i3 = size2;
             int i4 = size2;
@@ -77,12 +77,12 @@ public abstract class ContactGroup implements Sortable {
                 if (i4 < 0) {
                     break;
                 }
-                Contact contactM1394e2 = getContact(i4);
-                if (contactM1394e2.isOffline() || contactM1394e2.hasUnread() || contactM1394e2.canUnblock() || contactM1394e2.isSystem()) {
+                Contact ct = getContact(i4);
+                if (ct.isOffline() || ct.hasUnread() || ct.canUnblock() || ct.isSystem()) {
                     i3--;
                 }
             }
-            nameText2.addText(NetworkUtils.bufToStringCached(stringBufferAppend.append(i3).append(')')), 1, 0);
+            nameText2.addText(NetworkUtils.bufToStringCached(sb.append(i3).append(')')), 1, 0);
         } else if (i >= 0) {
             menuItem.addText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.name).append(' ').append('(').append(i).append(')')), 1, 0);
         } else {

@@ -2479,9 +2479,9 @@ public final class AppController {
                                                                 Message msg = new Message((Hashtable) enumerationElements2.nextElement());
                                                                 chatRoom2.messages.put(msg.from, msg);
                                                             }
-                                                            Enumeration enumerationKeys = chatRoom2.messages.keys();
-                                                            while (enumerationKeys.hasMoreElements()) {
-                                                                String str3 = (String) enumerationKeys.nextElement();
+                                                            Enumeration keys = chatRoom2.messages.keys();
+                                                            while (keys.hasMoreElements()) {
+                                                                String str3 = (String) keys.nextElement();
                                                                 if (!chatRoom2.messageIds.contains(str3)) {
                                                                     chatRoom2.messages.remove(str3);
                                                                 }
@@ -2519,9 +2519,9 @@ public final class AppController {
                                                         MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
                                                         int size4 = ((Vector) payload2).size();
                                                         for (int i6 = 0; i6 < size4; i6++) {
-                                                            Enumeration enumerationKeys2 = ((Hashtable) JsonParser.getVectorElement(payload2, i6)).keys();
-                                                            while (enumerationKeys2.hasMoreElements()) {
-                                                                String str5 = (String) enumerationKeys2.nextElement();
+                                                            Enumeration keys2 = ((Hashtable) JsonParser.getVectorElement(payload2, i6)).keys();
+                                                            while (keys2.hasMoreElements()) {
+                                                                String str5 = (String) keys2.nextElement();
                                                                 ChatRoom selectedChatRoom = mrimAccount3.findChatRoomByName(str5);
                                                                 ChatRoom chatRoom3 = mrimAccount3.findChatRoomById(AppState.getInt(1527));
                                                                 if (selectedChatRoom != null && (message2 = selectedChatRoom.getMessage(str5)) != null && chatRoom3 != null) {
@@ -2688,8 +2688,8 @@ public final class AppController {
                                                                     textBox.setString(StringUtils.prefix(inputText, inputText.length() - i9));
                                                                 }
                                                             } else {
-                                                                char cCharAt = inputText.charAt(i8);
-                                                                if ((cCharAt >= 1040 && cCharAt <= 1071) || ((cCharAt >= 1072 && cCharAt <= 1103) || cCharAt == 1105 || cCharAt == 1025)) {
+                                                                char ch = inputText.charAt(i8);
+                                                                if ((ch >= 1040 && ch <= 1071) || ((ch >= 1072 && ch <= 1103) || ch == 1105 || ch == 1025)) {
                                                                     i7 += 2;
                                                                 }
                                                             }
@@ -3419,9 +3419,9 @@ public final class AppController {
                                                                 }
                                                             }
                                                             if (!z4) {
-                                                                int iM456O = i13 == 42 ? getKeyAction(AppState.getInt(205)) : i13 == 35 ? getKeyAction(AppState.getInt(206)) : (i13 < 48 || i13 > 57) ? 0 : getKeyAction(AppState.getInt(i13 + 159));
-                                                                int i17 = iM456O;
-                                                                if (iM456O != 0) {
+                                                                int keyAction = i13 == 42 ? getKeyAction(AppState.getInt(205)) : i13 == 35 ? getKeyAction(AppState.getInt(206)) : (i13 < 48 || i13 > 57) ? 0 : getKeyAction(AppState.getInt(i13 + 159));
+                                                                int i17 = keyAction;
+                                                                if (keyAction != 0) {
                                                                     ScreenBuilder.openScreen(i17);
                                                                     break;
                                                                 } else if (i14 == 8) {
@@ -3873,22 +3873,22 @@ public final class AppController {
             MenuItem headerItem = AppState.getVector(1272).size() > 0 ? ScreenManager.getCurrentScreen().getHeaderItem() : null;
             Object obj = menuItem2 == null ? null : menuItem2.data;
             Object obj2 = headerItem == null ? null : headerItem.data;
-            int iM460J = 0;
+            int actionResult = 0;
             switch (ScreenManager.getCurrentScreen().screenId) {
                 case 1:
-                    iM460J = handleMapMenuOption(selectedOption);
+                    actionResult = handleMapMenuOption(selectedOption);
                     break;
                 case 2:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 3:
-                    iM460J = IOUtils.handleStatusChange(selectedOption);
+                    actionResult = IOUtils.handleStatusChange(selectedOption);
                     break;
                 case 4:
-                    iM460J = ContactListManager.onContactSelected(title, obj);
+                    actionResult = ContactListManager.onContactSelected(title, obj);
                     break;
                 case 5:
-                    iM460J = handleChatSettingsOption(selectedOption);
+                    actionResult = handleChatSettingsOption(selectedOption);
                     break;
                 case 6:
                     if (!AppState.getBool(1414)) {
@@ -3903,101 +3903,101 @@ public final class AppController {
                     } else {
                         i2 = 113;
                     }
-                    iM460J = i2;
+                    actionResult = i2;
                     break;
                 case 7:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 8:
-                    iM460J = handleSettingsOption(selectedOption);
+                    actionResult = handleSettingsOption(selectedOption);
                     break;
                 case 9:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 10:
-                    iM460J = 55;
+                    actionResult = 55;
                     break;
                 case 11:
-                    iM460J = handleLeftKey();
+                    actionResult = handleLeftKey();
                     break;
                 case 13:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 14:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 15:
-                    iM460J = handleMenuAction(title, obj);
+                    actionResult = handleMenuAction(title, obj);
                     break;
                 case 16:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 17:
-                    iM460J = handleAccountOption(selectedOption);
+                    actionResult = handleAccountOption(selectedOption);
                     break;
                 case 18:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 19:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 20:
-                    iM460J = handleProfileAction(selectedOption);
+                    actionResult = handleProfileAction(selectedOption);
                     break;
                 case 21:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 22:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 23:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 24:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 25:
-                    iM460J = handleInputAction(selectedOption, obj);
+                    actionResult = handleInputAction(selectedOption, obj);
                     break;
                 case 26:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 27:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 28:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 29:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 30:
-                    iM460J = IOUtils.handleContactGroupAction(title, selectedOption);
+                    actionResult = IOUtils.handleContactGroupAction(title, selectedOption);
                     break;
                 case 32:
-                    iM460J = ResourceManager.handleDropdownSelect(title, menuItem2);
+                    actionResult = ResourceManager.handleDropdownSelect(title, menuItem2);
                     break;
                 case 33:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 34:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 35:
-                    iM460J = handleConnectionOption(selectedOption);
+                    actionResult = handleConnectionOption(selectedOption);
                     break;
                 case 36:
-                    iM460J = ResourceManager.selectMailAccount(obj);
+                    actionResult = ResourceManager.selectMailAccount(obj);
                     break;
                 case 37:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 38:
                     AppState.setInt(1513, ((ChatRoom) obj).id);
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 39:
-                    iM460J = handleAction(obj);
+                    actionResult = handleAction(obj);
                     break;
                 case 40:
                     if (obj2 != null) {
@@ -4024,13 +4024,13 @@ public final class AppController {
                         Contact currentContact = AppState.getCurrentContact();
                         nextState = !currentContact.account.isConnected() ? showError(299) : currentContact.isOffline() ? ResourceManager.clearSmsFields() : 63;
                     }
-                    iM460J = nextState;
+                    actionResult = nextState;
                     break;
                 case 41:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 42:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 43:
                     AppState.setInt(1514, screen.scrollOffset);
@@ -4048,431 +4048,431 @@ public final class AppController {
                         }
                         i = 0;
                     }
-                    iM460J = i;
+                    actionResult = i;
                     break;
                 case 44:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 45:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 46:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 47:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 48:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 49:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 50:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 51:
                     ResourceManager.handleChatRoomAction(title);
                 case 52:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 53:
-                    iM460J = IOUtils.handleMailForwardAction(title);
+                    actionResult = IOUtils.handleMailForwardAction(title);
                     break;
                 case 54:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 55:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 56:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 57:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 58:
-                    iM460J = handleGroupSelection(selectedOption);
+                    actionResult = handleGroupSelection(selectedOption);
                     break;
                 case 59:
-                    iM460J = ResourceManager.applyVersionLabel();
+                    actionResult = ResourceManager.applyVersionLabel();
                     break;
                 case 60:
-                    iM460J = processInputText(title);
+                    actionResult = processInputText(title);
                     break;
                 case 61:
-                    iM460J = 42;
+                    actionResult = 42;
                     break;
                 case 62:
-                    iM460J = IOUtils.handleMailMenuAction(title, selectedOption);
+                    actionResult = IOUtils.handleMailMenuAction(title, selectedOption);
                     break;
                 case 63:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 64:
-                    iM460J = handleAccountSwitchOption(selectedOption);
+                    actionResult = handleAccountSwitchOption(selectedOption);
                     break;
                 case 65:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 66:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 67:
-                    iM460J = handleSoftKeyAction(title);
+                    actionResult = handleSoftKeyAction(title);
                     break;
                 case 68:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 69:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 70:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 71:
-                    iM460J = ResourceManager.deleteSelectedEntity();
+                    actionResult = ResourceManager.deleteSelectedEntity();
                     break;
                 case 72:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 73:
                     AppState.pool[1319] = obj;
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 74:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 75:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 76:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 77:
-                    iM460J = handleInviteResult();
+                    actionResult = handleInviteResult();
                     break;
                 case 78:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 79:
                     ScreenBuilder.onScreenClosed();
                     ScreenBuilder.onScreenClosed();
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 80:
-                    iM460J = handleNotificationOption(selectedOption);
+                    actionResult = handleNotificationOption(selectedOption);
                     break;
                 case 81:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 82:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 83:
-                    iM460J = handleHashKey();
+                    actionResult = handleHashKey();
                     break;
                 case 84:
-                    iM460J = ResourceManager.handleMessageInputAction(title, selectedOption);
+                    actionResult = ResourceManager.handleMessageInputAction(title, selectedOption);
                     break;
                 case 85:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 86:
-                    iM460J = handleSearchAction(obj);
+                    actionResult = handleSearchAction(obj);
                     break;
                 case 87:
-                    iM460J = ResourceManager.handleChatInputAction(title);
+                    actionResult = ResourceManager.handleChatInputAction(title);
                     break;
                 case 88:
-                    iM460J = handleThemeOption(selectedOption);
+                    actionResult = handleThemeOption(selectedOption);
                     break;
                 case 89:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 90:
-                    iM460J = handleEventObject(obj);
+                    actionResult = handleEventObject(obj);
                     break;
                 case 91:
-                    iM460J = getThemeBackground(selectedOption);
+                    actionResult = getThemeBackground(selectedOption);
                     break;
                 case 92:
-                    iM460J = IOUtils.handleContactMenuAction(title, selectedOption);
+                    actionResult = IOUtils.handleContactMenuAction(title, selectedOption);
                     break;
                 case 93:
-                    iM460J = handleSoundOption(selectedOption);
+                    actionResult = handleSoundOption(selectedOption);
                     break;
                 case 94:
-                    iM460J = processPhoneInput(title);
+                    actionResult = processPhoneInput(title);
                     break;
                 case 95:
-                    iM460J = validateServerAddress(title);
+                    actionResult = validateServerAddress(title);
                     break;
                 case 96:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 97:
-                    iM460J = handleSearchResultAction(obj);
+                    actionResult = handleSearchResultAction(obj);
                     break;
                 case 98:
-                    iM460J = processPhoneInput(title);
+                    actionResult = processPhoneInput(title);
                     break;
                 case 99:
-                    iM460J = openUrl(title);
+                    actionResult = openUrl(title);
                     break;
                 case 100:
-                    iM460J = IOUtils.handleMapPointAction(obj);
+                    actionResult = IOUtils.handleMapPointAction(obj);
                     break;
                 case 101:
-                    iM460J = handleConversationAction(obj);
+                    actionResult = handleConversationAction(obj);
                     break;
                 case 102:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 103:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 104:
-                    iM460J = getThemeColor(selectedOption);
+                    actionResult = getThemeColor(selectedOption);
                     break;
                 case 105:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 106:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 107:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 108:
-                    iM460J = handleContactListKey();
+                    actionResult = handleContactListKey();
                     break;
                 case 109:
-                    iM460J = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(selectedOption);
+                    actionResult = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(selectedOption);
                     break;
                 case 110:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 111:
-                    iM460J = handleMapSearchAction(obj);
+                    actionResult = handleMapSearchAction(obj);
                     break;
                 case 112:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 113:
-                    iM460J = XmppMailRuProtocol.handleMapAction(selectedOption);
+                    actionResult = XmppMailRuProtocol.handleMapAction(selectedOption);
                     break;
                 case 114:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 115:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 116:
-                    iM460J = handleMapResultAction(obj);
+                    actionResult = handleMapResultAction(obj);
                     break;
                 case 117:
-                    iM460J = processLoginField(title);
+                    actionResult = processLoginField(title);
                     break;
                 case 118:
-                    iM460J = handleFileAction(obj);
+                    actionResult = handleFileAction(obj);
                     break;
                 case 119:
-                    iM460J = handleChatRoomOption(selectedOption);
+                    actionResult = handleChatRoomOption(selectedOption);
                     break;
                 case 120:
-                    iM460J = handleIncomingCall(obj);
+                    actionResult = handleIncomingCall(obj);
                     break;
                 case 121:
-                    iM460J = handleChatListOption(selectedOption);
+                    actionResult = handleChatListOption(selectedOption);
                     break;
                 case 122:
-                    iM460J = handlePresenceAction();
+                    actionResult = handlePresenceAction();
                     break;
                 case 123:
-                    iM460J = handleLocationAction(obj);
+                    actionResult = handleLocationAction(obj);
                     break;
                 case 124:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 125:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 126:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 127:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 128:
                     AppState.getCurrentContact().initMessageBuffer();
-                    iM460J = 4;
+                    actionResult = 4;
                     break;
                 case 129:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 130:
-                    iM460J = handleScreenAction(selectedOption);
+                    actionResult = handleScreenAction(selectedOption);
                     break;
                 case 131:
-                    iM460J = processSearchQuery(title);
+                    actionResult = processSearchQuery(title);
                     break;
                 case 132:
-                    iM460J = mapKeyToAction(selectedOption);
+                    actionResult = mapKeyToAction(selectedOption);
                     break;
                 case 133:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 134:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 135:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 136:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 137:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 138:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 139:
-                    iM460J = 129;
+                    actionResult = 129;
                     break;
                 case 140:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 141:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 142:
                     AppState.pool[1336] = obj;
-                    iM460J = obj != null ? 0 : -1;
+                    actionResult = obj != null ? 0 : -1;
                     break;
                 case 143:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 144:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 145:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 146:
-                    iM460J = handleGroupRename(selectedOption);
+                    actionResult = handleGroupRename(selectedOption);
                     break;
                 case 147:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 148:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 149:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 150:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 151:
-                    iM460J = handleExtSettingsOption(selectedOption);
+                    actionResult = handleExtSettingsOption(selectedOption);
                     break;
                 case 152:
-                    iM460J = handleContactOption(selectedOption);
+                    actionResult = handleContactOption(selectedOption);
                     break;
                 case 153:
-                    iM460J = ResourceManager.setSelectedObject(obj);
+                    actionResult = ResourceManager.setSelectedObject(obj);
                     break;
                 case 154:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 155:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 156:
-                    iM460J = IOUtils.applyPhotoSelection();
+                    actionResult = IOUtils.applyPhotoSelection();
                     break;
                 case 157:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 158:
-                    iM460J = handleViewOption(selectedOption);
+                    actionResult = handleViewOption(selectedOption);
                     break;
                 case 159:
-                    iM460J = handleItemAction(obj);
+                    actionResult = handleItemAction(obj);
                     break;
                 case 160:
-                    iM460J = ResourceManager.syncAndReturn();
+                    actionResult = ResourceManager.syncAndReturn();
                     break;
                 case 161:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 162:
-                    iM460J = handleChatDetailOption(selectedOption);
+                    actionResult = handleChatDetailOption(selectedOption);
                     break;
                 case 163:
-                    iM460J = handleSendKey();
+                    actionResult = handleSendKey();
                     break;
                 case 164:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 165:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 166:
-                    iM460J = handleChatOption(selectedOption);
+                    actionResult = handleChatOption(selectedOption);
                     break;
                 case 167:
-                    iM460J = handleMailboxOption(selectedOption);
+                    actionResult = handleMailboxOption(selectedOption);
                     break;
                 case 168:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 169:
-                    iM460J = ResourceManager.applyLocationProfile(obj);
+                    actionResult = ResourceManager.applyLocationProfile(obj);
                     break;
                 case 170:
-                    iM460J = handleFormSubmit(obj);
+                    actionResult = handleFormSubmit(obj);
                     break;
                 case 171:
-                    iM460J = handleRightKey();
+                    actionResult = handleRightKey();
                     break;
                 case 172:
-                    iM460J = handleObjectAction(obj);
+                    actionResult = handleObjectAction(obj);
                     break;
                 case 173:
-                    iM460J = handleInviteAction();
+                    actionResult = handleInviteAction();
                     break;
                 case 174:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 175:
-                    iM460J = 0;
+                    actionResult = 0;
                     break;
                 case 176:
-                    iM460J = selectedOption == 1 ? showPeopleSearch() : selectedOption == 2 ? showPeopleNearby() : handleStarAction(obj);
+                    actionResult = selectedOption == 1 ? showPeopleSearch() : selectedOption == 2 ? showPeopleNearby() : handleStarAction(obj);
                     break;
                 case 177:
-                    iM460J = ResourceManager.handleSearchResultAction(selectedOption);
+                    actionResult = ResourceManager.handleSearchResultAction(selectedOption);
                     break;
                 case 178:
-                    iM460J = handleEditAction(selectedOption);
+                    actionResult = handleEditAction(selectedOption);
                     break;
                 case 179:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
                 case 180:
-                    iM460J = -1;
+                    actionResult = -1;
                     break;
             }
-            if (iM460J != -1) {
-                if (iM460J == 12) {
+            if (actionResult != -1) {
+                if (actionResult == 12) {
                     ScreenBuilder.onScreenClosed();
                     return;
                 }
-                if (iM460J != 0) {
-                    ScreenBuilder.openScreen(iM460J);
+                if (actionResult != 0) {
+                    ScreenBuilder.openScreen(actionResult);
                     return;
                 }
                 int i3 = screen.softKeyRight;

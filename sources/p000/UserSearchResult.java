@@ -90,9 +90,9 @@ public final class UserSearchResult implements ListItem, Identifiable {
     */
     public final String getText() {
         int i;
-        StringBuffer stringBufferAppend = NetworkUtils.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(451));
+        StringBuffer sb = NetworkUtils.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(451));
         if (this.age > 0) {
-            StringBuffer stringBufferAppend2 = stringBufferAppend.append(',').append(' ').append(this.age);
+            StringBuffer sb2 = sb.append(',').append(' ').append(this.age);
             if (this.age >= 100) {
                 i = 323;
             } else if (this.age < 5 || this.age > 20) {
@@ -101,12 +101,12 @@ public final class UserSearchResult implements ListItem, Identifiable {
             } else {
                 i = 320;
             }
-            stringBufferAppend2.append(AppState.getString(i));
+            sb2.append(AppState.getString(i));
         }
         if (Utils.nonEmpty(this.description)) {
-            stringBufferAppend.append(',').append(' ').append(this.description);
+            sb.append(',').append(' ').append(this.description);
         }
-        return NetworkUtils.bufToStringCached(stringBufferAppend);
+        return NetworkUtils.bufToStringCached(sb);
     }
 
     @Override // p000.ListItem
