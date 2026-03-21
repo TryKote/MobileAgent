@@ -88,9 +88,9 @@ public final class MenuItem {
 
     /* renamed from: a */
     public static final MenuItem createCheckbox(String str, boolean z) {
-        MenuItem c0032cM899a = new MenuItem(2, str).setIconAndLabel(z ? 25 : 24, str);
-        c0032cM899a.data = ResourceManager.booleanOf(z);
-        return c0032cM899a;
+        MenuItem item = new MenuItem(2, str).setIconAndLabel(z ? 25 : 24, str);
+        item.data = ResourceManager.booleanOf(z);
+        return item;
     }
 
     /* renamed from: a */
@@ -119,36 +119,36 @@ public final class MenuItem {
             i2--;
             if (i2 < 0) {
                 NetworkUtils.releaseVector(vector);
-                MenuItem c0032cM896a = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(247);
-                c0032cM896a.data = new Object[]{ResourceManager.integerOf(i), strArr};
-                return c0032cM896a;
+                MenuItem menuItem = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(247);
+                menuItem.data = new Object[]{ResourceManager.integerOf(i), strArr};
+                return menuItem;
             }
             strArr[i2] = (String) vector.elementAt(i2);
         }
     }
 
     /* renamed from: a */
-    public static final MenuItem createGraphics(GraphicsContext c0012al) {
-        MenuItem c0032c = new MenuItem(11, AppState.emptyStr);
-        c0032c.data = c0012al;
-        c0032c.totalWidth = c0012al.image.getWidth();
-        c0032c.maxHeight = c0012al.image.getHeight() + 5;
-        return c0032c;
+    public static final MenuItem createGraphics(GraphicsContext gfx) {
+        MenuItem graphicsItem = new MenuItem(11, AppState.emptyStr);
+        graphicsItem.data = gfx;
+        graphicsItem.totalWidth = gfx.image.getWidth();
+        graphicsItem.maxHeight = gfx.image.getHeight() + 5;
+        return graphicsItem;
     }
 
     /* renamed from: a */
-    public final int execute(Screen c0013am) {
+    public final int execute(Screen screen) {
         if (this.id == 2) {
             if (this.data != null) {
-                Boolean boolM968a = ResourceManager.booleanOf(!((Boolean) this.data).booleanValue());
-                this.data = boolM968a;
-                this.elements.setElementAt(createIconData(boolM968a.booleanValue() ? 25 : 24), 0);
+                Boolean checked = ResourceManager.booleanOf(!((Boolean) this.data).booleanValue());
+                this.data = checked;
+                this.elements.setElementAt(createIconData(checked.booleanValue() ? 25 : 24), 0);
             }
             IOUtils.postEvent(this);
             return 0;
         }
         if (this.id == 15) {
-            new AsyncTask(c0013am, this);
+            new AsyncTask(screen, this);
             return 0;
         }
         if (this.id != 9) {
@@ -162,18 +162,18 @@ public final class MenuItem {
             AppController.showMessageById(429);
             return 0;
         }
-        Screen c0013amM75b = ScreenManager.createScreen(2351);
+        Screen choiceScreen = ScreenManager.createScreen(2351);
         Object[] objArr = (Object[]) this.data;
         String[] strArr = (String[]) objArr[1];
         int iIntValue = ((Integer) objArr[0]).intValue();
-        Object[] objArr2 = {objArr, this, c0013am};
+        Object[] objArr2 = {objArr, this, screen};
         for (String str : strArr) {
-            MenuItem c0032cM898b = new MenuItem(13, str).setLabel(str);
-            c0032cM898b.data = objArr2;
-            c0013amM75b.addItem(c0032cM898b);
+            MenuItem choiceItem = new MenuItem(13, str).setLabel(str);
+            choiceItem.data = objArr2;
+            choiceScreen.addItem(choiceItem);
         }
-        c0013amM75b.selectByTitle(strArr[iIntValue]);
-        ScreenManager.showScreen(c0013amM75b);
+        choiceScreen.selectByTitle(strArr[iIntValue]);
+        ScreenManager.showScreen(choiceScreen);
         return 0;
     }
 
@@ -218,12 +218,12 @@ public final class MenuItem {
     /* renamed from: a */
     public final MenuItem addTextInternal(String str, int i, int i2, int i3) {
         if (str != null) {
-            Vector vectorM907a = wrapText(NetworkUtils.newVector(), str, 0, str.length(), i, i2, i3);
-            int size = vectorM907a.size();
+            Vector parts = wrapText(NetworkUtils.newVector(), str, 0, str.length(), i, i2, i3);
+            int size = parts.size();
             for (int i4 = 0; i4 < size; i4++) {
-                addElement(vectorM907a.elementAt(i4));
+                addElement(parts.elementAt(i4));
             }
-            NetworkUtils.releaseVector(vectorM907a);
+            NetworkUtils.releaseVector(parts);
         }
         return this;
     }
@@ -234,9 +234,9 @@ public final class MenuItem {
         this.positions = AppController.resizeArray(this.positions, this.totalWidth, 0);
         this.totalWidth += getElementWidth(obj);
         int i = this.maxHeight;
-        int iM905c = getElementHeight(obj);
-        if (i < iM905c) {
-            this.maxHeight = iM905c;
+        int elemH = getElementHeight(obj);
+        if (i < elemH) {
+            this.maxHeight = elemH;
         }
         return this;
     }
@@ -258,10 +258,10 @@ public final class MenuItem {
     }
 
     /* renamed from: a */
-    private final void wrapTextLine(Vector vector, String str, GraphicsContext c0012al, int i, int i2, int i3, int i4, int i5) {
-        int iM215a = c0012al.substringWidth(str, i2, i3);
-        if (iM215a < (AppState.getInt(1528) << 2) / 5) {
-            vector.addElement(new Object[]{str, new int[]{iM215a, i, i2, i3, i4, i5}});
+    private final void wrapTextLine(Vector vector, String str, GraphicsContext gfx, int i, int i2, int i3, int i4, int i5) {
+        int textW = gfx.substringWidth(str, i2, i3);
+        if (textW < (AppState.getInt(1528) << 2) / 5) {
+            vector.addElement(new Object[]{str, new int[]{textW, i, i2, i3, i4, i5}});
             return;
         }
         int i6 = 0;
@@ -269,18 +269,18 @@ public final class MenuItem {
             if (i6 >= i3 - 1) {
                 break;
             }
-            char cCharAt = str.charAt(i2 + i6);
-            if ((cCharAt >= ' ' && cCharAt <= '/') || (cCharAt >= ':' && cCharAt <= '@') || ((cCharAt >= '[' && cCharAt <= '`') || (cCharAt >= '{' && cCharAt <= '~'))) {
-                wrapTextLine(vector, str, c0012al, i, i2, i6 + 1, i4, i5);
-                wrapTextLine(vector, str, c0012al, i, i2 + i6 + 1, (i3 - i6) - 1, i4, i5);
+            char ch = str.charAt(i2 + i6);
+            if ((ch >= ' ' && ch <= '/') || (ch >= ':' && ch <= '@') || ((ch >= '[' && ch <= '`') || (ch >= '{' && ch <= '~'))) {
+                wrapTextLine(vector, str, gfx, i, i2, i6 + 1, i4, i5);
+                wrapTextLine(vector, str, gfx, i, i2 + i6 + 1, (i3 - i6) - 1, i4, i5);
                 break;
             }
             i6++;
         }
         if (i6 == i3 - 1) {
             int i7 = i3 >> 1;
-            wrapTextLine(vector, str, c0012al, i, i2, i7, i4, i5);
-            wrapTextLine(vector, str, c0012al, i, i2 + i7, i3 - i7, i4, i5);
+            wrapTextLine(vector, str, gfx, i, i2, i7, i4, i5);
+            wrapTextLine(vector, str, gfx, i, i2 + i7, i3 - i7, i4, i5);
         }
     }
 
@@ -293,8 +293,8 @@ public final class MenuItem {
                 int i6 = -1;
                 int i7 = -1;
                 for (int i8 = 0; i8 < 43; i8++) {
-                    String strM584b = AppState.getString(i8 + 1141);
-                    if (null != strM584b && (iIndexOf2 = str.indexOf(strM584b, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
+                    String pattern = AppState.getString(i8 + 1141);
+                    if (null != pattern && (iIndexOf2 = str.indexOf(pattern, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
                         i6 = iIndexOf2;
                         i7 = i8;
                     }
@@ -310,8 +310,8 @@ public final class MenuItem {
                 int i9 = -1;
                 int i10 = -1;
                 for (int i11 = 0; i11 < 37; i11++) {
-                    String strM584b2 = AppState.getString(i11 + 1184);
-                    if (null != strM584b2 && (iIndexOf = str.indexOf(strM584b2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
+                    String pattern2 = AppState.getString(i11 + 1184);
+                    if (null != pattern2 && (iIndexOf = str.indexOf(pattern2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
                         i9 = iIndexOf;
                         i10 = i11;
                     }
@@ -345,8 +345,8 @@ public final class MenuItem {
                     wrapText(vector, str, i12 + AppState.getString(i13 + 1063).length(), i2, i3, i4, 0);
                 }
             } else if (str != AppState.getString(1037)) {
-                GraphicsContext c0012alM608k = AppState.getGfxContext(i3);
-                int iM623o = AppState.getIntOffset(i3);
+                GraphicsContext fontGfx = AppState.getGfxContext(i3);
+                int offsetH = AppState.getIntOffset(i3);
                 int i15 = i;
                 int i16 = i;
                 while (true) {
@@ -356,20 +356,20 @@ public final class MenuItem {
                     if (i16 == i2) {
                         int i17 = i16 - i15;
                         if (i17 > 0) {
-                            wrapTextLine(vector, str, c0012alM608k, iM623o, i15, i17, i3, i4);
+                            wrapTextLine(vector, str, fontGfx, offsetH, i15, i17, i3, i4);
                         }
                     } else {
-                        char cCharAt = str.charAt(i16);
-                        if (cCharAt == ' ') {
+                        char ch = str.charAt(i16);
+                        if (ch == ' ') {
                             int i18 = (i16 - i15) + 1;
                             if (i18 > 1) {
-                                wrapTextLine(vector, str, c0012alM608k, iM623o, i15, i18, i3, i4);
+                                wrapTextLine(vector, str, fontGfx, offsetH, i15, i18, i3, i4);
                             }
                             i15 = i16 + 1;
-                        } else if (cCharAt == '\r' || cCharAt == '\n') {
+                        } else if (ch == '\r' || ch == '\n') {
                             int i19 = i16 - i15;
                             if (i19 > 0) {
-                                wrapTextLine(vector, str, c0012alM608k, iM623o, i15, i19, i3, i4);
+                                wrapTextLine(vector, str, fontGfx, offsetH, i15, i19, i3, i4);
                             }
                             vector.addElement(AppState.pool[1370]);
                             i15 = i16 + 1;
@@ -403,13 +403,13 @@ public final class MenuItem {
         int size = vector.size();
         int i2 = 0;
         int i3 = 0;
-        int iM502a = 0;
+        int lineH = 0;
         this.maxHeight = 0;
         for (int i4 = 0; i4 < size; i4++) {
-            Object objElementAt = vector.elementAt(i4);
-            if (objElementAt != AppState.pool[1370]) {
-                int iM904b = getElementWidth(objElementAt);
-                int iM905c = getElementHeight(objElementAt);
+            Object elem = vector.elementAt(i4);
+            if (elem != AppState.pool[1370]) {
+                int elemW = getElementWidth(elem);
+                int elemH = getElementHeight(elem);
                 int i5 = 0;
                 if (i4 == size - 2 && (vector.elementAt(i4 + 1) instanceof int[])) {
                     int[] iArr = (int[]) vector.elementAt(i4 + 1);
@@ -417,38 +417,38 @@ public final class MenuItem {
                         i5 = 16;
                     }
                 }
-                if (this.wrapWidth == 0 && i2 + iM904b + i5 > i) {
+                if (this.wrapWidth == 0 && i2 + elemW + i5 > i) {
                     i2 = 0;
-                    i3 += iM502a;
-                    this.maxHeight += iM502a;
-                    iM502a = 0;
+                    i3 += lineH;
+                    this.maxHeight += lineH;
+                    lineH = 0;
                 }
                 this.positions = AppController.resizeArray(this.positions, i2, i3);
-                iM502a = Utils.max(iM502a, iM905c);
-                i2 += iM904b;
+                lineH = Utils.max(lineH, elemH);
+                i2 += elemW;
             } else {
                 i2 = 0;
-                i3 += iM502a;
-                this.maxHeight += iM502a;
-                iM502a = 0;
+                i3 += lineH;
+                this.maxHeight += lineH;
+                lineH = 0;
                 this.positions = AppController.resizeArray(this.positions, 0, 0);
             }
         }
-        this.maxHeight += iM502a;
+        this.maxHeight += lineH;
         return this;
     }
 
     /* renamed from: f */
     public final int getMaxHeight() {
-        int iM502a = 0;
+        int lineH = 0;
         Vector vector = this.elements;
         int size = vector.size();
         while (true) {
             size--;
             if (size < 0) {
-                return iM502a + 4;
+                return lineH + 4;
             }
-            iM502a = Utils.max(iM502a, this.positions[(size << 1) + 1] + getElementWidth(vector.elementAt(size)));
+            lineH = Utils.max(lineH, this.positions[(size << 1) + 1] + getElementWidth(vector.elementAt(size)));
         }
     }
 
@@ -463,9 +463,9 @@ public final class MenuItem {
     }
 
     /* renamed from: a */
-    public final void render(GraphicsContext c0012al, int i, int i2, int i3) {
+    public final void render(GraphicsContext gfx, int i, int i2, int i3) {
         if (this.id == 11) {
-            c0012al.graphics.drawImage(((GraphicsContext) this.data).image, i, i2, 20);
+            gfx.graphics.drawImage(((GraphicsContext) this.data).image, i, i2, 20);
             return;
         }
         Vector vector = this.elements;
@@ -475,35 +475,35 @@ public final class MenuItem {
             if (size < 0) {
                 return;
             }
-            Object objElementAt = vector.elementAt(size);
-            if (objElementAt != AppState.pool[1370]) {
+            Object elem = vector.elementAt(size);
+            if (elem != AppState.pool[1370]) {
                 int i4 = i + 2;
                 int i5 = this.positions[(size << 1) + 1];
                 int i6 = i2 + 2 + this.positions[(size << 1) + 1 + 1];
                 int i7 = i4 + i5;
-                if (objElementAt instanceof int[]) {
-                    int[] iArr = (int[]) objElementAt;
+                if (elem instanceof int[]) {
+                    int[] iArr = (int[]) elem;
                     if (iArr.length == 3) {
                         int i8 = iArr[2];
-                        c0012al.drawIcon(i8, i8 != 244 ? i7 : (i4 + i3) - 13, i6 + ScreenManager.getCenterOffset());
+                        gfx.drawIcon(i8, i8 != 244 ? i7 : (i4 + i3) - 13, i6 + ScreenManager.getCenterOffset());
                     } else if (iArr.length == 2) {
-                        c0012al.setColorFromPalette(18).drawRect(i7, i6, i3 - i7, iArr[1]);
+                        gfx.setColorFromPalette(18).drawRect(i7, i6, i3 - i7, iArr[1]);
                     }
                 } else {
-                    String str = (String) ((Object[]) objElementAt)[0];
-                    int[] iArr2 = (int[]) ((Object[]) objElementAt)[1];
+                    String str = (String) ((Object[]) elem)[0];
+                    int[] iArr2 = (int[]) ((Object[]) elem)[1];
                     int i9 = iArr2[4];
-                    GraphicsContext c0012alM608k = AppState.getGfxContext(i9);
-                    GraphicsContext c0012alM207b = c0012al.setFont(c0012alM608k).setColorFromPalette(iArr2[5]);
+                    GraphicsContext fontGfx = AppState.getGfxContext(i9);
+                    GraphicsContext colorGfx = gfx.setFont(fontGfx).setColorFromPalette(iArr2[5]);
                     int i10 = iArr2[2];
                     int i11 = iArr2[3];
                     if (i6 > 0 && i6 < AppState.getInt(1529)) {
-                        c0012alM207b.graphics.drawSubstring(str, i10, i11, i7, i6, 20);
+                        colorGfx.graphics.drawSubstring(str, i10, i11, i7, i6, 20);
                     }
                     if (i9 == 3) {
-                        c0012al.drawRect(i7, i6 + (AppState.getInt(1450) >> 1), c0012alM608k.substringWidth(str, iArr2[2], iArr2[3]), 0);
+                        gfx.drawRect(i7, i6 + (AppState.getInt(1450) >> 1), fontGfx.substringWidth(str, iArr2[2], iArr2[3]), 0);
                     } else if (i9 == 5) {
-                        c0012al.drawRect(i7, i6 + AppState.getInt(1450), c0012alM608k.substringWidth(str, iArr2[2], iArr2[3]), 0);
+                        gfx.drawRect(i7, i6 + AppState.getInt(1450), fontGfx.substringWidth(str, iArr2[2], iArr2[3]), 0);
                     }
                 }
             }

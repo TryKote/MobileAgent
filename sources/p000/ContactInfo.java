@@ -7,28 +7,28 @@ import javax.microedition.lcdui.Image;
 /* renamed from: m */
 /* loaded from: MobileAgent_3.9.jar:m.class */
 public final class ContactInfo extends Hashtable {
-    public ContactInfo(Contact abstractC0041l) {
-        put(ResourceManager.integerOf(-2), abstractC0041l.account);
-        setContactField(0, abstractC0041l.displayName);
-        if (abstractC0041l instanceof MrimContact) {
-            setContactField(3, ((MrimContact) abstractC0041l).simpleIdentifier);
-        } else if (abstractC0041l instanceof MmpContact) {
-            setMmpContactId(Utils.parseInt((Object) ((MmpContact) abstractC0041l).identifier));
-        } else if (abstractC0041l instanceof XmppContact) {
-            setContactField(26, ((XmppContact) abstractC0041l).jabberId);
+    public ContactInfo(Contact contact) {
+        put(ResourceManager.integerOf(-2), contact.account);
+        setContactField(0, contact.displayName);
+        if (contact instanceof MrimContact) {
+            setContactField(3, ((MrimContact) contact).simpleIdentifier);
+        } else if (contact instanceof MmpContact) {
+            setMmpContactId(Utils.parseInt((Object) ((MmpContact) contact).identifier));
+        } else if (contact instanceof XmppContact) {
+            setContactField(26, ((XmppContact) contact).jabberId);
         }
     }
 
     public ContactInfo() {
     }
 
-    private ContactInfo(Account abstractC0037h) {
-        put(ResourceManager.integerOf(-2), abstractC0037h);
+    private ContactInfo(Account account) {
+        put(ResourceManager.integerOf(-2), account);
     }
 
     /* renamed from: a */
-    public static final ContactInfo createForAccount(Account abstractC0037h) {
-        return new ContactInfo(abstractC0037h);
+    public static final ContactInfo createForAccount(Account account) {
+        return new ContactInfo(account);
     }
 
     /* renamed from: a */
@@ -51,8 +51,8 @@ public final class ContactInfo extends Hashtable {
     }
 
     /* renamed from: b */
-    public static final ContactInfo createAccountInfo(Account abstractC0037h) {
-        return new ContactInfo(abstractC0037h);
+    public static final ContactInfo createAccountInfo(Account account) {
+        return new ContactInfo(account);
     }
 
     /* renamed from: c */
@@ -164,16 +164,16 @@ public final class ContactInfo extends Hashtable {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public final ContactInfo setAge(int i) {
-        String strM584b;
+        String ageStr;
         int i2 = i % 10;
         if (i <= 0 || i >= 100) {
-            strM584b = AppState.getString(323);
+            ageStr = AppState.getString(323);
         } else if (i < 5 || i > 20) {
-            strM584b = i2 == 1 ? formatAge(i, 321) : (i2 < 2 || i2 > 4) ? formatAge(i, 320) : formatAge(i, 322);
+            ageStr = i2 == 1 ? formatAge(i, 321) : (i2 < 2 || i2 > 4) ? formatAge(i, 320) : formatAge(i, 322);
         } else {
-            strM584b = formatAge(i, 320);
+            ageStr = formatAge(i, 320);
         }
-        return setContactField(5, strM584b);
+        return setContactField(5, ageStr);
     }
 
     /* renamed from: a */
@@ -188,11 +188,11 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: p */
     public final ContactInfo setBirthdayMonth(String str) {
-        int iM511a = Utils.parseIntBounded(str, 1, 12, 0);
-        if (iM511a != 0) {
-            Vector vectorM512e = Utils.splitByNull(AppState.getString(685));
-            setContactField(7, (String) vectorM512e.elementAt(iM511a));
-            NetworkUtils.releaseVector(vectorM512e);
+        int month = Utils.parseIntBounded(str, 1, 12, 0);
+        if (month != 0) {
+            Vector labels = Utils.splitByNull(AppState.getString(685));
+            setContactField(7, (String) labels.elementAt(month));
+            NetworkUtils.releaseVector(labels);
         }
         return this;
     }
@@ -254,24 +254,24 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: i */
     public final String getEmailOrMmpId() {
-        String strM1256a = getString(3);
-        return strM1256a != null ? strM1256a : getFieldDefault(60);
+        String fieldVal = getString(3);
+        return fieldVal != null ? fieldVal : getFieldDefault(60);
     }
 
     /* renamed from: j */
     public final String getDisplayNameOrId() {
-        String strM533j = Utils.trim(getFieldDefault(0));
-        return StringUtils.isEmpty(strM533j) ? getString(60) : strM533j;
+        String trimmed = Utils.trim(getFieldDefault(0));
+        return StringUtils.isEmpty(trimmed) ? getString(60) : trimmed;
     }
 
     /* renamed from: k */
     public final String getFullName() {
-        String strM533j = Utils.trim(StringUtils.concat(Utils.appendSpace(getFieldDefault(1)), Utils.trim(getFieldDefault(2))));
-        String str = strM533j;
-        if (StringUtils.isEmpty(strM533j)) {
-            String strM1256a = getString(0);
-            str = strM1256a;
-            if (null == strM1256a) {
+        String trimmed = Utils.trim(StringUtils.concat(Utils.appendSpace(getFieldDefault(1)), Utils.trim(getFieldDefault(2))));
+        String str = trimmed;
+        if (StringUtils.isEmpty(trimmed)) {
+            String fieldVal = getString(0);
+            str = fieldVal;
+            if (null == fieldVal) {
                 return getEmailOrMmpId();
             }
         }
@@ -285,62 +285,62 @@ public final class ContactInfo extends Hashtable {
     */
     public final Screen buildContactScreen(int i) {
         int i2 = 0;
-        int iIndexOf;
-        int iIndexOf2;
-        int iIndexOf3;
-        Account abstractC0037hM1255c = getAccount();
-        Screen c0013amM75b = ScreenManager.createScreen(i);
-        Vector vectorM512e = Utils.splitByNull(AppState.getString(312));
-        int size = vectorM512e.size();
-        if (abstractC0037hM1255c instanceof MrimAccount) {
-            MrimContact c0035f = (MrimContact) abstractC0037hM1255c.getContact((Object) getString(3));
+        int endIdx;
+        int endIdx2;
+        int endIdx3;
+        Account acct = getAccount();
+        Screen screen = ScreenManager.createScreen(i);
+        Vector labels = Utils.splitByNull(AppState.getString(312));
+        int size = labels.size();
+        if (acct instanceof MrimAccount) {
+            MrimContact mrimContact = (MrimContact) acct.getContact((Object) getString(3));
             int i3 = 0;
             while (i3 < size) {
                 try {
-                    String strM1215a = NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append((String) vectorM512e.elementAt(i3))));
-                    String strM1256a = getString(i3);
-                    if (null != strM1256a) {
+                    String label = NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append((String) labels.elementAt(i3))));
+                    String fieldVal = getString(i3);
+                    if (null != fieldVal) {
                         if (i3 == 6) {
-                            c0013amM75b.addLabelValue(strM1215a, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
+                            screen.addLabelValue(label, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(fieldVal, 8, 10)).append('/').append(StringUtils.substring(fieldVal, 5, 7)).append('/').append(StringUtils.prefix(fieldVal, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.addItem(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.handleServerAction(Utils.parseIntBounded(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
+                                screen.addItem(MenuItem.createSeparator().addText(label, 0, 6).setIcon(mrimContact == null ? AppController.handleServerAction(Utils.parseIntBounded(fieldVal, 0, 4, 0), Utils.defaultStr(getString(12))) : mrimContact.getIcon()).setLabel(Utils.defaultStr(getString(13))));
                                 break;
                             }
-                            c0013amM75b.addLabelValue(strM1215a, i3 == 9 ? Utils.formatPhone(Utils.extractDigits(strM1256a)) : strM1256a);
+                            screen.addLabelValue(label, i3 == 9 ? Utils.formatPhone(Utils.extractDigits(fieldVal)) : fieldVal);
                         }
                     }
                 } catch (Throwable unused) {
                 }
                 i3++;
             }
-            if (c0035f != null) {
-                String strM522f = Utils.defaultStr(c0035f.statusMessage);
-                int i4 = Conversation.hasKey(strM522f, 927) ? 936 : Conversation.hasKey(strM522f, 926) ? 935 : Conversation.hasKey(strM522f, 929) ? 937 : Conversation.hasKey(strM522f, 928) ? 938 : Conversation.hasKey(strM522f, 930) ? 939 : Conversation.hasKey(strM522f, 931) ? 940 : Conversation.hasKey(strM522f, 932) ? 941 : Conversation.hasKey(strM522f, 933) ? 942 : 934;
-                StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+            if (mrimContact != null) {
+                String statusMsg = Utils.defaultStr(mrimContact.statusMessage);
+                int i4 = Conversation.hasKey(statusMsg, 927) ? 936 : Conversation.hasKey(statusMsg, 926) ? 935 : Conversation.hasKey(statusMsg, 929) ? 937 : Conversation.hasKey(statusMsg, 928) ? 938 : Conversation.hasKey(statusMsg, 930) ? 939 : Conversation.hasKey(statusMsg, 931) ? 940 : Conversation.hasKey(statusMsg, 932) ? 941 : Conversation.hasKey(statusMsg, 933) ? 942 : 934;
+                StringBuffer sb = NetworkUtils.newStringBuffer();
                 if (i4 == 934) {
-                    int iM627a = AppState.indexOfLong(strM522f, 2467256188365532259L);
-                    if (iM627a >= 0 && (iIndexOf3 = strM522f.indexOf(34, iM627a + 9)) >= 0) {
-                        stringBufferM1217h.append(StringUtils.substring(strM522f, iM627a + 8, iIndexOf3));
+                    int startIdx = AppState.indexOfLong(statusMsg, 2467256188365532259L);
+                    if (startIdx >= 0 && (endIdx3 = statusMsg.indexOf(34, startIdx + 9)) >= 0) {
+                        sb.append(StringUtils.substring(statusMsg, startIdx + 8, endIdx3));
                     }
                 } else {
-                    stringBufferM1217h.append(AppState.getString(i4));
+                    sb.append(AppState.getString(i4));
                 }
-                int iM628b = AppState.indexOfPool(strM522f, 943);
-                if (iM628b >= 0 && (iIndexOf = strM522f.indexOf(34, iM628b + 11)) >= 0) {
-                    stringBufferM1217h.append(AppState.getString(944)).append(StringUtils.substring(strM522f, iM628b + 10, iIndexOf));
-                    int iM628b2 = AppState.indexOfPool(strM522f, 527990);
-                    if (iM628b2 >= 0 && (iIndexOf2 = strM522f.indexOf(34, iM628b2 + 9)) >= 0) {
-                        stringBufferM1217h.append('.').append(StringUtils.substring(strM522f, iM628b2 + 8, iIndexOf2));
+                int titleIdx = AppState.indexOfPool(statusMsg, 943);
+                if (titleIdx >= 0 && (endIdx = statusMsg.indexOf(34, titleIdx + 11)) >= 0) {
+                    sb.append(AppState.getString(944)).append(StringUtils.substring(statusMsg, titleIdx + 10, endIdx));
+                    int trackIdx = AppState.indexOfPool(statusMsg, 527990);
+                    if (trackIdx >= 0 && (endIdx2 = statusMsg.indexOf(34, trackIdx + 9)) >= 0) {
+                        sb.append('.').append(StringUtils.substring(statusMsg, trackIdx + 8, endIdx2));
                     }
                 }
-                String strM1215a2 = NetworkUtils.bufToStringCached(stringBufferM1217h);
-                if (Utils.nonEmpty(strM1215a2)) {
-                    MenuItem c0032cM901a = MenuItem.createSeparator().addText(AppState.getString(317), 0, 6);
-                    String str = c0035f.statusMessage;
+                String statusDesc = NetworkUtils.bufToStringCached(sb);
+                if (Utils.nonEmpty(statusDesc)) {
+                    MenuItem statusItem = MenuItem.createSeparator().addText(AppState.getString(317), 0, 6);
+                    String str = mrimContact.statusMessage;
                     if (str == null) {
                         i2 = -1;
-                        c0013amM75b.addItem(c0032cM901a.setIcon(i2).setLabel(strM1215a2));
+                        screen.addItem(statusItem.setIcon(i2).setLabel(statusDesc));
                     } else {
                         if (Conversation.hasKey(str, 927)) {
                             i2 = 357;
@@ -357,66 +357,66 @@ public final class ContactInfo extends Hashtable {
                         } else if (Conversation.hasKey(str, 933)) {
                             i2 = 307;
                         }
-                        c0013amM75b.addItem(c0032cM901a.setIcon(i2).setLabel(strM1215a2));
+                        screen.addItem(statusItem.setIcon(i2).setLabel(statusDesc));
                     }
                 }
-                String str2 = c0035f.customLink;
+                String str2 = mrimContact.customLink;
                 if (Utils.nonEmpty(str2)) {
-                    c0013amM75b.addItem(MenuItem.createSeparator().addText(AppState.getString(324), 0, 6).setIcon(242).setLabel(str2));
+                    screen.addItem(MenuItem.createSeparator().addText(AppState.getString(324), 0, 6).setIcon(242).setLabel(str2));
                 }
-                String str3 = c0035f.customNote;
+                String str3 = mrimContact.customNote;
                 if (Utils.nonEmpty(str3)) {
-                    c0013amM75b.addItem(MenuItem.createSeparator().addText(AppState.getString(325), 0, 6).setIcon(2).setLabel(str3));
+                    screen.addItem(MenuItem.createSeparator().addText(AppState.getString(325), 0, 6).setIcon(2).setLabel(str3));
                 }
-                String strM998o = c0035f.getVCardDescription();
-                if (Utils.nonEmpty(strM998o)) {
-                    c0013amM75b.addItem(MenuItem.createSeparator().addText(AppState.getString(326), 0, 6).setIcon(365).setLabel(strM998o));
+                String vCardDesc = mrimContact.getVCardDescription();
+                if (Utils.nonEmpty(vCardDesc)) {
+                    screen.addItem(MenuItem.createSeparator().addText(AppState.getString(326), 0, 6).setIcon(365).setLabel(vCardDesc));
                 }
             }
-        } else if (abstractC0037hM1255c instanceof MmpProtocol) {
-            String strM1256a2 = getString(60);
-            if (null != strM1256a2) {
-                c0013amM75b.addLabelValue(Utils.appendSpace(AppState.getString(263250)), strM1256a2);
+        } else if (acct instanceof MmpProtocol) {
+            String mmpId = getString(60);
+            if (null != mmpId) {
+                screen.addLabelValue(Utils.appendSpace(AppState.getString(263250)), mmpId);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
-                    String strM1256a3 = getString(i5);
-                    if (null != strM1256a3) {
-                        c0013amM75b.addLabelValue(NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append(vectorM512e.elementAt(i5)))), strM1256a3);
+                    String mmpField = getString(i5);
+                    if (null != mmpField) {
+                        screen.addLabelValue(NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append(labels.elementAt(i5)))), mmpField);
                     }
                 } catch (Throwable unused2) {
                 }
             }
-            String strM1256a4 = getString(5);
-            if (null != strM1256a4) {
-                c0013amM75b.addLabelValue(AppState.getString(315), strM1256a4);
+            String age = getString(5);
+            if (null != age) {
+                screen.addLabelValue(AppState.getString(315), age);
             }
-            String strM1256a5 = getString(32);
-            if (null != strM1256a5) {
-                c0013amM75b.addLabelValue(AppState.getString(313), strM1256a5);
+            String company = getString(32);
+            if (null != company) {
+                screen.addLabelValue(AppState.getString(313), company);
             }
-            String strM1256a6 = getString(37);
-            if (null != strM1256a6) {
-                c0013amM75b.addLabelValue(AppState.getString(314), strM1256a6);
+            String loc = getString(37);
+            if (null != loc) {
+                screen.addLabelValue(AppState.getString(314), loc);
             }
-            String strM1256a7 = getString(36);
-            if (null != strM1256a7) {
-                c0013amM75b.addLabelValue(AppState.getString(316), strM1256a7);
+            String website = getString(36);
+            if (null != website) {
+                screen.addLabelValue(AppState.getString(316), website);
             }
-        } else if (abstractC0037hM1255c instanceof XmppProtocol) {
+        } else if (acct instanceof XmppProtocol) {
             Image image = (Image) get(ResourceManager.integerOf(25));
             if (image != null) {
-                c0013amM75b.addItem(MenuItem.createGraphics(new GraphicsContext(image)));
+                screen.addItem(MenuItem.createGraphics(new GraphicsContext(image)));
             }
-            c0013amM75b.addIconItem(Utils.parseInt((Object) getString(24)), getFieldDefault(0), 0);
-            c0013amM75b.addTextPair(AppState.getString(744), getString(26), 0);
-            String strM1256a8 = getString(11);
-            if (null != strM1256a8) {
-                c0013amM75b.addTextItem(strM1256a8);
+            screen.addIconItem(Utils.parseInt((Object) getString(24)), getFieldDefault(0), 0);
+            screen.addTextPair(AppState.getString(744), getString(26), 0);
+            String xmppDesc = getString(11);
+            if (null != xmppDesc) {
+                screen.addTextItem(xmppDesc);
             }
         }
-        NetworkUtils.releaseVector(vectorM512e);
-        return c0013amM75b;
+        NetworkUtils.releaseVector(labels);
+        return screen;
     }
 
     /* renamed from: v */

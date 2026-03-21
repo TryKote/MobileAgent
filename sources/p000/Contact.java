@@ -47,12 +47,12 @@ public abstract class Contact implements Sortable {
     /* renamed from: x */
     public String extra;
 
-    public Contact(Account abstractC0037h) {
-        this.account = abstractC0037h;
+    public Contact(Account acct) {
+        this.account = acct;
     }
 
     /* renamed from: a */
-    public abstract void deserialize(ByteBuffer c0043n);
+    public abstract void deserialize(ByteBuffer buffer);
 
     /* renamed from: e */
     public int getIcon() {
@@ -129,35 +129,35 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: a */
     public final void receiveMessageFull(long j, String str, int i) {
-        TabBar c0008ah;
+        TabBar tabBar;
         AppState.setObject(1237, (Object) this.identifier);
         ResourceManager.playNotificationSound(2);
         addFlag(i);
         this.account.markRead(getIdentifier());
         clearStatus();
         appendMessage(i != 4 ? 0 : 8, str, j, 0L);
-        ContactGroup abstractC0046qM1080g = this.account.findGroup(this);
-        if (abstractC0046qM1080g != null && abstractC0046qM1080g.isSpecial) {
-            abstractC0046qM1080g.toggleSpecial();
+        ContactGroup group = this.account.findGroup(this);
+        if (group != null && group.isSpecial) {
+            group.toggleSpecial();
         }
         updateRenderState();
-        Account abstractC0037h = this.account;
+        Account acct = this.account;
         String str2 = this.identifier;
-        if (abstractC0037h == null || str2 == null) {
+        if (acct == null || str2 == null) {
             return;
         }
-        Vector vectorM614m = AppState.getVector(1246);
-        int size = vectorM614m.size();
+        Vector tabs = AppState.getVector(1246);
+        int size = tabs.size();
         do {
             size--;
             if (size < 0) {
                 return;
             } else {
-                c0008ah = (TabBar) vectorM614m.elementAt(size);
+                tabBar = (TabBar) tabs.elementAt(size);
             }
-        } while (c0008ah.account != abstractC0037h);
-        c0008ah.selectedTitle = str2;
-        c0008ah.selectedIndex = 0;
+        } while (tabBar.account != acct);
+        tabBar.selectedTitle = str2;
+        tabBar.selectedIndex = 0;
     }
 
     /* renamed from: b */
@@ -166,13 +166,13 @@ public abstract class Contact implements Sortable {
         if (StringUtils.isEmpty(str)) {
             return 309;
         }
-        Account abstractC0037h = this.account;
-        long jM598g = AppState.getLong(1530);
-        int iMo125a = abstractC0037h.validateSend(this, str, jM598g);
-        if (0 != iMo125a) {
-            return iMo125a;
+        Account acct = this.account;
+        long now = AppState.getLong(1530);
+        int sendResult = acct.validateSend(this, str, now);
+        if (0 != sendResult) {
+            return sendResult;
         }
-        appendMessage(1, str, jM598g, jM598g);
+        appendMessage(1, str, now, now);
         this.lastMessageTime = AppState.getLong(1530);
         updateRenderState();
         return 0;
@@ -202,13 +202,13 @@ public abstract class Contact implements Sortable {
     @Override // p000.Sortable
     /* renamed from: a */
     public final int compareTo(Object obj) {
-        Contact abstractC0041l = (Contact) obj;
-        int i = abstractC0041l.renderState - this.renderState;
+        Contact other = (Contact) obj;
+        int i = other.renderState - this.renderState;
         if (i != 0) {
             return i;
         }
-        long j = abstractC0041l.lastMessageTime - this.lastMessageTime;
-        return j != 0 ? j < 0 ? -1 : 1 : this.sortKey.compareTo(abstractC0041l.sortKey);
+        long j = other.lastMessageTime - this.lastMessageTime;
+        return j != 0 ? j < 0 ? -1 : 1 : this.sortKey.compareTo(other.sortKey);
     }
 
     /* renamed from: c */
@@ -224,9 +224,9 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void updateMessageFlag(long j, int i) {
         this.dirty = true;
-        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
-        this.messageBuffer = c0043nM851h;
-        int i2 = c0043nM851h.length;
+        ByteBuffer msgBuf = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
+        this.messageBuffer = msgBuf;
+        int i2 = msgBuf.length;
         int i3 = 0;
         while (true) {
             int i4 = i3;
@@ -234,36 +234,36 @@ public abstract class Contact implements Sortable {
                 saveMessageBuffer();
                 return;
             }
-            int iM1351l = c0043nM851h.peekShortBE(i4);
+            int pktLen = msgBuf.peekShortBE(i4);
             int i5 = i4 + 3 + 8;
-            if (j == ((c0043nM851h.peekIntAt(i5) & 4294967295L) | (c0043nM851h.peekIntAt(i5 + 4) << 32))) {
-                c0043nM851h.data[c0043nM851h.offset + i4 + 2] = (byte) (c0043nM851h.peekByteAt(i4 + 2) | i);
+            if (j == ((msgBuf.peekIntAt(i5) & 4294967295L) | (msgBuf.peekIntAt(i5 + 4) << 32))) {
+                msgBuf.data[msgBuf.offset + i4 + 2] = (byte) (msgBuf.peekByteAt(i4 + 2) | i);
             }
-            i3 = i4 + iM1351l + 2;
+            i3 = i4 + pktLen + 2;
         }
     }
 
     /* renamed from: a */
     public final void appendMessage(int i, String str, long j, long j2) {
         this.dirty = true;
-        ByteBuffer c0043nM851h = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
-        this.messageBuffer = c0043nM851h;
-        int iM586d = AppState.getInt(102) - 1;
-        ByteBuffer c0043n = this.messageBuffer;
+        ByteBuffer msgBuf = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
+        this.messageBuffer = msgBuf;
+        int maxCount = AppState.getInt(102) - 1;
+        ByteBuffer buffer = this.messageBuffer;
         int i2 = 0;
         int i3 = 0;
-        int i4 = c0043n.length;
+        int i4 = buffer.length;
         while (i4 > 0) {
-            int iM1351l = c0043n.peekShortBE(i3);
-            i3 += iM1351l + 2;
-            i4 -= iM1351l + 2;
+            int pktLen = buffer.peekShortBE(i3);
+            i3 += pktLen + 2;
+            i4 -= pktLen + 2;
             i2++;
         }
-        while (i2 > iM586d) {
-            c0043n.skip(c0043n.readShortBE());
+        while (i2 > maxCount) {
+            buffer.skip(buffer.readShortBE());
             i2--;
         }
-        c0043nM851h.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.getInt(246) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
+        msgBuf.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.getInt(246) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
         saveMessageBuffer();
         this.lastMessageTime = AppState.getLong(1530);
         updateRenderState();
@@ -277,18 +277,18 @@ public abstract class Contact implements Sortable {
     /* renamed from: H */
     public final long getLastSentTime() {
         long j = 0;
-        ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
-        while (c0043nM1380F.length > 0) {
-            int iM1353u = c0043nM1380F.readShortBE();
-            byte bM1344o = c0043nM1380F.readByte();
-            c0043nM1380F.readLong();
-            long jM1341m = c0043nM1380F.readLong();
-            c0043nM1380F.skip(iM1353u - 17);
-            if (bM1344o == 16) {
-                j = jM1341m;
+        ByteBuffer dupe = getMessageBuffer().duplicate();
+        while (dupe.length > 0) {
+            int entryLen = dupe.readShortBE();
+            byte msgType = dupe.readByte();
+            dupe.readLong();
+            long msgTime = dupe.readLong();
+            dupe.skip(entryLen - 17);
+            if (msgType == 16) {
+                j = msgTime;
             }
         }
-        c0043nM1380F.clear();
+        dupe.clear();
         return j;
     }
 
@@ -297,55 +297,55 @@ public abstract class Contact implements Sortable {
         this.dirty = false;
         String str = this.displayName;
         AppState.setObject(1290, (Object) str);
-        int iMo139e = getIcon();
-        if ((this instanceof XmppContact) && ((XmppProtocol) this.account).mo83f() && iMo139e >= 381 && iMo139e <= 384) {
-            iMo139e += 4;
+        int icon = getIcon();
+        if ((this instanceof XmppContact) && ((XmppProtocol) this.account).mo83f() && icon >= 381 && icon <= 384) {
+            icon += 4;
         }
-        AppState.setInt(2594, iMo139e);
-        Screen c0013amM75b = ScreenManager.createScreen(2591);
-        ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
-        int iM624l = AppState.getDateCode();
-        while (c0043nM1380F.length > 0) {
-            int iM1353u = c0043nM1380F.readShortBE();
-            byte bM1344o = c0043nM1380F.readByte();
-            long jM1341m = c0043nM1380F.readLong() - AppState.getLong(1532);
-            long jM1341m2 = c0043nM1380F.readLong();
-            String strM539n = Utils.normalizeSpaces(c0043nM1380F.readUnicodeChars(iM1353u - 17));
-            int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
-            if (bM1344o == 16) {
-                c0013amM75b.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(jM1341m, iM624l))), 8);
-                c0013amM75b.addIconItem(2, strM539n, 0);
+        AppState.setInt(2594, icon);
+        Screen msgScreen = ScreenManager.createScreen(2591);
+        ByteBuffer dupe = getMessageBuffer().duplicate();
+        int dateCode = AppState.getDateCode();
+        while (dupe.length > 0) {
+            int entryLen = dupe.readShortBE();
+            byte msgType = dupe.readByte();
+            long msgTime = dupe.readLong() - AppState.getLong(1532);
+            long sentTime = dupe.readLong();
+            String msgText = Utils.normalizeSpaces(dupe.readUnicodeChars(entryLen - 17));
+            int i = (msgType == 0 || msgType == 16 || msgType == 8) ? 0 : msgType == 1 ? 11 : (msgType & 64) == 0 ? 12 : 0;
+            if (msgType == 16) {
+                msgScreen.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(311)).append(formatTime(msgTime, dateCode))), 8);
+                msgScreen.addIconItem(2, msgText, 0);
                 if (this.account.isConnected()) {
-                    c0013amM75b.addExpandableItem(-1, AppState.getString(839), i, new Object[]{ResourceManager.integerOf(1), strM539n, str, new Long(jM1341m2)});
+                    msgScreen.addExpandableItem(-1, AppState.getString(839), i, new Object[]{ResourceManager.integerOf(1), msgText, str, new Long(sentTime)});
                 }
-            } else if (bM1344o == 8) {
-                int iIndexOf = strM539n.indexOf(10);
-                String strM13b = StringUtils.prefix(strM539n, iIndexOf);
-                String strM15c = StringUtils.suffix(strM539n, iIndexOf + 1);
-                c0013amM75b.addSeparator(StringUtils.concat(strM13b, formatTime(jM1341m, iM624l)), 8);
-                addMessageLines(c0013amM75b, strM15c, i);
+            } else if (msgType == 8) {
+                int nlIdx = msgText.indexOf(10);
+                String header = StringUtils.prefix(msgText, nlIdx);
+                String body = StringUtils.suffix(msgText, nlIdx + 1);
+                msgScreen.addSeparator(StringUtils.concat(header, formatTime(msgTime, dateCode)), 8);
+                addMessageLines(msgScreen, body, i);
             } else {
-                c0013amM75b.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(bM1344o == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(jM1341m, iM624l))), bM1344o == 0 ? 8 : 9);
-                addMessageLines(c0013amM75b, strM539n, i);
+                msgScreen.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(msgType == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(msgTime, dateCode))), msgType == 0 ? 8 : 9);
+                addMessageLines(msgScreen, msgText, i);
             }
         }
-        c0043nM1380F.clear();
-        return c0013amM75b;
+        dupe.clear();
+        return msgScreen;
     }
 
     /* renamed from: a */
-    private final void addMessageLines(Screen c0013am, String str, int i) {
-        Vector vectorM1098a = Conversation.parseConversation(str);
-        int size = vectorM1098a.size();
+    private final void addMessageLines(Screen screen, String str, int i) {
+        Vector lines = Conversation.parseConversation(str);
+        int size = lines.size();
         for (int i2 = 0; i2 < size; i2++) {
-            String str2 = (String) vectorM1098a.elementAt(i2);
+            String str2 = (String) lines.elementAt(i2);
             if (Conversation.isValidFormat(str2)) {
-                c0013am.addExpandableItem(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.integerOf(0), str2});
+                screen.addExpandableItem(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.integerOf(0), str2});
             } else {
-                c0013am.addItem(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
+                screen.addItem(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }
         }
-        NetworkUtils.releaseVector(vectorM1098a);
+        NetworkUtils.releaseVector(lines);
     }
 
     /* renamed from: f */
@@ -363,24 +363,24 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: J */
     public final Screen showMessageSummary() {
-        String strM1215a;
-        Screen c0013amM75b = ScreenManager.createScreen(2631);
-        ByteBuffer c0043nM1380F = getMessageBuffer().duplicate();
-        while (c0043nM1380F.length > 0) {
-            int iM1353u = c0043nM1380F.readShortBE();
-            c0043nM1380F.readByte();
-            c0043nM1380F.readLong();
-            c0043nM1380F.readLong();
-            String strM1369q = c0043nM1380F.readUnicodeChars(iM1353u - 17);
-            if (strM1369q.length() > 50) {
-                strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.prefix(strM1369q, 50)).append((char) 8230));
+        String truncated;
+        Screen msgScreen = ScreenManager.createScreen(2631);
+        ByteBuffer dupe = getMessageBuffer().duplicate();
+        while (dupe.length > 0) {
+            int entryLen = dupe.readShortBE();
+            dupe.readByte();
+            dupe.readLong();
+            dupe.readLong();
+            String fullText = dupe.readUnicodeChars(entryLen - 17);
+            if (fullText.length() > 50) {
+                truncated = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.prefix(fullText, 50)).append((char) 8230));
             } else {
-                strM1215a = strM1369q;
+                truncated = fullText;
             }
-            c0013amM75b.addFullItem(-1, (String) null, strM1215a, 200, strM1369q);
+            msgScreen.addFullItem(-1, (String) null, truncated, 200, fullText);
         }
-        c0043nM1380F.clear();
-        return c0013amM75b;
+        dupe.clear();
+        return msgScreen;
     }
 
     /* renamed from: K */
@@ -408,17 +408,17 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: b */
     private static String formatTime(long j, int i) {
-        Calendar calendarM622k = AppState.getCalendar();
-        calendarM622k.setTime(new Date(j));
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-        int i2 = calendarM622k.get(1) << 16;
-        int i3 = calendarM622k.get(2);
+        Calendar cal = AppState.getCalendar();
+        cal.setTime(new Date(j));
+        StringBuffer sb = NetworkUtils.newStringBuffer();
+        int i2 = cal.get(1) << 16;
+        int i3 = cal.get(2);
         int i4 = i2 + (i3 << 8);
-        int i5 = calendarM622k.get(5);
+        int i5 = cal.get(5);
         if (i4 + i5 != i) {
-            stringBufferM1217h.append(Utils.zeroPad(i5)).append('/').append(Utils.zeroPad(i3 + 1)).append(' ');
+            sb.append(Utils.zeroPad(i5)).append('/').append(Utils.zeroPad(i3 + 1)).append(' ');
         }
-        return NetworkUtils.bufToStringCached(stringBufferM1217h.append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(calendarM622k.get(12))));
+        return NetworkUtils.bufToStringCached(sb.append(Utils.zeroPad(cal.get(11))).append(':').append(Utils.zeroPad(cal.get(12))));
     }
 
     /* renamed from: a */
