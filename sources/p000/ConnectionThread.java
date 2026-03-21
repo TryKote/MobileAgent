@@ -94,7 +94,7 @@ public final class ConnectionThread {
         switch (this.state) {
             case 1:
                 try {
-                    this.connArray = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(112));
+                    this.connArray = NetworkUtils.openSocket(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(112));
                     if (this.state == 1) {
                         this.state = 2;
                     }
@@ -103,7 +103,7 @@ public final class ConnectionThread {
                 } catch (Throwable th) {
                     this.state = -1;
                     this.exception = th;
-                    NetworkUtils.m1184b(this.connArray);
+                    NetworkUtils.closeConnection(this.connArray);
                     return;
                 }
             case 2:
@@ -113,7 +113,7 @@ public final class ConnectionThread {
             case 3:
                 readFromSocket();
                 writeToSocket();
-                NetworkUtils.m1184b(this.connArray);
+                NetworkUtils.closeConnection(this.connArray);
                 this.state = 0;
                 return;
             default:
@@ -137,12 +137,12 @@ public final class ConnectionThread {
             if (this.state == 2) {
                 ByteBuffer c0043n = this.inBuffer;
                 Object[] objArr = this.connArray;
-                int iM1188c = NetworkUtils.m1188c(objArr);
+                int iM1188c = NetworkUtils.availableBytes(objArr);
                 if (iM1188c > 0) {
                     byte[] bArrM1211a = NetworkUtils.newBytes(iM1188c);
                     int i = 0;
                     do {
-                        iM1190a = i + NetworkUtils.m1190a(objArr, bArrM1211a, i, iM1188c - i);
+                        iM1190a = i + NetworkUtils.readSocket(objArr, bArrM1211a, i, iM1188c - i);
                         i = iM1190a;
                     } while (iM1190a != iM1188c);
                     synchronized (c0043n) {
@@ -157,7 +157,7 @@ public final class ConnectionThread {
         } catch (Throwable th) {
             this.state = -1;
             this.exception = th;
-            NetworkUtils.m1184b(this.connArray);
+            NetworkUtils.closeConnection(this.connArray);
         }
     }
 
@@ -175,7 +175,7 @@ public final class ConnectionThread {
                         c0043n.offset += i;
                         c0043n.length -= i;
                         c0043n.compact();
-                        NetworkUtils.m1189a(objArr, bArrM1211a, i);
+                        NetworkUtils.writeSocket(objArr, bArrM1211a, i);
                         NetworkUtils.releaseBytes(bArrM1211a);
                     }
                 }
@@ -183,7 +183,7 @@ public final class ConnectionThread {
         } catch (Throwable th) {
             this.state = -1;
             this.exception = th;
-            NetworkUtils.m1184b(this.connArray);
+            NetworkUtils.closeConnection(this.connArray);
         }
     }
 

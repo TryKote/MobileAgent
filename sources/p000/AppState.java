@@ -150,13 +150,13 @@ public abstract class AppState {
         StringUtils.initPlatform();
         AppController.timers = new long[14];
         pool[1238] = new Object[1];
-        NetworkUtils.m1208b(separator);
-        NetworkUtils.m1208b(getEllipsis());
-        NetworkUtils.m1208b(getString(1233));
-        NetworkUtils.m1208b(getString(1234));
-        NetworkUtils.m1208b(getString(1038));
-        NetworkUtils.m1208b(getString(525044));
-        NetworkUtils.m1208b(getString(590588));
+        NetworkUtils.cacheString(separator);
+        NetworkUtils.cacheString(getEllipsis());
+        NetworkUtils.cacheString(getString(1233));
+        NetworkUtils.cacheString(getString(1234));
+        NetworkUtils.cacheString(getString(1038));
+        NetworkUtils.cacheString(getString(525044));
+        NetworkUtils.cacheString(getString(590588));
         pool[112] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
         try {
             setBool(1535, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);

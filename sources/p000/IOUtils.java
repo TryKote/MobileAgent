@@ -424,7 +424,7 @@ public final class IOUtils {
         if (i == 6) {
             return handleMapPointAction(obj);
         }
-        NetworkUtils.m1195d();
+        NetworkUtils.processScreenForm();
         String strM522f = Utils.defaultStr(AppState.getString(1248));
         if (StringUtils.isEmpty(strM522f)) {
             return AppController.showError(351);

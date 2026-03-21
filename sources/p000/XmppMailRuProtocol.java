@@ -168,7 +168,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: s */
     public static final int performLogin() {
-        NetworkUtils.m1195d();
+        NetworkUtils.processScreenForm();
         if (getAccountType() == 1) {
             Account abstractC0037hM616i = AppState.getAccount();
             String strM843u = getLoginLowerCase();
@@ -1142,8 +1142,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     private static final boolean reconnectHttp() {
         try {
             AppController.acquireNetworkLock();
-            NetworkUtils.m1184b(AppState.getObjectArray(1392));
-            AppState.pool[1392] = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeCompressed(1511542).getStringAndClear(), false);
+            NetworkUtils.closeConnection(AppState.getObjectArray(1392));
+            AppState.pool[1392] = NetworkUtils.openSocket(new ByteBuffer().writeCompressed(593549).writeCompressed(1511542).getStringAndClear(), false);
             return true;
         } catch (Throwable unused) {
             return false;
@@ -1160,7 +1160,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             Object[] objArrM609l = AppState.getObjectArray(1392);
             byte[] bArr = c0043nM1310c.data;
             int i = c0043nM1310c.length;
-            NetworkUtils.m1189a(objArrM609l, bArr, i);
+            NetworkUtils.writeSocket(objArrM609l, bArr, i);
             AppController.addUploadBytes(i);
         } catch (Throwable unused) {
             if (!reconnectHttp()) {
@@ -1169,14 +1169,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             Object[] objArrM609l2 = AppState.getObjectArray(1392);
             byte[] bArr2 = c0043nM1310c.data;
             int i2 = c0043nM1310c.length;
-            NetworkUtils.m1189a(objArrM609l2, bArr2, i2);
+            NetworkUtils.writeSocket(objArrM609l2, bArr2, i2);
             AppController.addUploadBytes(i2);
         } finally {
             c0043nM1310c.clear();
         }
         String strM877V = readHttpHeaders();
         if (strM877V == null) {
-            NetworkUtils.m1184b(AppState.getObjectArray(1392));
+            NetworkUtils.closeConnection(AppState.getObjectArray(1392));
             throw new IOException();
         }
         AppState.addInt(1548, strM877V.getBytes().length);
@@ -1186,7 +1186,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 if (iM880m > 0) {
                     ((InputStream) AppState.getObjectArray(1392)[1]).skip(iM880m);
                 } else {
-                    NetworkUtils.m1184b(AppState.getObjectArray(1392));
+                    NetworkUtils.closeConnection(AppState.getObjectArray(1392));
                 }
                 return null;
             } catch (Throwable unused2) {
@@ -1195,7 +1195,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
         ByteBuffer c0043nM878i = readHttpBody(parseContentLength(strM877V));
         if (c0043nM878i == null) {
-            NetworkUtils.m1184b(AppState.getObjectArray(1392));
+            NetworkUtils.closeConnection(AppState.getObjectArray(1392));
             throw new IOException();
         }
         AppState.addInt(1548, c0043nM878i.length);
@@ -1247,7 +1247,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             int length = bArrM1211a.length;
             Object[] objArrM609l = AppState.getObjectArray(1392);
             while (i2 != i && iM1190a != -1) {
-                iM1190a = NetworkUtils.m1190a(objArrM609l, bArrM1211a, 0, Utils.min(length, i - i2));
+                iM1190a = NetworkUtils.readSocket(objArrM609l, bArrM1211a, 0, Utils.min(length, i - i2));
                 c0043n.writeBytesAt(bArrM1211a, 0, iM1190a);
                 i2 += iM1190a;
             }
@@ -1875,10 +1875,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 break;
             case 7:
-                NetworkUtils.m1202a(c0028ba, iM1328e, c0043n);
+                NetworkUtils.createSingleContact(c0028ba, iM1328e, c0043n);
                 break;
             case 8:
-                NetworkUtils.m1203b(c0028ba, iM1328e, c0043n);
+                NetworkUtils.parseContactInfoResponse(c0028ba, iM1328e, c0043n);
                 break;
             case 9:
                 if (iM1328e != 0) {
@@ -1941,7 +1941,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     }
                 }
             case 13:
-                NetworkUtils.m1204c(c0028ba, iM1328e, c0043n);
+                NetworkUtils.updateContactName(c0028ba, iM1328e, c0043n);
                 break;
             case 15:
                 if (iM1328e != 0) {
@@ -1958,7 +1958,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     break;
                 }
             case 16:
-                NetworkUtils.m1205d(c0028ba, iM1328e, c0043n);
+                NetworkUtils.addContactToGroup(c0028ba, iM1328e, c0043n);
                 break;
             case 17:
                 ResourceManager.handleAuthResponse(c0028ba, iM1328e, objArr, c0043n);

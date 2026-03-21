@@ -132,7 +132,7 @@ public final class AppController {
     /* renamed from: a */
     public static final int handleEnterKey() {
         restoreState();
-        return NetworkUtils.m1195d();
+        return NetworkUtils.processScreenForm();
     }
 
     /* renamed from: b */
@@ -397,7 +397,7 @@ public final class AppController {
 
     /* renamed from: n */
     public static final void finishScreenBuild() {
-        NetworkUtils.m1200b(180, 504);
+        NetworkUtils.showConfirmDialog(180, 504);
         AppState.clearRange(1239, 1240);
         Conversation.createStatusReport(true, (MrimAccount) AppState.getAccount());
     }
@@ -479,7 +479,7 @@ public final class AppController {
                 Conversation.setMapEnabled(false);
                 return 12;
             case 5:
-                return NetworkUtils.m1201f();
+                return NetworkUtils.getIconOffset();
             default:
                 return 0;
         }
@@ -513,7 +513,7 @@ public final class AppController {
 
     /* renamed from: d */
     public static final int openUrl(String str) {
-        AppState.setObject(1279, (Object) new StringBuffer().append((Object) NetworkUtils.m1196e()).append(str).toString());
+        AppState.setObject(1279, (Object) new StringBuffer().append((Object) NetworkUtils.getMessageBuffer()).append(str).toString());
         return 0;
     }
 
@@ -690,7 +690,7 @@ public final class AppController {
 
     /* renamed from: f */
     public static final int validateServerAddress(String str) {
-        AppState.setFromBuffer(1279, NetworkUtils.m1196e().append(str));
+        AppState.setFromBuffer(1279, NetworkUtils.getMessageBuffer().append(str));
         return 0;
     }
 
@@ -958,7 +958,7 @@ public final class AppController {
     /* renamed from: s */
     public static final int handleThemeOption(int i) {
         if (i == 10) {
-            return NetworkUtils.m1201f();
+            return NetworkUtils.getIconOffset();
         }
         return 0;
     }
@@ -984,7 +984,7 @@ public final class AppController {
 
     /* renamed from: t */
     public static final int handleSoundOption(int i) {
-        AppState.setFromBuffer(1279, NetworkUtils.m1196e().append(AppState.getString(i + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
+        AppState.setFromBuffer(1279, NetworkUtils.getMessageBuffer().append(AppState.getString(i + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
         return 63;
     }
 
@@ -1400,7 +1400,7 @@ public final class AppController {
         if (obj == null) {
             return 0;
         }
-        AppState.setFromBuffer(1279, NetworkUtils.m1196e().append(obj));
+        AppState.setFromBuffer(1279, NetworkUtils.getMessageBuffer().append(obj));
         return 0;
     }
 
@@ -1430,7 +1430,7 @@ public final class AppController {
             }
         }
         if (i == 10) {
-            return NetworkUtils.m1201f();
+            return NetworkUtils.getIconOffset();
         }
         if (i != 6) {
             return 0;
@@ -2342,7 +2342,7 @@ public final class AppController {
                                                 if (obj2 == null) {
                                                     String str2 = (String) objArr[20];
                                                     if ((str2 != null && Utils.parseInt((Object) str2) == 0) || objArr[3] != null) {
-                                                        iM1181a = NetworkUtils.m1181a(objArr);
+                                                        iM1181a = NetworkUtils.handleRegSubmit(objArr);
                                                     }
                                                     iM338l = iM1181a;
                                                     break;
@@ -2629,7 +2629,7 @@ public final class AppController {
                                                 iM338l = iM1181a;
                                                 break;
                                             case 55:
-                                                NetworkUtils.m1183c();
+                                                NetworkUtils.closeAllConnections();
                                                 ResourceManager.clearImageCache();
                                                 ResourceManager.clearMathTables();
                                                 System.gc();
@@ -3226,7 +3226,7 @@ public final class AppController {
                                                     showNotification(StringUtils.concatKeyObj(506, obj4));
                                                     iM1181a = 0;
                                                 } else {
-                                                    iM1181a = objArrM609l[3] == null ? 0 : NetworkUtils.m1181a(objArrM609l);
+                                                    iM1181a = objArrM609l[3] == null ? 0 : NetworkUtils.handleRegSubmit(objArrM609l);
                                                 }
                                                 iM338l = iM1181a;
                                                 break;
@@ -3732,7 +3732,7 @@ public final class AppController {
                                             MenuItem c0032c = (MenuItem) objM524a;
                                             if (c0032c.id == 2) {
                                                 if (i44 == 147 && AppState.setBool(1468, ((Boolean) c0032c.data).booleanValue())) {
-                                                    NetworkUtils.m1195d();
+                                                    NetworkUtils.processScreenForm();
                                                     AppState.setFromPool(1289, 1286);
                                                     finishScreenBuild();
                                                 }
@@ -4597,7 +4597,7 @@ public final class AppController {
             case 72:
             default:
                 c0028ba.handleError(0);
-                NetworkUtils.m1174a();
+                NetworkUtils.checkCrashReport();
                 break;
             case 68:
                 processMrimMailData(c0028ba, 492);

@@ -285,7 +285,7 @@ public final class ResourceManager {
         int iM1052c;
         String strM522f = Utils.defaultStr(AppState.getString(1279));
         if (str != AppState.getString(1060)) {
-            StringBuffer stringBufferM1196e = NetworkUtils.m1196e();
+            StringBuffer stringBufferM1196e = NetworkUtils.getMessageBuffer();
             if (StringUtils.matchesKey(473, str)) {
                 AppState.setFromBuffer(1279, stringBufferM1196e.append(AppState.getString(1280)));
                 return 0;
@@ -424,7 +424,7 @@ public final class ResourceManager {
 
     /* renamed from: f */
     public static final int parseBalance() {
-        NetworkUtils.m1195d();
+        NetworkUtils.processScreenForm();
         String strM522f = Utils.defaultStr(AppState.getString(1286));
         int i = 0;
         int iLastIndexOf = strM522f.lastIndexOf(46);
@@ -650,7 +650,7 @@ public final class ResourceManager {
             AppState.setInt(1456, 0);
             AppState.clearIndex(1279);
         } else if (StringUtils.matchesKey(473, str)) {
-            AppState.setFromBuffer(1279, NetworkUtils.m1196e().append(AppState.getString(1280)));
+            AppState.setFromBuffer(1279, NetworkUtils.getMessageBuffer().append(AppState.getString(1280)));
         } else if (StringUtils.matchesKey(474, str)) {
             AppState.setObject(1280, (Object) strM522f);
             AppState.setBool(1460, true);
@@ -1041,7 +1041,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final int collectInvitees(Screen c0013am) {
-        NetworkUtils.m1195d();
+        NetworkUtils.processScreenForm();
         String[] strArrM518a = Utils.getPhoneNumbers(true);
         Vector vectorM794a = IOUtils.getCheckedItems(c0013am, 1);
         int length = strArrM518a.length;

@@ -828,7 +828,7 @@ public final class Conversation implements ListItem {
             c0028ba.lastError = c0028ba.getDefaultError();
             c0028ba.markAllRead();
         }
-        NetworkUtils.m1174a();
+        NetworkUtils.checkCrashReport();
     }
 
     /* renamed from: a */

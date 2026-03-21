@@ -35,7 +35,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                         AppState.clearIndex(1358);
                     }
                 }
-                NetworkUtils.m1183c();
+                NetworkUtils.closeAllConnections();
                 AppController.saveState(AppController.saveOnExit, true);
                 AppState.saveDelta(AppController.saveOnExit);
             }
@@ -417,7 +417,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.NetworkUtils.m1192d(r0)     // Catch: java.lang.Throwable -> La84
+            p000.NetworkUtils.asyncReaderLoop(r0)     // Catch: java.lang.Throwable -> La84
             return
         L1ef:
             r0 = r8
@@ -974,7 +974,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.String r0 = (java.lang.String) r0     // Catch: java.lang.Throwable -> La84
-            p000.NetworkUtils.m1175a(r0)     // Catch: java.lang.Throwable -> La84
+            p000.NetworkUtils.sendDiagnosticReport(r0)     // Catch: java.lang.Throwable -> La84
             return
         L5f5:
             r0 = r8
@@ -1312,7 +1312,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.NetworkUtils.m1225e(r0)     // Catch: java.lang.Throwable -> La84
+            p000.NetworkUtils.executeRegRequest(r0)     // Catch: java.lang.Throwable -> La84
             return
         L85f:
             return
