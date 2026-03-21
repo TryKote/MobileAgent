@@ -148,7 +148,7 @@ public abstract class AppState {
         pool[1269] = new int[]{3};
         pool[1270] = new int[]{4};
         StringUtils.initPlatform();
-        AppController.f147a = new long[14];
+        AppController.timers = new long[14];
         pool[1238] = new Object[1];
         NetworkUtils.m1208b(separator);
         NetworkUtils.m1208b(getEllipsis());
@@ -333,7 +333,7 @@ public abstract class AppState {
     /* renamed from: b */
     public static final void setScreen(Object obj) {
         currentScreen = obj;
-        AppController.m304a(0, AppController.m376E());
+        AppController.setTimer(0, AppController.m376E());
     }
 
     /* renamed from: e */

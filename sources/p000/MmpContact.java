@@ -363,10 +363,10 @@ public final class MmpContact extends Contact {
             }
             int i13 = 0;
             int[] iArrM193a = getRoutePointAt(0);
-            int iM319a = AppController.m319a(iArrM193a[0], iArrM193a[1], i, i2);
+            int iM319a = AppController.computeColor(iArrM193a[0], iArrM193a[1], i, i2);
             for (int i14 = 1; i14 < iM192t; i14++) {
                 int[] iArrM193a2 = getRoutePointAt(i14);
-                int iM319a2 = AppController.m319a(iArrM193a2[0], iArrM193a2[1], i, i2);
+                int iM319a2 = AppController.computeColor(iArrM193a2[0], iArrM193a2[1], i, i2);
                 if (iM319a2 < iM319a) {
                     iM319a = iM319a2;
                     i13 = i14;
@@ -391,12 +391,12 @@ public final class MmpContact extends Contact {
         int iM192t = getTotalRoutePoints();
         int iM586d = AppState.getInt(39);
         int[] iArrM193a = getRoutePointAt(currentRouteIndex);
-        int iM317a = (int) AppController.m317a(iArrM193a[0], iM586d);
-        int iM317a2 = (int) AppController.m317a(iArrM193a[1], iM586d);
+        int iM317a = (int) AppController.coordToPixel(iArrM193a[0], iM586d);
+        int iM317a2 = (int) AppController.coordToPixel(iArrM193a[1], iM586d);
         for (int i = currentRouteIndex + 1; i < iM192t; i++) {
             if (getRouteLabelsAt(i) != null) {
                 int[] iArrM193a2 = getRoutePointAt(i);
-                if (ChatRenderer.isDistant(iM317a, (int) AppController.m317a(iArrM193a2[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
+                if (ChatRenderer.isDistant(iM317a, (int) AppController.coordToPixel(iArrM193a2[0], iM586d), iM317a2, (int) AppController.coordToPixel(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
                     currentRouteIndex = i;
                     break;
                 }
@@ -413,8 +413,8 @@ public final class MmpContact extends Contact {
         }
         int iM586d = AppState.getInt(39);
         int[] iArrM193a2 = getRoutePointAt(currentRouteIndex);
-        int iM317a = (int) AppController.m317a(iArrM193a2[0], iM586d);
-        int iM317a2 = (int) AppController.m317a(iArrM193a2[1], iM586d);
+        int iM317a = (int) AppController.coordToPixel(iArrM193a2[0], iM586d);
+        int iM317a2 = (int) AppController.coordToPixel(iArrM193a2[1], iM586d);
         int i = currentRouteIndex;
         while (true) {
             i--;
@@ -423,7 +423,7 @@ public final class MmpContact extends Contact {
             }
             if (getRouteLabelsAt(i) != null) {
                 iArrM193a = getRoutePointAt(i);
-                if (ChatRenderer.isDistant(iM317a, (int) AppController.m317a(iArrM193a[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a[1], iM586d)) || i == 0) {
+                if (ChatRenderer.isDistant(iM317a, (int) AppController.coordToPixel(iArrM193a[0], iM586d), iM317a2, (int) AppController.coordToPixel(iArrM193a[1], iM586d)) || i == 0) {
                     break;
                 }
             }

@@ -68,7 +68,7 @@ public abstract class ChatRenderer {
             scaleTimestamp = j;
             scaleZoom = i;
             int i3 = i;
-            int iM689d = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * AppController.m315d(i3)) / AppController.m316e(i3))));
+            int iM689d = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * AppController.getZoomNumerator(i3)) / AppController.getZoomDenominator(i3))));
             int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
             int i5 = (iM689d / i4) * i4;
             scaleBarWidth = scaleToPixels(i5, i, j);
@@ -112,8 +112,8 @@ public abstract class ChatRenderer {
         if (markerLon == 0 || markerLat == 0) {
             return;
         }
-        int iM317a = (int) ((i2 / 2) + (AppController.m317a(markerLon, i) - j));
-        int iM317a2 = (int) ((i3 / 2) + (j2 - AppController.m317a(markerLat, i)));
+        int iM317a = (int) ((i2 / 2) + (AppController.coordToPixel(markerLon, i) - j));
+        int iM317a2 = (int) ((i3 / 2) + (j2 - AppController.coordToPixel(markerLat, i)));
         if (iM317a < 0 || iM317a2 < 0 || iM317a >= i2 || iM317a2 >= i3) {
             return;
         }
@@ -313,7 +313,7 @@ public abstract class ChatRenderer {
 
     /* renamed from: a */
     private static int scaleToPixels(int i, int i2, long j) {
-        return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(AppController.m317a(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j))))));
+        return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(AppController.coordToPixel(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j))))));
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:132:0x0416, code lost:
@@ -655,8 +655,8 @@ public abstract class ChatRenderer {
                 int i21 = length - 1;
                 while (i21 > 0) {
                     if (objArr[i21] != null) {
-                        int iM317a = (int) (AppController.m317a(((int[]) ((Object[]) objArr[i21])[0])[0], i) - (j - (i2 / 2)));
-                        int iM317a2 = (int) ((j2 + (i3 / 2)) - AppController.m317a(((int[]) ((Object[]) objArr[i21])[0])[1], i));
+                        int iM317a = (int) (AppController.coordToPixel(((int[]) ((Object[]) objArr[i21])[0])[0], i) - (j - (i2 / 2)));
+                        int iM317a2 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) ((Object[]) objArr[i21])[0])[1], i));
                         while (true) {
                             Object[] objArr2 = (Object[]) objArr[length - i21];
                             String[] strArr = null;
@@ -667,10 +667,10 @@ public abstract class ChatRenderer {
                                 strArr[1] = (String) objArr2[2];
                             }
                             if (strArr != null) {
-                                int iM317a3 = (int) AppController.m317a(((int[]) objArr2[0])[0], i);
-                                int iM317a4 = (int) AppController.m317a(((int[]) objArr2[0])[1], i);
-                                int iM317a5 = (int) (AppController.m317a(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
-                                int iM317a6 = (int) ((j2 + (i3 / 2)) - AppController.m317a(((int[]) objArr2[0])[1], i));
+                                int iM317a3 = (int) AppController.coordToPixel(((int[]) objArr2[0])[0], i);
+                                int iM317a4 = (int) AppController.coordToPixel(((int[]) objArr2[0])[1], i);
+                                int iM317a5 = (int) (AppController.coordToPixel(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
+                                int iM317a6 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) objArr2[0])[1], i));
                                 if (Utils.m505a(j - iM317a3) < 7 && Utils.m505a(j2 - iM317a4) < 7 && str == null) {
                                     str = strArr[0];
                                     i18 = iM317a5;
@@ -678,8 +678,8 @@ public abstract class ChatRenderer {
                                 }
                             }
                             if (objArr[i21 - 1] != null) {
-                                int iM317a7 = (int) (AppController.m317a(((int[]) ((Object[]) objArr[i21 - 1])[0])[0], i) - (j - (i2 / 2)));
-                                int iM317a8 = (int) ((j2 + (i3 / 2)) - AppController.m317a(((int[]) ((Object[]) objArr[i21 - 1])[0])[1], i));
+                                int iM317a7 = (int) (AppController.coordToPixel(((int[]) ((Object[]) objArr[i21 - 1])[0])[0], i) - (j - (i2 / 2)));
+                                int iM317a8 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) ((Object[]) objArr[i21 - 1])[0])[1], i));
                                 if (isDistant(iM317a, iM317a7, iM317a2, iM317a8) || i21 - 1 == 0) {
                                     break;
                                 } else if (i21 > 0) {
@@ -693,15 +693,15 @@ public abstract class ChatRenderer {
             }
         } else {
             if (MmpContact.hasFirstToken()) {
-                int iM317a9 = (int) (AppController.m317a(MmpContact.lastTokenPair[0], i) - (j - (i2 / 2)));
-                int iM317a10 = (int) ((j2 + (i3 / 2)) - AppController.m317a(MmpContact.lastTokenPair[1], i));
+                int iM317a9 = (int) (AppController.coordToPixel(MmpContact.lastTokenPair[0], i) - (j - (i2 / 2)));
+                int iM317a10 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(MmpContact.lastTokenPair[1], i));
                 if (iM317a9 > 0 && iM317a9 < i2 && iM317a10 > 0 && iM317a10 < i3) {
                     graphics.drawImage(XmppContactGroup.getOrLoadImage(20), iM317a9, iM317a10, 36);
                 }
             }
             if (MmpContact.hasSecondToken()) {
-                int iM317a11 = (int) (AppController.m317a(MmpContact.currentTokenPair[0], i) - (j - (i2 / 2)));
-                int iM317a12 = (int) ((j2 + (i3 / 2)) - AppController.m317a(MmpContact.currentTokenPair[1], i));
+                int iM317a11 = (int) (AppController.coordToPixel(MmpContact.currentTokenPair[0], i) - (j - (i2 / 2)));
+                int iM317a12 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(MmpContact.currentTokenPair[1], i));
                 if (iM317a11 > 0 && iM317a11 < i2 && iM317a12 > 0 && iM317a12 < i3) {
                     graphics.drawImage(XmppContactGroup.getOrLoadImage(21), iM317a11, iM317a12, 36);
                 }
@@ -718,8 +718,8 @@ public abstract class ChatRenderer {
                 iArrM193a = (int[]) objArr3[1];
             }
             if (iArrM193a != null) {
-                int iM317a13 = (int) AppController.m317a(iArrM193a[0], i);
-                int iM317a14 = (int) AppController.m317a(iArrM193a[1], i);
+                int iM317a13 = (int) AppController.coordToPixel(iArrM193a[0], i);
+                int iM317a14 = (int) AppController.coordToPixel(iArrM193a[1], i);
                 int i23 = iM317a13 - (((int) j) - (i2 / 2));
                 int i24 = (((int) j2) + (i3 / 2)) - iM317a14;
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
@@ -757,8 +757,8 @@ public abstract class ChatRenderer {
             int i27 = 0;
             int i28 = 0;
             int[] iArrM193a2 = MmpContact.getRoutePointAt(0);
-            int iM317a15 = (int) AppController.m317a(iArrM193a2[0], i);
-            int iM317a16 = (int) AppController.m317a(iArrM193a2[1], i);
+            int iM317a15 = (int) AppController.coordToPixel(iArrM193a2[0], i);
+            int iM317a16 = (int) AppController.coordToPixel(iArrM193a2[1], i);
             int i29 = iM317a15 - (i25 - (i2 / 2));
             int i30 = (i26 + (i3 / 2)) - iM317a16;
             String[] strArrM194b = MmpContact.getRouteLabelsAt(0);
@@ -771,8 +771,8 @@ public abstract class ChatRenderer {
                 z3 = true;
             }
             int[] iArrM193a3 = MmpContact.getRoutePointAt(iM192t2 - 1);
-            int iM317a17 = (int) AppController.m317a(iArrM193a3[0], i);
-            int iM317a18 = (int) AppController.m317a(iArrM193a3[1], i);
+            int iM317a17 = (int) AppController.coordToPixel(iArrM193a3[0], i);
+            int iM317a18 = (int) AppController.coordToPixel(iArrM193a3[1], i);
             int i31 = iM317a17 - (i25 - (i2 / 2));
             int i32 = (i26 + (i3 / 2)) - iM317a18;
             String[] strArrM194b2 = MmpContact.getRouteLabelsAt(iM192t2 - 1);
@@ -798,8 +798,8 @@ public abstract class ChatRenderer {
             Font font2 = graphics.getFont();
             graphics.setFont(font);
             int[] iArrM193a4 = MmpContact.getRoutePointAt(0);
-            int iM317a19 = (int) AppController.m317a(iArrM193a4[0], i);
-            int iM317a20 = (int) AppController.m317a(iArrM193a4[1], i);
+            int iM317a19 = (int) AppController.coordToPixel(iArrM193a4[0], i);
+            int iM317a20 = (int) AppController.coordToPixel(iArrM193a4[1], i);
             if (Utils.abs(((int) j) - iM317a19) < 7 && Utils.abs(i33 - iM317a20) < 7) {
                 int height = font.getHeight();
                 int clipHeight = (graphics.getClipHeight() - height) - 1;

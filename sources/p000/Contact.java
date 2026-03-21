@@ -95,7 +95,7 @@ public abstract class Contact implements Sortable {
         int i3 = !isOnline() ? i2 | 134217728 : i2 & (-100663297);
         if (i3 != this.renderState) {
             this.renderState = i3;
-            AppController.f152f = true;
+            AppController.needsLayoutUpdate = true;
         }
     }
 
@@ -439,7 +439,7 @@ public abstract class Contact implements Sortable {
         }
         this.displayName = str;
         this.sortKey = StringUtils.intern(str.toLowerCase());
-        AppController.f152f = true;
+        AppController.needsLayoutUpdate = true;
     }
 
     public final String toString() {

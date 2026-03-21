@@ -237,7 +237,7 @@ public class XmppProtocol extends Account {
                     new AsyncTask(33, objArr4);
                     this.authState = objArr4;
                 }
-                AppController.f153g = true;
+                AppController.needsRepaint = true;
                 break;
             case 2:
                 this.msgCount = 20;
@@ -252,7 +252,7 @@ public class XmppProtocol extends Account {
                 } else if (this.lastException != null) {
                     handleException(this.lastException);
                 }
-                AppController.f153g = true;
+                AppController.needsRepaint = true;
                 break;
             case 3:
                 this.msgCount = 30;
@@ -262,7 +262,7 @@ public class XmppProtocol extends Account {
                 if (isMailRuXmpp()) {
                     new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
                 }
-                AppController.f153g = true;
+                AppController.needsRepaint = true;
                 break;
             case 4:
                 clearParserState();
@@ -278,12 +278,12 @@ public class XmppProtocol extends Account {
                         objArr5[2] = new XmlParser(objArr5);
                         new AsyncTask(29, objArr5);
                         this.parserState = objArr5;
-                        AppController.f153g = true;
+                        AppController.needsRepaint = true;
                         sendPresenceSubscription();
                     } else if (this.connection.m1131a() <= 0) {
                         closeConnection();
                     }
-                    AppController.f153g = true;
+                    AppController.needsRepaint = true;
                     break;
                 } else if (this.authResult != null) {
                     if (this.authResult instanceof Throwable) {
@@ -448,8 +448,8 @@ public class XmppProtocol extends Account {
                             }
                         }
                     }
-                    AppController.f153g = true;
-                    AppController.f152f = true;
+                    AppController.needsRepaint = true;
+                    AppController.needsLayoutUpdate = true;
                     break;
                 }
                 break;
@@ -459,7 +459,7 @@ public class XmppProtocol extends Account {
             closeConnection();
             this.lastError = getDefaultError();
         }
-        if (this.timeout <= 0 || !AppController.m306a(this.deadline)) {
+        if (this.timeout <= 0 || !AppController.isTimerExpired(this.deadline)) {
             return;
         }
         sendRawBytes(new byte[]{32});

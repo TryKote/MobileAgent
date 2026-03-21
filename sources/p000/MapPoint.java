@@ -121,12 +121,12 @@ public final class MapPoint implements ListItem {
 
     /* renamed from: c */
     public final long getLonAtZoom(int i) {
-        return AppController.m317a(this.longitude, i);
+        return AppController.coordToPixel(this.longitude, i);
     }
 
     /* renamed from: d */
     public final long getLatAtZoom(int i) {
-        return AppController.m317a(this.latitude, i);
+        return AppController.coordToPixel(this.latitude, i);
     }
 
     /* renamed from: d */

@@ -128,10 +128,10 @@ public final class Conversation implements ListItem {
         MmpProtocol c0033d = (MmpProtocol) objArr[0];
         try {
             try {
-                AppController.m343s();
+                AppController.acquireNetworkLock();
                 if (((Integer) objArr[1]).intValue() == 0) {
                     c0033d.msgCount = 30;
-                    AppController.f153g = true;
+                    AppController.needsRepaint = true;
                     HttpClient c0024axM629a = HttpClient.createHttpClient(AppState.getString(2755089), c0033d, 0);
                     c0024axM629a.setRequestMethod(NetworkUtils.longToHex(1414745936));
                     ByteBuffer c0043nM1315a = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
@@ -141,7 +141,7 @@ public final class Conversation implements ListItem {
                     i = iM634a;
                     if (iM634a == 200) {
                         c0033d.msgCount = 40;
-                        AppController.f153g = true;
+                        AppController.needsRepaint = true;
                         XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).parseXmlStr();
                         int i2 = Integer.parseInt(StringUtils.fromBuffer(c0022avM1389J.findChildByKey(658246).textContent));
                         if (i2 != 200) {
@@ -154,12 +154,12 @@ public final class Conversation implements ListItem {
                         XmlElement c0022avM562f = c0022avM1389J.findChildByKey(262156);
                         new AsyncTask(31, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(c0022avM562f.findChildByKey(461648).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(527196).textContent), StringUtils.fromBuffer(c0022avM562f.findChildByKey(854884).textContent), objArr[3]});
                         HttpClient.closeAndUpdateStats(c0024axM629a);
-                        AppController.m344t();
+                        AppController.releaseNetworkLock();
                         return;
                     }
                 } else {
                     c0033d.msgCount = 50;
-                    AppController.f153g = true;
+                    AppController.needsRepaint = true;
                     ByteBuffer c0043nM1321f = new ByteBuffer().writeCompressed(2951781).writeByte(63);
                     String strM1337i = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
                     HttpClient c0024axM642a = HttpClient.createMockClient(c0043nM1321f.writeRawString(strM1337i).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(2951781), false)).writeByte(38).writeRawString(percentEncodeInternal(strM1337i, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
@@ -167,11 +167,11 @@ public final class Conversation implements ListItem {
                     i = iM634a2;
                     if (iM634a2 == 200) {
                         c0033d.msgCount = 60;
-                        AppController.f153g = true;
+                        AppController.needsRepaint = true;
                         XmlElement c0022avM562f2 = c0024axM642a.readChunkedResponse().parseXmlStr().findChildByKey(262156);
                         ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(c0022avM562f2.findChildByKey(395483).textContent)};
                         HttpClient.closeAndUpdateStats(c0024axM642a);
-                        AppController.m344t();
+                        AppController.releaseNetworkLock();
                         return;
                     }
                 }
@@ -182,11 +182,11 @@ public final class Conversation implements ListItem {
                 IOUtils.postAccountMessage(c0033d2, th.toString());
                 c0033d2.progress = 0;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
             }
         } catch (Throwable th2) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th2;
         }
     }
@@ -624,7 +624,7 @@ public final class Conversation implements ListItem {
         boolean z = (iM1328e2 & 2048) != 0;
         boolean z2 = (iM1328e2 & 8192) != 0;
         if ((iM1328e2 & 4) == 0) {
-            c0028ba.trySendData(AppController.m321a(c0028ba, 4113, new ByteBuffer().writeStringLatin1((z2 || z) ? AppState.getString(1052223) : strM1338j).writeIntLE(iM1328e)));
+            c0028ba.trySendData(AppController.createMrimPacket(c0028ba, 4113, new ByteBuffer().writeStringLatin1((z2 || z) ? AppState.getString(1052223) : strM1338j).writeIntLE(iM1328e)));
         }
         if (z2) {
             Enumeration enumerationElements = c0028ba.contactMap.elements();
@@ -812,7 +812,7 @@ public final class Conversation implements ListItem {
             c0028ba.progress = 100;
             c0028ba.msgCount = 100;
             c0028ba.setConfiguration(c0028ba.configFlags);
-            c0028ba.trySendData(AppController.m321a(c0028ba, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
+            c0028ba.trySendData(AppController.createMrimPacket(c0028ba, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
             if (c0028ba.syncSeq == 1) {
                 String strM17c = StringUtils.intern(Utils.defaultStr(AppState.getString(1382)).toLowerCase());
                 if (!StringUtils.isEmpty(strM17c)) {
@@ -923,7 +923,7 @@ public final class Conversation implements ListItem {
         /*
             r0 = 0
             r8 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r7
             r1 = 0
             r9 = r1
@@ -1006,7 +1006,7 @@ public final class Conversation implements ListItem {
         La4:
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)
-            p000.AppController.m344t()
+            p000.AppController.releaseNetworkLock()
             return
         Lac:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
@@ -1035,13 +1035,13 @@ public final class Conversation implements ListItem {
         Ld4:
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)
-            p000.AppController.m344t()
+            p000.AppController.releaseNetworkLock()
             return
         Ldc:
             r10 = move-exception
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)
-            p000.AppController.m344t()
+            p000.AppController.releaseNetworkLock()
             r0 = r10
             throw r0
         */

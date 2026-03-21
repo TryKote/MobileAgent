@@ -425,7 +425,7 @@ public final class ConnectionThread {
             try {
                 try {
                     try {
-                        AppController.m343s();
+                        AppController.acquireNetworkLock();
                         String str = (String) objArr[5];
                         if (str == null) {
                             strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(1115687)).append(objArr[2]));
@@ -436,34 +436,34 @@ public final class ConnectionThread {
                         c0024ax = c0024axM629a;
                         Object[] objArrM1152a = m1152a(objArr, c0024axM629a);
                         HttpClient.closeAndUpdateStats(c0024ax);
-                        AppController.m344t();
+                        AppController.releaseNetworkLock();
                         return objArrM1152a;
                     } catch (ConnectionNotFoundException e) {
                         Object[] objArrM798a = IOUtils.createConnectError((Throwable) null);
                         HttpClient.closeAndUpdateStats(c0024ax);
-                        AppController.m344t();
+                        AppController.releaseNetworkLock();
                         return objArrM798a;
                     }
                 } catch (Throwable th) {
                     Object[] objArrM801d = IOUtils.createReceiveError((Throwable) null);
                     HttpClient.closeAndUpdateStats(c0024ax);
-                    AppController.m344t();
+                    AppController.releaseNetworkLock();
                     return objArrM801d;
                 }
             } catch (IllegalArgumentException e2) {
                 Object[] objArrM799b = IOUtils.createAuthError((Throwable) null);
                 HttpClient.closeAndUpdateStats(c0024ax);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
                 return objArrM799b;
             } catch (SecurityException e3) {
                 Object[] objArrM800c = IOUtils.createSendError((Throwable) null);
                 HttpClient.closeAndUpdateStats(c0024ax);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
                 return objArrM800c;
             }
         } catch (Throwable th2) {
             HttpClient.closeAndUpdateStats(c0024ax);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th2;
         }
     }
@@ -592,13 +592,13 @@ public final class ConnectionThread {
         MapRenderer.currentLat = AppState.getLong(1412);
         MapRenderer.currentLon = AppState.getLong(1410);
         int iM586d = AppState.getInt(39);
-        MapRenderer.currentPixelX = AppController.m317a(MapRenderer.currentLon, iM586d);
-        MapRenderer.currentPixelY = AppController.m317a(MapRenderer.currentLat, iM586d);
+        MapRenderer.currentPixelX = AppController.coordToPixel(MapRenderer.currentLon, iM586d);
+        MapRenderer.currentPixelY = AppController.coordToPixel(MapRenderer.currentLat, iM586d);
         AppState.pool[1364] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
         StringUtils.m19b();
         AppState.pool[1398] = NetworkUtils.newVector();
         AppState.pool[1396] = NetworkUtils.newVector();
-        Object[] objArrM332c = AppController.m332c(AppState.emptyStr);
+        Object[] objArrM332c = AppController.getUrlComponents(AppState.emptyStr);
         AppState.pool[1395] = objArrM332c;
         XmppContactGroup.addContactInfoToQueue(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
@@ -709,10 +709,10 @@ public final class ConnectionThread {
         if (vectorM614m == null) {
             return 0;
         }
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
         int size = vectorM614m.size();
         if (size == 0) {
-            return AppController.m338l(327);
+            return AppController.showError(327);
         }
         Screen c0013amM75b = ScreenManager.createScreen(1717);
         for (int i = 0; i < size; i++) {

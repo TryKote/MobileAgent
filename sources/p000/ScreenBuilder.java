@@ -16,7 +16,7 @@ public final class ScreenBuilder {
         Object[] objArrM1147a;
         int i2;
         AppController.m356y();
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
                 Vector vectorM614m = AppState.getVector(1272);
@@ -97,7 +97,7 @@ public final class ScreenBuilder {
             case 9:
                 AppState.setInt(1505, 1);
                 AppState.setObject(1284, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
-                AppState.setObject(1285, (Object) AppController.m298f());
+                AppState.setObject(1285, (Object) AppController.getAppVersion());
                 AppState.setFromBuffer(1288, NetworkUtils.newStringBuffer().append(AppState.getString(1375)).append(AppState.getString(511)));
                 AppState.setObject(1287, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(519)).getStringAndClear());
                 ScreenManager.showScreen(ScreenManager.createScreen(2448));
@@ -307,7 +307,7 @@ public final class ScreenBuilder {
                 NetworkUtils.releaseVector(vectorM614m3);
                 return;
             case 40:
-                AppController.m300h();
+                AppController.clearSearchState();
                 return;
             case 41:
                 AppState.clearIndex(1271);
@@ -443,7 +443,7 @@ public final class ScreenBuilder {
                     }
                 }
                 ScreenManager.showScreen(c0013amM75b3);
-                AppController.m299g();
+                AppController.clearPreviewState();
                 return;
             case 53:
                 ScreenManager.showScreen(ScreenManager.createScreen(4551));
@@ -497,7 +497,7 @@ public final class ScreenBuilder {
                 Vector vectorM516c2 = Utils.m516c(AppState.getCurrentMrimContact().contactGroupsStr, ',');
                 int size6 = vectorM516c2.size();
                 if (size6 <= 0) {
-                    AppController.m340m(713);
+                    AppController.showMessageById(713);
                     return;
                 }
                 StringBuffer stringBufferM1217h2 = NetworkUtils.newStringBuffer();
@@ -515,7 +515,7 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(ScreenManager.createScreen(4633));
                 return;
             case 68:
-                AppController.m293c();
+                AppController.resetSearchResults();
                 ScreenManager.showScreen(ScreenManager.createScreen(4769));
                 return;
             case 69:
@@ -553,7 +553,7 @@ public final class ScreenBuilder {
                 int iM586d5 = AppState.getInt(1506);
                 if (0 != iM586d5) {
                     AppController.m391H();
-                    AppController.m340m(iM586d5);
+                    AppController.showMessageById(iM586d5);
                     return;
                 }
                 Vector vectorM614m5 = AppState.getVector(1318);
@@ -562,7 +562,7 @@ public final class ScreenBuilder {
                     return;
                 } else {
                     AppController.m391H();
-                    AppController.m340m(736);
+                    AppController.showMessageById(736);
                     return;
                 }
             case 74:
@@ -610,7 +610,7 @@ public final class ScreenBuilder {
                 ResourceManager.playNotificationSound(4);
                 AppState.setInt(3329, 83);
                 AppState.setFromPool(1294, 879);
-                AppController.m341r();
+                AppController.clearNotifications();
                 return;
             case 84:
                 String strM1026g = XmppContactGroup.getTextInputValue();
@@ -653,7 +653,7 @@ public final class ScreenBuilder {
                 ResourceManager.showTosScreen();
                 return;
             case 90:
-                AppController.m350w();
+                AppController.processEventQueue();
                 return;
             case 91:
                 boolean zM587e4 = AppState.getBool(277);
@@ -731,7 +731,7 @@ public final class ScreenBuilder {
                 ContactInfo c0042m = (ContactInfo) AppState.pool[1315];
                 String str2 = (String) c0042m.get(ResourceManager.integerOf(-1));
                 if (null != str2) {
-                    AppController.m339e(str2);
+                    AppController.showNotification(str2);
                 } else {
                     AppState.setInt(3834, c0042m.isXmppContact() ? 0 : 503);
                     ScreenManager.showScreen(c0042m.buildContactScreen(3830));
@@ -742,7 +742,7 @@ public final class ScreenBuilder {
                 Vector vectorM614m6 = AppState.getVector(1389);
                 int size9 = vectorM614m6.size();
                 if (size9 == 0) {
-                    AppController.m340m(397);
+                    AppController.showMessageById(397);
                     return;
                 }
                 Screen c0013amM75b8 = ScreenManager.createScreen(1691);
@@ -780,14 +780,14 @@ public final class ScreenBuilder {
             case 101:
                 return;
             case 102:
-                if (AppController.f149c == null && AppController.f148b == null) {
+                if (AppController.pendingAccount == null && AppController.pendingUrl == null) {
                     Contact abstractC0041lM611g6 = AppState.getCurrentContact();
-                    String strM314m = AppController.m314m();
+                    String strM314m = AppController.getStatusText();
                     NetworkUtils.m1199a(102, 728, strM314m != null ? abstractC0041lM611g6.account.getResourceId((Object) strM314m) : ResourceManager.loadUserProfile(abstractC0041lM611g6.getIdentifier(), abstractC0041lM611g6.account));
                     return;
                 } else {
                     NetworkUtils.m1199a(102, 728, 0);
-                    ResourceManager.loadUserProfile(AppController.f148b, AppController.f149c);
+                    ResourceManager.loadUserProfile(AppController.pendingUrl, AppController.pendingAccount);
                     AppController.m394J();
                     return;
                 }
@@ -838,9 +838,9 @@ public final class ScreenBuilder {
                     size10--;
                     if (size10 < 0) {
                         if (vectorM445W.size() == 0) {
-                            AppController.m340m(762);
+                            AppController.showMessageById(762);
                         } else {
-                            AppController.m353a(vectorM445W);
+                            AppController.sortContacts(vectorM445W);
                             ScreenManager.showScreen(NetworkUtils.m1193a(ScreenManager.createScreen(1743), vectorM445W));
                         }
                         NetworkUtils.releaseVector(vectorM445W);
@@ -851,7 +851,7 @@ public final class ScreenBuilder {
                     }
                 }
             case 112:
-                AppController.m341r();
+                AppController.clearNotifications();
                 return;
             case 113:
                 XmppMailRuProtocol.showMapContextMenu();
@@ -866,7 +866,7 @@ public final class ScreenBuilder {
                 return;
             case 115:
                 ScreenManager.showScreen(ScreenManager.createScreen(2501));
-                AppController.m299g();
+                AppController.clearPreviewState();
                 return;
             case 116:
                 Screen c0013amM75b13 = ScreenManager.createScreen(1892);
@@ -888,9 +888,9 @@ public final class ScreenBuilder {
                     size11--;
                     if (size11 < 0) {
                         if (vectorM445W2.size() == 0) {
-                            AppController.m340m(762);
+                            AppController.showMessageById(762);
                         } else {
-                            AppController.m353a(vectorM445W2);
+                            AppController.sortContacts(vectorM445W2);
                             ScreenManager.showScreen(NetworkUtils.m1193a(ScreenManager.createScreen(1930), vectorM445W2));
                         }
                         NetworkUtils.releaseVector(vectorM445W2);
@@ -937,7 +937,7 @@ public final class ScreenBuilder {
                 if (vectorM1213g11.size() > 0) {
                     ScreenManager.showScreen(NetworkUtils.m1193a(ScreenManager.createScreen(4070), vectorM1213g11));
                 } else {
-                    AppController.m340m(762);
+                    AppController.showMessageById(762);
                 }
                 NetworkUtils.releaseVector(vectorM1213g11);
                 return;
@@ -954,7 +954,7 @@ public final class ScreenBuilder {
                 if (vectorM1213g12.size() > 0) {
                     ScreenManager.showScreen(NetworkUtils.m1193a(ScreenManager.createScreen(4060), vectorM1213g12));
                 } else {
-                    AppController.m340m(762);
+                    AppController.showMessageById(762);
                 }
                 NetworkUtils.releaseVector(vectorM1213g12);
                 return;
@@ -971,7 +971,7 @@ public final class ScreenBuilder {
                 if (vectorM1213g13.size() > 0) {
                     ScreenManager.showScreen(NetworkUtils.m1193a(ScreenManager.createScreen(4050), vectorM1213g13));
                 } else {
-                    AppController.m340m(762);
+                    AppController.showMessageById(762);
                 }
                 NetworkUtils.releaseVector(vectorM1213g13);
                 return;
@@ -1070,7 +1070,7 @@ public final class ScreenBuilder {
                 return;
             case 145:
                 AppState.clearIndex(1315);
-                NetworkUtils.m1199a(145, 727, ((MrimAccount) AppState.getCurrentContact().account).sendDeleteCommand(AppController.m314m()));
+                NetworkUtils.m1199a(145, 727, ((MrimAccount) AppState.getCurrentContact().account).sendDeleteCommand(AppController.getStatusText()));
                 return;
             case 146:
                 AppState.setBool(1462, AppController.m439R().size() > 1);
@@ -1102,7 +1102,7 @@ public final class ScreenBuilder {
                 AppController.m392I();
                 MrimContact c0035f3 = (MrimContact) AppState.getCurrentContact();
                 MrimAccount c0028ba5 = (MrimAccount) c0035f3.account;
-                NetworkUtils.m1199a(150, 504, c0028ba5.trySendData(c0028ba5.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), c0035f3, new Long(1L)})));
+                NetworkUtils.m1199a(150, 504, c0028ba5.trySendData(c0028ba5.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), c0035f3, new Long(1L)})));
                 return;
             case 151:
                 ScreenManager.showScreen(ScreenManager.createScreen(3272));
@@ -1121,7 +1121,7 @@ public final class ScreenBuilder {
                 Vector vectorM1141c = ConnectionThread.m1141c();
                 int iM541c = Utils.m541c(vectorM1141c);
                 if (iM541c == 0) {
-                    AppController.m340m(404);
+                    AppController.showMessageById(404);
                     return;
                 }
                 Screen c0013amM75b16 = ScreenManager.createScreen(2101);
@@ -1258,7 +1258,7 @@ public final class ScreenBuilder {
             case 180:
                 break;
         }
-        AppController.m324n();
+        AppController.finishScreenBuild();
     }
 
     /* renamed from: a */
@@ -1278,8 +1278,8 @@ public final class ScreenBuilder {
         int iM721d;
         int iM1052c2;
         int iMo112a;
-        AppController.f153g = true;
-        AppController.f152f = true;
+        AppController.needsRepaint = true;
+        AppController.needsLayoutUpdate = true;
         Screen c0013amM66b = ScreenManager.getCurrentScreen();
         String strM67c = ScreenManager.getCurrentTitle();
         int iM68d = ScreenManager.getCurrentWidth();
@@ -1312,7 +1312,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 8:
-                iM460J = AppController.m335j(iM68d);
+                iM460J = AppController.handleSettingsOption(iM68d);
                 break;
             case 9:
                 iM460J = 0;
@@ -1321,7 +1321,7 @@ public final class ScreenBuilder {
                 iM460J = 55;
                 break;
             case 11:
-                iM460J = AppController.m295d();
+                iM460J = AppController.handleLeftKey();
                 break;
             case 13:
                 iM460J = -1;
@@ -1330,13 +1330,13 @@ public final class ScreenBuilder {
                 iM460J = ResourceManager.parseBalance();
                 break;
             case 15:
-                iM460J = AppController.m287a(strM67c, obj);
+                iM460J = AppController.handleMenuAction(strM67c, obj);
                 break;
             case 16:
                 iM460J = 0;
                 break;
             case 17:
-                iM460J = AppController.m313c(iM68d);
+                iM460J = AppController.handleAccountOption(iM68d);
                 break;
             case 18:
                 iM460J = 0;
@@ -1352,15 +1352,15 @@ public final class ScreenBuilder {
                 Contact abstractC0041lM611g = AppState.getCurrentContact();
                 if (abstractC0041lM611g.isOnline()) {
                     abstractC0041lM611g.setDisplayName((String) objArr[0]);
-                    AppController.f152f = true;
+                    AppController.needsLayoutUpdate = true;
                     iMo112a = 0;
                 } else {
                     iMo112a = abstractC0041lM611g.account.validateModify(abstractC0041lM611g, objArr);
                 }
-                iM460J = 0 != iMo112a ? AppController.m338l(iMo112a) : 0;
+                iM460J = 0 != iMo112a ? AppController.showError(iMo112a) : 0;
                 break;
             case 20:
-                iM460J = AppController.m330i(iM68d);
+                iM460J = AppController.handleProfileAction(iM68d);
                 break;
             case 21:
                 NetworkUtils.m1195d();
@@ -1394,14 +1394,14 @@ public final class ScreenBuilder {
                                 MrimContactGroup c0010ajM718f = c0028ba.getFirstContactGroup();
                                 ByteBuffer c0043nM1309b = new ByteBuffer().writeIntLE(1048576).writeIntLE(103).writeStringLatin1(AppState.getString(1233)).writeStringUTF16(strM522f);
                                 String strM519a = Utils.m519a(strArrM518a2);
-                                iM1052c2 = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4121, c0043nM1309b.writeStringLatin1(strM519a).writeZeros(8)), ResourceManager.integerOf(5), strM522f, strM519a, c0010ajM718f}));
+                                iM1052c2 = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba, 4121, c0043nM1309b.writeStringLatin1(strM519a).writeZeros(8)), ResourceManager.integerOf(5), strM522f, strM519a, c0010ajM718f}));
                             }
                         }
                     }
                 } else {
                     iM1052c2 = 708;
                 }
-                iM460J = 0 != iM1052c2 ? AppController.m338l(iM1052c2) : 0;
+                iM460J = 0 != iM1052c2 ? AppController.showError(iM1052c2) : 0;
                 break;
             case 23:
                 iM460J = 0;
@@ -1458,7 +1458,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 35:
-                iM460J = AppController.m346n(iM68d);
+                iM460J = AppController.handleConnectionOption(iM68d);
                 break;
             case 36:
                 iM460J = 0;
@@ -1470,7 +1470,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 39:
-                iM460J = AppController.m286a(obj);
+                iM460J = AppController.handleAction(obj);
                 break;
             case 40:
                 iM460J = 0;
@@ -1505,7 +1505,7 @@ public final class ScreenBuilder {
                 break;
             case 49:
                 NetworkUtils.m1195d();
-                iM460J = (AppState.getInt(4308) != 4 || 0 == (iM721d = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(4305) - 157) << 8) + 4))) ? 0 : AppController.m338l(iM721d);
+                iM460J = (AppState.getInt(4308) != 4 || 0 == (iM721d = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(4305) - 157) << 8) + 4))) ? 0 : AppController.showError(iM721d);
                 break;
             case 50:
                 NetworkUtils.m1195d();
@@ -1541,14 +1541,14 @@ public final class ScreenBuilder {
                     i4++;
                 }
                 if (Utils.m541c(vectorM1213g) == 0) {
-                    iM338l8 = AppController.m338l(873);
+                    iM338l8 = AppController.showError(873);
                 } else {
                     boolean z = false;
                     int iM541c = Utils.m541c(vectorM1213g);
                     while (true) {
                         iM541c--;
                         if (iM541c < 0) {
-                            iM338l8 = z ? AppController.m338l(876) : 0;
+                            iM338l8 = z ? AppController.showError(876) : 0;
                         } else {
                             String str = (String) vectorM1213g.elementAt(iM541c);
                             int iIndexOf = str.indexOf(64);
@@ -1574,7 +1574,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 58:
-                iM460J = AppController.m322f(iM68d);
+                iM460J = AppController.handleGroupSelection(iM68d);
                 break;
             case 59:
                 iM460J = ResourceManager.applyVersionLabel();
@@ -1589,7 +1589,7 @@ public final class ScreenBuilder {
                 iM460J = IOUtils.handleMailMenuAction(strM67c, iM68d);
                 break;
             case 63:
-                AppController.f152f = true;
+                AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas().updateCommands());
                 onScreenClosed();
                 iM460J = 84;
@@ -1605,23 +1605,23 @@ public final class ScreenBuilder {
             case 66:
                 NetworkUtils.m1195d();
                 int iMo734a = ((ContactInfo) AppState.pool[1319]).getAccount().validateGroupAdd(Utils.defaultStr(AppState.getString(1320)), Utils.defaultStr(AppState.getString(1321)), Utils.defaultStr(AppState.getString(1322)), (ContactGroup) AppState.getVector(1324).elementAt(AppState.getInt(1507)), AppState.getBool(1509));
-                iM460J = 0 != iMo734a ? AppController.m338l(iMo734a) : 0;
+                iM460J = 0 != iMo734a ? AppController.showError(iMo734a) : 0;
                 break;
             case 67:
-                iM460J = AppController.m289a(strM67c);
+                iM460J = AppController.handleSoftKeyAction(strM67c);
                 break;
             case 68:
-                iM460J = AppController.m291a();
+                iM460J = AppController.handleEnterKey();
                 break;
             case 69:
                 NetworkUtils.m1195d();
                 int iMo122a = AppState.getAccount().validateGroupCreate(Utils.defaultStr(AppState.getString(1295)));
-                iM460J = 0 != iMo122a ? AppController.m338l(iMo122a) : 0;
+                iM460J = 0 != iMo122a ? AppController.showError(iMo122a) : 0;
                 break;
             case 70:
                 NetworkUtils.m1195d();
                 int iMo1399b = AppState.getCurrentGroup().rename(Utils.defaultStr(AppState.getString(1306)));
-                iM460J = 0 != iMo1399b ? AppController.m338l(iMo1399b) : 0;
+                iM460J = 0 != iMo1399b ? AppController.showError(iMo1399b) : 0;
                 break;
             case 71:
                 iM460J = ResourceManager.deleteSelectedEntity();
@@ -1654,7 +1654,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 80:
-                iM460J = AppController.m352o(iM68d);
+                iM460J = AppController.handleNotificationOption(iM68d);
                 break;
             case 81:
                 iM460J = -1;
@@ -1663,7 +1663,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 83:
-                iM460J = AppController.m308i();
+                iM460J = AppController.handleHashKey();
                 break;
             case 84:
                 iM460J = ResourceManager.handleMessageInputAction(strM67c, iM68d);
@@ -1684,7 +1684,7 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 90:
-                iM460J = AppController.m351e(obj);
+                iM460J = AppController.handleEventObject(obj);
                 break;
             case 91:
                 iM460J = AppController.m364q(iM68d);
@@ -1699,7 +1699,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m396h(strM67c);
                 break;
             case 95:
-                iM460J = AppController.m347f(strM67c);
+                iM460J = AppController.validateServerAddress(strM67c);
                 break;
             case 96:
                 iM460J = ((ContactInfo) AppState.pool[1315]).isMrimContact() ? 130 : ((ContactInfo) AppState.pool[1315]).isXmppContact() ? -1 : AppState.getInt(3650);
@@ -1711,7 +1711,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m396h(strM67c);
                 break;
             case 99:
-                iM460J = AppController.m333d(strM67c);
+                iM460J = AppController.openUrl(strM67c);
                 break;
             case 100:
                 iM460J = IOUtils.handleMapSearch(iM68d, obj);
@@ -1739,14 +1739,14 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 108:
-                iM460J = AppController.m327o();
+                iM460J = AppController.handleContactListKey();
                 break;
             case 109:
                 iM460J = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(iM68d);
                 break;
             case 110:
                 NetworkUtils.m1195d();
-                iM460J = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(1249))) ? AppController.m338l(352) : 0;
+                iM460J = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(1249))) ? AppController.showError(352) : 0;
                 break;
             case 111:
                 iM460J = AppController.m404j(obj);
@@ -1761,7 +1761,7 @@ public final class ScreenBuilder {
                 NetworkUtils.m1195d();
                 String strM522f3 = Utils.defaultStr(AppState.getString(1250));
                 if (StringUtils.isEmpty(strM522f3)) {
-                    iM338l7 = AppController.m338l(372);
+                    iM338l7 = AppController.showError(372);
                 } else {
                     long jMo274v = MapRenderer.currentLon;
                     long jMo275w = MapRenderer.currentLat;
@@ -1785,18 +1785,18 @@ public final class ScreenBuilder {
                 NetworkUtils.m1195d();
                 String strM522f4 = Utils.defaultStr(AppState.getString(1286));
                 if (StringUtils.isEmpty(strM522f4)) {
-                    iM338l6 = AppController.m338l(523);
+                    iM338l6 = AppController.showError(523);
                 } else {
                     MrimAccount c0028ba2 = (MrimAccount) AppState.getCurrentContact().account;
                     boolean zM587e = AppState.getBool(1507);
                     long jM598g = AppState.getLong(1469);
                     if (c0028ba2.isConnected()) {
                         IOUtils.postEvent((Object) AppState.getString(494));
-                        iM1052c = c0028ba2.trySendData(AppController.m321a(c0028ba2, 4196, new ByteBuffer().writeIntLE(zM587e ? 5 : 20).writeStringUTF16(strM522f4).writeLong(jM598g)));
+                        iM1052c = c0028ba2.trySendData(AppController.createMrimPacket(c0028ba2, 4196, new ByteBuffer().writeIntLE(zM587e ? 5 : 20).writeStringUTF16(strM522f4).writeLong(jM598g)));
                     } else {
                         iM1052c = 299;
                     }
-                    iM338l6 = 0 != iM1052c ? AppController.m338l(iM1052c) : 0;
+                    iM338l6 = 0 != iM1052c ? AppController.showError(iM1052c) : 0;
                 }
                 iM460J = iM338l6;
                 break;
@@ -1804,7 +1804,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m405k(obj);
                 break;
             case 117:
-                iM460J = AppController.m320b(strM67c);
+                iM460J = AppController.processLoginField(strM67c);
                 break;
             case 118:
                 iM460J = AppController.m409m(obj);
@@ -1819,7 +1819,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m387x(iM68d);
                 break;
             case 122:
-                iM460J = AppController.m329p();
+                iM460J = AppController.handlePresenceAction();
                 break;
             case 123:
                 iM460J = AppController.m407l(obj);
@@ -1829,15 +1829,15 @@ public final class ScreenBuilder {
                 break;
             case 125:
                 Contact abstractC0041l = (Contact) obj;
-                iM460J = (null == abstractC0041l || 0 == (iM1235E = abstractC0041l.validateBlock())) ? 0 : AppController.m338l(iM1235E);
+                iM460J = (null == abstractC0041l || 0 == (iM1235E = abstractC0041l.validateBlock())) ? 0 : AppController.showError(iM1235E);
                 break;
             case 126:
                 Contact abstractC0041l2 = (Contact) obj;
-                iM460J = (null == abstractC0041l2 || 0 == (iM1236F = abstractC0041l2.validateUnblock())) ? 0 : AppController.m338l(iM1236F);
+                iM460J = (null == abstractC0041l2 || 0 == (iM1236F = abstractC0041l2.validateUnblock())) ? 0 : AppController.showError(iM1236F);
                 break;
             case 127:
                 Contact abstractC0041l3 = (Contact) obj;
-                iM460J = (null == abstractC0041l3 || 0 == (iM1234D = abstractC0041l3.validateDelete())) ? 0 : AppController.m338l(iM1234D);
+                iM460J = (null == abstractC0041l3 || 0 == (iM1234D = abstractC0041l3.validateDelete())) ? 0 : AppController.showError(iM1234D);
                 break;
             case 128:
                 AppState.getCurrentContact().initMessageBuffer();
@@ -1856,13 +1856,13 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 130:
-                iM460J = AppController.m288a(iM68d);
+                iM460J = AppController.handleScreenAction(iM68d);
                 break;
             case 131:
                 iM460J = AppController.m406i(strM67c);
                 break;
             case 132:
-                iM460J = AppController.m301b(iM68d);
+                iM460J = AppController.mapKeyToAction(iM68d);
                 break;
             case 133:
                 iM460J = 0;
@@ -1898,7 +1898,7 @@ public final class ScreenBuilder {
                     AppState.pool[1319] = ContactInfo.createForAccount(AppState.getCurrentContact().account).setEmailAddress((String) obj).setDisplayName((String) obj);
                     iM338l5 = 66;
                 } else {
-                    iM338l5 = AppController.m338l(773);
+                    iM338l5 = AppController.showError(773);
                 }
                 iM460J = iM338l5;
                 break;
@@ -1906,11 +1906,11 @@ public final class ScreenBuilder {
                 NetworkUtils.m1195d();
                 String strM522f5 = Utils.defaultStr(AppState.getString(1292));
                 if (StringUtils.isEmpty(strM522f5)) {
-                    iM338l4 = AppController.m338l(301);
+                    iM338l4 = AppController.showError(301);
                 } else {
                     Vector vectorM794a = IOUtils.getCheckedItems(c0013amM66b, 3);
                     if (vectorM794a.size() == 0) {
-                        iM338l4 = AppController.m338l(775);
+                        iM338l4 = AppController.showError(775);
                     } else {
                         MrimAccount c0028ba3 = (MrimAccount) AppState.getAccount();
                         boolean zM587e2 = AppState.getBool(2722);
@@ -1923,12 +1923,12 @@ public final class ScreenBuilder {
                             if (i5 < 0) {
                                 ByteBuffer c0043nM1327c = new ByteBuffer().writeBufferIntLen(c0043nM1360p);
                                 Object[] objArr2 = new Object[3];
-                                objArr2[0] = AppController.m321a(c0028ba3, 4121, new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(strM522f5).writeZeros(12).writeBufferIntLen(zM587e2 ? c0043nM1327c.writeStringLatin1(c0028ba3.login) : c0043nM1327c));
+                                objArr2[0] = AppController.createMrimPacket(c0028ba3, 4121, new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(strM522f5).writeZeros(12).writeBufferIntLen(zM587e2 ? c0043nM1327c.writeStringLatin1(c0028ba3.login) : c0043nM1327c));
                                 objArr2[1] = ResourceManager.integerOf(15);
                                 objArr2[2] = strM522f5;
                                 int iM1052c3 = c0028ba3.trySendData(c0028ba3.createAndQueueCommand(objArr2));
                                 if (0 != iM1052c3) {
-                                    iM338l4 = AppController.m338l(iM1052c3);
+                                    iM338l4 = AppController.showError(iM1052c3);
                                 } else {
                                     AppState.addInt(63, 1);
                                     iM338l4 = 0;
@@ -1944,7 +1944,7 @@ public final class ScreenBuilder {
             case 144:
                 Vector vectorM794a2 = IOUtils.getCheckedItems(c0013amM66b, 0);
                 if (vectorM794a2.size() == 0) {
-                    iM338l3 = AppController.m338l(775);
+                    iM338l3 = AppController.showError(775);
                 } else {
                     MrimContact c0035f2 = (MrimContact) AppState.getCurrentContact();
                     MrimAccount c0028ba4 = (MrimAccount) c0035f2.account;
@@ -1955,8 +1955,8 @@ public final class ScreenBuilder {
                     while (true) {
                         i6--;
                         if (i6 < 0) {
-                            int iM1052c4 = c0028ba4.trySendData(c0028ba4.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba4, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(c0043nM1360p2))), ResourceManager.integerOf(10), c0035f2, new Long(2L)}));
-                            iM338l3 = 0 != iM1052c4 ? AppController.m338l(iM1052c4) : 0;
+                            int iM1052c4 = c0028ba4.trySendData(c0028ba4.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba4, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(c0035f2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(c0043nM1360p2))), ResourceManager.integerOf(10), c0035f2, new Long(2L)}));
+                            iM338l3 = 0 != iM1052c4 ? AppController.showError(iM1052c4) : 0;
                         } else {
                             c0043nM1360p2.writeStringLatin1((String) vectorM794a2.elementAt(i6));
                         }
@@ -1968,13 +1968,13 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 146:
-                iM460J = AppController.m323g(iM68d);
+                iM460J = AppController.handleGroupRename(iM68d);
                 break;
             case 147:
                 NetworkUtils.m1195d();
                 String strM522f6 = Utils.defaultStr(AppState.getString(1286));
                 if (StringUtils.isEmpty(strM522f6)) {
-                    iM338l2 = AppController.m338l(523);
+                    iM338l2 = AppController.showError(523);
                 } else {
                     MrimAccount c0028ba5 = (MrimAccount) AppState.getAccount();
                     new AsyncTask(17, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(c0028ba5.login).writeUInt(4022822).writeRawString(c0028ba5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) strM522f6)).writeRawString(Utils.defaultStr(AppState.getBool(1468) ? AppState.getString(1285) : null)).getStringAndClear());
@@ -1993,10 +1993,10 @@ public final class ScreenBuilder {
                 iM460J = -1;
                 break;
             case 151:
-                iM460J = AppController.m336k(iM68d);
+                iM460J = AppController.handleExtSettingsOption(iM68d);
                 break;
             case 152:
-                iM460J = AppController.m325h(iM68d);
+                iM460J = AppController.handleContactOption(iM68d);
                 break;
             case 153:
                 iM460J = ResourceManager.setSelectedObject(obj);
@@ -2062,7 +2062,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m370r(iM68d);
                 break;
             case 159:
-                iM460J = AppController.m296b(obj);
+                iM460J = AppController.handleItemAction(obj);
                 break;
             case 160:
                 iM460J = ResourceManager.syncAndReturn();
@@ -2074,7 +2074,7 @@ public final class ScreenBuilder {
                 iM460J = AppController.m388y(iM68d);
                 break;
             case 163:
-                iM460J = AppController.m348v();
+                iM460J = AppController.handleSendKey();
                 break;
             case 164:
                 NetworkUtils.m1195d();
@@ -2091,7 +2091,7 @@ public final class ScreenBuilder {
                     AppState.pool[1271] = NetworkUtils.m1223a(str2, 0, strM522f8, strM522f9, 0 == iM586d3 ? Utils.defaultStr(AppState.getString(1287)) : (String) Utils.m516c(AppState.getString(810), (char) 0).elementAt(iM586d3), Utils.defaultStr(AppState.getString(1288)), Utils.defaultStr(AppState.getString(1298)), Utils.defaultStr(AppState.getString(1299)), AppState.getInt(1489), AppState.getInt(1488), AppState.getInt(1491), AppState.getInt(1481), AppState.getInt(1480), AppState.getString(1342), AppState.getString(1343));
                     iM338l = 13;
                 } else {
-                    iM338l = AppController.m338l(559);
+                    iM338l = AppController.showError(559);
                 }
                 iM460J = iM338l;
                 break;
@@ -2114,10 +2114,10 @@ public final class ScreenBuilder {
                 iM460J = AppController.m379f(obj);
                 break;
             case 171:
-                iM460J = AppController.m297e();
+                iM460J = AppController.handleRightKey();
                 break;
             case 172:
-                iM460J = AppController.m337d(obj);
+                iM460J = AppController.handleObjectAction(obj);
                 break;
             case 173:
                 iM460J = AppController.m399K();
@@ -2133,7 +2133,7 @@ public final class ScreenBuilder {
                 iM460J = 0;
                 break;
             case 176:
-                iM460J = AppController.m309c(obj);
+                iM460J = AppController.handleStarAction(obj);
                 break;
             case 177:
                 iM460J = ResourceManager.handleSearchResultAction(iM68d);
@@ -2174,8 +2174,8 @@ public final class ScreenBuilder {
     /* renamed from: b */
     public static final void onMenuItemAction() {
         int iM1233b;
-        AppController.f153g = true;
-        AppController.f152f = true;
+        AppController.needsRepaint = true;
+        AppController.needsLayoutUpdate = true;
         Screen c0013amM66b = ScreenManager.getCurrentScreen();
         int i = ScreenManager.getCurrentScreen().screenId;
         ScreenManager.getCurrentTitle();
@@ -2256,7 +2256,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 26:
-                AppController.f152f = true;
+                AppController.needsLayoutUpdate = true;
                 iM308i = 0;
                 break;
             case 27:
@@ -2374,7 +2374,7 @@ public final class ScreenBuilder {
                 }
                 AppState.setInt(1456, 0);
                 AppState.clearIndex(1279);
-                AppController.f152f = true;
+                AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas());
                 onScreenClosed();
                 iM308i = 40;
@@ -2392,7 +2392,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 68:
-                iM308i = AppController.m292b();
+                iM308i = AppController.handleBackKey();
                 break;
             case 69:
                 iM308i = 0;
@@ -2437,7 +2437,7 @@ public final class ScreenBuilder {
                 iM308i = 0;
                 break;
             case 83:
-                iM308i = AppController.m308i();
+                iM308i = AppController.handleHashKey();
                 break;
             case 84:
                 onScreenClosed();
@@ -2770,7 +2770,7 @@ public final class ScreenBuilder {
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* renamed from: c */
     public static final void onScreenClosed() {
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
         switch (ScreenManager.getCurrentScreen().screenId) {
             case 2:
                 AppState.setBool(71, AppState.getBool(218));
@@ -2782,7 +2782,7 @@ public final class ScreenBuilder {
                 TabBar.removeSearchTab();
                 break;
             case 9:
-                AppController.m299g();
+                AppController.clearPreviewState();
                 break;
             case 14:
                 AppState.clearIndex(1286);
@@ -2855,7 +2855,7 @@ public final class ScreenBuilder {
                 IOUtils.setSelectedItems((Object) null);
                 break;
             case 68:
-                AppController.m293c();
+                AppController.resetSearchResults();
                 break;
             case 69:
                 AppState.clearIndex(1295);
@@ -2915,7 +2915,7 @@ public final class ScreenBuilder {
                 AppState.clearIndex(1291);
                 break;
             case 138:
-                AppController.m334q();
+                AppController.refreshContactList();
                 break;
             case 142:
                 AppState.clearIndex(1336);
@@ -2924,7 +2924,7 @@ public final class ScreenBuilder {
                 AppState.clearIndex(1292);
                 break;
             case 147:
-                AppController.m299g();
+                AppController.clearPreviewState();
                 break;
             case 154:
                 AppState.clearIndex(1253);
@@ -2941,7 +2941,7 @@ public final class ScreenBuilder {
                 AppState.setInt(1474, 0);
                 AppState.setInt(4305, 0);
                 AppState.clearRange(1341, 1343);
-                AppController.m299g();
+                AppController.clearPreviewState();
                 StringUtils.m30f();
                 break;
             case 168:

@@ -128,7 +128,7 @@ public final class IOUtils {
                     playerCreatePlayer.start();
                 } catch (Throwable unused4) {
                 }
-                AppController.m304a(6, 10000L);
+                AppController.setTimer(6, 10000L);
             }
         } catch (Throwable unused5) {
         }
@@ -155,7 +155,7 @@ public final class IOUtils {
     /* renamed from: a */
     public static final void checkSoundTimer() {
         boolean z;
-        long[] jArr = AppController.f147a;
+        long[] jArr = AppController.timers;
         long j = jArr[6];
         if (j == 0 || j >= System.currentTimeMillis()) {
             z = false;
@@ -411,7 +411,7 @@ public final class IOUtils {
             c0022av3.setAttrValue(328413, str);
             c0022av2.addChild(c0022av3);
         }
-        c0028ba.trySendData(AppController.m321a(c0028ba, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(c0022av.toString())));
+        c0028ba.trySendData(AppController.createMrimPacket(c0028ba, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(c0022av.toString())));
         if (c0028ba.accountProfile.gender != 3) {
             return 0;
         }
@@ -427,7 +427,7 @@ public final class IOUtils {
         NetworkUtils.m1195d();
         String strM522f = Utils.defaultStr(AppState.getString(1248));
         if (StringUtils.isEmpty(strM522f)) {
-            return AppController.m338l(351);
+            return AppController.showError(351);
         }
         boolean z = true;
         int i2 = 0;
@@ -482,19 +482,19 @@ public final class IOUtils {
 
     /* renamed from: f */
     public static final void requestNearbyPeople() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(pixelToLatitude((int) AppController.m318a((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393954).writeRawString(pixelToLongitude((int) AppController.m318a((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(393960).writeRawString(pixelToLatitude((int) AppController.m318a((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393966).writeRawString(pixelToLongitude((int) AppController.m318a((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(1376928);
+        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(pixelToLatitude((int) AppController.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393954).writeRawString(pixelToLongitude((int) AppController.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(393960).writeRawString(pixelToLatitude((int) AppController.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393966).writeRawString(pixelToLongitude((int) AppController.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(1376928);
         long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
         int iM586d = AppState.getInt(39);
         long j = MapRenderer.currentPixelX;
         int i = MapRenderer.viewportWidth / 2;
-        long jM318a = AppController.m318a((int) (j + i), iM586d) - AppController.m318a((int) (MapRenderer.currentPixelX - i), iM586d);
+        long jM318a = AppController.pixelToCoord((int) (j + i), iM586d) - AppController.pixelToCoord((int) (MapRenderer.currentPixelX - i), iM586d);
         long j2 = MapRenderer.currentPixelY;
         int i2 = MapRenderer.viewportHeight / 2;
-        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.currentPixelY - i2), iM586d)))), 100));
-        VCard.staticTs1 = (int) AppController.m318a((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
-        VCard.staticTs2 = (int) AppController.m318a((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
-        VCard.staticTs3 = (int) AppController.m318a((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
-        VCard.staticTs4 = (int) AppController.m318a((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
+        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (AppController.pixelToCoord((int) (j2 + i2), iM586d) - AppController.pixelToCoord((int) (MapRenderer.currentPixelY - i2), iM586d)))), 100));
+        VCard.staticTs1 = (int) AppController.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
+        VCard.staticTs2 = (int) AppController.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
+        VCard.staticTs3 = (int) AppController.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
+        VCard.staticTs4 = (int) AppController.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
         VCard.staticTs5 = AppState.getInt(39);
         new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(39))});
     }
@@ -669,7 +669,7 @@ public final class IOUtils {
                 vectorM1078P.removeElementAt(size);
             }
         }
-        AppController.m353a(vectorM1078P);
+        AppController.sortContacts(vectorM1078P);
         for (int i = 0; i < vectorM1078P.size(); i++) {
             MrimContact c0035f2 = (MrimContact) vectorM1078P.elementAt(i);
             String str = c0035f2.simpleIdentifier;
@@ -710,14 +710,14 @@ public final class IOUtils {
         AppState.clearIndex(1281);
         Contact abstractC0041lM611g = AppState.getCurrentContact();
         if (i == 63 && !abstractC0041lM611g.account.isConnected()) {
-            return AppController.m338l(299);
+            return AppController.showError(299);
         }
         if (i == 54 || i == 63 || i == 85) {
             ScreenBuilder.onScreenClosed();
         }
         if (StringUtils.m3a(717, str)) {
             int iM993f = ((MrimContact) abstractC0041lM611g).requestUserDetails();
-            return 0 != iM993f ? AppController.m338l(iM993f) : i;
+            return 0 != iM993f ? AppController.showError(iM993f) : i;
         }
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
@@ -896,14 +896,14 @@ public final class IOUtils {
     public static final int validateJsonResponse(Object[] objArr) {
         AppState.clearIndex(1355);
         if (!isHttpSuccess(objArr)) {
-            return AppController.m338l(888);
+            return AppController.showError(888);
         }
         Object objM806e = parseJsonResponse(objArr);
         if (objM806e == null) {
-            return AppController.m338l(889);
+            return AppController.showError(889);
         }
         if (!JsonParser.isSuccess(objM806e)) {
-            return AppController.m338l(890);
+            return AppController.showError(890);
         }
         AppState.pool[1355] = objM806e;
         return 0;
@@ -922,20 +922,20 @@ public final class IOUtils {
         String strM843u = XmppMailRuProtocol.getLoginLowerCase();
         String strM1215a = strM843u;
         if (StringUtils.isEmpty(strM843u)) {
-            return AppController.m338l(301);
+            return AppController.showError(301);
         }
         int iM586d = AppState.getInt(1474);
         if (iM586d != 0 && strM1215a.indexOf(64) < 0) {
             strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM1215a).append(Utils.splitByNull(AppState.getString(696)).elementAt(iM586d)));
         }
         if (i == 2 && strM1215a.indexOf(64) < 0) {
-            return AppController.m338l(699);
+            return AppController.showError(699);
         }
         int iM437a = AppController.m437a(i, AppState.getAccount(), strM1215a, strM522f);
         if (0 != iM437a) {
-            return AppController.m338l(iM437a);
+            return AppController.showError(iM437a);
         }
-        AppController.m328a(AppController.m438b(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(1297))));
+        AppController.setCurrentAccount(AppController.m438b(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(1297))));
         return 0;
     }
 
@@ -1075,24 +1075,24 @@ public final class IOUtils {
         AppState.clearIndex(1281);
         Object obj = AppState.pool[1365];
         if (i == 63 && !((Contact) obj).account.isConnected()) {
-            return AppController.m338l(299);
+            return AppController.showError(299);
         }
         if (i == 40 || i == 63 || i == 85) {
             ScreenBuilder.onScreenClosed();
             if (i != 85) {
-                AppController.m300h();
+                AppController.clearSearchState();
             }
         }
         if (StringUtils.m3a(717, str)) {
             int iM993f = ((MrimContact) obj).requestUserDetails();
             if (0 != iM993f) {
-                return AppController.m338l(iM993f);
+                return AppController.showError(iM993f);
             }
             return 40;
         }
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
-            AppController.m300h();
+            AppController.clearSearchState();
             return ResourceManager.clearSmsFields();
         }
         if (i == 66) {
@@ -1107,7 +1107,7 @@ public final class IOUtils {
             ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.deselect();
             ConnectionThread.m1172a(interfaceC0044o);
-            AppController.m331a(true, false, !AppState.getBool(276));
+            AppController.applyViewMode(true, false, !AppState.getBool(276));
             AppState.setInt(281, 1);
         }
         return i;
@@ -1125,13 +1125,13 @@ public final class IOUtils {
                 if (i == 5) {
                     int iMo120l = c0028ba.disconnect();
                     if (0 != iMo120l) {
-                        return AppController.m338l(iMo120l);
+                        return AppController.showError(iMo120l);
                     }
                     return 4;
                 }
                 int iM721d = c0028ba.setConfiguration(new int[]{1, 260, 2, 516, 3}[i]);
                 if (0 != iM721d) {
-                    return AppController.m338l(iM721d);
+                    return AppController.showError(iM721d);
                 }
                 return 4;
             case 1:
@@ -1145,13 +1145,13 @@ public final class IOUtils {
                 if (i == 12) {
                     int iMo120l2 = c0033d.disconnect();
                     if (0 != iMo120l2) {
-                        return AppController.m338l(iMo120l2);
+                        return AppController.showError(iMo120l2);
                     }
                     return 4;
                 }
                 int iM918b = c0033d.updateConnectionMode(new int[]{0, 32, 256, 2, 1, 4, 16, 24576, 20480, 16384, 12288, 8193}[i]);
                 if (0 != iM918b) {
-                    return AppController.m338l(iM918b);
+                    return AppController.showError(iM918b);
                 }
                 return 4;
             default:
@@ -1159,13 +1159,13 @@ public final class IOUtils {
                 if (i == 0) {
                     int iMo120l3 = c0005ae.disconnect();
                     if (0 != iMo120l3) {
-                        return AppController.m338l(iMo120l3);
+                        return AppController.showError(iMo120l3);
                     }
                     return 4;
                 }
                 int iM103b = c0005ae.setStatusMode(i);
                 if (0 != iM103b) {
-                    return AppController.m338l(iM103b);
+                    return AppController.showError(iM103b);
                 }
                 return 4;
         }
@@ -1239,7 +1239,7 @@ public final class IOUtils {
     public static final void performXmppAuth(Object[] objArr) {
         try {
             try {
-                AppController.m343s();
+                AppController.acquireNetworkLock();
                 HttpClient c0024axM629a = HttpClient.createHttpClient((String) objArr[1], (Account) objArr[0], 0);
                 int iM634a = c0024axM629a.getResponseCode();
                 if (iM634a == 200) {
@@ -1259,15 +1259,15 @@ public final class IOUtils {
                     ((XmppProtocol) objArr[0]).handleComplete();
                 }
                 HttpClient.closeAndUpdateStats(c0024axM629a);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
             } catch (Throwable th) {
                 setAuthResult(objArr, th);
                 HttpClient.closeAndUpdateStats((HttpClient) null);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
             }
         } catch (Throwable th2) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th2;
         }
     }

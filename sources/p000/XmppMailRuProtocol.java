@@ -80,7 +80,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (getAccountType() == 1) {
             Account abstractC0037hM616i = AppState.getAccount();
             if (abstractC0037hM616i != null && abstractC0037hM616i.isConnecting()) {
-                AppController.m340m(300);
+                AppController.showMessageById(300);
                 return;
             }
             clearLoginFields();
@@ -94,7 +94,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (getAccountType() == 2) {
             XmppProtocol c0005ae = (XmppProtocol) AppState.getAccount();
             if (c0005ae != null && c0005ae.isConnecting()) {
-                AppController.m340m(300);
+                AppController.showMessageById(300);
                 return;
             }
             clearLoginFields();
@@ -125,7 +125,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (getAccountType() == 3) {
             XmppMailRuProtocol c0031bd = (XmppMailRuProtocol) AppState.getAccount();
             if (c0031bd != null && c0031bd.isConnecting()) {
-                AppController.m340m(300);
+                AppController.showMessageById(300);
                 return;
             }
             clearLoginFields();
@@ -174,9 +174,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             String strM843u = getLoginLowerCase();
             int iM437a = AppController.m437a(1, abstractC0037hM616i, strM843u, Utils.defaultStr(AppState.getString(1293)));
             if (0 != iM437a) {
-                return AppController.m338l(iM437a);
+                return AppController.showError(iM437a);
             }
-            AppController.m328a(AppController.m438b(1, strM843u));
+            AppController.setCurrentAccount(AppController.m438b(1, strM843u));
             return 0;
         }
         if (getAccountType() == 2) {
@@ -190,19 +190,19 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         String strM843u2 = getLoginLowerCase();
         String strM9b = strM843u2;
         if (StringUtils.isEmpty(strM843u2)) {
-            return AppController.m338l(301);
+            return AppController.showError(301);
         }
         if (!containsDomainSuffix(strM9b, 694) && !containsDomainSuffix(strM9b, 695)) {
             strM9b = StringUtils.concat(strM9b, Utils.m542c(694, AppState.getInt(1474)));
         }
         if (!isValidUsername(strM9b)) {
-            return AppController.m338l(559);
+            return AppController.showError(559);
         }
         int iM437a2 = AppController.m437a(0, AppState.getAccount(), strM9b, strM522f);
         if (0 != iM437a2) {
-            return AppController.m338l(iM437a2);
+            return AppController.showError(iM437a2);
         }
-        AppController.m328a(AppController.m438b(0, strM9b));
+        AppController.setCurrentAccount(AppController.m438b(0, strM9b));
         return 0;
     }
 
@@ -685,7 +685,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setCurrentEntity((Object) null);
                 Vector vectorM440S = AppController.m440S();
                 if (vectorM440S == null || vectorM440S.size() <= 0) {
-                    return AppController.m338l(422);
+                    return AppController.showError(422);
                 }
                 ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) interfaceC0044o).userId, 1));
                 ScreenBuilder.onScreenClosed();
@@ -693,7 +693,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 3:
                 Vector vectorM440S2 = AppController.m440S();
                 if (vectorM440S2 == null || vectorM440S2.size() <= 0) {
-                    return AppController.m338l(422);
+                    return AppController.showError(422);
                 }
                 ((MrimAccount) vectorM440S2.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) interfaceC0044o).userId, 2));
                 ScreenBuilder.onScreenClosed();
@@ -829,7 +829,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         String strM1317c;
         DatagramConnection datagramConnection = null;
         try {
-            AppController.m343s();
+            AppController.acquireNetworkLock();
             Vector vectorM516c = Utils.m516c(str, '.');
             ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(792490);
             for (int i = 0; i < Utils.m541c(vectorM516c); i++) {
@@ -884,15 +884,15 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             }
             String str2 = strM1317c;
             IOUtils.closeConn((Connection) datagramConnection);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             return str2;
         } catch (RuntimeException th) {
             IOUtils.closeConn((Connection) datagramConnection);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th;
         } catch (Throwable th) {
             IOUtils.closeConn((Connection) datagramConnection);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw new RuntimeException(th);
         }
     }
@@ -1141,14 +1141,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: U */
     private static final boolean reconnectHttp() {
         try {
-            AppController.m343s();
+            AppController.acquireNetworkLock();
             NetworkUtils.m1184b(AppState.getObjectArray(1392));
             AppState.pool[1392] = NetworkUtils.m1186a(new ByteBuffer().writeCompressed(593549).writeCompressed(1511542).getStringAndClear(), false);
             return true;
         } catch (Throwable unused) {
             return false;
         } finally {
-            AppController.m344t();
+            AppController.releaseNetworkLock();
         }
     }
 

@@ -183,7 +183,7 @@ public abstract class ScreenManager {
     /* renamed from: g */
     public static final int handleScreenClose() {
         if (!AppState.getBool(1543)) {
-            return AppController.m338l(470);
+            return AppController.showError(470);
         }
         AppState.setScreen(new Object());
         return 0;

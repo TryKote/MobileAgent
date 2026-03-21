@@ -402,7 +402,7 @@ public abstract class Account {
         while (enumerationElements.hasMoreElements()) {
             ((Contact) enumerationElements.nextElement()).clearUnread();
         }
-        AppController.f152f = true;
+        AppController.needsLayoutUpdate = true;
     }
 
     /* renamed from: c */

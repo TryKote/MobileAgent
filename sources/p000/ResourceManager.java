@@ -91,7 +91,7 @@ public final class ResourceManager {
             if (z) {
                 Display.getDisplay(AppState.getMidlet()).vibrate(250);
             }
-            if (i == 0 || AppState.getBool(89) || !AppController.m307b(8, 1000L)) {
+            if (i == 0 || AppState.getBool(89) || !AppController.checkTimer(8, 1000L)) {
                 return;
             }
             IOUtils.playSound(i);
@@ -100,7 +100,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void resetClock() {
-        AppController.f147a[4] = 0;
+        AppController.timers[4] = 0;
         lastMinute = -1;
         clockWidth = 0;
         AppState.clearIndex(1263);
@@ -111,14 +111,14 @@ public final class ResourceManager {
     public static final void updateClock() {
         Calendar calendarM622k;
         int i;
-        if (!AppController.m307b(4, 1000L) || (i = (calendarM622k = AppState.getCalendar()).get(12)) == lastMinute) {
+        if (!AppController.checkTimer(4, 1000L) || (i = (calendarM622k = AppState.getCalendar()).get(12)) == lastMinute) {
             return;
         }
         String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(i)));
         AppState.setObject(1263, (Object) strM1215a);
         clockWidth = AppState.getGfxContext(0).stringWidth(strM1215a);
         lastMinute = i;
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
     }
 
     /* renamed from: a */
@@ -312,13 +312,13 @@ public final class ResourceManager {
             } else {
                 stringBufferAppend.append(strM584b);
             }
-            iM1052c = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(NetworkUtils.bufToStringCached(stringBufferAppend)).writeStringUTF16(strM522f)), integerOf(6), c0035f, strM522f, strM584b}));
+            iM1052c = c0028ba.trySendData(c0028ba.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(NetworkUtils.bufToStringCached(stringBufferAppend)).writeStringUTF16(strM522f)), integerOf(6), c0035f, strM522f, strM584b}));
         } else {
             iM1052c = 299;
         }
         int i = iM1052c;
         if (0 != iM1052c) {
-            return AppController.m338l(i);
+            return AppController.showError(i);
         }
         return 0;
     }
@@ -330,7 +330,7 @@ public final class ResourceManager {
         }
         try {
             try {
-                AppController.m343s();
+                AppController.acquireNetworkLock();
                 HttpClient c0024axM630a = HttpClient.createWithType3(obj);
                 if (c0024axM630a.getResponseCode() != 200) {
                     throw new Throwable();
@@ -356,18 +356,18 @@ public final class ResourceManager {
                         NetworkUtils.releaseVector(vector);
                         IOUtils.postEvent((Object) AppState.getString(494));
                         HttpClient.closeAndUpdateStats(c0024axM630a);
-                        AppController.m344t();
+                        AppController.releaseNetworkLock();
                         return;
                     }
                 }
             } catch (Throwable th) {
                 IOUtils.postEvent((Object) StringUtils.m8a(493, (Object) null));
                 HttpClient.closeAndUpdateStats((HttpClient) null);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
             }
         } catch (Throwable th2) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th2;
         }
     }
@@ -519,7 +519,7 @@ public final class ResourceManager {
             size--;
             if (size < 0) {
                 ScreenManager.showScreen(c0013amM75b);
-                AppController.f153g = true;
+                AppController.needsRepaint = true;
                 return;
             } else {
                 MapPoint c0014an = (MapPoint) vector.elementAt(size);
@@ -582,24 +582,24 @@ public final class ResourceManager {
         switch (i) {
             case 0:
                 if (vectorM440S.size() <= 0) {
-                    return AppController.m338l(422);
+                    return AppController.showError(422);
                 }
-                ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(AppController.m312l().userId, 1));
+                ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(AppController.getCurrentSearchResult().userId, 1));
                 ScreenBuilder.onScreenClosed();
                 return 85;
             case 1:
                 if (vectorM440S.size() <= 0) {
-                    return AppController.m338l(422);
+                    return AppController.showError(422);
                 }
-                ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(AppController.m312l().userId, 2));
+                ((MrimAccount) vectorM440S.firstElement()).performUserSearch(new SearchEntry(AppController.getCurrentSearchResult().userId, 2));
                 return 6;
             case 2:
-                return AppController.m310j();
+                return AppController.showPeopleNearby();
             case 3:
-                return AppController.m311k();
+                return AppController.showPeopleSearch();
             default:
                 AppState.setInt(4895, 0);
-                AppController.m393a((MrimAccount) null, AppController.m312l().userId);
+                AppController.m393a((MrimAccount) null, AppController.getCurrentSearchResult().userId);
                 ScreenBuilder.onScreenClosed();
                 return 0;
         }
@@ -616,7 +616,7 @@ public final class ResourceManager {
         int size = vectorM1142d == null ? 0 : vectorM1142d.size();
         int i = size;
         if (size == 0) {
-            AppController.m340m(404);
+            AppController.showMessageById(404);
             return;
         }
         Screen c0013amM75b = ScreenManager.createScreen(2075);
@@ -645,7 +645,7 @@ public final class ResourceManager {
             int iM1233b = AppState.getCurrentContact().sendMessage(strM522f);
             if (0 != iM1233b) {
                 ScreenBuilder.onScreenClosed();
-                return AppController.m338l(iM1233b);
+                return AppController.showError(iM1233b);
             }
             AppState.setInt(1456, 0);
             AppState.clearIndex(1279);
@@ -720,7 +720,7 @@ public final class ResourceManager {
     /* renamed from: b */
     public static final void fetchSharedContacts(String str) {
         try {
-            AppController.m343s();
+            AppController.acquireNetworkLock();
             HttpClient c0024axM631b = HttpClient.createWithType2((Object) str);
             if (c0024axM631b.getResponseCode() != 200) {
                 throw new Throwable();
@@ -733,7 +733,7 @@ public final class ResourceManager {
                 if (size < 0) {
                     NetworkUtils.releaseVector(vectorM513a);
                     HttpClient.closeAndUpdateStats(c0024axM631b);
-                    AppController.m344t();
+                    AppController.releaseNetworkLock();
                     return;
                 } else {
                     Vector vectorM514a = Utils.m514a((String) vectorM513a.elementAt(size), '|');
@@ -745,11 +745,11 @@ public final class ResourceManager {
             }
         } catch (RuntimeException th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th;
         } catch (Throwable th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw new RuntimeException(th);
         }
     }
@@ -831,7 +831,7 @@ public final class ResourceManager {
     /* renamed from: p */
     public static final void fetchUpdateStatus() {
         try {
-            AppController.m343s();
+            AppController.acquireNetworkLock();
             HttpClient c0024axM629a = HttpClient.createHttpClient(AppState.getString(3607418), (Account) null, 3);
             if (c0024axM629a.getResponseCode() != 200) {
                 throw new Throwable();
@@ -844,12 +844,12 @@ public final class ResourceManager {
                 setUpdateFlag((byte) 0);
             }
             HttpClient.closeAndUpdateStats(c0024axM629a);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
         } catch (Throwable unused) {
             synchronized (AppState.pool[1357]) {
                 setUpdateFlag((byte) 0);
                 HttpClient.closeAndUpdateStats((HttpClient) null);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
             }
         }
     }
@@ -879,7 +879,7 @@ public final class ResourceManager {
         }
         if (StringUtils.m3a(1061, str)) {
             ScreenBuilder.onScreenClosed();
-            AppController.m290a(false);
+            AppController.toggleOnlineMode(false);
             return 0;
         }
         if (!StringUtils.m3a(851, str)) {
@@ -930,7 +930,7 @@ public final class ResourceManager {
         int iMo1396m;
         Object obj = AppState.pool[1365];
         if ((obj instanceof ContactGroup) && 0 != (iMo1396m = ((ContactGroup) obj).getSortIndex())) {
-            return AppController.m338l(iMo1396m);
+            return AppController.showError(iMo1396m);
         }
         if (!(obj instanceof Contact)) {
             return 4;
@@ -938,7 +938,7 @@ public final class ResourceManager {
         Contact abstractC0041l = (Contact) obj;
         int iMo118b = abstractC0041l.account.validateResend(abstractC0041l);
         if (0 != iMo118b) {
-            return AppController.m338l(iMo118b);
+            return AppController.showError(iMo118b);
         }
         return 4;
     }
@@ -951,7 +951,7 @@ public final class ResourceManager {
         Object obj = AppState.getObjectArray(1271)[0];
         if (obj instanceof Integer) {
             if (zM587e) {
-                AppController.m340m(((Integer) obj).intValue());
+                AppController.showMessageById(((Integer) obj).intValue());
                 return;
             }
             return;
@@ -974,7 +974,7 @@ public final class ResourceManager {
             ScreenManager.showScreen(ScreenManager.createScreen(3850));
         } catch (Throwable unused) {
             if (zM587e) {
-                AppController.m340m(731);
+                AppController.showMessageById(731);
             }
         }
     }
@@ -1016,7 +1016,7 @@ public final class ResourceManager {
         ByteBuffer c0043nM980a = hashPassword(c0028ba);
         XmppContactGroup.encryptRC4(c0043nM980a.data, c0043nM980a.length, c0043nM1302a.data, c0043nM1302a.length);
         c0043nM980a.clear();
-        return c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4132, c0043n.writeBufferIntLen(c0043nM1302a)), integerOf(17), abstractC0037h});
+        return c0028ba.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba, 4132, c0043n.writeBufferIntLen(c0043nM1302a)), integerOf(17), abstractC0037h});
     }
 
     /* renamed from: a */
@@ -1036,7 +1036,7 @@ public final class ResourceManager {
     /* renamed from: t */
     public static final void showTosScreen() {
         ScreenManager.showScreen(ScreenManager.createScreen(5141));
-        AppController.m340m(1027);
+        AppController.showMessageById(1027);
     }
 
     /* renamed from: a */
@@ -1053,7 +1053,7 @@ public final class ResourceManager {
             vectorM794a.addElement(strArrM518a[length]);
         }
         if (vectorM794a.size() == 0) {
-            return AppController.m338l(775);
+            return AppController.showError(775);
         }
         vectorM794a.addElement(((MrimAccount) AppState.getAccount()).login);
         AppState.pool[1284] = vectorM794a;
@@ -1155,11 +1155,11 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer createMoveContactCmd(MrimAccount c0028ba, MrimContact c0035f, int i) {
-        return c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(i).writeIntLE(c0035f.groupId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), integerOf(11), c0035f, integerOf(i)});
+        return c0028ba.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(i).writeIntLE(c0035f.groupId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), integerOf(11), c0035f, integerOf(i)});
     }
 
     /* renamed from: a */
     public static final ByteBuffer createAddToGroupCmd(MrimAccount c0028ba, MrimContact c0035f, MrimContactGroup c0010aj) {
-        return c0028ba.createAndQueueCommand(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(c0035f.statusFlags).writeIntLE(c0010aj.serverId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), integerOf(12), c0035f, c0010aj});
+        return c0028ba.createAndQueueCommand(new Object[]{AppController.createMrimPacket(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.contactId).writeIntLE(c0035f.statusFlags).writeIntLE(c0010aj.serverId).writeStringLatin1(c0035f.simpleIdentifier).writeStringUTF16(c0035f.displayName).writeStringLatin1(c0035f.contactGroupsStr)), integerOf(12), c0035f, c0010aj});
     }
 }

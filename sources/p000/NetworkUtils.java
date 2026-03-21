@@ -89,13 +89,13 @@ public final class NetworkUtils {
             Thread.sleep(1000L);
             System.gc();
             Thread.sleep(1000L);
-            AppController.m343s();
+            AppController.acquireNetworkLock();
             if (str == null) {
                 HttpClient c0024axM631b = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
                 c0024ax = c0024axM631b;
                 if (c0024axM631b.getResponseCode() == 200) {
                     Vector vector = new ByteBuffer(c0024ax).parseXmlStr().children;
-                    XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.m298f()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
+                    XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.getAppVersion()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
                     for (int i6 = 0; i6 < vector.size(); i6++) {
                         XmlElement c0022av = (XmlElement) vector.elementAt(i6);
                         String str2 = c0022av.tagName;
@@ -240,16 +240,16 @@ public final class NetworkUtils {
                 c0024axM632a.sendHttpRequest(c0043nM1310c.length, 1414745936, 1038).writeBuffer(c0043nM1310c).getResponseCode();
             }
             HttpClient.closeAndUpdateStats(c0024ax);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             releaseBytes(bArrM1211a);
         } catch (RuntimeException th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             releaseBytes(bArrM1211a);
             throw th;
         } catch (Throwable th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             releaseBytes(bArrM1211a);
             throw new RuntimeException(th);
         }
@@ -306,9 +306,9 @@ public final class NetworkUtils {
                 String str2 = (String) objArr[7];
                 int iM437a = AppController.m437a(0, (Account) null, str2, (String) objArr[9]);
                 if (0 != iM437a) {
-                    return AppController.m338l(iM437a);
+                    return AppController.showError(iM437a);
                 }
-                AppController.m328a(AppController.m438b(0, str2));
+                AppController.setCurrentAccount(AppController.m438b(0, str2));
                 return 4;
             }
             if (Utils.parseInt((Object) str) == 4004) {
@@ -366,14 +366,14 @@ public final class NetworkUtils {
         ScreenManager.showScreen(ScreenManager.createScreen(4399));
         String strM584b = AppState.getString(1297);
         if (strM584b == null) {
-            AppController.m334q();
+            AppController.refreshContactList();
             return;
         }
         int iM510a = Utils.parseInt((Object) strM584b);
         int i2 = iM510a == 78 ? 818 : iM510a == 101 ? 819 : iM510a == 114 ? 820 : iM510a == 150 ? 821 : iM510a == 152 ? 822 : iM510a == 154 ? 823 : iM510a == 155 ? 824 : iM510a == 175 ? 825 : iM510a == 555 ? 826 : iM510a == 573 ? 827 : iM510a == 4003 ? 828 : iM510a == 4004 ? 829 : iM510a == 5005 ? 830 : 831;
         int i3 = i2;
         String strM584b2 = AppState.getString(i2);
-        AppController.m339e(i3 != 831 ? strM584b2 : new StringBuffer().append(strM584b2).append(iM510a).toString());
+        AppController.showNotification(i3 != 831 ? strM584b2 : new StringBuffer().append(strM584b2).append(iM510a).toString());
     }
 
     /* renamed from: c */
@@ -564,7 +564,7 @@ public final class NetworkUtils {
             } else if (objElementAt instanceof ContactInfo) {
                 ContactInfo c0042m = (ContactInfo) objElementAt;
                 if (c0042m.getAccount() instanceof MrimAccount) {
-                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.m349a(Utils.m511a(c0042m.getString(10), 0, 4, 0), c0042m.getString(12))).addText(Utils.m495b(c0042m.getDisplayName()), 1, 0).setLabel(c0042m.getString(3));
+                    MenuItem c0032cM898b = MenuItem.createDefault().setIcon(AppController.handleServerAction(Utils.m511a(c0042m.getString(10), 0, 4, 0), c0042m.getString(12))).addText(Utils.m495b(c0042m.getDisplayName()), 1, 0).setLabel(c0042m.getString(3));
                     c0032cM898b.data = c0042m;
                     c0032cM1057D = c0032cM898b;
                 } else {
@@ -690,7 +690,7 @@ public final class NetworkUtils {
     /* renamed from: a */
     public static final void m1199a(int i, int i2, int i3) {
         if (i3 != 0) {
-            AppController.m340m(i3);
+            AppController.showMessageById(i3);
         } else {
             m1200b(i, i2);
         }
@@ -1160,7 +1160,7 @@ public final class NetworkUtils {
     public static final void m1225e(Object[] objArr) {
         try {
             try {
-                AppController.m343s();
+                AppController.acquireNetworkLock();
                 HttpClient c0024axM630a = HttpClient.createWithType3(objArr[2]);
                 int iM634a = c0024axM630a.getResponseCode();
                 if (iM634a == 200) {
@@ -1169,17 +1169,17 @@ public final class NetworkUtils {
                         case 0:
                             m1226a(objArr, c0043n.parseXmlStr());
                             HttpClient.closeAndUpdateStats(c0024axM630a);
-                            AppController.m344t();
+                            AppController.releaseNetworkLock();
                             return;
                         case 1:
                             objArr[3] = c0043n.toImage();
                             HttpClient.closeAndUpdateStats(c0024axM630a);
-                            AppController.m344t();
+                            AppController.releaseNetworkLock();
                             return;
                         case 2:
                             m1226a(objArr, c0043n.parseXmlStr());
                             HttpClient.closeAndUpdateStats(c0024axM630a);
-                            AppController.m344t();
+                            AppController.releaseNetworkLock();
                             return;
                     }
                 }
@@ -1187,11 +1187,11 @@ public final class NetworkUtils {
             } catch (Throwable th) {
                 objArr[0] = th;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
-                AppController.m344t();
+                AppController.releaseNetworkLock();
             }
         } catch (Throwable th2) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
-            AppController.m344t();
+            AppController.releaseNetworkLock();
             throw th2;
         }
     }

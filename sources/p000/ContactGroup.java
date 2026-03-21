@@ -142,7 +142,7 @@ public abstract class ContactGroup implements Sortable {
             return;
         }
         setName(str);
-        AppController.f152f = true;
+        AppController.needsLayoutUpdate = true;
     }
 
     /* renamed from: d */

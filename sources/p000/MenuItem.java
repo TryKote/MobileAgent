@@ -153,13 +153,13 @@ public final class MenuItem {
         }
         if (this.id != 9) {
             if (this.id == 4) {
-                AppController.m340m(Utils.defaultStr(AppState.getString(1379)).length() > 0 ? 427 : 428);
+                AppController.showMessageById(Utils.defaultStr(AppState.getString(1379)).length() > 0 ? 427 : 428);
                 return 0;
             }
             if (this.id != 5) {
                 return -1;
             }
-            AppController.m340m(429);
+            AppController.showMessageById(429);
             return 0;
         }
         Screen c0013amM75b = ScreenManager.createScreen(2351);
@@ -231,7 +231,7 @@ public final class MenuItem {
     /* renamed from: a */
     private MenuItem addElement(Object obj) {
         this.elements.addElement(obj);
-        this.positions = AppController.m302a(this.positions, this.totalWidth, 0);
+        this.positions = AppController.resizeArray(this.positions, this.totalWidth, 0);
         this.totalWidth += getElementWidth(obj);
         int i = this.maxHeight;
         int iM905c = getElementHeight(obj);
@@ -423,7 +423,7 @@ public final class MenuItem {
                     this.maxHeight += iM502a;
                     iM502a = 0;
                 }
-                this.positions = AppController.m302a(this.positions, i2, i3);
+                this.positions = AppController.resizeArray(this.positions, i2, i3);
                 iM502a = Utils.max(iM502a, iM905c);
                 i2 += iM904b;
             } else {
@@ -431,7 +431,7 @@ public final class MenuItem {
                 i3 += iM502a;
                 this.maxHeight += iM502a;
                 iM502a = 0;
-                this.positions = AppController.m302a(this.positions, 0, 0);
+                this.positions = AppController.resizeArray(this.positions, 0, 0);
             }
         }
         this.maxHeight += iM502a;

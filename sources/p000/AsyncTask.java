@@ -24,9 +24,9 @@ public final class AsyncTask implements Runnable, CommandListener {
             AppController.m453a(obj, i, i2);
             return;
         }
-        if (AppController.f150d != null) {
-            synchronized (AppController.f150d) {
-                AppController.f151e = true;
+        if (AppController.appLock != null) {
+            synchronized (AppController.appLock) {
+                AppController.isShuttingDown = true;
                 ResourceManager.clearMathTables();
                 ResourceManager.clearImageCache();
                 Vector vectorM614m = AppState.getVector(1358);
@@ -36,8 +36,8 @@ public final class AsyncTask implements Runnable, CommandListener {
                     }
                 }
                 NetworkUtils.m1183c();
-                AppController.m436a(AppController.f155h, true);
-                AppState.saveDelta(AppController.f155h);
+                AppController.m436a(AppController.saveOnExit, true);
+                AppState.saveDelta(AppController.saveOnExit);
             }
         }
     }
@@ -227,7 +227,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r10 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r0 = r8
             r1 = 0
             r0 = r0[r1]     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
@@ -251,7 +251,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         Lda:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
             r2 = r10
@@ -263,7 +263,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r0
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
             r2 = r10
@@ -273,7 +273,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r12 = move-exception
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
             r2 = r10
@@ -287,7 +287,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r8 = r0
             r0 = 0
             r9 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0 = 2295208(0x2305a8, float:3.216271E-39)
             java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> L150 java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r1 = 0
@@ -319,7 +319,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L148:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L150:
             r0 = r8
@@ -329,13 +329,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0[r1] = r2     // Catch: java.lang.Throwable -> L162 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L162:
             r11 = move-exception
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r11
             throw r0     // Catch: java.lang.Throwable -> La84
         L16c:
@@ -428,7 +428,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L1fa:
             r0 = 0
             r8 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r0 = 1442705(0x160391, float:2.02166E-39)
             r15 = r0
             n r0 = new n     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
@@ -528,7 +528,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             if (r0 >= 0) goto L246
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L2d0:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
@@ -538,13 +538,13 @@ public final class AsyncTask implements Runnable, CommandListener {
         L2d8:
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L2e1:
             r9 = move-exception
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r9
             throw r0     // Catch: java.lang.Throwable -> La84
         L2eb:
@@ -593,7 +593,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r15 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r0 = 872(0x368, float:1.222E-42)
             java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r15 = r0
@@ -621,7 +621,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L36d:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
@@ -641,7 +641,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L392:
             r16 = move-exception
@@ -649,13 +649,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L3a3:
             r0 = 0
             r8 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r0 = 1442705(0x160391, float:2.02166E-39)
             r15 = r0
             n r0 = new n     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
@@ -684,7 +684,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.StringUtils.m44a(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L3ed:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
@@ -694,13 +694,13 @@ public final class AsyncTask implements Runnable, CommandListener {
         L3f5:
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L3fe:
             r9 = move-exception
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r9
             throw r0     // Catch: java.lang.Throwable -> La84
         L408:
@@ -714,7 +714,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r15 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r0 = 1000(0x3e8, float:1.401E-42)
             java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
             r15 = r0
@@ -803,7 +803,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L4c6:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L4ce java.lang.Throwable -> L4e9 java.lang.Throwable -> La84
@@ -822,7 +822,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L4e9:
             r16 = move-exception
@@ -830,7 +830,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L4fa:
@@ -847,7 +847,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r8 = r0
             r0 = 0
             r9 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = r8
             ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r0
@@ -897,7 +897,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L566:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L56e:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
@@ -907,13 +907,13 @@ public final class AsyncTask implements Runnable, CommandListener {
         L576:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L57f:
             r15 = move-exception
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r15
             throw r0     // Catch: java.lang.Throwable -> La84
         L58b:
@@ -933,7 +933,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r8 = r0
             r0 = 0
             r9 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r0 = r8
             ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r1 = r0
@@ -946,7 +946,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0.<init>(r1)     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L5c7:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L5cf java.lang.Throwable -> L5d8 java.lang.Throwable -> La84
@@ -956,13 +956,13 @@ public final class AsyncTask implements Runnable, CommandListener {
         L5cf:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L5d8:
             r11 = move-exception
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r11
             throw r0     // Catch: java.lang.Throwable -> La84
         L5e2:
@@ -985,7 +985,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r15 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r0 = 370(0x172, float:5.18E-43)
             java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
             r15 = r0
@@ -1031,7 +1031,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L65c:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L664 java.lang.Throwable -> L672 java.lang.Throwable -> La84
@@ -1043,7 +1043,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L672:
             r16 = move-exception
@@ -1051,7 +1051,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L683:
@@ -1063,7 +1063,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r15 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r0 = 505(0x1f9, float:7.08E-43)
             java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
             r15 = r0
@@ -1092,7 +1092,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L6cf:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L6d7 java.lang.Throwable -> L6e5 java.lang.Throwable -> La84
@@ -1104,7 +1104,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L6e5:
             r16 = move-exception
@@ -1112,7 +1112,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L6f6:
@@ -1124,7 +1124,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r15 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r0 = 505(0x1f9, float:7.08E-43)
             java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
             r15 = r0
@@ -1156,7 +1156,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L741:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L749 java.lang.Throwable -> L757 java.lang.Throwable -> La84
@@ -1168,7 +1168,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L757:
             r16 = move-exception
@@ -1176,7 +1176,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L768:
@@ -1188,7 +1188,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r9 = r0
             r0 = 0
             r15 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r0 = 505(0x1f9, float:7.08E-43)
             java.lang.Object[] r0 = p000.XmppContactGroup.getContactInfoFromState(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r15 = r0
@@ -1256,7 +1256,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L7fe:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
@@ -1289,7 +1289,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         L835:
             r16 = move-exception
@@ -1297,7 +1297,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
             r0 = r15
             p000.XmppContactGroup.removeContactInfoFromQueue(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         L846:
@@ -1321,7 +1321,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
             r8 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             r0 = 398209(0x61381, float:5.5801E-40)
             r1 = r8
             r2 = 0
@@ -1373,7 +1373,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 2
             r2 = r8
             r0[r1] = r2     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> L8d3 java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             return
         L8d3:
             r9 = move-exception
@@ -1381,11 +1381,11 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 2
             r2 = r9
             r0[r1] = r2     // Catch: java.lang.Throwable -> L8dc java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> L8dc java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> L8dc java.lang.Throwable -> La84
             return
         L8dc:
             r10 = move-exception
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r10
             throw r0     // Catch: java.lang.Throwable -> La84
         L8e2:
@@ -1430,7 +1430,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r8 = r0
             r0 = 0
             r9 = r0
-            p000.AppController.m343s()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            p000.AppController.acquireNetworkLock()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0 = r8
             r1 = 2
             r0 = r0[r1]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
@@ -1576,7 +1576,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         La48:
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         La50:
             java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
@@ -1598,13 +1598,13 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0.setException(r1)     // Catch: java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             return
         La77:
             r16 = move-exception
             r0 = r9
             p000.HttpClient.closeAndUpdateStats(r0)     // Catch: java.lang.Throwable -> La84
-            p000.AppController.m344t()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.releaseNetworkLock()     // Catch: java.lang.Throwable -> La84
             r0 = r16
             throw r0     // Catch: java.lang.Throwable -> La84
         La83:

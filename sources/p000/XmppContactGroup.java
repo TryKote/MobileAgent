@@ -101,7 +101,7 @@ public final class XmppContactGroup extends ContactGroup {
             }
             length2++;
         }
-        objArr[0] = AppController.m321a(c0028ba, 4104, c0043nM1308a.writeStringUTF16(NetworkUtils.bufToStringCached(stringBufferM1217h)).writeIntLE(0));
+        objArr[0] = AppController.createMrimPacket(c0028ba, 4104, c0043nM1308a.writeStringUTF16(NetworkUtils.bufToStringCached(stringBufferM1217h)).writeIntLE(0));
         objArr[1] = ResourceManager.integerOf(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
@@ -138,7 +138,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final void periodicTimeSync() throws Throwable {
         while (true) {
             Thread.sleep(3072L);
-            if (AppController.f151e) {
+            if (AppController.isShuttingDown) {
                 throw new Throwable();
             }
             if (System.currentTimeMillis() - AppState.getLong(236) >= 7200000) {
@@ -241,7 +241,7 @@ public final class XmppContactGroup extends ContactGroup {
             } while (c0043nM1349s == null);
             if (c0043nM1349s.peekIntAt(12) == 4098) {
                 updateLastCheckTime();
-                c0028ba.sendData(AppController.m321a(c0028ba, 4216, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(1442808).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
+                c0028ba.sendData(AppController.createMrimPacket(c0028ba, 4216, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(1442808).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
                 Thread.sleep(5000L);
             }
         } catch (Throwable unused) {
@@ -549,7 +549,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer createContactCommand(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
-        objArr[0] = AppController.m321a(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
+        objArr[0] = AppController.createMrimPacket(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
         objArr[1] = ResourceManager.integerOf(9);
         objArr[2] = str;
         objArr[3] = str2;
@@ -855,7 +855,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: c */
     public static final Object[] getContactInfoFromState(int i) {
-        return addContactInfoToQueue(AppController.m332c(AppState.getString(i)));
+        return addContactInfoToQueue(AppController.getUrlComponents(AppState.getString(i)));
     }
 
     /* renamed from: a */

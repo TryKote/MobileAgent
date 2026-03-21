@@ -225,7 +225,7 @@ public final class Screen {
         if (this.layoutMode == 0) {
             c0032c.layout(this.contentWidth);
             this.menuItems.addElement(c0032c);
-            this.layoutCache = AppController.m302a(this.layoutCache, 0, this.totalHeight);
+            this.layoutCache = AppController.resizeArray(this.layoutCache, 0, this.totalHeight);
             this.totalHeight += c0032c.getTotalHeight();
         } else {
             int iM240c = 0;
@@ -240,7 +240,7 @@ public final class Screen {
                 iM241d = getItemY(size) + getItemAt(size).getTotalHeight();
             }
             this.menuItems.addElement(c0032c);
-            this.layoutCache = AppController.m302a(this.layoutCache, iM240c, iM241d);
+            this.layoutCache = AppController.resizeArray(this.layoutCache, iM240c, iM241d);
             this.totalHeight = iM241d + c0032c.getTotalHeight();
         }
         if (this.totalHeight <= 0 || this.totalHeight < this.contentHeight) {
@@ -1276,7 +1276,7 @@ public final class Screen {
         if (!this.touchConsumed) {
             return true;
         }
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
         this.touchConsumed = false;
         int i5 = i - this.offsetX;
         int i6 = i2 - this.offsetY;

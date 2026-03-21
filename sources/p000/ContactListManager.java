@@ -51,7 +51,7 @@ public abstract class ContactListManager {
         c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
         c0013amM257b.invalidateLayout();
         TabBar.findTab(4, TabBar.currentAccount);
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
     }
 
     /* renamed from: e */
@@ -71,14 +71,14 @@ public abstract class ContactListManager {
             return 0;
         }
         if (obj instanceof ContactGroup) {
-            AppController.f152f = true;
+            AppController.needsLayoutUpdate = true;
             return ((ContactGroup) obj).toggleSpecial();
         }
         if (!(obj instanceof Contact)) {
             return 0;
         }
         AppState.clearIndex(1279);
-        AppController.m300h();
+        AppController.clearSearchState();
         return ((Contact) obj).getDefaultAction();
     }
 
@@ -187,14 +187,14 @@ public abstract class ContactListManager {
                             if (iMo922n2 >= 0) {
                                 vector.addElement(ResourceManager.integerOf(iMo922n2));
                             }
-                            AppController.f153g = true;
+                            AppController.needsRepaint = true;
                         }
                     }
                 }
             }
         } else if (vector != null && vector.size() > 0) {
             vector.removeAllElements();
-            AppController.f153g = true;
+            AppController.needsRepaint = true;
         }
         return AppState.getBool(1577) ? 163 : 0;
     }
@@ -212,7 +212,7 @@ public abstract class ContactListManager {
             Account abstractC0037h = TabBar.currentAccount;
             Vector vectorM445W = abstractC0037h == null ? AppController.m445W() : abstractC0037h.getAllContacts();
             Vector vector = vectorM445W;
-            int iM353a = AppController.m353a(vectorM445W);
+            int iM353a = AppController.sortContacts(vectorM445W);
             for (int i2 = 0; i2 < iM353a; i2++) {
                 Contact abstractC0041l = (Contact) vector.elementAt(i2);
                 if (!abstractC0041l.canUnblock() && (abstractC0041l.hasMessages() || abstractC0041l.isOnline() || (!abstractC0041l.canUnblock() && (z || (((zM1056C = abstractC0041l.account.isConnected()) && abstractC0041l.highlighted) || (!zM1056C && abstractC0041l.isOffline())))))) {
@@ -264,7 +264,7 @@ public abstract class ContactListManager {
                 }
             }
             NetworkUtils.releaseVector(vectorM446d);
-            int iM353a2 = AppController.m353a(vectorM1213g);
+            int iM353a2 = AppController.sortContacts(vectorM1213g);
             for (int i4 = 0; i4 < iM353a2; i4++) {
                 ContactGroup abstractC0046q2 = (ContactGroup) vectorM1213g.elementAt(i4);
                 boolean z3 = false;
@@ -274,7 +274,7 @@ public abstract class ContactListManager {
                 }
                 if (abstractC0046q2.isNotSpecial()) {
                     Vector vector3 = abstractC0046q2.contacts;
-                    int iM353a3 = AppController.m353a(vector3);
+                    int iM353a3 = AppController.sortContacts(vector3);
                     for (int i5 = 0; i5 < iM353a3; i5++) {
                         Contact abstractC0041l2 = (Contact) vector3.elementAt(i5);
                         if (shouldDisplayContact(z2, abstractC0041l2)) {
@@ -369,7 +369,7 @@ public abstract class ContactListManager {
             }
             if (c0054y8 != null) {
                 Vector vector4 = c0054y8.contacts;
-                int iM353a4 = AppController.m353a(vector4);
+                int iM353a4 = AppController.sortContacts(vector4);
                 c0013amM75b.addItem(c0054y8.createMenuItem(iM353a4).setLayout(iM586d, i));
                 if (c0054y8.isNotSpecial()) {
                     for (int i10 = 0; i10 < iM353a4; i10++) {
@@ -380,7 +380,7 @@ public abstract class ContactListManager {
             }
             if (c0054y5 != null) {
                 Vector vector5 = c0054y5.contacts;
-                int iM353a5 = AppController.m353a(vector5);
+                int iM353a5 = AppController.sortContacts(vector5);
                 c0013amM75b.addItem(c0054y5.createMenuItem(iM353a5).setLayout(iM586d, i));
                 if (c0054y5.isNotSpecial()) {
                     for (int i11 = 0; i11 < iM353a5; i11++) {
@@ -391,7 +391,7 @@ public abstract class ContactListManager {
             }
             if (c0054y7 != null) {
                 Vector vector6 = c0054y7.contacts;
-                int iM353a6 = AppController.m353a(vector6);
+                int iM353a6 = AppController.sortContacts(vector6);
                 c0013amM75b.addItem(c0054y7.createMenuItem(iM353a6).setLayout(iM586d, i));
                 if (c0054y7.isNotSpecial()) {
                     for (int i12 = 0; i12 < iM353a6; i12++) {
@@ -402,7 +402,7 @@ public abstract class ContactListManager {
             }
             if (c0054y6 != null) {
                 Vector vector7 = c0054y6.contacts;
-                int iM353a7 = AppController.m353a(vector7);
+                int iM353a7 = AppController.sortContacts(vector7);
                 c0013amM75b.addItem(c0054y6.createMenuItem(iM353a7).setLayout(iM586d, i));
                 if (c0054y6.isNotSpecial()) {
                     for (int i13 = 0; i13 < iM353a7; i13++) {
@@ -414,7 +414,7 @@ public abstract class ContactListManager {
         } else {
             int i14 = i / iM586d;
             Vector vectorM446d2 = AppController.m446d(TabBar.currentAccount);
-            int iM353a8 = AppController.m353a(vectorM446d2);
+            int iM353a8 = AppController.sortContacts(vectorM446d2);
             boolean zM587e2 = AppState.getBool(101);
             boolean z4 = !AppState.getBool(98);
             for (int i15 = 0; i15 < iM353a8; i15++) {
@@ -426,7 +426,7 @@ public abstract class ContactListManager {
                 }
                 if (abstractC0046q3.isNotSpecial()) {
                     Vector vector8 = abstractC0046q3.contacts;
-                    int iM353a9 = AppController.m353a(vector8);
+                    int iM353a9 = AppController.sortContacts(vector8);
                     for (int i16 = 0; i16 < iM353a9; i16++) {
                         Contact abstractC0041l3 = (Contact) vector8.elementAt(i16);
                         if (shouldDisplayContact(z4, abstractC0041l3)) {
@@ -456,7 +456,7 @@ public abstract class ContactListManager {
                     if (size8 > 0) {
                         c0013amM75b.addItem(abstractC0046q4.createMenuItem(size8).setLayout(iM586d, i));
                         if (abstractC0046q4.isNotSpecial()) {
-                            AppController.m353a(vectorMo720O2);
+                            AppController.sortContacts(vectorMo720O2);
                             for (int i18 = 0; i18 < size8; i18++) {
                                 c0013amM75b.addItem(((Contact) vectorMo720O2.elementAt(i18)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -480,7 +480,7 @@ public abstract class ContactListManager {
                     if (size9 > 0) {
                         c0013amM75b.addItem(abstractC0046q5.createMenuItem(size9).setLayout(iM586d, i));
                         if (abstractC0046q5.isNotSpecial()) {
-                            AppController.m353a(vectorM1077N2);
+                            AppController.sortContacts(vectorM1077N2);
                             for (int i20 = 0; i20 < size9; i20++) {
                                 c0013amM75b.addItem(((Contact) vectorM1077N2.elementAt(i20)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -504,7 +504,7 @@ public abstract class ContactListManager {
                     if (size10 > 0) {
                         c0013amM75b.addItem(abstractC0046q6.createMenuItem(size10).setLayout(iM586d, i));
                         if (abstractC0046q6.isNotSpecial()) {
-                            AppController.m353a(vectorM1079Q2);
+                            AppController.sortContacts(vectorM1079Q2);
                             for (int i22 = 0; i22 < size10; i22++) {
                                 c0013amM75b.addItem(((Contact) vectorM1079Q2.elementAt(i22)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -528,7 +528,7 @@ public abstract class ContactListManager {
                     if (size11 > 0) {
                         c0013amM75b.addItem(abstractC0046q7.createMenuItem(size11).setLayout(iM586d, i));
                         if (abstractC0046q7.isNotSpecial()) {
-                            AppController.m353a(vectorM1076M2);
+                            AppController.sortContacts(vectorM1076M2);
                             for (int i24 = 0; i24 < size11; i24++) {
                                 c0013amM75b.addItem(((Contact) vectorM1076M2.elementAt(i24)).createMenuItem().setLayout(iM586d, i14));
                             }

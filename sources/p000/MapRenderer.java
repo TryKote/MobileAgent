@@ -298,8 +298,8 @@ public abstract class MapRenderer {
                     if (!ConnectionThread.f355f.contains((String) objArr2[0])) {
                         long j8 = ((long[]) objArr2[1])[0];
                         long j9 = ((long[]) objArr2[1])[1];
-                        long jM317a = AppController.m317a(j8, iM586d);
-                        long jM317a2 = AppController.m317a(j9, iM586d);
+                        long jM317a = AppController.coordToPixel(j8, iM586d);
+                        long jM317a2 = AppController.coordToPixel(j9, iM586d);
                         int i31 = (int) (jM317a / 32);
                         int i32 = (int) (jM317a2 / 32);
                         if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (imageM1139a = ConnectionThread.m1139a((String) objArr2[0])) != null) {
@@ -672,7 +672,7 @@ public abstract class MapRenderer {
                 needsRedraw = false;
             }
         }
-        if (AppController.m307b(11, 2000L)) {
+        if (AppController.checkTimer(11, 2000L)) {
             AppState.setInt(1549, 0);
         }
         Vector vector2 = animationSteps;
@@ -691,12 +691,12 @@ public abstract class MapRenderer {
             long jCurrentTimeMillis2 = System.currentTimeMillis();
             if (jCurrentTimeMillis2 - autoScrollTimestamp > 80) {
                 int iM586d8 = AppState.getInt(39);
-                setPosition(currentLon, currentLat + ((AppController.m315d(iM586d8) / AppController.m316e(iM586d8)) * 9));
+                setPosition(currentLon, currentLat + ((AppController.getZoomNumerator(iM586d8) / AppController.getZoomDenominator(iM586d8)) * 9));
                 autoScrollCount -= 9;
                 autoScrollTimestamp = jCurrentTimeMillis2;
             }
         }
-        if (AppState.getBool(277) && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > 600000 && AppState.getBool(1576) && AppState.getBool(1414) && !AppController.m345u()) {
+        if (AppState.getBool(277) && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > 600000 && AppState.getBool(1576) && AppState.getBool(1414) && !AppController.isNetworkBusy()) {
             XmppContactGroup.initializeMapData();
         }
     }
@@ -713,8 +713,8 @@ public abstract class MapRenderer {
             AppState.setLong(37, 37L);
             currentLon = j;
             AppState.setLong(35, j);
-            currentPixelX = AppController.m317a(j, iM586d);
-            currentPixelY = AppController.m317a(j2, iM586d);
+            currentPixelX = AppController.coordToPixel(j, iM586d);
+            currentPixelY = AppController.coordToPixel(j2, iM586d);
             GeoRegion c0053x2 = currentRegion;
             Vector vectorM614m = AppState.getVector(1389);
             int iM541c = Utils.m541c(vectorM614m);
@@ -760,8 +760,8 @@ public abstract class MapRenderer {
         int iM650b = clampZoom(i);
         int i2 = iM650b != 8 ? iM650b : iM586d < iM650b ? 9 : 7;
         AppState.setInt(39, i2);
-        currentPixelX = AppController.m317a(currentLon, i2);
-        currentPixelY = AppController.m317a(currentLat, i2);
+        currentPixelX = AppController.coordToPixel(currentLon, i2);
+        currentPixelY = AppController.coordToPixel(currentLat, i2);
         resetInteraction();
         needsRedraw = true;
     }
@@ -876,7 +876,7 @@ public abstract class MapRenderer {
                 return;
             } else {
                 int iM586d = AppState.getInt(39);
-                animateTo((int) AppController.m318a(screenToTileX(i), iM586d), (int) AppController.m318a(screenToTileY(i2), iM586d));
+                animateTo((int) AppController.pixelToCoord(screenToTileX(i), iM586d), (int) AppController.pixelToCoord(screenToTileY(i2), iM586d));
             }
         }
         needsRedraw = true;
@@ -887,7 +887,7 @@ public abstract class MapRenderer {
         tapConsumed = true;
         rippleTimestamp = 0L;
         int iM586d = AppState.getInt(39);
-        setPosition((int) AppController.m318a(screenToTileX(i), iM586d), (int) AppController.m318a(screenToTileY(i2), iM586d));
+        setPosition((int) AppController.pixelToCoord(screenToTileX(i), iM586d), (int) AppController.pixelToCoord(screenToTileY(i2), iM586d));
         needsRedraw = true;
     }
 }

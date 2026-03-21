@@ -72,7 +72,7 @@ public final class TabBar {
             addTab(264, AppState.getString(1045), 6, null);
         }
         layout();
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
     }
 
     /* renamed from: a */
@@ -89,7 +89,7 @@ public final class TabBar {
         c0008ah2.selectedTitle = str2;
         c0008ah2.selectedIndex = i2;
         layout();
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
     }
 
     /* renamed from: a */
@@ -174,7 +174,7 @@ public final class TabBar {
         } while (c0008ah.type != i2);
         vectorM614m.removeElement(c0008ah);
         layout();
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
     }
 
     /* renamed from: k */

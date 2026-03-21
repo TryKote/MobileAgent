@@ -304,7 +304,7 @@ public final class ContactInfo extends Hashtable {
                             c0013amM75b.addLabelValue(strM1215a, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(strM1256a, 8, 10)).append('/').append(StringUtils.substring(strM1256a, 5, 7)).append('/').append(StringUtils.prefix(strM1256a, 4))));
                         } else {
                             if (i3 == 10) {
-                                c0013amM75b.addItem(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.m349a(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
+                                c0013amM75b.addItem(MenuItem.createSeparator().addText(strM1215a, 0, 6).setIcon(c0035f == null ? AppController.handleServerAction(Utils.m511a(strM1256a, 0, 4, 0), Utils.defaultStr(getString(12))) : c0035f.getIcon()).setLabel(Utils.defaultStr(getString(13))));
                                 break;
                             }
                             c0013amM75b.addLabelValue(strM1215a, i3 == 9 ? Utils.m530h(Utils.m532i(strM1256a)) : strM1256a);

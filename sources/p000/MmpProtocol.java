@@ -222,7 +222,7 @@ public final class MmpProtocol extends Account {
                 this.msgCount = 0;
                 break;
             case 1:
-                AppController.f153g = true;
+                AppController.needsRepaint = true;
                 this.msgCount = 10;
                 this.networkResourceMode = ResourceManager.checkForUpdates();
                 if (this.networkResourceMode != -1 || this.networkResourceMode == 1) {
@@ -261,12 +261,12 @@ public final class MmpProtocol extends Account {
                 new AsyncTask(31, new Object[]{this, ResourceManager.integerOf(0), this.login, getFormattedName()});
                 this.msgCount = 20;
                 this.progress = 5;
-                AppController.f153g = true;
+                AppController.needsRepaint = true;
                 break;
             case 5:
                 if (this.connectionData != null) {
                     this.msgCount = 70;
-                    AppController.f153g = true;
+                    AppController.needsRepaint = true;
                     this.state = 28179;
                     this.encryptionKey = ResourceManager.decodeBase64(this.connectionData[2]).toByteArray();
                     this.serverId = Integer.parseInt(this.connectionData[0]);
@@ -292,7 +292,7 @@ public final class MmpProtocol extends Account {
                 this.connection.m1132a(this.dataBuffer);
                 ByteBuffer c0043nM1350t = this.dataBuffer.extractJPEG();
                 if (c0043nM1350t != null) {
-                    AppController.f153g = true;
+                    AppController.needsRepaint = true;
                     this.msgCount = 85;
                     AppController.m421a((Account) this, c0043nM1350t);
                     if (c0043nM1350t.peekByteAt(1) == 1) {
@@ -301,7 +301,7 @@ public final class MmpProtocol extends Account {
                         this.deadline = System.currentTimeMillis() + j;
                         incrementSync();
                         byte[] bArr = this.encryptionKey;
-                        sendData(AppController.m326a(this, 1).writeIntBE(1).writeShortBE(6).writeShortBE(bArr.length).writeBytes(bArr).updateLength());
+                        sendData(AppController.createPingPacket(this, 1).writeIntBE(1).writeShortBE(6).writeShortBE(bArr.length).writeBytes(bArr).updateLength());
                         this.encryptionKey = null;
                         sendData(AppController.m375a(this));
                         sendData(AppController.m464a(this, 1026, new ByteBuffer().writeCompressed(1051079)));
@@ -336,8 +336,8 @@ public final class MmpProtocol extends Account {
                     closeConnection();
                     this.lastError = getDefaultError();
                 }
-                if (this.timeout > 0 && isConnected() && AppController.m306a(this.deadline)) {
-                    trySendData(AppController.m326a(this, 5));
+                if (this.timeout > 0 && isConnected() && AppController.isTimerExpired(this.deadline)) {
+                    trySendData(AppController.createPingPacket(this, 5));
                     return;
                 }
                 return;
@@ -474,11 +474,11 @@ public final class MmpProtocol extends Account {
                         XmppMailRuProtocol.handleMmpResponse(this, c0043nM1299a, iM1356x, iM1351l);
                         break;
                 }
-                AppController.f152f = true;
+                AppController.needsLayoutUpdate = true;
             } else {
                 if (c0043nM1299a.peekByteAt(1) == 4) {
                     AppController.m386a(this, c0043nM1299a);
-                    AppController.f152f = true;
+                    AppController.needsLayoutUpdate = true;
                 }
             }
             c0043nM1299a.clear();
@@ -868,7 +868,7 @@ public final class MmpProtocol extends Account {
         if (0 != iMo120l) {
             return iMo120l;
         }
-        trySendData(AppController.m326a(this, 4));
+        trySendData(AppController.createPingPacket(this, 4));
         closeConnection();
         this.lastError = getDefaultError();
         return 0;

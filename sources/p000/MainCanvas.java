@@ -77,13 +77,13 @@ public final class MainCanvas extends Canvas implements CommandListener {
     public final void hideNotify() {
         this.isShown = false;
         IOUtils.postBackEvent();
-        AppController.f147a[0] = 0;
+        AppController.timers[0] = 0;
     }
 
     public final void showNotify() {
         this.isShown = true;
         IOUtils.postBackEvent();
-        AppController.m304a(0, AppController.m376E());
+        AppController.setTimer(0, AppController.m376E());
     }
 
     public final boolean isShown() {
@@ -112,8 +112,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
         GraphicsContext c0012al = this.graphicsContext;
         c0012al.graphics = graphics;
         try {
-            synchronized (AppController.f150d) {
-                if (!AppController.f151e) {
+            synchronized (AppController.appLock) {
+                if (!AppController.isShuttingDown) {
                     XmppContactGroup.incrementCacheCounter();
                     Vector vectorM614m = AppState.getVector(1272);
                     int size = vectorM614m.size();
@@ -177,7 +177,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
             }
         } catch (Throwable unused) {
         }
-        AppController.f153g = false;
+        AppController.needsRepaint = false;
     }
 
     public final void keyPressed(int i) {
@@ -191,7 +191,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void keyReleased(int i) {
-        AppController.m304a(3, 10000L);
+        AppController.setTimer(3, 10000L);
         IOUtils.postBackEvent();
     }
 
@@ -207,8 +207,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
     /* renamed from: a */
     private final void handleKeyInput(int i, int i2) {
         AppController.m357z();
-        AppController.m304a(0, AppController.m376E());
-        AppController.m304a(3, 10000L);
+        AppController.setTimer(0, AppController.m376E());
+        AppController.setTimer(3, 10000L);
         int gameAction = 0;
         boolean zM587e = AppState.getBool(1511);
         try {
@@ -262,8 +262,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
     public final void pointerPressed(int i, int i2) {
         pointerDownX = i;
         pointerDownY = i2;
-        AppController.m304a(3, 10000L);
-        AppController.m304a(0, AppController.m376E());
+        AppController.setTimer(3, 10000L);
+        AppController.setTimer(0, AppController.m376E());
         Vector vectorM614m = AppState.getVector(1266);
         synchronized (vectorM614m) {
             vectorM614m.addElement(new int[]{5, i, i2});
@@ -320,7 +320,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void commandAction(Command command, Displayable displayable) {
-        AppController.m304a(3, 10000L);
+        AppController.setTimer(3, 10000L);
         if (command != null) {
             if (command == this.okCommand) {
                 IOUtils.postOkEvent();
@@ -365,6 +365,6 @@ public final class MainCanvas extends Canvas implements CommandListener {
             addCommand(command2);
         }
         setCommandListener(this);
-        AppController.f153g = true;
+        AppController.needsRepaint = true;
     }
 }
