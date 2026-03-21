@@ -274,10 +274,10 @@ public final class ScreenBuilder {
                 }
                 NetworkUtils.m1200b(37, 833);
                 Vector vectorM1213g = NetworkUtils.m1213g();
-                JsonParser.m481d(vectorM1213g, 0);
+                JsonParser.addIntToVector(vectorM1213g, 0);
                 vectorM1213g.addElement(AppState.f181d);
-                JsonParser.m481d(vectorM1213g, 1);
-                IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.m584b(1050207)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(2098635)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g)))));
+                JsonParser.addIntToVector(vectorM1213g, 1);
+                IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.m584b(1050207)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(2098635)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g)))));
                 return;
             case 38:
                 AppController.m402M();
@@ -322,7 +322,7 @@ public final class ScreenBuilder {
                 if (c0052wM745h == c0028ba2.m746W()) {
                     vectorM1213g2.addElement(StringUtils.m17c(Integer.toString(0)));
                     vectorM1213g2.addElement(c0052wM745h.f418j);
-                    objArrM1147a = ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1216b(722608).append(AppState.m584b(2950868)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1216b(722608).append(AppState.m584b(2950868)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g2))));
                 } else {
                     vectorM1213g2.addElement(StringUtils.m17c(Integer.toString(c0052wM745h.f409a)));
                     int iM586d2 = AppState.m586d(97);
@@ -339,16 +339,16 @@ public final class ScreenBuilder {
                         }
                     }
                     vectorM1213g2.addElement(vectorM1213g3);
-                    objArrM1147a = ConnectionThread.m1147a(NetworkUtils.m1216b(1050207).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1640218)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g2))));
+                    objArrM1147a = ConnectionThread.m1147a(NetworkUtils.m1216b(1050207).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1640218)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g2))));
                 }
                 IOUtils.m813b(objArrM1147a);
                 return;
             case 42:
                 NetworkUtils.m1200b(42, 862);
                 Vector vectorM1213g4 = NetworkUtils.m1213g();
-                JsonParser.m481d(vectorM1213g4, AppState.m586d(1527));
+                JsonParser.addIntToVector(vectorM1213g4, AppState.m586d(1527));
                 vectorM1213g4.addElement(AppState.m614m(1356));
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640193)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g4)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640193)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g4)))));
                 return;
             case 43:
                 IOUtils.m760c();
@@ -390,7 +390,7 @@ public final class ScreenBuilder {
                     vectorM1213g5.addElement(strM584b);
                     vectorM1213g5.addElement(AppState.f181d);
                     vectorM1213g5.addElement(NetworkUtils.m1221a(6775156));
-                    IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.m584b(1377926)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1836851)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g5)))));
+                    IOUtils.m813b(ConnectionThread.m1147a(NetworkUtils.m1217h().append(AppState.m584b(1377926)).append('?').append(AppState.m584b(722608)).append(AppState.m584b(1836851)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g5)))));
                     return;
                 }
                 return;
@@ -540,12 +540,12 @@ public final class ScreenBuilder {
                     if (size7 < 0) {
                         Vector vectorM1213g7 = NetworkUtils.m1213g();
                         vectorM1213g7.addElement(vectorM1213g6);
-                        IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1377771), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574400)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g7)))));
+                        IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1377771), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574400)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g7)))));
                         return;
                     } else {
                         Hashtable hashtable2 = new Hashtable();
-                        JsonParser.m473a(hashtable2, 329240, JsonParser.m482e(vectorM614m4, size7));
-                        JsonParser.m473a(hashtable2, 263673, ResourceManager.m967e(AppState.m586d(1525)));
+                        JsonParser.putIntKey(hashtable2, 329240, JsonParser.getVectorElement(vectorM614m4, size7));
+                        JsonParser.putIntKey(hashtable2, 263673, ResourceManager.m967e(AppState.m586d(1525)));
                         vectorM1213g6.addElement(hashtable2);
                     }
                 }
@@ -579,8 +579,8 @@ public final class ScreenBuilder {
                 NetworkUtils.m1200b(78, 861);
                 Vector vectorM1213g8 = NetworkUtils.m1213g();
                 vectorM1213g8.addElement(AppState.m614m(1356));
-                JsonParser.m481d(vectorM1213g8, AppState.m587e(1524) ? 1 : 0);
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1508975), IOUtils.m817a(NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640123)), Conversation.m1119a((Object) JsonParser.m484a(vectorM1213g8)))));
+                JsonParser.addIntToVector(vectorM1213g8, AppState.m587e(1524) ? 1 : 0);
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1508975), IOUtils.m817a(NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1640123)), Conversation.m1119a((Object) JsonParser.toJson(vectorM1213g8)))));
                 return;
             case 79:
                 NetworkUtils.m1198a(79, 863);
@@ -592,19 +592,19 @@ public final class ScreenBuilder {
                 NetworkUtils.m1200b(81, 872);
                 Vector vectorM1213g9 = NetworkUtils.m1213g();
                 vectorM1213g9.addElement(AppState.m584b(AppState.m587e(1526) ? 264068 : 1038));
-                JsonParser.m481d(vectorM1213g9, AppState.m586d(1513));
+                JsonParser.addIntToVector(vectorM1213g9, AppState.m586d(1513));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1348)));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1349)));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1350)));
                 vectorM1213g9.addElement(Utils.m522f(AppState.m584b(1351)));
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1509223)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1120b((Object) JsonParser.m484a(vectorM1213g9)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1050207), NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1509223)).append(AppState.m584b(1381)).append(AppState.m584b(395134)).append(Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g9)))));
                 return;
             case 82:
                 NetworkUtils.m1200b(82, 877);
                 Message c0026az3 = new Message(XmppMailRuProtocol.m871i(Utils.m522f(AppState.m584b(1352))), Utils.m522f(AppState.m584b(1353)), Utils.m522f(AppState.m584b(1354)));
                 Vector vectorM1213g10 = NetworkUtils.m1213g();
                 vectorM1213g10.addElement(c0026az3.m674e());
-                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1377947), IOUtils.m817a(NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574735)), Conversation.m1120b((Object) JsonParser.m484a(vectorM1213g10)))));
+                IOUtils.m813b(ConnectionThread.m1148a(AppState.m584b(1377947), IOUtils.m817a(NetworkUtils.m1217h().append(AppState.m584b(722608)).append(AppState.m584b(1574735)), Conversation.m1120b((Object) JsonParser.toJson(vectorM1213g10)))));
                 return;
             case 83:
                 ResourceManager.m925a(4);

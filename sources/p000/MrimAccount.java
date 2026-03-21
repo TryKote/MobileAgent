@@ -556,7 +556,7 @@ public final class MrimAccount extends Account implements ListItem {
                     if (!StringUtils.m3a(525167, strM1334g5)) {
                         break;
                     } else {
-                        this.f231g.m54a(new XmlParser(strM1334g6).m47a());
+                        this.f231g.m54a(new XmlParser(strM1334g6).parse());
                         m724j();
                         break;
                     }
@@ -1196,17 +1196,17 @@ public final class MrimAccount extends Account implements ListItem {
             z = false;
             this.f228d = NetworkUtils.m1213g();
         }
-        Object objM475a = JsonParser.m475a(obj, AppState.m584b(329785));
+        Object objM475a = JsonParser.getValue(obj, AppState.m584b(329785));
         for (int i = 0; i < ((Vector) objM475a).size(); i++) {
-            Object objM482e = JsonParser.m482e(objM475a, i);
-            ChatRoom c0052wM745h = m745h(JsonParser.m477b(objM482e, AppState.m584b(132297)));
+            Object objM482e = JsonParser.getVectorElement(objM475a, i);
+            ChatRoom c0052wM745h = m745h(JsonParser.getIntValue(objM482e, AppState.m584b(132297)));
             if (c0052wM745h == null) {
                 this.f228d.addElement(new ChatRoom(objM482e));
             } else {
                 c0052wM745h.m1412a(objM482e);
             }
         }
-        this.f230f = JsonParser.m479c(obj, AppState.m584b(526385));
+        this.f230f = JsonParser.getStringValue(obj, AppState.m584b(526385));
         m744b(z);
     }
 

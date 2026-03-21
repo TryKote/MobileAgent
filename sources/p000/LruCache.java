@@ -9,82 +9,82 @@ import java.util.Vector;
 public final class LruCache {
 
     /* renamed from: a */
-    private int f7a;
+    private int size;
 
     /* renamed from: b */
-    private int f8b;
+    private int maxSize;
 
     /* renamed from: c */
-    private Hashtable f9c;
+    private Hashtable map;
 
     /* renamed from: d */
-    private Vector f10d;
+    private Vector lruOrder;
 
     /* renamed from: e */
-    private long f11e;
+    private long hits;
 
     /* renamed from: f */
-    private long f12f;
+    private long misses;
 
     public LruCache() {
-        this.f9c = new Hashtable();
-        this.f10d = NetworkUtils.m1213g();
-        this.f8b = 27;
+        this.map = new Hashtable();
+        this.lruOrder = NetworkUtils.m1213g();
+        this.maxSize = 27;
     }
 
     public LruCache(int i) {
-        this.f9c = new Hashtable();
-        this.f10d = NetworkUtils.m1213g();
-        this.f8b = i;
+        this.map = new Hashtable();
+        this.lruOrder = NetworkUtils.m1213g();
+        this.maxSize = i;
     }
 
     /* renamed from: c */
-    private final void m48c(Object obj) {
-        this.f10d.removeElement(obj);
-        this.f10d.insertElementAt(obj, 0);
+    private final void moveToFront(Object obj) {
+        this.lruOrder.removeElement(obj);
+        this.lruOrder.insertElementAt(obj, 0);
     }
 
     /* renamed from: a */
-    public final synchronized void m49a(Object obj, Object obj2, int i) {
-        if (this.f7a >= this.f8b && !this.f10d.isEmpty()) {
-            Object objLastElement = this.f10d.lastElement();
-            this.f10d.removeElement(objLastElement);
-            this.f9c.remove(objLastElement);
-            this.f7a--;
+    public final synchronized void put(Object obj, Object obj2, int i) {
+        if (this.size >= this.maxSize && !this.lruOrder.isEmpty()) {
+            Object objLastElement = this.lruOrder.lastElement();
+            this.lruOrder.removeElement(objLastElement);
+            this.map.remove(objLastElement);
+            this.size--;
         }
-        if (this.f9c.containsKey(obj)) {
-            this.f9c.put(obj, obj2);
-            m48c(obj);
+        if (this.map.containsKey(obj)) {
+            this.map.put(obj, obj2);
+            moveToFront(obj);
         } else {
-            this.f9c.put(obj, obj2);
-            this.f10d.insertElementAt(obj, 0);
-            this.f7a++;
+            this.map.put(obj, obj2);
+            this.lruOrder.insertElementAt(obj, 0);
+            this.size++;
         }
     }
 
     /* renamed from: a */
-    public final synchronized Object m50a(Object obj) {
-        Object obj2 = this.f9c.get(obj);
+    public final synchronized Object get(Object obj) {
+        Object obj2 = this.map.get(obj);
         if (obj2 != null) {
-            this.f11e++;
-            m48c(obj);
+            this.hits++;
+            moveToFront(obj);
         } else {
-            this.f12f++;
+            this.misses++;
         }
         return obj2;
     }
 
     /* renamed from: b */
-    public final synchronized void m51b(Object obj) {
-        if (this.f10d.contains(obj)) {
-            this.f10d.removeElement(obj);
-            this.f9c.remove(obj);
-            this.f7a--;
+    public final synchronized void remove(Object obj) {
+        if (this.lruOrder.contains(obj)) {
+            this.lruOrder.removeElement(obj);
+            this.map.remove(obj);
+            this.size--;
         }
     }
 
     /* renamed from: a */
-    public final synchronized Enumeration m52a() {
-        return this.f10d.elements();
+    public final synchronized Enumeration keys() {
+        return this.lruOrder.elements();
     }
 }

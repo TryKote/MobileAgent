@@ -117,10 +117,10 @@ public final class ChatRoom {
 
     /* renamed from: a */
     public final void m1412a(Object obj) {
-        this.f410b = JsonParser.m480c(obj, 263472);
-        this.f411c = JsonParser.m478b(obj, 526252);
-        this.f409a = JsonParser.m478b(obj, 132297);
-        this.f412d = JsonParser.m478b(obj, 395188);
+        this.f410b = JsonParser.getStringByInt(obj, 263472);
+        this.f411c = JsonParser.getIntByInt(obj, 526252);
+        this.f409a = JsonParser.getIntByInt(obj, 132297);
+        this.f412d = JsonParser.getIntByInt(obj, 395188);
         this.f413e = AppState.f181d;
         this.f419k = true;
     }

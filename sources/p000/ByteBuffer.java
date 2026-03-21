@@ -1031,12 +1031,12 @@ public final class ByteBuffer {
 
     /* renamed from: I */
     public final XmlElement parseXml() {
-        return new XmlParser(readUTFWithLen()).m47a();
+        return new XmlParser(readUTFWithLen()).parse();
     }
 
     /* renamed from: J */
     public final XmlElement parseXmlStr() {
-        return new XmlParser(getStringAndClear()).m47a();
+        return new XmlParser(getStringAndClear()).parse();
     }
 
     /* renamed from: v */

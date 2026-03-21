@@ -38,14 +38,14 @@ public final class Message {
     public Object[] f224i;
 
     public Message(Hashtable hashtable) {
-        this.f216a = JsonParser.m479c(hashtable, AppState.m584b(591892));
-        this.f217b = JsonParser.m477b(hashtable, AppState.m584b(264254)) * 1000;
-        this.f218c = XmppMailRuProtocol.m868b(JsonParser.m479c(hashtable, AppState.m584b(591883)), JsonParser.m479c(hashtable, AppState.m584b(526365)));
-        this.f219d = XmppMailRuProtocol.m868b(JsonParser.m479c(hashtable, AppState.m584b(460804)), JsonParser.m479c(hashtable, AppState.m584b(395262)));
-        this.f220e = JsonParser.m477b(hashtable, AppState.m584b(591847));
-        m670a(4, JsonParser.m477b(hashtable, AppState.m584b(657373)) != 0);
-        m670a(1, JsonParser.m477b(hashtable, AppState.m584b(657363)) != 0);
-        this.f222g = Conversation.m1122j(JsonParser.m479c(hashtable, AppState.m584b(460837)));
+        this.f216a = JsonParser.getStringValue(hashtable, AppState.m584b(591892));
+        this.f217b = JsonParser.getIntValue(hashtable, AppState.m584b(264254)) * 1000;
+        this.f218c = XmppMailRuProtocol.m868b(JsonParser.getStringValue(hashtable, AppState.m584b(591883)), JsonParser.getStringValue(hashtable, AppState.m584b(526365)));
+        this.f219d = XmppMailRuProtocol.m868b(JsonParser.getStringValue(hashtable, AppState.m584b(460804)), JsonParser.getStringValue(hashtable, AppState.m584b(395262)));
+        this.f220e = JsonParser.getIntValue(hashtable, AppState.m584b(591847));
+        m670a(4, JsonParser.getIntValue(hashtable, AppState.m584b(657373)) != 0);
+        m670a(1, JsonParser.getIntValue(hashtable, AppState.m584b(657363)) != 0);
+        this.f222g = Conversation.m1122j(JsonParser.getStringValue(hashtable, AppState.m584b(460837)));
     }
 
     public Message(Vector vector, String str, String str2) {
@@ -228,11 +228,11 @@ public final class Message {
         hashtable.put(strM584b, NetworkUtils.m1215a(stringBufferM1217h));
         hashtable.put(AppState.m584b(460837), this.f222g);
         hashtable.put(AppState.m584b(264133), this.f223h);
-        JsonParser.m474a(hashtable, AppState.m584b(264258), 1);
-        JsonParser.m474a(hashtable, AppState.m584b(263849), 1);
-        JsonParser.m474a(hashtable, AppState.m584b(329772), 0);
-        JsonParser.m474a(hashtable, AppState.m584b(460784), 0);
-        JsonParser.m474a(hashtable, AppState.m584b(919536), 0);
+        JsonParser.putIntValue(hashtable, AppState.m584b(264258), 1);
+        JsonParser.putIntValue(hashtable, AppState.m584b(263849), 1);
+        JsonParser.putIntValue(hashtable, AppState.m584b(329772), 0);
+        JsonParser.putIntValue(hashtable, AppState.m584b(460784), 0);
+        JsonParser.putIntValue(hashtable, AppState.m584b(919536), 0);
         Vector vectorM1213g = NetworkUtils.m1213g();
         int length = this.f224i == null ? 0 : this.f224i.length;
         for (int i = 0; i < length; i++) {
@@ -245,7 +245,7 @@ public final class Message {
         }
         hashtable.put(AppState.m584b(722874), vectorM1213g);
         if (vectorM1213g.size() > 0) {
-            JsonParser.m474a(hashtable, AppState.m584b(657363), 1);
+            JsonParser.putIntValue(hashtable, AppState.m584b(657363), 1);
         }
         return hashtable;
     }

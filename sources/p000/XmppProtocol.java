@@ -151,7 +151,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: b */
     private int m92b(XmlElement c0022av) {
-        return m91a(c0022av.m559a(131550, m81r()));
+        return m91a(c0022av.setAttrValue(131550, m81r()));
     }
 
     /* renamed from: s */
@@ -304,29 +304,29 @@ public class XmppProtocol extends Account {
                 }
                 XmlElement c0022av = (XmlElement) Utils.m524a(this.f30a);
                 if (c0022av != null) {
-                    String str = c0022av.f171a;
+                    String str = c0022av.tagName;
                     if (!StringUtils.m3a(857301, str)) {
                         if (StringUtils.m3a(988737, str)) {
-                            XmlElement c0022avM568b = c0022av.m568b(AppState.m584b(660472));
+                            XmlElement c0022avM568b = c0022av.findByName(AppState.m584b(660472));
                             if (c0022avM568b != null) {
-                                XmlElement c0022avM569h = XmlElement.m550a(263757).m569h(2102710);
+                                XmlElement c0022avM569h = XmlElement.createFromState(263757).addIdAttr(2102710);
                                 String strM584b = AppState.m584b(660501);
-                                if (c0022avM568b.m567a(strM584b) != null) {
-                                    m91a(c0022avM569h.m559a(594936, strM584b));
+                                if (c0022avM568b.findChildByText(strM584b) != null) {
+                                    m91a(c0022avM569h.setAttrValue(594936, strM584b));
                                 } else {
                                     String strM584b2 = AppState.m584b(922626);
-                                    if (c0022avM568b.m567a(strM584b2) != null) {
-                                        m91a(c0022avM569h.m559a(594936, strM584b2).m553a((Object) new ByteBuffer().writeByte(0).writeRawString(this.f340J).writeByte(0).writeRawString((String) this.f35d).toBase64()));
+                                    if (c0022avM568b.findChildByText(strM584b2) != null) {
+                                        m91a(c0022avM569h.setAttrValue(594936, strM584b2).appendText((Object) new ByteBuffer().writeByte(0).writeRawString(this.f340J).writeByte(0).writeRawString((String) this.f35d).toBase64()));
                                     } else {
                                         String strM584b3 = AppState.m584b(332816);
-                                        if (c0022avM568b.m567a(strM584b3) != null) {
-                                            m91a(c0022avM569h.m559a(594936, strM584b3).m553a((Object) new ByteBuffer().writeUTFNoLen(new ByteBuffer().writeRawString(this.f340J).writeByte(64).writeRawString(this.f33b).readAllByteStr()).writeByte(0).writeUTFNoLen(this.f340J).writeByte(0).writeUTFNoLen(this.f316l).toBase64()));
+                                        if (c0022avM568b.findChildByText(strM584b3) != null) {
+                                            m91a(c0022avM569h.setAttrValue(594936, strM584b3).appendText((Object) new ByteBuffer().writeUTFNoLen(new ByteBuffer().writeRawString(this.f340J).writeByte(64).writeRawString(this.f33b).readAllByteStr()).writeByte(0).writeUTFNoLen(this.f340J).writeByte(0).writeUTFNoLen(this.f316l).toBase64()));
                                         }
                                     }
                                 }
-                            } else if (c0022av.m568b(AppState.m584b(267762)) != null) {
-                                XmlElement c0022avM570i = XmlElement.m550a(136604).m570i(198841);
-                                c0022avM570i.m572b(267762, 2102742).m571a(AppState.m584b(530129), AppState.m584b(264455));
+                            } else if (c0022av.findByName(AppState.m584b(267762)) != null) {
+                                XmlElement c0022avM570i = XmlElement.createFromState(136604).addNameAttr(198841);
+                                c0022avM570i.addChildWithId(267762, 2102742).addTextChild(AppState.m584b(530129), AppState.m584b(264455));
                                 m92b(c0022avM570i);
                                 this.f323s = 60;
                             } else {
@@ -335,8 +335,8 @@ public class XmppProtocol extends Account {
                                 this.f324t = mo89g();
                             }
                         } else if (StringUtils.m3a(595536, str)) {
-                            XmlElement c0022avM569h2 = XmlElement.m550a(529537).m569h(2102710);
-                            String strM1317c = ResourceManager.m986d(StringUtils.m11a(c0022av.f173c)).getStringAndClear();
+                            XmlElement c0022avM569h2 = XmlElement.createFromState(529537).addIdAttr(2102710);
+                            String strM1317c = ResourceManager.m986d(StringUtils.m11a(c0022av.textContent)).getStringAndClear();
                             int iIndexOf = strM1317c.indexOf(AppState.m584b(398406));
                             if (iIndexOf >= 0) {
                                 int i = iIndexOf + 7;
@@ -346,15 +346,15 @@ public class XmppProtocol extends Account {
                                 String strM12a = StringUtils.m12a(strM1317c, i, strM1317c.indexOf(34, i));
                                 ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(660529).writeRawString(strMo128m).writeCompressed(595003).writeRawString(str3).writeCompressed(595012).writeRawString(strM12a).writeCompressed(1446989);
                                 String strM544b = Utils.m544b();
-                                c0022avM569h2.m553a((Object) c0043nM1310c.writeRawString(strM544b).writeCompressed(1840227).writeRawString(str3).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(strMo128m).writeByte(58).writeRawString(str3).writeByte(58).writeRawString(str2).encryptMD5().writeByte(58).writeRawString(strM12a).writeByte(58).writeRawString(strM544b).encryptMD5().toHexString()).writeByte(58).writeRawString(strM12a).writeCompressed(660619).writeRawString(strM544b).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(str3).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
+                                c0022avM569h2.appendText((Object) c0043nM1310c.writeRawString(strM544b).writeCompressed(1840227).writeRawString(str3).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(strMo128m).writeByte(58).writeRawString(str3).writeByte(58).writeRawString(str2).encryptMD5().writeByte(58).writeRawString(strM12a).writeByte(58).writeRawString(strM544b).encryptMD5().toHexString()).writeByte(58).writeRawString(strM12a).writeCompressed(660619).writeRawString(strM544b).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(str3).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
                             }
                             m91a(c0022avM569h2);
                         } else if (StringUtils.m3a(464473, str)) {
                             m109u();
                         } else if (StringUtils.m3a(530016, str)) {
-                            String strM574a = c0022av.m574a();
+                            String strM574a = c0022av.getNameAttr();
                             String strM584b4 = strM574a != null ? strM574a : AppState.m584b(594984);
-                            String strM130h = m130h(c0022av.m554b(262852));
+                            String strM130h = m130h(c0022av.getIntAttribute(262852));
                             if (strM130h != null) {
                                 XmppContact c0006afM111f = m111f(strM130h);
                                 if (StringUtils.m3a(594926, strM584b4)) {
@@ -373,15 +373,15 @@ public class XmppProtocol extends Account {
                                 }
                             }
                         } else if (StringUtils.m3a(464488, str)) {
-                            String strM130h2 = m130h(c0022av.m554b(262852));
+                            String strM130h2 = m130h(c0022av.getIntAttribute(262852));
                             if (m111f(strM130h2) != null) {
                                 StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
-                                XmlElement c0022avM562f = c0022av.m562f(464558);
-                                if (c0022avM562f != null && (strM11a2 = StringUtils.m11a(c0022avM562f.f173c)) != null) {
+                                XmlElement c0022avM562f = c0022av.findChildByKey(464558);
+                                if (c0022avM562f != null && (strM11a2 = StringUtils.m11a(c0022avM562f.textContent)) != null) {
                                     stringBufferM1217h.append(strM11a2).append('\n');
                                 }
-                                XmlElement c0022avM562f2 = c0022av.m562f(267946);
-                                if (c0022avM562f2 != null && (strM11a = StringUtils.m11a(c0022avM562f2.f173c)) != null) {
+                                XmlElement c0022avM562f2 = c0022av.findChildByKey(267946);
+                                if (c0022avM562f2 != null && (strM11a = StringUtils.m11a(c0022avM562f2.textContent)) != null) {
                                     stringBufferM1217h.append(strM11a);
                                 }
                                 String strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
@@ -391,46 +391,46 @@ public class XmppProtocol extends Account {
                             }
                         } else if (StringUtils.m3a(464495, str)) {
                             m1065J();
-                        } else if (StringUtils.m3a(136604, c0022av.f171a)) {
-                            if (c0022av.m576d(267810, 857625) == null || !StringUtils.m3a(196633, c0022av.m574a())) {
+                        } else if (StringUtils.m3a(136604, c0022av.tagName)) {
+                            if (c0022av.findByAttrs(267810, 857625) == null || !StringUtils.m3a(196633, c0022av.getNameAttr())) {
                                 z = false;
                             } else {
-                                XmlElement c0022avM577b = c0022av.m577b();
-                                c0022avM577b.f172b = null;
+                                XmlElement c0022avM577b = c0022av.cloneElement();
+                                c0022avM577b.children = null;
                                 m91a(c0022avM577b);
                                 z = true;
                             }
                             if (!z && !m126c(c0022av)) {
-                                if (c0022av.m576d(267762, 2102742) == null || !StringUtils.m3a(398982, c0022av.m574a())) {
+                                if (c0022av.findByAttrs(267762, 2102742) == null || !StringUtils.m3a(398982, c0022av.getNameAttr())) {
                                     z2 = false;
                                 } else {
-                                    m92b(XmlElement.m550a(136604).m570i(198841).m573c(461668, 2299382));
+                                    m92b(XmlElement.createFromState(136604).addNameAttr(198841).addSimpleChild(461668, 2299382));
                                     this.f323s = 70;
                                     z2 = true;
                                 }
                                 if (!z2) {
-                                    if (this.f323s == 70 && StringUtils.m3a(398982, c0022av.m574a())) {
-                                        m92b(XmlElement.m550a(136604).m570i(196633).m573c(333360, 1054101));
+                                    if (this.f323s == 70 && StringUtils.m3a(398982, c0022av.getNameAttr())) {
+                                        m92b(XmlElement.createFromState(136604).addNameAttr(196633).addSimpleChild(333360, 1054101));
                                         this.f323s = 80;
                                         z3 = true;
                                     } else {
                                         z3 = false;
                                     }
                                     if (!z3) {
-                                        XmlElement c0022avM576d2 = c0022av.m576d(333360, 1119653);
-                                        if (c0022avM576d2 == null || !StringUtils.m3a(196633, c0022av.m574a())) {
+                                        XmlElement c0022avM576d2 = c0022av.findByAttrs(333360, 1119653);
+                                        if (c0022avM576d2 == null || !StringUtils.m3a(196633, c0022av.getNameAttr())) {
                                             z4 = false;
                                         } else {
-                                            c0022avM576d2.m551a(262601, 1119195).m551a(459728, 1375).m551a(133230, 264455);
-                                            m91a(c0022av.m577b());
+                                            c0022avM576d2.setIntAttribute(262601, 1119195).setIntAttribute(459728, 1375).setIntAttribute(133230, 264455);
+                                            m91a(c0022av.cloneElement());
                                             z4 = true;
                                         }
-                                        if (!z4 && (c0022avM576d = c0022av.m576d(333360, 1054101)) != null) {
-                                            String strM574a2 = c0022av.m574a();
+                                        if (!z4 && (c0022avM576d = c0022av.findByAttrs(333360, 1054101)) != null) {
+                                            String strM574a2 = c0022av.getNameAttr();
                                             if (StringUtils.m3a(198841, strM574a2)) {
                                                 m127d(c0022avM576d);
-                                                XmlElement c0022avM577b2 = c0022av.m577b();
-                                                c0022avM577b2.f172b = null;
+                                                XmlElement c0022avM577b2 = c0022av.cloneElement();
+                                                c0022avM577b2.children = null;
                                                 m91a(c0022avM577b2);
                                             } else if (StringUtils.m3a(398982, strM574a2)) {
                                                 m1067K();
@@ -475,7 +475,7 @@ public class XmppProtocol extends Account {
     /* renamed from: b */
     public final void m99b(String str, int i) {
         if (m1056C()) {
-            m91a(XmlElement.m550a(530016).m559a(131590, str).m570i(i == 0 ? 594926 : i == 1 ? 660462 : 791532).m552a(XmlElement.m550a(267628).m569h(2037073).m553a((Object) this.f339I)));
+            m91a(XmlElement.createFromState(530016).setAttrValue(131590, str).addNameAttr(i == 0 ? 594926 : i == 1 ? 660462 : 791532).addChild(XmlElement.createFromState(267628).addIdAttr(2037073).appendText((Object) this.f339I)));
         } else {
             IOUtils.m778d((Object) AppState.m584b(299));
         }
@@ -522,36 +522,36 @@ public class XmppProtocol extends Account {
             i = 1;
         }
         this.f324t = i;
-        XmlElement c0022avM550a = XmlElement.m550a(530016);
+        XmlElement c0022avM550a = XmlElement.createFromState(530016);
         int i2 = 0;
         switch (i) {
             case 1:
                 i2 = 642;
                 break;
             case 2:
-                c0022avM550a.m551a(267927, 267829);
+                c0022avM550a.setIntAttribute(267927, 267829);
                 i2 = 644;
                 break;
             case 3:
-                c0022avM550a.m570i(594975);
+                c0022avM550a.addNameAttr(594975);
                 break;
             case 4:
-                c0022avM550a.m551a(267927, 265215);
+                c0022avM550a.setIntAttribute(267927, 265215);
                 i2 = 643;
                 break;
             case 5:
-                c0022avM550a.m551a(267927, 202299);
+                c0022avM550a.setIntAttribute(267927, 202299);
                 i2 = 645;
                 break;
             case 6:
-                c0022avM550a.m551a(267927, 136761);
+                c0022avM550a.setIntAttribute(267927, 136761);
                 i2 = 648;
                 break;
         }
         if (i2 != 0) {
-            c0022avM550a.m571a(AppState.m584b(530137), AppState.m584b(65747));
-            c0022avM550a.m551a(394658, i2);
-            c0022avM550a.m572b(267628, 2037073).m553a((Object) this.f339I);
+            c0022avM550a.addTextChild(AppState.m584b(530137), AppState.m584b(65747));
+            c0022avM550a.setIntAttribute(394658, i2);
+            c0022avM550a.addChildWithId(267628, 2037073).appendText((Object) this.f339I);
         }
         m91a(c0022avM550a);
     }
@@ -655,7 +655,7 @@ public class XmppProtocol extends Account {
         }
         AppState.f177b[1316] = new Object[]{m81r(), ((XmppContact) abstractC0041l).m151f()};
         this.f319o--;
-        return m92b(XmlElement.m550a(136604).m570i(196633).m559a(131590, abstractC0041l.mo135a()).m573c(333452, 661030));
+        return m92b(XmlElement.createFromState(136604).addNameAttr(196633).setAttrValue(131590, abstractC0041l.mo135a()).addSimpleChild(333452, 661030));
     }
 
     @Override // p000.Account
@@ -679,12 +679,12 @@ public class XmppProtocol extends Account {
 
     /* renamed from: a */
     private final int m117a(String str, String str2, String str3) {
-        XmlElement c0022avM569h = XmlElement.m550a(333360).m569h(1054101);
-        XmlElement c0022avM559a = XmlElement.m550a(267942).m559a(202421, str).m559a(262601, str2).m559a(792248, str2 == null ? AppState.m584b(399049) : null);
+        XmlElement c0022avM569h = XmlElement.createFromState(333360).addIdAttr(1054101);
+        XmlElement c0022avM559a = XmlElement.createFromState(267942).setAttrValue(202421, str).setAttrValue(262601, str2).setAttrValue(792248, str2 == null ? AppState.m584b(399049) : null);
         if (str3 != null && !StringUtils.m3a(459528, str3)) {
-            c0022avM559a.m571a(AppState.m584b(333508), str3);
+            c0022avM559a.addTextChild(AppState.m584b(333508), str3);
         }
-        return m92b(XmlElement.m550a(136604).m570i(198841).m552a(c0022avM569h.m552a(c0022avM559a)));
+        return m92b(XmlElement.createFromState(136604).addNameAttr(198841).addChild(c0022avM569h.addChild(c0022avM559a)));
     }
 
     @Override // p000.Account
@@ -788,21 +788,21 @@ public class XmppProtocol extends Account {
             return iMo125a;
         }
         this.f327w++;
-        return m91a(XmlElement.m550a(464488).m559a(131590, abstractC0041l.mo135a()).m570i(265215).m552a(XmlElement.m550a(267946).m553a((Object) str)).m573c(398993, 2430320));
+        return m91a(XmlElement.createFromState(464488).setAttrValue(131590, abstractC0041l.mo135a()).addNameAttr(265215).addChild(XmlElement.createFromState(267946).appendText((Object) str)).addSimpleChild(398993, 2430320));
     }
 
     /* renamed from: c */
     private final boolean m126c(XmlElement c0022av) {
-        if (c0022av.m576d(333350, 661030) == null) {
+        if (c0022av.findByAttrs(333350, 661030) == null) {
             return false;
         }
-        if (!StringUtils.m3a(398982, c0022av.m574a())) {
-            if (!StringUtils.m3a(333441, c0022av.m574a())) {
+        if (!StringUtils.m3a(398982, c0022av.getNameAttr())) {
+            if (!StringUtils.m3a(333441, c0022av.getNameAttr())) {
                 return false;
             }
             try {
                 Object[] objArrM609l = AppState.m609l(1316);
-                if (((String) objArrM609l[0]).equals(c0022av.m554b(131550))) {
+                if (((String) objArrM609l[0]).equals(c0022av.getIntAttribute(131550))) {
                     AppState.f177b[1315] = ((ContactInfo) objArrM609l[1]).m1297y(c0022av.toString());
                 }
                 return true;
@@ -812,7 +812,7 @@ public class XmppProtocol extends Account {
         }
         try {
             Object[] objArrM609l2 = AppState.m609l(1316);
-            if (((String) objArrM609l2[0]).equals(c0022av.m554b(131550))) {
+            if (((String) objArrM609l2[0]).equals(c0022av.getIntAttribute(131550))) {
                 ContactInfo c0042mM1297y = ((ContactInfo) objArrM609l2[1]).m1297y(NetworkUtils.m1215a(m133a(NetworkUtils.m1217h(), c0022av)));
                 Image imageM132e = m132e(c0022av);
                 if (imageM132e != null) {
@@ -829,7 +829,7 @@ public class XmppProtocol extends Account {
     /* renamed from: d */
     private final void m127d(XmlElement c0022av) {
         Vector vector = this.f313i;
-        Vector vector2 = c0022av.f172b;
+        Vector vector2 = c0022av.children;
         int iM541c = Utils.m541c(vector2);
         while (true) {
             iM541c--;
@@ -837,16 +837,16 @@ public class XmppProtocol extends Account {
                 return;
             }
             XmlElement c0022av2 = (XmlElement) vector2.elementAt(iM541c);
-            if (StringUtils.m3a(267942, c0022av2.f171a)) {
-                String strM554b = c0022av2.m554b(202421);
-                String strM554b2 = c0022av2.m554b(792248);
-                c0022av2.m554b(202403);
-                String strM554b3 = c0022av2.m554b(262601);
+            if (StringUtils.m3a(267942, c0022av2.tagName)) {
+                String strM554b = c0022av2.getIntAttribute(202421);
+                String strM554b2 = c0022av2.getIntAttribute(792248);
+                c0022av2.getIntAttribute(202403);
+                String strM554b3 = c0022av2.getIntAttribute(262601);
                 boolean zM3a = StringUtils.m3a(399049, strM554b2);
                 if (strM554b3 == null) {
                     strM554b3 = strM554b;
                 }
-                String strM575c = c0022av2.m575c(AppState.m584b(333508));
+                String strM575c = c0022av2.getChildText(AppState.m584b(333508));
                 String strM584b = strM575c;
                 if (!Utils.m535l(strM575c)) {
                     strM584b = AppState.m584b(459528);
@@ -877,7 +877,7 @@ public class XmppProtocol extends Account {
     /* renamed from: a */
     private static String m129a(XmlElement c0022av, String str) {
         try {
-            return StringUtils.m11a(c0022av.m562f(267628).f173c);
+            return StringUtils.m11a(c0022av.findChildByKey(267628).textContent);
         } catch (Throwable unused) {
             return str;
         }
@@ -916,7 +916,7 @@ public class XmppProtocol extends Account {
     private final Image m132e(XmlElement c0022av) {
         Image imageM132e;
         String strM11a;
-        if (StringUtils.m3a(398966, c0022av.f171a) && (strM11a = StringUtils.m11a(c0022av.f173c)) != null) {
+        if (StringUtils.m3a(398966, c0022av.tagName) && (strM11a = StringUtils.m11a(c0022av.textContent)) != null) {
             String strM534k = Utils.m534k(strM11a);
             if (Utils.m535l(strM534k)) {
                 try {
@@ -925,29 +925,29 @@ public class XmppProtocol extends Account {
                 }
             }
         }
-        int iM541c = Utils.m541c(c0022av.f172b);
+        int iM541c = Utils.m541c(c0022av.children);
         do {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            imageM132e = m132e(c0022av.m564g(iM541c));
+            imageM132e = m132e(c0022av.getChildAt(iM541c));
         } while (imageM132e == null);
         return imageM132e;
     }
 
     /* renamed from: a */
     private final StringBuffer m133a(StringBuffer stringBuffer, XmlElement c0022av) {
-        if (!StringUtils.m3a(333436, c0022av.f171a)) {
-            String strM11a = StringUtils.m11a(c0022av.f173c);
+        if (!StringUtils.m3a(333436, c0022av.tagName)) {
+            String strM11a = StringUtils.m11a(c0022av.textContent);
             if (strM11a != null) {
                 String strM534k = Utils.m534k(strM11a);
                 if (Utils.m535l(strM534k)) {
                     stringBuffer.append(strM534k).append('\n');
                 }
             }
-            for (int i = 0; i < Utils.m541c(c0022av.f172b); i++) {
-                m133a(stringBuffer, c0022av.m564g(i));
+            for (int i = 0; i < Utils.m541c(c0022av.children); i++) {
+                m133a(stringBuffer, c0022av.getChildAt(i));
             }
         }
         return stringBuffer;

@@ -217,22 +217,22 @@ public final class ConnectionThread {
     /* renamed from: a */
     public static final void m1137a(int i, XmlElement c0022av, boolean z) {
         f352l = new Hashtable();
-        Vector vector = c0022av.f172b;
+        Vector vector = c0022av.children;
         if (vector == null) {
             return;
         }
         for (int i2 = 0; i2 < Utils.m541c(vector); i2++) {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(i2);
-            String strM555c = c0022av2.m555c(25705);
-            NetworkUtils c0040k = new NetworkUtils(Integer.parseInt(strM555c), c0022av2.m554b(262601), Integer.parseInt(c0022av2.m554b(201594)), c0022av2.m554b(529266));
-            Vector vector2 = c0022av2.f172b;
+            String strM555c = c0022av2.getLongKeyAttr(25705);
+            NetworkUtils c0040k = new NetworkUtils(Integer.parseInt(strM555c), c0022av2.getIntAttribute(262601), Integer.parseInt(c0022av2.getIntAttribute(201594)), c0022av2.getIntAttribute(529266));
+            Vector vector2 = c0022av2.children;
             int i3 = 0;
             while (i3 < Utils.m541c(vector2)) {
                 int i4 = i3;
                 i3++;
                 XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);
-                if (StringUtils.m3a(263156, c0022av3.f171a)) {
-                    c0040k.f362d = StringUtils.m11a(c0022av3.f173c);
+                if (StringUtils.m3a(263156, c0022av3.tagName)) {
+                    c0040k.f362d = StringUtils.m11a(c0022av3.textContent);
                 }
             }
             f352l.put(strM555c, c0040k);
@@ -404,7 +404,7 @@ public final class ConnectionThread {
             objArr[4] = objArrM1151a;
             return;
         }
-        if (IOUtils.m805a(objArrM1151a) && JsonParser.m486b(JsonParser.m467a(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
+        if (IOUtils.m805a(objArrM1151a) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
             objArr[4] = objArrM1151a;
             return;
         }

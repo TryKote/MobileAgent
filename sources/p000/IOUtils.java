@@ -405,11 +405,11 @@ public final class IOUtils {
         String[] strArr = c0028ba.f231g.f22j;
         XmlElement c0022av = new XmlElement(114);
         XmlElement c0022av2 = new XmlElement("visible", c0022av, null);
-        c0022av.m552a(c0022av2);
+        c0022av.addChild(c0022av2);
         for (String str : strArr) {
             XmlElement c0022av3 = new XmlElement("u", c0022av2, null);
-            c0022av3.m559a(328413, str);
-            c0022av2.m552a(c0022av3);
+            c0022av3.setAttrValue(328413, str);
+            c0022av2.addChild(c0022av3);
         }
         c0028ba.m1052c(AppController.m321a(c0028ba, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(c0022av.toString())));
         if (c0028ba.f231g.f21i != 3) {
@@ -792,7 +792,7 @@ public final class IOUtils {
     /* renamed from: e */
     private static Object m806e(Object[] objArr) {
         try {
-            return JsonParser.m467a((ByteBuffer) objArr[3]);
+            return JsonParser.parseJson((ByteBuffer) objArr[3]);
         } catch (Throwable unused) {
             return null;
         }
@@ -902,7 +902,7 @@ public final class IOUtils {
         if (objM806e == null) {
             return AppController.m338l(889);
         }
-        if (!JsonParser.m486b(objM806e)) {
+        if (!JsonParser.isSuccess(objM806e)) {
             return AppController.m338l(890);
         }
         AppState.f177b[1355] = objM806e;
@@ -913,7 +913,7 @@ public final class IOUtils {
     public static final Object m819l() {
         Object obj = AppState.f177b[1355];
         AppState.m591f(1355);
-        return JsonParser.m482e(obj, 2);
+        return JsonParser.getVectorElement(obj, 2);
     }
 
     /* renamed from: c */

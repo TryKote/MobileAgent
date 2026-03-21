@@ -143,7 +143,7 @@ public final class Conversation implements ListItem {
                         c0033d.f323s = 40;
                         AppController.f153g = true;
                         XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).parseXmlStr();
-                        int i2 = Integer.parseInt(StringUtils.m11a(c0022avM1389J.m562f(658246).f173c));
+                        int i2 = Integer.parseInt(StringUtils.m11a(c0022avM1389J.findChildByKey(658246).textContent));
                         if (i2 != 200) {
                             if (i2 == 330) {
                                 ((MmpProtocol) objArr[0]).m1065J();
@@ -151,8 +151,8 @@ public final class Conversation implements ListItem {
                             }
                             throw new RuntimeException(StringUtils.m17c(Integer.toString(i2)));
                         }
-                        XmlElement c0022avM562f = c0022avM1389J.m562f(262156);
-                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.m967e(1), StringUtils.m11a(c0022avM562f.m562f(461648).f173c), StringUtils.m11a(c0022avM562f.m562f(330583).m562f(65538).f173c), StringUtils.m11a(c0022avM562f.m562f(527196).f173c), StringUtils.m11a(c0022avM562f.m562f(854884).f173c), objArr[3]});
+                        XmlElement c0022avM562f = c0022avM1389J.findChildByKey(262156);
+                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.m967e(1), StringUtils.m11a(c0022avM562f.findChildByKey(461648).textContent), StringUtils.m11a(c0022avM562f.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.m11a(c0022avM562f.findChildByKey(527196).textContent), StringUtils.m11a(c0022avM562f.findChildByKey(854884).textContent), objArr[3]});
                         HttpClient.m633a(c0024axM629a);
                         AppController.m344t();
                         return;
@@ -168,8 +168,8 @@ public final class Conversation implements ListItem {
                     if (iM634a2 == 200) {
                         c0033d.f323s = 60;
                         AppController.f153g = true;
-                        XmlElement c0022avM562f2 = c0024axM642a.m644b().parseXmlStr().m562f(262156);
-                        ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m11a(c0022avM562f2.m562f(265052).f173c)).append(':').append(StringUtils.m11a(c0022avM562f2.m562f(265005).f173c))), StringUtils.m11a(c0022avM562f2.m562f(395483).f173c)};
+                        XmlElement c0022avM562f2 = c0024axM642a.m644b().parseXmlStr().findChildByKey(262156);
+                        ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m11a(c0022avM562f2.findChildByKey(265052).textContent)).append(':').append(StringUtils.m11a(c0022avM562f2.findChildByKey(265005).textContent))), StringUtils.m11a(c0022avM562f2.findChildByKey(395483).textContent)};
                         HttpClient.m633a(c0024axM642a);
                         AppController.m344t();
                         return;
@@ -835,11 +835,11 @@ public final class Conversation implements ListItem {
     public static final void m1113a(boolean z, MrimAccount c0028ba) {
         String strM1215a;
         String strM1215a2;
-        XmlElement c0022avM550a = XmlElement.m550a(266953);
-        XmlElement c0022avM550a2 = XmlElement.m550a(398003);
-        XmlElement c0022avM552a = c0022avM550a.m552a(c0022avM550a2);
+        XmlElement c0022avM550a = XmlElement.createFromState(266953);
+        XmlElement c0022avM550a2 = XmlElement.createFromState(398003);
+        XmlElement c0022avM552a = c0022avM550a.addChild(c0022avM550a2);
         try {
-            c0022avM550a2.m552a(new XmlElement(99).m559a(262589, NetworkUtils.m1221a(5067591)).m559a(329117, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(529061)).append(AppController.m367C()).append(',').append(AppController.m368D()).append(',').append(AppController.m365A()).append(',').append(AppController.m366B()).append(',').append(0))));
+            c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.m1221a(5067591)).setAttrValue(329117, NetworkUtils.m1215a(NetworkUtils.m1217h().append(AppState.m584b(529061)).append(AppController.m367C()).append(',').append(AppController.m368D()).append(',').append(AppController.m365A()).append(',').append(AppController.m366B()).append(',').append(0))));
         } catch (Throwable unused) {
         }
         Vector vectorM439R = AppController.m439R();
@@ -946,46 +946,46 @@ public final class Conversation implements ListItem {
             r1 = r9
             av r1 = r1.parseXml()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = 594557(0x9127d, float:8.33152E-40)
-            av r1 = r1.m562f(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            av r1 = r1.findChildByKey(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = 200701(0x30ffd, float:2.81242E-40)
-            av r1 = r1.m562f(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            av r1 = r1.findChildByKey(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r9 = r1
             boolean r0 = m1115q(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             if (r0 == 0) goto L5d
             r0 = r9
             r1 = 197037(0x301ad, float:2.76108E-40)
-            java.lang.String r0 = r0.m554b(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r1 = r9
             r2 = 197041(0x301b1, float:2.76113E-40)
-            java.lang.String r1 = r1.m554b(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r1 = r1.getIntAttribute(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = r9
             r3 = 529081(0x812b9, float:7.414E-40)
-            java.lang.String r2 = r2.m554b(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r2 = r2.getIntAttribute(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r3 = r9
             r4 = 529089(0x812c1, float:7.41412E-40)
-            java.lang.String r3 = r3.m554b(r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r3 = r3.getIntAttribute(r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r4 = r9
             r5 = 397788(0x611dc, float:5.5742E-40)
-            java.lang.String r4 = r4.m554b(r5)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r4 = r4.getIntAttribute(r5)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             p000.AppController.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             goto La4
         L5d:
             r0 = r9
             r1 = 197037(0x301ad, float:2.76108E-40)
-            java.lang.String r0 = r0.m554b(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             long r0 = p000.IOUtils.m807b(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r1 = r0; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r13 = r1
             r1 = r9
             r2 = 197041(0x301b1, float:2.76113E-40)
-            java.lang.String r1 = r1.m554b(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r1 = r1.getIntAttribute(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             long r1 = p000.IOUtils.m808c(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = r1; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r11 = r2
             p000.MapRenderer.m649a(r0, r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r9
             r1 = 725709(0xb12cd, float:1.016935E-39)
-            java.lang.String r0 = r0.m554b(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             int r0 = p000.Utils.m510a(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             p000.MapRenderer.m651a(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = 1
@@ -994,7 +994,7 @@ public final class Conversation implements ListItem {
             r1 = r11
             r2 = r9
             r3 = 594548(0x91274, float:8.33139E-40)
-            java.lang.String r2 = r2.m554b(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            java.lang.String r2 = r2.getIntAttribute(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             int r2 = p000.Utils.m510a(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r9 = r2
             r15 = r1

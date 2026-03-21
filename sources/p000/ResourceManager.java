@@ -125,7 +125,7 @@ public final class ResourceManager {
     public static final void m929a(Object[] objArr) {
         while (true) {
             XmppProtocol c0005ae = (XmppProtocol) objArr[0];
-            XmlElement c0022avM47a = ((XmlParser) objArr[2]).m47a();
+            XmlElement c0022avM47a = ((XmlParser) objArr[2]).parse();
             synchronized (c0005ae.f30a) {
                 c0005ae.f30a.addElement(c0022avM47a);
             }
@@ -337,7 +337,7 @@ public final class ResourceManager {
                 }
                 String str = null;
                 boolean z = false;
-                Vector vector = new ByteBuffer(c0024axM630a).parseXml().f172b;
+                Vector vector = new ByteBuffer(c0024axM630a).parseXml().children;
                 int size = vector.size();
                 while (true) {
                     size--;
@@ -345,8 +345,8 @@ public final class ResourceManager {
                         throw new RuntimeException();
                     }
                     XmlElement c0022av = (XmlElement) vector.elementAt(size);
-                    String str2 = c0022av.f171a;
-                    String strM11a = StringUtils.m11a(c0022av.f173c);
+                    String str2 = c0022av.tagName;
+                    String strM11a = StringUtils.m11a(c0022av.textContent);
                     if (StringUtils.m3a(394658, str2) && StringUtils.m3a(197596, strM11a)) {
                         z = true;
                     } else if (StringUtils.m3a(263156, str2)) {
@@ -838,7 +838,7 @@ public final class ResourceManager {
             }
             ByteBuffer c0043n = new ByteBuffer(c0024axM629a);
             synchronized (AppState.f177b[1357]) {
-                AppState.m594c(289, Integer.parseInt(c0043n.parseXmlStr().m554b(723889)) != 0 ? 1 : 0);
+                AppState.m594c(289, Integer.parseInt(c0043n.parseXmlStr().getIntAttribute(723889)) != 0 ? 1 : 0);
             }
             synchronized (AppState.f177b[1357]) {
                 m970a((byte) 0);

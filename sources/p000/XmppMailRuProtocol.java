@@ -1062,7 +1062,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         Message c0026azM1415b = c0052wM745h.m1415b(strM584b);
         boolean zM671a = c0026azM1415b.m671a(4);
         Object objM819l = IOUtils.m819l();
-        Object objM476a = JsonParser.m476a(objM819l, 722874);
+        Object objM476a = JsonParser.getValueByInt(objM819l, 722874);
         int size = ((Vector) objM476a).size();
         int i = size;
         Object[] objArr = new Object[size];
@@ -1071,11 +1071,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             if (i < 0) {
                 break;
             }
-            Object objM482e = JsonParser.m482e(objM476a, i);
-            objArr[i] = new String[]{JsonParser.m480c(objM482e, 1227), JsonParser.m480c(objM482e, 1228), JsonParser.m480c(objM482e, 1229), JsonParser.m480c(objM482e, 1230), JsonParser.m480c(objM482e, 1231), JsonParser.m480c(objM482e, 1232)};
+            Object objM482e = JsonParser.getVectorElement(objM476a, i);
+            objArr[i] = new String[]{JsonParser.getStringByInt(objM482e, 1227), JsonParser.getStringByInt(objM482e, 1228), JsonParser.getStringByInt(objM482e, 1229), JsonParser.getStringByInt(objM482e, 1230), JsonParser.getStringByInt(objM482e, 1231), JsonParser.getStringByInt(objM482e, 1232)};
         }
         c0026azM1415b.f224i = objArr;
-        String str = (String) JsonParser.m476a(objM819l, 919493);
+        String str = (String) JsonParser.getValueByInt(objM819l, 919493);
         if (str == null) {
             strM1215a = AppState.f181d;
         } else {

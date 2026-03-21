@@ -80,13 +80,13 @@ public final class VCard {
         }
         this.f23k = this.f22j;
         String[] strArr2 = new String[0];
-        if (c0022av.f172b == null || (vector = ((XmlElement) c0022av.f172b.elementAt(0)).f172b) == null) {
+        if (c0022av.children == null || (vector = ((XmlElement) c0022av.children.elementAt(0)).children) == null) {
             strArr = strArr2;
         } else {
             int size = vector.size();
             String[] strArr3 = new String[size];
             for (int i = 0; i < size; i++) {
-                strArr3[i] = ((XmlElement) vector.elementAt(i)).m554b(328413);
+                strArr3[i] = ((XmlElement) vector.elementAt(i)).getIntAttribute(328413);
             }
             strArr = strArr3;
         }
@@ -182,7 +182,7 @@ public final class VCard {
         Vector vector = null;
         Vector vectorM1213g = null;
         try {
-            vector = (Vector) JsonParser.m466a(c0043n, 2);
+            vector = (Vector) JsonParser.parseUTF8(c0043n, 2);
         } catch (Throwable unused) {
         }
         if (vector != null) {

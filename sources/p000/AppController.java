@@ -2478,13 +2478,13 @@ public final class AppController {
                                                         MrimAccount c0028ba2 = (MrimAccount) AppState.m616i();
                                                         ChatRoom c0052wM745h2 = c0028ba2.m745h(AppState.m586d(1513));
                                                         if (c0052wM745h2 != c0028ba2.m746W()) {
-                                                            c0052wM745h2.f413e = JsonParser.m479c(objM819l, AppState.m584b(591768));
+                                                            c0052wM745h2.f413e = JsonParser.getStringValue(objM819l, AppState.m584b(591768));
                                                             c0052wM745h2.f414f.removeAllElements();
-                                                            Enumeration enumerationElements = ((Vector) JsonParser.m475a(objM819l, AppState.m584b(526244))).elements();
+                                                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(objM819l, AppState.m584b(526244))).elements();
                                                             while (enumerationElements.hasMoreElements()) {
                                                                 c0052wM745h2.f414f.addElement(enumerationElements.nextElement());
                                                             }
-                                                            Enumeration enumerationElements2 = ((Vector) JsonParser.m475a(objM819l, AppState.m584b(329636))).elements();
+                                                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(objM819l, AppState.m584b(329636))).elements();
                                                             while (enumerationElements2.hasMoreElements()) {
                                                                 Message c0026az = new Message((Hashtable) enumerationElements2.nextElement());
                                                                 c0052wM745h2.f416h.put(c0026az.f216a, c0026az);
@@ -2529,7 +2529,7 @@ public final class AppController {
                                                         MrimAccount c0028ba3 = (MrimAccount) AppState.m616i();
                                                         int size4 = ((Vector) objM819l2).size();
                                                         for (int i6 = 0; i6 < size4; i6++) {
-                                                            Enumeration enumerationKeys2 = ((Hashtable) JsonParser.m482e(objM819l2, i6)).keys();
+                                                            Enumeration enumerationKeys2 = ((Hashtable) JsonParser.getVectorElement(objM819l2, i6)).keys();
                                                             while (enumerationKeys2.hasMoreElements()) {
                                                                 String str5 = (String) enumerationKeys2.nextElement();
                                                                 ChatRoom c0052wM747i = c0028ba3.m747i(str5);
@@ -2747,9 +2747,9 @@ public final class AppController {
                                                             if (size5 < 0) {
                                                                 iM1181a = 43;
                                                             } else {
-                                                                Object objM482e = JsonParser.m482e(objM819l3, size5);
-                                                                int iM510a = Utils.m510a((Object) JsonParser.m480c(objM482e, 263673));
-                                                                String strM480c = JsonParser.m480c(objM482e, 329240);
+                                                                Object objM482e = JsonParser.getVectorElement(objM819l3, size5);
+                                                                int iM510a = Utils.m510a((Object) JsonParser.getStringByInt(objM482e, 263673));
+                                                                String strM480c = JsonParser.getStringByInt(objM482e, 329240);
                                                                 ChatRoom c0052wM747i2 = ((MrimAccount) AppState.m616i()).m747i(strM480c);
                                                                 Message c0026azM1415b3 = c0052wM747i2.m1415b(strM480c);
                                                                 if (c0052wM747i2 != null) {
@@ -2800,13 +2800,13 @@ public final class AppController {
                                                         iM1181a = iM818c5;
                                                     } else {
                                                         Object objM819l4 = IOUtils.m819l();
-                                                        Object objM476a = JsonParser.m476a(objM819l4, 329636);
-                                                        if (JsonParser.m478b(objM819l4, 198543) == 1) {
+                                                        Object objM476a = JsonParser.getValueByInt(objM819l4, 329636);
+                                                        if (JsonParser.getIntByInt(objM819l4, 198543) == 1) {
                                                             int size6 = ((Vector) objM476a).size();
                                                             while (true) {
                                                                 size6--;
                                                                 if (size6 >= 0) {
-                                                                    String strM483f = JsonParser.m483f(objM476a, size6);
+                                                                    String strM483f = JsonParser.getVectorString(objM476a, size6);
                                                                     MrimAccount c0028ba4 = (MrimAccount) AppState.m616i();
                                                                     ChatRoom c0052wM747i3 = c0028ba4.m747i(strM483f);
                                                                     if (c0052wM747i3 != null && (c0026azM1415b = c0052wM747i3.m1415b(strM483f)) != null) {
@@ -2847,8 +2847,8 @@ public final class AppController {
                                                         int size7 = vector.size();
                                                         for (int i10 = 0; i10 < size7; i10++) {
                                                             Hashtable hashtable2 = (Hashtable) vector.elementAt(i10);
-                                                            Vector vector2 = (Vector) JsonParser.m475a(hashtable2, AppState.m584b(329636));
-                                                            String strM480c2 = JsonParser.m480c(hashtable2, 198561);
+                                                            Vector vector2 = (Vector) JsonParser.getValue(hashtable2, AppState.m584b(329636));
+                                                            String strM480c2 = JsonParser.getStringByInt(hashtable2, 198561);
                                                             int size8 = vector2.size();
                                                             for (int i11 = 0; i11 < size8; i11++) {
                                                                 Vector vector3 = c0052wM746W.f414f;

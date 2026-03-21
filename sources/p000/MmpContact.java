@@ -272,7 +272,7 @@ public final class MmpContact extends Contact {
         f70n.removeAllElements();
         f72B = 0;
         f73C = 0;
-        Hashtable hashtable = (Hashtable) JsonParser.m466a(c0043n, 2);
+        Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(c0043n, 2);
         f72B = ((Integer) hashtable.get("totalLength")).intValue();
         f73C = ((Integer) hashtable.get("totalTime")).intValue();
         Vector vector = (Vector) hashtable.get("regions");

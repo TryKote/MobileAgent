@@ -8,25 +8,25 @@ import java.util.Vector;
 /* loaded from: MobileAgent_3.9.jar:aq.class */
 public abstract class JsonParser {
     /* renamed from: a */
-    public static final Object m466a(ByteBuffer c0043n, int i) {
+    public static final Object parseUTF8(ByteBuffer c0043n, int i) {
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
-        Object objM469a = m469a(c0043n, stringBufferM1217h, 2);
+        Object objM469a = parseValue(c0043n, stringBufferM1217h, 2);
         NetworkUtils.m1215a(stringBufferM1217h);
         return objM469a;
     }
 
     /* renamed from: a */
-    public static final Object m467a(ByteBuffer c0043n) {
+    public static final Object parseJson(ByteBuffer c0043n) {
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
-        Object objM469a = m469a(c0043n, stringBufferM1217h, 1);
+        Object objM469a = parseValue(c0043n, stringBufferM1217h, 1);
         NetworkUtils.m1215a(stringBufferM1217h);
         return objM469a;
     }
 
     /* renamed from: a */
-    private static final char m468a(ByteBuffer c0043n, StringBuffer stringBuffer) {
+    private static final char skipWhitespace(ByteBuffer c0043n, StringBuffer stringBuffer) {
         while (true) {
-            char cM472c = m472c(c0043n, stringBuffer);
+            char cM472c = nextJsonChar(c0043n, stringBuffer);
             if (cM472c != ' ' && cM472c != '\n' && cM472c != '\r') {
                 return cM472c;
             }
@@ -34,10 +34,10 @@ public abstract class JsonParser {
     }
 
     /* renamed from: a */
-    private static final Object m469a(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
+    private static final Object parseValue(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
         char cM468a;
         char cM468a2;
-        char cM468a3 = m468a(c0043n, stringBuffer);
+        char cM468a3 = skipWhitespace(c0043n, stringBuffer);
         if (cM468a3 == 65535) {
             throw new RuntimeException();
         }
@@ -48,15 +48,15 @@ public abstract class JsonParser {
         if (cM468a3 == '{') {
             Hashtable hashtable = new Hashtable();
             do {
-                Object objM469a = m469a(c0043n, stringBuffer, i);
+                Object objM469a = parseValue(c0043n, stringBuffer, i);
                 if (!(objM469a instanceof String)) {
                     throw new RuntimeException();
                 }
-                if (m468a(c0043n, stringBuffer) != ':') {
+                if (skipWhitespace(c0043n, stringBuffer) != ':') {
                     throw new RuntimeException();
                 }
-                hashtable.put(objM469a, m469a(c0043n, stringBuffer, i));
-                cM468a2 = m468a(c0043n, stringBuffer);
+                hashtable.put(objM469a, parseValue(c0043n, stringBuffer, i));
+                cM468a2 = skipWhitespace(c0043n, stringBuffer);
                 if (cM468a2 == '}') {
                     return hashtable;
                 }
@@ -65,18 +65,18 @@ public abstract class JsonParser {
         }
         if (cM468a3 != '[') {
             if (cM468a3 == '\"') {
-                return m470b(c0043n, stringBuffer, i);
+                return parseString(c0043n, stringBuffer, i);
             }
             stringBuffer.append(cM468a3);
-            return m471b(c0043n, stringBuffer);
+            return parseUnquoted(c0043n, stringBuffer);
         }
         Vector vectorM1213g = NetworkUtils.m1213g();
         do {
-            Object objM469a2 = m469a(c0043n, stringBuffer, i);
+            Object objM469a2 = parseValue(c0043n, stringBuffer, i);
             if (objM469a2 != null) {
                 vectorM1213g.addElement(objM469a2);
             }
-            cM468a = m468a(c0043n, stringBuffer);
+            cM468a = skipWhitespace(c0043n, stringBuffer);
             if (cM468a == ']') {
                 return vectorM1213g;
             }
@@ -85,7 +85,7 @@ public abstract class JsonParser {
     }
 
     /* renamed from: b */
-    private static final String m470b(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
+    private static final String parseString(ByteBuffer c0043n, StringBuffer stringBuffer, int i) {
         char cM499a;
         char cM1342n;
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
@@ -106,13 +106,13 @@ public abstract class JsonParser {
                 }
                 cM499a = cM1342n;
             } else {
-                cM499a = Utils.m499a((int) m472c(c0043n, stringBuffer));
+                cM499a = Utils.m499a((int) nextJsonChar(c0043n, stringBuffer));
             }
             if (cM499a == '\"') {
                 return NetworkUtils.m1215a(stringBufferM1217h);
             }
             if (cM499a == '\\') {
-                switch (m472c(c0043n, stringBuffer)) {
+                switch (nextJsonChar(c0043n, stringBuffer)) {
                     case '\"':
                         stringBufferM1217h.append('\"');
                         break;
@@ -145,11 +145,11 @@ public abstract class JsonParser {
     }
 
     /* renamed from: b */
-    private static final Object m471b(ByteBuffer c0043n, StringBuffer stringBuffer) {
+    private static final Object parseUnquoted(ByteBuffer c0043n, StringBuffer stringBuffer) {
         char cM472c;
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         while (true) {
-            cM472c = m472c(c0043n, stringBuffer);
+            cM472c = nextJsonChar(c0043n, stringBuffer);
             if (cM472c == ',' || cM472c == '}' || cM472c == ']') {
                 break;
             }
@@ -161,7 +161,7 @@ public abstract class JsonParser {
     }
 
     /* renamed from: c */
-    private static final char m472c(ByteBuffer c0043n, StringBuffer stringBuffer) {
+    private static final char nextJsonChar(ByteBuffer c0043n, StringBuffer stringBuffer) {
         int length = stringBuffer.length() - 1;
         if (length < 0) {
             return (char) c0043n.readByteOrEOF();
@@ -172,67 +172,67 @@ public abstract class JsonParser {
     }
 
     /* renamed from: a */
-    public static final void m473a(Hashtable hashtable, int i, Object obj) {
+    public static final void putIntKey(Hashtable hashtable, int i, Object obj) {
         hashtable.put(AppState.m584b(i), obj);
     }
 
     /* renamed from: a */
-    public static final void m474a(Hashtable hashtable, String str, int i) {
+    public static final void putIntValue(Hashtable hashtable, String str, int i) {
         hashtable.put(str, ResourceManager.m967e(i));
     }
 
     /* renamed from: a */
-    public static final Object m475a(Object obj, String str) {
+    public static final Object getValue(Object obj, String str) {
         return ((Hashtable) obj).get(str);
     }
 
     /* renamed from: a */
-    public static final Object m476a(Object obj, int i) {
+    public static final Object getValueByInt(Object obj, int i) {
         return ((Hashtable) obj).get(AppState.m584b(i));
     }
 
     /* renamed from: b */
-    public static final int m477b(Object obj, String str) {
-        return ((Integer) m475a(obj, str)).intValue();
+    public static final int getIntValue(Object obj, String str) {
+        return ((Integer) getValue(obj, str)).intValue();
     }
 
     /* renamed from: b */
-    public static final int m478b(Object obj, int i) {
-        return ((Integer) m475a(obj, AppState.m584b(i))).intValue();
+    public static final int getIntByInt(Object obj, int i) {
+        return ((Integer) getValue(obj, AppState.m584b(i))).intValue();
     }
 
     /* renamed from: c */
-    public static final String m479c(Object obj, String str) {
-        return (String) m475a(obj, str);
+    public static final String getStringValue(Object obj, String str) {
+        return (String) getValue(obj, str);
     }
 
     /* renamed from: c */
-    public static final String m480c(Object obj, int i) {
-        return (String) m475a(obj, AppState.m584b(i));
+    public static final String getStringByInt(Object obj, int i) {
+        return (String) getValue(obj, AppState.m584b(i));
     }
 
     /* renamed from: d */
-    public static final void m481d(Object obj, int i) {
+    public static final void addIntToVector(Object obj, int i) {
         ((Vector) obj).addElement(ResourceManager.m967e(i));
     }
 
     /* renamed from: e */
-    public static final Object m482e(Object obj, int i) {
+    public static final Object getVectorElement(Object obj, int i) {
         return ((Vector) obj).elementAt(i);
     }
 
     /* renamed from: f */
-    public static final String m483f(Object obj, int i) {
+    public static final String getVectorString(Object obj, int i) {
         return Utils.m521a((Vector) obj, i);
     }
 
     /* renamed from: a */
-    public static final String m484a(Object obj) {
-        return NetworkUtils.m1215a(m485a(obj, NetworkUtils.m1217h()));
+    public static final String toJson(Object obj) {
+        return NetworkUtils.m1215a(serializeValue(obj, NetworkUtils.m1217h()));
     }
 
     /* renamed from: a */
-    private static final StringBuffer m485a(Object obj, StringBuffer stringBuffer) {
+    private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ResourceManager.f290i) {
             stringBuffer.append(AppState.m584b(1369));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
@@ -278,7 +278,7 @@ public abstract class JsonParser {
                 if (i2 > 0) {
                     stringBuffer.append(',');
                 }
-                m485a(vector.elementAt(i2), stringBuffer);
+                serializeValue(vector.elementAt(i2), stringBuffer);
             }
             stringBuffer.append(']');
         } else {
@@ -292,9 +292,9 @@ public abstract class JsonParser {
                 }
                 z = false;
                 Object objNextElement = enumerationKeys.nextElement();
-                m485a(objNextElement, stringBuffer);
+                serializeValue(objNextElement, stringBuffer);
                 stringBuffer.append(':');
-                m485a(hashtable.get(objNextElement), stringBuffer);
+                serializeValue(hashtable.get(objNextElement), stringBuffer);
             }
             stringBuffer.append('}');
         }
@@ -302,7 +302,7 @@ public abstract class JsonParser {
     }
 
     /* renamed from: b */
-    public static final boolean m486b(Object obj) {
-        return StringUtils.m3a(133005, m483f(obj, 1)) && StringUtils.m3a(788024, (String) m482e(obj, 0));
+    public static final boolean isSuccess(Object obj) {
+        return StringUtils.m3a(133005, getVectorString(obj, 1)) && StringUtils.m3a(788024, (String) getVectorElement(obj, 0));
     }
 }

@@ -94,18 +94,18 @@ public final class NetworkUtils {
                 HttpClient c0024axM631b = HttpClient.m631b((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
                 c0024ax = c0024axM631b;
                 if (c0024axM631b.m634a() == 200) {
-                    Vector vector = new ByteBuffer(c0024ax).parseXmlStr().f172b;
-                    XmlElement c0022avM560b = new XmlElement(103).m560b(103, AppState.m584b(223)).m560b(102, AppController.m298f()).m560b(116, StringUtils.m17c(Long.toString(Runtime.getRuntime().totalMemory()))).m560b(112, StringUtils.m17c(Integer.toString(0))).m560b(115, StringUtils.m17c(ResourceManager.m968a(false).toString()));
+                    Vector vector = new ByteBuffer(c0024ax).parseXmlStr().children;
+                    XmlElement c0022avM560b = new XmlElement(103).setLongKeyAttr(103, AppState.m584b(223)).setLongKeyAttr(102, AppController.m298f()).setLongKeyAttr(116, StringUtils.m17c(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.m17c(Integer.toString(0))).setLongKeyAttr(115, StringUtils.m17c(ResourceManager.m968a(false).toString()));
                     for (int i6 = 0; i6 < vector.size(); i6++) {
                         XmlElement c0022av = (XmlElement) vector.elementAt(i6);
-                        String str2 = c0022av.f171a;
-                        String strM11a = StringUtils.m11a(c0022av.f173c);
+                        String str2 = c0022av.tagName;
+                        String strM11a = StringUtils.m11a(c0022av.textContent);
                         if (m1177a(str2, 'p')) {
-                            c0022avM560b.m552a(m1176a('p', strM11a, m1179d(strM11a)));
+                            c0022avM560b.addChild(m1176a('p', strM11a, m1179d(strM11a)));
                         } else if (m1177a(str2, 'j')) {
-                            c0022avM560b.m552a(m1176a('j', strM11a, m1180e(strM11a)));
+                            c0022avM560b.addChild(m1176a('j', strM11a, m1180e(strM11a)));
                         } else if (m1177a(str2, 'e')) {
-                            c0022avM560b.m552a(m1176a('e', strM11a, (Object) m1178c(strM11a)));
+                            c0022avM560b.addChild(m1176a('e', strM11a, (Object) m1178c(strM11a)));
                         }
                     }
                     new AsyncTask(18, c0022avM560b.toString());
@@ -257,7 +257,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     private static final XmlElement m1176a(char c, String str, Object obj) {
-        return new XmlElement(c).m560b(110, str).m553a(obj);
+        return new XmlElement(c).setLongKeyAttr(110, str).appendText(obj);
     }
 
     /* renamed from: a */
@@ -1198,7 +1198,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     private static final void m1226a(Object[] objArr, XmlElement c0022av) {
-        Vector vector = c0022av.f172b;
+        Vector vector = c0022av.children;
         int size = vector.size();
         while (true) {
             size--;
@@ -1211,8 +1211,8 @@ public final class NetworkUtils {
                 return;
             }
             XmlElement c0022av2 = (XmlElement) vector.elementAt(size);
-            String strM554b = c0022av2.m554b(329117);
-            String strM554b2 = c0022av2.m554b(262601);
+            String strM554b = c0022av2.getIntAttribute(329117);
+            String strM554b2 = c0022av2.getIntAttribute(262601);
             if (StringUtils.m3a(132297, strM554b2)) {
                 objArr[4] = strM554b;
             } else if (StringUtils.m3a(1115488, strM554b2)) {

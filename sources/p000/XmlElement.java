@@ -9,26 +9,26 @@ import java.util.Vector;
 public final class XmlElement {
 
     /* renamed from: a */
-    public String f171a;
+    public String tagName;
 
     /* renamed from: b */
-    public Vector f172b;
+    public Vector children;
 
     /* renamed from: c */
-    public StringBuffer f173c;
+    public StringBuffer textContent;
 
     /* renamed from: d */
-    public XmlElement f174d;
+    public XmlElement parent;
 
     /* renamed from: e */
-    private Hashtable f175e;
+    private Hashtable attributes;
 
     public XmlElement() {
         this(null, null, null);
     }
 
     /* renamed from: a */
-    public static final XmlElement m550a(int i) {
+    public static final XmlElement createFromState(int i) {
         return new XmlElement(AppState.m584b(i));
     }
 
@@ -37,134 +37,134 @@ public final class XmlElement {
     }
 
     private XmlElement(String str) {
-        this.f171a = str;
+        this.tagName = str;
     }
 
     public XmlElement(String str, XmlElement c0022av, Hashtable hashtable) {
-        this.f174d = c0022av;
-        this.f175e = hashtable;
-        this.f171a = str;
+        this.parent = c0022av;
+        this.attributes = hashtable;
+        this.tagName = str;
     }
 
     /* renamed from: a */
-    public final XmlElement m551a(int i, int i2) {
-        m571a(AppState.m584b(i), AppState.m584b(i2));
+    public final XmlElement setIntAttribute(int i, int i2) {
+        addTextChild(AppState.m584b(i), AppState.m584b(i2));
         return this;
     }
 
     /* renamed from: a */
-    public final XmlElement m552a(XmlElement c0022av) {
-        if (this.f172b == null) {
-            this.f172b = NetworkUtils.m1213g();
+    public final XmlElement addChild(XmlElement c0022av) {
+        if (this.children == null) {
+            this.children = NetworkUtils.m1213g();
         }
-        this.f172b.addElement(c0022av);
+        this.children.addElement(c0022av);
         return this;
     }
 
     /* renamed from: a */
-    public final XmlElement m553a(Object obj) {
-        if (this.f173c == null) {
-            this.f173c = NetworkUtils.m1217h();
+    public final XmlElement appendText(Object obj) {
+        if (this.textContent == null) {
+            this.textContent = NetworkUtils.m1217h();
         }
-        this.f173c.append(obj);
+        this.textContent.append(obj);
         return this;
     }
 
     /* renamed from: b */
-    public final String m554b(int i) {
-        return m558d(AppState.m584b(i));
+    public final String getIntAttribute(int i) {
+        return getAttribute(AppState.m584b(i));
     }
 
     /* renamed from: c */
-    public final String m555c(int i) {
-        return m558d(NetworkUtils.m1221a(i));
+    public final String getLongKeyAttr(int i) {
+        return getAttribute(NetworkUtils.m1221a(i));
     }
 
     /* renamed from: d */
-    public final long m556d(int i) {
-        return Long.parseLong(m555c(i));
+    public final long getAttrAsLong(int i) {
+        return Long.parseLong(getLongKeyAttr(i));
     }
 
     /* renamed from: e */
-    public final int m557e(int i) {
-        return Integer.parseInt(m555c(i));
+    public final int getAttrAsInt(int i) {
+        return Integer.parseInt(getLongKeyAttr(i));
     }
 
     /* renamed from: d */
-    private String m558d(String str) {
-        return (String) this.f175e.get(str);
+    private String getAttribute(String str) {
+        return (String) this.attributes.get(str);
     }
 
     /* renamed from: a */
-    public final XmlElement m559a(int i, String str) {
-        return m561b(AppState.m584b(i), str);
+    public final XmlElement setAttrValue(int i, String str) {
+        return setAttrImpl(AppState.m584b(i), str);
     }
 
     /* renamed from: b */
-    public final XmlElement m560b(int i, String str) {
-        return m561b(NetworkUtils.m1221a(i), str);
+    public final XmlElement setLongKeyAttr(int i, String str) {
+        return setAttrImpl(NetworkUtils.m1221a(i), str);
     }
 
     /* renamed from: b */
-    private XmlElement m561b(String str, String str2) {
+    private XmlElement setAttrImpl(String str, String str2) {
         if (str != null) {
             if (str2 != null) {
-                if (this.f175e == null) {
-                    this.f175e = new Hashtable();
+                if (this.attributes == null) {
+                    this.attributes = new Hashtable();
                 }
-                this.f175e.put(str, str2);
-            } else if (this.f175e != null) {
-                this.f175e.remove(str);
+                this.attributes.put(str, str2);
+            } else if (this.attributes != null) {
+                this.attributes.remove(str);
             }
         }
         return this;
     }
 
     /* renamed from: f */
-    public final XmlElement m562f(int i) {
-        return m563e(AppState.m584b(i));
+    public final XmlElement findChildByKey(int i) {
+        return findChildByName(AppState.m584b(i));
     }
 
     /* renamed from: e */
-    private final XmlElement m563e(String str) {
+    private final XmlElement findChildByName(String str) {
         XmlElement c0022av;
-        int iM541c = Utils.m541c(this.f172b);
+        int iM541c = Utils.m541c(this.children);
         do {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            c0022av = (XmlElement) this.f172b.elementAt(iM541c);
-        } while (!StringUtils.m6a(c0022av.f171a, str));
+            c0022av = (XmlElement) this.children.elementAt(iM541c);
+        } while (!StringUtils.m6a(c0022av.tagName, str));
         return c0022av;
     }
 
     /* renamed from: g */
-    public final XmlElement m564g(int i) {
-        return (XmlElement) this.f172b.elementAt(i);
+    public final XmlElement getChildAt(int i) {
+        return (XmlElement) this.children.elementAt(i);
     }
 
     public final String toString() {
-        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('<').append(this.f171a);
-        if (this.f175e != null) {
-            Enumeration enumerationKeys = this.f175e.keys();
+        StringBuffer stringBufferAppend = NetworkUtils.m1217h().append('<').append(this.tagName);
+        if (this.attributes != null) {
+            Enumeration enumerationKeys = this.attributes.keys();
             while (enumerationKeys.hasMoreElements()) {
                 StringBuffer stringBufferAppend2 = stringBufferAppend.append(' ');
                 Object objNextElement = enumerationKeys.nextElement();
                 StringBuffer stringBufferAppend3 = stringBufferAppend2.append(objNextElement).append('=').append('\"');
-                StringBuffer stringBufferM565b = m565b(this.f175e.get(objNextElement));
+                StringBuffer stringBufferM565b = m565b(this.attributes.get(objNextElement));
                 stringBufferAppend3.append((Object) stringBufferM565b).append('\"');
                 NetworkUtils.m1215a(stringBufferM565b);
             }
         }
         StringBuffer stringBufferAppend4 = NetworkUtils.m1217h().append(NetworkUtils.m1215a(m566c() ? stringBufferAppend.append('/').append('>') : stringBufferAppend.append('>')));
-        if (this.f173c != null) {
-            stringBufferAppend4.append((Object) m565b(this.f173c));
+        if (this.textContent != null) {
+            stringBufferAppend4.append((Object) m565b(this.textContent));
         }
-        for (int i = 0; i < Utils.m541c(this.f172b); i++) {
-            stringBufferAppend4.append(this.f172b.elementAt(i));
+        for (int i = 0; i < Utils.m541c(this.children); i++) {
+            stringBufferAppend4.append(this.children.elementAt(i));
         }
-        return NetworkUtils.m1215a(m566c() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.m1215a(NetworkUtils.m1217h().append('<').append('/').append(this.f171a).append('>'))));
+        return NetworkUtils.m1215a(m566c() ? stringBufferAppend4 : stringBufferAppend4.append(NetworkUtils.m1215a(NetworkUtils.m1217h().append('<').append('/').append(this.tagName).append('>'))));
     }
 
     /* renamed from: b */
@@ -194,89 +194,89 @@ public final class XmlElement {
 
     /* renamed from: c */
     private final boolean m566c() {
-        return this.f173c == null && this.f172b == null;
+        return this.textContent == null && this.children == null;
     }
 
     /* renamed from: a */
-    public final XmlElement m567a(String str) {
+    public final XmlElement findChildByText(String str) {
         XmlElement c0022av;
-        int iM541c = Utils.m541c(this.f172b);
+        int iM541c = Utils.m541c(this.children);
         do {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            c0022av = (XmlElement) this.f172b.elementAt(iM541c);
-        } while (!StringUtils.m6a(str, StringUtils.m11a(c0022av.f173c)));
+            c0022av = (XmlElement) this.children.elementAt(iM541c);
+        } while (!StringUtils.m6a(str, StringUtils.m11a(c0022av.textContent)));
         return c0022av;
     }
 
     /* renamed from: b */
-    public final XmlElement m568b(String str) {
-        return m563e(str);
+    public final XmlElement findByName(String str) {
+        return findChildByName(str);
     }
 
     /* renamed from: h */
-    public final XmlElement m569h(int i) {
-        return m559a(333027, AppState.m584b(i));
+    public final XmlElement addIdAttr(int i) {
+        return setAttrValue(333027, AppState.m584b(i));
     }
 
     /* renamed from: i */
-    public final XmlElement m570i(int i) {
-        return m559a(262589, AppState.m584b(i));
+    public final XmlElement addNameAttr(int i) {
+        return setAttrValue(262589, AppState.m584b(i));
     }
 
     /* renamed from: a */
-    public final XmlElement m571a(String str, String str2) {
+    public final XmlElement addTextChild(String str, String str2) {
         XmlElement c0022av = new XmlElement(str);
         if (str2 != null) {
-            c0022av.m553a((Object) str2);
+            c0022av.appendText((Object) str2);
         }
-        m552a(c0022av);
+        addChild(c0022av);
         return c0022av;
     }
 
     /* renamed from: b */
-    public final XmlElement m572b(int i, int i2) {
-        return m571a(AppState.m584b(i), (String) null).m569h(i2);
+    public final XmlElement addChildWithId(int i, int i2) {
+        return addTextChild(AppState.m584b(i), (String) null).addIdAttr(i2);
     }
 
     /* renamed from: c */
-    public final XmlElement m573c(int i, int i2) {
-        return m552a(new XmlElement(AppState.m584b(i)).m569h(i2));
+    public final XmlElement addSimpleChild(int i, int i2) {
+        return addChild(new XmlElement(AppState.m584b(i)).addIdAttr(i2));
     }
 
     /* renamed from: a */
-    public final String m574a() {
-        return m558d(AppState.m584b(262589));
+    public final String getNameAttr() {
+        return getAttribute(AppState.m584b(262589));
     }
 
     /* renamed from: c */
-    public final String m575c(String str) {
+    public final String getChildText(String str) {
         try {
-            return StringUtils.m11a(m563e(str).f173c);
+            return StringUtils.m11a(findChildByName(str).textContent);
         } catch (Throwable unused) {
             return AppState.f181d;
         }
     }
 
     /* renamed from: d */
-    public final XmlElement m576d(int i, int i2) {
-        int iM541c = Utils.m541c(this.f172b);
+    public final XmlElement findByAttrs(int i, int i2) {
+        int iM541c = Utils.m541c(this.children);
         while (true) {
             iM541c--;
             if (iM541c < 0) {
                 return null;
             }
-            XmlElement c0022avM564g = m564g(iM541c);
-            if (StringUtils.m3a(i, c0022avM564g.f171a) && StringUtils.m3a(i2, c0022avM564g.m558d(AppState.m584b(333027)))) {
+            XmlElement c0022avM564g = getChildAt(iM541c);
+            if (StringUtils.m3a(i, c0022avM564g.tagName) && StringUtils.m3a(i2, c0022avM564g.getAttribute(AppState.m584b(333027)))) {
                 return c0022avM564g;
             }
         }
     }
 
     /* renamed from: b */
-    public final XmlElement m577b() {
-        return m570i(398982).m559a(131590, m558d(AppState.m584b(262852))).m559a(262852, (String) null);
+    public final XmlElement cloneElement() {
+        return addNameAttr(398982).setAttrValue(131590, getAttribute(AppState.m584b(262852))).setAttrValue(262852, (String) null);
     }
 }

@@ -147,9 +147,9 @@ public final class XmppContact extends Contact {
         this.f42f = str;
         this.f39c = 0;
         if (StringUtils.m3a(594984, str)) {
-            XmlElement c0022avM562f = c0022av.m562f(267927);
+            XmlElement c0022avM562f = c0022av.findChildByKey(267927);
             if (c0022avM562f != null) {
-                String strM11a = StringUtils.m11a(c0022avM562f.f173c);
+                String strM11a = StringUtils.m11a(c0022avM562f.textContent);
                 if (StringUtils.m1a(strM11a)) {
                     i = 1;
                     this.f39c = i;

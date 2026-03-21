@@ -224,7 +224,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final Image m20a(ResourceManager c0034e) {
-        Image image = (Image) m25l().m50a(c0034e);
+        Image image = (Image) m25l().get(c0034e);
         if (image == null && !AppState.m614m(1396).contains(c0034e)) {
             ResourceManager.m950b(c0034e);
         }
@@ -317,7 +317,7 @@ public final class StringUtils {
     /* renamed from: a */
     private static final void m23a(ResourceManager c0034e, Image image) {
         try {
-            m25l().m49a(c0034e, image, 1);
+            m25l().put(c0034e, image, 1);
             MapRenderer.f200h = true;
         } catch (Throwable unused) {
         }
@@ -325,11 +325,11 @@ public final class StringUtils {
 
     /* renamed from: d */
     public static final void m24d() {
-        Enumeration enumerationM52a = m25l().m52a();
+        Enumeration enumerationM52a = m25l().keys();
         while (enumerationM52a.hasMoreElements()) {
             ResourceManager c0034e = (ResourceManager) enumerationM52a.nextElement();
             if (c0034e.f281a == 3) {
-                m25l().m51b(c0034e);
+                m25l().remove(c0034e);
             }
         }
     }
@@ -348,7 +348,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     private static final void m27a(Vector vector, Object obj) {
-        Vector vector2 = ((XmlElement) obj).f172b;
+        Vector vector2 = ((XmlElement) obj).children;
         for (int i = 0; i < Utils.m541c(vector2); i++) {
             vector.addElement(m28b((XmlElement) vector2.elementAt(i)));
         }
@@ -356,14 +356,14 @@ public final class StringUtils {
 
     /* renamed from: b */
     private static final String m28b(XmlElement c0022av) {
-        String strM555c = c0022av.m555c(110);
-        return strM555c != null ? strM555c : m11a(c0022av.f173c);
+        String strM555c = c0022av.getLongKeyAttr(110);
+        return strM555c != null ? strM555c : m11a(c0022av.textContent);
     }
 
     /* renamed from: e */
     public static final void m29e() {
         m30f();
-        AppState.f177b[1301] = new XmlParser(new ByteBuffer(NetworkUtils.m1221a(25135), 41000)).m47a().f172b;
+        AppState.f177b[1301] = new XmlParser(new ByteBuffer(NetworkUtils.m1221a(25135), 41000)).parse().children;
         StringBuffer stringBufferAppend = NetworkUtils.m1217h().append(AppState.m584b(683));
         Vector vectorM614m = AppState.m614m(1301);
         for (int i = 0; i < Utils.m541c(vectorM614m); i++) {
@@ -444,7 +444,7 @@ public final class StringUtils {
             int i = iIntValue2;
             Vector vectorM26m2 = m26m();
             if (iIntValue > 0) {
-                m27a(vectorM26m2, ((XmlElement) AppState.m614m(1301).elementAt(i - 1)).f172b.elementAt(iIntValue - 1));
+                m27a(vectorM26m2, ((XmlElement) AppState.m614m(1301).elementAt(i - 1)).children.elementAt(iIntValue - 1));
             }
             c0032c9.m892a(vectorM26m2, 0, strM584b3);
         } else if (m6a(str, strM584b4)) {
@@ -481,15 +481,15 @@ public final class StringUtils {
         int iM586d = AppState.m586d(1485);
         if (iM586d > 0) {
             XmlElement c0022av = (XmlElement) AppState.m614m(1301).elementAt(iM586d - 1);
-            strArr[15] = c0022av.m555c(105);
+            strArr[15] = c0022av.getLongKeyAttr(105);
             int iM586d2 = AppState.m586d(1486);
             if (iM586d2 > 0) {
-                XmlElement c0022av2 = (XmlElement) c0022av.f172b.elementAt(iM586d2 - 1);
-                strArr[11] = c0022av2.m555c(105);
+                XmlElement c0022av2 = (XmlElement) c0022av.children.elementAt(iM586d2 - 1);
+                strArr[11] = c0022av2.getLongKeyAttr(105);
                 strArr[15] = null;
                 int iM586d3 = AppState.m586d(1487);
                 if (iM586d3 > 0) {
-                    strArr[11] = ((XmlElement) c0022av2.f172b.elementAt(iM586d3 - 1)).m555c(105);
+                    strArr[11] = ((XmlElement) c0022av2.children.elementAt(iM586d3 - 1)).getLongKeyAttr(105);
                 }
             }
         }
@@ -731,26 +731,26 @@ public final class StringUtils {
     /* renamed from: a */
     public static final void m44a(XmlElement c0022av) {
         Vector vector;
-        if (c0022av == null || (vector = c0022av.f172b) == null) {
+        if (c0022av == null || (vector = c0022av.children) == null) {
             return;
         }
         AppState.m614m(1389).removeAllElements();
-        String strM554b = c0022av.m554b(594023);
+        String strM554b = c0022av.getIntAttribute(594023);
         if (strM554b != null) {
             AppState.m601a(254, (Object) strM554b);
         }
         for (int i = 0; i < Utils.m541c(vector); i++) {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(i);
-            String str = c0022av2.f171a;
+            String str = c0022av2.tagName;
             if (m2a(str, 1936156018)) {
-                Vector vector2 = c0022av2.f172b;
+                Vector vector2 = c0022av2.children;
                 for (int i2 = 0; i2 < Utils.m541c(vector2); i2++) {
                     XmlElement c0022av3 = (XmlElement) vector2.elementAt(i2);
-                    GeoRegion c0053x = new GeoRegion(c0022av3.m555c(1701667182), c0022av3.m556d(28780), c0022av3.m556d(28788), c0022av3.m556d(28786), c0022av3.m556d(28770));
-                    c0053x.description = c0022av3.m555c(25705);
-                    c0053x.centerLat = c0022av3.m556d(1852796003);
-                    c0053x.centerLon = c0022av3.m556d(1952541795);
-                    c0053x.precision = c0022av3.m557e(2054709613);
+                    GeoRegion c0053x = new GeoRegion(c0022av3.getLongKeyAttr(1701667182), c0022av3.getAttrAsLong(28780), c0022av3.getAttrAsLong(28788), c0022av3.getAttrAsLong(28786), c0022av3.getAttrAsLong(28770));
+                    c0053x.description = c0022av3.getLongKeyAttr(25705);
+                    c0053x.centerLat = c0022av3.getAttrAsLong(1852796003);
+                    c0053x.centerLon = c0022av3.getAttrAsLong(1952541795);
+                    c0053x.precision = c0022av3.getAttrAsInt(2054709613);
                     m42a(c0053x);
                 }
             } else if (m3a(397424, str)) {

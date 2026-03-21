@@ -7,49 +7,49 @@ import java.util.Hashtable;
 public final class XmlParser {
 
     /* renamed from: a */
-    private String f3a;
+    private String rootTagName;
 
     /* renamed from: b */
-    private XmlElement f4b;
+    private XmlElement rootElement;
 
     /* renamed from: c */
-    private Object f5c;
+    private Object source;
 
     /* renamed from: d */
-    private int f6d;
+    private int position;
 
     public XmlParser(Object obj) {
-        this.f5c = obj;
+        this.source = obj;
     }
 
     /* renamed from: b */
-    private final int m45b() {
-        if (!(this.f5c instanceof String)) {
-            if (!(this.f5c instanceof ByteBuffer)) {
-                return ResourceManager.m930b((Object[]) this.f5c);
+    private final int nextChar() {
+        if (!(this.source instanceof String)) {
+            if (!(this.source instanceof ByteBuffer)) {
+                return ResourceManager.m930b((Object[]) this.source);
             }
-            ByteBuffer c0043n = (ByteBuffer) this.f5c;
+            ByteBuffer c0043n = (ByteBuffer) this.source;
             if (c0043n.length == 0) {
                 return -1;
             }
             return Utils.m499a(c0043n.readUByte());
         }
-        int i = this.f6d;
-        String str = (String) this.f5c;
+        int i = this.position;
+        String str = (String) this.source;
         if (i >= str.length()) {
             return -1;
         }
-        int i2 = this.f6d;
-        this.f6d = i2 + 1;
+        int i2 = this.position;
+        this.position = i2 + 1;
         return str.charAt(i2);
     }
 
     /* renamed from: a */
-    private final String m46a(int i) {
+    private final String parseTagOrContent(int i) {
         boolean z;
         StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
         boolean z2 = false;
-        int iM45b = m45b();
+        int iM45b = nextChar();
         int iM45b2 = iM45b;
         if (iM45b == -1) {
             throw new RuntimeException();
@@ -76,7 +76,7 @@ public final class XmlParser {
             } else {
                 stringBufferM1217h.append((char) iM45b2);
             }
-            iM45b2 = m45b();
+            iM45b2 = nextChar();
         }
         if (iM45b2 != 60 && iM45b2 != 62) {
             stringBufferM1217h.append((char) iM45b2);
@@ -94,18 +94,18 @@ public final class XmlParser {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final XmlElement m47a() {
+    public final XmlElement parse() {
         boolean zEndsWith;
         boolean z;
         XmlElement c0022av;
         String strM1215a;
-        this.f3a = null;
-        this.f4b = null;
+        this.rootTagName = null;
+        this.rootElement = null;
         while (true) {
             try {
-                String strM46a = m46a(1);
-                if (this.f4b != null) {
-                    XmlElement c0022av2 = this.f4b;
+                String strM46a = parseTagOrContent(1);
+                if (this.rootElement != null) {
+                    XmlElement c0022av2 = this.rootElement;
                     if (strM46a.indexOf(38) < 0) {
                         strM1215a = strM46a;
                     } else {
@@ -153,14 +153,14 @@ public final class XmlParser {
                         }
                         strM1215a = NetworkUtils.m1215a(stringBufferM1217h);
                     }
-                    c0022av2.m553a((Object) strM1215a);
+                    c0022av2.appendText((Object) strM1215a);
                 }
                 boolean z2 = true;
                 boolean z3 = false;
                 String strM17c = null;
                 Hashtable hashtable = null;
                 while (true) {
-                    String strM46a2 = m46a(2);
+                    String strM46a2 = parseTagOrContent(2);
                     int i2 = 0;
                     int length2 = strM46a2.length();
                     if (StringUtils.m3a(1046, strM46a2)) {
@@ -230,26 +230,26 @@ public final class XmlParser {
                 if (strM17c.charAt(0) != '?') {
                     String strM17c2 = StringUtils.m17c(strM17c.toLowerCase());
                     if (z2) {
-                        if (this.f3a == null) {
-                            this.f3a = strM17c2;
+                        if (this.rootTagName == null) {
+                            this.rootTagName = strM17c2;
                         }
-                        this.f4b = new XmlElement(strM17c2, this.f4b, hashtable);
+                        this.rootElement = new XmlElement(strM17c2, this.rootElement, hashtable);
                         if (StringUtils.m3a(857301, strM17c2)) {
                             throw new RuntimeException();
                         }
                     }
                     if (z3 || !z2) {
-                        if (this.f4b != null && (c0022av = this.f4b.f174d) != null) {
-                            c0022av.m552a(this.f4b);
-                            this.f4b = c0022av;
+                        if (this.rootElement != null && (c0022av = this.rootElement.parent) != null) {
+                            c0022av.addChild(this.rootElement);
+                            this.rootElement = c0022av;
                         }
-                        if (StringUtils.m6a(strM17c2, this.f3a)) {
+                        if (StringUtils.m6a(strM17c2, this.rootTagName)) {
                             throw new RuntimeException();
                         }
                     }
                 }
             } catch (Throwable unused) {
-                return this.f4b;
+                return this.rootElement;
             }
         }
     }
