@@ -1,0 +1,1165 @@
+package p000;
+
+import java.util.Calendar;
+import java.util.Vector;
+import javax.microedition.lcdui.Display;
+
+/* renamed from: e */
+/* loaded from: MobileAgent_3.9.jar:e.class */
+public final class C0034e {
+
+    /* renamed from: a */
+    public final int f281a;
+
+    /* renamed from: b */
+    public final int f282b;
+
+    /* renamed from: c */
+    public final int f283c;
+
+    /* renamed from: d */
+    public final int f284d;
+
+    /* renamed from: e */
+    public final String f285e;
+
+    /* renamed from: m */
+    private static int f286m;
+
+    /* renamed from: f */
+    public static int f287f;
+
+    /* renamed from: g */
+    public static long f288g;
+
+    /* renamed from: h */
+    public static Vector f289h;
+
+    /* renamed from: i */
+    public static Object f290i;
+
+    /* renamed from: j */
+    public static Integer[] f291j;
+
+    /* renamed from: k */
+    public static Boolean f292k;
+
+    /* renamed from: l */
+    public static Boolean f293l;
+
+    public C0034e(int i, int i2, int i3, int i4) {
+        this.f281a = i;
+        C0043n c0043nM1385u = new C0043n().m1385u(4027430).m1385u(i == 3 ? 1936548170 : 1936744781).m1385u(4028966);
+        this.f282b = i2;
+        C0043n c0043nM1385u2 = c0043nM1385u.m1382s(i2).m1385u(4028454);
+        this.f283c = i3;
+        C0043n c0043nM1385u3 = c0043nM1385u2.m1382s(i3).m1385u(4028710);
+        this.f284d = i4;
+        this.f285e = c0043nM1385u3.m1382s(i4).m1317c();
+    }
+
+    public final boolean equals(Object obj) {
+        return obj != null && (obj instanceof C0034e) && C0000a.m6a(this.f285e, ((C0034e) obj).f285e);
+    }
+
+    public final int hashCode() {
+        return this.f283c ^ this.f284d;
+    }
+
+    /* renamed from: a */
+    public static final void m925a(int i) {
+        int i2 = 0;
+        if (i == 1) {
+            i2 = 2;
+        } else if (i == 0) {
+            i2 = 4;
+        } else if (i == 3) {
+            i2 = 6;
+        } else if (i == 4) {
+            i2 = 8;
+        } else if (i == 5) {
+            i2 = 10;
+        } else if (i == 6) {
+            i2 = 165;
+        }
+        m926a(AbstractC0023aw.m586d(i2 + 75), AbstractC0023aw.m587e(i2 + 76));
+    }
+
+    /* renamed from: a */
+    public static final void m926a(int i, boolean z) {
+        if (AbstractC0023aw.m587e(1449)) {
+            if (z) {
+                Display.getDisplay(AbstractC0023aw.m602d()).vibrate(250);
+            }
+            if (i == 0 || AbstractC0023aw.m587e(89) || !C0015ao.m307b(8, 1000L)) {
+                return;
+            }
+            C0029bb.m754a(i);
+        }
+    }
+
+    /* renamed from: a */
+    public static final void m927a() {
+        C0015ao.f147a[4] = 0;
+        f286m = -1;
+        f287f = 0;
+        AbstractC0023aw.m591f(1263);
+        m928b();
+    }
+
+    /* renamed from: b */
+    public static final void m928b() {
+        Calendar calendarM622k;
+        int i;
+        if (!C0015ao.m307b(4, 1000L) || (i = (calendarM622k = AbstractC0023aw.m622k()).get(12)) == f286m) {
+            return;
+        }
+        String strM1215a = C0040k.m1215a(C0040k.m1217h().append(AbstractC0019as.m501b(calendarM622k.get(11))).append(':').append(AbstractC0019as.m501b(i)));
+        AbstractC0023aw.m601a(1263, (Object) strM1215a);
+        f287f = AbstractC0023aw.m608k(0).m214a(strM1215a);
+        f286m = i;
+        C0015ao.f153g = true;
+    }
+
+    /* renamed from: a */
+    public static final void m929a(Object[] objArr) {
+        while (true) {
+            C0005ae c0005ae = (C0005ae) objArr[0];
+            C0022av c0022avM47a = ((C0001aa) objArr[2]).m47a();
+            synchronized (c0005ae.f30a) {
+                c0005ae.f30a.addElement(c0022avM47a);
+            }
+        }
+    }
+
+    /* JADX WARN: Code restructure failed: missing block: B:40:0x0098, code lost:
+    
+        java.lang.Thread.sleep(255);
+     */
+    /* renamed from: b */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public static final int m930b(Object[] objArr) {
+        while (true) {
+            C0043n c0043n = (C0043n) objArr[1];
+            synchronized (c0043n) {
+                int i = c0043n.f384b;
+                if (i > 0) {
+                    int iM1343k = c0043n.m1343k(0);
+                    if ((iM1343k & 128) == 0) {
+                        return c0043n.m1346q();
+                    }
+                    if (i != 1) {
+                        int iM1343k2 = c0043n.m1343k(1);
+                        if (iM1343k < 224) {
+                            c0043n.m1329g(2);
+                            return ((iM1343k & 31) << 6) | (iM1343k2 & 63);
+                        }
+                        if (i != 2) {
+                            c0043n.m1329g(2);
+                            return ((iM1343k & 15) << 12) | ((iM1343k2 & 63) << 6) | (c0043n.m1346q() & 63);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* renamed from: a */
+    public static final void m931a(C0020at c0020at, int i) {
+        m932a(C0003ac.m63a(c0020at, i), c0020at, i);
+    }
+
+    /* renamed from: a */
+    public static final void m932a(String str, C0020at c0020at, int i) {
+        new RunnableC0055z(21, new Object[]{str, c0020at, m967e(i)});
+    }
+
+    /* renamed from: a */
+    public static final int m933a(String str, C0032c c0032c) {
+        Object[] objArr = (Object[]) c0032c.f265d;
+        Object[] objArr2 = (Object[]) objArr[0];
+        C0032c c0032c2 = (C0032c) objArr[1];
+        C0013am c0013am = (C0013am) objArr[2];
+        String[] strArr = (String[]) objArr2[1];
+        int i = 0;
+        int length = strArr.length;
+        while (true) {
+            length--;
+            if (length < 0) {
+                c0032c2.m884a().m898b(AbstractC0019as.m527g(c0032c2.f259b)).m901a(strArr[i], 1, 7).m896a(247).f265d = new Object[]{m967e(i), strArr};
+                c0013am.m258q();
+                C0029bb.m778d(c0032c2);
+                return 0;
+            }
+            if (str == strArr[length]) {
+                i = length;
+            }
+        }
+    }
+
+    /* renamed from: a */
+    public static final Object[] m934a(C0043n c0043n) {
+        try {
+            int iM1328e = c0043n.m1328e();
+            if (iM1328e == 0) {
+                return null;
+            }
+            Object[] objArr = new Object[iM1328e];
+            for (int i = 0; i < iM1328e; i++) {
+                String[] strArr = new String[6];
+                for (int i2 = 0; i2 < 6; i2++) {
+                    strArr[i2] = c0043n.m1335e((String) null);
+                }
+                objArr[i] = strArr;
+            }
+            return objArr;
+        } catch (Throwable unused) {
+            return null;
+        }
+    }
+
+    /* renamed from: c */
+    public static final void m935c() {
+        int i;
+        int i2;
+        int iM586d = AbstractC0023aw.m586d(1510);
+        AbstractC0037h abstractC0037hM616i = AbstractC0023aw.m616i();
+        if (abstractC0037hM616i != null) {
+            int iM1060a = abstractC0037hM616i.m1060a(iM586d, 0);
+            i = iM1060a;
+            m936a(1326, iM1060a);
+            int iM1060a2 = abstractC0037hM616i.m1060a(iM586d, 1);
+            i2 = iM1060a2;
+            m936a(1325, iM1060a2);
+            AbstractC0023aw.m594c(3987, 8);
+            AbstractC0023aw.m594c(3994, 3);
+        } else {
+            m936a(1329, C0015ao.m428a(0, iM586d, 0));
+            m936a(1328, C0015ao.m428a(0, iM586d, 1));
+            m936a(1331, C0015ao.m428a(1, iM586d, 0));
+            m936a(1330, C0015ao.m428a(1, iM586d, 1));
+            m936a(1333, C0015ao.m428a(2, iM586d, 0));
+            m936a(1332, C0015ao.m428a(2, iM586d, 1));
+            m936a(1335, C0015ao.m428a(3, iM586d, 0));
+            m936a(1334, C0015ao.m428a(3, iM586d, 1));
+            int iM429b = C0015ao.m429b(iM586d, 0);
+            i = iM429b;
+            m936a(1326, iM429b);
+            int iM429b2 = C0015ao.m429b(iM586d, 1);
+            i2 = iM429b2;
+            m936a(1325, iM429b2);
+            AbstractC0023aw.m594c(3987, 5);
+            AbstractC0023aw.m594c(3994, 16);
+        }
+        long j = i + i2;
+        int iM586d2 = AbstractC0023aw.m586d(114) << 10;
+        if (iM586d2 > 0) {
+            long j2 = j % iM586d2;
+            if (j2 > 0) {
+                j += iM586d2 - j2;
+            }
+        }
+        int iM586d3 = (int) ((j * AbstractC0023aw.m586d(113)) / 1048576);
+        AbstractC0023aw.m588a(1327, C0040k.m1217h().append(iM586d3 / 100).append('.').append(AbstractC0019as.m501b(iM586d3 % 100)).append(' ').append(AbstractC0023aw.m584b(117)));
+        AbstractC0023aw.m594c(3985, iM586d + 745);
+        AbstractC0004ad.m71b(AbstractC0004ad.m75b(3985));
+        AbstractC0023aw.m590b(1325, 1335);
+    }
+
+    /* renamed from: a */
+    private static final void m936a(int i, int i2) {
+        AbstractC0023aw.m601a(i, (Object) AbstractC0019as.m523d(i2));
+    }
+
+    /* renamed from: a */
+    public static final C0043n m937a(C0033d c0033d, String str) {
+        C0043n c0043nM1376j = new C0043n().m1376j(str);
+        int iM920k = c0033d.m920k();
+        return c0033d.m916a(new Object[]{C0015ao.m464a(c0033d, 4872, c0043nM1376j.m1357m(iM920k).m1357m(0).m1357m(1).m1357m(0)), m967e(4), str, m967e(iM920k)});
+    }
+
+    /* renamed from: a */
+    public static final int m938a(String str) {
+        int iM1052c;
+        String strM522f = AbstractC0019as.m522f(AbstractC0023aw.m584b(1279));
+        if (str != AbstractC0023aw.m584b(1060)) {
+            StringBuffer stringBufferM1196e = C0040k.m1196e();
+            if (C0000a.m3a(473, str)) {
+                AbstractC0023aw.m588a(1279, stringBufferM1196e.append(AbstractC0023aw.m584b(1280)));
+                return 0;
+            }
+            if (C0000a.m3a(474, str)) {
+                AbstractC0023aw.m601a(1280, (Object) strM522f);
+                AbstractC0023aw.m599a(1460, true);
+                return 0;
+            }
+            if (!C0000a.m3a(476, str)) {
+                return 0;
+            }
+            AbstractC0023aw.m601a(1279, (Object) C0038i.m1123k(strM522f));
+            return 0;
+        }
+        String strM584b = AbstractC0023aw.m584b(1314);
+        C0035f c0035f = (C0035f) AbstractC0023aw.f177b[1365];
+        C0028ba c0028ba = (C0028ba) c0035f.f369o;
+        if (c0028ba.m1056C()) {
+            c0035f.m1239a(1, C0040k.m1215a(AbstractC0019as.m497a(C0040k.m1217h().append(AbstractC0023aw.m584b(776)).append(AbstractC0019as.m530h(strM584b))).append(strM522f)), 0L, 0L);
+            StringBuffer stringBufferAppend = C0040k.m1217h().append('+');
+            if (strM584b.charAt(0) == '8') {
+                stringBufferAppend.append('7').append(C0000a.m15c(strM584b, 1));
+            } else {
+                stringBufferAppend.append(strM584b);
+            }
+            iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4153, new C0043n().m1360p(0).m1308a(C0040k.m1215a(stringBufferAppend)).m1309b(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
+        } else {
+            iM1052c = 299;
+        }
+        int i = iM1052c;
+        if (0 != iM1052c) {
+            return C0015ao.m338l(i);
+        }
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final void m939a(Object obj) {
+        if (!(obj instanceof String)) {
+            return;
+        }
+        try {
+            try {
+                C0015ao.m343s();
+                C0024ax c0024axM630a = C0024ax.m630a(obj);
+                if (c0024axM630a.m634a() != 200) {
+                    throw new Throwable();
+                }
+                String str = null;
+                boolean z = false;
+                Vector vector = new C0043n(c0024axM630a).m1388I().f172b;
+                int size = vector.size();
+                while (true) {
+                    size--;
+                    if (size < 0) {
+                        throw new RuntimeException();
+                    }
+                    C0022av c0022av = (C0022av) vector.elementAt(size);
+                    String str2 = c0022av.f171a;
+                    String strM11a = C0000a.m11a(c0022av.f173c);
+                    if (C0000a.m3a(394658, str2) && C0000a.m3a(197596, strM11a)) {
+                        z = true;
+                    } else if (C0000a.m3a(263156, str2)) {
+                        str = strM11a;
+                    }
+                    if (z && str != null) {
+                        C0040k.m1212a(vector);
+                        C0029bb.m778d((Object) AbstractC0023aw.m584b(494));
+                        C0024ax.m633a(c0024axM630a);
+                        C0015ao.m344t();
+                        return;
+                    }
+                }
+            } catch (Throwable th) {
+                C0029bb.m778d((Object) C0000a.m8a(493, (Object) null));
+                C0024ax.m633a((C0024ax) null);
+                C0015ao.m344t();
+            }
+        } catch (Throwable th2) {
+            C0024ax.m633a((C0024ax) null);
+            C0015ao.m344t();
+            throw th2;
+        }
+    }
+
+    /* renamed from: d */
+    public static final void m940d() {
+        AbstractC0023aw.f177b[986] = m942f(986);
+        AbstractC0023aw.f177b[987] = m942f(987);
+        AbstractC0023aw.f177b[990] = m942f(990);
+        AbstractC0023aw.f177b[991] = m942f(991);
+        AbstractC0023aw.f177b[989] = AbstractC0019as.m537e(989);
+        AbstractC0023aw.f177b[988] = AbstractC0019as.m537e(988);
+        AbstractC0023aw.f177b[992] = AbstractC0019as.m536a(AbstractC0023aw.m581a(992));
+        AbstractC0023aw.f177b[993] = AbstractC0019as.m536a(AbstractC0023aw.m581a(993));
+        AbstractC0023aw.f177b[580] = AbstractC0019as.m536a(AbstractC0023aw.m581a(580));
+    }
+
+    /* renamed from: e */
+    public static final void m941e() {
+        AbstractC0023aw.m590b(984, 993);
+    }
+
+    /* renamed from: f */
+    private static final long[] m942f(int i) {
+        byte[] bArrM581a = AbstractC0023aw.m581a(i);
+        int length = bArrM581a.length >> 3;
+        long[] jArr = new long[length];
+        int i2 = 0;
+        int i3 = 0;
+        while (i3 < length) {
+            long j = 0;
+            do {
+                int i4 = i2;
+                i2++;
+                j = (j << 8) | (bArrM581a[i4] & 255);
+            } while ((i2 & 7) != 0);
+            int i5 = i3;
+            i3++;
+            jArr[i5] = j;
+        }
+        C0040k.m1209a(bArrM581a);
+        return jArr;
+    }
+
+    /* renamed from: b */
+    public static final long m943b(int i) {
+        return ((long[]) AbstractC0023aw.f177b[991])[i];
+    }
+
+    /* renamed from: c */
+    public static final int m944c(int i) {
+        return ((int[]) AbstractC0023aw.f177b[992])[i];
+    }
+
+    /* renamed from: f */
+    public static final int m945f() {
+        C0040k.m1195d();
+        String strM522f = AbstractC0019as.m522f(AbstractC0023aw.m584b(1286));
+        int i = 0;
+        int iLastIndexOf = strM522f.lastIndexOf(46);
+        int iLastIndexOf2 = iLastIndexOf;
+        if (iLastIndexOf == -1) {
+            iLastIndexOf2 = strM522f.lastIndexOf(44);
+        }
+        if (iLastIndexOf2 != -1) {
+            try {
+                i = Integer.parseInt(C0000a.m13b(strM522f, iLastIndexOf2)) * 100;
+            } catch (Throwable unused) {
+            }
+            try {
+                String strM15c = C0000a.m15c(strM522f, iLastIndexOf2 + 1);
+                int i2 = Integer.parseInt(strM15c);
+                i += strM15c.length() == 1 ? i2 * 10 : i2;
+            } catch (Throwable unused2) {
+            }
+        } else {
+            try {
+                i = Integer.parseInt(strM522f) * 100;
+            } catch (Throwable unused3) {
+            }
+        }
+        AbstractC0023aw.m594c(113, i);
+        return 0;
+    }
+
+    /* renamed from: g */
+    public static final int m946g() {
+        AbstractC0023aw.m591f(1313);
+        AbstractC0023aw.m591f(1279);
+        AbstractC0023aw.m591f(1314);
+        return 65;
+    }
+
+    /* renamed from: h */
+    public static final int m947h() {
+        ((C0028ba) AbstractC0023aw.m616i()).m724j();
+        if (AbstractC0023aw.m587e(286)) {
+            return AbstractC0023aw.m586d(1476);
+        }
+        C0021au.m549c();
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final void m948a(C0034e c0034e) {
+        Vector vectorM614m = AbstractC0023aw.m614m(1398);
+        synchronized (vectorM614m) {
+            vectorM614m.removeElement(c0034e);
+        }
+    }
+
+    /* renamed from: i */
+    public static final C0034e m949i() {
+        C0034e c0034e;
+        Vector vectorM614m = AbstractC0023aw.m614m(1398);
+        synchronized (vectorM614m) {
+            c0034e = (C0034e) (vectorM614m.size() != 0 ? vectorM614m.firstElement() : null);
+        }
+        return c0034e;
+    }
+
+    /* renamed from: b */
+    public static final void m950b(C0034e c0034e) {
+        Vector vectorM614m = AbstractC0023aw.m614m(1398);
+        synchronized (vectorM614m) {
+            if (!vectorM614m.contains(c0034e)) {
+                if (c0034e.f281a == 3) {
+                    vectorM614m.addElement(c0034e);
+                } else {
+                    int size = vectorM614m.size();
+                    while (size > 0 && ((C0034e) vectorM614m.elementAt(size - 1)).f281a != 1) {
+                        size--;
+                    }
+                    vectorM614m.insertElementAt(c0034e, size);
+                }
+            }
+        }
+    }
+
+    /* renamed from: j */
+    public static final void m951j() {
+        Vector vector = f289h;
+        if (vector == null) {
+            return;
+        }
+        C0013am c0013amM75b = AbstractC0004ad.m75b(4292);
+        int size = vector.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                AbstractC0004ad.m71b(c0013amM75b);
+                C0015ao.f153g = true;
+                return;
+            } else {
+                C0014an c0014an = (C0014an) vector.elementAt(size);
+                c0013amM75b.m247a(-1, c0014an.f133a, 6, c0014an);
+            }
+        }
+    }
+
+    /* renamed from: b */
+    public static final int m952b(Object obj) {
+        C0028ba c0028ba = (C0028ba) AbstractC0023aw.m616i();
+        C0014an c0014an = (C0014an) obj;
+        c0028ba.m731a(c0014an);
+        C0036g.m1043a(AbstractC0023aw.m614m(1400), c0014an, 0, 5);
+        C0036g.m1046a(AbstractC0023aw.m614m(1400), 225);
+        AbstractC0023aw.m594c(1477, 0);
+        c0028ba.f232h = true;
+        return 160;
+    }
+
+    /* renamed from: a */
+    public static final void m953a(String str, long j, long j2) {
+        new RunnableC0055z(19, new Object[]{str, new long[]{j, j2}});
+    }
+
+    /* renamed from: k */
+    public static final void m954k() {
+        AbstractC0023aw.m591f(1281);
+        C0013am c0013amM75b = AbstractC0004ad.m75b(4507);
+        Vector vectorM439R = C0015ao.m439R();
+        int size = vectorM439R.size();
+        if (size > 0) {
+            c0013amM75b.m255a(832);
+            for (int i = 0; i < size; i++) {
+                c0013amM75b.m225a(((C0028ba) vectorM439R.elementAt(i)).m1057D());
+            }
+        } else {
+            c0013amM75b.f103i = false;
+            c0013amM75b.m255a(551);
+        }
+        C0040k.m1212a(vectorM439R);
+        AbstractC0004ad.m70a(c0013amM75b);
+        C0008ah.m169e();
+        C0008ah.m176a(36, (AbstractC0037h) null);
+    }
+
+    /* renamed from: c */
+    public static final int m955c(Object obj) {
+        if (obj == null) {
+            return -1;
+        }
+        AbstractC0023aw.m594c(1512, 38);
+        AbstractC0023aw.m617d(obj);
+        return 0;
+    }
+
+    /* renamed from: d */
+    public static final int m956d(int i) {
+        Vector vectorM440S = C0015ao.m440S();
+        switch (i) {
+            case 0:
+                if (vectorM440S.size() <= 0) {
+                    return C0015ao.m338l(422);
+                }
+                ((C0028ba) vectorM440S.firstElement()).m751a(new C0050u(C0015ao.m312l().f390a, 1));
+                C0021au.m549c();
+                return 85;
+            case 1:
+                if (vectorM440S.size() <= 0) {
+                    return C0015ao.m338l(422);
+                }
+                ((C0028ba) vectorM440S.firstElement()).m751a(new C0050u(C0015ao.m312l().f390a, 2));
+                return 6;
+            case 2:
+                return C0015ao.m310j();
+            case 3:
+                return C0015ao.m311k();
+            default:
+                AbstractC0023aw.m594c(4895, 0);
+                C0015ao.m393a((C0028ba) null, C0015ao.m312l().f390a);
+                C0021au.m549c();
+                return 0;
+        }
+    }
+
+    /* renamed from: l */
+    public static final void m957l() {
+        AbstractC0023aw.m590b(1360, 1364);
+    }
+
+    /* renamed from: m */
+    public static final void m958m() {
+        Vector vectorM1142d = C0039j.m1142d();
+        int size = vectorM1142d == null ? 0 : vectorM1142d.size();
+        int i = size;
+        if (size == 0) {
+            C0015ao.m340m(404);
+            return;
+        }
+        C0013am c0013amM75b = AbstractC0004ad.m75b(2075);
+        while (true) {
+            i--;
+            if (i < 0) {
+                AbstractC0004ad.m71b(c0013amM75b);
+                return;
+            } else {
+                Object objElementAt = vectorM1142d.elementAt(i);
+                c0013amM75b.m247a(-1, C0039j.m1138a(objElementAt), 6, objElementAt);
+            }
+        }
+    }
+
+    /* renamed from: d */
+    public static final int m959d(Object obj) {
+        AbstractC0023aw.f177b[1253] = obj;
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final int m960a(String str, int i) {
+        String strM522f = AbstractC0019as.m522f(AbstractC0023aw.m584b(1279));
+        if (C0000a.m3a(1060, str)) {
+            int iM1233b = AbstractC0023aw.m611g().m1233b(strM522f);
+            if (0 != iM1233b) {
+                C0021au.m549c();
+                return C0015ao.m338l(iM1233b);
+            }
+            AbstractC0023aw.m594c(1456, 0);
+            AbstractC0023aw.m591f(1279);
+        } else if (C0000a.m3a(473, str)) {
+            AbstractC0023aw.m588a(1279, C0040k.m1196e().append(AbstractC0023aw.m584b(1280)));
+        } else if (C0000a.m3a(474, str)) {
+            AbstractC0023aw.m601a(1280, (Object) strM522f);
+            AbstractC0023aw.m599a(1460, true);
+        } else if (C0000a.m3a(478, str)) {
+            AbstractC0023aw.m601a(1279, (Object) C0029bb.m825d(strM522f));
+        }
+        if (i == 93 || i == 123 || i == 95 || i == 94) {
+            return 0;
+        }
+        C0021au.m549c();
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final C0043n m961a(C0033d c0033d) {
+        return C0015ao.m464a(c0033d, 4881, (C0043n) null);
+    }
+
+    /* renamed from: b */
+    public static final C0043n m962b(C0033d c0033d) {
+        return C0015ao.m464a(c0033d, 4882, (C0043n) null);
+    }
+
+    /* renamed from: c */
+    public static final C0043n m963c(C0033d c0033d) {
+        Object[] objArr = new Object[2];
+        C0043n c0043nM1357m = new C0043n().m1360p(0).m1357m(0).m1357m(1);
+        int size = c0033d.f313i.size();
+        C0043n c0043nM1357m2 = c0043nM1357m.m1357m((size << 1) + 4).m1357m(200).m1357m(size << 1);
+        for (int i = 0; i < size; i++) {
+            c0043nM1357m2.m1357m(((C0016ap) c0033d.m1082g(i)).f157a);
+        }
+        objArr[0] = C0015ao.m464a(c0033d, 4873, c0043nM1357m2);
+        objArr[1] = m967e(3);
+        return c0033d.m916a(objArr);
+    }
+
+    /* renamed from: n */
+    public static final int m964n() {
+        try {
+            if (C0036g.m1026g().length() != 0) {
+                C0036g.m1027a(1055, 1060);
+            } else {
+                C0036g.m1027a(1060, 1055);
+            }
+            if (AbstractC0023aw.m587e(104)) {
+                int iM586d = AbstractC0023aw.m586d(1531);
+                if (AbstractC0019as.m504c(iM586d - AbstractC0023aw.m586d(1458)) > 5000) {
+                    AbstractC0023aw.m594c(1458, iM586d);
+                    int length = C0036g.m1026g().length();
+                    if (length != AbstractC0023aw.m586d(1459) && AbstractC0019as.m504c(iM586d - AbstractC0023aw.m586d(1457)) > 10000) {
+                        AbstractC0041l abstractC0041lM611g = AbstractC0023aw.m611g();
+                        if (!abstractC0041lM611g.mo143m() && !abstractC0041lM611g.mo144l() && !abstractC0041lM611g.mo990d()) {
+                            abstractC0041lM611g.f369o.mo735f(abstractC0041lM611g);
+                        }
+                        AbstractC0023aw.m594c(1457, iM586d);
+                        AbstractC0023aw.m594c(1459, length);
+                    }
+                }
+            }
+            return 0;
+        } catch (Throwable unused) {
+            return 0;
+        }
+    }
+
+    /* renamed from: b */
+    public static final void m965b(String str) {
+        try {
+            C0015ao.m343s();
+            C0024ax c0024axM631b = C0024ax.m631b((Object) str);
+            if (c0024axM631b.m634a() != 200) {
+                throw new Throwable();
+            }
+            Vector vectorM513a = AbstractC0019as.m513a(new C0043n(c0024axM631b).m1381G(), '\n', '\r');
+            C0036g.f310a.removeAllElements();
+            int size = vectorM513a.size();
+            while (true) {
+                size--;
+                if (size < 0) {
+                    C0040k.m1212a(vectorM513a);
+                    C0024ax.m633a(c0024axM631b);
+                    C0015ao.m344t();
+                    return;
+                } else {
+                    Vector vectorM514a = AbstractC0019as.m514a((String) vectorM513a.elementAt(size), '|');
+                    if (vectorM514a.size() == 5) {
+                        C0036g.f310a.addElement(new Object[]{vectorM514a.elementAt(0), new long[]{Long.parseLong((String) vectorM514a.elementAt(1)), Long.parseLong((String) vectorM514a.elementAt(2))}, vectorM514a.elementAt(4)});
+                    }
+                    C0040k.m1212a(vectorM514a);
+                }
+            }
+        } catch (RuntimeException th) {
+            C0024ax.m633a((C0024ax) null);
+            C0015ao.m344t();
+            throw th;
+        } catch (Throwable th) {
+            C0024ax.m633a((C0024ax) null);
+            C0015ao.m344t();
+            throw new RuntimeException(th);
+        }
+    }
+
+    /* renamed from: a */
+    public static final int m966a(Vector vector, String str, String str2) {
+        StringBuffer stringBufferM1217h = C0040k.m1217h();
+        String str3 = AbstractC0023aw.f181d;
+        String strM1221a = C0040k.m1221a(8236);
+        int i = 0;
+        while (i < AbstractC0019as.m541c(vector)) {
+            stringBufferM1217h.append(i > 0 ? strM1221a : str3).append(((String[]) vector.elementAt(i))[0]);
+            i++;
+        }
+        AbstractC0023aw.m601a(1352, (Object) C0040k.m1215a(stringBufferM1217h));
+        AbstractC0023aw.m601a(1353, (Object) AbstractC0019as.m522f(str));
+        String str4 = AbstractC0023aw.f181d;
+        AbstractC0023aw.m588a(1354, C0040k.m1217h().append(AbstractC0023aw.m587e(92) ? C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(93)).append('\n')) : str4).append(AbstractC0023aw.m587e(94) ? C0040k.m1215a(C0040k.m1217h().append(AbstractC0023aw.m584b(95)).append('\n')) : str4).append(AbstractC0019as.m522f(str2)).append(AbstractC0023aw.m584b(874)));
+        return 54;
+    }
+
+    /* renamed from: e */
+    public static final Integer m967e(int i) {
+        return (i & 31) == i ? f291j[i] : new Integer(i);
+    }
+
+    /* renamed from: a */
+    public static final Boolean m968a(boolean z) {
+        return z ? f292k : f293l;
+    }
+
+    /* renamed from: a */
+    public static final int m969a(String str, AbstractC0037h abstractC0037h) {
+        C0043n c0043nM1310c;
+        int iIndexOf = str.indexOf(64);
+        String strM15c = C0000a.m15c(str, iIndexOf + 1);
+        Object[] objArr = new Object[3];
+        if (abstractC0037h instanceof C0033d) {
+            c0043nM1310c = new C0043n().m1310c(3998225).m1314d(str);
+        } else {
+            C0043n c0043nM1310c2 = new C0043n().m1310c(1704439);
+            int iIndexOf2 = strM15c.indexOf(46);
+            c0043nM1310c = c0043nM1310c2.m1314d(iIndexOf2 < 0 ? C0040k.m1221a(6775139) : C0000a.m13b(strM15c, iIndexOf2)).m1321f(47).m1314d(iIndexOf < 0 ? str : C0000a.m13b(str, iIndexOf)).m1310c(467 + AbstractC0023aw.m586d(4895));
+        }
+        objArr[0] = c0043nM1310c.m1317c();
+        objArr[1] = abstractC0037h;
+        objArr[2] = null;
+        AbstractC0023aw.f177b[1271] = objArr;
+        new RunnableC0055z(1, objArr);
+        return 0;
+    }
+
+    /* renamed from: a */
+    private static final void m970a(byte b) {
+        AbstractC0023aw.m581a(1357)[0] = b;
+    }
+
+    /* renamed from: u */
+    private static final boolean m971u() {
+        return AbstractC0023aw.m581a(1357)[0] != 0;
+    }
+
+    /* renamed from: o */
+    public static final int m972o() {
+        synchronized (AbstractC0023aw.f177b[1357]) {
+            if (!m971u() && System.currentTimeMillis() > AbstractC0023aw.m598g(287) + 86400000) {
+                AbstractC0023aw.m597a(287, System.currentTimeMillis());
+                m970a((byte) 1);
+                new RunnableC0055z(32);
+            }
+            if (m971u()) {
+                return -1;
+            }
+            return AbstractC0023aw.m586d(289);
+        }
+    }
+
+    /* JADX DEBUG: Finally have unexpected throw blocks count: 2, expect 1 */
+    /* renamed from: p */
+    public static final void m973p() {
+        try {
+            C0015ao.m343s();
+            C0024ax c0024axM629a = C0024ax.m629a(AbstractC0023aw.m584b(3607418), (AbstractC0037h) null, 3);
+            if (c0024axM629a.m634a() != 200) {
+                throw new Throwable();
+            }
+            C0043n c0043n = new C0043n(c0024axM629a);
+            synchronized (AbstractC0023aw.f177b[1357]) {
+                AbstractC0023aw.m594c(289, Integer.parseInt(c0043n.m1389J().m554b(723889)) != 0 ? 1 : 0);
+            }
+            synchronized (AbstractC0023aw.f177b[1357]) {
+                m970a((byte) 0);
+            }
+            C0024ax.m633a(c0024axM629a);
+            C0015ao.m344t();
+        } catch (Throwable unused) {
+            synchronized (AbstractC0023aw.f177b[1357]) {
+                m970a((byte) 0);
+                C0024ax.m633a((C0024ax) null);
+                C0015ao.m344t();
+            }
+        }
+    }
+
+    /* renamed from: c */
+    public static final int m974c(String str) {
+        String strM584b = AbstractC0023aw.m584b(1346);
+        int iM586d = AbstractC0023aw.m586d(1513);
+        C0028ba c0028ba = (C0028ba) AbstractC0023aw.m616i();
+        C0052w c0052wM745h = c0028ba.m745h(iM586d);
+        if (C0000a.m3a(848, str)) {
+            c0052wM745h.f415g.addElement(strM584b);
+            return 0;
+        }
+        if (C0000a.m3a(847, str)) {
+            c0052wM745h.m1417d(strM584b);
+            return 0;
+        }
+        if (C0000a.m3a(846, str)) {
+            C0021au.m549c();
+            m966a((Vector) null, (String) null, (String) null);
+            return 0;
+        }
+        if (C0000a.m3a(1347, str)) {
+            C0029bb.m814e(c0052wM745h.f415g);
+            return 0;
+        }
+        if (C0000a.m3a(1061, str)) {
+            C0021au.m549c();
+            C0015ao.m290a(false);
+            return 0;
+        }
+        if (!C0000a.m3a(851, str)) {
+            return 0;
+        }
+        AbstractC0023aw.m594c(1514, 0);
+        AbstractC0023aw.m591f(1345);
+        c0028ba.f229e = true;
+        c0052wM745h.m1424a(false);
+        AbstractC0023aw.m594c(1512, 41);
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final String m975a(long j, long j2, int i, String str) {
+        String strM1109a;
+        C0043n c0043nM1385u = new C0043n().m1310c(1245774).m1385u(1031283503);
+        String strM809a = C0029bb.m809a(j);
+        C0043n c0043nM1385u2 = c0043nM1385u.m1314d(strM809a).m1385u(4028710);
+        String strM810b = C0029bb.m810b(j2);
+        C0043n c0043nM1310c = c0043nM1385u2.m1314d(strM810b).m1385u(4028966).m1382s(i).m1310c(2363459);
+        if (str != null) {
+            C0043n c0043nM1385u3 = c0043nM1310c.m1385u(1031302438).m1314d(strM809a).m1385u(1031367974).m1314d(strM810b).m1385u(1031040294);
+            if (C0000a.m1a(str)) {
+                strM1109a = C0040k.m1221a(1094795585);
+            } else {
+                C0043n c0043n = new C0043n();
+                int length = str.length();
+                for (int i2 = 0; i2 < length; i2++) {
+                    int iCharAt = str.charAt(i2) & 65535;
+                    if (iCharAt < 128) {
+                        c0043n.m1321f(iCharAt);
+                    } else if (iCharAt < 2048) {
+                        c0043n.m1321f(192 + (iCharAt >> 6)).m1321f(128 + (iCharAt & 63));
+                    } else {
+                        c0043n.m1321f(224 + (iCharAt >> 12)).m1321f(128 + ((iCharAt >> 6) & 63)).m1321f(128 + (iCharAt & 63));
+                    }
+                }
+                strM1109a = C0038i.m1109a(C0038i.m1109a(c0043n.m1320d(), 65547, 200765), 65552, 200768);
+            }
+            c0043nM1385u3.m1314d(strM1109a);
+        }
+        return c0043nM1310c.m1317c();
+    }
+
+    /* renamed from: q */
+    public static final int m976q() {
+        int iMo1396m;
+        Object obj = AbstractC0023aw.f177b[1365];
+        if ((obj instanceof AbstractC0046q) && 0 != (iMo1396m = ((AbstractC0046q) obj).mo1396m())) {
+            return C0015ao.m338l(iMo1396m);
+        }
+        if (!(obj instanceof AbstractC0041l)) {
+            return 4;
+        }
+        AbstractC0041l abstractC0041l = (AbstractC0041l) obj;
+        int iMo118b = abstractC0041l.f369o.mo118b(abstractC0041l);
+        if (0 != iMo118b) {
+            return C0015ao.m338l(iMo118b);
+        }
+        return 4;
+    }
+
+    /* renamed from: r */
+    public static final void m977r() {
+        int iM1346q;
+        int iM1346q2;
+        boolean zM587e = AbstractC0023aw.m587e(1505);
+        Object obj = AbstractC0023aw.m609l(1271)[0];
+        if (obj instanceof Integer) {
+            if (zM587e) {
+                C0015ao.m340m(((Integer) obj).intValue());
+                return;
+            }
+            return;
+        }
+        try {
+            StringBuffer stringBufferM1217h = C0040k.m1217h();
+            StringBuffer stringBufferM1217h2 = C0040k.m1217h();
+            C0043n c0043n = (C0043n) obj;
+            while (c0043n.f384b > 0 && 32 != (iM1346q2 = c0043n.m1346q())) {
+                stringBufferM1217h.append((char) iM1346q2);
+            }
+            while (c0043n.f384b > 0 && 32 != (iM1346q = c0043n.m1346q())) {
+                stringBufferM1217h2.append((char) iM1346q);
+            }
+            AbstractC0023aw.m588a(1284, stringBufferM1217h);
+            AbstractC0023aw.m588a(1285, stringBufferM1217h2);
+            if (m979e(AbstractC0023aw.m584b(1375)) >= m979e(AbstractC0023aw.m584b(1284))) {
+                throw new Throwable();
+            }
+            AbstractC0004ad.m71b(AbstractC0004ad.m75b(3850));
+        } catch (Throwable unused) {
+            if (zM587e) {
+                C0015ao.m340m(731);
+            }
+        }
+    }
+
+    /* renamed from: s */
+    public static final int m978s() {
+        AbstractC0023aw.m589a(1236, 1285);
+        return 0;
+    }
+
+    /* renamed from: e */
+    private static final int m979e(String str) {
+        int i = 0;
+        int i2 = 0;
+        for (int i3 = 0; i3 < str.length(); i3++) {
+            char cCharAt = str.charAt(i3);
+            if (cCharAt == '.') {
+                i = (i * 100) + i2;
+                i2 = 0;
+            } else if (cCharAt >= '0' && cCharAt <= '9') {
+                i2 = ((i2 * 10) + cCharAt) - 48;
+            }
+        }
+        return (i * 100) + i2;
+    }
+
+    /* renamed from: a */
+    private static final C0043n m980a(C0028ba c0028ba) {
+        return new C0043n().m1314d(c0028ba.f316l).m1365B();
+    }
+
+    /* renamed from: a */
+    public static final C0043n m981a(C0028ba c0028ba, AbstractC0037h abstractC0037h, int i, int i2, String str, boolean z, byte[] bArr) {
+        C0043n c0043nM1302a = new C0043n().m1384t(266).m1384t(20200).m1360p(i).m1360p(i2).m1308a(str).m1360p(z ? 1 : 0).m1360p(bArr.length).m1302a(bArr);
+        while ((c0043nM1302a.f384b & 7) != 0) {
+            c0043nM1302a.m1321f(0);
+        }
+        C0043n c0043n = new C0043n();
+        C0043n c0043nM980a = m980a(c0028ba);
+        C0036g.m1036a(c0043nM980a.f383a, c0043nM980a.f384b, c0043nM1302a.f383a, c0043nM1302a.f384b);
+        c0043nM980a.m1301b();
+        return c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4132, c0043n.m1327c(c0043nM1302a)), m967e(17), abstractC0037h});
+    }
+
+    /* renamed from: a */
+    public static final void m982a(C0028ba c0028ba, int i, Object[] objArr, C0043n c0043n) {
+        if (i == 1) {
+            c0043n.m1328e();
+            c0043n.m1300a(0);
+            C0043n c0043nM980a = m980a(c0028ba);
+            C0036g.m1037b(c0043nM980a.f383a, c0043nM980a.f384b, c0043n.f383a, c0043n.f384b);
+            c0043nM980a.m1301b();
+            c0043n.m1328e();
+            C0033d c0033d = (C0033d) objArr[2];
+            c0033d.m1052c(C0015ao.m464a(c0033d, 288, new C0043n().m1357m(16).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e())));
+        }
+    }
+
+    /* renamed from: t */
+    public static final void m983t() {
+        AbstractC0004ad.m71b(AbstractC0004ad.m75b(5141));
+        C0015ao.m340m(1027);
+    }
+
+    /* renamed from: a */
+    public static final int m984a(C0013am c0013am) {
+        C0040k.m1195d();
+        String[] strArrM518a = AbstractC0019as.m518a(true);
+        Vector vectorM794a = C0029bb.m794a(c0013am, 1);
+        int length = strArrM518a.length;
+        while (true) {
+            length--;
+            if (length < 0) {
+                break;
+            }
+            vectorM794a.addElement(strArrM518a[length]);
+        }
+        if (vectorM794a.size() == 0) {
+            return C0015ao.m338l(775);
+        }
+        vectorM794a.addElement(((C0028ba) AbstractC0023aw.m616i()).f315k);
+        AbstractC0023aw.f177b[1284] = vectorM794a;
+        return 179;
+    }
+
+    /* renamed from: g */
+    private static final int m985g(int i) {
+        if (i >= 65 && i <= 90) {
+            return i - 65;
+        }
+        if (i >= 97 && i <= 122) {
+            return i - 71;
+        }
+        if (i >= 48 && i <= 57) {
+            return i + 4;
+        }
+        if (i == 43) {
+            return 62;
+        }
+        if (i == 47) {
+            return 63;
+        }
+        throw new RuntimeException();
+    }
+
+    /* renamed from: d */
+    public static final C0043n m986d(String str) {
+        int i;
+        char cCharAt;
+        char cCharAt2;
+        char cCharAt3;
+        char cCharAt4;
+        C0043n c0043n = new C0043n();
+        int length = str.length();
+        int i2 = 0;
+        while (i2 < length) {
+            int iM985g = 0;
+            int iM985g2 = 0;
+            int iM985g3 = 0;
+            int iM985g4 = 0;
+            while (true) {
+                try {
+                    int i3 = i2;
+                    i2++;
+                    cCharAt = str.charAt(i3);
+                    if (cCharAt != '\n' && cCharAt != '\r') {
+                        break;
+                    }
+                } catch (Throwable unused) {
+                    i = 0 - 1;
+                    i2 = length;
+                }
+            }
+            iM985g = m985g(cCharAt);
+            int i4 = 0 + 1;
+            while (true) {
+                int i5 = i2;
+                i2++;
+                cCharAt2 = str.charAt(i5);
+                if (cCharAt2 != '\n' && cCharAt2 != '\r') {
+                    break;
+                }
+            }
+            iM985g2 = m985g(cCharAt2);
+            int i6 = i4 + 1;
+            while (true) {
+                int i7 = i2;
+                i2++;
+                cCharAt3 = str.charAt(i7);
+                if (cCharAt3 != '\n' && cCharAt3 != '\r') {
+                    break;
+                }
+            }
+            iM985g3 = m985g(cCharAt3);
+            int i8 = i6 + 1;
+            while (true) {
+                int i9 = i2;
+                i2++;
+                cCharAt4 = str.charAt(i9);
+                if (cCharAt4 != '\n' && cCharAt4 != '\r') {
+                    break;
+                }
+            }
+            iM985g4 = m985g(cCharAt4);
+            i = i8 + 1;
+            if (i > 0) {
+                c0043n.m1321f((iM985g << 2) | (iM985g2 >> 4));
+            }
+            if (i > 1) {
+                c0043n.m1321f((iM985g2 << 4) | (iM985g3 >> 2));
+            }
+            if (i > 2) {
+                c0043n.m1321f((iM985g3 << 6) | iM985g4);
+            }
+        }
+        return c0043n;
+    }
+
+    /* renamed from: a */
+    public static final C0043n m987a(C0028ba c0028ba, C0035f c0035f, int i) {
+        return c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4123, new C0043n().m1360p(c0035f.f294a).m1360p(i).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), m967e(11), c0035f, m967e(i)});
+    }
+
+    /* renamed from: a */
+    public static final C0043n m988a(C0028ba c0028ba, C0035f c0035f, C0010aj c0010aj) {
+        return c0028ba.m719a(new Object[]{C0015ao.m321a(c0028ba, 4123, new C0043n().m1360p(c0035f.f294a).m1360p(c0035f.f295b).m1360p(c0010aj.f74a).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), m967e(12), c0035f, c0010aj});
+    }
+}
