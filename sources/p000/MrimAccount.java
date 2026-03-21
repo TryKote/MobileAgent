@@ -354,7 +354,7 @@ public final class MrimAccount extends Account implements ListItem {
                     incrementSync();
                     break;
                 case 4101:
-                    AppController.m461a(this, c0043nM1349s);
+                    AppController.handleMrimMailNotify(this, c0043nM1349s);
                     break;
                 case 4105:
                     Conversation.handleMessage(this, c0043nM1349s, 0L);
@@ -627,7 +627,7 @@ public final class MrimAccount extends Account implements ListItem {
                                     this.accountProfile.phone = strArrM55a[3];
                                 }
                                 this.accountProfile.dirty = true;
-                                if (AppController.m442U() != 10) {
+                                if (AppController.getActiveScreenId() != 10) {
                                     break;
                                 } else {
                                     IOUtils.postEvent((Object) AppState.getString(786));
@@ -1354,7 +1354,7 @@ public final class MrimAccount extends Account implements ListItem {
             stringBufferM1217h.append("Уточнить?");
         } else {
             stringBufferM1217h.append(AppState.getString(488));
-            if (AppController.m439R().size() > 1) {
+            if (AppController.getMrimAccountList().size() > 1) {
                 stringBufferM1217h.append(' ').append('(').append(this.login).append(')').append('.').append(' ');
             }
             String str2 = this.accountProfile.phone;

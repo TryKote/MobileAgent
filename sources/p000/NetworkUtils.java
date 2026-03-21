@@ -304,11 +304,11 @@ public final class NetworkUtils {
         if (str != null) {
             if (Utils.parseInt((Object) str) == 0) {
                 String str2 = (String) objArr[7];
-                int iM437a = AppController.m437a(0, (Account) null, str2, (String) objArr[9]);
+                int iM437a = AppController.validateCredentials(0, (Account) null, str2, (String) objArr[9]);
                 if (0 != iM437a) {
                     return AppController.showError(iM437a);
                 }
-                AppController.setCurrentAccount(AppController.m438b(0, str2));
+                AppController.setCurrentAccount(AppController.createAccount(0, str2));
                 return 4;
             }
             if (Utils.parseInt((Object) str) == 4004) {

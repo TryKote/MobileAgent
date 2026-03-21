@@ -21,7 +21,7 @@ public final class AsyncTask implements Runnable, CommandListener {
 
     public AsyncTask(Object obj, int i, int i2) {
         if (obj != null) {
-            AppController.m453a(obj, i, i2);
+            AppController.dispatchCommand(obj, i, i2);
             return;
         }
         if (AppController.appLock != null) {
@@ -36,7 +36,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                     }
                 }
                 NetworkUtils.m1183c();
-                AppController.m436a(AppController.saveOnExit, true);
+                AppController.saveState(AppController.saveOnExit, true);
                 AppState.saveDelta(AppController.saveOnExit);
             }
         }
@@ -216,7 +216,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                 default: goto La83;
             }     // Catch: java.lang.Throwable -> La84
         La0:
-            p000.AppController.m454aa()     // Catch: java.lang.Throwable -> La84
+            p000.AppController.onSoftKeyPressed()     // Catch: java.lang.Throwable -> La84
             return
         La4:
             r0 = r8

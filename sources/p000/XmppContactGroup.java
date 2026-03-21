@@ -143,7 +143,7 @@ public final class XmppContactGroup extends ContactGroup {
             }
             if (System.currentTimeMillis() - AppState.getLong(236) >= 7200000) {
                 boolean z = false;
-                Vector vectorM443V = AppController.m443V();
+                Vector vectorM443V = AppController.getXmppAccountList();
                 int size = vectorM443V.size();
                 while (true) {
                     size--;
@@ -445,7 +445,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer buildSyncPayload(MrimAccount c0028ba) {
         ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(AppState.getString(223))).writeIntMixed(513).writeIntLE(c0028ba.syncSeq).writeIntMixed(335).writeStringLatin1(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getInt(1528)).append('x').append(AppState.getInt(1529)))).writeIntMixed(592).writeIntLE(AppState.getAndClearInt(251)).writeIntMixed(573).writeIntLE(AppState.getAndClearInt(250)).writeIntMixed(636).writeIntLE(AppState.getAndClearInt(290)).writeIntMixed(514).writeIntLE(AppState.getAndClearInt(291)).writeIntMixed(638).writeIntLE(AppState.getAndClearInt(292)).writeIntMixed(639).writeIntLE(AppState.getAndClearInt(294)).writeIntMixed(640).writeIntLE(AppState.getAndClearInt(293));
-        Vector vectorM443V = AppController.m443V();
+        Vector vectorM443V = AppController.getXmppAccountList();
         int size = vectorM443V.size();
         while (true) {
             size--;

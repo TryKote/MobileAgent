@@ -818,7 +818,7 @@ public final class Conversation implements ListItem {
                 if (!StringUtils.isEmpty(strM17c)) {
                     new AsyncTask(27, new Object[]{strM17c, c0028ba});
                 }
-                if (AppController.m442U() == 1) {
+                if (AppController.getActiveScreenId() == 1) {
                     AppState.setInt(1577, 1);
                 }
             }
@@ -842,7 +842,7 @@ public final class Conversation implements ListItem {
             c0022avM550a2.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
         } catch (Throwable unused) {
         }
-        Vector vectorM439R = AppController.m439R();
+        Vector vectorM439R = AppController.getMrimAccountList();
         if (c0028ba != null) {
             vectorM439R.addElement(c0028ba);
             c0028ba = null;
@@ -967,7 +967,7 @@ public final class Conversation implements ListItem {
             r4 = r9
             r5 = 397788(0x611dc, float:5.5742E-40)
             java.lang.String r4 = r4.getIntAttribute(r5)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            p000.AppController.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.AppController.setFormFields(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             goto La4
         L5d:
             r0 = r9
@@ -1024,7 +1024,7 @@ public final class Conversation implements ListItem {
             r2 = 0
             r3 = 0
             r4 = 0
-            p000.AppController.m450a(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Ldc
+            p000.AppController.setFormFields(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Ldc
             goto Ld4
         Lc9:
             r0 = 308(0x134, float:4.32E-43)

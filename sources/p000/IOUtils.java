@@ -97,7 +97,7 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final ByteBuffer createSendMessageCmd(MmpProtocol c0033d, MmpContact c0009ai, String str) {
-        return AppController.m464a(c0033d, 4888, new ByteBuffer().writeByteLenStr(c0009ai.identifier).writeUTF(str).writeShortBE(0));
+        return AppController.createMmpCommand(c0033d, 4888, new ByteBuffer().writeByteLenStr(c0009ai.identifier).writeUTF(str).writeShortBE(0));
     }
 
     /* renamed from: a */
@@ -228,7 +228,7 @@ public final class IOUtils {
                 }
                 ResourceManager.playNotificationSound(0);
             }
-            if (zM587e && (AppController.m442U() != 10 || !AppState.hasMemory())) {
+            if (zM587e && (AppController.getActiveScreenId() != 10 || !AppState.hasMemory())) {
                 StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
                 if (str2 != null && str != null) {
                     postAccountNotification(c0028ba, NetworkUtils.bufToStringCached(stringBufferM1217h.append(AppState.getString(917)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(918)).append(i).append(AppState.getString(919 + Utils.m540f(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(916)).toString())));
@@ -624,12 +624,12 @@ public final class IOUtils {
     private static final ByteBuffer createContactCommand(MmpProtocol c0033d, MmpContact c0009ai, int i) {
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0);
         int iM920k = c0033d.generateUniqueGroupId();
-        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.integerOf(18), c0009ai, ResourceManager.integerOf(i), ResourceManager.integerOf(iM920k)});
+        return c0033d.queueCommand(new Object[]{AppController.createMmpCommand(c0033d, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.integerOf(18), c0009ai, ResourceManager.integerOf(i), ResourceManager.integerOf(iM920k)});
     }
 
     /* renamed from: a */
     private static final ByteBuffer updateContactCommand(MmpProtocol c0033d, MmpContact c0009ai, int i, int i2) {
-        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.integerOf(19), c0009ai, ResourceManager.integerOf(i2)});
+        return c0033d.queueCommand(new Object[]{AppController.createMmpCommand(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.integerOf(19), c0009ai, ResourceManager.integerOf(i2)});
     }
 
     /* renamed from: a */
@@ -931,11 +931,11 @@ public final class IOUtils {
         if (i == 2 && strM1215a.indexOf(64) < 0) {
             return AppController.showError(699);
         }
-        int iM437a = AppController.m437a(i, AppState.getAccount(), strM1215a, strM522f);
+        int iM437a = AppController.validateCredentials(i, AppState.getAccount(), strM1215a, strM522f);
         if (0 != iM437a) {
             return AppController.showError(iM437a);
         }
-        AppController.setCurrentAccount(AppController.m438b(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(1297))));
+        AppController.setCurrentAccount(AppController.createAccount(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(1297))));
         return 0;
     }
 
@@ -1027,7 +1027,7 @@ public final class IOUtils {
                             }
                             strM1370r = strM1368E;
                             if (strM1368E != null && strM1370r.length() > 0) {
-                                c0033d.trySendData(AppController.m464a(c0033d, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(c0033d.getConnectionModeValue()).writeCompressed(3213718)));
+                                c0033d.trySendData(AppController.createMmpCommand(c0033d, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(c0033d.getConnectionModeValue()).writeCompressed(3213718)));
                                 break;
                             }
                         } else {
@@ -1037,7 +1037,7 @@ public final class IOUtils {
                     strM1368E = null;
                     strM1370r = strM1368E;
                     if (strM1368E != null) {
-                        c0033d.trySendData(AppController.m464a(c0033d, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(c0033d.getConnectionModeValue()).writeCompressed(3213718)));
+                        c0033d.trySendData(AppController.createMmpCommand(c0033d, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(c0033d.getConnectionModeValue()).writeCompressed(3213718)));
                     }
                 } else {
                     strM1368E = null;

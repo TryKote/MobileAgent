@@ -1304,7 +1304,7 @@ public final class Screen {
                         if (this.selectedIndex != i12 || z) {
                             this.selectedIndex = i12;
                         } else {
-                            AppController.m455ab();
+                            AppController.onItemSelected();
                         }
                         z2 = true;
                     }
@@ -1322,7 +1322,7 @@ public final class Screen {
             if (this.screenType == 0 || this.screenType == 1) {
                 return true;
             }
-            AppController.m455ab();
+            AppController.onItemSelected();
             return true;
         }
         int i13 = i5 - 2;
@@ -1345,7 +1345,7 @@ public final class Screen {
                 break;
             }
         }
-        AppController.m455ab();
+        AppController.onItemSelected();
         return true;
     }
 

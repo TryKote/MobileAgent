@@ -236,18 +236,18 @@ public final class ResourceManager {
             AppState.setInt(3987, 8);
             AppState.setInt(3994, 3);
         } else {
-            formatTrafficItem(1329, AppController.m428a(0, iM586d, 0));
-            formatTrafficItem(1328, AppController.m428a(0, iM586d, 1));
-            formatTrafficItem(1331, AppController.m428a(1, iM586d, 0));
-            formatTrafficItem(1330, AppController.m428a(1, iM586d, 1));
-            formatTrafficItem(1333, AppController.m428a(2, iM586d, 0));
-            formatTrafficItem(1332, AppController.m428a(2, iM586d, 1));
-            formatTrafficItem(1335, AppController.m428a(3, iM586d, 0));
-            formatTrafficItem(1334, AppController.m428a(3, iM586d, 1));
-            int iM429b = AppController.m429b(iM586d, 0);
+            formatTrafficItem(1329, AppController.getTrafficCount(0, iM586d, 0));
+            formatTrafficItem(1328, AppController.getTrafficCount(0, iM586d, 1));
+            formatTrafficItem(1331, AppController.getTrafficCount(1, iM586d, 0));
+            formatTrafficItem(1330, AppController.getTrafficCount(1, iM586d, 1));
+            formatTrafficItem(1333, AppController.getTrafficCount(2, iM586d, 0));
+            formatTrafficItem(1332, AppController.getTrafficCount(2, iM586d, 1));
+            formatTrafficItem(1335, AppController.getTrafficCount(3, iM586d, 0));
+            formatTrafficItem(1334, AppController.getTrafficCount(3, iM586d, 1));
+            int iM429b = AppController.getTotalTraffic(iM586d, 0);
             i = iM429b;
             formatTrafficItem(1326, iM429b);
-            int iM429b2 = AppController.m429b(iM586d, 1);
+            int iM429b2 = AppController.getTotalTraffic(iM586d, 1);
             i2 = iM429b2;
             formatTrafficItem(1325, iM429b2);
             AppState.setInt(3987, 5);
@@ -277,7 +277,7 @@ public final class ResourceManager {
     public static final ByteBuffer sendAddGroupCommand(MmpProtocol c0033d, String str) {
         ByteBuffer c0043nM1376j = new ByteBuffer().writeUTF(str);
         int iM920k = c0033d.generateUniqueGroupId();
-        return c0033d.queueCommand(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1376j.writeShortBE(iM920k).writeShortBE(0).writeShortBE(1).writeShortBE(0)), integerOf(4), str, integerOf(iM920k)});
+        return c0033d.queueCommand(new Object[]{AppController.createMmpCommand(c0033d, 4872, c0043nM1376j.writeShortBE(iM920k).writeShortBE(0).writeShortBE(1).writeShortBE(0)), integerOf(4), str, integerOf(iM920k)});
     }
 
     /* renamed from: a */
@@ -549,7 +549,7 @@ public final class ResourceManager {
     public static final void showMailAccountList() {
         AppState.clearIndex(1281);
         Screen c0013amM75b = ScreenManager.createScreen(4507);
-        Vector vectorM439R = AppController.m439R();
+        Vector vectorM439R = AppController.getMrimAccountList();
         int size = vectorM439R.size();
         if (size > 0) {
             c0013amM75b.addLabelById(832);
@@ -578,7 +578,7 @@ public final class ResourceManager {
 
     /* renamed from: d */
     public static final int handleSearchResultAction(int i) {
-        Vector vectorM440S = AppController.m440S();
+        Vector vectorM440S = AppController.getOnlineMrimAccounts();
         switch (i) {
             case 0:
                 if (vectorM440S.size() <= 0) {
@@ -666,12 +666,12 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer createGetContactsCmd(MmpProtocol c0033d) {
-        return AppController.m464a(c0033d, 4881, (ByteBuffer) null);
+        return AppController.createMmpCommand(c0033d, 4881, (ByteBuffer) null);
     }
 
     /* renamed from: b */
     public static final ByteBuffer createSyncContactsCmd(MmpProtocol c0033d) {
-        return AppController.m464a(c0033d, 4882, (ByteBuffer) null);
+        return AppController.createMmpCommand(c0033d, 4882, (ByteBuffer) null);
     }
 
     /* renamed from: c */
@@ -683,7 +683,7 @@ public final class ResourceManager {
         for (int i = 0; i < size; i++) {
             c0043nM1357m2.writeShortBE(((MmpContactGroup) c0033d.getGroup(i)).groupId);
         }
-        objArr[0] = AppController.m464a(c0033d, 4873, c0043nM1357m2);
+        objArr[0] = AppController.createMmpCommand(c0033d, 4873, c0043nM1357m2);
         objArr[1] = integerOf(3);
         return c0033d.queueCommand(objArr);
     }
@@ -1029,7 +1029,7 @@ public final class ResourceManager {
             c0043nM980a.clear();
             c0043n.readInt();
             MmpProtocol c0033d = (MmpProtocol) objArr[2];
-            c0033d.trySendData(AppController.m464a(c0033d, 288, new ByteBuffer().writeShortBE(16).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt())));
+            c0033d.trySendData(AppController.createMmpCommand(c0033d, 288, new ByteBuffer().writeShortBE(16).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt())));
         }
     }
 

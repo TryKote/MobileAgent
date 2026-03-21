@@ -414,7 +414,7 @@ public abstract class MapRenderer {
             int i47 = viewportWidth;
             int i48 = viewportHeight;
             if (AppState.getBool(276) && AppState.getBool(279) && !XmppContactGroup.isMapDataRecent()) {
-                Vector vectorM448X = AppController.m448X();
+                Vector vectorM448X = AppController.getMapContacts();
                 int size7 = vectorM448X.size();
                 if (size7 > 0) {
                     long j18 = (j16 - (i47 / 2)) / 32;
@@ -496,7 +496,7 @@ public abstract class MapRenderer {
             int i58 = viewportHeight;
             if (AppState.getBool(276) && AppState.getBool(278) && !XmppContactGroup.isMapDataRecent()) {
                 AppState.setInt(1547, 0);
-                Vector vectorM449Y = AppController.m449Y();
+                Vector vectorM449Y = AppController.getMapProfiles();
                 int size8 = vectorM449Y.size();
                 if (size8 != 0) {
                     MrimAccount c0028ba = null;
