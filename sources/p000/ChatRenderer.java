@@ -10,82 +10,82 @@ import javax.microedition.lcdui.Image;
 public abstract class ChatRenderer {
 
     /* renamed from: a */
-    public static int f241a;
+    public static int offsetX;
 
     /* renamed from: b */
-    public static int f242b;
+    public static int offsetY;
 
     /* renamed from: l */
-    private static long f243l;
+    private static long scaleTimestamp;
 
     /* renamed from: m */
-    private static long f244m;
+    private static long scaleZoom;
 
     /* renamed from: n */
-    private static int f245n;
+    private static int scaleBarWidth;
 
     /* renamed from: o */
-    private static String f246o;
+    private static String scaleLabel;
 
     /* renamed from: p */
-    private static boolean f247p;
+    private static boolean scaleValid;
 
     /* renamed from: c */
-    public static int[] f248c;
+    public static int[] buttonBounds;
 
     /* renamed from: d */
-    public static long f249d;
+    public static long coord1;
 
     /* renamed from: e */
-    public static long f250e;
+    public static long coord2;
 
     /* renamed from: f */
-    public static long f251f;
+    public static long coord3;
 
     /* renamed from: g */
-    public static long f252g;
+    public static long coord4;
 
     /* renamed from: h */
-    public static ListItem[] f253h;
+    public static ListItem[] mapItems;
 
     /* renamed from: i */
-    public static long f254i;
+    public static long markerLon;
 
     /* renamed from: j */
-    public static long f255j;
+    public static long markerLat;
 
     /* renamed from: k */
-    public static int f256k;
+    public static int markerRadius;
 
     /* renamed from: a */
-    public static final void m828a(Graphics graphics, int i, long j) {
+    public static final void renderScaleBar(Graphics graphics, int i, long j) {
         int i2;
         if (i < 0 || i > 17) {
             i = 0;
         }
-        if (i != f244m || Utils.m505a(j - f243l) > 10000 || !f247p) {
-            f247p = true;
-            f243l = j;
-            f244m = i;
+        if (i != scaleZoom || Utils.m505a(j - scaleTimestamp) > 10000 || !scaleValid) {
+            scaleValid = true;
+            scaleTimestamp = j;
+            scaleZoom = i;
             int i3 = i;
             int iM689d = (int) SoftFloat.m689d(SoftFloat.m692d(SoftFloat.m713k(SoftFloat.m699e(SoftFloat.m697a(IOUtils.m810b(j)))), SoftFloat.m687b((50 * AppController.m315d(i3)) / AppController.m316e(i3))));
             int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
             int i5 = (iM689d / i4) * i4;
-            f245n = m835a(i5, i, j);
+            scaleBarWidth = scaleToPixels(i5, i, j);
             StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
             if (i5 < 1000) {
                 stringBufferM1217h.append(i5);
             } else {
                 stringBufferM1217h.append(i5 / 1000).append((char) 1082);
             }
-            f246o = NetworkUtils.bufToStringCached(stringBufferM1217h.append((char) 1084));
+            scaleLabel = NetworkUtils.bufToStringCached(stringBufferM1217h.append((char) 1084));
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
         Font fontM625m = AppState.getFont();
         graphics.setFont(fontM625m);
         int iM586d = AppState.getInt(1450);
-        int iM502a = Utils.max(f245n, fontM625m.stringWidth(f246o));
+        int iM502a = Utils.max(scaleBarWidth, fontM625m.stringWidth(scaleLabel));
         int height = fontM625m.getHeight();
         if (AppState.getBool(230)) {
             i2 = -(iM586d > 16 ? iM586d : 18);
@@ -95,32 +95,32 @@ public abstract class ChatRenderer {
         int i6 = i2;
         int clipWidth = (graphics.getClipWidth() - iM502a) - 5;
         int clipHeight = (graphics.getClipHeight() - height) - 13;
-        graphics.drawString(f246o, clipWidth, i6 + clipHeight, 20);
+        graphics.drawString(scaleLabel, clipWidth, i6 + clipHeight, 20);
         graphics.setColor(16777215);
-        graphics.fillRect(clipWidth, i6 + clipHeight + height + 5, f245n / 2, 3);
-        graphics.fillRect(clipWidth + (f245n / 2), i6 + clipHeight + height + 2, f245n / 2, 3);
+        graphics.fillRect(clipWidth, i6 + clipHeight + height + 5, scaleBarWidth / 2, 3);
+        graphics.fillRect(clipWidth + (scaleBarWidth / 2), i6 + clipHeight + height + 2, scaleBarWidth / 2, 3);
         graphics.setColor(0);
-        graphics.fillRect(clipWidth, i6 + clipHeight + height + 2, f245n / 2, 4);
-        graphics.fillRect(clipWidth + (f245n / 2), i6 + clipHeight + height + 5, f245n / 2, 3);
-        graphics.drawRect(clipWidth, i6 + clipHeight + height + 2, f245n, 6);
+        graphics.fillRect(clipWidth, i6 + clipHeight + height + 2, scaleBarWidth / 2, 4);
+        graphics.fillRect(clipWidth + (scaleBarWidth / 2), i6 + clipHeight + height + 5, scaleBarWidth / 2, 3);
+        graphics.drawRect(clipWidth, i6 + clipHeight + height + 2, scaleBarWidth, 6);
         graphics.setColor(color);
         graphics.setFont(font);
     }
 
     /* renamed from: a */
-    public static final void m829a(Graphics graphics, long j, long j2, int i, int i2, int i3, long j3) {
-        if (f254i == 0 || f255j == 0) {
+    public static final void renderMarker(Graphics graphics, long j, long j2, int i, int i2, int i3, long j3) {
+        if (markerLon == 0 || markerLat == 0) {
             return;
         }
-        int iM317a = (int) ((i2 / 2) + (AppController.m317a(f254i, i) - j));
-        int iM317a2 = (int) ((i3 / 2) + (j2 - AppController.m317a(f255j, i)));
+        int iM317a = (int) ((i2 / 2) + (AppController.m317a(markerLon, i) - j));
+        int iM317a2 = (int) ((i3 / 2) + (j2 - AppController.m317a(markerLat, i)));
         if (iM317a < 0 || iM317a2 < 0 || iM317a >= i2 || iM317a2 >= i3) {
             return;
         }
         int color = graphics.getColor();
         graphics.setColor(255);
         graphics.fillArc(iM317a - 6, iM317a2 - 6, 12, 12, 0, 360);
-        int iM835a = m835a(f256k, i, j3);
+        int iM835a = scaleToPixels(markerRadius, i, j3);
         int i4 = iM835a << 1;
         graphics.drawArc(iM317a - iM835a, iM317a2 - iM835a, i4, i4, 0, 360);
         graphics.setColor(14474460);
@@ -129,7 +129,7 @@ public abstract class ChatRenderer {
     }
 
     /* renamed from: a */
-    private static final int m830a(Vector vector, Font font) {
+    private static final int getMaxTextWidth(Vector vector, Font font) {
         int iM502a = 20;
         int size = vector.size();
         while (true) {
@@ -142,10 +142,10 @@ public abstract class ChatRenderer {
     }
 
     /* renamed from: a */
-    public static final void m831a(Graphics graphics, String str, Font font, int i, int i2, int i3) {
+    public static final void renderTooltip(Graphics graphics, String str, Font font, int i, int i2, int i3) {
         Vector vectorM543a = Utils.wrapText(str, font, i);
         int size = vectorM543a.size();
-        int iM830a = m830a(vectorM543a, font) + 10;
+        int iM830a = getMaxTextWidth(vectorM543a, font) + 10;
         int height = font.getHeight();
         int i4 = (height * size) + 6;
         Font font2 = graphics.getFont();
@@ -179,7 +179,7 @@ public abstract class ChatRenderer {
     }
 
     /* renamed from: a */
-    public static final void m832a(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem interfaceC0044o) {
+    public static final void renderBubble(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem interfaceC0044o) {
         if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
             return;
         }
@@ -217,7 +217,7 @@ public abstract class ChatRenderer {
         int i10 = iMo283b - i5;
         Vector vectorM543a = Utils.wrapText(Utils.defaultStr(interfaceC0044o.getText()), font, i - 40);
         int size = vectorM543a.size();
-        int iM830a = m830a(vectorM543a, font);
+        int iM830a = getMaxTextWidth(vectorM543a, font);
         int iStringWidth = font.stringWidth(AppState.getString(982)) + 6 + 24;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
@@ -253,7 +253,7 @@ public abstract class ChatRenderer {
         graphics.drawRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
         GraphicsContext c0012al = new GraphicsContext(graphics);
         if (i8 != 0) {
-            c0012al.m216a(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
+            c0012al.drawIcon(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
         }
         graphics.setFont(font);
         graphics.setColor(AppState.getInt(iM586d2 + 4914));
@@ -261,17 +261,17 @@ public abstract class ChatRenderer {
             graphics.drawString((String) vectorM543a.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
         }
         Image imageM1023b = XmppContactGroup.m1023b(19);
-        if (f248c == null) {
+        if (buttonBounds == null) {
             int[] iArr = new int[4];
-            f248c = iArr;
+            buttonBounds = iArr;
             iArr[2] = imageM1023b.getWidth();
-            f248c[3] = imageM1023b.getHeight();
+            buttonBounds[3] = imageM1023b.getHeight();
         }
         if (zMo281z) {
             int i20 = (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2);
-            f248c[0] = i20;
+            buttonBounds[0] = i20;
             int i21 = ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)) + (i11 / 2);
-            f248c[1] = i21;
+            buttonBounds[1] = i21;
             graphics.drawImage(imageM1023b, i20, i21, 6);
             graphics.drawString(AppState.getString(982), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
         }
@@ -285,7 +285,7 @@ public abstract class ChatRenderer {
     }
 
     /* renamed from: a */
-    public static final boolean m833a(int i, int i2, int i3, int i4) {
+    public static final boolean isDistant(int i, int i2, int i3, int i4) {
         int iM504c = Utils.abs(i2 - i);
         int iM504c2 = Utils.abs(i4 - i3);
         int iM502a = Utils.max(iM504c, iM504c2);
@@ -296,7 +296,7 @@ public abstract class ChatRenderer {
     }
 
     /* renamed from: b */
-    private static final int m834b(int i, int i2, int i3, int i4) {
+    private static final int computeOutCode(int i, int i2, int i3, int i4) {
         int i5 = 0;
         if (i2 > i4) {
             i5 = 0 + 1;
@@ -312,7 +312,7 @@ public abstract class ChatRenderer {
     }
 
     /* renamed from: a */
-    private static int m835a(int i, int i2, long j) {
+    private static int scaleToPixels(int i, int i2, long j) {
         return (int) SoftFloat.m689d(SoftFloat.m693e(SoftFloat.m687b(AppController.m317a(i, i2)), SoftFloat.m713k(SoftFloat.m699e(SoftFloat.m697a(IOUtils.m810b(j))))));
     }
 
@@ -325,8 +325,8 @@ public abstract class ChatRenderer {
      */
     /* JADX WARN: Code restructure failed: missing block: B:133:0x042e, code lost:
     
-        r35 = m834b(r31, r43, r19, r20);
-        r0 = m834b(r44, r45, r19, r20);
+        r35 = computeOutCode(r31, r43, r19, r20);
+        r0 = computeOutCode(r44, r45, r19, r20);
      */
     /* JADX WARN: Code restructure failed: missing block: B:134:0x0454, code lost:
     
@@ -608,7 +608,7 @@ public abstract class ChatRenderer {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final void m836a(Graphics graphics, long j, long j2, long j3, long j4, int i, int i2, int i3) {
+    public static final void renderMapOverlay(Graphics graphics, long j, long j2, long j3, long j4, int i, int i2, int i3) {
         boolean z;
         int i4;
         if (!MmpContact.locationEnabled && !MmpContact.hasFirstToken() && !MmpContact.hasSecondToken()) {
@@ -680,7 +680,7 @@ public abstract class ChatRenderer {
                             if (objArr[i21 - 1] != null) {
                                 int iM317a7 = (int) (AppController.m317a(((int[]) ((Object[]) objArr[i21 - 1])[0])[0], i) - (j - (i2 / 2)));
                                 int iM317a8 = (int) ((j2 + (i3 / 2)) - AppController.m317a(((int[]) ((Object[]) objArr[i21 - 1])[0])[1], i));
-                                if (m833a(iM317a, iM317a7, iM317a2, iM317a8) || i21 - 1 == 0) {
+                                if (isDistant(iM317a, iM317a7, iM317a2, iM317a8) || i21 - 1 == 0) {
                                     break;
                                 } else if (i21 > 0) {
                                     i21--;
@@ -785,13 +785,13 @@ public abstract class ChatRenderer {
                 z3 = true;
             }
             if (z3) {
-                m831a(graphics, str2, font, i2 - 40, i27, i28);
+                renderTooltip(graphics, str2, font, i2 - 40, i27, i28);
             }
             z = z3;
         }
         boolean z4 = z;
         if (str != null && !z4) {
-            m831a(graphics, str, font, i2 - 40, i18, i19);
+            renderTooltip(graphics, str, font, i2 - 40, i18, i19);
         }
         if (iM192t > 1) {
             int i33 = (int) j2;

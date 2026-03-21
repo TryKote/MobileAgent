@@ -243,7 +243,7 @@ public final class IOUtils {
                     if (AppState.getBool(90)) {
                         AppState.getVector(1244).addElement(c0028ba);
                     }
-                    TabBar.m178j();
+                    TabBar.layout();
                 }
             }
         }

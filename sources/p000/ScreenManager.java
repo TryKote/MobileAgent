@@ -19,12 +19,12 @@ public abstract class ScreenManager {
         AppState.pool[1276] = c0012al;
         AppState.pool[1277] = c0012al;
         AppState.pool[1278] = c0012al2;
-        AppState.setInt(1450, c0012al.f93c.getHeight());
-        AppState.setInt(1453, c0012al.f93c.getHeight());
-        AppState.setInt(1454, c0012al.f93c.getHeight());
-        AppState.setInt(1455, c0012al2.f93c.getHeight());
-        AppState.setInt(1451, c0012al2.f93c.getHeight());
-        AppState.setInt(1452, c0012al3.f93c.getHeight());
+        AppState.setInt(1450, c0012al.font.getHeight());
+        AppState.setInt(1453, c0012al.font.getHeight());
+        AppState.setInt(1454, c0012al.font.getHeight());
+        AppState.setInt(1455, c0012al2.font.getHeight());
+        AppState.setInt(1451, c0012al2.font.getHeight());
+        AppState.setInt(1452, c0012al3.font.getHeight());
         Vector vectorM614m = AppState.getVector(1272);
         int size = vectorM614m.size();
         while (true) {

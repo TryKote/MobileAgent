@@ -396,7 +396,7 @@ public final class MmpContact extends Contact {
         for (int i = currentRouteIndex + 1; i < iM192t; i++) {
             if (getRouteLabelsAt(i) != null) {
                 int[] iArrM193a2 = getRoutePointAt(i);
-                if (ChatRenderer.m833a(iM317a, (int) AppController.m317a(iArrM193a2[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
+                if (ChatRenderer.isDistant(iM317a, (int) AppController.m317a(iArrM193a2[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a2[1], iM586d)) || i == iM192t - 1) {
                     currentRouteIndex = i;
                     break;
                 }
@@ -423,7 +423,7 @@ public final class MmpContact extends Contact {
             }
             if (getRouteLabelsAt(i) != null) {
                 iArrM193a = getRoutePointAt(i);
-                if (ChatRenderer.m833a(iM317a, (int) AppController.m317a(iArrM193a[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a[1], iM586d)) || i == 0) {
+                if (ChatRenderer.isDistant(iM317a, (int) AppController.m317a(iArrM193a[0], iM586d), iM317a2, (int) AppController.m317a(iArrM193a[1], iM586d)) || i == 0) {
                     break;
                 }
             }

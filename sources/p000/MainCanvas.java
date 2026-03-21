@@ -12,105 +12,105 @@ import javax.microedition.lcdui.Graphics;
 public final class MainCanvas extends Canvas implements CommandListener {
 
     /* renamed from: e */
-    private Command f76e;
+    private Command okCommand;
 
     /* renamed from: f */
-    private Command f77f;
+    private Command cancelCommand;
 
     /* renamed from: h */
-    private String f79h;
+    private String okLabel;
 
     /* renamed from: i */
-    private String f80i;
+    private String cancelLabel;
 
     /* renamed from: j */
-    private boolean f81j;
+    private boolean isShown;
 
     /* renamed from: k */
-    private int f82k;
+    private int parentWidth;
 
     /* renamed from: l */
-    private int f83l;
+    private int parentHeight;
 
     /* renamed from: a */
-    public static int f86a;
+    public static int pointerDownX;
 
     /* renamed from: b */
-    public static int f87b;
+    public static int pointerDownY;
 
     /* renamed from: o */
-    private boolean f88o;
+    private boolean fullScreen;
 
     /* renamed from: c */
-    public static long f89c;
+    public static long pointerDownTime;
 
     /* renamed from: d */
-    public static boolean f90d;
+    public static boolean pointerDragged;
 
     /* renamed from: m */
-    private int f84m = getWidth();
+    private int canvasWidth = getWidth();
 
     /* renamed from: n */
-    private int f85n = getHeight();
+    private int canvasHeight = getHeight();
 
     /* renamed from: g */
-    private GraphicsContext f78g = new GraphicsContext();
+    private GraphicsContext graphicsContext = new GraphicsContext();
 
     public MainCanvas(int i, int i2) {
-        this.f82k = i;
-        this.f83l = i2;
-        m201a();
-        AppState.setDimensions(m200d(), m199c());
+        this.parentWidth = i;
+        this.parentHeight = i2;
+        updateFullScreenMode();
+        AppState.setDimensions(getEffectiveWidth(), getEffectiveHeight());
         AppState.setScreen(this);
     }
 
     /* renamed from: c */
-    private int m199c() {
-        return this.f88o ? this.f83l : this.f85n;
+    private int getEffectiveHeight() {
+        return this.fullScreen ? this.parentHeight : this.canvasHeight;
     }
 
     /* renamed from: d */
-    private int m200d() {
-        return this.f88o ? this.f82k : this.f84m;
+    private int getEffectiveWidth() {
+        return this.fullScreen ? this.parentWidth : this.canvasWidth;
     }
 
     public final void hideNotify() {
-        this.f81j = false;
+        this.isShown = false;
         IOUtils.m776j();
         AppController.f147a[0] = 0;
     }
 
     public final void showNotify() {
-        this.f81j = true;
+        this.isShown = true;
         IOUtils.m776j();
         AppController.m304a(0, AppController.m376E());
     }
 
     public final boolean isShown() {
-        return this.f81j && super/*javax.microedition.lcdui.Displayable*/.isShown();
+        return this.isShown && super/*javax.microedition.lcdui.Displayable*/.isShown();
     }
 
     /* renamed from: a */
-    public final void m201a() {
+    public final void updateFullScreenMode() {
         boolean zM587e = AppState.getBool(71);
         if (zM587e) {
-            if (this.f76e != null) {
-                removeCommand(this.f76e);
-                this.f76e = null;
+            if (this.okCommand != null) {
+                removeCommand(this.okCommand);
+                this.okCommand = null;
             }
-            if (this.f77f != null) {
-                removeCommand(this.f77f);
-                this.f77f = null;
+            if (this.cancelCommand != null) {
+                removeCommand(this.cancelCommand);
+                this.cancelCommand = null;
             }
         }
         setFullScreenMode(zM587e);
-        this.f88o = zM587e;
-        AppState.setDimensions(m200d(), m199c());
+        this.fullScreen = zM587e;
+        AppState.setDimensions(getEffectiveWidth(), getEffectiveHeight());
     }
 
     public final void paint(Graphics graphics) {
-        GraphicsContext c0012al = this.f78g;
-        c0012al.f92b = graphics;
+        GraphicsContext c0012al = this.graphicsContext;
+        c0012al.graphics = graphics;
         try {
             synchronized (AppController.f150d) {
                 if (!AppController.f151e) {
@@ -127,9 +127,9 @@ public final class MainCanvas extends Canvas implements CommandListener {
                         } while (((Screen) vectorM614m.elementAt(i)).f99f != 0);
                         int iM586d = AppState.getInt(1528);
                         int iM586d2 = AppState.getInt(1529);
-                        c0012al.m208a(0, 0, iM586d, iM586d2);
-                        c0012al.m207b(14);
-                        c0012al.m210c(0, 0, iM586d, iM586d2);
+                        c0012al.setClip(0, 0, iM586d, iM586d2);
+                        c0012al.setColorFromPalette(14);
+                        c0012al.fillRect(0, 0, iM586d, iM586d2);
                         while (i < size) {
                             boolean z = i == size - 1;
                             boolean z2 = z;
@@ -145,7 +145,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                                         iArr[i2] = 2030043135;
                                     }
                                 }
-                                Graphics graphics2 = c0012al.f92b;
+                                Graphics graphics2 = c0012al.graphics;
                                 int iM605e = AppState.getHeight();
                                 while (true) {
                                     iM605e--;
@@ -157,19 +157,19 @@ public final class MainCanvas extends Canvas implements CommandListener {
                                 }
                             }
                             ((Screen) vectorM614m.elementAt(i)).m227a(c0012al, z2, false);
-                            c0012al.m208a(0, 0, iM586d, iM586d2);
+                            c0012al.setClip(0, 0, iM586d, iM586d2);
                             i++;
                         }
                     }
                     if (ScreenManager.m77h()) {
-                        c0012al.m208a(0, 0, 2048, 2048);
+                        c0012al.setClip(0, 0, 2048, 2048);
                         int iM586d4 = AppState.getInt(1528) - 17;
                         if (AppController.m413P() != 0) {
-                            c0012al.m216a(16384, iM586d4, 1);
+                            c0012al.drawIcon(16384, iM586d4, 1);
                             iM586d4 -= 17;
                         }
                         if (AppController.m410N()) {
-                            c0012al.m216a(16385, iM586d4, 1);
+                            c0012al.drawIcon(16385, iM586d4, 1);
                         }
                     }
                     XmppContactGroup.m1022f();
@@ -181,12 +181,12 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void keyPressed(int i) {
-        m203a(i, 0);
+        handleKeyInput(i, 0);
     }
 
     public final void keyRepeated(int i) {
         if (AppState.getVector(1266).size() < 3) {
-            m203a(i, 1);
+            handleKeyInput(i, 1);
         }
     }
 
@@ -196,7 +196,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     /* renamed from: a */
-    private final String m202a(int i) {
+    private final String getKeyNameUpper(int i) {
         try {
             return getKeyName(i).toUpperCase();
         } catch (Throwable unused) {
@@ -205,7 +205,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     /* renamed from: a */
-    private final void m203a(int i, int i2) {
+    private final void handleKeyInput(int i, int i2) {
         AppController.m357z();
         AppController.m304a(0, AppController.m376E());
         AppController.m304a(3, 10000L);
@@ -239,7 +239,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         if (i2 == 0) {
             try {
                 if (AppState.getBool(71)) {
-                    String strM202a = m202a(i);
+                    String strM202a = getKeyNameUpper(i);
                     if (i == -6 || strM202a.indexOf("SEND") >= 0 || strM202a.indexOf("SOFT1") >= 0 || strM202a.equals("SOFTKEY 1")) {
                         IOUtils.m773g();
                         return;
@@ -260,23 +260,23 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void pointerPressed(int i, int i2) {
-        f86a = i;
-        f87b = i2;
+        pointerDownX = i;
+        pointerDownY = i2;
         AppController.m304a(3, 10000L);
         AppController.m304a(0, AppController.m376E());
         Vector vectorM614m = AppState.getVector(1266);
         synchronized (vectorM614m) {
             vectorM614m.addElement(new int[]{5, i, i2});
         }
-        f89c = System.currentTimeMillis();
-        f90d = false;
+        pointerDownTime = System.currentTimeMillis();
+        pointerDragged = false;
         AppController.m357z();
     }
 
     public final void pointerDragged(int i, int i2) {
-        if (Utils.abs(i - f86a) > 5 || Utils.abs(i2 - f87b) > 5) {
-            int i3 = f86a;
-            int i4 = f87b;
+        if (Utils.abs(i - pointerDownX) > 5 || Utils.abs(i2 - pointerDownY) > 5) {
+            int i3 = pointerDownX;
+            int i4 = pointerDownY;
             Vector vectorM614m = AppState.getVector(1266);
             synchronized (vectorM614m) {
                 int iM541c = Utils.m541c(vectorM614m);
@@ -297,14 +297,14 @@ public final class MainCanvas extends Canvas implements CommandListener {
                 }
                 vectorM614m.addElement(new int[]{6, i, i2, i3, i4});
             }
-            f90d = true;
+            pointerDragged = true;
         }
     }
 
     public final void pointerReleased(int i, int i2) {
-        int i3 = f86a;
-        int i4 = f87b;
-        boolean z = f90d;
+        int i3 = pointerDownX;
+        int i4 = pointerDownY;
+        boolean z = pointerDragged;
         Vector vectorM614m = AppState.getVector(1266);
         synchronized (vectorM614m) {
             int[] iArr = new int[6];
@@ -316,52 +316,52 @@ public final class MainCanvas extends Canvas implements CommandListener {
             iArr[5] = z ? 1 : 0;
             vectorM614m.addElement(iArr);
         }
-        f89c = 0L;
+        pointerDownTime = 0L;
     }
 
     public final void commandAction(Command command, Displayable displayable) {
         AppController.m304a(3, 10000L);
         if (command != null) {
-            if (command == this.f76e) {
+            if (command == this.okCommand) {
                 IOUtils.m773g();
-            } else if (command == this.f77f) {
+            } else if (command == this.cancelCommand) {
                 IOUtils.m774h();
             }
         }
     }
 
     /* renamed from: b */
-    public final MainCanvas m204b() {
-        String str = this.f79h;
-        this.f79h = null;
-        String str2 = this.f80i;
-        this.f80i = null;
-        m205a(str, str2);
+    public final MainCanvas updateCommands() {
+        String str = this.okLabel;
+        this.okLabel = null;
+        String str2 = this.cancelLabel;
+        this.cancelLabel = null;
+        setCommands(str, str2);
         return this;
     }
 
     /* renamed from: a */
-    public final void m205a(String str, String str2) {
-        if (this.f79h == str && this.f80i == str2) {
+    public final void setCommands(String str, String str2) {
+        if (this.okLabel == str && this.cancelLabel == str2) {
             return;
         }
-        this.f79h = str;
-        this.f80i = str2;
-        if (this.f76e != null) {
-            removeCommand(this.f76e);
+        this.okLabel = str;
+        this.cancelLabel = str2;
+        if (this.okCommand != null) {
+            removeCommand(this.okCommand);
         }
-        if (this.f77f != null) {
-            removeCommand(this.f77f);
+        if (this.cancelCommand != null) {
+            removeCommand(this.cancelCommand);
         }
         boolean zM587e = AppState.getBool(65);
         if (str != null) {
             Command command = new Command(str, zM587e ? 3 : 4, 1);
-            this.f76e = command;
+            this.okCommand = command;
             addCommand(command);
         }
         if (str2 != null) {
             Command command2 = new Command(str2, zM587e ? 4 : 3, 1);
-            this.f77f = command2;
+            this.cancelCommand = command2;
             addCommand(command2);
         }
         setCommandListener(this);

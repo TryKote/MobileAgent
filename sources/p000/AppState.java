@@ -527,7 +527,7 @@ public abstract class AppState {
 
     /* renamed from: m */
     public static final Font getFont() {
-        return ((GraphicsContext) pool[1273]).f93c;
+        return ((GraphicsContext) pool[1273]).font;
     }
 
     /* renamed from: a */

@@ -546,9 +546,9 @@ public final class ConnectionThread {
         f357m = c0013amM75b;
         m1160d(c0013amM75b);
         ScreenManager.m70a(c0013amM75b);
-        TabBar.m171g();
-        TabBar.m176a(6, (Account) null);
-        TabBar.f44a = AppState.getBool(1414);
+        TabBar.ensureSearchTab();
+        TabBar.findTab(6, (Account) null);
+        TabBar.scrollEnabled = AppState.getBool(1414);
         if (AppState.getBool(281)) {
             return;
         }
@@ -611,7 +611,7 @@ public final class ConnectionThread {
             }
             i2 ^= 2;
         }
-        new GraphicsContext(graphics).m216a(312, 56, 56);
+        new GraphicsContext(graphics).drawIcon(312, 56, 56);
         AppState.pool[1393] = imageCreateImage;
         AppState.pool[1397] = NetworkUtils.newVector();
         new AsyncTask(8);
@@ -682,7 +682,7 @@ public final class ConnectionThread {
         if (!z2) {
             AppState.setInt(1479, 0);
         }
-        TabBar.f44a = z2;
+        TabBar.scrollEnabled = z2;
     }
 
     /* renamed from: a */

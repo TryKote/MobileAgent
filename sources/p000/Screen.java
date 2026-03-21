@@ -294,25 +294,25 @@ public final class Screen {
             int i3 = this.f95b;
             int i4 = this.f96c;
             int i5 = z ? 1 : 2;
-            Graphics graphics = c0012al.f92b;
-            c0012al.m207b(i5);
+            Graphics graphics = c0012al.graphics;
+            c0012al.setColorFromPalette(i5);
             graphics.fillRect(i, i2, i3, i4);
-            c0012al.m207b(16);
+            c0012al.setColorFromPalette(16);
             graphics.drawRect(i, i2, i3 - 1, i4 - 1);
             if (this.f101C != null) {
                 int i6 = this.f98e + 1;
                 int i7 = this.f99f + 1;
-                c0012al.m208a(i6, i7, this.f111E, this.f112F);
+                c0012al.setClip(i6, i7, this.f111E, this.f112F);
                 int iM586d = AppState.getInt(72);
                 int iM586d2 = AppState.getInt(5042 + iM586d);
                 if (iM586d2 != AppState.getInt(iM586d + 5082)) {
                     for (int i8 = 1; i8 < this.f112F; i8++) {
-                        c0012al.m206a(((255 - ((i8 * (255 - (iM586d2 >> 16))) / this.f112F)) << 16) | ((255 - ((i8 * (255 - ((iM586d2 >> 8) & 255))) / this.f112F)) << 8) | (255 - ((i8 * (255 - (iM586d2 & 255))) / this.f112F)));
-                        c0012al.m211d(i6, i7 + i8, this.f111E, 0);
+                        c0012al.setColor(((255 - ((i8 * (255 - (iM586d2 >> 16))) / this.f112F)) << 16) | ((255 - ((i8 * (255 - ((iM586d2 >> 8) & 255))) / this.f112F)) << 8) | (255 - ((i8 * (255 - (iM586d2 & 255))) / this.f112F)));
+                        c0012al.drawRect(i6, i7 + i8, this.f111E, 0);
                     }
                 } else {
-                    c0012al.m206a(iM586d2);
-                    c0012al.m210c(i6, i7, this.f111E, this.f112F);
+                    c0012al.setColor(iM586d2);
+                    c0012al.fillRect(i6, i7, this.f111E, this.f112F);
                 }
                 this.f101C.m913a(c0012al, i6, i7, 0);
             }
@@ -332,18 +332,18 @@ public final class Screen {
                 if (iM241d + iM912h >= i12) {
                     int iM240c = m240c(i13);
                     int iM911g = c0032cM239b.m911g();
-                    c0012al.m208a(i9, i10, i11, this.f115r);
+                    c0012al.setClip(i9, i10, i11, this.f115r);
                     int i14 = i9 + iM240c;
                     int i15 = (i10 + iM241d) - i12;
                     int i16 = this.f102h == 0 ? i11 : iM911g;
                     int i17 = c0032cM239b.f258a;
                     if (this.f103i && i13 == this.f106k && i17 != 11) {
-                        c0012al.m207b(13);
-                        c0012al.m210c(i14, i15, i16, iM912h);
+                        c0012al.setColorFromPalette(13);
+                        c0012al.fillRect(i14, i15, i16, iM912h);
                     }
                     if (i17 == 13 && c0032cM239b.f267f) {
-                        c0012al.m207b(13);
-                        c0012al.m210c(i14, i15, i16, iM912h);
+                        c0012al.setColorFromPalette(13);
+                        c0012al.fillRect(i14, i15, i16, iM912h);
                     }
                     if (z4) {
                         int i18 = iM912h;
@@ -351,7 +351,7 @@ public final class Screen {
                         int i20 = i15;
                         int i21 = i14;
                         int i22 = i21 + i19;
-                        Graphics graphics2 = c0012al.f92b;
+                        Graphics graphics2 = c0012al.graphics;
                         int clipX = graphics2.getClipX();
                         if (i22 >= clipX) {
                             int i23 = i20 + i18;
@@ -400,16 +400,16 @@ public final class Screen {
             if (this.f104D) {
                 int i26 = this.f98e + this.f116G;
                 int i27 = this.f99f + this.f117H;
-                c0012al.m208a(i26, i27, 7, this.f118I + 4);
-                c0012al.m207b(16);
-                c0012al.m210c(i26 + 1, i27 + (this.f107l == 0 ? 0 : Utils.min(((this.f118I - 4) * this.f105j) / this.f107l, (this.f118I - 4) - this.f119J)), 1, this.f119J + 2);
-                c0012al.m211d(i26, i27 - 1, 2, this.f118I + 1);
+                c0012al.setClip(i26, i27, 7, this.f118I + 4);
+                c0012al.setColorFromPalette(16);
+                c0012al.fillRect(i26 + 1, i27 + (this.f107l == 0 ? 0 : Utils.min(((this.f118I - 4) * this.f105j) / this.f107l, (this.f118I - 4) - this.f119J)), 1, this.f119J + 2);
+                c0012al.drawRect(i26, i27 - 1, 2, this.f118I + 1);
             }
             if (this.f110o != null) {
                 int iM502a = Utils.max(AppState.getInt(1450), 16);
                 int iM605e = AppState.getHeight() - 1;
                 int iM586d3 = AppState.getInt(1528);
-                c0012al.m208a(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).m207b(16).m210c(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).m207b(17).m210c(1, (iM605e - iM502a) - 2, iM586d3 - 2, iM502a + 2).m207b(0).m212a(AppState.getGfxContext(0));
+                c0012al.setClip(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).setColorFromPalette(16).fillRect(0, (iM605e - iM502a) - 3, iM586d3, iM502a + 4).setColorFromPalette(17).fillRect(1, (iM605e - iM502a) - 2, iM586d3 - 2, iM502a + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(0));
                 Vector vector = this.f110o;
                 int i28 = 3;
                 boolean z5 = false;
@@ -418,13 +418,13 @@ public final class Screen {
                     Object objElementAt = vector.elementAt(i29);
                     if (!(objElementAt instanceof Integer)) {
                         z5 = true;
-                        c0012al.m213a((String) objElementAt, i28, (iM605e - iM502a) - 1, 20);
+                        c0012al.drawString((String) objElementAt, i28, (iM605e - iM502a) - 1, 20);
                         i28 = iM586d3;
                     } else if (z5) {
                         i28 -= 18;
-                        c0012al.m216a(((Integer) objElementAt).intValue(), i28, iM73f);
+                        c0012al.drawIcon(((Integer) objElementAt).intValue(), i28, iM73f);
                     } else {
-                        c0012al.m216a(((Integer) objElementAt).intValue(), 3, iM73f);
+                        c0012al.drawIcon(((Integer) objElementAt).intValue(), 3, iM73f);
                         i28 += 18;
                     }
                 }
@@ -432,23 +432,23 @@ public final class Screen {
             if (z && AppState.getBool(71)) {
                 int iM586d4 = AppState.getInt(1528);
                 int iM605e2 = AppState.getHeight();
-                c0012al.m208a(0, 0, iM586d4, 2048 + iM605e2);
-                c0012al.m212a(AppState.getGfxContext(0));
-                c0012al.m207b(15);
+                c0012al.setClip(0, 0, iM586d4, 2048 + iM605e2);
+                c0012al.setFont(AppState.getGfxContext(0));
+                c0012al.setColorFromPalette(15);
                 if (this.f123v != null) {
-                    c0012al.m213a(this.f123v, 1, iM605e2, 20);
+                    c0012al.drawString(this.f123v, 1, iM605e2, 20);
                 }
                 if (this.f124w != null) {
-                    c0012al.m213a(this.f124w, iM586d4 - 1, iM605e2, 24);
+                    c0012al.drawString(this.f124w, iM586d4 - 1, iM605e2, 24);
                 }
                 if (ResourceManager.f287f + this.f126K < iM586d4 - 6) {
-                    c0012al.m213a(Utils.defaultStr(AppState.getString(1263)), iM586d4 >> 1, iM605e2, 17);
+                    c0012al.drawString(Utils.defaultStr(AppState.getString(1263)), iM586d4 >> 1, iM605e2, 17);
                 }
             }
         }
         if (this.f97d == 1 || this.f97d == 12) {
-            c0012al.m212a(AppState.getGfxContext(1));
-            TabBar c0008ah = (TabBar) AppState.getVector(1246).elementAt(TabBar.f45b);
+            c0012al.setFont(AppState.getGfxContext(1));
+            TabBar c0008ah = (TabBar) AppState.getVector(1246).elementAt(TabBar.currentIndex);
             Vector vectorM614m = AppState.getVector(1245);
             int size2 = vectorM614m.size();
             while (true) {
@@ -459,42 +459,42 @@ public final class Screen {
                 Object objElementAt2 = vectorM614m.elementAt(size2);
                 if (objElementAt2 instanceof TabBar) {
                     TabBar c0008ah2 = (TabBar) objElementAt2;
-                    boolean z6 = objElementAt2 == c0008ah && !TabBar.f44a;
-                    GraphicsContext c0012alM207b = c0012al.m207b(16);
-                    int i30 = c0008ah2.f49f;
-                    int i31 = c0008ah2.f48e;
+                    boolean z6 = objElementAt2 == c0008ah && !TabBar.scrollEnabled;
+                    GraphicsContext c0012alM207b = c0012al.setColorFromPalette(16);
+                    int i30 = c0008ah2.xOffset;
+                    int i31 = c0008ah2.width;
                     int iM623o = AppState.getIntOffset(1) + 7;
-                    c0012alM207b.m208a(i30, 2, i31, iM623o - 2).m209b(c0008ah2.f49f, iM623o, c0008ah2.f49f, 6).m209b(c0008ah2.f49f, 6, c0008ah2.f49f + 4, 2).m209b(c0008ah2.f49f + 4, 2, (c0008ah2.f49f + c0008ah2.f48e) - 2, 2).m209b((c0008ah2.f49f + c0008ah2.f48e) - 2, 2, (c0008ah2.f49f + c0008ah2.f48e) - 2, iM623o).m207b(z6 ? 1 : 17);
+                    c0012alM207b.setClip(i30, 2, i31, iM623o - 2).drawLine(c0008ah2.xOffset, iM623o, c0008ah2.xOffset, 6).drawLine(c0008ah2.xOffset, 6, c0008ah2.xOffset + 4, 2).drawLine(c0008ah2.xOffset + 4, 2, (c0008ah2.xOffset + c0008ah2.width) - 2, 2).drawLine((c0008ah2.xOffset + c0008ah2.width) - 2, 2, (c0008ah2.xOffset + c0008ah2.width) - 2, iM623o).setColorFromPalette(z6 ? 1 : 17);
                     int i32 = z6 ? iM623o : iM623o - 1;
                     int i33 = 3;
                     while (i33 < i32) {
-                        c0012al.m209b(c0008ah2.f49f + 1 + (i33 < 6 ? 6 - i33 : 0), i33, (c0008ah2.f49f + c0008ah2.f48e) - 3, i33);
+                        c0012al.drawLine(c0008ah2.xOffset + 1 + (i33 < 6 ? 6 - i33 : 0), i33, (c0008ah2.xOffset + c0008ah2.width) - 3, i33);
                         i33++;
                     }
-                    if (c0008ah2.f51h == null) {
-                        int i34 = c0008ah2.f47d;
+                    if (c0008ah2.account == null) {
+                        int i34 = c0008ah2.iconId;
                         iM417c = (i34 == 240 && AppController.m410N()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(1243).size() <= 0) ? i34 : 16384;
                     } else {
-                        iM417c = AppController.m417c(c0008ah2.f51h);
+                        iM417c = AppController.m417c(c0008ah2.account);
                     }
-                    c0012al.m216a(iM417c, c0008ah2.f49f + 4, 4 + ScreenManager.m73f()).m207b(0).m208a(c0008ah2.f49f, 2, c0008ah2.f48e - 3, iM623o - 2).m213a(c0008ah2.f46c, c0008ah2.f49f + 6 + 16, 4, 20);
+                    c0012al.drawIcon(iM417c, c0008ah2.xOffset + 4, 4 + ScreenManager.m73f()).setColorFromPalette(0).setClip(c0008ah2.xOffset, 2, c0008ah2.width - 3, iM623o - 2).drawString(c0008ah2.title, c0008ah2.xOffset + 6 + 16, 4, 20);
                 } else {
                     int[] iArr = (int[]) objElementAt2;
                     int i35 = iArr[0];
                     int iM73f2 = 4 + ScreenManager.m73f();
-                    c0012al.m208a(i35, iM73f2, 16, 16);
-                    c0012al.m216a(iArr[1], i35, iM73f2);
+                    c0012al.setClip(i35, iM73f2, 16, 16);
+                    c0012al.drawIcon(iArr[1], i35, iM73f2);
                 }
             }
         }
         if (this.f94a == 6) {
             int i36 = this.f98e + 2;
             int i37 = this.f99f + this.f113p;
-            c0012al.m208a(i36, i37, this.f95b, this.f115r);
+            c0012al.setClip(i36, i37, this.f95b, this.f115r);
             try {
                 int iM586d5 = AppState.getInt(1415);
                 int iM586d6 = AppState.getInt(1416);
-                Graphics graphics3 = c0012al.f92b;
+                Graphics graphics3 = c0012al.graphics;
                 graphics3.drawImage(AppState.getImage(1364), iM586d5 >> 1, i37 + (iM586d6 >> 1), 3);
                 if (!AppState.getBool(1414) && AppState.getBool(1535)) {
                     int[] iArr2 = new int[iM586d5];
@@ -524,20 +524,20 @@ public final class Screen {
         if (this.f94a != 4) {
             return;
         }
-        c0012al.m208a(this.f98e + 2, this.f99f + this.f113p, this.f95b, this.f115r);
+        c0012al.setClip(this.f98e + 2, this.f99f + this.f113p, this.f95b, this.f115r);
         int iM586d7 = AppState.getInt(1408);
         if (iM586d7 <= 0) {
             return;
         }
-        c0012al.m212a(AppState.getGfxContext(0));
+        c0012al.setFont(AppState.getGfxContext(0));
         int iM605e3 = AppState.getHeight() - 1;
         int iM586d8 = AppState.getInt(1528);
-        c0012al.m208a(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
-        c0012al.m207b(16);
-        c0012al.m210c(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
-        c0012al.m208a(1, iM605e3 - iM586d7, iM586d8 - 2, iM586d7);
-        c0012al.m207b(1);
-        c0012al.m210c(0, 0, 2048, 2048);
+        c0012al.setClip(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
+        c0012al.setColorFromPalette(16);
+        c0012al.fillRect(0, (iM605e3 - iM586d7) - 1, iM586d8, iM586d7 + 1);
+        c0012al.setClip(1, iM605e3 - iM586d7, iM586d8 - 2, iM586d7);
+        c0012al.setColorFromPalette(1);
+        c0012al.fillRect(0, 0, 2048, 2048);
         int iM502a2 = Utils.max(AppState.getInt(1450), 16);
         Vector vectorM614m2 = AppState.getVector(1247);
         int size3 = vectorM614m2.size();
@@ -550,12 +550,12 @@ public final class Screen {
             int i39 = iM605e3;
             int iM586d9 = AppState.getInt(1450);
             int iM502a3 = Utils.max(iM586d9, 16);
-            c0012al.m207b(13);
+            c0012al.setColorFromPalette(13);
             int i40 = i39 - iM586d9;
-            c0012al.m210c(1, i40, ((AppState.getInt(1528) - 2) * abstractC0037h.msgCount) / 100, iM502a3);
-            c0012al.m216a(abstractC0037h.getIconId(), 3, i40 + ScreenManager.m73f());
-            c0012al.m207b(0);
-            c0012al.m213a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(abstractC0037h.login).append(' ').append(abstractC0037h.msgCount).append('%')), 21, i39, 36);
+            c0012al.fillRect(1, i40, ((AppState.getInt(1528) - 2) * abstractC0037h.msgCount) / 100, iM502a3);
+            c0012al.drawIcon(abstractC0037h.getIconId(), 3, i40 + ScreenManager.m73f());
+            c0012al.setColorFromPalette(0);
+            c0012al.drawString(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(abstractC0037h.login).append(' ').append(abstractC0037h.msgCount).append('%')), 21, i39, 36);
             iM605e3 -= iM502a2;
         }
     }
@@ -1257,9 +1257,9 @@ public final class Screen {
     public final Screen m259a(String str, String str2, int i, int i2, int i3) {
         GraphicsContext c0012alM608k = AppState.getGfxContext(0);
         this.f123v = str;
-        int iM214a = c0012alM608k.m214a(str);
+        int iM214a = c0012alM608k.stringWidth(str);
         this.f124w = str2;
-        this.f126K = Utils.max(iM214a, c0012alM608k.m214a(str2)) << 1;
+        this.f126K = Utils.max(iM214a, c0012alM608k.stringWidth(str2)) << 1;
         this.f120s = i;
         this.f121t = i2;
         this.f122u = i3;

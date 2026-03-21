@@ -131,8 +131,8 @@ public final class MenuItem {
     public static final MenuItem m893a(GraphicsContext c0012al) {
         MenuItem c0032c = new MenuItem(11, AppState.emptyStr);
         c0032c.f265d = c0012al;
-        c0032c.f261g = c0012al.f91a.getWidth();
-        c0032c.f262h = c0012al.f91a.getHeight() + 5;
+        c0032c.f261g = c0012al.image.getWidth();
+        c0032c.f262h = c0012al.image.getHeight() + 5;
         return c0032c;
     }
 
@@ -189,7 +189,7 @@ public final class MenuItem {
 
     /* renamed from: c */
     private static Object m897c(int i) {
-        return new int[]{GraphicsContext.m217c(i), 16, i};
+        return new int[]{GraphicsContext.getIconSize(i), 16, i};
     }
 
     /* renamed from: b */
@@ -259,7 +259,7 @@ public final class MenuItem {
 
     /* renamed from: a */
     private final void m906a(Vector vector, String str, GraphicsContext c0012al, int i, int i2, int i3, int i4, int i5) {
-        int iM215a = c0012al.m215a(str, i2, i3);
+        int iM215a = c0012al.substringWidth(str, i2, i3);
         if (iM215a < (AppState.getInt(1528) << 2) / 5) {
             vector.addElement(new Object[]{str, new int[]{iM215a, i, i2, i3, i4, i5}});
             return;
@@ -379,7 +379,7 @@ public final class MenuItem {
                 }
             } else {
                 int length = str.length();
-                vector.addElement(new Object[]{str, new int[]{AppState.getGfxContext(i3).m215a(str, 0, length), AppState.getIntOffset(i3), 0, length, i3, i4}});
+                vector.addElement(new Object[]{str, new int[]{AppState.getGfxContext(i3).substringWidth(str, 0, length), AppState.getIntOffset(i3), 0, length, i3, i4}});
             }
         }
         return vector;
@@ -465,7 +465,7 @@ public final class MenuItem {
     /* renamed from: a */
     public final void m913a(GraphicsContext c0012al, int i, int i2, int i3) {
         if (this.f258a == 11) {
-            c0012al.f92b.drawImage(((GraphicsContext) this.f265d).f91a, i, i2, 20);
+            c0012al.graphics.drawImage(((GraphicsContext) this.f265d).image, i, i2, 20);
             return;
         }
         Vector vector = this.f263i;
@@ -485,25 +485,25 @@ public final class MenuItem {
                     int[] iArr = (int[]) objElementAt;
                     if (iArr.length == 3) {
                         int i8 = iArr[2];
-                        c0012al.m216a(i8, i8 != 244 ? i7 : (i4 + i3) - 13, i6 + ScreenManager.m73f());
+                        c0012al.drawIcon(i8, i8 != 244 ? i7 : (i4 + i3) - 13, i6 + ScreenManager.m73f());
                     } else if (iArr.length == 2) {
-                        c0012al.m207b(18).m211d(i7, i6, i3 - i7, iArr[1]);
+                        c0012al.setColorFromPalette(18).drawRect(i7, i6, i3 - i7, iArr[1]);
                     }
                 } else {
                     String str = (String) ((Object[]) objElementAt)[0];
                     int[] iArr2 = (int[]) ((Object[]) objElementAt)[1];
                     int i9 = iArr2[4];
                     GraphicsContext c0012alM608k = AppState.getGfxContext(i9);
-                    GraphicsContext c0012alM207b = c0012al.m212a(c0012alM608k).m207b(iArr2[5]);
+                    GraphicsContext c0012alM207b = c0012al.setFont(c0012alM608k).setColorFromPalette(iArr2[5]);
                     int i10 = iArr2[2];
                     int i11 = iArr2[3];
                     if (i6 > 0 && i6 < AppState.getInt(1529)) {
-                        c0012alM207b.f92b.drawSubstring(str, i10, i11, i7, i6, 20);
+                        c0012alM207b.graphics.drawSubstring(str, i10, i11, i7, i6, 20);
                     }
                     if (i9 == 3) {
-                        c0012al.m211d(i7, i6 + (AppState.getInt(1450) >> 1), c0012alM608k.m215a(str, iArr2[2], iArr2[3]), 0);
+                        c0012al.drawRect(i7, i6 + (AppState.getInt(1450) >> 1), c0012alM608k.substringWidth(str, iArr2[2], iArr2[3]), 0);
                     } else if (i9 == 5) {
-                        c0012al.m211d(i7, i6 + AppState.getInt(1450), c0012alM608k.m215a(str, iArr2[2], iArr2[3]), 0);
+                        c0012al.drawRect(i7, i6 + AppState.getInt(1450), c0012alM608k.substringWidth(str, iArr2[2], iArr2[3]), 0);
                     }
                 }
             }

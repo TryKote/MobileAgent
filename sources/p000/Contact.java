@@ -155,9 +155,9 @@ public abstract class Contact implements Sortable {
             } else {
                 c0008ah = (TabBar) vectorM614m.elementAt(size);
             }
-        } while (c0008ah.f51h != abstractC0037h);
-        c0008ah.f52i = str2;
-        c0008ah.f53j = 0;
+        } while (c0008ah.account != abstractC0037h);
+        c0008ah.selectedTitle = str2;
+        c0008ah.selectedIndex = 0;
     }
 
     /* renamed from: b */

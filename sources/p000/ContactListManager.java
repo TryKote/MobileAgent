@@ -10,12 +10,12 @@ public abstract class ContactListManager {
         AppState.clearIndex(1281);
         AppState.clearIndex(1365);
         AppState.setInt(1476, 4);
-        TabBar.m176a(4, TabBar.f54k);
+        TabBar.findTab(4, TabBar.currentAccount);
         Screen c0013amM161g = m161g();
-        TabBar c0008ahM175i = TabBar.m175i();
-        Screen c0013amM257b = c0013amM161g.m257b(c0008ahM175i.f52i);
+        TabBar c0008ahM175i = TabBar.getCurrentTab();
+        Screen c0013amM257b = c0013amM161g.m257b(c0008ahM175i.selectedTitle);
         ScreenManager.m70a(c0013amM257b);
-        c0013amM257b.f105j = c0008ahM175i.f53j;
+        c0013amM257b.f105j = c0008ahM175i.selectedIndex;
         c0013amM257b.m235n();
     }
 
@@ -29,10 +29,10 @@ public abstract class ContactListManager {
 
     /* renamed from: f */
     private static final void m154f() {
-        TabBar c0008ahM175i = TabBar.m175i();
+        TabBar c0008ahM175i = TabBar.getCurrentTab();
         Screen c0013amM66b = ScreenManager.m66b();
-        c0008ahM175i.f53j = c0013amM66b.f105j;
-        c0008ahM175i.f52i = c0013amM66b.m220b();
+        c0008ahM175i.selectedIndex = c0013amM66b.f105j;
+        c0008ahM175i.selectedTitle = c0013amM66b.m220b();
     }
 
     /* renamed from: c */
@@ -45,12 +45,12 @@ public abstract class ContactListManager {
     /* renamed from: d */
     public static final void m156d() {
         m155c();
-        TabBar c0008ahM175i = TabBar.m175i();
-        Screen c0013amM257b = m161g().m257b(c0008ahM175i.f52i);
+        TabBar c0008ahM175i = TabBar.getCurrentTab();
+        Screen c0013amM257b = m161g().m257b(c0008ahM175i.selectedTitle);
         ScreenManager.m70a(c0013amM257b);
-        c0013amM257b.f105j = c0008ahM175i.f53j;
+        c0013amM257b.f105j = c0008ahM175i.selectedIndex;
         c0013amM257b.m235n();
-        TabBar.m176a(4, TabBar.f54k);
+        TabBar.findTab(4, TabBar.currentAccount);
         AppController.f153g = true;
     }
 
@@ -132,7 +132,7 @@ public abstract class ContactListManager {
             int iMo108h = abstractC0037h.getIconId();
             String str = abstractC0037h2.shortName;
             if (!AppState.getBool(243)) {
-                TabBar.m164a(iMo108h, str);
+                TabBar.updateTitle(iMo108h, str);
             }
             if (vector != null) {
                 boolean z = false;
@@ -209,7 +209,7 @@ public abstract class ContactListManager {
         int i = c0013amM75b.f114q - 1;
         if (!AppState.getBool(99)) {
             boolean z = !AppState.getBool(98);
-            Account abstractC0037h = TabBar.f54k;
+            Account abstractC0037h = TabBar.currentAccount;
             Vector vectorM445W = abstractC0037h == null ? AppController.m445W() : abstractC0037h.getAllContacts();
             Vector vector = vectorM445W;
             int iM353a = AppController.m353a(vectorM445W);
@@ -225,7 +225,7 @@ public abstract class ContactListManager {
             boolean zM587e = AppState.getBool(101);
             boolean z2 = !AppState.getBool(98);
             Vector vectorM1213g = NetworkUtils.newVector();
-            Vector vectorM446d = AppController.m446d(TabBar.f54k);
+            Vector vectorM446d = AppController.m446d(TabBar.currentAccount);
             int size = vectorM446d.size();
             while (true) {
                 size--;
@@ -299,7 +299,7 @@ public abstract class ContactListManager {
                     break;
                 }
                 Account abstractC0037hM434I = AppController.m434I(iM433Q);
-                Account abstractC0037h2 = TabBar.f54k;
+                Account abstractC0037h2 = TabBar.currentAccount;
                 if (abstractC0037h2 == null || abstractC0037h2 == abstractC0037hM434I) {
                     Vector vectorMo720O = abstractC0037hM434I.getPendingContacts();
                     int size4 = vectorMo720O.size();
@@ -413,7 +413,7 @@ public abstract class ContactListManager {
             }
         } else {
             int i14 = i / iM586d;
-            Vector vectorM446d2 = AppController.m446d(TabBar.f54k);
+            Vector vectorM446d2 = AppController.m446d(TabBar.currentAccount);
             int iM353a8 = AppController.m353a(vectorM446d2);
             boolean zM587e2 = AppState.getBool(101);
             boolean z4 = !AppState.getBool(98);
@@ -448,7 +448,7 @@ public abstract class ContactListManager {
                     break;
                 }
                 Account abstractC0037hM434I2 = AppController.m434I(i17);
-                Account abstractC0037h3 = TabBar.f54k;
+                Account abstractC0037h3 = TabBar.currentAccount;
                 if (abstractC0037h3 == null || abstractC0037h3 == abstractC0037hM434I2) {
                     ContactGroup abstractC0046q4 = abstractC0037hM434I2.specialGroup;
                     Vector vectorMo720O2 = abstractC0037hM434I2.getPendingContacts();
@@ -472,7 +472,7 @@ public abstract class ContactListManager {
                     break;
                 }
                 Account abstractC0037hM434I3 = AppController.m434I(i19);
-                Account abstractC0037h4 = TabBar.f54k;
+                Account abstractC0037h4 = TabBar.currentAccount;
                 if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037hM434I3) {
                     ContactGroup abstractC0046q5 = abstractC0037hM434I3.offlineGroup;
                     Vector vectorM1077N2 = abstractC0037hM434I3.getOfflineContacts();
@@ -496,7 +496,7 @@ public abstract class ContactListManager {
                     break;
                 }
                 Account abstractC0037hM434I4 = AppController.m434I(i21);
-                Account abstractC0037h5 = TabBar.f54k;
+                Account abstractC0037h5 = TabBar.currentAccount;
                 if (abstractC0037h5 == null || abstractC0037h5 == abstractC0037hM434I4) {
                     ContactGroup abstractC0046q6 = abstractC0037hM434I4.defaultGroup;
                     Vector vectorM1079Q2 = abstractC0037hM434I4.getOnlineContacts();
@@ -520,7 +520,7 @@ public abstract class ContactListManager {
                     break;
                 }
                 Account abstractC0037hM434I5 = AppController.m434I(i23);
-                Account abstractC0037h6 = TabBar.f54k;
+                Account abstractC0037h6 = TabBar.currentAccount;
                 if (abstractC0037h6 == null || abstractC0037h6 == abstractC0037hM434I5) {
                     ContactGroup abstractC0046q7 = abstractC0037hM434I5.onlineGroup;
                     Vector vectorM1076M2 = abstractC0037hM434I5.getUnreadContacts();
@@ -538,7 +538,7 @@ public abstract class ContactListManager {
                 }
             }
         }
-        TabBar.m178j();
+        TabBar.layout();
         return c0013amM75b.m218a();
     }
 

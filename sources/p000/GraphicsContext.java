@@ -9,109 +9,109 @@ import javax.microedition.lcdui.Image;
 public final class GraphicsContext {
 
     /* renamed from: a */
-    public Image f91a;
+    public Image image;
 
     /* renamed from: b */
-    public Graphics f92b;
+    public Graphics graphics;
 
     /* renamed from: c */
-    public Font f93c;
+    public Font font;
 
     public GraphicsContext() {
     }
 
     public GraphicsContext(Graphics graphics) {
-        this.f92b = graphics;
+        this.graphics = graphics;
     }
 
     public GraphicsContext(Image image) {
-        this.f91a = image;
+        this.image = image;
     }
 
     public GraphicsContext(int i, int i2) {
-        this.f93c = Font.getFont(64, i, i2);
+        this.font = Font.getFont(64, i, i2);
     }
 
     /* renamed from: a */
-    public final GraphicsContext m206a(int i) {
-        this.f92b.setColor(i);
+    public final GraphicsContext setColor(int i) {
+        this.graphics.setColor(i);
         return this;
     }
 
     /* renamed from: b */
-    public final GraphicsContext m207b(int i) {
-        this.f92b.setColor(AppState.getInt(4914 + (i << 3) + AppState.getInt(72)));
+    public final GraphicsContext setColorFromPalette(int i) {
+        this.graphics.setColor(AppState.getInt(4914 + (i << 3) + AppState.getInt(72)));
         return this;
     }
 
     /* renamed from: a */
-    public final GraphicsContext m208a(int i, int i2, int i3, int i4) {
-        this.f92b.setClip(i, i2, i3, i4);
+    public final GraphicsContext setClip(int i, int i2, int i3, int i4) {
+        this.graphics.setClip(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: b */
-    public final GraphicsContext m209b(int i, int i2, int i3, int i4) {
-        this.f92b.drawLine(i, i2, i3, i4);
+    public final GraphicsContext drawLine(int i, int i2, int i3, int i4) {
+        this.graphics.drawLine(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: c */
-    public final GraphicsContext m210c(int i, int i2, int i3, int i4) {
-        this.f92b.fillRect(i, i2, i3, i4);
+    public final GraphicsContext fillRect(int i, int i2, int i3, int i4) {
+        this.graphics.fillRect(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: d */
-    public final GraphicsContext m211d(int i, int i2, int i3, int i4) {
-        this.f92b.drawRect(i, i2, i3, i4);
+    public final GraphicsContext drawRect(int i, int i2, int i3, int i4) {
+        this.graphics.drawRect(i, i2, i3, i4);
         return this;
     }
 
     /* renamed from: a */
-    public final GraphicsContext m212a(GraphicsContext c0012al) {
-        this.f92b.setFont(c0012al.f93c);
+    public final GraphicsContext setFont(GraphicsContext c0012al) {
+        this.graphics.setFont(c0012al.font);
         return this;
     }
 
     /* renamed from: a */
-    public final GraphicsContext m213a(String str, int i, int i2, int i3) {
+    public final GraphicsContext drawString(String str, int i, int i2, int i3) {
         if (i2 > 0 && i2 < AppState.getInt(1529)) {
-            this.f92b.drawString(str, i, i2, i3);
+            this.graphics.drawString(str, i, i2, i3);
         }
         return this;
     }
 
     /* renamed from: a */
-    public final int m214a(String str) {
+    public final int stringWidth(String str) {
         if (str != null) {
-            return this.f93c.stringWidth(str);
+            return this.font.stringWidth(str);
         }
         return 0;
     }
 
     /* renamed from: a */
-    public final int m215a(String str, int i, int i2) {
+    public final int substringWidth(String str, int i, int i2) {
         if (i2 > 0) {
-            return this.f93c.substringWidth(str, i, i2);
+            return this.font.substringWidth(str, i, i2);
         }
         return 0;
     }
 
     /* renamed from: a */
-    public final GraphicsContext m216a(int i, int i2, int i3) {
+    public final GraphicsContext drawIcon(int i, int i2, int i3) {
         int clipWidth;
         int clipWidth2;
         int clipHeight;
         int clipHeight2;
         int i4 = i >>> 16;
         if (i4 != 0) {
-            return m216a(i & 65535, i2, i3).m216a(i4, i2, i3);
+            return drawIcon(i & 65535, i2, i3).drawIcon(i4, i2, i3);
         }
         if ((i & 16384) != 0 && AppState.getBool(1534)) {
             return this;
         }
-        Graphics graphics = this.f92b;
+        Graphics graphics = this.graphics;
         int i5 = i & (-16385);
         int i6 = i3;
         int i7 = i2;
@@ -152,7 +152,7 @@ public final class GraphicsContext {
     }
 
     /* renamed from: c */
-    public static final int m217c(int i) {
+    public static final int getIconSize(int i) {
         return i == 247 ? 6 : 16;
     }
 }

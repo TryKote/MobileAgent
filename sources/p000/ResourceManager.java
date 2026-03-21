@@ -116,7 +116,7 @@ public final class ResourceManager {
         }
         String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(calendarM622k.get(11))).append(':').append(Utils.zeroPad(i)));
         AppState.setObject(1263, (Object) strM1215a);
-        f287f = AppState.getGfxContext(0).m214a(strM1215a);
+        f287f = AppState.getGfxContext(0).stringWidth(strM1215a);
         f286m = i;
         AppController.f153g = true;
     }
@@ -562,8 +562,8 @@ public final class ResourceManager {
         }
         NetworkUtils.releaseVector(vectorM439R);
         ScreenManager.m70a(c0013amM75b);
-        TabBar.m169e();
-        TabBar.m176a(36, (Account) null);
+        TabBar.ensureSettingsTab();
+        TabBar.findTab(36, (Account) null);
     }
 
     /* renamed from: c */

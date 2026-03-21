@@ -7,98 +7,98 @@ import java.util.Vector;
 public final class TabBar {
 
     /* renamed from: a */
-    public static boolean f44a;
+    public static boolean scrollEnabled;
 
     /* renamed from: b */
-    public static int f45b;
+    public static int currentIndex;
 
     /* renamed from: c */
-    public String f46c;
+    public String title;
 
     /* renamed from: d */
-    public int f47d;
+    public int iconId;
 
     /* renamed from: e */
-    public int f48e;
+    public int width;
 
     /* renamed from: f */
-    public int f49f;
+    public int xOffset;
 
     /* renamed from: g */
-    public int f50g;
+    public int type;
 
     /* renamed from: h */
-    public final Account f51h;
+    public final Account account;
 
     /* renamed from: i */
-    public String f52i;
+    public String selectedTitle;
 
     /* renamed from: j */
-    public int f53j;
+    public int selectedIndex;
 
     /* renamed from: k */
-    public static Account f54k;
+    public static Account currentAccount;
 
     private TabBar(int i, String str, int i2, Account abstractC0037h) {
-        this.f47d = i;
-        this.f46c = str;
-        this.f50g = i2;
-        this.f48e = GraphicsContext.m217c(i) + AppState.getGfxContext(1).m214a(str);
-        this.f51h = abstractC0037h;
+        this.iconId = i;
+        this.title = str;
+        this.type = i2;
+        this.width = GraphicsContext.getIconSize(i) + AppState.getGfxContext(1).stringWidth(str);
+        this.account = abstractC0037h;
     }
 
     /* renamed from: a */
-    public static final void m163a() {
-        f45b = 0;
-        f54k = null;
+    public static final void initialize() {
+        currentIndex = 0;
+        currentAccount = null;
         AppState.pool[1246] = NetworkUtils.newVector();
         Vector vectorM614m = AppState.getVector(1241);
         int size = vectorM614m.size();
         if (size == 0 || !AppState.getBool(243)) {
-            m165a(156, AppState.getString(1047), 4, null);
+            addTab(156, AppState.getString(1047), 4, null);
         } else {
             for (int i = 0; i < size; i++) {
                 Account abstractC0037h = (Account) vectorM614m.elementAt(i);
-                m165a(abstractC0037h.getIconId(), abstractC0037h.shortName, 4, abstractC0037h);
+                addTab(abstractC0037h.getIconId(), abstractC0037h.shortName, 4, abstractC0037h);
                 if (i == 0) {
-                    f54k = abstractC0037h;
+                    currentAccount = abstractC0037h;
                 }
             }
         }
         if (AppState.getBool(67)) {
-            m165a(240, AppState.getString(1044), 36, null);
+            addTab(240, AppState.getString(1044), 36, null);
         }
         if (AppState.getBool(68)) {
-            m165a(264, AppState.getString(1045), 6, null);
+            addTab(264, AppState.getString(1045), 6, null);
         }
-        m178j();
+        layout();
         AppController.f153g = true;
     }
 
     /* renamed from: a */
-    public static final void m164a(int i, String str) {
+    public static final void updateTitle(int i, String str) {
         Vector vectorM614m = AppState.getVector(1246);
         TabBar c0008ah = (TabBar) vectorM614m.elementAt(0);
-        if (c0008ah.f47d == i && c0008ah.f46c == str) {
+        if (c0008ah.iconId == i && c0008ah.title == str) {
             return;
         }
-        String str2 = c0008ah.f52i;
-        int i2 = c0008ah.f53j;
+        String str2 = c0008ah.selectedTitle;
+        int i2 = c0008ah.selectedIndex;
         TabBar c0008ah2 = new TabBar(i, str, 4, null);
         vectorM614m.setElementAt(c0008ah2, 0);
-        c0008ah2.f52i = str2;
-        c0008ah2.f53j = i2;
-        m178j();
+        c0008ah2.selectedTitle = str2;
+        c0008ah2.selectedIndex = i2;
+        layout();
         AppController.f153g = true;
     }
 
     /* renamed from: a */
-    private static void m165a(int i, String str, int i2, Account abstractC0037h) {
+    private static void addTab(int i, String str, int i2, Account abstractC0037h) {
         AppState.getVector(1246).addElement(new TabBar(i, str, i2, abstractC0037h));
     }
 
     /* renamed from: b */
-    public final int m166b() {
+    public final int selectTab() {
         Vector vectorM614m = AppState.getVector(1246);
         int size = vectorM614m.size();
         do {
@@ -107,13 +107,13 @@ public final class TabBar {
                 return 0;
             }
         } while (vectorM614m.elementAt(size) != this);
-        m177a(size);
-        return this.f50g;
+        selectTabByIndex(size);
+        return this.type;
     }
 
     /* renamed from: c */
-    public static final TabBar m167c() {
-        int i = f45b + 1;
+    public static final TabBar getNextTab() {
+        int i = currentIndex + 1;
         Vector vectorM614m = AppState.getVector(1246);
         if (i < vectorM614m.size()) {
             return (TabBar) vectorM614m.elementAt(i);
@@ -122,8 +122,8 @@ public final class TabBar {
     }
 
     /* renamed from: d */
-    public static final TabBar m168d() {
-        int i = f45b - 1;
+    public static final TabBar getPreviousTab() {
+        int i = currentIndex - 1;
         if (i >= 0) {
             return (TabBar) AppState.getVector(1246).elementAt(i);
         }
@@ -131,33 +131,33 @@ public final class TabBar {
     }
 
     /* renamed from: e */
-    public static final void m169e() {
-        m174k();
-        if (m176a(36, (Account) null) == null) {
-            m165a(240, AppState.getString(1044), 36, null);
+    public static final void ensureSettingsTab() {
+        ensureDefaultTab();
+        if (findTab(36, (Account) null) == null) {
+            addTab(240, AppState.getString(1044), 36, null);
         }
     }
 
     /* renamed from: f */
-    public static final void m170f() {
-        m173b(67, 36);
+    public static final void removeSettingsTab() {
+        removeTabByType(67, 36);
     }
 
     /* renamed from: g */
-    public static final void m171g() {
-        m174k();
-        if (m176a(6, (Account) null) == null) {
-            m165a(264, AppState.getString(1045), 6, null);
+    public static final void ensureSearchTab() {
+        ensureDefaultTab();
+        if (findTab(6, (Account) null) == null) {
+            addTab(264, AppState.getString(1045), 6, null);
         }
     }
 
     /* renamed from: h */
-    public static final void m172h() {
-        m173b(68, 6);
+    public static final void removeSearchTab() {
+        removeTabByType(68, 6);
     }
 
     /* renamed from: b */
-    private static final void m173b(int i, int i2) {
+    private static final void removeTabByType(int i, int i2) {
         TabBar c0008ah;
         if (AppState.getBool(i)) {
             return;
@@ -171,41 +171,41 @@ public final class TabBar {
             } else {
                 c0008ah = (TabBar) vectorM614m.elementAt(size);
             }
-        } while (c0008ah.f50g != i2);
+        } while (c0008ah.type != i2);
         vectorM614m.removeElement(c0008ah);
-        m178j();
+        layout();
         AppController.f153g = true;
     }
 
     /* renamed from: k */
-    private static final void m174k() {
+    private static final void ensureDefaultTab() {
         if (AppState.getBool(243)) {
             return;
         }
-        m164a(156, AppState.getString(1047));
+        updateTitle(156, AppState.getString(1047));
     }
 
     /* renamed from: i */
-    public static final TabBar m175i() {
-        return (TabBar) AppState.getVector(1246).elementAt(f45b);
+    public static final TabBar getCurrentTab() {
+        return (TabBar) AppState.getVector(1246).elementAt(currentIndex);
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:10:0x0032, code lost:
     
-        return m177a(r6);
+        return selectTabByIndex(r6);
      */
     /* renamed from: a */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final TabBar m176a(int i, Account abstractC0037h) {
+    public static final TabBar findTab(int i, Account abstractC0037h) {
         Vector vectorM614m = AppState.getVector(1246);
         int size = vectorM614m.size();
         while (true) {
             size--;
             if (size >= 0) {
                 TabBar c0008ah = (TabBar) vectorM614m.elementAt(size);
-                if (c0008ah.f50g == i && (abstractC0037h == null || c0008ah.f51h == abstractC0037h)) {
+                if (c0008ah.type == i && (abstractC0037h == null || c0008ah.account == abstractC0037h)) {
                     return c0008ah;
                 }
             } else {
@@ -215,18 +215,18 @@ public final class TabBar {
     }
 
     /* renamed from: a */
-    private static final TabBar m177a(int i) {
-        if (f45b != i) {
-            f45b = i;
-            m178j();
+    private static final TabBar selectTabByIndex(int i) {
+        if (currentIndex != i) {
+            currentIndex = i;
+            layout();
         }
         TabBar c0008ah = (TabBar) AppState.getVector(1246).elementAt(i);
-        f54k = c0008ah.f51h;
+        currentAccount = c0008ah.account;
         return c0008ah;
     }
 
     /* renamed from: j */
-    public static final void m178j() {
+    public static final void layout() {
         int i;
         Object objElementAt;
         int[] iArr;
@@ -240,18 +240,18 @@ public final class TabBar {
         Vector vectorM1213g = NetworkUtils.newVector();
         AppState.pool[1245] = vectorM1213g;
         int size = vectorM614m.size();
-        int i2 = f45b;
+        int i2 = currentIndex;
         TabBar c0008ah = (TabBar) vectorM614m.elementAt(i2);
         int i3 = 0;
         int i4 = 0;
         int i5 = 20;
         for (int i6 = 0; i6 < size; i6++) {
             TabBar c0008ah2 = (TabBar) vectorM614m.elementAt(i6);
-            c0008ah2.f48e = 26 + AppState.getGfxContext(1).m214a(c0008ah2.f46c);
-            c0008ah2.f49f = i5;
+            c0008ah2.width = 26 + AppState.getGfxContext(1).stringWidth(c0008ah2.title);
+            c0008ah2.xOffset = i5;
             vectorM1213g.addElement(c0008ah2);
-            i5 += c0008ah2.f48e;
-            i3 += c0008ah2.f48e;
+            i5 += c0008ah2.width;
+            i3 += c0008ah2.width;
             if (i6 == i2) {
                 i4 = i3;
             }
@@ -272,7 +272,7 @@ public final class TabBar {
             if (c0008ah3 == c0008ah) {
                 break;
             }
-            int i9 = c0008ah3.f48e;
+            int i9 = c0008ah3.width;
             vectorM1213g.removeElement(c0008ah3);
             Object objFirstElement = vectorM1213g.firstElement();
             if (objFirstElement instanceof int[]) {
@@ -283,7 +283,7 @@ public final class TabBar {
                 vectorM1213g.insertElementAt(iArr3, 0);
                 i9 -= 16;
             }
-            if (c0008ah3.f50g == 36 && AppController.m410N()) {
+            if (c0008ah3.type == 36 && AppController.m410N()) {
                 if (iArr2[1] == 248) {
                     vectorM1213g.insertElementAt(new int[]{20, 16385}, 0);
                     int[] iArr4 = iArr2;
@@ -295,8 +295,8 @@ public final class TabBar {
                 }
                 i9 -= 16;
             }
-            if (c0008ah3.f50g == 4) {
-                Account abstractC0037h = c0008ah3.f51h;
+            if (c0008ah3.type == 4) {
+                Account abstractC0037h = c0008ah3.account;
                 if (AppController.m416b(abstractC0037h) && AppState.getBool(67) && iArr2[1] == 248) {
                     vectorM1213g.insertElementAt(new int[]{20, AppController.m417c(abstractC0037h)}, 0);
                     int[] iArr6 = iArr2;
@@ -305,7 +305,7 @@ public final class TabBar {
                 }
             }
             for (int i10 = 0; i10 < size; i10++) {
-                ((TabBar) vectorM614m.elementAt(i10)).f49f -= i9;
+                ((TabBar) vectorM614m.elementAt(i10)).xOffset -= i9;
             }
             i4 -= i9;
             i7 -= i9;
@@ -328,9 +328,9 @@ public final class TabBar {
                 break;
             }
             int i12 = c0008ah4 == vectorM614m.lastElement() ? 16 : 0;
-            if (c0008ah4.f48e > (i7 - iM586d) + i12) {
+            if (c0008ah4.width > (i7 - iM586d) + i12) {
                 int i13 = (i7 - iM586d) + i12;
-                c0008ah4.f48e -= i13;
+                c0008ah4.width -= i13;
                 int size2 = vectorM1213g.size();
                 while (true) {
                     size2--;
@@ -345,8 +345,8 @@ public final class TabBar {
                     iArr7[0] = iArr7[0] - i13;
                 }
             } else {
-                int i14 = c0008ah4.f48e;
-                int i15 = c0008ah4.f49f;
+                int i14 = c0008ah4.width;
+                int i15 = c0008ah4.xOffset;
                 vectorM1213g.removeElement(c0008ah4);
                 Object objLastElement = vectorM1213g.lastElement();
                 if (objLastElement instanceof int[]) {
@@ -370,12 +370,12 @@ public final class TabBar {
                     vectorM1213g.addElement(iArr9);
                     i14 -= 16;
                 }
-                if (c0008ah4.f50g == 36 && AppController.m410N() && AppState.getBool(67)) {
+                if (c0008ah4.type == 36 && AppController.m410N() && AppState.getBool(67)) {
                     vectorM1213g.addElement(new int[]{i15 + 16, 16385});
                     i14 -= 16;
                 }
-                if (c0008ah4.f50g == 4) {
-                    Account abstractC0037h2 = c0008ah4.f51h;
+                if (c0008ah4.type == 4) {
+                    Account abstractC0037h2 = c0008ah4.account;
                     if (AppController.m416b(abstractC0037h2)) {
                         if (iArr[1] == 246) {
                             vectorM1213g.addElement(new int[]{i15 + 16, AppController.m417c(abstractC0037h2)});
@@ -398,7 +398,7 @@ public final class TabBar {
         Object objLastElement2 = vectorM1213g.lastElement();
         if (objLastElement2 instanceof TabBar) {
             TabBar c0008ah5 = (TabBar) objLastElement2;
-            i = (c0008ah5.f49f + c0008ah5.f48e) - 20;
+            i = (c0008ah5.xOffset + c0008ah5.width) - 20;
         } else {
             i = ((int[]) objLastElement2)[0] - 4;
         }
@@ -406,7 +406,7 @@ public final class TabBar {
             return;
         }
         int i17 = i - iM586d;
-        c0008ah.f48e -= i17;
+        c0008ah.width -= i17;
         int size5 = vectorM1213g.size();
         while (true) {
             size5--;
@@ -423,7 +423,7 @@ public final class TabBar {
     }
 
     /* renamed from: a */
-    public static final Object m179a(int i, int i2) {
+    public static final Object hitTest(int i, int i2) {
         Vector vectorM614m = AppState.getVector(1245);
         int size = vectorM614m.size();
         while (true) {
@@ -439,8 +439,8 @@ public final class TabBar {
                 }
             } else {
                 TabBar c0008ah = (TabBar) objElementAt;
-                int i3 = c0008ah.f49f;
-                if (i >= i3 && i2 >= 0 && i <= i3 + c0008ah.f48e && i2 <= 22) {
+                int i3 = c0008ah.xOffset;
+                if (i >= i3 && i2 >= 0 && i <= i3 + c0008ah.width && i2 <= 22) {
                     return c0008ah;
                 }
             }

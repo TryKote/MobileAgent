@@ -86,7 +86,7 @@ public final class Message {
         boolean zM671a = hasFlag(4);
         int i = zM671a ? 1 : 0;
         int i2 = i;
-        int iM214a = AppState.getGfxContext(i).m214a(AppState.getEllipsis());
+        int iM214a = AppState.getGfxContext(i).stringWidth(AppState.getEllipsis());
         int iM586d = (((AppState.getInt(1528) - iM214a) - 240) + 227) - 10;
         int i3 = zM671a ? 0 : 19;
         MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
@@ -116,7 +116,7 @@ public final class Message {
         MenuItem c0032cM901a = c0032cM896a.m901a(strM527g, i2, 10);
         String strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(903)));
         MenuItem c0032cM901a2 = c0032cM901a.m901a(strM1215a, i2, i3);
-        int iM214a2 = AppState.getGfxContext(i2).m214a(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM527g).append(strM1215a)));
+        int iM214a2 = AppState.getGfxContext(i2).stringWidth(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM527g).append(strM1215a)));
         if (hasFlag(1)) {
             c0032cM901a2.m896a(221);
             iM214a2 += 20;
@@ -177,14 +177,14 @@ public final class Message {
         int i4;
         int iM215a;
         GraphicsContext c0012alM608k = AppState.getGfxContext(i);
-        if (c0012alM608k.m214a(str) > i2 + i3) {
+        if (c0012alM608k.stringWidth(str) > i2 + i3) {
             int i5 = 4;
             int i6 = 4;
             int length = str.length();
             int i7 = length;
             while (true) {
                 i4 = (i5 + length) >> 1;
-                if (i4 == i6 || (iM215a = c0012alM608k.m215a(str, 0, i4)) == i2) {
+                if (i4 == i6 || (iM215a = c0012alM608k.substringWidth(str, 0, i4)) == i2) {
                     break;
                 }
                 if (iM215a > i2) {

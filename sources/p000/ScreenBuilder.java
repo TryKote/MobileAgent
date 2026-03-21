@@ -121,7 +121,7 @@ public final class ScreenBuilder {
                 return;
             case 15:
                 Screen c0013amM1193a = NetworkUtils.m1193a(ScreenManager.m75b(2719), AppState.getVector(1241));
-                Account abstractC0037h = TabBar.f54k;
+                Account abstractC0037h = TabBar.currentAccount;
                 if (abstractC0037h != null) {
                     c0013amM1193a.m257b(abstractC0037h.getSignature());
                 }
@@ -299,7 +299,7 @@ public final class ScreenBuilder {
                         c0013amM75b2.m225a(((Account) objElementAt).createMenuItem());
                     }
                 }
-                Account abstractC0037h2 = TabBar.f54k;
+                Account abstractC0037h2 = TabBar.currentAccount;
                 if (abstractC0037h2 != null) {
                     c0013amM75b2.m257b(abstractC0037h2.getSignature());
                 }
@@ -1416,8 +1416,8 @@ public final class ScreenBuilder {
                 NetworkUtils.m1195d();
                 AppState.setInt(4305, AppState.getInt(72));
                 ScreenManager.m65a();
-                AppState.getCanvas().m201a();
-                TabBar.m163a();
+                AppState.getCanvas().updateFullScreenMode();
+                TabBar.initialize();
                 ResourceManager.m927a();
                 iM460J = 0;
                 break;
@@ -1430,7 +1430,7 @@ public final class ScreenBuilder {
             case 29:
                 NetworkUtils.m1195d();
                 if (AppState.getInt(4305) != AppState.getInt(243)) {
-                    TabBar.m163a();
+                    TabBar.initialize();
                 }
                 iM460J = 0;
                 break;
@@ -1590,7 +1590,7 @@ public final class ScreenBuilder {
                 break;
             case 63:
                 AppController.f152f = true;
-                AppState.setScreen(AppState.getCanvas().m204b());
+                AppState.setScreen(AppState.getCanvas().updateCommands());
                 m549c();
                 iM460J = 84;
                 break;
@@ -2774,12 +2774,12 @@ public final class ScreenBuilder {
         switch (ScreenManager.m66b().f94a) {
             case 2:
                 AppState.setBool(71, AppState.getBool(218));
-                AppState.getCanvas().m201a();
+                AppState.getCanvas().updateFullScreenMode();
                 AppState.setInt(1511, 0);
                 break;
             case 6:
-                TabBar.f44a = false;
-                TabBar.m172h();
+                TabBar.scrollEnabled = false;
+                TabBar.removeSearchTab();
                 break;
             case 9:
                 AppController.m299g();
@@ -2815,7 +2815,7 @@ public final class ScreenBuilder {
                 AppState.setInt(72, AppState.getInt(4305));
                 break;
             case 36:
-                TabBar.m170f();
+                TabBar.removeSettingsTab();
                 break;
             case 37:
                 AppState.clearIndex(1271);

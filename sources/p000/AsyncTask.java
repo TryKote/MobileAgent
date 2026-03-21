@@ -89,7 +89,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                 c0013am.m258q();
             }
         }
-        AppState.setScreen(AppState.getCanvas().m204b());
+        AppState.setScreen(AppState.getCanvas().updateCommands());
     }
 
     public AsyncTask(int i) {

@@ -998,11 +998,11 @@ public final class Conversation implements ListItem {
             int r2 = p000.Utils.parseInt(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r9 = r2
             r15 = r1
-            p000.ChatRenderer.f254i = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.ChatRenderer.markerLon = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r15
-            p000.ChatRenderer.f255j = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.ChatRenderer.markerLat = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r0 = r9
-            p000.ChatRenderer.f256k = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            p000.ChatRenderer.markerRadius = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
         La4:
             r0 = r8
             p000.HttpClient.closeAndUpdateStats(r0)

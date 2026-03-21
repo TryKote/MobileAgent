@@ -1297,7 +1297,7 @@ public final class AppController {
             c = 300;
         } else {
             AppState.getVector(1241).removeElement(abstractC0037hM616i);
-            TabBar.m163a();
+            TabBar.initialize();
             m435ah();
             c = 0;
         }
@@ -1456,13 +1456,13 @@ public final class AppController {
     /* renamed from: b */
     public static final void m411b(MrimAccount c0028ba) {
         AppState.getVector(1244).removeElement(c0028ba);
-        TabBar.m178j();
+        TabBar.layout();
     }
 
     /* renamed from: O */
     public static final void m412O() {
         AppState.getVector(1244).removeAllElements();
-        TabBar.m178j();
+        TabBar.layout();
     }
 
     /* renamed from: P */
@@ -1487,7 +1487,7 @@ public final class AppController {
             return;
         }
         vectorM614m.addElement(abstractC0041l);
-        TabBar.m178j();
+        TabBar.layout();
     }
 
     /* renamed from: b */
@@ -1495,7 +1495,7 @@ public final class AppController {
         Vector vectorM614m = AppState.getVector(1243);
         if (vectorM614m.contains(abstractC0041l)) {
             Utils.removeFrom(vectorM614m, abstractC0041l);
-            TabBar.m178j();
+            TabBar.layout();
         }
     }
 
@@ -1809,7 +1809,7 @@ public final class AppController {
         } else if (i == 3) {
             vectorM614m2.addElement(new XmppMailRuProtocol(i4, str, str2));
         }
-        TabBar.m163a();
+        TabBar.initialize();
         m435ah();
         return 0;
     }
@@ -2115,7 +2115,7 @@ public final class AppController {
             XmppMailRuProtocol.m845v();
             AppState.pool[1371] = new MainCanvas(i, i2);
             AppState.clearRange(332, 333);
-            TabBar.m163a();
+            TabBar.initialize();
             AppState.pool[430] = Utils.m536a(AppState.getBytes(430));
             AppState.pool[1357] = new byte[1];
             try {
@@ -2195,14 +2195,14 @@ public final class AppController {
                 if (!f151e) {
                     AppState.updateTime();
                     ResourceManager.m928b();
-                    if (!MainCanvas.f90d && MainCanvas.f89c != 0 && System.currentTimeMillis() - MainCanvas.f89c > 600) {
-                        int i4 = MainCanvas.f86a;
-                        int i5 = MainCanvas.f87b;
+                    if (!MainCanvas.pointerDragged && MainCanvas.pointerDownTime != 0 && System.currentTimeMillis() - MainCanvas.pointerDownTime > 600) {
+                        int i4 = MainCanvas.pointerDownX;
+                        int i5 = MainCanvas.pointerDownY;
                         Vector vectorM614m = AppState.getVector(1266);
                         synchronized (vectorM614m) {
                             vectorM614m.addElement(new int[]{8, i4, i5});
                         }
-                        MainCanvas.f89c = 0L;
+                        MainCanvas.pointerDownTime = 0L;
                     }
                     Vector vectorM614m2 = AppState.getVector(1241);
                     int size = vectorM614m2.size();
@@ -3332,7 +3332,7 @@ public final class AppController {
                                                     int i13 = iArr[1];
                                                     int i14 = iArr[2];
                                                     int i15 = ScreenManager.m66b().f94a;
-                                                    int i16 = TabBar.f45b;
+                                                    int i16 = TabBar.currentIndex;
                                                     int size9 = AppState.getVector(1246).size();
                                                     boolean z6 = i16 == size9 - 1;
                                                     if (i15 == 4) {
@@ -3341,9 +3341,9 @@ public final class AppController {
                                                             AppState.setInt(1414, 0);
                                                             if (i14 == 2) {
                                                                 if (c0013amM66b3.m229h()) {
-                                                                    TabBar c0008ahM168d = TabBar.m168d();
+                                                                    TabBar c0008ahM168d = TabBar.getPreviousTab();
                                                                     if (c0008ahM168d != null) {
-                                                                        ScreenBuilder.m546a(c0008ahM168d.m166b());
+                                                                        ScreenBuilder.m546a(c0008ahM168d.selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3351,9 +3351,9 @@ public final class AppController {
                                                                 }
                                                             } else if (i14 == 5) {
                                                                 if (c0013amM66b3.m228g()) {
-                                                                    TabBar c0008ahM167c = TabBar.m167c();
+                                                                    TabBar c0008ahM167c = TabBar.getNextTab();
                                                                     if (c0008ahM167c != null) {
-                                                                        ScreenBuilder.m546a(c0008ahM167c.m166b());
+                                                                        ScreenBuilder.m546a(c0008ahM167c.selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3362,11 +3362,11 @@ public final class AppController {
                                                             } else if (i15 == 36) {
                                                                 AppState.setInt(1414, 0);
                                                                 if (i14 == 2) {
-                                                                    ScreenBuilder.m546a(TabBar.m168d().m166b());
+                                                                    ScreenBuilder.m546a(TabBar.getPreviousTab().selectTab());
                                                                     z4 = true;
                                                                 } else if (i14 == 5) {
                                                                     if (!z6) {
-                                                                        ScreenBuilder.m546a(TabBar.m167c().m166b());
+                                                                        ScreenBuilder.m546a(TabBar.getNextTab().selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else if (i15 != 6) {
@@ -3414,11 +3414,11 @@ public final class AppController {
                                                                         z4 = true;
                                                                     }
                                                                 } else if (i14 == 2) {
-                                                                    ScreenBuilder.m546a(TabBar.m168d().m166b());
+                                                                    ScreenBuilder.m546a(TabBar.getPreviousTab().selectTab());
                                                                     z4 = true;
                                                                 } else if (i14 == 5) {
                                                                     if (!z6) {
-                                                                        ScreenBuilder.m546a(TabBar.m167c().m166b());
+                                                                        ScreenBuilder.m546a(TabBar.getNextTab().selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else if (i14 == 1) {
@@ -3541,16 +3541,16 @@ public final class AppController {
                                                             }
                                                             if (!z3) {
                                                                 int i25 = c0013amM66b4.f97d;
-                                                                if ((i25 == 1 || i25 == 12) && (objM179a = TabBar.m179a(i19, i20)) != null) {
+                                                                if ((i25 == 1 || i25 == 12) && (objM179a = TabBar.hitTest(i19, i20)) != null) {
                                                                     if (!(objM179a instanceof int[])) {
-                                                                        int i26 = ((TabBar) objM179a).f50g;
-                                                                        Account abstractC0037h = ((TabBar) objM179a).f51h;
+                                                                        int i26 = ((TabBar) objM179a).type;
+                                                                        Account abstractC0037h = ((TabBar) objM179a).account;
                                                                         AppState.setInt(1414, 0);
                                                                         if (i == 4) {
                                                                             ContactListManager.m155c();
                                                                         }
                                                                         if (i26 != 6 && i26 != 36 && abstractC0037h != null) {
-                                                                            TabBar.m176a(4, ((TabBar) objM179a).f51h);
+                                                                            TabBar.findTab(4, ((TabBar) objM179a).account);
                                                                             ScreenBuilder.m546a(4);
                                                                         } else if (i != i26) {
                                                                             ScreenBuilder.m546a(i26);
@@ -3559,10 +3559,10 @@ public final class AppController {
                                                                     } else {
                                                                         switch (((int[]) objM179a)[1]) {
                                                                             case 246:
-                                                                                ScreenBuilder.m546a(TabBar.m167c().m166b());
+                                                                                ScreenBuilder.m546a(TabBar.getNextTab().selectTab());
                                                                                 break;
                                                                             case 248:
-                                                                                ScreenBuilder.m546a(TabBar.m168d().m166b());
+                                                                                ScreenBuilder.m546a(TabBar.getPreviousTab().selectTab());
                                                                                 break;
                                                                         }
                                                                     }
@@ -3777,7 +3777,7 @@ public final class AppController {
                                         }
                                     }
                                     if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.m66b())) {
-                                        AppState.getCanvas().m205a(c0013amM66b.f123v, c0013amM66b.f124w);
+                                        AppState.getCanvas().setCommands(c0013amM66b.f123v, c0013amM66b.f124w);
                                     }
                                     IOUtils.m756a();
                                     if (m306a(f147a[0]) && (!AppState.getBool(272) || ScreenManager.m66b().f94a != 6)) {
@@ -3841,7 +3841,7 @@ public final class AppController {
                 Object obj7 = AppState.currentScreen;
                 if (null != obj7) {
                     if (obj7 == AppState.getCanvas()) {
-                        AppState.getCanvas().m201a();
+                        AppState.getCanvas().updateFullScreenMode();
                     }
                     Display.getDisplay(AppState.getMidlet()).setCurrent(obj7 instanceof Displayable ? (Displayable) obj7 : null);
                     m304a(0, m376E());
