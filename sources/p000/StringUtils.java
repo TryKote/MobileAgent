@@ -212,7 +212,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final ByteBuffer m18a(MmpProtocol c0033d, int i) {
-        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().m1357m(1).m1357m(16).m1358n(14).m1360p(c0033d.f269a).m1358n(2000).m1357m(0).m1358n(1202).m1360p(i)), ResourceManager.m967e(7), ResourceManager.m967e(i)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(c0033d.f269a).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.m967e(7), ResourceManager.m967e(i)});
     }
 
     /* renamed from: b */
@@ -523,7 +523,7 @@ public final class StringUtils {
         }
         m38d(m39e(AppState.m603i(1381)));
         AppState.m601a(1382, (Object) AppState.m603i(1382));
-        AppState.m601a(1381, (Object) new ByteBuffer().m1385u(1029990694).m1314d(Utils.m522f(AppState.m584b(222))).m1386c(263912257062L).m1314d(m36n()).m1317c());
+        AppState.m601a(1381, (Object) new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.m522f(AppState.m584b(222))).writeLongBytes(263912257062L).writeRawString(m36n()).getStringAndClear());
         AppState.m592a(1376, m37a(963));
         AppState.m592a(1377, m37a(964));
         AppState.m592a(1378, m37a(1378));
@@ -610,7 +610,7 @@ public final class StringUtils {
         while (strArr[2].length() < 4) {
             strArr[2] = new StringBuffer().append('0').append(strArr[2]).toString();
         }
-        return new ByteBuffer().m1314d(strArr[0]).m1314d(strArr[1]).m1314d(strArr[2]).m1317c();
+        return new ByteBuffer().writeRawString(strArr[0]).writeRawString(strArr[1]).writeRawString(strArr[2]).getStringAndClear();
     }
 
     /* renamed from: a */
@@ -684,8 +684,8 @@ public final class StringUtils {
         try {
             ByteBuffer c0043nM986d = ResourceManager.m986d(AppState.m584b(227));
             AppState.m614m(1389).removeAllElements();
-            if (c0043nM986d.f384b > 0) {
-                int iM1355w = c0043nM986d.m1355w();
+            if (c0043nM986d.length > 0) {
+                int iM1355w = c0043nM986d.readIntBE();
                 while (true) {
                     iM1355w--;
                     if (iM1355w < 0) {
@@ -762,12 +762,12 @@ public final class StringUtils {
             ByteBuffer c0043n = new ByteBuffer();
             Vector vectorM614m = AppState.m614m(1389);
             int size = vectorM614m.size();
-            c0043n.m1359o(size);
+            c0043n.writeIntBE(size);
             for (int i3 = 0; i3 < size; i3++) {
                 GeoRegion c0053x2 = (GeoRegion) vectorM614m.elementAt(i3);
-                c0043n.m1309b(c0053x2.name).m1323a(c0053x2.minLat).m1323a(c0053x2.maxLon).m1323a(c0053x2.maxLat).m1323a(c0053x2.minLon).m1309b(c0053x2.description).m1323a(c0053x2.centerLat).m1323a(c0053x2.centerLon).m1360p(c0053x2.precision);
+                c0043n.writeStringUTF16(c0053x2.name).writeLong(c0053x2.minLat).writeLong(c0053x2.maxLon).writeLong(c0053x2.maxLat).writeLong(c0053x2.minLon).writeStringUTF16(c0053x2.description).writeLong(c0053x2.centerLat).writeLong(c0053x2.centerLon).writeIntLE(c0053x2.precision);
             }
-            AppState.m601a(227, (Object) c0043n.m1320d());
+            AppState.m601a(227, (Object) c0043n.toBase64());
         } catch (Throwable unused) {
             AppState.m607j(254);
         }

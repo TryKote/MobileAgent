@@ -226,7 +226,7 @@ public abstract class Contact implements Sortable {
         this.f375t = true;
         ByteBuffer c0043nM851h = this.f370a == null ? XmppMailRuProtocol.m851h(this.f380w) : this.f370a;
         this.f370a = c0043nM851h;
-        int i2 = c0043nM851h.f384b;
+        int i2 = c0043nM851h.length;
         int i3 = 0;
         while (true) {
             int i4 = i3;
@@ -234,10 +234,10 @@ public abstract class Contact implements Sortable {
                 m1245o();
                 return;
             }
-            int iM1351l = c0043nM851h.m1351l(i4);
+            int iM1351l = c0043nM851h.peekShortBE(i4);
             int i5 = i4 + 3 + 8;
-            if (j == ((c0043nM851h.m1330h(i5) & 4294967295L) | (c0043nM851h.m1330h(i5 + 4) << 32))) {
-                c0043nM851h.f383a[c0043nM851h.f385c + i4 + 2] = (byte) (c0043nM851h.m1331i(i4 + 2) | i);
+            if (j == ((c0043nM851h.peekIntAt(i5) & 4294967295L) | (c0043nM851h.peekIntAt(i5 + 4) << 32))) {
+                c0043nM851h.data[c0043nM851h.offset + i4 + 2] = (byte) (c0043nM851h.peekByteAt(i4 + 2) | i);
             }
             i3 = i4 + iM1351l + 2;
         }
@@ -252,18 +252,18 @@ public abstract class Contact implements Sortable {
         ByteBuffer c0043n = this.f370a;
         int i2 = 0;
         int i3 = 0;
-        int i4 = c0043n.f384b;
+        int i4 = c0043n.length;
         while (i4 > 0) {
-            int iM1351l = c0043n.m1351l(i3);
+            int iM1351l = c0043n.peekShortBE(i3);
             i3 += iM1351l + 2;
             i4 -= iM1351l + 2;
             i2++;
         }
         while (i2 > iM586d) {
-            c0043n.m1329g(c0043n.m1353u());
+            c0043n.skip(c0043n.readShortBE());
             i2--;
         }
-        c0043nM851h.m1357m(17 + (str.length() << 1)).m1321f(i).m1323a((j != 0 ? j : System.currentTimeMillis()) + ((AppState.m586d(246) - 13) * 3600000)).m1323a(j2).m1374i(str).m1299a();
+        c0043nM851h.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.m586d(246) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
         m1245o();
         this.f379c = AppState.m598g(1530);
         m1228A();
@@ -277,18 +277,18 @@ public abstract class Contact implements Sortable {
     /* renamed from: H */
     public final long m1241H() {
         long j = 0;
-        ByteBuffer c0043nM1380F = m1244f().m1380F();
-        while (c0043nM1380F.f384b > 0) {
-            int iM1353u = c0043nM1380F.m1353u();
-            byte bM1344o = c0043nM1380F.m1344o();
-            c0043nM1380F.m1341m();
-            long jM1341m = c0043nM1380F.m1341m();
-            c0043nM1380F.m1329g(iM1353u - 17);
+        ByteBuffer c0043nM1380F = m1244f().duplicate();
+        while (c0043nM1380F.length > 0) {
+            int iM1353u = c0043nM1380F.readShortBE();
+            byte bM1344o = c0043nM1380F.readByte();
+            c0043nM1380F.readLong();
+            long jM1341m = c0043nM1380F.readLong();
+            c0043nM1380F.skip(iM1353u - 17);
             if (bM1344o == 16) {
                 j = jM1341m;
             }
         }
-        c0043nM1380F.m1301b();
+        c0043nM1380F.clear();
         return j;
     }
 
@@ -303,14 +303,14 @@ public abstract class Contact implements Sortable {
         }
         AppState.m594c(2594, iMo139e);
         Screen c0013amM75b = ScreenManager.m75b(2591);
-        ByteBuffer c0043nM1380F = m1244f().m1380F();
+        ByteBuffer c0043nM1380F = m1244f().duplicate();
         int iM624l = AppState.m624l();
-        while (c0043nM1380F.f384b > 0) {
-            int iM1353u = c0043nM1380F.m1353u();
-            byte bM1344o = c0043nM1380F.m1344o();
-            long jM1341m = c0043nM1380F.m1341m() - AppState.m598g(1532);
-            long jM1341m2 = c0043nM1380F.m1341m();
-            String strM539n = Utils.m539n(c0043nM1380F.m1369q(iM1353u - 17));
+        while (c0043nM1380F.length > 0) {
+            int iM1353u = c0043nM1380F.readShortBE();
+            byte bM1344o = c0043nM1380F.readByte();
+            long jM1341m = c0043nM1380F.readLong() - AppState.m598g(1532);
+            long jM1341m2 = c0043nM1380F.readLong();
+            String strM539n = Utils.m539n(c0043nM1380F.readUnicodeChars(iM1353u - 17));
             int i = (bM1344o == 0 || bM1344o == 16 || bM1344o == 8) ? 0 : bM1344o == 1 ? 11 : (bM1344o & 64) == 0 ? 12 : 0;
             if (bM1344o == 16) {
                 c0013amM75b.m251a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f376u).append(AppState.m584b(311)).append(m1248b(jM1341m, iM624l))), 8);
@@ -329,7 +329,7 @@ public abstract class Contact implements Sortable {
                 m1243a(c0013amM75b, strM539n, i);
             }
         }
-        c0043nM1380F.m1301b();
+        c0043nM1380F.clear();
         return c0013amM75b;
     }
 
@@ -358,20 +358,20 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: o */
     private final void m1245o() {
-        XmppMailRuProtocol.m853a(this.f380w, m1244f().m1380F());
+        XmppMailRuProtocol.m853a(this.f380w, m1244f().duplicate());
     }
 
     /* renamed from: J */
     public final Screen m1246J() {
         String strM1215a;
         Screen c0013amM75b = ScreenManager.m75b(2631);
-        ByteBuffer c0043nM1380F = m1244f().m1380F();
-        while (c0043nM1380F.f384b > 0) {
-            int iM1353u = c0043nM1380F.m1353u();
-            c0043nM1380F.m1344o();
-            c0043nM1380F.m1341m();
-            c0043nM1380F.m1341m();
-            String strM1369q = c0043nM1380F.m1369q(iM1353u - 17);
+        ByteBuffer c0043nM1380F = m1244f().duplicate();
+        while (c0043nM1380F.length > 0) {
+            int iM1353u = c0043nM1380F.readShortBE();
+            c0043nM1380F.readByte();
+            c0043nM1380F.readLong();
+            c0043nM1380F.readLong();
+            String strM1369q = c0043nM1380F.readUnicodeChars(iM1353u - 17);
             if (strM1369q.length() > 50) {
                 strM1215a = NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m13b(strM1369q, 50)).append((char) 8230));
             } else {
@@ -379,13 +379,13 @@ public abstract class Contact implements Sortable {
             }
             c0013amM75b.m256a(-1, (String) null, strM1215a, 200, strM1369q);
         }
-        c0043nM1380F.m1301b();
+        c0043nM1380F.clear();
         return c0013amM75b;
     }
 
     /* renamed from: K */
     public final int m1247K() {
-        if (m1244f().f384b > 0 || !this.f369o.m1056C()) {
+        if (m1244f().length > 0 || !this.f369o.m1056C()) {
             return 40;
         }
         if (mo990d()) {

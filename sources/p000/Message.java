@@ -58,16 +58,16 @@ public final class Message {
 
     public Message(ByteBuffer c0043n, String str) {
         this.f216a = str;
-        this.f217b = c0043n.m1341m();
+        this.f217b = c0043n.readLong();
         this.f218c = XmppMailRuProtocol.m863e(c0043n);
         this.f219d = XmppMailRuProtocol.m863e(c0043n);
-        this.f220e = c0043n.m1328e();
-        this.f221f = c0043n.m1328e();
-        this.f222g = c0043n.m1335e((String) null);
-        if (c0043n.m1328e() != 0) {
-            this.f223h = c0043n.m1335e((String) null);
+        this.f220e = c0043n.readInt();
+        this.f221f = c0043n.readInt();
+        this.f222g = c0043n.readUTF8Str((String) null);
+        if (c0043n.readInt() != 0) {
+            this.f223h = c0043n.readUTF8Str((String) null);
         }
-        if (c0043n.m1328e() != 0) {
+        if (c0043n.readInt() != 0) {
             this.f224i = ResourceManager.m934a(c0043n);
         }
     }

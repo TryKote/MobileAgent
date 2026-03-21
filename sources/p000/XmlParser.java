@@ -29,10 +29,10 @@ public final class XmlParser {
                 return ResourceManager.m930b((Object[]) this.f5c);
             }
             ByteBuffer c0043n = (ByteBuffer) this.f5c;
-            if (c0043n.f384b == 0) {
+            if (c0043n.length == 0) {
                 return -1;
             }
-            return Utils.m499a(c0043n.m1346q());
+            return Utils.m499a(c0043n.readUByte());
         }
         int i = this.f6d;
         String str = (String) this.f5c;

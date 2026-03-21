@@ -30,7 +30,7 @@ public final class XmppContact extends Contact {
         this.f40d = 0;
         m1249c(Utils.m528a(str2, str));
         this.f373r = XmppProtocol.m131d(this.f39c);
-        this.f380w = c0005ae.m1050q().m1314d(str).m1317c();
+        this.f380w = c0005ae.m1050q().writeRawString(str).getStringAndClear();
         c0005ae.m1081h(this);
         m1228A();
     }
@@ -54,9 +54,9 @@ public final class XmppContact extends Contact {
 
     public XmppContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
-        this.f38a = c0043n.m1334g();
-        m1249c(c0043n.m1335e((String) null));
-        this.f380w = abstractC0037h.m1050q().m1314d(this.f38a).m1317c();
+        this.f38a = c0043n.readWideStr();
+        m1249c(c0043n.readUTF8Str((String) null));
+        this.f380w = abstractC0037h.m1050q().writeRawString(this.f38a).getStringAndClear();
         this.f39c = 0;
         this.f373r = XmppProtocol.m131d(0);
         abstractC0037h.m1081h(this);
@@ -67,7 +67,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: a */
     public final void mo136a(ByteBuffer c0043n) {
-        c0043n.m1308a(this.f38a).m1309b(this.f376u);
+        c0043n.writeStringLatin1(this.f38a).writeStringUTF16(this.f376u);
     }
 
     /* renamed from: o */

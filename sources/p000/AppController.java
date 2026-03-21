@@ -364,10 +364,10 @@ public final class AppController {
 
     /* renamed from: a */
     public static final ByteBuffer m321a(MrimAccount c0028ba, int i, ByteBuffer c0043n) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().m1360p(-559038737).m1360p(65557);
+        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(-559038737).writeIntLE(65557);
         int i2 = c0028ba.f319o;
         c0028ba.f319o = i2 + 1;
-        return c0043nM1360p.m1360p(i2).m1360p(i).m1360p(c0043n != null ? c0043n.f384b : 0).m1306b(24).m1325a(c0043n);
+        return c0043nM1360p.writeIntLE(i2).writeIntLE(i).writeIntLE(c0043n != null ? c0043n.length : 0).writeZeros(24).writeBuffer(c0043n);
     }
 
     /* renamed from: f */
@@ -420,10 +420,10 @@ public final class AppController {
 
     /* renamed from: a */
     public static final ByteBuffer m326a(MmpProtocol c0033d, int i) {
-        ByteBuffer c0043nM1321f = new ByteBuffer().m1321f(42).m1321f(i);
+        ByteBuffer c0043nM1321f = new ByteBuffer().writeByte(42).writeByte(i);
         int i2 = c0033d.f319o + 1;
         c0033d.f319o = i2;
-        return c0043nM1321f.m1357m((i2 & 16777215) % 32768).m1357m(0);
+        return c0043nM1321f.writeShortBE((i2 & 16777215) % 32768).writeShortBE(0);
     }
 
     /* renamed from: o */
@@ -990,19 +990,19 @@ public final class AppController {
 
     /* renamed from: a */
     public static final ByteBuffer m375a(MmpProtocol c0033d) {
-        ByteBuffer c0043nM1357m = new ByteBuffer().m1357m(5);
+        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortBE(5);
         int i = c0033d.f332B;
-        ByteBuffer c0043nM1357m2 = c0043nM1357m.m1357m(64 + (i == 0 ? 0 : 16));
+        ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE(64 + (i == 0 ? 0 : 16));
         int i2 = 4;
         while (true) {
             i2--;
             if (i2 < 0) {
                 break;
             }
-            c0043nM1357m2.m1310c(i2 + 904);
+            c0043nM1357m2.writeCompressed(i2 + 904);
         }
         if (i != 0) {
-            c0043nM1357m2.m1303a(AppState.m581a(908), (i - 1) << 4, 16);
+            c0043nM1357m2.writeBytesAt(AppState.m581a(908), (i - 1) << 4, 16);
         }
         return m464a(c0033d, 516, c0043nM1357m2);
     }
@@ -1025,7 +1025,7 @@ public final class AppController {
 
     /* renamed from: a */
     public static final ByteBuffer m377a(MrimAccount c0028ba) {
-        return m321a(c0028ba, 4097, new ByteBuffer().m1360p(120));
+        return m321a(c0028ba, 4097, new ByteBuffer().writeIntLE(120));
     }
 
     /* renamed from: F */
@@ -1127,12 +1127,12 @@ public final class AppController {
 
     /* renamed from: a */
     public static final void m386a(MmpProtocol c0033d, ByteBuffer c0043n) {
-        c0043n.m1329g(6);
-        while (c0043n.f384b > 0) {
-            int iM1353u = c0043n.m1353u();
-            int iM1353u2 = c0043n.m1353u();
+        c0043n.skip(6);
+        while (c0043n.length > 0) {
+            int iM1353u = c0043n.readShortBE();
+            int iM1353u2 = c0043n.readShortBE();
             if (iM1353u == 9 && iM1353u2 == 2) {
-                int iM1353u3 = c0043n.m1353u();
+                int iM1353u3 = c0043n.readShortBE();
                 if (iM1353u3 == 1) {
                     c0033d.m1063H();
                     return;
@@ -1141,7 +1141,7 @@ public final class AppController {
                     return;
                 }
             }
-            c0043n.m1329g(iM1353u2);
+            c0043n.skip(iM1353u2);
         }
         c0033d.m1066f(-1);
     }
@@ -1231,7 +1231,7 @@ public final class AppController {
 
     /* renamed from: b */
     public static final ByteBuffer m395b(MrimAccount c0028ba, String str) {
-        return m321a(c0028ba, 4128, new ByteBuffer().m1308a(str));
+        return m321a(c0028ba, 4128, new ByteBuffer().writeStringLatin1(str));
     }
 
     /* renamed from: h */
@@ -1346,9 +1346,9 @@ public final class AppController {
 
     /* renamed from: a */
     public static final ByteBuffer m403a(MrimAccount c0028ba, String str, int i) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().m1360p(0);
+        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntLE(0);
         int iIndexOf = str.indexOf(64);
-        return c0028ba.m719a(new Object[]{m321a(c0028ba, 4137, c0043nM1360p.m1308a(StringUtils.m13b(str, iIndexOf)).m1360p(1).m1308a(StringUtils.m15c(str, iIndexOf + 1))), ResourceManager.m967e(i)});
+        return c0028ba.m719a(new Object[]{m321a(c0028ba, 4137, c0043nM1360p.writeStringLatin1(StringUtils.m13b(str, iIndexOf)).writeIntLE(1).writeStringLatin1(StringUtils.m15c(str, iIndexOf + 1))), ResourceManager.m967e(i)});
     }
 
     /* renamed from: j */
@@ -1570,7 +1570,7 @@ public final class AppController {
 
     /* renamed from: a */
     public static final void m421a(Account abstractC0037h, ByteBuffer c0043n) {
-        m419a(abstractC0037h, c0043n.f384b);
+        m419a(abstractC0037h, c0043n.length);
     }
 
     /* renamed from: C */
@@ -1671,10 +1671,10 @@ public final class AppController {
     private static void m432ag() {
         Vector vectorM1213g = NetworkUtils.m1213g();
         ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.m1221a(6513505));
-        while (c0043nM851h.f384b > 0) {
+        while (c0043nM851h.length > 0) {
             try {
                 Account abstractC0037h = null;
-                byte bM1344o = c0043nM851h.m1344o();
+                byte bM1344o = c0043nM851h.readByte();
                 switch (bM1344o & 7) {
                     case 0:
                         MrimAccount c0028ba = new MrimAccount(c0043nM851h);
@@ -1728,12 +1728,12 @@ public final class AppController {
             ByteBuffer c0043n = new ByteBuffer();
             Vector vectorM614m = AppState.m614m(1241);
             if (z2) {
-                c0043n.m1300a(20480);
+                c0043n.ensureCapacity(20480);
                 while (vectorM614m.size() > 0) {
                     ((Account) Utils.m524a(vectorM614m)).mo82a(c0043n, z, true).mo714b(c0043n);
                 }
             } else {
-                c0043n.m1300a(3072);
+                c0043n.ensureCapacity(3072);
                 for (int i = 0; i < vectorM614m.size(); i++) {
                     ((Account) vectorM614m.elementAt(i)).mo82a(c0043n, z, false).mo714b(c0043n);
                 }
@@ -4582,8 +4582,8 @@ public final class AppController {
 
     /* renamed from: a */
     public static final void m461a(MrimAccount c0028ba, ByteBuffer c0043n) {
-        c0043n.m1328e();
-        switch (c0043n.m1328e() & 255) {
+        c0043n.readInt();
+        switch (c0043n.readInt() & 255) {
             case 65:
                 m462a(c0028ba, 490);
                 break;
@@ -4635,9 +4635,9 @@ public final class AppController {
 
     /* renamed from: a */
     public static final ByteBuffer m464a(MmpProtocol c0033d, int i, ByteBuffer c0043n) {
-        ByteBuffer c0043nM1357m = m326a(c0033d, 2).m1357m(i >> 8).m1357m(i & 255).m1357m(0);
+        ByteBuffer c0043nM1357m = m326a(c0033d, 2).writeShortBE(i >> 8).writeShortBE(i & 255).writeShortBE(0);
         int i2 = c0033d.f270b + 1;
         c0033d.f270b = i2;
-        return c0043nM1357m.m1359o(i2).m1325a(c0043n).m1362y();
+        return c0043nM1357m.writeIntBE(i2).writeBuffer(c0043n).updateLength();
     }
 }

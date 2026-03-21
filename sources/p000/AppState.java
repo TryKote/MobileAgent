@@ -71,11 +71,11 @@ public abstract class AppState {
         for (int i3 = 0; i3 < 3773; i3++) {
             int[] iArr = f179f;
             int i4 = i3;
-            byte bM1344o = c0043n.m1344o();
+            byte bM1344o = c0043n.readByte();
             if ((bM1344o & 64) != 0) {
                 iM1346q = bM1344o & 63;
             } else if ((bM1344o & 32) != 0) {
-                iM1346q = ((bM1344o & 31) << 8) + c0043n.m1346q();
+                iM1346q = ((bM1344o & 31) << 8) + c0043n.readUByte();
             } else {
                 int iM1346q2 = 0;
                 int i5 = bM1344o & 7;
@@ -84,7 +84,7 @@ public abstract class AppState {
                     if (i5 < 0) {
                         break;
                     } else {
-                        iM1346q2 = (iM1346q2 << 8) + c0043n.m1346q();
+                        iM1346q2 = (iM1346q2 << 8) + c0043n.readUByte();
                     }
                 }
                 iM1346q = iM1346q2;
@@ -93,7 +93,7 @@ public abstract class AppState {
         }
         f181d = (String) f177b[1038];
         ByteBuffer c0043nM851h = XmppMailRuProtocol.m851h(NetworkUtils.m1221a(1164404323));
-        while (c0043nM851h.f384b > 0) {
+        while (c0043nM851h.length > 0) {
             try {
                 f178e[((Integer) m618a(c0043nM851h, 0)).intValue()] = m618a(c0043nM851h, 0);
             } catch (Throwable unused) {
@@ -404,10 +404,10 @@ public abstract class AppState {
 
     /* renamed from: a */
     private static final Object m618a(ByteBuffer c0043n, int i) {
-        byte bM1344o = c0043n.m1344o();
+        byte bM1344o = c0043n.readByte();
         if ((bM1344o & 128) != 0) {
-            byte[] bArr = new byte[(bM1344o & 64) != 0 ? bM1344o & 63 : ((bM1344o & 31) << 8) + c0043n.m1346q()];
-            c0043n.m1347c(bArr);
+            byte[] bArr = new byte[(bM1344o & 64) != 0 ? bM1344o & 63 : ((bM1344o & 31) << 8) + c0043n.readUByte()];
+            c0043n.readIntoBytes(bArr);
             if (i >= 295 && i < 1036) {
                 return bArr;
             }
@@ -427,7 +427,7 @@ public abstract class AppState {
             return ResourceManager.m967e(bM1344o & 63);
         }
         if ((bM1344o & 32) != 0) {
-            return ResourceManager.m967e(((bM1344o & 31) << 8) + c0043n.m1346q());
+            return ResourceManager.m967e(((bM1344o & 31) << 8) + c0043n.readUByte());
         }
         int iM1346q = 0;
         int i2 = bM1344o & 7;
@@ -436,7 +436,7 @@ public abstract class AppState {
             if (i2 < 0) {
                 return ResourceManager.m967e(iM1346q);
             }
-            iM1346q = (iM1346q << 8) + c0043n.m1346q();
+            iM1346q = (iM1346q << 8) + c0043n.readUByte();
         }
     }
 
@@ -457,11 +457,11 @@ public abstract class AppState {
                         }
                         int length2 = str.length();
                         if (length2 <= 0 || length2 >= 64) {
-                            c0043n.m1357m(length2 | 32768);
+                            c0043n.writeShortBE(length2 | 32768);
                         } else {
-                            c0043n.m1321f(192 | length2);
+                            c0043n.writeByte(192 | length2);
                         }
-                        c0043n.m1302a(bArr);
+                        c0043n.writeBytes(bArr);
                     } else {
                         m621b(c0043n, ((Integer) obj).intValue());
                     }
@@ -480,7 +480,7 @@ public abstract class AppState {
     /* renamed from: b */
     private static final void m621b(ByteBuffer c0043n, int i) {
         if (i >= 0 && i <= 63) {
-            c0043n.m1321f(64 | i);
+            c0043n.writeByte(64 | i);
             return;
         }
         ByteBuffer c0043n2 = new ByteBuffer();
@@ -498,11 +498,11 @@ public abstract class AppState {
             i3 = 3;
         }
         for (int i5 = i3; i5 < 4; i5++) {
-            c0043n2.m1321f(iArr[i5]);
+            c0043n2.writeByte(iArr[i5]);
         }
-        byte[] bArrM1339k = c0043n2.m1339k();
-        c0043n.m1321f(8 | bArrM1339k.length);
-        c0043n.m1302a(bArrM1339k);
+        byte[] bArrM1339k = c0043n2.toByteArray();
+        c0043n.writeByte(8 | bArrM1339k.length);
+        c0043n.writeBytes(bArrM1339k);
     }
 
     /* renamed from: k */

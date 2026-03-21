@@ -629,6 +629,6 @@ public abstract class Utils {
 
     /* renamed from: b */
     public static final String m544b() {
-        return new ByteBuffer().m1360p(m520a()).m1323a(System.currentTimeMillis()).m1365B().m1387H();
+        return new ByteBuffer().writeIntLE(m520a()).writeLong(System.currentTimeMillis()).encryptMD5().toHexString();
     }
 }

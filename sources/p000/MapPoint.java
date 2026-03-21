@@ -82,17 +82,17 @@ public final class MapPoint implements ListItem {
     }
 
     public MapPoint(ByteBuffer c0043n) {
-        this.f133a = c0043n.m1335e((String) null);
-        this.f134b = c0043n.m1341m();
-        this.f135c = c0043n.m1341m();
-        this.f136d = c0043n.m1341m();
-        this.f137e = c0043n.m1341m();
-        this.f138f = c0043n.m1341m();
-        this.f139g = c0043n.m1341m();
-        this.f140h = c0043n.m1328e();
-        this.f143k = c0043n.m1328e();
-        this.f145m = c0043n.m1328e();
-        this.f144l = c0043n.m1328e();
+        this.f133a = c0043n.readUTF8Str((String) null);
+        this.f134b = c0043n.readLong();
+        this.f135c = c0043n.readLong();
+        this.f136d = c0043n.readLong();
+        this.f137e = c0043n.readLong();
+        this.f138f = c0043n.readLong();
+        this.f139g = c0043n.readLong();
+        this.f140h = c0043n.readInt();
+        this.f143k = c0043n.readInt();
+        this.f145m = c0043n.readInt();
+        this.f144l = c0043n.readInt();
         this.f146n = new SizeCache();
     }
 

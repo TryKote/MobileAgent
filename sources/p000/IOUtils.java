@@ -97,14 +97,14 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final ByteBuffer m753a(MmpProtocol c0033d, MmpContact c0009ai, String str) {
-        return AppController.m464a(c0033d, 4888, new ByteBuffer().m1373h(c0009ai.f57c).m1376j(str).m1357m(0));
+        return AppController.m464a(c0033d, 4888, new ByteBuffer().writeByteLenStr(c0009ai.f57c).writeUTF(str).writeShortBE(0));
     }
 
     /* renamed from: a */
     public static final void m754a(int i) {
         m755m();
         try {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().m1310c(590318).m1310c(i + 430).m1360p(3145472).m1339k());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(590318).writeCompressed(i + 430).writeIntLE(3145472).toByteArray());
             Object objM761a = m761a((Object) byteArrayInputStream);
             AppState.f177b[1264] = objM761a;
             if (null != objM761a) {
@@ -411,7 +411,7 @@ public final class IOUtils {
             c0022av3.m559a(328413, str);
             c0022av2.m552a(c0022av3);
         }
-        c0028ba.m1052c(AppController.m321a(c0028ba, 4181, new ByteBuffer().m1308a("geo-list").m1308a(c0022av.toString())));
+        c0028ba.m1052c(AppController.m321a(c0028ba, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(c0022av.toString())));
         if (c0028ba.f231g.f21i != 3) {
             return 0;
         }
@@ -458,7 +458,7 @@ public final class IOUtils {
             String strM1109a = Conversation.m1109a(strM522f, 1046, 199350);
             Image imageM615n = AppState.m615n(1364);
             long j = MapRenderer.f195c;
-            new AsyncTask(9, new ByteBuffer().m1310c(1442705).m1310c(1511760).m1314d(Conversation.m1120b((Object) strM1109a)).m1310c(659815).m1383b(j).m1310c(659825).m1383b(MapRenderer.f196d).m1310c(659835).m1382s(imageM615n.getWidth()).m1310c(659845).m1382s(imageM615n.getHeight()).m1317c());
+            new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.m1120b((Object) strM1109a)).writeCompressed(659815).writeLongAsString(j).writeCompressed(659825).writeLongAsString(MapRenderer.f196d).writeCompressed(659835).writeIntAsString(imageM615n.getWidth()).writeCompressed(659845).writeIntAsString(imageM615n.getHeight()).getStringAndClear());
         }
         return AppState.m587e(1477) ? 161 : 6;
     }
@@ -482,7 +482,7 @@ public final class IOUtils {
 
     /* renamed from: f */
     public static final void m772f() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().m1310c(1901187).m1314d(m810b((int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39)))).m1310c(393954).m1314d(m809a((int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39)))).m1310c(393960).m1314d(m810b((int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39)))).m1310c(393966).m1314d(m809a((int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39)))).m1310c(1376928);
+        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39)))).writeCompressed(393954).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39)))).writeCompressed(393960).writeRawString(m810b((int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39)))).writeCompressed(393966).writeRawString(m809a((int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39)))).writeCompressed(1376928);
         long jM692d = SoftFloat.m692d(4612811918334230528L, SoftFloat.m687b(((MapRenderer.f194b / 128) + 2) * ((MapRenderer.f193a / 128) + 2)));
         int iM586d = AppState.m586d(39);
         long j = MapRenderer.f197e;
@@ -490,13 +490,13 @@ public final class IOUtils {
         long jM318a = AppController.m318a((int) (j + i), iM586d) - AppController.m318a((int) (MapRenderer.f197e - i), iM586d);
         long j2 = MapRenderer.f198f;
         int i2 = MapRenderer.f194b / 2;
-        ByteBuffer c0043nM1314d = c0043nM1310c.m1314d(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
+        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.m698a(SoftFloat.m693e(jM692d, SoftFloat.m687b(jM318a * (AppController.m318a((int) (j2 + i2), iM586d) - AppController.m318a((int) (MapRenderer.f198f - i2), iM586d)))), 100));
         VCard.f25m = (int) AppController.m318a((int) (MapRenderer.f197e - (MapRenderer.f193a / 2)), AppState.m586d(39));
         VCard.f26n = (int) AppController.m318a((int) (MapRenderer.f198f - (MapRenderer.f194b / 2)), AppState.m586d(39));
         VCard.f27o = (int) AppController.m318a((int) (MapRenderer.f197e + (MapRenderer.f193a / 2)), AppState.m586d(39));
         VCard.f28p = (int) AppController.m318a((int) (MapRenderer.f198f + (MapRenderer.f194b / 2)), AppState.m586d(39));
         VCard.f29q = AppState.m586d(39);
-        new AsyncTask(20, new Object[]{c0043nM1314d.m1317c(), ResourceManager.m967e(AppState.m586d(39))});
+        new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.m967e(AppState.m586d(39))});
     }
 
     /* renamed from: g */
@@ -622,14 +622,14 @@ public final class IOUtils {
 
     /* renamed from: a */
     private static final ByteBuffer m788a(MmpProtocol c0033d, MmpContact c0009ai, int i) {
-        ByteBuffer c0043nM1357m = new ByteBuffer().m1361f(c0009ai.f57c).m1357m(0);
+        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(c0009ai.f57c).writeShortBE(0);
         int iM920k = c0033d.m920k();
-        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.m1357m(iM920k).m1357m(i).m1357m(0)), ResourceManager.m967e(18), c0009ai, ResourceManager.m967e(i), ResourceManager.m967e(iM920k)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.m967e(18), c0009ai, ResourceManager.m967e(i), ResourceManager.m967e(iM920k)});
     }
 
     /* renamed from: a */
     private static final ByteBuffer m789a(MmpProtocol c0033d, MmpContact c0009ai, int i, int i2) {
-        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().m1361f(c0009ai.f57c).m1357m(0).m1357m(i).m1357m(i2).m1357m(0)), ResourceManager.m967e(19), c0009ai, ResourceManager.m967e(i2)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4874, new ByteBuffer().writeShortString(c0009ai.f57c).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.m967e(19), c0009ai, ResourceManager.m967e(i2)});
     }
 
     /* renamed from: a */
@@ -949,26 +949,26 @@ public final class IOUtils {
         String strM1370r;
         String strM1368E;
         String strM1369q;
-        long jM1341m = c0043n.m1341m();
-        int iM1353u2 = c0043n.m1353u();
-        String strM1363z = c0043n.m1363z();
-        c0043n.m1353u();
-        int iM1353u3 = c0043n.m1353u();
+        long jM1341m = c0043n.readLong();
+        int iM1353u2 = c0043n.readShortBE();
+        String strM1363z = c0043n.readLenPrefixStr();
+        c0043n.readShortBE();
+        int iM1353u3 = c0043n.readShortBE();
         while (true) {
             iM1353u3--;
             if (iM1353u3 < 0) {
                 break;
             }
-            c0043n.m1353u();
-            c0043n.m1329g(c0043n.m1353u());
+            c0043n.readShortBE();
+            c0043n.skip(c0043n.readShortBE());
         }
         while (true) {
-            int iM1353u4 = c0043n.m1353u();
-            iM1353u = c0043n.m1353u();
+            int iM1353u4 = c0043n.readShortBE();
+            iM1353u = c0043n.readShortBE();
             if (iM1353u4 == 2 || iM1353u4 == 5) {
                 break;
             } else {
-                c0043n.m1329g(iM1353u);
+                c0043n.skip(iM1353u);
             }
         }
         switch (iM1353u2) {
@@ -979,16 +979,16 @@ public final class IOUtils {
                         strM1369q = null;
                         break;
                     } else {
-                        int iM1353u5 = c0043n.m1353u();
-                        int iM1353u6 = c0043n.m1353u();
+                        int iM1353u5 = c0043n.readShortBE();
+                        int iM1353u6 = c0043n.readShortBE();
                         int i2 = i - 4;
                         if (iM1353u5 == 257) {
-                            int iM1353u7 = c0043n.m1353u();
-                            c0043n.m1353u();
-                            strM1369q = iM1353u7 == 2 ? c0043n.m1369q(iM1353u6 - 4) : c0043n.m1370r(iM1353u6 - 4);
+                            int iM1353u7 = c0043n.readShortBE();
+                            c0043n.readShortBE();
+                            strM1369q = iM1353u7 == 2 ? c0043n.readUnicodeChars(iM1353u6 - 4) : c0043n.readByteChars(iM1353u6 - 4);
                             break;
                         } else {
-                            c0043n.m1329g(iM1353u6);
+                            c0043n.skip(iM1353u6);
                             i = i2 - iM1353u6;
                         }
                     }
@@ -996,48 +996,48 @@ public final class IOUtils {
                 strM1370r = strM1369q;
                 break;
             case 2:
-                if (c0043n.m1353u() == 0) {
-                    c0043n.m1329g(24);
+                if (c0043n.readShortBE() == 0) {
+                    c0043n.skip(24);
                     int i3 = iM1353u - 26;
                     while (i3 > 0) {
-                        int iM1353u8 = c0043n.m1353u();
-                        int iM1353u9 = c0043n.m1353u();
+                        int iM1353u8 = c0043n.readShortBE();
+                        int iM1353u9 = c0043n.readShortBE();
                         i3 -= iM1353u9 + 4;
                         if (iM1353u8 == 10001) {
-                            c0043n.m1354v();
-                            c0043n.m1354v();
-                            int iM1355w = c0043n.m1355w();
-                            int iM1355w2 = c0043n.m1355w();
-                            int iM1355w3 = c0043n.m1355w();
-                            int iM1355w4 = c0043n.m1355w();
-                            c0043n.m1353u();
-                            c0043n.m1328e();
-                            c0043n.m1344o();
-                            c0043n.m1353u();
-                            int iM1354v = c0043n.m1354v();
-                            c0043n.m1353u();
-                            c0043n.m1329g(iM1354v - 2);
+                            c0043n.readShortLE();
+                            c0043n.readShortLE();
+                            int iM1355w = c0043n.readIntBE();
+                            int iM1355w2 = c0043n.readIntBE();
+                            int iM1355w3 = c0043n.readIntBE();
+                            int iM1355w4 = c0043n.readIntBE();
+                            c0043n.readShortBE();
+                            c0043n.readInt();
+                            c0043n.readByte();
+                            c0043n.readShortBE();
+                            int iM1354v = c0043n.readShortLE();
+                            c0043n.readShortBE();
+                            c0043n.skip(iM1354v - 2);
                             if ((iM1355w | iM1355w2 | iM1355w3 | iM1355w4) == 0) {
-                                c0043n.m1353u();
-                                c0043n.m1354v();
-                                c0043n.m1354v();
-                                strM1368E = c0043n.m1368E();
+                                c0043n.readShortBE();
+                                c0043n.readShortLE();
+                                c0043n.readShortLE();
+                                strM1368E = c0043n.readModifiedStrTrim();
                             } else {
                                 strM1368E = null;
                             }
                             strM1370r = strM1368E;
                             if (strM1368E != null && strM1370r.length() > 0) {
-                                c0033d.m1052c(AppController.m464a(c0033d, 1035, new ByteBuffer().m1323a(jM1341m).m1357m(2).m1373h(strM1363z).m1310c(3213669).m1358n(c0033d.m919j()).m1310c(3213718)));
+                                c0033d.m1052c(AppController.m464a(c0033d, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(c0033d.m919j()).writeCompressed(3213718)));
                                 break;
                             }
                         } else {
-                            c0043n.m1329g(iM1353u9);
+                            c0043n.skip(iM1353u9);
                         }
                     }
                     strM1368E = null;
                     strM1370r = strM1368E;
                     if (strM1368E != null) {
-                        c0033d.m1052c(AppController.m464a(c0033d, 1035, new ByteBuffer().m1323a(jM1341m).m1357m(2).m1373h(strM1363z).m1310c(3213669).m1358n(c0033d.m919j()).m1310c(3213718)));
+                        c0033d.m1052c(AppController.m464a(c0033d, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(c0033d.m919j()).writeCompressed(3213718)));
                     }
                 } else {
                     strM1368E = null;
@@ -1051,9 +1051,9 @@ public final class IOUtils {
                 strM1370r = null;
                 break;
             case 4:
-                c0043n.m1355w();
-                int iM1353u10 = c0043n.m1353u();
-                strM1370r = (iM1353u10 == 1 || iM1353u10 == 4) ? c0043n.m1370r(c0043n.m1354v() - 1) : null;
+                c0043n.readIntBE();
+                int iM1353u10 = c0043n.readShortBE();
+                strM1370r = (iM1353u10 == 1 || iM1353u10 == 4) ? c0043n.readByteChars(c0043n.readShortLE() - 1) : null;
                 break;
         }
         if (!Utils.m535l(strM1370r) || StringUtils.m2a(strM1363z, 875573297)) {
@@ -1243,10 +1243,10 @@ public final class IOUtils {
                 HttpClient c0024axM629a = HttpClient.m629a((String) objArr[1], (Account) objArr[0], 0);
                 int iM634a = c0024axM629a.m634a();
                 if (iM634a == 200) {
-                    Vector vectorM516c = Utils.m516c(new ByteBuffer(c0024axM629a).m1317c(), '\n');
+                    Vector vectorM516c = Utils.m516c(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
                         objArr[2] = ResourceManager.m967e(1);
-                        objArr[1] = new ByteBuffer().m1310c(2365173).m1310c(2692947).m1316b(vectorM516c.elementAt(0)).m1321f(38).m1316b(vectorM516c.elementAt(1)).m1337i();
+                        objArr[1] = new ByteBuffer().writeCompressed(2365173).writeCompressed(2692947).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
                         new AsyncTask(30, objArr);
                     } else {
                         m827a(objArr, vectorM516c.elementAt(0));

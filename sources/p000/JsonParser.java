@@ -97,12 +97,12 @@ public abstract class JsonParser {
                     stringBuffer.setLength(length);
                     cM1342n = cCharAt;
                 } else if (i == 2) {
-                    int iM1346q = c0043n.m1346q();
-                    int iM1346q2 = iM1346q > 127 ? c0043n.m1346q() : 0;
-                    int iM1346q3 = iM1346q > 223 ? c0043n.m1346q() : 0;
-                    cM1342n = iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043n.m1346q() : 0) - 128));
+                    int iM1346q = c0043n.readUByte();
+                    int iM1346q2 = iM1346q > 127 ? c0043n.readUByte() : 0;
+                    int iM1346q3 = iM1346q > 223 ? c0043n.readUByte() : 0;
+                    cM1342n = iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043n.readUByte() : 0) - 128));
                 } else {
-                    cM1342n = (char) c0043n.m1342n();
+                    cM1342n = (char) c0043n.readByteOrEOF();
                 }
                 cM499a = cM1342n;
             } else {
@@ -164,7 +164,7 @@ public abstract class JsonParser {
     private static final char m472c(ByteBuffer c0043n, StringBuffer stringBuffer) {
         int length = stringBuffer.length() - 1;
         if (length < 0) {
-            return (char) c0043n.m1342n();
+            return (char) c0043n.readByteOrEOF();
         }
         char cCharAt = stringBuffer.charAt(length);
         stringBuffer.setLength(length);

@@ -88,14 +88,14 @@ public final class MrimContact extends Contact implements ListItem {
 
     public MrimContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
-        this.f294a = c0043n.m1328e();
+        this.f294a = c0043n.readInt();
         String str = AppState.f181d;
-        this.f295b = c0043n.m1328e();
-        this.f297d = StringUtils.m17c(c0043n.m1334g().toLowerCase());
-        m1249c(c0043n.m1335e((String) null));
-        this.f298e = c0043n.m1328e();
-        this.f300g = c0043n.m1334g();
-        byte bM1344o = c0043n.m1344o();
+        this.f295b = c0043n.readInt();
+        this.f297d = StringUtils.m17c(c0043n.readWideStr().toLowerCase());
+        m1249c(c0043n.readUTF8Str((String) null));
+        this.f298e = c0043n.readInt();
+        this.f300g = c0043n.readWideStr();
+        byte bM1344o = c0043n.readByte();
         this.f374s = bM1344o;
         if (bM1344o != 0) {
             AppController.m414a((Contact) this);
@@ -138,7 +138,7 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.Contact
     /* renamed from: a */
     public final void mo136a(ByteBuffer c0043n) {
-        c0043n.m1360p(this.f294a).m1360p(this.f295b).m1308a(this.f297d).m1309b(this.f376u).m1360p(this.f298e).m1308a(this.f300g).m1321f(this.f374s);
+        c0043n.writeIntLE(this.f294a).writeIntLE(this.f295b).writeStringLatin1(this.f297d).writeStringUTF16(this.f376u).writeIntLE(this.f298e).writeStringLatin1(this.f300g).writeByte(this.f374s);
     }
 
     /* renamed from: a */
@@ -203,7 +203,7 @@ public final class MrimContact extends Contact implements ListItem {
         ByteBuffer c0043nM1050q = this.f369o.m1050q();
         String strM991N = mo990d() ? m991N() : this.f297d;
         this.f381x = strM991N;
-        this.f380w = c0043nM1050q.m1314d(strM991N).m1337i();
+        this.f380w = c0043nM1050q.writeRawString(strM991N).readAllByteStr();
         if (mo990d()) {
             this.f381x = Utils.m530h(this.f381x);
         }
@@ -220,7 +220,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         this.f302y = jM598g;
         MrimAccount c0028ba = (MrimAccount) this.f369o;
-        int iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().m1360p(16512).m1308a(this.f297d).m1309b(AppState.m584b(909)).m1308a(AppState.m584b(33819707))), ResourceManager.m967e(14)}));
+        int iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.f297d).writeStringUTF16(AppState.m584b(909)).writeStringLatin1(AppState.m584b(33819707))), ResourceManager.m967e(14)}));
         if (0 != iM1052c) {
             return iM1052c;
         }

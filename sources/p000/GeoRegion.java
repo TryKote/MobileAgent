@@ -52,11 +52,11 @@ public final class GeoRegion {
     }
 
     public GeoRegion(ByteBuffer c0043n) {
-        this(c0043n.m1335e((String) null), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m());
-        this.description = c0043n.m1335e((String) null);
-        this.centerLat = c0043n.m1341m();
-        this.centerLon = c0043n.m1341m();
-        this.precision = c0043n.m1328e();
+        this(c0043n.readUTF8Str((String) null), c0043n.readLong(), c0043n.readLong(), c0043n.readLong(), c0043n.readLong());
+        this.description = c0043n.readUTF8Str((String) null);
+        this.centerLat = c0043n.readLong();
+        this.centerLon = c0043n.readLong();
+        this.precision = c0043n.readInt();
     }
 
     /* renamed from: a */

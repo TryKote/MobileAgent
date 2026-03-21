@@ -134,15 +134,15 @@ public final class Conversation implements ListItem {
                     AppController.f153g = true;
                     HttpClient c0024axM629a = HttpClient.m629a(AppState.m584b(2755089), c0033d, 0);
                     c0024axM629a.m635b(NetworkUtils.m1221a(1414745936));
-                    ByteBuffer c0043nM1315a = new ByteBuffer().m1310c(2755131).m1315a(objArr[2]).m1310c(330609).m1315a(objArr[3]);
+                    ByteBuffer c0043nM1315a = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
                     ConnectionThread.m1153a(c0024axM629a, 788628, 2164851);
-                    c0024axM629a.m637a(c0043nM1315a.f383a, c0043nM1315a.f384b);
+                    c0024axM629a.m637a(c0043nM1315a.data, c0043nM1315a.length);
                     int iM634a = c0024axM629a.m634a();
                     i = iM634a;
                     if (iM634a == 200) {
                         c0033d.f323s = 40;
                         AppController.f153g = true;
-                        XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).m1389J();
+                        XmlElement c0022avM1389J = new ByteBuffer(c0024axM629a).parseXmlStr();
                         int i2 = Integer.parseInt(StringUtils.m11a(c0022avM1389J.m562f(658246).f173c));
                         if (i2 != 200) {
                             if (i2 == 330) {
@@ -160,15 +160,15 @@ public final class Conversation implements ListItem {
                 } else {
                     c0033d.f323s = 50;
                     AppController.f153g = true;
-                    ByteBuffer c0043nM1321f = new ByteBuffer().m1310c(2951781).m1321f(63);
-                    String strM1337i = new ByteBuffer().m1310c(132058).m1315a(objArr[3]).m1310c(11012754).m1316b(objArr[4]).m1337i();
-                    HttpClient c0024axM642a = HttpClient.m632a(c0043nM1321f.m1314d(strM1337i).m1310c(789306).m1314d(m1089a(new ByteBuffer().m1310c(265078).m1314d(m1125a(AppState.m584b(2951781), false)).m1321f(38).m1314d(m1125a(strM1337i, false)).m1337i(), m1089a((String) objArr[5], (String) objArr[6]))).m1337i()).m642a(0, 5522759, 330359);
+                    ByteBuffer c0043nM1321f = new ByteBuffer().writeCompressed(2951781).writeByte(63);
+                    String strM1337i = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
+                    HttpClient c0024axM642a = HttpClient.m632a(c0043nM1321f.writeRawString(strM1337i).writeCompressed(789306).writeRawString(m1089a(new ByteBuffer().writeCompressed(265078).writeRawString(m1125a(AppState.m584b(2951781), false)).writeByte(38).writeRawString(m1125a(strM1337i, false)).readAllByteStr(), m1089a((String) objArr[5], (String) objArr[6]))).readAllByteStr()).m642a(0, 5522759, 330359);
                     int iM634a2 = c0024axM642a.m634a();
                     i = iM634a2;
                     if (iM634a2 == 200) {
                         c0033d.f323s = 60;
                         AppController.f153g = true;
-                        XmlElement c0022avM562f2 = c0024axM642a.m644b().m1389J().m562f(262156);
+                        XmlElement c0022avM562f2 = c0024axM642a.m644b().parseXmlStr().m562f(262156);
                         ((MmpProtocol) objArr[0]).f272c = new String[]{(String) objArr[2], NetworkUtils.m1215a(NetworkUtils.m1217h().append(StringUtils.m11a(c0022avM562f2.m562f(265052).f173c)).append(':').append(StringUtils.m11a(c0022avM562f2.m562f(265005).f173c))), StringUtils.m11a(c0022avM562f2.m562f(395483).f173c)};
                         HttpClient.m633a(c0024axM642a);
                         AppController.m344t();
@@ -193,7 +193,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     private static final String m1089a(String str, String str2) {
-        return new ByteBuffer().m1304b(XmppContactGroup.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).m1320d();
+        return new ByteBuffer().setData(XmppContactGroup.m1015a(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).toBase64();
     }
 
     /* renamed from: a */
@@ -429,11 +429,11 @@ public final class Conversation implements ListItem {
             }
             ByteBuffer c0043nM986d = ResourceManager.m986d(m1109a(m1109a(m1109a(str2, 200762, 65752), 200765, 65547), 200768, 65552));
             StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
-            while (c0043nM986d.f384b > 0) {
-                int iM1346q = c0043nM986d.m1346q();
-                int iM1346q2 = iM1346q > 127 ? c0043nM986d.m1346q() : 0;
-                int iM1346q3 = iM1346q > 223 ? c0043nM986d.m1346q() : 0;
-                stringBufferM1217h.append(iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043nM986d.m1346q() : 0) - 128)));
+            while (c0043nM986d.length > 0) {
+                int iM1346q = c0043nM986d.readUByte();
+                int iM1346q2 = iM1346q > 127 ? c0043nM986d.readUByte() : 0;
+                int iM1346q3 = iM1346q > 223 ? c0043nM986d.readUByte() : 0;
+                stringBufferM1217h.append(iM1346q < 128 ? (char) iM1346q : iM1346q < 224 ? (char) (((iM1346q - 192) << 6) + (iM1346q2 - 128)) : iM1346q < 240 ? (char) (((iM1346q - 224) << 12) + ((iM1346q2 - 128) << 6) + (iM1346q3 - 128)) : (char) (((iM1346q - 240) << 18) + ((iM1346q2 - 128) << 12) + ((iM1346q3 - 128) << 6) + ((iM1346q > 239 ? c0043nM986d.readUByte() : 0) - 128)));
             }
             return NetworkUtils.m1215a(stringBufferM1217h);
         } catch (Throwable unused) {
@@ -543,10 +543,10 @@ public final class Conversation implements ListItem {
         MrimContact c0035f;
         int i;
         int iIndexOf;
-        int iM1328e = c0043n.m1328e();
-        int iM1328e2 = c0043n.m1328e();
-        String strM1338j = c0043n.m1338j();
-        String strM1332j = c0043n.m1332j(iM1328e2 & 2097160);
+        int iM1328e = c0043n.readInt();
+        int iM1328e2 = c0043n.readInt();
+        String strM1338j = c0043n.readHexStr();
+        String strM1332j = c0043n.readStringByMode(iM1328e2 & 2097160);
         String strM1215a = null;
         String str = null;
         if ((iM1328e2 & 8) == 0) {
@@ -578,45 +578,45 @@ public final class Conversation implements ListItem {
         } else {
             ByteBuffer c0043nM986d = ResourceManager.m986d(strM1332j);
             int i4 = iM1328e2 & 2097152;
-            int iM1328e3 = c0043nM986d.m1328e();
+            int iM1328e3 = c0043nM986d.readInt();
             String[] strArr = new String[iM1328e3];
             for (int i5 = 0; i5 < iM1328e3; i5++) {
-                strArr[i5] = c0043nM986d.m1332j(i4);
+                strArr[i5] = c0043nM986d.readStringByMode(i4);
             }
-            c0043nM986d.m1301b();
+            c0043nM986d.clear();
             str = strArr[1];
         }
         if ((iM1328e2 & 128) != 0) {
-            c0043n.m1334g();
+            c0043n.readWideStr();
         }
         if ((iM1328e2 & 4194304) != 0) {
             if ((iM1328e2 & 17408) != 0) {
                 return;
             }
-            c0043n.m1328e();
-            switch (c0043n.m1328e()) {
+            c0043n.readInt();
+            switch (c0043n.readInt()) {
                 case 0:
-                    c0028ba.m738a(strM1338j, strM1215a, c0043n.m1335e((String) null), c0043n.m1334g(), j);
+                    c0028ba.m738a(strM1338j, strM1215a, c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
                     break;
                 case 2:
-                    c0043n.m1335e((String) null);
-                    c0043n.m1328e();
+                    c0043n.readUTF8Str((String) null);
+                    c0043n.readInt();
                     Vector vectorM1213g = NetworkUtils.m1213g();
-                    int iM1328e4 = c0043n.m1328e();
+                    int iM1328e4 = c0043n.readInt();
                     while (true) {
                         iM1328e4--;
                         if (iM1328e4 < 0) {
                             AppState.f177b[1318] = vectorM1213g;
                             break;
                         } else {
-                            vectorM1213g.addElement(c0043n.m1334g());
+                            vectorM1213g.addElement(c0043n.readWideStr());
                         }
                     }
                 case 3:
-                    c0028ba.m739a(strM1338j, AppState.m584b(911), c0043n.m1335e((String) null), c0043n.m1334g(), c0043n, j);
+                    c0028ba.m739a(strM1338j, AppState.m584b(911), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n, j);
                     break;
                 case 5:
-                    c0028ba.m738a(strM1338j, AppState.m584b(912), c0043n.m1335e((String) null), c0043n.m1334g(), j);
+                    c0028ba.m738a(strM1338j, AppState.m584b(912), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), j);
                     break;
             }
             return;
@@ -624,7 +624,7 @@ public final class Conversation implements ListItem {
         boolean z = (iM1328e2 & 2048) != 0;
         boolean z2 = (iM1328e2 & 8192) != 0;
         if ((iM1328e2 & 4) == 0) {
-            c0028ba.m1052c(AppController.m321a(c0028ba, 4113, new ByteBuffer().m1308a((z2 || z) ? AppState.m584b(1052223) : strM1338j).m1360p(iM1328e)));
+            c0028ba.m1052c(AppController.m321a(c0028ba, 4113, new ByteBuffer().writeStringLatin1((z2 || z) ? AppState.m584b(1052223) : strM1338j).writeIntLE(iM1328e)));
         }
         if (z2) {
             Enumeration enumerationElements = c0028ba.f321q.elements();
@@ -714,24 +714,24 @@ public final class Conversation implements ListItem {
         MrimContactGroup c0010aj;
         c0028ba.f324t = c0028ba.f325u;
         c0028ba.m1067K();
-        int iM1328e = c0043n.m1328e();
+        int iM1328e = c0043n.readInt();
         if (iM1328e == 0) {
-            int iM1328e2 = c0043n.m1328e();
-            String strM1334g = c0043n.m1334g();
-            String strM1334g2 = c0043n.m1334g();
+            int iM1328e2 = c0043n.readInt();
+            String strM1334g = c0043n.readWideStr();
+            String strM1334g2 = c0043n.readWideStr();
             Vector vector = c0028ba.f313i;
             int length = strM1334g.length();
             for (int i = 0; i < iM1328e2; i++) {
-                int iM1328e3 = c0043n.m1328e();
-                String strM1335e = c0043n.m1335e((String) null);
+                int iM1328e3 = c0043n.readInt();
+                String strM1335e = c0043n.readUTF8Str((String) null);
                 if ((iM1328e3 & 1) == 0) {
                     vector.addElement(new MrimContactGroup(c0028ba, i, iM1328e3, strM1335e));
                 }
                 for (int i2 = 2; i2 < length; i2++) {
                     if (strM1334g.charAt(i2) == 'u') {
-                        c0043n.m1328e();
+                        c0043n.readInt();
                     } else {
-                        c0043n.m1334g();
+                        c0043n.readWideStr();
                     }
                 }
             }
@@ -741,30 +741,30 @@ public final class Conversation implements ListItem {
             vector2.size();
             String strM584b = AppState.m584b(1233);
             String strM584b2 = AppState.m584b(923);
-            while (c0043n.f384b > 0) {
-                int iM1328e4 = c0043n.m1328e();
-                int iM1328e5 = c0043n.m1328e();
-                String strM1338j = c0043n.m1338j();
+            while (c0043n.length > 0) {
+                int iM1328e4 = c0043n.readInt();
+                int iM1328e5 = c0043n.readInt();
+                String strM1338j = c0043n.readHexStr();
                 String str = strM1338j;
-                String strM1335e2 = c0043n.m1335e(strM1338j);
-                int iM1328e6 = c0043n.m1328e();
-                int iM1328e7 = c0043n.m1328e();
-                String strM1334g3 = c0043n.m1334g();
+                String strM1335e2 = c0043n.readUTF8Str(strM1338j);
+                int iM1328e6 = c0043n.readInt();
+                int iM1328e7 = c0043n.readInt();
+                String strM1334g3 = c0043n.readWideStr();
                 ByteBuffer c0043n2 = new ByteBuffer();
                 if (strM1334g3 != null) {
                     for (int i4 = 0; i4 < strM1334g3.length(); i4++) {
                         char cCharAt = strM1334g3.charAt(i4);
-                        if ((cCharAt == ',' && c0043n2.f384b > 0) || (cCharAt >= '0' && cCharAt <= '9')) {
-                            c0043n2.m1321f(cCharAt);
+                        if ((cCharAt == ',' && c0043n2.length > 0) || (cCharAt >= '0' && cCharAt <= '9')) {
+                            c0043n2.writeByte(cCharAt);
                         }
                     }
                 }
-                String strM1317c = c0043n2.m1317c();
-                String strM1334g4 = c0043n.m1334g();
-                c0043n.m1335e((String) null);
-                c0043n.m1335e((String) null);
-                c0043n.m1328e();
-                String strM1334g5 = c0043n.m1334g();
+                String strM1317c = c0043n2.getStringAndClear();
+                String strM1334g4 = c0043n.readWideStr();
+                c0043n.readUTF8Str((String) null);
+                c0043n.readUTF8Str((String) null);
+                c0043n.readInt();
+                String strM1334g5 = c0043n.readWideStr();
                 if (StringUtils.m6a(str, strM584b) || (iM1328e4 & 1048576) != 0) {
                     str = strM584b;
                     iM1328e4 = (iM1328e4 | 1048576) & (-29);
@@ -801,18 +801,18 @@ public final class Conversation implements ListItem {
                 i3++;
                 for (int i6 = 12; i6 < length2; i6++) {
                     if (i6 == 18) {
-                        c0028ba.m729a(str, c0043n.m1345p());
+                        c0028ba.m729a(str, c0043n.readBufferArray());
                     } else if (strM1334g2.charAt(i6) == 'u') {
-                        c0043n.m1328e();
+                        c0043n.readInt();
                     } else {
-                        c0043n.m1334g();
+                        c0043n.readWideStr();
                     }
                 }
             }
             c0028ba.f322r = 100;
             c0028ba.f323s = 100;
             c0028ba.m721d(c0028ba.f325u);
-            c0028ba.m1052c(AppController.m321a(c0028ba, 4228, new ByteBuffer().m1392a((Vector) null).m1392a((Vector) null)));
+            c0028ba.m1052c(AppController.m321a(c0028ba, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
             if (c0028ba.f326v == 1) {
                 String strM17c = StringUtils.m17c(Utils.m522f(AppState.m584b(1382)).toLowerCase());
                 if (!StringUtils.m1a(strM17c)) {
@@ -869,7 +869,7 @@ public final class Conversation implements ListItem {
             strM1215a = str;
             strM1215a2 = str;
         }
-        new AsyncTask(23, new ByteBuffer().m1310c(5771795).m1315a((Object) new ByteBuffer().m1314d(c0022avM552a.toString()).m1320d()).m1311d(z ? 791174 : 1038).m1314d(strM1215a2).m1314d(strM1215a).m1310c(397997).m1311d(223).m1310c(594539).m1311d(1375).m1317c());
+        new AsyncTask(23, new ByteBuffer().writeCompressed(5771795).writeConversationStr((Object) new ByteBuffer().writeRawString(c0022avM552a.toString()).toBase64()).writeEncodedInt(z ? 791174 : 1038).writeRawString(strM1215a2).writeRawString(strM1215a).writeCompressed(397997).writeEncodedInt(223).writeCompressed(594539).writeEncodedInt(1375).getStringAndClear());
     }
 
     /*  JADX ERROR: Types fix failed
@@ -944,7 +944,7 @@ public final class Conversation implements ListItem {
             r9 = r0
             r0 = r7
             r1 = r9
-            av r1 = r1.m1388I()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
+            av r1 = r1.parseXml()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = 594557(0x9127d, float:8.33152E-40)
             av r1 = r1.m562f(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
             r2 = 200701(0x30ffd, float:2.81242E-40)

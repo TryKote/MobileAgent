@@ -58,33 +58,33 @@ public final class ChatRoom {
 
     /* renamed from: a */
     public final void m1410a(ByteBuffer c0043n) {
-        c0043n.m1309b(this.f410b).m1360p(this.f411c).m1360p(this.f409a).m1360p(this.f412d).m1308a(this.f413e);
+        c0043n.writeStringUTF16(this.f410b).writeIntLE(this.f411c).writeIntLE(this.f409a).writeIntLE(this.f412d).writeStringLatin1(this.f413e);
         if (this.f414f.size() > 20) {
             this.f414f.setSize(20);
         }
         int size = this.f414f.size();
-        c0043n.m1360p(size);
+        c0043n.writeIntLE(size);
         for (int i = 0; i < size; i++) {
             String strM521a = Utils.m521a(this.f414f, i);
-            c0043n.m1308a(strM521a);
+            c0043n.writeStringLatin1(strM521a);
             Message c0026azM1415b = m1415b(strM521a);
-            c0043n.m1323a(c0026azM1415b.f217b);
+            c0043n.writeLong(c0026azM1415b.f217b);
             XmppMailRuProtocol.m862a(c0026azM1415b.f218c, c0043n);
             XmppMailRuProtocol.m862a(c0026azM1415b.f219d, c0043n);
-            c0043n.m1360p(c0026azM1415b.f220e).m1360p(c0026azM1415b.f221f).m1309b(Utils.m522f(c0026azM1415b.f222g));
+            c0043n.writeIntLE(c0026azM1415b.f220e).writeIntLE(c0026azM1415b.f221f).writeStringUTF16(Utils.m522f(c0026azM1415b.f222g));
             if (c0026azM1415b.f223h == null || c0026azM1415b.f223h.length() > 3072) {
-                c0043n.m1360p(0).m1360p(0);
+                c0043n.writeIntLE(0).writeIntLE(0);
             } else {
-                c0043n.m1360p(1).m1309b(c0026azM1415b.f223h).m1360p(1);
+                c0043n.writeIntLE(1).writeStringUTF16(c0026azM1415b.f223h).writeIntLE(1);
                 Object[] objArr = c0026azM1415b.f224i;
                 if (objArr == null) {
-                    c0043n.m1360p(0);
+                    c0043n.writeIntLE(0);
                 } else {
-                    c0043n.m1360p(objArr.length);
+                    c0043n.writeIntLE(objArr.length);
                     for (Object obj : objArr) {
                         String[] strArr = (String[]) obj;
                         for (int i2 = 0; i2 < 6; i2++) {
-                            c0043n.m1309b(strArr[i2]);
+                            c0043n.writeStringUTF16(strArr[i2]);
                         }
                     }
                 }
@@ -100,15 +100,15 @@ public final class ChatRoom {
     /* renamed from: b */
     public static final ChatRoom m1411b(ByteBuffer c0043n) {
         ChatRoom c0052w = new ChatRoom();
-        c0052w.f410b = c0043n.m1335e((String) null);
-        c0052w.f411c = c0043n.m1328e();
-        c0052w.f409a = c0043n.m1328e();
-        c0052w.f412d = c0043n.m1328e();
-        c0052w.f413e = c0043n.m1334g();
-        int iM1328e = c0043n.m1328e();
+        c0052w.f410b = c0043n.readUTF8Str((String) null);
+        c0052w.f411c = c0043n.readInt();
+        c0052w.f409a = c0043n.readInt();
+        c0052w.f412d = c0043n.readInt();
+        c0052w.f413e = c0043n.readWideStr();
+        int iM1328e = c0043n.readInt();
         for (int i = 0; i < iM1328e; i++) {
             Vector vector = c0052w.f414f;
-            String strM1334g = c0043n.m1334g();
+            String strM1334g = c0043n.readWideStr();
             vector.addElement(strM1334g);
             c0052w.f416h.put(strM1334g, new Message(c0043n, strM1334g));
         }

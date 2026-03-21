@@ -73,7 +73,7 @@ public final class MmpContact extends Contact {
         this.f377v = StringUtils.m17c(str2.toLowerCase());
         this.f58z = z;
         this.f373r = 255;
-        this.f380w = c0033d.m1050q().m1314d(str).m1337i();
+        this.f380w = c0033d.m1050q().writeRawString(str).readAllByteStr();
         c0033d.m1081h(this);
         m1228A();
         this.f381x = str;
@@ -96,22 +96,22 @@ public final class MmpContact extends Contact {
 
     public MmpContact(Account abstractC0037h, ByteBuffer c0043n) {
         super(abstractC0037h);
-        this.f55a = c0043n.m1328e();
-        this.f56b = c0043n.m1328e();
-        this.f57c = c0043n.m1334g();
-        m1249c(c0043n.m1335e((String) null));
-        this.f58z = c0043n.m1340l();
-        c0043n.m1340l();
-        this.f59d = c0043n.m1353u();
-        this.f60e = c0043n.m1353u();
-        this.f61f = c0043n.m1353u();
-        byte bM1344o = c0043n.m1344o();
+        this.f55a = c0043n.readInt();
+        this.f56b = c0043n.readInt();
+        this.f57c = c0043n.readWideStr();
+        m1249c(c0043n.readUTF8Str((String) null));
+        this.f58z = c0043n.readBoolean();
+        c0043n.readBoolean();
+        this.f59d = c0043n.readShortBE();
+        this.f60e = c0043n.readShortBE();
+        this.f61f = c0043n.readShortBE();
+        byte bM1344o = c0043n.readByte();
         this.f374s = bM1344o;
         if (bM1344o != 0) {
             AppController.m414a((Contact) this);
         }
         this.f373r = 255;
-        this.f380w = abstractC0037h.m1050q().m1314d(this.f57c).m1337i();
+        this.f380w = abstractC0037h.m1050q().writeRawString(this.f57c).readAllByteStr();
         abstractC0037h.m1081h(this);
         m1228A();
         this.f381x = this.f57c;
@@ -120,7 +120,7 @@ public final class MmpContact extends Contact {
     @Override // p000.Contact
     /* renamed from: a */
     public final void mo136a(ByteBuffer c0043n) {
-        c0043n.m1360p(this.f55a).m1360p(this.f56b).m1308a(this.f57c).m1309b(this.f376u).m1322a(this.f58z).m1322a(false).m1357m(this.f59d).m1357m(this.f60e).m1357m(this.f61f).m1321f(this.f374s);
+        c0043n.writeIntLE(this.f55a).writeIntLE(this.f56b).writeStringLatin1(this.f57c).writeStringUTF16(this.f376u).writeBoolean(this.f58z).writeBoolean(false).writeShortBE(this.f59d).writeShortBE(this.f60e).writeShortBE(this.f61f).writeByte(this.f374s);
     }
 
     @Override // p000.Contact
@@ -148,12 +148,12 @@ public final class MmpContact extends Contact {
     public final ByteBuffer m180a(int i, String str, int i2) {
         ByteBuffer c0043n = new ByteBuffer();
         if (i != 2) {
-            c0043n.m1357m(305).m1376j(str);
+            c0043n.writeShortBE(305).writeUTF(str);
         }
         if (i == 5) {
-            c0043n.m1357m(102).m1357m(0);
+            c0043n.writeShortBE(102).writeShortBE(0);
         }
-        return new ByteBuffer().m1376j(this.f57c).m1357m(i2).m1357m(this.f55a).m1357m(0).m1326b(c0043n);
+        return new ByteBuffer().writeUTF(this.f57c).writeShortBE(i2).writeShortBE(this.f55a).writeShortBE(0).writeBufferShortLen(c0043n);
     }
 
     @Override // p000.Contact
@@ -244,15 +244,15 @@ public final class MmpContact extends Contact {
 
     /* renamed from: o */
     public static final String m186o() {
-        ByteBuffer c0043nM1314d = new ByteBuffer().m1310c(1442705).m1310c(3085016).m1314d(IOUtils.m809a(f64i[0])).m1385u(1026586918).m1314d(IOUtils.m810b(f64i[1]));
+        ByteBuffer c0043nM1314d = new ByteBuffer().writeCompressed(1442705).writeCompressed(3085016).writeRawString(IOUtils.m809a(f64i[0])).writeUInt(1026586918).writeRawString(IOUtils.m810b(f64i[1]));
         int size = f66k.size();
         int i = 0;
         while (i <= size) {
             int[] iArr = i < size ? (int[]) f66k.elementAt(i) : new int[]{(int) f65j[0], (int) f65j[1]};
-            c0043nM1314d.m1385u(30758).m1382s(i + 1).m1321f(61).m1314d(IOUtils.m809a(iArr[0])).m1385u(31014).m1382s(i + 1).m1321f(61).m1314d(IOUtils.m810b(iArr[1]));
+            c0043nM1314d.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.m809a(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.m810b(iArr[1]));
             i++;
         }
-        return c0043nM1314d.m1317c();
+        return c0043nM1314d.getStringAndClear();
     }
 
     /* JADX WARN: Multi-variable type inference failed */

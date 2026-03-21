@@ -59,7 +59,7 @@ public class XmppProtocol extends Account {
     public XmppProtocol(ByteBuffer c0043n) {
         super(c0043n);
         this.f30a = NetworkUtils.m1213g();
-        int iM1328e = c0043n.m1328e();
+        int iM1328e = c0043n.readInt();
         while (true) {
             iM1328e--;
             if (iM1328e < 0) {
@@ -75,9 +75,9 @@ public class XmppProtocol extends Account {
             if (iM541c < 0) {
                 c0036g.f399g = true;
                 this.f334D = c0036g;
-                this.f33b = c0043n.m1334g();
-                this.f34c = c0043n.m1353u();
-                this.f37e = c0043n.m1334g();
+                this.f33b = c0043n.readWideStr();
+                this.f34c = c0043n.readShortBE();
+                this.f37e = c0043n.readWideStr();
                 return;
             }
             ((XmppContact) c0036g.f397e.elementAt(iM541c)).f43b = true;
@@ -88,7 +88,7 @@ public class XmppProtocol extends Account {
     /* renamed from: a */
     public final Account mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
         super.mo82a(c0043n, z, z2);
-        c0043n.m1308a(this.f33b).m1357m(this.f34c).m1308a(this.f37e);
+        c0043n.writeStringLatin1(this.f33b).writeShortBE(this.f34c).writeStringLatin1(this.f37e);
         return this;
     }
 
@@ -141,12 +141,12 @@ public class XmppProtocol extends Account {
         long j = AppState.m587e(1536) ? 25000L : 60000L;
         this.f330z = j;
         this.f331A = System.currentTimeMillis() + j;
-        return m1053d(new ByteBuffer().m1302a(bArr));
+        return m1053d(new ByteBuffer().writeBytes(bArr));
     }
 
     /* renamed from: a */
     private int m91a(XmlElement c0022av) {
-        return m1053d(new ByteBuffer().m1377k(c0022av.toString()));
+        return m1053d(new ByteBuffer().writeUTFNoLen(c0022av.toString()));
     }
 
     /* renamed from: b */
@@ -156,7 +156,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: s */
     private final void m93s() {
-        this.f318n.m1301b();
+        this.f318n.clear();
         Object[] objArr = this.f31f;
         if (objArr != null) {
             objArr[2] = null;
@@ -223,7 +223,7 @@ public class XmppProtocol extends Account {
                             objArr = null;
                         } else {
                             String strM13b = StringUtils.m13b(Utils.m544b(), 16);
-                            Object[] objArr3 = {this, strM13b, new ByteBuffer().m1310c(5249005).m1314d(strM13b).m1337i(), ResourceManager.f291j[0], this.f315k, this.f316l};
+                            Object[] objArr3 = {this, strM13b, new ByteBuffer().writeCompressed(5249005).writeRawString(strM13b).readAllByteStr(), ResourceManager.f291j[0], this.f315k, this.f316l};
                             new AsyncTask(34, objArr3);
                             objArr = objArr3;
                         }
@@ -260,7 +260,7 @@ public class XmppProtocol extends Account {
                 this.f320p = new ConnectionThread(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f33b).append(':').append(this.f34c)));
                 this.f322r = 4;
                 if (m96t()) {
-                    new AsyncTask(30, new Object[]{this, new ByteBuffer().m1310c(2365173).m1310c(3807001).m1314d(this.f340J).m1310c(1316577).m1314d(this.f316l).m1337i(), ResourceManager.f291j[0]});
+                    new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.f340J).writeCompressed(1316577).writeRawString(this.f316l).readAllByteStr(), ResourceManager.f291j[0]});
                 }
                 AppController.f153g = true;
                 break;
@@ -294,13 +294,13 @@ public class XmppProtocol extends Account {
                 break;
             default:
                 this.f320p.m1132a(this.f318n);
-                AppController.m419a(this, this.f318n.f384b);
+                AppController.m419a(this, this.f318n.length);
                 Object[] objArr6 = this.f31f;
                 ByteBuffer c0043n = this.f318n;
                 ByteBuffer c0043n2 = (ByteBuffer) objArr6[1];
                 synchronized (c0043n2) {
-                    c0043n2.m1303a(c0043n.f383a, c0043n.f385c, c0043n.f384b);
-                    c0043n.m1301b();
+                    c0043n2.writeBytesAt(c0043n.data, c0043n.offset, c0043n.length);
+                    c0043n.clear();
                 }
                 XmlElement c0022av = (XmlElement) Utils.m524a(this.f30a);
                 if (c0022av != null) {
@@ -316,11 +316,11 @@ public class XmppProtocol extends Account {
                                 } else {
                                     String strM584b2 = AppState.m584b(922626);
                                     if (c0022avM568b.m567a(strM584b2) != null) {
-                                        m91a(c0022avM569h.m559a(594936, strM584b2).m553a((Object) new ByteBuffer().m1321f(0).m1314d(this.f340J).m1321f(0).m1314d((String) this.f35d).m1320d()));
+                                        m91a(c0022avM569h.m559a(594936, strM584b2).m553a((Object) new ByteBuffer().writeByte(0).writeRawString(this.f340J).writeByte(0).writeRawString((String) this.f35d).toBase64()));
                                     } else {
                                         String strM584b3 = AppState.m584b(332816);
                                         if (c0022avM568b.m567a(strM584b3) != null) {
-                                            m91a(c0022avM569h.m559a(594936, strM584b3).m553a((Object) new ByteBuffer().m1377k(new ByteBuffer().m1314d(this.f340J).m1321f(64).m1314d(this.f33b).m1337i()).m1321f(0).m1377k(this.f340J).m1321f(0).m1377k(this.f316l).m1320d()));
+                                            m91a(c0022avM569h.m559a(594936, strM584b3).m553a((Object) new ByteBuffer().writeUTFNoLen(new ByteBuffer().writeRawString(this.f340J).writeByte(64).writeRawString(this.f33b).readAllByteStr()).writeByte(0).writeUTFNoLen(this.f340J).writeByte(0).writeUTFNoLen(this.f316l).toBase64()));
                                         }
                                     }
                                 }
@@ -336,7 +336,7 @@ public class XmppProtocol extends Account {
                             }
                         } else if (StringUtils.m3a(595536, str)) {
                             XmlElement c0022avM569h2 = XmlElement.m550a(529537).m569h(2102710);
-                            String strM1317c = ResourceManager.m986d(StringUtils.m11a(c0022av.f173c)).m1317c();
+                            String strM1317c = ResourceManager.m986d(StringUtils.m11a(c0022av.f173c)).getStringAndClear();
                             int iIndexOf = strM1317c.indexOf(AppState.m584b(398406));
                             if (iIndexOf >= 0) {
                                 int i = iIndexOf + 7;
@@ -344,9 +344,9 @@ public class XmppProtocol extends Account {
                                 String str2 = this.f316l;
                                 String str3 = this.f33b;
                                 String strM12a = StringUtils.m12a(strM1317c, i, strM1317c.indexOf(34, i));
-                                ByteBuffer c0043nM1310c = new ByteBuffer().m1310c(660529).m1314d(strMo128m).m1310c(595003).m1314d(str3).m1310c(595012).m1314d(strM12a).m1310c(1446989);
+                                ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(660529).writeRawString(strMo128m).writeCompressed(595003).writeRawString(str3).writeCompressed(595012).writeRawString(strM12a).writeCompressed(1446989);
                                 String strM544b = Utils.m544b();
-                                c0022avM569h2.m553a((Object) c0043nM1310c.m1314d(strM544b).m1310c(1840227).m1314d(str3).m1310c(791679).m1314d(new ByteBuffer().m1314d(new ByteBuffer().m1314d(strMo128m).m1321f(58).m1314d(str3).m1321f(58).m1314d(str2).m1365B().m1321f(58).m1314d(strM12a).m1321f(58).m1314d(strM544b).m1365B().m1387H()).m1321f(58).m1314d(strM12a).m1310c(660619).m1314d(strM544b).m1321f(58).m1310c(263757).m1321f(58).m1314d(new ByteBuffer().m1310c(1184917).m1314d(str3).m1365B().m1387H()).m1365B().m1387H()).m1310c(988327).m1320d());
+                                c0022avM569h2.m553a((Object) c0043nM1310c.writeRawString(strM544b).writeCompressed(1840227).writeRawString(str3).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(strMo128m).writeByte(58).writeRawString(str3).writeByte(58).writeRawString(str2).encryptMD5().writeByte(58).writeRawString(strM12a).writeByte(58).writeRawString(strM544b).encryptMD5().toHexString()).writeByte(58).writeRawString(strM12a).writeCompressed(660619).writeRawString(strM544b).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(str3).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
                             }
                             m91a(c0022avM569h2);
                         } else if (StringUtils.m3a(464473, str)) {
@@ -619,7 +619,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: u */
     private void m109u() {
-        m90a(new ByteBuffer().m1310c(8131775).m1314d(mo84j()).m1310c(136911).m1339k());
+        m90a(new ByteBuffer().writeCompressed(8131775).writeRawString(mo84j()).writeCompressed(136911).toByteArray());
     }
 
     @Override // p000.Account
@@ -920,7 +920,7 @@ public class XmppProtocol extends Account {
             String strM534k = Utils.m534k(strM11a);
             if (Utils.m535l(strM534k)) {
                 try {
-                    return ResourceManager.m986d(strM534k).m1348r();
+                    return ResourceManager.m986d(strM534k).toImage();
                 } catch (Throwable unused) {
                 }
             }

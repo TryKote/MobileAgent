@@ -241,7 +241,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
-            javax.microedition.lcdui.Image r0 = r0.m1348r()     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
+            javax.microedition.lcdui.Image r0 = r0.toImage()     // Catch: java.lang.Throwable -> Le6 java.lang.Throwable -> Lfa java.lang.Throwable -> La84
             r10 = r0
             goto Lda
         Ld3:
@@ -435,10 +435,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r1.<init>()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r15
-            n r0 = r0.m1310c(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            n r0 = r0.writeCompressed(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = 987652(0xf1204, float:1.383995E-39)
-            n r0 = r0.m1310c(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
-            java.lang.String r0 = r0.m1317c()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            n r0 = r0.writeCompressed(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            java.lang.String r0 = r0.getStringAndClear()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r0
             r8 = r1
@@ -453,7 +453,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r15 = r1
             r1 = 0
             r16 = r1
-            av r0 = r0.m1388I()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            av r0 = r0.parseXml()     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = 0
             r12 = r1
             java.util.Vector r0 = r0.f172b     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
@@ -608,7 +608,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
-            java.lang.String r0 = r0.m1381G()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            java.lang.String r0 = r0.readUTFWithLen()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             java.util.Vector r0 = p000.XmppContactGroup.m1045a(r0)     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r10 = r0
             r0 = 0
@@ -662,12 +662,12 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r1.<init>()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = r15
-            n r0 = r0.m1310c(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            n r0 = r0.writeCompressed(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = 1905127(0x1d11e7, float:2.669652E-39)
-            n r0 = r0.m1310c(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            n r0 = r0.writeCompressed(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = 254(0xfe, float:3.56E-43)
-            n r0 = r0.m1311d(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
-            java.lang.String r0 = r0.m1317c()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            n r0 = r0.writeEncodedInt(r1)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            java.lang.String r0 = r0.getStringAndClear()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             ax r0 = p000.HttpClient.m631b(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = r0
             r8 = r1
@@ -680,7 +680,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1.<init>(r2)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r1 = 0
             r15 = r1
-            av r0 = r0.m1388I()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
+            av r0 = r0.parseXml()     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             p000.StringUtils.m44a(r0)     // Catch: java.lang.Throwable -> L3f5 java.lang.Throwable -> L3fe java.lang.Throwable -> La84
             r0 = r8
             p000.HttpClient.m633a(r0)     // Catch: java.lang.Throwable -> La84
@@ -876,7 +876,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.util.Hashtable r0 = p000.ConnectionThread.f353d     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r11
             r2 = r16
-            javax.microedition.lcdui.Image r2 = r2.m1348r()     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            javax.microedition.lcdui.Image r2 = r2.toImage()     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             java.lang.Object r0 = r0.put(r1, r2)     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             goto L552
         L551:
@@ -1454,7 +1454,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = r0
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            av r0 = r0.m1389J()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            av r0 = r0.parseXmlStr()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r15 = r0
             r0 = r8
             r1 = 3
@@ -1474,36 +1474,36 @@ public final class AsyncTask implements Runnable, CommandListener {
             r3 = r2
             r3.<init>()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = r11
-            n r2 = r2.m1310c(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeCompressed(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = 1316925(0x14183d, float:1.845405E-39)
-            n r2 = r2.m1310c(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeCompressed(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = r15
             r4 = 1
             r3 = r3[r4]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r2 = r2.m1316b(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeObjectStr(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = 463517(0x7129d, float:6.49526E-40)
-            n r2 = r2.m1310c(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeCompressed(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = r15
             r4 = 4
             r3 = r3[r4]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r2 = r2.m1316b(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeObjectStr(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = 530513(0x81851, float:7.43407E-40)
-            n r2 = r2.m1310c(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeCompressed(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r3 = 3282875(0x3217bb, float:4.600288E-39)
             r11 = r3
             n r3 = new n     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = r3
             r4.<init>()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = r11
-            n r3 = r3.m1310c(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeCompressed(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = 58
-            n r3 = r3.m1321f(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeByte(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = r15
             r5 = 1
             r4 = r4[r5]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r3 = r3.m1316b(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeObjectStr(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = 58
-            n r3 = r3.m1321f(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeByte(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = r10
             r5 = 330583(0x50b57, float:4.63245E-40)
             av r4 = r4.m562f(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
@@ -1513,29 +1513,29 @@ public final class AsyncTask implements Runnable, CommandListener {
             r4 = 0
             r11 = r4
             r4 = r10
-            n r3 = r3.m1314d(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeRawString(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r4 = 58
-            n r3 = r3.m1321f(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeByte(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             n r4 = new n     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r5 = r4
             r5.<init>()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r5 = r15
             r6 = 4
             r5 = r5[r6]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r4 = r4.m1316b(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r4 = r4.writeObjectStr(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r5 = 530521(0x81859, float:7.43418E-40)
-            n r4 = r4.m1310c(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r4 = r4.writeCompressed(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r5 = r15
             r6 = 5
             r5 = r5[r6]     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r4 = r4.m1316b(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r4 = r4.m1365B()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r4 = r4.m1387H()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r3 = r3.m1314d(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r3 = r3.m1365B()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r3 = r3.m1387H()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            n r2 = r2.m1314d(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
-            java.lang.String r2 = r2.m1337i()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r4 = r4.writeObjectStr(r5)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r4 = r4.encryptMD5()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r4 = r4.toHexString()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.writeRawString(r4)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r3 = r3.encryptMD5()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r3 = r3.toHexString()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            n r2 = r2.writeRawString(r3)     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
+            java.lang.String r2 = r2.readAllByteStr()     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0[r1] = r2     // Catch: java.lang.Throwable -> La60 java.lang.Throwable -> La77 java.lang.Throwable -> La84
             r0 = r15
             r1 = 3

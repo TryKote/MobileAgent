@@ -46,12 +46,12 @@ public final class NetworkUtils {
     public static Hashtable f368j;
 
     public NetworkUtils(ByteBuffer c0043n) {
-        this.f359a = c0043n.m1355w();
-        this.f360b = c0043n.m1355w();
-        this.f361c = c0043n.m1335e((String) null);
-        this.f362d = c0043n.m1334g();
-        this.f363e = c0043n.m1355w();
-        this.f364f = c0043n.m1334g();
+        this.f359a = c0043n.readIntBE();
+        this.f360b = c0043n.readIntBE();
+        this.f361c = c0043n.readUTF8Str((String) null);
+        this.f362d = c0043n.readWideStr();
+        this.f363e = c0043n.readIntBE();
+        this.f364f = c0043n.readWideStr();
     }
 
     public NetworkUtils(int i, String str, int i2, String str2) {
@@ -91,10 +91,10 @@ public final class NetworkUtils {
             Thread.sleep(1000L);
             AppController.m343s();
             if (str == null) {
-                HttpClient c0024axM631b = HttpClient.m631b((Object) new ByteBuffer().m1310c(1442705).m1310c(524308).m1310c(720924).m1317c());
+                HttpClient c0024axM631b = HttpClient.m631b((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
                 c0024ax = c0024axM631b;
                 if (c0024axM631b.m634a() == 200) {
-                    Vector vector = new ByteBuffer(c0024ax).m1389J().f172b;
+                    Vector vector = new ByteBuffer(c0024ax).parseXmlStr().f172b;
                     XmlElement c0022avM560b = new XmlElement(103).m560b(103, AppState.m584b(223)).m560b(102, AppController.m298f()).m560b(116, StringUtils.m17c(Long.toString(Runtime.getRuntime().totalMemory()))).m560b(112, StringUtils.m17c(Integer.toString(0))).m560b(115, StringUtils.m17c(ResourceManager.m968a(false).toString()));
                     for (int i6 = 0; i6 < vector.size(); i6++) {
                         XmlElement c0022av = (XmlElement) vector.elementAt(i6);
@@ -111,11 +111,11 @@ public final class NetworkUtils {
                     new AsyncTask(18, c0022avM560b.toString());
                 }
             } else {
-                ByteBuffer c0043nM1310c = new ByteBuffer().m1310c(131082);
-                ByteBuffer c0043nM1377k = new ByteBuffer().m1377k(str);
-                for (int i7 = 0; i7 < c0043nM1377k.f384b; i7 += 600) {
+                ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(131082);
+                ByteBuffer c0043nM1377k = new ByteBuffer().writeUTFNoLen(str);
+                for (int i7 = 0; i7 < c0043nM1377k.length; i7 += 600) {
                     int i8 = i7;
-                    int iM503b = Utils.m503b(i8 + 600, c0043nM1377k.f384b);
+                    int iM503b = Utils.m503b(i8 + 600, c0043nM1377k.length);
                     byte[] bArrM581a = AppState.m581a(961);
                     int i9 = 0;
                     boolean z = true;
@@ -127,19 +127,19 @@ public final class NetworkUtils {
                         if (i8 < iM503b) {
                             int i14 = i8;
                             i8++;
-                            i10 = c0043nM1377k.f383a[i14] & 255;
+                            i10 = c0043nM1377k.data[i14] & 255;
                             i13 = 0 + 1;
                         }
                         if (i8 < iM503b) {
                             int i15 = i8;
                             i8++;
-                            i11 = c0043nM1377k.f383a[i15] & 255;
+                            i11 = c0043nM1377k.data[i15] & 255;
                             i13++;
                         }
                         if (i8 < iM503b) {
                             int i16 = i8;
                             i8++;
-                            i12 = c0043nM1377k.f383a[i16] & 255;
+                            i12 = c0043nM1377k.data[i16] & 255;
                             i13++;
                         } else {
                             z = false;
@@ -232,12 +232,12 @@ public final class NetworkUtils {
                             }
                         }
                     }
-                    c0043nM1310c.m1303a(bArrM1211a, 0, i9);
+                    c0043nM1310c.writeBytesAt(bArrM1211a, 0, i9);
                 }
-                c0043nM1377k.m1301b();
-                HttpClient c0024axM632a = HttpClient.m632a(new ByteBuffer().m1310c(1311655).m1310c(524300).m1310c(720924).m1317c());
+                c0043nM1377k.clear();
+                HttpClient c0024axM632a = HttpClient.m632a(new ByteBuffer().writeCompressed(1311655).writeCompressed(524300).writeCompressed(720924).getStringAndClear());
                 c0024ax = c0024axM632a;
-                c0024axM632a.m642a(c0043nM1310c.f384b, 1414745936, 1038).m641a(c0043nM1310c).m634a();
+                c0024axM632a.m642a(c0043nM1310c.length, 1414745936, 1038).m641a(c0043nM1310c).m634a();
             }
             HttpClient.m633a(c0024ax);
             AppController.m344t();
@@ -465,7 +465,7 @@ public final class NetworkUtils {
             return ((InputStream) objArr[1]).available();
         }
         synchronized (objArr) {
-            int i = ((ByteBuffer) objArr[4]).f384b;
+            int i = ((ByteBuffer) objArr[4]).length;
             if (i > 0) {
                 return i;
             }
@@ -492,7 +492,7 @@ public final class NetworkUtils {
             return ((InputStream) objArr[1]).read(bArr, i, i2);
         }
         synchronized (objArr) {
-            ((ByteBuffer) objArr[4]).m1305b(bArr, i, i2);
+            ((ByteBuffer) objArr[4]).readInto(bArr, i, i2);
         }
         return i2;
     }
@@ -532,7 +532,7 @@ public final class NetworkUtils {
                 iM1191a = m1191a(objArr, bArr);
                 if (iM1191a > 0) {
                     synchronized (objArr) {
-                        ((ByteBuffer) objArr[4]).m1303a(bArr, 0, iM1191a);
+                        ((ByteBuffer) objArr[4]).writeBytesAt(bArr, 0, iM1191a);
                     }
                 }
                 if (iM1191a < 1024) {
@@ -807,14 +807,14 @@ public final class NetworkUtils {
     private static final Vector m1206a(MrimAccount c0028ba, ByteBuffer c0043n) {
         Vector vectorM1213g = m1213g();
         Vector vectorM512e = Utils.m512e(AppState.m584b(915));
-        int iM1328e = c0043n.m1328e();
-        int iM1328e2 = c0043n.m1328e();
-        c0043n.m1328e();
+        int iM1328e = c0043n.readInt();
+        int iM1328e2 = c0043n.readInt();
+        c0043n.readInt();
         Vector vectorM1213g2 = m1213g();
         for (int i = 0; i < iM1328e; i++) {
-            vectorM1213g2.addElement(c0043n.m1338j());
+            vectorM1213g2.addElement(c0043n.readHexStr());
         }
-        for (int i2 = 0; i2 < iM1328e2 && c0043n.f384b > 0; i2++) {
+        for (int i2 = 0; i2 < iM1328e2 && c0043n.length > 0; i2++) {
             ContactInfo c0042mM1251a = ContactInfo.m1251a(c0028ba);
             vectorM1213g.addElement(c0042mM1251a);
             int i3 = 0;
@@ -829,22 +829,22 @@ public final class NetworkUtils {
                     }
                     switch (iM541c) {
                         case 0:
-                            c0042mM1251a.m1279q(c0043n.m1334g());
+                            c0042mM1251a.m1279q(c0043n.readWideStr());
                             break;
                         case 1:
-                            c0042mM1251a.m1280r(c0043n.m1334g());
+                            c0042mM1251a.m1280r(c0043n.readWideStr());
                             break;
                         case 2:
-                            c0042mM1251a.m1259b(c0043n.m1335e((String) null));
+                            c0042mM1251a.m1259b(c0043n.readUTF8Str((String) null));
                             break;
                         case 3:
-                            c0042mM1251a.m1260c(c0043n.m1335e((String) null));
+                            c0042mM1251a.m1260c(c0043n.readUTF8Str((String) null));
                             break;
                         case 4:
-                            c0042mM1251a.m1261d(c0043n.m1335e((String) null));
+                            c0042mM1251a.m1261d(c0043n.readUTF8Str((String) null));
                             break;
                         case 5:
-                            int iM511a = Utils.m511a(c0043n.m1334g(), 1, 2, 0);
+                            int iM511a = Utils.m511a(c0043n.readWideStr(), 1, 2, 0);
                             if (1 == iM511a) {
                                 c0042mM1251a.m1263d();
                                 break;
@@ -855,43 +855,43 @@ public final class NetworkUtils {
                                 break;
                             }
                         case 6:
-                            c0042mM1251a.m1265f(c0043n.m1334g());
+                            c0042mM1251a.m1265f(c0043n.readWideStr());
                             break;
                         case 7:
-                            c0042mM1251a.m1281s(c0043n.m1334g());
+                            c0042mM1251a.m1281s(c0043n.readWideStr());
                             break;
                         case 8:
-                            c0042mM1251a.m1274o(c0043n.m1335e((String) null));
+                            c0042mM1251a.m1274o(c0043n.readUTF8Str((String) null));
                             break;
                         case 9:
-                            c0042mM1251a.m1278p(c0043n.m1334g());
+                            c0042mM1251a.m1278p(c0043n.readWideStr());
                             break;
                         case 10:
-                            c0043n.m1334g();
+                            c0043n.readWideStr();
                             break;
                         case 11:
-                            c0043n.m1334g();
+                            c0043n.readWideStr();
                             break;
                         case 12:
-                            c0042mM1251a.m1282t(c0043n.m1334g());
+                            c0042mM1251a.m1282t(c0043n.readWideStr());
                             break;
                         case 13:
-                            c0042mM1251a.m1266g(c0043n.m1334g());
+                            c0042mM1251a.m1266g(c0043n.readWideStr());
                             break;
                         case 14:
-                            c0042mM1251a.m1267h(c0043n.m1334g());
+                            c0042mM1251a.m1267h(c0043n.readWideStr());
                             break;
                         case 15:
-                            c0042mM1251a.m1294v(c0043n.m1334g());
+                            c0042mM1251a.m1294v(c0043n.readWideStr());
                             break;
                         case 16:
-                            c0042mM1251a.m1295w(c0043n.m1335e((String) null));
+                            c0042mM1251a.m1295w(c0043n.readUTF8Str((String) null));
                             break;
                         case 17:
-                            c0042mM1251a.m1296x(c0043n.m1335e((String) null));
+                            c0042mM1251a.m1296x(c0043n.readUTF8Str((String) null));
                             break;
                         default:
-                            c0043n.m1334g();
+                            c0043n.readWideStr();
                             break;
                     }
                 } while (!StringUtils.m6a(str, (String) vectorM512e.elementAt(iM541c)));
@@ -1167,17 +1167,17 @@ public final class NetworkUtils {
                     ByteBuffer c0043n = new ByteBuffer(c0024axM630a);
                     switch (((Integer) objArr[1]).intValue()) {
                         case 0:
-                            m1226a(objArr, c0043n.m1389J());
+                            m1226a(objArr, c0043n.parseXmlStr());
                             HttpClient.m633a(c0024axM630a);
                             AppController.m344t();
                             return;
                         case 1:
-                            objArr[3] = c0043n.m1348r();
+                            objArr[3] = c0043n.toImage();
                             HttpClient.m633a(c0024axM630a);
                             AppController.m344t();
                             return;
                         case 2:
-                            m1226a(objArr, c0043n.m1389J());
+                            m1226a(objArr, c0043n.parseXmlStr());
                             HttpClient.m633a(c0024axM630a);
                             AppController.m344t();
                             return;
@@ -1207,7 +1207,7 @@ public final class NetworkUtils {
                     throw new RuntimeException();
                 }
                 objArr[3] = null;
-                m1224a(1, new ByteBuffer().m1310c(2163862).m1316b(objArr[6]).m1317c(), objArr);
+                m1224a(1, new ByteBuffer().writeCompressed(2163862).writeObjectStr(objArr[6]).getStringAndClear(), objArr);
                 return;
             }
             XmlElement c0022av2 = (XmlElement) vector.elementAt(size);

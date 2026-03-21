@@ -117,7 +117,7 @@ public final class HttpClient {
     public final int m634a() throws IOException {
         if (this.f188f != 0) {
             m640d().flush();
-            return Integer.parseInt(new String(m645e().f383a, 9, 3));
+            return Integer.parseInt(new String(m645e().data, 9, 3));
         }
         int responseCode = ((HttpConnection) this.f183a).getResponseCode();
         this.f189g += this.f191i.length() + 127;
@@ -135,7 +135,7 @@ public final class HttpClient {
         if (this.f188f == 0) {
             ((HttpConnection) this.f183a).setRequestProperty(str, str2);
         } else {
-            m641a(new ByteBuffer().m1314d(str).m1385u(8250).m1314d(str2).m1385u(2573));
+            m641a(new ByteBuffer().writeRawString(str).writeUInt(8250).writeRawString(str2).writeUInt(2573));
         }
         this.f189g += str.length() + str2.length() + 4;
         return this;
@@ -181,20 +181,20 @@ public final class HttpClient {
 
     /* renamed from: a */
     public final HttpClient m641a(ByteBuffer c0043n) throws IOException {
-        m637a(c0043n.f383a, c0043n.f384b);
+        m637a(c0043n.data, c0043n.length);
         return this;
     }
 
     /* renamed from: a */
     public final HttpClient m642a(int i, int i2, int i3) throws IOException {
         String str = this.f191i;
-        this.f183a = Connector.open(new ByteBuffer().m1310c(593549).m1314d(StringUtils.m13b(str, str.indexOf(47))).m1317c(), 3);
-        m641a(new ByteBuffer().m1385u(i2).m1321f(32).m1314d(StringUtils.m15c(str, str.indexOf(47))).m1310c(2951238).m1314d(StringUtils.m13b(str, str.indexOf(58))).m1311d(i3).m1385u(2573));
+        this.f183a = Connector.open(new ByteBuffer().writeCompressed(593549).writeRawString(StringUtils.m13b(str, str.indexOf(47))).getStringAndClear(), 3);
+        m641a(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.m15c(str, str.indexOf(47))).writeCompressed(2951238).writeRawString(StringUtils.m13b(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
         if (i2 == 1414745936) {
             m643a(788628, 2164851);
             m643a(919726, 788668);
         }
-        return m636a(AppState.m584b(919712), StringUtils.m17c(Integer.toString(i))).m643a(657608, 329938).m641a(new ByteBuffer().m1385u(2573));
+        return m636a(AppState.m584b(919712), StringUtils.m17c(Integer.toString(i))).m643a(657608, 329938).m641a(new ByteBuffer().writeUInt(2573));
     }
 
     /* renamed from: a */
@@ -206,20 +206,20 @@ public final class HttpClient {
     public final ByteBuffer m644b() throws IOException, NumberFormatException {
         int i;
         ByteBuffer c0043nM645e = m645e();
-        String str = new String(c0043nM645e.f383a, 0, c0043nM645e.f384b);
+        String str = new String(c0043nM645e.data, 0, c0043nM645e.length);
         int iIndexOf = StringUtils.m17c(str.toLowerCase()).indexOf(AppState.m584b(1052310)) + 16;
         int i2 = Integer.parseInt(StringUtils.m12a(str, iIndexOf, str.indexOf(13, iIndexOf)));
         ByteBuffer c0043n = new ByteBuffer();
         byte[] bArrM1211a = NetworkUtils.m1211a(i2);
         do {
-            i = m639c().read(bArrM1211a, 0, i2 - c0043n.f384b);
+            i = m639c().read(bArrM1211a, 0, i2 - c0043n.length);
             if (i > 0) {
                 this.f190h += i;
             }
             if (i > 0) {
-                c0043n.m1303a(bArrM1211a, 0, i);
+                c0043n.writeBytesAt(bArrM1211a, 0, i);
             }
-            if (c0043n.f384b == i2) {
+            if (c0043n.length == i2) {
                 break;
             }
         } while (i != -1);
@@ -230,7 +230,7 @@ public final class HttpClient {
     /* renamed from: e */
     private final ByteBuffer m645e() throws IOException {
         if (this.f192j != null) {
-            return this.f192j.m1299a();
+            return this.f192j.compact();
         }
         this.f192j = new ByteBuffer();
         while (true) {
@@ -238,14 +238,14 @@ public final class HttpClient {
             while (true) {
                 int i2 = m639c().read();
                 if (i2 == -1) {
-                    throw new EOFException(this.f192j.m1317c());
+                    throw new EOFException(this.f192j.getStringAndClear());
                 }
-                this.f192j.m1321f(i2);
+                this.f192j.writeByte(i2);
                 this.f190h++;
                 if (i2 == 10) {
                     i++;
                     if (i == 34) {
-                        return this.f192j.m1299a();
+                        return this.f192j.compact();
                     }
                 } else if (i2 == 13) {
                     i += 16;

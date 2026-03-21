@@ -38,11 +38,11 @@ public abstract class ContactGroup implements Sortable {
     /* renamed from: a */
     public void mo196a(ByteBuffer c0043n, boolean z) {
         int size = this.f397e.size();
-        c0043n.m1360p(size);
+        c0043n.writeIntLE(size);
         for (int i = 0; i < size; i++) {
             m1394e(i).mo136a(c0043n);
         }
-        c0043n.m1322a(this.f399g);
+        c0043n.writeBoolean(this.f399g);
         if (z) {
             this.f397e.removeAllElements();
         }
@@ -51,7 +51,7 @@ public abstract class ContactGroup implements Sortable {
 
     /* renamed from: f */
     public final MenuItem m1395f(int i) {
-        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().m1321f(35).m1382s(this.f396d.f314j).m1321f(35).m1382s(mo197b()).m1337i()).m896a(this.f399g ? 30 : 31);
+        MenuItem c0032cM896a = MenuItem.m887a(new ByteBuffer().writeByte(35).writeIntAsString(this.f396d.f314j).writeByte(35).writeIntAsString(mo197b()).readAllByteStr()).m896a(this.f399g ? 30 : 31);
         c0032cM896a.f265d = this;
         if (mo198a()) {
             MenuItem c0032cM901a = c0032cM896a.m901a(NetworkUtils.m1215a(NetworkUtils.m1217h().append(this.f398f).append(' ').append('(')), 1, 0);

@@ -95,19 +95,19 @@ public final class VCard {
 
     /* renamed from: a */
     public static final String[] m55a(ByteBuffer c0043n) {
-        if (c0043n.f384b == 0 || c0043n.m1328e() == 0) {
+        if (c0043n.length == 0 || c0043n.readInt() == 0) {
             return null;
         }
         String[] strArr = new String[8];
-        strArr[0] = c0043n.m1334g();
-        strArr[1] = c0043n.m1334g();
-        strArr[2] = c0043n.m1334g();
-        strArr[3] = c0043n.m1335e((String) null);
-        strArr[4] = c0043n.m1334g();
-        strArr[5] = c0043n.m1334g();
+        strArr[0] = c0043n.readWideStr();
+        strArr[1] = c0043n.readWideStr();
+        strArr[2] = c0043n.readWideStr();
+        strArr[3] = c0043n.readUTF8Str((String) null);
+        strArr[4] = c0043n.readWideStr();
+        strArr[5] = c0043n.readWideStr();
         if (StringUtils.m3a(590588, strArr[2])) {
-            strArr[6] = c0043n.m1334g();
-            strArr[7] = c0043n.m1334g();
+            strArr[6] = c0043n.readWideStr();
+            strArr[7] = c0043n.readWideStr();
         } else {
             strArr[6] = AppState.f181d;
             strArr[7] = AppState.f181d;
@@ -128,13 +128,13 @@ public final class VCard {
     /* renamed from: b */
     public static final VCard m58b(ByteBuffer c0043n) {
         VCard c0003ac = new VCard();
-        if (c0043n.m1340l()) {
+        if (c0043n.readBoolean()) {
             try {
-                c0003ac.m53a(c0043n.m1334g(), c0043n.m1334g(), c0043n.m1334g(), c0043n.m1335e((String) null), c0043n.m1334g(), c0043n.m1334g(), c0043n.m1334g(), c0043n.m1334g());
-                c0003ac.f21i = c0043n.m1355w();
+                c0003ac.m53a(c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readUTF8Str((String) null), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr(), c0043n.readWideStr());
+                c0003ac.f21i = c0043n.readIntBE();
                 c0003ac.f23k = c0003ac.f22j;
                 c0003ac.f22j = new String[0];
-                c0003ac.f24l = c0043n.m1340l();
+                c0003ac.f24l = c0043n.readBoolean();
             } catch (Throwable unused) {
                 return null;
             }
@@ -169,12 +169,12 @@ public final class VCard {
 
     /* renamed from: a */
     public static final String m62a(int i, String str, String str2) {
-        return new ByteBuffer().m1310c(3473998).m1382s(i).m1385u(4028454).m1314d(str).m1385u(4028710).m1314d(str2).m1310c(1311433).m1382s(Utils.m520a()).m1317c();
+        return new ByteBuffer().writeCompressed(3473998).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(1311433).writeIntAsString(Utils.m520a()).getStringAndClear();
     }
 
     /* renamed from: a */
     public static final String m63a(PhoneContact c0020at, int i) {
-        return new ByteBuffer().m1310c(1901187).m1314d(c0020at.f164b).m1310c(393954).m1314d(c0020at.f163a).m1310c(393960).m1314d(c0020at.f166d).m1310c(393966).m1314d(c0020at.f165c).m1310c(1311413).m1382s(i).m1310c(393943).m1382s(Utils.m520a()).m1317c();
+        return new ByteBuffer().writeCompressed(1901187).writeRawString(c0020at.f164b).writeCompressed(393954).writeRawString(c0020at.f163a).writeCompressed(393960).writeRawString(c0020at.f166d).writeCompressed(393966).writeRawString(c0020at.f165c).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.m520a()).getStringAndClear();
     }
 
     /* renamed from: a */

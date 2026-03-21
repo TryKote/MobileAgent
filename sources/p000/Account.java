@@ -123,23 +123,23 @@ public abstract class Account {
     }
 
     public Account(ByteBuffer c0043n) {
-        this(c0043n.m1328e(), c0043n.m1338j(), c0043n.m1334g());
-        c0043n.m1328e();
+        this(c0043n.readInt(), c0043n.readHexStr(), c0043n.readWideStr());
+        c0043n.readInt();
         for (int i = 2; i < 9; i++) {
-            this.f317m[i] = c0043n.m1328e();
+            this.f317m[i] = c0043n.readInt();
         }
-        this.f325u = c0043n.m1328e();
-        this.f339I = c0043n.m1335e((String) null);
+        this.f325u = c0043n.readInt();
+        this.f339I = c0043n.readUTF8Str((String) null);
     }
 
     /* renamed from: q */
     public final ByteBuffer m1050q() {
-        return new ByteBuffer().m1382s(this.f314j).m1321f(95);
+        return new ByteBuffer().writeIntAsString(this.f314j).writeByte(95);
     }
 
     /* renamed from: A */
     public final String m1051A() {
-        return new ByteBuffer().m1321f(35).m1382s(this.f314j).m1321f(35).m1314d(this.f315k).m1337i();
+        return new ByteBuffer().writeByte(35).writeIntAsString(this.f314j).writeByte(35).writeRawString(this.f315k).readAllByteStr();
     }
 
     /* renamed from: b */
@@ -159,30 +159,30 @@ public abstract class Account {
 
     /* renamed from: a */
     public void mo715a(ByteBuffer c0043n) {
-        if (c0043n.m1328e() == 12) {
-            this.f326v = c0043n.m1328e();
-            this.f327w = c0043n.m1328e();
-            this.f328x = c0043n.m1328e();
-            c0043n.m1328e();
+        if (c0043n.readInt() == 12) {
+            this.f326v = c0043n.readInt();
+            this.f327w = c0043n.readInt();
+            this.f328x = c0043n.readInt();
+            c0043n.readInt();
         }
     }
 
     /* renamed from: b */
     public void mo714b(ByteBuffer c0043n) {
-        c0043n.m1360p(12).m1360p(this.f326v).m1360p(this.f327w).m1360p(this.f328x).m1360p(0);
+        c0043n.writeIntLE(12).writeIntLE(this.f326v).writeIntLE(this.f327w).writeIntLE(this.f328x).writeIntLE(0);
     }
 
     /* renamed from: a */
     public Account mo82a(ByteBuffer c0043n, boolean z, boolean z2) {
-        c0043n.m1321f(mo80a() | 8).m1360p(this.f314j).m1308a(this.f315k).m1308a(this.f316l).m1360p(0);
+        c0043n.writeByte(mo80a() | 8).writeIntLE(this.f314j).writeStringLatin1(this.f315k).writeStringLatin1(this.f316l).writeIntLE(0);
         for (int i = 2; i < 9; i++) {
-            c0043n.m1360p(this.f317m[i]);
+            c0043n.writeIntLE(this.f317m[i]);
         }
-        c0043n.m1360p(this.f325u);
+        c0043n.writeIntLE(this.f325u);
         if (this.f339I != null) {
-            c0043n.m1309b(this.f339I);
+            c0043n.writeStringUTF16(this.f339I);
         } else {
-            c0043n.m1360p(0);
+            c0043n.writeIntLE(0);
         }
         if (z2) {
             if (!z) {
@@ -190,7 +190,7 @@ public abstract class Account {
             }
             int size = this.f313i.size();
             int i2 = size;
-            c0043n.m1360p(size);
+            c0043n.writeIntLE(size);
             while (true) {
                 i2--;
                 if (i2 < 0) {
@@ -201,7 +201,7 @@ public abstract class Account {
             this.f334D.mo196a(c0043n, true);
             this.f321q.clear();
         } else {
-            this.f334D.mo196a(c0043n.m1360p(0), false);
+            this.f334D.mo196a(c0043n.writeIntLE(0), false);
         }
         return this;
     }
@@ -216,20 +216,20 @@ public abstract class Account {
 
     /* renamed from: d */
     public final int m1053d(ByteBuffer c0043n) {
-        AppController.m420b(this, c0043n.f384b);
+        AppController.m420b(this, c0043n.length);
         ConnectionThread c0039j = this.f320p;
         if (c0039j.f348b != null) {
             throw new RuntimeException();
         }
         ByteBuffer c0043n2 = c0039j.f347a;
-        int i = c0043n.f384b;
+        int i = c0043n.length;
         if (i > 0) {
             synchronized (c0043n2) {
-                c0043n2.m1300a(i);
-                Utils.m490a((Object) c0043n.f383a, c0043n.f385c, (Object) c0043n2.f383a, c0043n2.f384b, i);
-                c0043n.m1301b();
-                c0043n2.f384b += i;
-                c0043n2.m1299a();
+                c0043n2.ensureCapacity(i);
+                Utils.m490a((Object) c0043n.data, c0043n.offset, (Object) c0043n2.data, c0043n2.length, i);
+                c0043n.clear();
+                c0043n2.length += i;
+                c0043n2.compact();
             }
         }
         if (this.f330z <= 0) {

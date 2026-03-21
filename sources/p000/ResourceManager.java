@@ -49,13 +49,13 @@ public final class ResourceManager {
 
     public ResourceManager(int i, int i2, int i3, int i4) {
         this.f281a = i;
-        ByteBuffer c0043nM1385u = new ByteBuffer().m1385u(4027430).m1385u(i == 3 ? 1936548170 : 1936744781).m1385u(4028966);
+        ByteBuffer c0043nM1385u = new ByteBuffer().writeUInt(4027430).writeUInt(i == 3 ? 1936548170 : 1936744781).writeUInt(4028966);
         this.f282b = i2;
-        ByteBuffer c0043nM1385u2 = c0043nM1385u.m1382s(i2).m1385u(4028454);
+        ByteBuffer c0043nM1385u2 = c0043nM1385u.writeIntAsString(i2).writeUInt(4028454);
         this.f283c = i3;
-        ByteBuffer c0043nM1385u3 = c0043nM1385u2.m1382s(i3).m1385u(4028710);
+        ByteBuffer c0043nM1385u3 = c0043nM1385u2.writeIntAsString(i3).writeUInt(4028710);
         this.f284d = i4;
-        this.f285e = c0043nM1385u3.m1382s(i4).m1317c();
+        this.f285e = c0043nM1385u3.writeIntAsString(i4).getStringAndClear();
     }
 
     public final boolean equals(Object obj) {
@@ -144,21 +144,21 @@ public final class ResourceManager {
         while (true) {
             ByteBuffer c0043n = (ByteBuffer) objArr[1];
             synchronized (c0043n) {
-                int i = c0043n.f384b;
+                int i = c0043n.length;
                 if (i > 0) {
-                    int iM1343k = c0043n.m1343k(0);
+                    int iM1343k = c0043n.peekUByteAt(0);
                     if ((iM1343k & 128) == 0) {
-                        return c0043n.m1346q();
+                        return c0043n.readUByte();
                     }
                     if (i != 1) {
-                        int iM1343k2 = c0043n.m1343k(1);
+                        int iM1343k2 = c0043n.peekUByteAt(1);
                         if (iM1343k < 224) {
-                            c0043n.m1329g(2);
+                            c0043n.skip(2);
                             return ((iM1343k & 31) << 6) | (iM1343k2 & 63);
                         }
                         if (i != 2) {
-                            c0043n.m1329g(2);
-                            return ((iM1343k & 15) << 12) | ((iM1343k2 & 63) << 6) | (c0043n.m1346q() & 63);
+                            c0043n.skip(2);
+                            return ((iM1343k & 15) << 12) | ((iM1343k2 & 63) << 6) | (c0043n.readUByte() & 63);
                         }
                     }
                 }
@@ -202,7 +202,7 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final Object[] m934a(ByteBuffer c0043n) {
         try {
-            int iM1328e = c0043n.m1328e();
+            int iM1328e = c0043n.readInt();
             if (iM1328e == 0) {
                 return null;
             }
@@ -210,7 +210,7 @@ public final class ResourceManager {
             for (int i = 0; i < iM1328e; i++) {
                 String[] strArr = new String[6];
                 for (int i2 = 0; i2 < 6; i2++) {
-                    strArr[i2] = c0043n.m1335e((String) null);
+                    strArr[i2] = c0043n.readUTF8Str((String) null);
                 }
                 objArr[i] = strArr;
             }
@@ -275,9 +275,9 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer m937a(MmpProtocol c0033d, String str) {
-        ByteBuffer c0043nM1376j = new ByteBuffer().m1376j(str);
+        ByteBuffer c0043nM1376j = new ByteBuffer().writeUTF(str);
         int iM920k = c0033d.m920k();
-        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1376j.m1357m(iM920k).m1357m(0).m1357m(1).m1357m(0)), m967e(4), str, m967e(iM920k)});
+        return c0033d.m916a(new Object[]{AppController.m464a(c0033d, 4872, c0043nM1376j.writeShortBE(iM920k).writeShortBE(0).writeShortBE(1).writeShortBE(0)), m967e(4), str, m967e(iM920k)});
     }
 
     /* renamed from: a */
@@ -312,7 +312,7 @@ public final class ResourceManager {
             } else {
                 stringBufferAppend.append(strM584b);
             }
-            iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4153, new ByteBuffer().m1360p(0).m1308a(NetworkUtils.m1215a(stringBufferAppend)).m1309b(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
+            iM1052c = c0028ba.m1052c(c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(NetworkUtils.m1215a(stringBufferAppend)).writeStringUTF16(strM522f)), m967e(6), c0035f, strM522f, strM584b}));
         } else {
             iM1052c = 299;
         }
@@ -337,7 +337,7 @@ public final class ResourceManager {
                 }
                 String str = null;
                 boolean z = false;
-                Vector vector = new ByteBuffer(c0024axM630a).m1388I().f172b;
+                Vector vector = new ByteBuffer(c0024axM630a).parseXml().f172b;
                 int size = vector.size();
                 while (true) {
                     size--;
@@ -677,11 +677,11 @@ public final class ResourceManager {
     /* renamed from: c */
     public static final ByteBuffer m963c(MmpProtocol c0033d) {
         Object[] objArr = new Object[2];
-        ByteBuffer c0043nM1357m = new ByteBuffer().m1360p(0).m1357m(0).m1357m(1);
+        ByteBuffer c0043nM1357m = new ByteBuffer().writeIntLE(0).writeShortBE(0).writeShortBE(1);
         int size = c0033d.f313i.size();
-        ByteBuffer c0043nM1357m2 = c0043nM1357m.m1357m((size << 1) + 4).m1357m(200).m1357m(size << 1);
+        ByteBuffer c0043nM1357m2 = c0043nM1357m.writeShortBE((size << 1) + 4).writeShortBE(200).writeShortBE(size << 1);
         for (int i = 0; i < size; i++) {
-            c0043nM1357m2.m1357m(((MmpContactGroup) c0033d.m1082g(i)).f157a);
+            c0043nM1357m2.writeShortBE(((MmpContactGroup) c0033d.m1082g(i)).f157a);
         }
         objArr[0] = AppController.m464a(c0033d, 4873, c0043nM1357m2);
         objArr[1] = m967e(3);
@@ -725,7 +725,7 @@ public final class ResourceManager {
             if (c0024axM631b.m634a() != 200) {
                 throw new Throwable();
             }
-            Vector vectorM513a = Utils.m513a(new ByteBuffer(c0024axM631b).m1381G(), '\n', '\r');
+            Vector vectorM513a = Utils.m513a(new ByteBuffer(c0024axM631b).readUTFWithLen(), '\n', '\r');
             XmppContactGroup.f310a.removeAllElements();
             int size = vectorM513a.size();
             while (true) {
@@ -788,13 +788,13 @@ public final class ResourceManager {
         String strM15c = StringUtils.m15c(str, iIndexOf + 1);
         Object[] objArr = new Object[3];
         if (abstractC0037h instanceof MmpProtocol) {
-            c0043nM1310c = new ByteBuffer().m1310c(3998225).m1314d(str);
+            c0043nM1310c = new ByteBuffer().writeCompressed(3998225).writeRawString(str);
         } else {
-            ByteBuffer c0043nM1310c2 = new ByteBuffer().m1310c(1704439);
+            ByteBuffer c0043nM1310c2 = new ByteBuffer().writeCompressed(1704439);
             int iIndexOf2 = strM15c.indexOf(46);
-            c0043nM1310c = c0043nM1310c2.m1314d(iIndexOf2 < 0 ? NetworkUtils.m1221a(6775139) : StringUtils.m13b(strM15c, iIndexOf2)).m1321f(47).m1314d(iIndexOf < 0 ? str : StringUtils.m13b(str, iIndexOf)).m1310c(467 + AppState.m586d(4895));
+            c0043nM1310c = c0043nM1310c2.writeRawString(iIndexOf2 < 0 ? NetworkUtils.m1221a(6775139) : StringUtils.m13b(strM15c, iIndexOf2)).writeByte(47).writeRawString(iIndexOf < 0 ? str : StringUtils.m13b(str, iIndexOf)).writeCompressed(467 + AppState.m586d(4895));
         }
-        objArr[0] = c0043nM1310c.m1317c();
+        objArr[0] = c0043nM1310c.getStringAndClear();
         objArr[1] = abstractC0037h;
         objArr[2] = null;
         AppState.f177b[1271] = objArr;
@@ -838,7 +838,7 @@ public final class ResourceManager {
             }
             ByteBuffer c0043n = new ByteBuffer(c0024axM629a);
             synchronized (AppState.f177b[1357]) {
-                AppState.m594c(289, Integer.parseInt(c0043n.m1389J().m554b(723889)) != 0 ? 1 : 0);
+                AppState.m594c(289, Integer.parseInt(c0043n.parseXmlStr().m554b(723889)) != 0 ? 1 : 0);
             }
             synchronized (AppState.f177b[1357]) {
                 m970a((byte) 0);
@@ -896,13 +896,13 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final String m975a(long j, long j2, int i, String str) {
         String strM1109a;
-        ByteBuffer c0043nM1385u = new ByteBuffer().m1310c(1245774).m1385u(1031283503);
+        ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(1245774).writeUInt(1031283503);
         String strM809a = IOUtils.m809a(j);
-        ByteBuffer c0043nM1385u2 = c0043nM1385u.m1314d(strM809a).m1385u(4028710);
+        ByteBuffer c0043nM1385u2 = c0043nM1385u.writeRawString(strM809a).writeUInt(4028710);
         String strM810b = IOUtils.m810b(j2);
-        ByteBuffer c0043nM1310c = c0043nM1385u2.m1314d(strM810b).m1385u(4028966).m1382s(i).m1310c(2363459);
+        ByteBuffer c0043nM1310c = c0043nM1385u2.writeRawString(strM810b).writeUInt(4028966).writeIntAsString(i).writeCompressed(2363459);
         if (str != null) {
-            ByteBuffer c0043nM1385u3 = c0043nM1310c.m1385u(1031302438).m1314d(strM809a).m1385u(1031367974).m1314d(strM810b).m1385u(1031040294);
+            ByteBuffer c0043nM1385u3 = c0043nM1310c.writeUInt(1031302438).writeRawString(strM809a).writeUInt(1031367974).writeRawString(strM810b).writeUInt(1031040294);
             if (StringUtils.m1a(str)) {
                 strM1109a = NetworkUtils.m1221a(1094795585);
             } else {
@@ -911,18 +911,18 @@ public final class ResourceManager {
                 for (int i2 = 0; i2 < length; i2++) {
                     int iCharAt = str.charAt(i2) & 65535;
                     if (iCharAt < 128) {
-                        c0043n.m1321f(iCharAt);
+                        c0043n.writeByte(iCharAt);
                     } else if (iCharAt < 2048) {
-                        c0043n.m1321f(192 + (iCharAt >> 6)).m1321f(128 + (iCharAt & 63));
+                        c0043n.writeByte(192 + (iCharAt >> 6)).writeByte(128 + (iCharAt & 63));
                     } else {
-                        c0043n.m1321f(224 + (iCharAt >> 12)).m1321f(128 + ((iCharAt >> 6) & 63)).m1321f(128 + (iCharAt & 63));
+                        c0043n.writeByte(224 + (iCharAt >> 12)).writeByte(128 + ((iCharAt >> 6) & 63)).writeByte(128 + (iCharAt & 63));
                     }
                 }
-                strM1109a = Conversation.m1109a(Conversation.m1109a(c0043n.m1320d(), 65547, 200765), 65552, 200768);
+                strM1109a = Conversation.m1109a(Conversation.m1109a(c0043n.toBase64(), 65547, 200765), 65552, 200768);
             }
-            c0043nM1385u3.m1314d(strM1109a);
+            c0043nM1385u3.writeRawString(strM1109a);
         }
-        return c0043nM1310c.m1317c();
+        return c0043nM1310c.getStringAndClear();
     }
 
     /* renamed from: q */
@@ -960,10 +960,10 @@ public final class ResourceManager {
             StringBuffer stringBufferM1217h = NetworkUtils.m1217h();
             StringBuffer stringBufferM1217h2 = NetworkUtils.m1217h();
             ByteBuffer c0043n = (ByteBuffer) obj;
-            while (c0043n.f384b > 0 && 32 != (iM1346q2 = c0043n.m1346q())) {
+            while (c0043n.length > 0 && 32 != (iM1346q2 = c0043n.readUByte())) {
                 stringBufferM1217h.append((char) iM1346q2);
             }
-            while (c0043n.f384b > 0 && 32 != (iM1346q = c0043n.m1346q())) {
+            while (c0043n.length > 0 && 32 != (iM1346q = c0043n.readUByte())) {
                 stringBufferM1217h2.append((char) iM1346q);
             }
             AppState.m588a(1284, stringBufferM1217h);
@@ -1003,33 +1003,33 @@ public final class ResourceManager {
 
     /* renamed from: a */
     private static final ByteBuffer m980a(MrimAccount c0028ba) {
-        return new ByteBuffer().m1314d(c0028ba.f316l).m1365B();
+        return new ByteBuffer().writeRawString(c0028ba.f316l).encryptMD5();
     }
 
     /* renamed from: a */
     public static final ByteBuffer m981a(MrimAccount c0028ba, Account abstractC0037h, int i, int i2, String str, boolean z, byte[] bArr) {
-        ByteBuffer c0043nM1302a = new ByteBuffer().m1384t(266).m1384t(20200).m1360p(i).m1360p(i2).m1308a(str).m1360p(z ? 1 : 0).m1360p(bArr.length).m1302a(bArr);
-        while ((c0043nM1302a.f384b & 7) != 0) {
-            c0043nM1302a.m1321f(0);
+        ByteBuffer c0043nM1302a = new ByteBuffer().writeIntWithLen(266).writeIntWithLen(20200).writeIntLE(i).writeIntLE(i2).writeStringLatin1(str).writeIntLE(z ? 1 : 0).writeIntLE(bArr.length).writeBytes(bArr);
+        while ((c0043nM1302a.length & 7) != 0) {
+            c0043nM1302a.writeByte(0);
         }
         ByteBuffer c0043n = new ByteBuffer();
         ByteBuffer c0043nM980a = m980a(c0028ba);
-        XmppContactGroup.m1036a(c0043nM980a.f383a, c0043nM980a.f384b, c0043nM1302a.f383a, c0043nM1302a.f384b);
-        c0043nM980a.m1301b();
-        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4132, c0043n.m1327c(c0043nM1302a)), m967e(17), abstractC0037h});
+        XmppContactGroup.m1036a(c0043nM980a.data, c0043nM980a.length, c0043nM1302a.data, c0043nM1302a.length);
+        c0043nM980a.clear();
+        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4132, c0043n.writeBufferIntLen(c0043nM1302a)), m967e(17), abstractC0037h});
     }
 
     /* renamed from: a */
     public static final void m982a(MrimAccount c0028ba, int i, Object[] objArr, ByteBuffer c0043n) {
         if (i == 1) {
-            c0043n.m1328e();
-            c0043n.m1300a(0);
+            c0043n.readInt();
+            c0043n.ensureCapacity(0);
             ByteBuffer c0043nM980a = m980a(c0028ba);
-            XmppContactGroup.m1037b(c0043nM980a.f383a, c0043nM980a.f384b, c0043n.f383a, c0043n.f384b);
-            c0043nM980a.m1301b();
-            c0043n.m1328e();
+            XmppContactGroup.m1037b(c0043nM980a.data, c0043nM980a.length, c0043n.data, c0043n.length);
+            c0043nM980a.clear();
+            c0043n.readInt();
             MmpProtocol c0033d = (MmpProtocol) objArr[2];
-            c0033d.m1052c(AppController.m464a(c0033d, 288, new ByteBuffer().m1357m(16).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e()).m1360p(c0043n.m1328e())));
+            c0033d.m1052c(AppController.m464a(c0033d, 288, new ByteBuffer().writeShortBE(16).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt()).writeIntLE(c0043n.readInt())));
         }
     }
 
@@ -1141,13 +1141,13 @@ public final class ResourceManager {
             iM985g4 = m985g(cCharAt4);
             i = i8 + 1;
             if (i > 0) {
-                c0043n.m1321f((iM985g << 2) | (iM985g2 >> 4));
+                c0043n.writeByte((iM985g << 2) | (iM985g2 >> 4));
             }
             if (i > 1) {
-                c0043n.m1321f((iM985g2 << 4) | (iM985g3 >> 2));
+                c0043n.writeByte((iM985g2 << 4) | (iM985g3 >> 2));
             }
             if (i > 2) {
-                c0043n.m1321f((iM985g3 << 6) | iM985g4);
+                c0043n.writeByte((iM985g3 << 6) | iM985g4);
             }
         }
         return c0043n;
@@ -1155,11 +1155,11 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer m987a(MrimAccount c0028ba, MrimContact c0035f, int i) {
-        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(i).m1360p(c0035f.f296c).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), m967e(11), c0035f, m967e(i)});
+        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(i).writeIntLE(c0035f.f296c).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.f376u).writeStringLatin1(c0035f.f300g)), m967e(11), c0035f, m967e(i)});
     }
 
     /* renamed from: a */
     public static final ByteBuffer m988a(MrimAccount c0028ba, MrimContact c0035f, MrimContactGroup c0010aj) {
-        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().m1360p(c0035f.f294a).m1360p(c0035f.f295b).m1360p(c0010aj.f74a).m1308a(c0035f.f297d).m1309b(c0035f.f376u).m1308a(c0035f.f300g)), m967e(12), c0035f, c0010aj});
+        return c0028ba.m719a(new Object[]{AppController.m321a(c0028ba, 4123, new ByteBuffer().writeIntLE(c0035f.f294a).writeIntLE(c0035f.f295b).writeIntLE(c0010aj.f74a).writeStringLatin1(c0035f.f297d).writeStringUTF16(c0035f.f376u).writeStringLatin1(c0035f.f300g)), m967e(12), c0035f, c0010aj});
     }
 }
