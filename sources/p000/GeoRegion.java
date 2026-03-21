@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: x */
 /* loaded from: MobileAgent_3.9.jar:x.class */
-public final class C0053x {
+public final class GeoRegion {
 
     /* renamed from: a */
     public String f421a;
@@ -37,12 +37,12 @@ public final class C0053x {
     /* renamed from: k */
     public int f431k;
 
-    private C0053x() {
+    private GeoRegion() {
         this.f428h = -1;
         this.f431k = 16;
     }
 
-    public C0053x(String str, long j, long j2, long j3, long j4) {
+    public GeoRegion(String str, long j, long j2, long j3, long j4) {
         this();
         this.f421a = str;
         this.f422b = j;
@@ -51,7 +51,7 @@ public final class C0053x {
         this.f425e = j4;
     }
 
-    public C0053x(C0043n c0043n) {
+    public GeoRegion(C0043n c0043n) {
         this(c0043n.m1335e((String) null), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m(), c0043n.m1341m());
         this.f430j = c0043n.m1335e((String) null);
         this.f426f = c0043n.m1341m();

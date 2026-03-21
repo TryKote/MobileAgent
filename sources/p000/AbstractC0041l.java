@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /* renamed from: l */
 /* loaded from: MobileAgent_3.9.jar:l.class */
-public abstract class AbstractC0041l implements InterfaceC0047r {
+public abstract class AbstractC0041l implements Sortable {
 
     /* renamed from: o */
     public final AbstractC0037h f369o;
@@ -199,7 +199,7 @@ public abstract class AbstractC0041l implements InterfaceC0047r {
         return this.f369o.mo106e(this);
     }
 
-    @Override // p000.InterfaceC0047r
+    @Override // p000.Sortable
     /* renamed from: a */
     public final int mo1237a(Object obj) {
         AbstractC0041l abstractC0041l = (AbstractC0041l) obj;

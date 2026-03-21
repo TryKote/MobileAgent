@@ -732,7 +732,7 @@ public final class C0029bb {
             AbstractC0023aw.m617d(abstractC0041lM611g.f369o);
             C0034e.m966a(C0031bd.m871i(((C0035f) abstractC0041lM611g).f297d), (String) null, (String) null);
         } else if (i == 6) {
-            InterfaceC0044o interfaceC0044o = (InterfaceC0044o) abstractC0041lM611g;
+            ListItem interfaceC0044o = (ListItem) abstractC0041lM611g;
             interfaceC0044o.mo279u();
             C0039j.m1172a(interfaceC0044o);
         }
@@ -1104,7 +1104,7 @@ public final class C0029bb {
             AbstractC0023aw.m617d(((C0035f) obj).f369o);
             C0034e.m966a(C0031bd.m871i(((C0035f) obj).f297d), (String) null, (String) null);
         } else if (i == 6) {
-            InterfaceC0044o interfaceC0044o = (InterfaceC0044o) obj;
+            ListItem interfaceC0044o = (ListItem) obj;
             interfaceC0044o.mo279u();
             C0039j.m1172a(interfaceC0044o);
             C0015ao.m331a(true, false, !AbstractC0023aw.m587e(276));

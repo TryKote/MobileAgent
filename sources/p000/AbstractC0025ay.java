@@ -41,7 +41,7 @@ public abstract class AbstractC0025ay {
     public static C0014an f202j;
 
     /* renamed from: k */
-    public static InterfaceC0044o f203k;
+    public static ListItem f203k;
 
     /* renamed from: l */
     public static boolean f204l;
@@ -62,7 +62,7 @@ public abstract class AbstractC0025ay {
     public static long f209o;
 
     /* renamed from: w */
-    private static C0053x f210w;
+    private static GeoRegion f210w;
 
     /* renamed from: p */
     public static boolean f211p;
@@ -119,7 +119,7 @@ public abstract class AbstractC0025ay {
         int i;
         int i2;
         int i3 = 0;
-        InterfaceC0044o interfaceC0044o;
+        ListItem interfaceC0044o;
         Vector vectorM614m;
         int size;
         Image imageM1023b;
@@ -346,7 +346,7 @@ public abstract class AbstractC0025ay {
                 if (AbstractC0019as.m505a(j10 - c0014an2.m270c(iM586d)) >= 20 || AbstractC0019as.m505a(j11 - c0014an2.m271d(iM586d)) >= 20) {
                     m660h();
                 } else {
-                    m659a((InterfaceC0044o) c0014an2);
+                    m659a((ListItem) c0014an2);
                 }
             }
             long j12 = f197e;
@@ -368,7 +368,7 @@ public abstract class AbstractC0025ay {
             }
             if (!m658g()) {
                 if (z2) {
-                    m659a((InterfaceC0044o) c0014an3);
+                    m659a((ListItem) c0014an3);
                 } else {
                     m660h();
                 }
@@ -378,10 +378,10 @@ public abstract class AbstractC0025ay {
             int i41 = f193a;
             int i42 = f194b;
             if (AbstractC0023aw.m587e(276) && AbstractC0023aw.m587e(280) && !C0036g.m1033j() && (vectorM614m = AbstractC0023aw.m614m(1404)) != null && (size = vectorM614m.size()) != 0) {
-                InterfaceC0044o interfaceC0044o2 = null;
+                ListItem interfaceC0044o2 = null;
                 int iM586d4 = AbstractC0023aw.m586d(39);
                 for (int i43 = 0; i43 < size; i43++) {
-                    InterfaceC0044o interfaceC0044o3 = (InterfaceC0044o) vectorM614m.elementAt(i43);
+                    ListItem interfaceC0044o3 = (ListItem) vectorM614m.elementAt(i43);
                     if (interfaceC0044o3.mo277s() && iM586d4 == interfaceC0044o3.mo280y()) {
                         long jMo282a = interfaceC0044o3.mo282a(iM586d);
                         long jMo283b = interfaceC0044o3.mo283b(iM586d);
@@ -421,17 +421,17 @@ public abstract class AbstractC0025ay {
                     long j19 = (j17 - (i47 / 2)) / 32;
                     long j20 = (j16 + (i47 / 2)) / 32;
                     long j21 = (j17 + (i47 / 2)) / 32;
-                    InterfaceC0044o interfaceC0044o4 = C0039j.f358h;
+                    ListItem interfaceC0044o4 = C0039j.f358h;
                     if (AbstractC0030bc.f253h == null || j18 < AbstractC0030bc.f249d || j19 < AbstractC0030bc.f250e || j20 > AbstractC0030bc.f251f || j21 > AbstractC0030bc.f252g) {
                         AbstractC0030bc.f249d = j18 - 10;
                         AbstractC0030bc.f250e = j19 - 10;
                         AbstractC0030bc.f251f = j20 + 10;
                         AbstractC0030bc.f252g = j21 + 10;
                         int i49 = ((int) (AbstractC0030bc.f251f - AbstractC0030bc.f249d)) + 1;
-                        InterfaceC0044o[] interfaceC0044oArr = new InterfaceC0044o[i49 * (((int) (AbstractC0030bc.f252g - AbstractC0030bc.f250e)) + 1)];
+                        ListItem[] interfaceC0044oArr = new ListItem[i49 * (((int) (AbstractC0030bc.f252g - AbstractC0030bc.f250e)) + 1)];
                         AbstractC0030bc.f253h = interfaceC0044oArr;
                         for (int i50 = 0; i50 < size7; i50++) {
-                            InterfaceC0044o interfaceC0044o5 = (InterfaceC0044o) vectorM448X.elementAt(i50);
+                            ListItem interfaceC0044o5 = (ListItem) vectorM448X.elementAt(i50);
                             if (interfaceC0044o5.mo277s() && interfaceC0044o4 != interfaceC0044o5) {
                                 long jMo282a2 = interfaceC0044o5.mo282a(iM586d);
                                 long jMo283b2 = interfaceC0044o5.mo283b(iM586d);
@@ -440,7 +440,7 @@ public abstract class AbstractC0025ay {
                                 if (i51 >= AbstractC0030bc.f249d && i51 <= AbstractC0030bc.f251f && i52 >= AbstractC0030bc.f250e && i52 <= AbstractC0030bc.f252g) {
                                     int i53 = (int) (i51 - AbstractC0030bc.f249d);
                                     int i54 = (int) (i52 - AbstractC0030bc.f250e);
-                                    InterfaceC0044o interfaceC0044o6 = interfaceC0044oArr[(i54 * i49) + i53];
+                                    ListItem interfaceC0044o6 = interfaceC0044oArr[(i54 * i49) + i53];
                                     if (interfaceC0044o6 == null) {
                                         interfaceC0044oArr[(i54 * i49) + i53] = interfaceC0044o5;
                                     } else if (interfaceC0044o6.mo276r() == 5) {
@@ -455,15 +455,15 @@ public abstract class AbstractC0025ay {
                             }
                         }
                     }
-                    InterfaceC0044o[] interfaceC0044oArr2 = AbstractC0030bc.f253h;
-                    InterfaceC0044o interfaceC0044o7 = null;
+                    ListItem[] interfaceC0044oArr2 = AbstractC0030bc.f253h;
+                    ListItem interfaceC0044o7 = null;
                     int length = interfaceC0044oArr2.length;
                     while (true) {
                         length--;
                         if (length < 0) {
                             break;
                         }
-                        InterfaceC0044o interfaceC0044o8 = interfaceC0044oArr2[length];
+                        ListItem interfaceC0044o8 = interfaceC0044oArr2[length];
                         if (interfaceC0044o8 != null) {
                             long jMo282a3 = interfaceC0044o8.mo282a(iM586d);
                             long jMo283b3 = interfaceC0044o8.mo283b(iM586d);
@@ -557,7 +557,7 @@ public abstract class AbstractC0025ay {
             }
             long j26 = f196d;
             long j27 = f195c;
-            C0053x c0053x = null;
+            GeoRegion c0053x = null;
             Vector vectorM614m5 = AbstractC0023aw.m614m(1389);
             int size9 = vectorM614m5.size();
             while (true) {
@@ -565,17 +565,17 @@ public abstract class AbstractC0025ay {
                 if (size9 < 0) {
                     break;
                 }
-                C0053x c0053x2 = (C0053x) vectorM614m5.elementAt(size9);
+                GeoRegion c0053x2 = (GeoRegion) vectorM614m5.elementAt(size9);
                 if (c0053x2.m1426a(j26, j27) && c0053x2.f428h != -1) {
                     if (c0053x != null) {
-                        C0053x c0053x3 = c0053x;
+                        GeoRegion c0053x3 = c0053x;
                         if (c0053x2.f424d - c0053x2.f422b < c0053x3.f424d - c0053x3.f422b && c0053x2.f423c - c0053x2.f425e < c0053x3.f423c - c0053x3.f425e) {
                         }
                     }
                     c0053x = c0053x2;
                 }
             }
-            C0053x c0053x4 = c0053x;
+            GeoRegion c0053x4 = c0053x;
             if (AbstractC0023aw.m587e(277)) {
                 boolean zM587e = AbstractC0023aw.m587e(230);
                 int clipWidth = zM587e ? graphics.getClipWidth() - 4 : 18;
@@ -703,7 +703,7 @@ public abstract class AbstractC0025ay {
 
     /* renamed from: a */
     public static final void m649a(long j, long j2) {
-        C0053x c0053x;
+        GeoRegion c0053x;
         if (j2 == f195c && j == f196d) {
             return;
         }
@@ -715,7 +715,7 @@ public abstract class AbstractC0025ay {
             AbstractC0023aw.m597a(35, j);
             f197e = C0015ao.m317a(j, iM586d);
             f198f = C0015ao.m317a(j2, iM586d);
-            C0053x c0053x2 = f210w;
+            GeoRegion c0053x2 = f210w;
             Vector vectorM614m = AbstractC0023aw.m614m(1389);
             int iM541c = AbstractC0019as.m541c(vectorM614m);
             while (true) {
@@ -724,13 +724,13 @@ public abstract class AbstractC0025ay {
                     c0053x = null;
                     break;
                 }
-                C0053x c0053x3 = (C0053x) vectorM614m.elementAt(iM541c);
+                GeoRegion c0053x3 = (GeoRegion) vectorM614m.elementAt(iM541c);
                 if (c0053x3.m1426a(j, j2)) {
                     c0053x = c0053x3;
                     break;
                 }
             }
-            C0053x c0053x4 = c0053x;
+            GeoRegion c0053x4 = c0053x;
             if (c0053x2 != c0053x) {
                 if (AbstractC0023aw.m587e(277)) {
                     C0036g.m1032i();
@@ -834,7 +834,7 @@ public abstract class AbstractC0025ay {
     }
 
     /* renamed from: a */
-    private static void m659a(InterfaceC0044o interfaceC0044o) {
+    private static void m659a(ListItem interfaceC0044o) {
         if (f204l) {
             return;
         }

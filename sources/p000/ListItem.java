@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: o */
 /* loaded from: MobileAgent_3.9.jar:o.class */
-public interface InterfaceC0044o {
+public interface ListItem {
     /* renamed from: r */
     int mo276r();
 

@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /* renamed from: ab */
 /* loaded from: MobileAgent_3.9.jar:ab.class */
-public final class C0002ab {
+public final class LruCache {
 
     /* renamed from: a */
     private int f7a;
@@ -26,13 +26,13 @@ public final class C0002ab {
     /* renamed from: f */
     private long f12f;
 
-    public C0002ab() {
+    public LruCache() {
         this.f9c = new Hashtable();
         this.f10d = C0040k.m1213g();
         this.f8b = 27;
     }
 
-    public C0002ab(int i) {
+    public LruCache(int i) {
         this.f9c = new Hashtable();
         this.f10d = C0040k.m1213g();
         this.f8b = i;

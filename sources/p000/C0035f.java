@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: f */
 /* loaded from: MobileAgent_3.9.jar:f.class */
-public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
+public final class C0035f extends AbstractC0041l implements ListItem {
 
     /* renamed from: a */
     public final int f294a;
@@ -49,7 +49,7 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
     public boolean f307m;
 
     /* renamed from: n */
-    public C0048s f308n;
+    public SizeCache f308n;
 
     public C0035f(AbstractC0037h abstractC0037h, int i, int i2, int i3, String str, String str2, int i4, int i5, String str3, String str4, String str5) {
         super(abstractC0037h);
@@ -65,13 +65,13 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         this.f373r = C0015ao.m349a(i5, str4);
         this.f371p = i5 != 0;
         m992O();
-        this.f308n = new C0048s();
+        this.f308n = new SizeCache();
     }
 
     public C0035f() {
         super(null);
         this.f294a = 0;
-        this.f308n = new C0048s();
+        this.f308n = new SizeCache();
     }
 
     @Override // p000.AbstractC0041l
@@ -103,7 +103,7 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         this.f301h = str;
         this.f373r = 155;
         m992O();
-        this.f308n = new C0048s();
+        this.f308n = new SizeCache();
     }
 
     @Override // p000.AbstractC0041l
@@ -320,31 +320,31 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         return this.f306l != null;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: r */
     public final int mo276r() {
         return 3;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: s */
     public final boolean mo277s() {
         return this.f307m && this.f306l != null && this.f306l.m59c();
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: t */
     public final void mo278t() {
         this.f307m = false;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: u */
     public final void mo279u() {
         this.f307m = true;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: v */
     public final int mo274v() {
         try {
@@ -355,7 +355,7 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         }
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: w */
     public final int mo275w() {
         try {
@@ -366,7 +366,7 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         }
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: x */
     public final String mo273x() {
         StringBuffer stringBufferAppend = C0040k.m1217h().append(this.f376u);
@@ -377,7 +377,7 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         return C0040k.m1215a(stringBufferAppend);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: y */
     public final int mo280y() {
         if (this.f306l != null) {
@@ -386,19 +386,19 @@ public final class C0035f extends AbstractC0041l implements InterfaceC0044o {
         return 10;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: z */
     public final boolean mo281z() {
         return this.f306l.m59c() && !this.f306l.f24l;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: a */
     public final int mo282a(int i) {
         return this.f308n.m1405a(i, this);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: b */
     public final int mo283b(int i) {
         return this.f308n.m1406b(i, this);

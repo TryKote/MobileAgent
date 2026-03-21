@@ -488,7 +488,7 @@ public final class RunnableC0055z implements Runnable, CommandListener {
             r0 = r18
             r1 = r19
             java.lang.Object r0 = r0.elementAt(r1)     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
-            x r0 = (p000.C0053x) r0     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
+            x r0 = (p000.GeoRegion) r0     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84
             r1 = r0
             r20 = r1
             java.lang.String r0 = r0.f430j     // Catch: java.lang.Throwable -> L2d8 java.lang.Throwable -> L2e1 java.lang.Throwable -> La84

@@ -414,7 +414,7 @@ public final class C0015ao {
         }
         m331a(true, false, !AbstractC0023aw.m587e(276));
         AbstractC0023aw.m594c(281, 1);
-        C0039j.m1172a((InterfaceC0044o) c0028ba);
+        C0039j.m1172a((ListItem) c0028ba);
         return 0;
     }
 
@@ -775,7 +775,7 @@ public final class C0015ao {
     private static final void m354a(Vector vector, int i, int i2) {
         if (i < i2) {
             if (i + 1 == i2) {
-                if (((InterfaceC0047r) vector.elementAt(i)).mo1237a(vector.elementAt(i2)) > 0) {
+                if (((Sortable) vector.elementAt(i)).mo1237a(vector.elementAt(i2)) > 0) {
                     AbstractC0019as.m508a(vector, i, i2);
                     return;
                 }
@@ -785,7 +785,7 @@ public final class C0015ao {
             int i4 = i2;
             boolean z = true;
             while (i3 < i4) {
-                if (((InterfaceC0047r) vector.elementAt(i3)).mo1237a(vector.elementAt(i4)) > 0) {
+                if (((Sortable) vector.elementAt(i3)).mo1237a(vector.elementAt(i4)) > 0) {
                     AbstractC0019as.m508a(vector, i3, i4);
                     z = !z;
                 }
@@ -1035,7 +1035,7 @@ public final class C0015ao {
 
     /* renamed from: f */
     public static final int m379f(Object obj) {
-        C0031bd.f257f = (InterfaceC0044o) obj;
+        C0031bd.f257f = (ListItem) obj;
         return 0;
     }
 
@@ -1266,7 +1266,7 @@ public final class C0015ao {
     /* renamed from: i */
     public static final int m398i(Object obj) {
         AbstractC0025ay.m646a();
-        C0053x c0053x = (C0053x) obj;
+        GeoRegion c0053x = (GeoRegion) obj;
         AbstractC0025ay.m649a(c0053x.f426f, c0053x.f427g);
         AbstractC0025ay.m651a(c0053x == C0000a.m40i() ? 3 : 11);
         return 0;
@@ -1276,7 +1276,7 @@ public final class C0015ao {
     public static final int m399K() {
         long jMo274v;
         long jMo275w;
-        InterfaceC0044o interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = AbstractC0025ay.f203k;
         if (interfaceC0044o != null) {
             jMo274v = interfaceC0044o.mo274v();
             jMo275w = interfaceC0044o.mo275w();
@@ -1357,7 +1357,7 @@ public final class C0015ao {
         long jMo275w;
         AbstractC0041l abstractC0041l = (AbstractC0041l) obj;
         String strM584b = AbstractC0023aw.m584b(1249);
-        InterfaceC0044o interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = AbstractC0025ay.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
             jMo274v = AbstractC0025ay.f196d;
             jMo275w = AbstractC0025ay.f195c;

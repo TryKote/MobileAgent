@@ -46,7 +46,7 @@ public abstract class AbstractC0030bc {
     public static long f252g;
 
     /* renamed from: h */
-    public static InterfaceC0044o[] f253h;
+    public static ListItem[] f253h;
 
     /* renamed from: i */
     public static long f254i;
@@ -179,7 +179,7 @@ public abstract class AbstractC0030bc {
     }
 
     /* renamed from: a */
-    public static final void m832a(Graphics graphics, int i, int i2, int i3, long j, long j2, InterfaceC0044o interfaceC0044o) {
+    public static final void m832a(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem interfaceC0044o) {
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
             return;
         }

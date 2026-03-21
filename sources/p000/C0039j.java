@@ -40,7 +40,7 @@ public final class C0039j {
     private static C0013am f357m;
 
     /* renamed from: h */
-    public static InterfaceC0044o f358h;
+    public static ListItem f358h;
 
     /* renamed from: i */
     private C0043n f346i = new C0043n();
@@ -747,7 +747,7 @@ public final class C0039j {
         if (AbstractC0025ay.m656d()) {
             C0009ai.m195u();
         }
-        InterfaceC0044o interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = AbstractC0025ay.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
             jMo274v = AbstractC0025ay.f196d;
             jMo275w = AbstractC0025ay.f195c;
@@ -770,7 +770,7 @@ public final class C0039j {
         if (AbstractC0025ay.m656d()) {
             C0009ai.m195u();
         }
-        InterfaceC0044o interfaceC0044o = AbstractC0025ay.f203k;
+        ListItem interfaceC0044o = AbstractC0025ay.f203k;
         if (interfaceC0044o == null || !interfaceC0044o.mo277s()) {
             jMo274v = AbstractC0025ay.f196d;
             jMo275w = AbstractC0025ay.f195c;
@@ -787,7 +787,7 @@ public final class C0039j {
     }
 
     /* renamed from: a */
-    public static final void m1172a(InterfaceC0044o interfaceC0044o) {
+    public static final void m1172a(ListItem interfaceC0044o) {
         if (interfaceC0044o.mo277s()) {
             m1173n();
             AbstractC0025ay.m649a(interfaceC0044o.mo274v(), interfaceC0044o.mo275w());

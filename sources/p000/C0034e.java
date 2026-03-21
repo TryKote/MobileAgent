@@ -584,14 +584,14 @@ public final class C0034e {
                 if (vectorM440S.size() <= 0) {
                     return C0015ao.m338l(422);
                 }
-                ((C0028ba) vectorM440S.firstElement()).m751a(new C0050u(C0015ao.m312l().f390a, 1));
+                ((C0028ba) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 1));
                 C0021au.m549c();
                 return 85;
             case 1:
                 if (vectorM440S.size() <= 0) {
                     return C0015ao.m338l(422);
                 }
-                ((C0028ba) vectorM440S.firstElement()).m751a(new C0050u(C0015ao.m312l().f390a, 2));
+                ((C0028ba) vectorM440S.firstElement()).m751a(new SearchEntry(C0015ao.m312l().f390a, 2));
                 return 6;
             case 2:
                 return C0015ao.m310j();

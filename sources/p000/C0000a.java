@@ -218,7 +218,7 @@ public final class C0000a {
     /* renamed from: b */
     public static final void m19b() {
         int iM586d = AbstractC0023aw.m587e(277) ? (((AbstractC0023aw.m586d(1415) >> 7) + 2) * ((AbstractC0023aw.m586d(1416) >> 7) + 2)) << 1 : ((AbstractC0023aw.m586d(1415) >> 7) + 2) * ((AbstractC0023aw.m586d(1416) >> 7) + 2);
-        AbstractC0023aw.f177b[1394] = new C0002ab(iM586d);
+        AbstractC0023aw.f177b[1394] = new LruCache(iM586d);
         AbstractC0023aw.m594c(1550, iM586d);
     }
 
@@ -335,8 +335,8 @@ public final class C0000a {
     }
 
     /* renamed from: l */
-    private static final C0002ab m25l() {
-        return (C0002ab) AbstractC0023aw.f177b[1394];
+    private static final LruCache m25l() {
+        return (LruCache) AbstractC0023aw.f177b[1394];
     }
 
     /* renamed from: m */
@@ -673,14 +673,14 @@ public final class C0000a {
     }
 
     /* renamed from: i */
-    public static C0053x m40i() {
-        return (C0053x) AbstractC0023aw.f177b[1391];
+    public static GeoRegion m40i() {
+        return (GeoRegion) AbstractC0023aw.f177b[1391];
     }
 
     /* renamed from: j */
     public static final void m41j() {
         AbstractC0023aw.f177b[1389] = C0040k.m1213g();
-        AbstractC0023aw.f177b[1390] = new C0053x(AbstractC0023aw.m584b(996), 4115426L, 7539707L, 4267459L, 7412592L);
+        AbstractC0023aw.f177b[1390] = new GeoRegion(AbstractC0023aw.m584b(996), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
             C0043n c0043nM986d = C0034e.m986d(AbstractC0023aw.m584b(227));
             AbstractC0023aw.m614m(1389).removeAllElements();
@@ -691,20 +691,20 @@ public final class C0000a {
                     if (iM1355w < 0) {
                         break;
                     } else {
-                        m42a(new C0053x(c0043nM986d));
+                        m42a(new GeoRegion(c0043nM986d));
                     }
                 }
             }
         } catch (Throwable unused) {
         }
-        C0053x c0053x = new C0053x(AbstractC0023aw.m584b(995), 1866877L, 15815124L, 21989606L, 4133096L);
+        GeoRegion c0053x = new GeoRegion(AbstractC0023aw.m584b(995), 1866877L, 15815124L, 21989606L, 4133096L);
         c0053x.f426f = 10848141L;
         c0053x.f427g = 8758455L;
         AbstractC0023aw.f177b[1391] = c0053x;
     }
 
     /* renamed from: a */
-    private static void m42a(C0053x c0053x) {
+    private static void m42a(GeoRegion c0053x) {
         Vector vectorM614m = AbstractC0023aw.m614m(1389);
         if (vectorM614m.contains(c0053x)) {
             return;
@@ -721,7 +721,7 @@ public final class C0000a {
             if (iM541c < 0) {
                 return false;
             }
-            C0053x c0053x = (C0053x) vectorM614m.elementAt(iM541c);
+            GeoRegion c0053x = (GeoRegion) vectorM614m.elementAt(iM541c);
             if (c0053x.m1426a(j, j2) && AbstractC0023aw.m628b(c0053x.f421a, 995) < 0) {
                 return true;
             }
@@ -746,7 +746,7 @@ public final class C0000a {
                 Vector vector2 = c0022av2.f172b;
                 for (int i2 = 0; i2 < AbstractC0019as.m541c(vector2); i2++) {
                     C0022av c0022av3 = (C0022av) vector2.elementAt(i2);
-                    C0053x c0053x = new C0053x(c0022av3.m555c(1701667182), c0022av3.m556d(28780), c0022av3.m556d(28788), c0022av3.m556d(28786), c0022av3.m556d(28770));
+                    GeoRegion c0053x = new GeoRegion(c0022av3.m555c(1701667182), c0022av3.m556d(28780), c0022av3.m556d(28788), c0022av3.m556d(28786), c0022av3.m556d(28770));
                     c0053x.f430j = c0022av3.m555c(25705);
                     c0053x.f426f = c0022av3.m556d(1852796003);
                     c0053x.f427g = c0022av3.m556d(1952541795);
@@ -764,7 +764,7 @@ public final class C0000a {
             int size = vectorM614m.size();
             c0043n.m1359o(size);
             for (int i3 = 0; i3 < size; i3++) {
-                C0053x c0053x2 = (C0053x) vectorM614m.elementAt(i3);
+                GeoRegion c0053x2 = (GeoRegion) vectorM614m.elementAt(i3);
                 c0043n.m1309b(c0053x2.f421a).m1323a(c0053x2.f422b).m1323a(c0053x2.f423c).m1323a(c0053x2.f424d).m1323a(c0053x2.f425e).m1309b(c0053x2.f430j).m1323a(c0053x2.f426f).m1323a(c0053x2.f427g).m1360p(c0053x2.f431k);
             }
             AbstractC0023aw.m601a(227, (Object) c0043n.m1320d());

@@ -747,10 +747,10 @@ public final class C0021au {
                 }
                 C0013am c0013amM75b8 = AbstractC0004ad.m75b(1691);
                 for (int i16 = 0; i16 < size9; i16++) {
-                    C0053x c0053x = (C0053x) vectorM614m6.elementAt(i16);
+                    GeoRegion c0053x = (GeoRegion) vectorM614m6.elementAt(i16);
                     c0013amM75b8.m247a(-1, c0053x.f421a, 6, c0053x);
                 }
-                C0053x c0053xM40i = C0000a.m40i();
+                GeoRegion c0053xM40i = C0000a.m40i();
                 c0013amM75b8.m247a(-1, c0053xM40i.f421a, 6, c0053xM40i);
                 AbstractC0004ad.m71b(c0013amM75b8);
                 return;
@@ -1212,7 +1212,7 @@ public final class C0021au {
                         AbstractC0023aw.m591f(1255);
                         return;
                     } else {
-                        InterfaceC0044o interfaceC0044o = (InterfaceC0044o) vector2.elementAt(size14);
+                        ListItem interfaceC0044o = (ListItem) vector2.elementAt(size14);
                         c0013amM75b18.m247a(-1, interfaceC0044o.mo273x(), 0, interfaceC0044o);
                     }
                 }
@@ -1765,7 +1765,7 @@ public final class C0021au {
                 } else {
                     long jMo274v = AbstractC0025ay.f196d;
                     long jMo275w = AbstractC0025ay.f195c;
-                    InterfaceC0044o interfaceC0044o = AbstractC0025ay.f203k;
+                    ListItem interfaceC0044o = AbstractC0025ay.f203k;
                     if (interfaceC0044o != null && interfaceC0044o.mo277s()) {
                         jMo274v = interfaceC0044o.mo274v();
                         jMo275w = interfaceC0044o.mo275w();
@@ -2006,7 +2006,7 @@ public final class C0021au {
                 String strM584b = AbstractC0023aw.m584b(1253);
                 long jMo274v2 = AbstractC0025ay.f196d;
                 long jMo275w2 = AbstractC0025ay.f195c;
-                InterfaceC0044o interfaceC0044o2 = AbstractC0025ay.f203k;
+                ListItem interfaceC0044o2 = AbstractC0025ay.f203k;
                 if (interfaceC0044o2 != null && interfaceC0044o2.mo277s()) {
                     jMo274v2 = interfaceC0044o2.mo274v();
                     jMo275w2 = interfaceC0044o2.mo275w();

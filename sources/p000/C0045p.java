@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: p */
 /* loaded from: MobileAgent_3.9.jar:p.class */
-public final class C0045p implements InterfaceC0044o, InterfaceC0051v {
+public final class C0045p implements ListItem, Identifiable {
 
     /* renamed from: e */
     private boolean f386e;
@@ -32,7 +32,7 @@ public final class C0045p implements InterfaceC0044o, InterfaceC0051v {
     private int f394i;
 
     /* renamed from: j */
-    private C0048s f395j;
+    private SizeCache f395j;
 
     private C0045p() {
     }
@@ -43,47 +43,47 @@ public final class C0045p implements InterfaceC0044o, InterfaceC0051v {
         this.f389h = str;
         this.f394i = i3;
         this.f386e = true;
-        this.f395j = new C0048s();
+        this.f395j = new SizeCache();
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: r */
     public final int mo276r() {
         return 8;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: s */
     public final boolean mo277s() {
         return this.f386e;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: t */
     public final void mo278t() {
         this.f386e = false;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: u */
     public final void mo279u() {
         this.f386e = true;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: v */
     public final int mo274v() {
         return this.f387f;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: w */
     public final int mo275w() {
         return this.f388g;
     }
 
     /* JADX WARN: Removed duplicated region for block: B:23:0x007c  */
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: x */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -109,31 +109,31 @@ public final class C0045p implements InterfaceC0044o, InterfaceC0051v {
         return C0040k.m1215a(stringBufferAppend);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: y */
     public final int mo280y() {
         return this.f394i;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: z */
     public final boolean mo281z() {
         return true;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: a */
     public final int mo282a(int i) {
         return this.f395j.m1405a(i, this);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: b */
     public final int mo283b(int i) {
         return this.f395j.m1406b(i, this);
     }
 
-    @Override // p000.InterfaceC0051v
+    @Override // p000.Identifiable
     /* renamed from: a */
     public final String mo545a() {
         return this.f390a;

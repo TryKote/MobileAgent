@@ -17,7 +17,7 @@ import javax.microedition.rms.RecordStore;
 public final class C0031bd extends C0005ae {
 
     /* renamed from: f */
-    public static InterfaceC0044o f257f;
+    public static ListItem f257f;
 
     public C0031bd(int i, String str, String str2) {
         super(i, str, str2);
@@ -601,7 +601,7 @@ public final class C0031bd extends C0005ae {
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:30:0x00ce */
     /* renamed from: w */
     public static final void m858w() {
-        InterfaceC0044o interfaceC0044o;
+        ListItem interfaceC0044o;
         int i = 3072;
         if (C0015ao.m440S().size() > 0) {
             i = 11264;
@@ -612,7 +612,7 @@ public final class C0031bd extends C0005ae {
             interfaceC0044o = AbstractC0025ay.f203k;
             f257f = interfaceC0044o;
         }
-        InterfaceC0044o interfaceC0044o2 = interfaceC0044o;
+        ListItem interfaceC0044o2 = interfaceC0044o;
         if (interfaceC0044o != null && interfaceC0044o2.mo277s()) {
             switch (interfaceC0044o2.mo276r()) {
                 case 3:
@@ -660,7 +660,7 @@ public final class C0031bd extends C0005ae {
     public static final int m859h(int i) {
         long jMo274v;
         long jMo275w;
-        InterfaceC0044o interfaceC0044o = f257f;
+        ListItem interfaceC0044o = f257f;
         int iMo276r = interfaceC0044o == null ? 0 : interfaceC0044o.mo276r();
         switch (i) {
             case 0:
@@ -687,7 +687,7 @@ public final class C0031bd extends C0005ae {
                 if (vectorM440S == null || vectorM440S.size() <= 0) {
                     return C0015ao.m338l(422);
                 }
-                ((C0028ba) vectorM440S.firstElement()).m751a(new C0050u(((C0045p) interfaceC0044o).f390a, 1));
+                ((C0028ba) vectorM440S.firstElement()).m751a(new SearchEntry(((C0045p) interfaceC0044o).f390a, 1));
                 C0021au.m549c();
                 return 85;
             case 3:
@@ -695,7 +695,7 @@ public final class C0031bd extends C0005ae {
                 if (vectorM440S2 == null || vectorM440S2.size() <= 0) {
                     return C0015ao.m338l(422);
                 }
-                ((C0028ba) vectorM440S2.firstElement()).m751a(new C0050u(((C0045p) interfaceC0044o).f390a, 2));
+                ((C0028ba) vectorM440S2.firstElement()).m751a(new SearchEntry(((C0045p) interfaceC0044o).f390a, 2));
                 C0021au.m549c();
                 return 6;
             case 4:
@@ -721,7 +721,7 @@ public final class C0031bd extends C0005ae {
                 if (AbstractC0025ay.m656d()) {
                     C0009ai.m195u();
                 }
-                InterfaceC0044o interfaceC0044o2 = AbstractC0025ay.f203k;
+                ListItem interfaceC0044o2 = AbstractC0025ay.f203k;
                 if (interfaceC0044o2 == null || !interfaceC0044o2.mo277s()) {
                     jMo274v = AbstractC0025ay.f196d;
                     jMo275w = AbstractC0025ay.f195c;
@@ -760,7 +760,7 @@ public final class C0031bd extends C0005ae {
                 AbstractC0025ay.f200h = true;
                 return 6;
             case 13:
-                InterfaceC0044o interfaceC0044o3 = AbstractC0025ay.f203k;
+                ListItem interfaceC0044o3 = AbstractC0025ay.f203k;
                 if (interfaceC0044o3 != null && interfaceC0044o3.mo277s()) {
                     interfaceC0044o3.mo278t();
                 }

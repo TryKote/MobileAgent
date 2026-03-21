@@ -4,7 +4,7 @@ import java.util.Vector;
 
 /* renamed from: q */
 /* loaded from: MobileAgent_3.9.jar:q.class */
-public abstract class AbstractC0046q implements InterfaceC0047r {
+public abstract class AbstractC0046q implements Sortable {
 
     /* renamed from: d */
     public final AbstractC0037h f396d;
@@ -120,7 +120,7 @@ public abstract class AbstractC0046q implements InterfaceC0047r {
     /* renamed from: a */
     public abstract boolean mo198a();
 
-    @Override // p000.InterfaceC0047r
+    @Override // p000.Sortable
     /* renamed from: a */
     public final int mo1237a(Object obj) {
         return this.f400a.compareTo(((AbstractC0046q) obj).f400a);

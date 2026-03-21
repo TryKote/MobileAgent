@@ -5,7 +5,7 @@ import java.util.Vector;
 
 /* renamed from: i */
 /* loaded from: MobileAgent_3.9.jar:i.class */
-public final class C0038i implements InterfaceC0044o {
+public final class C0038i implements ListItem {
 
     /* renamed from: c */
     private int f344c = 5;
@@ -17,44 +17,44 @@ public final class C0038i implements InterfaceC0044o {
     public Vector f343a = C0040k.m1213g();
 
     /* renamed from: d */
-    private C0048s f345d = new C0048s();
+    private SizeCache f345d = new SizeCache();
 
     /* renamed from: a */
-    public final void m1086a(InterfaceC0044o interfaceC0044o) {
+    public final void m1086a(ListItem interfaceC0044o) {
         this.f343a.addElement(interfaceC0044o);
         this.f345d.f403a = -1;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: r */
     public final int mo276r() {
         return this.f344c;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: s */
     public final boolean mo277s() {
         return this.f342b && this.f343a.size() > 0;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: t */
     public final void mo278t() {
         this.f342b = false;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: u */
     public final void mo279u() {
         this.f342b = true;
     }
 
     /* renamed from: d */
-    private final InterfaceC0044o m1087d(int i) {
-        return (InterfaceC0044o) this.f343a.elementAt(i);
+    private final ListItem m1087d(int i) {
+        return (ListItem) this.f343a.elementAt(i);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: v */
     public final int mo274v() {
         long jMo274v = 0;
@@ -69,7 +69,7 @@ public final class C0038i implements InterfaceC0044o {
         }
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: w */
     public final int mo275w() {
         long jMo275w = 0;
@@ -84,19 +84,19 @@ public final class C0038i implements InterfaceC0044o {
         }
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: a */
     public final int mo282a(int i) {
         return this.f345d.m1405a(i, this);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: b */
     public final int mo283b(int i) {
         return this.f345d.m1406b(i, this);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: x */
     public final String mo273x() {
         StringBuffer stringBufferM1217h = C0040k.m1217h();
@@ -105,18 +105,18 @@ public final class C0038i implements InterfaceC0044o {
             stringBufferM1217h.append(AbstractC0023aw.m584b(445)).append(size);
         } else {
             int i = size - 1;
-            stringBufferM1217h.append(((InterfaceC0044o) this.f343a.firstElement()).mo273x()).append(AbstractC0023aw.m584b(446)).append(i).append(AbstractC0023aw.m584b(442 + AbstractC0019as.m540f(i)));
+            stringBufferM1217h.append(((ListItem) this.f343a.firstElement()).mo273x()).append(AbstractC0023aw.m584b(446)).append(i).append(AbstractC0023aw.m584b(442 + AbstractC0019as.m540f(i)));
         }
         return C0040k.m1215a(stringBufferM1217h);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: y */
     public final int mo280y() {
         return 10;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: z */
     public final boolean mo281z() {
         return true;

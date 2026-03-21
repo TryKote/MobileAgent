@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: s */
 /* loaded from: MobileAgent_3.9.jar:s.class */
-public final class C0048s {
+public final class SizeCache {
 
     /* renamed from: b */
     private int f401b;
@@ -14,7 +14,7 @@ public final class C0048s {
     public int f403a = -1;
 
     /* renamed from: a */
-    public final int m1405a(int i, InterfaceC0044o interfaceC0044o) {
+    public final int m1405a(int i, ListItem interfaceC0044o) {
         if (m1408a(i)) {
             return this.f401b;
         }
@@ -23,7 +23,7 @@ public final class C0048s {
     }
 
     /* renamed from: b */
-    public final int m1406b(int i, InterfaceC0044o interfaceC0044o) {
+    public final int m1406b(int i, ListItem interfaceC0044o) {
         if (m1408a(i)) {
             return this.f402c;
         }

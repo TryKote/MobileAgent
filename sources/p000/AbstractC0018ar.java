@@ -6,7 +6,7 @@ import java.util.Vector;
 
 /* renamed from: ar */
 /* loaded from: MobileAgent_3.9.jar:ar.class */
-public abstract class AbstractC0018ar implements InterfaceC0044o {
+public abstract class AbstractC0018ar implements ListItem {
 
     /* renamed from: a */
     private static int f158a;
@@ -53,7 +53,7 @@ public abstract class AbstractC0018ar implements InterfaceC0044o {
                     z2 = false;
                     break;
                 }
-                if (C0000a.m6a(str, ((InterfaceC0051v) vectorM1213g.elementAt(size)).mo545a()) && i == ((InterfaceC0044o) vectorM1213g.elementAt(size)).mo280y()) {
+                if (C0000a.m6a(str, ((Identifiable) vectorM1213g.elementAt(size)).mo545a()) && i == ((ListItem) vectorM1213g.elementAt(size)).mo280y()) {
                     z2 = true;
                     break;
                 }
@@ -84,47 +84,47 @@ public abstract class AbstractC0018ar implements InterfaceC0044o {
         return vectorM1213g;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: b */
     public abstract int mo283b(int i);
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: a */
     public abstract int mo282a(int i);
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: z */
     public abstract boolean mo281z();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: y */
     public abstract int mo280y();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: x */
     public abstract String mo273x();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: w */
     public abstract int mo275w();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: v */
     public abstract int mo274v();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: u */
     public abstract void mo279u();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: t */
     public abstract void mo278t();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: s */
     public abstract boolean mo277s();
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: r */
     public abstract int mo276r();
 }

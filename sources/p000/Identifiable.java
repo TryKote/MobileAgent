@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: v */
 /* loaded from: MobileAgent_3.9.jar:v.class */
-public interface InterfaceC0051v {
+public interface Identifiable {
     /* renamed from: a */
     String mo545a();
 }

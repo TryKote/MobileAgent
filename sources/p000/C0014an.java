@@ -2,7 +2,7 @@ package p000;
 
 /* renamed from: an */
 /* loaded from: MobileAgent_3.9.jar:an.class */
-public final class C0014an implements InterfaceC0044o {
+public final class C0014an implements ListItem {
 
     /* renamed from: a */
     public String f133a;
@@ -44,10 +44,10 @@ public final class C0014an implements InterfaceC0044o {
     public int f145m;
 
     /* renamed from: n */
-    private C0048s f146n;
+    private SizeCache f146n;
 
     public C0014an() {
-        this.f146n = new C0048s();
+        this.f146n = new SizeCache();
     }
 
     public C0014an(String str, long j, long j2, long j3, long j4, long j5, long j6, int i) {
@@ -59,7 +59,7 @@ public final class C0014an implements InterfaceC0044o {
         this.f138f = j5;
         this.f139g = j6;
         this.f140h = i;
-        this.f146n = new C0048s();
+        this.f146n = new SizeCache();
     }
 
     public C0014an(String str, long j, long j2, int i) {
@@ -67,7 +67,7 @@ public final class C0014an implements InterfaceC0044o {
         this.f138f = j;
         this.f139g = j2;
         this.f140h = i;
-        this.f146n = new C0048s();
+        this.f146n = new SizeCache();
     }
 
     public C0014an(String str) {
@@ -78,7 +78,7 @@ public final class C0014an implements InterfaceC0044o {
             this.f140h = Integer.parseInt(C0038i.m1102e(str));
         } catch (Throwable unused) {
         }
-        this.f146n = new C0048s();
+        this.f146n = new SizeCache();
     }
 
     public C0014an(C0043n c0043n) {
@@ -93,7 +93,7 @@ public final class C0014an implements InterfaceC0044o {
         this.f143k = c0043n.m1328e();
         this.f145m = c0043n.m1328e();
         this.f144l = c0043n.m1328e();
-        this.f146n = new C0048s();
+        this.f146n = new SizeCache();
     }
 
     /* renamed from: a */
@@ -134,49 +134,49 @@ public final class C0014an implements InterfaceC0044o {
         return C0034e.m975a(this.f138f, this.f139g, this.f140h, this.f133a);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: x */
     public final String mo273x() {
         return m267a();
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: v */
     public final int mo274v() {
         return (int) this.f138f;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: w */
     public final int mo275w() {
         return (int) this.f139g;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: r */
     public final int mo276r() {
         return this.f143k;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: s */
     public final boolean mo277s() {
         return this.f141i;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: t */
     public final void mo278t() {
         this.f141i = false;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: u */
     public final void mo279u() {
         this.f141i = true;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: y */
     public final int mo280y() {
         if (this.f144l != 0) {
@@ -185,19 +185,19 @@ public final class C0014an implements InterfaceC0044o {
         return 10;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: z */
     public final boolean mo281z() {
         return true;
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: a */
     public final int mo282a(int i) {
         return this.f146n.m1405a(i, this);
     }
 
-    @Override // p000.InterfaceC0044o
+    @Override // p000.ListItem
     /* renamed from: b */
     public final int mo283b(int i) {
         return this.f146n.m1406b(i, this);
