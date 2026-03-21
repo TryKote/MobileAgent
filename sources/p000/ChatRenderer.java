@@ -68,32 +68,32 @@ public abstract class ChatRenderer {
             scaleTimestamp = j;
             scaleZoom = i;
             int i3 = i;
-            int iM689d = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * AppController.getZoomNumerator(i3)) / AppController.getZoomDenominator(i3))));
-            int i4 = iM689d < 100 ? 25 : iM689d < 1000 ? 100 : iM689d < 10000 ? 1000 : iM689d < 100000 ? 10000 : 100000;
-            int i5 = (iM689d / i4) * i4;
-            scaleBarWidth = scaleToPixels(i5, i, j);
-            StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
-            if (i5 < 1000) {
-                stringBufferM1217h.append(i5);
+            int metersPerBar = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * AppController.getZoomNumerator(i3)) / AppController.getZoomDenominator(i3))));
+            int step = metersPerBar < 100 ? 25 : metersPerBar < 1000 ? 100 : metersPerBar < 10000 ? 1000 : metersPerBar < 100000 ? 10000 : 100000;
+            int roundedMeters = (metersPerBar / step) * step;
+            scaleBarWidth = scaleToPixels(roundedMeters, i, j);
+            StringBuffer sb = NetworkUtils.newStringBuffer();
+            if (roundedMeters < 1000) {
+                sb.append(roundedMeters);
             } else {
-                stringBufferM1217h.append(i5 / 1000).append((char) 1082);
+                sb.append(roundedMeters / 1000).append((char) 1082);
             }
-            scaleLabel = NetworkUtils.bufToStringCached(stringBufferM1217h.append((char) 1084));
+            scaleLabel = NetworkUtils.bufToStringCached(sb.append((char) 1084));
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
-        Font fontM625m = AppState.getFont();
-        graphics.setFont(fontM625m);
-        int iM586d = AppState.getInt(1450);
-        int iM502a = Utils.max(scaleBarWidth, fontM625m.stringWidth(scaleLabel));
-        int height = fontM625m.getHeight();
+        Font scaleFont = AppState.getFont();
+        graphics.setFont(scaleFont);
+        int softKeyHeight = AppState.getInt(1450);
+        int barWidth = Utils.max(scaleBarWidth, scaleFont.stringWidth(scaleLabel));
+        int height = scaleFont.getHeight();
         if (AppState.getBool(230)) {
-            i2 = -(iM586d > 16 ? iM586d : 18);
+            i2 = -(softKeyHeight > 16 ? softKeyHeight : 18);
         } else {
             i2 = 0;
         }
         int i6 = i2;
-        int clipWidth = (graphics.getClipWidth() - iM502a) - 5;
+        int clipWidth = (graphics.getClipWidth() - barWidth) - 5;
         int clipHeight = (graphics.getClipHeight() - height) - 13;
         graphics.drawString(scaleLabel, clipWidth, i6 + clipHeight, 20);
         graphics.setColor(16777215);
@@ -112,125 +112,125 @@ public abstract class ChatRenderer {
         if (markerLon == 0 || markerLat == 0) {
             return;
         }
-        int iM317a = (int) ((i2 / 2) + (AppController.coordToPixel(markerLon, i) - j));
-        int iM317a2 = (int) ((i3 / 2) + (j2 - AppController.coordToPixel(markerLat, i)));
-        if (iM317a < 0 || iM317a2 < 0 || iM317a >= i2 || iM317a2 >= i3) {
+        int markerX = (int) ((i2 / 2) + (AppController.coordToPixel(markerLon, i) - j));
+        int markerY = (int) ((i3 / 2) + (j2 - AppController.coordToPixel(markerLat, i)));
+        if (markerX < 0 || markerY < 0 || markerX >= i2 || markerY >= i3) {
             return;
         }
         int color = graphics.getColor();
         graphics.setColor(255);
-        graphics.fillArc(iM317a - 6, iM317a2 - 6, 12, 12, 0, 360);
-        int iM835a = scaleToPixels(markerRadius, i, j3);
-        int i4 = iM835a << 1;
-        graphics.drawArc(iM317a - iM835a, iM317a2 - iM835a, i4, i4, 0, 360);
+        graphics.fillArc(markerX - 6, markerY - 6, 12, 12, 0, 360);
+        int radiusPx = scaleToPixels(markerRadius, i, j3);
+        int diameter = radiusPx << 1;
+        graphics.drawArc(markerX - radiusPx, markerY - radiusPx, diameter, diameter, 0, 360);
         graphics.setColor(14474460);
-        graphics.drawArc(iM317a - 7, iM317a2 - 7, 14, 14, 0, 360);
+        graphics.drawArc(markerX - 7, markerY - 7, 14, 14, 0, 360);
         graphics.setColor(color);
     }
 
     /* renamed from: a */
     private static final int getMaxTextWidth(Vector vector, Font font) {
-        int iM502a = 20;
+        int maxWidth = 20;
         int size = vector.size();
         while (true) {
             size--;
             if (size < 0) {
-                return iM502a;
+                return maxWidth;
             }
-            iM502a = Utils.max(iM502a, font.stringWidth((String) vector.elementAt(size)));
+            maxWidth = Utils.max(maxWidth, font.stringWidth((String) vector.elementAt(size)));
         }
     }
 
     /* renamed from: a */
     public static final void renderTooltip(Graphics graphics, String str, Font font, int i, int i2, int i3) {
-        Vector vectorM543a = Utils.wrapText(str, font, i);
-        int size = vectorM543a.size();
-        int iM830a = getMaxTextWidth(vectorM543a, font) + 10;
+        Vector lines = Utils.wrapText(str, font, i);
+        int size = lines.size();
+        int boxWidth = getMaxTextWidth(lines, font) + 10;
         int height = font.getHeight();
         int i4 = (height * size) + 6;
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
-        int iM586d = AppState.getInt(72);
-        graphics.setColor(AppState.getInt(iM586d + 5050));
-        int iM503b = Utils.min(iM830a / 25, 3);
-        int i5 = iM503b << 1;
-        int i6 = i2 - (iM830a / 2);
-        int i7 = (i3 - i5) - i4;
-        graphics.fillRoundRect(i6, i7, iM830a, i4, 10, 10);
+        int themeIdx = AppState.getInt(72);
+        graphics.setColor(AppState.getInt(themeIdx + 5050));
+        int arrowSize = Utils.min(boxWidth / 25, 3);
+        int arrowH = arrowSize << 1;
+        int boxX = i2 - (boxWidth / 2);
+        int boxY = (i3 - arrowH) - i4;
+        graphics.fillRoundRect(boxX, boxY, boxWidth, i4, 10, 10);
         graphics.setColor(0);
-        graphics.drawRoundRect(i6, i7, iM830a, i4, 10, 10);
+        graphics.drawRoundRect(boxX, boxY, boxWidth, i4, 10, 10);
         graphics.setFont(font);
-        graphics.setColor(AppState.getInt(iM586d + 4914));
+        graphics.setColor(AppState.getInt(themeIdx + 4914));
         int i8 = size;
         while (true) {
             i8--;
             if (i8 < 0) {
-                graphics.setColor(AppState.getInt(iM586d + 5050));
-                graphics.fillTriangle(i2 + iM503b, i3 - (iM503b << 1), i2 + (iM503b << 2), i3 - (iM503b << 1), i2, i3);
+                graphics.setColor(AppState.getInt(themeIdx + 5050));
+                graphics.fillTriangle(i2 + arrowSize, i3 - (arrowSize << 1), i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
                 graphics.setColor(0);
-                graphics.drawLine(i2 + iM503b, i3 - (iM503b << 1), i2, i3);
-                graphics.drawLine(i2 + (iM503b << 2), i3 - (iM503b << 1), i2, i3);
+                graphics.drawLine(i2 + arrowSize, i3 - (arrowSize << 1), i2, i3);
+                graphics.drawLine(i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
                 graphics.setFont(font2);
                 graphics.setColor(color);
                 return;
             }
-            graphics.drawString((String) vectorM543a.elementAt(i8), i6 + 5, i7 + 3 + (i8 * height), 20);
+            graphics.drawString((String) lines.elementAt(i8), boxX + 5, boxY + 3 + (i8 * height), 20);
         }
     }
 
     /* renamed from: a */
-    public static final void renderBubble(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem interfaceC0044o) {
-        if (interfaceC0044o == null || !interfaceC0044o.isSelected()) {
+    public static final void renderBubble(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem item) {
+        if (item == null || !item.isSelected()) {
             return;
         }
-        int iM586d = AppState.getInt(73);
-        Font font = Font.getFont(64, 0, iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16);
-        int iMo282a = (int) ((i / 2) + (interfaceC0044o.getCommandId(i3) - j));
-        int iMo283b = (int) ((i2 / 2) + (j2 - interfaceC0044o.executeCommand(i3)));
+        int fontSize = AppState.getInt(73);
+        Font font = Font.getFont(64, 0, fontSize == 0 ? 8 : fontSize == 1 ? 0 : 16);
+        int bubbleX = (int) ((i / 2) + (item.getCommandId(i3) - j));
+        int bubbleY = (int) ((i2 / 2) + (j2 - item.executeCommand(i3)));
         int i4 = 8;
         int i5 = 22;
-        boolean zMo281z = interfaceC0044o.isHighlighted();
-        int iMo276r = interfaceC0044o.getHeight();
-        int i6 = iMo276r == 1 ? 303 : 360;
-        if (iMo276r == 2) {
+        boolean hasAction = item.isHighlighted();
+        int itemType = item.getHeight();
+        int i6 = itemType == 1 ? 303 : 360;
+        if (itemType == 2) {
             i6 = 308;
             i4 = 0;
         }
-        if (iMo276r == 3 || iMo276r == 9 || iMo276r == 6) {
+        if (itemType == 3 || itemType == 9 || itemType == 6) {
             i6 = 0;
             i4 = 0;
             i5 = 4;
         }
-        if (iMo276r == 8) {
-            int i7 = ((UserSearchResult) interfaceC0044o).gender;
+        if (itemType == 8) {
+            int i7 = ((UserSearchResult) item).gender;
             i6 = i7 == 1 ? 377 : i7 == 2 ? 378 : 379;
             i4 = 0;
             i5 = 4;
         }
-        if (iMo276r == 7 || iMo276r == 5) {
+        if (itemType == 7 || itemType == 5) {
             i4 = 0;
             i5 = 4;
             i6 = 380;
         }
         int i8 = i6;
-        int i9 = iMo282a + i4;
-        int i10 = iMo283b - i5;
-        Vector vectorM543a = Utils.wrapText(Utils.defaultStr(interfaceC0044o.getText()), font, i - 40);
-        int size = vectorM543a.size();
-        int iM830a = getMaxTextWidth(vectorM543a, font);
+        int i9 = bubbleX + i4;
+        int i10 = bubbleY - i5;
+        Vector textLines = Utils.wrapText(Utils.defaultStr(item.getText()), font, i - 40);
+        int size = textLines.size();
+        int textWidth = getMaxTextWidth(textLines, font);
         int iStringWidth = font.stringWidth(AppState.getString(982)) + 6 + 24;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
         int i11 = height > 16 ? height : 16;
-        int i12 = 6 + ((zMo281z ? 2 : 1) * i11) + ((size - 1) * height);
-        int i13 = iM830a + (i8 != 0 ? 16 : 0) + 6;
+        int i12 = 6 + ((hasAction ? 2 : 1) * i11) + ((size - 1) * height);
+        int i13 = textWidth + (i8 != 0 ? 16 : 0) + 6;
         int i14 = i13;
         if (i13 < iStringWidth) {
             i14 = iStringWidth;
         }
-        int iM586d2 = AppState.getInt(72);
-        graphics.setColor(AppState.getInt(iM586d2 + 5050));
+        int themeIdx = AppState.getInt(72);
+        graphics.setColor(AppState.getInt(themeIdx + 5050));
         int i15 = i14 / 25;
         int i16 = i15;
         if (i15 < 3) {
@@ -239,9 +239,9 @@ public abstract class ChatRenderer {
         int i17 = (i10 - i12) - i16;
         if (i17 < 10) {
             if (!(MapRenderer.autoScrollCount > 0)) {
-                int iM504c = Utils.abs(i17) + 20;
+                int scrollAmount = Utils.abs(i17) + 20;
                 if (MapRenderer.autoScrollCount <= 0) {
-                    MapRenderer.autoScrollCount = iM504c;
+                    MapRenderer.autoScrollCount = scrollAmount;
                     MapRenderer.autoScrollTimestamp = System.currentTimeMillis();
                     MapRenderer.tooltipLocked = true;
                 }
@@ -251,31 +251,31 @@ public abstract class ChatRenderer {
         graphics.fillRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
         graphics.setColor(0);
         graphics.drawRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
-        GraphicsContext c0012al = new GraphicsContext(graphics);
+        GraphicsContext gfx = new GraphicsContext(graphics);
         if (i8 != 0) {
-            c0012al.drawIcon(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
+            gfx.drawIcon(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
         }
         graphics.setFont(font);
-        graphics.setColor(AppState.getInt(iM586d2 + 4914));
+        graphics.setColor(AppState.getInt(themeIdx + 4914));
         for (int i19 = 0; i19 < size; i19++) {
-            graphics.drawString((String) vectorM543a.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
+            graphics.drawString((String) textLines.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
         }
-        Image imageM1023b = XmppContactGroup.getOrLoadImage(19);
+        Image buttonImage = XmppContactGroup.getOrLoadImage(19);
         if (buttonBounds == null) {
             int[] iArr = new int[4];
             buttonBounds = iArr;
-            iArr[2] = imageM1023b.getWidth();
-            buttonBounds[3] = imageM1023b.getHeight();
+            iArr[2] = buttonImage.getWidth();
+            buttonBounds[3] = buttonImage.getHeight();
         }
-        if (zMo281z) {
+        if (hasAction) {
             int i20 = (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2);
             buttonBounds[0] = i20;
             int i21 = ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)) + (i11 / 2);
             buttonBounds[1] = i21;
-            graphics.drawImage(imageM1023b, i20, i21, 6);
+            graphics.drawImage(buttonImage, i20, i21, 6);
             graphics.drawString(AppState.getString(982), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
         }
-        graphics.setColor(AppState.getInt(iM586d2 + 5050));
+        graphics.setColor(AppState.getInt(themeIdx + 5050));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
         graphics.setColor(0);
         graphics.drawLine(i9 + i16, i10 - i18, i9, i10);
@@ -286,13 +286,13 @@ public abstract class ChatRenderer {
 
     /* renamed from: a */
     public static final boolean isDistant(int i, int i2, int i3, int i4) {
-        int iM504c = Utils.abs(i2 - i);
-        int iM504c2 = Utils.abs(i4 - i3);
-        int iM502a = Utils.max(iM504c, iM504c2);
-        if (iM502a >= 5) {
+        int dx = Utils.abs(i2 - i);
+        int dy = Utils.abs(i4 - i3);
+        int maxDist = Utils.max(dx, dy);
+        if (maxDist >= 5) {
             return true;
         }
-        return iM502a == 4 && Utils.min(iM504c, iM504c2) >= 3;
+        return maxDist == 4 && Utils.min(dx, dy) >= 3;
     }
 
     /* renamed from: b */
@@ -616,14 +616,14 @@ public abstract class ChatRenderer {
             return;
         }
         int color = graphics.getColor();
-        int iM586d = AppState.getInt(73);
-        Font font = Font.getFont(64, 0, iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16);
-        int iM688c = (i2 / 2) * SoftFloat.floatToInt(SoftFloat.multiply(SoftFloat.longToFloat(1 << (17 - i)), 4608057598812004689L));
-        int i5 = (int) (j3 - iM688c);
-        int i6 = (int) (j3 + iM688c);
-        int i7 = (int) (j4 + iM688c);
-        int i8 = (int) (j4 - iM688c);
-        Vector vectorM1213g = NetworkUtils.newVector();
+        int fontSize = AppState.getInt(73);
+        Font font = Font.getFont(64, 0, fontSize == 0 ? 8 : fontSize == 1 ? 0 : 16);
+        int halfSpan = (i2 / 2) * SoftFloat.floatToInt(SoftFloat.multiply(SoftFloat.longToFloat(1 << (17 - i)), 4608057598812004689L));
+        int i5 = (int) (j3 - halfSpan);
+        int i6 = (int) (j3 + halfSpan);
+        int i7 = (int) (j4 + halfSpan);
+        int i8 = (int) (j4 - halfSpan);
+        Vector visibleRegions = NetworkUtils.newVector();
         int size = MmpContact.routeRegions.size();
         for (int i9 = 0; i9 < size; i9++) {
             int[] iArr = (int[]) ((Object[]) MmpContact.routeRegions.elementAt(i9))[0];
@@ -637,26 +637,26 @@ public abstract class ChatRenderer {
                 int i16 = iArr[2];
                 int i17 = iArr[3];
                 if ((i15 <= i7 && i15 >= i8 && ((i5 >= i14 && i5 <= i16) || (i6 >= i14 && i6 <= i16))) || (i17 <= i7 && i17 >= i8 && ((i5 >= i14 && i5 <= i16) || (i6 >= i14 && i6 <= i16))) || ((i16 >= i5 && i16 <= i6 && ((i15 >= i7 && i17 <= i7) || (i15 >= i8 && i17 <= i8))) || (i14 >= i5 && i14 <= i6 && ((i15 >= i7 && i17 <= i7) || (i15 >= i8 && i17 <= i8))))) {
-                    vectorM1213g.addElement(MmpContact.routeRegions.elementAt(i9));
+                    visibleRegions.addElement(MmpContact.routeRegions.elementAt(i9));
                 }
             }
         }
-        int size2 = vectorM1213g.size();
-        int iM192t = MmpContact.getTotalRoutePoints();
+        int size2 = visibleRegions.size();
+        int totalPoints = MmpContact.getTotalRoutePoints();
         AppState.setBool(1546, size2 > 0);
         String str = null;
         int i18 = 0;
         int i19 = 0;
-        if (iM192t > 1) {
+        if (totalPoints > 1) {
             graphics.setColor(13311);
             for (int i20 = 0; i20 < size2; i20++) {
-                Object[] objArr = (Object[]) ((Object[]) vectorM1213g.elementAt(i20))[1];
+                Object[] objArr = (Object[]) ((Object[]) visibleRegions.elementAt(i20))[1];
                 int length = objArr.length;
                 int i21 = length - 1;
                 while (i21 > 0) {
                     if (objArr[i21] != null) {
-                        int iM317a = (int) (AppController.coordToPixel(((int[]) ((Object[]) objArr[i21])[0])[0], i) - (j - (i2 / 2)));
-                        int iM317a2 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) ((Object[]) objArr[i21])[0])[1], i));
+                        int px = (int) (AppController.coordToPixel(((int[]) ((Object[]) objArr[i21])[0])[0], i) - (j - (i2 / 2)));
+                        int px2 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) ((Object[]) objArr[i21])[0])[1], i));
                         while (true) {
                             Object[] objArr2 = (Object[]) objArr[length - i21];
                             String[] strArr = null;
@@ -667,20 +667,20 @@ public abstract class ChatRenderer {
                                 strArr[1] = (String) objArr2[2];
                             }
                             if (strArr != null) {
-                                int iM317a3 = (int) AppController.coordToPixel(((int[]) objArr2[0])[0], i);
-                                int iM317a4 = (int) AppController.coordToPixel(((int[]) objArr2[0])[1], i);
-                                int iM317a5 = (int) (AppController.coordToPixel(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
-                                int iM317a6 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) objArr2[0])[1], i));
-                                if (Utils.absLong(j - iM317a3) < 7 && Utils.absLong(j2 - iM317a4) < 7 && str == null) {
+                                int px3 = (int) AppController.coordToPixel(((int[]) objArr2[0])[0], i);
+                                int px4 = (int) AppController.coordToPixel(((int[]) objArr2[0])[1], i);
+                                int px5 = (int) (AppController.coordToPixel(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
+                                int px6 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) objArr2[0])[1], i));
+                                if (Utils.absLong(j - px3) < 7 && Utils.absLong(j2 - px4) < 7 && str == null) {
                                     str = strArr[0];
-                                    i18 = iM317a5;
-                                    i19 = iM317a6;
+                                    i18 = px5;
+                                    i19 = px6;
                                 }
                             }
                             if (objArr[i21 - 1] != null) {
-                                int iM317a7 = (int) (AppController.coordToPixel(((int[]) ((Object[]) objArr[i21 - 1])[0])[0], i) - (j - (i2 / 2)));
-                                int iM317a8 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) ((Object[]) objArr[i21 - 1])[0])[1], i));
-                                if (isDistant(iM317a, iM317a7, iM317a2, iM317a8) || i21 - 1 == 0) {
+                                int px7 = (int) (AppController.coordToPixel(((int[]) ((Object[]) objArr[i21 - 1])[0])[0], i) - (j - (i2 / 2)));
+                                int px8 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(((int[]) ((Object[]) objArr[i21 - 1])[0])[1], i));
+                                if (isDistant(px, px7, px2, px8) || i21 - 1 == 0) {
                                     break;
                                 } else if (i21 > 0) {
                                     i21--;
@@ -693,17 +693,17 @@ public abstract class ChatRenderer {
             }
         } else {
             if (MmpContact.hasFirstToken()) {
-                int iM317a9 = (int) (AppController.coordToPixel(MmpContact.lastTokenPair[0], i) - (j - (i2 / 2)));
-                int iM317a10 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(MmpContact.lastTokenPair[1], i));
-                if (iM317a9 > 0 && iM317a9 < i2 && iM317a10 > 0 && iM317a10 < i3) {
-                    graphics.drawImage(XmppContactGroup.getOrLoadImage(20), iM317a9, iM317a10, 36);
+                int px9 = (int) (AppController.coordToPixel(MmpContact.lastTokenPair[0], i) - (j - (i2 / 2)));
+                int px10 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(MmpContact.lastTokenPair[1], i));
+                if (px9 > 0 && px9 < i2 && px10 > 0 && px10 < i3) {
+                    graphics.drawImage(XmppContactGroup.getOrLoadImage(20), px9, px10, 36);
                 }
             }
             if (MmpContact.hasSecondToken()) {
-                int iM317a11 = (int) (AppController.coordToPixel(MmpContact.currentTokenPair[0], i) - (j - (i2 / 2)));
-                int iM317a12 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(MmpContact.currentTokenPair[1], i));
-                if (iM317a11 > 0 && iM317a11 < i2 && iM317a12 > 0 && iM317a12 < i3) {
-                    graphics.drawImage(XmppContactGroup.getOrLoadImage(21), iM317a11, iM317a12, 36);
+                int px11 = (int) (AppController.coordToPixel(MmpContact.currentTokenPair[0], i) - (j - (i2 / 2)));
+                int px12 = (int) ((j2 + (i3 / 2)) - AppController.coordToPixel(MmpContact.currentTokenPair[1], i));
+                if (px11 > 0 && px11 < i2 && px12 > 0 && px12 < i3) {
+                    graphics.drawImage(XmppContactGroup.getOrLoadImage(21), px11, px12, 36);
                 }
             }
         }
@@ -713,17 +713,17 @@ public abstract class ChatRenderer {
         boolean z2 = false;
         for (int i22 = 0; i22 < size3; i22++) {
             Object[] objArr3 = (Object[]) vector.elementAt(i22);
-            int[] iArrM193a = objArr3[0] != null ? MmpContact.getRoutePointAt(((Integer) objArr3[0]).intValue()) : null;
-            if (iArrM193a == null) {
-                iArrM193a = (int[]) objArr3[1];
+            int[] coords = objArr3[0] != null ? MmpContact.getRoutePointAt(((Integer) objArr3[0]).intValue()) : null;
+            if (coords == null) {
+                coords = (int[]) objArr3[1];
             }
-            if (iArrM193a != null) {
-                int iM317a13 = (int) AppController.coordToPixel(iArrM193a[0], i);
-                int iM317a14 = (int) AppController.coordToPixel(iArrM193a[1], i);
-                int i23 = iM317a13 - (((int) j) - (i2 / 2));
-                int i24 = (((int) j2) + (i3 / 2)) - iM317a14;
+            if (coords != null) {
+                int px13 = (int) AppController.coordToPixel(coords[0], i);
+                int px14 = (int) AppController.coordToPixel(coords[1], i);
+                int i23 = px13 - (((int) j) - (i2 / 2));
+                int i24 = (((int) j2) + (i3 / 2)) - px14;
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
-                    if (Utils.absLong(j - iM317a13) >= 20 || Utils.absLong(j2 - iM317a14) >= 20 || z2) {
+                    if (Utils.absLong(j - px13) >= 20 || Utils.absLong(j2 - px14) >= 20 || z2) {
                         if (!z2) {
                             AppState.setInt(1575, 0);
                             AppState.setBool(1574, AppState.getBool(1573) && !AppState.getBool(1575));
@@ -748,38 +748,38 @@ public abstract class ChatRenderer {
         graphics.setColor(color2);
         int i25 = (int) j;
         int i26 = (int) j2;
-        int iM192t2 = MmpContact.getTotalRoutePoints();
-        if (iM192t2 < 2) {
+        int totalPoints2 = MmpContact.getTotalRoutePoints();
+        if (totalPoints2 < 2) {
             z = false;
         } else {
             boolean z3 = false;
             String str2 = null;
             int i27 = 0;
             int i28 = 0;
-            int[] iArrM193a2 = MmpContact.getRoutePointAt(0);
-            int iM317a15 = (int) AppController.coordToPixel(iArrM193a2[0], i);
-            int iM317a16 = (int) AppController.coordToPixel(iArrM193a2[1], i);
-            int i29 = iM317a15 - (i25 - (i2 / 2));
-            int i30 = (i26 + (i3 / 2)) - iM317a16;
-            String[] strArrM194b = MmpContact.getRouteLabelsAt(0);
-            if (Utils.abs(i25 - iM317a15) >= 7 || Utils.abs(i26 - iM317a16) >= 7 || strArrM194b == null) {
+            int[] coords2 = MmpContact.getRoutePointAt(0);
+            int px15 = (int) AppController.coordToPixel(coords2[0], i);
+            int px16 = (int) AppController.coordToPixel(coords2[1], i);
+            int i29 = px15 - (i25 - (i2 / 2));
+            int i30 = (i26 + (i3 / 2)) - px16;
+            String[] labels = MmpContact.getRouteLabelsAt(0);
+            if (Utils.abs(i25 - px15) >= 7 || Utils.abs(i26 - px16) >= 7 || labels == null) {
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(20), i29, i30, 36);
-            } else if (strArrM194b[0] != null) {
-                str2 = strArrM194b[0];
+            } else if (labels[0] != null) {
+                str2 = labels[0];
                 i27 = i29;
                 i28 = i30;
                 z3 = true;
             }
-            int[] iArrM193a3 = MmpContact.getRoutePointAt(iM192t2 - 1);
-            int iM317a17 = (int) AppController.coordToPixel(iArrM193a3[0], i);
-            int iM317a18 = (int) AppController.coordToPixel(iArrM193a3[1], i);
-            int i31 = iM317a17 - (i25 - (i2 / 2));
-            int i32 = (i26 + (i3 / 2)) - iM317a18;
-            String[] strArrM194b2 = MmpContact.getRouteLabelsAt(iM192t2 - 1);
-            if (Utils.abs(i25 - iM317a17) >= 7 || Utils.abs(i26 - iM317a18) >= 7 || strArrM194b2 == null || z3) {
+            int[] coords3 = MmpContact.getRoutePointAt(totalPoints2 - 1);
+            int px17 = (int) AppController.coordToPixel(coords3[0], i);
+            int px18 = (int) AppController.coordToPixel(coords3[1], i);
+            int i31 = px17 - (i25 - (i2 / 2));
+            int i32 = (i26 + (i3 / 2)) - px18;
+            String[] labels2 = MmpContact.getRouteLabelsAt(totalPoints2 - 1);
+            if (Utils.abs(i25 - px17) >= 7 || Utils.abs(i26 - px18) >= 7 || labels2 == null || z3) {
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(21), i31, i32, 36);
-            } else if (strArrM194b2[0] != null) {
-                str2 = strArrM194b2[0];
+            } else if (labels2[0] != null) {
+                str2 = labels2[0];
                 i27 = i31;
                 i28 = i32;
                 z3 = true;
@@ -793,14 +793,14 @@ public abstract class ChatRenderer {
         if (str != null && !z4) {
             renderTooltip(graphics, str, font, i2 - 40, i18, i19);
         }
-        if (iM192t > 1) {
+        if (totalPoints > 1) {
             int i33 = (int) j2;
             Font font2 = graphics.getFont();
             graphics.setFont(font);
-            int[] iArrM193a4 = MmpContact.getRoutePointAt(0);
-            int iM317a19 = (int) AppController.coordToPixel(iArrM193a4[0], i);
-            int iM317a20 = (int) AppController.coordToPixel(iArrM193a4[1], i);
-            if (Utils.abs(((int) j) - iM317a19) < 7 && Utils.abs(i33 - iM317a20) < 7) {
+            int[] coords4 = MmpContact.getRoutePointAt(0);
+            int px19 = (int) AppController.coordToPixel(coords4[0], i);
+            int px20 = (int) AppController.coordToPixel(coords4[1], i);
+            if (Utils.abs(((int) j) - px19) < 7 && Utils.abs(i33 - px20) < 7) {
                 int height = font.getHeight();
                 int clipHeight = (graphics.getClipHeight() - height) - 1;
                 int i34 = 22;
@@ -808,14 +808,14 @@ public abstract class ChatRenderer {
                     clipHeight -= (height > 18 ? height : 18) + 2;
                     i34 = 22 - 20;
                 }
-                String strM584b = AppState.getString(981);
-                int iStringWidth = font.stringWidth(strM584b) + 6;
-                int iM586d2 = AppState.getInt(72);
-                graphics.setColor(AppState.getInt(iM586d2 + 5050));
-                graphics.fillRoundRect(i34, clipHeight, iStringWidth, height, 10, 10);
-                graphics.setColor(AppState.getInt(iM586d2 + 4914));
-                graphics.drawRoundRect(i34, clipHeight, iStringWidth, height, 10, 10);
-                graphics.drawString(strM584b, i34 + 3, clipHeight, 20);
+                String routeLabel = AppState.getString(981);
+                int labelWidth = font.stringWidth(routeLabel) + 6;
+                int themeIdx2 = AppState.getInt(72);
+                graphics.setColor(AppState.getInt(themeIdx2 + 5050));
+                graphics.fillRoundRect(i34, clipHeight, labelWidth, height, 10, 10);
+                graphics.setColor(AppState.getInt(themeIdx2 + 4914));
+                graphics.drawRoundRect(i34, clipHeight, labelWidth, height, 10, 10);
+                graphics.drawString(routeLabel, i34 + 3, clipHeight, 20);
                 graphics.setFont(font2);
             }
         }
