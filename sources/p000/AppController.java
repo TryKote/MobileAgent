@@ -2166,19 +2166,19 @@ public final class AppController {
         boolean z2;
         int i;
         int i2 = 0;
-        Object objM179a;
+        Object stateObj;
         boolean z3;
         boolean z4 = false;
-        int[] iArrM190r;
-        int[] iArrM191s;
-        Screen c0013amM66b;
-        int iM1181a = 0;
-        Message c0026azM1415b;
-        TextBox textBoxM1028h;
+        int[] keyArr;
+        int[] configArr;
+        Screen screen;
+        int action = 0;
+        Message message;
+        TextBox textBox;
         int i3 = 0;
-        MrimAccount c0028ba;
-        ChatRoom c0052wM745h;
-        Message c0026azM1415b2;
+        MrimAccount mrimAccount;
+        ChatRoom chatRoom;
+        Message message2;
         boolean z5;
         while (!isShuttingDown) {
             synchronized (appLock) {
@@ -2188,20 +2188,20 @@ public final class AppController {
                     if (!MainCanvas.pointerDragged && MainCanvas.pointerDownTime != 0 && System.currentTimeMillis() - MainCanvas.pointerDownTime > 600) {
                         int i4 = MainCanvas.pointerDownX;
                         int i5 = MainCanvas.pointerDownY;
-                        Vector vectorM614m = AppState.getVector(1266);
-                        synchronized (vectorM614m) {
-                            vectorM614m.addElement(new int[]{8, i4, i5});
+                        Vector vec = AppState.getVector(1266);
+                        synchronized (vec) {
+                            vec.addElement(new int[]{8, i4, i5});
                         }
                         MainCanvas.pointerDownTime = 0L;
                     }
-                    Vector vectorM614m2 = AppState.getVector(1241);
-                    int size = vectorM614m2.size();
+                    Vector vec2 = AppState.getVector(1241);
+                    int size = vec2.size();
                     while (true) {
                         size--;
                         if (size < 0) {
-                            int iM586d = AppState.getInt(1531);
-                            Vector vectorM614m3 = AppState.getVector(1242);
-                            int size2 = vectorM614m3.size();
+                            int stateInt = AppState.getInt(1531);
+                            Vector vec3 = AppState.getVector(1242);
+                            int size2 = vec3.size();
                             while (true) {
                                 size2--;
                                 if (size2 < 0) {
@@ -2212,38 +2212,38 @@ public final class AppController {
                                         AppState.clearIndex(1237);
                                         setTimer(1, 1000L);
                                     }
-                                    Object objM524a = Utils.dequeue(AppState.getVector(1266));
-                                    if (objM524a == null) {
-                                        Screen c0013amM66b2 = ScreenManager.getCurrentScreen();
-                                        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
-                                        Object obj = c0032cM69e == null ? null : c0032cM69e.data;
-                                        String str = c0032cM69e == null ? null : c0032cM69e.title;
-                                        int iM338l = 0;
+                                    Object event = Utils.dequeue(AppState.getVector(1266));
+                                    if (event == null) {
+                                        Screen currentScreen = ScreenManager.getCurrentScreen();
+                                        MenuItem menuItem = ScreenManager.getCurrentMenuItem();
+                                        Object obj = menuItem == null ? null : menuItem.data;
+                                        String str = menuItem == null ? null : menuItem.title;
+                                        int nextState = 0;
                                         switch (ScreenManager.getCurrentScreen().screenId) {
                                             case 1:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 2:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 3:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 4:
-                                                iM1181a = ContactListManager.updateContextMenu(c0013amM66b2, obj);
-                                                iM338l = iM1181a;
+                                                action = ContactListManager.updateContextMenu(currentScreen, obj);
+                                                nextState = action;
                                                 break;
                                             case 5:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 6:
-                                                long jCurrentTimeMillis = System.currentTimeMillis();
-                                                if (jCurrentTimeMillis - AppState.getLong(1556) > 45) {
-                                                    AppState.setLong(1556, jCurrentTimeMillis);
+                                                long currentTime = System.currentTimeMillis();
+                                                if (currentTime - AppState.getLong(1556) > 45) {
+                                                    AppState.setLong(1556, currentTime);
                                                 }
                                                 if (isTimerType(10) && MapRenderer.crosshairVisible) {
                                                     if (AppState.getBool(276)) {
@@ -2253,45 +2253,45 @@ public final class AppController {
                                                     }
                                                     MapRenderer.setCrosshairVisible(false);
                                                 }
-                                                int iM586d2 = AppState.getInt(1564);
-                                                if (iM586d2 >= 0 && AppState.getLong(1556) == jCurrentTimeMillis && !AppState.getBool(1553)) {
+                                                int stateInt2 = AppState.getInt(1564);
+                                                if (stateInt2 >= 0 && AppState.getLong(1556) == currentTime && !AppState.getBool(1553)) {
                                                     AppState.setLong(1558, MapRenderer.currentLon);
                                                     AppState.setLong(1560, MapRenderer.currentLat);
-                                                    int iM586d3 = AppState.getInt(39);
-                                                    long jM315d = (getZoomNumerator(iM586d3) / getZoomDenominator(iM586d3)) * 9;
-                                                    switch (iM586d2) {
+                                                    int stateInt3 = AppState.getInt(39);
+                                                    long scrollDelta = (getZoomNumerator(stateInt3) / getZoomDenominator(stateInt3)) * 9;
+                                                    switch (stateInt2) {
                                                         case 0:
-                                                            AppState.setLong(1558, AppState.getLong(1558) + jM315d);
+                                                            AppState.setLong(1558, AppState.getLong(1558) + scrollDelta);
                                                             break;
                                                         case 1:
-                                                            AppState.setLong(1558, AppState.getLong(1558) - jM315d);
+                                                            AppState.setLong(1558, AppState.getLong(1558) - scrollDelta);
                                                             break;
                                                         case 2:
-                                                            AppState.setLong(1560, AppState.getLong(1560) + jM315d);
+                                                            AppState.setLong(1560, AppState.getLong(1560) + scrollDelta);
                                                             break;
                                                         case 3:
-                                                            AppState.setLong(1560, AppState.getLong(1560) - jM315d);
+                                                            AppState.setLong(1560, AppState.getLong(1560) - scrollDelta);
                                                             break;
                                                     }
                                                     MapRenderer.setPosition(AppState.getLong(1558), AppState.getLong(1560));
                                                     setTimer(10, 500L);
                                                     MapRenderer.resetInteraction();
                                                 }
-                                                if (AppState.getLong(1556) == jCurrentTimeMillis) {
+                                                if (AppState.getLong(1556) == currentTime) {
                                                     MapRenderer.render();
                                                 }
                                                 if (AppState.getBool(277) && checkTimer(7, 300000L)) {
                                                     setTimer(7, 300000L);
                                                     StringUtils.clearSatelliteTiles();
-                                                    Vector vectorM614m4 = AppState.getVector(1383);
-                                                    int size3 = vectorM614m4.size();
+                                                    Vector vec4 = AppState.getVector(1383);
+                                                    int size3 = vec4.size();
                                                     while (true) {
                                                         size3--;
                                                         if (size3 < 0) {
                                                             MapRenderer.needsRedraw = true;
                                                             new AsyncTask(6);
-                                                        } else if (3 == ((ResourceManager) vectorM614m4.elementAt(size3)).tileType) {
-                                                            vectorM614m4.removeElementAt(size3);
+                                                        } else if (3 == ((ResourceManager) vec4.elementAt(size3)).tileType) {
+                                                            vec4.removeElementAt(size3);
                                                         }
                                                     }
                                                 }
@@ -2304,27 +2304,27 @@ public final class AppController {
                                                 } else {
                                                     z5 = false;
                                                 }
-                                                iM338l = z5 ? 113 : ConnectionThread.showMapSearchResults();
+                                                nextState = z5 ? 113 : ConnectionThread.showMapSearchResults();
                                                 break;
                                             case 7:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 8:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 9:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 10:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 11:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 13:
                                                 Object[] objArr = (Object[]) AppState.pool[1271];
@@ -2332,291 +2332,291 @@ public final class AppController {
                                                 if (obj2 == null) {
                                                     String str2 = (String) objArr[20];
                                                     if ((str2 != null && Utils.parseInt((Object) str2) == 0) || objArr[3] != null) {
-                                                        iM1181a = NetworkUtils.handleRegSubmit(objArr);
+                                                        action = NetworkUtils.handleRegSubmit(objArr);
                                                     }
-                                                    iM338l = iM1181a;
+                                                    nextState = action;
                                                     break;
                                                 } else {
                                                     showNotification(StringUtils.concatKeyObj(506, obj2));
                                                 }
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 14:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 15:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 16:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 17:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 18:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 19:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 20:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 21:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 22:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 23:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 24:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 25:
-                                                iM338l = AppState.pool[1291] != null ? 122 : 0;
+                                                nextState = AppState.pool[1291] != null ? 122 : 0;
                                                 break;
                                             case 26:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 27:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 28:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 29:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 30:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 32:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 33:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 34:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 35:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 36:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 37:
-                                                Object[] objArrM1156c = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c != null) {
-                                                    int iM586d4 = AppState.getInt(1512);
-                                                    int iM818c = IOUtils.validateJsonResponse(objArrM1156c);
-                                                    if (iM818c != 0) {
-                                                        iM1181a = iM818c;
+                                                Object[] asyncResult = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult != null) {
+                                                    int stateInt4 = AppState.getInt(1512);
+                                                    int responseCode = IOUtils.validateJsonResponse(asyncResult);
+                                                    if (responseCode != 0) {
+                                                        action = responseCode;
                                                     } else {
                                                         ((MrimAccount) AppState.getAccount()).parseChatRoomsFromJson(IOUtils.getJsonPayload());
-                                                        iM1181a = iM586d4;
+                                                        action = stateInt4;
                                                     }
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 38:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 39:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 40:
-                                                Contact abstractC0041lM611g = AppState.getCurrentContact();
-                                                iM338l = (abstractC0041lM611g.flags != 0) || abstractC0041lM611g.dirty ? 40 : 0;
+                                                Contact currentContact = AppState.getCurrentContact();
+                                                nextState = (currentContact.flags != 0) || currentContact.dirty ? 40 : 0;
                                                 break;
                                             case 41:
-                                                Object[] objArrM1156c2 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c2 != null) {
-                                                    int iM818c2 = IOUtils.validateJsonResponse(objArrM1156c2);
-                                                    if (iM818c2 != 0) {
-                                                        iM1181a = iM818c2;
+                                                Object[] asyncResult2 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult2 != null) {
+                                                    int responseCode2 = IOUtils.validateJsonResponse(asyncResult2);
+                                                    if (responseCode2 != 0) {
+                                                        action = responseCode2;
                                                     } else {
-                                                        Object objM819l = IOUtils.getJsonPayload();
-                                                        MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-                                                        ChatRoom c0052wM745h2 = c0028ba2.findChatRoomById(AppState.getInt(1513));
-                                                        if (c0052wM745h2 != c0028ba2.getLastChatRoom()) {
-                                                            c0052wM745h2.subject = JsonParser.getStringValue(objM819l, AppState.getString(591768));
-                                                            c0052wM745h2.messageIds.removeAllElements();
-                                                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(objM819l, AppState.getString(526244))).elements();
+                                                        Object payload = IOUtils.getJsonPayload();
+                                                        MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
+                                                        ChatRoom chatRoom2 = mrimAccount2.findChatRoomById(AppState.getInt(1513));
+                                                        if (chatRoom2 != mrimAccount2.getLastChatRoom()) {
+                                                            chatRoom2.subject = JsonParser.getStringValue(payload, AppState.getString(591768));
+                                                            chatRoom2.messageIds.removeAllElements();
+                                                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(payload, AppState.getString(526244))).elements();
                                                             while (enumerationElements.hasMoreElements()) {
-                                                                c0052wM745h2.messageIds.addElement(enumerationElements.nextElement());
+                                                                chatRoom2.messageIds.addElement(enumerationElements.nextElement());
                                                             }
-                                                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(objM819l, AppState.getString(329636))).elements();
+                                                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(payload, AppState.getString(329636))).elements();
                                                             while (enumerationElements2.hasMoreElements()) {
-                                                                Message c0026az = new Message((Hashtable) enumerationElements2.nextElement());
-                                                                c0052wM745h2.messages.put(c0026az.from, c0026az);
+                                                                Message msg = new Message((Hashtable) enumerationElements2.nextElement());
+                                                                chatRoom2.messages.put(msg.from, msg);
                                                             }
-                                                            Enumeration enumerationKeys = c0052wM745h2.messages.keys();
+                                                            Enumeration enumerationKeys = chatRoom2.messages.keys();
                                                             while (enumerationKeys.hasMoreElements()) {
                                                                 String str3 = (String) enumerationKeys.nextElement();
-                                                                if (!c0052wM745h2.messageIds.contains(str3)) {
-                                                                    c0052wM745h2.messages.remove(str3);
+                                                                if (!chatRoom2.messageIds.contains(str3)) {
+                                                                    chatRoom2.messages.remove(str3);
                                                                 }
                                                             }
-                                                            Enumeration enumerationElements3 = c0052wM745h2.readMessages.elements();
+                                                            Enumeration enumerationElements3 = chatRoom2.readMessages.elements();
                                                             while (enumerationElements3.hasMoreElements()) {
                                                                 String str4 = (String) enumerationElements3.nextElement();
-                                                                if (!c0052wM745h2.messageIds.contains(str4)) {
-                                                                    c0052wM745h2.readMessages.removeElement(str4);
+                                                                if (!chatRoom2.messageIds.contains(str4)) {
+                                                                    chatRoom2.readMessages.removeElement(str4);
                                                                 }
                                                             }
-                                                            c0052wM745h2.isInitialized = false;
+                                                            chatRoom2.isInitialized = false;
                                                         } else {
-                                                            Enumeration enumerationElements4 = ((Vector) objM819l).elements();
+                                                            Enumeration enumerationElements4 = ((Vector) payload).elements();
                                                             while (enumerationElements4.hasMoreElements()) {
-                                                                Message c0026az2 = new Message((Hashtable) enumerationElements4.nextElement());
-                                                                c0052wM745h2.messages.put(c0026az2.from, c0026az2);
+                                                                Message msg2 = new Message((Hashtable) enumerationElements4.nextElement());
+                                                                chatRoom2.messages.put(msg2.from, msg2);
                                                             }
                                                         }
-                                                        iM1181a = 43;
+                                                        action = 43;
                                                     }
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 42:
-                                                Object[] objArrM1156c3 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c3 != null) {
-                                                    int iM818c3 = IOUtils.validateJsonResponse(objArrM1156c3);
-                                                    if (iM818c3 != 0) {
-                                                        iM1181a = iM818c3;
+                                                Object[] asyncResult3 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult3 != null) {
+                                                    int responseCode3 = IOUtils.validateJsonResponse(asyncResult3);
+                                                    if (responseCode3 != 0) {
+                                                        action = responseCode3;
                                                     } else {
-                                                        Object objM819l2 = IOUtils.getJsonPayload();
-                                                        MrimAccount c0028ba3 = (MrimAccount) AppState.getAccount();
-                                                        int size4 = ((Vector) objM819l2).size();
+                                                        Object payload2 = IOUtils.getJsonPayload();
+                                                        MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
+                                                        int size4 = ((Vector) payload2).size();
                                                         for (int i6 = 0; i6 < size4; i6++) {
-                                                            Enumeration enumerationKeys2 = ((Hashtable) JsonParser.getVectorElement(objM819l2, i6)).keys();
+                                                            Enumeration enumerationKeys2 = ((Hashtable) JsonParser.getVectorElement(payload2, i6)).keys();
                                                             while (enumerationKeys2.hasMoreElements()) {
                                                                 String str5 = (String) enumerationKeys2.nextElement();
-                                                                ChatRoom c0052wM747i = c0028ba3.findChatRoomByName(str5);
-                                                                ChatRoom c0052wM745h3 = c0028ba3.findChatRoomById(AppState.getInt(1527));
-                                                                if (c0052wM747i != null && (c0026azM1415b2 = c0052wM747i.getMessage(str5)) != null && c0052wM745h3 != null) {
-                                                                    if (c0026azM1415b2.hasFlag(4)) {
-                                                                        if (c0052wM745h3 == c0028ba3.findDefaultChatRoom()) {
-                                                                            c0026azM1415b2.setFlag(4, false);
+                                                                ChatRoom selectedChatRoom = mrimAccount3.findChatRoomByName(str5);
+                                                                ChatRoom chatRoom3 = mrimAccount3.findChatRoomById(AppState.getInt(1527));
+                                                                if (selectedChatRoom != null && (message2 = selectedChatRoom.getMessage(str5)) != null && chatRoom3 != null) {
+                                                                    if (message2.hasFlag(4)) {
+                                                                        if (chatRoom3 == mrimAccount3.findDefaultChatRoom()) {
+                                                                            message2.setFlag(4, false);
                                                                         }
-                                                                        c0052wM747i.decrementUnread();
+                                                                        selectedChatRoom.decrementUnread();
                                                                     }
-                                                                    c0052wM747i.decrementMembers();
-                                                                    if (!c0026azM1415b2.isRead()) {
-                                                                        c0052wM745h3.incrementUnread();
+                                                                    selectedChatRoom.decrementMembers();
+                                                                    if (!message2.isRead()) {
+                                                                        chatRoom3.incrementUnread();
                                                                     }
-                                                                    c0052wM745h3.memberCount++;
+                                                                    chatRoom3.memberCount++;
                                                                 }
-                                                                if (c0052wM747i != c0052wM745h3) {
-                                                                    c0028ba3.removeUserFromChatRooms(str5);
-                                                                    c0052wM745h3.setActive(false);
+                                                                if (selectedChatRoom != chatRoom3) {
+                                                                    mrimAccount3.removeUserFromChatRooms(str5);
+                                                                    chatRoom3.setActive(false);
                                                                 }
                                                             }
                                                         }
-                                                        iM1181a = 43;
+                                                        action = 43;
                                                     }
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 43:
-                                                AppState.setInt(1514, c0013amM66b2.scrollOffset);
+                                                AppState.setInt(1514, currentScreen.scrollOffset);
                                                 AppState.setObject(1345, (Object) str);
-                                                if (str == null || (c0052wM745h = (c0028ba = (MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513))) == c0028ba.getLastChatRoom() || str.equals(c0052wM745h.subject)) {
+                                                if (str == null || (chatRoom = (mrimAccount = (MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513))) == mrimAccount.getLastChatRoom() || str.equals(chatRoom.subject)) {
                                                     i3 = 0;
-                                                    iM338l = i3;
+                                                    nextState = i3;
                                                     break;
                                                 } else {
                                                     Object obj3 = null;
-                                                    Enumeration enumerationElements5 = c0052wM745h.messageIds.elements();
+                                                    Enumeration enumerationElements5 = chatRoom.messageIds.elements();
                                                     while (enumerationElements5.hasMoreElements()) {
-                                                        Hashtable hashtable = c0052wM745h.messages;
+                                                        Hashtable hashtable = chatRoom.messages;
                                                         Object objNextElement = enumerationElements5.nextElement();
                                                         if (hashtable.containsKey(objNextElement)) {
-                                                            obj3 = c0052wM745h.messages.get(objNextElement);
+                                                            obj3 = chatRoom.messages.get(objNextElement);
                                                         }
                                                     }
                                                     if (str == (obj3 != null ? ((Message) obj3).from : null)) {
-                                                        c0052wM745h.setActive(true);
+                                                        chatRoom.setActive(true);
                                                         i3 = 41;
                                                     }
-                                                    iM338l = i3;
+                                                    nextState = i3;
                                                 }
                                                 break;
                                             case 44:
-                                                int iM586d5 = AppState.getInt(1506);
-                                                iM338l = 0 != iM586d5 ? showError(iM586d5) : AppState.pool[1318] == null ? 0 : 73;
+                                                int stateInt5 = AppState.getInt(1506);
+                                                nextState = 0 != stateInt5 ? showError(stateInt5) : AppState.pool[1318] == null ? 0 : 73;
                                                 break;
                                             case 45:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 46:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 47:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 48:
-                                                iM1181a = XmppMailRuProtocol.processMailResponse();
-                                                iM338l = iM1181a;
+                                                action = XmppMailRuProtocol.processMailResponse();
+                                                nextState = action;
                                                 break;
                                             case 49:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 50:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 51:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 52:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 53:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 54:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 55:
                                                 NetworkUtils.closeAllConnections();
@@ -2630,54 +2630,54 @@ public final class AppController {
                                                 AppState.addInt(292, 1);
                                                 saveOnExit = true;
                                                 isBackgrounded = true;
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 56:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 57:
-                                                iM338l = AppState.getObjectArray(1271)[0] == null ? 0 : 59;
+                                                nextState = AppState.getObjectArray(1271)[0] == null ? 0 : 59;
                                                 break;
                                             case 58:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 59:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 60:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 61:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 62:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 63:
-                                                iM1181a = ResourceManager.updateMessageInput();
-                                                iM338l = iM1181a;
+                                                action = ResourceManager.updateMessageInput();
+                                                nextState = action;
                                                 break;
                                             case 64:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 65:
-                                                if (checkTimer(9, 3000L) && (textBoxM1028h = XmppContactGroup.getTextInputBox()) != null) {
-                                                    String strM16a = StringUtils.getTextBoxString(textBoxM1028h);
+                                                if (checkTimer(9, 3000L) && (textBox = XmppContactGroup.getTextInputBox()) != null) {
+                                                    String inputText = StringUtils.getTextBoxString(textBox);
                                                     if (AppState.getBool(106)) {
-                                                        String strM1123k = Conversation.transliterateRussian(strM16a);
-                                                        if (!StringUtils.equals(strM1123k, strM16a)) {
-                                                            textBoxM1028h.setString(strM1123k);
+                                                        String transliterated = Conversation.transliterateRussian(inputText);
+                                                        if (!StringUtils.equals(transliterated, inputText)) {
+                                                            textBox.setString(transliterated);
                                                         }
                                                     } else {
-                                                        int length = strM16a.length();
+                                                        int length = inputText.length();
                                                         int i7 = length;
                                                         int i8 = length;
                                                         while (true) {
@@ -2685,10 +2685,10 @@ public final class AppController {
                                                             if (i8 < 0) {
                                                                 int i9 = i7 - 160;
                                                                 if (i9 > 0) {
-                                                                    textBoxM1028h.setString(StringUtils.prefix(strM16a, strM16a.length() - i9));
+                                                                    textBox.setString(StringUtils.prefix(inputText, inputText.length() - i9));
                                                                 }
                                                             } else {
-                                                                char cCharAt = strM16a.charAt(i8);
+                                                                char cCharAt = inputText.charAt(i8);
                                                                 if ((cCharAt >= 1040 && cCharAt <= 1071) || ((cCharAt >= 1072 && cCharAt <= 1103) || cCharAt == 1105 || cCharAt == 1025)) {
                                                                     i7 += 2;
                                                                 }
@@ -2696,627 +2696,627 @@ public final class AppController {
                                                         }
                                                     }
                                                 }
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 66:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 67:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 68:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 69:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 70:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 71:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 72:
-                                                Object[] objArrM1156c4 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c4 != null) {
-                                                    int iM818c4 = IOUtils.validateJsonResponse(objArrM1156c4);
-                                                    if (iM818c4 != 0) {
-                                                        iM1181a = iM818c4;
+                                                Object[] asyncResult4 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult4 != null) {
+                                                    int responseCode4 = IOUtils.validateJsonResponse(asyncResult4);
+                                                    if (responseCode4 != 0) {
+                                                        action = responseCode4;
                                                     } else {
-                                                        Object objM819l3 = IOUtils.getJsonPayload();
-                                                        int size5 = ((Vector) objM819l3).size();
+                                                        Object payload3 = IOUtils.getJsonPayload();
+                                                        int size5 = ((Vector) payload3).size();
                                                         while (true) {
                                                             size5--;
                                                             if (size5 < 0) {
-                                                                iM1181a = 43;
+                                                                action = 43;
                                                             } else {
-                                                                Object objM482e = JsonParser.getVectorElement(objM819l3, size5);
-                                                                int iM510a = Utils.parseInt((Object) JsonParser.getStringByInt(objM482e, 263673));
-                                                                String strM480c = JsonParser.getStringByInt(objM482e, 329240);
-                                                                ChatRoom c0052wM747i2 = ((MrimAccount) AppState.getAccount()).findChatRoomByName(strM480c);
-                                                                Message c0026azM1415b3 = c0052wM747i2.getMessage(strM480c);
-                                                                if (c0052wM747i2 != null) {
-                                                                    c0052wM747i2.markMessageRead(strM480c);
+                                                                Object jsonObj = JsonParser.getVectorElement(payload3, size5);
+                                                                int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
+                                                                String jsonStr = JsonParser.getStringByInt(jsonObj, 329240);
+                                                                ChatRoom selectedChatRoom2 = ((MrimAccount) AppState.getAccount()).findChatRoomByName(jsonStr);
+                                                                Message message3 = selectedChatRoom2.getMessage(jsonStr);
+                                                                if (selectedChatRoom2 != null) {
+                                                                    selectedChatRoom2.markMessageRead(jsonStr);
                                                                 }
-                                                                if (iM510a == 1) {
-                                                                    if (c0026azM1415b3 != null && !c0026azM1415b3.hasFlag(4)) {
-                                                                        c0026azM1415b3.setFlag(4, true);
-                                                                        c0052wM747i2.incrementUnread();
+                                                                if (parsedInt == 1) {
+                                                                    if (message3 != null && !message3.hasFlag(4)) {
+                                                                        message3.setFlag(4, true);
+                                                                        selectedChatRoom2.incrementUnread();
                                                                     }
-                                                                } else if (c0026azM1415b3 != null && c0026azM1415b3.hasFlag(4)) {
-                                                                    c0026azM1415b3.setFlag(4, false);
-                                                                    c0052wM747i2.decrementUnread();
+                                                                } else if (message3 != null && message3.hasFlag(4)) {
+                                                                    message3.setFlag(4, false);
+                                                                    selectedChatRoom2.decrementUnread();
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 73:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 74:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 75:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 76:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 77:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 78:
-                                                Object[] objArrM1156c5 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c5 != null) {
-                                                    int iM818c5 = IOUtils.validateJsonResponse(objArrM1156c5);
-                                                    if (iM818c5 != 0) {
-                                                        iM1181a = iM818c5;
+                                                Object[] asyncResult5 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult5 != null) {
+                                                    int responseCode5 = IOUtils.validateJsonResponse(asyncResult5);
+                                                    if (responseCode5 != 0) {
+                                                        action = responseCode5;
                                                     } else {
-                                                        Object objM819l4 = IOUtils.getJsonPayload();
-                                                        Object objM476a = JsonParser.getValueByInt(objM819l4, 329636);
-                                                        if (JsonParser.getIntByInt(objM819l4, 198543) == 1) {
-                                                            int size6 = ((Vector) objM476a).size();
+                                                        Object payload4 = IOUtils.getJsonPayload();
+                                                        Object jsonArray = JsonParser.getValueByInt(payload4, 329636);
+                                                        if (JsonParser.getIntByInt(payload4, 198543) == 1) {
+                                                            int size6 = ((Vector) jsonArray).size();
                                                             while (true) {
                                                                 size6--;
                                                                 if (size6 >= 0) {
-                                                                    String strM483f = JsonParser.getVectorString(objM476a, size6);
-                                                                    MrimAccount c0028ba4 = (MrimAccount) AppState.getAccount();
-                                                                    ChatRoom c0052wM747i3 = c0028ba4.findChatRoomByName(strM483f);
-                                                                    if (c0052wM747i3 != null && (c0026azM1415b = c0052wM747i3.getMessage(strM483f)) != null) {
-                                                                        if (c0026azM1415b.hasFlag(4)) {
-                                                                            c0052wM747i3.decrementUnread();
+                                                                    String jsonValue = JsonParser.getVectorString(jsonArray, size6);
+                                                                    MrimAccount mrimAccount4 = (MrimAccount) AppState.getAccount();
+                                                                    ChatRoom selectedChatRoom3 = mrimAccount4.findChatRoomByName(jsonValue);
+                                                                    if (selectedChatRoom3 != null && (message = selectedChatRoom3.getMessage(jsonValue)) != null) {
+                                                                        if (message.hasFlag(4)) {
+                                                                            selectedChatRoom3.decrementUnread();
                                                                         }
-                                                                        c0052wM747i3.decrementMembers();
+                                                                        selectedChatRoom3.decrementMembers();
                                                                     }
-                                                                    c0028ba4.removeUserFromChatRooms(strM483f);
+                                                                    mrimAccount4.removeUserFromChatRooms(jsonValue);
                                                                 }
                                                             }
                                                         }
-                                                        iM1181a = 43;
+                                                        action = 43;
                                                     }
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 79:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 80:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 81:
-                                                Object[] objArrM1156c6 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c6 != null) {
-                                                    int iM818c6 = IOUtils.validateJsonResponse(objArrM1156c6);
-                                                    if (iM818c6 != 0) {
-                                                        iM1181a = iM818c6;
+                                                Object[] asyncResult6 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult6 != null) {
+                                                    int responseCode6 = IOUtils.validateJsonResponse(asyncResult6);
+                                                    if (responseCode6 != 0) {
+                                                        action = responseCode6;
                                                     } else {
-                                                        ChatRoom c0052wM746W = ((MrimAccount) AppState.getAccount()).getLastChatRoom();
+                                                        ChatRoom lastChatRoom = ((MrimAccount) AppState.getAccount()).getLastChatRoom();
                                                         Vector vector = (Vector) IOUtils.getJsonPayload();
-                                                        c0052wM746W.clear();
+                                                        lastChatRoom.clear();
                                                         int size7 = vector.size();
                                                         for (int i10 = 0; i10 < size7; i10++) {
                                                             Hashtable hashtable2 = (Hashtable) vector.elementAt(i10);
                                                             Vector vector2 = (Vector) JsonParser.getValue(hashtable2, AppState.getString(329636));
-                                                            String strM480c2 = JsonParser.getStringByInt(hashtable2, 198561);
+                                                            String jsonStr2 = JsonParser.getStringByInt(hashtable2, 198561);
                                                             int size8 = vector2.size();
                                                             for (int i11 = 0; i11 < size8; i11++) {
-                                                                Vector vector3 = c0052wM746W.messageIds;
+                                                                Vector vector3 = lastChatRoom.messageIds;
                                                                 Object objElementAt = vector2.elementAt(i11);
                                                                 vector3.addElement(objElementAt);
-                                                                c0052wM746W.metadata.put(objElementAt, strM480c2);
+                                                                lastChatRoom.metadata.put(objElementAt, jsonStr2);
                                                             }
                                                         }
-                                                        c0052wM746W.isInitialized = false;
-                                                        int iM541c = Utils.vectorSize(c0052wM746W.messageIds);
-                                                        if (iM541c > 0) {
-                                                            c0052wM746W.subject = (String) c0052wM746W.messageIds.lastElement();
-                                                            MrimAccount c0028ba5 = (MrimAccount) AppState.getAccount();
-                                                            for (int i12 = 0; i12 < iM541c; i12++) {
-                                                                String strM521a = Utils.getVectorString(c0052wM746W.messageIds, i12);
-                                                                Message c0026azM1415b4 = c0028ba5.findChatRoomById(Utils.parseInt(c0052wM746W.metadata.get(strM521a))).getMessage(strM521a);
-                                                                if (c0026azM1415b4 != null) {
-                                                                    c0052wM746W.messages.put(strM521a, c0026azM1415b4);
+                                                        lastChatRoom.isInitialized = false;
+                                                        int vecSize = Utils.vectorSize(lastChatRoom.messageIds);
+                                                        if (vecSize > 0) {
+                                                            lastChatRoom.subject = (String) lastChatRoom.messageIds.lastElement();
+                                                            MrimAccount mrimAccount5 = (MrimAccount) AppState.getAccount();
+                                                            for (int i12 = 0; i12 < vecSize; i12++) {
+                                                                String messageId = Utils.getVectorString(lastChatRoom.messageIds, i12);
+                                                                Message message4 = mrimAccount5.findChatRoomById(Utils.parseInt(lastChatRoom.metadata.get(messageId))).getMessage(messageId);
+                                                                if (message4 != null) {
+                                                                    lastChatRoom.messages.put(messageId, message4);
                                                                 } else {
-                                                                    c0052wM746W.participants.addElement(strM521a);
-                                                                    c0052wM746W.isInitialized = true;
+                                                                    lastChatRoom.participants.addElement(messageId);
+                                                                    lastChatRoom.isInitialized = true;
                                                                 }
                                                             }
-                                                            c0052wM746W.name = new StringBuffer().append(AppState.getString(901)).append(c0052wM746W.messageIds.size()).toString();
+                                                            lastChatRoom.name = new StringBuffer().append(AppState.getString(901)).append(lastChatRoom.messageIds.size()).toString();
                                                         }
-                                                        if (c0052wM746W.messageIds.size() == 0) {
-                                                            iM1181a = showError(736);
+                                                        if (lastChatRoom.messageIds.size() == 0) {
+                                                            action = showError(736);
                                                         } else {
-                                                            AppState.setInt(1513, c0052wM746W.id);
-                                                            iM1181a = 41;
+                                                            AppState.setInt(1513, lastChatRoom.id);
+                                                            action = 41;
                                                         }
                                                     }
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 82:
-                                                Object[] objArrM1156c7 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (objArrM1156c7 != null) {
-                                                    int iM818c7 = IOUtils.validateJsonResponse(objArrM1156c7);
-                                                    iM1181a = iM818c7 != 0 ? iM818c7 : StringUtils.isEmpty((String) IOUtils.getJsonPayload()) ? showError(878) : 83;
+                                                Object[] asyncResult7 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
+                                                if (asyncResult7 != null) {
+                                                    int responseCode7 = IOUtils.validateJsonResponse(asyncResult7);
+                                                    action = responseCode7 != 0 ? responseCode7 : StringUtils.isEmpty((String) IOUtils.getJsonPayload()) ? showError(878) : 83;
                                                 } else {
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 83:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 84:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 85:
-                                                iM338l = AppState.pool[1315] == null ? 0 : 96;
+                                                nextState = AppState.pool[1315] == null ? 0 : 96;
                                                 break;
                                             case 86:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 87:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 88:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 89:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 90:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 91:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 92:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 93:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 94:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 95:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 96:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 97:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 98:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 99:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 100:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 101:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 102:
-                                                iM338l = AppState.getObjectArray(1271)[2] == null ? 0 : 106;
+                                                nextState = AppState.getObjectArray(1271)[2] == null ? 0 : 106;
                                                 break;
                                             case 103:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 104:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 105:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 106:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 107:
-                                                iM338l = AppState.getObjectArray(1271)[2] == null ? 0 : 106;
+                                                nextState = AppState.getObjectArray(1271)[2] == null ? 0 : 106;
                                                 break;
                                             case 108:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 109:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 110:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 111:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 112:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 113:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 114:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 115:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 116:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 117:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 118:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 119:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 120:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 121:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 122:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 123:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 124:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 125:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 126:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 127:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 128:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 129:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 130:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 131:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 132:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 133:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 134:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 135:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 136:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 137:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 138:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 139:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 140:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 141:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 142:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 143:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 144:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 145:
-                                                iM338l = AppState.pool[1315] == null ? 0 : 96;
+                                                nextState = AppState.pool[1315] == null ? 0 : 96;
                                                 break;
                                             case 146:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 147:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 148:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 149:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 150:
-                                                iM338l = AppState.pool[1318] == null ? 0 : 142;
+                                                nextState = AppState.pool[1318] == null ? 0 : 142;
                                                 break;
                                             case 151:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 152:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 153:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 154:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 155:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 156:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 157:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 158:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 159:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 160:
-                                                iM1181a = System.currentTimeMillis() - ResourceManager.lastTileLoadTime > 5000 ? ResourceManager.syncAndReturn() : 0;
-                                                iM338l = iM1181a;
+                                                action = System.currentTimeMillis() - ResourceManager.lastTileLoadTime > 5000 ? ResourceManager.syncAndReturn() : 0;
+                                                nextState = action;
                                                 break;
                                             case 161:
-                                                iM1181a = ConnectionThread.showMapSearchResults();
-                                                iM338l = iM1181a;
+                                                action = ConnectionThread.showMapSearchResults();
+                                                nextState = action;
                                                 break;
                                             case 162:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 163:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 164:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 165:
-                                                Object[] objArrM609l = AppState.getObjectArray(1271);
-                                                Object obj4 = objArrM609l[0];
+                                                Object[] stateArr = AppState.getObjectArray(1271);
+                                                Object obj4 = stateArr[0];
                                                 if (obj4 != null) {
                                                     showNotification(StringUtils.concatKeyObj(506, obj4));
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 } else {
-                                                    iM1181a = objArrM609l[3] == null ? 0 : NetworkUtils.handleRegSubmit(objArrM609l);
+                                                    action = stateArr[3] == null ? 0 : NetworkUtils.handleRegSubmit(stateArr);
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 166:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 167:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 168:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 169:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 170:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 171:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 172:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 173:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 174:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 175:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 176:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 177:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 178:
-                                                iM1181a = 0;
-                                                iM338l = iM1181a;
+                                                action = 0;
+                                                nextState = action;
                                                 break;
                                             case 179:
-                                                Vector vectorM614m5 = AppState.getVector(1284);
-                                                if (Utils.vectorSize(vectorM614m5) <= 1) {
-                                                    NetworkUtils.releaseVector(vectorM614m5);
+                                                Vector vec5 = AppState.getVector(1284);
+                                                if (Utils.vectorSize(vec5) <= 1) {
+                                                    NetworkUtils.releaseVector(vec5);
                                                     IOUtils.postEvent((Object) AppState.getString(1029));
-                                                    iM1181a = 4;
+                                                    action = 4;
                                                 } else {
-                                                    Object objElementAt2 = vectorM614m5.elementAt(0);
+                                                    Object objElementAt2 = vec5.elementAt(0);
                                                     if (objElementAt2 instanceof String) {
-                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.concatKey(5510023, Conversation.percentEncode((String) vectorM614m5.lastElement())), null};
+                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.concatKey(5510023, Conversation.percentEncode((String) vec5.lastElement())), null};
                                                         new AsyncTask(26, objArr2);
-                                                        vectorM614m5.setElementAt(objArr2, 0);
+                                                        vec5.setElementAt(objArr2, 0);
                                                     } else {
                                                         Object obj5 = ((Object[]) objElementAt2)[2];
                                                         if (obj5 != null) {
                                                             if (obj5 instanceof Throwable) {
                                                                 IOUtils.postEvent((Object) StringUtils.concatKeyObj(1030, obj5));
                                                             } else {
-                                                                Utils.dequeue(vectorM614m5);
+                                                                Utils.dequeue(vec5);
                                                             }
                                                         }
                                                     }
-                                                    iM1181a = 0;
+                                                    action = 0;
                                                 }
-                                                iM338l = iM1181a;
+                                                nextState = action;
                                                 break;
                                             case 180:
-                                                iM1181a = AppState.getString(1239) == null ? 0 : 147;
-                                                iM338l = iM1181a;
+                                                action = AppState.getString(1239) == null ? 0 : 147;
+                                                nextState = action;
                                                 break;
                                         }
-                                        if (iM338l == 12) {
+                                        if (nextState == 12) {
                                             ScreenBuilder.onScreenClosed();
-                                        } else if (iM338l != 0) {
-                                            ScreenBuilder.openScreen(iM338l);
+                                        } else if (nextState != 0) {
+                                            ScreenBuilder.openScreen(nextState);
                                         }
-                                    } else if (objM524a instanceof int[]) {
-                                        int[] iArr = (int[]) objM524a;
+                                    } else if (event instanceof int[]) {
+                                        int[] iArr = (int[]) event;
                                         switch (iArr[0]) {
                                             case 0:
-                                                Screen c0013amM66b3 = ScreenManager.getCurrentScreen();
-                                                if (c0013amM66b3 == null) {
+                                                Screen screen3 = ScreenManager.getCurrentScreen();
+                                                if (screen3 == null) {
                                                     break;
                                                 } else {
-                                                    if (c0013amM66b3.screenId != 6) {
+                                                    if (screen3.screenId != 6) {
                                                         needsRepaint = true;
                                                     }
                                                     int i13 = iArr[1];
@@ -3330,20 +3330,20 @@ public final class AppController {
                                                         if (size9 > 1) {
                                                             AppState.setInt(1414, 0);
                                                             if (i14 == 2) {
-                                                                if (c0013amM66b3.isAtStart()) {
-                                                                    TabBar c0008ahM168d = TabBar.getPreviousTab();
-                                                                    if (c0008ahM168d != null) {
-                                                                        ScreenBuilder.openScreen(c0008ahM168d.selectTab());
+                                                                if (screen3.isAtStart()) {
+                                                                    TabBar prevTab = TabBar.getPreviousTab();
+                                                                    if (prevTab != null) {
+                                                                        ScreenBuilder.openScreen(prevTab.selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
                                                                     z4 = false;
                                                                 }
                                                             } else if (i14 == 5) {
-                                                                if (c0013amM66b3.isAtEnd()) {
-                                                                    TabBar c0008ahM167c = TabBar.getNextTab();
-                                                                    if (c0008ahM167c != null) {
-                                                                        ScreenBuilder.openScreen(c0008ahM167c.selectTab());
+                                                                if (screen3.isAtEnd()) {
+                                                                    TabBar nextTab = TabBar.getNextTab();
+                                                                    if (nextTab != null) {
+                                                                        ScreenBuilder.openScreen(nextTab.selectTab());
                                                                     }
                                                                     z4 = true;
                                                                 } else {
@@ -3376,13 +3376,13 @@ public final class AppController {
                                                                         ScreenBuilder.openScreen(100);
                                                                         z4 = true;
                                                                     } else if (i13 == 50) {
-                                                                        boolean zM587e = AppState.getBool(41);
-                                                                        if (zM587e) {
+                                                                        boolean isEnabled = AppState.getBool(41);
+                                                                        if (isEnabled) {
                                                                             Conversation.setMapEnabled(false);
                                                                         } else {
                                                                             Conversation.setMapEnabled(true);
                                                                         }
-                                                                        AppState.setBool(41, !zM587e);
+                                                                        AppState.setBool(41, !isEnabled);
                                                                         ScreenBuilder.openScreen(6);
                                                                         z4 = true;
                                                                     } else if (i13 == 51) {
@@ -3393,13 +3393,13 @@ public final class AppController {
                                                                         MapRenderer.needsRedraw = true;
                                                                         z4 = true;
                                                                     } else if (i13 == 55) {
-                                                                        if (MmpContact.locationEnabled && (iArrM191s = MmpContact.getPrevRoutePoint()) != null) {
-                                                                            MapRenderer.animateTo(iArrM191s[0], iArrM191s[1]);
+                                                                        if (MmpContact.locationEnabled && (configArr = MmpContact.getPrevRoutePoint()) != null) {
+                                                                            MapRenderer.animateTo(configArr[0], configArr[1]);
                                                                         }
                                                                         z4 = true;
                                                                     } else if (i13 == 57) {
-                                                                        if (MmpContact.locationEnabled && (iArrM190r = MmpContact.getNextRoutePoint()) != null) {
-                                                                            MapRenderer.animateTo(iArrM190r[0], iArrM190r[1]);
+                                                                        if (MmpContact.locationEnabled && (keyArr = MmpContact.getNextRoutePoint()) != null) {
+                                                                            MapRenderer.animateTo(keyArr[0], keyArr[1]);
                                                                         }
                                                                         z4 = true;
                                                                     }
@@ -3414,7 +3414,7 @@ public final class AppController {
                                                                 } else if (i14 == 1) {
                                                                     z4 = true;
                                                                 } else if (i14 == 6) {
-                                                                    ConnectionThread.handleMapSwitch(c0013amM66b3);
+                                                                    ConnectionThread.handleMapSwitch(screen3);
                                                                     z4 = true;
                                                                 }
                                                             }
@@ -3428,29 +3428,29 @@ public final class AppController {
                                                                     onItemSelected();
                                                                     break;
                                                                 } else if (i14 == 1) {
-                                                                    c0013amM66b3.scrollUp();
+                                                                    screen3.scrollUp();
                                                                     break;
                                                                 } else if (i14 == 6) {
-                                                                    c0013amM66b3.scrollDown();
+                                                                    screen3.scrollDown();
                                                                     break;
                                                                 } else if (i14 == 2) {
-                                                                    if (c0013amM66b3.showCheckboxes) {
+                                                                    if (screen3.showCheckboxes) {
                                                                         ScreenBuilder.onScreenClosed();
                                                                         break;
-                                                                    } else if (c0013amM66b3.screenId == 6) {
+                                                                    } else if (screen3.screenId == 6) {
                                                                         AppState.setInt(1564, 1);
                                                                         break;
                                                                     } else {
-                                                                        if (c0013amM66b3.layoutMode == 1) {
-                                                                            int i18 = c0013amM66b3.selectedIndex;
-                                                                            int size10 = c0013amM66b3.menuItems.size();
-                                                                            c0013amM66b3.selectedIndex = ((i18 + size10) - 1) % size10;
-                                                                            c0013amM66b3.invalidateLayout();
+                                                                        if (screen3.layoutMode == 1) {
+                                                                            int i18 = screen3.selectedIndex;
+                                                                            int size10 = screen3.menuItems.size();
+                                                                            screen3.selectedIndex = ((i18 + size10) - 1) % size10;
+                                                                            screen3.invalidateLayout();
                                                                         }
                                                                         break;
                                                                     }
                                                                 } else if (i14 == 5) {
-                                                                    c0013amM66b3.onActionKey();
+                                                                    screen3.onActionKey();
                                                                 }
                                                             }
                                                         }
@@ -3500,19 +3500,19 @@ public final class AppController {
                                                         }
                                                         break;
                                                     } else {
-                                                        Screen c0013amM66b4 = ScreenManager.getCurrentScreen();
-                                                        if (c0013amM66b4 != null) {
-                                                            c0013amM66b4.touchConsumed = true;
-                                                            c0013amM66b4.marginLeft = 0;
-                                                            c0013amM66b4.marginTop = 0;
-                                                            int i22 = i19 - c0013amM66b4.offsetX;
-                                                            int i23 = i20 - c0013amM66b4.offsetY;
-                                                            boolean z7 = i22 >= 2 && i22 < 2 + c0013amM66b4.contentWidth && i23 >= c0013amM66b4.contentTop && i23 < c0013amM66b4.contentTop + c0013amM66b4.contentHeight;
+                                                        Screen screen4 = ScreenManager.getCurrentScreen();
+                                                        if (screen4 != null) {
+                                                            screen4.touchConsumed = true;
+                                                            screen4.marginLeft = 0;
+                                                            screen4.marginTop = 0;
+                                                            int i22 = i19 - screen4.offsetX;
+                                                            int i23 = i20 - screen4.offsetY;
+                                                            boolean z7 = i22 >= 2 && i22 < 2 + screen4.contentWidth && i23 >= screen4.contentTop && i23 < screen4.contentTop + screen4.contentHeight;
                                                             boolean z8 = z7;
-                                                            if (z7 && c0013amM66b4.screenId == 6) {
-                                                                int i24 = i23 - c0013amM66b4.contentTop;
+                                                            if (z7 && screen4.screenId == 6) {
+                                                                int i24 = i23 - screen4.contentTop;
                                                                 if (i24 > 0) {
-                                                                    ConnectionThread.toggleMapControls(c0013amM66b4);
+                                                                    ConnectionThread.toggleMapControls(screen4);
                                                                     MapRenderer.dragActive = false;
                                                                     MapRenderer.rippleTimestamp = System.currentTimeMillis();
                                                                     MapRenderer.rippleX = i22;
@@ -3522,7 +3522,7 @@ public final class AppController {
                                                                 } else {
                                                                     z3 = false;
                                                                 }
-                                                            } else if (z8 || c0013amM66b4.screenType == 1 || c0013amM66b4.screenType == 12) {
+                                                            } else if (z8 || screen4.screenType == 1 || screen4.screenType == 12) {
                                                                 z3 = false;
                                                             } else {
                                                                 ScreenBuilder.onScreenClosed();
@@ -3530,24 +3530,24 @@ public final class AppController {
                                                                 z3 = true;
                                                             }
                                                             if (!z3) {
-                                                                int i25 = c0013amM66b4.screenType;
-                                                                if ((i25 == 1 || i25 == 12) && (objM179a = TabBar.hitTest(i19, i20)) != null) {
-                                                                    if (!(objM179a instanceof int[])) {
-                                                                        int i26 = ((TabBar) objM179a).type;
-                                                                        Account abstractC0037h = ((TabBar) objM179a).account;
+                                                                int i25 = screen4.screenType;
+                                                                if ((i25 == 1 || i25 == 12) && (stateObj = TabBar.hitTest(i19, i20)) != null) {
+                                                                    if (!(stateObj instanceof int[])) {
+                                                                        int i26 = ((TabBar) stateObj).type;
+                                                                        Account acct = ((TabBar) stateObj).account;
                                                                         AppState.setInt(1414, 0);
                                                                         if (i == 4) {
                                                                             ContactListManager.clearState();
                                                                         }
-                                                                        if (i26 != 6 && i26 != 36 && abstractC0037h != null) {
-                                                                            TabBar.findTab(4, ((TabBar) objM179a).account);
+                                                                        if (i26 != 6 && i26 != 36 && acct != null) {
+                                                                            TabBar.findTab(4, ((TabBar) stateObj).account);
                                                                             ScreenBuilder.openScreen(4);
                                                                         } else if (i != i26) {
                                                                             ScreenBuilder.openScreen(i26);
                                                                             break;
                                                                         }
                                                                     } else {
-                                                                        switch (((int[]) objM179a)[1]) {
+                                                                        switch (((int[]) stateObj)[1]) {
                                                                             case 246:
                                                                                 ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
                                                                                 break;
@@ -3561,21 +3561,21 @@ public final class AppController {
                                                         }
                                                     }
                                                 } else {
-                                                    int iM586d6 = AppState.getInt(1528) - 17;
+                                                    int stateInt6 = AppState.getInt(1528) - 17;
                                                     if (handleTabAction() == 0) {
-                                                        if (!hasActiveConnection() && i19 > iM586d6) {
+                                                        if (!hasActiveConnection() && i19 > stateInt6) {
                                                             i2 = 36;
                                                         }
                                                         int i212 = i2;
                                                         if (i2 <= 0) {
                                                         }
-                                                    } else if (i19 > iM586d6) {
+                                                    } else if (i19 > stateInt6) {
                                                         i2 = !AppState.getBool(243) ? 4 : 0;
                                                         int i2122 = i2;
                                                         if (i2 <= 0) {
                                                         }
                                                     } else {
-                                                        iM586d6 -= 17;
+                                                        stateInt6 -= 17;
                                                         if (!hasActiveConnection()) {
                                                             i2 = 0;
                                                             int i21222 = i2;
@@ -3588,38 +3588,38 @@ public final class AppController {
                                             case 6:
                                                 int i27 = iArr[1];
                                                 int i28 = iArr[2];
-                                                Screen c0013amM66b5 = ScreenManager.getCurrentScreen();
-                                                if (c0013amM66b5 == null || !c0013amM66b5.touchConsumed) {
+                                                Screen screen5 = ScreenManager.getCurrentScreen();
+                                                if (screen5 == null || !screen5.touchConsumed) {
                                                     break;
                                                 } else {
-                                                    int i29 = i27 - c0013amM66b5.offsetX;
-                                                    int i30 = i28 - (c0013amM66b5.offsetY + c0013amM66b5.contentTop);
-                                                    if (c0013amM66b5.marginLeft == 0 && c0013amM66b5.marginTop == 0) {
-                                                        c0013amM66b5.marginLeft = i29;
-                                                        c0013amM66b5.marginTop = i30;
+                                                    int i29 = i27 - screen5.offsetX;
+                                                    int i30 = i28 - (screen5.offsetY + screen5.contentTop);
+                                                    if (screen5.marginLeft == 0 && screen5.marginTop == 0) {
+                                                        screen5.marginLeft = i29;
+                                                        screen5.marginTop = i30;
                                                     }
-                                                    int i31 = i29 - c0013amM66b5.marginLeft;
-                                                    int i32 = i30 - c0013amM66b5.marginTop;
-                                                    c0013amM66b5.marginLeft = i29;
-                                                    c0013amM66b5.marginTop = i30;
-                                                    if (c0013amM66b5.screenId == 6) {
-                                                        ConnectionThread.toggleMapControls(c0013amM66b5);
+                                                    int i31 = i29 - screen5.marginLeft;
+                                                    int i32 = i30 - screen5.marginTop;
+                                                    screen5.marginLeft = i29;
+                                                    screen5.marginTop = i30;
+                                                    if (screen5.screenId == 6) {
+                                                        ConnectionThread.toggleMapControls(screen5);
                                                         MapRenderer.dragActive = true;
                                                         MapRenderer.rippleTimestamp = 0L;
-                                                        int iM586d7 = AppState.getInt(39);
-                                                        MapRenderer.setPosition(MapRenderer.currentLon - ((int) pixelToCoord(i31, iM586d7)), MapRenderer.currentLat + ((int) pixelToCoord(i32, iM586d7)));
+                                                        int stateInt7 = AppState.getInt(39);
+                                                        MapRenderer.setPosition(MapRenderer.currentLon - ((int) pixelToCoord(i31, stateInt7)), MapRenderer.currentLat + ((int) pixelToCoord(i32, stateInt7)));
                                                         MapRenderer.needsRedraw = true;
                                                         break;
                                                     } else {
-                                                        c0013amM66b5.scrollOffset -= i32;
-                                                        if (c0013amM66b5.totalHeight < c0013amM66b5.contentHeight) {
-                                                            c0013amM66b5.scrollOffset = 0;
+                                                        screen5.scrollOffset -= i32;
+                                                        if (screen5.totalHeight < screen5.contentHeight) {
+                                                            screen5.scrollOffset = 0;
                                                         }
-                                                        if (c0013amM66b5.scrollOffset > c0013amM66b5.totalHeight - c0013amM66b5.contentHeight) {
-                                                            c0013amM66b5.scrollOffset = c0013amM66b5.totalHeight - c0013amM66b5.contentHeight;
+                                                        if (screen5.scrollOffset > screen5.totalHeight - screen5.contentHeight) {
+                                                            screen5.scrollOffset = screen5.totalHeight - screen5.contentHeight;
                                                         }
-                                                        if (c0013amM66b5.scrollOffset < 0) {
-                                                            c0013amM66b5.scrollOffset = 0;
+                                                        if (screen5.scrollOffset < 0) {
+                                                            screen5.scrollOffset = 0;
                                                         }
                                                         needsRepaint = true;
                                                     }
@@ -3631,77 +3631,77 @@ public final class AppController {
                                                 int i35 = iArr[3];
                                                 int i36 = iArr[4];
                                                 int i37 = iArr[5];
-                                                Screen c0013amM66b6 = ScreenManager.getCurrentScreen();
-                                                if (c0013amM66b6 != null) {
-                                                    c0013amM66b6.onPointerEvent(i33, i34, i35, i36, i37 != 0);
+                                                Screen screen6 = ScreenManager.getCurrentScreen();
+                                                if (screen6 != null) {
+                                                    screen6.onPointerEvent(i33, i34, i35, i36, i37 != 0);
                                                 }
                                                 break;
                                             case 8:
                                                 int i38 = iArr[1];
                                                 int i39 = iArr[2];
-                                                Screen c0013amM66b7 = ScreenManager.getCurrentScreen();
-                                                if (c0013amM66b7 != null) {
-                                                    int i40 = i38 - c0013amM66b7.offsetX;
-                                                    int i41 = i39 - c0013amM66b7.offsetY;
-                                                    c0013amM66b7.touchConsumed = false;
-                                                    if (c0013amM66b7.screenId == 6) {
-                                                        int i42 = i41 - c0013amM66b7.contentTop;
-                                                        ConnectionThread.toggleMapControls(c0013amM66b7);
+                                                Screen screen7 = ScreenManager.getCurrentScreen();
+                                                if (screen7 != null) {
+                                                    int i40 = i38 - screen7.offsetX;
+                                                    int i41 = i39 - screen7.offsetY;
+                                                    screen7.touchConsumed = false;
+                                                    if (screen7.screenId == 6) {
+                                                        int i42 = i41 - screen7.contentTop;
+                                                        ConnectionThread.toggleMapControls(screen7);
                                                         MapRenderer.onDrag(i40, i42);
                                                     }
                                                 }
                                                 break;
                                         }
-                                    } else if (objM524a instanceof String) {
-                                        showNotification((String) objM524a);
+                                    } else if (event instanceof String) {
+                                        showNotification((String) event);
                                         needsRepaint = true;
-                                    } else if (objM524a instanceof Object[]) {
-                                        if (((Object[]) objM524a)[0] instanceof MrimAccount) {
+                                    } else if (event instanceof Object[]) {
+                                        if (((Object[]) event)[0] instanceof MrimAccount) {
                                             AppState.setInt(4486, 108);
-                                            AppState.setObject(1344, ((Object[]) objM524a)[1]);
-                                            MrimAccount c0028ba6 = (MrimAccount) ((Object[]) objM524a)[0];
-                                            c0028ba6.chatRoomsLoaded = true;
-                                            AppState.pool[1282] = c0028ba6;
+                                            AppState.setObject(1344, ((Object[]) event)[1]);
+                                            MrimAccount mrimAccount6 = (MrimAccount) ((Object[]) event)[0];
+                                            mrimAccount6.chatRoomsLoaded = true;
+                                            AppState.pool[1282] = mrimAccount6;
                                             ScreenManager.showScreen(ScreenManager.createScreen(4485));
                                             AppState.clearIndex(1344);
                                             needsRepaint = true;
                                         } else {
-                                            ((MrimAccount) ((Object[]) objM524a)[1]).addOfflineContact((String) ((Object[]) objM524a)[0]);
+                                            ((MrimAccount) ((Object[]) event)[1]).addOfflineContact((String) ((Object[]) event)[0]);
                                         }
-                                    } else if (objM524a instanceof IOUtils) {
-                                        IOUtils c0029bb = (IOUtils) objM524a;
-                                        int i43 = c0029bb.eventType;
-                                        Object obj6 = c0029bb.eventData;
+                                    } else if (event instanceof IOUtils) {
+                                        IOUtils ioUtils = (IOUtils) event;
+                                        int i43 = ioUtils.eventType;
+                                        Object obj6 = ioUtils.eventData;
                                         switch (i43) {
                                             case 3:
                                                 ResourceManager.showSavedLocations();
                                                 break;
                                             case 4:
                                                 Object[] objArr3 = (Object[]) obj6;
-                                                PhoneContact c0020at = (PhoneContact) objArr3[0];
-                                                AppState.pool[1256] = c0020at;
+                                                PhoneContact phoneContact = (PhoneContact) objArr3[0];
+                                                AppState.pool[1256] = phoneContact;
                                                 Vector vector4 = (Vector) objArr3[1];
                                                 AppState.pool[1257] = vector4;
                                                 int iIntValue = ((Integer) objArr3[2]).intValue();
                                                 AppState.setInt(1444, iIntValue);
-                                                Screen c0013amM75b = ScreenManager.createScreen(2237);
+                                                Screen popupScreen = ScreenManager.createScreen(2237);
                                                 if (iIntValue >= 10) {
-                                                    c0013amM75b.addIconItemWithData(6, AppState.getString(421), 1, null);
+                                                    popupScreen.addIconItemWithData(6, AppState.getString(421), 1, null);
                                                 }
                                                 int size11 = vector4.size();
                                                 while (true) {
                                                     size11--;
                                                     if (size11 < 0) {
-                                                        if (iIntValue < c0020at.userCount - 10) {
-                                                            c0013amM75b.addIconItemWithData(6, AppState.getString(420), 2, null);
+                                                        if (iIntValue < phoneContact.userCount - 10) {
+                                                            popupScreen.addIconItemWithData(6, AppState.getString(420), 2, null);
                                                         }
-                                                        AppState.setBool(1445, iIntValue < c0020at.userCount - 10);
+                                                        AppState.setBool(1445, iIntValue < phoneContact.userCount - 10);
                                                         AppState.setBool(1446, iIntValue >= 10);
-                                                        ScreenManager.showScreen(c0013amM75b);
+                                                        ScreenManager.showScreen(popupScreen);
                                                         break;
                                                     } else {
-                                                        UserSearchResult c0045p = (UserSearchResult) vector4.elementAt(size11);
-                                                        c0013amM75b.addIconItemWithData(c0045p.gender == 1 ? 377 : c0045p.gender == 2 ? 378 : 379, c0045p.getText(), 0, c0045p);
+                                                        UserSearchResult searchResult = (UserSearchResult) vector4.elementAt(size11);
+                                                        popupScreen.addIconItemWithData(searchResult.gender == 1 ? 377 : searchResult.gender == 2 ? 378 : 379, searchResult.getText(), 0, searchResult);
                                                     }
                                                 }
                                             case 5:
@@ -3716,12 +3716,12 @@ public final class AppController {
                                     } else {
                                         needsRepaint = true;
                                         needsLayoutUpdate = true;
-                                        Screen c0013amM66b8 = ScreenManager.getCurrentScreen();
+                                        Screen screen8 = ScreenManager.getCurrentScreen();
                                         int i44 = ScreenManager.getCurrentScreen().screenId;
-                                        if (objM524a != null && (objM524a instanceof MenuItem)) {
-                                            MenuItem c0032c = (MenuItem) objM524a;
-                                            if (c0032c.id == 2) {
-                                                if (i44 == 147 && AppState.setBool(1468, ((Boolean) c0032c.data).booleanValue())) {
+                                        if (event != null && (event instanceof MenuItem)) {
+                                            MenuItem eventItem = (MenuItem) event;
+                                            if (eventItem.id == 2) {
+                                                if (i44 == 147 && AppState.setBool(1468, ((Boolean) eventItem.data).booleanValue())) {
                                                     NetworkUtils.processScreenForm();
                                                     AppState.setFromPool(1289, 1286);
                                                     finishScreenBuild();
@@ -3729,45 +3729,45 @@ public final class AppController {
                                             }
                                         } else if (i44 == 21) {
                                             if (AppState.getAccount().getType() == 0) {
-                                                StringUtils.updateRegDropdowns(c0013amM66b8, objM524a);
+                                                StringUtils.updateRegDropdowns(screen8, event);
                                             }
                                         } else if (i44 == 164) {
-                                            MenuItem c0032c2 = (MenuItem) objM524a;
-                                            Object[] objArr4 = (Object[]) c0032c2.data;
+                                            MenuItem menuItem2 = (MenuItem) event;
+                                            Object[] objArr4 = (Object[]) menuItem2.data;
                                             int iIntValue2 = ((Integer) objArr4[0]).intValue();
                                             String[] strArr = (String[]) objArr4[1];
-                                            MenuItem c0032c3 = null;
-                                            Vector vector5 = c0013amM66b8.menuItems;
+                                            MenuItem menuItem3 = null;
+                                            Vector vector5 = screen8.menuItems;
                                             int size12 = vector5.size();
                                             while (true) {
                                                 size12--;
                                                 if (size12 < 0) {
-                                                    if (c0032c2.title.equals(AppState.getString(809))) {
-                                                        MenuItem c0032c4 = c0032c3;
-                                                        String strM522f = iIntValue2 == 0 ? Utils.defaultStr(AppState.getString(1287)) : strArr[iIntValue2];
-                                                        Object[] objArr5 = (Object[]) c0032c4.data;
-                                                        c0032c4.clear().setAction(objArr5[4], strM522f, objArr5[1], objArr5[2], objArr5[3]);
+                                                    if (menuItem2.title.equals(AppState.getString(809))) {
+                                                        MenuItem menuItem4 = menuItem3;
+                                                        String optionStr = iIntValue2 == 0 ? Utils.defaultStr(AppState.getString(1287)) : strArr[iIntValue2];
+                                                        Object[] objArr5 = (Object[]) menuItem4.data;
+                                                        menuItem4.clear().setAction(objArr5[4], optionStr, objArr5[1], objArr5[2], objArr5[3]);
                                                     }
-                                                    c0013amM66b8.rebuildItems();
+                                                    screen8.rebuildItems();
                                                 } else {
-                                                    MenuItem c0032c5 = (MenuItem) vector5.elementAt(size12);
-                                                    if (c0032c5.id == 15 && c0032c5.title.startsWith(AppState.getString(811))) {
-                                                        c0032c3 = c0032c5;
+                                                    MenuItem item = (MenuItem) vector5.elementAt(size12);
+                                                    if (item.id == 15 && item.title.startsWith(AppState.getString(811))) {
+                                                        menuItem3 = item;
                                                     }
                                                 }
                                             }
                                         } else if (i44 == 26) {
-                                            MenuItem c0032c6 = (MenuItem) objM524a;
-                                            Object[] objArr6 = (Object[]) c0032c6.data;
-                                            if (AppState.getString(560).equals(c0032c6.title)) {
+                                            MenuItem menuItem6 = (MenuItem) event;
+                                            Object[] objArr6 = (Object[]) menuItem6.data;
+                                            if (AppState.getString(560).equals(menuItem6.title)) {
                                                 AppState.setInt(72, ((Integer) objArr6[0]).intValue());
                                             }
                                         } else if (i44 == 28) {
-                                            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) ((MenuItem) objM524a).data)[0]).intValue(), false);
+                                            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) ((MenuItem) event).data)[0]).intValue(), false);
                                         }
                                     }
-                                    if (!AppState.getBool(71) && null != (c0013amM66b = ScreenManager.getCurrentScreen())) {
-                                        AppState.getCanvas().setCommands(c0013amM66b.titleLeft, c0013amM66b.titleRight);
+                                    if (!AppState.getBool(71) && null != (screen = ScreenManager.getCurrentScreen())) {
+                                        AppState.getCanvas().setCommands(screen.titleLeft, screen.titleRight);
                                     }
                                     IOUtils.checkSoundTimer();
                                     if (isTimerExpired(timers[0]) && (!AppState.getBool(272) || ScreenManager.getCurrentScreen().screenId != 6)) {
@@ -3778,41 +3778,41 @@ public final class AppController {
                                         }
                                     }
                                 } else {
-                                    Contact abstractC0041l = (Contact) vectorM614m3.elementAt(size2);
-                                    if (Utils.abs(iM586d - abstractC0041l.statusCode) > 10000) {
-                                        deleteContact(abstractC0041l);
+                                    Contact contact = (Contact) vec3.elementAt(size2);
+                                    if (Utils.abs(stateInt - contact.statusCode) > 10000) {
+                                        deleteContact(contact);
                                     }
                                 }
                             }
                         } else {
-                            Account abstractC0037h2 = (Account) vectorM614m2.elementAt(size);
+                            Account acct2 = (Account) vec2.elementAt(size);
                             try {
-                                if (abstractC0037h2.progress <= 0 || abstractC0037h2.progress == 100) {
-                                    Vector vectorM614m6 = AppState.getVector(1247);
-                                    if (vectorM614m6.contains(abstractC0037h2)) {
-                                        Utils.removeFrom(vectorM614m6, abstractC0037h2);
+                                if (acct2.progress <= 0 || acct2.progress == 100) {
+                                    Vector vec6 = AppState.getVector(1247);
+                                    if (vec6.contains(acct2)) {
+                                        Utils.removeFrom(vec6, acct2);
                                         processKeyRepeat();
                                     }
                                 } else {
-                                    Vector vectorM614m7 = AppState.getVector(1247);
-                                    if (!vectorM614m7.contains(abstractC0037h2)) {
-                                        vectorM614m7.addElement(abstractC0037h2);
+                                    Vector vec7 = AppState.getVector(1247);
+                                    if (!vec7.contains(acct2)) {
+                                        vec7.addElement(acct2);
                                         processKeyRepeat();
                                     }
                                 }
-                                abstractC0037h2.loadData();
+                                acct2.loadData();
                             } catch (Throwable unused2) {
-                                abstractC0037h2.handleConnError();
+                                acct2.handleConnError();
                             }
                         }
                     }
                 }
             }
-            String strM584b = AppState.getString(1236);
-            if (strM584b != null) {
+            String savedStr = AppState.getString(1236);
+            if (savedStr != null) {
                 try {
                     isBackgrounded = true;
-                    AppState.getMidlet().platformRequest(strM584b);
+                    AppState.getMidlet().platformRequest(savedStr);
                     throw new Throwable();
                 } catch (Throwable unused3) {
                     AppState.clearIndex(1236);
@@ -3826,7 +3826,7 @@ public final class AppController {
             if ((handleTabAction() != 0 || hasActiveConnection()) && isTimerType(5)) {
                 needsRepaint = true;
             }
-            MainCanvas c0011akM582c = AppState.getCanvas();
+            MainCanvas canvas = AppState.getCanvas();
             if (!isShuttingDown && needsRepaint) {
                 Object obj7 = AppState.currentScreen;
                 if (null != obj7) {
@@ -3841,8 +3841,8 @@ public final class AppController {
                     z = false;
                 }
                 if (!z) {
-                    if (c0011akM582c.isShown()) {
-                        c0011akM582c.repaint();
+                    if (canvas.isShown()) {
+                        canvas.repaint();
                         setTimer(5, 1000L);
                     } else {
                         try {
@@ -3862,43 +3862,43 @@ public final class AppController {
     /* renamed from: ab */
     public static final void onItemSelected() {
         int i;
-        int iM338l;
+        int nextState;
         int i2;
-        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
-        if (c0032cM69e == null || c0032cM69e.execute(ScreenManager.getCurrentScreen()) == -1) {
-            Screen c0013amM66b = ScreenManager.getCurrentScreen();
-            String strM67c = ScreenManager.getCurrentTitle();
-            int iM68d = ScreenManager.getCurrentWidth();
-            MenuItem c0032cM69e2 = ScreenManager.getCurrentMenuItem();
-            MenuItem c0032cM223e = AppState.getVector(1272).size() > 0 ? ScreenManager.getCurrentScreen().getHeaderItem() : null;
-            Object obj = c0032cM69e2 == null ? null : c0032cM69e2.data;
-            Object obj2 = c0032cM223e == null ? null : c0032cM223e.data;
+        MenuItem menuItem = ScreenManager.getCurrentMenuItem();
+        if (menuItem == null || menuItem.execute(ScreenManager.getCurrentScreen()) == -1) {
+            Screen screen = ScreenManager.getCurrentScreen();
+            String title = ScreenManager.getCurrentTitle();
+            int selectedOption = ScreenManager.getCurrentWidth();
+            MenuItem menuItem2 = ScreenManager.getCurrentMenuItem();
+            MenuItem headerItem = AppState.getVector(1272).size() > 0 ? ScreenManager.getCurrentScreen().getHeaderItem() : null;
+            Object obj = menuItem2 == null ? null : menuItem2.data;
+            Object obj2 = headerItem == null ? null : headerItem.data;
             int iM460J = 0;
             switch (ScreenManager.getCurrentScreen().screenId) {
                 case 1:
-                    iM460J = handleMapMenuOption(iM68d);
+                    iM460J = handleMapMenuOption(selectedOption);
                     break;
                 case 2:
                     iM460J = 0;
                     break;
                 case 3:
-                    iM460J = IOUtils.handleStatusChange(iM68d);
+                    iM460J = IOUtils.handleStatusChange(selectedOption);
                     break;
                 case 4:
-                    iM460J = ContactListManager.onContactSelected(strM67c, obj);
+                    iM460J = ContactListManager.onContactSelected(title, obj);
                     break;
                 case 5:
-                    iM460J = handleChatSettingsOption(iM68d);
+                    iM460J = handleChatSettingsOption(selectedOption);
                     break;
                 case 6:
                     if (!AppState.getBool(1414)) {
-                        ConnectionThread.toggleMapControls(c0013amM66b);
+                        ConnectionThread.toggleMapControls(screen);
                         i2 = -1;
                     } else if (AppState.getBool(1479)) {
-                        String strM809a = IOUtils.pixelToLongitude(MapRenderer.currentLon);
-                        String strM810b = IOUtils.pixelToLatitude(MapRenderer.currentLat);
+                        String lonStr = IOUtils.pixelToLongitude(MapRenderer.currentLon);
+                        String latStr = IOUtils.pixelToLatitude(MapRenderer.currentLat);
                         AppState.setInt(1479, 0);
-                        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(39), strM809a, strM810b), MapRenderer.currentLon, MapRenderer.currentLat);
+                        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(39), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
                         i2 = 0;
                     } else {
                         i2 = 113;
@@ -3909,7 +3909,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 8:
-                    iM460J = handleSettingsOption(iM68d);
+                    iM460J = handleSettingsOption(selectedOption);
                     break;
                 case 9:
                     iM460J = 0;
@@ -3927,13 +3927,13 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 15:
-                    iM460J = handleMenuAction(strM67c, obj);
+                    iM460J = handleMenuAction(title, obj);
                     break;
                 case 16:
                     iM460J = 0;
                     break;
                 case 17:
-                    iM460J = handleAccountOption(iM68d);
+                    iM460J = handleAccountOption(selectedOption);
                     break;
                 case 18:
                     iM460J = 0;
@@ -3942,7 +3942,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 20:
-                    iM460J = handleProfileAction(iM68d);
+                    iM460J = handleProfileAction(selectedOption);
                     break;
                 case 21:
                     iM460J = 0;
@@ -3957,7 +3957,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 25:
-                    iM460J = handleInputAction(iM68d, obj);
+                    iM460J = handleInputAction(selectedOption, obj);
                     break;
                 case 26:
                     iM460J = 0;
@@ -3972,10 +3972,10 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 30:
-                    iM460J = IOUtils.handleContactGroupAction(strM67c, iM68d);
+                    iM460J = IOUtils.handleContactGroupAction(title, selectedOption);
                     break;
                 case 32:
-                    iM460J = ResourceManager.handleDropdownSelect(strM67c, c0032cM69e2);
+                    iM460J = ResourceManager.handleDropdownSelect(title, menuItem2);
                     break;
                 case 33:
                     iM460J = 0;
@@ -3984,7 +3984,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 35:
-                    iM460J = handleConnectionOption(iM68d);
+                    iM460J = handleConnectionOption(selectedOption);
                     break;
                 case 36:
                     iM460J = ResourceManager.selectMailAccount(obj);
@@ -4003,11 +4003,11 @@ public final class AppController {
                     if (obj2 != null) {
                         Object[] objArr = (Object[]) obj2;
                         if (((Integer) objArr[0]).intValue() == 0) {
-                            MapPoint c0014an = new MapPoint((String) objArr[1]);
-                            c0014an.height = 2;
-                            ConnectionThread.navigateToPoint(c0014an, false);
+                            MapPoint mapPoint = new MapPoint((String) objArr[1]);
+                            mapPoint.height = 2;
+                            ConnectionThread.navigateToPoint(mapPoint, false);
                             AppState.setInt(1414, 1);
-                            iM338l = 6;
+                            nextState = 6;
                         } else {
                             String str = (String) objArr[1];
                             String str2 = (String) objArr[2];
@@ -4017,14 +4017,14 @@ public final class AppController {
                             AppState.setObject(1287, (Object) str);
                             AppState.setFromBuffer(1284, NetworkUtils.newStringBuffer().append(str2).append(':'));
                             AppState.setLong(1469, jLongValue);
-                            iM338l = 115;
+                            nextState = 115;
                         }
                     } else {
                         AppState.clearIndex(1279);
-                        Contact abstractC0041lM611g = AppState.getCurrentContact();
-                        iM338l = !abstractC0041lM611g.account.isConnected() ? showError(299) : abstractC0041lM611g.isOffline() ? ResourceManager.clearSmsFields() : 63;
+                        Contact currentContact = AppState.getCurrentContact();
+                        nextState = !currentContact.account.isConnected() ? showError(299) : currentContact.isOffline() ? ResourceManager.clearSmsFields() : 63;
                     }
-                    iM460J = iM338l;
+                    iM460J = nextState;
                     break;
                 case 41:
                     iM460J = -1;
@@ -4033,15 +4033,15 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 43:
-                    AppState.setInt(1514, c0013amM66b.scrollOffset);
-                    AppState.setObject(1345, (Object) strM67c);
-                    Message c0026az = (Message) obj;
-                    if (c0026az == null) {
+                    AppState.setInt(1514, screen.scrollOffset);
+                    AppState.setObject(1345, (Object) title);
+                    Message msg = (Message) obj;
+                    if (msg == null) {
                         i = -1;
                     } else {
-                        AppState.setObject(1346, (Object) c0026az.from);
-                        ChatRoom c0052wM745h = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
-                        if (StringUtils.matchesKey(894, c0052wM745h.name) || StringUtils.matchesKey(899, c0052wM745h.name)) {
+                        AppState.setObject(1346, (Object) msg.from);
+                        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
+                        if (StringUtils.matchesKey(894, chatRoom.name) || StringUtils.matchesKey(899, chatRoom.name)) {
                             XmppMailRuProtocol.setMailAction(54, 3);
                         } else {
                             XmppMailRuProtocol.setMailAction(52, 0);
@@ -4072,12 +4072,12 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 51:
-                    ResourceManager.handleChatRoomAction(strM67c);
+                    ResourceManager.handleChatRoomAction(title);
                 case 52:
                     iM460J = 0;
                     break;
                 case 53:
-                    iM460J = IOUtils.handleMailForwardAction(strM67c);
+                    iM460J = IOUtils.handleMailForwardAction(title);
                     break;
                 case 54:
                     iM460J = 0;
@@ -4092,25 +4092,25 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 58:
-                    iM460J = handleGroupSelection(iM68d);
+                    iM460J = handleGroupSelection(selectedOption);
                     break;
                 case 59:
                     iM460J = ResourceManager.applyVersionLabel();
                     break;
                 case 60:
-                    iM460J = processInputText(strM67c);
+                    iM460J = processInputText(title);
                     break;
                 case 61:
                     iM460J = 42;
                     break;
                 case 62:
-                    iM460J = IOUtils.handleMailMenuAction(strM67c, iM68d);
+                    iM460J = IOUtils.handleMailMenuAction(title, selectedOption);
                     break;
                 case 63:
                     iM460J = 0;
                     break;
                 case 64:
-                    iM460J = handleAccountSwitchOption(iM68d);
+                    iM460J = handleAccountSwitchOption(selectedOption);
                     break;
                 case 65:
                     iM460J = 0;
@@ -4119,7 +4119,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 67:
-                    iM460J = handleSoftKeyAction(strM67c);
+                    iM460J = handleSoftKeyAction(title);
                     break;
                 case 68:
                     iM460J = 0;
@@ -4161,7 +4161,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 80:
-                    iM460J = handleNotificationOption(iM68d);
+                    iM460J = handleNotificationOption(selectedOption);
                     break;
                 case 81:
                     iM460J = -1;
@@ -4173,7 +4173,7 @@ public final class AppController {
                     iM460J = handleHashKey();
                     break;
                 case 84:
-                    iM460J = ResourceManager.handleMessageInputAction(strM67c, iM68d);
+                    iM460J = ResourceManager.handleMessageInputAction(title, selectedOption);
                     break;
                 case 85:
                     iM460J = -1;
@@ -4182,10 +4182,10 @@ public final class AppController {
                     iM460J = handleSearchAction(obj);
                     break;
                 case 87:
-                    iM460J = ResourceManager.handleChatInputAction(strM67c);
+                    iM460J = ResourceManager.handleChatInputAction(title);
                     break;
                 case 88:
-                    iM460J = handleThemeOption(iM68d);
+                    iM460J = handleThemeOption(selectedOption);
                     break;
                 case 89:
                     iM460J = -1;
@@ -4194,19 +4194,19 @@ public final class AppController {
                     iM460J = handleEventObject(obj);
                     break;
                 case 91:
-                    iM460J = getThemeBackground(iM68d);
+                    iM460J = getThemeBackground(selectedOption);
                     break;
                 case 92:
-                    iM460J = IOUtils.handleContactMenuAction(strM67c, iM68d);
+                    iM460J = IOUtils.handleContactMenuAction(title, selectedOption);
                     break;
                 case 93:
-                    iM460J = handleSoundOption(iM68d);
+                    iM460J = handleSoundOption(selectedOption);
                     break;
                 case 94:
-                    iM460J = processPhoneInput(strM67c);
+                    iM460J = processPhoneInput(title);
                     break;
                 case 95:
-                    iM460J = validateServerAddress(strM67c);
+                    iM460J = validateServerAddress(title);
                     break;
                 case 96:
                     iM460J = 0;
@@ -4215,10 +4215,10 @@ public final class AppController {
                     iM460J = handleSearchResultAction(obj);
                     break;
                 case 98:
-                    iM460J = processPhoneInput(strM67c);
+                    iM460J = processPhoneInput(title);
                     break;
                 case 99:
-                    iM460J = openUrl(strM67c);
+                    iM460J = openUrl(title);
                     break;
                 case 100:
                     iM460J = IOUtils.handleMapPointAction(obj);
@@ -4233,7 +4233,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 104:
-                    iM460J = getThemeColor(iM68d);
+                    iM460J = getThemeColor(selectedOption);
                     break;
                 case 105:
                     iM460J = 0;
@@ -4248,7 +4248,7 @@ public final class AppController {
                     iM460J = handleContactListKey();
                     break;
                 case 109:
-                    iM460J = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(iM68d);
+                    iM460J = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(selectedOption);
                     break;
                 case 110:
                     iM460J = 0;
@@ -4260,7 +4260,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 113:
-                    iM460J = XmppMailRuProtocol.handleMapAction(iM68d);
+                    iM460J = XmppMailRuProtocol.handleMapAction(selectedOption);
                     break;
                 case 114:
                     iM460J = 0;
@@ -4272,19 +4272,19 @@ public final class AppController {
                     iM460J = handleMapResultAction(obj);
                     break;
                 case 117:
-                    iM460J = processLoginField(strM67c);
+                    iM460J = processLoginField(title);
                     break;
                 case 118:
                     iM460J = handleFileAction(obj);
                     break;
                 case 119:
-                    iM460J = handleChatRoomOption(iM68d);
+                    iM460J = handleChatRoomOption(selectedOption);
                     break;
                 case 120:
                     iM460J = handleIncomingCall(obj);
                     break;
                 case 121:
-                    iM460J = handleChatListOption(iM68d);
+                    iM460J = handleChatListOption(selectedOption);
                     break;
                 case 122:
                     iM460J = handlePresenceAction();
@@ -4312,13 +4312,13 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 130:
-                    iM460J = handleScreenAction(iM68d);
+                    iM460J = handleScreenAction(selectedOption);
                     break;
                 case 131:
-                    iM460J = processSearchQuery(strM67c);
+                    iM460J = processSearchQuery(title);
                     break;
                 case 132:
-                    iM460J = mapKeyToAction(iM68d);
+                    iM460J = mapKeyToAction(selectedOption);
                     break;
                 case 133:
                     iM460J = 0;
@@ -4361,7 +4361,7 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 146:
-                    iM460J = handleGroupRename(iM68d);
+                    iM460J = handleGroupRename(selectedOption);
                     break;
                 case 147:
                     iM460J = 0;
@@ -4376,10 +4376,10 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 151:
-                    iM460J = handleExtSettingsOption(iM68d);
+                    iM460J = handleExtSettingsOption(selectedOption);
                     break;
                 case 152:
-                    iM460J = handleContactOption(iM68d);
+                    iM460J = handleContactOption(selectedOption);
                     break;
                 case 153:
                     iM460J = ResourceManager.setSelectedObject(obj);
@@ -4397,7 +4397,7 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 158:
-                    iM460J = handleViewOption(iM68d);
+                    iM460J = handleViewOption(selectedOption);
                     break;
                 case 159:
                     iM460J = handleItemAction(obj);
@@ -4409,7 +4409,7 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 162:
-                    iM460J = handleChatDetailOption(iM68d);
+                    iM460J = handleChatDetailOption(selectedOption);
                     break;
                 case 163:
                     iM460J = handleSendKey();
@@ -4421,10 +4421,10 @@ public final class AppController {
                     iM460J = -1;
                     break;
                 case 166:
-                    iM460J = handleChatOption(iM68d);
+                    iM460J = handleChatOption(selectedOption);
                     break;
                 case 167:
-                    iM460J = handleMailboxOption(iM68d);
+                    iM460J = handleMailboxOption(selectedOption);
                     break;
                 case 168:
                     iM460J = 0;
@@ -4451,13 +4451,13 @@ public final class AppController {
                     iM460J = 0;
                     break;
                 case 176:
-                    iM460J = iM68d == 1 ? showPeopleSearch() : iM68d == 2 ? showPeopleNearby() : handleStarAction(obj);
+                    iM460J = selectedOption == 1 ? showPeopleSearch() : selectedOption == 2 ? showPeopleNearby() : handleStarAction(obj);
                     break;
                 case 177:
-                    iM460J = ResourceManager.handleSearchResultAction(iM68d);
+                    iM460J = ResourceManager.handleSearchResultAction(selectedOption);
                     break;
                 case 178:
-                    iM460J = handleEditAction(iM68d);
+                    iM460J = handleEditAction(selectedOption);
                     break;
                 case 179:
                     iM460J = -1;
@@ -4475,9 +4475,9 @@ public final class AppController {
                     ScreenBuilder.openScreen(iM460J);
                     return;
                 }
-                int i3 = c0013amM66b.softKeyRight;
+                int i3 = screen.softKeyRight;
                 if (i3 != 200) {
-                    int i4 = i3 == 199 ? iM68d : i3;
+                    int i4 = i3 == 199 ? selectedOption : i3;
                     int i5 = i4;
                     if (i4 == 12) {
                         ScreenBuilder.onScreenClosed();
@@ -4494,27 +4494,27 @@ public final class AppController {
         if (ScreenManager.getCurrentScreen().screenId == 137) {
             return 0;
         }
-        Screen c0013amM66b = ScreenManager.getCurrentScreen();
+        Screen screen = ScreenManager.getCurrentScreen();
         int i2 = ScreenManager.getCurrentScreen().screenId;
         switch (i) {
             case 4:
                 break;
             case 8:
-                if (c0013amM66b.selectable) {
-                    c0013amM66b.selectedIndex = c0013amM66b.menuItems.size() - 1;
-                    c0013amM66b.scrollOffset = c0013amM66b.totalHeight - c0013amM66b.contentHeight;
-                    if (c0013amM66b.scrollOffset < 0) {
-                        c0013amM66b.scrollOffset = 0;
+                if (screen.selectable) {
+                    screen.selectedIndex = screen.menuItems.size() - 1;
+                    screen.scrollOffset = screen.totalHeight - screen.contentHeight;
+                    if (screen.scrollOffset < 0) {
+                        screen.scrollOffset = 0;
                     }
-                } else if (c0013amM66b.totalHeight < c0013amM66b.contentHeight) {
-                    c0013amM66b.scrollOffset = 0;
-                } else if (((MenuItem) c0013amM66b.menuItems.lastElement()).getTotalHeight() < c0013amM66b.contentHeight) {
-                    c0013amM66b.scrollOffset = c0013amM66b.totalHeight - c0013amM66b.contentHeight;
+                } else if (screen.totalHeight < screen.contentHeight) {
+                    screen.scrollOffset = 0;
+                } else if (((MenuItem) screen.menuItems.lastElement()).getTotalHeight() < screen.contentHeight) {
+                    screen.scrollOffset = screen.totalHeight - screen.contentHeight;
                 } else {
-                    int[] iArr = c0013amM66b.layoutCache;
-                    c0013amM66b.scrollOffset = iArr[iArr[0]];
+                    int[] iArr = screen.layoutCache;
+                    screen.scrollOffset = iArr[iArr[0]];
                 }
-                c0013amM66b.invalidateLayout();
+                screen.invalidateLayout();
                 break;
             case 11:
                 AppState.toggleBool(98);
@@ -4530,7 +4530,7 @@ public final class AppController {
                         break;
                     }
                 } else {
-                    AppState.pool[1319] = c0013amM66b.getSelectedItem().data;
+                    AppState.pool[1319] = screen.getSelectedItem().data;
                     break;
                 }
                 break;
@@ -4544,12 +4544,12 @@ public final class AppController {
         if (obj == null || !(obj instanceof Contact)) {
             return 0;
         }
-        Contact abstractC0041l = (Contact) obj;
-        if (!abstractC0041l.account.isConnected()) {
+        Contact contact = (Contact) obj;
+        if (!contact.account.isConnected()) {
             return showError(299);
         }
         AppState.clearIndex(1281);
-        return (abstractC0041l.isSystem() || abstractC0041l.isOffline()) ? 0 : 85;
+        return (contact.isSystem() || contact.isOffline()) ? 0 : 85;
     }
 
     /* renamed from: ak */
@@ -4571,14 +4571,14 @@ public final class AppController {
     }
 
     /* renamed from: a */
-    public static final void handleMrimMailNotify(MrimAccount c0028ba, ByteBuffer c0043n) {
-        c0043n.readInt();
-        switch (c0043n.readInt() & 255) {
+    public static final void handleMrimMailNotify(MrimAccount mrimAccount, ByteBuffer buffer) {
+        buffer.readInt();
+        switch (buffer.readInt() & 255) {
             case 65:
-                processMrimMailData(c0028ba, 490);
+                processMrimMailData(mrimAccount, 490);
                 break;
             case 66:
-                processMrimMailData(c0028ba, 491);
+                processMrimMailData(mrimAccount, 491);
                 break;
             case 67:
             case 69:
@@ -4586,23 +4586,23 @@ public final class AppController {
             case 71:
             case 72:
             default:
-                c0028ba.handleError(0);
+                mrimAccount.handleError(0);
                 NetworkUtils.checkCrashReport();
                 break;
             case 68:
-                processMrimMailData(c0028ba, 492);
+                processMrimMailData(mrimAccount, 492);
                 break;
             case 73:
-                c0028ba.handleComplete();
+                mrimAccount.handleComplete();
                 break;
         }
     }
 
     /* renamed from: a */
-    private static final void processMrimMailData(MrimAccount c0028ba, int i) {
-        IOUtils.postAccountError(c0028ba, i);
-        c0028ba.closeConnection();
-        c0028ba.lastError = c0028ba.getDefaultError();
+    private static final void processMrimMailData(MrimAccount mrimAccount, int i) {
+        IOUtils.postAccountError(mrimAccount, i);
+        mrimAccount.closeConnection();
+        mrimAccount.lastError = mrimAccount.getDefaultError();
     }
 
     /* renamed from: n */
@@ -4615,19 +4615,19 @@ public final class AppController {
             pendingMapPoint = (MapPoint) obj;
             return 121;
         }
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
-        MapPoint c0014an = (MapPoint) obj;
-        c0028ba.setSimpleProfile(IOUtils.pixelToLongitude(c0014an.longitude), IOUtils.pixelToLatitude(c0014an.latitude));
-        c0028ba.syncProfile();
+        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        MapPoint mapPoint = (MapPoint) obj;
+        mrimAccount.setSimpleProfile(IOUtils.pixelToLongitude(mapPoint.longitude), IOUtils.pixelToLatitude(mapPoint.latitude));
+        mrimAccount.syncProfile();
         AppState.setInt(1478, 0);
         return 160;
     }
 
     /* renamed from: a */
-    public static final ByteBuffer createMmpCommand(MmpProtocol c0033d, int i, ByteBuffer c0043n) {
-        ByteBuffer c0043nM1357m = createPingPacket(c0033d, 2).writeShortBE(i >> 8).writeShortBE(i & 255).writeShortBE(0);
-        int i2 = c0033d.messageSequence + 1;
-        c0033d.messageSequence = i2;
-        return c0043nM1357m.writeIntBE(i2).writeBuffer(c0043n).updateLength();
+    public static final ByteBuffer createMmpCommand(MmpProtocol protocol, int command, ByteBuffer buffer) {
+        ByteBuffer cmdBuffer = createPingPacket(protocol, 2).writeShortBE(command >> 8).writeShortBE(command & 255).writeShortBE(0);
+        int sequenceNum = protocol.messageSequence + 1;
+        protocol.messageSequence = sequenceNum;
+        return cmdBuffer.writeIntBE(sequenceNum).writeBuffer(buffer).updateLength();
     }
 }
