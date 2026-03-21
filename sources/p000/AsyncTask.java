@@ -29,9 +29,9 @@ public final class AsyncTask implements Runnable, CommandListener {
                 AppController.isShuttingDown = true;
                 ResourceManager.clearMathTables();
                 ResourceManager.clearImageCache();
-                Vector vectorM614m = AppState.getVector(1358);
-                if (vectorM614m != null) {
-                    synchronized (vectorM614m) {
+                Vector tasks = AppState.getVector(1358);
+                if (tasks != null) {
+                    synchronized (tasks) {
                         AppState.clearIndex(1358);
                     }
                 }
@@ -45,19 +45,19 @@ public final class AsyncTask implements Runnable, CommandListener {
     public AsyncTask() {
     }
 
-    public AsyncTask(Screen c0013am, MenuItem c0032c) {
-        Object[] objArr = (Object[]) c0032c.data;
-        this.taskData = new Object[]{c0013am, c0032c};
+    public AsyncTask(Screen screen, MenuItem menuItem) {
+        Object[] objArr = (Object[]) menuItem.data;
+        this.taskData = new Object[]{screen, menuItem};
         String str = (String) objArr[0];
-        int iIntValue = ((Integer) objArr[1]).intValue();
-        XmppContactGroup.showTextInputDialog(AppState.emptyStr, str.length() > iIntValue ? StringUtils.prefix(str, iIntValue) : str, iIntValue, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
+        int maxLen = ((Integer) objArr[1]).intValue();
+        XmppContactGroup.showTextInputDialog(AppState.emptyStr, str.length() > maxLen ? StringUtils.prefix(str, maxLen) : str, maxLen, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
     }
 
     public final void commandAction(Command command, Displayable displayable) {
         if (this.taskData == null) {
-            String strM16a = StringUtils.getTextBoxString((TextBox) displayable);
-            AppState.setObject(1279, (Object) strM16a);
-            AppState.setBool(1456, !StringUtils.isEmpty(strM16a));
+            String text = StringUtils.getTextBoxString((TextBox) displayable);
+            AppState.setObject(1279, (Object) text);
+            AppState.setBool(1456, !StringUtils.isEmpty(text));
             if (command.getPriority() == 0) {
                 IOUtils.postOkEvent();
                 return;
@@ -67,26 +67,26 @@ public final class AsyncTask implements Runnable, CommandListener {
             }
         }
         if (command.getPriority() == 0) {
-            String strM17c = StringUtils.intern(((TextBox) displayable).getString());
-            Screen c0013am = (Screen) ((Object[]) this.taskData)[0];
-            MenuItem c0032c = (MenuItem) ((Object[]) this.taskData)[1];
-            Object[] objArr = (Object[]) c0032c.data;
-            if (!StringUtils.equalsObj(strM17c, objArr[0])) {
-                objArr[0] = strM17c;
-                String strM506c = ((Integer) objArr[2]).intValue() != 327680 ? strM17c : Utils.maskPassword(strM17c);
-                String str = StringUtils.isEmpty(strM506c) ? null : strM506c;
-                c0032c.clear();
+            String inputText = StringUtils.intern(((TextBox) displayable).getString());
+            Screen screen = (Screen) ((Object[]) this.taskData)[0];
+            MenuItem menuItem = (MenuItem) ((Object[]) this.taskData)[1];
+            Object[] objArr = (Object[]) menuItem.data;
+            if (!StringUtils.equalsObj(inputText, objArr[0])) {
+                objArr[0] = inputText;
+                String displayText = ((Integer) objArr[2]).intValue() != 327680 ? inputText : Utils.maskPassword(inputText);
+                String str = StringUtils.isEmpty(displayText) ? null : displayText;
+                menuItem.clear();
                 if (objArr[4] instanceof String) {
-                    c0032c.setLabel(Utils.appendSpace((String) objArr[4]));
+                    menuItem.setLabel(Utils.appendSpace((String) objArr[4]));
                 } else {
-                    c0032c.setIcon(((Integer) objArr[4]).intValue());
+                    menuItem.setIcon(((Integer) objArr[4]).intValue());
                 }
                 if (str != null) {
-                    c0032c.addText(str, 1, 7);
+                    menuItem.addText(str, 1, 7);
                 } else {
-                    c0032c.setDefaultFont();
+                    menuItem.setDefaultFont();
                 }
-                c0013am.rebuildItems();
+                screen.rebuildItems();
             }
         }
         AppState.setScreen(AppState.getCanvas().updateCommands());
