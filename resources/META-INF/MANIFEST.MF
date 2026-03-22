@@ -9,7 +9,7 @@ MIDlet-Icon: /icon.png
 Created-By: 1.3.0 (Sun Microsystems Inc.)
 MIDlet-Vendor: TryKote
 Nokia-MIDlet-No-Exit: true
-MIDlet-1: MobileAgent by TryKote,/icon.png,main.Midlet
+MIDlet-1: MobileAgent by TryKote,/icon.png,p001main.Midlet
 MicroEdition-Profile: MIDP-2.0
 MIDlet-Name: MobileAgent by TryKote
 MIDlet-Info-URL: http://www.mail.ru/

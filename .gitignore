@@ -1,5 +1,7 @@
 .claude
 .idea
 build
+config
+rms
 out
 *.iml

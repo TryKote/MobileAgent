@@ -1197,7 +1197,12 @@ public final class AppController {
     public static final void showSettingsScreen() {
         AppState.setInt(217, 0);
         AppState.setInt(1511, 1);
-        ScreenManager.pushScreen(ScreenManager.createScreen(4038));
+        System.out.println("[DEBUG] showSettingsScreen: before createScreen(4038)");
+        Screen s = ScreenManager.createScreen(4038);
+        System.out.println("[DEBUG] showSettingsScreen: screen created, screenId=" + s.screenId);
+        System.out.println("[DEBUG] showSettingsScreen: before pushScreen, screens.size=" + AppState.getVector(1272).size());
+        ScreenManager.pushScreen(s);
+        System.out.println("[DEBUG] showSettingsScreen: done");
     }
 
     /* renamed from: H */
@@ -2078,6 +2083,7 @@ public final class AppController {
         Object obj2 = new Object();
         appLock = obj2;
         synchronized (obj2) {
+            System.out.println("[DEBUG] dispatchCommand: START");
             AppState.init(obj);
             AppState.clearRange(1022, 1023);
             AppState.pool[1373] = NetworkUtils.newVector();
@@ -2087,6 +2093,7 @@ public final class AppController {
             AppState.pool[1244] = NetworkUtils.newVector();
             AppState.pool[1358] = NetworkUtils.newVector();
             AppState.pool[1359] = NetworkUtils.newVector();
+            System.out.println("[DEBUG] dispatchCommand: fonts done, starting AsyncTask(3)");
             new AsyncTask(3);
             loadSavedAccounts();
             AppState.pool[1247] = NetworkUtils.newVector();
@@ -2104,7 +2111,9 @@ public final class AppController {
             AppState.setInt(27, 0);
             AppState.pool[1402] = NetworkUtils.newVector();
             XmppMailRuProtocol.calculateCacheSize();
+            System.out.println("[DEBUG] dispatchCommand: creating MainCanvas");
             AppState.pool[1371] = new MainCanvas(i, i2);
+            System.out.println("[DEBUG] dispatchCommand: MainCanvas created");
             AppState.clearRange(332, 333);
             TabBar.initialize();
             AppState.pool[430] = Utils.bytesToInts(AppState.getBytes(430));
@@ -2120,10 +2129,15 @@ public final class AppController {
             setTimer(0, getSessionTimestamp());
             AppState.addInt(291, 1);
             AppState.saveDelta(true);
+            System.out.println("[DEBUG] dispatchCommand: getBool(217)=" + AppState.getBool(217));
+            System.out.println("[DEBUG] free=" + Runtime.getRuntime().freeMemory() + " total=" + Runtime.getRuntime().totalMemory());
             if (AppState.getBool(217)) {
+                System.out.println("[DEBUG] dispatchCommand: calling showSettingsScreen");
                 showSettingsScreen();
+                System.out.println("[DEBUG] dispatchCommand: showSettingsScreen done");
             } else {
                 int accountCount = getActiveAccountCount();
+                System.out.println("[DEBUG] dispatchCommand: accountCount=" + accountCount);
                 if (accountCount == 0) {
                     ScreenManager.pushScreen(ScreenManager.createScreen(4381));
                     refreshContactList();
@@ -2140,8 +2154,10 @@ public final class AppController {
                     refreshContactList();
                 }
             }
+            System.out.println("[DEBUG] dispatchCommand: starting event loop threads");
             new AsyncTask(13);
             new AsyncTask(0);
+            System.out.println("[DEBUG] dispatchCommand: DONE");
         }
     }
 
@@ -2213,6 +2229,7 @@ public final class AppController {
                                         setTimer(1, 1000L);
                                     }
                                     Object event = Utils.dequeue(AppState.getVector(1266));
+                                    if (event != null) System.out.println("[DEBUG] event=" + (event instanceof int[] ? "int[]{" + ((int[])event)[0] + "}" : event.getClass().getName()) + " screenId=" + (ScreenManager.getCurrentScreen() != null ? ScreenManager.getCurrentScreen().screenId : -1));
                                     if (event == null) {
                                         Screen currentScreen = ScreenManager.getCurrentScreen();
                                         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
@@ -2290,6 +2307,7 @@ public final class AppController {
                                                         if (size3 < 0) {
                                                             MapRenderer.needsRedraw = true;
                                                             new AsyncTask(6);
+                                                            break;
                                                         } else if (3 == ((ResourceManager) vec4.elementAt(size3)).tileType) {
                                                             vec4.removeElementAt(size3);
                                                         }
@@ -2736,6 +2754,7 @@ public final class AppController {
                                                             size5--;
                                                             if (size5 < 0) {
                                                                 action = 43;
+                                                                break;
                                                             } else {
                                                                 Object jsonObj = JsonParser.getVectorElement(payload3, size5);
                                                                 int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
@@ -2806,6 +2825,8 @@ public final class AppController {
                                                                         selectedChatRoom3.decrementMembers();
                                                                     }
                                                                     mrimAccount4.removeUserFromChatRooms(jsonValue);
+                                                                } else {
+                                                                    break;
                                                                 }
                                                             }
                                                         }
@@ -3325,6 +3346,7 @@ public final class AppController {
                                                     int i16 = TabBar.currentIndex;
                                                     int size9 = AppState.getVector(1246).size();
                                                     boolean z6 = i16 == size9 - 1;
+                                                    z4 = false;
                                                     if (i15 == 4) {
                                                         ContactListManager.clearState();
                                                         if (size9 > 1) {
@@ -3336,8 +3358,6 @@ public final class AppController {
                                                                         ScreenBuilder.openScreen(prevTab.selectTab());
                                                                     }
                                                                     z4 = true;
-                                                                } else {
-                                                                    z4 = false;
                                                                 }
                                                             } else if (i14 == 5) {
                                                                 if (screen3.isAtEnd()) {
@@ -3346,113 +3366,104 @@ public final class AppController {
                                                                         ScreenBuilder.openScreen(nextTab.selectTab());
                                                                     }
                                                                     z4 = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    } else if (i15 == 36) {
+                                                        AppState.setInt(1414, 0);
+                                                        if (i14 == 2) {
+                                                            ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
+                                                            z4 = true;
+                                                        } else if (i14 == 5) {
+                                                            if (!z6) {
+                                                                ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
+                                                            }
+                                                            z4 = true;
+                                                        }
+                                                    } else if (i15 == 6) {
+                                                        if (AppState.getBool(1414)) {
+                                                            if (i13 == 42) {
+                                                                Conversation.incrementZoom();
+                                                                z4 = true;
+                                                            } else if (i13 == 35) {
+                                                                Conversation.decrementZoom();
+                                                                z4 = true;
+                                                            } else if (i13 == 48) {
+                                                                Conversation.createStatusReport(false, (MrimAccount) null);
+                                                                ScreenBuilder.openScreen(6);
+                                                                z4 = true;
+                                                            } else if (i13 == 49) {
+                                                                ScreenBuilder.openScreen(100);
+                                                                z4 = true;
+                                                            } else if (i13 == 50) {
+                                                                boolean isEnabled = AppState.getBool(41);
+                                                                if (isEnabled) {
+                                                                    Conversation.setMapEnabled(false);
                                                                 } else {
-                                                                    z4 = false;
+                                                                    Conversation.setMapEnabled(true);
                                                                 }
-                                                            } else if (i15 == 36) {
-                                                                AppState.setInt(1414, 0);
-                                                                if (i14 == 2) {
-                                                                    ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
-                                                                    z4 = true;
-                                                                } else if (i14 == 5) {
-                                                                    if (!z6) {
-                                                                        ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
-                                                                    }
-                                                                    z4 = true;
-                                                                } else if (i15 != 6) {
-                                                                    z4 = false;
-                                                                } else if (AppState.getBool(1414)) {
-                                                                    if (i13 == 42) {
-                                                                        Conversation.incrementZoom();
-                                                                        z4 = true;
-                                                                    } else if (i13 == 35) {
-                                                                        Conversation.decrementZoom();
-                                                                        z4 = true;
-                                                                    } else if (i13 == 48) {
-                                                                        Conversation.createStatusReport(false, (MrimAccount) null);
-                                                                        ScreenBuilder.openScreen(6);
-                                                                        z4 = true;
-                                                                    } else if (i13 == 49) {
-                                                                        ScreenBuilder.openScreen(100);
-                                                                        z4 = true;
-                                                                    } else if (i13 == 50) {
-                                                                        boolean isEnabled = AppState.getBool(41);
-                                                                        if (isEnabled) {
-                                                                            Conversation.setMapEnabled(false);
-                                                                        } else {
-                                                                            Conversation.setMapEnabled(true);
-                                                                        }
-                                                                        AppState.setBool(41, !isEnabled);
-                                                                        ScreenBuilder.openScreen(6);
-                                                                        z4 = true;
-                                                                    } else if (i13 == 51) {
-                                                                        IOUtils.postEvent(new IOUtils(7, null));
-                                                                        z4 = true;
-                                                                    } else if (i13 == 53) {
-                                                                        AppState.setBool(230, !AppState.getBool(230));
-                                                                        MapRenderer.needsRedraw = true;
-                                                                        z4 = true;
-                                                                    } else if (i13 == 55) {
-                                                                        if (MmpContact.locationEnabled && (configArr = MmpContact.getPrevRoutePoint()) != null) {
-                                                                            MapRenderer.animateTo(configArr[0], configArr[1]);
-                                                                        }
-                                                                        z4 = true;
-                                                                    } else if (i13 == 57) {
-                                                                        if (MmpContact.locationEnabled && (keyArr = MmpContact.getNextRoutePoint()) != null) {
-                                                                            MapRenderer.animateTo(keyArr[0], keyArr[1]);
-                                                                        }
-                                                                        z4 = true;
-                                                                    }
-                                                                } else if (i14 == 2) {
-                                                                    ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
-                                                                    z4 = true;
-                                                                } else if (i14 == 5) {
-                                                                    if (!z6) {
-                                                                        ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
-                                                                    }
-                                                                    z4 = true;
-                                                                } else if (i14 == 1) {
-                                                                    z4 = true;
-                                                                } else if (i14 == 6) {
-                                                                    ConnectionThread.handleMapSwitch(screen3);
-                                                                    z4 = true;
+                                                                AppState.setBool(41, !isEnabled);
+                                                                ScreenBuilder.openScreen(6);
+                                                                z4 = true;
+                                                            } else if (i13 == 51) {
+                                                                IOUtils.postEvent(new IOUtils(7, null));
+                                                                z4 = true;
+                                                            } else if (i13 == 53) {
+                                                                AppState.setBool(230, !AppState.getBool(230));
+                                                                MapRenderer.needsRedraw = true;
+                                                                z4 = true;
+                                                            } else if (i13 == 55) {
+                                                                if (MmpContact.locationEnabled && (configArr = MmpContact.getPrevRoutePoint()) != null) {
+                                                                    MapRenderer.animateTo(configArr[0], configArr[1]);
                                                                 }
+                                                                z4 = true;
+                                                            } else if (i13 == 57) {
+                                                                if (MmpContact.locationEnabled && (keyArr = MmpContact.getNextRoutePoint()) != null) {
+                                                                    MapRenderer.animateTo(keyArr[0], keyArr[1]);
+                                                                }
+                                                                z4 = true;
                                                             }
-                                                            if (!z4) {
-                                                                int keyAction = i13 == 42 ? getKeyAction(AppState.getInt(205)) : i13 == 35 ? getKeyAction(AppState.getInt(206)) : (i13 < 48 || i13 > 57) ? 0 : getKeyAction(AppState.getInt(i13 + 159));
-                                                                int i17 = keyAction;
-                                                                if (keyAction != 0) {
-                                                                    ScreenBuilder.openScreen(i17);
-                                                                    break;
-                                                                } else if (i14 == 8) {
-                                                                    onItemSelected();
-                                                                    break;
-                                                                } else if (i14 == 1) {
-                                                                    screen3.scrollUp();
-                                                                    break;
-                                                                } else if (i14 == 6) {
-                                                                    screen3.scrollDown();
-                                                                    break;
-                                                                } else if (i14 == 2) {
-                                                                    if (screen3.showCheckboxes) {
-                                                                        ScreenBuilder.onScreenClosed();
-                                                                        break;
-                                                                    } else if (screen3.screenId == 6) {
-                                                                        AppState.setInt(1564, 1);
-                                                                        break;
-                                                                    } else {
-                                                                        if (screen3.layoutMode == 1) {
-                                                                            int i18 = screen3.selectedIndex;
-                                                                            int size10 = screen3.menuItems.size();
-                                                                            screen3.selectedIndex = ((i18 + size10) - 1) % size10;
-                                                                            screen3.invalidateLayout();
-                                                                        }
-                                                                        break;
-                                                                    }
-                                                                } else if (i14 == 5) {
-                                                                    screen3.onActionKey();
+                                                        } else {
+                                                            if (i14 == 2) {
+                                                                ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
+                                                                z4 = true;
+                                                            } else if (i14 == 5) {
+                                                                if (!z6) {
+                                                                    ScreenBuilder.openScreen(TabBar.getNextTab().selectTab());
                                                                 }
+                                                                z4 = true;
+                                                            } else if (i14 == 1) {
+                                                                z4 = true;
+                                                            } else if (i14 == 6) {
+                                                                ConnectionThread.handleMapSwitch(screen3);
+                                                                z4 = true;
                                                             }
+                                                        }
+                                                    }
+                                                    if (!z4) {
+                                                        int keyAction = i13 == 42 ? getKeyAction(AppState.getInt(205)) : i13 == 35 ? getKeyAction(AppState.getInt(206)) : (i13 < 48 || i13 > 57) ? 0 : getKeyAction(AppState.getInt(i13 + 159));
+                                                        int i17 = keyAction;
+                                                        if (keyAction != 0) {
+                                                            ScreenBuilder.openScreen(i17);
+                                                        } else if (i14 == 8) {
+                                                            onItemSelected();
+                                                        } else if (i14 == 1) {
+                                                            screen3.scrollUp();
+                                                        } else if (i14 == 6) {
+                                                            screen3.scrollDown();
+                                                        } else if (i14 == 2) {
+                                                            if (screen3.showCheckboxes) {
+                                                                ScreenBuilder.onScreenClosed();
+                                                            } else if (screen3.screenId == 6) {
+                                                                AppState.setInt(1564, 1);
+                                                            } else if (screen3.layoutMode == 1) {
+                                                                int i18 = screen3.selectedIndex;
+                                                                int size10 = screen3.menuItems.size();
+                                                                screen3.selectedIndex = ((i18 + size10) - 1) % size10;
+                                                                screen3.invalidateLayout();
+                                                            }
+                                                        } else if (i14 == 5) {
+                                                            screen3.onActionKey();
                                                         }
                                                     }
                                                 }
@@ -3749,6 +3760,7 @@ public final class AppController {
                                                         menuItem4.clear().setAction(objArr5[4], optionStr, objArr5[1], objArr5[2], objArr5[3]);
                                                     }
                                                     screen8.rebuildItems();
+                                                    break;
                                                 } else {
                                                     MenuItem item = (MenuItem) vector5.elementAt(size12);
                                                     if (item.id == 15 && item.title.startsWith(AppState.getString(811))) {
@@ -3777,6 +3789,7 @@ public final class AppController {
                                             setTimer(0, getSessionTimestamp());
                                         }
                                     }
+                                    break;
                                 } else {
                                     Contact contact = (Contact) vec3.elementAt(size2);
                                     if (Utils.abs(stateInt - contact.statusCode) > 10000) {
@@ -3784,6 +3797,7 @@ public final class AppController {
                                     }
                                 }
                             }
+                            break;
                         } else {
                             Account acct2 = (Account) vec2.elementAt(size);
                             try {

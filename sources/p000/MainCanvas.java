@@ -323,9 +323,13 @@ public final class MainCanvas extends Canvas implements CommandListener {
         AppController.setTimer(3, 10000L);
         if (command != null) {
             if (command == this.okCommand) {
+                System.out.println("[DEBUG] commandAction: OK pressed");
                 IOUtils.postOkEvent();
             } else if (command == this.cancelCommand) {
+                System.out.println("[DEBUG] commandAction: Cancel pressed");
                 IOUtils.postCancelEvent();
+            } else {
+                System.out.println("[DEBUG] commandAction: unknown command " + command.getLabel());
             }
         }
     }

@@ -443,7 +443,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 throw th;
             } catch (Throwable th) {
                 IOUtils.closeRecordStore(recordStore);
-                throw new RuntimeException(th);
+                return buf;
             }
         }
     }

@@ -1,5 +1,5 @@
 LIBS    = libs
-CP      = $(LIBS)/cldcapi11.jar:$(LIBS)/midpapi20.jar:$(LIBS)/jsr75.jar:$(LIBS)/nokiaui.jar
+CP      = $(LIBS)/cldcapi11.jar:$(LIBS)/midpapi20.jar:$(LIBS)/jsr75.jar:$(LIBS)/nokiaui.jar:$(LIBS)/wma.jar
 SRC     = sources
 BUILD   = build
 JAR     = TK_MobileAgent_3.9.jar
@@ -21,8 +21,8 @@ jar: $(BUILD)/$(JAR)
 
 $(BUILD)/$(JAR): $(BUILD)/.compiled
 	@mkdir -p $(BUILD)/jar
-	cp -r $(BUILD)/classes/* $(BUILD)/jar/
 	cp -r resources/* $(BUILD)/jar/
+	cp -r $(BUILD)/classes/* $(BUILD)/jar/
 	rm -rf $(BUILD)/jar/META-INF
 	mkdir -p $(BUILD)/jar/META-INF
 	cp resources/META-INF/MANIFEST.MF $(BUILD)/jar/META-INF/

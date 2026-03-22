@@ -1,10 +1,15 @@
 package p000;
 
 import java.util.Vector;
+import javax.microedition.io.Connection;
+import javax.microedition.io.Connector;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
+import javax.wireless.messaging.Message;
+import javax.wireless.messaging.MessageConnection;
+import javax.wireless.messaging.TextMessage;
 
 /* renamed from: z */
 /* loaded from: MobileAgent_3.9.jar:z.class */
@@ -172,10 +177,465 @@ public final class AsyncTask implements Runnable, CommandListener {
     /* JADX WARN: Not initialized variable reg: 9, insn: 0x00fc: MOVE (r0 I:??[int, float, boolean, short, byte, char, OBJECT, ARRAY]) = (r9 I:??[int, float, boolean, short, byte, char, OBJECT, ARRAY]), block:B:18:0x00fc */
     /* JADX WARN: Not initialized variable reg: 9, insn: 0x0a79: MOVE (r0 I:??[int, float, boolean, short, byte, char, OBJECT, ARRAY]) = (r9 I:??[int, float, boolean, short, byte, char, OBJECT, ARRAY]), block:B:341:0x0a79 */
     @Override // java.lang.Runnable
+    /* Decompiled by CFR (JADX failed on this method) */
     public final void run() {
-        /*
-            r8 = this;
-            r0 = r8
+        try {
+            switch (this.taskId) {
+                case 0: {
+                    AppController.onSoftKeyPressed();
+                    return;
+                }
+                case 1: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    Object result = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createWithType3(args[0]);
+                        result = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient).toImage() : ResourceManager.integerOf(465);
+                    } catch (Throwable e) {
+                        result = ResourceManager.integerOf(466);
+                    } finally {
+                        HttpClient.closeAndUpdateStats(httpClient);
+                        AppController.releaseNetworkLock();
+                        args[2] = result;
+                    }
+                    return;
+                }
+                case 2: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createHttpClient(AppState.getString(2295208), null, 3);
+                        args[0] = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient) : ResourceManager.integerOf(731);
+                    } catch (Throwable e) {
+                        args[0] = ResourceManager.integerOf(731);
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 3: {
+                    while (true) {
+                        Vector tasks = AppState.getVector(1358);
+                        if (tasks == null) {
+                            return;
+                        }
+                        int idx = 0;
+                        while (true) {
+                            ConnectionThread conn;
+                            synchronized (tasks) {
+                                if (idx >= tasks.size()) break;
+                                conn = (ConnectionThread) tasks.elementAt(idx);
+                            }
+                            conn.process();
+                            ++idx;
+                        }
+                        Vector closeQueue = AppState.getVector(1359);
+                        if (closeQueue != null) {
+                            synchronized (closeQueue) {
+                                IOUtils.closeConn((Connection) Utils.dequeue(closeQueue));
+                            }
+                        }
+                        try {
+                            Thread.sleep(100);
+                        } catch (Throwable e) {
+                        }
+                    }
+                }
+                case 4: {
+                    NetworkUtils.asyncReaderLoop((Object[]) this.taskData);
+                    return;
+                }
+                case 5: {
+                    ConnectionThread.executeWithReauth((Object[]) this.taskData);
+                    return;
+                }
+                case 6: {
+                    HttpClient httpClient = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(1442705).writeCompressed(987652).getStringAndClear());
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        Vector children = new ByteBuffer(httpClient).parseXml().children;
+                        int i = children.size();
+                        while (--i >= 0) {
+                            XmlElement child = (XmlElement) children.elementAt(i);
+                            if (!child.tagName.equals("city")) continue;
+                            String cityId = child.getIntAttribute(131550);
+                            Vector regions = AppState.getVector(1389);
+                            int j = regions.size();
+                            GeoRegion region = null;
+                            while (--j >= 0) {
+                                GeoRegion candidate = (GeoRegion) regions.elementAt(j);
+                                if (candidate.description.equals(cityId)) {
+                                    region = candidate;
+                                    break;
+                                }
+                            }
+                            if (region == null) continue;
+                            int mapType = child.getAttrAsInt(29300);
+                            int zoomLevel = child.getAttrAsInt(98);
+                            region.zoomLevel = zoomLevel;
+                            region.mapType = mapType;
+                        }
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 7: {
+                    Object connObj = this.taskData;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Throwable e) {
+                    }
+                    Vector closeQueue = AppState.getVector(1359);
+                    if (closeQueue == null) return;
+                    synchronized (closeQueue) {
+                        closeQueue.addElement(connObj);
+                        return;
+                    }
+                }
+                case 8: {
+                    StringUtils.tileLoaderLoop();
+                    return;
+                }
+                case 9: {
+                    Object requestData = this.taskData;
+                    HttpClient httpClient = null;
+                    Object[] contactInfo = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        contactInfo = XmppContactGroup.getContactInfoFromState(872);
+                        httpClient = HttpClient.createWithType2(requestData);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        Object mapPoints = XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen());
+                        AppState.pool[1399] = mapPoints;
+                    } catch (Throwable e) {
+                        AppState.pool[1399] = NetworkUtils.newVector();
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 10: {
+                    HttpClient httpClient = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(1442705).writeCompressed(1905127).writeEncodedInt(254).getStringAndClear());
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        StringUtils.parseGeoConfig(new ByteBuffer(httpClient).parseXml());
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 11: {
+                    String requestUrl = (String) this.taskData;
+                    HttpClient httpClient = null;
+                    Object[] contactInfo = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        contactInfo = XmppContactGroup.getContactInfoFromState(1000);
+                        httpClient = HttpClient.createWithType2(requestUrl);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        MmpContact.parseRouteFromJson(new ByteBuffer(httpClient));
+                        if (MmpContact.routeRegions.size() > 0) {
+                            MmpContact.setLocationEnabled(true);
+                            Object[] firstEntry;
+                            MapRenderer.setPosition(
+                                MmpContact.routeRegions.size() > 0 && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[0] : 0L,
+                                MmpContact.routeRegions.size() > 0 && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
+                        }
+                    } catch (Throwable e) {
+                        IOUtils.postEvent((Object) AppState.getString(1001));
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 12: {
+                    return;
+                }
+                case 13: {
+                    XmppContactGroup.periodicTimeSync();
+                    return;
+                }
+                case 14: {
+                    String requestUrl = (String) this.taskData;
+                    HttpClient httpClient = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createWithType2(requestUrl);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        ByteBuffer responseBuffer = new ByteBuffer(httpClient);
+                        synchronized (ConnectionThread.photoCache) {
+                            String photoKey = ConnectionThread.pendingPhotoKey;
+                            XmppMailRuProtocol.writeChunkedRecord(StringUtils.concat("upi", photoKey), responseBuffer);
+                            try {
+                                ConnectionThread.photoCache.put(photoKey, responseBuffer.toImage());
+                            } catch (Throwable e) {
+                            }
+                            ConnectionThread.pendingPhotoKey = null;
+                            MapRenderer.needsRedraw = true;
+                        }
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 15: {
+                    ResourceManager.fetchSharedContacts((String) this.taskData);
+                    return;
+                }
+                case 16: {
+                    String requestUrl = (String) this.taskData;
+                    HttpClient httpClient = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createWithType2(requestUrl);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        new ByteBuffer(httpClient);
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 17: {
+                    ResourceManager.sendSmsRequest(this.taskData);
+                    return;
+                }
+                case 18: {
+                    NetworkUtils.sendDiagnosticReport((String) this.taskData);
+                    return;
+                }
+                case 19: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    Object[] contactInfo = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        contactInfo = XmppContactGroup.getContactInfoFromState(370);
+                        httpClient = HttpClient.createWithType2(args[0]);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        long[] coords = (long[]) args[1];
+                        ResourceManager.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
+                        IOUtils.postEvent(new IOUtils(3, null));
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 20: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    Object[] contactInfo = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        contactInfo = XmppContactGroup.getContactInfoFromState(505);
+                        httpClient = HttpClient.createWithType2(args[0]);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        ContactListParser.parseContactsSync(new ByteBuffer(httpClient), (Integer) args[1]);
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 21: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    Object[] contactInfo = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        contactInfo = XmppContactGroup.getContactInfoFromState(505);
+                        httpClient = HttpClient.createWithType2(args[0]);
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        ContactListParser.parseContactsAsync(new ByteBuffer(httpClient), args[1], args[2]);
+                    } catch (Throwable e) {
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 22: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    Object[] contactInfo = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        contactInfo = XmppContactGroup.getContactInfoFromState(505);
+                        String baseUrl = AppState.getString(3805583);
+                        httpClient = HttpClient.createWithType2(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(baseUrl).append(args[1]).append(AppState.getString(201188)).append(args[2]).append(AppState.getString(1774025))));
+                        if (httpClient.getResponseCode() != 200) throw new Throwable();
+                        long[] coords = (long[]) args[3];
+                        MrimAccount account = (MrimAccount) args[0];
+                        Vector mapPoints = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
+                        account.setLocationProfile((MapPoint) mapPoints.firstElement());
+                        IOUtils.postAccountEvent(account);
+                    } catch (Throwable e) {
+                        String lat = (String) args[2];
+                        String lon = (String) args[1];
+                        MrimAccount account = (MrimAccount) args[0];
+                        account.setSimpleProfile(lon, lat);
+                        IOUtils.postAccountEvent(account);
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 23: {
+                    Conversation.fetchMapData((String) this.taskData);
+                    return;
+                }
+                case 24: {
+                    NetworkUtils.executeRegRequest((Object[]) this.taskData);
+                    return;
+                }
+                case 25: {
+                    return;
+                }
+                case 26: {
+                    Object[] args = (Object[]) this.taskData;
+                    try {
+                        AppController.acquireNetworkLock();
+                        String smsText = (String) args[1];
+                        String smsAddress = StringUtils.concatKeyObj(398209, args[0]);
+                        MessageConnection msgConn = null;
+                        try {
+                            Thread.sleep(100L);
+                            msgConn = (MessageConnection) IOUtils.registerResource((Object) Connector.open(smsAddress));
+                            TextMessage textMsg = (TextMessage) msgConn.newMessage(AppState.getString(267133));
+                            textMsg.setAddress(smsAddress);
+                            textMsg.setPayloadText(smsText);
+                            msgConn.send((Message) textMsg);
+                        } catch (Throwable e) {
+                            IOUtils.closeConn(msgConn);
+                            throw e;
+                        }
+                        IOUtils.closeConn((Connection) msgConn);
+                        args[2] = args;
+                    } catch (Throwable e) {
+                        args[2] = e;
+                        return;
+                    }
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+                case 27: {
+                    AppController.waitForCompletion((Object[]) this.taskData);
+                    return;
+                }
+                case 28: {
+                    return;
+                }
+                case 29: {
+                    ResourceManager.processXmppStream((Object[]) this.taskData);
+                    return;
+                }
+                case 30: {
+                    IOUtils.performXmppAuth((Object[]) this.taskData);
+                    return;
+                }
+                case 31: {
+                    Conversation.fetchHistory((Object[]) this.taskData);
+                    return;
+                }
+                case 32: {
+                    ResourceManager.fetchUpdateStatus();
+                    return;
+                }
+                case 33: {
+                    XmppMailRuProtocol.resolveXmppServer((Object[]) this.taskData);
+                    return;
+                }
+                case 34: {
+                    Object[] args = (Object[]) this.taskData;
+                    HttpClient httpClient = null;
+                    try {
+                        AppController.acquireNetworkLock();
+                        httpClient = HttpClient.createHttpClient((String) args[2], (Account) args[0], 0);
+                        int responseCode = httpClient.getResponseCode();
+                        if (responseCode != 200) throw new Throwable(StringUtils.intern(Integer.toString(responseCode)));
+                        XmlElement xmlResponse = new ByteBuffer(httpClient).parseXmlStr();
+                        if (((Integer) args[3]).intValue() != 0) {
+                            XmppMailRuProtocol xmppProto = (XmppMailRuProtocol) args[0];
+                            if (StringUtils.matchesKey(333441, xmlResponse.tagName)) {
+                                xmppProto.handleComplete();
+                            } else {
+                                xmppProto.serverResourceId = StringUtils.concatKey(131550, StringUtils.fromBuffer(xmlResponse.findChildByKey(131550).textContent));
+                            }
+                        } else {
+                            String nextUrl = new ByteBuffer()
+                                .writeCompressed(4069357)
+                                .writeCompressed(1316925)
+                                .writeObjectStr(args[1])
+                                .writeCompressed(463517)
+                                .writeObjectStr(args[4])
+                                .writeCompressed(530513)
+                                .writeRawString(
+                                    new ByteBuffer()
+                                        .writeCompressed(3282875)
+                                        .writeByte(58)
+                                        .writeObjectStr(args[1])
+                                        .writeByte(58)
+                                        .writeRawString(StringUtils.fromBuffer(xmlResponse.findChildByKey(330583).textContent))
+                                        .writeByte(58)
+                                        .writeRawString(
+                                            new ByteBuffer()
+                                                .writeObjectStr(args[4])
+                                                .writeCompressed(530521)
+                                                .writeObjectStr(args[5])
+                                                .encryptMD5()
+                                                .toHexString()
+                                        )
+                                        .encryptMD5()
+                                        .toHexString()
+                                )
+                                .readAllByteStr();
+                            args[2] = nextUrl;
+                            args[3] = ResourceManager.integerOf(1);
+                            new AsyncTask(34, args);
+                        }
+                    } catch (Throwable error) {
+                        ((XmppProtocol) args[0]).setException(error);
+                        return;
+                    }
+                    HttpClient.closeAndUpdateStats(httpClient);
+                    AppController.releaseNetworkLock();
+                    return;
+                }
+            }
+            return;
+        } catch (Throwable e) {
+            return;
+        }
+    }
+    /* Original JADX bytecode dump preserved below:
+        r8 = this;
+        r0 = r8
             int r0 = r0.taskId     // Catch: java.lang.Throwable -> La84
             switch(r0) {
                 case 0: goto La0;
@@ -1612,6 +2072,4 @@ public final class AsyncTask implements Runnable, CommandListener {
         La84:
             return
         */
-        throw new UnsupportedOperationException("Method not decompiled: p000.AsyncTask.run():void");
-    }
 }

@@ -358,6 +358,7 @@ public final class MenuItem {
                         if (i17 > 0) {
                             wrapTextLine(vector, str, fontGfx, offsetH, i15, i17, i3, i4);
                         }
+                        break;
                     } else {
                         char ch = str.charAt(i16);
                         if (ch == ' ') {

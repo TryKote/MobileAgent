@@ -99,13 +99,7 @@ public abstract class AppState {
             } catch (Throwable unused) {
             }
         }
-        try {
-            try {
-            } catch (Throwable th) {
-                setInt(0, 3096);
-                throw th;
-            }
-        } catch (Throwable unused2) {
+        if (delta[0] == null) {
             delta = new Object[295];
             try {
                 String[] stores = StringUtils.listRecordStores();

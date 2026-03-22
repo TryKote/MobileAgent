@@ -345,7 +345,9 @@ public final class Screen {
                         g.setColorFromPalette(13);
                         g.fillRect(i14, i15, i16, itemHeight);
                     }
+                    z3 = true;
                     if (z4) {
+                        z3 = false;
                         int i18 = itemHeight;
                         int i19 = i16;
                         int i20 = i15;
@@ -360,12 +362,7 @@ public final class Screen {
                                 int clipWidth = graphics2.getClipWidth();
                                 if (i21 <= clipX + clipWidth) {
                                     int clipHeight = graphics2.getClipHeight();
-                                    if (i20 > clipY + clipHeight) {
-                                        z3 = false;
-                                        if (!z3) {
-                                            menuItem.render(g, i14, i15, i11);
-                                        }
-                                    } else {
+                                    if (i20 <= clipY + clipHeight) {
                                         if (clipX + clipWidth < i21 + i19) {
                                             i19 = (clipX + clipWidth) - i21;
                                         }
@@ -387,13 +384,14 @@ public final class Screen {
                                                 graphics2.setClip(i21, i20, i19, i18);
                                                 z3 = true;
                                             }
-                                            if (!z3) {
-                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                    }
+                    if (z3) {
+                        menuItem.render(g, i14, i15, i11);
                     }
                 }
             }
@@ -1192,6 +1190,7 @@ public final class Screen {
 
     /* renamed from: a */
     public final Screen addFullItem(int i, String str, String str2, int i2, Object obj) {
+        System.out.println("[DEBUG] addFullItem: icon=" + i + " str='" + str + "' str2='" + str2 + "' width=" + i2);
         MenuItem newItem = MenuItem.createWithWidth(str2, i2);
         if (i >= 0) {
             newItem.setIcon(i);

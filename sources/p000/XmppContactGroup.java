@@ -513,6 +513,8 @@ public final class XmppContactGroup extends ContactGroup {
                             objArrM1018s[i + 29] = null;
                         }
                     }
+                } else {
+                    break;
                 }
             }
         }

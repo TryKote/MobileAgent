@@ -214,6 +214,7 @@ public abstract class ScreenManager {
         int iM586d8 = AppState.getInt(i10);
         int pos = i11 + 1;
         int itemCount = AppState.getInt(i11);
+        System.out.println("[DEBUG] createScreen(" + i + "): type=" + i5 + " itemCount=" + itemCount + " screenId=" + iM586d);
         int screenW = AppState.getInt(1528);
         int screenH = AppState.getHeight();
         switch (i5) {
@@ -244,20 +245,25 @@ public abstract class ScreenManager {
                 screen = null;
                 break;
         }
+        System.out.println("[DEBUG] createScreen: Screen created OK");
         if (i5 != 3 && i5 != 4 && i5 != 2 && i5 != 11 && i5 != 10 && i5 != 8) {
             if (i5 != 7) {
+                System.out.println("[DEBUG] createScreen: calling setHeader(" + iM586d3 + ", " + title + ")");
                 screen.setHeader(iM586d3, title);
+                System.out.println("[DEBUG] createScreen: setHeader done");
             } else {
                 screen.addItem(new MenuItem(0, title).addText(title, 1, 0));
             }
         }
         screen.showCheckboxes = z;
         screen.screenFlags = i;
+        System.out.println("[DEBUG] createScreen: starting items loop");
         for (int i12 = 0; i12 < itemCount; i12++) {
             pos = parseScreenItem(screen, pos, iM586d);
         }
         Screen configuredScreen = screen.setSoftKeys(iM586d4 > 0 ? AppState.getString(iM586d4) : null, iM586d5 > 0 ? AppState.getString(iM586d5) : null, iM586d6, iM586d7, iM586d8);
         configuredScreen.screenType = i5;
+        System.out.println("[DEBUG] createScreen(" + i + ") done: items=" + screen.menuItems.size() + " softKeyLeft=" + iM586d6 + " softKeyRight=" + iM586d8);
         return configuredScreen;
     }
 
@@ -308,6 +314,7 @@ public abstract class ScreenManager {
         String title;
         int i5 = i + 1;
         int iM586d = AppState.getInt(i);
+        System.out.println("[DEBUG] parseScreenItem: pos=" + i + " raw=" + iM586d + " type=" + (iM586d & 15));
         boolean z = (iM586d & 16) != 0;
         boolean z2 = (iM586d & 32) != 0;
         switch (iM586d & 15) {
@@ -420,6 +427,7 @@ public abstract class ScreenManager {
                 screen.addItem(MenuItem.createGraphics(new GraphicsContext((Image) AppState.pool[AppState.getInt(i5)])));
                 return i5 + 1;
             default:
+                System.out.println("[DEBUG] parseScreenItem DEFAULT: type=" + (iM586d & 15) + " recursing to pos=" + AppState.getInt(i5));
                 parseScreenItem(screen, AppState.getInt(i5), i2);
                 return i5 + 1;
         }

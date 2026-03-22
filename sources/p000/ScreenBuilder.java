@@ -21,19 +21,14 @@ public final class ScreenBuilder {
             if (!ScreenManager.hasScreen(i)) {
                 Vector screenStack = AppState.getVector(1272);
                 int size = screenStack.size();
-                do {
-                    size--;
-                    if (size < 0) {
-                        z = false;
+                z = false;
+                while (--size >= 0) {
+                    i2 = ((Screen) screenStack.elementAt(size)).screenType;
+                    if (i2 == 7 || i2 == 8) {
+                        z = true;
                         break;
-                    } else {
-                        i2 = ((Screen) screenStack.elementAt(size)).screenType;
-                        if (i2 == 8) {
-                            break;
-                        }
                     }
-                } while (i2 != 7);
-                z = true;
+                }
                 if (!z) {
                     break;
                 }
@@ -1549,6 +1544,7 @@ public final class ScreenBuilder {
                         count--;
                         if (count < 0) {
                             errorCode8 = z ? AppController.showError(876) : 0;
+                            break;
                         } else {
                             String str = (String) params.elementAt(count);
                             int atIdx = str.indexOf(64);
@@ -2148,6 +2144,7 @@ public final class ScreenBuilder {
                 nextScreen = -1;
                 break;
         }
+        System.out.println("[DEBUG] onMenuItemSelected: screenId=" + ScreenManager.getCurrentScreen().screenId + " nextScreen=" + nextScreen + " softKeyLeft=" + currentScreen.softKeyLeft);
         if (nextScreen != -1) {
             if (nextScreen == 12) {
                 onScreenClosed();
@@ -2161,6 +2158,7 @@ public final class ScreenBuilder {
             if (i8 != 200) {
                 int i9 = i8 == 199 ? action : i8;
                 int i10 = i9;
+                System.out.println("[DEBUG] onMenuItemSelected: softKeyLeft action=" + i10);
                 if (i9 == 12) {
                     onScreenClosed();
                 } else if (i10 != 0) {
@@ -2747,6 +2745,7 @@ public final class ScreenBuilder {
                 result = 0;
                 break;
         }
+        System.out.println("[DEBUG] onMenuItemAction: screenId=" + ScreenManager.getCurrentScreen().screenId + " result=" + result + " softKeyCenter=" + currentScreen.softKeyCenter);
         if (result != -1) {
             if (result == 12) {
                 onScreenClosed();

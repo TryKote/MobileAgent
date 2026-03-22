@@ -245,6 +245,8 @@ public final class StringUtils {
                         if (!items.contains(req)) {
                             pendingReqs.removeElement(req);
                         }
+                    } else {
+                        break;
                     }
                 }
             }
