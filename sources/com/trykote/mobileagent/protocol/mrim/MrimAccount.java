@@ -265,7 +265,6 @@ public final class MrimAccount extends Account implements ListItem {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public final void loadData() throws Throwable {
-        RemoteLogger.log("MRIM", "loadData progress=" + this.progress + " msgCount=" + this.msgCount + " login=" + this.login);
         int i;
         String senderName;
         String str;
@@ -454,7 +453,7 @@ public final class MrimAccount extends Account implements ListItem {
                                     String str2 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
                                     int i10 = str2 != null ? -1 : Integer.parseInt(str2);
                                     i = i10;
-                                    senderName = i10 >= 0 ? null : ResourceManager.decodeBase64(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
+                                    senderName = i10 >= 0 ? null : Base64.decode(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
                                     str = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
                                     i2 = Integer.parseInt((String) hashtable.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
                                     timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
@@ -462,14 +461,14 @@ public final class MrimAccount extends Account implements ListItem {
                                     if ((i2 & 128) != 0) {
                                         String bodyText = StringUtils.suffix(rawText, i9);
                                         if ((i2 & 2097160) == 0) {
-                                            messageBody = ResourceManager.decodeBase64(bodyText).readAllWideStr();
+                                            messageBody = Base64.decode(bodyText).readAllWideStr();
                                         } else {
                                             messageBody = bodyText;
                                             i3 = 0;
                                         }
                                     } else {
                                         int tagIdx = AppState.indexOfLong(rawText, 57408234938722L);
-                                        messageBody = ResourceManager.decodeBase64(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StateKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
+                                        messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StateKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
                                     }
                                     if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
                                         Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
@@ -495,7 +494,7 @@ public final class MrimAccount extends Account implements ListItem {
                         String str22 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
                         int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
                         i = i10_2;
-                        senderName = i10_2 >= 0 ? null : ResourceManager.decodeBase64(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
+                        senderName = i10_2 >= 0 ? null : Base64.decode(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
                         str = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
                         i2 = Integer.parseInt((String) hashtable.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
                         timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));

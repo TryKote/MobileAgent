@@ -218,7 +218,6 @@ public final class MmpProtocol extends Account {
     @Override // p000.Account
     /* renamed from: i */
     public final void loadData() throws Throwable {
-        RemoteLogger.log("MMP", "loadData progress=" + this.progress + " login=" + this.login);
         Contact authContact;
         if (this.progress <= 0) {
             closeConnection();
@@ -280,7 +279,7 @@ public final class MmpProtocol extends Account {
                     this.msgCount = 70;
                     AppController.needsRepaint = true;
                     this.state = 28179;
-                    this.encryptionKey = ResourceManager.decodeBase64(this.connectionData[2]).toByteArray();
+                    this.encryptionKey = Base64.decode(this.connectionData[2]).toByteArray();
                     this.serverId = Integer.parseInt(this.connectionData[0]);
                     this.connection = new ConnectionThread(this.connectionData[1]);
                     this.progress = 6;

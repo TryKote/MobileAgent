@@ -537,7 +537,6 @@ public final class IOUtils {
 
     /* renamed from: d */
     public static final void postEvent(Object obj) {
-        RemoteLogger.log("POST", "postEvent: " + (obj instanceof int[] ? "int[]{" + ((int[])obj)[0] + "}" : obj instanceof String ? "str:" + ((String)obj).substring(0, Math.min(50, ((String)obj).length())) : obj.getClass().getName()));
         Vector vectorM614m = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
         synchronized (vectorM614m) {
             vectorM614m.addElement(obj);

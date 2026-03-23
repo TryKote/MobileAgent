@@ -287,50 +287,12 @@ public final class ByteBuffer {
         return writeStringLatin1(buf.toBase64());
     }
 
-    /* renamed from: w */
-    private static char base64Char(int i) {
-        return (char) AppState.getBytes(StateKeys.RES_BASE64_TABLE)[i & 63];
-    }
-
     /* renamed from: d */
     public final String toBase64() {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
         ensureCapacity(0);
-        int i = 0;
-        int i2 = this.length;
-        boolean z = true;
-        while (z) {
-            int i3 = 0;
-            int i4 = 0;
-            int i5 = 0;
-            int i6 = 0;
-            if (i < i2) {
-                int i7 = i;
-                i++;
-                i3 = this.data[i7] & 255;
-                i6 = 0 + 1;
-            }
-            if (i < i2) {
-                int i8 = i;
-                i++;
-                i4 = this.data[i8] & 255;
-                i6++;
-            }
-            if (i < i2) {
-                int i9 = i;
-                i++;
-                i5 = this.data[i9] & 255;
-                i6++;
-            } else {
-                z = false;
-            }
-            if (i6 > 0) {
-                int i10 = (i3 << 16) | (i4 << 8) | i5;
-                sb.append(base64Char(i10 >> 18)).append(base64Char(i10 >> 12)).append(i6 > 1 ? base64Char(i10 >> 6) : '=').append(i6 > 2 ? base64Char(i10) : '=');
-            }
-        }
+        String result = Base64.encode(this.data, 0, this.length);
         clear();
-        return NetworkUtils.bufToStringCached(sb);
+        return result;
     }
 
     /* renamed from: f */
@@ -354,7 +316,7 @@ public final class ByteBuffer {
     }
 
     /* renamed from: a */
-    private ByteBuffer copyFrom(ByteBuffer buf, int i) {
+    ByteBuffer copyFrom(ByteBuffer buf, int i) {
         byte[] tempBuf = NetworkUtils.newBytes(i);
         buf.readInto(tempBuf, 0, i);
         writeBytesAt(tempBuf, 0, i);
@@ -571,7 +533,7 @@ public final class ByteBuffer {
     /* renamed from: r */
     public final Image toImage() {
         try {
-            return Image.createImage(this.data, this.offset, this.length);
+            return ImageExtractor.toImage(this.data, this.offset, this.length);
         } finally {
             clear();
         }
@@ -579,34 +541,12 @@ public final class ByteBuffer {
 
     /* renamed from: s */
     public final ByteBuffer extractPNG() {
-        int i = this.length;
-        if (i >= 4 && peekIntAt(0) != -559038737) {
-            throw new RuntimeException();
-        }
-        if (i < 44 || i < 44 + peekIntAt(16)) {
-            return null;
-        }
-        return new ByteBuffer().copyFrom(this, 44 + peekIntAt(16)).compact();
+        return ImageExtractor.extractPNG(this);
     }
 
     /* renamed from: t */
     public final ByteBuffer extractJPEG() {
-        int i = this.length;
-        if (i < 6) {
-            return null;
-        }
-        if (peekByteAt(0) != 42) {
-            throw new RuntimeException();
-        }
-        int typeCode = peekByteAt(1);
-        if (typeCode < 1 || typeCode > 5) {
-            throw new RuntimeException();
-        }
-        int dataLen = peekShortBE(4);
-        if (dataLen + 6 > i) {
-            return null;
-        }
-        return new ByteBuffer().copyFrom(this, dataLen + 6).compact();
+        return ImageExtractor.extractJPEG(this);
     }
 
     /* renamed from: l */
@@ -782,7 +722,7 @@ public final class ByteBuffer {
     /* renamed from: B */
     public final ByteBuffer encryptMD5() {
         ensureCapacity(0);
-        byte[] hash = Conversation.hashData(this.data, this.length);
+        byte[] hash = Md5Hash.hash(this.data, this.length);
         clear();
         this.data = hash;
         this.length = 16;
@@ -1017,37 +957,19 @@ public final class ByteBuffer {
     /* JADX DEBUG: Move duplicate insns, count: 2 to block B:11:0x005d */
     /* renamed from: H */
     public final String toHexString() {
-        int i;
-        int i2;
-        StringBuffer sb = NetworkUtils.newStringBuffer();
-        int i3 = this.offset;
-        int i4 = this.length;
-        for (int i5 = 0; i5 < i4; i5++) {
-            int i6 = this.data[i3 + i5] & 255;
-            int i7 = i6 >> 4;
-            StringBuffer sbHigh = sb.append(i7 < 10 ? (char) (i7 + 48) : (char) (i7 + 87));
-            int i8 = i6 & 15;
-            if (i8 < 10) {
-                i = i8;
-                i2 = 48;
-            } else {
-                i = i8;
-                i2 = 87;
-            }
-            sbHigh.append((char) (i + i2));
-        }
+        String result = HexEncoder.encode(this.data, this.offset, this.length);
         clear();
-        return NetworkUtils.bufToStringCached(sb);
+        return result;
     }
 
     /* renamed from: I */
     public final XmlElement parseXml() {
-        return new XmlParser(readUTFWithLen()).parse();
+        return XmlParser.parseFromBuffer(this);
     }
 
     /* renamed from: J */
     public final XmlElement parseXmlStr() {
-        return new XmlParser(getStringAndClear()).parse();
+        return XmlParser.parseFromString(this);
     }
 
     /* renamed from: v */

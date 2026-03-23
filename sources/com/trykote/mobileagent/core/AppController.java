@@ -1459,7 +1459,6 @@ public final class AppController {
                     while (true) {
                         size--;
                         if (size < 0) {
-                            RemoteLogger.log("TIMER", "stateInt=" + AppState.getInt(StateKeys.INT_CURRENT_TIMESTAMP) + " timersSize=" + AppState.getVector(StateKeys.VEC_PENDING_CONNECTIONS).size());
                             int stateInt = AppState.getInt(StateKeys.INT_CURRENT_TIMESTAMP);
                             Vector vec3 = AppState.getVector(StateKeys.VEC_PENDING_CONNECTIONS);
                             int size2 = vec3.size();
@@ -1469,15 +1468,11 @@ public final class AppController {
                                     if (needsLayoutUpdate && ScreenManager.getCurrentScreen().screenId == 4 && isTimerType(1)) {
                                         needsLayoutUpdate = false;
                                         AppState.getString(StateKeys.SLOT_CURRENT_CONTACT_ID);
-                                        RemoteLogger.log("CL", "needsLayoutUpdate -> refreshList");
                                         ContactListManager.refreshList();
-                                        RemoteLogger.log("CL", "refreshList returned OK");
                                         AppState.clearIndex(StateKeys.SLOT_CURRENT_CONTACT_ID);
                                         setTimer(1, 1000L);
                                     }
-                                    RemoteLogger.log("EVT", "pre-dequeue, screenId=" + (ScreenManager.getCurrentScreen() != null ? ScreenManager.getCurrentScreen().screenId : -1));
                                     Object event = Utils.dequeue(AppState.getVector(StateKeys.VEC_EVENT_QUEUE));
-                                    if (event != null) RemoteLogger.log("EVT", "event=" + (event instanceof int[] ? "int[]{" + ((int[])event)[0] + "}" : event instanceof String ? "String:" + ((String)event).substring(0, Math.min(40, ((String)event).length())) : event.getClass().getName()) + " screenId=" + (ScreenManager.getCurrentScreen() != null ? ScreenManager.getCurrentScreen().screenId : -1));
                                     if (event == null) {
                                         Screen currentScreen = ScreenManager.getCurrentScreen();
                                         MenuItem menuItem = ScreenManager.getCurrentMenuItem();

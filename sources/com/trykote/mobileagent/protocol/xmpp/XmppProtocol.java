@@ -348,7 +348,7 @@ public class XmppProtocol extends Account {
                             }
                         } else if (StringUtils.matchesKey(595536, tagName)) {
                             XmlElement challengeResponse = XmlElement.createFromState(529537).addIdAttr(2102710);
-                            String decoded = ResourceManager.decodeBase64(StringUtils.fromBuffer(element.textContent)).getStringAndClear();
+                            String decoded = Base64.decode(StringUtils.fromBuffer(element.textContent)).getStringAndClear();
                             int idx = decoded.indexOf(AppState.getString(StateKeys.STR_RES_LABEL_TEXT_1));
                             if (idx >= 0) {
                                 int nonceStart = idx + 7;
@@ -932,7 +932,7 @@ public class XmppProtocol extends Account {
             String trimmed = Utils.trimAll(text);
             if (Utils.nonEmpty(trimmed)) {
                 try {
-                    return ResourceManager.decodeBase64(trimmed).toImage();
+                    return Base64.decode(trimmed).toImage();
                 } catch (Throwable unused) {
                 }
             }

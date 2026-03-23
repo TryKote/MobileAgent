@@ -964,7 +964,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final Vector loadMapPoints(int i) {
         Vector vectorM1213g = NetworkUtils.newVector();
         try {
-            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(i));
+            ByteBuffer c0043nM986d = Base64.decode(AppState.getString(i));
             if (c0043nM986d.length > 4) {
                 int iM1328e = c0043nM986d.readInt();
                 for (int i2 = 0; i2 < iM1328e; i2++) {

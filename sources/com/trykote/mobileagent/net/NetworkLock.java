@@ -21,7 +21,6 @@ public final class NetworkLock {
 
     /* renamed from: s */
     public static final void acquireNetworkLock() {
-        RemoteLogger.log("LOCK", "acquireNetworkLock");
         Object[] syncState = createSyncState();
         while (true) {
             synchronized (syncState) {
@@ -39,7 +38,6 @@ public final class NetworkLock {
 
     /* renamed from: t */
     public static final void releaseNetworkLock() {
-        RemoteLogger.log("LOCK", "releaseNetworkLock");
         Object[] syncState = createSyncState();
         synchronized (syncState) {
             syncState[0] = null;

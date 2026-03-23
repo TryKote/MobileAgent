@@ -212,7 +212,7 @@ public final class ConnectionThread {
         XmppContactGroup.sharedContactList = NetworkUtils.newVector();
         hiddenContacts = Utils.split(AppState.getString(StateKeys.HIDDEN_CONTACTS_LIST), (char) 0);
         try {
-            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(StateKeys.CONTACT_REGISTRY_DATA));
+            ByteBuffer c0043nM986d = Base64.decode(AppState.getString(StateKeys.CONTACT_REGISTRY_DATA));
             photoRegistry = new Hashtable();
             try {
                 if (c0043nM986d.length > 0) {

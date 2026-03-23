@@ -695,7 +695,7 @@ public final class StringUtils {
         AppState.pool[StateKeys.VEC_MAP_POINTS] = NetworkUtils.newVector();
         AppState.pool[StateKeys.OBJ_GEO_REGION] = new GeoRegion(AppState.getString(StateKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
-            ByteBuffer geoBuffer = ResourceManager.decodeBase64(AppState.getString(StateKeys.GEO_SAVED_DATA));
+            ByteBuffer geoBuffer = Base64.decode(AppState.getString(StateKeys.GEO_SAVED_DATA));
             AppState.getVector(StateKeys.VEC_MAP_POINTS).removeAllElements();
             if (geoBuffer.length > 0) {
                 int count = geoBuffer.readIntBE();

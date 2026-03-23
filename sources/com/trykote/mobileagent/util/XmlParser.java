@@ -33,6 +33,14 @@ public final class XmlParser {
         this.source = obj;
     }
 
+    public static XmlElement parseFromBuffer(ByteBuffer buf) {
+        return new XmlParser(buf.readUTFWithLen()).parse();
+    }
+
+    public static XmlElement parseFromString(ByteBuffer buf) {
+        return new XmlParser(buf.getStringAndClear()).parse();
+    }
+
     /* renamed from: b */
     private final int nextChar() {
         if (!(this.source instanceof String)) {
