@@ -4,7 +4,10 @@ SRC     = sources
 BUILD   = build
 JAR     = TK_MobileAgent_3.9.jar
 
-SOURCES = $(shell find $(SRC) -name '*.java')
+GEN_DIR  = $(BUILD)/generated/com/trykote/mobileagent/util
+GEN_CFG  = config/remote_logger.cfg
+GEN_SRC  = $(SRC)/com/trykote/mobileagent/util/RemoteLoggerConfig.java
+SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java')
 
 .PHONY: all compile jar clean
 
@@ -12,9 +15,19 @@ all: jar
 
 compile: $(BUILD)/.compiled
 
-$(BUILD)/.compiled: $(SOURCES)
+$(GEN_DIR)/RemoteLoggerConfig.java: $(GEN_SRC) $(GEN_CFG)
+	@mkdir -p $(GEN_DIR)
+	@awk -F= 'FNR==NR { if ($$1=="enabled") e=($$2=="true"||$$2=="1")?"true":"false"; \
+	                      if ($$1=="host") h=$$2; \
+	                      if ($$1=="port") p=$$2; next } \
+	           /@@REMOTE_LOGGER_ENABLED@@/ { sub(/= [^;]+;/, "= "e";") } \
+	           /@@REMOTE_LOGGER_HOST@@/    { sub(/= "[^"]*";/, "= \""h"\";") } \
+	           /@@REMOTE_LOGGER_PORT@@/    { sub(/= [^;]+;/, "= "p";") } \
+	           { print }' $(GEN_CFG) $(GEN_SRC) > $@
+
+$(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
 	@mkdir -p $(BUILD)/classes
-	javac --release 8 -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES)
+	javac --release 8 -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
 	@touch $@
 
 jar: $(BUILD)/$(JAR)
