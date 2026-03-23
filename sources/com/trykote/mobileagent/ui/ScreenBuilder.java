@@ -48,9 +48,9 @@ public final class ScreenBuilder {
             onScreenClosed();
         }
         switch (i) {
-            case 0:
+            case ScreenId.NONE:
                 return;
-            case 1:
+            case ScreenId.ACCOUNT_LIST:
                 int size2 = AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
                 AppState.setBool(StateKeys.FLAG_HAS_MRIM_ACCOUNTS, size2 > 0);
                 AppState.setBool(StateKeys.FLAG_HAS_MULTIPLE_MRIM, size2 > 1);
@@ -58,10 +58,10 @@ public final class ScreenBuilder {
                 AppState.setBool(StateKeys.FLAG_HAS_XMPP_ACCOUNTS, size2 > 0);
                 ScreenManager.showScreen(ScreenManager.createScreen(2361));
                 return;
-            case 2:
+            case ScreenId.SETTINGS:
                 AppController.showSettingsScreen();
                 return;
-            case 3:
+            case ScreenId.STATUS_DIALOG:
                 Screen dialogScreen = ScreenManager.createDialogScreen(3);
                 Account account = AppState.getAccount();
                 switch (account.getType()) {
@@ -84,24 +84,24 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(dialogScreen.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_YES), AppState.getString(StateKeys.STR_SOFTKEY_NO), 199, 12, 199));
                 return;
-            case 4:
+            case ScreenId.CONTACT_LIST:
                 ContactListManager.showContactList();
                 return;
-            case 5:
+            case ScreenId.ACCOUNTS_MENU:
                 AppState.setBool(StateKeys.FLAG_MULTIPLE_MRIM, AccountManager.getMrimAccountList().size() > 1);
                 AppState.setBool(StateKeys.FLAG_MULTIPLE_XMPP, AccountManager.getXmppAccountList().size() > 1);
                 ScreenManager.showScreen(ScreenManager.createScreen(2733));
                 return;
-            case 6:
+            case ScreenId.MAP:
                 ConnectionThread.showMapScreen();
                 return;
-            case 7:
+            case ScreenId.MAP_MENU:
                 ScreenManager.showScreen(ScreenManager.createScreen(2641));
                 return;
-            case 8:
+            case ScreenId.SETTINGS_MENU:
                 ScreenManager.showScreen(ScreenManager.createScreen(3959));
                 return;
-            case 9:
+            case ScreenId.ABOUT:
                 AppState.setInt(StateKeys.FLAG_SHOW_NOTIFICATION, 1);
                 AppState.setObject(StateKeys.SLOT_SCREEN_TITLE, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
                 AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getAppVersion());
@@ -109,24 +109,24 @@ public final class ScreenBuilder {
                 AppState.setObject(StateKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(StateKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
                 ScreenManager.showScreen(ScreenManager.createScreen(2448));
                 return;
-            case 10:
+            case ScreenId.BLOCK_CONFIRM:
                 NetworkUtils.showAlertById(10, 710);
                 return;
-            case 11:
+            case ScreenId.UNBLOCK_CONFIRM:
                 NetworkUtils.showAlertBuffer(11, NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_BLOCK_CONFIRM)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.longToHex(16167)));
                 return;
-            case 12:
+            case ScreenId.CLOSE:
                 return;
-            case 13:
+            case ScreenId.CONFIRM_EXIT:
                 NetworkUtils.showConfirmDialog(13, 505);
                 return;
-            case 14:
+            case ScreenId.TRAFFIC_COST:
                 StringBuffer sb = NetworkUtils.newStringBuffer();
                 int intVal = AppState.getInt(StateKeys.SETTING_TRAFFIC_COST);
                 AppState.setFromBuffer(StateKeys.SLOT_SCREEN_VALUE, sb.append(intVal / 100).append('.').append(Utils.zeroPad(intVal % 100)));
                 ScreenManager.showScreen(ScreenManager.createScreen(3183));
                 return;
-            case 15:
+            case ScreenId.ACCOUNT_SWITCHER:
                 Screen contactListScreen = NetworkUtils.addContactItems(ScreenManager.createScreen(2719), AppState.getVector(StateKeys.VEC_ACCOUNTS));
                 Account currentAccount = TabBar.currentAccount;
                 if (currentAccount != null) {
@@ -134,11 +134,11 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(contactListScreen);
                 return;
-            case 16:
+            case ScreenId.REGISTRATION:
                 AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, 0);
                 ScreenManager.showScreen(ScreenManager.createScreen(4467));
                 return;
-            case 17:
+            case ScreenId.EMOTICON_DIALOG:
                 Screen dialogScreen2 = ScreenManager.createDialogScreen(17);
                 if (AppState.getAccount() instanceof MmpProtocol) {
                     for (int i3 = 0; i3 <= 36; i3++) {
@@ -153,9 +153,9 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(dialogScreen2.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_YES), AppState.getString(StateKeys.STR_SOFTKEY_NO), 199, 12, 199));
                 return;
-            case 18:
+            case ScreenId.UNUSED_18:
                 return;
-            case 19:
+            case ScreenId.CONTACT_EDITOR:
                 AppController.clearFormFields();
                 Contact contact = AppState.getCurrentContact();
                 AppState.setObject(StateKeys.SLOT_INPUT_TEXT, (Object) contact.displayName);
@@ -169,14 +169,14 @@ public final class ScreenBuilder {
                 AppState.setInt(StateKeys.INT_CONTACT_TYPE_CODE, (!(contact instanceof MrimContact) || contact.isSystem()) ? 1 : 4);
                 ScreenManager.showScreen(ScreenManager.createScreen(3501));
                 return;
-            case 20:
+            case ScreenId.GPS_SETTINGS:
                 boolean flag = AppState.getBool(StateKeys.MAP_GPS_ENABLED);
                 boolean flag2 = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE);
                 AppState.setBool(StateKeys.FLAG_GPS_NO_MAP, !flag && flag2);
                 AppState.setBool(StateKeys.FLAG_GPS_WITH_MAP, flag && flag2);
                 ScreenManager.showScreen(ScreenManager.createScreen(1632));
                 return;
-            case 21:
+            case ScreenId.ADD_CONTACT:
                 int accountType = AppState.getAccount().getType();
                 if (accountType == 0) {
                     StringUtils.showRegionSelector();
@@ -195,14 +195,14 @@ public final class ScreenBuilder {
                     ScreenManager.showScreen(ScreenManager.createScreen(3939));
                     return;
                 }
-            case 22:
+            case ScreenId.ADD_MRIM_CONTACT:
                 ScreenManager.showScreen(ScreenManager.createScreen(3535));
                 return;
-            case 23:
+            case ScreenId.UNUSED_23:
                 return;
-            case 24:
+            case ScreenId.UNUSED_24:
                 return;
-            case 25:
+            case ScreenId.MULTI_ACCOUNT_LIST:
                 Screen screen = ScreenManager.createScreen(2581);
                 Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
                 int size3 = accounts.size();
@@ -211,21 +211,21 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen.addActionById(-1, 531, 16).addIconById(-1, 532, 1).addIconById(-1, 533, 3).addIconById(-1, 534, 2));
                 return;
-            case 26:
+            case ScreenId.THEME_SETTINGS:
                 AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_COLOR_THEME));
                 ScreenManager.showScreen(ScreenManager.createScreen(2917));
                 return;
-            case 27:
+            case ScreenId.NOTIFICATION_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(3214));
                 return;
-            case 28:
+            case ScreenId.SOUND_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(2978));
                 return;
-            case 29:
+            case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_MULTI_ACCOUNT));
                 ScreenManager.showScreen(ScreenManager.createScreen(3102));
                 return;
-            case 30:
+            case ScreenId.CONTACT_GROUP_MENU:
                 AppState.setInt(StateKeys.FLAG_CONTACT_MENU_MODE, 1);
                 Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
                 if (obj instanceof ContactGroup) {
@@ -255,24 +255,24 @@ public final class ScreenBuilder {
                 AppState.setInt(StateKeys.INT_OK_MENU_ACTION, 30);
                 ScreenManager.showScreen(ScreenManager.createScreen(3704));
                 return;
-            case 31:
+            case ScreenId.UNUSED_31:
             default:
                 return;
-            case 32:
+            case ScreenId.UNUSED_32:
                 return;
-            case 33:
+            case ScreenId.PRIVACY_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(2817));
                 return;
-            case 34:
+            case ScreenId.TRAFFIC_STATS:
                 ResourceManager.showTrafficStats();
                 return;
-            case 35:
+            case ScreenId.CONNECTION_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(5157));
                 return;
-            case 36:
+            case ScreenId.MAIL_ACCOUNT_LIST:
                 ResourceManager.showMailAccountList();
                 return;
-            case 37:
+            case ScreenId.CHAT_ROOMS:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
                 if (mrimAccount.getChatRoomCount() != 0 && !mrimAccount.chatRoomsLoaded) {
@@ -286,13 +286,13 @@ public final class ScreenBuilder {
                 JsonParser.addIntToVector(params, 1);
                 IOUtils.sendChatRoomRequest(ConnectionThread.createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_LONG_URL_1)).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_HUGE_URL_1)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 return;
-            case 38:
+            case ScreenId.CHAT_ROOM_INIT:
                 AppController.initChatRoomList();
                 return;
-            case 39:
+            case ScreenId.ACCOUNT_CHECKBOX_LIST:
                 Vector accountList = AppState.getVector(StateKeys.VEC_FILTERED_ACCOUNTS);
                 Screen screen2 = ScreenManager.createScreen(2581);
-                screen2.screenId = 39;
+                screen2.screenId = ScreenId.ACCOUNT_CHECKBOX_LIST;
                 screen2.showCheckboxes = true;
                 int size4 = accountList.size();
                 boolean showFlags = AppState.getBool(StateKeys.FLAG_SHOW_STATUS_FLAGS);
@@ -313,10 +313,10 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(screen2);
                 NetworkUtils.releaseVector(accountList);
                 return;
-            case 40:
+            case ScreenId.CLEAR_SEARCH:
                 AppController.clearSearchState();
                 return;
-            case 41:
+            case ScreenId.CHAT_ROOM_MESSAGES:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
                 if (!chatRoom.isInitialized) {
@@ -350,17 +350,17 @@ public final class ScreenBuilder {
                 }
                 IOUtils.sendChatRoomRequest(request);
                 return;
-            case 42:
+            case ScreenId.CHAT_ROOM_INVITE:
                 NetworkUtils.showConfirmDialog(42, 862);
                 Vector params4 = NetworkUtils.newVector();
                 JsonParser.addIntToVector(params4, AppState.getInt(StateKeys.INT_ACTIVE_CHATROOM_ID));
                 params4.addElement(AppState.getVector(StateKeys.SLOT_MEDIA_STREAM));
                 IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(StateKeys.STR_RES_LONG_URL_1), NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_4)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
                 return;
-            case 43:
+            case ScreenId.CHAT_ROOM_VIEW:
                 IOUtils.showChatRoomMessages();
                 return;
-            case 44:
+            case ScreenId.SUBMIT_REGISTRATION:
                 AppController.prepareFormData();
                 Account account2 = AppState.getAccount();
                 if (AppState.getAccount().getType() == 0) {
@@ -379,14 +379,14 @@ public final class ScreenBuilder {
                 }
                 NetworkUtils.showErrorOrConfirm(44, 729, account2.validateObject(regData));
                 return;
-            case 45:
+            case ScreenId.UNUSED_45:
                 return;
-            case 46:
+            case ScreenId.UNUSED_46:
                 return;
-            case 47:
+            case ScreenId.CONTACT_GROUPS:
                 ScreenManager.showScreen(ScreenManager.createScreen(2697));
                 return;
-            case 48:
+            case ScreenId.MESSAGE_DETAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 String msgId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
                 Message message = (Message) ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).messages.get(msgId);
@@ -401,13 +401,13 @@ public final class ScreenBuilder {
                     return;
                 }
                 return;
-            case 49:
+            case ScreenId.CHAT_ROOM_CONFIG:
                 ScreenManager.showScreen(ScreenManager.createScreen(4302));
                 return;
-            case 50:
+            case ScreenId.CHAT_VIEW_MODE:
                 ScreenManager.showScreen(ScreenManager.createScreen(3170));
                 return;
-            case 51:
+            case ScreenId.CHAT_ROOM_CONTEXT:
                 String msgId2 = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
                 int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
                 MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
@@ -427,7 +427,7 @@ public final class ScreenBuilder {
                 AppState.setFromBuffer(StateKeys.SLOT_UNREAD_COUNT_TEXT, NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_UNREAD_COUNT_PREFIX)).append(size5).append(')'));
                 ScreenManager.showScreen(ScreenManager.createScreen(4589));
                 return;
-            case 52:
+            case ScreenId.MESSAGE_PREVIEW:
                 String msgId3 = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
                 ChatRoom chatRoom3 = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
                 int roomType = chatRoom3.getType();
@@ -452,19 +452,19 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(screen3);
                 AppController.clearPreviewState();
                 return;
-            case 53:
+            case ScreenId.COMPOSE_RECIPIENTS:
                 ScreenManager.showScreen(ScreenManager.createScreen(4551));
                 return;
-            case 54:
+            case ScreenId.COMPOSE_MESSAGE:
                 ScreenManager.showScreen(ScreenManager.createScreen(4806));
                 return;
-            case 55:
+            case ScreenId.DELETE_CONFIRM:
                 NetworkUtils.showConfirmDialog(55, 761);
                 return;
-            case 56:
+            case ScreenId.CONTACT_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(3052));
                 return;
-            case 57:
+            case ScreenId.FIRST_RUN:
                 NetworkUtils.showConfirmDialog(57, 730);
                 AppState.setLong(StateKeys.TIMESTAMP_FIRST_RUN, System.currentTimeMillis());
                 Object[] objArr2 = new Object[1];
@@ -472,35 +472,35 @@ public final class ScreenBuilder {
                 new AsyncTask(2, objArr2);
                 NetworkUtils.checkCrashReport();
                 return;
-            case 58:
+            case ScreenId.GROUP_SELECTOR:
                 ScreenManager.showScreen(ScreenManager.createScreen(4729));
                 return;
-            case 59:
+            case ScreenId.VERSION_CHECK:
                 ResourceManager.processUpdateResult();
                 return;
-            case 60:
+            case ScreenId.INPUT_DIALOG:
                 ScreenManager.showScreen(ScreenManager.createScreen(4711));
                 return;
-            case 61:
+            case ScreenId.CHAT_ROOM_ALERT:
                 NetworkUtils.showAlertById(61, 857);
                 return;
-            case 62:
+            case ScreenId.MAIL_MENU:
                 ScreenManager.showScreen(ScreenManager.createScreen(4667));
                 return;
-            case 63:
+            case ScreenId.STATUS_INPUT:
                 XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(StateKeys.SLOT_STATUS_TEXT), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(StateKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new AsyncTask());
                 AppState.setInt(StateKeys.INT_LAST_POLL_TIMESTAMP, 0);
                 AppState.setInt(StateKeys.INT_LAST_CHECK_TIMESTAMP, 0);
                 AppState.setInt(StateKeys.INT_LAST_LIST_SIZE, 0);
                 ScreenManager.showScreen(new Screen());
                 return;
-            case 64:
+            case ScreenId.ACCOUNT_SWITCH_OPTIONS:
                 Contact contact2 = AppState.getCurrentContact();
                 AppState.setInt(StateKeys.INT_DELETE_BUTTON_ICON, contact2.canDelete() ? 25 : 24);
                 AppState.setInt(StateKeys.INT_BLOCK_BUTTON_ICON, contact2.canBlock() ? 25 : 24);
                 ScreenManager.showScreen(ScreenManager.createScreen(4100));
                 return;
-            case 65:
+            case ScreenId.PHONE_GROUPS:
                 Vector phoneGroups = Utils.splitNonEmpty(AppState.getCurrentMrimContact().contactGroupsStr, ',');
                 int size6 = phoneGroups.size();
                 if (size6 <= 0) {
@@ -515,29 +515,29 @@ public final class ScreenBuilder {
                 AppState.setInt(StateKeys.INT_SELECTED_GROUP_INDEX, 0);
                 ScreenManager.showScreen(ScreenManager.createScreen(3627));
                 return;
-            case 66:
+            case ScreenId.ADD_CONTACT_INFO:
                 IOUtils.showAddContactScreen();
                 return;
-            case 67:
+            case ScreenId.SOFTKEY_MENU:
                 ScreenManager.showScreen(ScreenManager.createScreen(4633));
                 return;
-            case 68:
+            case ScreenId.SEARCH_RESULTS:
                 AppController.resetSearchResults();
                 ScreenManager.showScreen(ScreenManager.createScreen(4769));
                 return;
-            case 69:
+            case ScreenId.CREATE_GROUP:
                 ScreenManager.showScreen(ScreenManager.createScreen(3340));
                 return;
-            case 70:
+            case ScreenId.RENAME_GROUP:
                 AppState.setObject(StateKeys.SLOT_SEARCH_RESULT, (Object) AppState.getCurrentGroup().name);
                 ScreenManager.showScreen(ScreenManager.createScreen(3553));
                 return;
-            case 71:
+            case ScreenId.DELETE_ENTITY:
                 StringBuffer sbAlert = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ALERT_PREFIX));
                 Object obj3 = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
                 NetworkUtils.showAlertBuffer(71, sbAlert.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).name : ((Contact) obj3).displayName).append(NetworkUtils.longToHex(16167)));
                 return;
-            case 72:
+            case ScreenId.BATCH_DELETE:
                 NetworkUtils.showConfirmDialog(72, 866);
                 Vector selectedItems = AppState.getVector(StateKeys.SLOT_MEDIA_STREAM);
                 Vector itemsParams = NetworkUtils.newVector();
@@ -556,7 +556,7 @@ public final class ScreenBuilder {
                         itemsParams.addElement(hashtable2);
                     }
                 }
-            case 73:
+            case ScreenId.SEARCH_RESULT_LIST:
                 int errorMsgId = AppState.getInt(StateKeys.INT_ERROR_MSG_INDEX);
                 if (0 != errorMsgId) {
                     AppController.clearSearchResults2();
@@ -572,30 +572,30 @@ public final class ScreenBuilder {
                     NotificationHelper.showMessageById(736);
                     return;
                 }
-            case 74:
+            case ScreenId.UNUSED_74:
                 return;
-            case 75:
+            case ScreenId.UNUSED_75:
                 return;
-            case 76:
+            case ScreenId.XMPP_LOGIN:
                 XmppMailRuProtocol.showLoginScreen();
                 return;
-            case 77:
+            case ScreenId.ACCOUNT_DELETE_CONFIRM:
                 NetworkUtils.showAlertBuffer(77, NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ALERT_PREFIX)).append(AppState.getAccount().login).append(NetworkUtils.longToHex(16167)));
                 return;
-            case 78:
+            case ScreenId.SHARE_MEDIA:
                 NetworkUtils.showConfirmDialog(78, 861);
                 Vector params8 = NetworkUtils.newVector();
                 params8.addElement(AppState.getVector(StateKeys.SLOT_MEDIA_STREAM));
                 JsonParser.addIntToVector(params8, AppState.getBool(StateKeys.FLAG_SPECIAL_KEY_MODE) ? 1 : 0);
                 IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_5), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_3)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
                 return;
-            case 79:
+            case ScreenId.SHARE_ALERT:
                 NetworkUtils.showAlertById(79, 863);
                 return;
-            case 80:
+            case ScreenId.NOTIFICATION_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(4747));
                 return;
-            case 81:
+            case ScreenId.SEND_MAIL:
                 NetworkUtils.showConfirmDialog(81, 872);
                 Vector params9 = NetworkUtils.newVector();
                 params9.addElement(AppState.getString(AppState.getBool(StateKeys.FLAG_EXTENDED_CHAT_VIEW) ? 264068 : 1038));
@@ -606,26 +606,26 @@ public final class ScreenBuilder {
                 params9.addElement(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_1)));
                 IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(StateKeys.STR_RES_LONG_URL_1), NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_API_URL_6)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params9)))));
                 return;
-            case 82:
+            case ScreenId.REPLY_MAIL:
                 NetworkUtils.showConfirmDialog(82, 877);
                 Message newMessage = new Message(XmppMailRuProtocol.parseRecipientList(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_2))), Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_3)), Utils.defaultStr(AppState.getString(StateKeys.SLOT_TRAFFIC_STATUS_TEXT)));
                 Vector params10 = NetworkUtils.newVector();
                 params10.addElement(newMessage.toHashtable());
                 IOUtils.sendChatRoomRequest(ConnectionThread.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_3), IOUtils.appendAuthParams(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_2)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
                 return;
-            case 83:
+            case ScreenId.PRIVACY_MODE:
                 ResourceManager.playNotificationSound(4);
-                AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, 83);
+                AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.PRIVACY_MODE);
                 AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, StateKeys.STR_PRIVACY_MODE_BASE);
                 NotificationHelper.clearNotifications();
                 return;
-            case 84:
+            case ScreenId.STATUS_PREVIEW:
                 String inputText = XmppContactGroup.getTextInputValue();
                 AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) inputText);
                 AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(inputText));
                 ScreenManager.showScreen(ScreenManager.createScreen(2299));
                 return;
-            case 85:
+            case ScreenId.CONTACT_DELETE:
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_1);
                 if (AppState.getCurrentContact() == null) {
                     NetworkUtils.showErrorOrConfirm(85, 727, 0);
@@ -635,7 +635,7 @@ public final class ScreenBuilder {
                     NetworkUtils.showErrorOrConfirm(85, 727, contact3.account.validateDelete(contact3));
                     return;
                 }
-            case 86:
+            case ScreenId.GROUP_MOVE:
                 Screen screen4 = ScreenManager.createScreen(4238);
                 Contact contact4 = AppState.getCurrentContact();
                 Vector vector = contact4.account.groups;
@@ -649,27 +649,27 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen4);
                 return;
-            case 87:
+            case ScreenId.CHAT_STATUS:
                 AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, Utils.nonEmpty(AppState.getString(StateKeys.SLOT_STATUS_TEXT)));
                 ScreenManager.showScreen(ScreenManager.createScreen(3647));
                 return;
-            case 88:
+            case ScreenId.THEME_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(4836));
                 return;
-            case 89:
+            case ScreenId.TOS_SCREEN:
                 ResourceManager.showTosScreen();
                 return;
-            case 90:
+            case ScreenId.EVENT_QUEUE:
                 AppController.processEventQueue();
                 return;
-            case 91:
+            case ScreenId.VIEW_MODE:
                 boolean isOnline4 = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE);
                 boolean isCustom = AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE);
                 AppState.setBool(StateKeys.FLAG_ONLINE_CUSTOM_OFF, isOnline4 && !isCustom);
                 AppState.setBool(StateKeys.FLAG_ONLINE_CUSTOM_ON, isOnline4 && isCustom);
                 ScreenManager.showScreen(ScreenManager.createScreen(1600));
                 return;
-            case 92:
+            case ScreenId.CONTACT_MENU:
                 AppState.setInt(StateKeys.FLAG_CONTACT_MENU_MODE, 0);
                 Contact contact5 = AppState.getCurrentContact();
                 if (contact5.isSystem()) {
@@ -692,7 +692,7 @@ public final class ScreenBuilder {
                 AppState.setInt(StateKeys.INT_OK_MENU_ACTION, 92);
                 ScreenManager.showScreen(ScreenManager.createScreen(3704));
                 return;
-            case 93:
+            case ScreenId.EMOTICON_PICKER:
                 Screen screen5 = ScreenManager.createScreen(2621);
                 if (AppState.getCurrentContact() instanceof MmpContact) {
                     for (int i10 = 0; i10 < 43; i10++) {
@@ -720,21 +720,21 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen5);
                 return;
-            case 94:
+            case ScreenId.PHONE_INPUT:
                 Screen screen6 = ScreenManager.createScreen(2611);
                 for (int i14 = 0; i14 < 15; i14++) {
                     screen6.addTextItem(AppState.getString(i14 + 48));
                 }
                 ScreenManager.showScreen(screen6);
                 return;
-            case 95:
+            case ScreenId.SERVER_ADDRESS:
                 Screen screen7 = ScreenManager.createScreen(2601);
                 for (int i15 = 0; i15 < 15; i15++) {
                     screen7.addTextItem(AppState.getString(i15 + 48));
                 }
                 ScreenManager.showScreen(screen7);
                 return;
-            case 96:
+            case ScreenId.CONTACT_INFO_VIEW:
                 ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_1];
                 String str2 = (String) contactInfo.get(ResourceManager.integerOf(-1));
                 if (null != str2) {
@@ -743,9 +743,9 @@ public final class ScreenBuilder {
                     AppState.setInt(StateKeys.INT_INFO_SCREEN_MODE, contactInfo.isXmppContact() ? 0 : 503);
                     ScreenManager.showScreen(contactInfo.buildContactScreen(3830));
                 }
-                AppState.setInt(StateKeys.INT_CURRENT_SCREEN_ID, 102);
+                AppState.setInt(StateKeys.INT_CURRENT_SCREEN_ID, ScreenId.USER_PROFILE);
                 return;
-            case 97:
+            case ScreenId.REGION_SELECTOR:
                 Vector regions = AppState.getVector(StateKeys.VEC_MAP_POINTS);
                 int size9 = regions.size();
                 if (size9 == 0) {
@@ -761,21 +761,21 @@ public final class ScreenBuilder {
                 screen8.addIconItemWithData(-1, currentRegion.name, 6, currentRegion);
                 ScreenManager.showScreen(screen8);
                 return;
-            case 98:
+            case ScreenId.PHONE_INPUT_ALT:
                 Screen screen9 = ScreenManager.createScreen(4080);
                 for (int i17 = 0; i17 < 15; i17++) {
                     screen9.addTextItem(AppState.getString(i17 + 48));
                 }
                 ScreenManager.showScreen(screen9);
                 return;
-            case 99:
+            case ScreenId.URL_OPEN:
                 Screen screen10 = ScreenManager.createScreen(4090);
                 for (int i18 = 0; i18 < 15; i18++) {
                     screen10.addTextItem(AppState.getString(i18 + 48));
                 }
                 ScreenManager.showScreen(screen10);
                 return;
-            case 100:
+            case ScreenId.MAP_POINTS:
                 Screen screen11 = ScreenManager.createScreen(1701);
                 Vector mapPoints = AppState.getVector(StateKeys.VEC_CONTACT_GROUPS);
                 for (int i19 = 0; i19 < mapPoints.size(); i19++) {
@@ -784,9 +784,9 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen11);
                 return;
-            case 101:
+            case ScreenId.CONVERSATION:
                 return;
-            case 102:
+            case ScreenId.USER_PROFILE:
                 if (AppController.pendingAccount == null && AppController.pendingUrl == null) {
                     Contact contact6 = AppState.getCurrentContact();
                     String statusText = AppController.getStatusText();
@@ -798,19 +798,19 @@ public final class ScreenBuilder {
                     AppController.clearMapPoints();
                     return;
                 }
-            case 103:
+            case ScreenId.CONTACT_INFO_DETAIL:
                 ScreenManager.showScreen(((ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO]).buildContactScreen(3878));
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_1);
-                AppState.setInt(StateKeys.INT_CURRENT_SCREEN_ID, 107);
+                AppState.setInt(StateKeys.INT_CURRENT_SCREEN_ID, ScreenId.PROFILE_LOAD);
                 return;
-            case 104:
+            case ScreenId.COLOR_PICKER:
                 ScreenManager.showScreen(ScreenManager.createScreen(4204));
                 return;
-            case 105:
+            case ScreenId.XMPP_LOGIN_ALT:
                 XmppMailRuProtocol.showLoginScreen();
-                ScreenManager.getCurrentScreen().screenId = 105;
+                ScreenManager.getCurrentScreen().screenId = ScreenId.XMPP_LOGIN_ALT;
                 return;
-            case 106:
+            case ScreenId.CAPTCHA:
                 Screen screen12 = ScreenManager.createScreen(3840);
                 Object obj4 = ((Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA])[2];
                 if (obj4 instanceof Image) {
@@ -821,16 +821,16 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(screen12);
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 return;
-            case 107:
+            case ScreenId.PROFILE_LOAD:
                 ContactInfo contactInfo2 = (ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO];
                 NetworkUtils.showErrorOrConfirm(107, 728, contactInfo2.getAccount().getResourceId((Object) contactInfo2.getEmailOrMmpId()));
                 return;
-            case 108:
+            case ScreenId.CONTACT_LIST_KEY:
                 return;
-            case 109:
+            case ScreenId.VERSION_SELECT:
                 ScreenManager.showScreen(ScreenManager.createScreen(4862).selectByTitle(AppState.getString(StateKeys.STR_PRIVACY_MODE_BASE + ((MmpProtocol) AppState.getAccount()).getPendingVersion())));
                 return;
-            case 110:
+            case ScreenId.MAP_TOOLTIP:
                 AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_1, (Object) AppState.emptyStr);
                 String tooltipText = MapRenderer.getTooltipText();
                 if (tooltipText != null) {
@@ -838,7 +838,7 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(ScreenManager.createScreen(1727));
                 return;
-            case 111:
+            case ScreenId.PEOPLE_NEARBY:
                 Vector allContacts = AccountManager.getAllAccountsList();
                 int size10 = allContacts.size();
                 while (true) {
@@ -857,13 +857,13 @@ public final class ScreenBuilder {
                         allContacts.removeElementAt(size10);
                     }
                 }
-            case 112:
+            case ScreenId.CLEAR_NOTIFICATIONS:
                 NotificationHelper.clearNotifications();
                 return;
-            case 113:
+            case ScreenId.MAP_CONTEXT_MENU:
                 XmppMailRuProtocol.showMapContextMenu();
                 return;
-            case 114:
+            case ScreenId.SAVE_LOCATION:
                 AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_2, (Object) AppState.emptyStr);
                 String tooltipText2 = MapRenderer.getTooltipText();
                 if (tooltipText2 != null) {
@@ -871,11 +871,11 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(ScreenManager.createScreen(1876));
                 return;
-            case 115:
+            case ScreenId.MESSAGE_INPUT:
                 ScreenManager.showScreen(ScreenManager.createScreen(2501));
                 AppController.clearPreviewState();
                 return;
-            case 116:
+            case ScreenId.MAP_ROUTE:
                 Screen screen13 = ScreenManager.createScreen(1892);
                 Enumeration routeEnum = ConnectionThread.getRouteElements();
                 while (routeEnum.hasMoreElements()) {
@@ -884,11 +884,11 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen13);
                 return;
-            case 117:
+            case ScreenId.MAP_STATUS:
                 Conversation.updateStatusText(375);
                 ScreenManager.showScreen(ScreenManager.createScreen(1902));
                 return;
-            case 118:
+            case ScreenId.SEND_TO_CONTACT:
                 Vector allContacts2 = AccountManager.getAllAccountsList();
                 int size11 = allContacts2.size();
                 while (true) {
@@ -907,10 +907,10 @@ public final class ScreenBuilder {
                         allContacts2.removeElementAt(size11);
                     }
                 }
-            case 119:
+            case ScreenId.CHAT_ROOM_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(1940));
                 return;
-            case 120:
+            case ScreenId.MAP_ROUTE_SELECT:
                 Screen screen14 = ScreenManager.createScreen(1958);
                 Enumeration routeEnum2 = ConnectionThread.getRouteElements();
                 while (routeEnum2.hasMoreElements()) {
@@ -919,19 +919,19 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen14);
                 return;
-            case 121:
+            case ScreenId.CHAT_LIST_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(1968));
                 return;
-            case 122:
+            case ScreenId.PRESENCE_ACTION:
                 NetworkUtils.showAlertById(122, 535);
                 return;
-            case 123:
+            case ScreenId.MESSAGE_SUMMARY:
                 ScreenManager.showScreen(AppState.getCurrentContact().showMessageSummary());
                 return;
-            case 124:
+            case ScreenId.EMPTY_SCREEN:
                 ScreenManager.showScreen(ScreenManager.createScreen(3479));
                 return;
-            case 125:
+            case ScreenId.BLOCK_CONTACT_LIST:
                 Account account3 = AppState.getAccount();
                 Vector contacts11 = NetworkUtils.newVector();
                 Enumeration contactEnum2 = account3.contactMap.elements();
@@ -948,7 +948,7 @@ public final class ScreenBuilder {
                 }
                 NetworkUtils.releaseVector(contacts11);
                 return;
-            case 126:
+            case ScreenId.UNBLOCK_CONTACT_LIST:
                 Account account4 = AppState.getAccount();
                 Vector contacts12 = NetworkUtils.newVector();
                 Enumeration contactEnum3 = account4.contactMap.elements();
@@ -965,7 +965,7 @@ public final class ScreenBuilder {
                 }
                 NetworkUtils.releaseVector(contacts12);
                 return;
-            case 127:
+            case ScreenId.DELETE_CONTACT_LIST:
                 Account account5 = AppState.getAccount();
                 Vector contacts13 = NetworkUtils.newVector();
                 Enumeration contactEnum4 = account5.contactMap.elements();
@@ -982,10 +982,10 @@ public final class ScreenBuilder {
                 }
                 NetworkUtils.releaseVector(contacts13);
                 return;
-            case 128:
+            case ScreenId.DELETE_MESSAGES:
                 NetworkUtils.showAlertBuffer(128, NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_DELETE_CONFIRM)).append(AppState.getCurrentContact().displayName).append(NetworkUtils.longToHex(16167)));
                 return;
-            case 129:
+            case ScreenId.MMP_ACCOUNT_SELECT:
                 StringBuffer sbAccounts = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNTS_HEADER));
                 Vector mmpAccounts = AccountManager.getMmpAccountList();
                 int i20 = 0;
@@ -1009,40 +1009,40 @@ public final class ScreenBuilder {
                         }
                     }
                 }
-            case 130:
+            case ScreenId.VCARD_ACTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(4892));
                 return;
-            case 131:
+            case ScreenId.PEOPLE_SEARCH:
                 ScreenManager.showScreen(ScreenManager.createScreen(2043));
                 return;
-            case 132:
+            case ScreenId.KEY_MAPPING:
                 ScreenManager.showScreen(ScreenManager.createScreen(2421));
                 return;
-            case 133:
+            case ScreenId.UNUSED_133:
                 return;
-            case 134:
+            case ScreenId.UNUSED_134:
                 return;
-            case 135:
+            case ScreenId.UNUSED_135:
                 return;
-            case 136:
+            case ScreenId.UNUSED_136:
                 return;
-            case 137:
+            case ScreenId.MAIN_SCREEN:
                 ScreenManager.showScreen(ScreenManager.createScreen(4369));
                 if (AppState.getBool(StateKeys.FLAG_HAS_XMPP_ACCOUNT)) {
                     AppController.processBackgroundTasks();
                     return;
                 }
                 return;
-            case 138:
+            case ScreenId.UNUSED_138:
                 return;
-            case 139:
+            case ScreenId.UNUSED_139:
                 return;
-            case 140:
+            case ScreenId.FORM_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(5090));
                 return;
-            case 141:
+            case ScreenId.UNUSED_141:
                 return;
-            case 142:
+            case ScreenId.GROUP_MEMBERS:
                 Screen screen15 = ScreenManager.createScreen(4159);
                 MrimContact mrimContact = (MrimContact) AppState.getCurrentContact();
                 MrimAccount mrimAccount4 = (MrimAccount) mrimContact.account;
@@ -1067,23 +1067,23 @@ public final class ScreenBuilder {
                 ScreenManager.showScreen(screen15);
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_4);
                 return;
-            case 143:
+            case ScreenId.CREATE_CHAT_ROOM:
                 AppState.setInt(StateKeys.FLAG_CHAT_ROOM_CREATED, 0);
                 AppState.setFromBuffer(StateKeys.SLOT_CHAT_NAME, NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_CHAT_NAME_PREFIX)).append(1 + (AppState.getInt(StateKeys.UI_COUNTER) % 1000)));
                 ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(4138), (MrimAccount) AppState.getAccount(), (Contact) null));
                 return;
-            case 144:
+            case ScreenId.EDIT_MEMBERS:
                 ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(4169), (Account) null, AppState.getCurrentContact()));
                 return;
-            case 145:
+            case ScreenId.CONTACT_DELETE_MRIM:
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_1);
                 NetworkUtils.showErrorOrConfirm(145, 727, ((MrimAccount) AppState.getCurrentContact().account).sendDeleteCommand(AppController.getStatusText()));
                 return;
-            case 146:
+            case ScreenId.GROUP_MANAGEMENT:
                 AppState.setBool(StateKeys.FLAG_HAS_MULTIPLE_MRIM, AccountManager.getMrimAccountList().size() > 1);
                 ScreenManager.showScreen(ScreenManager.createScreen(2523));
                 return;
-            case 147:
+            case ScreenId.BLOG_POST:
                 String[] langOptions = AppController.getLanguageOptions();
                 if (langOptions != null) {
                     AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) langOptions[0]);
@@ -1101,30 +1101,30 @@ public final class ScreenBuilder {
                     return;
                 }
                 break;
-            case 148:
+            case ScreenId.UNUSED_148:
                 return;
-            case 149:
+            case ScreenId.UNUSED_149:
                 return;
-            case 150:
+            case ScreenId.CONTACT_MODIFY:
                 AppController.prepareFormData();
                 MrimContact mrimContact3 = (MrimContact) AppState.getCurrentContact();
                 MrimAccount mrimAccount5 = (MrimAccount) mrimContact3.account;
                 NetworkUtils.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), mrimContact3, new Long(1L)})));
                 return;
-            case 151:
+            case ScreenId.EXT_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(3272));
                 return;
-            case 152:
+            case ScreenId.MAP_VIEW_SETTINGS:
                 ConnectionThread.showMapView();
                 ScreenManager.showScreen(ScreenManager.createScreen(3302));
                 return;
-            case 153:
+            case ScreenId.WIFI_NETWORKS:
                 ResourceManager.showWiFiNetworks();
                 return;
-            case 154:
+            case ScreenId.SHARE_LOCATION:
                 ScreenManager.showScreen(ScreenManager.createScreen(2085));
                 return;
-            case 155:
+            case ScreenId.VISIBLE_CONTACTS:
                 Vector contactIds = ConnectionThread.getAllContactIds();
                 int count = Utils.vectorSize(contactIds);
                 if (count == 0) {
@@ -1138,18 +1138,18 @@ public final class ScreenBuilder {
                 }
                 ScreenManager.showScreen(screen16);
                 return;
-            case 156:
+            case ScreenId.PHOTO_SELECTOR:
                 IOUtils.showPhotoSelector();
                 return;
-            case 157:
+            case ScreenId.PHOTO_VIEW:
                 ScreenManager.pushScreen(ScreenManager.createScreen(4381));
                 return;
-            case 158:
+            case ScreenId.MAP_SEARCH:
                 AppState.setInt(StateKeys.INT_SCREEN_BUILDER_ACTION, AppState.getBool(StateKeys.FLAG_MAP_MODE_ACTIVE) ? 407 : 408);
                 Conversation.updateStatusText(411);
                 ScreenManager.showScreen(ScreenManager.createScreen(2111));
                 return;
-            case 159:
+            case ScreenId.WIFI_ACCOUNT_LIST:
                 if (!AppState.getBool(StateKeys.FLAG_REGISTRATION_DONE)) {
                     Vector mmpAccounts2 = AccountManager.getMmpAccountList();
                     int size13 = mmpAccounts2.size();
@@ -1171,44 +1171,44 @@ public final class ScreenBuilder {
                 }
                 ResourceManager.showWiFiNetworks();
                 return;
-            case 160:
+            case ScreenId.PROFILE_EDIT:
                 StringBuffer stringBuffer = new StringBuffer(AppState.getString(StateKeys.STR_REGISTRATION_TEXT));
                 stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).accountProfile.gender + 780));
                 AppState.setFromBuffer(StateKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
                 ResourceManager.lastTileLoadTime = System.currentTimeMillis();
                 ScreenManager.showScreen(ScreenManager.createScreen(4258));
                 return;
-            case 161:
+            case ScreenId.SEND_CONFIRM:
                 NetworkUtils.showConfirmDialog(161, 872);
                 return;
-            case 162:
+            case ScreenId.CHAT_DETAIL:
                 Conversation.updateStatusText(411);
                 ScreenManager.showScreen(ScreenManager.createScreen(4270));
                 return;
-            case 163:
+            case ScreenId.NOTIFY_MESSAGE:
                 AppState.setInt(StateKeys.FLAG_CONVERSATION_ACTIVE, 0);
                 NetworkUtils.showAlertBuffer(163, NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_NOTIFY_MESSAGE)));
                 return;
-            case 164:
+            case ScreenId.REG_FORM:
                 NetworkUtils.processRegForm();
                 return;
-            case 165:
+            case ScreenId.ASYNC_CONFIRM:
                 NetworkUtils.showConfirmDialog(165, 505);
                 AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = NetworkUtils.newRequest();
                 return;
-            case 166:
+            case ScreenId.CHAT_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(4179));
                 return;
-            case 167:
+            case ScreenId.MAILBOX_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(2158));
                 return;
-            case 168:
+            case ScreenId.INVITE_TOS:
                 ResourceManager.showTosScreen();
                 return;
-            case 169:
+            case ScreenId.SAVED_LOCATIONS:
                 ResourceManager.showSavedLocations();
                 return;
-            case 170:
+            case ScreenId.FORM_LIST:
                 Screen screen18 = ScreenManager.createScreen(2176);
                 Vector vector2 = ((Conversation) AppState.pool[StateKeys.SLOT_TEMP_OBJECT_1]).items;
                 int size14 = vector2.size();
@@ -1223,11 +1223,11 @@ public final class ScreenBuilder {
                         screen18.addIconItemWithData(-1, listItem.getText(), 0, listItem);
                     }
                 }
-            case 171:
+            case ScreenId.UPDATE_ALERT:
                 NetworkUtils.showAlertById(171, 787);
                 AppState.setInt(StateKeys.FLAG_UPDATE_AVAILABLE, 1);
                 return;
-            case 172:
+            case ScreenId.MRIM_ACCOUNT_SELECT:
                 Screen screen19 = ScreenManager.createScreen(2186);
                 Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
                 int size15 = onlineAccounts.size();
@@ -1241,28 +1241,28 @@ public final class ScreenBuilder {
                         screen19.addIconItemWithData(156, mrimAccount7.login, 0, mrimAccount7);
                     }
                 }
-            case 173:
+            case ScreenId.INVITE_ALERT:
                 NetworkUtils.showAlertById(173, 416);
                 return;
-            case 174:
+            case ScreenId.MAP_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(2198));
                 return;
-            case 175:
+            case ScreenId.NEARBY_SETTINGS:
                 ScreenManager.showScreen(ScreenManager.createScreen(2218));
                 return;
-            case 176:
+            case ScreenId.PHONE_CONTACTS:
                 return;
-            case 177:
+            case ScreenId.SEARCH_ENTRY:
                 AppState.setCurrentEntity((Object) null);
                 ScreenManager.showScreen(ScreenManager.createScreen(2247));
                 return;
-            case 178:
+            case ScreenId.EDIT_SCREEN:
                 ScreenManager.showScreen(ScreenManager.createScreen(2279));
                 return;
-            case 179:
+            case ScreenId.SEND_DATA:
                 NetworkUtils.showConfirmDialog(179, 504);
                 return;
-            case 180:
+            case ScreenId.ASYNC_TASK:
                 break;
         }
         AppController.finishScreenBuild();
@@ -1294,61 +1294,61 @@ public final class ScreenBuilder {
         Object obj = menuItem == null ? null : menuItem.data;
         int nextScreen = 0;
         switch (ScreenManager.getCurrentScreen().screenId) {
-            case 1:
+            case ScreenId.ACCOUNT_LIST:
                 nextScreen = AppController.handleMapMenuOption(action);
                 break;
-            case 2:
+            case ScreenId.SETTINGS:
                 nextScreen = 0;
                 break;
-            case 3:
+            case ScreenId.STATUS_DIALOG:
                 nextScreen = IOUtils.handleStatusChange(action);
                 break;
-            case 4:
+            case ScreenId.CONTACT_LIST:
                 nextScreen = ContactListManager.getSelectedContact();
                 break;
-            case 5:
+            case ScreenId.ACCOUNTS_MENU:
                 nextScreen = AppController.handleChatSettingsOption(action);
                 break;
-            case 6:
+            case ScreenId.MAP:
                 if (!AppState.getBool(StateKeys.FLAG_MAP_TILES_PENDING)) {
                     ConnectionThread.toggleMapControls(currentScreen);
                 }
                 nextScreen = 0;
                 break;
-            case 7:
+            case ScreenId.MAP_MENU:
                 nextScreen = 0;
                 break;
-            case 8:
+            case ScreenId.SETTINGS_MENU:
                 nextScreen = AppController.handleSettingsOption(action);
                 break;
-            case 9:
+            case ScreenId.ABOUT:
                 nextScreen = 0;
                 break;
-            case 10:
-                nextScreen = 55;
+            case ScreenId.BLOCK_CONFIRM:
+                nextScreen = ScreenId.DELETE_CONFIRM;
                 break;
-            case 11:
+            case ScreenId.UNBLOCK_CONFIRM:
                 nextScreen = AppController.handleLeftKey();
                 break;
-            case 13:
+            case ScreenId.CONFIRM_EXIT:
                 nextScreen = -1;
                 break;
-            case 14:
+            case ScreenId.TRAFFIC_COST:
                 nextScreen = ResourceManager.parseBalance();
                 break;
-            case 15:
+            case ScreenId.ACCOUNT_SWITCHER:
                 nextScreen = AppController.handleMenuAction(title, obj);
                 break;
-            case 16:
+            case ScreenId.REGISTRATION:
                 nextScreen = 0;
                 break;
-            case 17:
+            case ScreenId.EMOTICON_DIALOG:
                 nextScreen = AppController.handleAccountOption(action);
                 break;
-            case 18:
+            case ScreenId.UNUSED_18:
                 nextScreen = 0;
                 break;
-            case 19:
+            case ScreenId.CONTACT_EDITOR:
                 NetworkUtils.processScreenForm();
                 String[] phoneNumbers = Utils.getPhoneNumbers(false);
                 Object[] objArr = new Object[phoneNumbers.length + 1];
@@ -1366,14 +1366,14 @@ public final class ScreenBuilder {
                 }
                 nextScreen = 0 != modifyResult ? NotificationHelper.showError(modifyResult) : 0;
                 break;
-            case 20:
+            case ScreenId.GPS_SETTINGS:
                 nextScreen = AppController.handleProfileAction(action);
                 break;
-            case 21:
+            case ScreenId.ADD_CONTACT:
                 NetworkUtils.processScreenForm();
                 nextScreen = AppState.getAccount() instanceof XmppProtocol ? ((XmppProtocol) AppState.getAccount()).addNewContact() : 0;
                 break;
-            case 22:
+            case ScreenId.ADD_MRIM_CONTACT:
                 NetworkUtils.processScreenForm();
                 MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
                 String displayName = Utils.defaultStr(AppState.getString(StateKeys.SLOT_INPUT_TEXT));
@@ -1410,16 +1410,16 @@ public final class ScreenBuilder {
                 }
                 nextScreen = 0 != sendResult2 ? NotificationHelper.showError(sendResult2) : 0;
                 break;
-            case 23:
+            case ScreenId.UNUSED_23:
                 nextScreen = 0;
                 break;
-            case 24:
+            case ScreenId.UNUSED_24:
                 nextScreen = 0;
                 break;
-            case 25:
+            case ScreenId.MULTI_ACCOUNT_LIST:
                 nextScreen = AppController.handleInputAction(action, obj);
                 break;
-            case 26:
+            case ScreenId.THEME_SETTINGS:
                 NetworkUtils.processScreenForm();
                 AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_COLOR_THEME));
                 ScreenManager.initializeFonts();
@@ -1428,29 +1428,29 @@ public final class ScreenBuilder {
                 ResourceManager.resetClock();
                 nextScreen = 0;
                 break;
-            case 27:
+            case ScreenId.NOTIFICATION_SETTINGS:
                 nextScreen = NetworkUtils.processScreenForm();
                 break;
-            case 28:
+            case ScreenId.SOUND_SETTINGS:
                 nextScreen = NetworkUtils.processScreenForm();
                 break;
-            case 29:
+            case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 NetworkUtils.processScreenForm();
                 if (AppState.getInt(StateKeys.INT_SETTINGS_THEME) != AppState.getInt(StateKeys.SETTING_MULTI_ACCOUNT)) {
                     TabBar.initialize();
                 }
                 nextScreen = 0;
                 break;
-            case 30:
+            case ScreenId.CONTACT_GROUP_MENU:
                 nextScreen = IOUtils.handleContactGroupAction(title, action);
                 break;
-            case 32:
+            case ScreenId.UNUSED_32:
                 nextScreen = ResourceManager.handleDropdownSelect(title, menuItem);
                 break;
-            case 33:
+            case ScreenId.PRIVACY_SETTINGS:
                 nextScreen = NetworkUtils.processScreenForm();
                 break;
-            case 34:
+            case ScreenId.TRAFFIC_STATS:
                 int intVal = AppState.getInt(StateKeys.INT_PERIOD_INDEX);
                 Account account = AppState.getAccount();
                 if (account != null) {
@@ -1464,70 +1464,70 @@ public final class ScreenBuilder {
                 }
                 nextScreen = 0;
                 break;
-            case 35:
+            case ScreenId.CONNECTION_SETTINGS:
                 nextScreen = AppController.handleConnectionOption(action);
                 break;
-            case 36:
+            case ScreenId.MAIL_ACCOUNT_LIST:
                 nextScreen = 0;
                 break;
-            case 37:
+            case ScreenId.CHAT_ROOMS:
                 nextScreen = -1;
                 break;
-            case 38:
+            case ScreenId.CHAT_ROOM_INIT:
                 nextScreen = 0;
                 break;
-            case 39:
+            case ScreenId.ACCOUNT_CHECKBOX_LIST:
                 nextScreen = AppController.handleAction(obj);
                 break;
-            case 40:
+            case ScreenId.CLEAR_SEARCH:
                 nextScreen = 0;
                 break;
-            case 41:
+            case ScreenId.CHAT_ROOM_MESSAGES:
                 nextScreen = -1;
                 break;
-            case 42:
+            case ScreenId.CHAT_ROOM_INVITE:
                 nextScreen = -1;
                 break;
-            case 43:
+            case ScreenId.CHAT_ROOM_VIEW:
                 AppState.setInt(StateKeys.INT_SCROLL_OFFSET, currentScreen.scrollOffset);
                 AppState.setObject(StateKeys.SLOT_MAP_POINT_2, (Object) title);
                 Message message = (Message) obj;
                 AppState.setObject(StateKeys.SLOT_MESSAGE_ID, (Object) (message != null ? message.from : null));
                 nextScreen = 0;
                 break;
-            case 44:
+            case ScreenId.SUBMIT_REGISTRATION:
                 nextScreen = -1;
                 break;
-            case 45:
+            case ScreenId.UNUSED_45:
                 nextScreen = -1;
                 break;
-            case 46:
+            case ScreenId.UNUSED_46:
                 nextScreen = 0;
                 break;
-            case 47:
+            case ScreenId.CONTACT_GROUPS:
                 nextScreen = 0;
                 break;
-            case 48:
+            case ScreenId.MESSAGE_DETAIL:
                 nextScreen = -1;
                 break;
-            case 49:
+            case ScreenId.CHAT_ROOM_CONFIG:
                 NetworkUtils.processScreenForm();
                 nextScreen = (AppState.getInt(StateKeys.INT_SETTINGS_ACTION) != 4 || 0 == (configResult = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(StateKeys.INT_SETTINGS_THEME) - 157) << 8) + 4))) ? 0 : NotificationHelper.showError(configResult);
                 break;
-            case 50:
+            case ScreenId.CHAT_VIEW_MODE:
                 NetworkUtils.processScreenForm();
                 nextScreen = 0;
                 break;
-            case 51:
+            case ScreenId.CHAT_ROOM_CONTEXT:
                 nextScreen = ResourceManager.handleChatRoomAction(title);
                 break;
-            case 52:
+            case ScreenId.MESSAGE_PREVIEW:
                 nextScreen = 0;
                 break;
-            case 53:
+            case ScreenId.COMPOSE_RECIPIENTS:
                 nextScreen = IOUtils.handleMailForwardAction(title);
                 break;
-            case 54:
+            case ScreenId.COMPOSE_MESSAGE:
                 NetworkUtils.processScreenForm();
                 Vector params = NetworkUtils.newVector();
                 StringBuffer sb = NetworkUtils.newStringBuffer();
@@ -1568,204 +1568,204 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode8;
                 break;
-            case 55:
+            case ScreenId.DELETE_CONFIRM:
                 nextScreen = -1;
                 break;
-            case 56:
+            case ScreenId.CONTACT_SETTINGS:
                 NetworkUtils.processScreenForm();
                 if (AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST)) {
                     AccountManager.updateTabBar();
                 }
                 nextScreen = 0;
                 break;
-            case 57:
+            case ScreenId.FIRST_RUN:
                 nextScreen = -1;
                 break;
-            case 58:
+            case ScreenId.GROUP_SELECTOR:
                 nextScreen = AppController.handleGroupSelection(action);
                 break;
-            case 59:
+            case ScreenId.VERSION_CHECK:
                 nextScreen = ResourceManager.applyVersionLabel();
                 break;
-            case 60:
+            case ScreenId.INPUT_DIALOG:
                 nextScreen = AppController.processInputText(title);
                 break;
-            case 61:
-                nextScreen = 42;
+            case ScreenId.CHAT_ROOM_ALERT:
+                nextScreen = ScreenId.CHAT_ROOM_INVITE;
                 break;
-            case 62:
+            case ScreenId.MAIL_MENU:
                 nextScreen = IOUtils.handleMailMenuAction(title, action);
                 break;
-            case 63:
+            case ScreenId.STATUS_INPUT:
                 AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas().updateCommands());
                 onScreenClosed();
-                nextScreen = 84;
+                nextScreen = ScreenId.STATUS_PREVIEW;
                 break;
-            case 64:
+            case ScreenId.ACCOUNT_SWITCH_OPTIONS:
                 nextScreen = AppController.handleAccountSwitchOption(action);
                 break;
-            case 65:
+            case ScreenId.PHONE_GROUPS:
                 NetworkUtils.processScreenForm();
                 AppState.pool[StateKeys.SLOT_SELECTED_GROUP] = Utils.splitNonEmpty(AppState.getCurrentMrimContact().contactGroupsStr, ',').elementAt(AppState.getInt(StateKeys.INT_SELECTED_GROUP_INDEX));
                 nextScreen = 0;
                 break;
-            case 66:
+            case ScreenId.ADD_CONTACT_INFO:
                 NetworkUtils.processScreenForm();
                 int addResult = ((ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO]).getAccount().validateGroupAdd(Utils.defaultStr(AppState.getString(StateKeys.SLOT_GROUP_ADD_NAME)), Utils.defaultStr(AppState.getString(StateKeys.SLOT_GROUP_ADD_DISPLAY)), Utils.defaultStr(AppState.getString(StateKeys.SLOT_GROUP_ADD_GROUP)), (ContactGroup) AppState.getVector(StateKeys.VEC_GROUP_LIST).elementAt(AppState.getInt(StateKeys.INT_GROUP_OPERATION_RESULT)), AppState.getBool(StateKeys.FLAG_GROUP_ADD_RESULT));
                 nextScreen = 0 != addResult ? NotificationHelper.showError(addResult) : 0;
                 break;
-            case 67:
+            case ScreenId.SOFTKEY_MENU:
                 nextScreen = AppController.handleSoftKeyAction(title);
                 break;
-            case 68:
+            case ScreenId.SEARCH_RESULTS:
                 nextScreen = AppController.handleEnterKey();
                 break;
-            case 69:
+            case ScreenId.CREATE_GROUP:
                 NetworkUtils.processScreenForm();
                 int createResult = AppState.getAccount().validateGroupCreate(Utils.defaultStr(AppState.getString(StateKeys.SLOT_NEW_GROUP_NAME)));
                 nextScreen = 0 != createResult ? NotificationHelper.showError(createResult) : 0;
                 break;
-            case 70:
+            case ScreenId.RENAME_GROUP:
                 NetworkUtils.processScreenForm();
                 int renameResult = AppState.getCurrentGroup().rename(Utils.defaultStr(AppState.getString(StateKeys.SLOT_SEARCH_RESULT)));
                 nextScreen = 0 != renameResult ? NotificationHelper.showError(renameResult) : 0;
                 break;
-            case 71:
+            case ScreenId.DELETE_ENTITY:
                 nextScreen = ResourceManager.deleteSelectedEntity();
                 break;
-            case 72:
+            case ScreenId.BATCH_DELETE:
                 nextScreen = -1;
                 break;
-            case 73:
+            case ScreenId.SEARCH_RESULT_LIST:
                 AppState.pool[StateKeys.SLOT_CONTACT_INFO] = obj;
                 nextScreen = 0;
                 break;
-            case 74:
+            case ScreenId.UNUSED_74:
                 nextScreen = -1;
                 break;
-            case 75:
+            case ScreenId.UNUSED_75:
                 nextScreen = -1;
                 break;
-            case 76:
+            case ScreenId.XMPP_LOGIN:
                 nextScreen = XmppMailRuProtocol.performLogin();
                 break;
-            case 77:
+            case ScreenId.ACCOUNT_DELETE_CONFIRM:
                 nextScreen = AppController.handleInviteResult();
                 break;
-            case 78:
+            case ScreenId.SHARE_MEDIA:
                 nextScreen = -1;
                 break;
-            case 79:
+            case ScreenId.SHARE_ALERT:
                 onScreenClosed();
                 onScreenClosed();
                 nextScreen = 0;
                 break;
-            case 80:
+            case ScreenId.NOTIFICATION_OPTIONS:
                 nextScreen = AppController.handleNotificationOption(action);
                 break;
-            case 81:
+            case ScreenId.SEND_MAIL:
                 nextScreen = -1;
                 break;
-            case 82:
+            case ScreenId.REPLY_MAIL:
                 nextScreen = -1;
                 break;
-            case 83:
+            case ScreenId.PRIVACY_MODE:
                 nextScreen = AppController.handleHashKey();
                 break;
-            case 84:
+            case ScreenId.STATUS_PREVIEW:
                 nextScreen = ResourceManager.handleMessageInputAction(title, action);
                 break;
-            case 85:
+            case ScreenId.CONTACT_DELETE:
                 nextScreen = -1;
                 break;
-            case 86:
+            case ScreenId.GROUP_MOVE:
                 nextScreen = AppController.handleSearchAction(obj);
                 break;
-            case 87:
+            case ScreenId.CHAT_STATUS:
                 nextScreen = ResourceManager.handleChatInputAction(title);
                 break;
-            case 88:
+            case ScreenId.THEME_OPTIONS:
                 nextScreen = AppController.handleThemeOption(action);
                 break;
-            case 89:
+            case ScreenId.TOS_SCREEN:
                 nextScreen = -1;
                 break;
-            case 90:
+            case ScreenId.EVENT_QUEUE:
                 nextScreen = AppController.handleEventObject(obj);
                 break;
-            case 91:
+            case ScreenId.VIEW_MODE:
                 nextScreen = AppController.getThemeBackground(action);
                 break;
-            case 92:
+            case ScreenId.CONTACT_MENU:
                 nextScreen = IOUtils.handleContactMenuAction(title, action);
                 break;
-            case 93:
+            case ScreenId.EMOTICON_PICKER:
                 nextScreen = AppController.handleSoundOption(action);
                 break;
-            case 94:
+            case ScreenId.PHONE_INPUT:
                 nextScreen = AppController.processPhoneInput(title);
                 break;
-            case 95:
+            case ScreenId.SERVER_ADDRESS:
                 nextScreen = AppController.validateServerAddress(title);
                 break;
-            case 96:
-                nextScreen = ((ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_1]).isMrimContact() ? 130 : ((ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_1]).isXmppContact() ? -1 : AppState.getInt(StateKeys.INT_CURRENT_SCREEN_ID);
+            case ScreenId.CONTACT_INFO_VIEW:
+                nextScreen = ((ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_1]).isMrimContact() ? ScreenId.VCARD_ACTIONS : ((ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_1]).isXmppContact() ? -1 : AppState.getInt(StateKeys.INT_CURRENT_SCREEN_ID);
                 break;
-            case 97:
+            case ScreenId.REGION_SELECTOR:
                 nextScreen = AppController.handleSearchResultAction(obj);
                 break;
-            case 98:
+            case ScreenId.PHONE_INPUT_ALT:
                 nextScreen = AppController.processPhoneInput(title);
                 break;
-            case 99:
+            case ScreenId.URL_OPEN:
                 nextScreen = AppController.openUrl(title);
                 break;
-            case 100:
+            case ScreenId.MAP_POINTS:
                 nextScreen = IOUtils.handleMapSearch(action, obj);
                 break;
-            case 101:
+            case ScreenId.CONVERSATION:
                 nextScreen = AppController.handleConversationAction(obj);
                 break;
-            case 102:
+            case ScreenId.USER_PROFILE:
                 nextScreen = -1;
                 break;
-            case 103:
-                nextScreen = ((ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO]).isMrimContact() ? 130 : AppState.getInt(StateKeys.INT_CURRENT_SCREEN_ID);
+            case ScreenId.CONTACT_INFO_DETAIL:
+                nextScreen = ((ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO]).isMrimContact() ? ScreenId.VCARD_ACTIONS : AppState.getInt(StateKeys.INT_CURRENT_SCREEN_ID);
                 break;
-            case 104:
+            case ScreenId.COLOR_PICKER:
                 nextScreen = AppController.getThemeColor(action);
                 break;
-            case 105:
+            case ScreenId.XMPP_LOGIN_ALT:
                 int loginResult = XmppMailRuProtocol.performLogin();
-                nextScreen = 0 == loginResult ? 4 : loginResult;
+                nextScreen = 0 == loginResult ? ScreenId.CONTACT_LIST : loginResult;
                 break;
-            case 106:
+            case ScreenId.CAPTCHA:
                 nextScreen = 0;
                 break;
-            case 107:
+            case ScreenId.PROFILE_LOAD:
                 nextScreen = -1;
                 break;
-            case 108:
+            case ScreenId.CONTACT_LIST_KEY:
                 nextScreen = AppController.handleContactListKey();
                 break;
-            case 109:
+            case ScreenId.VERSION_SELECT:
                 nextScreen = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(action);
                 break;
-            case 110:
+            case ScreenId.MAP_TOOLTIP:
                 NetworkUtils.processScreenForm();
                 nextScreen = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_1))) ? NotificationHelper.showError(352) : 0;
                 break;
-            case 111:
+            case ScreenId.PEOPLE_NEARBY:
                 nextScreen = AppController.handleMapSearchAction(obj);
                 break;
-            case 112:
+            case ScreenId.CLEAR_NOTIFICATIONS:
                 nextScreen = -1;
                 break;
-            case 113:
+            case ScreenId.MAP_CONTEXT_MENU:
                 nextScreen = XmppMailRuProtocol.handleMapAction(action);
                 break;
-            case 114:
+            case ScreenId.SAVE_LOCATION:
                 NetworkUtils.processScreenForm();
                 String locationName = Utils.defaultStr(AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_2));
                 if (StringUtils.isEmpty(locationName)) {
@@ -1789,7 +1789,7 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode7;
                 break;
-            case 115:
+            case ScreenId.MESSAGE_INPUT:
                 NetworkUtils.processScreenForm();
                 String messageText4 = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SCREEN_VALUE));
                 if (StringUtils.isEmpty(messageText4)) {
@@ -1808,50 +1808,50 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode6;
                 break;
-            case 116:
+            case ScreenId.MAP_ROUTE:
                 nextScreen = AppController.handleMapResultAction(obj);
                 break;
-            case 117:
+            case ScreenId.MAP_STATUS:
                 nextScreen = AppController.processLoginField(title);
                 break;
-            case 118:
+            case ScreenId.SEND_TO_CONTACT:
                 nextScreen = AppController.handleFileAction(obj);
                 break;
-            case 119:
+            case ScreenId.CHAT_ROOM_OPTIONS:
                 nextScreen = AppController.handleChatRoomOption(action);
                 break;
-            case 120:
+            case ScreenId.MAP_ROUTE_SELECT:
                 nextScreen = AppController.handleIncomingCall(obj);
                 break;
-            case 121:
+            case ScreenId.CHAT_LIST_OPTIONS:
                 nextScreen = AppController.handleChatListOption(action);
                 break;
-            case 122:
+            case ScreenId.PRESENCE_ACTION:
                 nextScreen = AppController.handlePresenceAction();
                 break;
-            case 123:
+            case ScreenId.MESSAGE_SUMMARY:
                 nextScreen = AppController.handleLocationAction(obj);
                 break;
-            case 124:
+            case ScreenId.EMPTY_SCREEN:
                 nextScreen = 0;
                 break;
-            case 125:
+            case ScreenId.BLOCK_CONTACT_LIST:
                 Contact selectedContact = (Contact) obj;
                 nextScreen = (null == selectedContact || 0 == (blockResult = selectedContact.validateBlock())) ? 0 : NotificationHelper.showError(blockResult);
                 break;
-            case 126:
+            case ScreenId.UNBLOCK_CONTACT_LIST:
                 Contact contactToDelete = (Contact) obj;
                 nextScreen = (null == contactToDelete || 0 == (unblockResult = contactToDelete.validateUnblock())) ? 0 : NotificationHelper.showError(unblockResult);
                 break;
-            case 127:
+            case ScreenId.DELETE_CONTACT_LIST:
                 Contact contactToBlock = (Contact) obj;
                 nextScreen = (null == contactToBlock || 0 == (deleteResult = contactToBlock.validateDelete())) ? 0 : NotificationHelper.showError(deleteResult);
                 break;
-            case 128:
+            case ScreenId.DELETE_MESSAGES:
                 AppState.getCurrentContact().initMessageBuffer();
-                nextScreen = 4;
+                nextScreen = ScreenId.CONTACT_LIST;
                 break;
-            case 129:
+            case ScreenId.MMP_ACCOUNT_SELECT:
                 NetworkUtils.processScreenForm();
                 AppState.setInt(StateKeys.MAP_INITIALIZED, 1);
                 int intVal2 = AppState.getInt(StateKeys.INT_ACCOUNT_INDEX);
@@ -1863,43 +1863,43 @@ public final class ScreenBuilder {
                 }
                 nextScreen = 0;
                 break;
-            case 130:
+            case ScreenId.VCARD_ACTIONS:
                 nextScreen = AppController.handleScreenAction(action);
                 break;
-            case 131:
+            case ScreenId.PEOPLE_SEARCH:
                 nextScreen = AppController.processSearchQuery(title);
                 break;
-            case 132:
+            case ScreenId.KEY_MAPPING:
                 nextScreen = AppController.mapKeyToAction(action);
                 break;
-            case 133:
+            case ScreenId.UNUSED_133:
                 nextScreen = 0;
                 break;
-            case 134:
+            case ScreenId.UNUSED_134:
                 nextScreen = 0;
                 break;
-            case 135:
+            case ScreenId.UNUSED_135:
                 nextScreen = 0;
                 break;
-            case 136:
+            case ScreenId.UNUSED_136:
                 nextScreen = 0;
                 break;
-            case 137:
+            case ScreenId.MAIN_SCREEN:
                 nextScreen = -1;
                 break;
-            case 138:
+            case ScreenId.UNUSED_138:
                 nextScreen = 0;
                 break;
-            case 139:
-                nextScreen = 129;
+            case ScreenId.UNUSED_139:
+                nextScreen = ScreenId.MMP_ACCOUNT_SELECT;
                 break;
-            case 140:
+            case ScreenId.FORM_SETTINGS:
                 nextScreen = NetworkUtils.processScreenForm();
                 break;
-            case 141:
+            case ScreenId.UNUSED_141:
                 nextScreen = -1;
                 break;
-            case 142:
+            case ScreenId.GROUP_MEMBERS:
                 if (obj == null) {
                     errorCode5 = -1;
                 } else if (obj instanceof String) {
@@ -1910,7 +1910,7 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode5;
                 break;
-            case 143:
+            case ScreenId.CREATE_CHAT_ROOM:
                 NetworkUtils.processScreenForm();
                 String chatName = Utils.defaultStr(AppState.getString(StateKeys.SLOT_CHAT_NAME));
                 if (StringUtils.isEmpty(chatName)) {
@@ -1949,7 +1949,7 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode4;
                 break;
-            case 144:
+            case ScreenId.EDIT_MEMBERS:
                 Vector checkedItems2 = IOUtils.getCheckedItems(currentScreen, 0);
                 if (checkedItems2.size() == 0) {
                     errorCode3 = NotificationHelper.showError(775);
@@ -1972,13 +1972,13 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode3;
                 break;
-            case 145:
+            case ScreenId.CONTACT_DELETE_MRIM:
                 nextScreen = -1;
                 break;
-            case 146:
+            case ScreenId.GROUP_MANAGEMENT:
                 nextScreen = AppController.handleGroupRename(action);
                 break;
-            case 147:
+            case ScreenId.BLOG_POST:
                 NetworkUtils.processScreenForm();
                 String messageText6 = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SCREEN_VALUE));
                 if (StringUtils.isEmpty(messageText6)) {
@@ -1991,25 +1991,25 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode2;
                 break;
-            case 148:
+            case ScreenId.UNUSED_148:
                 nextScreen = 0;
                 break;
-            case 149:
+            case ScreenId.UNUSED_149:
                 nextScreen = 0;
                 break;
-            case 150:
+            case ScreenId.CONTACT_MODIFY:
                 nextScreen = -1;
                 break;
-            case 151:
+            case ScreenId.EXT_SETTINGS:
                 nextScreen = AppController.handleExtSettingsOption(action);
                 break;
-            case 152:
+            case ScreenId.MAP_VIEW_SETTINGS:
                 nextScreen = AppController.handleContactOption(action);
                 break;
-            case 153:
+            case ScreenId.WIFI_NETWORKS:
                 nextScreen = ResourceManager.setSelectedObject(obj);
                 break;
-            case 154:
+            case ScreenId.SHARE_LOCATION:
                 NetworkUtils.processScreenForm();
                 String msgId = AppState.getString(StateKeys.SLOT_MSG_ID_1);
                 long lon2 = MapRenderer.currentLon;
@@ -2045,7 +2045,7 @@ public final class ScreenBuilder {
                 MapRenderer.needsRedraw = true;
                 nextScreen = 0;
                 break;
-            case 155:
+            case ScreenId.VISIBLE_CONTACTS:
                 Vector contactIds = ConnectionThread.getAllContactIds();
                 StringBuffer sb2 = NetworkUtils.newStringBuffer();
                 Vector vector = currentScreen.menuItems;
@@ -2060,31 +2060,31 @@ public final class ScreenBuilder {
                 AppState.setObject(StateKeys.HIDDEN_CONTACTS_LIST, (Object) hiddenStr);
                 nextScreen = 0;
                 break;
-            case 156:
+            case ScreenId.PHOTO_SELECTOR:
                 nextScreen = IOUtils.applyPhotoSelection();
                 break;
-            case 157:
+            case ScreenId.PHOTO_VIEW:
                 nextScreen = 0;
                 break;
-            case 158:
+            case ScreenId.MAP_SEARCH:
                 nextScreen = AppController.handleViewOption(action);
                 break;
-            case 159:
+            case ScreenId.WIFI_ACCOUNT_LIST:
                 nextScreen = AppController.handleItemAction(obj);
                 break;
-            case 160:
+            case ScreenId.PROFILE_EDIT:
                 nextScreen = ResourceManager.syncAndReturn();
                 break;
-            case 161:
+            case ScreenId.SEND_CONFIRM:
                 nextScreen = -1;
                 break;
-            case 162:
+            case ScreenId.CHAT_DETAIL:
                 nextScreen = AppController.handleChatDetailOption(action);
                 break;
-            case 163:
+            case ScreenId.NOTIFY_MESSAGE:
                 nextScreen = AppController.handleSendKey();
                 break;
-            case 164:
+            case ScreenId.REG_FORM:
                 NetworkUtils.processScreenForm();
                 String loginLower = XmppMailRuProtocol.getLoginLowerCase();
                 String fullLogin = loginLower;
@@ -2103,56 +2103,56 @@ public final class ScreenBuilder {
                 }
                 nextScreen = errorCode;
                 break;
-            case 165:
+            case ScreenId.ASYNC_CONFIRM:
                 nextScreen = -1;
                 break;
-            case 166:
+            case ScreenId.CHAT_OPTIONS:
                 nextScreen = AppController.handleChatOption(action);
                 break;
-            case 167:
+            case ScreenId.MAILBOX_OPTIONS:
                 nextScreen = AppController.handleMailboxOption(action);
                 break;
-            case 168:
+            case ScreenId.INVITE_TOS:
                 nextScreen = ResourceManager.collectInvitees(currentScreen);
                 break;
-            case 169:
+            case ScreenId.SAVED_LOCATIONS:
                 nextScreen = ResourceManager.applyLocationProfile(obj);
                 break;
-            case 170:
+            case ScreenId.FORM_LIST:
                 nextScreen = AppController.handleFormSubmit(obj);
                 break;
-            case 171:
+            case ScreenId.UPDATE_ALERT:
                 nextScreen = AppController.handleRightKey();
                 break;
-            case 172:
+            case ScreenId.MRIM_ACCOUNT_SELECT:
                 nextScreen = AppController.handleObjectAction(obj);
                 break;
-            case 173:
+            case ScreenId.INVITE_ALERT:
                 nextScreen = AppController.handleInviteAction();
                 break;
-            case 174:
+            case ScreenId.MAP_OPTIONS:
                 nextScreen = 0;
                 break;
-            case 175:
+            case ScreenId.NEARBY_SETTINGS:
                 NetworkUtils.processScreenForm();
                 if (AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
                     IOUtils.requestNearbyPeople();
                 }
                 nextScreen = 0;
                 break;
-            case 176:
+            case ScreenId.PHONE_CONTACTS:
                 nextScreen = AppController.handleStarAction(obj);
                 break;
-            case 177:
+            case ScreenId.SEARCH_ENTRY:
                 nextScreen = ResourceManager.handleSearchResultAction(action);
                 break;
-            case 178:
+            case ScreenId.EDIT_SCREEN:
                 nextScreen = AppController.handleEditAction(action);
                 break;
-            case 179:
+            case ScreenId.SEND_DATA:
                 nextScreen = -1;
                 break;
-            case 180:
+            case ScreenId.ASYNC_TASK:
                 nextScreen = -1;
                 break;
         }
@@ -2193,190 +2193,190 @@ public final class ScreenBuilder {
         Object obj = menuItem == null ? null : menuItem.data;
         int result = 0;
         switch (i) {
-            case 1:
+            case ScreenId.ACCOUNT_LIST:
                 result = 0;
                 break;
-            case 2:
+            case ScreenId.SETTINGS:
                 result = 0;
                 break;
-            case 3:
+            case ScreenId.STATUS_DIALOG:
                 result = 0;
                 break;
-            case 4:
+            case ScreenId.CONTACT_LIST:
                 result = ContactListManager.onContactAction(obj);
                 break;
-            case 5:
+            case ScreenId.ACCOUNTS_MENU:
                 result = 0;
                 break;
-            case 6:
+            case ScreenId.MAP:
                 result = ConnectionThread.handleMapBack(currentScreen);
                 break;
-            case 7:
+            case ScreenId.MAP_MENU:
                 result = 0;
                 break;
-            case 8:
+            case ScreenId.SETTINGS_MENU:
                 result = 0;
                 break;
-            case 9:
+            case ScreenId.ABOUT:
                 result = 0;
                 break;
-            case 10:
+            case ScreenId.BLOCK_CONFIRM:
                 result = 0;
                 break;
-            case 11:
+            case ScreenId.UNBLOCK_CONFIRM:
                 result = 0;
                 break;
-            case 13:
+            case ScreenId.CONFIRM_EXIT:
                 result = 0;
                 break;
-            case 14:
+            case ScreenId.TRAFFIC_COST:
                 result = 0;
                 break;
-            case 15:
+            case ScreenId.ACCOUNT_SWITCHER:
                 result = 0;
                 break;
-            case 16:
+            case ScreenId.REGISTRATION:
                 result = 0;
                 break;
-            case 17:
+            case ScreenId.EMOTICON_DIALOG:
                 result = 0;
                 break;
-            case 18:
+            case ScreenId.UNUSED_18:
                 result = 0;
                 break;
-            case 19:
+            case ScreenId.CONTACT_EDITOR:
                 result = 0;
                 break;
-            case 20:
+            case ScreenId.GPS_SETTINGS:
                 result = 0;
                 break;
-            case 21:
+            case ScreenId.ADD_CONTACT:
                 result = 0;
                 break;
-            case 22:
+            case ScreenId.ADD_MRIM_CONTACT:
                 result = 0;
                 break;
-            case 23:
+            case ScreenId.UNUSED_23:
                 result = 0;
                 break;
-            case 24:
+            case ScreenId.UNUSED_24:
                 result = 0;
                 break;
-            case 25:
+            case ScreenId.MULTI_ACCOUNT_LIST:
                 result = 0;
                 break;
-            case 26:
+            case ScreenId.THEME_SETTINGS:
                 AppController.needsLayoutUpdate = true;
                 result = 0;
                 break;
-            case 27:
+            case ScreenId.NOTIFICATION_SETTINGS:
                 result = 0;
                 break;
-            case 28:
+            case ScreenId.SOUND_SETTINGS:
                 result = 0;
                 break;
-            case 29:
+            case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 result = 0;
                 break;
-            case 30:
+            case ScreenId.CONTACT_GROUP_MENU:
                 result = 0;
                 break;
-            case 32:
+            case ScreenId.UNUSED_32:
                 result = 0;
                 break;
-            case 33:
+            case ScreenId.PRIVACY_SETTINGS:
                 result = 0;
                 break;
-            case 34:
+            case ScreenId.TRAFFIC_STATS:
                 result = 0;
                 break;
-            case 35:
+            case ScreenId.CONNECTION_SETTINGS:
                 result = 0;
                 break;
-            case 36:
+            case ScreenId.MAIL_ACCOUNT_LIST:
                 result = ResourceManager.selectMailAccount(obj);
                 break;
-            case 37:
+            case ScreenId.CHAT_ROOMS:
                 result = 0;
                 break;
-            case 38:
+            case ScreenId.CHAT_ROOM_INIT:
                 result = 0;
                 break;
-            case 39:
+            case ScreenId.ACCOUNT_CHECKBOX_LIST:
                 result = 0;
                 break;
-            case 40:
+            case ScreenId.CLEAR_SEARCH:
                 result = 0;
                 break;
-            case 41:
+            case ScreenId.CHAT_ROOM_MESSAGES:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 result = 0;
                 break;
-            case 42:
+            case ScreenId.CHAT_ROOM_INVITE:
                 result = 0;
                 break;
-            case 43:
+            case ScreenId.CHAT_ROOM_VIEW:
                 result = 0;
                 break;
-            case 44:
+            case ScreenId.SUBMIT_REGISTRATION:
                 result = 0;
                 break;
-            case 45:
+            case ScreenId.UNUSED_45:
                 result = 0;
                 break;
-            case 46:
+            case ScreenId.UNUSED_46:
                 result = 0;
                 break;
-            case 47:
+            case ScreenId.CONTACT_GROUPS:
                 result = 0;
                 break;
-            case 48:
+            case ScreenId.MESSAGE_DETAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 result = 0;
                 break;
-            case 49:
+            case ScreenId.CHAT_ROOM_CONFIG:
                 result = 0;
                 break;
-            case 50:
+            case ScreenId.CHAT_VIEW_MODE:
                 result = 0;
                 break;
-            case 51:
+            case ScreenId.CHAT_ROOM_CONTEXT:
                 result = 0;
                 break;
-            case 52:
+            case ScreenId.MESSAGE_PREVIEW:
                 result = 0;
                 break;
-            case 53:
+            case ScreenId.COMPOSE_RECIPIENTS:
                 result = 0;
                 break;
-            case 54:
+            case ScreenId.COMPOSE_MESSAGE:
                 result = 0;
                 break;
-            case 55:
+            case ScreenId.DELETE_CONFIRM:
                 result = -1;
                 break;
-            case 56:
+            case ScreenId.CONTACT_SETTINGS:
                 result = 0;
                 break;
-            case 57:
+            case ScreenId.FIRST_RUN:
                 result = 0;
                 break;
-            case 58:
+            case ScreenId.GROUP_SELECTOR:
                 result = 0;
                 break;
-            case 59:
+            case ScreenId.VERSION_CHECK:
                 result = 0;
                 break;
-            case 60:
+            case ScreenId.INPUT_DIALOG:
                 result = 0;
                 break;
-            case 61:
-                result = 12;
+            case ScreenId.CHAT_ROOM_ALERT:
+                result = ScreenId.CLOSE;
                 break;
-            case 62:
+            case ScreenId.MAIL_MENU:
                 result = 0;
                 break;
-            case 63:
+            case ScreenId.STATUS_INPUT:
                 String inputText = XmppContactGroup.getTextInputValue();
                 if (!StringUtils.isEmpty(inputText) && 0 != (sendMsgResult = AppState.getCurrentContact().sendMessage(inputText))) {
                     onScreenClosed();
@@ -2387,373 +2387,373 @@ public final class ScreenBuilder {
                 AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas());
                 onScreenClosed();
-                result = 40;
+                result = ScreenId.CLEAR_SEARCH;
                 break;
-            case 64:
+            case ScreenId.ACCOUNT_SWITCH_OPTIONS:
                 result = 0;
                 break;
-            case 65:
+            case ScreenId.PHONE_GROUPS:
                 result = 0;
                 break;
-            case 66:
+            case ScreenId.ADD_CONTACT_INFO:
                 result = 0;
                 break;
-            case 67:
+            case ScreenId.SOFTKEY_MENU:
                 result = 0;
                 break;
-            case 68:
+            case ScreenId.SEARCH_RESULTS:
                 result = AppController.handleBackKey();
                 break;
-            case 69:
+            case ScreenId.CREATE_GROUP:
                 result = 0;
                 break;
-            case 70:
+            case ScreenId.RENAME_GROUP:
                 result = 0;
                 break;
-            case 71:
+            case ScreenId.DELETE_ENTITY:
                 result = 0;
                 break;
-            case 72:
+            case ScreenId.BATCH_DELETE:
                 result = 0;
                 break;
-            case 73:
+            case ScreenId.SEARCH_RESULT_LIST:
                 result = 0;
                 break;
-            case 74:
+            case ScreenId.UNUSED_74:
                 result = 0;
                 break;
-            case 75:
+            case ScreenId.UNUSED_75:
                 result = 0;
                 break;
-            case 76:
+            case ScreenId.XMPP_LOGIN:
                 result = 0;
                 break;
-            case 77:
+            case ScreenId.ACCOUNT_DELETE_CONFIRM:
                 result = 0;
                 break;
-            case 78:
+            case ScreenId.SHARE_MEDIA:
                 result = 0;
                 break;
-            case 79:
+            case ScreenId.SHARE_ALERT:
                 result = 0;
                 break;
-            case 80:
+            case ScreenId.NOTIFICATION_OPTIONS:
                 result = 0;
                 break;
-            case 81:
+            case ScreenId.SEND_MAIL:
                 result = 0;
                 break;
-            case 82:
+            case ScreenId.REPLY_MAIL:
                 result = 0;
                 break;
-            case 83:
+            case ScreenId.PRIVACY_MODE:
                 result = AppController.handleHashKey();
                 break;
-            case 84:
+            case ScreenId.STATUS_PREVIEW:
                 onScreenClosed();
                 result = 0;
                 break;
-            case 85:
+            case ScreenId.CONTACT_DELETE:
                 AppController.clearMapPoints();
                 result = 0;
                 break;
-            case 86:
+            case ScreenId.GROUP_MOVE:
                 result = 0;
                 break;
-            case 87:
+            case ScreenId.CHAT_STATUS:
                 result = 0;
                 break;
-            case 88:
+            case ScreenId.THEME_OPTIONS:
                 result = 0;
                 break;
-            case 89:
+            case ScreenId.TOS_SCREEN:
                 result = 0;
                 break;
-            case 90:
+            case ScreenId.EVENT_QUEUE:
                 result = 0;
                 break;
-            case 91:
+            case ScreenId.VIEW_MODE:
                 result = 0;
                 break;
-            case 92:
+            case ScreenId.CONTACT_MENU:
                 result = 0;
                 break;
-            case 93:
+            case ScreenId.EMOTICON_PICKER:
                 result = 0;
                 break;
-            case 94:
+            case ScreenId.PHONE_INPUT:
                 result = 0;
                 break;
-            case 95:
+            case ScreenId.SERVER_ADDRESS:
                 result = 0;
                 break;
-            case 96:
+            case ScreenId.CONTACT_INFO_VIEW:
                 AppController.clearMapPoints();
                 result = 0;
                 break;
-            case 97:
+            case ScreenId.REGION_SELECTOR:
                 result = 0;
                 break;
-            case 98:
+            case ScreenId.PHONE_INPUT_ALT:
                 result = 0;
                 break;
-            case 99:
+            case ScreenId.URL_OPEN:
                 result = 0;
                 break;
-            case 100:
+            case ScreenId.MAP_POINTS:
                 AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
                 AppState.setInt(StateKeys.FLAG_LOADING, 0);
                 result = 0;
                 break;
-            case 101:
+            case ScreenId.CONVERSATION:
                 AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
                 AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
                 result = 0;
                 break;
-            case 102:
+            case ScreenId.USER_PROFILE:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 result = 0;
                 break;
-            case 103:
+            case ScreenId.CONTACT_INFO_DETAIL:
                 result = 0;
                 break;
-            case 104:
+            case ScreenId.COLOR_PICKER:
                 result = 0;
                 break;
-            case 105:
-                result = 12;
+            case ScreenId.XMPP_LOGIN_ALT:
+                result = ScreenId.CLOSE;
                 break;
-            case 106:
+            case ScreenId.CAPTCHA:
                 result = 0;
                 break;
-            case 107:
+            case ScreenId.PROFILE_LOAD:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 result = 0;
                 break;
-            case 108:
+            case ScreenId.CONTACT_LIST_KEY:
                 result = 0;
                 break;
-            case 109:
+            case ScreenId.VERSION_SELECT:
                 result = 0;
                 break;
-            case 110:
+            case ScreenId.MAP_TOOLTIP:
                 result = 0;
                 break;
-            case 111:
+            case ScreenId.PEOPLE_NEARBY:
                 result = 0;
                 break;
-            case 112:
+            case ScreenId.CLEAR_NOTIFICATIONS:
                 result = 0;
                 break;
-            case 113:
+            case ScreenId.MAP_CONTEXT_MENU:
                 result = 0;
                 break;
-            case 114:
+            case ScreenId.SAVE_LOCATION:
                 result = 0;
                 break;
-            case 115:
+            case ScreenId.MESSAGE_INPUT:
                 result = 0;
                 break;
-            case 116:
+            case ScreenId.MAP_ROUTE:
                 AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
                 result = 0;
                 break;
-            case 117:
+            case ScreenId.MAP_STATUS:
                 result = 0;
                 break;
-            case 118:
+            case ScreenId.SEND_TO_CONTACT:
                 result = 0;
                 break;
-            case 119:
+            case ScreenId.CHAT_ROOM_OPTIONS:
                 result = 0;
                 break;
-            case 120:
+            case ScreenId.MAP_ROUTE_SELECT:
                 AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
                 result = 0;
                 break;
-            case 121:
+            case ScreenId.CHAT_LIST_OPTIONS:
                 result = 0;
                 break;
-            case 122:
+            case ScreenId.PRESENCE_ACTION:
                 result = 0;
                 break;
-            case 123:
+            case ScreenId.MESSAGE_SUMMARY:
                 result = 0;
                 break;
-            case 124:
+            case ScreenId.EMPTY_SCREEN:
                 result = 0;
                 break;
-            case 125:
+            case ScreenId.BLOCK_CONTACT_LIST:
                 result = 0;
                 break;
-            case 126:
+            case ScreenId.UNBLOCK_CONTACT_LIST:
                 result = 0;
                 break;
-            case 127:
+            case ScreenId.DELETE_CONTACT_LIST:
                 result = 0;
                 break;
-            case 128:
+            case ScreenId.DELETE_MESSAGES:
                 result = 0;
                 break;
-            case 129:
+            case ScreenId.MMP_ACCOUNT_SELECT:
                 result = 0;
                 break;
-            case 130:
+            case ScreenId.VCARD_ACTIONS:
                 result = 0;
                 break;
-            case 131:
+            case ScreenId.PEOPLE_SEARCH:
                 result = 0;
                 break;
-            case 132:
+            case ScreenId.KEY_MAPPING:
                 result = 0;
                 break;
-            case 133:
+            case ScreenId.UNUSED_133:
                 result = 0;
                 break;
-            case 134:
+            case ScreenId.UNUSED_134:
                 result = 0;
                 break;
-            case 135:
+            case ScreenId.UNUSED_135:
                 result = 0;
                 break;
-            case 136:
+            case ScreenId.UNUSED_136:
                 result = 0;
                 break;
-            case 137:
-                result = 12;
+            case ScreenId.MAIN_SCREEN:
+                result = ScreenId.CLOSE;
                 break;
-            case 138:
+            case ScreenId.UNUSED_138:
                 result = 0;
                 break;
-            case 139:
-                result = 6;
+            case ScreenId.UNUSED_139:
+                result = ScreenId.MAP;
                 break;
-            case 140:
+            case ScreenId.FORM_SETTINGS:
                 result = 0;
                 break;
-            case 141:
+            case ScreenId.UNUSED_141:
                 result = 0;
                 break;
-            case 142:
+            case ScreenId.GROUP_MEMBERS:
                 result = 0;
                 break;
-            case 143:
+            case ScreenId.CREATE_CHAT_ROOM:
                 result = 0;
                 break;
-            case 144:
+            case ScreenId.EDIT_MEMBERS:
                 result = 0;
                 break;
-            case 145:
+            case ScreenId.CONTACT_DELETE_MRIM:
                 result = 0;
                 break;
-            case 146:
+            case ScreenId.GROUP_MANAGEMENT:
                 result = 0;
                 break;
-            case 147:
+            case ScreenId.BLOG_POST:
                 result = 0;
                 break;
-            case 148:
+            case ScreenId.UNUSED_148:
                 result = 0;
                 break;
-            case 149:
+            case ScreenId.UNUSED_149:
                 result = 0;
                 break;
-            case 150:
-                result = 12;
+            case ScreenId.CONTACT_MODIFY:
+                result = ScreenId.CLOSE;
                 break;
-            case 151:
+            case ScreenId.EXT_SETTINGS:
                 result = 0;
                 break;
-            case 152:
+            case ScreenId.MAP_VIEW_SETTINGS:
                 result = 0;
                 break;
-            case 153:
+            case ScreenId.WIFI_NETWORKS:
                 result = 0;
                 break;
-            case 154:
+            case ScreenId.SHARE_LOCATION:
                 result = 0;
                 break;
-            case 155:
+            case ScreenId.VISIBLE_CONTACTS:
                 result = 0;
                 break;
-            case 156:
+            case ScreenId.PHOTO_SELECTOR:
                 result = 0;
                 break;
-            case 157:
+            case ScreenId.PHOTO_VIEW:
                 result = 0;
                 break;
-            case 158:
+            case ScreenId.MAP_SEARCH:
                 result = 0;
                 break;
-            case 159:
+            case ScreenId.WIFI_ACCOUNT_LIST:
                 result = 0;
                 break;
-            case 160:
+            case ScreenId.PROFILE_EDIT:
                 onScreenClosed();
                 result = 0;
                 break;
-            case 161:
-                result = 4;
+            case ScreenId.SEND_CONFIRM:
+                result = ScreenId.CONTACT_LIST;
                 break;
-            case 162:
+            case ScreenId.CHAT_DETAIL:
                 result = 0;
                 break;
-            case 163:
+            case ScreenId.NOTIFY_MESSAGE:
                 result = 0;
                 break;
-            case 164:
+            case ScreenId.REG_FORM:
                 result = 0;
                 break;
-            case 165:
+            case ScreenId.ASYNC_CONFIRM:
                 result = 0;
                 break;
-            case 166:
+            case ScreenId.CHAT_OPTIONS:
                 result = 0;
                 break;
-            case 167:
+            case ScreenId.MAILBOX_OPTIONS:
                 result = 0;
                 break;
-            case 168:
+            case ScreenId.INVITE_TOS:
                 result = 0;
                 break;
-            case 169:
+            case ScreenId.SAVED_LOCATIONS:
                 ((MrimAccount) AppState.getAccount()).isHighlighted = true;
                 result = 0;
                 break;
-            case 170:
+            case ScreenId.FORM_LIST:
                 result = 0;
                 break;
-            case 171:
+            case ScreenId.UPDATE_ALERT:
                 AppState.setInt(StateKeys.FLAG_APP_STARTING, 0);
                 ConnectionThread.toggleScrollMode();
-                result = 6;
+                result = ScreenId.MAP;
                 break;
-            case 172:
+            case ScreenId.MRIM_ACCOUNT_SELECT:
                 result = 0;
                 break;
-            case 173:
+            case ScreenId.INVITE_ALERT:
                 AppState.setAccount((Object) null);
-                result = 12;
+                result = ScreenId.CLOSE;
                 break;
-            case 174:
+            case ScreenId.MAP_OPTIONS:
                 result = 0;
                 break;
-            case 175:
+            case ScreenId.NEARBY_SETTINGS:
                 result = 0;
                 break;
-            case 176:
-                result = 12;
+            case ScreenId.PHONE_CONTACTS:
+                result = ScreenId.CLOSE;
                 break;
-            case 177:
+            case ScreenId.SEARCH_ENTRY:
                 result = 0;
                 break;
-            case 178:
+            case ScreenId.EDIT_SCREEN:
                 result = 0;
                 break;
-            case 179:
+            case ScreenId.SEND_DATA:
                 result = 0;
                 break;
-            case 180:
+            case ScreenId.ASYNC_TASK:
                 result = 0;
                 break;
         }
@@ -2783,25 +2783,25 @@ public final class ScreenBuilder {
     public static final void onScreenClosed() {
         AppController.needsRepaint = true;
         switch (ScreenManager.getCurrentScreen().screenId) {
-            case 2:
+            case ScreenId.SETTINGS:
                 AppState.setBool(StateKeys.SETTING_STATUS_BAR_VISIBLE, AppState.getBool(StateKeys.FLAG_FULLSCREEN_REQUESTED));
                 AppState.getCanvas().updateFullScreenMode();
                 AppState.setInt(StateKeys.FLAG_FULLSCREEN_ACTIVE, 0);
                 break;
-            case 6:
+            case ScreenId.MAP:
                 TabBar.scrollEnabled = false;
                 TabBar.removeSearchTab();
                 break;
-            case 9:
+            case ScreenId.ABOUT:
                 AppController.clearPreviewState();
                 break;
-            case 14:
+            case ScreenId.TRAFFIC_COST:
                 AppState.clearIndex(StateKeys.SLOT_SCREEN_VALUE);
                 break;
-            case 19:
+            case ScreenId.CONTACT_EDITOR:
                 AppController.clearFormFields();
                 break;
-            case 21:
+            case ScreenId.ADD_CONTACT:
                 int accountType = AppState.getAccount().getType();
                 if (accountType != 0 && accountType == 1) {
                     AppState.clearIndex(StateKeys.SLOT_SEARCH_FIELD_1);
@@ -2816,136 +2816,136 @@ public final class ScreenBuilder {
                     StringUtils.resetRegForm();
                     break;
                 }
-            case 22:
+            case ScreenId.ADD_MRIM_CONTACT:
                 AppController.clearFormFields();
                 break;
-            case 25:
+            case ScreenId.MULTI_ACCOUNT_LIST:
                 AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
                 break;
-            case 26:
+            case ScreenId.THEME_SETTINGS:
                 AppState.setInt(StateKeys.SETTING_COLOR_THEME, AppState.getInt(StateKeys.INT_SETTINGS_THEME));
                 break;
-            case 36:
+            case ScreenId.MAIL_ACCOUNT_LIST:
                 TabBar.removeSettingsTab();
                 break;
-            case 37:
+            case ScreenId.CHAT_ROOMS:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 39:
+            case ScreenId.ACCOUNT_CHECKBOX_LIST:
                 AppState.clearIndex(StateKeys.VEC_FILTERED_ACCOUNTS);
                 break;
-            case 40:
+            case ScreenId.CLEAR_SEARCH:
                 AppState.clearIndex(StateKeys.SLOT_CURRENT_MSG_TEXT);
                 AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
                 break;
-            case 41:
+            case ScreenId.CHAT_ROOM_MESSAGES:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 42:
+            case ScreenId.CHAT_ROOM_INVITE:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 48:
+            case ScreenId.MESSAGE_DETAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 51:
+            case ScreenId.CHAT_ROOM_CONTEXT:
                 AppState.clearIndex(StateKeys.SLOT_UNREAD_COUNT_TEXT);
                 break;
-            case 54:
+            case ScreenId.COMPOSE_MESSAGE:
                 AppState.clearRange(StateKeys.SLOT_MSG_EXTRA_2, StateKeys.SLOT_TRAFFIC_STATUS_TEXT);
                 break;
-            case 59:
+            case ScreenId.VERSION_CHECK:
                 AppState.clearIndex(StateKeys.SLOT_SCREEN_TITLE);
                 AppState.clearIndex(StateKeys.SLOT_SCREEN_SUBTITLE);
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 66:
+            case ScreenId.ADD_CONTACT_INFO:
                 AppState.clearIndex(StateKeys.SLOT_CONTACT_INFO);
                 AppState.clearRange(StateKeys.SLOT_GROUP_ADD_NAME, StateKeys.VEC_GROUP_LIST);
                 break;
-            case 67:
+            case ScreenId.SOFTKEY_MENU:
                 IOUtils.setSelectedItems((Object) null);
                 break;
-            case 68:
+            case ScreenId.SEARCH_RESULTS:
                 AppController.resetSearchResults();
                 break;
-            case 69:
+            case ScreenId.CREATE_GROUP:
                 AppState.clearIndex(StateKeys.SLOT_NEW_GROUP_NAME);
                 break;
-            case 70:
+            case ScreenId.RENAME_GROUP:
                 AppState.clearIndex(StateKeys.SLOT_SEARCH_RESULT);
                 break;
-            case 72:
+            case ScreenId.BATCH_DELETE:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 73:
+            case ScreenId.SEARCH_RESULT_LIST:
                 AppController.clearSearchResults2();
                 break;
-            case 76:
+            case ScreenId.XMPP_LOGIN:
                 XmppMailRuProtocol.clearLoginFields();
                 break;
-            case 78:
+            case ScreenId.SHARE_MEDIA:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 81:
+            case ScreenId.SEND_MAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 82:
+            case ScreenId.REPLY_MAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
-            case 85:
+            case ScreenId.CONTACT_DELETE:
                 if (AppState.getCurrentContact() != null) {
                     AppState.getCurrentContact().mo148L();
                     break;
                 }
                 break;
-            case 96:
+            case ScreenId.CONTACT_INFO_VIEW:
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_1);
                 break;
-            case 100:
+            case ScreenId.MAP_POINTS:
                 AppState.clearIndex(StateKeys.SLOT_SEARCH_QUERY);
                 break;
-            case 101:
+            case ScreenId.CONVERSATION:
                 AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
                 AppState.setInt(StateKeys.FLAG_LOADING, 0);
                 break;
-            case 105:
+            case ScreenId.XMPP_LOGIN_ALT:
                 XmppMailRuProtocol.clearLoginFields();
                 break;
-            case 108:
+            case ScreenId.CONTACT_LIST_KEY:
                 AccountManager.updateTabBar();
                 AppState.clearIndex(StateKeys.SLOT_TEMP_ACCOUNT);
                 break;
-            case 113:
+            case ScreenId.MAP_CONTEXT_MENU:
                 XmppMailRuProtocol.mapContextItem = null;
                 break;
-            case 120:
+            case ScreenId.MAP_ROUTE_SELECT:
                 AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
                 break;
-            case 122:
+            case ScreenId.PRESENCE_ACTION:
                 NetworkUtils.releaseVector(AppState.getVector(StateKeys.VEC_ACCOUNT_SELECTION));
                 AppState.clearIndex(StateKeys.VEC_ACCOUNT_SELECTION);
                 break;
-            case 138:
+            case ScreenId.UNUSED_138:
                 AppController.refreshContactList();
                 break;
-            case 142:
+            case ScreenId.GROUP_MEMBERS:
                 AppState.clearIndex(StateKeys.OBJ_PHOTO_CACHE_1);
                 break;
-            case 143:
+            case ScreenId.CREATE_CHAT_ROOM:
                 AppState.clearIndex(StateKeys.SLOT_CHAT_NAME);
                 break;
-            case 147:
+            case ScreenId.BLOG_POST:
                 AppController.clearPreviewState();
                 break;
-            case 154:
+            case ScreenId.SHARE_LOCATION:
                 AppState.clearIndex(StateKeys.SLOT_MSG_ID_1);
                 AppState.clearIndex(StateKeys.SLOT_MSG_ID_2);
                 break;
-            case 156:
+            case ScreenId.PHOTO_SELECTOR:
                 IOUtils.photoUrlList = null;
                 IOUtils.contactIdList = null;
                 break;
-            case 164:
+            case ScreenId.REG_FORM:
                 AppState.clearIndex(StateKeys.SLOT_CHAT_NAME);
                 AppState.clearIndex(StateKeys.SLOT_PASSWORD);
                 AppState.clearIndex(StateKeys.SLOT_SCREEN_TITLE);
@@ -2955,16 +2955,16 @@ public final class ScreenBuilder {
                 AppController.clearPreviewState();
                 StringUtils.resetRegForm();
                 break;
-            case 168:
+            case ScreenId.INVITE_TOS:
                 AppController.clearFormFields();
                 break;
-            case 176:
+            case ScreenId.PHONE_CONTACTS:
                 AppState.clearRange(StateKeys.RANGE_PHONE_CONTACT_START, StateKeys.OBJ_SEARCH_RESULT);
                 break;
-            case 179:
+            case ScreenId.SEND_DATA:
                 AppState.clearIndex(StateKeys.SLOT_SCREEN_TITLE);
                 break;
-            case 180:
+            case ScreenId.ASYNC_TASK:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
         }

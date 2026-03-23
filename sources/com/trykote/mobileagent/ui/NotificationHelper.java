@@ -20,19 +20,19 @@ public final class NotificationHelper {
             ScreenBuilder.onScreenClosed();
         }
         AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, i);
-        return 112;
+        return ScreenId.CLEAR_NOTIFICATIONS;
     }
 
     /* renamed from: e */
     public static final void showNotification(String str) {
-        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, 112);
+        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
         AppState.setObject(StateKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
         clearNotifications();
     }
 
     /* renamed from: m */
     public static final void showMessageById(int i) {
-        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, 112);
+        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
         AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, i);
         clearNotifications();
     }

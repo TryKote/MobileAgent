@@ -569,7 +569,7 @@ public final class ConnectionThread {
         if (AppState.getBool(StateKeys.FLAG_REFRESH_CONTACTS)) {
             return;
         }
-        ScreenBuilder.openScreen(178);
+        ScreenBuilder.openScreen(ScreenId.EDIT_SCREEN);
     }
 
     /* renamed from: g */

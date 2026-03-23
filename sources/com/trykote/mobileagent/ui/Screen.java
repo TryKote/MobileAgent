@@ -138,7 +138,7 @@ public final class Screen {
 
     public Screen() {
         this.layoutMode = 2;
-        this.screenId = 63;
+        this.screenId = ScreenId.STATUS_INPUT;
     }
 
     /* renamed from: a */
@@ -496,7 +496,7 @@ public final class Screen {
                 }
             }
         }
-        if (this.screenId == 6) {
+        if (this.screenId == ScreenId.MAP) {
             int i36 = this.offsetX + 2;
             int i37 = this.offsetY + this.contentTop;
             g.setClip(i36, i37, this.containerWidth, this.contentHeight);
@@ -530,7 +530,7 @@ public final class Screen {
             AppState.setInt(StateKeys.FLAG_MAP_SCROLLING, 0);
             return;
         }
-        if (this.screenId != 4) {
+        if (this.screenId != ScreenId.CONTACT_LIST) {
             return;
         }
         g.setClip(this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
@@ -598,11 +598,11 @@ public final class Screen {
             IOUtils.postSelectEvent();
             return;
         }
-        if (this.screenId == 6) {
+        if (this.screenId == ScreenId.MAP) {
             AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 0);
             return;
         }
-        if (this.screenId != 4) {
+        if (this.screenId != ScreenId.CONTACT_LIST) {
             if (this.layoutMode == 1) {
                 this.selectedIndex = (this.selectedIndex + 1) % this.menuItems.size();
                 invalidateLayout();
@@ -711,7 +711,7 @@ public final class Screen {
     */
     public final void scrollUp() {
         boolean z;
-        if (this.screenId == 6) {
+        if (this.screenId == ScreenId.MAP) {
             AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 2);
             return;
         }
@@ -920,7 +920,7 @@ public final class Screen {
 
     /* renamed from: p */
     public final void scrollDown() {
-        if (this.screenId == 6) {
+        if (this.screenId == ScreenId.MAP) {
             ConnectionThread.handleMapSwitch(this);
             return;
         }
@@ -1291,7 +1291,7 @@ public final class Screen {
         int i6 = i2 - this.offsetY;
         int i7 = i3 - this.offsetX;
         int i8 = i4 - this.offsetY;
-        if (this.screenId == 6) {
+        if (this.screenId == ScreenId.MAP) {
             ConnectionThread.toggleMapControls(this);
             MapRenderer.onTap(i5, i6 - this.contentTop);
             return true;

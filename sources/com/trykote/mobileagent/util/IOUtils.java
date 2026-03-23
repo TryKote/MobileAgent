@@ -467,17 +467,17 @@ public final class IOUtils {
     public static final int handleMapPointAction(Object obj) {
         if (AppState.getBool(StateKeys.FLAG_NEW_MESSAGE)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
-            return 6;
+            return ScreenId.MAP;
         }
         if (!AppState.getBool(StateKeys.FLAG_LOADING)) {
             ConnectionThread.navigateToPoint((MapPoint) obj, true);
-            return 6;
+            return ScreenId.MAP;
         }
         MrimAccount account = (MrimAccount) AppState.getAccount();
         account.setLocationProfile((MapPoint) obj);
         account.syncProfile();
         AppState.setInt(StateKeys.FLAG_LOADING, 0);
-        return 160;
+        return ScreenId.PROFILE_EDIT;
     }
 
     /* renamed from: f */
@@ -1092,7 +1092,7 @@ public final class IOUtils {
             if (0 != iM993f) {
                 return NotificationHelper.showError(iM993f);
             }
-            return 40;
+            return ScreenId.CLEAR_SEARCH;
         }
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
@@ -1124,40 +1124,40 @@ public final class IOUtils {
             case 0:
                 MrimAccount account = (MrimAccount) acctM616i;
                 if (i == 6) {
-                    return 17;
+                    return ScreenId.EMOTICON_DIALOG;
                 }
                 if (i == 5) {
                     int iMo120l = account.disconnect();
                     if (0 != iMo120l) {
                         return NotificationHelper.showError(iMo120l);
                     }
-                    return 4;
+                    return ScreenId.CONTACT_LIST;
                 }
                 int iM721d = account.setConfiguration(new int[]{1, 260, 2, 516, 3}[i]);
                 if (0 != iM721d) {
                     return NotificationHelper.showError(iM721d);
                 }
-                return 4;
+                return ScreenId.CONTACT_LIST;
             case 1:
                 MmpProtocol protocol = (MmpProtocol) acctM616i;
                 if (i == 13) {
-                    return 17;
+                    return ScreenId.EMOTICON_DIALOG;
                 }
                 if (i == 14) {
-                    return 109;
+                    return ScreenId.VERSION_SELECT;
                 }
                 if (i == 12) {
                     int iMo120l2 = protocol.disconnect();
                     if (0 != iMo120l2) {
                         return NotificationHelper.showError(iMo120l2);
                     }
-                    return 4;
+                    return ScreenId.CONTACT_LIST;
                 }
                 int iM918b = protocol.updateConnectionMode(new int[]{0, 32, 256, 2, 1, 4, 16, 24576, 20480, 16384, 12288, 8193}[i]);
                 if (0 != iM918b) {
                     return NotificationHelper.showError(iM918b);
                 }
-                return 4;
+                return ScreenId.CONTACT_LIST;
             default:
                 XmppProtocol c0005ae = (XmppProtocol) acctM616i;
                 if (i == 0) {
@@ -1165,13 +1165,13 @@ public final class IOUtils {
                     if (0 != iMo120l3) {
                         return NotificationHelper.showError(iMo120l3);
                     }
-                    return 4;
+                    return ScreenId.CONTACT_LIST;
                 }
                 int iM103b = c0005ae.setStatusMode(i);
                 if (0 != iM103b) {
                     return NotificationHelper.showError(iM103b);
                 }
-                return 4;
+                return ScreenId.CONTACT_LIST;
         }
     }
 

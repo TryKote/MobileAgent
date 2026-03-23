@@ -118,13 +118,13 @@ public abstract class ContactListManager {
         Account abstractC0037h;
         int iM1250M = -1;
         if (AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] != null) {
-            return 122;
+            return ScreenId.PRESENCE_ACTION;
         }
         if (!AppState.getBool(StateKeys.FLAG_CLEANUP_DONE)) {
             AppState.setInt(StateKeys.FLAG_CLEANUP_DONE, 1);
             if (System.currentTimeMillis() - AppState.getLong(StateKeys.TIMESTAMP_FIRST_RUN) > 604800000) {
                 AppState.setInt(StateKeys.FLAG_SHOW_NOTIFICATION, 0);
-                return 57;
+                return ScreenId.FIRST_RUN;
             }
         }
         updateState();

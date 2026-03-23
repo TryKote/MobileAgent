@@ -677,7 +677,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 0:
                 AppState.setCurrentEntity(item);
                 ScreenBuilder.onScreenClosed();
-                return 63;
+                return ScreenId.STATUS_INPUT;
             case 1:
                 if (itemType == 8) {
                     AppState.setInt(StateKeys.INT_ASYNC_TASK_ID, 0);
@@ -686,12 +686,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     AppState.setCurrentEntity(mapContextItem);
                 }
                 ScreenBuilder.onScreenClosed();
-                return 102;
+                return ScreenId.USER_PROFILE;
             case 2:
                 if (itemType == 3) {
                     AppState.setCurrentEntity(mapContextItem);
                     ScreenBuilder.onScreenClosed();
-                    return 85;
+                    return ScreenId.CONTACT_DELETE;
                 }
                 AppState.setCurrentEntity((Object) null);
                 Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
@@ -700,7 +700,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 1));
                 ScreenBuilder.onScreenClosed();
-                return 85;
+                return ScreenId.CONTACT_DELETE;
             case 3:
                 Vector onlineAccounts2 = AccountManager.getOnlineMrimAccounts();
                 if (onlineAccounts2 == null || onlineAccounts2.size() <= 0) {
@@ -708,26 +708,26 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 ((MrimAccount) onlineAccounts2.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 2));
                 ScreenBuilder.onScreenClosed();
-                return 6;
+                return ScreenId.MAP;
             case 4:
                 ScreenBuilder.onScreenClosed();
                 AppState.pool[StateKeys.SLOT_TEMP_OBJECT_1] = (Conversation) item;
-                return 170;
+                return ScreenId.FORM_LIST;
             case 5:
                 ResourceManager.dialPhoneUrl(VCard.formatPhoneContactUrl((PhoneContact) item, 0), (PhoneContact) item, 0);
-                return 12;
+                return ScreenId.CLOSE;
             case 6:
                 AppState.setAccount(item);
                 ScreenBuilder.onScreenClosed();
-                return 167;
+                return ScreenId.MAILBOX_OPTIONS;
             case 7:
                 AppState.setAccount(item);
                 ScreenBuilder.onScreenClosed();
-                return 151;
+                return ScreenId.EXT_SETTINGS;
             case 8:
             case 9:
             default:
-                return 6;
+                return ScreenId.MAP;
             case 10:
                 if (MapRenderer.hasRouteEndpoints()) {
                     MmpContact.clearRouteProgress();
@@ -746,10 +746,10 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 MmpContact.nearestPoints.addElement(new Object[]{null, coords});
                 MapRenderer.needsRedraw = true;
                 if (!MapRenderer.hasRouteEndpoints()) {
-                    return 6;
+                    return ScreenId.MAP;
                 }
                 Conversation.loadContacts();
-                return 6;
+                return ScreenId.MAP;
             case 11:
                 if (MapRenderer.hasRouteEndpoints()) {
                     MmpContact.clearRouteProgress();
@@ -762,58 +762,58 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setBool(StateKeys.FLAG_TYPING_VISIBLE, AppState.getBool(StateKeys.FLAG_TYPING_INDICATOR));
                 MapRenderer.needsRedraw = true;
                 if (!MapRenderer.hasRouteEndpoints()) {
-                    return 6;
+                    return ScreenId.MAP;
                 }
                 Conversation.loadContacts();
-                return 6;
+                return ScreenId.MAP;
             case 12:
                 MmpContact.clearLocationData();
                 MapRenderer.needsRedraw = true;
-                return 6;
+                return ScreenId.MAP;
             case 13:
                 ListItem tooltipItem3 = MapRenderer.tooltipItem;
                 if (tooltipItem3 != null && tooltipItem3.isSelected()) {
                     tooltipItem3.select();
                 }
                 MapRenderer.needsRedraw = true;
-                return 6;
+                return ScreenId.MAP;
             case 14:
                 ConnectionThread.setRouteStart();
                 if (MmpContact.hasSecondToken()) {
-                    return 6;
+                    return ScreenId.MAP;
                 }
                 AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 1);
-                return 158;
+                return ScreenId.MAP_SEARCH;
             case 15:
                 ConnectionThread.setRouteEnd();
                 if (MmpContact.hasFirstToken()) {
-                    return 6;
+                    return ScreenId.MAP;
                 }
                 AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 0);
-                return 158;
+                return ScreenId.MAP_SEARCH;
             case 16:
-                return 159;
+                return ScreenId.WIFI_ACCOUNT_LIST;
             case 17:
-                return 114;
+                return ScreenId.SAVE_LOCATION;
             case 18:
                 ScreenBuilder.onScreenClosed();
                 Vector onlineAccounts3 = AccountManager.getOnlineMrimAccounts();
                 if (onlineAccounts3.size() > 1) {
-                    return 172;
+                    return ScreenId.MRIM_ACCOUNT_SELECT;
                 }
                 AppState.setAccount(onlineAccounts3.elementAt(0));
-                return 173;
+                return ScreenId.INVITE_ALERT;
             case 19:
-                return 110;
+                return ScreenId.MAP_TOOLTIP;
             case 20:
                 ConnectionThread.removeRoutePoint((MapPoint) mapContextItem);
-                return 6;
+                return ScreenId.MAP;
             case 21:
                 Conversation.incrementZoom();
-                return 6;
+                return ScreenId.MAP;
             case 22:
                 Conversation.decrementZoom();
-                return 6;
+                return ScreenId.MAP;
         }
     }
 

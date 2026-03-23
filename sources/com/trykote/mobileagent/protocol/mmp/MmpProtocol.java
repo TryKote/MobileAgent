@@ -961,7 +961,7 @@ public final class MmpProtocol extends Account {
             return 0;
         }
         trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
-        return 4;
+        return ScreenId.CONTACT_LIST;
     }
 
     @Override // p000.Account

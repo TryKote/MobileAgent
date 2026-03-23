@@ -469,7 +469,7 @@ public final class ResourceManager {
         AppState.clearIndex(StateKeys.SLOT_SEARCH_LABEL_1);
         AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
         AppState.clearIndex(StateKeys.SLOT_SELECTED_GROUP);
-        return 65;
+        return ScreenId.PHONE_GROUPS;
     }
 
     /* renamed from: h */
@@ -548,7 +548,7 @@ public final class ResourceManager {
         XmppContactGroup.saveMapPoints(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), 225);
         AppState.setInt(StateKeys.FLAG_LOADING, 0);
         mrimAccount.isHighlighted = true;
-        return 160;
+        return ScreenId.PROFILE_EDIT;
     }
 
     /* renamed from: a */
@@ -597,13 +597,13 @@ public final class ResourceManager {
                 }
                 ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(AppController.getCurrentSearchResult().userId, 1));
                 ScreenBuilder.onScreenClosed();
-                return 85;
+                return ScreenId.CONTACT_DELETE;
             case 1:
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
                 ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(AppController.getCurrentSearchResult().userId, 2));
-                return 6;
+                return ScreenId.MAP;
             case 2:
                 return AppController.showPeopleNearby();
             case 3:
@@ -779,7 +779,7 @@ public final class ResourceManager {
         AppState.setObject(StateKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(str));
         String str4 = AppState.emptyStr;
         AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_STATUS_TEXT, NetworkUtils.newStringBuffer().append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_ENABLED) ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : str4).append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_TYPE) ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(StateKeys.STR_TRAFFIC_LABEL)));
-        return 54;
+        return ScreenId.COMPOSE_MESSAGE;
     }
 
     /* renamed from: e */
@@ -944,14 +944,14 @@ public final class ResourceManager {
             return NotificationHelper.showError(groupError);
         }
         if (!(obj instanceof Contact)) {
-            return 4;
+            return ScreenId.CONTACT_LIST;
         }
         Contact selectedContact = (Contact) obj;
         int contactError = selectedContact.account.validateResend(selectedContact);
         if (0 != contactError) {
             return NotificationHelper.showError(contactError);
         }
-        return 4;
+        return ScreenId.CONTACT_LIST;
     }
 
     /* renamed from: r */
@@ -1068,7 +1068,7 @@ public final class ResourceManager {
         }
         invitees.addElement(((MrimAccount) AppState.getAccount()).login);
         AppState.pool[StateKeys.SLOT_SCREEN_TITLE] = invitees;
-        return 179;
+        return ScreenId.SEND_DATA;
     }
 
     /* renamed from: a */
