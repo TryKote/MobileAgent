@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -52,18 +53,18 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final int handleMailMenuAction(String str, int i) {
-        String messageId = AppState.getString(1346);
+        String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
         wrapInVector(messageId);
-        int chatRoomId = AppState.getInt(1513);
+        int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Message message = account.findChatRoomById(chatRoomId).getMessage(messageId);
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         XmppMailRuProtocol.getFirstRecipient(toList);
-        boolean needsAuth = AppState.getBool(96);
-        String replyPrefix = AppState.getString(198549);
-        String forwardPrefix = AppState.getString(198546);
+        boolean needsAuth = AppState.getBool(StateKeys.SETTING_AUTH_REQUIRED);
+        String replyPrefix = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
+        String forwardPrefix = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
         String body = AppState.emptyStr;
         if (i == 48) {
             ScreenBuilder.onScreenClosed();
@@ -91,17 +92,17 @@ public final class IOUtils {
             return 0;
         }
         if (StringUtils.matchesKey(855, str)) {
-            AppState.setInt(1525, 2);
+            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 2);
             return 0;
         }
         if (StringUtils.matchesKey(856, str)) {
-            AppState.setInt(1525, 1);
+            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 1);
             return 0;
         }
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        AppState.setInt(1527, account.findDefaultChatRoom().id);
+        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.findDefaultChatRoom().id);
         return 0;
     }
 
@@ -116,17 +117,17 @@ public final class IOUtils {
         try {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(590318).writeCompressed(i + 430).writeIntLE(3145472).toByteArray());
             Object resource = registerResource((Object) byteArrayInputStream);
-            AppState.pool[1264] = resource;
+            AppState.pool[StateKeys.RANGE_MEDIA_RESOURCES_START] = resource;
             if (null != resource) {
-                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, AppState.getString(655831));
-                AppState.pool[1265] = registerResource(playerCreatePlayer);
+                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_2));
+                AppState.pool[StateKeys.OBJ_MEDIA_PLAYER] = registerResource(playerCreatePlayer);
                 try {
                     playerCreatePlayer.realize();
                 } catch (Throwable unused) {
                 }
-                if (AppState.getBool(87)) {
+                if (AppState.getBool(StateKeys.SETTING_SOUND_ENABLED)) {
                     try {
-                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(AppState.getString(852449))).setLevel(AppState.getInt(88));
+                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(AppState.getString(StateKeys.STR_RES_MEDIA_CONTROL))).setLevel(AppState.getInt(StateKeys.SETTING_VOLUME_LEVEL));
                     } catch (Throwable unused2) {
                     }
                 }
@@ -146,7 +147,7 @@ public final class IOUtils {
 
     /* renamed from: m */
     private static final void stopSound() {
-        Player player = (Player) AppState.pool[1265];
+        Player player = (Player) AppState.pool[StateKeys.OBJ_MEDIA_PLAYER];
         if (player != null) {
             unregisterResource(player);
             try {
@@ -158,8 +159,8 @@ public final class IOUtils {
             } catch (Throwable unused2) {
             }
         }
-        closeInput((InputStream) AppState.pool[1264]);
-        AppState.clearRange(1264, 1265);
+        closeInput((InputStream) AppState.pool[StateKeys.RANGE_MEDIA_RESOURCES_START]);
+        AppState.clearRange(StateKeys.RANGE_MEDIA_RESOURCES_START, StateKeys.OBJ_MEDIA_PLAYER);
     }
 
     /* renamed from: a */
@@ -187,49 +188,49 @@ public final class IOUtils {
             for (int i = 0; i < count; i++) {
                 sb.append(((ContactGroup) vector.elementAt(i)).name).append((char) 0);
             }
-            AppState.setFromBuffer(1323, sb);
-            AppState.pool[1324] = vector;
-            AppState.setInt(1507, 0);
+            AppState.setFromBuffer(StateKeys.SLOT_MENU_ITEM_1, sb);
+            AppState.pool[StateKeys.VEC_GROUP_LIST] = vector;
+            AppState.setInt(StateKeys.INT_GROUP_OPERATION_RESULT, 0);
         }
         return count;
     }
 
     /* renamed from: b */
     public static final void showAddContactScreen() {
-        ContactInfo contactInfo = (ContactInfo) AppState.pool[1319];
+        ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO];
         Account acctRef = contactInfo.getAccount();
         if (getGroupCount(acctRef) == 0) {
-            postEvent((Object) AppState.getString(743));
+            postEvent((Object) AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
             return;
         }
-        if (AppState.getBool(1508)) {
-            AppState.setFromPool(1322, 331);
-            AppState.setInt(1508, 0);
+        if (AppState.getBool(StateKeys.FLAG_SHOW_PHOTO)) {
+            AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_SOFTKEY_OK);
+            AppState.setInt(StateKeys.FLAG_SHOW_PHOTO, 0);
         } else {
-            AppState.setFromPool(1322, 741);
+            AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_DEFAULT_GROUP_NAME);
         }
         if (acctRef.getType() == 1) {
-            AppState.setObject(1320, (Object) contactInfo.getString(60));
-            AppState.setObject(1321, (Object) contactInfo.getDisplayNameOrId());
+            AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getString(60));
+            AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getDisplayNameOrId());
             ScreenManager.showScreen(ScreenManager.createScreen(3920));
             return;
         }
         if (((MrimAccount) acctRef).hasCustomDomain) {
-            AppState.setInt(1509, 1);
-            AppState.setInt(3897, 5);
+            AppState.setInt(StateKeys.FLAG_GROUP_ADD_RESULT, 1);
+            AppState.setInt(StateKeys.INT_ADD_CONTACT_MODE, 5);
         } else {
-            AppState.setInt(1509, 0);
-            AppState.setInt(3897, 4);
+            AppState.setInt(StateKeys.FLAG_GROUP_ADD_RESULT, 0);
+            AppState.setInt(StateKeys.INT_ADD_CONTACT_MODE, 4);
         }
-        AppState.setObject(1320, (Object) contactInfo.getEmailOrMmpId());
-        AppState.setObject(1321, (Object) contactInfo.getFullName());
+        AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getEmailOrMmpId());
+        AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
         ScreenManager.showScreen(ScreenManager.createScreen(3888));
     }
 
     /* renamed from: a */
     public static final void notifyNewMail(MrimAccount account, int i, String str, String str2) {
-        boolean showPopup = AppState.getBool(91);
-        boolean showInList = AppState.getBool(90);
+        boolean showPopup = AppState.getBool(StateKeys.SETTING_SHOW_POPUP);
+        boolean showInList = AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST);
         if (showInList || showPopup) {
             if (str != null) {
                 int iLastIndexOf = str.lastIndexOf(60);
@@ -241,17 +242,17 @@ public final class IOUtils {
             if (showPopup && (AccountManager.getActiveScreenId() != 10 || !AppState.hasMemory())) {
                 StringBuffer sb = NetworkUtils.newStringBuffer();
                 if (str2 != null && str != null) {
-                    postAccountNotification(account, NetworkUtils.bufToStringCached(sb.append(AppState.getString(917)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(918)).append(i).append(AppState.getString(919 + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(916)).toString())));
+                    postAccountNotification(account, NetworkUtils.bufToStringCached(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(StateKeys.STR_MAIL_PREFIX)).toString())));
                 } else if (i > 0) {
-                    postAccountNotification(account, NetworkUtils.bufToStringCached(sb.append(AppState.getString(918)).append(i).append(AppState.getString(919 + Utils.pluralForm(i))).append('\n').append(AppState.getString(916))));
+                    postAccountNotification(account, NetworkUtils.bufToStringCached(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').append(AppState.getString(StateKeys.STR_MAIL_PREFIX))));
                 }
             }
             if (showInList) {
                 if (i > 0 || !(str2 == null || str == null)) {
                     AppController.markScreenDirty();
                     AccountManager.markAccountHighlighted(account);
-                    if (AppState.getBool(90)) {
-                        AppState.getVector(1244).addElement(account);
+                    if (AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST)) {
+                        AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).addElement(account);
                     }
                     TabBar.layout();
                 }
@@ -261,7 +262,7 @@ public final class IOUtils {
 
     /* renamed from: c */
     public static final void showChatRoomMessages() {
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(1513));
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
         Screen screen = ScreenManager.createScreen(4527);
         screen.setHeader(234, chatRoom.getDisplayName());
         Vector messages = NetworkUtils.newVector();
@@ -281,8 +282,8 @@ public final class IOUtils {
             screen.selectable = false;
             screen.addLabelById(835);
         } else {
-            screen.scrollOffset = AppState.getInt(1514);
-            screen.selectByTitle(AppState.getString(1345));
+            screen.scrollOffset = AppState.getInt(StateKeys.INT_SCROLL_OFFSET);
+            screen.selectByTitle(AppState.getString(StateKeys.SLOT_MAP_POINT_2));
             screen.invalidateLayout();
         }
         screen.reverseScroll = true;
@@ -435,7 +436,7 @@ public final class IOUtils {
             return handleMapPointAction(obj);
         }
         NetworkUtils.processScreenForm();
-        String query = Utils.defaultStr(AppState.getString(1248));
+        String query = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SEARCH_QUERY));
         if (StringUtils.isEmpty(query)) {
             return NotificationHelper.showError(351);
         }
@@ -466,67 +467,67 @@ public final class IOUtils {
             }
         } else {
             String encodedQuery = Conversation.replaceText(query, 1046, 199350);
-            Image mapImage = AppState.getImage(1364);
+            Image mapImage = AppState.getImage(StateKeys.OBJ_FONT_2);
             long currentLat = MapRenderer.currentLat;
             new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(659815).writeLongAsString(currentLat).writeCompressed(659825).writeLongAsString(MapRenderer.currentLon).writeCompressed(659835).writeIntAsString(mapImage.getWidth()).writeCompressed(659845).writeIntAsString(mapImage.getHeight()).getStringAndClear());
         }
-        return AppState.getBool(1477) ? 161 : 6;
+        return AppState.getBool(StateKeys.FLAG_LOADING) ? 161 : 6;
     }
 
     /* renamed from: c */
     public static final int handleMapPointAction(Object obj) {
-        if (AppState.getBool(1443)) {
+        if (AppState.getBool(StateKeys.FLAG_NEW_MESSAGE)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
             return 6;
         }
-        if (!AppState.getBool(1477)) {
+        if (!AppState.getBool(StateKeys.FLAG_LOADING)) {
             ConnectionThread.navigateToPoint((MapPoint) obj, true);
             return 6;
         }
         MrimAccount account = (MrimAccount) AppState.getAccount();
         account.setLocationProfile((MapPoint) obj);
         account.syncProfile();
-        AppState.setInt(1477, 0);
+        AppState.setInt(StateKeys.FLAG_LOADING, 0);
         return 160;
     }
 
     /* renamed from: f */
     public static final void requestNearbyPeople() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393954).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(393960).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39)))).writeCompressed(393966).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39)))).writeCompressed(1376928);
+        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(393954).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(393960).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(393966).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(1376928);
         long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
-        int iM586d = AppState.getInt(39);
+        int iM586d = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
         long j = MapRenderer.currentPixelX;
         int i = MapRenderer.viewportWidth / 2;
         long jM318a = MapUtils.pixelToCoord((int) (j + i), iM586d) - MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - i), iM586d);
         long j2 = MapRenderer.currentPixelY;
         int i2 = MapRenderer.viewportHeight / 2;
         ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (MapUtils.pixelToCoord((int) (j2 + i2), iM586d) - MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - i2), iM586d)))), 100));
-        VCard.staticTs1 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
-        VCard.staticTs2 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
-        VCard.staticTs3 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(39));
-        VCard.staticTs4 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(39));
-        VCard.staticTs5 = AppState.getInt(39);
-        new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(39))});
+        VCard.staticTs1 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs2 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs3 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs4 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs5 = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
+        new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL))});
     }
 
     /* renamed from: g */
     public static final void postOkEvent() {
-        postEvent(AppState.pool[1267]);
+        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_1]);
     }
 
     /* renamed from: h */
     public static final void postCancelEvent() {
-        postEvent(AppState.pool[1268]);
+        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_2]);
     }
 
     /* renamed from: i */
     public static final void postSelectEvent() {
-        postEvent(AppState.pool[1269]);
+        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_3]);
     }
 
     /* renamed from: j */
     public static final void postBackEvent() {
-        postEvent(AppState.pool[1270]);
+        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_4]);
     }
 
     /* renamed from: a */
@@ -537,7 +538,7 @@ public final class IOUtils {
     /* renamed from: d */
     public static final void postEvent(Object obj) {
         RemoteLogger.log("POST", "postEvent: " + (obj instanceof int[] ? "int[]{" + ((int[])obj)[0] + "}" : obj instanceof String ? "str:" + ((String)obj).substring(0, Math.min(50, ((String)obj).length())) : obj.getClass().getName()));
-        Vector vectorM614m = AppState.getVector(1266);
+        Vector vectorM614m = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
         synchronized (vectorM614m) {
             vectorM614m.addElement(obj);
         }
@@ -545,32 +546,32 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final void postRenameError(Object[] objArr, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(455)).append(objArr[2]).append(AppState.getString(457)).append(i)));
+        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: b */
     public static final void postAddGroupError(Object[] objArr, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(456)).append(objArr[2]).append(AppState.getString(457)).append(i)));
+        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: c */
     public static final void postDeleteError(Object[] objArr, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(454)).append(objArr[2]).append(AppState.getString(457)).append(i)));
+        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: b */
     public static final void postOperationError(int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(464)).append(AppState.getString(457)).append(i)));
+        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_NETWORK_ERROR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: a */
     public static final void postAccountError(Account acct, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(459)).append(acct).append(AppState.getString(460)).append(AppState.getString(i))));
+        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
     }
 
     /* renamed from: a */
     public static final void postAccountMessage(Account acct, String str) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(459)).append(acct).append(AppState.getString(460)).append(str)));
+        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
     }
 
     /* renamed from: b */
@@ -585,15 +586,15 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final int handleMailForwardAction(String str) {
-        String strM584b = AppState.getString(1346);
-        int iM586d = AppState.getInt(1513);
+        String strM584b = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
+        int iM586d = AppState.getInt(StateKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Message message = account.findChatRoomById(iM586d).getMessage(strM584b);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String strM584b2 = AppState.getString(198549);
-        String strM584b3 = AppState.getString(198546);
+        String strM584b2 = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
+        String strM584b3 = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
         String str2 = ((MrimAccount) AppState.getAccount()).login;
         wrapInVector(strM584b);
         if (StringUtils.matchesKey(839, str)) {
@@ -610,7 +611,7 @@ public final class IOUtils {
             if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
-            AppState.setInt(1527, account.findDefaultChatRoom().id);
+            AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.findDefaultChatRoom().id);
             return 0;
         }
         ScreenBuilder.onScreenClosed();
@@ -718,7 +719,7 @@ public final class IOUtils {
     /* JADX WARN: Multi-variable type inference failed */
     /* renamed from: b */
     public static final int handleContactMenuAction(String str, int i) {
-        AppState.clearIndex(1281);
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
         Contact contact = AppState.getCurrentContact();
         if (i == 63 && !contact.account.isConnected()) {
             return NotificationHelper.showError(299);
@@ -738,7 +739,7 @@ public final class IOUtils {
             if (contact instanceof XmppContact) {
                 return ((XmppContact) contact).sendPresence(40);
             }
-            AppState.pool[1319] = new ContactInfo(contact);
+            AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo(contact);
         } else if (i == 54) {
             AppState.setAccount(contact.account);
             ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
@@ -757,7 +758,7 @@ public final class IOUtils {
 
     /* renamed from: a */
     private static final Object[] createErrorResult(int i, int i2, Object obj) {
-        return createHttpResult(i, NetworkUtils.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(946)).append(obj), 0, (ByteBuffer) null);
+        return createHttpResult(i, NetworkUtils.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
     }
 
     /* renamed from: a */
@@ -874,12 +875,12 @@ public final class IOUtils {
     /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
         AccountManager.markAccountHighlighted((MrimAccount) AppState.getAccount());
-        AppState.pool[1271] = ConnectionThread.submitAsync(objArr);
+        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = ConnectionThread.submitAsync(objArr);
     }
 
     /* renamed from: e */
     public static final void setSelectedItems(Object obj) {
-        AppState.pool[1356] = obj;
+        AppState.pool[StateKeys.SLOT_MEDIA_STREAM] = obj;
     }
 
     /* renamed from: g */
@@ -891,21 +892,21 @@ public final class IOUtils {
 
     /* renamed from: k */
     public static final Object[] pollAsyncResult() {
-        Object[] objArrM609l = AppState.getObjectArray(1271);
+        Object[] objArrM609l = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA);
         if (objArrM609l != null && ConnectionThread.getAsyncResult(objArrM609l) != null) {
-            AppState.clearIndex(1271);
+            AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
         }
         return objArrM609l;
     }
 
     /* renamed from: a */
     public static final StringBuffer appendAuthParams(StringBuffer stringBuffer, String str) {
-        return stringBuffer.append(AppState.getString(1381)).append(AppState.getString(395134)).append(str);
+        return stringBuffer.append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(str);
     }
 
     /* renamed from: c */
     public static final int validateJsonResponse(Object[] objArr) {
-        AppState.clearIndex(1355);
+        AppState.clearIndex(StateKeys.SLOT_MEDIA_PLAYER);
         if (!isHttpSuccess(objArr)) {
             return NotificationHelper.showError(888);
         }
@@ -916,28 +917,28 @@ public final class IOUtils {
         if (!JsonParser.isSuccess(objM806e)) {
             return NotificationHelper.showError(890);
         }
-        AppState.pool[1355] = objM806e;
+        AppState.pool[StateKeys.SLOT_MEDIA_PLAYER] = objM806e;
         return 0;
     }
 
     /* renamed from: l */
     public static final Object getJsonPayload() {
-        Object obj = AppState.pool[1355];
-        AppState.clearIndex(1355);
+        Object obj = AppState.pool[StateKeys.SLOT_MEDIA_PLAYER];
+        AppState.clearIndex(StateKeys.SLOT_MEDIA_PLAYER);
         return JsonParser.getVectorElement(obj, 2);
     }
 
     /* renamed from: c */
     public static final int loginXmpp(int i) {
-        String strM522f = Utils.defaultStr(AppState.getString(1293));
+        String strM522f = Utils.defaultStr(AppState.getString(StateKeys.SLOT_PASSWORD));
         String strM843u = XmppMailRuProtocol.getLoginLowerCase();
         String strM1215a = strM843u;
         if (StringUtils.isEmpty(strM843u)) {
             return NotificationHelper.showError(301);
         }
-        int iM586d = AppState.getInt(1474);
+        int iM586d = AppState.getInt(StateKeys.INT_SERVER_INDEX);
         if (iM586d != 0 && strM1215a.indexOf(64) < 0) {
-            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM1215a).append(Utils.splitByNull(AppState.getString(696)).elementAt(iM586d)));
+            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM1215a).append(Utils.splitByNull(AppState.getString(StateKeys.STR_SERVER_LIST)).elementAt(iM586d)));
         }
         if (i == 2 && strM1215a.indexOf(64) < 0) {
             return NotificationHelper.showError(699);
@@ -946,7 +947,7 @@ public final class IOUtils {
         if (0 != iM437a) {
             return NotificationHelper.showError(iM437a);
         }
-        AccountManager.setCurrentAccount(AccountManager.createAccount(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(1297))));
+        AccountManager.setCurrentAccount(AccountManager.createAccount(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(StateKeys.SLOT_DISPLAY_NAME))));
         return 0;
     }
 
@@ -1078,13 +1079,13 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final void updateContactFlags(Contact contact) {
-        AppState.setBool(1504, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).mo83f());
+        AppState.setBool(StateKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).mo83f());
     }
 
     /* renamed from: c */
     public static final int handleContactGroupAction(String str, int i) {
-        AppState.clearIndex(1281);
-        Object obj = AppState.pool[1365];
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
         if (i == 63 && !((Contact) obj).account.isConnected()) {
             return NotificationHelper.showError(299);
         }
@@ -1110,7 +1111,7 @@ public final class IOUtils {
             if (obj instanceof XmppContact) {
                 return ((XmppContact) obj).sendPresence(4);
             }
-            AppState.pool[1319] = new ContactInfo((Contact) obj);
+            AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
             ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
@@ -1118,8 +1119,8 @@ public final class IOUtils {
             ListItem item = (ListItem) obj;
             item.deselect();
             ConnectionThread.selectMapItem(item);
-            AppController.applyViewMode(true, false, !AppState.getBool(276));
-            AppState.setInt(281, 1);
+            AppController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
+            AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
         }
         return i;
     }
@@ -1187,8 +1188,8 @@ public final class IOUtils {
         boolean zIsUpperCase = false;
         String str2 = null;
         String str3;
-        Vector vectorM512e = Utils.splitByNull(AppState.getString(14290598));
-        Vector vectorM512e2 = Utils.splitByNull(AppState.getString(958));
+        Vector vectorM512e = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_MEGA_URL_4));
+        Vector vectorM512e2 = Utils.splitByNull(AppState.getString(StateKeys.STR_SOUND_LIST));
         Hashtable hashtable = new Hashtable();
         int size = vectorM512e.size();
         while (true) {
@@ -1198,8 +1199,8 @@ public final class IOUtils {
             }
             hashtable.put(vectorM512e.elementAt(size), vectorM512e2.elementAt(size));
         }
-        String strM584b = AppState.getString(956);
-        String strM584b2 = AppState.getString(957);
+        String strM584b = AppState.getString(StateKeys.STR_SOUND_TYPE_1);
+        String strM584b2 = AppState.getString(StateKeys.STR_SOUND_TYPE_2);
         Hashtable hashtable2 = new Hashtable();
         StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
         int length = strM584b.length();

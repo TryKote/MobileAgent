@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -64,7 +65,7 @@ public final class ConnectionThread {
     public ConnectionThread(String str) {
         this.connUrl = str;
         RemoteLogger.log("CONN", "new ConnectionThread url=" + str);
-        Vector vectorM614m = AppState.getVector(1358);
+        Vector vectorM614m = AppState.getVector(StateKeys.SLOT_MEDIA_CONTROL);
         if (vectorM614m != null) {
             synchronized (vectorM614m) {
                 vectorM614m.addElement(IOUtils.registerResource(this));
@@ -106,7 +107,7 @@ public final class ConnectionThread {
         switch (this.state) {
             case 1:
                 try {
-                    this.connArray = NetworkUtils.openSocket(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(112));
+                    this.connArray = NetworkUtils.openSocket(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(StateKeys.SETTING_COMPRESSION_ENABLED));
                     if (this.state == 1) {
                         this.state = 2;
                         RemoteLogger.log("CONN", "state 1->2 (socket opened)");
@@ -132,7 +133,7 @@ public final class ConnectionThread {
                 this.state = 0;
                 return;
             default:
-                Vector vectorM614m = AppState.getVector(1358);
+                Vector vectorM614m = AppState.getVector(StateKeys.SLOT_MEDIA_CONTROL);
                 if (vectorM614m != null) {
                     synchronized (vectorM614m) {
                         vectorM614m.removeElement(this);
@@ -209,9 +210,9 @@ public final class ConnectionThread {
     /* renamed from: q */
     private static void loadSavedMapData() {
         XmppContactGroup.sharedContactList = NetworkUtils.newVector();
-        hiddenContacts = Utils.split(AppState.getString(264), (char) 0);
+        hiddenContacts = Utils.split(AppState.getString(StateKeys.HIDDEN_CONTACTS_LIST), (char) 0);
         try {
-            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(265));
+            ByteBuffer c0043nM986d = ResourceManager.decodeBase64(AppState.getString(StateKeys.CONTACT_REGISTRY_DATA));
             photoRegistry = new Hashtable();
             try {
                 if (c0043nM986d.length > 0) {
@@ -228,7 +229,7 @@ public final class ConnectionThread {
             } catch (Throwable unused) {
             }
             clearPhotoCache();
-            AppState.setInt(1576, 1);
+            AppState.setInt(StateKeys.FLAG_PHOTO_REGISTRY_READY, 1);
         } catch (Throwable unused2) {
         }
     }
@@ -257,19 +258,19 @@ public final class ConnectionThread {
             photoRegistry.put(strM555c, c0040k);
         }
         photoCache = new Hashtable();
-        AppState.setInt(1576, 1);
+        AppState.setInt(StateKeys.FLAG_PHOTO_REGISTRY_READY, 1);
         try {
-            AppState.setObject(265, (Object) AppState.emptyStr);
-            AppState.setObject(265, (Object) serializeRegistry().toBase64());
+            AppState.setObject(StateKeys.CONTACT_REGISTRY_DATA, (Object) AppState.emptyStr);
+            AppState.setObject(StateKeys.CONTACT_REGISTRY_DATA, (Object) serializeRegistry().toBase64());
         } catch (Throwable unused) {
-            AppState.setObject(254, (Object) AppState.emptyStr);
+            AppState.setObject(StateKeys.URL_GEO_CONFIG, (Object) AppState.emptyStr);
         }
     }
 
     /* renamed from: a */
     public static final String getPhotoHost(Object obj) {
         NetworkUtils c0040k;
-        if (!AppState.getBool(1576) || (c0040k = (NetworkUtils) photoRegistry.get(obj)) == null) {
+        if (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(obj)) == null) {
             return null;
         }
         return c0040k.host;
@@ -279,7 +280,7 @@ public final class ConnectionThread {
     public static final Image getProfileImage(String str) {
         NetworkUtils c0040k;
         Image image;
-        if (!AppState.getBool(1576)) {
+        if (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         synchronized (photoCache) {
@@ -294,7 +295,7 @@ public final class ConnectionThread {
                 } catch (Throwable unused) {
                     if (pendingPhotoKey == null) {
                         pendingPhotoKey = str;
-                        new AsyncTask(14, (!AppState.getBool(1576) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
+                        new AsyncTask(14, (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
                     }
                 }
                 image = image3;
@@ -307,7 +308,7 @@ public final class ConnectionThread {
 
     /* renamed from: a */
     public static final Vector getServiceContactIds(int i) {
-        if (!AppState.getBool(1576)) {
+        if (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.newVector();
@@ -326,7 +327,7 @@ public final class ConnectionThread {
 
     /* renamed from: c */
     public static final Vector getAllContactIds() {
-        if (!AppState.getBool(1576)) {
+        if (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.newVector();
@@ -342,7 +343,7 @@ public final class ConnectionThread {
 
     /* renamed from: d */
     public static final Vector getActiveContactIds() {
-        if (!AppState.getBool(1576)) {
+        if (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         Vector vectorM1213g = NetworkUtils.newVector();
@@ -358,7 +359,7 @@ public final class ConnectionThread {
 
     /* renamed from: b */
     private static final int getContactStatus(Object obj) {
-        if (!AppState.getBool(1576)) {
+        if (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return 2;
         }
         try {
@@ -429,7 +430,7 @@ public final class ConnectionThread {
         }
         objArr[8] = objArr;
         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1147a = createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(1771076)).append(c0028ba2.login).append(AppState.getString(656925)).append(c0028ba2.password).append(AppState.getString(1381)));
+        Object[] objArrM1147a = createAuthRequest(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_1)).append(c0028ba2.login).append(AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_3)).append(c0028ba2.password).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) submitAsync(objArrM1147a)[7]).thread.join();
         c0028ba.jabberId = (String) objArrM1147a[6];
@@ -447,7 +448,7 @@ public final class ConnectionThread {
                         NetworkLock.acquireNetworkLock();
                         String str = (String) objArr[5];
                         if (str == null) {
-                            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(1115687)).append(objArr[2]));
+                            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_LONG_URL_5)).append(objArr[2]));
                         } else {
                             strM1215a = str;
                         }
@@ -534,7 +535,7 @@ public final class ConnectionThread {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(329959)) && StringUtils.matchesKey(657623, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(StateKeys.STR_RES_PARAM_4)) && StringUtils.matchesKey(657623, StringUtils.intern(headerFieldKey.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;
@@ -560,15 +561,15 @@ public final class ConnectionThread {
     /* renamed from: f */
     public static final void showMapScreen() {
         initMapState();
-        AppState.setInt(1476, 6);
+        AppState.setInt(StateKeys.INT_CONNECTION_STATE, 6);
         Screen c0013amM75b = ScreenManager.createScreen(1578);
         mapScreen = c0013amM75b;
         setMapSoftKeys(c0013amM75b);
         ScreenManager.pushScreen(c0013amM75b);
         TabBar.ensureSearchTab();
         TabBar.findTab(6, (Account) null);
-        TabBar.scrollEnabled = AppState.getBool(1414);
-        if (AppState.getBool(281)) {
+        TabBar.scrollEnabled = AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE);
+        if (AppState.getBool(StateKeys.FLAG_REFRESH_CONTACTS)) {
             return;
         }
         ScreenBuilder.openScreen(178);
@@ -576,19 +577,19 @@ public final class ConnectionThread {
 
     /* renamed from: g */
     public static final void updateMapSoftKeys() {
-        if (AppState.getBool(1547)) {
-            if (AppState.getBool(1409) || mapScreen == null) {
+        if (AppState.getBool(StateKeys.FLAG_MAP_TILES_PENDING)) {
+            if (AppState.getBool(StateKeys.FLAG_MAP_SCREEN_VISIBLE) || mapScreen == null) {
                 return;
             }
-            mapScreen.setSoftKeys(AppState.getString(330), AppState.getString(1055), 167, 4, 167);
-            AppState.setInt(1409, 1);
+            mapScreen.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_MAP), AppState.getString(StateKeys.STR_SOFTKEY_CLOSE), 167, 4, 167);
+            AppState.setInt(StateKeys.FLAG_MAP_SCREEN_VISIBLE, 1);
             return;
         }
-        if (!AppState.getBool(1409) || mapScreen == null) {
+        if (!AppState.getBool(StateKeys.FLAG_MAP_SCREEN_VISIBLE) || mapScreen == null) {
             return;
         }
         setMapSoftKeys(mapScreen);
-        AppState.setInt(1409, 0);
+        AppState.setInt(StateKeys.FLAG_MAP_SCREEN_VISIBLE, 0);
     }
 
     /* renamed from: s */
@@ -598,27 +599,27 @@ public final class ConnectionThread {
         }
         mapInitialized = true;
         int i = ScreenManager.createScreen(1578).contentHeight;
-        AppState.setLong(1558, 4178628L);
-        AppState.setLong(1560, 7482960L);
-        AppState.pool[1400] = XmppContactGroup.loadMapPoints(225);
-        AppState.pool[1401] = XmppContactGroup.loadMapPoints(226);
-        AppState.setInt(1415, AppState.getInt(1528));
-        AppState.setInt(1416, i);
-        AppState.setLong(1410, AppState.getLong(35));
-        AppState.setLong(1412, AppState.getLong(37));
-        MapRenderer.viewportWidth = AppState.getInt(1415);
-        MapRenderer.viewportHeight = AppState.getInt(1416);
-        MapRenderer.currentLat = AppState.getLong(1412);
-        MapRenderer.currentLon = AppState.getLong(1410);
-        int iM586d = AppState.getInt(39);
+        AppState.setLong(StateKeys.MAP_SCROLL_LON, 4178628L);
+        AppState.setLong(StateKeys.MAP_SCROLL_LAT, 7482960L);
+        AppState.pool[StateKeys.VEC_CONTACT_GROUPS] = XmppContactGroup.loadMapPoints(225);
+        AppState.pool[StateKeys.VEC_PHOTO_QUEUE] = XmppContactGroup.loadMapPoints(226);
+        AppState.setInt(StateKeys.MAP_VIEWPORT_WIDTH, AppState.getInt(StateKeys.INT_SCREEN_WIDTH));
+        AppState.setInt(StateKeys.MAP_VIEWPORT_HEIGHT, i);
+        AppState.setLong(StateKeys.MAP_SAVED_LONGITUDE, AppState.getLong(StateKeys.MAP_LONGITUDE));
+        AppState.setLong(StateKeys.MAP_SAVED_LATITUDE, AppState.getLong(StateKeys.MAP_LATITUDE));
+        MapRenderer.viewportWidth = AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH);
+        MapRenderer.viewportHeight = AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT);
+        MapRenderer.currentLat = AppState.getLong(StateKeys.MAP_SAVED_LATITUDE);
+        MapRenderer.currentLon = AppState.getLong(StateKeys.MAP_SAVED_LONGITUDE);
+        int iM586d = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
         MapRenderer.currentPixelX = MapUtils.coordToPixel(MapRenderer.currentLon, iM586d);
         MapRenderer.currentPixelY = MapUtils.coordToPixel(MapRenderer.currentLat, iM586d);
-        AppState.pool[1364] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
+        AppState.pool[StateKeys.OBJ_FONT_2] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
         StringUtils.initTileCache();
-        AppState.pool[1398] = NetworkUtils.newVector();
-        AppState.pool[1396] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.VEC_CHATROOM_LIST] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.OBJ_SEARCH_PARAMS_1] = NetworkUtils.newVector();
         Object[] objArrM332c = AppController.getUrlComponents(AppState.emptyStr);
-        AppState.pool[1395] = objArrM332c;
+        AppState.pool[StateKeys.OBJ_TILE_REQUEST_ARRAY] = objArrM332c;
         XmppContactGroup.addContactInfoToQueue(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
         Graphics graphics = imageCreateImage.getGraphics();
@@ -631,8 +632,8 @@ public final class ConnectionThread {
             i2 ^= 2;
         }
         new GraphicsContext(graphics).drawIcon(312, 56, 56);
-        AppState.pool[1393] = imageCreateImage;
-        AppState.pool[1397] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.OBJ_MENU_LABELS] = imageCreateImage;
+        AppState.pool[StateKeys.OBJ_SEARCH_PARAMS_2] = NetworkUtils.newVector();
         new AsyncTask(8);
         MapRenderer.syncLock = new Object();
         StringUtils.initGeoRegions();
@@ -643,24 +644,24 @@ public final class ConnectionThread {
         MmpContact.lastTokenPair = new long[2];
         MmpContact.currentTokenPair = new long[2];
         MapRenderer.animationSteps = NetworkUtils.newVector();
-        if (AppState.getBool(253)) {
-            XmppContactGroup.stopMapAnimation(AppState.getVector(1401));
+        if (AppState.getBool(StateKeys.FLAG_GPS_ACTIVE)) {
+            XmppContactGroup.stopMapAnimation(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE));
         }
-        AppState.pool[1383] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.SLOT_MAP_DATA] = NetworkUtils.newVector();
         MapRenderer.needsRedraw = true;
-        AppState.setLong(1556, System.currentTimeMillis() - 90);
+        AppState.setLong(StateKeys.TIMESTAMP_MAP_SCROLL, System.currentTimeMillis() - 90);
         new AsyncTask(10);
         loadSavedMapData();
     }
 
     /* renamed from: d */
     private static final void setMapSoftKeys(Screen c0013am) {
-        c0013am.setSoftKeys(AppState.getString(1062), AppState.getString(AppState.getBool(1414) ? 1050 : 328), 20, 0, 0);
+        c0013am.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_MENU), AppState.getString(AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE) ? 1050 : 328), 20, 0, 0);
     }
 
     /* renamed from: a */
     public static final void toggleMapControls(Screen c0013am) {
-        if (AppState.getBool(1414)) {
+        if (AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
             return;
         }
         toggleScrollMode();
@@ -670,13 +671,13 @@ public final class ConnectionThread {
     /* renamed from: b */
     public static final int handleMapBack(Screen c0013am) {
         MrimAccount c0028ba;
-        if (AppState.getBool(1547)) {
+        if (AppState.getBool(StateKeys.FLAG_MAP_TILES_PENDING)) {
             ((MrimAccount) AppState.getAccount()).isHighlighted = false;
             MapRenderer.needsRedraw = true;
             toggleScrollMode();
             return 0;
         }
-        if (AppState.getBool(1479) && (c0028ba = (MrimAccount) AppState.getAccount()) != null) {
+        if (AppState.getBool(StateKeys.FLAG_MAP_LOADING) && (c0028ba = (MrimAccount) AppState.getAccount()) != null) {
             c0028ba.deselect();
         }
         toggleScrollMode();
@@ -686,8 +687,8 @@ public final class ConnectionThread {
 
     /* renamed from: c */
     public static final void handleMapSwitch(Screen c0013am) {
-        if (AppState.getBool(1414)) {
-            AppState.setInt(1564, 3);
+        if (AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
+            AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 3);
         } else {
             toggleMapControls(c0013am);
         }
@@ -695,11 +696,11 @@ public final class ConnectionThread {
 
     /* renamed from: h */
     public static final void toggleScrollMode() {
-        boolean z = !AppState.getBool(1414);
+        boolean z = !AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE);
         boolean z2 = z;
-        AppState.setBool(1414, z);
+        AppState.setBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE, z);
         if (!z2) {
-            AppState.setInt(1479, 0);
+            AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
         }
         TabBar.scrollEnabled = z2;
     }
@@ -708,8 +709,8 @@ public final class ConnectionThread {
     public static final void navigateToPoint(MapPoint c0014an, boolean z) {
         initMapState();
         if (z) {
-            XmppContactGroup.addMapPointIfNew(AppState.getVector(1400), c0014an, 0, 5);
-            XmppContactGroup.saveMapPoints(AppState.getVector(1400), 225);
+            XmppContactGroup.addMapPointIfNew(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), c0014an, 0, 5);
+            XmppContactGroup.saveMapPoints(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), 225);
         }
         MapRenderer.selectedMapPoint = c0014an;
         MapRenderer.invalidate();
@@ -721,9 +722,9 @@ public final class ConnectionThread {
 
     /* renamed from: i */
     public static final int showMapSearchResults() {
-        Vector vectorM614m = AppState.getVector(1399);
+        Vector vectorM614m = AppState.getVector(StateKeys.VEC_MESSAGE_LIST);
         if (vectorM614m != null) {
-            AppState.clearIndex(1399);
+            AppState.clearIndex(StateKeys.VEC_MESSAGE_LIST);
         }
         if (vectorM614m == null) {
             return 0;
@@ -744,17 +745,17 @@ public final class ConnectionThread {
 
     /* renamed from: j */
     public static final Enumeration getRouteElements() {
-        return AppState.getVector(1401).elements();
+        return AppState.getVector(StateKeys.VEC_PHOTO_QUEUE).elements();
     }
 
     /* renamed from: k */
     public static final boolean hasRoutePoints() {
-        return AppState.getVector(1401).size() > 0;
+        return AppState.getVector(StateKeys.VEC_PHOTO_QUEUE).size() > 0;
     }
 
     /* renamed from: a */
     public static final void removeRoutePoint(MapPoint c0014an) {
-        Vector vectorM614m = AppState.getVector(1401);
+        Vector vectorM614m = AppState.getVector(StateKeys.VEC_PHOTO_QUEUE);
         vectorM614m.removeElement(c0014an);
         XmppContactGroup.saveMapPoints(vectorM614m, 226);
     }
@@ -818,7 +819,7 @@ public final class ConnectionThread {
     /* renamed from: n */
     public static final void showMapView() {
         initMapState();
-        AppState.setInt(1414, 1);
+        AppState.setInt(StateKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
         MapRenderer.invalidate();
     }
 }

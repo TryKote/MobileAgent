@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -224,17 +225,17 @@ public final class MrimContact extends Contact implements ListItem {
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
     public final int requestUserDetails() {
-        long now = AppState.getLong(1530);
+        long now = AppState.getLong(StateKeys.TIMESTAMP_CURRENT);
         if (now - this.lastStatusCheckTime <= 60000) {
             return 925;
         }
         this.lastStatusCheckTime = now;
         MrimAccount mrimAccount = (MrimAccount) this.account;
-        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(909)).writeStringLatin1(AppState.getString(33819707))), ResourceManager.integerOf(14)}));
+        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4104, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(StateKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(AppState.getString(StateKeys.STR_RES_MEGA_URL_5))), ResourceManager.integerOf(14)}));
         if (0 != sendResult) {
             return sendResult;
         }
-        appendMessage(1, AppState.getString(924), 0L, 0L);
+        appendMessage(1, AppState.getString(StateKeys.STR_WELCOME_MESSAGE), 0L, 0L);
         return 0;
     }
 

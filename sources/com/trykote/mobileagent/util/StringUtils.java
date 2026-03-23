@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -86,7 +87,7 @@ public final class StringUtils {
         if (i <= 5179) {
             return equals(AppState.getString(i), str);
         }
-        byte[] bytes = AppState.getBytes(295);
+        byte[] bytes = AppState.getBytes(StateKeys.RES_STRING_DATA);
         int i2 = i >> 16;
         int i3 = i2;
         if (i2 != str.length()) {
@@ -227,15 +228,15 @@ public final class StringUtils {
 
     /* renamed from: b */
     public static final void initTileCache() {
-        int iM586d = AppState.getBool(277) ? (((AppState.getInt(1415) >> 7) + 2) * ((AppState.getInt(1416) >> 7) + 2)) << 1 : ((AppState.getInt(1415) >> 7) + 2) * ((AppState.getInt(1416) >> 7) + 2);
-        AppState.pool[1394] = new LruCache(iM586d);
-        AppState.setInt(1550, iM586d);
+        int iM586d = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE) ? (((AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2)) << 1 : ((AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2);
+        AppState.pool[StateKeys.OBJ_TILE_CACHE] = new LruCache(iM586d);
+        AppState.setInt(StateKeys.INT_MAX_PENDING_REQUESTS, iM586d);
     }
 
     /* renamed from: a */
     public static final Image getTileImage(ResourceManager tile) {
         Image image = (Image) getTileCache().get(tile);
-        if (image == null && !AppState.getVector(1396).contains(tile)) {
+        if (image == null && !AppState.getVector(StateKeys.OBJ_SEARCH_PARAMS_1).contains(tile)) {
             ResourceManager.enqueueTileRequest(tile);
         }
         return image;
@@ -243,9 +244,9 @@ public final class StringUtils {
 
     /* renamed from: k */
     private static final void pruneStaleRequests() {
-        Vector items = AppState.getVector(1397);
+        Vector items = AppState.getVector(StateKeys.OBJ_SEARCH_PARAMS_2);
         synchronized (items) {
-            Vector pendingReqs = AppState.getVector(1398);
+            Vector pendingReqs = AppState.getVector(StateKeys.VEC_CHATROOM_LIST);
             synchronized (pendingReqs) {
                 int size = pendingReqs.size();
                 while (true) {
@@ -267,10 +268,10 @@ public final class StringUtils {
     public static final void tileLoaderLoop() {
         Image tileImage = null;
         int i = 4;
-        while (0 == AppState.getInt(1549)) {
-            Object[] objArr = (Object[]) AppState.pool[1395];
+        while (0 == AppState.getInt(StateKeys.FLAG_TILES_READY)) {
+            Object[] objArr = (Object[]) AppState.pool[StateKeys.OBJ_TILE_REQUEST_ARRAY];
             while (true) {
-                if (!(AppState.getVector(1398).size() == 0)) {
+                if (!(AppState.getVector(StateKeys.VEC_CHATROOM_LIST).size() == 0)) {
                     break;
                 }
                 XmppContactGroup.removeContactInfoFromQueue(objArr);
@@ -281,10 +282,10 @@ public final class StringUtils {
             }
             ResourceManager tileReq = ResourceManager.peekTileRequest();
             int i2 = tileReq.tileType;
-            objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(1548))).toString();
+            objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(StateKeys.INT_XMPP_TRAFFIC_BYTES))).toString();
             XmppContactGroup.addContactInfoToQueue(objArr);
             try {
-                Image cachedImage = (tileReq.tileType == 1 && AppState.getBool(1551)) ? XmppMailRuProtocol.loadTileFromCache(tileReq) : null;
+                Image cachedImage = (tileReq.tileType == 1 && AppState.getBool(StateKeys.FLAG_TILE_CACHE_ENABLED)) ? XmppMailRuProtocol.loadTileFromCache(tileReq) : null;
                 tileImage = cachedImage;
                 if (cachedImage == null) {
                     tileImage = XmppMailRuProtocol.fetchTileImage(tileReq);
@@ -294,28 +295,28 @@ public final class StringUtils {
                 i = i3 - 1;
                 if (i3 > 0) {
                     pruneStaleRequests();
-                    Vector items = AppState.getVector(1398);
+                    Vector items = AppState.getVector(StateKeys.VEC_CHATROOM_LIST);
                     synchronized (items) {
                         if (items.removeElement(tileReq)) {
                             ResourceManager.enqueueTileRequest(tileReq);
                         }
                     }
                 } else {
-                    AppState.setInt(1549, 1);
+                    AppState.setInt(StateKeys.FLAG_TILES_READY, 1);
                 }
             } catch (Throwable unused3) {
                 ResourceManager.removeTileRequest(tileReq);
             }
             if (tileImage == null) {
                 if (i2 == 3) {
-                    Vector pendingReqs = AppState.getVector(1396);
-                    while (pendingReqs.size() >= AppState.getInt(1550)) {
+                    Vector pendingReqs = AppState.getVector(StateKeys.OBJ_SEARCH_PARAMS_1);
+                    while (pendingReqs.size() >= AppState.getInt(StateKeys.INT_MAX_PENDING_REQUESTS)) {
                         pendingReqs.removeElementAt(0);
                     }
                     pendingReqs.addElement(tileReq);
                     XmppContactGroup.flagSyncRequired();
                 } else {
-                    cacheTileImage(tileReq, AppState.getImage(1393));
+                    cacheTileImage(tileReq, AppState.getImage(StateKeys.OBJ_MENU_LABELS));
                 }
                 throw new RuntimeException();
             }
@@ -348,13 +349,13 @@ public final class StringUtils {
 
     /* renamed from: l */
     private static final LruCache getTileCache() {
-        return (LruCache) AppState.pool[1394];
+        return (LruCache) AppState.pool[StateKeys.OBJ_TILE_CACHE];
     }
 
     /* renamed from: m */
     private static final Vector createRegionVector() {
         Vector result = NetworkUtils.newVector();
-        result.addElement(AppState.getString(684));
+        result.addElement(AppState.getString(StateKeys.STR_CITY_LIST));
         return result;
     }
 
@@ -375,30 +376,30 @@ public final class StringUtils {
     /* renamed from: e */
     public static final void showRegionSelector() {
         resetRegForm();
-        AppState.pool[1301] = new XmlParser(new ByteBuffer(NetworkUtils.longToHex(25135), 41000)).parse().children;
-        StringBuffer sb = NetworkUtils.newStringBuffer().append(AppState.getString(683));
-        Vector items = AppState.getVector(1301);
+        AppState.pool[StateKeys.SLOT_REG_FIELD_2] = new XmlParser(new ByteBuffer(NetworkUtils.longToHex(25135), 41000)).parse().children;
+        StringBuffer sb = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_SEARCH_TITLE));
+        Vector items = AppState.getVector(StateKeys.SLOT_REG_FIELD_2);
         for (int i = 0; i < Utils.vectorSize(items); i++) {
             sb.append((char) 0).append(getXmlText((XmlElement) items.elementAt(i)));
         }
-        AppState.setFromBuffer(1300, sb);
+        AppState.setFromBuffer(StateKeys.SLOT_REG_FIELD_1, sb);
         ScreenManager.showScreen(ScreenManager.createScreen(3356));
     }
 
     /* renamed from: f */
     public static final void resetRegForm() {
-        AppState.clearRange(1296, 1301);
-        AppState.setInt(1480, 0);
-        AppState.setInt(1481, 0);
-        AppState.setInt(1482, -1);
-        AppState.setInt(1483, -1);
-        AppState.setInt(1484, 0);
-        AppState.setInt(1485, 0);
-        AppState.setInt(1486, 0);
-        AppState.setInt(1487, 0);
-        AppState.setInt(1488, 0);
-        AppState.setInt(1489, 0);
-        AppState.setInt(1490, 0);
+        AppState.clearRange(StateKeys.SLOT_CONTACT_JID, StateKeys.SLOT_REG_FIELD_2);
+        AppState.setInt(StateKeys.INT_REGION_CODE, 0);
+        AppState.setInt(StateKeys.INT_COUNTRY_CODE, 0);
+        AppState.setInt(StateKeys.INT_SEARCH_PARAM_1, -1);
+        AppState.setInt(StateKeys.INT_SEARCH_PARAM_2, -1);
+        AppState.setInt(StateKeys.INT_SEARCH_PARAM_3, 0);
+        AppState.setInt(StateKeys.INT_SEARCH_COUNTRY, 0);
+        AppState.setInt(StateKeys.INT_SEARCH_REGION, 0);
+        AppState.setInt(StateKeys.INT_SEARCH_CITY, 0);
+        AppState.setInt(StateKeys.INT_SEARCH_AGE, 0);
+        AppState.setInt(StateKeys.INT_SEARCH_GENDER, 0);
+        AppState.setInt(StateKeys.FLAG_SEARCH_ONLINE_ONLY, 0);
     }
 
     /* renamed from: a */
@@ -406,12 +407,12 @@ public final class StringUtils {
         MenuItem menuItem = (MenuItem) obj;
         int selectedIdx = ((Integer) ((Object[]) menuItem.data)[0]).intValue();
         String str = menuItem.title;
-        String countryLabel = AppState.getString(689);
-        String regionLabel = AppState.getString(690);
-        String cityLabel = AppState.getString(691);
-        String monthLabel = AppState.getString(688);
-        String ageLabel = AppState.getString(692);
-        String genderLabel = AppState.getString(693);
+        String countryLabel = AppState.getString(StateKeys.STR_LABEL_COUNTRY);
+        String regionLabel = AppState.getString(StateKeys.STR_LABEL_REGION);
+        String cityLabel = AppState.getString(StateKeys.STR_LABEL_CITY);
+        String monthLabel = AppState.getString(StateKeys.STR_LABEL_MONTH);
+        String ageLabel = AppState.getString(StateKeys.STR_LABEL_AGE_RANGE);
+        String genderLabel = AppState.getString(StateKeys.STR_LABEL_GENDER);
         MenuItem regionItem = null;
         MenuItem cityItem = null;
         MenuItem monthDropdown = null;
@@ -447,23 +448,23 @@ public final class StringUtils {
             MenuItem regionDropdown = regionItem;
             Vector regions = createRegionVector();
             if (selectedIdx > 0) {
-                addXmlChildTexts(regions, AppState.getVector(1301).elementAt(selectedIdx - 1));
+                addXmlChildTexts(regions, AppState.getVector(StateKeys.SLOT_REG_FIELD_2).elementAt(selectedIdx - 1));
             }
             regionDropdown.setChoices(regions, 0, regionLabel);
-            cityItem.setChoices(Utils.splitByNull(AppState.getString(684)), 0, cityLabel);
+            cityItem.setChoices(Utils.splitByNull(AppState.getString(StateKeys.STR_CITY_LIST)), 0, cityLabel);
         } else if (equals(str, regionLabel)) {
             MenuItem cityDropdown = cityItem;
             int i = countryIdx;
             Vector regions2 = createRegionVector();
             if (selectedIdx > 0) {
-                addXmlChildTexts(regions2, ((XmlElement) AppState.getVector(1301).elementAt(i - 1)).children.elementAt(selectedIdx - 1));
+                addXmlChildTexts(regions2, ((XmlElement) AppState.getVector(StateKeys.SLOT_REG_FIELD_2).elementAt(i - 1)).children.elementAt(selectedIdx - 1));
             }
             cityDropdown.setChoices(regions2, 0, cityLabel);
         } else if (equals(str, monthLabel)) {
-            ageDropdown.setChoices(Utils.splitByNull(AppState.getString(687)), 0, ageLabel);
-            genderDropdown.setChoices(Utils.splitByNull(AppState.getString(686)), 0, genderLabel);
+            ageDropdown.setChoices(Utils.splitByNull(AppState.getString(StateKeys.STR_AGE_RANGES)), 0, ageLabel);
+            genderDropdown.setChoices(Utils.splitByNull(AppState.getString(StateKeys.STR_GENDER_LIST)), 0, genderLabel);
         } else if (equals(str, ageLabel) || equals(str, genderLabel)) {
-            monthDropdown.setChoices(Utils.splitByNull(AppState.getString(685)), 0, monthLabel);
+            monthDropdown.setChoices(Utils.splitByNull(AppState.getString(StateKeys.STR_MONTH_NAMES)), 0, monthLabel);
         }
         screen.rebuildItems();
     }
@@ -471,7 +472,7 @@ public final class StringUtils {
     /* renamed from: g */
     public static final String[] buildRegData() {
         String[] strArr = new String[16];
-        String inputStr = Utils.defaultStr(AppState.getString(1296));
+        String inputStr = Utils.defaultStr(AppState.getString(StateKeys.SLOT_CONTACT_JID));
         if (!isEmpty(inputStr)) {
             String result = intern(inputStr.toLowerCase());
             int idx = result.indexOf(64);
@@ -480,26 +481,26 @@ public final class StringUtils {
                 strArr[1] = suffix(result, idx + 1);
             } else {
                 strArr[0] = result;
-                strArr[1] = suffix(Utils.splitAndGet(694, AppState.getInt(1480)), 1);
+                strArr[1] = suffix(Utils.splitAndGet(694, AppState.getInt(StateKeys.INT_REGION_CODE)), 1);
             }
             return strArr;
         }
-        strArr[2] = Utils.defaultStr(AppState.getString(1297));
-        strArr[3] = Utils.defaultStr(AppState.getString(1298));
-        strArr[4] = Utils.defaultStr(AppState.getString(1299));
+        strArr[2] = Utils.defaultStr(AppState.getString(StateKeys.SLOT_DISPLAY_NAME));
+        strArr[3] = Utils.defaultStr(AppState.getString(StateKeys.SLOT_FIRST_NAME));
+        strArr[4] = Utils.defaultStr(AppState.getString(StateKeys.SLOT_LAST_NAME));
         strArr[5] = intToStringPositive(1481);
         strArr[7] = intToStringPositive(1482);
         strArr[8] = intToStringPositive(1483);
-        int iM586d = AppState.getInt(1485);
+        int iM586d = AppState.getInt(StateKeys.INT_SEARCH_COUNTRY);
         if (iM586d > 0) {
-            XmlElement element = (XmlElement) AppState.getVector(1301).elementAt(iM586d - 1);
+            XmlElement element = (XmlElement) AppState.getVector(StateKeys.SLOT_REG_FIELD_2).elementAt(iM586d - 1);
             strArr[15] = element.getLongKeyAttr(105);
-            int iM586d2 = AppState.getInt(1486);
+            int iM586d2 = AppState.getInt(StateKeys.INT_SEARCH_REGION);
             if (iM586d2 > 0) {
                 XmlElement childElem = (XmlElement) element.children.elementAt(iM586d2 - 1);
                 strArr[11] = childElem.getLongKeyAttr(105);
                 strArr[15] = null;
-                int iM586d3 = AppState.getInt(1487);
+                int iM586d3 = AppState.getInt(StateKeys.INT_SEARCH_CITY);
                 if (iM586d3 > 0) {
                     strArr[11] = ((XmlElement) childElem.children.elementAt(iM586d3 - 1)).getLongKeyAttr(105);
                 }
@@ -508,7 +509,7 @@ public final class StringUtils {
         strArr[12] = intToStringPositive(1484);
         strArr[13] = intToStringPositive(1488);
         strArr[14] = intToStringPositive(1489);
-        if (AppState.getBool(1490)) {
+        if (AppState.getBool(StateKeys.FLAG_SEARCH_ONLINE_ONLY)) {
             strArr[9] = intern(Integer.toString(1));
         }
         return strArr;
@@ -525,22 +526,22 @@ public final class StringUtils {
 
     /* renamed from: h */
     public static final void initPlatform() {
-        AppState.setObject(1375, (Object) AppState.getAppProperty(1375));
-        while (Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222))) <= 106) {
+        AppState.setObject(StateKeys.STR_APP_NAME, (Object) AppState.getAppProperty(StateKeys.STR_APP_NAME));
+        while (Utils.parseInt((Object) Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID))) <= 106) {
             try {
                 throw new Throwable();
             } catch (Throwable unused) {
-                AppState.setObject(222, (Object) intern(Integer.toString(Utils.nextRandom())));
+                AppState.setObject(StateKeys.SESSION_RANDOM_ID, (Object) intern(Integer.toString(Utils.nextRandom())));
             }
         }
-        setOrGenerateGuid(validateGuid(AppState.getAppProperty(1381)));
-        AppState.setObject(1382, (Object) AppState.getAppProperty(1382));
-        AppState.setObject(1381, (Object) new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(AppState.getString(222))).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
-        AppState.setString(1376, getSystemProp(963));
-        AppState.setString(1377, getSystemProp(964));
-        AppState.setString(1378, getSystemProp(1378));
-        AppState.setString(1380, getSystemProp(1380));
-        AppState.setString(1379, getSystemProp(1379));
+        setOrGenerateGuid(validateGuid(AppState.getAppProperty(StateKeys.SLOT_SESSION_HASH)));
+        AppState.setObject(StateKeys.SLOT_SESSION_TOKEN, (Object) AppState.getAppProperty(StateKeys.SLOT_SESSION_TOKEN));
+        AppState.setObject(StateKeys.SLOT_SESSION_HASH, (Object) new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID))).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
+        AppState.setString(StateKeys.SLOT_ACCOUNT_LOGIN, getSystemProp(963));
+        AppState.setString(StateKeys.SLOT_ACCOUNT_PASSWORD, getSystemProp(964));
+        AppState.setString(StateKeys.SLOT_ACCOUNT_SERVER, getSystemProp(1378));
+        AppState.setString(StateKeys.SLOT_ACCOUNT_TYPE_STR, getSystemProp(1380));
+        AppState.setString(StateKeys.SLOT_ACCOUNT_DISPLAY_NAME, getSystemProp(1379));
         int i = 967;
         while (true) {
             i--;
@@ -551,45 +552,45 @@ public final class StringUtils {
                 String inputStr = Utils.defaultStr(AppState.getString(i));
                 AppState.clearIndex(i);
                 Class.forName(inputStr);
-                AppState.setInt(1537, 1);
+                AppState.setInt(StateKeys.FLAG_KNOWN_PLATFORM, 1);
                 break;
             } catch (Throwable unused2) {
             }
         }
-        if (AppState.getString(1375).charAt(0) == '3' && AppState.getString(1375).charAt(2) == '9') {
-            if (AppState.getString(239) == null) {
-                AppState.setFromPool(239, 1024);
+        if (AppState.getString(StateKeys.STR_APP_NAME).charAt(0) == '3' && AppState.getString(StateKeys.STR_APP_NAME).charAt(2) == '9') {
+            if (AppState.getString(StateKeys.SESSION_DEVICE_INFO) == null) {
+                AppState.setFromPool(StateKeys.SESSION_DEVICE_INFO, StateKeys.STR_DEVICE_FEATURES);
             }
-            AppState.clearIndex(403);
-            String result = intern(concat(AppState.getString(1376), AppState.getString(1377)).toLowerCase());
+            AppState.clearIndex(StateKeys.SESSION_PLATFORM_INFO);
+            String result = intern(concat(AppState.getString(StateKeys.SLOT_ACCOUNT_LOGIN), AppState.getString(StateKeys.SLOT_ACCOUNT_PASSWORD)).toLowerCase());
             isKnownDevice2 = AppState.indexOfLong(result, 7163382462464028531L) >= 0 || AppState.indexOf(result, 842019699) == 0 || AppState.indexOf(result, 842019703) == 0;
             isKnownDevice1 = AppState.indexOfLong(result, 418380476270L) >= 0;
-            AppState.setBool(1536, AppState.indexOf(result, 761620851) == 0 || AppState.indexOf(result, 1903060322) == 0);
-            AppState.setBool(1543, isKnownDevice1 || isKnownDevice2);
-            AppState.setBool(1538, AppState.getBool(1537) || AppState.indexOfLong(result, 29113373327974771L) >= 0 || AppState.indexOf(result, 6514035) == 0 || AppState.indexOf(result, 6841203) == 0 || AppState.indexOf(result, 6842227) == 0 || AppState.indexOf(result, 29799) == 0);
+            AppState.setBool(StateKeys.FLAG_WIFI_CONNECTION, AppState.indexOf(result, 761620851) == 0 || AppState.indexOf(result, 1903060322) == 0);
+            AppState.setBool(StateKeys.FLAG_KNOWN_DEVICE, isKnownDevice1 || isKnownDevice2);
+            AppState.setBool(StateKeys.FLAG_ADVANCED_FEATURES, AppState.getBool(StateKeys.FLAG_KNOWN_PLATFORM) || AppState.indexOfLong(result, 29113373327974771L) >= 0 || AppState.indexOf(result, 6514035) == 0 || AppState.indexOf(result, 6841203) == 0 || AppState.indexOf(result, 6842227) == 0 || AppState.indexOf(result, 29799) == 0);
             byte major = parseVersionByte(0);
             byte minor = parseVersionByte(1);
             byte patch = parseVersionByte(2);
-            byte[] bytes = AppState.getBytes(907);
+            byte[] bytes = AppState.getBytes(StateKeys.RES_SESSION_BYTES);
             bytes[13] = major;
             bytes[14] = minor;
             bytes[15] = patch;
-            if (AppState.getLong(219) == 0) {
-                AppState.setLong(219, System.currentTimeMillis());
+            if (AppState.getLong(StateKeys.TIMESTAMP_FIRST_RUN) == 0) {
+                AppState.setLong(StateKeys.TIMESTAMP_FIRST_RUN, System.currentTimeMillis());
                 return;
             }
             return;
         }
         while (true) {
-            Object obj = AppState.pool[1375];
-            AppState.pool[1375] = new Object[]{obj, obj, obj};
+            Object obj = AppState.pool[StateKeys.STR_APP_NAME];
+            AppState.pool[StateKeys.STR_APP_NAME] = new Object[]{obj, obj, obj};
         }
     }
 
     /* renamed from: c */
     private static final byte parseVersionByte(int i) {
         try {
-            return (byte) Utils.parseInt(Utils.split(AppState.getString(1375), '.').elementAt(i));
+            return (byte) Utils.parseInt(Utils.split(AppState.getString(StateKeys.STR_APP_NAME), '.').elementAt(i));
         } catch (Throwable unused) {
             return (byte) 0;
         }
@@ -597,7 +598,7 @@ public final class StringUtils {
 
     /* renamed from: n */
     private static final String formatVersion() {
-        String countryLabel = AppState.getString(1375);
+        String countryLabel = AppState.getString(StateKeys.STR_APP_NAME);
         String[] strArr = new String[3];
         String str = AppState.emptyStr;
         strArr[0] = str;
@@ -636,17 +637,17 @@ public final class StringUtils {
         int i;
         int i2;
         if (str != null) {
-            AppState.setObject(1374, (Object) str);
+            AppState.setObject(StateKeys.SLOT_MAP_TILE_DATA, (Object) str);
         }
-        if (null == AppState.getString(223)) {
+        if (null == AppState.getString(StateKeys.SESSION_KEY)) {
             if (null != str) {
-                AppState.setObject(223, (Object) str);
+                AppState.setObject(StateKeys.SESSION_KEY, (Object) str);
                 return;
             }
             StringBuffer sb = NetworkUtils.newStringBuffer();
             int i3 = 0;
             while (i3 < 2) {
-                long seed = i3 == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(AppState.getString(222)));
+                long seed = i3 == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID)));
                 for (int i4 = 0; i4 < 64; i4 += 4) {
                     int i5 = ((int) (seed >>> (60 - i4))) & 15;
                     if (i5 < 10) {
@@ -660,7 +661,7 @@ public final class StringUtils {
                 }
                 i3++;
             }
-            AppState.setFromBuffer(223, sb);
+            AppState.setFromBuffer(StateKeys.SESSION_KEY, sb);
         }
     }
 
@@ -686,16 +687,16 @@ public final class StringUtils {
 
     /* renamed from: i */
     public static GeoRegion getGeoRegion() {
-        return (GeoRegion) AppState.pool[1391];
+        return (GeoRegion) AppState.pool[StateKeys.OBJ_GEO_REGION_2];
     }
 
     /* renamed from: j */
     public static final void initGeoRegions() {
-        AppState.pool[1389] = NetworkUtils.newVector();
-        AppState.pool[1390] = new GeoRegion(AppState.getString(996), 4115426L, 7539707L, 4267459L, 7412592L);
+        AppState.pool[StateKeys.VEC_MAP_POINTS] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.OBJ_GEO_REGION] = new GeoRegion(AppState.getString(StateKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
-            ByteBuffer geoBuffer = ResourceManager.decodeBase64(AppState.getString(227));
-            AppState.getVector(1389).removeAllElements();
+            ByteBuffer geoBuffer = ResourceManager.decodeBase64(AppState.getString(StateKeys.GEO_SAVED_DATA));
+            AppState.getVector(StateKeys.VEC_MAP_POINTS).removeAllElements();
             if (geoBuffer.length > 0) {
                 int count = geoBuffer.readIntBE();
                 while (true) {
@@ -709,15 +710,15 @@ public final class StringUtils {
             }
         } catch (Throwable unused) {
         }
-        GeoRegion region = new GeoRegion(AppState.getString(995), 1866877L, 15815124L, 21989606L, 4133096L);
+        GeoRegion region = new GeoRegion(AppState.getString(StateKeys.STR_REGION_NAME_1), 1866877L, 15815124L, 21989606L, 4133096L);
         region.centerLat = 10848141L;
         region.centerLon = 8758455L;
-        AppState.pool[1391] = region;
+        AppState.pool[StateKeys.OBJ_GEO_REGION_2] = region;
     }
 
     /* renamed from: a */
     private static void addGeoRegion(GeoRegion region) {
-        Vector items = AppState.getVector(1389);
+        Vector items = AppState.getVector(StateKeys.VEC_MAP_POINTS);
         if (items.contains(region)) {
             return;
         }
@@ -726,7 +727,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final boolean isInSavedRegion(long j, long j2) {
-        Vector items = AppState.getVector(1389);
+        Vector items = AppState.getVector(StateKeys.VEC_MAP_POINTS);
         int size = Utils.vectorSize(items);
         while (true) {
             size--;
@@ -746,10 +747,10 @@ public final class StringUtils {
         if (element == null || (vector = element.children) == null) {
             return;
         }
-        AppState.getVector(1389).removeAllElements();
+        AppState.getVector(StateKeys.VEC_MAP_POINTS).removeAllElements();
         String configUrl = element.getIntAttribute(594023);
         if (configUrl != null) {
-            AppState.setObject(254, (Object) configUrl);
+            AppState.setObject(StateKeys.URL_GEO_CONFIG, (Object) configUrl);
         }
         for (int i = 0; i < Utils.vectorSize(vector); i++) {
             XmlElement childElem = (XmlElement) vector.elementAt(i);
@@ -770,18 +771,18 @@ public final class StringUtils {
             }
         }
         try {
-            AppState.resetToEmpty(227);
+            AppState.resetToEmpty(StateKeys.GEO_SAVED_DATA);
             ByteBuffer buffer = new ByteBuffer();
-            Vector items = AppState.getVector(1389);
+            Vector items = AppState.getVector(StateKeys.VEC_MAP_POINTS);
             int size = items.size();
             buffer.writeIntBE(size);
             for (int i3 = 0; i3 < size; i3++) {
                 GeoRegion region2 = (GeoRegion) items.elementAt(i3);
                 buffer.writeStringUTF16(region2.name).writeLong(region2.minLat).writeLong(region2.maxLon).writeLong(region2.maxLat).writeLong(region2.minLon).writeStringUTF16(region2.description).writeLong(region2.centerLat).writeLong(region2.centerLon).writeIntLE(region2.precision);
             }
-            AppState.setObject(227, (Object) buffer.toBase64());
+            AppState.setObject(StateKeys.GEO_SAVED_DATA, (Object) buffer.toBase64());
         } catch (Throwable unused) {
-            AppState.resetToEmpty(254);
+            AppState.resetToEmpty(StateKeys.URL_GEO_CONFIG);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -18,9 +19,9 @@ public abstract class ContactListManager {
     /* renamed from: a */
     public static final void showContactList() {
         RemoteLogger.log("CL", "showContactList called");
-        AppState.clearIndex(1281);
-        AppState.clearIndex(1365);
-        AppState.setInt(1476, 4);
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ENTITY);
+        AppState.setInt(StateKeys.INT_CONNECTION_STATE, 4);
         TabBar.findTab(4, TabBar.currentAccount);
         Screen c0013amM161g = buildContactList();
         TabBar c0008ahM175i = TabBar.getCurrentTab();
@@ -48,8 +49,8 @@ public abstract class ContactListManager {
 
     /* renamed from: c */
     public static final void clearState() {
-        AppState.clearIndex(1281);
-        AppState.clearIndex(1365);
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ENTITY);
         updateState();
     }
 
@@ -89,7 +90,7 @@ public abstract class ContactListManager {
         if (!(obj instanceof Contact)) {
             return 0;
         }
-        AppState.clearIndex(1279);
+        AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
         AppController.clearSearchState();
         return ((Contact) obj).getDefaultAction();
     }
@@ -116,13 +117,13 @@ public abstract class ContactListManager {
     public static final int updateContextMenu(Screen c0013am, Object obj) {
         Account abstractC0037h;
         int iM1250M = -1;
-        if (AppState.pool[1291] != null) {
+        if (AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] != null) {
             return 122;
         }
-        if (!AppState.getBool(1471)) {
-            AppState.setInt(1471, 1);
-            if (System.currentTimeMillis() - AppState.getLong(219) > 604800000) {
-                AppState.setInt(1505, 0);
+        if (!AppState.getBool(StateKeys.FLAG_CLEANUP_DONE)) {
+            AppState.setInt(StateKeys.FLAG_CLEANUP_DONE, 1);
+            if (System.currentTimeMillis() - AppState.getLong(StateKeys.TIMESTAMP_FIRST_RUN) > 604800000) {
+                AppState.setInt(StateKeys.FLAG_SHOW_NOTIFICATION, 0);
                 return 57;
             }
         }
@@ -143,7 +144,7 @@ public abstract class ContactListManager {
             Account abstractC0037h2 = abstractC0037h;
             int iMo108h = abstractC0037h.getIconId();
             String str = abstractC0037h2.shortName;
-            if (!AppState.getBool(243)) {
+            if (!AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT)) {
                 TabBar.updateTitle(iMo108h, str);
             }
             if (vector != null) {
@@ -208,7 +209,7 @@ public abstract class ContactListManager {
             vector.removeAllElements();
             AppController.needsRepaint = true;
         }
-        return AppState.getBool(1577) ? 163 : 0;
+        return AppState.getBool(StateKeys.FLAG_CONVERSATION_ACTIVE) ? 163 : 0;
     }
 
     /* renamed from: g */
@@ -216,12 +217,12 @@ public abstract class ContactListManager {
         RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
         boolean zM1056C;
         MergedContactGroup c0054y;
-        int iM586d = 1 + AppState.getInt(242);
-        AppState.setInt(2573, iM586d == 1 ? 1 : 12);
+        int iM586d = 1 + AppState.getInt(StateKeys.SETTING_CONTACT_SORT_MODE);
+        AppState.setInt(StateKeys.INT_CONTACT_ICON_SIZE, iM586d == 1 ? 1 : 12);
         Screen c0013amM75b = ScreenManager.createScreen(2571);
         int i = c0013amM75b.contentWidth - 1;
-        if (!AppState.getBool(99)) {
-            boolean z = !AppState.getBool(98);
+        if (!AppState.getBool(StateKeys.SETTING_SHOW_OFFLINE)) {
+            boolean z = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
             Account abstractC0037h = TabBar.currentAccount;
             Vector vectorM445W = abstractC0037h == null ? AccountManager.getAllAccountsList() : abstractC0037h.getAllContacts();
             Vector vector = vectorM445W;
@@ -233,10 +234,10 @@ public abstract class ContactListManager {
                 }
             }
             NetworkUtils.releaseVector(vector);
-        } else if (AppState.getBool(100)) {
+        } else if (AppState.getBool(StateKeys.SETTING_GROUP_BY_STATUS)) {
             int i3 = i / iM586d;
-            boolean zM587e = AppState.getBool(101);
-            boolean z2 = !AppState.getBool(98);
+            boolean zM587e = AppState.getBool(StateKeys.SETTING_SHOW_GROUPS);
+            boolean z2 = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
             Vector vectorM1213g = NetworkUtils.newVector();
             Vector vectorM446d = AccountManager.getAccountConversations(TabBar.currentAccount);
             int size = vectorM446d.size();
@@ -428,8 +429,8 @@ public abstract class ContactListManager {
             int i14 = i / iM586d;
             Vector vectorM446d2 = AccountManager.getAccountConversations(TabBar.currentAccount);
             int iM353a8 = AppController.sortContacts(vectorM446d2);
-            boolean zM587e2 = AppState.getBool(101);
-            boolean z4 = !AppState.getBool(98);
+            boolean zM587e2 = AppState.getBool(StateKeys.SETTING_SHOW_GROUPS);
+            boolean z4 = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
             for (int i15 = 0; i15 < iM353a8; i15++) {
                 ContactGroup abstractC0046q3 = (ContactGroup) vectorM446d2.elementAt(i15);
                 boolean z5 = false;

@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.model;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
@@ -48,14 +49,14 @@ public final class Message {
     public Object[] attachments;
 
     public Message(Hashtable hashtable) {
-        this.from = JsonParser.getStringValue(hashtable, AppState.getString(591892));
-        this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(264254)) * 1000;
-        this.toList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(591883)), JsonParser.getStringValue(hashtable, AppState.getString(526365)));
-        this.ccList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(460804)), JsonParser.getStringValue(hashtable, AppState.getString(395262)));
-        this.priority = JsonParser.getIntValue(hashtable, AppState.getString(591847));
-        setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(657373)) != 0);
-        setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(657363)) != 0);
-        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, AppState.getString(460837)));
+        this.from = JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_3));
+        this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_SEMICOLON)) * 1000;
+        this.toList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_HEADER_NAME_2)));
+        this.ccList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_INFO_PREFIX)));
+        this.priority = JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_1));
+        setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_5)) != 0);
+        setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_4)) != 0);
+        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)));
     }
 
     public Message(Vector vector, String str, String str2) {
@@ -97,7 +98,7 @@ public final class Message {
         int i = isUnread ? 1 : 0;
         int i2 = i;
         int ellipsisWidth = AppState.getGfxContext(i).stringWidth(AppState.getEllipsis());
-        int availWidth = (((AppState.getInt(1528) - ellipsisWidth) - 240) + 227) - 10;
+        int availWidth = (((AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - ellipsisWidth) - 240) + 227) - 10;
         int i3 = isUnread ? 0 : 19;
         MrimAccount account = (MrimAccount) AppState.getAccount();
         MenuItem item = MenuItem.create(this.from);
@@ -124,7 +125,7 @@ public final class Message {
         StringBuffer sb = NetworkUtils.newStringBuffer();
         String dateStr = Utils.appendSpace(NetworkUtils.bufToStringCached((i4 == cal.get(1) && i5 == cal.get(2) && i6 == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
         MenuItem textItem = iconItem.addText(dateStr, i2, 10);
-        String priorityStr = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(903)));
+        String priorityStr = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(StateKeys.STR_PRIORITY_SUFFIX)));
         MenuItem mainItem = textItem.addText(priorityStr, i2, i3);
         int textWidth = AppState.getGfxContext(i2).stringWidth(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(dateStr).append(priorityStr)));
         if (hasFlag(1)) {
@@ -142,11 +143,11 @@ public final class Message {
         int i7 = roomType;
         boolean z3 = false;
         if ((i7 & 1) != 0 && (toRecipient = XmppMailRuProtocol.getFirstRecipient(getToList())) != null) {
-            mainItem.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(867)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
+            mainItem.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
             z3 = true;
         }
         if ((i7 & 2) != 0 && (ccRecipient = XmppMailRuProtocol.getFirstRecipient(getCcList())) != null) {
-            mainItem.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(868)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
+            mainItem.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
         }
         boolean z4 = chatRoom == account.getLastChatRoom();
         mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), i2, availWidth - 22, ellipsisWidth, z4), i2, i3);
@@ -212,7 +213,7 @@ public final class Message {
 
     /* renamed from: d */
     public final String getSubject() {
-        return (this.subject == null || this.subject.length() == 0) ? AppState.getString(902) : this.subject;
+        return (this.subject == null || this.subject.length() == 0) ? AppState.getString(StateKeys.STR_NO_SUBJECT) : this.subject;
     }
 
     /* renamed from: e */
@@ -220,9 +221,9 @@ public final class Message {
         Hashtable hashtable = new Hashtable();
         String[] ccRecipient = XmppMailRuProtocol.getFirstRecipient(this.toList);
         if (ccRecipient != null) {
-            hashtable.put(AppState.getString(264203), ccRecipient[1]);
+            hashtable.put(AppState.getString(StateKeys.STR_RES_OPEN_TAG), ccRecipient[1]);
         }
-        String ccKey = AppState.getString(133118);
+        String ccKey = AppState.getString(StateKeys.STR_RES_PROTOCOL_SEPARATOR);
         Vector vector = this.ccList;
         StringBuffer sb = NetworkUtils.newStringBuffer();
         if (vector != null) {
@@ -236,13 +237,13 @@ public final class Message {
             }
         }
         hashtable.put(ccKey, NetworkUtils.bufToStringCached(sb));
-        hashtable.put(AppState.getString(460837), this.subject);
-        hashtable.put(AppState.getString(264133), this.body);
-        JsonParser.putIntValue(hashtable, AppState.getString(264258), 1);
-        JsonParser.putIntValue(hashtable, AppState.getString(263849), 1);
-        JsonParser.putIntValue(hashtable, AppState.getString(329772), 0);
-        JsonParser.putIntValue(hashtable, AppState.getString(460784), 0);
-        JsonParser.putIntValue(hashtable, AppState.getString(919536), 0);
+        hashtable.put(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3), this.subject);
+        hashtable.put(AppState.getString(StateKeys.STR_RES_CLOSE_TAG), this.body);
+        JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_COMMA), 1);
+        JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_QUOTE), 1);
+        JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PARAM_2), 0);
+        JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_1), 0);
+        JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_URL_TEMPLATE_1), 0);
         Vector attachList = NetworkUtils.newVector();
         int length = this.attachments == null ? 0 : this.attachments.length;
         for (int i = 0; i < length; i++) {
@@ -253,9 +254,9 @@ public final class Message {
             }
             attachList.addElement(hashtable2);
         }
-        hashtable.put(AppState.getString(722874), attachList);
+        hashtable.put(AppState.getString(StateKeys.STR_RES_XML_TAG_2), attachList);
         if (attachList.size() > 0) {
-            JsonParser.putIntValue(hashtable, AppState.getString(657363), 1);
+            JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_4), 1);
         }
         return hashtable;
     }

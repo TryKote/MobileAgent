@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.net;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -76,8 +77,8 @@ public final class NetworkUtils {
     /* renamed from: a */
     public static final void checkCrashReport() {
         long jCurrentTimeMillis = System.currentTimeMillis();
-        if (jCurrentTimeMillis > AppState.getLong(274) + 7776000000L) {
-            AppState.setLong(274, jCurrentTimeMillis);
+        if (jCurrentTimeMillis > AppState.getLong(StateKeys.TIMESTAMP_LAST_CLEANUP) + 7776000000L) {
+            AppState.setLong(StateKeys.TIMESTAMP_LAST_CLEANUP, jCurrentTimeMillis);
             new AsyncTask(18);
         }
     }
@@ -105,7 +106,7 @@ public final class NetworkUtils {
                 httpClient = diagClient;
                 if (diagClient.getResponseCode() == 200) {
                     Vector children = new ByteBuffer(httpClient).parseXmlStr().children;
-                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(223)).setLongKeyAttr(102, AppController.getAppVersion()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
+                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(StateKeys.SESSION_KEY)).setLongKeyAttr(102, AppController.getAppVersion()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
                     for (int i6 = 0; i6 < children.size(); i6++) {
                         XmlElement element = (XmlElement) children.elementAt(i6);
                         String tag = element.tagName;
@@ -126,7 +127,7 @@ public final class NetworkUtils {
                 for (int i7 = 0; i7 < dataBuffer.length; i7 += 600) {
                     int pos = i7;
                     int limit = Utils.min(pos + 600, dataBuffer.length);
-                    byte[] base64Table = AppState.getBytes(961);
+                    byte[] base64Table = AppState.getBytes(StateKeys.RES_BASE64_TABLE);
                     int outPos = 0;
                     boolean z = true;
                     while (z) {
@@ -309,7 +310,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final int handleRegSubmit(Object[] objArr) {
-        AppState.clearIndex(1271);
+        AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
         String statusCode = (String) objArr[20];
         if (statusCode != null) {
             if (Utils.parseInt((Object) statusCode) == 0) {
@@ -325,15 +326,15 @@ public final class NetworkUtils {
                 objArr[21] = ResourceManager.integerOf(-1);
             }
         }
-        AppState.pool[1271] = objArr;
+        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = objArr;
         return 164;
     }
 
     /* renamed from: b */
     public static final void processRegForm() {
         String domain;
-        Object[] objArr = (Object[]) AppState.pool[1271];
-        AppState.clearIndex(1271);
+        Object[] objArr = (Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA];
+        AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
         String email = (String) objArr[7];
         String login = email;
         int atIndex = email.indexOf(64);
@@ -344,7 +345,7 @@ public final class NetworkUtils {
             domain = AppState.emptyStr;
         }
         int i = 0;
-        Vector domains = Utils.splitNonEmpty(AppState.getString(694), (char) 0);
+        Vector domains = Utils.splitNonEmpty(AppState.getString(StateKeys.STR_DOMAIN_LIST), (char) 0);
         int size = domains.size();
         while (true) {
             size--;
@@ -355,26 +356,26 @@ public final class NetworkUtils {
             }
         }
         releaseVector(domains);
-        AppState.pool[1341] = objArr[3];
-        AppState.pool[1342] = objArr[4];
-        AppState.pool[1343] = objArr[5];
-        AppState.pool[1292] = login;
-        AppState.setInt(1474, i);
-        AppState.pool[1293] = objArr[9];
-        AppState.pool[1284] = objArr[10];
-        AppState.setInt(4305, ((Integer) objArr[11]).intValue());
-        AppState.pool[1287] = objArr[12];
-        AppState.pool[1288] = objArr[13];
-        AppState.pool[1298] = objArr[14];
-        AppState.pool[1299] = objArr[15];
-        AppState.setInt(1489, ((Integer) objArr[16]).intValue());
-        AppState.setInt(1488, ((Integer) objArr[17]).intValue());
-        AppState.setInt(1491, ((Integer) objArr[18]).intValue());
-        AppState.setInt(1481, ((Integer) objArr[19]).intValue());
-        AppState.pool[1297] = objArr[20];
-        AppState.setInt(1480, ((Integer) objArr[21]).intValue());
+        AppState.pool[StateKeys.SLOT_MAP_SEARCH_QUERY] = objArr[3];
+        AppState.pool[StateKeys.STR_MAP_LOCATION_NAME] = objArr[4];
+        AppState.pool[StateKeys.STR_MAP_LOCATION_URL] = objArr[5];
+        AppState.pool[StateKeys.SLOT_CHAT_NAME] = login;
+        AppState.setInt(StateKeys.INT_SERVER_INDEX, i);
+        AppState.pool[StateKeys.SLOT_PASSWORD] = objArr[9];
+        AppState.pool[StateKeys.SLOT_SCREEN_TITLE] = objArr[10];
+        AppState.setInt(StateKeys.INT_SETTINGS_THEME, ((Integer) objArr[11]).intValue());
+        AppState.pool[StateKeys.SLOT_DEVICE_ID] = objArr[12];
+        AppState.pool[StateKeys.SLOT_APP_VERSION_STRING] = objArr[13];
+        AppState.pool[StateKeys.SLOT_FIRST_NAME] = objArr[14];
+        AppState.pool[StateKeys.SLOT_LAST_NAME] = objArr[15];
+        AppState.setInt(StateKeys.INT_SEARCH_GENDER, ((Integer) objArr[16]).intValue());
+        AppState.setInt(StateKeys.INT_SEARCH_AGE, ((Integer) objArr[17]).intValue());
+        AppState.setInt(StateKeys.INT_REG_DOMAIN_INDEX, ((Integer) objArr[18]).intValue());
+        AppState.setInt(StateKeys.INT_COUNTRY_CODE, ((Integer) objArr[19]).intValue());
+        AppState.pool[StateKeys.SLOT_DISPLAY_NAME] = objArr[20];
+        AppState.setInt(StateKeys.INT_REGION_CODE, ((Integer) objArr[21]).intValue());
         ScreenManager.showScreen(ScreenManager.createScreen(4399));
-        String statusStr = AppState.getString(1297);
+        String statusStr = AppState.getString(StateKeys.SLOT_DISPLAY_NAME);
         if (statusStr == null) {
             RemoteLogger.log("NET", "triggering refreshContactList from NetworkUtils");
             AppController.refreshContactList();
@@ -390,7 +391,7 @@ public final class NetworkUtils {
     /* renamed from: c */
     public static final void closeAllConnections() {
         RemoteLogger.log("NET", "closeAllConnections");
-        Vector connections = AppState.getVector(1373);
+        Vector connections = AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST);
         int size = connections.size();
         while (true) {
             size--;
@@ -422,7 +423,7 @@ public final class NetworkUtils {
             objArr[0] = null;
             objArr[1] = null;
             objArr[2] = null;
-            Utils.removeFrom(AppState.getVector(1373), objArr);
+            Utils.removeFrom(AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST), objArr);
         }
     }
 
@@ -459,7 +460,7 @@ public final class NetworkUtils {
                 objArr[4] = new ByteBuffer();
                 new AsyncTask(4, objArr);
             }
-            AppState.getVector(1373).addElement(objArr);
+            AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST).addElement(objArr);
             return objArr;
         } catch (Throwable th) {
             closeConnectionImpl(objArr, true);
@@ -675,7 +676,7 @@ public final class NetworkUtils {
     /* renamed from: e */
     public static final StringBuffer getMessageBuffer() {
         StringBuffer sb = newStringBuffer();
-        String prefix = Utils.defaultStr(AppState.getString(1279));
+        String prefix = Utils.defaultStr(AppState.getString(StateKeys.SLOT_STATUS_TEXT));
         StringBuffer result = sb.append(prefix);
         int length = prefix.length();
         if (length != 0 && prefix.charAt(length - 1) != ' ') {
@@ -686,18 +687,18 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final void showAlertBuffer(int i, StringBuffer stringBuffer) {
-        AppState.setInt(4486, i);
-        AppState.setFromBuffer(1344, stringBuffer);
+        AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, i);
+        AppState.setFromBuffer(StateKeys.SLOT_MAP_POINT_1, stringBuffer);
         ScreenManager.showScreen(ScreenManager.createScreen(4485));
-        AppState.clearIndex(1344);
+        AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
     }
 
     /* renamed from: a */
     public static final void showAlertById(int i, int i2) {
-        AppState.setInt(4486, i);
-        AppState.setFromPool(1344, i2);
+        AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, i);
+        AppState.setFromPool(StateKeys.SLOT_MAP_POINT_1, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(4485));
-        AppState.clearIndex(1344);
+        AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
     }
 
     /* renamed from: a */
@@ -711,14 +712,14 @@ public final class NetworkUtils {
 
     /* renamed from: b */
     public static final void showConfirmDialog(int i, int i2) {
-        AppState.setInt(4498, i);
-        AppState.setInt(4497, i2);
+        AppState.setInt(StateKeys.INT_HTTP_PARAM_1, i);
+        AppState.setInt(StateKeys.INT_HTTP_PARAM_2, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(4497));
     }
 
     /* renamed from: f */
     public static final int getIconOffset() {
-        return AppState.getBool(69) ? 10 : 55;
+        return AppState.getBool(StateKeys.SETTING_FAST_CONNECTION) ? 10 : 55;
     }
 
     /* renamed from: a */
@@ -726,16 +727,16 @@ public final class NetworkUtils {
         ContactInfo contactInfo = ContactInfo.createForAccount(account);
         switch (i) {
             case 0:
-                contactInfo.setContactName(AppState.getString(913));
+                contactInfo.setContactName(AppState.getString(StateKeys.STR_DEFAULT_CONTACT_NAME));
                 break;
             case 1:
                 contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
                 break;
             default:
-                contactInfo.setContactName(bufToStringCached(newStringBuffer().append(AppState.getString(914)).append(i)));
+                contactInfo.setContactName(bufToStringCached(newStringBuffer().append(AppState.getString(StateKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
                 break;
         }
-        AppState.pool[1315] = contactInfo;
+        AppState.pool[StateKeys.SLOT_REG_PARAM_1] = contactInfo;
     }
 
     /* renamed from: b */
@@ -753,8 +754,8 @@ public final class NetworkUtils {
                 nameIndex = 914;
                 break;
         }
-        AppState.setInt(1506, nameIndex);
-        AppState.pool[1318] = contacts;
+        AppState.setInt(StateKeys.INT_ERROR_MSG_INDEX, nameIndex);
+        AppState.pool[StateKeys.SLOT_REG_PARAM_4] = contacts;
     }
 
     /* renamed from: c */
@@ -789,7 +790,7 @@ public final class NetworkUtils {
             if (null != contact) {
                 String fullName = contactInfo.getFullName();
                 contact.setDisplayName(fullName);
-                account.validateGroupAdd(email, fullName, AppState.getString(741), (ContactGroup) account.getFirstContactGroup(), true);
+                account.validateGroupAdd(email, fullName, AppState.getString(StateKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
             }
         }
     }
@@ -819,7 +820,7 @@ public final class NetworkUtils {
     */
     private static final Vector parseMrimContacts(MrimAccount account, ByteBuffer buffer) {
         Vector result = newVector();
-        Vector fieldNames = Utils.splitByNull(AppState.getString(915));
+        Vector fieldNames = Utils.splitByNull(AppState.getString(StateKeys.STR_REG_FIELD_NAMES));
         int fieldCount = buffer.readInt();
         int contactCount = buffer.readInt();
         buffer.readInt();
@@ -1148,7 +1149,7 @@ public final class NetworkUtils {
 
     /* renamed from: i */
     public static final Object[] newRequest() {
-        String url = AppState.getString(2950249);
+        String url = AppState.getString(StateKeys.STR_RES_HUGE_URL_6);
         String empty = AppState.emptyStr;
         Integer zero = ResourceManager.integerCache[0];
         Integer minusOne = ResourceManager.integerOf(-1);
@@ -1157,7 +1158,7 @@ public final class NetworkUtils {
 
     /* renamed from: a */
     public static final Object[] createRegRequest(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return startAsyncRequest(2, bufToStringCached(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(newStringBuffer().append(AppState.getString(2163862)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(817))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
+        return startAsyncRequest(2, bufToStringCached(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(newStringBuffer().append(AppState.getString(StateKeys.STR_RES_HUGE_URL_2)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(StateKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
     }
 
     /* renamed from: a */

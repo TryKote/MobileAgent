@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -78,7 +79,7 @@ public final class MenuItem {
 
     /* renamed from: c */
     public static final MenuItem createDefault() {
-        return new MenuItem(1, AppState.getString(1038));
+        return new MenuItem(1, AppState.getString(StateKeys.STR_EMPTY));
     }
 
     /* renamed from: a */
@@ -163,7 +164,7 @@ public final class MenuItem {
         }
         if (this.id != 9) {
             if (this.id == 4) {
-                NotificationHelper.showMessageById(Utils.defaultStr(AppState.getString(1379)).length() > 0 ? 427 : 428);
+                NotificationHelper.showMessageById(Utils.defaultStr(AppState.getString(StateKeys.SLOT_ACCOUNT_DISPLAY_NAME)).length() > 0 ? 427 : 428);
                 return 0;
             }
             if (this.id != 5) {
@@ -189,7 +190,7 @@ public final class MenuItem {
 
     /* renamed from: e */
     public final MenuItem setDefaultFont() {
-        return addElement(new int[]{16, AppState.getInt(1450)});
+        return addElement(new int[]{16, AppState.getInt(StateKeys.INT_FONT_HEIGHT)});
     }
 
     /* renamed from: a */
@@ -253,7 +254,7 @@ public final class MenuItem {
 
     /* renamed from: b */
     private static int getElementWidth(Object obj) {
-        if (obj == AppState.pool[1370]) {
+        if (obj == AppState.pool[StateKeys.ARR_EMPTY_INT]) {
             return 0;
         }
         return obj instanceof int[] ? ((int[]) obj)[0] + 2 : ((int[]) ((Object[]) obj)[1])[0];
@@ -261,7 +262,7 @@ public final class MenuItem {
 
     /* renamed from: c */
     private static int getElementHeight(Object obj) {
-        if (obj == AppState.pool[1370]) {
+        if (obj == AppState.pool[StateKeys.ARR_EMPTY_INT]) {
             return 0;
         }
         return obj instanceof int[] ? ((int[]) obj)[1] : ((int[]) ((Object[]) obj)[1])[1];
@@ -270,7 +271,7 @@ public final class MenuItem {
     /* renamed from: a */
     private final void wrapTextLine(Vector vector, String str, GraphicsContext gfx, int i, int i2, int i3, int i4, int i5) {
         int textW = gfx.substringWidth(str, i2, i3);
-        if (textW < (AppState.getInt(1528) << 2) / 5) {
+        if (textW < (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) << 2) / 5) {
             vector.addElement(new Object[]{str, new int[]{textW, i, i2, i3, i4, i5}});
             return;
         }
@@ -354,7 +355,7 @@ public final class MenuItem {
                     vector.addElement(iArr);
                     wrapText(vector, str, i12 + AppState.getString(i13 + 1063).length(), i2, i3, i4, 0);
                 }
-            } else if (str != AppState.getString(1037)) {
+            } else if (str != AppState.getString(StateKeys.STR_PLACEHOLDER_TEXT)) {
                 GraphicsContext fontGfx = AppState.getGfxContext(i3);
                 int offsetH = AppState.getIntOffset(i3);
                 int i15 = i;
@@ -382,7 +383,7 @@ public final class MenuItem {
                             if (i19 > 0) {
                                 wrapTextLine(vector, str, fontGfx, offsetH, i15, i19, i3, i4);
                             }
-                            vector.addElement(AppState.pool[1370]);
+                            vector.addElement(AppState.pool[StateKeys.ARR_EMPTY_INT]);
                             i15 = i16 + 1;
                         }
                         i16++;
@@ -418,7 +419,7 @@ public final class MenuItem {
         this.maxHeight = 0;
         for (int i4 = 0; i4 < size; i4++) {
             Object elem = vector.elementAt(i4);
-            if (elem != AppState.pool[1370]) {
+            if (elem != AppState.pool[StateKeys.ARR_EMPTY_INT]) {
                 int elemW = getElementWidth(elem);
                 int elemH = getElementHeight(elem);
                 int i5 = 0;
@@ -470,7 +471,7 @@ public final class MenuItem {
 
     /* renamed from: h */
     public final int getTotalHeight() {
-        return Utils.max(this.maxHeight, AppState.getInt(1450)) + 4;
+        return Utils.max(this.maxHeight, AppState.getInt(StateKeys.INT_FONT_HEIGHT)) + 4;
     }
 
     /* renamed from: a */
@@ -487,7 +488,7 @@ public final class MenuItem {
                 return;
             }
             Object elem = vector.elementAt(size);
-            if (elem != AppState.pool[1370]) {
+            if (elem != AppState.pool[StateKeys.ARR_EMPTY_INT]) {
                 int i4 = i + 2;
                 int i5 = this.positions[(size << 1) + 1];
                 int i6 = i2 + 2 + this.positions[(size << 1) + 1 + 1];
@@ -508,13 +509,13 @@ public final class MenuItem {
                     GraphicsContext colorGfx = gfx.setFont(fontGfx).setColorFromPalette(iArr2[5]);
                     int i10 = iArr2[2];
                     int i11 = iArr2[3];
-                    if (i6 > 0 && i6 < AppState.getInt(1529)) {
+                    if (i6 > 0 && i6 < AppState.getInt(StateKeys.INT_SCREEN_HEIGHT)) {
                         colorGfx.graphics.drawSubstring(str, i10, i11, i7, i6, 20);
                     }
                     if (i9 == 3) {
-                        gfx.drawRect(i7, i6 + (AppState.getInt(1450) >> 1), fontGfx.substringWidth(str, iArr2[2], iArr2[3]), 0);
+                        gfx.drawRect(i7, i6 + (AppState.getInt(StateKeys.INT_FONT_HEIGHT) >> 1), fontGfx.substringWidth(str, iArr2[2], iArr2[3]), 0);
                     } else if (i9 == 5) {
-                        gfx.drawRect(i7, i6 + AppState.getInt(1450), fontGfx.substringWidth(str, iArr2[2], iArr2[3]), 0);
+                        gfx.drawRect(i7, i6 + AppState.getInt(StateKeys.INT_FONT_HEIGHT), fontGfx.substringWidth(str, iArr2[2], iArr2[3]), 0);
                     }
                 }
             }

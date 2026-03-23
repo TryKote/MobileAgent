@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -53,21 +54,21 @@ public final class TabBar {
         this.iconId = i;
         this.title = str;
         this.type = i2;
-        this.width = GraphicsContext.getIconSize(i) + AppState.getGfxContext(1).stringWidth(str);
+        this.width = GraphicsContext.getIconSize(i) + AppState.getGfxContext(StateKeys.GFX_INDEX_BOLD).stringWidth(str);
         this.account = acct;
     }
 
     /* renamed from: a */
     public static final void initialize() {
-        RemoteLogger.log("TAB", "initialize: accounts=" + AppState.getVector(1241).size() + " multiAcct=" + AppState.getBool(243));
+        RemoteLogger.log("TAB", "initialize: accounts=" + AppState.getVector(StateKeys.VEC_ACCOUNTS).size() + " multiAcct=" + AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT));
         currentIndex = 0;
         currentAccount = null;
-        AppState.pool[1246] = NetworkUtils.newVector();
-        Vector tabs = AppState.getVector(1241);
+        AppState.pool[StateKeys.VEC_TAB_BARS] = NetworkUtils.newVector();
+        Vector tabs = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = tabs.size();
-        if (size == 0 || !AppState.getBool(243)) {
-            RemoteLogger.log("TAB", "addTab DEFAULT: icon=156 title=" + AppState.getString(1047));
-            addTab(156, AppState.getString(1047), 4, null);
+        if (size == 0 || !AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT)) {
+            RemoteLogger.log("TAB", "addTab DEFAULT: icon=156 title=" + AppState.getString(StateKeys.STR_TAB_CONTACTS));
+            addTab(156, AppState.getString(StateKeys.STR_TAB_CONTACTS), 4, null);
         } else {
             for (int i = 0; i < size; i++) {
                 Account acct = (Account) tabs.elementAt(i);
@@ -78,22 +79,22 @@ public final class TabBar {
                 }
             }
         }
-        if (AppState.getBool(67)) {
-            RemoteLogger.log("TAB", "addTab MAIL: getBool(67)=" + AppState.getBool(67));
-            addTab(240, AppState.getString(1044), 36, null);
+        if (AppState.getBool(StateKeys.SETTING_MAIL_TAB_ENABLED)) {
+            RemoteLogger.log("TAB", "addTab MAIL: getBool(67)=" + AppState.getBool(StateKeys.SETTING_MAIL_TAB_ENABLED));
+            addTab(240, AppState.getString(StateKeys.STR_TAB_MAIL), 36, null);
         }
-        if (AppState.getBool(68)) {
-            RemoteLogger.log("TAB", "addTab SEARCH: getBool(68)=" + AppState.getBool(68));
-            addTab(264, AppState.getString(1045), 6, null);
+        if (AppState.getBool(StateKeys.SETTING_SEARCH_TAB_ENABLED)) {
+            RemoteLogger.log("TAB", "addTab SEARCH: getBool(68)=" + AppState.getBool(StateKeys.SETTING_SEARCH_TAB_ENABLED));
+            addTab(264, AppState.getString(StateKeys.STR_TAB_SEARCH), 6, null);
         }
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs=" + AppState.getVector(1246).size());
+        RemoteLogger.log("TAB", "initialize done: totalTabs=" + AppState.getVector(StateKeys.VEC_TAB_BARS).size());
         AppController.needsRepaint = true;
     }
 
     /* renamed from: a */
     public static final void updateTitle(int i, String str) {
-        Vector tabs = AppState.getVector(1246);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
         TabBar tab = (TabBar) tabs.elementAt(0);
         if (tab.iconId == i && tab.title == str) {
             return;
@@ -105,18 +106,18 @@ public final class TabBar {
         iterTab.selectedTitle = str2;
         iterTab.selectedIndex = i2;
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs=" + AppState.getVector(1246).size());
+        RemoteLogger.log("TAB", "initialize done: totalTabs=" + AppState.getVector(StateKeys.VEC_TAB_BARS).size());
         AppController.needsRepaint = true;
     }
 
     /* renamed from: a */
     private static void addTab(int i, String str, int i2, Account acct) {
-        AppState.getVector(1246).addElement(new TabBar(i, str, i2, acct));
+        AppState.getVector(StateKeys.VEC_TAB_BARS).addElement(new TabBar(i, str, i2, acct));
     }
 
     /* renamed from: b */
     public final int selectTab() {
-        Vector tabs = AppState.getVector(1246);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
         int size = tabs.size();
         do {
             size--;
@@ -131,7 +132,7 @@ public final class TabBar {
     /* renamed from: c */
     public static final TabBar getNextTab() {
         int i = currentIndex + 1;
-        Vector tabs = AppState.getVector(1246);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
         if (i < tabs.size()) {
             return (TabBar) tabs.elementAt(i);
         }
@@ -142,7 +143,7 @@ public final class TabBar {
     public static final TabBar getPreviousTab() {
         int i = currentIndex - 1;
         if (i >= 0) {
-            return (TabBar) AppState.getVector(1246).elementAt(i);
+            return (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(i);
         }
         return null;
     }
@@ -151,7 +152,7 @@ public final class TabBar {
     public static final void ensureSettingsTab() {
         ensureDefaultTab();
         if (findTab(36, (Account) null) == null) {
-            addTab(240, AppState.getString(1044), 36, null);
+            addTab(240, AppState.getString(StateKeys.STR_TAB_MAIL), 36, null);
         }
     }
 
@@ -164,7 +165,7 @@ public final class TabBar {
     public static final void ensureSearchTab() {
         ensureDefaultTab();
         if (findTab(6, (Account) null) == null) {
-            addTab(264, AppState.getString(1045), 6, null);
+            addTab(264, AppState.getString(StateKeys.STR_TAB_SEARCH), 6, null);
         }
     }
 
@@ -179,7 +180,7 @@ public final class TabBar {
         if (AppState.getBool(i)) {
             return;
         }
-        Vector tabs = AppState.getVector(1246);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
         int size = tabs.size();
         do {
             size--;
@@ -191,21 +192,21 @@ public final class TabBar {
         } while (tab.type != i2);
         tabs.removeElement(tab);
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs=" + AppState.getVector(1246).size());
+        RemoteLogger.log("TAB", "initialize done: totalTabs=" + AppState.getVector(StateKeys.VEC_TAB_BARS).size());
         AppController.needsRepaint = true;
     }
 
     /* renamed from: k */
     private static final void ensureDefaultTab() {
-        if (AppState.getBool(243)) {
+        if (AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT)) {
             return;
         }
-        updateTitle(156, AppState.getString(1047));
+        updateTitle(156, AppState.getString(StateKeys.STR_TAB_CONTACTS));
     }
 
     /* renamed from: i */
     public static final TabBar getCurrentTab() {
-        return (TabBar) AppState.getVector(1246).elementAt(currentIndex);
+        return (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(currentIndex);
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:10:0x0032, code lost:
@@ -217,7 +218,7 @@ public final class TabBar {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public static final TabBar findTab(int i, Account acct) {
-        Vector tabs = AppState.getVector(1246);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
         int size = tabs.size();
         while (true) {
             size--;
@@ -238,7 +239,7 @@ public final class TabBar {
             currentIndex = i;
             layout();
         }
-        TabBar tab = (TabBar) AppState.getVector(1246).elementAt(i);
+        TabBar tab = (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(i);
         currentAccount = tab.account;
         return tab;
     }
@@ -250,14 +251,14 @@ public final class TabBar {
         int[] iArr;
         Object leftElem;
         int[] iArr2;
-        Vector tabs = AppState.getVector(1246);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
         RemoteLogger.log("TAB", "layout: tabs=" + (tabs != null ? String.valueOf(tabs.size()) : "null") + " currentIdx=" + currentIndex);
         if (tabs == null) {
             return;
         }
-        NetworkUtils.releaseVector(AppState.getVector(1245));
+        NetworkUtils.releaseVector(AppState.getVector(StateKeys.VEC_TAB_ITEMS));
         Vector layoutItems = NetworkUtils.newVector();
-        AppState.pool[1245] = layoutItems;
+        AppState.pool[StateKeys.VEC_TAB_ITEMS] = layoutItems;
         int size = tabs.size();
         int i2 = currentIndex;
         TabBar tab = (TabBar) tabs.elementAt(i2);
@@ -266,7 +267,7 @@ public final class TabBar {
         int i5 = 20;
         for (int i6 = 0; i6 < size; i6++) {
             TabBar iterTab = (TabBar) tabs.elementAt(i6);
-            iterTab.width = 26 + AppState.getGfxContext(1).stringWidth(iterTab.title);
+            iterTab.width = 26 + AppState.getGfxContext(StateKeys.GFX_INDEX_BOLD).stringWidth(iterTab.title);
             iterTab.xOffset = i5;
             layoutItems.addElement(iterTab);
             i5 += iterTab.width;
@@ -276,7 +277,7 @@ public final class TabBar {
             }
         }
         int i7 = i3;
-        int availWidth = AppState.getInt(1528) - 20;
+        int availWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 20;
         while (i4 >= availWidth - 32) {
             int i8 = 0;
             while (true) {
@@ -316,7 +317,7 @@ public final class TabBar {
             }
             if (leftTab.type == 4) {
                 Account acct = leftTab.account;
-                if (AccountManager.isAccountOnline(acct) && AppState.getBool(67) && iArr2[1] == 248) {
+                if (AccountManager.isAccountOnline(acct) && AppState.getBool(StateKeys.SETTING_MAIL_TAB_ENABLED) && iArr2[1] == 248) {
                     layoutItems.insertElementAt(new int[]{20, AccountManager.getAccountStatus(acct)}, 0);
                     int[] iArr6 = iArr2;
                     iArr6[0] = iArr6[0] + 16;
@@ -389,7 +390,7 @@ public final class TabBar {
                     layoutItems.addElement(iArr9);
                     i14 -= 16;
                 }
-                if (rightTab.type == 36 && AccountManager.hasActiveConnection() && AppState.getBool(67)) {
+                if (rightTab.type == 36 && AccountManager.hasActiveConnection() && AppState.getBool(StateKeys.SETTING_MAIL_TAB_ENABLED)) {
                     layoutItems.addElement(new int[]{i15 + 16, 16385});
                     i14 -= 16;
                 }
@@ -443,7 +444,7 @@ public final class TabBar {
 
     /* renamed from: a */
     public static final Object hitTest(int i, int i2) {
-        Vector tabs = AppState.getVector(1245);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_ITEMS);
         int size = tabs.size();
         while (true) {
             size--;

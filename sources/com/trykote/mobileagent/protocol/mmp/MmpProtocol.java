@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.mmp;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -58,7 +59,7 @@ public final class MmpProtocol extends Account {
         this.lastError = -1;
         this.configFlags = 0;
         this.protocolVersion = 4;
-        MmpContactGroup group = new MmpContactGroup(this, 0, AppState.getString(1039));
+        MmpContactGroup group = new MmpContactGroup(this, 0, AppState.getString(StateKeys.STR_GROUP_DEFAULT));
         group.isSpecial = true;
         this.defaultGroup = group;
         this.contactsByIdMap = new Hashtable();
@@ -115,25 +116,25 @@ public final class MmpProtocol extends Account {
     @Override // p000.Account
     /* renamed from: b */
     public final ContactGroup createOnlineGroup() {
-        return new MmpContactGroup(this, -1, AppState.getString(1040));
+        return new MmpContactGroup(this, -1, AppState.getString(StateKeys.STR_GROUP_NOT_IN_LIST));
     }
 
     @Override // p000.Account
     /* renamed from: c */
     public final ContactGroup createBlockedGroup() {
-        return new MmpContactGroup(this, -2, AppState.getString(1042));
+        return new MmpContactGroup(this, -2, AppState.getString(StateKeys.STR_GROUP_TEMPORARY));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final ContactGroup createOfflineGroup() {
-        return new MmpContactGroup(this, -3, AppState.getString(1041));
+        return new MmpContactGroup(this, -3, AppState.getString(StateKeys.STR_GROUP_IGNORE));
     }
 
     @Override // p000.Account
     /* renamed from: e */
     public final ContactGroup createSpecialGroup() {
-        return new MmpContactGroup(this, -4, AppState.getString(1043));
+        return new MmpContactGroup(this, -4, AppState.getString(StateKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
     @Override // p000.Account
@@ -259,7 +260,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.vectorSize(accounts) == 0) {
-                        IOUtils.postEvent((Object) AppState.getString(479));
+                        IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
                         this.progress = 0;
                     }
                     NetworkUtils.releaseVector(accounts);
@@ -307,7 +308,7 @@ public final class MmpProtocol extends Account {
                     this.msgCount = 85;
                     AccountManager.processAccountData((Account) this, handshakePacket);
                     if (handshakePacket.peekByteAt(1) == 1) {
-                        long j = AppState.getBool(1536) ? 25000L : 60000L;
+                        long j = AppState.getBool(StateKeys.FLAG_WIFI_CONNECTION) ? 25000L : 60000L;
                         this.timeout = j;
                         this.deadline = System.currentTimeMillis() + j;
                         incrementSync();
@@ -468,17 +469,17 @@ public final class MmpProtocol extends Account {
                     case 4891:
                         String senderId = packet.readLenPrefixStr();
                         byte authFlag = packet.readByte();
-                        onMessage(senderId, 0L, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(483)).append(AppState.getString(authFlag == 1 ? 484 : 485)).append(packet.readVarLenStr())));
+                        onMessage(senderId, 0L, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_FILE_TRANSFER)).append(AppState.getString(authFlag == 1 ? 484 : 485)).append(packet.readVarLenStr())));
                         if (authFlag == 1 && null != (authContact = getContact((Object) senderId))) {
                             authContact.performAction();
                             break;
                         }
                         break;
                     case 4892:
-                        onMessage(packet.readLenPrefixStr(), 0L, AppState.getString(480));
+                        onMessage(packet.readLenPrefixStr(), 0L, AppState.getString(StateKeys.STR_MMP_SYSTEM_MESSAGE));
                         break;
                     case 5377:
-                        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(481)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(482))));
+                        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
                         XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
                         break;
                     case 5379:
@@ -560,9 +561,9 @@ public final class MmpProtocol extends Account {
                         contact.highlighted = true;
                     }
                 } else if (attrType == 13) {
-                    byte[] blockedGuid = AppState.getBytes(905);
-                    byte[] unblockedGuid = AppState.getBytes(906);
-                    byte[] iconGuids = AppState.getBytes(908);
+                    byte[] blockedGuid = AppState.getBytes(StateKeys.RES_BLOCKED_GUID);
+                    byte[] unblockedGuid = AppState.getBytes(StateKeys.RES_UNBLOCKED_GUID);
+                    byte[] iconGuids = AppState.getBytes(StateKeys.RES_AUTH_SLOT_GUIDS);
                     byte[] rawData = buffer.data;
                     int baseOffset = buffer.offset;
                     for (int i4 = 0; i4 < attrLen; i4 += 16) {
@@ -693,7 +694,7 @@ public final class MmpProtocol extends Account {
             return 299;
         }
         MmpContact contact = (MmpContact) contactParam;
-        AppState.pool[1316] = ContactInfo.createAccountInfo(this).setMmpContactIdStr(contact.identifier);
+        AppState.pool[StateKeys.SLOT_REG_PARAM_2] = ContactInfo.createAccountInfo(this).setMmpContactIdStr(contact.identifier);
         return trySendData(StringUtils.createContactInfoCmd(this, Utils.parseInt((Object) contact.identifier)));
     }
 

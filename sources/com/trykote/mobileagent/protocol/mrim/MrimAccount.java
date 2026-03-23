@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -52,7 +53,7 @@ public final class MrimAccount extends Account implements ListItem {
         super(i, str, str2);
         this.lastError = 0;
         this.configFlags = 1;
-        MrimContactGroup mrimGroup = new MrimContactGroup(this, -1, 102, AppState.getString(1039));
+        MrimContactGroup mrimGroup = new MrimContactGroup(this, -1, 102, AppState.getString(StateKeys.STR_GROUP_DEFAULT));
         mrimGroup.isSpecial = true;
         this.defaultGroup = mrimGroup;
         this.accountProfile = new VCard();
@@ -190,25 +191,25 @@ public final class MrimAccount extends Account implements ListItem {
     @Override // p000.Account
     /* renamed from: b */
     public final ContactGroup createOnlineGroup() {
-        return new MrimContactGroup(this, -1, 101, AppState.getString(1040));
+        return new MrimContactGroup(this, -1, 101, AppState.getString(StateKeys.STR_GROUP_NOT_IN_LIST));
     }
 
     @Override // p000.Account
     /* renamed from: c */
     public final ContactGroup createBlockedGroup() {
-        return new MrimContactGroup(this, -1, 104, AppState.getString(1042));
+        return new MrimContactGroup(this, -1, 104, AppState.getString(StateKeys.STR_GROUP_TEMPORARY));
     }
 
     @Override // p000.Account
     /* renamed from: d */
     public final ContactGroup createOfflineGroup() {
-        return new MrimContactGroup(this, -1, 103, AppState.getString(1041));
+        return new MrimContactGroup(this, -1, 103, AppState.getString(StateKeys.STR_GROUP_IGNORE));
     }
 
     @Override // p000.Account
     /* renamed from: e */
     public final ContactGroup createSpecialGroup() {
-        return new MrimContactGroup(this, -1, 105, AppState.getString(1043));
+        return new MrimContactGroup(this, -1, 105, AppState.getString(StateKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
     /* renamed from: f */
@@ -280,7 +281,7 @@ public final class MrimAccount extends Account implements ListItem {
             case 1:
                 this.msgCount = 20;
                 this.state = 0;
-                this.connection = new ConnectionThread(AppState.getString(1114895));
+                this.connection = new ConnectionThread(AppState.getString(StateKeys.STR_RES_LONG_URL_4));
                 this.progress = 2;
                 AppController.needsRepaint = true;
                 break;
@@ -352,11 +353,11 @@ public final class MrimAccount extends Account implements ListItem {
             packet.skip(44);
             switch (msgType) {
                 case 4098:
-                    long pingInterval = Utils.min(packet.readInt(), AppState.getBool(1536) ? 25 : 45) * 1000;
+                    long pingInterval = Utils.min(packet.readInt(), AppState.getBool(StateKeys.FLAG_WIFI_CONNECTION) ? 25 : 45) * 1000;
                     this.timeout = pingInterval;
                     this.deadline = System.currentTimeMillis() + pingInterval;
                     ByteBuffer authPacket = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
-                    boolean useExtended = AppState.getBool(105);
+                    boolean useExtended = AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS);
                     sendData(ProtocolFactory.createMrimPacket(this, 4216, authPacket.writeIntLE(useExtended ? -1 : 22).writeStringLatin1(useExtended ? null : new ByteBuffer().writeCompressed(1642077).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(1704823).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
                     this.progress = 6;
                     break;
@@ -436,7 +437,7 @@ public final class MrimAccount extends Account implements ListItem {
                         int i8 = this.reserved1;
                         this.reserved1 = i8 + 1;
                         if (0 != i8) {
-                            AppState.setInt(1449, 0);
+                            AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 0);
                         }
                         Hashtable hashtable = new Hashtable();
                         String headerKey = null;
@@ -450,13 +451,13 @@ public final class MrimAccount extends Account implements ListItem {
                             if (!z) {
                                 if (ch2 == '\n' && sb2.length() == 0) {
                                     NetworkUtils.bufToStringCached(sb2);
-                                    String str2 = (String) hashtable.get(AppState.getString(1379315));
+                                    String str2 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
                                     int i10 = str2 != null ? -1 : Integer.parseInt(str2);
                                     i = i10;
-                                    senderName = i10 >= 0 ? null : ResourceManager.decodeBase64(StringUtils.suffix((String) hashtable.get(AppState.getString(460837)), 13)).readAllWideStr();
-                                    str = (String) hashtable.get(AppState.getString(396269));
-                                    i2 = Integer.parseInt((String) hashtable.get(AppState.getString(789512)), 16);
-                                    timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(264254)));
+                                    senderName = i10 >= 0 ? null : ResourceManager.decodeBase64(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
+                                    str = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
+                                    i2 = Integer.parseInt((String) hashtable.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
+                                    timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
                                     i3 = 1;
                                     if ((i2 & 128) != 0) {
                                         String bodyText = StringUtils.suffix(rawText, i9);
@@ -468,12 +469,12 @@ public final class MrimAccount extends Account implements ListItem {
                                         }
                                     } else {
                                         int tagIdx = AppState.indexOfLong(rawText, 57408234938722L);
-                                        messageBody = ResourceManager.decodeBase64(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(134123), tagIdx))).readAllWideStr();
+                                        messageBody = ResourceManager.decodeBase64(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StateKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
                                     }
                                     if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
-                                        Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
+                                        Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
                                     }
-                                    AppState.setInt(1449, 1);
+                                    AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
                                     break;
                                 } else if (ch2 == ':') {
                                     headerKey = NetworkUtils.bufToString(sb2, false);
@@ -491,22 +492,22 @@ public final class MrimAccount extends Account implements ListItem {
                             i9++;
                         }
                         NetworkUtils.bufToStringCached(sb2);
-                        String str22 = (String) hashtable.get(AppState.getString(1379315));
+                        String str22 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
                         int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
                         i = i10_2;
-                        senderName = i10_2 >= 0 ? null : ResourceManager.decodeBase64(StringUtils.suffix((String) hashtable.get(AppState.getString(460837)), 13)).readAllWideStr();
-                        str = (String) hashtable.get(AppState.getString(396269));
-                        i2 = Integer.parseInt((String) hashtable.get(AppState.getString(789512)), 16);
-                        timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(264254)));
+                        senderName = i10_2 >= 0 ? null : ResourceManager.decodeBase64(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
+                        str = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
+                        i2 = Integer.parseInt((String) hashtable.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
+                        timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
                         i3 = 1;
                         if ((i2 & 128) != 0) {
                         }
                         if (i != -1) {
-                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(264203))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
-                            AppState.setInt(1449, 1);
+                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
+                            AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
                         }
                     } catch (Throwable th) {
-                        AppState.setInt(1449, 1);
+                        AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
                         throw th;
                     }
                     break;
@@ -551,7 +552,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 } else if (i11 == 2) {
                                     ContactInfo contactInfo = ContactInfo.createForAccount(this);
                                     contactInfo.setEmailAddress(foundEmail);
-                                    AppState.pool[1319] = contactInfo;
+                                    AppState.pool[StateKeys.SLOT_CONTACT_INFO] = contactInfo;
                                     IOUtils.postEvent(new IOUtils(5, null));
                                 }
                             }
@@ -584,8 +585,8 @@ public final class MrimAccount extends Account implements ListItem {
                     if (noteContact != null && !noteContact.isOnline()) {
                         if ((noteFlags & 2) == 0) {
                             if ((noteFlags & 5) != 0) {
-                                if (AppState.getBool(244) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
-                                    AppState.setObject(1237, (Object) noteContact.identifier);
+                                if (AppState.getBool(StateKeys.SETTING_CUSTOM_NOTE_ENABLED) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
+                                    AppState.setObject(StateKeys.SLOT_CURRENT_CONTACT_ID, (Object) noteContact.identifier);
                                     ResourceManager.playNotificationSound(6);
                                     noteContact.addFlag(2);
                                     noteContact.appendMessage(16, noteText, 0L, sentTime);
@@ -628,7 +629,7 @@ public final class MrimAccount extends Account implements ListItem {
                                     String str7 = cardFields[7];
                                     try {
                                         VCard profile = this.accountProfile;
-                                        String typeStr = AppState.getString(590588);
+                                        String typeStr = AppState.getString(StateKeys.STR_RES_HTTP_METHOD);
                                         String str8 = AppState.emptyStr;
                                         profile.setCardData(str5, str4, typeStr, str8, str8, str8, str6, str7);
                                     } catch (Throwable unused) {
@@ -641,7 +642,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 if (AccountManager.getActiveScreenId() != 10) {
                                     break;
                                 } else {
-                                    IOUtils.postEvent((Object) AppState.getString(786));
+                                    IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
                                     break;
                                 }
                             } else {
@@ -710,30 +711,30 @@ public final class MrimAccount extends Account implements ListItem {
                 statusText = AppState.getString(i3);
                 break;
             default:
-                statusText = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(1226)).append(this.configFlags >> 8));
+                statusText = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
                 break;
         }
         switch (this.configFlags) {
             case 1:
-                typeStr = AppState.getString(642);
+                typeStr = AppState.getString(StateKeys.STR_STATUS_ONLINE);
                 break;
             case 2:
-                typeStr = AppState.getString(644);
+                typeStr = AppState.getString(StateKeys.STR_STATUS_DND);
                 break;
             case 3:
-                typeStr = AppState.getString(642);
+                typeStr = AppState.getString(StateKeys.STR_STATUS_ONLINE);
                 break;
             case 260:
-                typeStr = AppState.getString(643);
+                typeStr = AppState.getString(StateKeys.STR_STATUS_AWAY);
                 break;
             case 516:
-                typeStr = AppState.getString(645);
+                typeStr = AppState.getString(StateKeys.STR_STATUS_INVISIBLE);
                 break;
             default:
-                typeStr = AppState.getString(151 + (this.configFlags >> 8));
+                typeStr = AppState.getString(StateKeys.STR_CONFIG_TYPE_BASE + (this.configFlags >> 8));
                 break;
         }
-        return trySendData(ProtocolFactory.createMrimPacket(this, 4130, new ByteBuffer().writeIntLE(i2 != 3 ? i2 : -2147483647).writeStringLatin1(statusText).writeStringUTF16(typeStr).writeStringUTF16(AppState.emptyStr).writeIntLE(AppState.getBool(105) ? -1 : 22)));
+        return trySendData(ProtocolFactory.createMrimPacket(this, 4130, new ByteBuffer().writeIntLE(i2 != 3 ? i2 : -2147483647).writeStringLatin1(statusText).writeStringUTF16(typeStr).writeStringUTF16(AppState.emptyStr).writeIntLE(AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS) ? -1 : 22)));
     }
 
     @Override // p000.Account
@@ -753,7 +754,7 @@ public final class MrimAccount extends Account implements ListItem {
             return 0;
         }
         String[] strArr2 = {profile.latStr, profile.lonStr, profile.mapTypeStr, profile.phone, profile.email, profile.nickname, profile.address, profile.zoomStr};
-        trySendData(ProtocolFactory.createMrimPacket(this, 4213, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(AppState.getString(590694)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
+        trySendData(ProtocolFactory.createMrimPacket(this, 4213, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(AppState.getString(StateKeys.STR_RES_USER_AGENT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
         return 0;
     }
 
@@ -782,7 +783,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.accountProfile.gender = 1;
         if (isConnected()) {
             if (i == 3) {
-                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(590694));
+                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
             }
             sendProfileUpdate(1, new String[0], this.accountProfile);
         }
@@ -794,7 +795,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.accountProfile.gender = 2;
         if (isConnected()) {
             if (i == 3) {
-                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(590694));
+                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
             }
             sendProfileUpdate(0, new String[0], this.accountProfile);
         }
@@ -806,9 +807,9 @@ public final class MrimAccount extends Account implements ListItem {
         this.accountProfile.gender = 4;
         if (isConnected()) {
             if (i == 3) {
-                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(590694));
+                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
             }
-            sendGroupRename(new String[0], AppState.getString(590694));
+            sendGroupRename(new String[0], AppState.getString(StateKeys.STR_RES_USER_AGENT));
         }
     }
 
@@ -818,9 +819,9 @@ public final class MrimAccount extends Account implements ListItem {
         this.accountProfile.gender = 3;
         if (isConnected()) {
             if (i == 3) {
-                sendGroupRename(this.accountProfile.prevPhotoUrls, AppState.getString(590694));
+                sendGroupRename(this.accountProfile.prevPhotoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
             } else if (i == 1 || i == 2) {
-                sendGroupRename(new String[0], AppState.getString(590694));
+                sendGroupRename(new String[0], AppState.getString(StateKeys.STR_RES_USER_AGENT));
             }
             sendProfileUpdate(0, this.accountProfile.photoUrls, this.accountProfile);
         }
@@ -857,7 +858,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final void setSimpleProfile(String str, String str2) {
         try {
             VCard profile = this.accountProfile;
-            String typeStr = AppState.getString(525044);
+            String typeStr = AppState.getString(StateKeys.STR_RES_CONTENT_TYPE);
             String str3 = AppState.emptyStr;
             profile.setCardData(str2, str, typeStr, str3, str3, str3, str3, str3);
         } catch (Throwable unused) {
@@ -872,7 +873,7 @@ public final class MrimAccount extends Account implements ListItem {
             VCard profile = this.accountProfile;
             String latStr = IOUtils.pixelToLatitude(mapPoint.latitude);
             String lonStr = IOUtils.pixelToLongitude(mapPoint.longitude);
-            String typeStr = AppState.getString(590588);
+            String typeStr = AppState.getString(StateKeys.STR_RES_HTTP_METHOD);
             String pointName = mapPoint.getDisplayName();
             String str = AppState.emptyStr;
             profile.setCardData(latStr, lonStr, typeStr, pointName, str, str, StringUtils.intern(Integer.toString(mapPoint.objectCode)), StringUtils.intern(Integer.toString(mapPoint.typeCode)));
@@ -1207,17 +1208,17 @@ public final class MrimAccount extends Account implements ListItem {
             z = false;
             this.chatRoomsList = NetworkUtils.newVector();
         }
-        Object roomsArray = JsonParser.getValue(obj, AppState.getString(329785));
+        Object roomsArray = JsonParser.getValue(obj, AppState.getString(StateKeys.STR_RES_PARAM_3));
         for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
             Object roomObj = JsonParser.getVectorElement(roomsArray, i);
-            ChatRoom existingRoom = findChatRoomById(JsonParser.getIntValue(roomObj, AppState.getString(132297)));
+            ChatRoom existingRoom = findChatRoomById(JsonParser.getIntValue(roomObj, AppState.getString(StateKeys.STR_RES_AT_SIGN)));
             if (existingRoom == null) {
                 this.chatRoomsList.addElement(new ChatRoom(roomObj));
             } else {
                 existingRoom.parseJson(roomObj);
             }
         }
-        this.accountNickname = JsonParser.getStringValue(obj, AppState.getString(526385));
+        this.accountNickname = JsonParser.getStringValue(obj, AppState.getString(StateKeys.STR_RES_HEADER_NAME_3));
         assignDefaultChatRoom(z);
     }
 
@@ -1292,8 +1293,8 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: X */
     public final ChatRoom findDefaultChatRoom() {
-        ChatRoom defaultRoom = findChatRoomByNameHelper(AppState.getString(897));
-        return defaultRoom != null ? defaultRoom : findChatRoomByNameHelper(AppState.getString(892));
+        ChatRoom defaultRoom = findChatRoomByNameHelper(AppState.getString(StateKeys.STR_MAIN_CHATROOM));
+        return defaultRoom != null ? defaultRoom : findChatRoomByNameHelper(AppState.getString(StateKeys.STR_DEFAULT_CHATROOM));
     }
 
     /* renamed from: m */
@@ -1357,14 +1358,14 @@ public final class MrimAccount extends Account implements ListItem {
         int i;
         StringBuffer sb = NetworkUtils.newStringBuffer();
         if (this.accountProfile.dirty) {
-            sb.append(AppState.getString(489));
+            sb.append(AppState.getString(StateKeys.STR_MRIM_AWAY_SUFFIX));
             String str = this.accountProfile.phone;
             if (Utils.nonEmpty(str)) {
                 sb.append(str).append('.').append(' ');
             }
             sb.append("Уточнить?");
         } else {
-            sb.append(AppState.getString(488));
+            sb.append(AppState.getString(StateKeys.STR_MRIM_OFFLINE_SUFFIX));
             if (AccountManager.getMrimAccountList().size() > 1) {
                 sb.append(' ').append('(').append(this.login).append(')').append('.').append(' ');
             }

@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -258,7 +259,7 @@ public final class XmlElement {
 
     /* renamed from: a */
     public final String getNameAttr() {
-        return getAttribute(AppState.getString(262589));
+        return getAttribute(AppState.getString(StateKeys.STR_RES_EQUALS));
     }
 
     /* renamed from: c */
@@ -279,7 +280,7 @@ public final class XmlElement {
                 return null;
             }
             XmlElement child = getChildAt(idx);
-            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(AppState.getString(333027)))) {
+            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(AppState.getString(StateKeys.STR_RES_URL_PARAM_3)))) {
                 return child;
             }
         }
@@ -287,6 +288,6 @@ public final class XmlElement {
 
     /* renamed from: b */
     public final XmlElement cloneElement() {
-        return addNameAttr(398982).setAttrValue(131590, getAttribute(AppState.getString(262852))).setAttrValue(262852, (String) null);
+        return addNameAttr(398982).setAttrValue(131590, getAttribute(AppState.getString(StateKeys.STR_RES_AMPERSAND))).setAttrValue(262852, (String) null);
     }
 }

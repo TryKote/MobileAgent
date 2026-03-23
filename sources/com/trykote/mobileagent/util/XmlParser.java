@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -176,7 +177,7 @@ public final class XmlParser {
                     if (StringUtils.matchesKey(1046, text2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        endTag = text2.endsWith(AppState.getString(1046));
+                        endTag = text2.endsWith(AppState.getString(StateKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                             length2--;
@@ -225,7 +226,7 @@ public final class XmlParser {
                             z3 = true;
                             length2--;
                         }
-                        endTag = text2.endsWith(AppState.getString(1046));
+                        endTag = text2.endsWith(AppState.getString(StateKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                         }

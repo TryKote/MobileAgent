@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -350,9 +351,9 @@ public abstract class Account {
         String errorMsg;
         Throwable th = this.connection.exception;
         if (null == th) {
-            errorMsg = AppState.getString(951);
+            errorMsg = AppState.getString(StateKeys.STR_TIMEOUT_ERROR);
         } else {
-            errorMsg = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(946)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            errorMsg = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
         IOUtils.postAccountMessage(this, errorMsg);
@@ -386,7 +387,7 @@ public abstract class Account {
 
     /* renamed from: f */
     public final void handleError(int i) {
-        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(459)).append(this).append(AppState.getString(460)).append(AppState.getString(457)).append(i)));
+        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -435,8 +436,8 @@ public abstract class Account {
             return;
         }
         AppController.deleteContact(contact);
-        AppState.getVector(1242).addElement(contact);
-        contact.statusCode = AppState.getInt(1531);
+        AppState.getVector(StateKeys.VEC_PENDING_CONNECTIONS).addElement(contact);
+        contact.statusCode = AppState.getInt(StateKeys.INT_CURRENT_TIMESTAMP);
         contact.dirty = true;
     }
 

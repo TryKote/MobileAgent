@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.mmp;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -232,8 +233,8 @@ public final class MmpContact extends Contact {
     /* renamed from: a */
     public static final void setLocationEnabled(boolean z) {
         locationEnabled = z;
-        AppState.setBool(1573, z);
-        AppState.setBool(1574, z && !AppState.getBool(1575));
+        AppState.setBool(StateKeys.FLAG_TYPING_INDICATOR, z);
+        AppState.setBool(StateKeys.FLAG_TYPING_VISIBLE, z && !AppState.getBool(StateKeys.FLAG_TYPING_HIDDEN));
     }
 
     /* renamed from: f */
@@ -247,9 +248,9 @@ public final class MmpContact extends Contact {
         nearestPoints.removeAllElements();
         setLocationEnabled(false);
         currentRouteIndex = 0;
-        AppState.setInt(1573, 0);
-        AppState.setInt(1574, 0);
-        AppState.setInt(1575, 0);
+        AppState.setInt(StateKeys.FLAG_TYPING_INDICATOR, 0);
+        AppState.setInt(StateKeys.FLAG_TYPING_VISIBLE, 0);
+        AppState.setInt(StateKeys.FLAG_TYPING_HIDDEN, 0);
     }
 
     /* renamed from: o */
@@ -308,7 +309,7 @@ public final class MmpContact extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer routeInfo = NetworkUtils.newStringBuffer().append(AppState.getString(979));
+                        StringBuffer routeInfo = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ROUTE_PREFIX));
                         int i7 = 952;
                         int i8 = totalRouteLength;
                         int i9 = 0;
@@ -328,19 +329,19 @@ public final class MmpContact extends Contact {
                             }
                             distBuf.append(trimmed);
                         }
-                        StringBuffer routeInfo2 = routeInfo.append(NetworkUtils.bufToStringCached(distBuf.append(AppState.getString(i7)))).append(AppState.getString(983));
+                        StringBuffer routeInfo2 = routeInfo.append(NetworkUtils.bufToStringCached(distBuf.append(AppState.getString(i7)))).append(AppState.getString(StateKeys.STR_DISTANCE_UNIT));
                         int i10 = totalRouteDuration;
                         StringBuffer distBuf2 = NetworkUtils.newStringBuffer();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             distBuf2.append(i11);
                         } else {
-                            distBuf2.append(i11 / 60).append(AppState.getString(954)).append(i11 % 60);
+                            distBuf2.append(i11 / 60).append(AppState.getString(StateKeys.STR_HOUR_SEPARATOR)).append(i11 % 60);
                         }
-                        r03[1] = routeInfo2.append(NetworkUtils.bufToStringCached(distBuf2.append(AppState.getString(955)))).toString();
+                        r03[1] = routeInfo2.append(NetworkUtils.bufToStringCached(distBuf2.append(AppState.getString(StateKeys.STR_DISTANCE_SUFFIX)))).toString();
                         r03[2] = AppState.emptyStr;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
-                        r03[1] = AppState.getString(980);
+                        r03[1] = AppState.getString(StateKeys.STR_NO_ROUTE);
                         r03[2] = AppState.emptyStr;
                     } else {
                         r03[1] = vector5.elementAt(2);
@@ -399,7 +400,7 @@ public final class MmpContact extends Contact {
     /* renamed from: r */
     public static final int[] getNextRoutePoint() {
         int totalPoints = getTotalRoutePoints();
-        int zoom = AppState.getInt(39);
+        int zoom = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
         int[] coords = getRoutePointAt(currentRouteIndex);
         int px = (int) MapUtils.coordToPixel(coords[0], zoom);
         int px2 = (int) MapUtils.coordToPixel(coords[1], zoom);
@@ -421,7 +422,7 @@ public final class MmpContact extends Contact {
         if (currentRouteIndex == 0 && getRouteLabelsAt(currentRouteIndex) != null) {
             return getRoutePointAt(currentRouteIndex);
         }
-        int zoom = AppState.getInt(39);
+        int zoom = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
         int[] coords2 = getRoutePointAt(currentRouteIndex);
         int px = (int) MapUtils.coordToPixel(coords2[0], zoom);
         int px2 = (int) MapUtils.coordToPixel(coords2[1], zoom);

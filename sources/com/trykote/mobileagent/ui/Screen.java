@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -142,7 +143,7 @@ public final class Screen {
 
     /* renamed from: a */
     public final Screen initTabs() {
-        if (AppState.getBool(245)) {
+        if (AppState.getBool(StateKeys.SETTING_HEADER_VISIBLE)) {
             this.tabItems = NetworkUtils.newVector();
             recalcLayout();
         }
@@ -183,7 +184,7 @@ public final class Screen {
         this.contentHeight = this.contentBottom - 2;
         if (this.tabItems != null) {
             int i3 = this.contentBottom;
-            int barHeight = Utils.max(AppState.getInt(1450), 16) + 3;
+            int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16) + 3;
             this.contentBottom = i3 - barHeight;
             this.contentHeight -= barHeight;
         }
@@ -225,7 +226,7 @@ public final class Screen {
 
     /* renamed from: a */
     public final Screen setHeader(int i, String str) {
-        this.headerItem = MenuItem.createSeparator().addText(AppState.getString(1037), 1, 0).setLabelInternal(i, str, 1, 0);
+        this.headerItem = MenuItem.createSeparator().addText(AppState.getString(StateKeys.STR_PLACEHOLDER_TEXT), 1, 0).setLabelInternal(i, str, 1, 0);
         recalcLayout();
         return this;
     }
@@ -313,8 +314,8 @@ public final class Screen {
                 int i6 = this.offsetX + 1;
                 int i7 = this.offsetY + 1;
                 g.setClip(i6, i7, this.innerWidth, this.headerHeight);
-                int stateVal = AppState.getInt(72);
-                int stateVal2 = AppState.getInt(5042 + stateVal);
+                int stateVal = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
+                int stateVal2 = AppState.getInt(StateKeys.PALETTE_SCREEN_BASE + stateVal);
                 if (stateVal2 != AppState.getInt(stateVal + 5082)) {
                     for (int i8 = 1; i8 < this.headerHeight; i8++) {
                         g.setColor(((255 - ((i8 * (255 - (stateVal2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((stateVal2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (stateVal2 & 255))) / this.headerHeight)));
@@ -414,10 +415,10 @@ public final class Screen {
                 g.drawRect(i26, i27 - 1, 2, this.contentBottom + 1);
             }
             if (this.tabItems != null) {
-                int barHeight = Utils.max(AppState.getInt(1450), 16);
+                int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
                 int screenHeight = AppState.getHeight() - 1;
-                int stateVal3 = AppState.getInt(1528);
-                g.setClip(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, stateVal3 - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(0));
+                int stateVal3 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+                g.setClip(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, stateVal3 - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
                 Vector vector = this.tabItems;
                 int i28 = 3;
                 boolean z5 = false;
@@ -437,11 +438,11 @@ public final class Screen {
                     }
                 }
             }
-            if (z && AppState.getBool(71)) {
-                int stateVal4 = AppState.getInt(1528);
+            if (z && AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE)) {
+                int stateVal4 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
                 int screenHeight2 = AppState.getHeight();
                 g.setClip(0, 0, stateVal4, 2048 + screenHeight2);
-                g.setFont(AppState.getGfxContext(0));
+                g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
                 g.setColorFromPalette(15);
                 if (this.titleLeft != null) {
                     g.drawString(this.titleLeft, 1, screenHeight2, 20);
@@ -450,14 +451,14 @@ public final class Screen {
                     g.drawString(this.titleRight, stateVal4 - 1, screenHeight2, 24);
                 }
                 if (ResourceManager.clockWidth + this.titleMaxWidth < stateVal4 - 6) {
-                    g.drawString(Utils.defaultStr(AppState.getString(1263)), stateVal4 >> 1, screenHeight2, 17);
+                    g.drawString(Utils.defaultStr(AppState.getString(StateKeys.SLOT_CLOCK_STRING)), stateVal4 >> 1, screenHeight2, 17);
                 }
             }
         }
         if (this.screenType == 1 || this.screenType == 12) {
-            g.setFont(AppState.getGfxContext(1));
-            TabBar tab = (TabBar) AppState.getVector(1246).elementAt(TabBar.currentIndex);
-            Vector tabs = AppState.getVector(1245);
+            g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_BOLD));
+            TabBar tab = (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(TabBar.currentIndex);
+            Vector tabs = AppState.getVector(StateKeys.VEC_TAB_ITEMS);
             int size2 = tabs.size();
             while (true) {
                 size2--;
@@ -471,7 +472,7 @@ public final class Screen {
                     GraphicsContext gfx = g.setColorFromPalette(16);
                     int i30 = tab2.xOffset;
                     int i31 = tab2.width;
-                    int textOffset = AppState.getIntOffset(1) + 7;
+                    int textOffset = AppState.getIntOffset(StateKeys.OFFSET_BOLD_FONT_HEIGHT) + 7;
                     gfx.setClip(i30, 2, i31, textOffset - 2).drawLine(tab2.xOffset, textOffset, tab2.xOffset, 6).drawLine(tab2.xOffset, 6, tab2.xOffset + 4, 2).drawLine(tab2.xOffset + 4, 2, (tab2.xOffset + tab2.width) - 2, 2).drawLine((tab2.xOffset + tab2.width) - 2, 2, (tab2.xOffset + tab2.width) - 2, textOffset).setColorFromPalette(z6 ? 1 : 17);
                     int i32 = z6 ? textOffset : textOffset - 1;
                     int i33 = 3;
@@ -481,7 +482,7 @@ public final class Screen {
                     }
                     if (tab2.account == null) {
                         int i34 = tab2.iconId;
-                        paintMode = (i34 == 240 && AccountManager.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(1243).size() <= 0) ? i34 : 16384;
+                        paintMode = (i34 == 240 && AccountManager.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS).size() <= 0) ? i34 : 16384;
                     } else {
                         paintMode = AccountManager.getAccountStatus(tab2.account);
                     }
@@ -500,11 +501,11 @@ public final class Screen {
             int i37 = this.offsetY + this.contentTop;
             g.setClip(i36, i37, this.containerWidth, this.contentHeight);
             try {
-                int stateVal5 = AppState.getInt(1415);
-                int stateVal6 = AppState.getInt(1416);
+                int stateVal5 = AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH);
+                int stateVal6 = AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT);
                 Graphics graphics3 = g.graphics;
-                graphics3.drawImage(AppState.getImage(1364), stateVal5 >> 1, i37 + (stateVal6 >> 1), 3);
-                if (!AppState.getBool(1414) && AppState.getBool(1535)) {
+                graphics3.drawImage(AppState.getImage(StateKeys.OBJ_FONT_2), stateVal5 >> 1, i37 + (stateVal6 >> 1), 3);
+                if (!AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE) && AppState.getBool(StateKeys.FLAG_SUPPORTS_ALPHA)) {
                     int[] iArr2 = new int[stateVal5];
                     int i38 = stateVal5;
                     while (true) {
@@ -526,28 +527,28 @@ public final class Screen {
                 }
             } catch (Throwable unused) {
             }
-            AppState.setInt(1553, 0);
+            AppState.setInt(StateKeys.FLAG_MAP_SCROLLING, 0);
             return;
         }
         if (this.screenId != 4) {
             return;
         }
         g.setClip(this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
-        int stateVal7 = AppState.getInt(1408);
+        int stateVal7 = AppState.getInt(StateKeys.INT_POPUP_HEIGHT);
         if (stateVal7 <= 0) {
             return;
         }
-        g.setFont(AppState.getGfxContext(0));
+        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
         int screenHeight3 = AppState.getHeight() - 1;
-        int stateVal8 = AppState.getInt(1528);
+        int stateVal8 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
         g.setClip(0, (screenHeight3 - stateVal7) - 1, stateVal8, stateVal7 + 1);
         g.setColorFromPalette(16);
         g.fillRect(0, (screenHeight3 - stateVal7) - 1, stateVal8, stateVal7 + 1);
         g.setClip(1, screenHeight3 - stateVal7, stateVal8 - 2, stateVal7);
         g.setColorFromPalette(1);
         g.fillRect(0, 0, 2048, 2048);
-        int barHeight2 = Utils.max(AppState.getInt(1450), 16);
-        Vector tabs2 = AppState.getVector(1247);
+        int barHeight2 = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
+        Vector tabs2 = AppState.getVector(StateKeys.VEC_POPUP_ITEMS);
         int size3 = tabs2.size();
         while (true) {
             size3--;
@@ -556,11 +557,11 @@ public final class Screen {
             }
             Account account = (Account) tabs2.elementAt(size3);
             int i39 = screenHeight3;
-            int stateVal9 = AppState.getInt(1450);
+            int stateVal9 = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
             int barHeight3 = Utils.max(stateVal9, 16);
             g.setColorFromPalette(13);
             int i40 = i39 - stateVal9;
-            g.fillRect(1, i40, ((AppState.getInt(1528) - 2) * account.msgCount) / 100, barHeight3);
+            g.fillRect(1, i40, ((AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 2) * account.msgCount) / 100, barHeight3);
             g.drawIcon(account.getIconId(), 3, i40 + ScreenManager.getCenterOffset());
             g.setColorFromPalette(0);
             g.drawString(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, i39, 36);
@@ -598,7 +599,7 @@ public final class Screen {
             return;
         }
         if (this.screenId == 6) {
-            AppState.setInt(1564, 0);
+            AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 0);
             return;
         }
         if (this.screenId != 4) {
@@ -711,7 +712,7 @@ public final class Screen {
     public final void scrollUp() {
         boolean z;
         if (this.screenId == 6) {
-            AppState.setInt(1564, 2);
+            AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 2);
             return;
         }
         if (this.menuItems.size() == 0) {
@@ -1263,7 +1264,7 @@ public final class Screen {
 
     /* renamed from: a */
     public final Screen setSoftKeys(String str, String str2, int i, int i2, int i3) {
-        GraphicsContext gfxCtx = AppState.getGfxContext(0);
+        GraphicsContext gfxCtx = AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT);
         this.titleLeft = str;
         int textWidth = gfxCtx.stringWidth(str);
         this.titleRight = str2;

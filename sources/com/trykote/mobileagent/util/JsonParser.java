@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -244,7 +245,7 @@ public abstract class JsonParser {
     /* renamed from: a */
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ResourceManager.syncObject) {
-            stringBuffer.append(AppState.getString(1369));
+            stringBuffer.append(AppState.getString(StateKeys.STR_SEPARATOR));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);
         } else if (obj instanceof String) {

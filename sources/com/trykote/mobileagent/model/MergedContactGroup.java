@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.model;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
@@ -52,7 +53,7 @@ public final class MergedContactGroup extends ContactGroup {
     public final int toggleSpecial() {
         if (this.isSpecial) {
             String str = this.name;
-            Vector accounts = AppState.getVector(1241);
+            Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
             int size = accounts.size();
             while (true) {
                 size--;
@@ -86,7 +87,7 @@ public final class MergedContactGroup extends ContactGroup {
             }
         } else {
             String str2 = this.name;
-            Vector accounts2 = AppState.getVector(1241);
+            Vector accounts2 = AppState.getVector(StateKeys.VEC_ACCOUNTS);
             int size3 = accounts2.size();
             while (true) {
                 size3--;

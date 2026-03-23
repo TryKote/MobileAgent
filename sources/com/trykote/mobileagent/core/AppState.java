@@ -99,7 +99,7 @@ public abstract class AppState {
             }
             iArr[i4] = value;
         }
-        emptyStr = (String) pool[1038];
+        emptyStr = (String) pool[StateKeys.STR_EMPTY];
         ByteBuffer recordBuf = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(1164404323));
         while (recordBuf.length > 0) {
             try {
@@ -127,41 +127,41 @@ public abstract class AppState {
                 }
             } catch (Throwable unused4) {
             }
-            setInt(0, 3096);
+            setInt(StateKeys.DELTA_VERSION, 3096);
         }
         if (((Integer) delta[0]).intValue() != 3096) {
             throw new RuntimeException();
         }
-        setInt(0, 3096);
-        setObject(1369, (Object) separator);
-        pool[1366] = obj;
-        pool[1370] = new int[0];
+        setInt(StateKeys.DELTA_VERSION, 3096);
+        setObject(StateKeys.STR_SEPARATOR, (Object) separator);
+        pool[StateKeys.OBJ_MIDLET] = obj;
+        pool[StateKeys.ARR_EMPTY_INT] = new int[0];
         Date date = new Date();
-        pool[1368] = date;
-        pool[1367] = Calendar.getInstance();
-        setLong(1532, date.getTime() - System.currentTimeMillis());
+        pool[StateKeys.OBJ_DATE] = date;
+        pool[StateKeys.OBJ_CALENDAR] = Calendar.getInstance();
+        setLong(StateKeys.TIMESTAMP_OFFSET, date.getTime() - System.currentTimeMillis());
         updateTime();
-        pool[1372] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
-        pool[1361] = new Object[58];
-        pool[1362] = new int[29];
-        pool[1266] = NetworkUtils.newVector();
-        pool[1267] = new int[]{1};
-        pool[1268] = new int[]{2};
-        pool[1269] = new int[]{3};
-        pool[1270] = new int[]{4};
+        pool[StateKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
+        pool[StateKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[58];
+        pool[StateKeys.ARR_GFX_HEIGHTS] = new int[29];
+        pool[StateKeys.VEC_EVENT_QUEUE] = NetworkUtils.newVector();
+        pool[StateKeys.ARR_EVENT_TYPE_1] = new int[]{1};
+        pool[StateKeys.ARR_EVENT_TYPE_2] = new int[]{2};
+        pool[StateKeys.ARR_EVENT_TYPE_3] = new int[]{3};
+        pool[StateKeys.ARR_EVENT_TYPE_4] = new int[]{4};
         StringUtils.initPlatform();
         AppController.timers = new long[14];
-        pool[1238] = new Object[1];
+        pool[StateKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
         NetworkUtils.cacheString(separator);
         NetworkUtils.cacheString(getEllipsis());
-        NetworkUtils.cacheString(getString(1233));
-        NetworkUtils.cacheString(getString(1234));
-        NetworkUtils.cacheString(getString(1038));
-        NetworkUtils.cacheString(getString(525044));
-        NetworkUtils.cacheString(getString(590588));
-        pool[112] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
+        NetworkUtils.cacheString(getString(StateKeys.STR_PHONE_SUFFIX));
+        NetworkUtils.cacheString(getString(StateKeys.STR_PHONE_PREFIX));
+        NetworkUtils.cacheString(getString(StateKeys.STR_EMPTY));
+        NetworkUtils.cacheString(getString(StateKeys.STR_RES_CONTENT_TYPE));
+        NetworkUtils.cacheString(getString(StateKeys.STR_RES_HTTP_METHOD));
+        pool[StateKeys.SETTING_COMPRESSION_ENABLED] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
         try {
-            setBool(1535, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
+            setBool(StateKeys.FLAG_SUPPORTS_ALPHA, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
         } catch (Throwable unused5) {
         }
     }
@@ -174,8 +174,8 @@ public abstract class AppState {
     /* renamed from: b */
     public static final void updateTime() {
         long now = System.currentTimeMillis();
-        setLong(1530, now);
-        setBool(1534, (((int) now) & Integer.MAX_VALUE) % 2000 < 1000);
+        setLong(StateKeys.TIMESTAMP_CURRENT, now);
+        setBool(StateKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % 2000 < 1000);
     }
 
     /* renamed from: a */
@@ -185,7 +185,7 @@ public abstract class AppState {
 
     /* renamed from: c */
     public static final MainCanvas getCanvas() {
-        return (MainCanvas) pool[1371];
+        return (MainCanvas) pool[StateKeys.OBJ_CANVAS];
     }
 
     /* renamed from: p */
@@ -197,7 +197,7 @@ public abstract class AppState {
     /* renamed from: b */
     public static final String getString(int i) {
         if (i > 5179) {
-            return StringUtils.intern(new String(getBytes(295), i & 65535, i >> 16));
+            return StringUtils.intern(new String(getBytes(StateKeys.RES_STRING_DATA), i & 65535, i >> 16));
         }
         Object result = getOrDefault(i);
         if (result == null) {
@@ -324,7 +324,7 @@ public abstract class AppState {
 
     /* renamed from: d */
     public static final Midlet getMidlet() {
-        return (Midlet) pool[1366];
+        return (Midlet) pool[StateKeys.OBJ_MIDLET];
     }
 
     /* renamed from: i */
@@ -340,13 +340,13 @@ public abstract class AppState {
 
     /* renamed from: e */
     public static final int getHeight() {
-        return getInt(1529) - (getBool(71) ? getInt(1450) + 2 : 0);
+        return getInt(StateKeys.INT_SCREEN_HEIGHT) - (getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE) ? getInt(StateKeys.INT_FONT_HEIGHT) + 2 : 0);
     }
 
     /* renamed from: f */
     public static final void setDimensions(int i, int i2) {
-        setInt(1528, i);
-        setInt(1529, i2);
+        setInt(StateKeys.INT_SCREEN_WIDTH, i);
+        setInt(StateKeys.INT_SCREEN_HEIGHT, i2);
     }
 
     /* renamed from: j */
@@ -356,7 +356,7 @@ public abstract class AppState {
 
     /* renamed from: k */
     public static final GraphicsContext getGfxContext(int i) {
-        return (GraphicsContext) pool[i + 1273];
+        return (GraphicsContext) pool[i + StateKeys.GFX_CONTEXT_BASE];
     }
 
     /* renamed from: l */
@@ -366,22 +366,22 @@ public abstract class AppState {
 
     /* renamed from: f */
     public static final ContactGroup getCurrentGroup() {
-        return (ContactGroup) pool[1365];
+        return (ContactGroup) pool[StateKeys.SLOT_CURRENT_ENTITY];
     }
 
     /* renamed from: g */
     public static final Contact getCurrentContact() {
-        return (Contact) pool[1365];
+        return (Contact) pool[StateKeys.SLOT_CURRENT_ENTITY];
     }
 
     /* renamed from: h */
     public static final MrimContact getCurrentMrimContact() {
-        return (MrimContact) pool[1365];
+        return (MrimContact) pool[StateKeys.SLOT_CURRENT_ENTITY];
     }
 
     /* renamed from: c */
     public static final void setCurrentEntity(Object obj) {
-        pool[1365] = obj;
+        pool[StateKeys.SLOT_CURRENT_ENTITY] = obj;
     }
 
     /* renamed from: m */
@@ -396,12 +396,12 @@ public abstract class AppState {
 
     /* renamed from: i */
     public static final Account getAccount() {
-        return (Account) pool[1281];
+        return (Account) pool[StateKeys.SLOT_CURRENT_ACCOUNT];
     }
 
     /* renamed from: d */
     public static final void setAccount(Object obj) {
-        pool[1281] = obj;
+        pool[StateKeys.SLOT_CURRENT_ACCOUNT] = obj;
     }
 
     /* renamed from: a */
@@ -509,16 +509,16 @@ public abstract class AppState {
 
     /* renamed from: k */
     public static final Calendar getCalendar() {
-        Calendar calendar = (Calendar) pool[1367];
-        Date date = (Date) pool[1368];
-        date.setTime((getLong(1530) - getLong(1532)) + ((getInt(246) - 13) * 3600000));
+        Calendar calendar = (Calendar) pool[StateKeys.OBJ_CALENDAR];
+        Date date = (Date) pool[StateKeys.OBJ_DATE];
+        date.setTime((getLong(StateKeys.TIMESTAMP_CURRENT) - getLong(StateKeys.TIMESTAMP_OFFSET)) + ((getInt(StateKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000));
         calendar.setTime(date);
         return calendar;
     }
 
     /* renamed from: o */
     public static final int getIntOffset(int i) {
-        return getInt(i + 1450);
+        return getInt(i + StateKeys.INT_FONT_HEIGHT);
     }
 
     /* renamed from: l */
@@ -529,7 +529,7 @@ public abstract class AppState {
 
     /* renamed from: m */
     public static final Font getFont() {
-        return ((GraphicsContext) pool[1273]).font;
+        return ((GraphicsContext) pool[StateKeys.GFX_CONTEXT_BASE]).font;
     }
 
     /* renamed from: a */

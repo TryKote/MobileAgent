@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -18,21 +19,21 @@ public final class NotificationHelper {
         if (ScreenManager.getCurrentScreen().screenType == 8) {
             ScreenBuilder.onScreenClosed();
         }
-        AppState.setFromPool(1294, i);
+        AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, i);
         return 112;
     }
 
     /* renamed from: e */
     public static final void showNotification(String str) {
-        AppState.setInt(3329, 112);
-        AppState.setObject(1294, (Object) str);
+        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, 112);
+        AppState.setObject(StateKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
         clearNotifications();
     }
 
     /* renamed from: m */
     public static final void showMessageById(int i) {
-        AppState.setInt(3329, 112);
-        AppState.setFromPool(1294, i);
+        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, 112);
+        AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, i);
         clearNotifications();
     }
 
@@ -40,6 +41,6 @@ public final class NotificationHelper {
     public static final void clearNotifications() {
         ResourceManager.playNotificationSound(5);
         ScreenManager.showScreen(ScreenManager.createScreen(3328));
-        AppState.clearIndex(1294);
+        AppState.clearIndex(StateKeys.SLOT_NOTIFICATION_TITLE);
     }
 }

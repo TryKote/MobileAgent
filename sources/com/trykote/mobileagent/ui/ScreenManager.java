@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -18,24 +19,24 @@ import javax.microedition.lcdui.Image;
 public abstract class ScreenManager {
     /* renamed from: a */
     public static final void initializeFonts() {
-        int iM586d = AppState.getInt(73);
+        int iM586d = AppState.getInt(StateKeys.SETTING_FONT_SIZE_CHAT);
         int i = iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16;
         GraphicsContext normalGfx = new GraphicsContext(0, i);
-        AppState.pool[1273] = normalGfx;
+        AppState.pool[StateKeys.GFX_CONTEXT_BASE] = normalGfx;
         GraphicsContext boldGfx = new GraphicsContext(1, i);
-        AppState.pool[1274] = boldGfx;
-        GraphicsContext titleGfx = AppState.getBool(70) ? new GraphicsContext(2, i) : normalGfx;
-        AppState.pool[1275] = titleGfx;
-        AppState.pool[1276] = normalGfx;
-        AppState.pool[1277] = normalGfx;
-        AppState.pool[1278] = boldGfx;
-        AppState.setInt(1450, normalGfx.font.getHeight());
-        AppState.setInt(1453, normalGfx.font.getHeight());
-        AppState.setInt(1454, normalGfx.font.getHeight());
-        AppState.setInt(1455, boldGfx.font.getHeight());
-        AppState.setInt(1451, boldGfx.font.getHeight());
-        AppState.setInt(1452, titleGfx.font.getHeight());
-        Vector screens = AppState.getVector(1272);
+        AppState.pool[StateKeys.GFX_CONTEXT_BOLD] = boldGfx;
+        GraphicsContext titleGfx = AppState.getBool(StateKeys.SETTING_BOLD_TITLE_FONT) ? new GraphicsContext(2, i) : normalGfx;
+        AppState.pool[StateKeys.GFX_CONTEXT_TITLE] = titleGfx;
+        AppState.pool[StateKeys.GFX_CONTEXT_NORMAL] = normalGfx;
+        AppState.pool[StateKeys.GFX_CONTEXT_NORMAL_2] = normalGfx;
+        AppState.pool[StateKeys.GFX_CONTEXT_BOLD_2] = boldGfx;
+        AppState.setInt(StateKeys.INT_FONT_HEIGHT, normalGfx.font.getHeight());
+        AppState.setInt(StateKeys.INT_NORMAL_FONT_HEIGHT, normalGfx.font.getHeight());
+        AppState.setInt(StateKeys.INT_NORMAL_FONT_HEIGHT_2, normalGfx.font.getHeight());
+        AppState.setInt(StateKeys.INT_BOLD_FONT_HEIGHT_2, boldGfx.font.getHeight());
+        AppState.setInt(StateKeys.INT_BOLD_FONT_HEIGHT, boldGfx.font.getHeight());
+        AppState.setInt(StateKeys.INT_TITLE_FONT_HEIGHT, titleGfx.font.getHeight());
+        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         int size = screens.size();
         while (true) {
             size--;
@@ -49,7 +50,7 @@ public abstract class ScreenManager {
 
     /* renamed from: b */
     public static final Screen getCurrentScreen() {
-        Vector screens = AppState.getVector(1272);
+        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         if (screens.isEmpty()) {
             return null;
         }
@@ -58,7 +59,7 @@ public abstract class ScreenManager {
 
     /* renamed from: c */
     public static final String getCurrentTitle() {
-        if (AppState.getVector(1272).size() > 0) {
+        if (AppState.getVector(StateKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedTitle();
         }
         return null;
@@ -66,7 +67,7 @@ public abstract class ScreenManager {
 
     /* renamed from: d */
     public static final int getCurrentWidth() {
-        if (AppState.getVector(1272).size() > 0) {
+        if (AppState.getVector(StateKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedWidth();
         }
         return 200;
@@ -74,7 +75,7 @@ public abstract class ScreenManager {
 
     /* renamed from: e */
     public static final MenuItem getCurrentMenuItem() {
-        if (AppState.getVector(1272).size() > 0) {
+        if (AppState.getVector(StateKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedItem();
         }
         return null;
@@ -82,7 +83,7 @@ public abstract class ScreenManager {
 
     /* renamed from: a */
     public static final void pushScreen(Screen screen) {
-        Vector screens = AppState.getVector(1272);
+        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         while (screens.size() > 0) {
             ScreenBuilder.onScreenClosed();
         }
@@ -98,7 +99,7 @@ public abstract class ScreenManager {
     public static final void showScreen(Screen screen) {
         RemoteLogger.log("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
         Screen prevScreen = null;
-        Vector screens = AppState.getVector(1272);
+        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         int size = screens.size() - 1;
         int i = size >= 0 ? ((Screen) screens.elementAt(size)).screenId : -1;
         if (i == 137 || i == 63) {
@@ -124,7 +125,7 @@ public abstract class ScreenManager {
         }
         int i5 = screen.containerWidth;
         int i6 = screen.containerHeight;
-        int iM586d = AppState.getInt(1528) - i5;
+        int iM586d = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - i5;
         int screenH = AppState.getHeight() - i6;
         switch (i4) {
             case 2:
@@ -143,8 +144,8 @@ public abstract class ScreenManager {
                 if (curScreen != null) {
                     int iM586d2 = curScreen.offsetX + curScreen.containerWidth;
                     int selectedY = curScreen.getSelectedY();
-                    if (iM586d2 + screen.containerWidth > AppState.getInt(1528)) {
-                        iM586d2 = AppState.getInt(1528) - screen.containerWidth;
+                    if (iM586d2 + screen.containerWidth > AppState.getInt(StateKeys.INT_SCREEN_WIDTH)) {
+                        iM586d2 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
                     }
                     if (selectedY + screen.containerHeight > AppState.getHeight()) {
                         selectedY = AppState.getHeight() - screen.containerHeight;
@@ -175,7 +176,7 @@ public abstract class ScreenManager {
 
     /* renamed from: a */
     public static final boolean hasScreen(int i) {
-        Vector screens = AppState.getVector(1272);
+        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         int size = screens.size();
         do {
             size--;
@@ -188,12 +189,12 @@ public abstract class ScreenManager {
 
     /* renamed from: f */
     public static final int getCenterOffset() {
-        return Utils.max(0, (AppState.getInt(1450) - 16) >> 1);
+        return Utils.max(0, (AppState.getInt(StateKeys.INT_FONT_HEIGHT) - 16) >> 1);
     }
 
     /* renamed from: g */
     public static final int handleScreenClose() {
-        if (!AppState.getBool(1543)) {
+        if (!AppState.getBool(StateKeys.FLAG_KNOWN_DEVICE)) {
             return NotificationHelper.showError(470);
         }
         AppState.setScreen(new Object());
@@ -226,7 +227,7 @@ public abstract class ScreenManager {
         int pos = i11 + 1;
         int itemCount = AppState.getInt(i11);
         RemoteLogger.log("SCR", "createScreen(" + i + "): type=" + i5 + " items=" + itemCount + " id=" + iM586d);
-        int screenW = AppState.getInt(1528);
+        int screenW = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
         int screenH = AppState.getHeight();
         switch (i5) {
             case 0:
@@ -280,7 +281,7 @@ public abstract class ScreenManager {
 
     /* renamed from: c */
     public static final Screen createDialogScreen(int i) {
-        Screen screen = new Screen(0, i, (AppState.getInt(1528) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
+        Screen screen = new Screen(0, i, (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
         screen.screenType = 2;
         screen.showCheckboxes = true;
         return screen;
@@ -288,7 +289,7 @@ public abstract class ScreenManager {
 
     /* renamed from: h */
     public static final boolean hasModal() {
-        Vector screens = AppState.getVector(1272);
+        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         int size = screens.size();
         do {
             size--;

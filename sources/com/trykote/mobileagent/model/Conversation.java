@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.model;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
@@ -112,10 +113,10 @@ public final class Conversation implements ListItem {
         StringBuffer sb = NetworkUtils.newStringBuffer();
         int size = this.items.size();
         if (this.height == 5) {
-            sb.append(AppState.getString(445)).append(size);
+            sb.append(AppState.getString(StateKeys.STR_CONV_UNREAD_PREFIX)).append(size);
         } else {
             int i = size - 1;
-            sb.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(446)).append(i).append(AppState.getString(442 + Utils.pluralForm(i)));
+            sb.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(StateKeys.STR_CONV_SEPARATOR)).append(i).append(AppState.getString(StateKeys.STR_CONV_SUFFIX_BASE + Utils.pluralForm(i)));
         }
         return NetworkUtils.bufToStringCached(sb);
     }
@@ -142,7 +143,7 @@ public final class Conversation implements ListItem {
                 if (((Integer) objArr[1]).intValue() == 0) {
                     protocol.msgCount = 30;
                     AppController.needsRepaint = true;
-                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(2755089), protocol, 0);
+                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(StateKeys.STR_RES_HUGE_URL_5), protocol, 0);
                     httpClient.setRequestMethod(NetworkUtils.longToHex(1414745936));
                     ByteBuffer requestBody = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
                     ConnectionThread.setHeaderFromState(httpClient, 788628, 2164851);
@@ -172,7 +173,7 @@ public final class Conversation implements ListItem {
                     AppController.needsRepaint = true;
                     ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(2951781).writeByte(63);
                     String queryStr = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
-                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(2951781), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(StateKeys.STR_RES_HUGE_URL_8), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
                     int responseCode2 = httpClient2.getResponseCode();
                     i = responseCode2;
                     if (responseCode2 == 200) {
@@ -209,7 +210,7 @@ public final class Conversation implements ListItem {
     /* renamed from: a */
     public static final byte[] hashData(byte[] bArr, int i) {
         int[] blockBuf = new int[16];
-        int[] state = Utils.bytesToInts(AppState.getBytes(962));
+        int[] state = Utils.bytesToInts(AppState.getBytes(StateKeys.RES_EMOTICON_STATE));
         int[] bitCount = new int[2];
         byte[] tempBuf = NetworkUtils.newBytes(64);
         md5ProcessBuffer(bArr, i, blockBuf, state, bitCount, tempBuf);
@@ -393,7 +394,7 @@ public final class Conversation implements ListItem {
             int i2 = 0;
             while (true) {
                 try {
-                    int idx = str.indexOf(AppState.getString(1245774), i);
+                    int idx = str.indexOf(AppState.getString(StateKeys.STR_RES_VERY_LONG_URL_1), i);
                     if (idx < 0) {
                         break;
                     }
@@ -426,7 +427,7 @@ public final class Conversation implements ListItem {
         try {
             if (!isEncodedFormat(str)) {
                 if (isSimpleFormat(str)) {
-                    return AppState.getString(994);
+                    return AppState.getString(StateKeys.STR_CHAT_DEFAULT_TOPIC);
                 }
                 return null;
             }
@@ -561,9 +562,9 @@ public final class Conversation implements ListItem {
         if ((flags & 8) == 0) {
             String decoded = decodeHtmlEntities(rawBody);
             StringBuffer sb = NetworkUtils.newStringBuffer();
-            String openTag = AppState.getString(658377);
-            String midTag = AppState.getString(396261);
-            String closeTag = AppState.getString(592851);
+            String openTag = AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_6);
+            String midTag = AppState.getString(StateKeys.STR_RES_HEADER_1);
+            String closeTag = AppState.getString(StateKeys.STR_RES_XMPP_TAG_1);
             int i2 = 0;
             while (true) {
                 int i3 = i2;
@@ -615,17 +616,17 @@ public final class Conversation implements ListItem {
                     while (true) {
                         memberCount--;
                         if (memberCount < 0) {
-                            AppState.pool[1318] = members;
+                            AppState.pool[StateKeys.SLOT_REG_PARAM_4] = members;
                             break;
                         } else {
                             members.addElement(buffer.readWideStr());
                         }
                     }
                 case 3:
-                    account.receiveGroupMessage(sender, AppState.getString(911), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, j);
+                    account.receiveGroupMessage(sender, AppState.getString(StateKeys.STR_GROUP_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, j);
                     break;
                 case 5:
-                    account.receivePrivateMessage(sender, AppState.getString(912), buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
+                    account.receivePrivateMessage(sender, AppState.getString(StateKeys.STR_PRIVATE_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
                     break;
             }
             return;
@@ -633,7 +634,7 @@ public final class Conversation implements ListItem {
         boolean isNotify = (flags & 2048) != 0;
         boolean isGroupMsg = (flags & 8192) != 0;
         if ((flags & 4) == 0) {
-            account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(1052223) : sender).writeIntLE(msgId)));
+            account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(StateKeys.STR_RES_LONG_URL_2) : sender).writeIntLE(msgId)));
         }
         if (isGroupMsg) {
             Enumeration elements = account.contactMap.elements();
@@ -675,7 +676,7 @@ public final class Conversation implements ListItem {
             return;
         }
         if ((flags & 16384) != 0) {
-            account.onMessage(sender, j, AppState.getString(910));
+            account.onMessage(sender, j, AppState.getString(StateKeys.STR_CONFERENCE_INVITE));
         } else if ((flags & 1024) != 0) {
             account.deleteContact(sender);
         } else {
@@ -687,7 +688,7 @@ public final class Conversation implements ListItem {
     /* renamed from: p */
     private static final String decodeHtmlEntities(String str) {
         StringBuffer sb = NetworkUtils.newStringBuffer();
-        String entityPrefix = AppState.getString(854972);
+        String entityPrefix = AppState.getString(StateKeys.STR_RES_LONG_LABEL_2);
         int i = 0;
         while (true) {
             int i2 = i;
@@ -748,8 +749,8 @@ public final class Conversation implements ListItem {
             Vector groups2 = account.groups;
             int contactFormatLen = contactFormat.length();
             groups2.size();
-            String phoneSuffix = AppState.getString(1233);
-            String botSuffix = AppState.getString(923);
+            String phoneSuffix = AppState.getString(StateKeys.STR_PHONE_SUFFIX);
+            String botSuffix = AppState.getString(StateKeys.STR_BOT_SUFFIX);
             while (buffer.length > 0) {
                 int contactFlags = buffer.readInt();
                 int groupId = buffer.readInt();
@@ -823,16 +824,16 @@ public final class Conversation implements ListItem {
             account.setConfiguration(account.configFlags);
             account.trySendData(ProtocolFactory.createMrimPacket(account, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
             if (account.syncSeq == 1) {
-                String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(1382)).toLowerCase());
+                String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(StateKeys.SLOT_SESSION_TOKEN)).toLowerCase());
                 if (!StringUtils.isEmpty(searchQuery)) {
                     new AsyncTask(27, new Object[]{searchQuery, account});
                 }
                 if (AccountManager.getActiveScreenId() == 1) {
-                    AppState.setInt(1577, 1);
+                    AppState.setInt(StateKeys.FLAG_CONVERSATION_ACTIVE, 1);
                 }
             }
         } else {
-            IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(458)).append(status)));
+            IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_STATUS_CHANGED)).append(status)));
             account.closeConnection();
             account.lastError = account.getDefaultError();
             account.markAllRead();
@@ -848,7 +849,7 @@ public final class Conversation implements ListItem {
         XmlElement childElement = XmlElement.createFromState(398003);
         XmlElement reportElement = rootElement.addChild(childElement);
         try {
-            childElement.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(529061)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
+            childElement.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_URL_PATH_1)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
         } catch (Throwable unused) {
         }
         Vector accounts = AccountManager.getMrimAccountList();
@@ -871,8 +872,8 @@ public final class Conversation implements ListItem {
         NetworkUtils.releaseVector(accounts);
         MrimAccount connectedAccount = account;
         if (connectedAccount != null) {
-            loginParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(463517)).append(connectedAccount.login));
-            domainParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(725650)).append(connectedAccount.customDomain));
+            loginParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_COMMAND_2)).append(connectedAccount.login));
+            domainParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_ATTR_2)).append(connectedAccount.customDomain));
         } else {
             String str = AppState.emptyStr;
             loginParam = str;
@@ -1090,10 +1091,10 @@ public final class Conversation implements ListItem {
     public static final String urlEncode(Object obj) {
         String string = obj.toString().toString();
         StringBuffer sb = NetworkUtils.newStringBuffer();
-        AppState.getString(266215);
-        AppState.getString(266221);
-        AppState.getString(397287);
-        AppState.getString(397293);
+        AppState.getString(StateKeys.STR_RES_DASH_SEPARATOR);
+        AppState.getString(StateKeys.STR_RES_SPACE_DASH_SPACE);
+        AppState.getString(StateKeys.STR_RES_FIELD_NAME_1);
+        AppState.getString(StateKeys.STR_RES_FIELD_NAME_2);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
@@ -1112,10 +1113,10 @@ public final class Conversation implements ListItem {
     public static final String urlEncodeCyrillic(Object obj) {
         String string = obj.toString();
         StringBuffer sb = NetworkUtils.newStringBuffer();
-        String hexPrefixLo = AppState.getString(266215);
-        String hexPrefixHi = AppState.getString(266221);
-        String yoUpper = AppState.getString(397287);
-        String yoLower = AppState.getString(397293);
+        String hexPrefixLo = AppState.getString(StateKeys.STR_RES_DASH_SEPARATOR);
+        String hexPrefixHi = AppState.getString(StateKeys.STR_RES_SPACE_DASH_SPACE);
+        String yoUpper = AppState.getString(StateKeys.STR_RES_FIELD_NAME_1);
+        String yoLower = AppState.getString(StateKeys.STR_RES_FIELD_NAME_2);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
@@ -1155,8 +1156,8 @@ public final class Conversation implements ListItem {
 
     /* renamed from: j */
     public static final String decodeHtmlSpecial(String str) {
-        Vector entityNames = Utils.splitByNull(AppState.getString(1511369));
-        Vector entityValues = Utils.splitByNull(AppState.getString(462816));
+        Vector entityNames = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_API_URL_7));
+        Vector entityValues = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_COMMAND_1));
         StringBuffer sb = NetworkUtils.newStringBuffer();
         int length = str.length();
         int length2 = 0;
@@ -1189,7 +1190,7 @@ public final class Conversation implements ListItem {
     /* renamed from: k */
     public static final String transliterateRussian(String str) {
         StringBuffer sb = NetworkUtils.newStringBuffer();
-        Vector translitTable = Utils.splitByNull(AppState.getString(4788096));
+        Vector translitTable = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_MEGA_URL_3));
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -1231,17 +1232,17 @@ public final class Conversation implements ListItem {
     /* renamed from: a */
     public static final void setMapEnabled(boolean z) {
         MapRenderer.needsRedraw = true;
-        AppState.setBool(41, z);
+        AppState.setBool(StateKeys.MAP_GPS_ENABLED, z);
     }
 
     /* renamed from: a */
     public static final void incrementZoom() {
-        MapRenderer.setZoom(AppState.getInt(39) + 1);
+        MapRenderer.setZoom(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL) + 1);
     }
 
     /* renamed from: b */
     public static final void decrementZoom() {
-        MapRenderer.setZoom(AppState.getInt(39) - 1);
+        MapRenderer.setZoom(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL) - 1);
     }
 
     /* renamed from: c */
@@ -1251,6 +1252,6 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void updateStatusText(int i) {
-        AppState.setFromBuffer(1251, NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(1401).size()).append(')'));
+        AppState.setFromBuffer(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME, NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE).size()).append(')'));
     }
 }

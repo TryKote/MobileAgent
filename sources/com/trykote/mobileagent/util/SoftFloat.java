@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -344,10 +345,10 @@ public final class SoftFloat {
         if (i3 > 218) {
             return z ? -4503599627370496L : 9218868437227405312L;
         }
-        short s = ((short[]) AppState.pool[988])[i3];
+        short s = ((short[]) AppState.pool[StateKeys.RES_SHORT_INDEX_TABLE_1])[i3];
         int leadingZeros = BitMath.countLeadingZeros(j);
         int i4 = s - leadingZeros;
-        long product = multiplyHigh(j << leadingZeros, ((long[]) AppState.pool[987])[i3]);
+        long product = multiplyHigh(j << leadingZeros, ((long[]) AppState.pool[StateKeys.RES_POW_BASE_TABLE])[i3]);
         for (int i5 = i2 % 3; i5 > 0; i5--) {
             if (product < 0) {
                 product >>>= 1;
@@ -385,7 +386,7 @@ public final class SoftFloat {
         if (z || firstChar == '+') {
             i = 1;
         }
-        if (i < length && (((ch = normalized.charAt(i)) == 'I' || ch == 'i') && StringUtils.equals(AppState.getString(984), StringUtils.intern(StringUtils.suffix(normalized, i).toUpperCase())))) {
+        if (i < length && (((ch = normalized.charAt(i)) == 'I' || ch == 'i') && StringUtils.equals(AppState.getString(StateKeys.STR_INFINITY), StringUtils.intern(StringUtils.suffix(normalized, i).toUpperCase())))) {
             return z2 ? -4503599627370496L : 9218868437227405312L;
         }
         long j = 0;
@@ -446,12 +447,12 @@ public final class SoftFloat {
         int exponent = getExponent(j) + 1075;
         long mantissa = getMantissa(j) << (exponent % 11);
         int i3 = exponent / 11;
-        int i4 = ((short[]) AppState.pool[989])[i3];
+        int i4 = ((short[]) AppState.pool[StateKeys.RES_SHORT_INDEX_TABLE_2])[i3];
         while (mantissa <= 922337203685477580L) {
             mantissa = (mantissa << 3) + (mantissa << 1);
             i4--;
         }
-        long product = multiplyHigh(mantissa, ((long[]) AppState.pool[986])[i3]);
+        long product = multiplyHigh(mantissa, ((long[]) AppState.pool[StateKeys.RES_LOG_BASE_TABLE])[i3]);
         boolean z2 = false;
         while (true) {
             int i5 = (int) (product % 10);
@@ -1032,7 +1033,7 @@ public final class SoftFloat {
             long lo2 = subtract(j2, multiply(0L, 4609753056924401664L));
             long t = multiply(0L, 4454258360616903473L);
             if (intPart2 < 32) {
-                if (i3 != ((int[]) AppState.pool[993])[intPart2 - 1]) {
+                if (i3 != ((int[]) AppState.pool[StateKeys.RES_PALETTE_MAP_2])[intPart2 - 1]) {
                     jArr[0] = subtract(lo2, t);
                 } else {
                     int i4 = i3 >> 20;
@@ -1209,7 +1210,7 @@ public final class SoftFloat {
         for (int i32 = i17; i32 >= 0; i32--) {
             long s5 = 0;
             for (int i33 = 0; i33 <= 4 && i33 <= i17 - i32; i33++) {
-                s5 = add(s5, multiply(((long[]) AppState.pool[990])[i33], jArr4[i32 + i33]));
+                s5 = add(s5, multiply(((long[]) AppState.pool[StateKeys.RES_MULTIPLY_COEFFICIENTS])[i33], jArr4[i32 + i33]));
             }
             jArr5[i17 - i32] = s5;
         }

@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.net;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -16,7 +17,7 @@ public final class TrafficAccounting {
     /* renamed from: af */
     public static final int initStartupState() {
         int currentDate = AppState.getDateCode();
-        int savedDate = AppState.getInt(1);
+        int savedDate = AppState.getInt(StateKeys.TRAFFIC_SAVED_DATE);
         if (currentDate != savedDate) {
             for (int i = 0; i < 4; i++) {
                 int offset = i << 3;
@@ -27,7 +28,7 @@ public final class TrafficAccounting {
                     AppState.setInt(offset + 7, 0);
                 }
             }
-            AppState.setInt(1, currentDate);
+            AppState.setInt(StateKeys.TRAFFIC_SAVED_DATE, currentDate);
         }
         return currentDate;
     }
@@ -35,66 +36,66 @@ public final class TrafficAccounting {
     /* renamed from: C */
     public static final void addSentBytes(int i) {
         initStartupState();
-        AppState.addInt(10, i);
-        AppState.addInt(12, i);
-        AppState.addInt(14, i);
-        AppState.addInt(16, i);
-        AppState.addInt(293, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_SENT_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_SENT_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_SENT_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_SENT_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
     /* renamed from: D */
     public static final void addReceivedBytes(int i) {
         initStartupState();
-        AppState.addInt(11, i);
-        AppState.addInt(13, i);
-        AppState.addInt(15, i);
-        AppState.addInt(17, i);
-        AppState.addInt(294, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_RECV_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_RECV_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_RECV_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MMP_RECV_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_RESERVED, i);
     }
 
     /* renamed from: E */
     public static final void addDownloadBytes(int i) {
         initStartupState();
-        AppState.addInt(18, i);
-        AppState.addInt(20, i);
-        AppState.addInt(22, i);
-        AppState.addInt(24, i);
-        AppState.addInt(293, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_SENT_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_SENT_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_SENT_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_SENT_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
     /* renamed from: F */
     public static final void addUploadBytes(int i) {
         initStartupState();
-        AppState.addInt(19, i);
-        AppState.addInt(21, i);
-        AppState.addInt(23, i);
-        AppState.addInt(25, i);
-        AppState.addInt(294, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_RECV_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_RECV_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_RECV_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_XMPP_RECV_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_RESERVED, i);
     }
 
     /* renamed from: G */
     public static final void addConnectionBytes(int i) {
         initStartupState();
-        AppState.addInt(26, i);
-        AppState.addInt(28, i);
-        AppState.addInt(30, i);
-        AppState.addInt(32, i);
-        AppState.addInt(293, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_SENT_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_SENT_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_SENT_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_SENT_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
     /* renamed from: H */
     public static final void addProtocolBytes(int i) {
         initStartupState();
-        AppState.addInt(27, i);
-        AppState.addInt(29, i);
-        AppState.addInt(31, i);
-        AppState.addInt(33, i);
-        AppState.addInt(294, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_RECV_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_RECV_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_RECV_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_TOTAL_RECV_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_RESERVED, i);
     }
 
     /* renamed from: a */
     public static final int getTrafficCount(int i, int i2, int i3) {
-        return AppState.getInt(2 + (i << 3) + (i2 << 1) + i3);
+        return AppState.getInt(StateKeys.TRAFFIC_MRIM_SENT_BYTES + (i << 3) + (i2 << 1) + i3);
     }
 
     /* renamed from: b */
@@ -104,6 +105,6 @@ public final class TrafficAccounting {
 
     /* renamed from: b */
     public static final void addTrafficCount(int i, int i2, int i3) {
-        AppState.setInt(2 + (i << 3) + (i2 << 1) + i3, 0);
+        AppState.setInt(StateKeys.TRAFFIC_MRIM_SENT_BYTES + (i << 3) + (i2 << 1) + i3, 0);
     }
 }

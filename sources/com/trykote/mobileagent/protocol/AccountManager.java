@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol;
 
 
+import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -17,8 +18,8 @@ public final class AccountManager {
 
     /* renamed from: a */
     public static int showAccountList(Vector vector, int i, boolean z) {
-        AppState.setBool(1467, z);
-        AppState.clearIndex(1281);
+        AppState.setBool(StateKeys.FLAG_SHOW_STATUS_FLAGS, z);
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
         int size = vector.size();
         if (size == 0) {
             return NotificationHelper.showError(551);
@@ -27,42 +28,42 @@ public final class AccountManager {
             AppState.setAccount(vector.firstElement());
             return i;
         }
-        AppState.pool[1283] = vector;
-        AppState.setInt(1466, i);
+        AppState.pool[StateKeys.VEC_FILTERED_ACCOUNTS] = vector;
+        AppState.setInt(StateKeys.INT_TARGET_STATE, i);
         return 39;
     }
 
     /* renamed from: a */
     public static final void setCurrentAccount(Account account) {
-        Vector accounts = AppState.getVector(1291);
+        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNT_SELECTION);
         if (accounts == null) {
             accounts = NetworkUtils.newVector();
-            AppState.pool[1291] = accounts;
+            AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] = accounts;
         }
         accounts.addElement(account);
     }
 
     /* renamed from: N */
     public static final boolean hasActiveConnection() {
-        return AppState.getVector(1244).size() != 0;
+        return AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).size() != 0;
     }
 
     /* renamed from: b */
     public static final void markAccountHighlighted(MrimAccount account) {
-        AppState.getVector(1244).removeElement(account);
+        AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).removeElement(account);
         TabBar.layout();
     }
 
     /* renamed from: O */
     public static final void updateTabBar() {
-        AppState.getVector(1244).removeAllElements();
+        AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).removeAllElements();
         TabBar.layout();
     }
 
     /* renamed from: P */
     public static final int handleTabAction() {
         int i = 0;
-        Vector contacts = AppState.getVector(1243);
+        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
         int size = contacts.size();
         while (true) {
             size--;
@@ -78,7 +79,7 @@ public final class AccountManager {
         if (account == null) {
             return false;
         }
-        Vector contacts = AppState.getVector(1243);
+        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
         int size = contacts.size();
         do {
             size--;
@@ -94,7 +95,7 @@ public final class AccountManager {
         if (account == null) {
             return 16384;
         }
-        Vector contacts = AppState.getVector(1243);
+        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
         int size = contacts.size();
         do {
             size--;
@@ -113,11 +114,11 @@ public final class AccountManager {
         iArr[2] = iArr[2] + i;
         iArr[4] = iArr[4] + i;
         iArr[6] = iArr[6] + i;
-        AppState.addInt(2, i);
-        AppState.addInt(4, i);
-        AppState.addInt(6, i);
-        AppState.addInt(8, i);
-        AppState.addInt(293, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
     /* renamed from: b */
@@ -128,11 +129,11 @@ public final class AccountManager {
         iArr[3] = iArr[3] + i;
         iArr[5] = iArr[5] + i;
         iArr[7] = iArr[7] + i;
-        AppState.addInt(3, i);
-        AppState.addInt(5, i);
-        AppState.addInt(7, i);
-        AppState.addInt(9, i);
-        AppState.addInt(294, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_BYTES, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_PACKETS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_MSGS, i);
+        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_FILES, i);
+        AppState.addInt(StateKeys.COUNTER_RESERVED, i);
     }
 
     /* renamed from: a */
@@ -182,17 +183,17 @@ public final class AccountManager {
             }
         }
         RemoteLogger.log("ACCT", "loadSavedAccounts: loaded " + accounts.size() + " accounts");
-        AppState.pool[1241] = accounts;
+        AppState.pool[StateKeys.VEC_ACCOUNTS] = accounts;
     }
 
     /* renamed from: Q */
     public static final int getActiveAccountCount() {
-        return AppState.getVector(1241).size();
+        return AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
     }
 
     /* renamed from: I */
     public static final Account getAccountByIndex(int i) {
-        return (Account) AppState.getVector(1241).elementAt(i);
+        return (Account) AppState.getVector(StateKeys.VEC_ACCOUNTS).elementAt(i);
     }
 
     /* renamed from: ah */
@@ -205,7 +206,7 @@ public final class AccountManager {
     public static final void saveState(boolean z, boolean z2) {
         try {
             ByteBuffer buffer = new ByteBuffer();
-            Vector accounts = AppState.getVector(1241);
+            Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
             if (z2) {
                 buffer.ensureCapacity(20480);
                 while (accounts.size() > 0) {
@@ -231,7 +232,7 @@ public final class AccountManager {
         if (StringUtils.isEmpty(str2)) {
             return 306;
         }
-        Vector accounts = AppState.getVector(1241);
+        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = accounts.size();
         while (true) {
             size--;
@@ -255,7 +256,7 @@ public final class AccountManager {
         if (foundAccount != null) {
             return 307;
         }
-        Vector allAccounts = AppState.getVector(1241);
+        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int totalSize = allAccounts.size();
         int newId = 0;
         while (true) {
@@ -293,7 +294,7 @@ public final class AccountManager {
 
     /* renamed from: b */
     public static final Account createAccount(int i, String str) {
-        Vector accounts = AppState.getVector(1241);
+        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = accounts.size();
         while (true) {
             size--;
@@ -310,7 +311,7 @@ public final class AccountManager {
     /* renamed from: R */
     public static final Vector getMrimAccountList() {
         Vector result = NetworkUtils.newVector();
-        Vector allAccounts = AppState.getVector(1241);
+        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = allAccounts.size();
         while (true) {
             size--;
@@ -372,7 +373,7 @@ public final class AccountManager {
     /* renamed from: V */
     public static final Vector getXmppAccountList() {
         Vector result = NetworkUtils.newVector();
-        Vector allAccounts = AppState.getVector(1241);
+        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = allAccounts.size();
         while (true) {
             size--;
@@ -386,7 +387,7 @@ public final class AccountManager {
     /* renamed from: ai */
     public static void rebuildAccountCaches() {
         boolean allDisconnected = true;
-        int size = AppState.getVector(1241).size();
+        int size = AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
         while (true) {
             size--;
             if (size < 0) {
@@ -395,7 +396,7 @@ public final class AccountManager {
                 allDisconnected = false;
             }
         }
-        int size2 = AppState.getVector(1241).size();
+        int size2 = AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
         while (true) {
             size2--;
             if (size2 < 0) {
@@ -415,7 +416,7 @@ public final class AccountManager {
     /* renamed from: W */
     public static final Vector getAllAccountsList() {
         Vector result = NetworkUtils.newVector();
-        Vector allAccounts = AppState.getVector(1241);
+        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int accountIdx = Utils.vectorSize(allAccounts);
         while (true) {
             accountIdx--;
