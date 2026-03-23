@@ -155,7 +155,7 @@ public final class MenuItem {
                 this.data = checked;
                 this.elements.setElementAt(createIconData(checked.booleanValue() ? 25 : 24), 0);
             }
-            IOUtils.postEvent(this);
+            IOUtils.postEvent(new MenuItemEvent(this));
             return 0;
         }
         if (this.id == 15) {

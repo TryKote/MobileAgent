@@ -277,7 +277,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         AppController.setTimer(0, AppController.getSessionTimestamp());
         Vector events = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
         synchronized (events) {
-            events.addElement(new int[]{5, i, i2});
+            events.addElement(PointerEvent.press(i, i2));
         }
         pointerDownTime = System.currentTimeMillis();
         pointerDragged = false;
@@ -297,16 +297,16 @@ public final class MainCanvas extends Canvas implements CommandListener {
                         break;
                     }
                     Object event = events.elementAt(idx);
-                    if (event instanceof int[]) {
-                        int i5 = ((int[]) event)[0];
-                        if (i5 == 6) {
+                    if (event instanceof PointerEvent) {
+                        int action = ((PointerEvent) event).action;
+                        if (action == PointerEvent.DRAG) {
                             events.removeElementAt(idx);
-                        } else if (i5 == 5 || i5 == 7) {
+                        } else if (action == PointerEvent.PRESS || action == PointerEvent.RELEASE) {
                             break;
                         }
                     }
                 }
-                events.addElement(new int[]{6, i, i2, i3, i4});
+                events.addElement(PointerEvent.drag(i, i2, i3, i4));
             }
             pointerDragged = true;
         }
@@ -318,14 +318,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         boolean z = pointerDragged;
         Vector events = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
         synchronized (events) {
-            int[] iArr = new int[6];
-            iArr[0] = 7;
-            iArr[1] = i;
-            iArr[2] = i2;
-            iArr[3] = i3;
-            iArr[4] = i4;
-            iArr[5] = z ? 1 : 0;
-            events.addElement(iArr);
+            events.addElement(PointerEvent.release(i, i2, i3, i4, z));
         }
         pointerDownTime = 0L;
     }

@@ -546,9 +546,13 @@ public final class StateKeys {
     public static final int SLOT_CLOCK_STRING = 1263;
     public static final int OBJ_MEDIA_PLAYER = 1265;
     public static final int VEC_EVENT_QUEUE = 1266;
+    /** @deprecated Replaced by CommandEvent singletons */
     public static final int ARR_EVENT_TYPE_1 = 1267;
+    /** @deprecated Replaced by CommandEvent singletons */
     public static final int ARR_EVENT_TYPE_2 = 1268;
+    /** @deprecated Replaced by CommandEvent singletons */
     public static final int ARR_EVENT_TYPE_3 = 1269;
+    /** @deprecated Replaced by CommandEvent singletons */
     public static final int ARR_EVENT_TYPE_4 = 1270;
     public static final int OBJ_REGISTRATION_DATA = 1271;
     public static final int VEC_SCREEN_STACK = 1272;

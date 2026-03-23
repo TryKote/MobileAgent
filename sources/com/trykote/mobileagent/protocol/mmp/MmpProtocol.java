@@ -259,7 +259,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.vectorSize(accounts) == 0) {
-                        IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
+                        IOUtils.postNotification(AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
                         this.progress = 0;
                     }
                     NetworkUtils.releaseVector(accounts);
@@ -478,7 +478,7 @@ public final class MmpProtocol extends Account {
                         onMessage(packet.readLenPrefixStr(), 0L, AppState.getString(StateKeys.STR_MMP_SYSTEM_MESSAGE));
                         break;
                     case 5377:
-                        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
+                        IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
                         XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
                         break;
                     case 5379:

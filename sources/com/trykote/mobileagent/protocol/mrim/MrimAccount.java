@@ -552,7 +552,7 @@ public final class MrimAccount extends Account implements ListItem {
                                     ContactInfo contactInfo = ContactInfo.createForAccount(this);
                                     contactInfo.setEmailAddress(foundEmail);
                                     AppState.pool[StateKeys.SLOT_CONTACT_INFO] = contactInfo;
-                                    IOUtils.postEvent(new IOUtils(5, null));
+                                    IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.ADD_CONTACT_CONFIRM, null));
                                 }
                             }
                         }
@@ -641,7 +641,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 if (AccountManager.getActiveScreenId() != 10) {
                                     break;
                                 } else {
-                                    IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
+                                    IOUtils.postNotification(AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
                                     break;
                                 }
                             } else {

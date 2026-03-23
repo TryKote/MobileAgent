@@ -227,7 +227,6 @@ public abstract class Account {
 
     /* renamed from: d */
     public final int sendData(ByteBuffer buffer) {
-        RemoteLogger.log("ACCT", "sendData len=" + buffer.length + " login=" + this.login);
         AccountManager.setAccountOption(this, buffer.length);
         ConnectionThread conn = this.connection;
         if (conn.exception != null) {
@@ -387,7 +386,7 @@ public abstract class Account {
 
     /* renamed from: f */
     public final void handleError(int i) {
-        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
         closeConnection();
         this.lastError = getDefaultError();
     }

@@ -145,10 +145,7 @@ public abstract class AppState {
         pool[StateKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[58];
         pool[StateKeys.ARR_GFX_HEIGHTS] = new int[29];
         pool[StateKeys.VEC_EVENT_QUEUE] = NetworkUtils.newVector();
-        pool[StateKeys.ARR_EVENT_TYPE_1] = new int[]{1};
-        pool[StateKeys.ARR_EVENT_TYPE_2] = new int[]{2};
-        pool[StateKeys.ARR_EVENT_TYPE_3] = new int[]{3};
-        pool[StateKeys.ARR_EVENT_TYPE_4] = new int[]{4};
+        // Event type arrays removed — replaced by CommandEvent singletons
         StringUtils.initPlatform();
         AppController.timers = new long[14];
         pool[StateKeys.OBJ_CALLBACK_ARRAY] = new Object[1];

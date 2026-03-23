@@ -1881,7 +1881,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
             case 6:
                 if (resultCode != 1) {
-                    IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                     break;
                 }
                 break;
@@ -1917,11 +1917,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                         break;
                     case 32769:
                         if (mrimContact.isSystem()) {
-                            IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_AUTH_GRANTED));
+                            IOUtils.postNotification(AppState.getString(StateKeys.STR_AUTH_GRANTED));
                             break;
                         }
                     default:
-                        IOUtils.postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                        IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                         break;
                 }
                 break;

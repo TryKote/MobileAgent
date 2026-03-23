@@ -189,7 +189,7 @@ public final class ScreenBuilder {
                 }
                 StringUtils.resetRegForm();
                 if (IOUtils.getGroupCount(AppState.getAccount()) == 0) {
-                    IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
+                    IOUtils.postNotification(AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
                     return;
                 } else {
                     ScreenManager.showScreen(ScreenManager.createScreen(3939));
@@ -1799,7 +1799,7 @@ public final class ScreenBuilder {
                     boolean flag = AppState.getBool(StateKeys.INT_GROUP_OPERATION_RESULT);
                     long timestamp = AppState.getLong(StateKeys.TIMESTAMP_SELECTED_MSG);
                     if (mrimAccount2.isConnected()) {
-                        IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
+                        IOUtils.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
                         sendResult = mrimAccount2.trySendData(ProtocolFactory.createMrimPacket(mrimAccount2, 4196, new ByteBuffer().writeIntLE(flag ? 5 : 20).writeStringUTF16(messageText4).writeLong(timestamp)));
                     } else {
                         sendResult = 299;
@@ -2380,7 +2380,7 @@ public final class ScreenBuilder {
                 String inputText = XmppContactGroup.getTextInputValue();
                 if (!StringUtils.isEmpty(inputText) && 0 != (sendMsgResult = AppState.getCurrentContact().sendMessage(inputText))) {
                     onScreenClosed();
-                    IOUtils.postEvent((Object) AppState.getString(sendMsgResult));
+                    IOUtils.postNotification(AppState.getString(sendMsgResult));
                 }
                 AppState.setInt(StateKeys.FLAG_STATUS_TEXT_SET, 0);
                 AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);

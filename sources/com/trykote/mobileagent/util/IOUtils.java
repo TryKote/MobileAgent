@@ -28,12 +28,6 @@ import javax.microedition.rms.RecordStoreException;
 /* loaded from: MobileAgent_3.9.jar:bb.class */
 public final class IOUtils {
 
-    /* renamed from: a */
-    public int eventType;
-
-    /* renamed from: b */
-    public Object eventData;
-
     /* renamed from: c */
     public static Vector openResources;
 
@@ -45,11 +39,6 @@ public final class IOUtils {
 
     /* renamed from: f */
     private static Screen selectionScreen;
-
-    public IOUtils(int i, Object obj) {
-        this.eventType = i;
-        this.eventData = obj;
-    }
 
     /* renamed from: a */
     public static final int handleMailMenuAction(String str, int i) {
@@ -200,7 +189,7 @@ public final class IOUtils {
         ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO];
         Account acctRef = contactInfo.getAccount();
         if (getGroupCount(acctRef) == 0) {
-            postEvent((Object) AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
+            postNotification(AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
             return;
         }
         if (AppState.getBool(StateKeys.FLAG_SHOW_PHOTO)) {
@@ -512,27 +501,31 @@ public final class IOUtils {
 
     /* renamed from: g */
     public static final void postOkEvent() {
-        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_1]);
+        postEvent(CommandEvent.OK_EVENT);
     }
 
     /* renamed from: h */
     public static final void postCancelEvent() {
-        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_2]);
+        postEvent(CommandEvent.CANCEL_EVENT);
     }
 
     /* renamed from: i */
     public static final void postSelectEvent() {
-        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_3]);
+        postEvent(CommandEvent.SELECT_EVENT);
     }
 
     /* renamed from: j */
     public static final void postBackEvent() {
-        postEvent(AppState.pool[StateKeys.ARR_EVENT_TYPE_4]);
+        postEvent(CommandEvent.BACK_EVENT);
     }
 
     /* renamed from: a */
     public static final void postNavigationEvent(int i, int i2, int i3) {
-        postEvent(new int[]{0, i, i2, i3});
+        postEvent(new KeyEvent(i, i2, i3));
+    }
+
+    public static final void postNotification(String str) {
+        postEvent(new NotificationEvent(str));
     }
 
     /* renamed from: d */
@@ -545,42 +538,42 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final void postRenameError(Object[] objArr, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: b */
     public static final void postAddGroupError(Object[] objArr, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: c */
     public static final void postDeleteError(Object[] objArr, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: b */
     public static final void postOperationError(int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_NETWORK_ERROR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_NETWORK_ERROR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: a */
     public static final void postAccountError(Account acct, int i) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
+        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
     }
 
     /* renamed from: a */
     public static final void postAccountMessage(Account acct, String str) {
-        postEvent((Object) NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
+        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
     }
 
     /* renamed from: b */
     private static void postAccountNotification(Account acct, String str) {
-        postEvent((Object) new Object[]{acct, str});
+        postEvent(new AccountDataEvent(new Object[]{acct, str}));
     }
 
     /* renamed from: a */
     public static final void postAccountEvent(MrimAccount account) {
-        postEvent(new IOUtils(6, account));
+        postEvent(new ProtocolEvent(ProtocolEvent.ACCOUNT_SYNC, account));
     }
 
     /* renamed from: a */

@@ -27,7 +27,7 @@ public abstract class ContactListParser implements ListItem {
 
     /* renamed from: a */
     public static final void parseContactsAsync(ByteBuffer buffer, Object obj, Object obj2) {
-        IOUtils.postEvent(new IOUtils(4, new Object[]{obj, parseContactsInternal(buffer, 10, true), obj2}));
+        IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.PHONE_SEARCH_RESULT, new Object[]{obj, parseContactsInternal(buffer, 10, true), obj2}));
     }
 
     /* renamed from: a */

@@ -203,7 +203,6 @@ public class XmppProtocol extends Account {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public final void loadData() throws Throwable {
-        RemoteLogger.log("XMPP", "loadData progress=" + this.progress + " login=" + this.login);
         boolean handledPing;
         boolean handledSession;
         boolean handledBind;
@@ -489,7 +488,7 @@ public class XmppProtocol extends Account {
         if (isConnected()) {
             sendXmlElement(XmlElement.createFromState(530016).setAttrValue(131590, str).addNameAttr(i == 0 ? 594926 : i == 1 ? 660462 : 791532).addChild(XmlElement.createFromState(267628).addIdAttr(2037073).appendText((Object) this.displayName)));
         } else {
-            IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_XMPP_EVENT));
+            IOUtils.postNotification(AppState.getString(StateKeys.STR_XMPP_EVENT));
         }
     }
 
@@ -679,7 +678,7 @@ public class XmppProtocol extends Account {
     /* renamed from: k */
     public final int addNewContact() {
         if (!isConnected()) {
-            IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_XMPP_EVENT));
+            IOUtils.postNotification(AppState.getString(StateKeys.STR_XMPP_EVENT));
             return 0;
         }
         String contactJid = Utils.defaultStr(AppState.getString(StateKeys.SLOT_CONTACT_JID));
@@ -706,7 +705,7 @@ public class XmppProtocol extends Account {
             createRosterUpdate(contact.getIdentifier(), (String) null, (String) null);
             return 0;
         }
-        IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_XMPP_EVENT));
+        IOUtils.postNotification(AppState.getString(StateKeys.STR_XMPP_EVENT));
         return 0;
     }
 

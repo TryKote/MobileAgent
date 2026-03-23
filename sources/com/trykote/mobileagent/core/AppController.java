@@ -824,7 +824,7 @@ public final class AppController {
         do {
             remaining -= 500;
             if (remaining < 0) {
-                IOUtils.postEvent((Object) objArr);
+                IOUtils.postEvent(new AccountDataEvent(objArr));
                 return;
             }
             Thread.sleep(500L);
@@ -1450,7 +1450,7 @@ public final class AppController {
                         int i5 = MainCanvas.pointerDownY;
                         Vector vec = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
                         synchronized (vec) {
-                            vec.addElement(new int[]{8, i4, i5});
+                            vec.addElement(PointerEvent.longPress(i4, i5));
                         }
                         MainCanvas.pointerDownTime = 0L;
                     }
@@ -2540,7 +2540,7 @@ public final class AppController {
                                                 Vector vec5 = AppState.getVector(StateKeys.SLOT_SCREEN_TITLE);
                                                 if (Utils.vectorSize(vec5) <= 1) {
                                                     NetworkUtils.releaseVector(vec5);
-                                                    IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_EXIT_CONFIRM));
+                                                    IOUtils.postNotification(AppState.getString(StateKeys.STR_EXIT_CONFIRM));
                                                     action = 4;
                                                 } else {
                                                     Object objElementAt2 = vec5.elementAt(0);
@@ -2552,7 +2552,7 @@ public final class AppController {
                                                         Object obj5 = ((Object[]) objElementAt2)[2];
                                                         if (obj5 != null) {
                                                             if (obj5 instanceof Throwable) {
-                                                                IOUtils.postEvent((Object) StringUtils.concatKeyObj(1030, obj5));
+                                                                IOUtils.postNotification(StringUtils.concatKeyObj(1030, obj5));
                                                             } else {
                                                                 Utils.dequeue(vec5);
                                                             }
@@ -2572,19 +2572,15 @@ public final class AppController {
                                         } else if (nextState != 0) {
                                             ScreenBuilder.openScreen(nextState);
                                         }
-                                    } else if (event instanceof int[]) {
-                                        int[] iArr = (int[]) event;
-                                        switch (iArr[0]) {
-                                            case 0:
+                                    } else if (event instanceof KeyEvent) {
+                                        KeyEvent keyEvt = (KeyEvent) event;
                                                 Screen screen3 = ScreenManager.getCurrentScreen();
-                                                if (screen3 == null) {
-                                                    break;
-                                                } else {
+                                                if (screen3 != null) {
                                                     if (screen3.screenId != 6) {
                                                         needsRepaint = true;
                                                     }
-                                                    int i13 = iArr[1];
-                                                    int i14 = iArr[2];
+                                                    int i13 = keyEvt.keyCode;
+                                                    int i14 = keyEvt.gameAction;
                                                     int i15 = ScreenManager.getCurrentScreen().screenId;
                                                     int i16 = TabBar.currentIndex;
                                                     int size9 = AppState.getVector(StateKeys.VEC_TAB_BARS).size();
@@ -2649,7 +2645,7 @@ public final class AppController {
                                                                 ScreenBuilder.openScreen(6);
                                                                 z4 = true;
                                                             } else if (i13 == 51) {
-                                                                IOUtils.postEvent(new IOUtils(7, null));
+                                                                IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.MAP_CONTROL, null));
                                                                 z4 = true;
                                                             } else if (i13 == 53) {
                                                                 AppState.setBool(StateKeys.SETTING_CUSTOM_VIEW_MODE, !AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE));
@@ -2710,26 +2706,27 @@ public final class AppController {
                                                         }
                                                     }
                                                 }
-                                                break;
-                                            case 1:
+                                    } else if (event instanceof CommandEvent) {
+                                        int cmdType = ((CommandEvent) event).command;
+                                        if (cmdType == CommandEvent.OK) {
                                                 ScreenBuilder.onMenuItemSelected();
-                                                break;
-                                            case 2:
+                                        } else if (cmdType == CommandEvent.CANCEL) {
                                                 ScreenBuilder.onMenuItemAction();
-                                                break;
-                                            case 3:
+                                        } else if (cmdType == CommandEvent.SELECT) {
                                                 needsRepaint = true;
                                                 onItemSelected();
-                                                break;
-                                            case 4:
+                                        } else if (cmdType == CommandEvent.BACK) {
                                                 if (ScreenManager.getCurrentScreen().screenId == 6) {
                                                     needsRepaint = true;
                                                     AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, -1);
                                                 }
-                                                break;
-                                            case 5:
-                                                int i19 = iArr[1];
-                                                int i20 = iArr[2];
+                                        }
+                                    } else if (event instanceof PointerEvent) {
+                                        PointerEvent ptrEvt = (PointerEvent) event;
+                                        int ptrAction = ptrEvt.action;
+                                        if (ptrAction == PointerEvent.PRESS) {
+                                                int i19 = ptrEvt.x;
+                                                int i20 = ptrEvt.y;
                                                 if (!AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE) || i20 <= AppState.getHeight()) {
                                                     z2 = false;
                                                 } else {
@@ -2838,14 +2835,11 @@ public final class AppController {
                                                         }
                                                     }
                                                 }
-                                                break;
-                                            case 6:
-                                                int i27 = iArr[1];
-                                                int i28 = iArr[2];
+                                        } else if (ptrAction == PointerEvent.DRAG) {
+                                                int i27 = ptrEvt.x;
+                                                int i28 = ptrEvt.y;
                                                 Screen screen5 = ScreenManager.getCurrentScreen();
-                                                if (screen5 == null || !screen5.touchConsumed) {
-                                                    break;
-                                                } else {
+                                                if (screen5 != null && screen5.touchConsumed) {
                                                     int i29 = i27 - screen5.offsetX;
                                                     int i30 = i28 - (screen5.offsetY + screen5.contentTop);
                                                     if (screen5.marginLeft == 0 && screen5.marginTop == 0) {
@@ -2863,7 +2857,6 @@ public final class AppController {
                                                         int stateInt7 = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
                                                         MapRenderer.setPosition(MapRenderer.currentLon - ((int) MapUtils.pixelToCoord(i31, stateInt7)), MapRenderer.currentLat + ((int) MapUtils.pixelToCoord(i32, stateInt7)));
                                                         MapRenderer.needsRedraw = true;
-                                                        break;
                                                     } else {
                                                         screen5.scrollOffset -= i32;
                                                         if (screen5.totalHeight < screen5.contentHeight) {
@@ -2878,21 +2871,19 @@ public final class AppController {
                                                         needsRepaint = true;
                                                     }
                                                 }
-                                                break;
-                                            case 7:
-                                                int i33 = iArr[1];
-                                                int i34 = iArr[2];
-                                                int i35 = iArr[3];
-                                                int i36 = iArr[4];
-                                                int i37 = iArr[5];
+                                        } else if (ptrAction == PointerEvent.RELEASE) {
+                                                int i33 = ptrEvt.x;
+                                                int i34 = ptrEvt.y;
+                                                int i35 = ptrEvt.startX;
+                                                int i36 = ptrEvt.startY;
+                                                boolean i37 = ptrEvt.wasDragged;
                                                 Screen screen6 = ScreenManager.getCurrentScreen();
                                                 if (screen6 != null) {
-                                                    screen6.onPointerEvent(i33, i34, i35, i36, i37 != 0);
+                                                    screen6.onPointerEvent(i33, i34, i35, i36, i37);
                                                 }
-                                                break;
-                                            case 8:
-                                                int i38 = iArr[1];
-                                                int i39 = iArr[2];
+                                        } else if (ptrAction == PointerEvent.LONG_PRESS) {
+                                                int i38 = ptrEvt.x;
+                                                int i39 = ptrEvt.y;
                                                 Screen screen7 = ScreenManager.getCurrentScreen();
                                                 if (screen7 != null) {
                                                     int i40 = i38 - screen7.offsetX;
@@ -2904,33 +2895,33 @@ public final class AppController {
                                                         MapRenderer.onDrag(i40, i42);
                                                     }
                                                 }
-                                                break;
                                         }
-                                    } else if (event instanceof String) {
-                                        NotificationHelper.showNotification((String) event);
+                                    } else if (event instanceof NotificationEvent) {
+                                        NotificationHelper.showNotification(((NotificationEvent) event).message);
                                         needsRepaint = true;
-                                    } else if (event instanceof Object[]) {
-                                        if (((Object[]) event)[0] instanceof MrimAccount) {
+                                    } else if (event instanceof AccountDataEvent) {
+                                        Object[] evtData = ((AccountDataEvent) event).data;
+                                        if (evtData[0] instanceof MrimAccount) {
                                             AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, 108);
-                                            AppState.setObject(StateKeys.SLOT_MAP_POINT_1, ((Object[]) event)[1]);
-                                            MrimAccount mrimAccount6 = (MrimAccount) ((Object[]) event)[0];
+                                            AppState.setObject(StateKeys.SLOT_MAP_POINT_1, evtData[1]);
+                                            MrimAccount mrimAccount6 = (MrimAccount) evtData[0];
                                             mrimAccount6.chatRoomsLoaded = true;
                                             AppState.pool[StateKeys.SLOT_TEMP_ACCOUNT] = mrimAccount6;
                                             ScreenManager.showScreen(ScreenManager.createScreen(4485));
                                             AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
                                             needsRepaint = true;
                                         } else {
-                                            ((MrimAccount) ((Object[]) event)[1]).addOfflineContact((String) ((Object[]) event)[0]);
+                                            ((MrimAccount) evtData[1]).addOfflineContact((String) evtData[0]);
                                         }
-                                    } else if (event instanceof IOUtils) {
-                                        IOUtils ioUtils = (IOUtils) event;
-                                        int i43 = ioUtils.eventType;
-                                        Object obj6 = ioUtils.eventData;
+                                    } else if (event instanceof ProtocolEvent) {
+                                        ProtocolEvent protoEvt = (ProtocolEvent) event;
+                                        int i43 = protoEvt.type;
+                                        Object obj6 = protoEvt.data;
                                         switch (i43) {
-                                            case 3:
+                                            case ProtocolEvent.MAP_LOCATIONS_LOADED:
                                                 ResourceManager.showSavedLocations();
                                                 break;
-                                            case 4:
+                                            case ProtocolEvent.PHONE_SEARCH_RESULT:
                                                 Object[] objArr3 = (Object[]) obj6;
                                                 PhoneContact phoneContact = (PhoneContact) objArr3[0];
                                                 AppState.pool[StateKeys.RANGE_PHONE_CONTACT_START] = phoneContact;
@@ -2958,36 +2949,35 @@ public final class AppController {
                                                         popupScreen.addIconItemWithData(searchResult.gender == 1 ? 377 : searchResult.gender == 2 ? 378 : 379, searchResult.getText(), 0, searchResult);
                                                     }
                                                 }
-                                            case 5:
+                                            case ProtocolEvent.ADD_CONTACT_CONFIRM:
                                                 AppState.setInt(StateKeys.FLAG_SHOW_PHOTO, 1);
                                                 IOUtils.showAddContactScreen();
                                                 break;
-                                            case 6:
+                                            case ProtocolEvent.ACCOUNT_SYNC:
                                                 ((MrimAccount) obj6).syncProfile();
+                                                break;
+                                            case ProtocolEvent.MAP_CONTROL:
                                                 break;
                                         }
                                         needsRepaint = true;
-                                    } else {
+                                    } else if (event instanceof MenuItemEvent) {
                                         needsRepaint = true;
                                         needsLayoutUpdate = true;
                                         Screen screen8 = ScreenManager.getCurrentScreen();
                                         int i44 = ScreenManager.getCurrentScreen().screenId;
-                                        if (event != null && (event instanceof MenuItem)) {
-                                            MenuItem eventItem = (MenuItem) event;
-                                            if (eventItem.id == 2) {
-                                                if (i44 == 147 && AppState.setBool(StateKeys.FLAG_CAPTCHA_SHOWN, ((Boolean) eventItem.data).booleanValue())) {
-                                                    NetworkUtils.processScreenForm();
-                                                    AppState.setFromPool(StateKeys.SLOT_SCREEN_DESCRIPTION, StateKeys.SLOT_SCREEN_VALUE);
-                                                    finishScreenBuild();
-                                                }
+                                        MenuItem eventItem = ((MenuItemEvent) event).item;
+                                        if (eventItem.id == 2) {
+                                            if (i44 == 147 && AppState.setBool(StateKeys.FLAG_CAPTCHA_SHOWN, ((Boolean) eventItem.data).booleanValue())) {
+                                                NetworkUtils.processScreenForm();
+                                                AppState.setFromPool(StateKeys.SLOT_SCREEN_DESCRIPTION, StateKeys.SLOT_SCREEN_VALUE);
+                                                finishScreenBuild();
                                             }
                                         } else if (i44 == 21) {
                                             if (AppState.getAccount().getType() == 0) {
-                                                StringUtils.updateRegDropdowns(screen8, event);
+                                                StringUtils.updateRegDropdowns(screen8, eventItem);
                                             }
                                         } else if (i44 == 164) {
-                                            MenuItem menuItem2 = (MenuItem) event;
-                                            Object[] objArr4 = (Object[]) menuItem2.data;
+                                            Object[] objArr4 = (Object[]) eventItem.data;
                                             int iIntValue2 = ((Integer) objArr4[0]).intValue();
                                             String[] strArr = (String[]) objArr4[1];
                                             MenuItem menuItem3 = null;
@@ -2996,7 +2986,7 @@ public final class AppController {
                                             while (true) {
                                                 size12--;
                                                 if (size12 < 0) {
-                                                    if (menuItem2.title.equals(AppState.getString(StateKeys.STR_MENU_OPTIONS))) {
+                                                    if (eventItem.title.equals(AppState.getString(StateKeys.STR_MENU_OPTIONS))) {
                                                         MenuItem menuItem4 = menuItem3;
                                                         String optionStr = iIntValue2 == 0 ? Utils.defaultStr(AppState.getString(StateKeys.SLOT_DEVICE_ID)) : strArr[iIntValue2];
                                                         Object[] objArr5 = (Object[]) menuItem4.data;
@@ -3012,13 +3002,12 @@ public final class AppController {
                                                 }
                                             }
                                         } else if (i44 == 26) {
-                                            MenuItem menuItem6 = (MenuItem) event;
-                                            Object[] objArr6 = (Object[]) menuItem6.data;
-                                            if (AppState.getString(StateKeys.STR_MENU_SETTINGS).equals(menuItem6.title)) {
+                                            Object[] objArr6 = (Object[]) eventItem.data;
+                                            if (AppState.getString(StateKeys.STR_MENU_SETTINGS).equals(eventItem.title)) {
                                                 AppState.setInt(StateKeys.SETTING_COLOR_THEME, ((Integer) objArr6[0]).intValue());
                                             }
                                         } else if (i44 == 28) {
-                                            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) ((MenuItem) event).data)[0]).intValue(), false);
+                                            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) eventItem.data)[0]).intValue(), false);
                                         }
                                     }
                                     if (!AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE) && null != (screen = ScreenManager.getCurrentScreen())) {

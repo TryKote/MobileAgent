@@ -201,7 +201,7 @@ public final class ResourceManager {
             if (length < 0) {
                 targetItem.clear().setLabel(Utils.appendSpace(targetItem.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{integerOf(i), strArr};
                 parentScreen.rebuildItems();
-                IOUtils.postEvent(targetItem);
+                IOUtils.postEvent(new MenuItemEvent(targetItem));
                 return 0;
             }
             if (str == strArr[length]) {
@@ -365,14 +365,14 @@ public final class ResourceManager {
                     }
                     if (z && str != null) {
                         NetworkUtils.releaseVector(vector);
-                        IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
+                        IOUtils.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
                     }
                 }
             } catch (Throwable th) {
-                IOUtils.postEvent((Object) StringUtils.concatKeyObj(493, (Object) null));
+                IOUtils.postNotification(StringUtils.concatKeyObj(493, (Object) null));
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
             }

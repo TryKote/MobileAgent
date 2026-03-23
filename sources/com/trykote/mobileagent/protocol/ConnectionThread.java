@@ -103,7 +103,6 @@ public final class ConnectionThread {
 
     /* renamed from: b */
     public final void process() {
-        RemoteLogger.log("CONN", "process() state=" + this.state);
         switch (this.state) {
             case 1:
                 try {
@@ -166,7 +165,6 @@ public final class ConnectionThread {
                         Utils.arraycopy((Object) bArrM1211a, 0, (Object) c0043n.data, c0043n.length, iM1188c);
                         c0043n.length += iM1188c;
                         c0043n.compact();
-                        RemoteLogger.log("CONN", "read " + iM1188c + " bytes, inBuf=" + c0043n.length);
                     }
                     NetworkUtils.releaseBytes(bArrM1211a);
                 }
@@ -194,7 +192,6 @@ public final class ConnectionThread {
                         c0043n.length -= i;
                         c0043n.compact();
                         NetworkUtils.writeSocket(objArr, bArrM1211a, i);
-                        RemoteLogger.log("CONN", "wrote " + i + " bytes");
                         NetworkUtils.releaseBytes(bArrM1211a);
                     }
                 }

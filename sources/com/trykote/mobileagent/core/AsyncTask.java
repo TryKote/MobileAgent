@@ -368,7 +368,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                                 MmpContact.routeRegions.size() > 0 && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
                         }
                     } catch (Throwable e) {
-                        IOUtils.postEvent((Object) AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
+                        IOUtils.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
                     }
                     HttpClient.closeAndUpdateStats(httpClient);
                     XmppContactGroup.removeContactInfoFromQueue(contactInfo);
@@ -445,7 +445,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                         if (httpClient.getResponseCode() != 200) throw new Throwable();
                         long[] coords = (long[]) args[1];
                         ResourceManager.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
-                        IOUtils.postEvent(new IOUtils(3, null));
+                        IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
                     } catch (Throwable e) {
                         return;
                     }

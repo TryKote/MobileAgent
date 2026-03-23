@@ -777,7 +777,7 @@ public final class NetworkUtils {
                 nameIndex = 914;
                 break;
         }
-        IOUtils.postEvent((Object) AppState.getString(nameIndex));
+        IOUtils.postNotification(AppState.getString(nameIndex));
     }
 
     /* renamed from: d */
