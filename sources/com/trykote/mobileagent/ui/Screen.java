@@ -289,283 +289,311 @@ public final class Screen {
         return this;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:198:0x0363 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:75:0x0352  */
-    /* JADX WARN: Removed duplicated region for block: B:77:0x0356  */
     /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public final void paint(GraphicsContext g, boolean z, boolean z2) {
-        int paintMode;
-        boolean z3 = false;
+    public final void paint(GraphicsContext g, boolean isTop, boolean isModal) {
         if (this.layoutMode != 2) {
-            int i = this.offsetX;
-            int i2 = this.offsetY;
-            int i3 = this.containerWidth;
-            int i4 = this.containerHeight;
-            int i5 = z ? 1 : 2;
-            Graphics graphics = g.graphics;
-            g.setColorFromPalette(i5);
-            graphics.fillRect(i, i2, i3, i4);
-            g.setColorFromPalette(16);
-            graphics.drawRect(i, i2, i3 - 1, i4 - 1);
+            paintBackground(g, isTop);
             if (this.headerItem != null) {
-                int i6 = this.offsetX + 1;
-                int i7 = this.offsetY + 1;
-                g.setClip(i6, i7, this.innerWidth, this.headerHeight);
-                int stateVal = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
-                int stateVal2 = AppState.getInt(StateKeys.PALETTE_SCREEN_BASE + stateVal);
-                if (stateVal2 != AppState.getInt(stateVal + 5082)) {
-                    for (int i8 = 1; i8 < this.headerHeight; i8++) {
-                        g.setColor(((255 - ((i8 * (255 - (stateVal2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((stateVal2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (stateVal2 & 255))) / this.headerHeight)));
-                        g.drawRect(i6, i7 + i8, this.innerWidth, 0);
-                    }
-                } else {
-                    g.setColor(stateVal2);
-                    g.fillRect(i6, i7, this.innerWidth, this.headerHeight);
-                }
-                this.headerItem.render(g, i6, i7, 0);
+                paintHeaderGradient(g);
             }
-            int i9 = this.offsetX + 2;
-            int i10 = this.offsetY + this.contentTop;
-            int i11 = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
-            int size = this.menuItems.size();
-            boolean z4 = this.layoutMode != 0;
-            int i12 = this.scrollOffset;
-            for (int i13 = 0; i13 < size; i13++) {
-                int itemY = getItemY(i13);
-                if (itemY - i12 > this.contentHeight) {
-                    break;
+            paintMenuItems(g);
+            if (this.hasScrollbar) {
+                paintScrollbar(g);
+            }
+            if (this.tabItems != null) {
+                paintBottomTabBar(g);
+            }
+            if (isTop && AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE)) {
+                paintSoftKeys(g);
+            }
+        }
+        if (this.screenType == 1 || this.screenType == 12) {
+            paintTopTabBar(g);
+        }
+        if (this.screenId == ScreenId.MAP) {
+            paintMapOverlay(g);
+            return;
+        }
+        if (this.screenId == ScreenId.CONTACT_LIST) {
+            paintContactPopup(g);
+        }
+    }
+
+    private void paintBackground(GraphicsContext g, boolean isTop) {
+        int i = this.offsetX;
+        int i2 = this.offsetY;
+        int i3 = this.containerWidth;
+        int i4 = this.containerHeight;
+        int colorIdx = isTop ? 1 : 2;
+        Graphics graphics = g.graphics;
+        g.setColorFromPalette(colorIdx);
+        graphics.fillRect(i, i2, i3, i4);
+        g.setColorFromPalette(16);
+        graphics.drawRect(i, i2, i3 - 1, i4 - 1);
+    }
+
+    private void paintHeaderGradient(GraphicsContext g) {
+        int i6 = this.offsetX + 1;
+        int i7 = this.offsetY + 1;
+        g.setClip(i6, i7, this.innerWidth, this.headerHeight);
+        int stateVal = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
+        int stateVal2 = AppState.getInt(StateKeys.PALETTE_SCREEN_BASE + stateVal);
+        if (stateVal2 != AppState.getInt(stateVal + 5082)) {
+            for (int i8 = 1; i8 < this.headerHeight; i8++) {
+                g.setColor(((255 - ((i8 * (255 - (stateVal2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((stateVal2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (stateVal2 & 255))) / this.headerHeight)));
+                g.drawRect(i6, i7 + i8, this.innerWidth, 0);
+            }
+        } else {
+            g.setColor(stateVal2);
+            g.fillRect(i6, i7, this.innerWidth, this.headerHeight);
+        }
+        this.headerItem.render(g, i6, i7, 0);
+    }
+
+    private void paintMenuItems(GraphicsContext g) {
+        int i9 = this.offsetX + 2;
+        int i10 = this.offsetY + this.contentTop;
+        int i11 = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
+        int size = this.menuItems.size();
+        boolean isGridLayout = this.layoutMode != 0;
+        int i12 = this.scrollOffset;
+        for (int i13 = 0; i13 < size; i13++) {
+            int itemY = getItemY(i13);
+            if (itemY - i12 > this.contentHeight) {
+                break;
+            }
+            MenuItem menuItem = getItemAt(i13);
+            int itemHeight = menuItem.getTotalHeight();
+            if (itemY + itemHeight >= i12) {
+                int itemX = getItemX(i13);
+                int itemWidth = menuItem.getTotalWidth();
+                g.setClip(i9, i10, i11, this.contentHeight);
+                int i14 = i9 + itemX;
+                int i15 = (i10 + itemY) - i12;
+                int i16 = this.layoutMode == 0 ? i11 : itemWidth;
+                int i17 = menuItem.id;
+                if (this.selectable && i13 == this.selectedIndex && i17 != 11) {
+                    g.setColorFromPalette(13);
+                    g.fillRect(i14, i15, i16, itemHeight);
                 }
-                MenuItem menuItem = getItemAt(i13);
-                int itemHeight = menuItem.getTotalHeight();
-                if (itemY + itemHeight >= i12) {
-                    int itemX = getItemX(i13);
-                    int itemWidth = menuItem.getTotalWidth();
-                    g.setClip(i9, i10, i11, this.contentHeight);
-                    int i14 = i9 + itemX;
-                    int i15 = (i10 + itemY) - i12;
-                    int i16 = this.layoutMode == 0 ? i11 : itemWidth;
-                    int i17 = menuItem.id;
-                    if (this.selectable && i13 == this.selectedIndex && i17 != 11) {
-                        g.setColorFromPalette(13);
-                        g.fillRect(i14, i15, i16, itemHeight);
-                    }
-                    if (i17 == 13 && menuItem.visible) {
-                        g.setColorFromPalette(13);
-                        g.fillRect(i14, i15, i16, itemHeight);
-                    }
-                    z3 = true;
-                    if (z4) {
-                        z3 = false;
-                        int i18 = itemHeight;
-                        int i19 = i16;
-                        int i20 = i15;
-                        int i21 = i14;
-                        int i22 = i21 + i19;
-                        Graphics graphics2 = g.graphics;
-                        int clipX = graphics2.getClipX();
-                        if (i22 >= clipX) {
-                            int i23 = i20 + i18;
-                            int clipY = graphics2.getClipY();
-                            if (i23 >= clipY) {
-                                int clipWidth = graphics2.getClipWidth();
-                                if (i21 <= clipX + clipWidth) {
-                                    int clipHeight = graphics2.getClipHeight();
-                                    if (i20 <= clipY + clipHeight) {
-                                        if (clipX + clipWidth < i21 + i19) {
-                                            i19 = (clipX + clipWidth) - i21;
+                if (i17 == 13 && menuItem.visible) {
+                    g.setColorFromPalette(13);
+                    g.fillRect(i14, i15, i16, itemHeight);
+                }
+                boolean isVisible = true;
+                if (isGridLayout) {
+                    isVisible = false;
+                    int i18 = itemHeight;
+                    int i19 = i16;
+                    int i20 = i15;
+                    int i21 = i14;
+                    int i22 = i21 + i19;
+                    Graphics graphics2 = g.graphics;
+                    int clipX = graphics2.getClipX();
+                    if (i22 >= clipX) {
+                        int i23 = i20 + i18;
+                        int clipY = graphics2.getClipY();
+                        if (i23 >= clipY) {
+                            int clipWidth = graphics2.getClipWidth();
+                            if (i21 <= clipX + clipWidth) {
+                                int clipHeight = graphics2.getClipHeight();
+                                if (i20 <= clipY + clipHeight) {
+                                    if (clipX + clipWidth < i21 + i19) {
+                                        i19 = (clipX + clipWidth) - i21;
+                                    }
+                                    if (clipY + clipHeight < i20 + i18) {
+                                        i18 = (clipY + clipHeight) - i20;
+                                    }
+                                    if (clipX > i21) {
+                                        int i24 = clipX - i21;
+                                        i21 = clipX;
+                                        i19 -= i24;
+                                    }
+                                    if (i19 > 0) {
+                                        if (clipY > i20) {
+                                            int i25 = clipY - i20;
+                                            i20 = clipY;
+                                            i18 -= i25;
                                         }
-                                        if (clipY + clipHeight < i20 + i18) {
-                                            i18 = (clipY + clipHeight) - i20;
-                                        }
-                                        if (clipX > i21) {
-                                            int i24 = clipX - i21;
-                                            i21 = clipX;
-                                            i19 -= i24;
-                                        }
-                                        if (i19 > 0) {
-                                            if (clipY > i20) {
-                                                int i25 = clipY - i20;
-                                                i20 = clipY;
-                                                i18 -= i25;
-                                            }
-                                            if (i18 > 0) {
-                                                graphics2.setClip(i21, i20, i19, i18);
-                                                z3 = true;
-                                            }
+                                        if (i18 > 0) {
+                                            graphics2.setClip(i21, i20, i19, i18);
+                                            isVisible = true;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    if (z3) {
-                        menuItem.render(g, i14, i15, i11);
-                    }
                 }
-            }
-            if (this.hasScrollbar) {
-                int i26 = this.offsetX + this.borderWidth;
-                int i27 = this.offsetY + this.contentStart;
-                g.setClip(i26, i27, 7, this.contentBottom + 4);
-                g.setColorFromPalette(16);
-                g.fillRect(i26 + 1, i27 + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - 4) * this.scrollOffset) / this.totalHeight, (this.contentBottom - 4) - this.scrollRange)), 1, this.scrollRange + 2);
-                g.drawRect(i26, i27 - 1, 2, this.contentBottom + 1);
-            }
-            if (this.tabItems != null) {
-                int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
-                int screenHeight = AppState.getHeight() - 1;
-                int stateVal3 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
-                g.setClip(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, stateVal3, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, stateVal3 - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
-                Vector vector = this.tabItems;
-                int i28 = 3;
-                boolean z5 = false;
-                int centerY = ((screenHeight - barHeight) - 1) + ScreenManager.getCenterOffset();
-                for (int i29 = 0; i29 < vector.size(); i29++) {
-                    Object objElementAt = vector.elementAt(i29);
-                    if (!(objElementAt instanceof Integer)) {
-                        z5 = true;
-                        g.drawString((String) objElementAt, i28, (screenHeight - barHeight) - 1, 20);
-                        i28 = stateVal3;
-                    } else if (z5) {
-                        i28 -= 18;
-                        g.drawIcon(((Integer) objElementAt).intValue(), i28, centerY);
-                    } else {
-                        g.drawIcon(((Integer) objElementAt).intValue(), 3, centerY);
-                        i28 += 18;
-                    }
-                }
-            }
-            if (z && AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE)) {
-                int stateVal4 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
-                int screenHeight2 = AppState.getHeight();
-                g.setClip(0, 0, stateVal4, 2048 + screenHeight2);
-                g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
-                g.setColorFromPalette(15);
-                if (this.titleLeft != null) {
-                    g.drawString(this.titleLeft, 1, screenHeight2, 20);
-                }
-                if (this.titleRight != null) {
-                    g.drawString(this.titleRight, stateVal4 - 1, screenHeight2, 24);
-                }
-                if (ResourceManager.clockWidth + this.titleMaxWidth < stateVal4 - 6) {
-                    g.drawString(Utils.defaultStr(AppState.getString(StateKeys.SLOT_CLOCK_STRING)), stateVal4 >> 1, screenHeight2, 17);
+                if (isVisible) {
+                    menuItem.render(g, i14, i15, i11);
                 }
             }
         }
-        if (this.screenType == 1 || this.screenType == 12) {
-            g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_BOLD));
-            TabBar tab = (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(TabBar.currentIndex);
-            Vector tabs = AppState.getVector(StateKeys.VEC_TAB_ITEMS);
-            int size2 = tabs.size();
-            while (true) {
-                size2--;
-                if (size2 < 0) {
-                    break;
+    }
+
+    private void paintScrollbar(GraphicsContext g) {
+        int i26 = this.offsetX + this.borderWidth;
+        int i27 = this.offsetY + this.contentStart;
+        g.setClip(i26, i27, 7, this.contentBottom + 4);
+        g.setColorFromPalette(16);
+        g.fillRect(i26 + 1, i27 + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - 4) * this.scrollOffset) / this.totalHeight, (this.contentBottom - 4) - this.scrollRange)), 1, this.scrollRange + 2);
+        g.drawRect(i26, i27 - 1, 2, this.contentBottom + 1);
+    }
+
+    private void paintBottomTabBar(GraphicsContext g) {
+        int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
+        int screenHeight = AppState.getHeight() - 1;
+        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        g.setClip(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, screenWidth - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
+        Vector vector = this.tabItems;
+        int i28 = 3;
+        boolean z5 = false;
+        int centerY = ((screenHeight - barHeight) - 1) + ScreenManager.getCenterOffset();
+        for (int i29 = 0; i29 < vector.size(); i29++) {
+            Object objElementAt = vector.elementAt(i29);
+            if (!(objElementAt instanceof Integer)) {
+                z5 = true;
+                g.drawString((String) objElementAt, i28, (screenHeight - barHeight) - 1, 20);
+                i28 = screenWidth;
+            } else if (z5) {
+                i28 -= 18;
+                g.drawIcon(((Integer) objElementAt).intValue(), i28, centerY);
+            } else {
+                g.drawIcon(((Integer) objElementAt).intValue(), 3, centerY);
+                i28 += 18;
+            }
+        }
+    }
+
+    private void paintSoftKeys(GraphicsContext g) {
+        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        int screenHeight = AppState.getHeight();
+        g.setClip(0, 0, screenWidth, 2048 + screenHeight);
+        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
+        g.setColorFromPalette(15);
+        if (this.titleLeft != null) {
+            g.drawString(this.titleLeft, 1, screenHeight, 20);
+        }
+        if (this.titleRight != null) {
+            g.drawString(this.titleRight, screenWidth - 1, screenHeight, 24);
+        }
+        if (ResourceManager.clockWidth + this.titleMaxWidth < screenWidth - 6) {
+            g.drawString(Utils.defaultStr(AppState.getString(StateKeys.SLOT_CLOCK_STRING)), screenWidth >> 1, screenHeight, 17);
+        }
+    }
+
+    private void paintTopTabBar(GraphicsContext g) {
+        int paintMode;
+        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_BOLD));
+        TabBar tab = (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(TabBar.currentIndex);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_ITEMS);
+        int size2 = tabs.size();
+        while (true) {
+            size2--;
+            if (size2 < 0) {
+                break;
+            }
+            Object objElementAt2 = tabs.elementAt(size2);
+            if (objElementAt2 instanceof TabBar) {
+                TabBar tab2 = (TabBar) objElementAt2;
+                boolean isSelected = objElementAt2 == tab && !TabBar.scrollEnabled;
+                GraphicsContext gfx = g.setColorFromPalette(16);
+                int i30 = tab2.xOffset;
+                int i31 = tab2.width;
+                int textOffset = AppState.getIntOffset(StateKeys.OFFSET_BOLD_FONT_HEIGHT) + 7;
+                gfx.setClip(i30, 2, i31, textOffset - 2).drawLine(tab2.xOffset, textOffset, tab2.xOffset, 6).drawLine(tab2.xOffset, 6, tab2.xOffset + 4, 2).drawLine(tab2.xOffset + 4, 2, (tab2.xOffset + tab2.width) - 2, 2).drawLine((tab2.xOffset + tab2.width) - 2, 2, (tab2.xOffset + tab2.width) - 2, textOffset).setColorFromPalette(isSelected ? 1 : 17);
+                int i32 = isSelected ? textOffset : textOffset - 1;
+                int i33 = 3;
+                while (i33 < i32) {
+                    g.drawLine(tab2.xOffset + 1 + (i33 < 6 ? 6 - i33 : 0), i33, (tab2.xOffset + tab2.width) - 3, i33);
+                    i33++;
                 }
-                Object objElementAt2 = tabs.elementAt(size2);
-                if (objElementAt2 instanceof TabBar) {
-                    TabBar tab2 = (TabBar) objElementAt2;
-                    boolean z6 = objElementAt2 == tab && !TabBar.scrollEnabled;
-                    GraphicsContext gfx = g.setColorFromPalette(16);
-                    int i30 = tab2.xOffset;
-                    int i31 = tab2.width;
-                    int textOffset = AppState.getIntOffset(StateKeys.OFFSET_BOLD_FONT_HEIGHT) + 7;
-                    gfx.setClip(i30, 2, i31, textOffset - 2).drawLine(tab2.xOffset, textOffset, tab2.xOffset, 6).drawLine(tab2.xOffset, 6, tab2.xOffset + 4, 2).drawLine(tab2.xOffset + 4, 2, (tab2.xOffset + tab2.width) - 2, 2).drawLine((tab2.xOffset + tab2.width) - 2, 2, (tab2.xOffset + tab2.width) - 2, textOffset).setColorFromPalette(z6 ? 1 : 17);
-                    int i32 = z6 ? textOffset : textOffset - 1;
-                    int i33 = 3;
-                    while (i33 < i32) {
-                        g.drawLine(tab2.xOffset + 1 + (i33 < 6 ? 6 - i33 : 0), i33, (tab2.xOffset + tab2.width) - 3, i33);
-                        i33++;
-                    }
-                    if (tab2.account == null) {
-                        int i34 = tab2.iconId;
-                        paintMode = (i34 == 240 && AccountManager.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS).size() <= 0) ? i34 : 16384;
-                    } else {
-                        paintMode = AccountManager.getAccountStatus(tab2.account);
-                    }
-                    g.drawIcon(paintMode, tab2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(tab2.xOffset, 2, tab2.width - 3, textOffset - 2).drawString(tab2.title, tab2.xOffset + 6 + 16, 4, 20);
+                if (tab2.account == null) {
+                    int i34 = tab2.iconId;
+                    paintMode = (i34 == 240 && AccountManager.hasActiveConnection()) ? 16385 : (i34 == 240 || i34 == 264 || AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS).size() <= 0) ? i34 : 16384;
                 } else {
-                    int[] iArr = (int[]) objElementAt2;
-                    int i35 = iArr[0];
-                    int centerY2 = 4 + ScreenManager.getCenterOffset();
-                    g.setClip(i35, centerY2, 16, 16);
-                    g.drawIcon(iArr[1], i35, centerY2);
+                    paintMode = AccountManager.getAccountStatus(tab2.account);
                 }
+                g.drawIcon(paintMode, tab2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(tab2.xOffset, 2, tab2.width - 3, textOffset - 2).drawString(tab2.title, tab2.xOffset + 6 + 16, 4, 20);
+            } else {
+                int[] iArr = (int[]) objElementAt2;
+                int i35 = iArr[0];
+                int centerY2 = 4 + ScreenManager.getCenterOffset();
+                g.setClip(i35, centerY2, 16, 16);
+                g.drawIcon(iArr[1], i35, centerY2);
             }
         }
-        if (this.screenId == ScreenId.MAP) {
-            int i36 = this.offsetX + 2;
-            int i37 = this.offsetY + this.contentTop;
-            g.setClip(i36, i37, this.containerWidth, this.contentHeight);
-            try {
-                int stateVal5 = AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH);
-                int stateVal6 = AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT);
-                Graphics graphics3 = g.graphics;
-                graphics3.drawImage(AppState.getImage(StateKeys.OBJ_FONT_2), stateVal5 >> 1, i37 + (stateVal6 >> 1), 3);
-                if (!AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE) && AppState.getBool(StateKeys.FLAG_SUPPORTS_ALPHA)) {
-                    int[] iArr2 = new int[stateVal5];
-                    int i38 = stateVal5;
-                    while (true) {
-                        i38--;
-                        if (i38 < 0) {
-                            break;
-                        } else {
-                            iArr2[i38] = 1006632960;
-                        }
-                    }
-                    while (true) {
-                        stateVal6--;
-                        if (stateVal6 < 0) {
-                            break;
-                        } else {
-                            graphics3.drawRGB(iArr2, 0, stateVal5, 0, i37 + stateVal6, stateVal5, 1, true);
-                        }
+    }
+
+    private void paintMapOverlay(GraphicsContext g) {
+        int i36 = this.offsetX + 2;
+        int i37 = this.offsetY + this.contentTop;
+        g.setClip(i36, i37, this.containerWidth, this.contentHeight);
+        try {
+            int stateVal5 = AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH);
+            int stateVal6 = AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT);
+            Graphics graphics3 = g.graphics;
+            graphics3.drawImage(AppState.getImage(StateKeys.OBJ_FONT_2), stateVal5 >> 1, i37 + (stateVal6 >> 1), 3);
+            if (!AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE) && AppState.getBool(StateKeys.FLAG_SUPPORTS_ALPHA)) {
+                int[] iArr2 = new int[stateVal5];
+                int i38 = stateVal5;
+                while (true) {
+                    i38--;
+                    if (i38 < 0) {
+                        break;
+                    } else {
+                        iArr2[i38] = 1006632960;
                     }
                 }
-            } catch (Throwable unused) {
+                while (true) {
+                    stateVal6--;
+                    if (stateVal6 < 0) {
+                        break;
+                    } else {
+                        graphics3.drawRGB(iArr2, 0, stateVal5, 0, i37 + stateVal6, stateVal5, 1, true);
+                    }
+                }
             }
-            AppState.setInt(StateKeys.FLAG_MAP_SCROLLING, 0);
-            return;
+        } catch (Throwable unused) {
         }
-        if (this.screenId != ScreenId.CONTACT_LIST) {
-            return;
-        }
+        AppState.setInt(StateKeys.FLAG_MAP_SCROLLING, 0);
+    }
+
+    private void paintContactPopup(GraphicsContext g) {
         g.setClip(this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
-        int stateVal7 = AppState.getInt(StateKeys.INT_POPUP_HEIGHT);
-        if (stateVal7 <= 0) {
+        int popupHeight = AppState.getInt(StateKeys.INT_POPUP_HEIGHT);
+        if (popupHeight <= 0) {
             return;
         }
         g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
-        int screenHeight3 = AppState.getHeight() - 1;
-        int stateVal8 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
-        g.setClip(0, (screenHeight3 - stateVal7) - 1, stateVal8, stateVal7 + 1);
+        int screenHeight = AppState.getHeight() - 1;
+        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        g.setClip(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
         g.setColorFromPalette(16);
-        g.fillRect(0, (screenHeight3 - stateVal7) - 1, stateVal8, stateVal7 + 1);
-        g.setClip(1, screenHeight3 - stateVal7, stateVal8 - 2, stateVal7);
+        g.fillRect(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
+        g.setClip(1, screenHeight - popupHeight, screenWidth - 2, popupHeight);
         g.setColorFromPalette(1);
         g.fillRect(0, 0, 2048, 2048);
-        int barHeight2 = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
-        Vector tabs2 = AppState.getVector(StateKeys.VEC_POPUP_ITEMS);
-        int size3 = tabs2.size();
+        int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
+        Vector tabs = AppState.getVector(StateKeys.VEC_POPUP_ITEMS);
+        int size = tabs.size();
         while (true) {
-            size3--;
-            if (size3 < 0) {
+            size--;
+            if (size < 0) {
                 return;
             }
-            Account account = (Account) tabs2.elementAt(size3);
-            int i39 = screenHeight3;
-            int stateVal9 = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
-            int barHeight3 = Utils.max(stateVal9, 16);
+            Account account = (Account) tabs.elementAt(size);
+            int i39 = screenHeight;
+            int fontHeight = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
+            int barHeight3 = Utils.max(fontHeight, 16);
             g.setColorFromPalette(13);
-            int i40 = i39 - stateVal9;
+            int i40 = i39 - fontHeight;
             g.fillRect(1, i40, ((AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 2) * account.msgCount) / 100, barHeight3);
             g.drawIcon(account.getIconId(), 3, i40 + ScreenManager.getCenterOffset());
             g.setColorFromPalette(0);
             g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, i39, 36);
-            screenHeight3 -= barHeight2;
+            screenHeight -= barHeight;
         }
     }
 
