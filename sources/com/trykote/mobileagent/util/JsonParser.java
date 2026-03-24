@@ -20,17 +20,17 @@ import java.util.Vector;
 public abstract class JsonParser {
     /* renamed from: a */
     public static final Object parseUTF8(ByteBuffer buffer, int i) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         Object result = parseValue(buffer, sb, 2);
-        NetworkUtils.bufToStringCached(sb);
+        ObjectPool.toStringAndRelease(sb);
         return result;
     }
 
     /* renamed from: a */
     public static final Object parseJson(ByteBuffer buffer) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         Object result = parseValue(buffer, sb, 1);
-        NetworkUtils.bufToStringCached(sb);
+        ObjectPool.toStringAndRelease(sb);
         return result;
     }
 
@@ -81,7 +81,7 @@ public abstract class JsonParser {
             stringBuffer.append(firstChar);
             return parseUnquoted(buffer, stringBuffer);
         }
-        Vector items = NetworkUtils.newVector();
+        Vector items = ObjectPool.newVector();
         do {
             Object value = parseValue(buffer, stringBuffer, i);
             if (value != null) {
@@ -99,7 +99,7 @@ public abstract class JsonParser {
     private static final String parseString(ByteBuffer buffer, StringBuffer stringBuffer, int i) {
         char ch;
         char decoded;
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         while (true) {
             if (i == 2) {
                 int length = stringBuffer.length() - 1;
@@ -120,7 +120,7 @@ public abstract class JsonParser {
                 ch = Utils.win1251ToChar((int) nextJsonChar(buffer, stringBuffer));
             }
             if (ch == '\"') {
-                return NetworkUtils.bufToStringCached(sb);
+                return ObjectPool.toStringAndRelease(sb);
             }
             if (ch == '\\') {
                 switch (nextJsonChar(buffer, stringBuffer)) {
@@ -158,7 +158,7 @@ public abstract class JsonParser {
     /* renamed from: b */
     private static final Object parseUnquoted(ByteBuffer buffer, StringBuffer stringBuffer) {
         char next;
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         while (true) {
             next = nextJsonChar(buffer, stringBuffer);
             if (next == ',' || next == '}' || next == ']') {
@@ -167,7 +167,7 @@ public abstract class JsonParser {
             sb.append(next);
         }
         stringBuffer.append(next);
-        String text = NetworkUtils.bufToStringCached(sb);
+        String text = ObjectPool.toStringAndRelease(sb);
         return StringUtils.matchesKey(264068, text) ? ResourceManager.boolTrue : StringUtils.matchesKey(329608, text) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, text) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) text));
     }
 
@@ -239,7 +239,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final String toJson(Object obj) {
-        return NetworkUtils.bufToStringCached(serializeValue(obj, NetworkUtils.newStringBuffer()));
+        return ObjectPool.toStringAndRelease(serializeValue(obj, ObjectPool.newStringBuffer()));
     }
 
     /* renamed from: a */

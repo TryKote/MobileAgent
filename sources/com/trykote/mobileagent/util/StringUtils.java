@@ -126,17 +126,17 @@ public final class StringUtils {
 
     /* renamed from: b */
     public static final String concatKey(int i, String str) {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(str));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(i)).append(str));
     }
 
     /* renamed from: a */
     public static final String concatKeyObj(int i, Object obj) {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(obj));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(i)).append(obj));
     }
 
     /* renamed from: b */
     public static final String concat(String str, String str2) {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(str).append(str2));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(str).append(str2));
     }
 
     /* renamed from: a */
@@ -354,7 +354,7 @@ public final class StringUtils {
 
     /* renamed from: m */
     private static final Vector createRegionVector() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         result.addElement(AppState.getString(StateKeys.STR_CITY_LIST));
         return result;
     }
@@ -376,8 +376,8 @@ public final class StringUtils {
     /* renamed from: e */
     public static final void showRegionSelector() {
         resetRegForm();
-        AppState.pool[StateKeys.SLOT_REG_FIELD_2] = new XmlParser(new ByteBuffer(NetworkUtils.longToHex(25135), 41000)).parse().children;
-        StringBuffer sb = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_SEARCH_TITLE));
+        AppState.pool[StateKeys.SLOT_REG_FIELD_2] = new XmlParser(new ByteBuffer(ObjectPool.unpackChars(25135), 41000)).parse().children;
+        StringBuffer sb = ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_SEARCH_TITLE));
         Vector items = AppState.getVector(StateKeys.SLOT_REG_FIELD_2);
         for (int i = 0; i < Utils.vectorSize(items); i++) {
             sb.append((char) 0).append(getXmlText((XmlElement) items.elementAt(i)));
@@ -644,7 +644,7 @@ public final class StringUtils {
                 AppState.setObject(StateKeys.SESSION_KEY, (Object) str);
                 return;
             }
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             int i3 = 0;
             while (i3 < 2) {
                 long seed = i3 == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID)));
@@ -692,7 +692,7 @@ public final class StringUtils {
 
     /* renamed from: j */
     public static final void initGeoRegions() {
-        AppState.pool[StateKeys.VEC_MAP_POINTS] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.VEC_MAP_POINTS] = ObjectPool.newVector();
         AppState.pool[StateKeys.OBJ_GEO_REGION] = new GeoRegion(AppState.getString(StateKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L);
         try {
             ByteBuffer geoBuffer = Base64.decode(AppState.getString(StateKeys.GEO_SAVED_DATA));
@@ -767,7 +767,7 @@ public final class StringUtils {
                     addGeoRegion(region);
                 }
             } else if (matchesKey(397424, str)) {
-                ConnectionThread.parseServiceConfig(1, childElem, true);
+                ServiceRegistry.parseServiceConfig(1, childElem, true);
             }
         }
         try {

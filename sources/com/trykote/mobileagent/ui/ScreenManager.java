@@ -352,7 +352,7 @@ public abstract class ScreenManager {
                 return i10;
             case 1:
                 int i11 = i5 + 1;
-                MenuItem separator = MenuItem.createSeparator().addText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
+                MenuItem separator = MenuItem.createSeparator().addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
                 int i12 = i11 + 1;
                 String sublabel = Utils.defaultStr(AppState.getString(AppState.getInt(i11)));
                 if (!StringUtils.isEmpty(sublabel)) {
@@ -443,5 +443,82 @@ public abstract class ScreenManager {
                 parseScreenItem(screen, AppState.getInt(i5), i2);
                 return i5 + 1;
         }
+    }
+
+    /* renamed from: a */
+    private static final int processFormField(int i, Object obj) {
+        int nextIdx;
+        int idx = i + 1;
+        switch (AppState.getInt(i)) {
+            case 1:
+                idx += 2;
+                break;
+            case 2:
+                AppState.setBool(AppState.getInt(idx + 1), ((Boolean) obj).booleanValue());
+                idx += 2;
+                break;
+            case 3:
+                AppState.setIntInd(idx + 2, ((Integer) ((Object[]) obj)[0]).intValue());
+                idx += 3;
+                break;
+            case 4:
+                idx++;
+                break;
+            case 5:
+                int baseIdx = idx + 3;
+                String value = (String) ((Object[]) obj)[0];
+                int curIdx = baseIdx + 1;
+                if (AppState.getInt(baseIdx) == 2) {
+                    int minIdx = curIdx + 1;
+                    int minValue = AppState.getInt(curIdx);
+                    int maxIdx = minIdx + 1;
+                    int maxValue = AppState.getInt(minIdx);
+                    int defIdx = maxIdx + 1;
+                    int parsedValue = Utils.parseIntBounded(value, minValue, maxValue, AppState.getInt(maxIdx));
+                    nextIdx = defIdx + 1;
+                    AppState.setIntInd(defIdx, parsedValue);
+                } else {
+                    nextIdx = curIdx + 1;
+                    AppState.setStringInd(curIdx, value);
+                }
+                idx += nextIdx - idx;
+                break;
+            case 6:
+                idx++;
+                break;
+            case 7:
+            case 8:
+                idx += 3;
+                break;
+            case 9:
+                AppState.setStringInd(idx + 1, ((String[]) obj)[1]);
+                idx += 2;
+                break;
+            case 10:
+                AppState.setStringInd(idx, (String) obj);
+                idx++;
+                break;
+            case 11:
+                idx++;
+                break;
+            case 12:
+                processFormField(AppState.getInt(idx), obj);
+                idx++;
+                break;
+        }
+        return idx;
+    }
+
+    /* renamed from: d */
+    public static final int processScreenForm() {
+        Screen screen = getCurrentScreen();
+        int i = screen.screenFlags + 9;
+        Vector items = screen.menuItems;
+        int fieldIdx = i + 1;
+        int fieldCount = AppState.getInt(i);
+        for (int i2 = 0; i2 < fieldCount; i2++) {
+            fieldIdx = processFormField(fieldIdx, ((MenuItem) items.elementAt(i2)).data);
+        }
+        return 0;
     }
 }

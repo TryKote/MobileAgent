@@ -37,7 +37,7 @@ public final class AccountManager {
     public static final void setCurrentAccount(Account account) {
         Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNT_SELECTION);
         if (accounts == null) {
-            accounts = NetworkUtils.newVector();
+            accounts = ObjectPool.newVector();
             AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] = accounts;
         }
         accounts.addElement(account);
@@ -144,8 +144,8 @@ public final class AccountManager {
     /* renamed from: ag */
     public static void loadSavedAccounts() {
         RemoteLogger.log("ACCT", "loadSavedAccounts START");
-        Vector accounts = NetworkUtils.newVector();
-        ByteBuffer buffer = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(6513505));
+        Vector accounts = ObjectPool.newVector();
+        ByteBuffer buffer = XmppMailRuProtocol.readChunkedRecord(ObjectPool.unpackChars(6513505));
         while (buffer.length > 0) {
             try {
                 Account account = null;
@@ -218,7 +218,7 @@ public final class AccountManager {
                     ((Account) accounts.elementAt(i)).serializeAccount(buffer, z, false).saveProperties(buffer);
                 }
             }
-            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(6513505), buffer, z);
+            XmppMailRuProtocol.writeRecord(ObjectPool.unpackChars(6513505), buffer, z);
         } catch (Throwable unused) {
         }
     }
@@ -310,7 +310,7 @@ public final class AccountManager {
 
     /* renamed from: R */
     public static final Vector getMrimAccountList() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = allAccounts.size();
         while (true) {
@@ -363,7 +363,7 @@ public final class AccountManager {
         while (true) {
             size--;
             if (size < 0) {
-                NetworkUtils.releaseVector(accounts);
+                ObjectPool.releaseVector(accounts);
                 return i;
             }
             i += findMrimAccount(accounts, size).syncSeq;
@@ -372,7 +372,7 @@ public final class AccountManager {
 
     /* renamed from: V */
     public static final Vector getXmppAccountList() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = allAccounts.size();
         while (true) {
@@ -415,7 +415,7 @@ public final class AccountManager {
 
     /* renamed from: W */
     public static final Vector getAllAccountsList() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int accountIdx = Utils.vectorSize(allAccounts);
         while (true) {
@@ -432,14 +432,14 @@ public final class AccountManager {
                 }
                 result.addElement(contacts.elementAt(contactIdx));
             }
-            NetworkUtils.releaseVector(contacts);
+            ObjectPool.releaseVector(contacts);
         }
     }
 
     /* renamed from: d */
     public static final Vector getAccountConversations(Account targetAccount) {
         if (targetAccount == null) {
-            Vector result = NetworkUtils.newVector();
+            Vector result = ObjectPool.newVector();
             int count = getActiveAccountCount();
             while (true) {
                 count--;
@@ -457,7 +457,7 @@ public final class AccountManager {
                 }
             }
         } else {
-            Vector result2 = NetworkUtils.newVector();
+            Vector result2 = ObjectPool.newVector();
             int count2 = getActiveAccountCount();
             while (true) {
                 count2--;

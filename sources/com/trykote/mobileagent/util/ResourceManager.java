@@ -125,7 +125,7 @@ public final class ResourceManager {
         if (!AppController.checkTimer(4, 1000L) || (i = (calendar = AppState.getCalendar()).get(12)) == lastMinute) {
             return;
         }
-        String timeStr = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(calendar.get(11))).append(':').append(Utils.zeroPad(i)));
+        String timeStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(calendar.get(11))).append(':').append(Utils.zeroPad(i)));
         AppState.setObject(StateKeys.SLOT_CLOCK_STRING, (Object) timeStr);
         clockWidth = AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT).stringWidth(timeStr);
         lastMinute = i;
@@ -273,7 +273,7 @@ public final class ResourceManager {
             }
         }
         int costCents = (int) ((j * AppState.getInt(StateKeys.SETTING_TRAFFIC_COST)) / 1048576);
-        AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_COST_TEXT, NetworkUtils.newStringBuffer().append(costCents / 100).append('.').append(Utils.zeroPad(costCents % 100)).append(' ').append(AppState.getString(StateKeys.STR_CURRENCY_SYMBOL)));
+        AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_COST_TEXT, ObjectPool.newStringBuffer().append(costCents / 100).append('.').append(Utils.zeroPad(costCents % 100)).append(' ').append(AppState.getString(StateKeys.STR_CURRENCY_SYMBOL)));
         AppState.setInt(StateKeys.INT_TRAFFIC_PERIOD_LABEL, periodIndex + 745);
         ScreenManager.showScreen(ScreenManager.createScreen(3985));
         AppState.clearRange(StateKeys.SLOT_GROUP_LIST_INDEX, StateKeys.RANGE_SEARCH_LABEL_END);
@@ -296,7 +296,7 @@ public final class ResourceManager {
         int errorCode;
         String messageText = Utils.defaultStr(AppState.getString(StateKeys.SLOT_STATUS_TEXT));
         if (str != AppState.getString(StateKeys.STR_NOTIFICATION_SOUND)) {
-            StringBuffer sb = NetworkUtils.getMessageBuffer();
+            StringBuffer sb = Utils.getMessageBuffer();
             if (StringUtils.matchesKey(473, str)) {
                 AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, sb.append(AppState.getString(StateKeys.SLOT_NOTIFICATION_TEXT)));
                 return 0;
@@ -316,14 +316,14 @@ public final class ResourceManager {
         MrimContact mrimContact = (MrimContact) AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
         MrimAccount mrimAccount = (MrimAccount) mrimContact.account;
         if (mrimAccount.isConnected()) {
-            mrimContact.appendMessage(1, NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
-            StringBuffer phoneSb = NetworkUtils.newStringBuffer().append('+');
+            mrimContact.appendMessage(1, ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
+            StringBuffer phoneSb = ObjectPool.newStringBuffer().append('+');
             if (phoneNumber.charAt(0) == '8') {
                 phoneSb.append('7').append(StringUtils.suffix(phoneNumber, 1));
             } else {
                 phoneSb.append(phoneNumber);
             }
-            errorCode = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(NetworkUtils.bufToStringCached(phoneSb)).writeStringUTF16(messageText)), integerOf(6), mrimContact, messageText, phoneNumber}));
+            errorCode = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(ObjectPool.toStringAndRelease(phoneSb)).writeStringUTF16(messageText)), integerOf(6), mrimContact, messageText, phoneNumber}));
         } else {
             errorCode = 299;
         }
@@ -364,7 +364,7 @@ public final class ResourceManager {
                         str = textValue;
                     }
                     if (z && str != null) {
-                        NetworkUtils.releaseVector(vector);
+                        ObjectPool.releaseVector(vector);
                         IOUtils.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
@@ -419,7 +419,7 @@ public final class ResourceManager {
             i3++;
             jArr[i5] = j;
         }
-        NetworkUtils.releaseBytes(bytes);
+        ObjectPool.releaseBytes(bytes);
         return jArr;
     }
 
@@ -435,7 +435,7 @@ public final class ResourceManager {
 
     /* renamed from: f */
     public static final int parseBalance() {
-        NetworkUtils.processScreenForm();
+        ScreenManager.processScreenForm();
         String balanceStr = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SCREEN_VALUE));
         int i = 0;
         int sepIdx = balanceStr.lastIndexOf(46);
@@ -571,7 +571,7 @@ public final class ResourceManager {
             screen.selectable = false;
             screen.addLabelById(551);
         }
-        NetworkUtils.releaseVector(accounts);
+        ObjectPool.releaseVector(accounts);
         ScreenManager.pushScreen(screen);
         TabBar.ensureSettingsTab();
         TabBar.findTab(36, (Account) null);
@@ -623,7 +623,7 @@ public final class ResourceManager {
 
     /* renamed from: m */
     public static final void showWiFiNetworks() {
-        Vector networks = ConnectionThread.getActiveContactIds();
+        Vector networks = ServiceRegistry.getActiveContactIds();
         int size = networks == null ? 0 : networks.size();
         int i = size;
         if (size == 0) {
@@ -638,7 +638,7 @@ public final class ResourceManager {
                 return;
             } else {
                 Object networkObj = networks.elementAt(i);
-                screen.addIconItemWithData(-1, ConnectionThread.getPhotoHost(networkObj), 6, networkObj);
+                screen.addIconItemWithData(-1, ServiceRegistry.getPhotoHost(networkObj), 6, networkObj);
             }
         }
     }
@@ -661,7 +661,7 @@ public final class ResourceManager {
             AppState.setInt(StateKeys.FLAG_STATUS_TEXT_SET, 0);
             AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
         } else if (StringUtils.matchesKey(473, str)) {
-            AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, NetworkUtils.getMessageBuffer().append(AppState.getString(StateKeys.SLOT_NOTIFICATION_TEXT)));
+            AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(StateKeys.SLOT_NOTIFICATION_TEXT)));
         } else if (StringUtils.matchesKey(474, str)) {
             AppState.setObject(StateKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
             AppState.setBool(StateKeys.FLAG_RESOURCE_LOADING, true);
@@ -742,7 +742,7 @@ public final class ResourceManager {
             while (true) {
                 size--;
                 if (size < 0) {
-                    NetworkUtils.releaseVector(lines);
+                    ObjectPool.releaseVector(lines);
                     HttpClient.closeAndUpdateStats(http);
                     NetworkLock.releaseNetworkLock();
                     return;
@@ -751,7 +751,7 @@ public final class ResourceManager {
                     if (fields.size() == 5) {
                         XmppContactGroup.sharedContactList.addElement(new Object[]{fields.elementAt(0), new long[]{Long.parseLong((String) fields.elementAt(1)), Long.parseLong((String) fields.elementAt(2))}, fields.elementAt(4)});
                     }
-                    NetworkUtils.releaseVector(fields);
+                    ObjectPool.releaseVector(fields);
                 }
             }
         } catch (RuntimeException th) {
@@ -767,18 +767,18 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final int composeEmail(Vector vector, String str, String str2) {
-        StringBuffer recipientsSb = NetworkUtils.newStringBuffer();
+        StringBuffer recipientsSb = ObjectPool.newStringBuffer();
         String str3 = AppState.emptyStr;
-        String separator = NetworkUtils.longToHex(8236);
+        String separator = ObjectPool.unpackChars(8236);
         int i = 0;
         while (i < Utils.vectorSize(vector)) {
             recipientsSb.append(i > 0 ? separator : str3).append(((String[]) vector.elementAt(i))[0]);
             i++;
         }
-        AppState.setObject(StateKeys.SLOT_MSG_EXTRA_2, (Object) NetworkUtils.bufToStringCached(recipientsSb));
+        AppState.setObject(StateKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
         AppState.setObject(StateKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(str));
         String str4 = AppState.emptyStr;
-        AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_STATUS_TEXT, NetworkUtils.newStringBuffer().append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_ENABLED) ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : str4).append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_TYPE) ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(StateKeys.STR_TRAFFIC_LABEL)));
+        AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : str4).append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(StateKeys.STR_TRAFFIC_LABEL)));
         return ScreenId.COMPOSE_MESSAGE;
     }
 
@@ -803,7 +803,7 @@ public final class ResourceManager {
         } else {
             ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(1704439);
             int dotIndex = domain.indexOf(46);
-            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? NetworkUtils.longToHex(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(StateKeys.INT_ASYNC_TASK_ID));
+            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(StateKeys.INT_ASYNC_TASK_ID));
         }
         objArr[0] = urlBuffer.getStringAndClear();
         objArr[1] = targetAccount;
@@ -915,7 +915,7 @@ public final class ResourceManager {
         if (str != null) {
             ByteBuffer urlBuf3 = urlBuffer.writeUInt(1031302438).writeRawString(longitude).writeUInt(1031367974).writeRawString(latitude).writeUInt(1031040294);
             if (StringUtils.isEmpty(str)) {
-                encodedQuery = NetworkUtils.longToHex(1094795585);
+                encodedQuery = ObjectPool.unpackChars(1094795585);
             } else {
                 ByteBuffer buffer = new ByteBuffer();
                 int length = str.length();
@@ -968,8 +968,8 @@ public final class ResourceManager {
             return;
         }
         try {
-            StringBuffer versionSb = NetworkUtils.newStringBuffer();
-            StringBuffer urlSb = NetworkUtils.newStringBuffer();
+            StringBuffer versionSb = ObjectPool.newStringBuffer();
+            StringBuffer urlSb = ObjectPool.newStringBuffer();
             ByteBuffer buffer = (ByteBuffer) obj;
             while (buffer.length > 0 && 32 != (charVal1 = buffer.readUByte())) {
                 versionSb.append((char) charVal1);
@@ -1052,7 +1052,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final int collectInvitees(Screen parentScreen) {
-        NetworkUtils.processScreenForm();
+        ScreenManager.processScreenForm();
         String[] phoneNumbers = Utils.getPhoneNumbers(true);
         Vector invitees = IOUtils.getCheckedItems(parentScreen, 1);
         int length = phoneNumbers.length;

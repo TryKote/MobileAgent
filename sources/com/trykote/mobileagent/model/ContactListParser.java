@@ -43,7 +43,7 @@ public abstract class ContactListParser implements ListItem {
     private static final Vector parseContactsInternal(ByteBuffer buffer, int i, boolean z) {
         boolean z2;
         Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(buffer, 2);
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Vector existing = AppState.getVector(StateKeys.OBJ_HTTP_CALLBACK);
         if (existing != null && !z) {
             int i2 = updateCounter;

@@ -11,16 +11,16 @@ public final class Md5Hash {
         int[] blockBuf = new int[16];
         int[] state = Utils.bytesToInts(AppState.getBytes(StateKeys.RES_EMOTICON_STATE));
         int[] bitCount = new int[2];
-        byte[] tempBuf = NetworkUtils.newBytes(64);
+        byte[] tempBuf = ObjectPool.newBytes(64);
         md5ProcessBuffer(bArr, i, blockBuf, state, bitCount, tempBuf);
-        byte[] lengthBytes = md5Finalize(NetworkUtils.newBytes(16), bitCount, 8);
-        byte[] padBuf = NetworkUtils.newBytes(64);
+        byte[] lengthBytes = md5Finalize(ObjectPool.newBytes(16), bitCount, 8);
+        byte[] padBuf = ObjectPool.newBytes(64);
         padBuf[0] = -128;
         int bufIdx = (bitCount[0] >>> 3) & 63;
         md5ProcessBuffer(padBuf, bufIdx < 56 ? 56 - bufIdx : 120 - bufIdx, blockBuf, state, bitCount, tempBuf);
         md5ProcessBuffer(lengthBytes, 8, blockBuf, state, bitCount, tempBuf);
-        NetworkUtils.releaseBytes(padBuf);
-        NetworkUtils.releaseBytes(tempBuf);
+        ObjectPool.releaseBytes(padBuf);
+        ObjectPool.releaseBytes(tempBuf);
         return md5Finalize(lengthBytes, state, 16);
     }
 
@@ -57,13 +57,13 @@ public final class Md5Hash {
         if (i >= i4) {
             Utils.arraycopy((Object) bArr, 0, (Object) bArr2, i2, i5);
             md5ProcessBlock(bArr2, iArr, iArr2);
-            byte[] tempBlock = NetworkUtils.newBytes(64);
+            byte[] tempBlock = ObjectPool.newBytes(64);
             while (i5 + 63 < i) {
                 Utils.arraycopy((Object) bArr, i5, (Object) tempBlock, 0, 64);
                 md5ProcessBlock(tempBlock, iArr, iArr2);
                 i5 += 64;
             }
-            NetworkUtils.releaseBytes(tempBlock);
+            ObjectPool.releaseBytes(tempBlock);
             i2 = 0;
         } else {
             i5 = 0;

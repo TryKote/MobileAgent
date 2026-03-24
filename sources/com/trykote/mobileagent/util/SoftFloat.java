@@ -376,7 +376,7 @@ public final class SoftFloat {
         if (length == 0) {
             throw new NumberFormatException(normalized);
         }
-        if (NetworkUtils.longToHex(5136718).equals(normalized)) {
+        if (ObjectPool.unpackChars(5136718).equals(normalized)) {
             return 9221120237041090560L;
         }
         int i = 0;
@@ -432,11 +432,11 @@ public final class SoftFloat {
         boolean z;
         int i2;
         if (isNaN(j)) {
-            return NetworkUtils.longToHex(5136718);
+            return ObjectPool.unpackChars(5136718);
         }
         boolean negative = isNegative(j);
         if (isZero(j)) {
-            return NetworkUtils.longToHex(negative ? 808333357 : 3157552);
+            return ObjectPool.unpackChars(negative ? 808333357 : 3157552);
         }
         if (isInfinite(j)) {
             return AppState.getString(negative ? 985 : 984);
@@ -480,7 +480,7 @@ public final class SoftFloat {
         while (true) {
             int i7 = i4;
             long j3 = product;
-            StringBuffer buf = NetworkUtils.newStringBuffer();
+            StringBuffer buf = ObjectPool.newStringBuffer();
             if (negative) {
                 buf.append('-');
             }
@@ -514,7 +514,7 @@ public final class SoftFloat {
             if (z4) {
                 buf.append('E').append(length);
             }
-            String formatted = NetworkUtils.bufToStringCached(buf);
+            String formatted = ObjectPool.toStringAndRelease(buf);
             if (formatted.length() <= i) {
                 return formatted;
             }

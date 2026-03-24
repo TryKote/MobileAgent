@@ -45,7 +45,7 @@ public class XmppProtocol extends Account {
     public XmppProtocol(int i, String str, String str2) {
         super(i, str, str2);
         this.configFlags = 1;
-        this.elementQueue = NetworkUtils.newVector();
+        this.elementQueue = ObjectPool.newVector();
         XmppContactGroup defaultGrp = new XmppContactGroup(this, 0, AppState.getString(StateKeys.STR_GROUP_DEFAULT));
         defaultGrp.isSpecial = true;
         this.defaultGroup = defaultGrp;
@@ -61,15 +61,15 @@ public class XmppProtocol extends Account {
 
     /* renamed from: r */
     private String generateMessageId() {
-        StringBuffer sb = NetworkUtils.newStringBuffer().append('m');
+        StringBuffer sb = ObjectPool.newStringBuffer().append('m');
         int i = this.state + 1;
         this.state = i;
-        return NetworkUtils.bufToStringCached(sb.append(i));
+        return ObjectPool.toStringAndRelease(sb.append(i));
     }
 
     public XmppProtocol(ByteBuffer buffer) {
         super(buffer);
-        this.elementQueue = NetworkUtils.newVector();
+        this.elementQueue = ObjectPool.newVector();
         int groupCount = buffer.readInt();
         while (true) {
             groupCount--;
@@ -268,7 +268,7 @@ public class XmppProtocol extends Account {
             case 3:
                 this.msgCount = 30;
                 this.state = 0;
-                this.connection = new ConnectionThread(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
+                this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
                 this.progress = 4;
                 if (isMailRuXmpp()) {
                     new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
@@ -386,7 +386,7 @@ public class XmppProtocol extends Account {
                         } else if (StringUtils.matchesKey(464488, tagName)) {
                             String senderJid = extractBareJid(element.getIntAttribute(262852));
                             if (findContactByJid(senderJid) != null) {
-                                StringBuffer sb = NetworkUtils.newStringBuffer();
+                                StringBuffer sb = ObjectPool.newStringBuffer();
                                 XmlElement subjectChild = element.findChildByKey(464558);
                                 if (subjectChild != null && (subjectText = StringUtils.fromBuffer(subjectChild.textContent)) != null) {
                                     sb.append(subjectText).append('\n');
@@ -395,7 +395,7 @@ public class XmppProtocol extends Account {
                                 if (bodyChild != null && (bodyText = StringUtils.fromBuffer(bodyChild.textContent)) != null) {
                                     sb.append(bodyText);
                                 }
-                                String messageText = NetworkUtils.bufToStringCached(sb);
+                                String messageText = ObjectPool.toStringAndRelease(sb);
                                 if (messageText.length() > 0) {
                                     onMessage(senderJid, 0L, messageText);
                                 }
@@ -824,7 +824,7 @@ public class XmppProtocol extends Account {
         try {
             Object[] pendingRequest = AppState.getObjectArray(StateKeys.SLOT_REG_PARAM_2);
             if (((String) pendingRequest[0]).equals(element.getIntAttribute(131550))) {
-                ContactInfo contactInfo = ((ContactInfo) pendingRequest[1]).setDescriptionBis(NetworkUtils.bufToStringCached(buildContactDescription(NetworkUtils.newStringBuffer(), element)));
+                ContactInfo contactInfo = ((ContactInfo) pendingRequest[1]).setDescriptionBis(ObjectPool.toStringAndRelease(buildContactDescription(ObjectPool.newStringBuffer(), element)));
                 Image avatar = extractImageFromElement(element);
                 if (avatar != null) {
                     contactInfo.put(ResourceManager.integerOf(25), avatar);

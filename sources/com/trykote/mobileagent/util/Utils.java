@@ -32,12 +32,12 @@ public abstract class Utils {
         int idx = AppState.getString(StateKeys.STR_RES_HUGE_URL_4).indexOf(getVectorString(parts, 2)) / 3;
         int year = parseInt(parts.elementAt(3));
         String timeStr = getVectorString(parts, 4);
-        NetworkUtils.releaseVector(parts);
+        ObjectPool.releaseVector(parts);
         Vector timeParts = splitImpl(timeStr, ':', false);
         int hours = parseInt(timeParts.elementAt(0));
         int minutes = parseInt(timeParts.elementAt(1));
         parseInt(timeParts.elementAt(2));
-        NetworkUtils.releaseVector(timeParts);
+        ObjectPool.releaseVector(timeParts);
         byte b = (year % 4 != 0 || year == 2000) ? (byte) 28 : (byte) 29;
         int i = (((((year - 1970) * 365) + ((year - 1968) / 4)) + day) + 28) - b;
         if (year >= 2000) {
@@ -70,7 +70,7 @@ public abstract class Utils {
 
     /* renamed from: b */
     public static final String withComma(String str) {
-        return NetworkUtils.bufToStringCached(appendCommaIf(NetworkUtils.newStringBuffer().append(str), true));
+        return ObjectPool.toStringAndRelease(appendCommaIf(ObjectPool.newStringBuffer().append(str), true));
     }
 
     /* renamed from: a */
@@ -122,11 +122,11 @@ public abstract class Utils {
 
     /* renamed from: b */
     public static final String zeroPad(int i) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         if (i < 10) {
             sb.append('0');
         }
-        return NetworkUtils.bufToStringCached(sb.append(i));
+        return ObjectPool.toStringAndRelease(sb.append(i));
     }
 
     /* renamed from: a */
@@ -151,12 +151,12 @@ public abstract class Utils {
 
     /* renamed from: c */
     public static final String maskPassword(String str) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         while (true) {
             length--;
             if (length < 0) {
-                return NetworkUtils.bufToStringCached(sb);
+                return ObjectPool.toStringAndRelease(sb);
             }
             sb.append('*');
         }
@@ -164,7 +164,7 @@ public abstract class Utils {
 
     /* renamed from: d */
     public static final String quoteText(String str) {
-        StringBuffer sb = NetworkUtils.newStringBuffer().append('>');
+        StringBuffer sb = ObjectPool.newStringBuffer().append('>');
         int length = str == null ? 0 : str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -174,7 +174,7 @@ public abstract class Utils {
                 sb.append(ch);
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
@@ -221,20 +221,20 @@ public abstract class Utils {
 
     /* renamed from: a */
     public static final Vector splitReplace(String str, char c, char c2) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str == null ? 0 : str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
             sb.append(ch == c2 ? c : ch);
         }
-        return splitImpl(NetworkUtils.bufToStringCached(sb), c, false);
+        return splitImpl(ObjectPool.toStringAndRelease(sb), c, false);
     }
 
     /* renamed from: a */
     public static final Vector splitMerge(String str, char c) {
         Vector parts = splitImpl(str, '|', true);
         while (parts.size() > 5) {
-            parts.setElementAt(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(getVectorString(parts, 4)).append('|').append(parts.elementAt(5))), 4);
+            parts.setElementAt(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(getVectorString(parts, 4)).append('|').append(parts.elementAt(5))), 4);
             parts.removeElementAt(5);
         }
         return parts;
@@ -252,8 +252,8 @@ public abstract class Utils {
 
     /* renamed from: a */
     private static final Vector splitImpl(String str, char c, boolean z) {
-        Vector result = NetworkUtils.newVector();
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Vector result = ObjectPool.newVector();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str == null ? 0 : str.length();
         int i = 0;
         while (i <= length) {
@@ -262,19 +262,19 @@ public abstract class Utils {
             if (ch != c) {
                 sb.append(c2);
             } else if (z || sb.length() > 0) {
-                result.addElement(NetworkUtils.bufToString(sb, false));
+                result.addElement(ObjectPool.toString(sb, false));
             }
             i++;
         }
-        NetworkUtils.bufToStringCached(sb);
+        ObjectPool.toStringAndRelease(sb);
         return result;
     }
 
     /* renamed from: a */
     public static final String[] getPhoneNumbers(boolean z) {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         for (int i = 0; i < 3; i++) {
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             String rawPhone = defaultStr(AppState.getString(i + 1303));
             int length = rawPhone.length();
             for (int i2 = 0; i2 < length; i2++) {
@@ -283,7 +283,7 @@ public abstract class Utils {
                     sb.append(ch);
                 }
             }
-            String phoneNum = NetworkUtils.bufToStringCached(sb);
+            String phoneNum = ObjectPool.toStringAndRelease(sb);
             if (!StringUtils.isEmpty(phoneNum)) {
                 result.addElement(phoneNum);
             }
@@ -295,14 +295,14 @@ public abstract class Utils {
 
     /* renamed from: a */
     public static final String joinComma(String[] strArr) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         for (int i = 0; i < strArr.length; i++) {
             if (i > 0) {
                 sb.append(',');
             }
             sb.append(strArr[i]);
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
@@ -329,7 +329,7 @@ public abstract class Utils {
             i /= 1024;
             i2++;
         }
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         sb.append(i);
         if (i3 != 0 && i2 == 754) {
             sb.append('.');
@@ -343,7 +343,7 @@ public abstract class Utils {
             }
             sb.append(frac);
         }
-        return NetworkUtils.bufToStringCached(sb.append(AppState.getString(i2)));
+        return ObjectPool.toStringAndRelease(sb.append(AppState.getString(i2)));
     }
 
     /* renamed from: a */
@@ -374,7 +374,7 @@ public abstract class Utils {
 
     /* renamed from: g */
     public static final String appendSpace(String str) {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(str).append(' '));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(str).append(' '));
     }
 
     /* renamed from: a */
@@ -389,7 +389,7 @@ public abstract class Utils {
 
     /* renamed from: d */
     public static final String removeChar(String str, char c) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -397,7 +397,7 @@ public abstract class Utils {
                 sb.append(ch);
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: h */
@@ -405,7 +405,7 @@ public abstract class Utils {
         if (str == null) {
             return AppState.emptyStr;
         }
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         if (startsWithInt(str, 99897)) {
             for (int i = 0; i < str.length(); i++) {
                 if (i == 0) {
@@ -432,7 +432,7 @@ public abstract class Utils {
                 sb.append(str.charAt(i3));
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
@@ -442,7 +442,7 @@ public abstract class Utils {
 
     /* renamed from: i */
     public static final String extractDigits(String str) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         if (str != null) {
             for (int i = 0; i < str.length(); i++) {
                 char ch = str.charAt(i);
@@ -451,7 +451,7 @@ public abstract class Utils {
                 }
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: j */
@@ -526,7 +526,7 @@ public abstract class Utils {
             i2 = i6 + 1;
             sArr[i4] = (short) ((bytes[i5] << 8) | (bytes[i6] & 255));
         }
-        NetworkUtils.releaseBytes(bytes);
+        ObjectPool.releaseBytes(bytes);
         return sArr;
     }
 
@@ -542,7 +542,7 @@ public abstract class Utils {
         if (str == null || (length = str.length()) == 0) {
             return str;
         }
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         char c = 0;
         int i = 0;
         while (i < length) {
@@ -562,7 +562,7 @@ public abstract class Utils {
             i++;
             c = c2;
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: f */
@@ -589,14 +589,14 @@ public abstract class Utils {
     public static final String splitAndGet(int i, int i2) {
         Vector parts = splitImpl(AppState.getString(i), (char) 0, false);
         String str = (String) parts.elementAt(i2);
-        NetworkUtils.releaseVector(parts);
+        ObjectPool.releaseVector(parts);
         return str;
     }
 
     /* renamed from: a */
     public static Vector wrapText(String str, Font font, int i) {
-        Vector result = NetworkUtils.newVector();
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Vector result = ObjectPool.newVector();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int i2 = 0;
         int idx = str.indexOf(32);
         int length = idx;
@@ -641,5 +641,17 @@ public abstract class Utils {
     /* renamed from: b */
     public static final String generateRandomHash() {
         return new ByteBuffer().writeIntLE(nextRandom()).writeLong(System.currentTimeMillis()).encryptMD5().toHexString();
+    }
+
+    /* renamed from: e */
+    public static final StringBuffer getMessageBuffer() {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        String prefix = defaultStr(AppState.getString(StateKeys.SLOT_STATUS_TEXT));
+        StringBuffer result = sb.append(prefix);
+        int length = prefix.length();
+        if (length != 0 && prefix.charAt(length - 1) != ' ') {
+            result.append(' ');
+        }
+        return result;
     }
 }

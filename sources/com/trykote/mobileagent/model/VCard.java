@@ -197,7 +197,7 @@ public final class VCard {
         }
         if (vector != null) {
             if (!vector.isEmpty()) {
-                points = NetworkUtils.newVector();
+                points = ObjectPool.newVector();
             }
             int size = vector.size();
             while (true) {

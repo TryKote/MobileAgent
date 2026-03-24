@@ -167,7 +167,7 @@ public abstract class MapRenderer {
             int i12 = i8 < 0 ? (i8 / 128) - 1 : i8 / 128;
             int i13 = (int) ((((i9 << 7) + 64) - currentPixelX) + (viewportWidth / 2));
             int i14 = (int) (viewportHeight - ((((i10 << 7) + 64) - currentPixelY) + (viewportHeight / 2)));
-            Vector visibleTiles = NetworkUtils.newVector();
+            Vector visibleTiles = ObjectPool.newVector();
             Graphics graphics = AppState.getImage(StateKeys.OBJ_FONT_2).getGraphics();
             int zoomLevel = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
             for (int i15 = i9; i15 <= i11; i15++) {
@@ -253,7 +253,7 @@ public abstract class MapRenderer {
                 for (int i23 = 0; i23 < size5; i23++) {
                     currentTiles.addElement(visibleTiles.elementAt(i23));
                 }
-                NetworkUtils.releaseVector(visibleTiles);
+                ObjectPool.releaseVector(visibleTiles);
             }
             Vector infoLabels = AppState.getVector(StateKeys.VEC_TILE_QUEUE);
             synchronized (infoLabels) {
@@ -306,14 +306,14 @@ public abstract class MapRenderer {
                 int height = 0;
                 for (int i30 = 0; i30 < size2; i30++) {
                     Object[] objArr2 = (Object[]) vector.elementAt(i30);
-                    if (!ConnectionThread.hiddenContacts.contains((String) objArr2[0])) {
+                    if (!ServiceRegistry.hiddenContacts.contains((String) objArr2[0])) {
                         long j8 = ((long[]) objArr2[1])[0];
                         long j9 = ((long[]) objArr2[1])[1];
                         long pixelX = MapUtils.coordToPixel(j8, zoomLevel);
                         long pixelY = MapUtils.coordToPixel(j9, zoomLevel);
                         int i31 = (int) (pixelX / 32);
                         int i32 = (int) (pixelY / 32);
-                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (profileImage = ConnectionThread.getProfileImage((String) objArr2[0])) != null) {
+                        if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (profileImage = ServiceRegistry.getProfileImage((String) objArr2[0])) != null) {
                             int i33 = (int) (i31 - j4);
                             int i34 = (int) (i32 - j5);
                             if (iArr2[(i34 * i28) + i33] == 0) {
@@ -364,7 +364,7 @@ public abstract class MapRenderer {
             long j13 = currentPixelY;
             int i39 = viewportWidth;
             int i40 = viewportHeight;
-            Enumeration routeElements = ConnectionThread.getRouteElements();
+            Enumeration routeElements = MapController.getRouteElements();
             boolean z2 = false;
             MapPoint nearestRoute = null;
             while (routeElements.hasMoreElements()) {
@@ -432,7 +432,7 @@ public abstract class MapRenderer {
                     long j19 = (j17 - (i47 / 2)) / 32;
                     long j20 = (j16 + (i47 / 2)) / 32;
                     long j21 = (j17 + (i47 / 2)) / 32;
-                    ListItem activeContact = ConnectionThread.activeMapItem;
+                    ListItem activeContact = MapController.activeMapItem;
                     if (ChatRenderer.mapItems == null || j18 < ChatRenderer.coord1 || j19 < ChatRenderer.coord2 || j20 > ChatRenderer.coord3 || j21 > ChatRenderer.coord4) {
                         ChatRenderer.coord1 = j18 - 10;
                         ChatRenderer.coord2 = j19 - 10;
@@ -499,7 +499,7 @@ public abstract class MapRenderer {
                         }
                     }
                 }
-                NetworkUtils.releaseVector(mapContacts);
+                ObjectPool.releaseVector(mapContacts);
             }
             long j22 = currentPixelX;
             long j23 = currentPixelY;
@@ -537,14 +537,14 @@ public abstract class MapRenderer {
                             hideTooltip();
                         }
                     }
-                    ConnectionThread.updateMapSoftKeys();
+                    MapController.updateMapSoftKeys();
                 }
             }
             long j24 = currentPixelX;
             long j25 = currentPixelY;
             int i62 = viewportWidth;
             int i63 = viewportHeight;
-            if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE) && !XmppContactGroup.isMapDataRecent() && (item = ConnectionThread.activeMapItem) != null) {
+            if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE) && !XmppContactGroup.isMapDataRecent() && (item = MapController.activeMapItem) != null) {
                 long activePixelX = item.getCommandId(zoomLevel);
                 long activePixelY = item.executeCommand(zoomLevel);
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (activePixelX - j24)), (int) ((i63 / 2) + (j25 - activePixelY)), 3);
@@ -611,7 +611,7 @@ public abstract class MapRenderer {
                 }
                 if (ChatRenderer.offsetX != i || ChatRenderer.offsetY != i2) {
                     int i69 = i66;
-                    StringBuffer sb = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MAP_INFO_PREFIX));
+                    StringBuffer sb = ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MAP_INFO_PREFIX));
                     if (i69 < 0 || activeRegion == null) {
                         i3 = 975;
                     } else {
@@ -620,7 +620,7 @@ public abstract class MapRenderer {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    AppState.setObject(StateKeys.SLOT_XMPP_SESSION_ID, (Object) NetworkUtils.bufToStringCached(sb.append(AppState.getString(i3))));
+                    AppState.setObject(StateKeys.SLOT_XMPP_SESSION_ID, (Object) ObjectPool.toStringAndRelease(sb.append(AppState.getString(i3))));
                     ChatRenderer.offsetX = i;
                     ChatRenderer.offsetY = i2;
                 }

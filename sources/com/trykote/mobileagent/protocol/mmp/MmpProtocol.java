@@ -262,7 +262,7 @@ public final class MmpProtocol extends Account {
                         IOUtils.postNotification(AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
                         this.progress = 0;
                     }
-                    NetworkUtils.releaseVector(accounts);
+                    ObjectPool.releaseVector(accounts);
                     break;
                 } else {
                     this.progress = 3;
@@ -337,7 +337,7 @@ public final class MmpProtocol extends Account {
                 this.lastError = getDefaultError();
                 return;
             }
-            NetworkUtils.releaseVector(onlineAccounts);
+            ObjectPool.releaseVector(onlineAccounts);
         }
         while (true) {
             ByteBuffer extractedPacket = this.dataBuffer.extractJPEG();
@@ -404,7 +404,7 @@ public final class MmpProtocol extends Account {
                                     authData = tlvValue;
                                 }
                                 if (tlvType != 3) {
-                                    NetworkUtils.releaseBytes(tlvValue);
+                                    ObjectPool.releaseBytes(tlvValue);
                                 }
                             }
                             MrimAccount mrimAccount = (MrimAccount) AccountManager.getOnlineMrimAccounts().elementAt(0);
@@ -468,7 +468,7 @@ public final class MmpProtocol extends Account {
                     case 4891:
                         String senderId = packet.readLenPrefixStr();
                         byte authFlag = packet.readByte();
-                        onMessage(senderId, 0L, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_FILE_TRANSFER)).append(AppState.getString(authFlag == 1 ? 484 : 485)).append(packet.readVarLenStr())));
+                        onMessage(senderId, 0L, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_FILE_TRANSFER)).append(AppState.getString(authFlag == 1 ? 484 : 485)).append(packet.readVarLenStr())));
                         if (authFlag == 1 && null != (authContact = getContact((Object) senderId))) {
                             authContact.performAction();
                             break;
@@ -478,7 +478,7 @@ public final class MmpProtocol extends Account {
                         onMessage(packet.readLenPrefixStr(), 0L, AppState.getString(StateKeys.STR_MMP_SYSTEM_MESSAGE));
                         break;
                     case 5377:
-                        IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
+                        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
                         XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
                         break;
                     case 5379:
@@ -591,11 +591,11 @@ public final class MmpProtocol extends Account {
                             byte[] tlvData = new byte[tlvLen];
                             buffer.readIntoBytes(tlvData);
                             String capStr = StringUtils.intern(new String(tlvData));
-                            if (capStr.startsWith(NetworkUtils.longToHex(28270022039266153L)) && (iconIndex = Utils.parseIntBounded(StringUtils.suffix(capStr, 7), 0, 23, -1)) >= 0) {
+                            if (capStr.startsWith(ObjectPool.unpackChars(28270022039266153L)) && (iconIndex = Utils.parseIntBounded(StringUtils.suffix(capStr, 7), 0, 23, -1)) >= 0) {
                                 contact.defaultIcon &= -65536;
                                 contact.defaultIcon |= iconIndex + 269;
                             }
-                            NetworkUtils.releaseBytes(tlvData);
+                            ObjectPool.releaseBytes(tlvData);
                             attrLen = remaining - tlvLen;
                         } else {
                             buffer.skip(tlvLen);

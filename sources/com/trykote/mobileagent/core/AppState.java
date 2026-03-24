@@ -62,17 +62,17 @@ public abstract class AppState {
             }
         }
         StringUtils.internCache = new Vector(128);
-        NetworkUtils.bytePool = new byte[20][];
-        NetworkUtils.bufferPool = new StringBuffer[5];
-        NetworkUtils.vectorPool = new Vector[5];
-        NetworkUtils.stringCache = new Hashtable();
-        IOUtils.openResources = NetworkUtils.newVector();
-        separator = NetworkUtils.longToHex(1819047278);
+        ObjectPool.bytePool = new byte[20][];
+        ObjectPool.bufferPool = new StringBuffer[5];
+        ObjectPool.vectorPool = new Vector[5];
+        ObjectPool.stringCache = new Hashtable();
+        IOUtils.openResources = ObjectPool.newVector();
+        separator = ObjectPool.unpackChars(1819047278);
         emptyBytes = new byte[0];
         delta = new Object[295];
         pool = new Object[1406];
         intPool = new int[3773];
-        ByteBuffer buffer = new ByteBuffer(NetworkUtils.longToHex(1734763311), 45000);
+        ByteBuffer buffer = new ByteBuffer(ObjectPool.unpackChars(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
             pool[i2] = decodeObject(buffer, i2);
         }
@@ -100,7 +100,7 @@ public abstract class AppState {
             iArr[i4] = value;
         }
         emptyStr = (String) pool[StateKeys.STR_EMPTY];
-        ByteBuffer recordBuf = XmppMailRuProtocol.readChunkedRecord(NetworkUtils.longToHex(1164404323));
+        ByteBuffer recordBuf = XmppMailRuProtocol.readChunkedRecord(ObjectPool.unpackChars(1164404323));
         while (recordBuf.length > 0) {
             try {
                 delta[((Integer) decodeObject(recordBuf, 0)).intValue()] = decodeObject(recordBuf, 0);
@@ -144,18 +144,18 @@ public abstract class AppState {
         pool[StateKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
         pool[StateKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[58];
         pool[StateKeys.ARR_GFX_HEIGHTS] = new int[29];
-        pool[StateKeys.VEC_EVENT_QUEUE] = NetworkUtils.newVector();
+        pool[StateKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
         // Event type arrays removed — replaced by CommandEvent singletons
         StringUtils.initPlatform();
         AppController.timers = new long[14];
         pool[StateKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
-        NetworkUtils.cacheString(separator);
-        NetworkUtils.cacheString(getEllipsis());
-        NetworkUtils.cacheString(getString(StateKeys.STR_PHONE_SUFFIX));
-        NetworkUtils.cacheString(getString(StateKeys.STR_PHONE_PREFIX));
-        NetworkUtils.cacheString(getString(StateKeys.STR_EMPTY));
-        NetworkUtils.cacheString(getString(StateKeys.STR_RES_CONTENT_TYPE));
-        NetworkUtils.cacheString(getString(StateKeys.STR_RES_HTTP_METHOD));
+        ObjectPool.cacheString(separator);
+        ObjectPool.cacheString(getEllipsis());
+        ObjectPool.cacheString(getString(StateKeys.STR_PHONE_SUFFIX));
+        ObjectPool.cacheString(getString(StateKeys.STR_PHONE_PREFIX));
+        ObjectPool.cacheString(getString(StateKeys.STR_EMPTY));
+        ObjectPool.cacheString(getString(StateKeys.STR_RES_CONTENT_TYPE));
+        ObjectPool.cacheString(getString(StateKeys.STR_RES_HTTP_METHOD));
         pool[StateKeys.SETTING_COMPRESSION_ENABLED] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
         try {
             setBool(StateKeys.FLAG_SUPPORTS_ALPHA, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
@@ -200,7 +200,7 @@ public abstract class AppState {
         if (result == null) {
             return null;
         }
-        return result instanceof byte[] ? NetworkUtils.bytesToString((byte[]) result) : (String) result;
+        return result instanceof byte[] ? ObjectPool.decodeWin1251((byte[]) result) : (String) result;
     }
 
     /* renamed from: c */
@@ -222,7 +222,7 @@ public abstract class AppState {
 
     /* renamed from: a */
     public static final void setFromBuffer(int i, StringBuffer stringBuffer) {
-        setObject(i, (Object) NetworkUtils.bufToStringCached(stringBuffer));
+        setObject(i, (Object) ObjectPool.toStringAndRelease(stringBuffer));
     }
 
     /* renamed from: a */
@@ -410,13 +410,13 @@ public abstract class AppState {
             if (i >= 295 && i < 1036) {
                 return bArr;
             }
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             for (byte b : bArr) {
                 sb.append(Utils.win1251ToChar((int) b));
             }
-            NetworkUtils.releaseBytes(bArr);
+            ObjectPool.releaseBytes(bArr);
             String str = separator;
-            String decoded = NetworkUtils.bufToStringCached(sb);
+            String decoded = ObjectPool.toStringAndRelease(sb);
             if (str.equals(decoded)) {
                 return null;
             }
@@ -466,14 +466,14 @@ public abstract class AppState {
                     }
                 }
             }
-            XmppMailRuProtocol.writeRecord(NetworkUtils.longToHex(1164404323), buffer, z);
+            XmppMailRuProtocol.writeRecord(ObjectPool.unpackChars(1164404323), buffer, z);
         } catch (Throwable unused) {
         }
     }
 
     /* renamed from: j */
     public static final String getEllipsis() {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append((char) 8230));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append((char) 8230));
     }
 
     /* renamed from: b */
@@ -531,12 +531,12 @@ public abstract class AppState {
 
     /* renamed from: a */
     public static final int indexOf(String str, int i) {
-        return str.indexOf(NetworkUtils.longToHex(i));
+        return str.indexOf(ObjectPool.unpackChars(i));
     }
 
     /* renamed from: a */
     public static final int indexOfLong(String str, long j) {
-        return str.indexOf(NetworkUtils.longToHex(j));
+        return str.indexOf(ObjectPool.unpackChars(j));
     }
 
     /* renamed from: b */

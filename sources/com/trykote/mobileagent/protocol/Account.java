@@ -109,7 +109,7 @@ public abstract class Account {
     private int authMode;
 
     public Account(int i, String str, String str2) {
-        this.groups = NetworkUtils.newVector();
+        this.groups = ObjectPool.newVector();
         this.accountId = i;
         this.login = str;
         this.displayName = str;
@@ -117,7 +117,7 @@ public abstract class Account {
         this.syncArray = new int[9];
         this.dataBuffer = new ByteBuffer();
         this.contactMap = new Hashtable();
-        this.extras = NetworkUtils.newVector();
+        this.extras = ObjectPool.newVector();
         ContactGroup onlineGrp = createOnlineGroup();
         onlineGrp.isSpecial = true;
         this.onlineGroup = onlineGrp;
@@ -352,7 +352,7 @@ public abstract class Account {
         if (null == th) {
             errorMsg = AppState.getString(StateKeys.STR_TIMEOUT_ERROR);
         } else {
-            errorMsg = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(th).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
         IOUtils.postAccountMessage(this, errorMsg);
@@ -370,7 +370,7 @@ public abstract class Account {
 
     /* renamed from: I */
     public final String getFormattedName() {
-        return this.authMode != 3 ? this.password : NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.suffix(this.password, 1)));
+        return this.authMode != 3 ? this.password : ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.suffix(this.password, 1)));
     }
 
     /* renamed from: J */
@@ -386,7 +386,7 @@ public abstract class Account {
 
     /* renamed from: f */
     public final void handleError(int i) {
-        IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -599,7 +599,7 @@ public abstract class Account {
 
     /* renamed from: M */
     public final Vector getUnreadContacts() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
         while (elements.hasMoreElements()) {
             Contact contact = (Contact) elements.nextElement();
@@ -612,7 +612,7 @@ public abstract class Account {
 
     /* renamed from: N */
     public final Vector getOfflineContacts() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
         while (elements.hasMoreElements()) {
             Contact contact = (Contact) elements.nextElement();
@@ -625,12 +625,12 @@ public abstract class Account {
 
     /* renamed from: O */
     public Vector getPendingContacts() {
-        return NetworkUtils.newVector();
+        return ObjectPool.newVector();
     }
 
     /* renamed from: P */
     public final Vector getAllContacts() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
         while (elements.hasMoreElements()) {
             result.addElement(elements.nextElement());
@@ -648,7 +648,7 @@ public abstract class Account {
 
     /* renamed from: Q */
     public final Vector getOnlineContacts() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
         while (elements.hasMoreElements()) {
             Contact contact = (Contact) elements.nextElement();

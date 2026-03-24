@@ -101,7 +101,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
     */
     public final String getText() {
         int i;
-        StringBuffer sb = NetworkUtils.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(StateKeys.STR_ANONYMOUS_NAME));
+        StringBuffer sb = ObjectPool.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(StateKeys.STR_ANONYMOUS_NAME));
         if (this.age > 0) {
             StringBuffer sb2 = sb.append(',').append(' ').append(this.age);
             if (this.age >= 100) {
@@ -117,7 +117,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
         if (Utils.nonEmpty(this.description)) {
             sb.append(',').append(' ').append(this.description);
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     @Override // p000.ListItem

@@ -36,13 +36,13 @@ public final class ByteBuffer {
     }
 
     public ByteBuffer(HttpClient client) {
-        this.data = NetworkUtils.newBytes(2048);
+        this.data = ObjectPool.newBytes(2048);
         try {
-            byte[] tempBuf = NetworkUtils.newBytes(2048);
+            byte[] tempBuf = ObjectPool.newBytes(2048);
             while (true) {
                 int bytesRead = client.readData(tempBuf);
                 if (bytesRead < 0) {
-                    NetworkUtils.releaseBytes(tempBuf);
+                    ObjectPool.releaseBytes(tempBuf);
                     return;
                 }
                 writeBytesAt(tempBuf, 0, bytesRead);
@@ -60,9 +60,9 @@ public final class ByteBuffer {
     }
 
     private ByteBuffer(InputStream inputStream, int i) {
-        this.data = NetworkUtils.newBytes(i);
+        this.data = ObjectPool.newBytes(i);
         try {
-            byte[] tempBuf = NetworkUtils.newBytes(8192);
+            byte[] tempBuf = ObjectPool.newBytes(8192);
             while (true) {
                 int i2 = inputStream.read(tempBuf);
                 if (i2 < 0) {
@@ -71,7 +71,7 @@ public final class ByteBuffer {
                     writeBytesAt(tempBuf, 0, i2);
                 }
             }
-            NetworkUtils.releaseBytes(tempBuf);
+            ObjectPool.releaseBytes(tempBuf);
         } catch (Throwable unused) {
         }
         IOUtils.closeInput(inputStream);
@@ -86,7 +86,7 @@ public final class ByteBuffer {
             byte[] bArr = this.data;
             if (i < bArr.length) {
                 ensureCapacity(0);
-                byte[] compactData = NetworkUtils.allocBytes(bArr, i);
+                byte[] compactData = ObjectPool.reallocBytes(bArr, i);
                 if (compactData != null) {
                     this.data = compactData;
                 }
@@ -103,11 +103,11 @@ public final class ByteBuffer {
         int i3 = i2 + i;
         boolean z = length < i3;
         boolean z2 = z;
-        byte[] tempBuf = z ? NetworkUtils.newBytes(i3 + 32) : bArr;
+        byte[] tempBuf = z ? ObjectPool.newBytes(i3 + 32) : bArr;
         if (z2 || this.offset != 0) {
             Utils.arraycopy((Object) bArr, this.offset, (Object) tempBuf, 0, i2);
             if (z2) {
-                NetworkUtils.releaseBytes(bArr);
+                ObjectPool.releaseBytes(bArr);
                 this.data = tempBuf;
             }
         }
@@ -117,7 +117,7 @@ public final class ByteBuffer {
 
     /* renamed from: b */
     public final ByteBuffer clear() {
-        NetworkUtils.releaseBytes(this.data);
+        ObjectPool.releaseBytes(this.data);
         this.data = AppState.emptyBytes;
         this.length = 0;
         this.offset = 0;
@@ -317,10 +317,10 @@ public final class ByteBuffer {
 
     /* renamed from: a */
     ByteBuffer copyFrom(ByteBuffer buf, int i) {
-        byte[] tempBuf = NetworkUtils.newBytes(i);
+        byte[] tempBuf = ObjectPool.newBytes(i);
         buf.readInto(tempBuf, 0, i);
         writeBytesAt(tempBuf, 0, i);
-        NetworkUtils.releaseBytes(tempBuf);
+        ObjectPool.releaseBytes(tempBuf);
         return this;
     }
 
@@ -386,12 +386,12 @@ public final class ByteBuffer {
 
     /* renamed from: f */
     public final String readUnicodeStr() {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int remaining = readInt();
         while (true) {
             remaining--;
             if (remaining < 0) {
-                return NetworkUtils.bufToStringCached(sb);
+                return ObjectPool.toStringAndRelease(sb);
             }
             sb.append(Utils.win1251ToChar((int) readByte()));
         }
@@ -399,12 +399,12 @@ public final class ByteBuffer {
 
     /* renamed from: g */
     public final String readWideStr() {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int remaining = readInt();
         while (true) {
             remaining--;
             if (remaining < 0) {
-                return NetworkUtils.bufToStringCached(sb);
+                return ObjectPool.toStringAndRelease(sb);
             }
             sb.append((char) readUByte());
         }
@@ -412,7 +412,7 @@ public final class ByteBuffer {
 
     /* renamed from: e */
     public final String readUTF8Str(String str) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int remaining = readInt();
         while (true) {
             remaining -= 2;
@@ -427,27 +427,27 @@ public final class ByteBuffer {
                 return str;
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: h */
     public final String readAllWideStr() {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         while (this.length > 0) {
             sb.append((char) (readUByte() | (readByte() << 8)));
         }
         clear();
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: i */
     public final String readAllByteStr() {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         while (this.length > 0) {
             sb.append(Utils.win1251ToChar((int) readByte()));
         }
         clear();
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: j */
@@ -503,7 +503,7 @@ public final class ByteBuffer {
 
     /* renamed from: p */
     public final Vector readBufferArray() {
-        Vector buffers = NetworkUtils.newVector();
+        Vector buffers = ObjectPool.newVector();
         readInt();
         int remaining = readInt();
         while (true) {
@@ -768,11 +768,11 @@ public final class ByteBuffer {
 
     /* renamed from: q */
     public final String readUnicodeChars(int i) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         while (true) {
             i -= 2;
             if (i < 0) {
-                return NetworkUtils.bufToStringCached(sb);
+                return ObjectPool.toStringAndRelease(sb);
             }
             sb.append((char) readShortBE());
         }
@@ -780,11 +780,11 @@ public final class ByteBuffer {
 
     /* renamed from: r */
     public final String readByteChars(int i) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         while (true) {
             i--;
             if (i < 0) {
-                return NetworkUtils.bufToStringCached(sb);
+                return ObjectPool.toStringAndRelease(sb);
             }
             sb.append(Utils.win1251ToChar(readUByte()));
         }
@@ -851,7 +851,7 @@ public final class ByteBuffer {
     public final ByteBuffer writeUTF(String str) {
         byte[] encoded = encodeUTF(str);
         writeBytes(encoded);
-        NetworkUtils.releaseBytes(encoded);
+        ObjectPool.releaseBytes(encoded);
         return this;
     }
 
@@ -859,7 +859,7 @@ public final class ByteBuffer {
     public final ByteBuffer writeUTFNoLen(String str) {
         byte[] encoded = encodeUTF(str);
         writeBytesAt(encoded, 2, encoded.length - 2);
-        NetworkUtils.releaseBytes(encoded);
+        ObjectPool.releaseBytes(encoded);
         return this;
     }
 

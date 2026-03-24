@@ -61,7 +61,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        this.toList = XmppMailRuProtocol.addUniqueAddress(NetworkUtils.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.accountNickname)));
+        this.toList = XmppMailRuProtocol.addUniqueAddress(ObjectPool.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.accountNickname)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;
@@ -122,12 +122,12 @@ public final class Message {
         int i5 = cal.get(2);
         int i6 = cal.get(5);
         cal.setTime(new Date(this.timestamp));
-        StringBuffer sb = NetworkUtils.newStringBuffer();
-        String dateStr = Utils.appendSpace(NetworkUtils.bufToStringCached((i4 == cal.get(1) && i5 == cal.get(2) && i6 == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        String dateStr = Utils.appendSpace(ObjectPool.toStringAndRelease((i4 == cal.get(1) && i5 == cal.get(2) && i6 == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
         MenuItem textItem = iconItem.addText(dateStr, i2, 10);
-        String priorityStr = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('[').append(this.priority).append(AppState.getString(StateKeys.STR_PRIORITY_SUFFIX)));
+        String priorityStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('[').append(this.priority).append(AppState.getString(StateKeys.STR_PRIORITY_SUFFIX)));
         MenuItem mainItem = textItem.addText(priorityStr, i2, i3);
-        int textWidth = AppState.getGfxContext(i2).stringWidth(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(dateStr).append(priorityStr)));
+        int textWidth = AppState.getGfxContext(i2).stringWidth(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(dateStr).append(priorityStr)));
         if (hasFlag(1)) {
             mainItem.setIcon(221);
             textWidth += 20;
@@ -143,11 +143,11 @@ public final class Message {
         int i7 = roomType;
         boolean z3 = false;
         if ((i7 & 1) != 0 && (toRecipient = XmppMailRuProtocol.getFirstRecipient(getToList())) != null) {
-            mainItem.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
             z3 = true;
         }
         if ((i7 & 2) != 0 && (ccRecipient = XmppMailRuProtocol.getFirstRecipient(getCcList())) != null) {
-            mainItem.addText(truncateText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
         }
         boolean z4 = chatRoom == account.getLastChatRoom();
         mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), i2, availWidth - 22, ellipsisWidth, z4), i2, i3);
@@ -160,12 +160,12 @@ public final class Message {
 
     /* renamed from: b */
     public final Vector getToList() {
-        return this.toList == null ? NetworkUtils.newVector() : this.toList;
+        return this.toList == null ? ObjectPool.newVector() : this.toList;
     }
 
     /* renamed from: c */
     public final Vector getCcList() {
-        return this.ccList == null ? NetworkUtils.newVector() : this.ccList;
+        return this.ccList == null ? ObjectPool.newVector() : this.ccList;
     }
 
     /* renamed from: a */
@@ -206,9 +206,9 @@ public final class Message {
                 i5 = i6;
                 length = i7;
             }
-            str = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.prefix(str, i4 + 1)).append((char) 8230));
+            str = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(str, i4 + 1)).append((char) 8230));
         }
-        return z ? NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(str).append('\n')) : str;
+        return z ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(str).append('\n')) : str;
     }
 
     /* renamed from: d */
@@ -225,18 +225,18 @@ public final class Message {
         }
         String ccKey = AppState.getString(StateKeys.STR_RES_PROTOCOL_SEPARATOR);
         Vector vector = this.ccList;
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         if (vector != null) {
             String str = AppState.emptyStr;
-            NetworkUtils.longToHex(60);
-            NetworkUtils.longToHex(62);
-            String separator = NetworkUtils.longToHex(44);
+            ObjectPool.unpackChars(60);
+            ObjectPool.unpackChars(62);
+            String separator = ObjectPool.unpackChars(44);
             Enumeration elements = vector.elements();
             while (elements.hasMoreElements()) {
                 sb.append(sb.length() > 0 ? separator : str).append(str).append(((String[]) elements.nextElement())[0]).append(str);
             }
         }
-        hashtable.put(ccKey, NetworkUtils.bufToStringCached(sb));
+        hashtable.put(ccKey, ObjectPool.toStringAndRelease(sb));
         hashtable.put(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3), this.subject);
         hashtable.put(AppState.getString(StateKeys.STR_RES_CLOSE_TAG), this.body);
         JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_COMMA), 1);
@@ -244,7 +244,7 @@ public final class Message {
         JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PARAM_2), 0);
         JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_1), 0);
         JsonParser.putIntValue(hashtable, AppState.getString(StateKeys.STR_RES_URL_TEMPLATE_1), 0);
-        Vector attachList = NetworkUtils.newVector();
+        Vector attachList = ObjectPool.newVector();
         int length = this.attachments == null ? 0 : this.attachments.length;
         for (int i = 0; i < length; i++) {
             String[] strArr = (String[]) this.attachments[i];

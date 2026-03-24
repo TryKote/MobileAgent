@@ -59,7 +59,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.accountProfile = new VCard();
         this.isHighlighted = true;
         this.accountSizeCache = new SizeCache();
-        this.searchEntryList = NetworkUtils.newVector();
+        this.searchEntryList = ObjectPool.newVector();
     }
 
     @Override // p000.Account
@@ -98,7 +98,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         this.accountNickname = extraBuffer.readUTF8Str((String) null);
         extraBuffer.readWideStr();
-        this.chatRoomsList = NetworkUtils.newVector();
+        this.chatRoomsList = ObjectPool.newVector();
         int chatRoomCount = extraBuffer.readInt();
         for (int i = 0; i < chatRoomCount; i++) {
             this.chatRoomsList.addElement(ChatRoom.deserialize(extraBuffer));
@@ -110,7 +110,7 @@ public final class MrimAccount extends Account implements ListItem {
         this.accountProfile = new VCard();
         this.isHighlighted = true;
         this.accountSizeCache = new SizeCache();
-        this.searchEntryList = NetworkUtils.newVector();
+        this.searchEntryList = ObjectPool.newVector();
     }
 
     @Override // p000.Account
@@ -300,13 +300,13 @@ public final class MrimAccount extends Account implements ListItem {
                 if (i4 > 0) {
                     AccountManager.updateAccountStatus((Account) this, i5);
                     this.msgCount = 60;
-                    StringBuffer sb = NetworkUtils.newStringBuffer();
+                    StringBuffer sb = ObjectPool.newStringBuffer();
                     while (true) {
                         int i6 = i5;
                         i5 = i6 - 1;
                         if (i6 <= 0) {
                             this.connection.state = 3;
-                            this.connection = new ConnectionThread(NetworkUtils.bufToStringCached(sb));
+                            this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(sb));
                             this.progress = 4;
                             AppController.needsRepaint = true;
                             break;
@@ -442,14 +442,14 @@ public final class MrimAccount extends Account implements ListItem {
                         String headerKey = null;
                         String rawText = Utils.removeChar(packet.readWideStr(), '\r');
                         int length = rawText.length();
-                        StringBuffer sb2 = NetworkUtils.newStringBuffer();
+                        StringBuffer sb2 = ObjectPool.newStringBuffer();
                         boolean z = false;
                         int i9 = 0;
                         while (i9 < length) {
                             char ch2 = rawText.charAt(i9);
                             if (!z) {
                                 if (ch2 == '\n' && sb2.length() == 0) {
-                                    NetworkUtils.bufToStringCached(sb2);
+                                    ObjectPool.toStringAndRelease(sb2);
                                     String str2 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
                                     int i10 = str2 != null ? -1 : Integer.parseInt(str2);
                                     i = i10;
@@ -476,21 +476,21 @@ public final class MrimAccount extends Account implements ListItem {
                                     AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
                                     break;
                                 } else if (ch2 == ':') {
-                                    headerKey = NetworkUtils.bufToString(sb2, false);
+                                    headerKey = ObjectPool.toString(sb2, false);
                                     z = true;
                                     i9++;
                                 } else {
                                     sb2.append(ch2);
                                 }
                             } else if (ch2 == '\n') {
-                                hashtable.put(headerKey, NetworkUtils.bufToString(sb2, false));
+                                hashtable.put(headerKey, ObjectPool.toString(sb2, false));
                                 z = false;
                             } else {
                                 sb2.append(ch2);
                             }
                             i9++;
                         }
-                        NetworkUtils.bufToStringCached(sb2);
+                        ObjectPool.toStringAndRelease(sb2);
                         String str22 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
                         int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
                         i = i10_2;
@@ -710,7 +710,7 @@ public final class MrimAccount extends Account implements ListItem {
                 statusText = AppState.getString(i3);
                 break;
             default:
-                statusText = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
+                statusText = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
                 break;
         }
         switch (this.configFlags) {
@@ -850,7 +850,7 @@ public final class MrimAccount extends Account implements ListItem {
                 }
             }
         }
-        NetworkUtils.releaseVector(vector);
+        ObjectPool.releaseVector(vector);
     }
 
     /* renamed from: b */
@@ -1099,7 +1099,7 @@ public final class MrimAccount extends Account implements ListItem {
 
     /* renamed from: l */
     private final StringBuffer formatContactName(String str) {
-        return Utils.appendCommaIf(NetworkUtils.newStringBuffer().append(getContactDisplayName(str)), true).append('\n');
+        return Utils.appendCommaIf(ObjectPool.newStringBuffer().append(getContactDisplayName(str)), true).append('\n');
     }
 
     /* renamed from: a */
@@ -1205,7 +1205,7 @@ public final class MrimAccount extends Account implements ListItem {
         boolean z = true;
         if (this.chatRoomsList == null) {
             z = false;
-            this.chatRoomsList = NetworkUtils.newVector();
+            this.chatRoomsList = ObjectPool.newVector();
         }
         Object roomsArray = JsonParser.getValue(obj, AppState.getString(StateKeys.STR_RES_PARAM_3));
         for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
@@ -1355,7 +1355,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final String getText() {
         String typeStr;
         int i;
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         if (this.accountProfile.dirty) {
             sb.append(AppState.getString(StateKeys.STR_MRIM_AWAY_SUFFIX));
             String str = this.accountProfile.phone;
@@ -1398,7 +1398,7 @@ public final class MrimAccount extends Account implements ListItem {
                 sb.append(str3).append('.');
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     @Override // p000.ListItem

@@ -221,7 +221,7 @@ public final class HttpClient {
         int idx = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(StateKeys.STR_RES_LONG_URL_3)) + 16;
         int i2 = Integer.parseInt(StringUtils.substring(str, idx, str.indexOf(13, idx)));
         ByteBuffer buffer = new ByteBuffer();
-        byte[] readBuf = NetworkUtils.newBytes(i2);
+        byte[] readBuf = ObjectPool.newBytes(i2);
         do {
             i = getInputStream().read(readBuf, 0, i2 - buffer.length);
             if (i > 0) {
@@ -234,7 +234,7 @@ public final class HttpClient {
                 break;
             }
         } while (i != -1);
-        NetworkUtils.releaseBytes(readBuf);
+        ObjectPool.releaseBytes(readBuf);
         return buffer;
     }
 

@@ -83,13 +83,13 @@ public abstract class ChatRenderer {
             int step = metersPerBar < 100 ? 25 : metersPerBar < 1000 ? 100 : metersPerBar < 10000 ? 1000 : metersPerBar < 100000 ? 10000 : 100000;
             int roundedMeters = (metersPerBar / step) * step;
             scaleBarWidth = scaleToPixels(roundedMeters, i, j);
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             if (roundedMeters < 1000) {
                 sb.append(roundedMeters);
             } else {
                 sb.append(roundedMeters / 1000).append((char) 1082);
             }
-            scaleLabel = NetworkUtils.bufToStringCached(sb.append((char) 1084));
+            scaleLabel = ObjectPool.toStringAndRelease(sb.append((char) 1084));
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
@@ -634,7 +634,7 @@ public abstract class ChatRenderer {
         int i6 = (int) (j3 + halfSpan);
         int i7 = (int) (j4 + halfSpan);
         int i8 = (int) (j4 - halfSpan);
-        Vector visibleRegions = NetworkUtils.newVector();
+        Vector visibleRegions = ObjectPool.newVector();
         int size = MmpContact.routeRegions.size();
         for (int i9 = 0; i9 < size; i9++) {
             int[] iArr = (int[]) ((Object[]) MmpContact.routeRegions.elementAt(i9))[0];

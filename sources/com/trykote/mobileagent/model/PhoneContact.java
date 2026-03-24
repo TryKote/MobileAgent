@@ -99,7 +99,7 @@ public final class PhoneContact implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(AppState.getString(StateKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(AppState.getString(StateKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
     }
 
     @Override // p000.ListItem

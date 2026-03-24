@@ -179,7 +179,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: s */
     public static final int performLogin() {
-        NetworkUtils.processScreenForm();
+        ScreenManager.processScreenForm();
         if (getAccountType() == 1) {
             Account account = AppState.getAccount();
             String login = getLoginLowerCase();
@@ -235,7 +235,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         do {
             size--;
             if (size < 0) {
-                NetworkUtils.releaseVector(parts);
+                ObjectPool.releaseVector(parts);
                 return false;
             }
         } while (str.indexOf((String) parts.elementAt(size)) < 0);
@@ -431,7 +431,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: c */
     private static final String buildTileCacheKey(ResourceManager resource) {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_URL_PARAM_1)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_URL_PARAM_1)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
     }
 
     /* renamed from: h */
@@ -447,7 +447,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 recordStore = store;
                 byte[] record = store.getRecord(1);
                 buf.writeBytes(record);
-                NetworkUtils.releaseBytes(record);
+                ObjectPool.releaseBytes(record);
                 IOUtils.closeRecordStore(recordStore);
             } catch (RuntimeException th) {
                 IOUtils.closeRecordStore(recordStore);
@@ -596,12 +596,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (i == 0) {
             return str.length() <= 32 ? str : StringUtils.prefix(str, 32);
         }
-        StringBuffer sb = NetworkUtils.newStringBuffer().append(i);
-        StringBuffer sb2 = NetworkUtils.newStringBuffer().append('s').append(str).append('s');
+        StringBuffer sb = ObjectPool.newStringBuffer().append(i);
+        StringBuffer sb2 = ObjectPool.newStringBuffer().append('s').append(str).append('s');
         while (sb2.length() + sb.length() > 32) {
             sb2.setLength(sb2.length() - 1);
         }
-        return NetworkUtils.bufToStringCached(sb2.append((Object) sb));
+        return ObjectPool.toStringAndRelease(sb2.append((Object) sb));
     }
 
     /* renamed from: a */
@@ -778,14 +778,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 MapRenderer.needsRedraw = true;
                 return ScreenId.MAP;
             case 14:
-                ConnectionThread.setRouteStart();
+                MapController.setRouteStart();
                 if (MmpContact.hasSecondToken()) {
                     return ScreenId.MAP;
                 }
                 AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 1);
                 return ScreenId.MAP_SEARCH;
             case 15:
-                ConnectionThread.setRouteEnd();
+                MapController.setRouteEnd();
                 if (MmpContact.hasFirstToken()) {
                     return ScreenId.MAP;
                 }
@@ -806,7 +806,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 19:
                 return ScreenId.MAP_TOOLTIP;
             case 20:
-                ConnectionThread.removeRoutePoint((MapPoint) mapContextItem);
+                MapController.removeRoutePoint((MapPoint) mapContextItem);
                 return ScreenId.MAP;
             case 21:
                 Conversation.incrementZoom();
@@ -828,7 +828,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             } else {
                 Vector parts = Utils.splitNonEmpty(srvRecord, ':');
                 ((XmppProtocol) objArr[0]).setAuthParameters(Utils.getVectorString(parts, 0), Integer.parseInt(Utils.getVectorString(parts, 1)));
-                NetworkUtils.releaseVector(parts);
+                ObjectPool.releaseVector(parts);
             }
         } catch (Throwable th) {
             ((XmppProtocol) objArr[0]).setException(th);
@@ -846,7 +846,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             for (int i = 0; i < Utils.vectorSize(parts); i++) {
                 requestBuf.writeByteLenStr(Utils.getVectorString(parts, i));
             }
-            NetworkUtils.releaseVector(parts);
+            ObjectPool.releaseVector(parts);
             requestBuf.writeCompressed(333750);
             DatagramConnection datagramConnection2 = (DatagramConnection) IOUtils.registerResource((Object) Connector.open(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_4)));
             datagramConnection = datagramConnection2;
@@ -920,7 +920,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: e */
     public static final Vector readAddressPairs(ByteBuffer buf) {
-        Vector results = NetworkUtils.newVector();
+        Vector results = ObjectPool.newVector();
         int resultCode = buf.readInt();
         while (true) {
             resultCode--;
@@ -933,7 +933,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: a */
     public static final Vector copyAddressList(Vector vector) {
-        Vector results = NetworkUtils.newVector();
+        Vector results = ObjectPool.newVector();
         for (int i = 0; i < Utils.vectorSize(vector); i++) {
             results.addElement(vector.elementAt(i));
         }
@@ -953,7 +953,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: b */
     public static final Vector getFirstAddress(Vector vector) {
-        Vector results = NetworkUtils.newVector();
+        Vector results = ObjectPool.newVector();
         if (Utils.vectorSize(vector) > 0) {
             results.addElement(vector.elementAt(0));
         }
@@ -984,14 +984,14 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: b */
     public static final Vector parseAddressHeader(String str, String str2) {
-        Vector results = NetworkUtils.newVector();
+        Vector results = ObjectPool.newVector();
         Vector decodedNames = splitCommaSeparated(Conversation.decodeHtmlSpecial(str2));
         Vector rawAddresses = splitCommaSeparated(str);
         for (int i = 0; i < Utils.vectorSize(rawAddresses); i++) {
             addUniqueAddress(results, AppController.createAddressPair((String) rawAddresses.elementAt(i), (String) decodedNames.elementAt(i)));
         }
-        NetworkUtils.releaseVector(decodedNames);
-        NetworkUtils.releaseVector(rawAddresses);
+        ObjectPool.releaseVector(decodedNames);
+        ObjectPool.releaseVector(rawAddresses);
         return results;
     }
 
@@ -1005,8 +1005,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: k */
     private static final Vector splitCommaSeparated(String str) {
-        Vector results = NetworkUtils.newVector();
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Vector results = ObjectPool.newVector();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         boolean z = true;
         int i = 0;
@@ -1015,21 +1015,21 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             if (!z) {
                 z = true;
             } else if (ch == ',') {
-                results.addElement(NetworkUtils.bufToString(sb, false));
+                results.addElement(ObjectPool.toString(sb, false));
                 z = false;
             } else {
                 sb.append(ch);
             }
             i++;
         }
-        NetworkUtils.bufToStringCached(sb);
+        ObjectPool.toStringAndRelease(sb);
         return results;
     }
 
     /* renamed from: i */
     public static final Vector parseRecipientList(String str) {
-        Vector results = NetworkUtils.newVector();
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        Vector results = ObjectPool.newVector();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         int i = 0;
         while (i <= length) {
@@ -1038,12 +1038,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             if (ch != ';' && c != ',' && c != ' ') {
                 sb.append(c);
             } else if (sb.length() > 0) {
-                String address = NetworkUtils.bufToString(sb, false);
+                String address = ObjectPool.toString(sb, false);
                 results.addElement(new String[]{address, address});
             }
             i++;
         }
-        NetworkUtils.bufToStringCached(sb);
+        ObjectPool.toStringAndRelease(sb);
         return results;
     }
 
@@ -1060,7 +1060,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (asyncResult == null) {
             return handleMailRedirect();
         }
-        Object[] responseData = ConnectionThread.getAsyncResult(asyncResult);
+        Object[] responseData = ApiClient.getAsyncResult(asyncResult);
         if (responseData == null) {
             return 0;
         }
@@ -1090,7 +1090,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (str == null) {
             bodyText = AppState.emptyStr;
         } else {
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             int length = str.length();
             int i2 = 0;
             while (i2 < length) {
@@ -1108,7 +1108,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
                 i2++;
             }
-            bodyText = NetworkUtils.bufToStringCached(sb);
+            bodyText = ObjectPool.toStringAndRelease(sb);
         }
         message.body = bodyText;
         if (wasUnread) {
@@ -1139,7 +1139,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     ResourceManager.composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
                     break;
                 case 2:
-                    ResourceManager.composeEmail(NetworkUtils.newVector(), new StringBuffer().append(fwdPrefix).append(subject).toString(), string);
+                    ResourceManager.composeEmail(ObjectPool.newVector(), new StringBuffer().append(fwdPrefix).append(subject).toString(), string);
                     break;
                 case 3:
                     ResourceManager.composeEmail(copyAddressList(ccList), subject, str);
@@ -1153,8 +1153,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     private static final boolean reconnectHttp() {
         try {
             NetworkLock.acquireNetworkLock();
-            NetworkUtils.closeConnection(AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS));
-            AppState.pool[StateKeys.OBJ_MENU_ACTIONS] = NetworkUtils.openSocket(new ByteBuffer().writeCompressed(593549).writeCompressed(1511542).getStringAndClear(), false);
+            SocketWrapper oldSocket = (SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS];
+            if (oldSocket != null) {
+                oldSocket.close();
+            }
+            AppState.pool[StateKeys.OBJ_MENU_ACTIONS] = SocketWrapper.open(new ByteBuffer().writeCompressed(593549).writeCompressed(1511542).getStringAndClear(), false);
             return true;
         } catch (Throwable unused) {
             return false;
@@ -1168,26 +1171,26 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     public static final Image fetchTileImage(ResourceManager resource) throws IOException {
         ByteBuffer requestBuf = new ByteBuffer().writeCompressed(2232520).writeRawString(resource.tileUrl).writeCompressed(3870861).writeExtendedInt(2950495).writeEncodedInt(222).writeCompressed(6689002);
         try {
-            Object[] socket = AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper socket = (SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS];
             byte[] bArr = requestBuf.data;
             int i = requestBuf.length;
-            NetworkUtils.writeSocket(socket, bArr, i);
+            socket.write(bArr, i);
             TrafficAccounting.addUploadBytes(i);
         } catch (Throwable unused) {
             if (!reconnectHttp()) {
                 throw new IOException();
             }
-            Object[] socket2 = AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper socket2 = (SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS];
             byte[] bArr2 = requestBuf.data;
             int i2 = requestBuf.length;
-            NetworkUtils.writeSocket(socket2, bArr2, i2);
+            socket2.write(bArr2, i2);
             TrafficAccounting.addUploadBytes(i2);
         } finally {
             requestBuf.clear();
         }
         String headers = readHttpHeaders();
         if (headers == null) {
-            NetworkUtils.closeConnection(AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS));
+            ((SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS]).close();
             throw new IOException();
         }
         AppState.addInt(StateKeys.INT_XMPP_TRAFFIC_BYTES, headers.getBytes().length);
@@ -1195,9 +1198,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             int contentLen = parseContentLength(headers);
             try {
                 if (contentLen > 0) {
-                    ((InputStream) AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS)[1]).skip(contentLen);
+                    ((SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS]).inputStream.skip(contentLen);
                 } else {
-                    NetworkUtils.closeConnection(AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS));
+                    ((SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS]).close();
                 }
                 return null;
             } catch (Throwable unused2) {
@@ -1206,7 +1209,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
         ByteBuffer bodyBuf = readHttpBody(parseContentLength(headers));
         if (bodyBuf == null) {
-            NetworkUtils.closeConnection(AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS));
+            ((SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS]).close();
             throw new IOException();
         }
         AppState.addInt(StateKeys.INT_XMPP_TRAFFIC_BYTES, bodyBuf.length);
@@ -1221,12 +1224,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: V */
     private static final String readHttpHeaders() {
-        Object[] socket = AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS);
+        SocketWrapper socket = (SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS];
         ByteBuffer buf = new ByteBuffer();
         int i = 0;
         while (true) {
             try {
-                int i2 = ((InputStream) socket[1]).read();
+                int i2 = socket.inputStream.read();
                 if (i2 == -1) {
                     return null;
                 }
@@ -1254,15 +1257,15 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             ByteBuffer buf = new ByteBuffer();
             int bytesRead = 0;
             int i2 = 0;
-            byte[] readBuf = NetworkUtils.newBytes(8192);
+            byte[] readBuf = ObjectPool.newBytes(8192);
             int length = readBuf.length;
-            Object[] socket = AppState.getObjectArray(StateKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper socket = (SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS];
             while (i2 != i && bytesRead != -1) {
-                bytesRead = NetworkUtils.readSocket(socket, readBuf, 0, Utils.min(length, i - i2));
+                bytesRead = socket.read(readBuf, 0, Utils.min(length, i - i2));
                 buf.writeBytesAt(readBuf, 0, bytesRead);
                 i2 += bytesRead;
             }
-            NetworkUtils.releaseBytes(readBuf);
+            ObjectPool.releaseBytes(readBuf);
             return buf;
         } catch (Throwable unused) {
             return null;
@@ -1391,7 +1394,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             case 6:
                 boolean z4 = (i2 & 1) == 0;
                 buf.skip(1);
-                Vector results = NetworkUtils.newVector();
+                Vector results = ObjectPool.newVector();
                 int contactCount = buf.readShortBE();
                 for (int i3 = 0; i3 < contactCount; i3++) {
                     String name = buf.readVarLenStr();
@@ -1499,7 +1502,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             protocol.progress = 100;
                             protocol.msgCount = 100;
                         }
-                        NetworkUtils.releaseVector(results);
+                        ObjectPool.releaseVector(results);
                         z = z4;
                         z3 = z;
                         break;
@@ -1554,7 +1557,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             byte birthDay = buf.readByte();
                             byte birthMonth = buf.readByte();
                             if (birthMonth >= 0) {
-                                contactInfo4.setCompany(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(Utils.zeroPad(birthMonth + 1)).append('/').append(Utils.zeroPad(birthDay)).append('/').append(birthYear)));
+                                contactInfo4.setCompany(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(birthMonth + 1)).append('/').append(Utils.zeroPad(birthDay)).append('/').append(birthYear)));
                                 break;
                             }
                             break;
@@ -1881,15 +1884,15 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
             case 6:
                 if (resultCode != 1) {
-                    IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                     break;
                 }
                 break;
             case 7:
-                NetworkUtils.createSingleContact(mrimAccount, resultCode, buf);
+                MrimContactParser.createSingleContact(mrimAccount, resultCode, buf);
                 break;
             case 8:
-                NetworkUtils.parseContactInfoResponse(mrimAccount, resultCode, buf);
+                MrimContactParser.parseContactInfoResponse(mrimAccount, resultCode, buf);
                 break;
             case 9:
                 if (resultCode != 0) {
@@ -1921,7 +1924,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             break;
                         }
                     default:
-                        IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                         break;
                 }
                 break;
@@ -1953,7 +1956,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     }
                 }
             case 13:
-                NetworkUtils.updateContactName(mrimAccount, resultCode, buf);
+                MrimContactParser.updateContactName(mrimAccount, resultCode, buf);
                 break;
             case 15:
                 if (resultCode != 0) {
@@ -1970,7 +1973,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     break;
                 }
             case 16:
-                NetworkUtils.addContactToGroup(mrimAccount, resultCode, buf);
+                MrimContactParser.addContactToGroup(mrimAccount, resultCode, buf);
                 break;
             case 17:
                 ResourceManager.handleAuthResponse(mrimAccount, resultCode, objArr, buf);

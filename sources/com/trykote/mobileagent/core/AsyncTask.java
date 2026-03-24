@@ -51,7 +51,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                         AppState.clearIndex(StateKeys.SLOT_MEDIA_CONTROL);
                     }
                 }
-                NetworkUtils.closeAllConnections();
+                SocketWrapper.closeAll();
                 AccountManager.saveState(AppController.saveOnExit, true);
                 AppState.saveDelta(AppController.saveOnExit);
             }
@@ -258,11 +258,11 @@ public final class AsyncTask implements Runnable, CommandListener {
                     }
                 }
                 case 4: {
-                    NetworkUtils.asyncReaderLoop((Object[]) this.taskData);
+                    ((SocketWrapper) this.taskData).asyncReaderLoop();
                     return;
                 }
                 case 5: {
-                    ConnectionThread.executeWithReauth((Object[]) this.taskData);
+                    ApiClient.executeWithReauth((Object[]) this.taskData);
                     return;
                 }
                 case 6: {
@@ -329,7 +329,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                         Object mapPoints = XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen());
                         AppState.pool[StateKeys.VEC_MESSAGE_LIST] = mapPoints;
                     } catch (Throwable e) {
-                        AppState.pool[StateKeys.VEC_MESSAGE_LIST] = NetworkUtils.newVector();
+                        AppState.pool[StateKeys.VEC_MESSAGE_LIST] = ObjectPool.newVector();
                     }
                     HttpClient.closeAndUpdateStats(httpClient);
                     XmppContactGroup.removeContactInfoFromQueue(contactInfo);
@@ -390,14 +390,14 @@ public final class AsyncTask implements Runnable, CommandListener {
                         httpClient = HttpClient.createWithType2(requestUrl);
                         if (httpClient.getResponseCode() != 200) throw new Throwable();
                         ByteBuffer responseBuffer = new ByteBuffer(httpClient);
-                        synchronized (ConnectionThread.photoCache) {
-                            String photoKey = ConnectionThread.pendingPhotoKey;
+                        synchronized (ServiceRegistry.photoCache) {
+                            String photoKey = ServiceRegistry.pendingPhotoKey;
                             XmppMailRuProtocol.writeChunkedRecord(StringUtils.concat("upi", photoKey), responseBuffer);
                             try {
-                                ConnectionThread.photoCache.put(photoKey, responseBuffer.toImage());
+                                ServiceRegistry.photoCache.put(photoKey, responseBuffer.toImage());
                             } catch (Throwable e) {
                             }
-                            ConnectionThread.pendingPhotoKey = null;
+                            ServiceRegistry.pendingPhotoKey = null;
                             MapRenderer.needsRedraw = true;
                         }
                     } catch (Throwable e) {
@@ -431,7 +431,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                     return;
                 }
                 case 18: {
-                    NetworkUtils.sendDiagnosticReport((String) this.taskData);
+                    DiagnosticReporter.sendDiagnosticReport((String) this.taskData);
                     return;
                 }
                 case 19: {
@@ -498,7 +498,7 @@ public final class AsyncTask implements Runnable, CommandListener {
                         NetworkLock.acquireNetworkLock();
                         contactInfo = XmppContactGroup.getContactInfoFromState(505);
                         String baseUrl = AppState.getString(StateKeys.STR_RES_MEGA_URL_2);
-                        httpClient = HttpClient.createWithType2(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(baseUrl).append(args[1]).append(AppState.getString(StateKeys.STR_RES_NEWLINE)).append(args[2]).append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_2))));
+                        httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(AppState.getString(StateKeys.STR_RES_NEWLINE)).append(args[2]).append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_2))));
                         if (httpClient.getResponseCode() != 200) throw new Throwable();
                         long[] coords = (long[]) args[3];
                         MrimAccount account = (MrimAccount) args[0];
@@ -518,12 +518,10 @@ public final class AsyncTask implements Runnable, CommandListener {
                     NetworkLock.releaseNetworkLock();
                     return;
                 }
-                case 23: {
-                    Conversation.fetchMapData((String) this.taskData);
+                case 23:
                     return;
-                }
                 case 24: {
-                    NetworkUtils.executeRegRequest((Object[]) this.taskData);
+                    RegistrationService.executeRegRequest((Object[]) this.taskData);
                     return;
                 }
                 case 25: {
@@ -896,7 +894,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.ConnectionThread.executeWithReauth(r0)     // Catch: java.lang.Throwable -> La84
+            p000.ApiClient.executeWithReauth(r0)     // Catch: java.lang.Throwable -> La84
             return
         L1fa:
             r0 = 0
@@ -1102,7 +1100,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1.<init>()     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
             throw r0     // Catch: java.lang.Throwable -> L375 java.lang.Throwable -> L392 java.lang.Throwable -> La84
         L375:
-            java.util.Vector r0 = p000.NetworkUtils.newVector()     // Catch: java.lang.Throwable -> L392 java.lang.Throwable -> La84
+            java.util.Vector r0 = p000.ObjectPool.newVector()     // Catch: java.lang.Throwable -> L392 java.lang.Throwable -> La84
             r10 = r0
             r0 = 0
             r12 = r0
@@ -1333,11 +1331,11 @@ public final class AsyncTask implements Runnable, CommandListener {
             r2 = r9
             r1.<init>(r2)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r16 = r0
-            java.util.Hashtable r0 = p000.ConnectionThread.photoCache     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.util.Hashtable r0 = p000.ServiceRegistry.photoCache     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r0
             r10 = r1
             monitor-enter(r0)     // Catch: java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
-            java.lang.String r0 = p000.ConnectionThread.pendingPhotoKey     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.lang.String r0 = p000.ServiceRegistry.pendingPhotoKey     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r0
             r11 = r1
             r17 = r0
@@ -1346,7 +1344,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             java.lang.String r0 = p000.StringUtils.concat(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r16
             p000.XmppMailRuProtocol.writeChunkedRecord(r0, r1)     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
-            java.util.Hashtable r0 = p000.ConnectionThread.photoCache     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            java.util.Hashtable r0 = p000.ServiceRegistry.photoCache     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r1 = r11
             r2 = r16
             javax.microedition.lcdui.Image r2 = r2.toImage()     // Catch: java.lang.Throwable -> L551 java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
@@ -1355,7 +1353,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         L551:
         L552:
             r0 = 0
-            p000.ConnectionThread.pendingPhotoKey = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
+            p000.ServiceRegistry.pendingPhotoKey = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = 1
             p000.MapRenderer.needsRedraw = r0     // Catch: java.lang.Throwable -> L55f java.lang.Throwable -> L576 java.lang.Throwable -> L57f java.lang.Throwable -> La84
             r0 = r10
@@ -1447,7 +1445,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.String r0 = (java.lang.String) r0     // Catch: java.lang.Throwable -> La84
-            p000.NetworkUtils.sendDiagnosticReport(r0)     // Catch: java.lang.Throwable -> La84
+            p000.DiagnosticReporter.sendDiagnosticReport(r0)     // Catch: java.lang.Throwable -> La84
             return
         L5f5:
             r0 = r8
@@ -1670,7 +1668,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r10 = r1
             java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r10 = r0
-            java.lang.StringBuffer r0 = p000.NetworkUtils.newStringBuffer()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.lang.StringBuffer r0 = p000.ObjectPool.newStringBuffer()     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = r10
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = r8
@@ -1687,7 +1685,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r1 = 1774025(0x1b11c9, float:2.485939E-39)
             java.lang.String r1 = p000.AppState.getString(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             java.lang.StringBuffer r0 = r0.append(r1)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
-            java.lang.String r0 = p000.NetworkUtils.bufToStringCached(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
+            java.lang.String r0 = p000.ObjectPool.toStringAndRelease(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             ax r0 = p000.HttpClient.createWithType2(r0)     // Catch: java.lang.Throwable -> L806 java.lang.Throwable -> L835 java.lang.Throwable -> La84
             r1 = r0
             r9 = r1
@@ -1785,7 +1783,7 @@ public final class AsyncTask implements Runnable, CommandListener {
             r0 = r8
             java.lang.Object r0 = r0.taskData     // Catch: java.lang.Throwable -> La84
             java.lang.Object[] r0 = (java.lang.Object[]) r0     // Catch: java.lang.Throwable -> La84
-            p000.NetworkUtils.executeRegRequest(r0)     // Catch: java.lang.Throwable -> La84
+            p000.RegistrationService.executeRegRequest(r0)     // Catch: java.lang.Throwable -> La84
             return
         L85f:
             return

@@ -25,7 +25,7 @@ public final class Conversation implements ListItem {
     private boolean selected = true;
 
     /* renamed from: a */
-    public Vector items = NetworkUtils.newVector();
+    public Vector items = ObjectPool.newVector();
 
     /* renamed from: d */
     private SizeCache sizeCache = new SizeCache();
@@ -110,7 +110,7 @@ public final class Conversation implements ListItem {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int size = this.items.size();
         if (this.height == 5) {
             sb.append(AppState.getString(StateKeys.STR_CONV_UNREAD_PREFIX)).append(size);
@@ -118,7 +118,7 @@ public final class Conversation implements ListItem {
             int i = size - 1;
             sb.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(StateKeys.STR_CONV_SEPARATOR)).append(i).append(AppState.getString(StateKeys.STR_CONV_SUFFIX_BASE + Utils.pluralForm(i)));
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     @Override // p000.ListItem
@@ -144,9 +144,9 @@ public final class Conversation implements ListItem {
                     protocol.msgCount = 30;
                     AppController.needsRepaint = true;
                     HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(StateKeys.STR_RES_HUGE_URL_5), protocol, 0);
-                    httpClient.setRequestMethod(NetworkUtils.longToHex(1414745936));
+                    httpClient.setRequestMethod(ObjectPool.unpackChars(1414745936));
                     ByteBuffer requestBody = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
-                    ConnectionThread.setHeaderFromState(httpClient, 788628, 2164851);
+                    ApiClient.setHeaderFromState(httpClient, 788628, 2164851);
                     httpClient.writeData(requestBody.data, requestBody.length);
                     int responseCode = httpClient.getResponseCode();
                     i = responseCode;
@@ -180,7 +180,7 @@ public final class Conversation implements ListItem {
                         protocol.msgCount = 60;
                         AppController.needsRepaint = true;
                         XmlElement resultElement2 = httpClient2.readChunkedResponse().parseXmlStr().findChildByKey(262156);
-                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(395483).textContent)};
+                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(395483).textContent)};
                         HttpClient.closeAndUpdateStats(httpClient2);
                         NetworkLock.releaseNetworkLock();
                         return;
@@ -209,7 +209,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     public static final Vector parseConversation(String str) {
-        Vector parts = NetworkUtils.newVector();
+        Vector parts = ObjectPool.newVector();
         if (isValidFormat(str)) {
             int i = 0;
             int i2 = 0;
@@ -253,20 +253,20 @@ public final class Conversation implements ListItem {
                 return null;
             }
             int bodyStart = AppState.indexOf(str, 1031040294);
-            int idx = str.indexOf(NetworkUtils.longToHex(1031302438), AppState.indexOf(str, 1031302438) + 4);
+            int idx = str.indexOf(ObjectPool.unpackChars(1031302438), AppState.indexOf(str, 1031302438) + 4);
             String encoded = idx < 0 ? StringUtils.suffix(str, bodyStart + 4) : StringUtils.substring(str, bodyStart + 4, idx);
             if (StringUtils.matchesEncoded(encoded, 1094795585)) {
                 return AppState.emptyStr;
             }
             ByteBuffer decodeBuffer = Base64.decode(replaceText(replaceText(replaceText(encoded, 200762, 65752), 200765, 65547), 200768, 65552));
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             while (decodeBuffer.length > 0) {
                 int b1 = decodeBuffer.readUByte();
                 int b2 = b1 > 127 ? decodeBuffer.readUByte() : 0;
                 int b3 = b1 > 223 ? decodeBuffer.readUByte() : 0;
                 sb.append(b1 < 128 ? (char) b1 : b1 < 224 ? (char) (((b1 - 192) << 6) + (b2 - 128)) : b1 < 240 ? (char) (((b1 - 224) << 12) + ((b2 - 128) << 6) + (b3 - 128)) : (char) (((b1 - 240) << 18) + ((b2 - 128) << 12) + ((b3 - 128) << 6) + ((b1 > 239 ? decodeBuffer.readUByte() : 0) - 128)));
             }
-            return NetworkUtils.bufToStringCached(sb);
+            return ObjectPool.toStringAndRelease(sb);
         } catch (Throwable unused) {
             return null;
         }
@@ -355,13 +355,13 @@ public final class Conversation implements ListItem {
             return str;
         }
         String replaceStr = AppState.getString(i2);
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = 0;
         while (true) {
             int i3 = length;
             int idx = str.indexOf(searchStr, i3);
             if (idx < 0) {
-                return NetworkUtils.bufToStringCached(sb.append(StringUtils.suffix(str, i3)));
+                return ObjectPool.toStringAndRelease(sb.append(StringUtils.suffix(str, i3)));
             }
             sb.append(StringUtils.substring(str, i3, idx)).append(replaceStr);
             length = idx + searchStr.length();
@@ -382,7 +382,7 @@ public final class Conversation implements ListItem {
         String str = null;
         if ((flags & 8) == 0) {
             String decoded = decodeHtmlEntities(rawBody);
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             String openTag = AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_6);
             String midTag = AppState.getString(StateKeys.STR_RES_HEADER_1);
             String closeTag = AppState.getString(StateKeys.STR_RES_XMPP_TAG_1);
@@ -405,7 +405,7 @@ public final class Conversation implements ListItem {
                 sb.append(StringUtils.substring(decoded, i, idx));
                 i2 = idx + 9;
             }
-            messageText = NetworkUtils.bufToStringCached(sb);
+            messageText = ObjectPool.toStringAndRelease(sb);
         } else {
             ByteBuffer decodeBuffer = Base64.decode(rawBody);
             int encodingFlag = flags & 2097152;
@@ -432,7 +432,7 @@ public final class Conversation implements ListItem {
                 case 2:
                     buffer.readUTF8Str((String) null);
                     buffer.readInt();
-                    Vector members = NetworkUtils.newVector();
+                    Vector members = ObjectPool.newVector();
                     int memberCount = buffer.readInt();
                     while (true) {
                         memberCount--;
@@ -508,7 +508,7 @@ public final class Conversation implements ListItem {
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:17:0x0074 */
     /* renamed from: p */
     private static final String decodeHtmlEntities(String str) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         String entityPrefix = AppState.getString(StateKeys.STR_RES_LONG_LABEL_2);
         int i = 0;
         while (true) {
@@ -537,7 +537,7 @@ public final class Conversation implements ListItem {
                 break;
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
@@ -654,234 +654,12 @@ public final class Conversation implements ListItem {
                 }
             }
         } else {
-            IOUtils.postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_STATUS_CHANGED)).append(status)));
+            IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_STATUS_CHANGED)).append(status)));
             account.closeConnection();
             account.lastError = account.getDefaultError();
             account.markAllRead();
         }
-        NetworkUtils.checkCrashReport();
-    }
-
-    /* renamed from: a */
-    public static final void createStatusReport(boolean z, MrimAccount account) {
-        String loginParam;
-        String domainParam;
-        XmlElement rootElement = XmlElement.createFromState(266953);
-        XmlElement childElement = XmlElement.createFromState(398003);
-        XmlElement reportElement = rootElement.addChild(childElement);
-        try {
-            childElement.addChild(new XmlElement(99).setAttrValue(262589, NetworkUtils.longToHex(5067591)).setAttrValue(329117, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_URL_PATH_1)).append(AppController.getScreenMode3()).append(',').append(AppController.getScreenMode4()).append(',').append(AppController.getScreenMode1()).append(',').append(AppController.getScreenMode2()).append(',').append(0))));
-        } catch (Throwable unused) {
-        }
-        Vector accounts = AccountManager.getMrimAccountList();
-        if (account != null) {
-            accounts.addElement(account);
-            account = null;
-        }
-        int count = Utils.vectorSize(accounts);
-        while (true) {
-            count--;
-            if (count < 0) {
-                break;
-            }
-            MrimAccount candidate = (MrimAccount) accounts.elementAt(count);
-            if (candidate.isConnected()) {
-                account = candidate;
-                break;
-            }
-        }
-        NetworkUtils.releaseVector(accounts);
-        MrimAccount connectedAccount = account;
-        if (connectedAccount != null) {
-            loginParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_COMMAND_2)).append(connectedAccount.login));
-            domainParam = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_ATTR_2)).append(connectedAccount.customDomain));
-        } else {
-            String str = AppState.emptyStr;
-            loginParam = str;
-            domainParam = str;
-        }
-        new AsyncTask(23, new ByteBuffer().writeCompressed(5771795).writeConversationStr((Object) new ByteBuffer().writeRawString(reportElement.toString()).toBase64()).writeEncodedInt(z ? 791174 : 1038).writeRawString(domainParam).writeRawString(loginParam).writeCompressed(397997).writeEncodedInt(223).writeCompressed(594539).writeEncodedInt(1375).getStringAndClear());
-    }
-
-    /*  JADX ERROR: Types fix failed
-        java.lang.NullPointerException: Cannot invoke "jadx.core.dex.instructions.args.InsnArg.getType()" because "changeArg" is null
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.moveListener(TypeUpdate.java:439)
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.runListeners(TypeUpdate.java:232)
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.requestUpdate(TypeUpdate.java:212)
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.updateTypeForSsaVar(TypeUpdate.java:183)
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.updateTypeChecked(TypeUpdate.java:112)
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.apply(TypeUpdate.java:83)
-        	at jadx.core.dex.visitors.typeinference.TypeUpdate.apply(TypeUpdate.java:56)
-        	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.tryPossibleTypes(FixTypesVisitor.java:183)
-        	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.deduceType(FixTypesVisitor.java:242)
-        	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.tryDeduceTypes(FixTypesVisitor.java:221)
-        	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.visit(FixTypesVisitor.java:91)
-        */
-    /* JADX WARN: Failed to calculate best type for var: r3v1 ??
-    java.lang.NullPointerException: Cannot invoke "jadx.core.dex.instructions.args.InsnArg.getType()" because "changeArg" is null
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.moveListener(TypeUpdate.java:439)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.runListeners(TypeUpdate.java:232)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.requestUpdate(TypeUpdate.java:212)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.updateTypeForSsaVar(TypeUpdate.java:183)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.updateTypeChecked(TypeUpdate.java:112)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.apply(TypeUpdate.java:83)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.apply(TypeUpdate.java:56)
-    	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.calculateFromBounds(FixTypesVisitor.java:156)
-    	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.setBestType(FixTypesVisitor.java:133)
-    	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.deduceType(FixTypesVisitor.java:238)
-    	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.tryDeduceTypes(FixTypesVisitor.java:221)
-    	at jadx.core.dex.visitors.typeinference.FixTypesVisitor.visit(FixTypesVisitor.java:91)
-     */
-    /* JADX WARN: Failed to calculate best type for var: r3v1 ??
-    java.lang.NullPointerException: Cannot invoke "jadx.core.dex.instructions.args.InsnArg.getType()" because "changeArg" is null
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.moveListener(TypeUpdate.java:439)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.runListeners(TypeUpdate.java:232)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.requestUpdate(TypeUpdate.java:212)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.updateTypeForSsaVar(TypeUpdate.java:183)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.updateTypeChecked(TypeUpdate.java:112)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.apply(TypeUpdate.java:83)
-    	at jadx.core.dex.visitors.typeinference.TypeUpdate.apply(TypeUpdate.java:56)
-    	at jadx.core.dex.visitors.typeinference.TypeInferenceVisitor.calculateFromBounds(TypeInferenceVisitor.java:145)
-    	at jadx.core.dex.visitors.typeinference.TypeInferenceVisitor.setBestType(TypeInferenceVisitor.java:123)
-    	at jadx.core.dex.visitors.typeinference.TypeInferenceVisitor.lambda$runTypePropagation$2(TypeInferenceVisitor.java:101)
-    	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-    	at jadx.core.dex.visitors.typeinference.TypeInferenceVisitor.runTypePropagation(TypeInferenceVisitor.java:101)
-    	at jadx.core.dex.visitors.typeinference.TypeInferenceVisitor.visit(TypeInferenceVisitor.java:75)
-     */
-    /* JADX WARN: Not initialized variable reg: 3, insn: MOVE (r2 I:??) = (r3 I:??), block:B:8:0x005d */
-    /* renamed from: g */
-    public static final void fetchMapData(java.lang.String r7) {
-        /*
-            r0 = 0
-            r8 = r0
-            p000.NetworkLock.acquireNetworkLock()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r0 = r7
-            r1 = 0
-            r9 = r1
-            r1 = 0
-            r9 = r1
-            r1 = 0
-            r2 = 3
-            ax r0 = p000.HttpClient.createHttpClient(r0, r1, r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r1 = r0
-            r8 = r1
-            int r0 = r0.getResponseCode()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r1 = 200(0xc8, float:2.8E-43)
-            if (r0 != r1) goto Lac
-            n r0 = new n     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r1 = r0
-            r2 = r8
-            r1.<init>(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r9 = r0
-            r0 = r7
-            r1 = r9
-            av r1 = r1.parseXml()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r2 = 594557(0x9127d, float:8.33152E-40)
-            av r1 = r1.findChildByKey(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r2 = 200701(0x30ffd, float:2.81242E-40)
-            av r1 = r1.findChildByKey(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r9 = r1
-            boolean r0 = isStatusReport(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            if (r0 == 0) goto L5d
-            r0 = r9
-            r1 = 197037(0x301ad, float:2.76108E-40)
-            java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r1 = r9
-            r2 = 197041(0x301b1, float:2.76113E-40)
-            java.lang.String r1 = r1.getIntAttribute(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r2 = r9
-            r3 = 529081(0x812b9, float:7.414E-40)
-            java.lang.String r2 = r2.getIntAttribute(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r3 = r9
-            r4 = 529089(0x812c1, float:7.41412E-40)
-            java.lang.String r3 = r3.getIntAttribute(r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r4 = r9
-            r5 = 397788(0x611dc, float:5.5742E-40)
-            java.lang.String r4 = r4.getIntAttribute(r5)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            p000.AppController.setFormFields(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            goto La4
-        L5d:
-            r0 = r9
-            r1 = 197037(0x301ad, float:2.76108E-40)
-            java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            long r0 = p000.IOUtils.longitudeToPixel(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r1 = r0; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r13 = r1
-            r1 = r9
-            r2 = 197041(0x301b1, float:2.76113E-40)
-            java.lang.String r1 = r1.getIntAttribute(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            long r1 = p000.IOUtils.latitudeToPixel(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r2 = r1; r2 = r3;      // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r11 = r2
-            p000.MapRenderer.setPosition(r0, r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r0 = r9
-            r1 = 725709(0xb12cd, float:1.016935E-39)
-            java.lang.String r0 = r0.getIntAttribute(r1)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            int r0 = p000.Utils.parseInt(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            p000.MapRenderer.setZoom(r0)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r0 = 1
-            p000.MapRenderer.needsRedraw = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r0 = r13
-            r1 = r11
-            r2 = r9
-            r3 = 594548(0x91274, float:8.33139E-40)
-            java.lang.String r2 = r2.getIntAttribute(r3)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            int r2 = p000.Utils.parseInt(r2)     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r9 = r2
-            r15 = r1
-            p000.ChatRenderer.markerLon = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r0 = r15
-            p000.ChatRenderer.markerLat = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r0 = r9
-            p000.ChatRenderer.markerRadius = r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-        La4:
-            r0 = r8
-            p000.HttpClient.closeAndUpdateStats(r0)
-            p000.NetworkLock.releaseNetworkLock()
-            return
-        Lac:
-            java.lang.Throwable r0 = new java.lang.Throwable     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            r1 = r0
-            r1.<init>()     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-            throw r0     // Catch: java.lang.Throwable -> Lb4 java.lang.Throwable -> Ldc
-        Lb4:
-            r0 = r7
-            r1 = 0
-            r9 = r1
-            boolean r0 = isStatusReport(r0)     // Catch: java.lang.Throwable -> Ldc
-            if (r0 == 0) goto Lc9
-            r0 = 0
-            r1 = 0
-            r2 = 0
-            r3 = 0
-            r4 = 0
-            p000.AppController.setFormFields(r0, r1, r2, r3, r4)     // Catch: java.lang.Throwable -> Ldc
-            goto Ld4
-        Lc9:
-            r0 = 308(0x134, float:4.32E-43)
-            r1 = 0
-            r9 = r1
-            java.lang.String r0 = p000.AppState.getString(r0)     // Catch: java.lang.Throwable -> Ldc
-            p000.IOUtils.postEvent(r0)     // Catch: java.lang.Throwable -> Ldc
-        Ld4:
-            r0 = r8
-            p000.HttpClient.closeAndUpdateStats(r0)
-            p000.NetworkLock.releaseNetworkLock()
-            return
-        Ldc:
-            r10 = move-exception
-            r0 = r8
-            p000.HttpClient.closeAndUpdateStats(r0)
-            p000.NetworkLock.releaseNetworkLock()
-            r0 = r10
-            throw r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: p000.Conversation.fetchMapData(java.lang.String):void");
-    }
-
-    /* renamed from: q */
-    private static final boolean isStatusReport(String str) {
-        return AppState.indexOfPool(str, 791174) > 0;
+        DiagnosticReporter.checkCrashReport();
     }
 
     /* renamed from: h */
@@ -898,20 +676,20 @@ public final class Conversation implements ListItem {
     private static final String encodeDecodeInternal(String str, int i, int i2) {
         String sourceChars = AppState.getString(i);
         String targetChars = AppState.getString(i2);
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         for (int i3 = 0; i3 < length; i3++) {
             char ch = str.charAt(i3);
             int idx = sourceChars.indexOf(ch);
             sb.append(idx < 0 ? ch : targetChars.charAt(idx));
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
     public static final String urlEncode(Object obj) {
         String string = obj.toString().toString();
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         AppState.getString(StateKeys.STR_RES_DASH_SEPARATOR);
         AppState.getString(StateKeys.STR_RES_SPACE_DASH_SPACE);
         AppState.getString(StateKeys.STR_RES_FIELD_NAME_1);
@@ -927,13 +705,13 @@ public final class Conversation implements ListItem {
                 sb.append(ch);
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: b */
     public static final String urlEncodeCyrillic(Object obj) {
         String string = obj.toString();
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         String hexPrefixLo = AppState.getString(StateKeys.STR_RES_DASH_SEPARATOR);
         String hexPrefixHi = AppState.getString(StateKeys.STR_RES_SPACE_DASH_SPACE);
         String yoUpper = AppState.getString(StateKeys.STR_RES_FIELD_NAME_1);
@@ -957,7 +735,7 @@ public final class Conversation implements ListItem {
                 sb.append('%').append(Integer.toHexString((ch >> 4) & 15)).append(Integer.toHexString(ch & 15));
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
@@ -967,19 +745,19 @@ public final class Conversation implements ListItem {
         if (length >= 2) {
             return numStr;
         }
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         for (int i3 = length; i3 < 2; i3++) {
             sb.append('0');
         }
         sb.append(numStr);
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: j */
     public static final String decodeHtmlSpecial(String str) {
         Vector entityNames = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_API_URL_7));
         Vector entityValues = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_COMMAND_1));
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         int length2 = 0;
         while (length2 < length) {
@@ -1005,12 +783,12 @@ public final class Conversation implements ListItem {
             }
             length2++;
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: k */
     public static final String transliterateRussian(String str) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         Vector translitTable = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_MEGA_URL_3));
         int length = str.length();
         for (int i = 0; i < length; i++) {
@@ -1024,8 +802,8 @@ public final class Conversation implements ListItem {
                 sb.append(ch);
             }
         }
-        NetworkUtils.releaseVector(translitTable);
-        return NetworkUtils.bufToStringCached(sb);
+        ObjectPool.releaseVector(translitTable);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: l */
@@ -1035,7 +813,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: a */
     private static final String percentEncodeInternal(String str, boolean z) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -1047,7 +825,7 @@ public final class Conversation implements ListItem {
                 sb.append('%').append(Integer.toHexString(ch >> 4).toUpperCase()).append(Integer.toHexString(ch & 15).toUpperCase());
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     /* renamed from: a */
@@ -1073,6 +851,6 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void updateStatusText(int i) {
-        AppState.setFromBuffer(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME, NetworkUtils.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE).size()).append(')'));
+        AppState.setFromBuffer(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME, ObjectPool.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE).size()).append(')'));
     }
 }

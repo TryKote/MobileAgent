@@ -44,7 +44,7 @@ public final class XmlElement {
     }
 
     public XmlElement(int i) {
-        this(NetworkUtils.longToHex(i));
+        this(ObjectPool.unpackChars(i));
     }
 
     private XmlElement(String str) {
@@ -66,7 +66,7 @@ public final class XmlElement {
     /* renamed from: a */
     public final XmlElement addChild(XmlElement element) {
         if (this.children == null) {
-            this.children = NetworkUtils.newVector();
+            this.children = ObjectPool.newVector();
         }
         this.children.addElement(element);
         return this;
@@ -75,7 +75,7 @@ public final class XmlElement {
     /* renamed from: a */
     public final XmlElement appendText(Object obj) {
         if (this.textContent == null) {
-            this.textContent = NetworkUtils.newStringBuffer();
+            this.textContent = ObjectPool.newStringBuffer();
         }
         this.textContent.append(obj);
         return this;
@@ -88,7 +88,7 @@ public final class XmlElement {
 
     /* renamed from: c */
     public final String getLongKeyAttr(int i) {
-        return getAttribute(NetworkUtils.longToHex(i));
+        return getAttribute(ObjectPool.unpackChars(i));
     }
 
     /* renamed from: d */
@@ -113,7 +113,7 @@ public final class XmlElement {
 
     /* renamed from: b */
     public final XmlElement setLongKeyAttr(int i, String str) {
-        return setAttrImpl(NetworkUtils.longToHex(i), str);
+        return setAttrImpl(ObjectPool.unpackChars(i), str);
     }
 
     /* renamed from: b */
@@ -156,7 +156,7 @@ public final class XmlElement {
     }
 
     public final String toString() {
-        StringBuffer sb = NetworkUtils.newStringBuffer().append('<').append(this.tagName);
+        StringBuffer sb = ObjectPool.newStringBuffer().append('<').append(this.tagName);
         if (this.attributes != null) {
             Enumeration keys = this.attributes.keys();
             while (keys.hasMoreElements()) {
@@ -165,17 +165,17 @@ public final class XmlElement {
                 StringBuffer attrBuf = spaceBuf.append(key).append('=').append('\"');
                 StringBuffer escaped = escapeXml(this.attributes.get(key));
                 attrBuf.append((Object) escaped).append('\"');
-                NetworkUtils.bufToStringCached(escaped);
+                ObjectPool.toStringAndRelease(escaped);
             }
         }
-        StringBuffer result = NetworkUtils.newStringBuffer().append(NetworkUtils.bufToStringCached(isSelfClosing() ? sb.append('/').append('>') : sb.append('>')));
+        StringBuffer result = ObjectPool.newStringBuffer().append(ObjectPool.toStringAndRelease(isSelfClosing() ? sb.append('/').append('>') : sb.append('>')));
         if (this.textContent != null) {
             result.append((Object) escapeXml(this.textContent));
         }
         for (int i = 0; i < Utils.vectorSize(this.children); i++) {
             result.append(this.children.elementAt(i));
         }
-        return NetworkUtils.bufToStringCached(isSelfClosing() ? result : result.append(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
+        return ObjectPool.toStringAndRelease(isSelfClosing() ? result : result.append(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('<').append('/').append(this.tagName).append('>'))));
     }
 
     /* renamed from: b */
@@ -184,18 +184,18 @@ public final class XmlElement {
             return null;
         }
         String string = obj.toString();
-        StringBuffer out = NetworkUtils.newStringBuffer();
+        StringBuffer out = ObjectPool.newStringBuffer();
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
             if (ch == '&') {
-                out.append(NetworkUtils.longToHex(255289286950L));
+                out.append(ObjectPool.unpackChars(255289286950L));
             } else if (ch == '\"') {
-                out.append(NetworkUtils.longToHex(65371272212774L));
+                out.append(ObjectPool.unpackChars(65371272212774L));
             } else if (ch == '<') {
-                out.append(NetworkUtils.longToHex(997485606));
+                out.append(ObjectPool.unpackChars(997485606));
             } else if (ch == '>') {
-                out.append(NetworkUtils.longToHex(997484326));
+                out.append(ObjectPool.unpackChars(997484326));
             } else {
                 out.append(ch);
             }

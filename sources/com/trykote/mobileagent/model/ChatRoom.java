@@ -54,8 +54,8 @@ public final class ChatRoom {
     public boolean isActive;
 
     public ChatRoom() {
-        this.messageIds = NetworkUtils.newVector();
-        this.readMessages = NetworkUtils.newVector();
+        this.messageIds = ObjectPool.newVector();
+        this.readMessages = ObjectPool.newVector();
         this.messages = new Hashtable();
         this.isActive = true;
     }
@@ -137,11 +137,11 @@ public final class ChatRoom {
 
     public ChatRoom(int i) {
         this.id = i;
-        this.messageIds = NetworkUtils.newVector();
-        this.readMessages = NetworkUtils.newVector();
+        this.messageIds = ObjectPool.newVector();
+        this.readMessages = ObjectPool.newVector();
         this.messages = new Hashtable();
         this.metadata = new Hashtable();
-        this.participants = NetworkUtils.newVector();
+        this.participants = ObjectPool.newVector();
     }
 
     /* renamed from: g */
@@ -229,6 +229,6 @@ public final class ChatRoom {
         if (this == ((MrimAccount) AppState.getAccount()).getLastChatRoom()) {
             return this.name;
         }
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));
     }
 }

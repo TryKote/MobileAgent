@@ -20,7 +20,7 @@ public abstract class ContactGroup implements Sortable {
     public final Account account;
 
     /* renamed from: e */
-    public final Vector contacts = NetworkUtils.newVector();
+    public final Vector contacts = ObjectPool.newVector();
 
     /* renamed from: f */
     public String name;
@@ -64,7 +64,7 @@ public abstract class ContactGroup implements Sortable {
         MenuItem menuItem = MenuItem.create(new ByteBuffer().writeByte(35).writeIntAsString(this.account.accountId).writeByte(35).writeIntAsString(getGroupType()).readAllByteStr()).setIcon(this.isSpecial ? 30 : 31);
         menuItem.data = this;
         if (isCustom()) {
-            MenuItem nameText = menuItem.addText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.name).append(' ').append('(')), 1, 0);
+            MenuItem nameText = menuItem.addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.name).append(' ').append('(')), 1, 0);
             int i2 = 0;
             int size = this.contacts.size();
             while (true) {
@@ -78,7 +78,7 @@ public abstract class ContactGroup implements Sortable {
                 }
             }
             MenuItem nameText2 = nameText.addText(StringUtils.intern(Integer.toString(i2)), 1, 20);
-            StringBuffer sb = NetworkUtils.newStringBuffer().append('/');
+            StringBuffer sb = ObjectPool.newStringBuffer().append('/');
             int size2 = this.contacts.size();
             int i3 = size2;
             int i4 = size2;
@@ -92,9 +92,9 @@ public abstract class ContactGroup implements Sortable {
                     i3--;
                 }
             }
-            nameText2.addText(NetworkUtils.bufToStringCached(sb.append(i3).append(')')), 1, 0);
+            nameText2.addText(ObjectPool.toStringAndRelease(sb.append(i3).append(')')), 1, 0);
         } else if (i >= 0) {
-            menuItem.addText(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.name).append(' ').append('(').append(i).append(')')), 1, 0);
+            menuItem.addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.name).append(' ').append('(').append(i).append(')')), 1, 0);
         } else {
             menuItem.addText(this.name, 1, 0);
         }

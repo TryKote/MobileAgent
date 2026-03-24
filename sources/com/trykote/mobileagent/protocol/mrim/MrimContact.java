@@ -93,7 +93,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         Vector groups = Utils.splitNonEmpty(this.contactGroupsStr, ',');
         String str = (String) groups.elementAt(0);
-        NetworkUtils.releaseVector(groups);
+        ObjectPool.releaseVector(groups);
         return str;
     }
 
@@ -155,12 +155,12 @@ public final class MrimContact extends Contact implements ListItem {
     /* renamed from: a */
     public final void setGroupsList(Vector vector) {
         if (vector == null) {
-            NetworkUtils.releaseVector(this.groupsList);
+            ObjectPool.releaseVector(this.groupsList);
             this.groupsList = null;
             return;
         }
         if (this.groupsList == null) {
-            this.groupsList = NetworkUtils.newVector();
+            this.groupsList = ObjectPool.newVector();
         }
         this.groupsList.removeAllElements();
         int size = vector.size();
@@ -246,11 +246,11 @@ public final class MrimContact extends Contact implements ListItem {
         do {
             size--;
             if (size < 0) {
-                NetworkUtils.releaseVector(groups);
+                ObjectPool.releaseVector(groups);
                 return false;
             }
         } while (!str.equals(groups.elementAt(size)));
-        NetworkUtils.releaseVector(groups);
+        ObjectPool.releaseVector(groups);
         return true;
     }
 
@@ -380,12 +380,12 @@ public final class MrimContact extends Contact implements ListItem {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        StringBuffer sb = NetworkUtils.newStringBuffer().append(this.displayName);
+        StringBuffer sb = ObjectPool.newStringBuffer().append(this.displayName);
         String str = this.vCardInfo.phone;
         if (str.length() > 0) {
             sb.append(',').append(' ').append(str).append('.');
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     @Override // p000.ListItem

@@ -189,7 +189,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: a */
     private static final String formatAge(int i, int i2) {
-        return NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(i).append(AppState.getString(i2)));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(i).append(AppState.getString(i2)));
     }
 
     /* renamed from: c */
@@ -203,7 +203,7 @@ public final class ContactInfo extends Hashtable {
         if (month != 0) {
             Vector labels = Utils.splitByNull(AppState.getString(StateKeys.STR_MONTH_NAMES));
             setContactField(7, (String) labels.elementAt(month));
-            NetworkUtils.releaseVector(labels);
+            ObjectPool.releaseVector(labels);
         }
         return this;
     }
@@ -308,11 +308,11 @@ public final class ContactInfo extends Hashtable {
             int i3 = 0;
             while (i3 < size) {
                 try {
-                    String label = NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append((String) labels.elementAt(i3))));
+                    String label = ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append((String) labels.elementAt(i3))));
                     String fieldVal = getString(i3);
                     if (null != fieldVal) {
                         if (i3 == 6) {
-                            screen.addLabelValue(label, NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.substring(fieldVal, 8, 10)).append('/').append(StringUtils.substring(fieldVal, 5, 7)).append('/').append(StringUtils.prefix(fieldVal, 4))));
+                            screen.addLabelValue(label, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.substring(fieldVal, 8, 10)).append('/').append(StringUtils.substring(fieldVal, 5, 7)).append('/').append(StringUtils.prefix(fieldVal, 4))));
                         } else {
                             if (i3 == 10) {
                                 screen.addItem(MenuItem.createSeparator().addText(label, 0, 6).setIcon(mrimContact == null ? AppController.handleServerAction(Utils.parseIntBounded(fieldVal, 0, 4, 0), Utils.defaultStr(getString(12))) : mrimContact.getIcon()).setLabel(Utils.defaultStr(getString(13))));
@@ -328,7 +328,7 @@ public final class ContactInfo extends Hashtable {
             if (mrimContact != null) {
                 String statusMsg = Utils.defaultStr(mrimContact.statusMessage);
                 int i4 = Conversation.hasKey(statusMsg, 927) ? 936 : Conversation.hasKey(statusMsg, 926) ? 935 : Conversation.hasKey(statusMsg, 929) ? 937 : Conversation.hasKey(statusMsg, 928) ? 938 : Conversation.hasKey(statusMsg, 930) ? 939 : Conversation.hasKey(statusMsg, 931) ? 940 : Conversation.hasKey(statusMsg, 932) ? 941 : Conversation.hasKey(statusMsg, 933) ? 942 : 934;
-                StringBuffer sb = NetworkUtils.newStringBuffer();
+                StringBuffer sb = ObjectPool.newStringBuffer();
                 if (i4 == 934) {
                     int startIdx = AppState.indexOfLong(statusMsg, 2467256188365532259L);
                     if (startIdx >= 0 && (endIdx3 = statusMsg.indexOf(34, startIdx + 9)) >= 0) {
@@ -345,7 +345,7 @@ public final class ContactInfo extends Hashtable {
                         sb.append('.').append(StringUtils.substring(statusMsg, trackIdx + 8, endIdx2));
                     }
                 }
-                String statusDesc = NetworkUtils.bufToStringCached(sb);
+                String statusDesc = ObjectPool.toStringAndRelease(sb);
                 if (Utils.nonEmpty(statusDesc)) {
                     MenuItem statusItem = MenuItem.createSeparator().addText(AppState.getString(StateKeys.STR_LABEL_STATUS), 0, 6);
                     String str = mrimContact.statusMessage;
@@ -393,7 +393,7 @@ public final class ContactInfo extends Hashtable {
                 try {
                     String mmpField = getString(i5);
                     if (null != mmpField) {
-                        screen.addLabelValue(NetworkUtils.bufToStringCached(Utils.appendColon(NetworkUtils.newStringBuffer().append(labels.elementAt(i5)))), mmpField);
+                        screen.addLabelValue(ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(labels.elementAt(i5)))), mmpField);
                     }
                 } catch (Throwable unused2) {
                 }
@@ -426,7 +426,7 @@ public final class ContactInfo extends Hashtable {
                 screen.addTextItem(xmppDesc);
             }
         }
-        NetworkUtils.releaseVector(labels);
+        ObjectPool.releaseVector(labels);
         return screen;
     }
 

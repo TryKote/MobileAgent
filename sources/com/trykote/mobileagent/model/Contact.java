@@ -135,7 +135,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: a */
     public final void receiveMessage(long j, StringBuffer stringBuffer) {
-        receiveMessageFull(j, NetworkUtils.bufToStringCached(stringBuffer), 4);
+        receiveMessageFull(j, ObjectPool.toStringAndRelease(stringBuffer), 4);
     }
 
     /* renamed from: a */
@@ -324,7 +324,7 @@ public abstract class Contact implements Sortable {
             String msgText = Utils.normalizeSpaces(dupe.readUnicodeChars(entryLen - 17));
             int i = (msgType == 0 || msgType == 16 || msgType == 8) ? 0 : msgType == 1 ? 11 : (msgType & 64) == 0 ? 12 : 0;
             if (msgType == 16) {
-                msgScreen.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(this.displayName).append(AppState.getString(StateKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
+                msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.displayName).append(AppState.getString(StateKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
                 msgScreen.addIconItem(2, msgText, 0);
                 if (this.account.isConnected()) {
                     msgScreen.addExpandableItem(-1, AppState.getString(StateKeys.STR_EXPAND_MESSAGE), i, new Object[]{ResourceManager.integerOf(1), msgText, str, new Long(sentTime)});
@@ -336,7 +336,7 @@ public abstract class Contact implements Sortable {
                 msgScreen.addSeparator(StringUtils.concat(header, formatTime(msgTime, dateCode)), 8);
                 addMessageLines(msgScreen, body, i);
             } else {
-                msgScreen.addSeparator(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(msgType == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(msgTime, dateCode))), msgType == 0 ? 8 : 9);
+                msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(msgType == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(msgTime, dateCode))), msgType == 0 ? 8 : 9);
                 addMessageLines(msgScreen, msgText, i);
             }
         }
@@ -356,7 +356,7 @@ public abstract class Contact implements Sortable {
                 screen.addItem(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }
         }
-        NetworkUtils.releaseVector(lines);
+        ObjectPool.releaseVector(lines);
     }
 
     /* renamed from: f */
@@ -384,7 +384,7 @@ public abstract class Contact implements Sortable {
             dupe.readLong();
             String fullText = dupe.readUnicodeChars(entryLen - 17);
             if (fullText.length() > 50) {
-                truncated = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(StringUtils.prefix(fullText, 50)).append((char) 8230));
+                truncated = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(fullText, 50)).append((char) 8230));
             } else {
                 truncated = fullText;
             }
@@ -421,7 +421,7 @@ public abstract class Contact implements Sortable {
     private static String formatTime(long j, int i) {
         Calendar cal = AppState.getCalendar();
         cal.setTime(new Date(j));
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int i2 = cal.get(1) << 16;
         int i3 = cal.get(2);
         int i4 = i2 + (i3 << 8);
@@ -429,7 +429,7 @@ public abstract class Contact implements Sortable {
         if (i4 + i5 != i) {
             sb.append(Utils.zeroPad(i5)).append('/').append(Utils.zeroPad(i3 + 1)).append(' ');
         }
-        return NetworkUtils.bufToStringCached(sb.append(Utils.zeroPad(cal.get(11))).append(':').append(Utils.zeroPad(cal.get(12))));
+        return ObjectPool.toStringAndRelease(sb.append(Utils.zeroPad(cal.get(11))).append(':').append(Utils.zeroPad(cal.get(12))));
     }
 
     /* renamed from: a */

@@ -12,7 +12,7 @@ public final class Base64 {
     }
 
     public static String encode(byte[] data, int offset, int length) {
-        StringBuffer sb = NetworkUtils.newStringBuffer();
+        StringBuffer sb = ObjectPool.newStringBuffer();
         int i = offset;
         int end = offset + length;
         boolean z = true;
@@ -46,7 +46,7 @@ public final class Base64 {
                 sb.append(base64Char(i10 >> 18)).append(base64Char(i10 >> 12)).append(i6 > 1 ? base64Char(i10 >> 6) : '=').append(i6 > 2 ? base64Char(i10) : '=');
             }
         }
-        return NetworkUtils.bufToStringCached(sb);
+        return ObjectPool.toStringAndRelease(sb);
     }
 
     private static final int base64CharToInt(int i) {

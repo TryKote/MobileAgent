@@ -38,13 +38,13 @@ public final class LruCache {
 
     public LruCache() {
         this.map = new Hashtable();
-        this.lruOrder = NetworkUtils.newVector();
+        this.lruOrder = ObjectPool.newVector();
         this.maxSize = 27;
     }
 
     public LruCache(int i) {
         this.map = new Hashtable();
-        this.lruOrder = NetworkUtils.newVector();
+        this.lruOrder = ObjectPool.newVector();
         this.maxSize = i;
     }
 

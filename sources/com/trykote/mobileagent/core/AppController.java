@@ -2,6 +2,7 @@ package com.trykote.mobileagent.core;
 
 
 import com.trykote.mobileagent.ui.*;
+import com.trykote.mobileagent.ui.handler.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -43,7 +44,7 @@ public final class AppController {
     public static boolean needsRepaint;
 
     /* renamed from: i */
-    private static boolean isBackgrounded;
+    public static boolean isBackgrounded;
 
     /* renamed from: h */
     public static boolean saveOnExit;
@@ -124,7 +125,7 @@ public final class AppController {
     /* renamed from: a */
     public static final int handleEnterKey() {
         restoreState();
-        return NetworkUtils.processScreenForm();
+        return ScreenManager.processScreenForm();
     }
 
     /* renamed from: b */
@@ -165,7 +166,7 @@ public final class AppController {
     /* renamed from: e */
     public static final int handleRightKey() {
         AppState.setInt(StateKeys.FLAG_APP_STARTING, 1);
-        ConnectionThread.toggleScrollMode();
+        MapController.toggleScrollMode();
         return ScreenId.MAP;
     }
 
@@ -209,7 +210,7 @@ public final class AppController {
     }
 
     /* renamed from: K */
-    private static boolean isTimerType(int i) {
+    public static boolean isTimerType(int i) {
         return timers[i] < System.currentTimeMillis();
     }
 
@@ -289,7 +290,7 @@ public final class AppController {
     public static final int processLoginField(String str) {
         if (AppState.getString(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME).equals(str)) {
             ScreenBuilder.onScreenClosed();
-            if (ConnectionThread.hasRoutePoints()) {
+            if (MapController.hasRoutePoints()) {
                 return 0;
             }
             return NotificationHelper.showError(354);
@@ -336,9 +337,8 @@ public final class AppController {
 
     /* renamed from: n */
     public static final void finishScreenBuild() {
-        NetworkUtils.showConfirmDialog(180, 504);
         AppState.clearRange(StateKeys.SLOT_INIT_PARAMS, StateKeys.SLOT_LANGUAGE_OPTION);
-        Conversation.createStatusReport(true, (MrimAccount) AppState.getAccount());
+        Telemetry.sendReport(true, (MrimAccount) AppState.getAccount());
     }
 
     /* renamed from: h */
@@ -353,7 +353,7 @@ public final class AppController {
         }
         applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
         AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
-        ConnectionThread.selectMapItem((ListItem) account);
+        MapController.selectMapItem((ListItem) account);
         return 0;
     }
 
@@ -383,7 +383,7 @@ public final class AppController {
     public static final int handleProfileAction(int i) {
         switch (i) {
             case 0:
-                Conversation.createStatusReport(false, (MrimAccount) null);
+                Telemetry.sendReport(false, null);
                 return ScreenId.CLOSE;
             case 1:
                 applyViewMode(false, true, true);
@@ -398,7 +398,7 @@ public final class AppController {
                 Conversation.setMapEnabled(false);
                 return ScreenId.CLOSE;
             case 5:
-                return NetworkUtils.getIconOffset();
+                return AppController.getIconOffset();
             default:
                 return 0;
         }
@@ -408,7 +408,7 @@ public final class AppController {
     public static final void applyViewMode(boolean showMap, boolean showList, boolean shouldInvalidate) {
         AppState.setBool(StateKeys.FLAG_MAP_VIEW_ACTIVE, showMap);
         AppState.setBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE, showList);
-        if (!shouldInvalidate || !ConnectionThread.mapInitialized) {
+        if (!shouldInvalidate || !MapController.mapInitialized) {
             return;
         }
         int i = 11;
@@ -417,7 +417,7 @@ public final class AppController {
             if (i < 0) {
                 MmpContact.clearLocationData();
                 StringUtils.initTileCache();
-                ConnectionThread.clearPhotoCache();
+                ServiceRegistry.clearPhotoCache();
                 MapRenderer.needsRedraw = true;
                 return;
             }
@@ -432,7 +432,7 @@ public final class AppController {
 
     /* renamed from: d */
     public static final int openUrl(String str) {
-        AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) new StringBuffer().append((Object) NetworkUtils.getMessageBuffer()).append(str).toString());
+        AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) new StringBuffer().append((Object) Utils.getMessageBuffer()).append(str).toString());
         return 0;
     }
 
@@ -462,7 +462,7 @@ public final class AppController {
                     while (true) {
                         size--;
                         if (size < 0) {
-                            NetworkUtils.releaseVector(accounts);
+                            ObjectPool.releaseVector(accounts);
                             break;
                         } else {
                             AccountManager.findMrimAccount(accounts, size).markProfileForPublish();
@@ -479,7 +479,7 @@ public final class AppController {
                     while (true) {
                         size2--;
                         if (size2 < 0) {
-                            NetworkUtils.releaseVector(accounts2);
+                            ObjectPool.releaseVector(accounts2);
                             break;
                         } else {
                             AccountManager.findMrimAccount(accounts2, size2).markProfileForHide();
@@ -496,7 +496,7 @@ public final class AppController {
                     while (true) {
                         size3--;
                         if (size3 < 0) {
-                            NetworkUtils.releaseVector(accounts3);
+                            ObjectPool.releaseVector(accounts3);
                             break;
                         } else {
                             AccountManager.findMrimAccount(accounts3, size3).setProfileGroups();
@@ -513,7 +513,7 @@ public final class AppController {
                     while (true) {
                         size4--;
                         if (size4 < 0) {
-                            NetworkUtils.releaseVector(accounts4);
+                            ObjectPool.releaseVector(accounts4);
                             break;
                         } else {
                             AccountManager.findMrimAccount(accounts4, size4).clearProfileGroups();
@@ -545,7 +545,7 @@ public final class AppController {
 
     /* renamed from: f */
     public static final int validateServerAddress(String str) {
-        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, NetworkUtils.getMessageBuffer().append(str));
+        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(str));
         return 0;
     }
 
@@ -745,7 +745,7 @@ public final class AppController {
     /* renamed from: r */
     public static final int handleViewOption(int i) {
         if (i == 120) {
-            if (!ConnectionThread.hasRoutePoints()) {
+            if (!MapController.hasRoutePoints()) {
                 return NotificationHelper.showError(354);
             }
             AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 1);
@@ -761,7 +761,7 @@ public final class AppController {
     /* renamed from: s */
     public static final int handleThemeOption(int i) {
         if (i == 10) {
-            return NetworkUtils.getIconOffset();
+            return AppController.getIconOffset();
         }
         return 0;
     }
@@ -787,7 +787,7 @@ public final class AppController {
 
     /* renamed from: t */
     public static final int handleSoundOption(int i) {
-        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, NetworkUtils.getMessageBuffer().append(AppState.getString(i + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
+        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(i + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
         return ScreenId.STATUS_INPUT;
     }
 
@@ -854,7 +854,7 @@ public final class AppController {
             return 0;
         }
         if (!AppState.getBool(StateKeys.FLAG_LOADING)) {
-            ConnectionThread.navigateToPoint((MapPoint) obj, true);
+            MapController.navigateToPoint((MapPoint) obj, true);
             return 0;
         }
         MapPoint mapPoint = (MapPoint) obj;
@@ -877,14 +877,14 @@ public final class AppController {
     /* renamed from: v */
     public static final int handleChatRoomOption(int i) {
         if (i == 0) {
-            ConnectionThread.setRouteStart();
+            MapController.setRouteStart();
             if (MmpContact.hasSecondToken()) {
                 return ScreenId.MAP;
             }
             AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 1);
             return ScreenId.MAP_SEARCH;
         }
-        ConnectionThread.setRouteEnd();
+        MapController.setRouteEnd();
         if (MmpContact.hasFirstToken()) {
             return ScreenId.MAP;
         }
@@ -941,13 +941,13 @@ public final class AppController {
         if (i != 120) {
             return 0;
         }
-        ConnectionThread.removeRoutePoint(mapPoint);
+        MapController.removeRoutePoint(mapPoint);
         return 0;
     }
 
     /* renamed from: y */
     public static final int handleChatDetailOption(int i) {
-        ConnectionThread.showMapView();
+        MapController.showMapView();
         if (i == 6) {
             applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
             AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
@@ -958,7 +958,7 @@ public final class AppController {
             AppState.setInt(StateKeys.FLAG_LOADING, 1);
             return 0;
         }
-        if (!ConnectionThread.hasRoutePoints()) {
+        if (!MapController.hasRoutePoints()) {
             return NotificationHelper.showError(354);
         }
         AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 1);
@@ -997,7 +997,7 @@ public final class AppController {
     public static final void prepareFormData() {
         AppState.setInt(StateKeys.INT_ERROR_MSG_INDEX, 0);
         AppState.clearIndex(StateKeys.SLOT_REG_PARAM_4);
-        AppState.pool[StateKeys.SLOT_REG_PARAM_3] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.SLOT_REG_PARAM_3] = ObjectPool.newVector();
     }
 
     /* renamed from: a */
@@ -1113,7 +1113,7 @@ public final class AppController {
         while (chatRooms.hasMoreElements()) {
             ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
             if (chatRoom != account.getLastChatRoom()) {
-                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(chatRoom.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(chatRoom.unreadCount)), 1, 0).setLabel(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append('/').append(chatRoom.memberCount).append(']')));
+                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(chatRoom.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(chatRoom.unreadCount)), 1, 0).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('/').append(chatRoom.memberCount).append(']')));
                 menuItem.data = chatRoom;
                 screen.addItem(menuItem);
             }
@@ -1170,7 +1170,7 @@ public final class AppController {
         if (obj == null) {
             return 0;
         }
-        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, NetworkUtils.getMessageBuffer().append(obj));
+        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(obj));
         return 0;
     }
 
@@ -1200,7 +1200,7 @@ public final class AppController {
             }
         }
         if (i == 10) {
-            return NetworkUtils.getIconOffset();
+            return AppController.getIconOffset();
         }
         if (i != 6) {
             return 0;
@@ -1247,7 +1247,7 @@ public final class AppController {
 
     /* renamed from: X */
     public static final Vector getMapContacts() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
         int size = mrimAccounts.size();
         while (true) {
@@ -1267,13 +1267,13 @@ public final class AppController {
                     result.addElement(contact);
                 }
             }
-            NetworkUtils.releaseVector(contacts);
+            ObjectPool.releaseVector(contacts);
         }
     }
 
     /* renamed from: Y */
     public static final Vector getMapProfiles() {
-        Vector result = NetworkUtils.newVector();
+        Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
         int size = mrimAccounts.size();
         while (true) {
@@ -1291,7 +1291,7 @@ public final class AppController {
     /* renamed from: a */
     public static final void setFormFields(String str, String str2, String str3, String str4, String str5) {
         AppState.setObject(StateKeys.SLOT_LANGUAGE_OPTION, (Object) str5);
-        AppState.setFromBuffer(StateKeys.SLOT_INIT_PARAMS, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(NetworkUtils.newStringBuffer(), 262572, str), 262576, str2), 524724, str3), 590268, str4), 524741, str5));
+        AppState.setFromBuffer(StateKeys.SLOT_INIT_PARAMS, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer(), 262572, str), 262576, str2), 524724, str3), 590268, str4), 524741, str5));
         setTimer(13, computeInitialState());
     }
 
@@ -1327,20 +1327,20 @@ public final class AppController {
             RemoteLogger.log("INIT", "dispatchCommand START");
             AppState.init(obj);
             AppState.clearRange(StateKeys.RANGE_SESSION_TEMP_START, StateKeys.RANGE_SESSION_TEMP_END);
-            AppState.pool[StateKeys.SLOT_MAP_TILE_REQUEST] = NetworkUtils.newVector();
-            AppState.pool[StateKeys.VEC_SCREEN_STACK] = NetworkUtils.newVector();
+            AppState.pool[StateKeys.SLOT_MAP_TILE_REQUEST] = ObjectPool.newVector();
+            AppState.pool[StateKeys.VEC_SCREEN_STACK] = ObjectPool.newVector();
             ScreenManager.initializeFonts();
-            AppState.pool[StateKeys.VEC_ONLINE_CONTACTS] = NetworkUtils.newVector();
-            AppState.pool[StateKeys.VEC_ACTIVE_CONNECTIONS] = NetworkUtils.newVector();
-            AppState.pool[StateKeys.SLOT_MEDIA_CONTROL] = NetworkUtils.newVector();
-            AppState.pool[StateKeys.SLOT_MEDIA_VOLUME] = NetworkUtils.newVector();
+            AppState.pool[StateKeys.VEC_ONLINE_CONTACTS] = ObjectPool.newVector();
+            AppState.pool[StateKeys.VEC_ACTIVE_CONNECTIONS] = ObjectPool.newVector();
+            AppState.pool[StateKeys.SLOT_MEDIA_CONTROL] = ObjectPool.newVector();
+            AppState.pool[StateKeys.SLOT_MEDIA_VOLUME] = ObjectPool.newVector();
             RemoteLogger.log("INIT", "fonts done, starting AsyncTask(3)");
             new AsyncTask(3);
             AccountManager.loadSavedAccounts();
             RemoteLogger.log("INIT", "accounts loaded: " + AppState.getVector(StateKeys.VEC_ACCOUNTS).size());
-            AppState.pool[StateKeys.VEC_POPUP_ITEMS] = NetworkUtils.newVector();
+            AppState.pool[StateKeys.VEC_POPUP_ITEMS] = ObjectPool.newVector();
             processKeyRepeat();
-            AppState.pool[StateKeys.VEC_PENDING_CONNECTIONS] = NetworkUtils.newVector();
+            AppState.pool[StateKeys.VEC_PENDING_CONNECTIONS] = ObjectPool.newVector();
             ResourceManager.resetClock();
             ResourceManager.initMathTables();
             AppState.setInt(StateKeys.TRAFFIC_MRIM_SENT_BYTES, 0);
@@ -1351,7 +1351,7 @@ public final class AppController {
             AppState.setInt(StateKeys.TRAFFIC_XMPP_RECV_BYTES, 0);
             AppState.setInt(StateKeys.TRAFFIC_TOTAL_SENT_BYTES, 0);
             AppState.setInt(StateKeys.TRAFFIC_TOTAL_RECV_BYTES, 0);
-            AppState.pool[StateKeys.VEC_TILE_QUEUE] = NetworkUtils.newVector();
+            AppState.pool[StateKeys.VEC_TILE_QUEUE] = ObjectPool.newVector();
             XmppMailRuProtocol.calculateCacheSize();
             RemoteLogger.log("INIT", "creating MainCanvas w=" + i + " h=" + i2);
             AppState.pool[StateKeys.OBJ_CANVAS] = new MainCanvas(i, i2);
@@ -1479,1093 +1479,9 @@ public final class AppController {
                                         Object obj = menuItem == null ? null : menuItem.data;
                                         String str = menuItem == null ? null : menuItem.title;
                                         int nextState = 0;
-                                        switch (ScreenManager.getCurrentScreen().screenId) {
-                                            case ScreenId.ACCOUNT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.STATUS_DIALOG:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_LIST:
-                                                action = ContactListManager.updateContextMenu(currentScreen, obj);
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ACCOUNTS_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP:
-                                                long currentTime = System.currentTimeMillis();
-                                                if (currentTime - AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) > 45) {
-                                                    AppState.setLong(StateKeys.TIMESTAMP_MAP_SCROLL, currentTime);
-                                                }
-                                                if (isTimerType(10) && MapRenderer.crosshairVisible) {
-                                                    if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE)) {
-                                                        if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)) != VCard.staticTs5) && AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
-                                                            IOUtils.requestNearbyPeople();
-                                                        }
-                                                    }
-                                                    MapRenderer.setCrosshairVisible(false);
-                                                }
-                                                int stateInt2 = AppState.getInt(StateKeys.INT_MAP_SCROLL_DIRECTION);
-                                                if (stateInt2 >= 0 && AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) == currentTime && !AppState.getBool(StateKeys.FLAG_MAP_SCROLLING)) {
-                                                    AppState.setLong(StateKeys.MAP_SCROLL_LON, MapRenderer.currentLon);
-                                                    AppState.setLong(StateKeys.MAP_SCROLL_LAT, MapRenderer.currentLat);
-                                                    int stateInt3 = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
-                                                    long scrollDelta = (MapUtils.getZoomNumerator(stateInt3) / MapUtils.getZoomDenominator(stateInt3)) * 9;
-                                                    switch (stateInt2) {
-                                                        case 0:
-                                                            AppState.setLong(StateKeys.MAP_SCROLL_LON, AppState.getLong(StateKeys.MAP_SCROLL_LON) + scrollDelta);
-                                                            break;
-                                                        case 1:
-                                                            AppState.setLong(StateKeys.MAP_SCROLL_LON, AppState.getLong(StateKeys.MAP_SCROLL_LON) - scrollDelta);
-                                                            break;
-                                                        case 2:
-                                                            AppState.setLong(StateKeys.MAP_SCROLL_LAT, AppState.getLong(StateKeys.MAP_SCROLL_LAT) + scrollDelta);
-                                                            break;
-                                                        case 3:
-                                                            AppState.setLong(StateKeys.MAP_SCROLL_LAT, AppState.getLong(StateKeys.MAP_SCROLL_LAT) - scrollDelta);
-                                                            break;
-                                                    }
-                                                    MapRenderer.setPosition(AppState.getLong(StateKeys.MAP_SCROLL_LON), AppState.getLong(StateKeys.MAP_SCROLL_LAT));
-                                                    setTimer(10, 500L);
-                                                    MapRenderer.resetInteraction();
-                                                }
-                                                if (AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) == currentTime) {
-                                                    MapRenderer.render();
-                                                }
-                                                if (AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE) && checkTimer(7, 300000L)) {
-                                                    setTimer(7, 300000L);
-                                                    StringUtils.clearSatelliteTiles();
-                                                    Vector vec4 = AppState.getVector(StateKeys.SLOT_MAP_DATA);
-                                                    int size3 = vec4.size();
-                                                    while (true) {
-                                                        size3--;
-                                                        if (size3 < 0) {
-                                                            MapRenderer.needsRedraw = true;
-                                                            new AsyncTask(6);
-                                                            break;
-                                                        } else if (3 == ((ResourceManager) vec4.elementAt(size3)).tileType) {
-                                                            vec4.removeElementAt(size3);
-                                                        }
-                                                    }
-                                                }
-                                                if (AppState.getBool(StateKeys.FLAG_MAP_SCROLLING)) {
-                                                    needsRepaint = true;
-                                                }
-                                                if (MapRenderer.tapConsumed) {
-                                                    MapRenderer.tapConsumed = false;
-                                                    z5 = true;
-                                                } else {
-                                                    z5 = false;
-                                                }
-                                                nextState = z5 ? ScreenId.MAP_CONTEXT_MENU : ConnectionThread.showMapSearchResults();
-                                                break;
-                                            case ScreenId.MAP_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SETTINGS_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ABOUT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.BLOCK_CONFIRM:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNBLOCK_CONFIRM:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONFIRM_EXIT:
-                                                Object[] objArr = (Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA];
-                                                Object obj2 = objArr[0];
-                                                if (obj2 == null) {
-                                                    String str2 = (String) objArr[20];
-                                                    if ((str2 != null && Utils.parseInt((Object) str2) == 0) || objArr[3] != null) {
-                                                        action = NetworkUtils.handleRegSubmit(objArr);
-                                                    }
-                                                    nextState = action;
-                                                    break;
-                                                } else {
-                                                    NotificationHelper.showNotification(StringUtils.concatKeyObj(506, obj2));
-                                                }
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.TRAFFIC_COST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ACCOUNT_SWITCHER:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.REGISTRATION:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.EMOTICON_DIALOG:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_18:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_EDITOR:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.GPS_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ADD_CONTACT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ADD_MRIM_CONTACT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_23:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_24:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MULTI_ACCOUNT_LIST:
-                                                nextState = AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] != null ? ScreenId.PRESENCE_ACTION : 0;
-                                                break;
-                                            case ScreenId.THEME_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.NOTIFICATION_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SOUND_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MULTI_ACCOUNT_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_GROUP_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_32:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PRIVACY_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.TRAFFIC_STATS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONNECTION_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAIL_ACCOUNT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOMS:
-                                                Object[] asyncResult = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult != null) {
-                                                    int stateInt4 = AppState.getInt(StateKeys.INT_SCREEN_ACTION);
-                                                    int responseCode = IOUtils.validateJsonResponse(asyncResult);
-                                                    if (responseCode != 0) {
-                                                        action = responseCode;
-                                                    } else {
-                                                        ((MrimAccount) AppState.getAccount()).parseChatRoomsFromJson(IOUtils.getJsonPayload());
-                                                        action = stateInt4;
-                                                    }
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_INIT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ACCOUNT_CHECKBOX_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CLEAR_SEARCH:
-                                                Contact currentContact = AppState.getCurrentContact();
-                                                nextState = (currentContact.flags != 0) || currentContact.dirty ? ScreenId.CLEAR_SEARCH : 0;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_MESSAGES:
-                                                Object[] asyncResult2 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult2 != null) {
-                                                    int responseCode2 = IOUtils.validateJsonResponse(asyncResult2);
-                                                    if (responseCode2 != 0) {
-                                                        action = responseCode2;
-                                                    } else {
-                                                        Object payload = IOUtils.getJsonPayload();
-                                                        MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
-                                                        ChatRoom chatRoom2 = mrimAccount2.findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
-                                                        if (chatRoom2 != mrimAccount2.getLastChatRoom()) {
-                                                            chatRoom2.subject = JsonParser.getStringValue(payload, AppState.getString(StateKeys.STR_RES_CONTENT_ENCODING));
-                                                            chatRoom2.messageIds.removeAllElements();
-                                                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(payload, AppState.getString(StateKeys.STR_RES_HEADER_NAME_1))).elements();
-                                                            while (enumerationElements.hasMoreElements()) {
-                                                                chatRoom2.messageIds.addElement(enumerationElements.nextElement());
-                                                            }
-                                                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(payload, AppState.getString(StateKeys.STR_RES_PARAM_1))).elements();
-                                                            while (enumerationElements2.hasMoreElements()) {
-                                                                Message msg = new Message((Hashtable) enumerationElements2.nextElement());
-                                                                chatRoom2.messages.put(msg.from, msg);
-                                                            }
-                                                            Enumeration keys = chatRoom2.messages.keys();
-                                                            while (keys.hasMoreElements()) {
-                                                                String str3 = (String) keys.nextElement();
-                                                                if (!chatRoom2.messageIds.contains(str3)) {
-                                                                    chatRoom2.messages.remove(str3);
-                                                                }
-                                                            }
-                                                            Enumeration enumerationElements3 = chatRoom2.readMessages.elements();
-                                                            while (enumerationElements3.hasMoreElements()) {
-                                                                String str4 = (String) enumerationElements3.nextElement();
-                                                                if (!chatRoom2.messageIds.contains(str4)) {
-                                                                    chatRoom2.readMessages.removeElement(str4);
-                                                                }
-                                                            }
-                                                            chatRoom2.isInitialized = false;
-                                                        } else {
-                                                            Enumeration enumerationElements4 = ((Vector) payload).elements();
-                                                            while (enumerationElements4.hasMoreElements()) {
-                                                                Message msg2 = new Message((Hashtable) enumerationElements4.nextElement());
-                                                                chatRoom2.messages.put(msg2.from, msg2);
-                                                            }
-                                                        }
-                                                        action = ScreenId.CHAT_ROOM_VIEW;
-                                                    }
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_INVITE:
-                                                Object[] asyncResult3 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult3 != null) {
-                                                    int responseCode3 = IOUtils.validateJsonResponse(asyncResult3);
-                                                    if (responseCode3 != 0) {
-                                                        action = responseCode3;
-                                                    } else {
-                                                        Object payload2 = IOUtils.getJsonPayload();
-                                                        MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
-                                                        int size4 = ((Vector) payload2).size();
-                                                        for (int i6 = 0; i6 < size4; i6++) {
-                                                            Enumeration keys2 = ((Hashtable) JsonParser.getVectorElement(payload2, i6)).keys();
-                                                            while (keys2.hasMoreElements()) {
-                                                                String str5 = (String) keys2.nextElement();
-                                                                ChatRoom selectedChatRoom = mrimAccount3.findChatRoomByName(str5);
-                                                                ChatRoom chatRoom3 = mrimAccount3.findChatRoomById(AppState.getInt(StateKeys.INT_ACTIVE_CHATROOM_ID));
-                                                                if (selectedChatRoom != null && (message2 = selectedChatRoom.getMessage(str5)) != null && chatRoom3 != null) {
-                                                                    if (message2.hasFlag(4)) {
-                                                                        if (chatRoom3 == mrimAccount3.findDefaultChatRoom()) {
-                                                                            message2.setFlag(4, false);
-                                                                        }
-                                                                        selectedChatRoom.decrementUnread();
-                                                                    }
-                                                                    selectedChatRoom.decrementMembers();
-                                                                    if (!message2.isRead()) {
-                                                                        chatRoom3.incrementUnread();
-                                                                    }
-                                                                    chatRoom3.memberCount++;
-                                                                }
-                                                                if (selectedChatRoom != chatRoom3) {
-                                                                    mrimAccount3.removeUserFromChatRooms(str5);
-                                                                    chatRoom3.setActive(false);
-                                                                }
-                                                            }
-                                                        }
-                                                        action = ScreenId.CHAT_ROOM_VIEW;
-                                                    }
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_VIEW:
-                                                AppState.setInt(StateKeys.INT_SCROLL_OFFSET, currentScreen.scrollOffset);
-                                                AppState.setObject(StateKeys.SLOT_MAP_POINT_2, (Object) str);
-                                                if (str == null || (chatRoom = (mrimAccount = (MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID))) == mrimAccount.getLastChatRoom() || str.equals(chatRoom.subject)) {
-                                                    i3 = 0;
-                                                    nextState = i3;
-                                                    break;
-                                                } else {
-                                                    Object obj3 = null;
-                                                    Enumeration enumerationElements5 = chatRoom.messageIds.elements();
-                                                    while (enumerationElements5.hasMoreElements()) {
-                                                        Hashtable hashtable = chatRoom.messages;
-                                                        Object objNextElement = enumerationElements5.nextElement();
-                                                        if (hashtable.containsKey(objNextElement)) {
-                                                            obj3 = chatRoom.messages.get(objNextElement);
-                                                        }
-                                                    }
-                                                    if (str == (obj3 != null ? ((Message) obj3).from : null)) {
-                                                        chatRoom.setActive(true);
-                                                        i3 = 41;
-                                                    }
-                                                    nextState = i3;
-                                                }
-                                                break;
-                                            case ScreenId.SUBMIT_REGISTRATION:
-                                                int stateInt5 = AppState.getInt(StateKeys.INT_ERROR_MSG_INDEX);
-                                                nextState = 0 != stateInt5 ? NotificationHelper.showError(stateInt5) : AppState.pool[StateKeys.SLOT_REG_PARAM_4] == null ? 0 : ScreenId.SEARCH_RESULT_LIST;
-                                                break;
-                                            case ScreenId.UNUSED_45:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_46:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_GROUPS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MESSAGE_DETAIL:
-                                                action = XmppMailRuProtocol.processMailResponse();
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_CONFIG:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_VIEW_MODE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_CONTEXT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MESSAGE_PREVIEW:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.COMPOSE_RECIPIENTS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.COMPOSE_MESSAGE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.DELETE_CONFIRM:
-                                                NetworkUtils.closeAllConnections();
-                                                ResourceManager.clearImageCache();
-                                                ResourceManager.clearMathTables();
-                                                System.gc();
-                                                try {
-                                                    Thread.sleep(50);
-                                                } catch (Throwable unused) {
-                                                }
-                                                AppState.addInt(StateKeys.COUNTER_ERRORS, 1);
-                                                saveOnExit = true;
-                                                isBackgrounded = true;
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.FIRST_RUN:
-                                                nextState = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[0] == null ? 0 : ScreenId.VERSION_CHECK;
-                                                break;
-                                            case ScreenId.GROUP_SELECTOR:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.VERSION_CHECK:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.INPUT_DIALOG:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_ALERT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAIL_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.STATUS_INPUT:
-                                                action = ResourceManager.updateMessageInput();
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ACCOUNT_SWITCH_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PHONE_GROUPS:
-                                                if (checkTimer(9, 3000L) && (textBox = XmppContactGroup.getTextInputBox()) != null) {
-                                                    String inputText = StringUtils.getTextBoxString(textBox);
-                                                    if (AppState.getBool(StateKeys.SETTING_AUTO_RECONNECT)) {
-                                                        String transliterated = Conversation.transliterateRussian(inputText);
-                                                        if (!StringUtils.equals(transliterated, inputText)) {
-                                                            textBox.setString(transliterated);
-                                                        }
-                                                    } else {
-                                                        int length = inputText.length();
-                                                        int i7 = length;
-                                                        int i8 = length;
-                                                        while (true) {
-                                                            i8--;
-                                                            if (i8 < 0) {
-                                                                int i9 = i7 - 160;
-                                                                if (i9 > 0) {
-                                                                    textBox.setString(StringUtils.prefix(inputText, inputText.length() - i9));
-                                                                }
-                                                            } else {
-                                                                char ch = inputText.charAt(i8);
-                                                                if ((ch >= 1040 && ch <= 1071) || ((ch >= 1072 && ch <= 1103) || ch == 1105 || ch == 1025)) {
-                                                                    i7 += 2;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ADD_CONTACT_INFO:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SOFTKEY_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEARCH_RESULTS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CREATE_GROUP:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.RENAME_GROUP:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.DELETE_ENTITY:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.BATCH_DELETE:
-                                                Object[] asyncResult4 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult4 != null) {
-                                                    int responseCode4 = IOUtils.validateJsonResponse(asyncResult4);
-                                                    if (responseCode4 != 0) {
-                                                        action = responseCode4;
-                                                    } else {
-                                                        Object payload3 = IOUtils.getJsonPayload();
-                                                        int size5 = ((Vector) payload3).size();
-                                                        while (true) {
-                                                            size5--;
-                                                            if (size5 < 0) {
-                                                                action = ScreenId.CHAT_ROOM_VIEW;
-                                                                break;
-                                                            } else {
-                                                                Object jsonObj = JsonParser.getVectorElement(payload3, size5);
-                                                                int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
-                                                                String jsonStr = JsonParser.getStringByInt(jsonObj, 329240);
-                                                                ChatRoom selectedChatRoom2 = ((MrimAccount) AppState.getAccount()).findChatRoomByName(jsonStr);
-                                                                Message message3 = selectedChatRoom2.getMessage(jsonStr);
-                                                                if (selectedChatRoom2 != null) {
-                                                                    selectedChatRoom2.markMessageRead(jsonStr);
-                                                                }
-                                                                if (parsedInt == 1) {
-                                                                    if (message3 != null && !message3.hasFlag(4)) {
-                                                                        message3.setFlag(4, true);
-                                                                        selectedChatRoom2.incrementUnread();
-                                                                    }
-                                                                } else if (message3 != null && message3.hasFlag(4)) {
-                                                                    message3.setFlag(4, false);
-                                                                    selectedChatRoom2.decrementUnread();
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEARCH_RESULT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_74:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_75:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.XMPP_LOGIN:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ACCOUNT_DELETE_CONFIRM:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SHARE_MEDIA:
-                                                Object[] asyncResult5 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult5 != null) {
-                                                    int responseCode5 = IOUtils.validateJsonResponse(asyncResult5);
-                                                    if (responseCode5 != 0) {
-                                                        action = responseCode5;
-                                                    } else {
-                                                        Object payload4 = IOUtils.getJsonPayload();
-                                                        Object jsonArray = JsonParser.getValueByInt(payload4, 329636);
-                                                        if (JsonParser.getIntByInt(payload4, 198543) == 1) {
-                                                            int size6 = ((Vector) jsonArray).size();
-                                                            while (true) {
-                                                                size6--;
-                                                                if (size6 >= 0) {
-                                                                    String jsonValue = JsonParser.getVectorString(jsonArray, size6);
-                                                                    MrimAccount mrimAccount4 = (MrimAccount) AppState.getAccount();
-                                                                    ChatRoom selectedChatRoom3 = mrimAccount4.findChatRoomByName(jsonValue);
-                                                                    if (selectedChatRoom3 != null && (message = selectedChatRoom3.getMessage(jsonValue)) != null) {
-                                                                        if (message.hasFlag(4)) {
-                                                                            selectedChatRoom3.decrementUnread();
-                                                                        }
-                                                                        selectedChatRoom3.decrementMembers();
-                                                                    }
-                                                                    mrimAccount4.removeUserFromChatRooms(jsonValue);
-                                                                } else {
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                        action = ScreenId.CHAT_ROOM_VIEW;
-                                                    }
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SHARE_ALERT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.NOTIFICATION_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEND_MAIL:
-                                                Object[] asyncResult6 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult6 != null) {
-                                                    int responseCode6 = IOUtils.validateJsonResponse(asyncResult6);
-                                                    if (responseCode6 != 0) {
-                                                        action = responseCode6;
-                                                    } else {
-                                                        ChatRoom lastChatRoom = ((MrimAccount) AppState.getAccount()).getLastChatRoom();
-                                                        Vector vector = (Vector) IOUtils.getJsonPayload();
-                                                        lastChatRoom.clear();
-                                                        int size7 = vector.size();
-                                                        for (int i10 = 0; i10 < size7; i10++) {
-                                                            Hashtable hashtable2 = (Hashtable) vector.elementAt(i10);
-                                                            Vector vector2 = (Vector) JsonParser.getValue(hashtable2, AppState.getString(StateKeys.STR_RES_PARAM_1));
-                                                            String jsonStr2 = JsonParser.getStringByInt(hashtable2, 198561);
-                                                            int size8 = vector2.size();
-                                                            for (int i11 = 0; i11 < size8; i11++) {
-                                                                Vector vector3 = lastChatRoom.messageIds;
-                                                                Object objElementAt = vector2.elementAt(i11);
-                                                                vector3.addElement(objElementAt);
-                                                                lastChatRoom.metadata.put(objElementAt, jsonStr2);
-                                                            }
-                                                        }
-                                                        lastChatRoom.isInitialized = false;
-                                                        int vecSize = Utils.vectorSize(lastChatRoom.messageIds);
-                                                        if (vecSize > 0) {
-                                                            lastChatRoom.subject = (String) lastChatRoom.messageIds.lastElement();
-                                                            MrimAccount mrimAccount5 = (MrimAccount) AppState.getAccount();
-                                                            for (int i12 = 0; i12 < vecSize; i12++) {
-                                                                String messageId = Utils.getVectorString(lastChatRoom.messageIds, i12);
-                                                                Message message4 = mrimAccount5.findChatRoomById(Utils.parseInt(lastChatRoom.metadata.get(messageId))).getMessage(messageId);
-                                                                if (message4 != null) {
-                                                                    lastChatRoom.messages.put(messageId, message4);
-                                                                } else {
-                                                                    lastChatRoom.participants.addElement(messageId);
-                                                                    lastChatRoom.isInitialized = true;
-                                                                }
-                                                            }
-                                                            lastChatRoom.name = new StringBuffer().append(AppState.getString(StateKeys.STR_CHATROOM_PREFIX)).append(lastChatRoom.messageIds.size()).toString();
-                                                        }
-                                                        if (lastChatRoom.messageIds.size() == 0) {
-                                                            action = NotificationHelper.showError(736);
-                                                        } else {
-                                                            AppState.setInt(StateKeys.INT_CHATROOM_ID, lastChatRoom.id);
-                                                            action = ScreenId.CHAT_ROOM_MESSAGES;
-                                                        }
-                                                    }
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.REPLY_MAIL:
-                                                Object[] asyncResult7 = ConnectionThread.getAsyncResult(IOUtils.pollAsyncResult());
-                                                if (asyncResult7 != null) {
-                                                    int responseCode7 = IOUtils.validateJsonResponse(asyncResult7);
-                                                    action = responseCode7 != 0 ? responseCode7 : StringUtils.isEmpty((String) IOUtils.getJsonPayload()) ? NotificationHelper.showError(878) : 83;
-                                                } else {
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PRIVACY_MODE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.STATUS_PREVIEW:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_DELETE:
-                                                nextState = AppState.pool[StateKeys.SLOT_REG_PARAM_1] == null ? 0 : ScreenId.CONTACT_INFO_VIEW;
-                                                break;
-                                            case ScreenId.GROUP_MOVE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_STATUS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.THEME_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.TOS_SCREEN:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.EVENT_QUEUE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.VIEW_MODE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.EMOTICON_PICKER:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PHONE_INPUT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SERVER_ADDRESS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_INFO_VIEW:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.REGION_SELECTOR:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PHONE_INPUT_ALT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.URL_OPEN:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_POINTS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONVERSATION:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.USER_PROFILE:
-                                                nextState = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
-                                                break;
-                                            case ScreenId.CONTACT_INFO_DETAIL:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.COLOR_PICKER:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.XMPP_LOGIN_ALT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CAPTCHA:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PROFILE_LOAD:
-                                                nextState = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
-                                                break;
-                                            case ScreenId.CONTACT_LIST_KEY:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.VERSION_SELECT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_TOOLTIP:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PEOPLE_NEARBY:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CLEAR_NOTIFICATIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_CONTEXT_MENU:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SAVE_LOCATION:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MESSAGE_INPUT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_ROUTE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_STATUS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEND_TO_CONTACT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_ROOM_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_ROUTE_SELECT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_LIST_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PRESENCE_ACTION:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MESSAGE_SUMMARY:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.EMPTY_SCREEN:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.BLOCK_CONTACT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNBLOCK_CONTACT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.DELETE_CONTACT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.DELETE_MESSAGES:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MMP_ACCOUNT_SELECT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.VCARD_ACTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PEOPLE_SEARCH:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.KEY_MAPPING:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_133:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_134:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_135:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_136:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAIN_SCREEN:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_138:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_139:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.FORM_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_141:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.GROUP_MEMBERS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CREATE_CHAT_ROOM:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.EDIT_MEMBERS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_DELETE_MRIM:
-                                                nextState = AppState.pool[StateKeys.SLOT_REG_PARAM_1] == null ? 0 : ScreenId.CONTACT_INFO_VIEW;
-                                                break;
-                                            case ScreenId.GROUP_MANAGEMENT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.BLOG_POST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_148:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UNUSED_149:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CONTACT_MODIFY:
-                                                nextState = AppState.pool[StateKeys.SLOT_REG_PARAM_4] == null ? 0 : ScreenId.GROUP_MEMBERS;
-                                                break;
-                                            case ScreenId.EXT_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_VIEW_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.WIFI_NETWORKS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SHARE_LOCATION:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.VISIBLE_CONTACTS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PHOTO_SELECTOR:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PHOTO_VIEW:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_SEARCH:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.WIFI_ACCOUNT_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PROFILE_EDIT:
-                                                action = System.currentTimeMillis() - ResourceManager.lastTileLoadTime > 5000 ? ResourceManager.syncAndReturn() : 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEND_CONFIRM:
-                                                action = ConnectionThread.showMapSearchResults();
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_DETAIL:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.NOTIFY_MESSAGE:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.REG_FORM:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ASYNC_CONFIRM:
-                                                Object[] stateArr = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA);
-                                                Object obj4 = stateArr[0];
-                                                if (obj4 != null) {
-                                                    NotificationHelper.showNotification(StringUtils.concatKeyObj(506, obj4));
-                                                    action = 0;
-                                                } else {
-                                                    action = stateArr[3] == null ? 0 : NetworkUtils.handleRegSubmit(stateArr);
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.CHAT_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAILBOX_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.INVITE_TOS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SAVED_LOCATIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.FORM_LIST:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.UPDATE_ALERT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MRIM_ACCOUNT_SELECT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.INVITE_ALERT:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.MAP_OPTIONS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.NEARBY_SETTINGS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.PHONE_CONTACTS:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEARCH_ENTRY:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.EDIT_SCREEN:
-                                                action = 0;
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.SEND_DATA:
-                                                Vector vec5 = AppState.getVector(StateKeys.SLOT_SCREEN_TITLE);
-                                                if (Utils.vectorSize(vec5) <= 1) {
-                                                    NetworkUtils.releaseVector(vec5);
-                                                    IOUtils.postNotification(AppState.getString(StateKeys.STR_EXIT_CONFIRM));
-                                                    action = ScreenId.CONTACT_LIST;
-                                                } else {
-                                                    Object objElementAt2 = vec5.elementAt(0);
-                                                    if (objElementAt2 instanceof String) {
-                                                        Object[] objArr2 = {(String) objElementAt2, StringUtils.concatKey(5510023, Conversation.percentEncode((String) vec5.lastElement())), null};
-                                                        new AsyncTask(26, objArr2);
-                                                        vec5.setElementAt(objArr2, 0);
-                                                    } else {
-                                                        Object obj5 = ((Object[]) objElementAt2)[2];
-                                                        if (obj5 != null) {
-                                                            if (obj5 instanceof Throwable) {
-                                                                IOUtils.postNotification(StringUtils.concatKeyObj(1030, obj5));
-                                                            } else {
-                                                                Utils.dequeue(vec5);
-                                                            }
-                                                        }
-                                                    }
-                                                    action = 0;
-                                                }
-                                                nextState = action;
-                                                break;
-                                            case ScreenId.ASYNC_TASK:
-                                                action = AppState.getString(StateKeys.SLOT_INIT_PARAMS) == null ? 0 : ScreenId.BLOG_POST;
-                                                nextState = action;
-                                                break;
+                                        ScreenHandler handler = ScreenHandlerRegistry.getHandler(ScreenManager.getCurrentScreen().screenId);
+                                        if (handler != null) {
+                                            nextState = handler.onIdleProcess(currentScreen, menuItem, obj, str);
                                         }
                                         if (nextState == 12) {
                                             ScreenBuilder.onScreenClosed();
@@ -2628,7 +1544,7 @@ public final class AppController {
                                                                 Conversation.decrementZoom();
                                                                 z4 = true;
                                                             } else if (i13 == 48) {
-                                                                Conversation.createStatusReport(false, (MrimAccount) null);
+                                                                Telemetry.sendReport(false, null);
                                                                 ScreenBuilder.openScreen(ScreenId.MAP);
                                                                 z4 = true;
                                                             } else if (i13 == 49) {
@@ -2674,7 +1590,7 @@ public final class AppController {
                                                             } else if (i14 == 1) {
                                                                 z4 = true;
                                                             } else if (i14 == 6) {
-                                                                ConnectionThread.handleMapSwitch(screen3);
+                                                                MapController.handleMapSwitch(screen3);
                                                                 z4 = true;
                                                             }
                                                         }
@@ -2763,7 +1679,7 @@ public final class AppController {
                                                             if (z7 && screen4.screenId == ScreenId.MAP) {
                                                                 int i24 = i23 - screen4.contentTop;
                                                                 if (i24 > 0) {
-                                                                    ConnectionThread.toggleMapControls(screen4);
+                                                                    MapController.toggleMapControls(screen4);
                                                                     MapRenderer.dragActive = false;
                                                                     MapRenderer.rippleTimestamp = System.currentTimeMillis();
                                                                     MapRenderer.rippleX = i22;
@@ -2851,7 +1767,7 @@ public final class AppController {
                                                     screen5.marginLeft = i29;
                                                     screen5.marginTop = i30;
                                                     if (screen5.screenId == ScreenId.MAP) {
-                                                        ConnectionThread.toggleMapControls(screen5);
+                                                        MapController.toggleMapControls(screen5);
                                                         MapRenderer.dragActive = true;
                                                         MapRenderer.rippleTimestamp = 0L;
                                                         int stateInt7 = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
@@ -2891,7 +1807,7 @@ public final class AppController {
                                                     screen7.touchConsumed = false;
                                                     if (screen7.screenId == ScreenId.MAP) {
                                                         int i42 = i41 - screen7.contentTop;
-                                                        ConnectionThread.toggleMapControls(screen7);
+                                                        MapController.toggleMapControls(screen7);
                                                         MapRenderer.onDrag(i40, i42);
                                                     }
                                                 }
@@ -2968,7 +1884,7 @@ public final class AppController {
                                         MenuItem eventItem = ((MenuItemEvent) event).item;
                                         if (eventItem.id == 2) {
                                             if (i44 == 147 && AppState.setBool(StateKeys.FLAG_CAPTCHA_SHOWN, ((Boolean) eventItem.data).booleanValue())) {
-                                                NetworkUtils.processScreenForm();
+                                                ScreenManager.processScreenForm();
                                                 AppState.setFromPool(StateKeys.SLOT_SCREEN_DESCRIPTION, StateKeys.SLOT_SCREEN_VALUE);
                                                 finishScreenBuild();
                                             }
@@ -3120,465 +2036,20 @@ public final class AppController {
             Object obj = menuItem2 == null ? null : menuItem2.data;
             Object obj2 = headerItem == null ? null : headerItem.data;
             int actionResult = 0;
-            switch (ScreenManager.getCurrentScreen().screenId) {
-                case ScreenId.ACCOUNT_LIST:
-                    actionResult = handleMapMenuOption(selectedOption);
-                    break;
-                case ScreenId.SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.STATUS_DIALOG:
-                    actionResult = IOUtils.handleStatusChange(selectedOption);
-                    break;
-                case ScreenId.CONTACT_LIST:
-                    actionResult = ContactListManager.onContactSelected(title, obj);
-                    break;
-                case ScreenId.ACCOUNTS_MENU:
-                    actionResult = handleChatSettingsOption(selectedOption);
-                    break;
-                case ScreenId.MAP:
-                    if (!AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
-                        ConnectionThread.toggleMapControls(screen);
-                        i2 = -1;
-                    } else if (AppState.getBool(StateKeys.FLAG_MAP_LOADING)) {
-                        String lonStr = IOUtils.pixelToLongitude(MapRenderer.currentLon);
-                        String latStr = IOUtils.pixelToLatitude(MapRenderer.currentLat);
-                        AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
-                        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
-                        i2 = 0;
-                    } else {
-                        i2 = ScreenId.MAP_CONTEXT_MENU;
-                    }
-                    actionResult = i2;
-                    break;
-                case ScreenId.MAP_MENU:
-                    actionResult = 0;
-                    break;
-                case ScreenId.SETTINGS_MENU:
-                    actionResult = handleSettingsOption(selectedOption);
-                    break;
-                case ScreenId.ABOUT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.BLOCK_CONFIRM:
-                    actionResult = ScreenId.DELETE_CONFIRM;
-                    break;
-                case ScreenId.UNBLOCK_CONFIRM:
-                    actionResult = handleLeftKey();
-                    break;
-                case ScreenId.CONFIRM_EXIT:
-                    actionResult = -1;
-                    break;
-                case ScreenId.TRAFFIC_COST:
-                    actionResult = 0;
-                    break;
-                case ScreenId.ACCOUNT_SWITCHER:
-                    actionResult = handleMenuAction(title, obj);
-                    break;
-                case ScreenId.REGISTRATION:
-                    actionResult = 0;
-                    break;
-                case ScreenId.EMOTICON_DIALOG:
-                    actionResult = handleAccountOption(selectedOption);
-                    break;
-                case ScreenId.UNUSED_18:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CONTACT_EDITOR:
-                    actionResult = 0;
-                    break;
-                case ScreenId.GPS_SETTINGS:
-                    actionResult = handleProfileAction(selectedOption);
-                    break;
-                case ScreenId.ADD_CONTACT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.ADD_MRIM_CONTACT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_23:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_24:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MULTI_ACCOUNT_LIST:
-                    actionResult = handleInputAction(selectedOption, obj);
-                    break;
-                case ScreenId.THEME_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.NOTIFICATION_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.SOUND_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MULTI_ACCOUNT_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CONTACT_GROUP_MENU:
-                    actionResult = IOUtils.handleContactGroupAction(title, selectedOption);
-                    break;
+            ScreenHandler handler = ScreenHandlerRegistry.getHandler(ScreenManager.getCurrentScreen().screenId);
+            if (handler != null) {
+                actionResult = handler.onItemSelected(screen, menuItem2, title, selectedOption, obj, obj2);
+            } else switch (ScreenManager.getCurrentScreen().screenId) {
                 case ScreenId.UNUSED_32:
                     actionResult = ResourceManager.handleDropdownSelect(title, menuItem2);
                     break;
-                case ScreenId.PRIVACY_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.TRAFFIC_STATS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CONNECTION_SETTINGS:
-                    actionResult = handleConnectionOption(selectedOption);
-                    break;
-                case ScreenId.MAIL_ACCOUNT_LIST:
-                    actionResult = ResourceManager.selectMailAccount(obj);
-                    break;
-                case ScreenId.CHAT_ROOMS:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CHAT_ROOM_INIT:
-                    AppState.setInt(StateKeys.INT_CHATROOM_ID, ((ChatRoom) obj).id);
-                    actionResult = 0;
-                    break;
-                case ScreenId.ACCOUNT_CHECKBOX_LIST:
-                    actionResult = handleAction(obj);
-                    break;
-                case ScreenId.CLEAR_SEARCH:
-                    if (obj2 != null) {
-                        Object[] objArr = (Object[]) obj2;
-                        if (((Integer) objArr[0]).intValue() == 0) {
-                            MapPoint mapPoint = new MapPoint((String) objArr[1]);
-                            mapPoint.height = 2;
-                            ConnectionThread.navigateToPoint(mapPoint, false);
-                            AppState.setInt(StateKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
-                            nextState = ScreenId.MAP;
-                        } else {
-                            String str = (String) objArr[1];
-                            String str2 = (String) objArr[2];
-                            long jLongValue = ((Long) objArr[3]).longValue();
-                            clearPreviewState();
-                            AppState.setInt(StateKeys.INT_GROUP_OPERATION_RESULT, 0);
-                            AppState.setObject(StateKeys.SLOT_DEVICE_ID, (Object) str);
-                            AppState.setFromBuffer(StateKeys.SLOT_SCREEN_TITLE, NetworkUtils.newStringBuffer().append(str2).append(':'));
-                            AppState.setLong(StateKeys.TIMESTAMP_SELECTED_MSG, jLongValue);
-                            nextState = ScreenId.MESSAGE_INPUT;
-                        }
-                    } else {
-                        AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
-                        Contact currentContact = AppState.getCurrentContact();
-                        nextState = !currentContact.account.isConnected() ? NotificationHelper.showError(299) : currentContact.isOffline() ? ResourceManager.clearSmsFields() : 63;
-                    }
-                    actionResult = nextState;
-                    break;
-                case ScreenId.CHAT_ROOM_MESSAGES:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CHAT_ROOM_INVITE:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CHAT_ROOM_VIEW:
-                    AppState.setInt(StateKeys.INT_SCROLL_OFFSET, screen.scrollOffset);
-                    AppState.setObject(StateKeys.SLOT_MAP_POINT_2, (Object) title);
-                    Message msg = (Message) obj;
-                    if (msg == null) {
-                        i = -1;
-                    } else {
-                        AppState.setObject(StateKeys.SLOT_MESSAGE_ID, (Object) msg.from);
-                        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
-                        if (StringUtils.matchesKey(894, chatRoom.name) || StringUtils.matchesKey(899, chatRoom.name)) {
-                            XmppMailRuProtocol.setMailAction(54, 3);
-                        } else {
-                            XmppMailRuProtocol.setMailAction(52, 0);
-                        }
-                        i = 0;
-                    }
-                    actionResult = i;
-                    break;
-                case ScreenId.SUBMIT_REGISTRATION:
-                    actionResult = -1;
-                    break;
                 case ScreenId.UNUSED_45:
                     actionResult = -1;
-                    break;
-                case ScreenId.UNUSED_46:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CONTACT_GROUPS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MESSAGE_DETAIL:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CHAT_ROOM_CONFIG:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CHAT_VIEW_MODE:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CHAT_ROOM_CONTEXT:
-                    ResourceManager.handleChatRoomAction(title);
-                case ScreenId.MESSAGE_PREVIEW:
-                    actionResult = 0;
-                    break;
-                case ScreenId.COMPOSE_RECIPIENTS:
-                    actionResult = IOUtils.handleMailForwardAction(title);
-                    break;
-                case ScreenId.COMPOSE_MESSAGE:
-                    actionResult = 0;
-                    break;
-                case ScreenId.DELETE_CONFIRM:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CONTACT_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.FIRST_RUN:
-                    actionResult = -1;
-                    break;
-                case ScreenId.GROUP_SELECTOR:
-                    actionResult = handleGroupSelection(selectedOption);
-                    break;
-                case ScreenId.VERSION_CHECK:
-                    actionResult = ResourceManager.applyVersionLabel();
-                    break;
-                case ScreenId.INPUT_DIALOG:
-                    actionResult = processInputText(title);
-                    break;
-                case ScreenId.CHAT_ROOM_ALERT:
-                    actionResult = ScreenId.CHAT_ROOM_INVITE;
-                    break;
-                case ScreenId.MAIL_MENU:
-                    actionResult = IOUtils.handleMailMenuAction(title, selectedOption);
-                    break;
-                case ScreenId.STATUS_INPUT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.ACCOUNT_SWITCH_OPTIONS:
-                    actionResult = handleAccountSwitchOption(selectedOption);
-                    break;
-                case ScreenId.PHONE_GROUPS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.ADD_CONTACT_INFO:
-                    actionResult = 0;
-                    break;
-                case ScreenId.SOFTKEY_MENU:
-                    actionResult = handleSoftKeyAction(title);
-                    break;
-                case ScreenId.SEARCH_RESULTS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CREATE_GROUP:
-                    actionResult = 0;
-                    break;
-                case ScreenId.RENAME_GROUP:
-                    actionResult = 0;
-                    break;
-                case ScreenId.DELETE_ENTITY:
-                    actionResult = ResourceManager.deleteSelectedEntity();
-                    break;
-                case ScreenId.BATCH_DELETE:
-                    actionResult = -1;
-                    break;
-                case ScreenId.SEARCH_RESULT_LIST:
-                    AppState.pool[StateKeys.SLOT_CONTACT_INFO] = obj;
-                    actionResult = 0;
                     break;
                 case ScreenId.UNUSED_74:
                     actionResult = -1;
                     break;
                 case ScreenId.UNUSED_75:
-                    actionResult = -1;
-                    break;
-                case ScreenId.XMPP_LOGIN:
-                    actionResult = 0;
-                    break;
-                case ScreenId.ACCOUNT_DELETE_CONFIRM:
-                    actionResult = handleInviteResult();
-                    break;
-                case ScreenId.SHARE_MEDIA:
-                    actionResult = -1;
-                    break;
-                case ScreenId.SHARE_ALERT:
-                    ScreenBuilder.onScreenClosed();
-                    ScreenBuilder.onScreenClosed();
-                    actionResult = 0;
-                    break;
-                case ScreenId.NOTIFICATION_OPTIONS:
-                    actionResult = handleNotificationOption(selectedOption);
-                    break;
-                case ScreenId.SEND_MAIL:
-                    actionResult = -1;
-                    break;
-                case ScreenId.REPLY_MAIL:
-                    actionResult = -1;
-                    break;
-                case ScreenId.PRIVACY_MODE:
-                    actionResult = handleHashKey();
-                    break;
-                case ScreenId.STATUS_PREVIEW:
-                    actionResult = ResourceManager.handleMessageInputAction(title, selectedOption);
-                    break;
-                case ScreenId.CONTACT_DELETE:
-                    actionResult = -1;
-                    break;
-                case ScreenId.GROUP_MOVE:
-                    actionResult = handleSearchAction(obj);
-                    break;
-                case ScreenId.CHAT_STATUS:
-                    actionResult = ResourceManager.handleChatInputAction(title);
-                    break;
-                case ScreenId.THEME_OPTIONS:
-                    actionResult = handleThemeOption(selectedOption);
-                    break;
-                case ScreenId.TOS_SCREEN:
-                    actionResult = -1;
-                    break;
-                case ScreenId.EVENT_QUEUE:
-                    actionResult = handleEventObject(obj);
-                    break;
-                case ScreenId.VIEW_MODE:
-                    actionResult = getThemeBackground(selectedOption);
-                    break;
-                case ScreenId.CONTACT_MENU:
-                    actionResult = IOUtils.handleContactMenuAction(title, selectedOption);
-                    break;
-                case ScreenId.EMOTICON_PICKER:
-                    actionResult = handleSoundOption(selectedOption);
-                    break;
-                case ScreenId.PHONE_INPUT:
-                    actionResult = processPhoneInput(title);
-                    break;
-                case ScreenId.SERVER_ADDRESS:
-                    actionResult = validateServerAddress(title);
-                    break;
-                case ScreenId.CONTACT_INFO_VIEW:
-                    actionResult = 0;
-                    break;
-                case ScreenId.REGION_SELECTOR:
-                    actionResult = handleSearchResultAction(obj);
-                    break;
-                case ScreenId.PHONE_INPUT_ALT:
-                    actionResult = processPhoneInput(title);
-                    break;
-                case ScreenId.URL_OPEN:
-                    actionResult = openUrl(title);
-                    break;
-                case ScreenId.MAP_POINTS:
-                    actionResult = IOUtils.handleMapPointAction(obj);
-                    break;
-                case ScreenId.CONVERSATION:
-                    actionResult = handleConversationAction(obj);
-                    break;
-                case ScreenId.USER_PROFILE:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CONTACT_INFO_DETAIL:
-                    actionResult = 0;
-                    break;
-                case ScreenId.COLOR_PICKER:
-                    actionResult = getThemeColor(selectedOption);
-                    break;
-                case ScreenId.XMPP_LOGIN_ALT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CAPTCHA:
-                    actionResult = 0;
-                    break;
-                case ScreenId.PROFILE_LOAD:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CONTACT_LIST_KEY:
-                    actionResult = handleContactListKey();
-                    break;
-                case ScreenId.VERSION_SELECT:
-                    actionResult = ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(selectedOption);
-                    break;
-                case ScreenId.MAP_TOOLTIP:
-                    actionResult = 0;
-                    break;
-                case ScreenId.PEOPLE_NEARBY:
-                    actionResult = handleMapSearchAction(obj);
-                    break;
-                case ScreenId.CLEAR_NOTIFICATIONS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MAP_CONTEXT_MENU:
-                    actionResult = XmppMailRuProtocol.handleMapAction(selectedOption);
-                    break;
-                case ScreenId.SAVE_LOCATION:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MESSAGE_INPUT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MAP_ROUTE:
-                    actionResult = handleMapResultAction(obj);
-                    break;
-                case ScreenId.MAP_STATUS:
-                    actionResult = processLoginField(title);
-                    break;
-                case ScreenId.SEND_TO_CONTACT:
-                    actionResult = handleFileAction(obj);
-                    break;
-                case ScreenId.CHAT_ROOM_OPTIONS:
-                    actionResult = handleChatRoomOption(selectedOption);
-                    break;
-                case ScreenId.MAP_ROUTE_SELECT:
-                    actionResult = handleIncomingCall(obj);
-                    break;
-                case ScreenId.CHAT_LIST_OPTIONS:
-                    actionResult = handleChatListOption(selectedOption);
-                    break;
-                case ScreenId.PRESENCE_ACTION:
-                    actionResult = handlePresenceAction();
-                    break;
-                case ScreenId.MESSAGE_SUMMARY:
-                    actionResult = handleLocationAction(obj);
-                    break;
-                case ScreenId.EMPTY_SCREEN:
-                    actionResult = 0;
-                    break;
-                case ScreenId.BLOCK_CONTACT_LIST:
-                    actionResult = -1;
-                    break;
-                case ScreenId.UNBLOCK_CONTACT_LIST:
-                    actionResult = -1;
-                    break;
-                case ScreenId.DELETE_CONTACT_LIST:
-                    actionResult = -1;
-                    break;
-                case ScreenId.DELETE_MESSAGES:
-                    AppState.getCurrentContact().initMessageBuffer();
-                    actionResult = ScreenId.CONTACT_LIST;
-                    break;
-                case ScreenId.MMP_ACCOUNT_SELECT:
-                    actionResult = 0;
-                    break;
-                case ScreenId.VCARD_ACTIONS:
-                    actionResult = handleScreenAction(selectedOption);
-                    break;
-                case ScreenId.PEOPLE_SEARCH:
-                    actionResult = processSearchQuery(title);
-                    break;
-                case ScreenId.KEY_MAPPING:
-                    actionResult = mapKeyToAction(selectedOption);
-                    break;
-                case ScreenId.UNUSED_133:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_134:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_135:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_136:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MAIN_SCREEN:
                     actionResult = -1;
                     break;
                 case ScreenId.UNUSED_138:
@@ -3587,128 +2058,7 @@ public final class AppController {
                 case ScreenId.UNUSED_139:
                     actionResult = ScreenId.MMP_ACCOUNT_SELECT;
                     break;
-                case ScreenId.FORM_SETTINGS:
-                    actionResult = 0;
-                    break;
                 case ScreenId.UNUSED_141:
-                    actionResult = -1;
-                    break;
-                case ScreenId.GROUP_MEMBERS:
-                    AppState.pool[StateKeys.OBJ_PHOTO_CACHE_1] = obj;
-                    actionResult = obj != null ? 0 : -1;
-                    break;
-                case ScreenId.CREATE_CHAT_ROOM:
-                    actionResult = 0;
-                    break;
-                case ScreenId.EDIT_MEMBERS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CONTACT_DELETE_MRIM:
-                    actionResult = -1;
-                    break;
-                case ScreenId.GROUP_MANAGEMENT:
-                    actionResult = handleGroupRename(selectedOption);
-                    break;
-                case ScreenId.BLOG_POST:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_148:
-                    actionResult = 0;
-                    break;
-                case ScreenId.UNUSED_149:
-                    actionResult = 0;
-                    break;
-                case ScreenId.CONTACT_MODIFY:
-                    actionResult = -1;
-                    break;
-                case ScreenId.EXT_SETTINGS:
-                    actionResult = handleExtSettingsOption(selectedOption);
-                    break;
-                case ScreenId.MAP_VIEW_SETTINGS:
-                    actionResult = handleContactOption(selectedOption);
-                    break;
-                case ScreenId.WIFI_NETWORKS:
-                    actionResult = ResourceManager.setSelectedObject(obj);
-                    break;
-                case ScreenId.SHARE_LOCATION:
-                    actionResult = 0;
-                    break;
-                case ScreenId.VISIBLE_CONTACTS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.PHOTO_SELECTOR:
-                    actionResult = IOUtils.applyPhotoSelection();
-                    break;
-                case ScreenId.PHOTO_VIEW:
-                    actionResult = 0;
-                    break;
-                case ScreenId.MAP_SEARCH:
-                    actionResult = handleViewOption(selectedOption);
-                    break;
-                case ScreenId.WIFI_ACCOUNT_LIST:
-                    actionResult = handleItemAction(obj);
-                    break;
-                case ScreenId.PROFILE_EDIT:
-                    actionResult = ResourceManager.syncAndReturn();
-                    break;
-                case ScreenId.SEND_CONFIRM:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CHAT_DETAIL:
-                    actionResult = handleChatDetailOption(selectedOption);
-                    break;
-                case ScreenId.NOTIFY_MESSAGE:
-                    actionResult = handleSendKey();
-                    break;
-                case ScreenId.REG_FORM:
-                    actionResult = 0;
-                    break;
-                case ScreenId.ASYNC_CONFIRM:
-                    actionResult = -1;
-                    break;
-                case ScreenId.CHAT_OPTIONS:
-                    actionResult = handleChatOption(selectedOption);
-                    break;
-                case ScreenId.MAILBOX_OPTIONS:
-                    actionResult = handleMailboxOption(selectedOption);
-                    break;
-                case ScreenId.INVITE_TOS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.SAVED_LOCATIONS:
-                    actionResult = ResourceManager.applyLocationProfile(obj);
-                    break;
-                case ScreenId.FORM_LIST:
-                    actionResult = handleFormSubmit(obj);
-                    break;
-                case ScreenId.UPDATE_ALERT:
-                    actionResult = handleRightKey();
-                    break;
-                case ScreenId.MRIM_ACCOUNT_SELECT:
-                    actionResult = handleObjectAction(obj);
-                    break;
-                case ScreenId.INVITE_ALERT:
-                    actionResult = handleInviteAction();
-                    break;
-                case ScreenId.MAP_OPTIONS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.NEARBY_SETTINGS:
-                    actionResult = 0;
-                    break;
-                case ScreenId.PHONE_CONTACTS:
-                    actionResult = selectedOption == 1 ? showPeopleSearch() : selectedOption == 2 ? showPeopleNearby() : handleStarAction(obj);
-                    break;
-                case ScreenId.SEARCH_ENTRY:
-                    actionResult = ResourceManager.handleSearchResultAction(selectedOption);
-                    break;
-                case ScreenId.EDIT_SCREEN:
-                    actionResult = handleEditAction(selectedOption);
-                    break;
-                case ScreenId.SEND_DATA:
-                    actionResult = -1;
-                    break;
-                case ScreenId.ASYNC_TASK:
                     actionResult = -1;
                     break;
             }
@@ -3833,7 +2183,7 @@ public final class AppController {
             case 72:
             default:
                 mrimAccount.handleError(0);
-                NetworkUtils.checkCrashReport();
+                DiagnosticReporter.checkCrashReport();
                 break;
             case 68:
                 processMrimMailData(mrimAccount, 492);
@@ -3867,6 +2217,11 @@ public final class AppController {
         mrimAccount.syncProfile();
         AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
         return ScreenId.PROFILE_EDIT;
+    }
+
+    /* renamed from: f */
+    public static final int getIconOffset() {
+        return AppState.getBool(StateKeys.SETTING_FAST_CONNECTION) ? 10 : 55;
     }
 
 }

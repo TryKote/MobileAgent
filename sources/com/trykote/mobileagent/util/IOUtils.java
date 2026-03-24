@@ -75,7 +75,7 @@ public final class IOUtils {
         }
         if (StringUtils.matchesKey(841, str)) {
             if (!needsAuth) {
-                return ResourceManager.composeEmail(NetworkUtils.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
+                return ResourceManager.composeEmail(ObjectPool.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
             }
             XmppMailRuProtocol.setMailAction(54, 2);
             return 0;
@@ -173,7 +173,7 @@ public final class IOUtils {
         Vector vector = acct.groups;
         int count = Utils.vectorSize(vector);
         if (count > 0) {
-            StringBuffer sb = NetworkUtils.newStringBuffer();
+            StringBuffer sb = ObjectPool.newStringBuffer();
             for (int i = 0; i < count; i++) {
                 sb.append(((ContactGroup) vector.elementAt(i)).name).append((char) 0);
             }
@@ -229,11 +229,11 @@ public final class IOUtils {
                 ResourceManager.playNotificationSound(0);
             }
             if (showPopup && (AccountManager.getActiveScreenId() != 10 || !AppState.hasMemory())) {
-                StringBuffer sb = NetworkUtils.newStringBuffer();
+                StringBuffer sb = ObjectPool.newStringBuffer();
                 if (str2 != null && str != null) {
-                    postAccountNotification(account, NetworkUtils.bufToStringCached(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(StateKeys.STR_MAIL_PREFIX)).toString())));
+                    postAccountNotification(account, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(StateKeys.STR_MAIL_PREFIX)).toString())));
                 } else if (i > 0) {
-                    postAccountNotification(account, NetworkUtils.bufToStringCached(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').append(AppState.getString(StateKeys.STR_MAIL_PREFIX))));
+                    postAccountNotification(account, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').append(AppState.getString(StateKeys.STR_MAIL_PREFIX))));
                 }
             }
             if (showInList) {
@@ -254,7 +254,7 @@ public final class IOUtils {
         ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
         Screen screen = ScreenManager.createScreen(4527);
         screen.setHeader(234, chatRoom.getDisplayName());
-        Vector messages = NetworkUtils.newVector();
+        Vector messages = ObjectPool.newVector();
         Enumeration elements = chatRoom.messageIds.elements();
         while (elements.hasMoreElements()) {
             Hashtable hashtable = chatRoom.messages;
@@ -348,7 +348,7 @@ public final class IOUtils {
         boolean z;
         MrimAccount account = (MrimAccount) AppState.getAccount();
         photoUrlList = account.accountProfile.photoUrls;
-        Vector candidates = NetworkUtils.newVector();
+        Vector candidates = ObjectPool.newVector();
         Enumeration elements = account.contactMap.elements();
         while (elements.hasMoreElements()) {
             Contact contact = (Contact) elements.nextElement();
@@ -358,7 +358,7 @@ public final class IOUtils {
         }
         int size = candidates.size();
         Screen screen = ScreenManager.createScreen(4248);
-        contactIdList = NetworkUtils.newVector();
+        contactIdList = ObjectPool.newVector();
         for (int i = 0; i < size; i++) {
             MrimContact mrimContact = (MrimContact) candidates.elementAt(i);
             String identifier = mrimContact.getIdentifier();
@@ -387,7 +387,7 @@ public final class IOUtils {
     /* renamed from: e */
     public static final int applyPhotoSelection() {
         Vector vector = selectionScreen.menuItems;
-        Vector selected = NetworkUtils.newVector();
+        Vector selected = ObjectPool.newVector();
         int size = vector.size();
         for (int i = 0; i < size; i++) {
             if (((Boolean) ((MenuItem) vector.elementAt(i)).data).booleanValue()) {
@@ -424,7 +424,7 @@ public final class IOUtils {
         if (i == 6) {
             return handleMapPointAction(obj);
         }
-        NetworkUtils.processScreenForm();
+        ScreenManager.processScreenForm();
         String query = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SEARCH_QUERY));
         if (StringUtils.isEmpty(query)) {
             return NotificationHelper.showError(351);
@@ -470,7 +470,7 @@ public final class IOUtils {
             return ScreenId.MAP;
         }
         if (!AppState.getBool(StateKeys.FLAG_LOADING)) {
-            ConnectionThread.navigateToPoint((MapPoint) obj, true);
+            MapController.navigateToPoint((MapPoint) obj, true);
             return ScreenId.MAP;
         }
         MrimAccount account = (MrimAccount) AppState.getAccount();
@@ -538,32 +538,32 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final void postRenameError(Object[] objArr, int i) {
-        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: b */
     public static final void postAddGroupError(Object[] objArr, int i) {
-        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: c */
     public static final void postDeleteError(Object[] objArr, int i) {
-        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: b */
     public static final void postOperationError(int i) {
-        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_NETWORK_ERROR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_NETWORK_ERROR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     /* renamed from: a */
     public static final void postAccountError(Account acct, int i) {
-        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
     }
 
     /* renamed from: a */
     public static final void postAccountMessage(Account acct, String str) {
-        postNotification(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
     }
 
     /* renamed from: b */
@@ -597,7 +597,7 @@ public final class IOUtils {
         if (!StringUtils.matchesKey(840, str)) {
             if (StringUtils.matchesKey(841, str)) {
                 ScreenBuilder.onScreenClosed();
-                ResourceManager.composeEmail(NetworkUtils.newVector(), StringUtils.concat(strM584b3, subject), Utils.quoteText(message.body));
+                ResourceManager.composeEmail(ObjectPool.newVector(), StringUtils.concat(strM584b3, subject), Utils.quoteText(message.body));
                 return 0;
             }
             if (!StringUtils.matchesKey(845, str)) {
@@ -685,13 +685,13 @@ public final class IOUtils {
             menuItem.title = str;
             screen.addItem(menuItem);
         }
-        NetworkUtils.releaseVector(contacts);
+        ObjectPool.releaseVector(contacts);
         return screen;
     }
 
     /* renamed from: a */
     public static final Vector getCheckedItems(Screen screen, int i) {
-        Vector vectorM1213g = NetworkUtils.newVector();
+        Vector vectorM1213g = ObjectPool.newVector();
         Vector vector = screen.menuItems;
         int size = vector.size();
         while (true) {
@@ -738,7 +738,7 @@ public final class IOUtils {
         } else if (i == 6) {
             ListItem item = (ListItem) contact;
             item.deselect();
-            ConnectionThread.selectMapItem(item);
+            MapController.selectMapItem(item);
         }
         return i;
     }
@@ -750,7 +750,7 @@ public final class IOUtils {
 
     /* renamed from: a */
     private static final Object[] createErrorResult(int i, int i2, Object obj) {
-        return createHttpResult(i, NetworkUtils.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
+        return createHttpResult(i, ObjectPool.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
     }
 
     /* renamed from: a */
@@ -867,7 +867,7 @@ public final class IOUtils {
     /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
         AccountManager.markAccountHighlighted((MrimAccount) AppState.getAccount());
-        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = ConnectionThread.submitAsync(objArr);
+        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = ApiClient.submitAsync(objArr);
     }
 
     /* renamed from: e */
@@ -877,7 +877,7 @@ public final class IOUtils {
 
     /* renamed from: g */
     private static void wrapInVector(String str) {
-        Vector vectorM1213g = NetworkUtils.newVector();
+        Vector vectorM1213g = ObjectPool.newVector();
         vectorM1213g.addElement(str);
         setSelectedItems(vectorM1213g);
     }
@@ -885,7 +885,7 @@ public final class IOUtils {
     /* renamed from: k */
     public static final Object[] pollAsyncResult() {
         Object[] objArrM609l = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA);
-        if (objArrM609l != null && ConnectionThread.getAsyncResult(objArrM609l) != null) {
+        if (objArrM609l != null && ApiClient.getAsyncResult(objArrM609l) != null) {
             AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
         }
         return objArrM609l;
@@ -930,7 +930,7 @@ public final class IOUtils {
         }
         int iM586d = AppState.getInt(StateKeys.INT_SERVER_INDEX);
         if (iM586d != 0 && strM1215a.indexOf(64) < 0) {
-            strM1215a = NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(strM1215a).append(Utils.splitByNull(AppState.getString(StateKeys.STR_SERVER_LIST)).elementAt(iM586d)));
+            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(strM1215a).append(Utils.splitByNull(AppState.getString(StateKeys.STR_SERVER_LIST)).elementAt(iM586d)));
         }
         if (i == 2 && strM1215a.indexOf(64) < 0) {
             return NotificationHelper.showError(699);
@@ -1110,7 +1110,7 @@ public final class IOUtils {
         } else if (i == 6) {
             ListItem item = (ListItem) obj;
             item.deselect();
-            ConnectionThread.selectMapItem(item);
+            MapController.selectMapItem(item);
             AppController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
             AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
         }
@@ -1194,7 +1194,7 @@ public final class IOUtils {
         String strM584b = AppState.getString(StateKeys.STR_SOUND_TYPE_1);
         String strM584b2 = AppState.getString(StateKeys.STR_SOUND_TYPE_2);
         Hashtable hashtable2 = new Hashtable();
-        StringBuffer stringBufferM1217h = NetworkUtils.newStringBuffer();
+        StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
         int length = strM584b.length();
         while (true) {
             length--;
@@ -1234,9 +1234,9 @@ public final class IOUtils {
             }
             i++;
         }
-        NetworkUtils.releaseVector(vectorM512e);
-        NetworkUtils.releaseVector(vectorM512e2);
-        return NetworkUtils.bufToStringCached(stringBufferM1217h);
+        ObjectPool.releaseVector(vectorM512e);
+        ObjectPool.releaseVector(vectorM512e2);
+        return ObjectPool.toStringAndRelease(stringBufferM1217h);
     }
 
     /* renamed from: d */
@@ -1255,7 +1255,7 @@ public final class IOUtils {
                     } else {
                         setAuthResult(objArr, vectorM516c.elementAt(0));
                     }
-                    NetworkUtils.releaseVector(vectorM516c);
+                    ObjectPool.releaseVector(vectorM516c);
                 } else {
                     if (iM634a != 403) {
                         throw new Throwable(StringUtils.intern(Integer.toString(iM634a)));

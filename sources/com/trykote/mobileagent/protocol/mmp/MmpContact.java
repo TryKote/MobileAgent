@@ -309,7 +309,7 @@ public final class MmpContact extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer routeInfo = NetworkUtils.newStringBuffer().append(AppState.getString(StateKeys.STR_ROUTE_PREFIX));
+                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ROUTE_PREFIX));
                         int i7 = 952;
                         int i8 = totalRouteLength;
                         int i9 = 0;
@@ -318,7 +318,7 @@ public final class MmpContact extends Contact {
                             i8 /= 1000;
                             i7 = 952 + 1;
                         }
-                        StringBuffer distBuf = NetworkUtils.newStringBuffer();
+                        StringBuffer distBuf = ObjectPool.newStringBuffer();
                         distBuf.append(i8);
                         if (i9 != 0) {
                             distBuf.append('.');
@@ -329,16 +329,16 @@ public final class MmpContact extends Contact {
                             }
                             distBuf.append(trimmed);
                         }
-                        StringBuffer routeInfo2 = routeInfo.append(NetworkUtils.bufToStringCached(distBuf.append(AppState.getString(i7)))).append(AppState.getString(StateKeys.STR_DISTANCE_UNIT));
+                        StringBuffer routeInfo2 = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(AppState.getString(i7)))).append(AppState.getString(StateKeys.STR_DISTANCE_UNIT));
                         int i10 = totalRouteDuration;
-                        StringBuffer distBuf2 = NetworkUtils.newStringBuffer();
+                        StringBuffer distBuf2 = ObjectPool.newStringBuffer();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             distBuf2.append(i11);
                         } else {
                             distBuf2.append(i11 / 60).append(AppState.getString(StateKeys.STR_HOUR_SEPARATOR)).append(i11 % 60);
                         }
-                        r03[1] = routeInfo2.append(NetworkUtils.bufToStringCached(distBuf2.append(AppState.getString(StateKeys.STR_DISTANCE_SUFFIX)))).toString();
+                        r03[1] = routeInfo2.append(ObjectPool.toStringAndRelease(distBuf2.append(AppState.getString(StateKeys.STR_DISTANCE_SUFFIX)))).toString();
                         r03[2] = AppState.emptyStr;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
                         r03[1] = AppState.getString(StateKeys.STR_NO_ROUTE);

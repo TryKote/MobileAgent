@@ -63,7 +63,7 @@ public final class TabBar {
         RemoteLogger.log("TAB", "initialize: accounts=" + AppState.getVector(StateKeys.VEC_ACCOUNTS).size() + " multiAcct=" + AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT));
         currentIndex = 0;
         currentAccount = null;
-        AppState.pool[StateKeys.VEC_TAB_BARS] = NetworkUtils.newVector();
+        AppState.pool[StateKeys.VEC_TAB_BARS] = ObjectPool.newVector();
         Vector tabs = AppState.getVector(StateKeys.VEC_ACCOUNTS);
         int size = tabs.size();
         if (size == 0 || !AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT)) {
@@ -256,8 +256,8 @@ public final class TabBar {
         if (tabs == null) {
             return;
         }
-        NetworkUtils.releaseVector(AppState.getVector(StateKeys.VEC_TAB_ITEMS));
-        Vector layoutItems = NetworkUtils.newVector();
+        ObjectPool.releaseVector(AppState.getVector(StateKeys.VEC_TAB_ITEMS));
+        Vector layoutItems = ObjectPool.newVector();
         AppState.pool[StateKeys.VEC_TAB_ITEMS] = layoutItems;
         int size = tabs.size();
         int i2 = currentIndex;

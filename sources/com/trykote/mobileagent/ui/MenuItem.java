@@ -52,7 +52,7 @@ public final class MenuItem {
 
     public MenuItem(int i, String str) {
         this.id = i;
-        this.elements = NetworkUtils.newVector();
+        this.elements = ObjectPool.newVector();
         this.positions = new int[16];
         this.title = str;
         this.width = 200;
@@ -129,7 +129,7 @@ public final class MenuItem {
         while (true) {
             i2--;
             if (i2 < 0) {
-                NetworkUtils.releaseVector(vector);
+                ObjectPool.releaseVector(vector);
                 MenuItem menuItem = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(247);
                 menuItem.data = new Object[]{ResourceManager.integerOf(i), strArr};
                 return menuItem;
@@ -229,12 +229,12 @@ public final class MenuItem {
     /* renamed from: a */
     public final MenuItem addTextInternal(String str, int i, int i2, int i3) {
         if (str != null) {
-            Vector parts = wrapText(NetworkUtils.newVector(), str, 0, str.length(), i, i2, i3);
+            Vector parts = wrapText(ObjectPool.newVector(), str, 0, str.length(), i, i2, i3);
             int size = parts.size();
             for (int i4 = 0; i4 < size; i4++) {
                 addElement(parts.elementAt(i4));
             }
-            NetworkUtils.releaseVector(parts);
+            ObjectPool.releaseVector(parts);
         }
         return this;
     }

@@ -144,14 +144,14 @@ public final class Screen {
     /* renamed from: a */
     public final Screen initTabs() {
         if (AppState.getBool(StateKeys.SETTING_HEADER_VISIBLE)) {
-            this.tabItems = NetworkUtils.newVector();
+            this.tabItems = ObjectPool.newVector();
             recalcLayout();
         }
         return this;
     }
 
     private Screen(int i, int i2, int i3, int i4) {
-        this.menuItems = NetworkUtils.newVector();
+        this.menuItems = ObjectPool.newVector();
         this.layoutCache = new int[16];
         this.layoutMode = i;
         this.containerWidth = i3;
@@ -564,7 +564,7 @@ public final class Screen {
             g.fillRect(1, i40, ((AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 2) * account.msgCount) / 100, barHeight3);
             g.drawIcon(account.getIconId(), 3, i40 + ScreenManager.getCenterOffset());
             g.setColorFromPalette(0);
-            g.drawString(NetworkUtils.bufToStringCached(NetworkUtils.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, i39, 36);
+            g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, i39, 36);
             screenHeight3 -= barHeight2;
         }
     }
@@ -921,7 +921,7 @@ public final class Screen {
     /* renamed from: p */
     public final void scrollDown() {
         if (this.screenId == ScreenId.MAP) {
-            ConnectionThread.handleMapSwitch(this);
+            MapController.handleMapSwitch(this);
             return;
         }
         int size = this.menuItems.size();
@@ -1238,7 +1238,7 @@ public final class Screen {
 
     /* renamed from: q */
     public final void rebuildItems() {
-        Vector newItems = NetworkUtils.newVector();
+        Vector newItems = ObjectPool.newVector();
         int size = this.menuItems.size();
         while (true) {
             size--;
@@ -1255,7 +1255,7 @@ public final class Screen {
         while (true) {
             size2--;
             if (size2 < 0) {
-                NetworkUtils.releaseVector(newItems);
+                ObjectPool.releaseVector(newItems);
                 return;
             }
             addItem((MenuItem) newItems.elementAt(size2));
@@ -1292,7 +1292,7 @@ public final class Screen {
         int i7 = i3 - this.offsetX;
         int i8 = i4 - this.offsetY;
         if (this.screenId == ScreenId.MAP) {
-            ConnectionThread.toggleMapControls(this);
+            MapController.toggleMapControls(this);
             MapRenderer.onTap(i5, i6 - this.contentTop);
             return true;
         }
