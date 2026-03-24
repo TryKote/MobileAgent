@@ -16,7 +16,7 @@ public final class ProtocolFactory {
 
     /* renamed from: a */
     public static final ByteBuffer createMrimPacket(MrimAccount account, int command, ByteBuffer payload) {
-        ByteBuffer header = new ByteBuffer().writeIntLE(-559038737).writeIntLE(65557);
+        ByteBuffer header = new ByteBuffer().writeIntLE(MrimCommand.MAGIC).writeIntLE(MrimCommand.VERSION);
         int sequenceNum = account.state;
         account.state = sequenceNum + 1;
         return header.writeIntLE(sequenceNum).writeIntLE(command).writeIntLE(payload != null ? payload.length : 0).writeZeros(24).writeBuffer(payload);
@@ -46,29 +46,29 @@ public final class ProtocolFactory {
         if (authSlot != 0) {
             buffer.writeBytesAt(AppState.getBytes(StateKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, 16);
         }
-        return createMmpCommand(protocol, 516, buffer);
+        return createMmpCommand(protocol, MmpCommand.EXTENDED_AUTH, buffer);
     }
 
     /* renamed from: a */
     public static final ByteBuffer createMrimAuthPacket(MrimAccount account) {
-        return createMrimPacket(account, 4097, new ByteBuffer().writeIntLE(120));
+        return createMrimPacket(account, MrimCommand.CS_HELLO, new ByteBuffer().writeIntLE(120));
     }
 
     /* renamed from: b */
     public static final ByteBuffer createPasswordAuthCmd(MrimAccount account, String str) {
-        return createMrimPacket(account, 4128, new ByteBuffer().writeStringLatin1(str));
+        return createMrimPacket(account, MrimCommand.CS_AUTHORIZE, new ByteBuffer().writeStringLatin1(str));
     }
 
     /* renamed from: a */
     public static final ByteBuffer createChatRoomCmd(MrimAccount account, String str, int i) {
         ByteBuffer buffer = new ByteBuffer().writeIntLE(0);
         int atIndex = str.indexOf(64);
-        return account.createAndQueueCommand(new Object[]{createMrimPacket(account, 4137, buffer.writeStringLatin1(StringUtils.prefix(str, atIndex)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, atIndex + 1))), ResourceManager.integerOf(i)});
+        return account.createAndQueueCommand(new Object[]{createMrimPacket(account, MrimCommand.CS_WP_REQUEST, buffer.writeStringLatin1(StringUtils.prefix(str, atIndex)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, atIndex + 1))), ResourceManager.integerOf(i)});
     }
 
     /* renamed from: a */
     public static final ByteBuffer createMmpCommand(MmpProtocol protocol, int command, ByteBuffer buffer) {
-        ByteBuffer cmdBuffer = createPingPacket(protocol, 2).writeShortBE(command >> 8).writeShortBE(command & 255).writeShortBE(0);
+        ByteBuffer cmdBuffer = createPingPacket(protocol, MmpCommand.PACKET_COMMAND).writeShortBE(command >> 8).writeShortBE(command & 255).writeShortBE(0);
         int sequenceNum = protocol.messageSequence + 1;
         protocol.messageSequence = sequenceNum;
         return cmdBuffer.writeIntBE(sequenceNum).writeBuffer(buffer).updateLength();

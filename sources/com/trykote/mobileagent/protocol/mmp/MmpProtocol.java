@@ -18,6 +18,23 @@ import java.util.Vector;
 /* loaded from: MobileAgent_3.9.jar:d.class */
 public final class MmpProtocol extends Account {
 
+    // MMP progress states
+    public static final int PROGRESS_CHECK_RESOURCES = 2;
+    public static final int PROGRESS_WAIT_ACCOUNTS = 3;
+    public static final int PROGRESS_WAIT_AUTH = 5;
+    public static final int PROGRESS_CONNECTING = 6;
+    public static final int PROGRESS_HANDSHAKING = 7;
+    public static final int PROGRESS_PROCESSING = 8;
+
+    // MMP status codes
+    public static final int STATUS_OFFLINE = -1;
+    public static final int STATUS_ONLINE = 0;
+    public static final int STATUS_DND = 2;
+    public static final int STATUS_AWAY = 4;
+    public static final int STATUS_INVISIBLE = 16;
+    public static final int STATUS_FREE_CHAT = 32;
+    public static final int STATUS_AT_WORK = 256;
+
     /* renamed from: a */
     public int serverId;
 
@@ -56,8 +73,8 @@ public final class MmpProtocol extends Account {
 
     public MmpProtocol(int i, String str, String str2) {
         super(i, str, str2);
-        this.lastError = -1;
-        this.configFlags = 0;
+        this.lastError = STATUS_OFFLINE;
+        this.configFlags = STATUS_ONLINE;
         this.protocolVersion = 4;
         MmpContactGroup group = new MmpContactGroup(this, 0, AppState.getString(StateKeys.STR_GROUP_DEFAULT));
         group.isSpecial = true;
@@ -70,7 +87,7 @@ public final class MmpProtocol extends Account {
     @Override // p000.Account
     /* renamed from: a */
     public final int getType() {
-        return 1;
+        return TYPE_MMP;
     }
 
     @Override // p000.Account
@@ -163,30 +180,30 @@ public final class MmpProtocol extends Account {
         this.timeout = 0L;
         markAllRead();
         this.extras.removeAllElements();
-        return -1;
+        return STATUS_OFFLINE;
     }
 
     @Override // p000.Account
     /* renamed from: h */
     public final int getIconId() {
-        if (this.progress >= 1 && this.progress < 100) {
+        if (this.progress >= PROGRESS_STARTING && this.progress < PROGRESS_CONNECTED) {
             return 265;
         }
         int iconRes = getIconResourceId();
         switch (this.lastError) {
-            case -1:
+            case STATUS_OFFLINE:
                 return 255;
             case 1:
                 return 16318464 | iconRes;
-            case 2:
+            case STATUS_DND:
                 return 16449536 | iconRes;
-            case 4:
+            case STATUS_AWAY:
                 return 16580608 | iconRes;
-            case 16:
+            case STATUS_INVISIBLE:
                 return 16646144 | iconRes;
-            case 32:
+            case STATUS_FREE_CHAT:
                 return 16384000 | iconRes;
-            case 256:
+            case STATUS_AT_WORK:
                 return 16515072 | iconRes;
             case 8193:
                 return 17104896 | iconRes;
@@ -219,12 +236,12 @@ public final class MmpProtocol extends Account {
     /* renamed from: i */
     public final void loadData() throws Throwable {
         Contact authContact;
-        if (this.progress <= 0) {
+        if (this.progress <= PROGRESS_DISCONNECTED) {
             closeConnection();
-            this.lastError = -1;
+            this.lastError = STATUS_OFFLINE;
         }
         switch (this.progress) {
-            case 0:
+            case PROGRESS_DISCONNECTED:
                 this.dataBuffer.clear();
                 if (this.connectionData != null) {
                     this.connectionData[0] = null;
@@ -232,16 +249,16 @@ public final class MmpProtocol extends Account {
                 this.connectionData = null;
                 this.msgCount = 0;
                 break;
-            case 1:
+            case PROGRESS_STARTING:
                 AppController.needsRepaint = true;
                 this.msgCount = 10;
                 this.networkResourceMode = ResourceManager.checkForUpdates();
                 if (this.networkResourceMode != -1 || this.networkResourceMode == 1) {
-                    this.progress = 2;
+                    this.progress = PROGRESS_CHECK_RESOURCES;
                     break;
                 }
                 break;
-            case 2:
+            case PROGRESS_CHECK_RESOURCES:
                 if (this.networkResourceMode != 0) {
                     Vector accounts = AccountManager.getMrimAccountList();
                     int idx = Utils.vectorSize(accounts);
@@ -250,7 +267,7 @@ public final class MmpProtocol extends Account {
                         if (idx >= 0) {
                             Account account = (Account) accounts.elementAt(idx);
                             if (account.isConnected()) {
-                                this.progress = 3;
+                                this.progress = PROGRESS_WAIT_ACCOUNTS;
                             } else if (!account.isConnecting()) {
                                 accounts.removeElementAt(idx);
                             }
@@ -260,21 +277,21 @@ public final class MmpProtocol extends Account {
                     }
                     if (Utils.vectorSize(accounts) == 0) {
                         IOUtils.postNotification(AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
-                        this.progress = 0;
+                        this.progress = PROGRESS_DISCONNECTED;
                     }
                     ObjectPool.releaseVector(accounts);
                     break;
                 } else {
-                    this.progress = 3;
+                    this.progress = PROGRESS_WAIT_ACCOUNTS;
                     break;
                 }
-            case 3:
+            case PROGRESS_WAIT_ACCOUNTS:
                 new AsyncTask(31, new Object[]{this, ResourceManager.integerOf(0), this.login, getFormattedName()});
                 this.msgCount = 20;
-                this.progress = 5;
+                this.progress = PROGRESS_WAIT_AUTH;
                 AppController.needsRepaint = true;
                 break;
-            case 5:
+            case PROGRESS_WAIT_AUTH:
                 if (this.connectionData != null) {
                     this.msgCount = 70;
                     AppController.needsRepaint = true;
@@ -282,51 +299,51 @@ public final class MmpProtocol extends Account {
                     this.encryptionKey = Base64.decode(this.connectionData[2]).toByteArray();
                     this.serverId = Integer.parseInt(this.connectionData[0]);
                     this.connection = new ConnectionThread(this.connectionData[1]);
-                    this.progress = 6;
+                    this.progress = PROGRESS_CONNECTING;
                     this.connectionData = null;
                     break;
                 }
                 break;
-            case 6:
-                if (this.connection.getState() != 2) {
-                    if (this.connection.getState() <= 0) {
+            case PROGRESS_CONNECTING:
+                if (this.connection.getState() != ConnectionThread.STATE_CONNECTED) {
+                    if (this.connection.getState() <= ConnectionThread.STATE_CLOSED) {
                         closeConnection();
                         this.lastError = getDefaultError();
                         break;
                     }
                 } else {
-                    this.progress = 7;
+                    this.progress = PROGRESS_HANDSHAKING;
                     break;
                 }
                 break;
-            case 7:
+            case PROGRESS_HANDSHAKING:
                 this.connection.drainInput(this.dataBuffer);
                 ByteBuffer handshakePacket = this.dataBuffer.extractJPEG();
                 if (handshakePacket != null) {
                     AppController.needsRepaint = true;
                     this.msgCount = 85;
                     AccountManager.processAccountData((Account) this, handshakePacket);
-                    if (handshakePacket.peekByteAt(1) == 1) {
+                    if (handshakePacket.peekByteAt(1) == MmpCommand.PACKET_HANDSHAKE) {
                         long j = AppState.getBool(StateKeys.FLAG_WIFI_CONNECTION) ? 25000L : 60000L;
                         this.timeout = j;
                         this.deadline = System.currentTimeMillis() + j;
                         incrementSync();
                         byte[] key = this.encryptionKey;
-                        sendData(ProtocolFactory.createPingPacket(this, 1).writeIntBE(1).writeShortBE(6).writeShortBE(key.length).writeBytes(key).updateLength());
+                        sendData(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_HANDSHAKE).writeIntBE(1).writeShortBE(6).writeShortBE(key.length).writeBytes(key).updateLength());
                         this.encryptionKey = null;
                         sendData(ProtocolFactory.createAuthData(this));
-                        sendData(ProtocolFactory.createMmpCommand(this, 1026, new ByteBuffer().writeCompressed(1051079)));
-                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.integerOf(17)}));
+                        sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_PREFS, new ByteBuffer().writeCompressed(1051079)));
+                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.integerOf(17)}));
                         this.contactListIndex = 0;
-                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4868, (ByteBuffer) null), ResourceManager.integerOf(6)}));
+                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.GET_CONTACT_LIST, (ByteBuffer) null), ResourceManager.integerOf(6)}));
                         sendData(StringUtils.createContactInfoCmd(this, this.serverId));
-                        this.progress = 8;
+                        this.progress = PROGRESS_PROCESSING;
                         break;
                     }
                 }
                 break;
         }
-        if (this.progress < 8) {
+        if (this.progress < PROGRESS_PROCESSING) {
             return;
         }
         this.connection.drainInput(this.dataBuffer);
@@ -343,19 +360,19 @@ public final class MmpProtocol extends Account {
             ByteBuffer extractedPacket = this.dataBuffer.extractJPEG();
             ByteBuffer packet = extractedPacket;
             if (extractedPacket == null) {
-                if (this.lastError != -1 && this.connection != null && this.connection.getState() == 0) {
+                if (this.lastError != STATUS_OFFLINE && this.connection != null && this.connection.getState() == ConnectionThread.STATE_CLOSED) {
                     closeConnection();
                     this.lastError = getDefaultError();
                 }
                 if (this.timeout > 0 && isConnected() && AppController.isTimerExpired(this.deadline)) {
-                    trySendData(ProtocolFactory.createPingPacket(this, 5));
+                    trySendData(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_KEEPALIVE));
                     return;
                 }
                 return;
             }
             AccountManager.processAccountData((Account) this, packet);
             this.msgCount = 90;
-            if (packet.peekByteAt(1) == 2) {
+            if (packet.peekByteAt(1) == MmpCommand.PACKET_COMMAND) {
                 int commandId = (packet.peekByteAt(6) << 24) | (packet.peekByteAt(8) << 16) | (packet.peekByteAt(7) << 8) | packet.peekByteAt(9);
                 int seqNum = packet.readIntBEAt();
                 int flags = packet.peekShortBE(10);
@@ -366,7 +383,7 @@ public final class MmpProtocol extends Account {
                 }
                 packet = packet.compact();
                 switch (commandId) {
-                    case 271:
+                    case MmpCommand.AUTH_RESULT:
                         Vector vector = this.extras;
                         int size = vector.size();
                         while (true) {
@@ -381,7 +398,7 @@ public final class MmpProtocol extends Account {
                                 }
                             }
                         }
-                    case 287:
+                    case MmpCommand.AUTH_REQUEST:
                         try {
                             int authParam1 = packet.readIntBE();
                             int authParam2 = packet.readIntBE();
@@ -413,29 +430,29 @@ public final class MmpProtocol extends Account {
                         } catch (Throwable unused) {
                             break;
                         }
-                    case 779:
+                    case MmpCommand.CONTACT_ONLINE:
                         parseContactStatus(packet.readLenPrefixStr(), packet);
                         break;
-                    case 780:
+                    case MmpCommand.CONTACT_OFFLINE:
                         parseContactStatus(packet.readLenPrefixStr(), packet);
                         break;
-                    case 1025:
+                    case MmpCommand.ACK:
                         XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
                         break;
-                    case 1031:
+                    case MmpCommand.FILE_TRANSFER:
                         IOUtils.handleFileTransfer(this, packet);
                         break;
-                    case 1035:
+                    case MmpCommand.MSG_DELIVERED:
                         long timestamp = packet.readLong();
                         packet.readShortBE();
                         updateStatus(packet.readLenPrefixStr(), timestamp, 64);
                         break;
-                    case 1036:
+                    case MmpCommand.MSG_READ:
                         long offlineTimestamp = packet.readLong();
                         packet.readShortBE();
                         updateStatus(packet.readLenPrefixStr(), offlineTimestamp, 128);
                         break;
-                    case 1044:
+                    case MmpCommand.CONTACT_STATUS_CHANGE:
                         packet.skip(10);
                         String contactId = packet.readLenPrefixStr();
                         if (packet.readShortBE() != 0) {
@@ -445,27 +462,27 @@ public final class MmpProtocol extends Account {
                             markRead(contactId);
                             break;
                         }
-                    case 4870:
+                    case MmpCommand.CONTACT_LIST_RESPONSE:
                         if (this.contactListIndex == 0) {
                             removeAllContacts();
                         }
                         XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, flags);
                         break;
-                    case 4878:
+                    case MmpCommand.CONTACT_INFO_RESPONSE:
                         XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, 0);
                         break;
-                    case 4885:
+                    case MmpCommand.TYPING_NOTIFY:
                         Contact typingContact = getContact((Object) packet.readLenPrefixStr());
                         if (null != typingContact) {
                             typingContact.performAction();
                             break;
                         }
                         break;
-                    case 4889:
+                    case MmpCommand.MESSAGE_RECEIVED:
                         ResourceManager.playNotificationSound(3);
                         onMessage(packet.readLenPrefixStr(), 0L, packet.readVarLenStr());
                         break;
-                    case 4891:
+                    case MmpCommand.AUTH_RECEIVED:
                         String senderId = packet.readLenPrefixStr();
                         byte authFlag = packet.readByte();
                         onMessage(senderId, 0L, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_FILE_TRANSFER)).append(AppState.getString(authFlag == 1 ? 484 : 485)).append(packet.readVarLenStr())));
@@ -474,20 +491,20 @@ public final class MmpProtocol extends Account {
                             break;
                         }
                         break;
-                    case 4892:
+                    case MmpCommand.SYSTEM_MESSAGE:
                         onMessage(packet.readLenPrefixStr(), 0L, AppState.getString(StateKeys.STR_MMP_SYSTEM_MESSAGE));
                         break;
-                    case 5377:
+                    case MmpCommand.SPAM_REPORT_ACK:
                         IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
                         XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
                         break;
-                    case 5379:
+                    case MmpCommand.SEARCH_RESPONSE:
                         XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, flags);
                         break;
                 }
                 AppController.needsLayoutUpdate = true;
             } else {
-                if (packet.peekByteAt(1) == 4) {
+                if (packet.peekByteAt(1) == MmpCommand.PACKET_NOTIFICATION) {
                     AppController.handleMmpPacket(this, packet);
                     AppController.needsLayoutUpdate = true;
                 }
@@ -640,7 +657,7 @@ public final class MmpProtocol extends Account {
             } else {
                 headerBuffer.writeByte(1);
             }
-            command = ProtocolFactory.createMmpCommand(this, 1030, headerBuffer.writeShortBE(257).writeBufferShortLen(bodyBuffer).writeShortBE(6).writeShortBE(0));
+            command = ProtocolFactory.createMmpCommand(this, MmpCommand.SEND_MESSAGE, headerBuffer.writeShortBE(257).writeBufferShortLen(bodyBuffer).writeShortBE(6).writeShortBE(0));
         } else {
             if (i == 1) {
                 bodyBuffer.writeUTFNoLen(str);
@@ -650,7 +667,7 @@ public final class MmpProtocol extends Account {
             bodyBuffer.writeByte(0);
             int i3 = bodyBuffer.length;
             int i4 = i3 - (i == 1 ? 0 : 42);
-            command = ProtocolFactory.createMmpCommand(this, 1030, headerBuffer.writeShortBE(5).writeShortBE(i4 + 143).writeShortBE(0).writeLong(j).writeCompressed(906).writeShortBE(10).writeShortBE(2).writeShortBE(1).writeShortBE(15).writeShortBE(0).writeShortBE(10001).writeShortBE(i4 + 103).writeShortLE(27).writeShortLE(8).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortBE(0).writeIntLE(3).writeByte(0).writeShortBE(0).writeIntLE(14).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortLE(1).writeShortLE(getConnectionModeValue()).writeShortLE(1).writeShortLE(i3).writeBuffer(bodyBuffer).writeCompressed(i == 0 ? 526807 : 3279327).writeShortBE(3).writeShortBE(0));
+            command = ProtocolFactory.createMmpCommand(this, MmpCommand.SEND_MESSAGE, headerBuffer.writeShortBE(5).writeShortBE(i4 + 143).writeShortBE(0).writeLong(j).writeCompressed(906).writeShortBE(10).writeShortBE(2).writeShortBE(1).writeShortBE(15).writeShortBE(0).writeShortBE(10001).writeShortBE(i4 + 103).writeShortLE(27).writeShortLE(8).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortBE(0).writeIntLE(3).writeByte(0).writeShortBE(0).writeIntLE(14).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortLE(1).writeShortLE(getConnectionModeValue()).writeShortLE(1).writeShortLE(i3).writeBuffer(bodyBuffer).writeCompressed(i == 0 ? 526807 : 3279327).writeShortBE(3).writeShortBE(0));
         }
         return trySendData(command);
     }
@@ -664,12 +681,12 @@ public final class MmpProtocol extends Account {
         }
         MmpContact contact = (MmpContact) contactParam;
         String str = (String) params[0];
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4873, contact.encodeContactUpdate(3, str, contact.onlineSemaphore)), ResourceManager.integerOf(0), contact, str}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, contact.encodeContactUpdate(3, str, contact.onlineSemaphore)), ResourceManager.integerOf(0), contact, str}));
     }
 
     /* renamed from: b */
     public final int updateConnectionMode(int i) {
-        if (i == 256) {
+        if (i == STATUS_AT_WORK) {
             scheduleVersionUpdate(3);
         } else if (this.protocolVersion == 3) {
             scheduleVersionUpdate(4);
@@ -677,7 +694,7 @@ public final class MmpProtocol extends Account {
         this.configFlags = i;
         if (isConnected()) {
             trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
-            trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 286, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.integerOf(17)}));
+            trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.integerOf(17)}));
             return trySendData(ProtocolFactory.createAuthData(this));
         }
         if (isConnecting()) {
@@ -706,7 +723,7 @@ public final class MmpProtocol extends Account {
         }
         trySendData(ResourceManager.createGetContactsCmd(this));
         MmpContact contact = (MmpContact) contactParam;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4874, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(10), contact, groupParam, targetGroup}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(10), contact, groupParam, targetGroup}));
     }
 
     @Override // p000.Account
@@ -717,7 +734,7 @@ public final class MmpProtocol extends Account {
             return result;
         }
         MmpContactGroup group = (MmpContactGroup) groupParam;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4873, group.createUpdatePacket(str, -1, -1)), ResourceManager.integerOf(1), group, str}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, group.createUpdatePacket(str, -1, -1)), ResourceManager.integerOf(1), group, str}));
     }
 
     @Override // p000.Account
@@ -740,7 +757,7 @@ public final class MmpProtocol extends Account {
         }
         trySendData(ResourceManager.createGetContactsCmd(this));
         MmpContactGroup group = (MmpContactGroup) groupParam;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4874, group.createUpdatePacket(group.name, -1, -1)), ResourceManager.integerOf(2), group}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, group.createUpdatePacket(group.name, -1, -1)), ResourceManager.integerOf(2), group}));
     }
 
     @Override // p000.Account
@@ -764,7 +781,7 @@ public final class MmpProtocol extends Account {
         if (contact.canBlock()) {
             trySendData(IOUtils.blockContact(this, contact));
         }
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4874, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(5), contact}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(5), contact}));
     }
 
     @Override // p000.Account
@@ -774,7 +791,7 @@ public final class MmpProtocol extends Account {
         if (0 != result) {
             return result;
         }
-        trySendData(ProtocolFactory.createMmpCommand(this, 4884, new ByteBuffer().writeByteLenStr(str).writeIntLE(0)));
+        trySendData(ProtocolFactory.createMmpCommand(this, MmpCommand.AUTH_GRANT, new ByteBuffer().writeByteLenStr(str).writeIntLE(0)));
         MmpContact contact = (MmpContact) getContact((Object) str);
         if (null != contact && !contact.isOnline()) {
             return trySendData(IOUtils.createSendMessageCmd(this, contact, str3));
@@ -783,7 +800,7 @@ public final class MmpProtocol extends Account {
         MmpContactGroup group = (MmpContactGroup) groupParam;
         ByteBuffer wrapperBuffer = new ByteBuffer().writeShortString(str).writeShortBE(group.groupId);
         int uniqueId = generateUniqueGroupId();
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4872, wrapperBuffer.writeShortBE(uniqueId).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ResourceManager.integerOf(14), str, str2, group, ResourceManager.integerOf(uniqueId), str3}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, wrapperBuffer.writeShortBE(uniqueId).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ResourceManager.integerOf(14), str, str2, group, ResourceManager.integerOf(uniqueId), str3}));
     }
 
     /* renamed from: j */
@@ -898,7 +915,7 @@ public final class MmpProtocol extends Account {
         }
         ByteBuffer wrapperBuffer = new ByteBuffer().writeShortBE(1);
         int i = searchBuffer.length;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 5378, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(searchBuffer)), ResourceManager.integerOf(9)}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(searchBuffer)), ResourceManager.integerOf(9)}));
     }
 
     @Override // p000.Account
@@ -910,7 +927,7 @@ public final class MmpProtocol extends Account {
         ByteBuffer queryBuffer = new ByteBuffer().writeIntLE(this.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1375).writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.parseInt((Object) str));
         ByteBuffer wrapperBuffer = new ByteBuffer().writeShortBE(1);
         int i = queryBuffer.length;
-        trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 5378, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(queryBuffer)), ResourceManager.integerOf(21)}));
+        trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(queryBuffer)), ResourceManager.integerOf(21)}));
         return contact;
     }
 

@@ -1889,7 +1889,7 @@ public final class AppController {
                                                 finishScreenBuild();
                                             }
                                         } else if (i44 == 21) {
-                                            if (AppState.getAccount().getType() == 0) {
+                                            if (AppState.getAccount().getType() == Account.TYPE_MRIM) {
                                                 StringUtils.updateRegDropdowns(screen8, eventItem);
                                             }
                                         } else if (i44 == 164) {
@@ -1949,7 +1949,7 @@ public final class AppController {
                         } else {
                             Account acct2 = (Account) vec2.elementAt(size);
                             try {
-                                if (acct2.progress <= 0 || acct2.progress == 100) {
+                                if (acct2.progress <= Account.PROGRESS_DISCONNECTED || acct2.progress == Account.PROGRESS_CONNECTED) {
                                     Vector vec6 = AppState.getVector(StateKeys.VEC_POPUP_ITEMS);
                                     if (vec6.contains(acct2)) {
                                         Utils.removeFrom(vec6, acct2);

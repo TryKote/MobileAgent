@@ -151,25 +151,25 @@ public final class AccountManager {
                 Account account = null;
                 byte typeByte = buffer.readByte();
                 switch (typeByte & 7) {
-                    case 0:
+                    case Account.TYPE_MRIM:
                         MrimAccount mrimAccount = new MrimAccount(buffer);
                         account = mrimAccount;
                         accounts.addElement(mrimAccount);
                         RemoteLogger.log("ACCT", "loaded MRIM: " + mrimAccount.login);
                         break;
-                    case 1:
+                    case Account.TYPE_MMP:
                         MmpProtocol mmpProtocol = new MmpProtocol(buffer);
                         account = mmpProtocol;
                         accounts.addElement(mmpProtocol);
                         RemoteLogger.log("ACCT", "loaded MMP: " + mmpProtocol.login);
                         break;
-                    case 2:
+                    case Account.TYPE_XMPP:
                         XmppProtocol xmppProtocol = new XmppProtocol(buffer);
                         account = xmppProtocol;
                         accounts.addElement(xmppProtocol);
                         RemoteLogger.log("ACCT", "loaded XMPP: " + xmppProtocol.login);
                         break;
-                    case 3:
+                    case Account.TYPE_XMPP_MAILRU:
                         XmppMailRuProtocol xmppMailRu = new XmppMailRuProtocol(buffer);
                         account = xmppMailRu;
                         accounts.addElement(xmppMailRu);
@@ -277,13 +277,13 @@ public final class AccountManager {
             }
             newId++;
         }
-        if (i == 0) {
+        if (i == Account.TYPE_MRIM) {
             allAccounts.addElement(new MrimAccount(newId, str, str2));
-        } else if (i == 1) {
+        } else if (i == Account.TYPE_MMP) {
             allAccounts.addElement(new MmpProtocol(newId, str, str2));
-        } else if (i == 2) {
+        } else if (i == Account.TYPE_XMPP) {
             allAccounts.addElement(new XmppProtocol(newId, str, str2));
-        } else if (i == 3) {
+        } else if (i == Account.TYPE_XMPP_MAILRU) {
             allAccounts.addElement(new XmppMailRuProtocol(newId, str, str2));
         }
         RemoteLogger.log("ACCT", "validateCredentials OK, new account type=" + i + " login=" + str);

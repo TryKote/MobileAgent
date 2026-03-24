@@ -191,7 +191,7 @@ public final class Conversation implements ListItem {
                 MmpProtocol protocol2 = (MmpProtocol) objArr[0];
                 protocol2.lastError = protocol2.getDefaultError();
                 IOUtils.postAccountMessage(protocol2, th.toString());
-                protocol2.progress = 0;
+                protocol2.progress = Account.PROGRESS_DISCONNECTED;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
             }
@@ -640,7 +640,7 @@ public final class Conversation implements ListItem {
                     }
                 }
             }
-            account.progress = 100;
+            account.progress = Account.PROGRESS_CONNECTED;
             account.msgCount = 100;
             account.setConfiguration(account.configFlags);
             account.trySendData(ProtocolFactory.createMrimPacket(account, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));

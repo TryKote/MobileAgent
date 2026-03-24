@@ -198,7 +198,7 @@ public final class IOUtils {
         } else {
             AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_DEFAULT_GROUP_NAME);
         }
-        if (acctRef.getType() == 1) {
+        if (acctRef.getType() == Account.TYPE_MMP) {
             AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getString(60));
             AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getDisplayNameOrId());
             ScreenManager.showScreen(ScreenManager.createScreen(3920));
@@ -1121,7 +1121,7 @@ public final class IOUtils {
     public static final int handleStatusChange(int i) {
         Account acctM616i = AppState.getAccount();
         switch (acctM616i.getType()) {
-            case 0:
+            case Account.TYPE_MRIM:
                 MrimAccount account = (MrimAccount) acctM616i;
                 if (i == 6) {
                     return ScreenId.EMOTICON_DIALOG;
@@ -1138,7 +1138,7 @@ public final class IOUtils {
                     return NotificationHelper.showError(iM721d);
                 }
                 return ScreenId.CONTACT_LIST;
-            case 1:
+            case Account.TYPE_MMP:
                 MmpProtocol protocol = (MmpProtocol) acctM616i;
                 if (i == 13) {
                     return ScreenId.EMOTICON_DIALOG;

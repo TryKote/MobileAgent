@@ -11,6 +11,13 @@ import java.util.Vector;
 /* loaded from: MobileAgent_3.9.jar:j.class */
 public final class ConnectionThread {
 
+    // Connection state constants
+    public static final int STATE_ERROR = -1;
+    public static final int STATE_CLOSED = 0;
+    public static final int STATE_CONNECTING = 1;
+    public static final int STATE_CONNECTED = 2;
+    public static final int STATE_CLOSING = 3;
+
     /* renamed from: b */
     public Throwable exception;
 
@@ -27,7 +34,7 @@ public final class ConnectionThread {
     public final ByteBuffer outBuffer = new ByteBuffer();
 
     /* renamed from: c */
-    public int state = 1;
+    public int state = STATE_CONNECTING;
 
     public ConnectionThread(String str) {
         this.connUrl = str;
@@ -71,17 +78,17 @@ public final class ConnectionThread {
     /* renamed from: b */
     public final void process() {
         switch (this.state) {
-            case 1:
+            case STATE_CONNECTING:
                 try {
                     this.socket = SocketWrapper.open(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(StateKeys.SETTING_COMPRESSION_ENABLED));
-                    if (this.state == 1) {
-                        this.state = 2;
+                    if (this.state == STATE_CONNECTING) {
+                        this.state = STATE_CONNECTED;
                         RemoteLogger.log("CONN", "state 1->2 (socket opened)");
                     }
                     this.connUrl = null;
                     return;
                 } catch (Throwable th) {
-                    this.state = -1;
+                    this.state = STATE_ERROR;
                     this.exception = th;
                     RemoteLogger.log("CONN", "state 1 ERROR: " + th, th);
                     if (this.socket != null) {
@@ -89,16 +96,16 @@ public final class ConnectionThread {
                     }
                     return;
                 }
-            case 2:
+            case STATE_CONNECTED:
                 readFromSocket();
                 writeToSocket();
                 return;
-            case 3:
+            case STATE_CLOSING:
                 readFromSocket();
                 writeToSocket();
                 RemoteLogger.log("CONN", "state 3->0 (closing)");
                 this.socket.close();
-                this.state = 0;
+                this.state = STATE_CLOSED;
                 return;
             default:
                 Vector vectorM614m = AppState.getVector(StateKeys.SLOT_MEDIA_CONTROL);
@@ -118,7 +125,7 @@ public final class ConnectionThread {
     private final void readFromSocket() {
         int iM1190a;
         try {
-            if (this.state == 2) {
+            if (this.state == STATE_CONNECTED) {
                 ByteBuffer c0043n = this.inBuffer;
                 SocketWrapper sock = this.socket;
                 int iM1188c = sock.available();
@@ -139,7 +146,7 @@ public final class ConnectionThread {
                 }
             }
         } catch (Throwable th) {
-            this.state = -1;
+            this.state = STATE_ERROR;
             this.exception = th;
             RemoteLogger.log("CONN", "readFromSocket ERROR: " + th, th);
             this.socket.close();
@@ -149,7 +156,7 @@ public final class ConnectionThread {
     /* renamed from: p */
     private final void writeToSocket() {
         try {
-            if (this.state == 2) {
+            if (this.state == STATE_CONNECTED) {
                 ByteBuffer c0043n = this.outBuffer;
                 SocketWrapper sock = this.socket;
                 synchronized (c0043n) {
@@ -166,7 +173,7 @@ public final class ConnectionThread {
                 }
             }
         } catch (Throwable th) {
-            this.state = -1;
+            this.state = STATE_ERROR;
             this.exception = th;
             RemoteLogger.log("CONN", "writeToSocket ERROR: " + th, th);
             this.socket.close();

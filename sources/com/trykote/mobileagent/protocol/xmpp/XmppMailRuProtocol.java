@@ -39,7 +39,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     @Override // p000.XmppProtocol, p000.Account
     /* renamed from: a */
     public final int getType() {
-        return 3;
+        return TYPE_XMPP_MAILRU;
     }
 
     public XmppMailRuProtocol(ByteBuffer buf) {
@@ -88,7 +88,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: r */
     public static final void showLoginScreen() {
-        if (getAccountType() == 1) {
+        if (getAccountType() == TYPE_MMP) {
             Account account = AppState.getAccount();
             if (account != null && account.isConnecting()) {
                 NotificationHelper.showMessageById(300);
@@ -102,7 +102,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             ScreenManager.showScreen(ScreenManager.createScreen(2803));
             return;
         }
-        if (getAccountType() == 2) {
+        if (getAccountType() == TYPE_XMPP) {
             XmppProtocol xmppAccount = (XmppProtocol) AppState.getAccount();
             if (xmppAccount != null && xmppAccount.isConnecting()) {
                 NotificationHelper.showMessageById(300);
@@ -133,7 +133,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             ScreenManager.showScreen(ScreenManager.createScreen(3443));
             return;
         }
-        if (getAccountType() == 3) {
+        if (getAccountType() == TYPE_XMPP_MAILRU) {
             XmppMailRuProtocol mailRuAccount = (XmppMailRuProtocol) AppState.getAccount();
             if (mailRuAccount != null && mailRuAccount.isConnecting()) {
                 NotificationHelper.showMessageById(300);
@@ -180,22 +180,22 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* renamed from: s */
     public static final int performLogin() {
         ScreenManager.processScreenForm();
-        if (getAccountType() == 1) {
+        if (getAccountType() == TYPE_MMP) {
             Account account = AppState.getAccount();
             String login = getLoginLowerCase();
-            int errorCode = AccountManager.validateCredentials(1, account, login, Utils.defaultStr(AppState.getString(StateKeys.SLOT_PASSWORD)));
+            int errorCode = AccountManager.validateCredentials(TYPE_MMP, account, login, Utils.defaultStr(AppState.getString(StateKeys.SLOT_PASSWORD)));
             if (0 != errorCode) {
                 return NotificationHelper.showError(errorCode);
             }
-            AccountManager.setCurrentAccount(AccountManager.createAccount(1, login));
+            AccountManager.setCurrentAccount(AccountManager.createAccount(TYPE_MMP, login));
             return 0;
         }
-        if (getAccountType() == 2) {
-            return IOUtils.loginXmpp(2);
+        if (getAccountType() == TYPE_XMPP) {
+            return IOUtils.loginXmpp(TYPE_XMPP);
         }
-        if (getAccountType() == 3) {
+        if (getAccountType() == TYPE_XMPP_MAILRU) {
             AppState.setInt(StateKeys.INT_SERVER_INDEX, 0);
-            return IOUtils.loginXmpp(3);
+            return IOUtils.loginXmpp(TYPE_XMPP_MAILRU);
         }
         String password = Utils.defaultStr(AppState.getString(StateKeys.SLOT_PASSWORD));
         String login2 = getLoginLowerCase();
@@ -209,11 +209,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (!isValidUsername(fullLogin)) {
             return NotificationHelper.showError(559);
         }
-        int errorCode2 = AccountManager.validateCredentials(0, AppState.getAccount(), fullLogin, password);
+        int errorCode2 = AccountManager.validateCredentials(TYPE_MRIM, AppState.getAccount(), fullLogin, password);
         if (0 != errorCode2) {
             return NotificationHelper.showError(errorCode2);
         }
-        AccountManager.setCurrentAccount(AccountManager.createAccount(0, fullLogin));
+        AccountManager.setCurrentAccount(AccountManager.createAccount(TYPE_MRIM, fullLogin));
         return 0;
     }
 
@@ -606,7 +606,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     /* renamed from: a */
     public static final ByteBuffer sendContactListRequest(MmpProtocol protocol, int i) {
-        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4873, new ByteBuffer().writeIntLE(0).writeShortBE(i).writeShortBE(4).writeShortBE(5).writeShortBE(202).writeShortBE(1).writeByte(protocol.getPendingVersion())), ResourceManager.integerOf(20)});
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.MODIFY_CONTACT, new ByteBuffer().writeIntLE(0).writeShortBE(i).writeShortBE(4).writeShortBE(5).writeShortBE(202).writeShortBE(1).writeByte(protocol.getPendingVersion())), ResourceManager.integerOf(20)});
     }
 
     /* JADX DEBUG: Move duplicate insns, count: 1 to block B:30:0x00ce */
@@ -1469,13 +1469,13 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     size2--;
                     if (size2 < 0) {
                         if (z4) {
-                            protocol.sendData(ProtocolFactory.createMmpCommand(protocol, 4871, (ByteBuffer) null));
+                            protocol.sendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.CONTACT_LIST_ACK, (ByteBuffer) null));
                             int i4 = protocol.groupSequenceId;
                             if (i4 != 0) {
                                 protocol.sendData(sendContactListRequest(protocol, i4));
                             }
-                            protocol.sendData(ProtocolFactory.createMmpCommand(protocol, 258, new ByteBuffer().writeCompressed(5245205)));
-                            protocol.sendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(protocol.serverId).writeShortLE(60).writeShortBE(0)), ResourceManager.integerOf(8)}));
+                            protocol.sendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCompressed(5245205)));
+                            protocol.sendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(protocol.serverId).writeShortLE(60).writeShortBE(0)), ResourceManager.integerOf(8)}));
                             Enumeration elements = protocol.contactMap.elements();
                             while (elements.hasMoreElements()) {
                                 Hashtable hashtable = protocol.contactsByIdMap;
@@ -1499,8 +1499,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             if (protocol.groups.size() == 0) {
                                 protocol.sendData(ResourceManager.sendAddGroupCommand(protocol, AppState.getString(StateKeys.STR_RES_MENU_ITEM_2)));
                             }
-                            protocol.progress = 100;
-                            protocol.msgCount = 100;
+                            protocol.progress = PROGRESS_CONNECTED;
+                            protocol.msgCount = PROGRESS_CONNECTED;
                         }
                         ObjectPool.releaseVector(results);
                         z = z4;
@@ -1615,7 +1615,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                         break;
                     case 66:
                         AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
-                        protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(protocol.serverId).writeShortLE(62).writeShortBE(0)));
+                        protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(protocol.serverId).writeShortLE(62).writeShortBE(0)));
                         break;
                     default:
                         z = false;
@@ -1655,7 +1655,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 if (status14 == 0) {
                     MmpContact mmpContact3 = (MmpContact) objArr[2];
                     MmpContactGroup srcGroup4 = (MmpContactGroup) objArr[3];
-                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4873, srcGroup4.createUpdatePacket(srcGroup4.name, mmpContact3.userId, -1)), ResourceManager.integerOf(11), mmpContact3, srcGroup4, objArr[4]}));
+                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.MODIFY_CONTACT, srcGroup4.createUpdatePacket(srcGroup4.name, mmpContact3.userId, -1)), ResourceManager.integerOf(11), mmpContact3, srcGroup4, objArr[4]}));
                 } else {
                     IOUtils.postRenameError(objArr, status14);
                 }
@@ -1668,7 +1668,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContact mmpContact4 = (MmpContact) objArr[2];
                     Object obj4 = objArr[3];
                     MmpContactGroup destGroup5 = (MmpContactGroup) objArr[4];
-                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4872, mmpContact4.encodeContactUpdate(4, mmpContact4.displayName, destGroup5.groupId)), ResourceManager.integerOf(12), mmpContact4, obj4, destGroup5}));
+                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.ADD_CONTACT, mmpContact4.encodeContactUpdate(4, mmpContact4.displayName, destGroup5.groupId)), ResourceManager.integerOf(12), mmpContact4, obj4, destGroup5}));
                 } else {
                     IOUtils.postRenameError(objArr, status15);
                 }
@@ -1681,7 +1681,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     MmpContact mmpContact5 = (MmpContact) objArr[2];
                     Object obj5 = objArr[3];
                     MmpContactGroup destGroup6 = (MmpContactGroup) objArr[4];
-                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4873, destGroup6.createUpdatePacket(destGroup6.name, -1, mmpContact5.userId)), ResourceManager.integerOf(13), mmpContact5, obj5, destGroup6}));
+                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.MODIFY_CONTACT, destGroup6.createUpdatePacket(destGroup6.name, -1, mmpContact5.userId)), ResourceManager.integerOf(13), mmpContact5, obj5, destGroup6}));
                 } else {
                     IOUtils.postRenameError(objArr, status16);
                 }
@@ -1708,7 +1708,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 int status18 = buf.readShortBE();
                 if (status18 == 0) {
                     MmpContactGroup destGroup9 = (MmpContactGroup) objArr[4];
-                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4873, destGroup9.createUpdatePacket(destGroup9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.integerOf(15), objArr[2], objArr[3], destGroup9, objArr[5], objArr[6]}));
+                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.MODIFY_CONTACT, destGroup9.createUpdatePacket(destGroup9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.integerOf(15), objArr[2], objArr[3], destGroup9, objArr[5], objArr[6]}));
                 } else {
                     IOUtils.postRenameError(objArr, status18);
                 }
@@ -1723,7 +1723,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     destGroup10.addContact((Object) mmpContact7);
                     protocol.trySendData(ResourceManager.createSyncContactsCmd(protocol));
                     protocol.trySendData(ResourceManager.createGetContactsCmd(protocol));
-                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4873, mmpContact7.encodeContactUpdate(5, mmpContact7.displayName, mmpContact7.onlineSemaphore)), ResourceManager.integerOf(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], mmpContact7}));
+                    protocol.trySendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.MODIFY_CONTACT, mmpContact7.encodeContactUpdate(5, mmpContact7.displayName, mmpContact7.onlineSemaphore)), ResourceManager.integerOf(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], mmpContact7}));
                     protocol.trySendData(ResourceManager.createSyncContactsCmd(protocol));
                 } else {
                     IOUtils.postRenameError(objArr, status19);

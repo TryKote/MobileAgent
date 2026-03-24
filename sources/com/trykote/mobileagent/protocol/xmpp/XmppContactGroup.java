@@ -112,7 +112,7 @@ public final class XmppContactGroup extends ContactGroup {
             }
             length2++;
         }
-        objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, 4104, c0043nM1308a.writeStringUTF16(ObjectPool.toStringAndRelease(stringBufferM1217h)).writeIntLE(0));
+        objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_MESSAGE, c0043nM1308a.writeStringUTF16(ObjectPool.toStringAndRelease(stringBufferM1217h)).writeIntLE(0));
         objArr[1] = ResourceManager.integerOf(10);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
@@ -186,9 +186,9 @@ public final class XmppContactGroup extends ContactGroup {
         do {
             Thread.sleep(100L);
             iM1131a = c0039j.getState();
-        } while (iM1131a == 1);
-        if (iM1131a != 2) {
-            c0039j.state = 3;
+        } while (iM1131a == ConnectionThread.STATE_CONNECTING);
+        if (iM1131a != ConnectionThread.STATE_CONNECTED) {
+            c0039j.state = ConnectionThread.STATE_CLOSING;
         }
         return c0039j;
     }
@@ -219,17 +219,17 @@ public final class XmppContactGroup extends ContactGroup {
             }
             String strM1215a = ObjectPool.toStringAndRelease(stringBufferM1217h);
             if (c0039j != null) {
-                c0039j.state = 3;
+                c0039j.state = ConnectionThread.STATE_CLOSING;
             }
             return strM1215a;
         } catch (RuntimeException th) {
             if (c0039j != null) {
-                c0039j.state = 3;
+                c0039j.state = ConnectionThread.STATE_CLOSING;
             }
             throw th;
         } catch (Throwable th) {
             if (c0039j != null) {
-                c0039j.state = 3;
+                c0039j.state = ConnectionThread.STATE_CLOSING;
             }
             throw new RuntimeException(th);
         }
@@ -250,15 +250,15 @@ public final class XmppContactGroup extends ContactGroup {
                 c0039j.drainInput(c0043n);
                 c0043nM1349s = c0043n.extractPNG();
             } while (c0043nM1349s == null);
-            if (c0043nM1349s.peekIntAt(12) == 4098) {
+            if (c0043nM1349s.peekIntAt(12) == MrimCommand.CS_HELLO_ACK) {
                 updateLastCheckTime();
-                c0028ba.sendData(ProtocolFactory.createMrimPacket(c0028ba, 4216, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(1442808).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
+                c0028ba.sendData(ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(1442808).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
                 Thread.sleep(5000L);
             }
         } catch (Throwable unused) {
         } finally {
             if (c0039j != null) {
-                c0039j.state = 3;
+                c0039j.state = ConnectionThread.STATE_CLOSING;
             }
         }
     }
@@ -562,7 +562,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer createContactCommand(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
-        objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, 4121, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
+        objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_ADD_CONTACT, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
         objArr[1] = ResourceManager.integerOf(9);
         objArr[2] = str;
         objArr[3] = str2;

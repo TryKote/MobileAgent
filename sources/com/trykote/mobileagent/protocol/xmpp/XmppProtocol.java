@@ -18,6 +18,21 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:ae.class */
 public class XmppProtocol extends Account {
 
+    // XMPP progress states
+    public static final int PROGRESS_RESOLVING = 2;
+    public static final int PROGRESS_CONNECTING = 3;
+    public static final int PROGRESS_OPENING_STREAM = 4;
+    public static final int PROGRESS_PROCESSING = 5;
+
+    // XMPP status modes
+    public static final int STATUS_DISCONNECTED = 0;
+    public static final int STATUS_ONLINE = 1;
+    public static final int STATUS_BUSY = 2;
+    public static final int STATUS_XA = 3;
+    public static final int STATUS_AWAY = 4;
+    public static final int STATUS_DND = 5;
+    public static final int STATUS_CUSTOM = 6;
+
     /* renamed from: a */
     public final Vector elementQueue;
 
@@ -56,7 +71,7 @@ public class XmppProtocol extends Account {
     @Override // p000.Account
     /* renamed from: a */
     public int getType() {
-        return 2;
+        return TYPE_XMPP;
     }
 
     /* renamed from: r */
@@ -178,14 +193,14 @@ public class XmppProtocol extends Account {
 
     /* renamed from: a */
     public final void setException(Throwable th) {
-        if (this.progress == 2) {
+        if (this.progress == PROGRESS_RESOLVING) {
             this.lastException = th;
         }
     }
 
     /* renamed from: a */
     public final void setAuthParameters(String str, int i) {
-        if (this.progress == 2) {
+        if (this.progress == PROGRESS_RESOLVING) {
             this.serverPort = i;
             this.serverAddress = str;
         }
@@ -193,7 +208,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: t */
     private final boolean isMailRuXmpp() {
-        return getType() == 2 && this.login.endsWith(AppState.getString(StateKeys.STR_RES_PROTOCOL_ATTR_3));
+        return getType() == TYPE_XMPP && this.login.endsWith(AppState.getString(StateKeys.STR_RES_PROTOCOL_ATTR_3));
     }
 
     /* JADX WARN: Removed duplicated region for block: B:49:0x0236  */
@@ -212,7 +227,7 @@ public class XmppProtocol extends Account {
         String subjectText;
         Object[] taskArgs;
         switch (this.progress) {
-            case 0:
+            case PROGRESS_DISCONNECTED:
                 clearParserState();
                 Object[] prevAuthState = this.authState;
                 if (prevAuthState != null) {
@@ -222,13 +237,13 @@ public class XmppProtocol extends Account {
                 this.lastException = null;
                 this.msgCount = 0;
                 break;
-            case 1:
+            case PROGRESS_STARTING:
                 this.msgCount = 10;
                 if (mo83f()) {
                     if (Utils.nonEmpty(this.serverResourceId)) {
-                        this.progress = 3;
+                        this.progress = PROGRESS_CONNECTING;
                     } else {
-                        this.progress = 2;
+                        this.progress = PROGRESS_RESOLVING;
                         if (this.login.indexOf(64) <= 0) {
                             ((XmppMailRuProtocol) this).serverResourceId = this.login;
                             taskArgs = null;
@@ -241,47 +256,47 @@ public class XmppProtocol extends Account {
                         this.authState = taskArgs;
                     }
                 } else if (Utils.nonEmpty(this.serverAddress)) {
-                    this.progress = 3;
+                    this.progress = PROGRESS_CONNECTING;
                 } else {
-                    this.progress = 2;
+                    this.progress = PROGRESS_RESOLVING;
                     Object[] resolveArgs = {this};
                     new AsyncTask(33, resolveArgs);
                     this.authState = resolveArgs;
                 }
                 AppController.needsRepaint = true;
                 break;
-            case 2:
+            case PROGRESS_RESOLVING:
                 this.msgCount = 20;
                 if (mo83f()) {
                     if (Utils.nonEmpty(this.serverResourceId)) {
-                        this.progress = 3;
+                        this.progress = PROGRESS_CONNECTING;
                     } else if (this.lastException != null) {
                         handleException(this.lastException);
                     }
                 } else if (Utils.nonEmpty(this.serverAddress)) {
-                    this.progress = 3;
+                    this.progress = PROGRESS_CONNECTING;
                 } else if (this.lastException != null) {
                     handleException(this.lastException);
                 }
                 AppController.needsRepaint = true;
                 break;
-            case 3:
+            case PROGRESS_CONNECTING:
                 this.msgCount = 30;
                 this.state = 0;
                 this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
-                this.progress = 4;
+                this.progress = PROGRESS_OPENING_STREAM;
                 if (isMailRuXmpp()) {
                     new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
                 }
                 AppController.needsRepaint = true;
                 break;
-            case 4:
+            case PROGRESS_OPENING_STREAM:
                 clearParserState();
                 this.msgCount = 40;
                 if (!isMailRuXmpp()) {
-                    if (this.connection.getState() == 2) {
+                    if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
                         this.msgCount = 50;
-                        this.progress = 5;
+                        this.progress = PROGRESS_PROCESSING;
                         Object[] parserArgs = new Object[3];
                         parserArgs[0] = this;
                         parserArgs[1] = new ByteBuffer();
@@ -291,7 +306,7 @@ public class XmppProtocol extends Account {
                         this.parserState = parserArgs;
                         AppController.needsRepaint = true;
                         sendPresenceSubscription();
-                    } else if (this.connection.getState() <= 0) {
+                    } else if (this.connection.getState() <= ConnectionThread.STATE_CLOSED) {
                         closeConnection();
                     }
                     AppController.needsRepaint = true;
@@ -449,7 +464,7 @@ public class XmppProtocol extends Account {
                                                 if (Utils.vectorSize(this.groups) == 0) {
                                                     this.groups.addElement(new XmppContactGroup(this, 1, AppState.getString(StateKeys.STR_RES_MENU_ITEM_2)));
                                                 }
-                                                this.progress = 100;
+                                                this.progress = PROGRESS_CONNECTED;
                                                 setStatusMode(this.configFlags);
                                                 this.msgCount = 100;
                                             }
@@ -465,8 +480,8 @@ public class XmppProtocol extends Account {
                 }
                 break;
         }
-        if (this.lastError != 0 && this.connection != null && this.connection.getState() == 0) {
-            this.progress = 0;
+        if (this.lastError != 0 && this.connection != null && this.connection.getState() == ConnectionThread.STATE_CLOSED) {
+            this.progress = PROGRESS_DISCONNECTED;
             closeConnection();
             this.lastError = getDefaultError();
         }
@@ -498,19 +513,19 @@ public class XmppProtocol extends Account {
         int statusMode;
         switch (i) {
             case 0:
-                statusMode = 1;
+                statusMode = STATUS_ONLINE;
                 break;
             case 1:
-                statusMode = 4;
+                statusMode = STATUS_AWAY;
                 break;
             case 2:
-                statusMode = 2;
+                statusMode = STATUS_BUSY;
                 break;
             case 3:
-                statusMode = 5;
+                statusMode = STATUS_DND;
                 break;
             case 4:
-                statusMode = 3;
+                statusMode = STATUS_XA;
                 break;
             default:
                 disconnect();
@@ -536,25 +551,25 @@ public class XmppProtocol extends Account {
         XmlElement presence = XmlElement.createFromState(530016);
         int statusStringId = 0;
         switch (i) {
-            case 1:
+            case STATUS_ONLINE:
                 statusStringId = 642;
                 break;
-            case 2:
+            case STATUS_BUSY:
                 presence.setIntAttribute(267927, 267829);
                 statusStringId = 644;
                 break;
-            case 3:
+            case STATUS_XA:
                 presence.addNameAttr(594975);
                 break;
-            case 4:
+            case STATUS_AWAY:
                 presence.setIntAttribute(267927, 265215);
                 statusStringId = 643;
                 break;
-            case 5:
+            case STATUS_DND:
                 presence.setIntAttribute(267927, 202299);
                 statusStringId = 645;
                 break;
-            case 6:
+            case STATUS_CUSTOM:
                 presence.setIntAttribute(267927, 136761);
                 statusStringId = 648;
                 break;
@@ -622,7 +637,7 @@ public class XmppProtocol extends Account {
     @Override // p000.Account
     /* renamed from: h */
     public int getIconId() {
-        if (this.progress < 1 || this.progress >= 100) {
+        if (this.progress < PROGRESS_STARTING || this.progress >= PROGRESS_CONNECTED) {
             return getIconForError(this.lastError);
         }
         return 382;
@@ -906,17 +921,17 @@ public class XmppProtocol extends Account {
     /* renamed from: d */
     public static final int getIconForError(int i) {
         switch (i) {
-            case 0:
+            case STATUS_DISCONNECTED:
                 return 381;
-            case 1:
+            case STATUS_ONLINE:
                 return 383;
-            case 2:
+            case STATUS_BUSY:
                 return 16318847;
-            case 3:
+            case STATUS_XA:
                 return 16515455;
-            case 4:
+            case STATUS_AWAY:
                 return 16384383;
-            case 5:
+            case STATUS_DND:
                 return 16449919;
             default:
                 return 16580991;

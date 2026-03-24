@@ -90,7 +90,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 AppController.prepareFormData();
                 Account account2 = AppState.getAccount();
                 String[] regData;
-                if (AppState.getAccount().getType() == 0) {
+                if (AppState.getAccount().getType() == Account.TYPE_MRIM) {
                     regData = StringUtils.buildRegData();
                 } else {
                     regData = new String[8];

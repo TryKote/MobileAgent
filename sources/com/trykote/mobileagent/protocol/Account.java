@@ -21,6 +21,17 @@ import javax.microedition.io.ConnectionNotFoundException;
 /* loaded from: MobileAgent_3.9.jar:h.class */
 public abstract class Account {
 
+    // Account type constants
+    public static final int TYPE_MRIM = 0;
+    public static final int TYPE_MMP = 1;
+    public static final int TYPE_XMPP = 2;
+    public static final int TYPE_XMPP_MAILRU = 3;
+
+    // Common progress constants
+    public static final int PROGRESS_DISCONNECTED = 0;
+    public static final int PROGRESS_STARTING = 1;
+    public static final int PROGRESS_CONNECTED = 100;
+
     /* renamed from: i */
     public final Vector groups;
 
@@ -263,7 +274,7 @@ public abstract class Account {
 
     /* renamed from: C */
     public final boolean isConnected() {
-        return this.progress == 100;
+        return this.progress == PROGRESS_CONNECTED;
     }
 
     /* renamed from: D */
@@ -298,7 +309,7 @@ public abstract class Account {
             this.authMode = i;
         }
         this.msgCount = 0;
-        this.progress = 1;
+        this.progress = PROGRESS_STARTING;
         RemoteLogger.log("ACCT", "connect: progress=1, authMode=" + this.authMode);
         return 0;
     }
@@ -339,10 +350,10 @@ public abstract class Account {
     public final void closeConnection() {
         RemoteLogger.log("ACCT", "closeConnection login=" + this.login);
         if (this.connection != null) {
-            this.connection.state = 3;
+            this.connection.state = ConnectionThread.STATE_CLOSING;
         }
         this.connection = null;
-        this.progress = 0;
+        this.progress = PROGRESS_DISCONNECTED;
     }
 
     /* renamed from: G */
