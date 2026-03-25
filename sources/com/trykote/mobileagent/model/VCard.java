@@ -96,7 +96,7 @@ public final class VCard {
             int size = vector.size();
             String[] strArr3 = new String[size];
             for (int i = 0; i < size; i++) {
-                strArr3[i] = ((XmlElement) vector.elementAt(i)).getIntAttribute(328413);
+                strArr3[i] = ((XmlElement) vector.elementAt(i)).getIntAttribute(PackedStringKeys.ATTR_EMAIL);
             }
             strArr = strArr3;
         }
@@ -115,7 +115,7 @@ public final class VCard {
         strArr[3] = buffer.readUTF8Str((String) null);
         strArr[4] = buffer.readWideStr();
         strArr[5] = buffer.readWideStr();
-        if (StringUtils.matchesKey(590588, strArr[2])) {
+        if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, strArr[2])) {
             strArr[6] = buffer.readWideStr();
             strArr[7] = buffer.readWideStr();
         } else {
@@ -160,7 +160,7 @@ public final class VCard {
     /* renamed from: d */
     public final int getCommandCount() {
         try {
-            if (StringUtils.matchesKey(590588, this.mapTypeStr)) {
+            if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, this.mapTypeStr)) {
                 return MapPoint.getMarkerType(Integer.parseInt(this.zoomStr));
             }
             return 10;
@@ -179,12 +179,12 @@ public final class VCard {
 
     /* renamed from: a */
     public static final String formatLocationUrl(int i, String str, String str2) {
-        return new ByteBuffer().writeCompressed(3473998).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(1311433).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_SEARCH_ZOOM).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(PackedStringKeys.PARAM_DIST_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     /* renamed from: a */
     public static final String formatPhoneContactUrl(PhoneContact phoneContact, int i) {
-        return new ByteBuffer().writeCompressed(1901187).writeRawString(phoneContact.surname).writeCompressed(393954).writeRawString(phoneContact.firstName).writeCompressed(393960).writeRawString(phoneContact.address).writeCompressed(393966).writeRawString(phoneContact.phone).writeCompressed(1311413).writeIntAsString(i).writeCompressed(393943).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(phoneContact.surname).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(phoneContact.firstName).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(phoneContact.address).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(phoneContact.phone).writeCompressed(PackedStringKeys.PARAM_QUANTITY_IDFROM).writeIntAsString(i).writeCompressed(PackedStringKeys.PARAM_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     /* renamed from: a */

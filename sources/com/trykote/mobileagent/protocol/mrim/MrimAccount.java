@@ -372,7 +372,7 @@ public final class MrimAccount extends Account implements ListItem {
                     this.deadline = System.currentTimeMillis() + pingInterval;
                     ByteBuffer authPacket = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
                     boolean useExtended = AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS);
-                    sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_LOGIN2, authPacket.writeIntLE(useExtended ? -1 : 22).writeStringLatin1(useExtended ? null : new ByteBuffer().writeCompressed(1642077).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(1704823).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
+                    sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_LOGIN2, authPacket.writeIntLE(useExtended ? -1 : 22).writeStringLatin1(useExtended ? null : new ByteBuffer().writeCompressed(PackedStringKeys.MRIM_CLIENT_VERSION).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(PackedStringKeys.MRIM_GEO_LIST_PACKET).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
                     this.progress = PROGRESS_LOGGED_IN;
                     break;
                 case MrimCommand.CS_LOGOUT:
@@ -422,17 +422,17 @@ public final class MrimAccount extends Account implements ListItem {
                 case MrimCommand.CS_USER_INFO:
                     while (packet.length > 0) {
                         String paramKey = packet.readWideStr();
-                        if (StringUtils.matchesKey(852768, paramKey)) {
+                        if (StringUtils.matchesKey(PackedStringKeys.MRIM_NICKNAME, paramKey)) {
                             setDisplayName(packet.readUTF8Str((String) null));
-                        } else if (StringUtils.matchesKey(983853, paramKey)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MESSAGES_UNREAD, paramKey)) {
                             IOUtils.notifyNewMail(this, Utils.parseInt((Object) packet.readUTF8Str((String) null)), (String) null, (String) null);
-                        } else if (StringUtils.matchesKey(983868, paramKey)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_CLIENT_ENDPOINT, paramKey)) {
                             String domainStr = packet.readUTF8Str((String) null);
                             this.customDomain = StringUtils.prefix(domainStr, domainStr.indexOf(58));
-                        } else if (StringUtils.matchesKey(656203, paramKey)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_HAS_MYMAIL, paramKey)) {
                             packet.readWideStr();
                             this.hasCustomDomain = true;
-                        } else if (StringUtils.matchesKey(1114965, paramKey)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_SUGGEST, paramKey)) {
                             packet.skip((((((((packet.readInt() - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + (packet.readUTF8Str((String) null).length() << 1))) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length()));
                         } else {
                             packet.readWideStr();
@@ -579,7 +579,7 @@ public final class MrimAccount extends Account implements ListItem {
                 case MrimCommand.CS_MPOP_SESSION:
                     String sectionKey = packet.readWideStr();
                     String xmlData = packet.readWideStr();
-                    if (!StringUtils.matchesKey(525167, sectionKey)) {
+                    if (!StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_LIST, sectionKey)) {
                         break;
                     } else {
                         this.accountProfile.updatePhotos(new XmlParser(xmlData).parse());
@@ -634,9 +634,9 @@ public final class MrimAccount extends Account implements ListItem {
                             String[] cardFields = VCard.parseCardFromBuffer((ByteBuffer) buffers.elementAt(0));
                             if (cardFields.length >= 8 && !this.accountProfile.hasCoordinates()) {
                                 String str3 = cardFields[2];
-                                if (StringUtils.matchesKey(525044, str3)) {
+                                if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPPOINT, str3)) {
                                     setSimpleProfile(cardFields[1], cardFields[0]);
-                                } else if (StringUtils.matchesKey(590588, str3)) {
+                                } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, str3)) {
                                     String str4 = cardFields[1];
                                     String str5 = cardFields[0];
                                     String str6 = cardFields[6];
@@ -846,7 +846,7 @@ public final class MrimAccount extends Account implements ListItem {
         for (int i = 0; i < vector.size(); i++) {
             ByteBuffer buffer = (ByteBuffer) vector.elementAt(i);
             buffer.readInt();
-            if (StringUtils.matchesKey(590694, buffer.readWideStr())) {
+            if (StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_POINT, buffer.readWideStr())) {
                 String[] cardFields = VCard.parseCardFromBuffer(buffer);
                 MrimContact contact = findContactByIdentifier(str);
                 if (contact != null) {

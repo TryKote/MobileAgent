@@ -821,7 +821,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     public static final void resolveXmppServer(Object[] objArr) {
         try {
             String str = ((XmppProtocol) objArr[0]).login;
-            String srvRecord = dnsLookupSrv(StringUtils.concatKey(1185660, StringUtils.suffix(str, str.indexOf(64) + 1)));
+            String srvRecord = dnsLookupSrv(StringUtils.concatKey(PackedStringKeys.SRV_XMPP_CLIENT_TCP, StringUtils.suffix(str, str.indexOf(64) + 1)));
             if (srvRecord == null || srvRecord.indexOf(58) <= 0) {
                 XmppProtocol xmppAccount = (XmppProtocol) objArr[0];
                 xmppAccount.setAuthParameters(xmppAccount.mo84j(), 5222);
@@ -842,12 +842,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         try {
             NetworkLock.acquireNetworkLock();
             Vector parts = Utils.splitNonEmpty(str, '.');
-            ByteBuffer requestBuf = new ByteBuffer().writeCompressed(792490);
+            ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.MMP_PADDING_12);
             for (int i = 0; i < Utils.vectorSize(parts); i++) {
                 requestBuf.writeByteLenStr(Utils.getVectorString(parts, i));
             }
             ObjectPool.releaseVector(parts);
-            requestBuf.writeCompressed(333750);
+            requestBuf.writeCompressed(PackedStringKeys.MMP_SPACER);
             DatagramConnection datagramConnection2 = (DatagramConnection) IOUtils.registerResource((Object) Connector.open(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_4)));
             datagramConnection = datagramConnection2;
             datagramConnection2.send(datagramConnection2.newDatagram(requestBuf.data, requestBuf.length));
@@ -1157,7 +1157,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             if (oldSocket != null) {
                 oldSocket.close();
             }
-            AppState.pool[StateKeys.OBJ_MENU_ACTIONS] = SocketWrapper.open(new ByteBuffer().writeCompressed(593549).writeCompressed(1511542).getStringAndClear(), false);
+            AppState.pool[StateKeys.OBJ_MENU_ACTIONS] = SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeCompressed(PackedStringKeys.HOST_MOBILEMAPS_2043).getStringAndClear(), false);
             return true;
         } catch (Throwable unused) {
             return false;
@@ -1169,7 +1169,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     /* JADX DEBUG: Finally have unexpected throw blocks count: 2, expect 1 */
     /* renamed from: b */
     public static final Image fetchTileImage(ResourceManager resource) throws IOException {
-        ByteBuffer requestBuf = new ByteBuffer().writeCompressed(2232520).writeRawString(resource.tileUrl).writeCompressed(3870861).writeExtendedInt(2950495).writeEncodedInt(222).writeCompressed(6689002);
+        ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_TILESENDER).writeRawString(resource.tileUrl).writeCompressed(PackedStringKeys.HTTP_MAP_TILE_HEADER).writeExtendedInt(2950495).writeEncodedInt(222).writeCompressed(PackedStringKeys.HTTP_TILE_HEADERS);
         try {
             SocketWrapper socket = (SocketWrapper) AppState.pool[StateKeys.OBJ_MENU_ACTIONS];
             byte[] bArr = requestBuf.data;
@@ -1474,7 +1474,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                             if (i4 != 0) {
                                 protocol.sendData(sendContactListRequest(protocol, i4));
                             }
-                            protocol.sendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCompressed(5245205)));
+                            protocol.sendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_TRANSFER_HEADER)));
                             protocol.sendData(protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(protocol.serverId).writeShortLE(60).writeShortBE(0)), ResourceManager.integerOf(8)}));
                             Enumeration elements = protocol.contactMap.elements();
                             while (elements.hasMoreElements()) {

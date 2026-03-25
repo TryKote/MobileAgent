@@ -80,7 +80,7 @@ public final class ConnectionThread {
         switch (this.state) {
             case STATE_CONNECTING:
                 try {
-                    this.socket = SocketWrapper.open(new ByteBuffer().writeCompressed(593549).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(StateKeys.SETTING_COMPRESSION_ENABLED));
+                    this.socket = SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(StateKeys.SETTING_COMPRESSION_ENABLED));
                     if (this.state == STATE_CONNECTING) {
                         this.state = STATE_CONNECTED;
                         RemoteLogger.log("CONN", "state 1->2 (socket opened)");

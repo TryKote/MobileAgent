@@ -165,19 +165,19 @@ public abstract class RegistrationService {
                     throw new RuntimeException();
                 }
                 objArr[3] = null;
-                startAsyncRequest(1, new ByteBuffer().writeCompressed(2163862).writeObjectStr(objArr[6]).getStringAndClear(), objArr);
+                startAsyncRequest(1, new ByteBuffer().writeCompressed(PackedStringKeys.URL_XHTML_WAP_MAIL_RU).writeObjectStr(objArr[6]).getStringAndClear(), objArr);
                 return;
             }
             XmlElement child = (XmlElement) children.elementAt(size);
-            String attrValue = child.getIntAttribute(329117);
-            String attrName = child.getIntAttribute(262601);
-            if (StringUtils.matchesKey(132297, attrName)) {
+            String attrValue = child.getIntAttribute(PackedStringKeys.ATTR_VALUE);
+            String attrName = child.getIntAttribute(PackedStringKeys.ATTR_NAME);
+            if (StringUtils.matchesKey(PackedStringKeys.ATTR_ID_UPPER, attrName)) {
                 objArr[4] = attrValue;
-            } else if (StringUtils.matchesKey(1115488, attrName)) {
+            } else if (StringUtils.matchesKey(PackedStringKeys.TAG_SECURITY_IMAGE_ID, attrName)) {
                 objArr[5] = attrValue;
-            } else if (StringUtils.matchesKey(1246602, attrName)) {
+            } else if (StringUtils.matchesKey(PackedStringKeys.TAG_SECURITY_IMAGE_LINK, attrName)) {
                 objArr[6] = attrValue;
-            } else if (StringUtils.matchesKey(394658, attrName)) {
+            } else if (StringUtils.matchesKey(PackedStringKeys.TAG_STATUS, attrName)) {
                 objArr[20] = attrValue;
                 if (Integer.parseInt(attrValue) == 0) {
                     return;

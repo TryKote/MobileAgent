@@ -145,7 +145,7 @@ public final class Conversation implements ListItem {
                     AppController.needsRepaint = true;
                     HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(StateKeys.STR_RES_HUGE_URL_5), protocol, 0);
                     httpClient.setRequestMethod(ObjectPool.unpackChars(1414745936));
-                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(2755131).writeConversationStr(objArr[2]).writeCompressed(330609).writeConversationStr(objArr[3]);
+                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(PackedStringKeys.ICQ_AUTH_PARAMS).writeConversationStr(objArr[2]).writeCompressed(PackedStringKeys.PARAM_PWD).writeConversationStr(objArr[3]);
                     ApiClient.setHeaderFromState(httpClient, 788628, 2164851);
                     httpClient.writeData(requestBody.data, requestBody.length);
                     int responseCode = httpClient.getResponseCode();
@@ -154,7 +154,7 @@ public final class Conversation implements ListItem {
                         protocol.msgCount = 40;
                         AppController.needsRepaint = true;
                         XmlElement responseXml = new ByteBuffer(httpClient).parseXmlStr();
-                        int statusCode = Integer.parseInt(StringUtils.fromBuffer(responseXml.findChildByKey(658246).textContent));
+                        int statusCode = Integer.parseInt(StringUtils.fromBuffer(responseXml.findChildByKey(PackedStringKeys.TAG_STATUSCODE).textContent));
                         if (statusCode != 200) {
                             if (statusCode == 330) {
                                 ((MmpProtocol) objArr[0]).handleComplete();
@@ -162,8 +162,8 @@ public final class Conversation implements ListItem {
                             }
                             throw new RuntimeException(StringUtils.intern(Integer.toString(statusCode)));
                         }
-                        XmlElement resultElement = responseXml.findChildByKey(262156);
-                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(461648).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(527196).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(854884).textContent), objArr[3]});
+                        XmlElement resultElement = responseXml.findChildByKey(PackedStringKeys.TAG_DATA);
+                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_LOGINID).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_TOKEN).findChildByKey(PackedStringKeys.TAG_A).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_HOSTTIME).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_SESSIONSECRET).textContent), objArr[3]});
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
@@ -171,16 +171,16 @@ public final class Conversation implements ListItem {
                 } else {
                     protocol.msgCount = 50;
                     AppController.needsRepaint = true;
-                    ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(2951781).writeByte(63);
-                    String queryStr = new ByteBuffer().writeCompressed(132058).writeConversationStr(objArr[3]).writeCompressed(11012754).writeObjectStr(objArr[4]).readAllByteStr();
-                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(789306).writeRawString(encryptData(new ByteBuffer().writeCompressed(265078).writeRawString(percentEncodeInternal(AppState.getString(StateKeys.STR_RES_HUGE_URL_8), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_OSCAR_SESSION).writeByte(63);
+                    String queryStr = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_A_EQ).writeConversationStr(objArr[3]).writeCompressed(PackedStringKeys.ICQ_OSCAR_PARAMS).writeObjectStr(objArr[4]).readAllByteStr();
+                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(AppState.getString(StateKeys.STR_RES_HUGE_URL_8), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
                     int responseCode2 = httpClient2.getResponseCode();
                     i = responseCode2;
                     if (responseCode2 == 200) {
                         protocol.msgCount = 60;
                         AppController.needsRepaint = true;
-                        XmlElement resultElement2 = httpClient2.readChunkedResponse().parseXmlStr().findChildByKey(262156);
-                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(265052).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(265005).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(395483).textContent)};
+                        XmlElement resultElement2 = httpClient2.readChunkedResponse().parseXmlStr().findChildByKey(PackedStringKeys.TAG_DATA);
+                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_HOST).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_PORT).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_COOKIE).textContent)};
                         HttpClient.closeAndUpdateStats(httpClient2);
                         NetworkLock.releaseNetworkLock();
                         return;

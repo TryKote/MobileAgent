@@ -332,8 +332,8 @@ public final class MmpProtocol extends Account {
                         sendData(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_HANDSHAKE).writeIntBE(1).writeShortBE(6).writeShortBE(key.length).writeBytes(key).updateLength());
                         this.encryptionKey = null;
                         sendData(ProtocolFactory.createAuthData(this));
-                        sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_PREFS, new ByteBuffer().writeCompressed(1051079)));
-                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(2689260)), ResourceManager.integerOf(17)}));
+                        sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_PREFS, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_LOGIN_HEADER)));
+                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_AUTH_PACKET)), ResourceManager.integerOf(17)}));
                         this.contactListIndex = 0;
                         sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.GET_CONTACT_LIST, (ByteBuffer) null), ResourceManager.integerOf(6)}));
                         sendData(StringUtils.createContactInfoCmd(this, this.serverId));

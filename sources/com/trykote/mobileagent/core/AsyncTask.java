@@ -16,40 +16,29 @@ import com.trykote.mobileagent.protocol.mrim.MrimAccount;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
-import com.trykote.mobileagent.ui.MenuItem;
-import com.trykote.mobileagent.ui.Screen;
 import com.trykote.mobileagent.util.*;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.TextBox;
 import javax.wireless.messaging.Message;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
 import java.util.Vector;
 
-/* renamed from: z */
-/* loaded from: MobileAgent_3.9.jar:z.class */
-public final class AsyncTask implements Runnable, CommandListener {
+public final class AsyncTask implements Runnable {
 
-    /* renamed from: b */
     private int taskId;
 
-    /* renamed from: c */
     private Object taskData;
 
-    /* renamed from: a */
     public Thread thread;
 
-    public AsyncTask(Object obj, int i, int i2) {
-        RemoteLogger.log("TASK", "new AsyncTask type=" + i + " param=" + i2);
-        if (obj != null) {
-            AppController.dispatchCommand(obj, i, i2);
-            return;
-        }
+    public AsyncTask(Object target, int commandId, int commandParam) {
+        RemoteLogger.log("TASK", "new AsyncTask type=" + commandId + " param=" + commandParam);
+        AppController.dispatchCommand(target, commandId, commandParam);
+    }
+
+    public static void shutdown() {
         if (AppController.appLock != null) {
             synchronized (AppController.appLock) {
                 AppController.isShuttingDown = true;
@@ -68,63 +57,13 @@ public final class AsyncTask implements Runnable, CommandListener {
         }
     }
 
-    public AsyncTask() {
+    public AsyncTask(int taskId) {
+        this(taskId, (Object) null);
     }
 
-    public AsyncTask(Screen screen, MenuItem menuItem) {
-        Object[] objArr = (Object[]) menuItem.data;
-        this.taskData = new Object[]{screen, menuItem};
-        String str = (String) objArr[0];
-        int maxLen = ((Integer) objArr[1]).intValue();
-        XmppContactGroup.showTextInputDialog(AppState.emptyStr, str.length() > maxLen ? StringUtils.prefix(str, maxLen) : str, maxLen, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
-    }
-
-    public final void commandAction(Command command, Displayable displayable) {
-        if (this.taskData == null) {
-            String text = StringUtils.getTextBoxString((TextBox) displayable);
-            AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) text);
-            AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(text));
-            if (command.getPriority() == 0) {
-                IOUtils.postOkEvent();
-                return;
-            } else {
-                IOUtils.postCancelEvent();
-                return;
-            }
-        }
-        if (command.getPriority() == 0) {
-            String inputText = StringUtils.intern(((TextBox) displayable).getString());
-            Screen screen = (Screen) ((Object[]) this.taskData)[0];
-            MenuItem menuItem = (MenuItem) ((Object[]) this.taskData)[1];
-            Object[] objArr = (Object[]) menuItem.data;
-            if (!StringUtils.equalsObj(inputText, objArr[0])) {
-                objArr[0] = inputText;
-                String displayText = ((Integer) objArr[2]).intValue() != 327680 ? inputText : Utils.maskPassword(inputText);
-                String str = StringUtils.isEmpty(displayText) ? null : displayText;
-                menuItem.clear();
-                if (objArr[4] instanceof String) {
-                    menuItem.setLabel(Utils.appendSpace((String) objArr[4]));
-                } else {
-                    menuItem.setIcon(((Integer) objArr[4]).intValue());
-                }
-                if (str != null) {
-                    menuItem.addText(str, 1, 7);
-                } else {
-                    menuItem.setDefaultFont();
-                }
-                screen.rebuildItems();
-            }
-        }
-        AppState.setScreen(AppState.getCanvas().updateCommands());
-    }
-
-    public AsyncTask(int i) {
-        this(i, (Object) null);
-    }
-
-    public AsyncTask(int i, Object obj) {
-        this.taskId = i;
-        this.taskData = obj;
+    public AsyncTask(int taskId, Object taskData) {
+        this.taskId = taskId;
+        this.taskData = taskData;
         Thread thread = new Thread(this);
         this.thread = thread;
         thread.start();
@@ -201,10 +140,10 @@ public final class AsyncTask implements Runnable, CommandListener {
             args[0] = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient) : ResourceManager.integerOf(731);
         } catch (Throwable e) {
             args[0] = ResourceManager.integerOf(731);
-            return;
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskConnectionLoop() {
@@ -248,35 +187,36 @@ public final class AsyncTask implements Runnable, CommandListener {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(1442705).writeCompressed(987652).getStringAndClear());
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            Vector children = new ByteBuffer(httpClient).parseXml().children;
-            int i = children.size();
-            while (--i >= 0) {
-                XmlElement child = (XmlElement) children.elementAt(i);
-                if (!child.tagName.equals("city")) continue;
-                String cityId = child.getIntAttribute(131550);
-                Vector regions = AppState.getVector(StateKeys.VEC_MAP_POINTS);
-                int j = regions.size();
-                GeoRegion region = null;
-                while (--j >= 0) {
-                    GeoRegion candidate = (GeoRegion) regions.elementAt(j);
-                    if (candidate.description.equals(cityId)) {
-                        region = candidate;
-                        break;
+            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_JAMS_STATE).getStringAndClear());
+            if (httpClient.getResponseCode() == 200) {
+                Vector children = new ByteBuffer(httpClient).parseXml().children;
+                int i = children.size();
+                while (--i >= 0) {
+                    XmlElement child = (XmlElement) children.elementAt(i);
+                    if (!child.tagName.equals("city")) continue;
+                    String cityId = child.getIntAttribute(PackedStringKeys.ATTR_ID);
+                    Vector regions = AppState.getVector(StateKeys.VEC_MAP_POINTS);
+                    int j = regions.size();
+                    GeoRegion region = null;
+                    while (--j >= 0) {
+                        GeoRegion candidate = (GeoRegion) regions.elementAt(j);
+                        if (candidate.description.equals(cityId)) {
+                            region = candidate;
+                            break;
+                        }
                     }
+                    if (region == null) continue;
+                    int mapType = child.getAttrAsInt(29300);
+                    int zoomLevel = child.getAttrAsInt(98);
+                    region.zoomLevel = zoomLevel;
+                    region.mapType = mapType;
                 }
-                if (region == null) continue;
-                int mapType = child.getAttrAsInt(29300);
-                int zoomLevel = child.getAttrAsInt(98);
-                region.zoomLevel = zoomLevel;
-                region.mapType = mapType;
             }
-        } catch (Throwable e) {
-            return;
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskDelayedClose() {
@@ -304,29 +244,33 @@ public final class AsyncTask implements Runnable, CommandListener {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(872);
             httpClient = HttpClient.createWithType2(requestData);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            Object mapPoints = XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen());
-            AppState.pool[StateKeys.VEC_MESSAGE_LIST] = mapPoints;
+            if (httpClient.getResponseCode() == 200) {
+                AppState.pool[StateKeys.VEC_MESSAGE_LIST] = XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen());
+            } else {
+                AppState.pool[StateKeys.VEC_MESSAGE_LIST] = ObjectPool.newVector();
+            }
         } catch (Throwable e) {
             AppState.pool[StateKeys.VEC_MESSAGE_LIST] = ObjectPool.newVector();
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        XmppContactGroup.removeContactInfoFromQueue(contactInfo);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskFetchGeoConfig() {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(1442705).writeCompressed(1905127).writeEncodedInt(254).getStringAndClear());
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            StringUtils.parseGeoConfig(new ByteBuffer(httpClient).parseXml());
-        } catch (Throwable e) {
-            return;
+            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_ROAD_INFO).writeEncodedInt(254).getStringAndClear());
+            if (httpClient.getResponseCode() == 200) {
+                StringUtils.parseGeoConfig(new ByteBuffer(httpClient).parseXml());
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskFetchMmpRoute() {
@@ -337,21 +281,25 @@ public final class AsyncTask implements Runnable, CommandListener {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(1000);
             httpClient = HttpClient.createWithType2(requestUrl);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            MmpContact.parseRouteFromJson(new ByteBuffer(httpClient));
-            if (!MmpContact.routeRegions.isEmpty()) {
-                MmpContact.setLocationEnabled(true);
-                Object[] firstEntry;
-                MapRenderer.setPosition(
-                        !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[0] : 0L,
-                        !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
+            if (httpClient.getResponseCode() == 200) {
+                MmpContact.parseRouteFromJson(new ByteBuffer(httpClient));
+                if (!MmpContact.routeRegions.isEmpty()) {
+                    MmpContact.setLocationEnabled(true);
+                    Object[] firstEntry;
+                    MapRenderer.setPosition(
+                            !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[0] : 0L,
+                            !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
+                }
+            } else {
+                IOUtils.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
             }
         } catch (Throwable e) {
             IOUtils.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        XmppContactGroup.removeContactInfoFromQueue(contactInfo);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskPeriodicTimeSync() throws Throwable {
@@ -364,23 +312,24 @@ public final class AsyncTask implements Runnable, CommandListener {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType2(requestUrl);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            ByteBuffer responseBuffer = new ByteBuffer(httpClient);
-            synchronized (ServiceRegistry.photoCache) {
-                String photoKey = ServiceRegistry.pendingPhotoKey;
-                XmppMailRuProtocol.writeChunkedRecord(StringUtils.concat("upi", photoKey), responseBuffer);
-                try {
-                    ServiceRegistry.photoCache.put(photoKey, responseBuffer.toImage());
-                } catch (Throwable e) {
+            if (httpClient.getResponseCode() == 200) {
+                ByteBuffer responseBuffer = new ByteBuffer(httpClient);
+                synchronized (ServiceRegistry.photoCache) {
+                    String photoKey = ServiceRegistry.pendingPhotoKey;
+                    XmppMailRuProtocol.writeChunkedRecord(StringUtils.concat("upi", photoKey), responseBuffer);
+                    try {
+                        ServiceRegistry.photoCache.put(photoKey, responseBuffer.toImage());
+                    } catch (Throwable ignored) {
+                    }
+                    ServiceRegistry.pendingPhotoKey = null;
+                    MapRenderer.needsRedraw = true;
                 }
-                ServiceRegistry.pendingPhotoKey = null;
-                MapRenderer.needsRedraw = true;
             }
-        } catch (Throwable e) {
-            return;
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskFetchSharedContacts() {
@@ -393,13 +342,14 @@ public final class AsyncTask implements Runnable, CommandListener {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType2(requestUrl);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            new ByteBuffer(httpClient);
-        } catch (Throwable e) {
-            return;
+            if (httpClient.getResponseCode() == 200) {
+                new ByteBuffer(httpClient);
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskSendSmsRequest() {
@@ -418,16 +368,17 @@ public final class AsyncTask implements Runnable, CommandListener {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(370);
             httpClient = HttpClient.createWithType2(args[0]);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            long[] coords = (long[]) args[1];
-            ResourceManager.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
-            IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
-        } catch (Throwable e) {
-            return;
+            if (httpClient.getResponseCode() == 200) {
+                long[] coords = (long[]) args[1];
+                ResourceManager.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
+                IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        XmppContactGroup.removeContactInfoFromQueue(contactInfo);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskParseContactsSync() {
@@ -438,14 +389,15 @@ public final class AsyncTask implements Runnable, CommandListener {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(505);
             httpClient = HttpClient.createWithType2(args[0]);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            ContactListParser.parseContactsSync(new ByteBuffer(httpClient), (Integer) args[1]);
-        } catch (Throwable e) {
-            return;
+            if (httpClient.getResponseCode() == 200) {
+                ContactListParser.parseContactsSync(new ByteBuffer(httpClient), (Integer) args[1]);
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        XmppContactGroup.removeContactInfoFromQueue(contactInfo);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskParseContactsAsync() {
@@ -456,14 +408,15 @@ public final class AsyncTask implements Runnable, CommandListener {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(505);
             httpClient = HttpClient.createWithType2(args[0]);
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            ContactListParser.parseContactsAsync(new ByteBuffer(httpClient), args[1], args[2]);
-        } catch (Throwable e) {
-            return;
+            if (httpClient.getResponseCode() == 200) {
+                ContactListParser.parseContactsAsync(new ByteBuffer(httpClient), args[1], args[2]);
+            }
+        } catch (Throwable ignored) {
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        XmppContactGroup.removeContactInfoFromQueue(contactInfo);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskFetchLocationProfile() {
@@ -475,23 +428,26 @@ public final class AsyncTask implements Runnable, CommandListener {
             contactInfo = XmppContactGroup.getContactInfoFromState(505);
             String baseUrl = AppState.getString(StateKeys.STR_RES_MEGA_URL_2);
             httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(AppState.getString(StateKeys.STR_RES_NEWLINE)).append(args[2]).append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_2))));
-            if (httpClient.getResponseCode() != 200) throw new Throwable();
-            long[] coords = (long[]) args[3];
-            MrimAccount account = (MrimAccount) args[0];
-            Vector mapPoints = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
-            account.setLocationProfile((MapPoint) mapPoints.firstElement());
-            IOUtils.postAccountEvent(account);
+            if (httpClient.getResponseCode() == 200) {
+                long[] coords = (long[]) args[3];
+                MrimAccount account = (MrimAccount) args[0];
+                Vector mapPoints = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
+                account.setLocationProfile((MapPoint) mapPoints.firstElement());
+                IOUtils.postAccountEvent(account);
+            } else {
+                MrimAccount account = (MrimAccount) args[0];
+                account.setSimpleProfile((String) args[1], (String) args[2]);
+                IOUtils.postAccountEvent(account);
+            }
         } catch (Throwable e) {
-            String lat = (String) args[2];
-            String lon = (String) args[1];
             MrimAccount account = (MrimAccount) args[0];
-            account.setSimpleProfile(lon, lat);
+            account.setSimpleProfile((String) args[1], (String) args[2]);
             IOUtils.postAccountEvent(account);
-            return;
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        XmppContactGroup.removeContactInfoFromQueue(contactInfo);
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskExecuteRegistration() {
@@ -503,7 +459,7 @@ public final class AsyncTask implements Runnable, CommandListener {
         try {
             NetworkLock.acquireNetworkLock();
             String smsText = (String) args[1];
-            String smsAddress = StringUtils.concatKeyObj(398209, args[0]);
+            String smsAddress = StringUtils.concatKeyObj(PackedStringKeys.SCHEME_SMS, args[0]);
             MessageConnection msgConn = null;
             try {
                 Thread.sleep(100L);
@@ -520,9 +476,9 @@ public final class AsyncTask implements Runnable, CommandListener {
             args[2] = args;
         } catch (Throwable e) {
             args[2] = e;
-            return;
+        } finally {
+            NetworkLock.releaseNetworkLock();
         }
-        NetworkLock.releaseNetworkLock();
     }
 
     private void taskWaitForCompletion() throws InterruptedException {
@@ -556,52 +512,55 @@ public final class AsyncTask implements Runnable, CommandListener {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createHttpClient((String) args[2], (Account) args[0], 0);
             int responseCode = httpClient.getResponseCode();
-            if (responseCode != 200) throw new Throwable(StringUtils.intern(Integer.toString(responseCode)));
-            XmlElement xmlResponse = new ByteBuffer(httpClient).parseXmlStr();
-            if (((Integer) args[3]).intValue() != 0) {
-                XmppMailRuProtocol xmppProto = (XmppMailRuProtocol) args[0];
-                if (StringUtils.matchesKey(333441, xmlResponse.tagName)) {
-                    xmppProto.handleComplete();
+            if (responseCode == 200) {
+                XmlElement xmlResponse = new ByteBuffer(httpClient).parseXmlStr();
+                if (((Integer) args[3]).intValue() != 0) {
+                    XmppMailRuProtocol xmppProto = (XmppMailRuProtocol) args[0];
+                    if (StringUtils.matchesKey(PackedStringKeys.TAG_ERROR, xmlResponse.tagName)) {
+                        xmppProto.handleComplete();
+                    } else {
+                        xmppProto.serverResourceId = StringUtils.concatKey(PackedStringKeys.ATTR_ID, StringUtils.fromBuffer(xmlResponse.findChildByKey(PackedStringKeys.ATTR_ID).textContent));
+                    }
                 } else {
-                    xmppProto.serverResourceId = StringUtils.concatKey(131550, StringUtils.fromBuffer(xmlResponse.findChildByKey(131550).textContent));
+                    String nextUrl = new ByteBuffer()
+                        .writeCompressed(PackedStringKeys.URL_VK_AUTH_GET)
+                        .writeCompressed(PackedStringKeys.AUTH_SESSION_NONCE)
+                        .writeObjectStr(args[1])
+                        .writeCompressed(PackedStringKeys.PARAM_LOGIN)
+                        .writeObjectStr(args[4])
+                        .writeCompressed(PackedStringKeys.PARAM_DIGEST)
+                        .writeRawString(
+                            new ByteBuffer()
+                                .writeCompressed(PackedStringKeys.VK_API_SECRET)
+                                .writeByte(58)
+                                .writeObjectStr(args[1])
+                                .writeByte(58)
+                                .writeRawString(StringUtils.fromBuffer(xmlResponse.findChildByKey(PackedStringKeys.TAG_TOKEN).textContent))
+                                .writeByte(58)
+                                .writeRawString(
+                                    new ByteBuffer()
+                                        .writeObjectStr(args[4])
+                                        .writeCompressed(PackedStringKeys.DOMAIN_VK_COM)
+                                        .writeObjectStr(args[5])
+                                        .encryptMD5()
+                                        .toHexString()
+                                )
+                                .encryptMD5()
+                                .toHexString()
+                        )
+                        .readAllByteStr();
+                    args[2] = nextUrl;
+                    args[3] = ResourceManager.integerOf(1);
+                    new AsyncTask(AsyncTaskId.XMPP_HTTP_AUTH, args);
                 }
             } else {
-                String nextUrl = new ByteBuffer()
-                    .writeCompressed(4069357)
-                    .writeCompressed(1316925)
-                    .writeObjectStr(args[1])
-                    .writeCompressed(463517)
-                    .writeObjectStr(args[4])
-                    .writeCompressed(530513)
-                    .writeRawString(
-                        new ByteBuffer()
-                            .writeCompressed(3282875)
-                            .writeByte(58)
-                            .writeObjectStr(args[1])
-                            .writeByte(58)
-                            .writeRawString(StringUtils.fromBuffer(xmlResponse.findChildByKey(330583).textContent))
-                            .writeByte(58)
-                            .writeRawString(
-                                new ByteBuffer()
-                                    .writeObjectStr(args[4])
-                                    .writeCompressed(530521)
-                                    .writeObjectStr(args[5])
-                                    .encryptMD5()
-                                    .toHexString()
-                            )
-                            .encryptMD5()
-                            .toHexString()
-                    )
-                    .readAllByteStr();
-                args[2] = nextUrl;
-                args[3] = ResourceManager.integerOf(1);
-                new AsyncTask(AsyncTaskId.XMPP_HTTP_AUTH, args);
+                ((XmppProtocol) args[0]).setException(new Throwable(StringUtils.intern(Integer.toString(responseCode))));
             }
         } catch (Throwable error) {
             ((XmppProtocol) args[0]).setException(error);
-            return;
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
         }
-        HttpClient.closeAndUpdateStats(httpClient);
-        NetworkLock.releaseNetworkLock();
     }
 }

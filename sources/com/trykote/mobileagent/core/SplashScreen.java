@@ -35,7 +35,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
             new Thread(this).start();
         } else {
             try {
-                new AsyncTask(null, 0, 0);
+                AsyncTask.shutdown();
             } catch (Throwable unused) {
             }
         }

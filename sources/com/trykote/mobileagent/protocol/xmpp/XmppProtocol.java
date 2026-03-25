@@ -249,7 +249,7 @@ public class XmppProtocol extends Account {
                             taskArgs = null;
                         } else {
                             String hashPrefix = StringUtils.prefix(Utils.generateRandomHash(), 16);
-                            Object[] authArgs = {this, hashPrefix, new ByteBuffer().writeCompressed(5249005).writeRawString(hashPrefix).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
+                            Object[] authArgs = {this, hashPrefix, new ByteBuffer().writeCompressed(PackedStringKeys.URL_VK_AUTH_TOKEN_SECURE).writeRawString(hashPrefix).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
                             new AsyncTask(AsyncTaskId.XMPP_HTTP_AUTH, authArgs);
                             taskArgs = authArgs;
                         }
@@ -286,7 +286,7 @@ public class XmppProtocol extends Account {
                 this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
                 this.progress = PROGRESS_OPENING_STREAM;
                 if (isMailRuXmpp()) {
-                    new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
+                    new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, new Object[]{this, new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_CLIENT_AUTH).writeRawString(this.shortName).writeCompressed(PackedStringKeys.GMAIL_PASSWD).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
                 }
                 AppController.needsRepaint = true;
                 break;
@@ -331,8 +331,8 @@ public class XmppProtocol extends Account {
                 XmlElement element = (XmlElement) Utils.dequeue(this.elementQueue);
                 if (element != null) {
                     String tagName = element.tagName;
-                    if (!StringUtils.matchesKey(857301, tagName)) {
-                        if (StringUtils.matchesKey(988737, tagName)) {
+                    if (!StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName)) {
+                        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_FEATURES, tagName)) {
                             XmlElement mechanisms = element.findByName(AppState.getString(StateKeys.STR_RES_PROTOCOL_ATTR_1));
                             if (mechanisms != null) {
                                 XmlElement authElement = XmlElement.createFromState(263757).addIdAttr(2102710);
@@ -360,7 +360,7 @@ public class XmppProtocol extends Account {
                                 closeConnection();
                                 this.lastError = getDefaultError();
                             }
-                        } else if (StringUtils.matchesKey(595536, tagName)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.TAG_CHALLENGE, tagName)) {
                             XmlElement challengeResponse = XmlElement.createFromState(529537).addIdAttr(2102710);
                             String decoded = Base64.decode(StringUtils.fromBuffer(element.textContent)).getStringAndClear();
                             int idx = decoded.indexOf(AppState.getString(StateKeys.STR_RES_LABEL_TEXT_1));
@@ -370,20 +370,20 @@ public class XmppProtocol extends Account {
                                 String password = this.password;
                                 String realm = this.serverAddress;
                                 String nonce = StringUtils.substring(decoded, nonceStart, decoded.indexOf(34, nonceStart));
-                                ByteBuffer digestBuffer = new ByteBuffer().writeCompressed(660529).writeRawString(username).writeCompressed(595003).writeRawString(realm).writeCompressed(595012).writeRawString(nonce).writeCompressed(1446989);
+                                ByteBuffer digestBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.DIGEST_USERNAME).writeRawString(username).writeCompressed(PackedStringKeys.DIGEST_REALM).writeRawString(realm).writeCompressed(PackedStringKeys.DIGEST_NONCE).writeRawString(nonce).writeCompressed(PackedStringKeys.DIGEST_NC_CNONCE);
                                 String cnonce = Utils.generateRandomHash();
-                                challengeResponse.appendText((Object) digestBuffer.writeRawString(cnonce).writeCompressed(1840227).writeRawString(realm).writeCompressed(791679).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(username).writeByte(58).writeRawString(realm).writeByte(58).writeRawString(password).encryptMD5().writeByte(58).writeRawString(nonce).writeByte(58).writeRawString(cnonce).encryptMD5().toHexString()).writeByte(58).writeRawString(nonce).writeCompressed(660619).writeRawString(cnonce).writeByte(58).writeCompressed(263757).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(1184917).writeRawString(realm).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(988327).toBase64());
+                                challengeResponse.appendText((Object) digestBuffer.writeRawString(cnonce).writeCompressed(PackedStringKeys.DIGEST_QOP_AUTH).writeRawString(realm).writeCompressed(PackedStringKeys.DIGEST_RESPONSE).writeRawString(new ByteBuffer().writeRawString(new ByteBuffer().writeRawString(username).writeByte(58).writeRawString(realm).writeByte(58).writeRawString(password).encryptMD5().writeByte(58).writeRawString(nonce).writeByte(58).writeRawString(cnonce).encryptMD5().toHexString()).writeByte(58).writeRawString(nonce).writeCompressed(PackedStringKeys.DIGEST_NC).writeRawString(cnonce).writeByte(58).writeCompressed(PackedStringKeys.TAG_AUTH).writeByte(58).writeRawString(new ByteBuffer().writeCompressed(PackedStringKeys.DIGEST_AUTH_XMPP).writeRawString(realm).encryptMD5().toHexString()).encryptMD5().toHexString()).writeCompressed(PackedStringKeys.DIGEST_CHARSET).toBase64());
                             }
                             sendXmlElement(challengeResponse);
-                        } else if (StringUtils.matchesKey(464473, tagName)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.TAG_SUCCESS, tagName)) {
                             sendPresenceSubscription();
-                        } else if (StringUtils.matchesKey(530016, tagName)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.TAG_PRESENCE, tagName)) {
                             String nameAttr = element.getNameAttr();
                             String presenceType = nameAttr != null ? nameAttr : AppState.getString(StateKeys.STR_RES_XMPP_STANZA_1);
-                            String jid = extractBareJid(element.getIntAttribute(262852));
+                            String jid = extractBareJid(element.getIntAttribute(PackedStringKeys.ATTR_FROM));
                             if (jid != null) {
                                 XmppContact contact = findContactByJid(jid);
-                                if (StringUtils.matchesKey(594926, presenceType)) {
+                                if (StringUtils.matchesKey(PackedStringKeys.XMPP_SUBSCRIBE, presenceType)) {
                                     if (contact == null) {
                                         ContactGroup group = this.defaultGroup;
                                         XmppContact newContact = new XmppContact(this, jid, extractDisplayName(element, jid), null);
@@ -398,15 +398,15 @@ public class XmppProtocol extends Account {
                                     contact.updateFromPresence(presenceType, element);
                                 }
                             }
-                        } else if (StringUtils.matchesKey(464488, tagName)) {
-                            String senderJid = extractBareJid(element.getIntAttribute(262852));
+                        } else if (StringUtils.matchesKey(PackedStringKeys.TAG_MESSAGE, tagName)) {
+                            String senderJid = extractBareJid(element.getIntAttribute(PackedStringKeys.ATTR_FROM));
                             if (findContactByJid(senderJid) != null) {
                                 StringBuffer sb = ObjectPool.newStringBuffer();
-                                XmlElement subjectChild = element.findChildByKey(464558);
+                                XmlElement subjectChild = element.findChildByKey(PackedStringKeys.TAG_SUBJECT);
                                 if (subjectChild != null && (subjectText = StringUtils.fromBuffer(subjectChild.textContent)) != null) {
                                     sb.append(subjectText).append('\n');
                                 }
-                                XmlElement bodyChild = element.findChildByKey(267946);
+                                XmlElement bodyChild = element.findChildByKey(PackedStringKeys.TAG_BODY);
                                 if (bodyChild != null && (bodyText = StringUtils.fromBuffer(bodyChild.textContent)) != null) {
                                     sb.append(bodyText);
                                 }
@@ -415,10 +415,10 @@ public class XmppProtocol extends Account {
                                     onMessage(senderJid, 0L, messageText);
                                 }
                             }
-                        } else if (StringUtils.matchesKey(464495, tagName)) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.TAG_FAILURE, tagName)) {
                             handleComplete();
-                        } else if (StringUtils.matchesKey(136604, element.tagName)) {
-                            if (element.findByAttrs(267810, 857625) == null || !StringUtils.matchesKey(196633, element.getNameAttr())) {
+                        } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_IQ, element.tagName)) {
+                            if (element.findByAttrs(267810, 857625) == null || !StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_GET, element.getNameAttr())) {
                                 handledPing = false;
                             } else {
                                 XmlElement pingReply = element.cloneElement();
@@ -427,7 +427,7 @@ public class XmppProtocol extends Account {
                                 handledPing = true;
                             }
                             if (!handledPing && !processRosterUpdate(element)) {
-                                if (element.findByAttrs(267762, 2102742) == null || !StringUtils.matchesKey(398982, element.getNameAttr())) {
+                                if (element.findByAttrs(267762, 2102742) == null || !StringUtils.matchesKey(PackedStringKeys.TAG_RESULT, element.getNameAttr())) {
                                     handledSession = false;
                                 } else {
                                     sendElementWithId(XmlElement.createFromState(136604).addNameAttr(198841).addSimpleChild(461668, 2299382));
@@ -435,7 +435,7 @@ public class XmppProtocol extends Account {
                                     handledSession = true;
                                 }
                                 if (!handledSession) {
-                                    if (this.msgCount == 70 && StringUtils.matchesKey(398982, element.getNameAttr())) {
+                                    if (this.msgCount == 70 && StringUtils.matchesKey(PackedStringKeys.TAG_RESULT, element.getNameAttr())) {
                                         sendElementWithId(XmlElement.createFromState(136604).addNameAttr(196633).addSimpleChild(333360, 1054101));
                                         this.msgCount = 80;
                                         handledBind = true;
@@ -444,7 +444,7 @@ public class XmppProtocol extends Account {
                                     }
                                     if (!handledBind) {
                                         XmlElement discoInfoElement = element.findByAttrs(333360, 1119653);
-                                        if (discoInfoElement == null || !StringUtils.matchesKey(196633, element.getNameAttr())) {
+                                        if (discoInfoElement == null || !StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_GET, element.getNameAttr())) {
                                             handledDiscoInfo = false;
                                         } else {
                                             discoInfoElement.setIntAttribute(262601, 1119195).setIntAttribute(459728, 1375).setIntAttribute(133230, 264455);
@@ -453,12 +453,12 @@ public class XmppProtocol extends Account {
                                         }
                                         if (!handledDiscoInfo && (rosterElement = element.findByAttrs(333360, 1054101)) != null) {
                                             String iqType = element.getNameAttr();
-                                            if (StringUtils.matchesKey(198841, iqType)) {
+                                            if (StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_SET, iqType)) {
                                                 parseRosterItems(rosterElement);
                                                 XmlElement ackElement = element.cloneElement();
                                                 ackElement.children = null;
                                                 sendXmlElement(ackElement);
-                                            } else if (StringUtils.matchesKey(398982, iqType)) {
+                                            } else if (StringUtils.matchesKey(PackedStringKeys.TAG_RESULT, iqType)) {
                                                 removeAllContacts();
                                                 parseRosterItems(rosterElement);
                                                 if (Utils.vectorSize(this.groups) == 0) {
@@ -645,7 +645,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: u */
     private void sendPresenceSubscription() {
-        sendRawBytes(new ByteBuffer().writeCompressed(8131775).writeRawString(mo84j()).writeCompressed(136911).toByteArray());
+        sendRawBytes(new ByteBuffer().writeCompressed(PackedStringKeys.XML_XMPP_STREAM_HEADER).writeRawString(mo84j()).writeCompressed(PackedStringKeys.XML_CLOSE_TAG_END).toByteArray());
     }
 
     @Override // p000.Account
@@ -707,7 +707,7 @@ public class XmppProtocol extends Account {
     private final int createRosterUpdate(String str, String str2, String str3) {
         XmlElement queryElement = XmlElement.createFromState(333360).addIdAttr(1054101);
         XmlElement itemElement = XmlElement.createFromState(267942).setAttrValue(202421, str).setAttrValue(262601, str2).setAttrValue(792248, str2 == null ? AppState.getString(StateKeys.STR_RES_LABEL_TEXT_2) : null);
-        if (str3 != null && !StringUtils.matchesKey(459528, str3)) {
+        if (str3 != null && !StringUtils.matchesKey(PackedStringKeys.XMPP_GROUP_GENERAL, str3)) {
             itemElement.addTextChild(AppState.getString(StateKeys.STR_RES_URL_PARAM_4), str3);
         }
         return sendElementWithId(XmlElement.createFromState(136604).addNameAttr(198841).addChild(queryElement.addChild(itemElement)));
@@ -822,13 +822,13 @@ public class XmppProtocol extends Account {
         if (element.findByAttrs(333350, 661030) == null) {
             return false;
         }
-        if (!StringUtils.matchesKey(398982, element.getNameAttr())) {
-            if (!StringUtils.matchesKey(333441, element.getNameAttr())) {
+        if (!StringUtils.matchesKey(PackedStringKeys.TAG_RESULT, element.getNameAttr())) {
+            if (!StringUtils.matchesKey(PackedStringKeys.TAG_ERROR, element.getNameAttr())) {
                 return false;
             }
             try {
                 Object[] pendingRequest = AppState.getObjectArray(StateKeys.SLOT_REG_PARAM_2);
-                if (((String) pendingRequest[0]).equals(element.getIntAttribute(131550))) {
+                if (((String) pendingRequest[0]).equals(element.getIntAttribute(PackedStringKeys.ATTR_ID))) {
                     AppState.pool[StateKeys.SLOT_REG_PARAM_1] = ((ContactInfo) pendingRequest[1]).setDescriptionBis(element.toString());
                 }
                 return true;
@@ -838,7 +838,7 @@ public class XmppProtocol extends Account {
         }
         try {
             Object[] pendingRequest = AppState.getObjectArray(StateKeys.SLOT_REG_PARAM_2);
-            if (((String) pendingRequest[0]).equals(element.getIntAttribute(131550))) {
+            if (((String) pendingRequest[0]).equals(element.getIntAttribute(PackedStringKeys.ATTR_ID))) {
                 ContactInfo contactInfo = ((ContactInfo) pendingRequest[1]).setDescriptionBis(ObjectPool.toStringAndRelease(buildContactDescription(ObjectPool.newStringBuffer(), element)));
                 Image avatar = extractImageFromElement(element);
                 if (avatar != null) {
@@ -863,12 +863,12 @@ public class XmppProtocol extends Account {
                 return;
             }
             XmlElement itemElement = (XmlElement) children.elementAt(i);
-            if (StringUtils.matchesKey(267942, itemElement.tagName)) {
-                String jid = itemElement.getIntAttribute(202421);
-                String subscription = itemElement.getIntAttribute(792248);
-                itemElement.getIntAttribute(202403);
-                String displayName = itemElement.getIntAttribute(262601);
-                boolean isRemoved = StringUtils.matchesKey(399049, subscription);
+            if (StringUtils.matchesKey(PackedStringKeys.TAG_ITEM, itemElement.tagName)) {
+                String jid = itemElement.getIntAttribute(PackedStringKeys.ATTR_JID);
+                String subscription = itemElement.getIntAttribute(PackedStringKeys.ATTR_SUBSCRIPTION);
+                itemElement.getIntAttribute(PackedStringKeys.ATTR_ASK);
+                String displayName = itemElement.getIntAttribute(PackedStringKeys.ATTR_NAME);
+                boolean isRemoved = StringUtils.matchesKey(PackedStringKeys.TAG_REMOVE, subscription);
                 if (displayName == null) {
                     displayName = jid;
                 }
@@ -903,7 +903,7 @@ public class XmppProtocol extends Account {
     /* renamed from: a */
     private static String extractDisplayName(XmlElement element, String str) {
         try {
-            return StringUtils.fromBuffer(element.findChildByKey(267628).textContent);
+            return StringUtils.fromBuffer(element.findChildByKey(PackedStringKeys.TAG_NICK).textContent);
         } catch (Throwable unused) {
             return str;
         }
@@ -942,7 +942,7 @@ public class XmppProtocol extends Account {
     private final Image extractImageFromElement(XmlElement element) {
         Image image;
         String text;
-        if (StringUtils.matchesKey(398966, element.tagName) && (text = StringUtils.fromBuffer(element.textContent)) != null) {
+        if (StringUtils.matchesKey(PackedStringKeys.TAG_BINVAL, element.tagName) && (text = StringUtils.fromBuffer(element.textContent)) != null) {
             String trimmed = Utils.trimAll(text);
             if (Utils.nonEmpty(trimmed)) {
                 try {
@@ -964,7 +964,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: a */
     private final StringBuffer buildContactDescription(StringBuffer sb, XmlElement element) {
-        if (!StringUtils.matchesKey(333436, element.tagName)) {
+        if (!StringUtils.matchesKey(PackedStringKeys.TAG_PHOTO, element.tagName)) {
             String text = StringUtils.fromBuffer(element.textContent);
             if (text != null) {
                 String trimmed = Utils.trimAll(text);

@@ -104,10 +104,10 @@ public final class XmppContact extends Contact {
         if (icon == 16384) {
             return i;
         }
-        if (StringUtils.matchesKey(262852, this.statusMessage) || StringUtils.matchesKey(267931, this.statusMessage) || StringUtils.matchesKey(202403, this.statusMessage)) {
+        if (StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.ATTR_ASK, this.statusMessage)) {
             i = 384;
         }
-        if (StringUtils.matchesKey(131590, this.statusMessage)) {
+        if (StringUtils.matchesKey(PackedStringKeys.ATTR_TO, this.statusMessage)) {
             i = (i & 65535) | 20578304;
         }
         return i;
@@ -140,7 +140,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: l */
     public final boolean hasUnread() {
-        return StringUtils.matchesKey(267931, this.statusMessage) || StringUtils.matchesKey(262852, this.statusMessage);
+        return StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage);
     }
 
     @Override // p000.Contact
@@ -157,23 +157,23 @@ public final class XmppContact extends Contact {
         int i = 0;
         this.vCardHash = str;
         this.status = 0;
-        if (StringUtils.matchesKey(594984, str)) {
-            XmlElement showChild = element.findChildByKey(267927);
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AVAILABLE, str)) {
+            XmlElement showChild = element.findChildByKey(PackedStringKeys.TAG_SHOW);
             if (showChild != null) {
                 String statusText = StringUtils.fromBuffer(showChild.textContent);
                 if (StringUtils.isEmpty(statusText)) {
                     i = 1;
                     this.status = i;
                 } else {
-                    if (StringUtils.matchesKey(265215, statusText)) {
+                    if (StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_CHAT, statusText)) {
                         i = 4;
-                    } else if (StringUtils.matchesKey(267829, statusText)) {
+                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AWAY, statusText)) {
                         i = 2;
-                    } else if (StringUtils.matchesKey(136761, statusText)) {
+                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_XA, statusText)) {
                         i = 6;
-                    } else if (StringUtils.matchesKey(202299, statusText)) {
+                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_DND, statusText)) {
                         i = 5;
-                    } else if (StringUtils.matchesKey(202302, statusText)) {
+                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_INV, statusText)) {
                         i = 3;
                     }
                     this.status = i;

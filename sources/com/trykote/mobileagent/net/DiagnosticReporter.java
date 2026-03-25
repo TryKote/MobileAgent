@@ -36,7 +36,7 @@ public abstract class DiagnosticReporter {
             Thread.sleep(1000L);
             NetworkLock.acquireNetworkLock();
             if (str == null) {
-                HttpClient diagClient = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(1442705).writeCompressed(524308).writeCompressed(720924).getStringAndClear());
+                HttpClient diagClient = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_DATA_GET).writeCompressed(PackedStringKeys.API_PHONE_INFO).getStringAndClear());
                 httpClient = diagClient;
                 if (diagClient.getResponseCode() == 200) {
                     Vector children = new ByteBuffer(httpClient).parseXmlStr().children;
@@ -56,7 +56,7 @@ public abstract class DiagnosticReporter {
                     new AsyncTask(AsyncTaskId.SEND_DIAGNOSTIC, report.toString());
                 }
             } else {
-                ByteBuffer urlBuffer = new ByteBuffer().writeCompressed(131082);
+                ByteBuffer urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_Q_EQ);
                 ByteBuffer dataBuffer = new ByteBuffer().writeUTFNoLen(str);
                 for (int i7 = 0; i7 < dataBuffer.length; i7 += 600) {
                     int pos = i7;
@@ -180,7 +180,7 @@ public abstract class DiagnosticReporter {
                     urlBuffer.writeBytesAt(outputBuffer, 0, outPos);
                 }
                 dataBuffer.clear();
-                HttpClient uploadClient = HttpClient.createMockClient(new ByteBuffer().writeCompressed(1311655).writeCompressed(524300).writeCompressed(720924).getStringAndClear());
+                HttpClient uploadClient = HttpClient.createMockClient(new ByteBuffer().writeCompressed(PackedStringKeys.HOST_MOBILE_MAIL_RU_2041).writeCompressed(PackedStringKeys.API_DATA_ADD).writeCompressed(PackedStringKeys.API_PHONE_INFO).getStringAndClear());
                 httpClient = uploadClient;
                 uploadClient.sendHttpRequest(urlBuffer.length, 1414745936, 1038).writeBuffer(urlBuffer).getResponseCode();
             }

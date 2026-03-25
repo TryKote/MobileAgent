@@ -192,7 +192,7 @@ public final class MapHandler extends BaseScreenHandler {
                 long j4 = lat2;
                 if (msgId != null) {
                     String sessionKey = Utils.defaultStr(AppState.getString(StateKeys.SESSION_KEY));
-                    ByteBuffer requestBuf = new ByteBuffer().writeCompressed(3150648).writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(j3).writeUInt(4023078).writeLongAsString(j4).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCompressed(396139).writeLongAsString(j3).encryptMD5().toHexString());
+                    ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_ADD).writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(j3).writeUInt(4023078).writeLongAsString(j4).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCompressed(PackedStringKeys.TAG_SECRET).writeLongAsString(j3).encryptMD5().toHexString());
                     if (msgId2 != null) {
                         requestBuf.writeUInt(4023846).writeEncodedString(msgId2);
                     }

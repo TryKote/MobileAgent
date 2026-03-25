@@ -141,7 +141,7 @@ public final class ApiClient {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(StateKeys.STR_RES_PARAM_4)) && StringUtils.matchesKey(657623, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(StateKeys.STR_RES_PARAM_4)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;

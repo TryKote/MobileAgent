@@ -84,7 +84,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(4711));
                 return;
             case ScreenId.STATUS_INPUT:
-                XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(StateKeys.SLOT_STATUS_TEXT), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(StateKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new AsyncTask());
+                XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(StateKeys.SLOT_STATUS_TEXT), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(StateKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new TextInputHandler());
                 AppState.setInt(StateKeys.INT_LAST_POLL_TIMESTAMP, 0);
                 AppState.setInt(StateKeys.INT_LAST_CHECK_TIMESTAMP, 0);
                 AppState.setInt(StateKeys.INT_LAST_LIST_SIZE, 0);
@@ -236,7 +236,7 @@ public final class DialogHandler extends BaseScreenHandler {
                     errorCode2 = NotificationHelper.showError(523);
                 } else {
                     MrimAccount mrimAccount5 = (MrimAccount) AppState.getAccount();
-                    new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN) ? AppState.getString(StateKeys.SLOT_SCREEN_SUBTITLE) : null)).getStringAndClear());
+                    new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_AGENTUPLOAD).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(PackedStringKeys.PARAM_Z_JAVA).writeCompressed(PackedStringKeys.PARAM_CE).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN) ? AppState.getString(StateKeys.SLOT_SCREEN_SUBTITLE) : null)).getStringAndClear());
                     AppState.addInt(StateKeys.COUNTER_SEARCH_RESULTS, 1);
                     errorCode2 = 0;
                 }

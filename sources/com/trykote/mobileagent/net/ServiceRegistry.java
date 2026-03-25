@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Image;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import com.trykote.mobileagent.core.PackedStringKeys;
 
 public final class ServiceRegistry {
 
@@ -59,14 +60,14 @@ public final class ServiceRegistry {
         for (int i2 = 0; i2 < Utils.vectorSize(vector); i2++) {
             XmlElement c0022av2 = (XmlElement) vector.elementAt(i2);
             String strM555c = c0022av2.getLongKeyAttr(25705);
-            NetworkUtils c0040k = new NetworkUtils(Integer.parseInt(strM555c), c0022av2.getIntAttribute(262601), Integer.parseInt(c0022av2.getIntAttribute(201594)), c0022av2.getIntAttribute(529266));
+            NetworkUtils c0040k = new NetworkUtils(Integer.parseInt(strM555c), c0022av2.getIntAttribute(PackedStringKeys.ATTR_NAME), Integer.parseInt(c0022av2.getIntAttribute(PackedStringKeys.ATTR_DIR)), c0022av2.getIntAttribute(PackedStringKeys.TAG_LISTLINK));
             Vector vector2 = c0022av2.children;
             int i3 = 0;
             while (i3 < Utils.vectorSize(vector2)) {
                 int i4 = i3;
                 i3++;
                 XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);
-                if (StringUtils.matchesKey(263156, c0022av3.tagName)) {
+                if (StringUtils.matchesKey(PackedStringKeys.TAG_LINK, c0022av3.tagName)) {
                     c0040k.url = StringUtils.fromBuffer(c0022av3.textContent);
                 }
             }

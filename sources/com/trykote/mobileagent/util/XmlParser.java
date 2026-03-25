@@ -253,7 +253,7 @@ public final class XmlParser {
                             this.rootTagName = tagName2;
                         }
                         this.rootElement = new XmlElement(tagName2, this.rootElement, hashtable);
-                        if (StringUtils.matchesKey(857301, tagName2)) {
+                        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName2)) {
                             throw new RuntimeException();
                         }
                     }

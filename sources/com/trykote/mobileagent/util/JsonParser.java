@@ -168,7 +168,7 @@ public abstract class JsonParser {
         }
         stringBuffer.append(next);
         String text = ObjectPool.toStringAndRelease(sb);
-        return StringUtils.matchesKey(264068, text) ? ResourceManager.boolTrue : StringUtils.matchesKey(329608, text) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, text) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) text));
+        return StringUtils.matchesKey(PackedStringKeys.VALUE_TRUE, text) ? ResourceManager.boolTrue : StringUtils.matchesKey(PackedStringKeys.VALUE_FALSE, text) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, text) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) text));
     }
 
     /* renamed from: c */
@@ -314,6 +314,6 @@ public abstract class JsonParser {
 
     /* renamed from: b */
     public static final boolean isSuccess(Object obj) {
-        return StringUtils.matchesKey(133005, getVectorString(obj, 1)) && StringUtils.matchesKey(788024, (String) getVectorElement(obj, 0));
+        return StringUtils.matchesKey(PackedStringKeys.STATUS_OK, getVectorString(obj, 1)) && StringUtils.matchesKey(PackedStringKeys.TAG_AJAX_RESPONSE, (String) getVectorElement(obj, 0));
     }
 }

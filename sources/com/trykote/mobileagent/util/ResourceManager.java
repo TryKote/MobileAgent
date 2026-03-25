@@ -358,9 +358,9 @@ public final class ResourceManager {
                     XmlElement xmlElement = (XmlElement) vector.elementAt(size);
                     String str2 = xmlElement.tagName;
                     String textValue = StringUtils.fromBuffer(xmlElement.textContent);
-                    if (StringUtils.matchesKey(394658, str2) && StringUtils.matchesKey(197596, textValue)) {
+                    if (StringUtils.matchesKey(PackedStringKeys.TAG_STATUS, str2) && StringUtils.matchesKey(PackedStringKeys.HTTP_STATUS_200, textValue)) {
                         z = true;
-                    } else if (StringUtils.matchesKey(263156, str2)) {
+                    } else if (StringUtils.matchesKey(PackedStringKeys.TAG_LINK, str2)) {
                         str = textValue;
                     }
                     if (z && str != null) {
@@ -799,9 +799,9 @@ public final class ResourceManager {
         String domain = StringUtils.suffix(str, atIndex + 1);
         Object[] objArr = new Object[3];
         if (targetAccount instanceof MmpProtocol) {
-            urlBuffer = new ByteBuffer().writeCompressed(3998225).writeRawString(str);
+            urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_BUDDY_ICON).writeRawString(str);
         } else {
-            ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(1704439);
+            ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(PackedStringKeys.URL_OBRAZ_FOTO);
             int dotIndex = domain.indexOf(46);
             urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(StateKeys.INT_ASYNC_TASK_ID));
         }
@@ -849,7 +849,7 @@ public final class ResourceManager {
             }
             ByteBuffer buffer = new ByteBuffer(httpConn);
             synchronized (AppState.pool[StateKeys.SLOT_MEDIA_RESOURCE]) {
-                AppState.setInt(StateKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(723889)) != 0 ? 1 : 0);
+                AppState.setInt(StateKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(PackedStringKeys.TAG_SNAP_LOGINS)) != 0 ? 1 : 0);
             }
             synchronized (AppState.pool[StateKeys.SLOT_MEDIA_RESOURCE]) {
                 setUpdateFlag((byte) 0);
@@ -907,11 +907,11 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final String buildTileRequestUrl(long j, long j2, int i, String str) {
         String encodedQuery;
-        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(1245774).writeUInt(1031283503);
+        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAPS_MAIL_RU).writeUInt(1031283503);
         String longitude = IOUtils.pixelToLongitude(j);
         ByteBuffer urlBuf2 = urlBuf.writeRawString(longitude).writeUInt(4028710);
         String latitude = IOUtils.pixelToLatitude(j2);
-        ByteBuffer urlBuffer = urlBuf2.writeRawString(latitude).writeUInt(4028966).writeIntAsString(i).writeCompressed(2363459);
+        ByteBuffer urlBuffer = urlBuf2.writeRawString(latitude).writeUInt(4028966).writeIntAsString(i).writeCompressed(PackedStringKeys.PARAM_MAP_FULLSCREEN);
         if (str != null) {
             ByteBuffer urlBuf3 = urlBuffer.writeUInt(1031302438).writeRawString(longitude).writeUInt(1031367974).writeRawString(latitude).writeUInt(1031040294);
             if (StringUtils.isEmpty(str)) {

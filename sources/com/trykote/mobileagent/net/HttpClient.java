@@ -199,8 +199,8 @@ public final class HttpClient {
     /* renamed from: a */
     public final HttpClient sendHttpRequest(int i, int i2, int i3) throws IOException {
         String str = this.url;
-        this.connection = Connector.open(new ByteBuffer().writeCompressed(593549).writeRawString(StringUtils.prefix(str, str.indexOf(47))).getStringAndClear(), 3);
-        writeBuffer(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.suffix(str, str.indexOf(47))).writeCompressed(2951238).writeRawString(StringUtils.prefix(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
+        this.connection = Connector.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeRawString(StringUtils.prefix(str, str.indexOf(47))).getStringAndClear(), 3);
+        writeBuffer(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.suffix(str, str.indexOf(47))).writeCompressed(PackedStringKeys.HTTP_REQUEST_HEADER).writeRawString(StringUtils.prefix(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
         if (i2 == 1414745936) {
             setRequestHeader(788628, 2164851);
             setRequestHeader(919726, 788668);

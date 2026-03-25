@@ -157,7 +157,7 @@ public final class MenuItem {
             return 0;
         }
         if (this.id == 15) {
-            new AsyncTask(screen, this);
+            new TextInputHandler(screen, this);
             return 0;
         }
         if (this.id != 9) {

@@ -1,0 +1,1787 @@
+<countries>
+    <country i="24" n="Россия">
+        <region i="25" n="Москва">
+            <city i="1734">Зеленоград</city>
+        </region>
+        <region i="293" n="Московская обл.">
+            <city i="1733">Апрелевка</city>
+            <city i="1732">Балашиха</city>
+            <city i="1731">Бронницы</city>
+            <city i="1730">Верея</city>
+            <city i="2063">Видное</city>
+            <city i="2064">Волоколамск</city>
+            <city i="1729">Воскресенск</city>
+            <city i="1728">Высоковск</city>
+            <city i="1727">Голицыно</city>
+            <city i="2065">Дедовск</city>
+            <city i="1726">Дзержинский</city>
+            <city i="1725">Дмитров</city>
+            <city i="1724">Долгопрудный</city>
+            <city i="1723">Домодедово</city>
+            <city i="2066">Дрезна</city>
+            <city i="1722">Дубна</city>
+            <city i="1721">Егорьевск</city>
+            <city i="1720">Железнодорожный</city>
+            <city i="1719">Жуковский</city>
+            <city i="2067">Зарайск</city>
+            <city i="1718">Звенигород</city>
+            <city i="1715">Ивантеевка</city>
+            <city i="1717">Истра</city>
+            <city i="2068">Калининград</city>
+            <city i="2069">Кашира</city>
+            <city i="1716">Климовск</city>
+            <city i="1714">Клин</city>
+            <city i="1713">Коломна</city>
+            <city i="1712">Королев</city>
+            <city i="1711">Красноармейск</city>
+            <city i="1710">Красногорск</city>
+            <city i="2070">Краснозаводск</city>
+            <city i="2071">Куровское</city>
+            <city i="1709">Ликино-Дулёво</city>
+            <city i="1708">Лобня</city>
+            <city i="2072">Лосино-Петровский</city>
+            <city i="1707">Луховицы</city>
+            <city i="1706">Лыткарино</city>
+            <city i="1705">Люберцы</city>
+            <city i="1703">Можайск</city>
+            <city i="3695">Московский</city>
+            <city i="1702">Мытищи</city>
+            <city i="1701">Наро-Фоминск</city>
+            <city i="1700">Ногинск</city>
+            <city i="1698">Одинцово</city>
+            <city i="2073">Ожерелье</city>
+            <city i="2074">Озеры</city>
+            <city i="1699">Орехово-Зуево</city>
+            <city i="1697">Павловский Посад</city>
+            <city i="1696">Подольск</city>
+            <city i="1695">Протвино</city>
+            <city i="1694">Пушкино</city>
+            <city i="1693">Пущино</city>
+            <city i="1692">Раменское</city>
+            <city i="1691">Реутов</city>
+            <city i="2075">Рошаль</city>
+            <city i="2076">Руза</city>
+            <city i="1689">Сергиев Посад</city>
+            <city i="1688">Серпухов</city>
+            <city i="1687">Солнечногорск</city>
+            <city i="1686">Ступино</city>
+            <city i="2077">Сходня</city>
+            <city i="2078">Талдом</city>
+            <city i="1685">Троицк</city>
+            <city i="1684">Фрязино</city>
+            <city i="1683">Химки</city>
+            <city i="1682">Хотьково</city>
+            <city i="1681">Черноголовка</city>
+            <city i="1680">Чехов</city>
+            <city i="1679">Шатура</city>
+            <city i="1678">Щелково</city>
+            <city i="2080">Щербинка</city>
+            <city i="1677">Электрогорск</city>
+            <city i="1676">Электросталь</city>
+            <city i="2079">Электроугли</city>
+            <city i="3031">Юбилейный</city>
+            <city i="2081">Яхрома</city>
+        </region>
+        <region i="226">Санкт-Петербург</region>
+        <region i="257" n="Ленинградская обл.">
+            <city i="1985">Бокситогорск</city>
+            <city i="1374">Волхов</city>
+            <city i="1373">Всеволожск</city>
+            <city i="1375">Выборг</city>
+            <city i="1995">Высоцк</city>
+            <city i="1376">Гатчина</city>
+            <city i="1378">Ивангород</city>
+            <city i="1993">Каменногорск</city>
+            <city i="1379">Кингисепп</city>
+            <city i="1380">Кириши</city>
+            <city i="1381">Кировск</city>
+            <city i="1384">Кузьмоловский</city>
+            <city i="1984">Лодейное Поле</city>
+            <city i="3531">Ломоносов</city>
+            <city i="1990">Луга</city>
+            <city i="1994">Любань</city>
+            <city i="1386">Никольское</city>
+            <city i="1987">Новая Ладога</city>
+            <city i="1996">Отрадное</city>
+            <city i="1983">Подпорожье</city>
+            <city i="1992">Приморск</city>
+            <city i="1988">Приозерск</city>
+            <city i="3071">Пушкин</city>
+            <city i="1989">Светогорск</city>
+            <city i="1389">Сертолово</city>
+            <city i="1991">Сланцы</city>
+            <city i="1391">Сосновый Бор</city>
+            <city i="3493">Старая Ладога</city>
+            <city i="1392">Тихвин</city>
+            <city i="1393">Тосно</city>
+            <city i="1394">Шлиссельбург</city>
+        </region>
+        <region i="301" n="Адыгея">
+            <city i="2849">Адыгейск</city>
+            <city i="1776">Майкоп</city>
+        </region>
+        <region i="263" n="Алтай">
+            <city i="1439">Горно-Алтайск</city>
+        </region>
+        <region i="264" n="Алтайский край">
+            <city i="1440">Алейск</city>
+            <city i="1441">Барнаул</city>
+            <city i="1442">Белокуриха</city>
+            <city i="1443">Бийск</city>
+            <city i="2728">Горняк</city>
+            <city i="2731">Заринск</city>
+            <city i="2729">Змеиногорск</city>
+            <city i="2732">Камень-на-Оби</city>
+            <city i="2730">Новоалтайск</city>
+            <city i="1444">Рубцовск</city>
+            <city i="1445">Славгород</city>
+            <city i="3231">Яровое</city>
+        </region>
+        <region i="227" n="Амурская обл.">
+            <city i="455">Белогорск</city>
+            <city i="456">Благовещенск</city>
+            <city i="2814">Завитинск</city>
+            <city i="2813">Зея</city>
+            <city i="2815">Райчихинск</city>
+            <city i="2812">Свободный</city>
+            <city i="2811">Сковородино</city>
+            <city i="457">Тында</city>
+            <city i="2217">Шимановск</city>
+        </region>
+        <region i="252" n="Архангельская обл.">
+            <city i="593">Архангельск</city>
+            <city i="594">Вельск</city>
+            <city i="1945">Каргополь</city>
+            <city i="595">Коряжма</city>
+            <city i="596">Котлас</city>
+            <city i="1944">Мезень</city>
+            <city i="597">Мирный</city>
+            <city i="598">Новодвинск</city>
+            <city i="1946">Няндома</city>
+            <city i="599">Онега</city>
+            <city i="601">Северодвинск</city>
+            <city i="1942">Сольвычегодск</city>
+            <city i="1943">Шенкурск</city>
+        </region>
+        <region i="302" n="Астраханская обл.">
+            <city i="3427">Аксарайский</city>
+            <city i="1777">Астрахань</city>
+            <city i="1778">Ахтубинск</city>
+            <city i="3383">Знаменск</city>
+            <city i="2578">Камызяк</city>
+            <city i="2579">Нариманов</city>
+            <city i="1786">Харабали</city>
+        </region>
+        <region i="237" n="Башкортостан">
+            <city i="2657">Баймак</city>
+            <city i="2662">Белебей</city>
+            <city i="494">Белорецк</city>
+            <city i="2658">Бирск</city>
+            <city i="2660">Благовещенск</city>
+            <city i="2659">Давлеканово</city>
+            <city i="495">Ишимбай</city>
+            <city i="496">Кумертау</city>
+            <city i="2655">Мелеуз</city>
+            <city i="497">Нефтекамск</city>
+            <city i="2654">Октябрьский</city>
+            <city i="499">Салават</city>
+            <city i="2656">Сибай</city>
+            <city i="498">Стерлитамак</city>
+            <city i="2661">Туймазы</city>
+            <city i="500">Туймазы</city>
+            <city i="501">Уфа</city>
+            <city i="502">Учалы</city>
+        </region>
+        <region i="284" n="Белгородская обл.">
+            <city i="1625">Алексеевка</city>
+            <city i="1626">Белгород</city>
+            <city i="2172">Валуйки</city>
+            <city i="2173">Грайворон</city>
+            <city i="1627">Губкин</city>
+            <city i="2174">Короча</city>
+            <city i="2175">Новый Оскол</city>
+            <city i="1628">Старый Оскол</city>
+            <city i="1629">Шебекино</city>
+        </region>
+        <region i="285" n="Брянская обл.">
+            <city i="1630">Брянск</city>
+            <city i="3283">Дебрянск</city>
+            <city i="1631">Дятьково</city>
+            <city i="2013">Жуковка</city>
+            <city i="2015">Злынка</city>
+            <city i="1632">Карачев</city>
+            <city i="1633">Клинцы</city>
+            <city i="1634">Мглин</city>
+            <city i="2016">Новозыбков</city>
+            <city i="2018">Почеп</city>
+            <city i="2017">Севск</city>
+            <city i="2014">Стародуб</city>
+            <city i="2010">Сураж</city>
+            <city i="2012">Трубчевск</city>
+            <city i="2011">Унеча</city>
+            <city i="2019">Фокино</city>
+        </region>
+        <region i="265" n="Бурятия">
+            <city i="2764">Бабушкин</city>
+            <city i="2760">Гусиноозерск</city>
+            <city i="2762">Закаменск</city>
+            <city i="2763">Кяхта</city>
+            <city i="2761">Северобайкальск</city>
+            <city i="1446">Улан-Удэ</city>
+        </region>
+        <region i="286" n="Владимирская обл.">
+            <city i="1635">Александров</city>
+            <city i="1636">Владимир</city>
+            <city i="2021">Вязники</city>
+            <city i="2022">Гороховец</city>
+            <city i="1638">Гусь-Хрустальный</city>
+            <city i="2023">Камешково</city>
+            <city i="2031">Карабаново</city>
+            <city i="2024">Киржач</city>
+            <city i="1639">Ковров</city>
+            <city i="1640">Кольчугино</city>
+            <city i="2026">Костерево</city>
+            <city i="2033">Лакинск</city>
+            <city i="2025">Меленки</city>
+            <city i="1641">Муром</city>
+            <city i="1642">Петушки</city>
+            <city i="2027">Покров</city>
+            <city i="2211">Радужный</city>
+            <city i="2028">Собинка</city>
+            <city i="2032">Струнино</city>
+            <city i="2029">Судогда</city>
+            <city i="1643">Суздаль</city>
+            <city i="2030">Юрьев-Польский</city>
+        </region>
+        <region i="303" n="Волгоградская обл.">
+            <city i="1779">Волгоград</city>
+            <city i="1780">Волжский</city>
+            <city i="2584">Дубовка</city>
+            <city i="1781">Жирновск</city>
+            <city i="1782">Калач-на-Дону</city>
+            <city i="1783">Камышин</city>
+            <city i="2588">Котельниково</city>
+            <city i="2591">Котово</city>
+            <city i="2587">Краснослободск</city>
+            <city i="2582">Ленинск</city>
+            <city i="2590">Михайловка</city>
+            <city i="1784">Николаевск</city>
+            <city i="2581">Новоаннинский</city>
+            <city i="2580">Петров Вал</city>
+            <city i="2589">Серафимович</city>
+            <city i="2585">Суровикино</city>
+            <city i="1785">Урюпинск</city>
+            <city i="2586">Фролово</city>
+        </region>
+        <region i="253" n="Вологодская обл.">
+            <city i="1950">Бабаево</city>
+            <city i="1949">Белозерск</city>
+            <city i="1338">Великий Устюг</city>
+            <city i="1339">Вологда</city>
+            <city i="1951">Вытегра</city>
+            <city i="1340">Грязовец</city>
+            <city i="1952">Кадников</city>
+            <city i="1341">Кириллов</city>
+            <city i="1955">Красавино</city>
+            <city i="1947">Никольск</city>
+            <city i="1343">Сокол</city>
+            <city i="1953">Тотьма</city>
+            <city i="1954">Устюжна</city>
+            <city i="1948">Харовск</city>
+            <city i="1344">Череповец</city>
+        </region>
+        <region i="287" n="Воронежская обл.">
+            <city i="1644">Бобров</city>
+            <city i="1645">Богучар</city>
+            <city i="1646">Борисоглебск</city>
+            <city i="1647">Бутурлиновка</city>
+            <city i="1648">Воронеж</city>
+            <city i="2178">Калач</city>
+            <city i="2176">Лиски</city>
+            <city i="1649">Нововоронеж</city>
+            <city i="2177">Новохоперск</city>
+            <city i="2180">Острогожск</city>
+            <city i="1650">Павловск</city>
+            <city i="2181">Поворино</city>
+            <city i="1651">Россошь</city>
+            <city i="2179">Семилуки</city>
+            <city i="2182">Эртиль</city>
+        </region>
+        <region i="304" n="Дагестан">
+            <city i="2617">Буйнакск</city>
+            <city i="1788">Дербент</city>
+            <city i="2619">Избербаш</city>
+            <city i="1789">Каспийск</city>
+            <city i="2618">Кизилюрт</city>
+            <city i="1790">Кизляр</city>
+            <city i="1792">Махачкала</city>
+            <city i="2620">Хасавюрт</city>
+        </region>
+        <region i="228" n="Еврейская АО">
+            <city i="458">Биробиджан</city>
+            <city i="2810">Облучье</city>
+        </region>
+        <region i="3425" n="Забайкальский край">
+            <city i="2803">Балей</city>
+            <city i="2799">Борзя</city>
+            <city i="1499">Краснокаменск</city>
+            <city i="2801">Могоча</city>
+            <city i="2800">Нерчинск</city>
+            <city i="2802">Петровск-Забайкальский</city>
+            <city i="2798">Сретенск</city>
+            <city i="2796">Хилок</city>
+            <city i="1498">Чита</city>
+            <city i="2797">Шилка</city>
+        </region>
+        <region i="288" n="Ивановская обл.">
+            <city i="1652">Вичуга</city>
+            <city i="2036">Гаврилов Посад</city>
+            <city i="1657">Заволжск</city>
+            <city i="1653">Иваново</city>
+            <city i="1656">Кинешма</city>
+            <city i="2040">Комсомольск</city>
+            <city i="2037">Кохма</city>
+            <city i="2043">Наволоки</city>
+            <city i="2039">Плес</city>
+            <city i="2038">Приволжск</city>
+            <city i="2042">Пучеж</city>
+            <city i="2044">Родники</city>
+            <city i="1655">Тейково</city>
+            <city i="2034">Фурманов</city>
+            <city i="3415">Холуй</city>
+            <city i="1654">Шуя</city>
+            <city i="2041">Южа</city>
+            <city i="2035">Юрьевец</city>
+        </region>
+        <region i="305" n="Ингушетия">
+            <city i="3052">Магас</city>
+            <city i="1787">Назрань</city>
+        </region>
+        <region i="266" n="Иркутская обл.">
+            <city i="2792">Алзамай</city>
+            <city i="1447">Ангарск</city>
+            <city i="1448">Байкальск</city>
+            <city i="2791">Бирюсинск</city>
+            <city i="1450">Бодайбо</city>
+            <city i="1451">Братск</city>
+            <city i="2793">Вихоревка</city>
+            <city i="2789">Железногорск-Илимский</city>
+            <city i="3609">Железногорск-Илимский</city>
+            <city i="2786">Зима</city>
+            <city i="1452">Иркутск</city>
+            <city i="2794">Киренск</city>
+            <city i="2787">Нижнеудинск</city>
+            <city i="1449">Саянск</city>
+            <city i="2790">Свирск</city>
+            <city i="1453">Слюдянка</city>
+            <city i="2788">Тайшет</city>
+            <city i="1454">Тулун</city>
+            <city i="1455">Усолье-Сибирское</city>
+            <city i="2908">Усолье-Сибирское</city>
+            <city i="1456">Усть-Илимск</city>
+            <city i="1457">Усть-Кут</city>
+            <city i="1459">Черемхово</city>
+            <city i="2795">Шелехов</city>
+        </region>
+        <region i="306" n="Кабардино-Балкария">
+            <city i="2621">Баксан</city>
+            <city i="1794">Майский</city>
+            <city i="1793">Нальчик</city>
+            <city i="2622">Нарткала</city>
+            <city i="1795">Прохладный</city>
+            <city i="2623">Терек</city>
+            <city i="2624">Тырныауз</city>
+        </region>
+        <region i="254" n="Калининградская обл.">
+            <city i="2838">Багратионовск</city>
+            <city i="1345">Балтийск</city>
+            <city i="2846">Гвардейск</city>
+            <city i="2843">Гурьевск</city>
+            <city i="1346">Гусев</city>
+            <city i="1347">Зеленоградск</city>
+            <city i="1348">Калининград</city>
+            <city i="2842">Краснознаменск</city>
+            <city i="2845">Ладушкин</city>
+            <city i="2848">Мамоново</city>
+            <city i="2837">Неман</city>
+            <city i="2844">Нестеров</city>
+            <city i="1349">Озерск</city>
+            <city i="2841">Полесск</city>
+            <city i="2839">Правдинск</city>
+            <city i="1350">Приморск</city>
+            <city i="1351">Светлогорск</city>
+            <city i="1352">Светлый</city>
+            <city i="2840">Славск</city>
+            <city i="1353">Советск</city>
+            <city i="1354">Черняховск</city>
+        </region>
+        <region i="307" n="Калмыкия">
+            <city i="2568">Лагань</city>
+            <city i="1796">Элиста</city>
+        </region>
+        <region i="289" n="Калужская обл.">
+            <city i="2050">Балабаново</city>
+            <city i="2051">Боровск</city>
+            <city i="2052">Жиздра</city>
+            <city i="1660">Жуковка</city>
+            <city i="1658">Калуга</city>
+            <city i="2046">Киров</city>
+            <city i="1763">Климовск</city>
+            <city i="1661">Козельск</city>
+            <city i="2049">Людиново</city>
+            <city i="1659">Малоярославец</city>
+            <city i="2054">Медынь</city>
+            <city i="2055">Мещовск</city>
+            <city i="2047">Мосальск</city>
+            <city i="1662">Обнинск</city>
+            <city i="2056">Спас-Деменск</city>
+            <city i="2045">Сухиничи</city>
+            <city i="1663">Таруса</city>
+            <city i="2048">Юхнов</city>
+        </region>
+        <region i="229" n="Камчатский край">
+            <city i="460">Елизово</city>
+            <city i="2822">Ключи</city>
+            <city i="459">Петропавловск-Камчатский</city>
+        </region>
+        <region i="308" n="Карачаево-Черкессия">
+            <city i="1798">Карачаевск</city>
+            <city i="2626">Теберда</city>
+            <city i="2625">Усть-Джегута</city>
+            <city i="1797">Черкесск</city>
+        </region>
+        <region i="255" n="Карелия">
+            <city i="1355">Беломорск</city>
+            <city i="1356">Кемь</city>
+            <city i="1357">Кондопога</city>
+            <city i="1358">Костомукша</city>
+            <city i="1360">Лахденпохья</city>
+            <city i="1361">Медвежьегорск</city>
+            <city i="1937">Олонец</city>
+            <city i="1363">Петрозаводск</city>
+            <city i="1938">Питкяранта</city>
+            <city i="1936">Пудож</city>
+            <city i="1364">Сегежа</city>
+            <city i="1365">Сортавала</city>
+            <city i="1939">Суоярви</city>
+        </region>
+        <region i="267" n="Кемеровская обл.">
+            <city i="2737">Анжеро-Судженск</city>
+            <city i="2740">Белово</city>
+            <city i="2746">Березовский</city>
+            <city i="2739">Гурьевск</city>
+            <city i="2742">Калтан</city>
+            <city i="1460">Кемерово</city>
+            <city i="1461">Киселевск</city>
+            <city i="2738">Ленинск-Кузнецкий</city>
+            <city i="2745">Мариинск</city>
+            <city i="1462">Междуреченск</city>
+            <city i="1463">Мыски</city>
+            <city i="1464">Новокузнецк</city>
+            <city i="2744">Осинники</city>
+            <city i="3358">Полысаево</city>
+            <city i="1465">Прокопьевск</city>
+            <city i="1466">Салаир</city>
+            <city i="2743">Тайга</city>
+            <city i="2741">Таштагол</city>
+            <city i="1467">Топки</city>
+            <city i="1468">Юрга</city>
+        </region>
+        <region i="238" n="Кировская обл.">
+            <city i="2168">Белая Холуница</city>
+            <city i="503">Вятские Поляны</city>
+            <city i="2164">Зуевка</city>
+            <city i="504">Киров</city>
+            <city i="505">Кирово-Чепецк</city>
+            <city i="2160">Кирс</city>
+            <city i="506">Котельнич</city>
+            <city i="2167">Луза</city>
+            <city i="2159">Малмыж</city>
+            <city i="2169">Мураши</city>
+            <city i="2163">Нолинск</city>
+            <city i="2170">Омутнинск</city>
+            <city i="2166">Слободской</city>
+            <city i="2165">Советск</city>
+            <city i="2162">Сосновка</city>
+            <city i="2171">Уржум</city>
+            <city i="2161">Халтурин</city>
+            <city i="507">Яранск</city>
+        </region>
+        <region i="256" n="Коми">
+            <city i="1366">Воркута</city>
+            <city i="1367">Вуктыл</city>
+            <city i="2202">Емва</city>
+            <city i="1368">Инта</city>
+            <city i="1940">Микунь</city>
+            <city i="1369">Печора</city>
+            <city i="1941">Сосногорск</city>
+            <city i="1370">Сыктывкар</city>
+            <city i="1371">Усинск</city>
+            <city i="1372">Ухта</city>
+        </region>
+        <region i="290" n="Костромская обл.">
+            <city i="1664">Буй</city>
+            <city i="1666">Галич</city>
+            <city i="2059">Кологрив</city>
+            <city i="1667">Кострома</city>
+            <city i="1668">Макарьев</city>
+            <city i="2060">Мантурово</city>
+            <city i="1669">Нерехта</city>
+            <city i="2061">Нея</city>
+            <city i="2062">Солигалич</city>
+            <city i="2058">Чухлома</city>
+            <city i="1670">Шарья</city>
+        </region>
+        <region i="309" n="Краснодарский край">
+            <city i="2636">Абинск</city>
+            <city i="1800">Анапа</city>
+            <city i="1801">Апшеронск</city>
+            <city i="1802">Армавир</city>
+            <city i="1803">Белореченск</city>
+            <city i="1804">Геленджик</city>
+            <city i="1805">Горячий Ключ</city>
+            <city i="2637">Гулькевичи</city>
+            <city i="1807">Ейск</city>
+            <city i="2638">Кореновск</city>
+            <city i="1808">Краснодар</city>
+            <city i="1809">Кропоткин</city>
+            <city i="1810">Крымск</city>
+            <city i="1811">Курганинск</city>
+            <city i="3232">Лабинск</city>
+            <city i="2639">Новокубанск</city>
+            <city i="1812">Новороссийск</city>
+            <city i="1814">Приморско-Ахтарск</city>
+            <city i="1815">Славянск-на-Кубани</city>
+            <city i="1816">Сочи</city>
+            <city i="1817">Темрюк</city>
+            <city i="2635">Тимашевск</city>
+            <city i="1818">Тихорецк</city>
+            <city i="1819">Туапсе</city>
+            <city i="1820">Усть-Лабинск</city>
+            <city i="2634">Хадыженск</city>
+        </region>
+        <region i="268" n="Красноярский край">
+            <city i="2781">Артемовск</city>
+            <city i="1469">Ачинск</city>
+            <city i="2784">Боготол</city>
+            <city i="2773">Бородино</city>
+            <city i="2774">Дивногорск</city>
+            <city i="1485">Дудинка</city>
+            <city i="2772">Енисейск</city>
+            <city i="3294">Железногорск</city>
+            <city i="2777">Заозерный</city>
+            <city i="3667">Зеленогорск</city>
+            <city i="1470">Игарка</city>
+            <city i="2778">Иланский</city>
+            <city i="1487">Кайеркан</city>
+            <city i="2782">Канск</city>
+            <city i="2783">Кодинский</city>
+            <city i="1471">Красноярск</city>
+            <city i="1472">Лесосибирск</city>
+            <city i="1473">Минусинск</city>
+            <city i="2775">Назарово</city>
+            <city i="1483">Норильск</city>
+            <city i="2776">Сосновоборск</city>
+            <city i="1484">Талнах</city>
+            <city i="2780">Ужур</city>
+            <city i="2779">Уяр</city>
+            <city i="2785">Шарыпово</city>
+        </region>
+        <region i="278" n="Курганская обл.">
+            <city i="2668">Далматово</city>
+            <city i="2667">Катайск</city>
+            <city i="1524">Курган</city>
+            <city i="2669">Куртамыш</city>
+            <city i="2666">Макушино</city>
+            <city i="2671">Петухово</city>
+            <city i="1525">Шадринск</city>
+            <city i="2670">Шумиха</city>
+            <city i="2672">Щучье</city>
+        </region>
+        <region i="291" n="Курская обл.">
+            <city i="1671">Дмитриев-Льговский</city>
+            <city i="3279">Железногорск</city>
+            <city i="1673">Железногорск</city>
+            <city i="1672">Курск</city>
+            <city i="2187">Курчатов</city>
+            <city i="2188">Льгов</city>
+            <city i="2184">Обоянь</city>
+            <city i="2185">Рыльск</city>
+            <city i="2183">Суджа</city>
+            <city i="2189">Фатеж</city>
+            <city i="2186">Щигры</city>
+        </region>
+        <region i="292" n="Липецкая обл.">
+            <city i="2194">Грязи</city>
+            <city i="2193">Данков</city>
+            <city i="1674">Елец</city>
+            <city i="2190">Задонск</city>
+            <city i="2195">Лебедянь</city>
+            <city i="1675">Липецк</city>
+            <city i="2192">Усмань</city>
+            <city i="2191">Чаплыгин</city>
+        </region>
+        <region i="231" n="Магаданская обл.">
+            <city i="462">Магадан</city>
+            <city i="2823">Сусуман</city>
+        </region>
+        <region i="240" n="Марий Эл">
+            <city i="509">Волжск</city>
+            <city i="510">Звенигово</city>
+            <city i="511">Йошкар-Ола</city>
+            <city i="512">Козьмодемьянск</city>
+        </region>
+        <region i="241" n="Мордовия">
+            <city i="2147">Инсар</city>
+            <city i="2150">Ковылкино</city>
+            <city i="2148">Краснослободск</city>
+            <city i="515">Рузаевка</city>
+            <city i="514">Саранск</city>
+            <city i="2149">Темников</city>
+        </region>
+        <region i="258" n="Мурманская обл.">
+            <city i="1395">Апатиты</city>
+            <city i="3557">Заозёрск</city>
+            <city i="1959">Заполярный</city>
+            <city i="1397">Кандалакша</city>
+            <city i="1398">Кировск</city>
+            <city i="1399">Ковдор</city>
+            <city i="1958">Кола</city>
+            <city i="1400">Мончегорск</city>
+            <city i="1401">Мурманск</city>
+            <city i="1403">Оленегорск</city>
+            <city i="1956">Полярный</city>
+            <city i="1957">Североморск</city>
+            <city i="3288">Снежногорск</city>
+        </region>
+        <region i="259" n="Ненецкий АО">
+            <city i="1405">Нарьян-Мар</city>
+        </region>
+        <region i="242" n="Нижегородская обл.">
+            <city i="516">Арзамас</city>
+            <city i="517">Балахна</city>
+            <city i="2139">Богородск</city>
+            <city i="518">Бор</city>
+            <city i="520">Ветлуга</city>
+            <city i="2140">Володарск</city>
+            <city i="2138">Ворсма</city>
+            <city i="521">Выкса</city>
+            <city i="2137">Горбатов</city>
+            <city i="522">Городец</city>
+            <city i="523">Дзержинск</city>
+            <city i="524">Заволжье</city>
+            <city i="525">Кстово</city>
+            <city i="2145">Кулебаки</city>
+            <city i="2143">Лукоянов</city>
+            <city i="2144">Лысково</city>
+            <city i="2146">Навашино</city>
+            <city i="526">Нижний Новгород</city>
+            <city i="527">Павлово</city>
+            <city i="2135">Первомайск</city>
+            <city i="528">Саров</city>
+            <city i="529">Семенов</city>
+            <city i="530">Сергач</city>
+            <city i="2141">Урень</city>
+            <city i="2136">Чкаловск</city>
+            <city i="2142">Шахунья</city>
+        </region>
+        <region i="260" n="Новгородская обл.">
+            <city i="2001">Боровичи</city>
+            <city i="2003">Валдай</city>
+            <city i="1407">Великий Новгород</city>
+            <city i="2002">Малая Вишера</city>
+            <city i="1409">Окуловка</city>
+            <city i="2000">Пестово</city>
+            <city i="1997">Сольцы</city>
+            <city i="1410">Старая Русса</city>
+            <city i="1998">Холм</city>
+            <city i="1999">Чудово</city>
+        </region>
+        <region i="269" n="Новосибирская обл.">
+            <city i="1476">Барабинск</city>
+            <city i="1477">Бердск</city>
+            <city i="2750">Болотное</city>
+            <city i="1478">Искитим</city>
+            <city i="2752">Карасук</city>
+            <city i="2751">Каргат</city>
+            <city i="2753">Куйбышев</city>
+            <city i="2755">Купино</city>
+            <city i="1479">Новосибирск</city>
+            <city i="2759">Обь</city>
+            <city i="2756">Татарск</city>
+            <city i="2758">Тогучин</city>
+            <city i="2757">Черепаново</city>
+            <city i="2754">Чулым</city>
+        </region>
+        <region i="270" n="Омская обл.">
+            <city i="2733">Исилькуль</city>
+            <city i="1480">Калачинск</city>
+            <city i="2735">Называевск</city>
+            <city i="1482">Омск</city>
+            <city i="2734">Тара</city>
+            <city i="2736">Тюкалинск</city>
+        </region>
+        <region i="243" n="Оренбургская обл.">
+            <city i="2678">Абдулино</city>
+            <city i="2673">Бугуруслан</city>
+            <city i="531">Бузулук</city>
+            <city i="532">Гай</city>
+            <city i="2674">Кувандык</city>
+            <city i="2675">Медногорск</city>
+            <city i="533">Новотроицк</city>
+            <city i="535">Оренбург</city>
+            <city i="536">Орск</city>
+            <city i="2677">Соль-Илецк</city>
+            <city i="2676">Сорочинск</city>
+            <city i="538">Ясный</city>
+        </region>
+        <region i="294" n="Орловская обл.">
+            <city i="2083">Болхов</city>
+            <city i="2082">Дмитровск-Орловский</city>
+            <city i="1736">Ливны</city>
+            <city i="2084">Малоархангельск</city>
+            <city i="1737">Мценск</city>
+            <city i="2085">Новосиль</city>
+            <city i="1735">Орел</city>
+        </region>
+        <region i="244" n="Пензенская обл.">
+            <city i="539">Беднодемьяновск</city>
+            <city i="2597">Белинский</city>
+            <city i="2595">Городище</city>
+            <city i="2593">Каменка</city>
+            <city i="540">Кузнецк</city>
+            <city i="2598">Нижний Ломов</city>
+            <city i="2592">Никольск</city>
+            <city i="541">Пенза</city>
+            <city i="2596">Сердобск</city>
+            <city i="2594">Сурск</city>
+        </region>
+        <region i="245" n="Пермский край">
+            <city i="2690">Александровск</city>
+            <city i="542">Березники</city>
+            <city i="2679">Верещагино</city>
+            <city i="2680">Горнозаводск</city>
+            <city i="2687">Гремячинск</city>
+            <city i="2686">Губаха</city>
+            <city i="543">Добрянка</city>
+            <city i="544">Кизел</city>
+            <city i="2681">Красновишерск</city>
+            <city i="545">Краснокамск</city>
+            <city i="508">Кудымкар</city>
+            <city i="546">Кунгур</city>
+            <city i="547">Лысьва</city>
+            <city i="548">Нытва</city>
+            <city i="2683">Оса</city>
+            <city i="2684">Оханск</city>
+            <city i="2682">Очер</city>
+            <city i="549">Пермь</city>
+            <city i="550">Соликамск</city>
+            <city i="3512">Уинск</city>
+            <city i="2685">Усолье</city>
+            <city i="551">Чайковский</city>
+            <city i="2689">Чердынь</city>
+            <city i="2688">Чермоз</city>
+            <city i="552">Чернушка</city>
+            <city i="553">Чусовой</city>
+        </region>
+        <region i="232" n="Приморский край">
+            <city i="2819">Арсеньев</city>
+            <city i="464">Артем</city>
+            <city i="465">Большой Камень</city>
+            <city i="466">Владивосток</city>
+            <city i="2817">Дальнегорск</city>
+            <city i="2818">Дальнереченск</city>
+            <city i="468">Лесозаводск</city>
+            <city i="470">Находка</city>
+            <city i="471">Партизанск</city>
+            <city i="2816">Спасск-Дальний</city>
+            <city i="473">Уссурийск</city>
+        </region>
+        <region i="261" n="Псковская обл.">
+            <city i="1412">Великие Луки</city>
+            <city i="2004">Гдов</city>
+            <city i="2009">Дно</city>
+            <city i="2005">Невель</city>
+            <city i="1413">Новоржев</city>
+            <city i="2006">Опочка</city>
+            <city i="2008">Остров</city>
+            <city i="1414">Печоры</city>
+            <city i="1415">Порхов</city>
+            <city i="1411">Псков</city>
+            <city i="1416">Пустошка</city>
+            <city i="2007">Пыталово</city>
+            <city i="1417">Себеж</city>
+        </region>
+        <region i="310" n="Ростовская обл.">
+            <city i="1821">Азов</city>
+            <city i="1822">Аксай</city>
+            <city i="1824">Батайск</city>
+            <city i="1825">Белая Калитва</city>
+            <city i="1826">Волгодонск</city>
+            <city i="1827">Гуково</city>
+            <city i="2651">Донецк</city>
+            <city i="1828">Зерноград</city>
+            <city i="2652">Каменск-Шахтинский</city>
+            <city i="2649">Константиновск</city>
+            <city i="2648">Красный Сулин</city>
+            <city i="1829">Миллерово</city>
+            <city i="2653">Морозовск</city>
+            <city i="1830">Новочеркасск</city>
+            <city i="1831">Новошахтинск</city>
+            <city i="1832">Пролетарск</city>
+            <city i="1833">Ростов-на-Дону</city>
+            <city i="1834">Сальск</city>
+            <city i="1835">Семикаракорск</city>
+            <city i="1836">Таганрог</city>
+            <city i="2650">Цимлянск</city>
+            <city i="1838">Шахты</city>
+        </region>
+        <region i="295" n="Рязанская обл.">
+            <city i="1741">Касимов</city>
+            <city i="2086">Кораблино</city>
+            <city i="2087">Михайлов</city>
+            <city i="2089">Новомичуринск</city>
+            <city i="2091">Рыбное</city>
+            <city i="2093">Ряжск</city>
+            <city i="1738">Рязань</city>
+            <city i="1739">Сасово</city>
+            <city i="2090">Скопин</city>
+            <city i="2088">Спас-Клепики</city>
+            <city i="2092">Спасск-Рязанский</city>
+            <city i="2094">Шацк</city>
+        </region>
+        <region i="246" n="Самарская обл.">
+            <city i="555">Жигулевск</city>
+            <city i="2599">Кинель</city>
+            <city i="2602">Нефтегорск</city>
+            <city i="556">Новокуйбышевск</city>
+            <city i="2600">Октябрьск</city>
+            <city i="557">Отрадный</city>
+            <city i="558">Похвистнево</city>
+            <city i="559">Самара</city>
+            <city i="560">Сызрань</city>
+            <city i="561">Тольятти</city>
+            <city i="2601">Чапаевск</city>
+        </region>
+        <region i="247" n="Саратовская обл.">
+            <city i="2613">Аркадак</city>
+            <city i="2606">Аткарск</city>
+            <city i="563">Балаково</city>
+            <city i="564">Балашов</city>
+            <city i="565">Вольск</city>
+            <city i="2608">Ершов</city>
+            <city i="2607">Калининск</city>
+            <city i="2609">Красноармейск</city>
+            <city i="2610">Красный Кут</city>
+            <city i="2605">Маркс</city>
+            <city i="566">Новоузенск</city>
+            <city i="2603">Петровск</city>
+            <city i="2604">Пугачев</city>
+            <city i="2612">Ртищево</city>
+            <city i="567">Саратов</city>
+            <city i="2611">Хвалынск</city>
+            <city i="568">Энгельс</city>
+            <city i="3267">Энгельс</city>
+        </region>
+        <region i="233" n="Саха (Якутия)">
+            <city i="474">Алдан</city>
+            <city i="2809">Верхоянск</city>
+            <city i="2804">Вилюйск</city>
+            <city i="475">Ленск</city>
+            <city i="477">Мирный</city>
+            <city i="476">Нерюнгри</city>
+            <city i="2806">Олекминск</city>
+            <city i="3115">Покровск</city>
+            <city i="2808">Среднеколымск</city>
+            <city i="2807">Томмот</city>
+            <city i="2805">Удачный</city>
+            <city i="479">Якутск</city>
+        </region>
+        <region i="234" n="Сахалинская обл.">
+            <city i="480">Александровск-Сахалинский</city>
+            <city i="2829">Анива</city>
+            <city i="2833">Горнозаводск</city>
+            <city i="2825">Долинск</city>
+            <city i="481">Корсаков</city>
+            <city i="482">Красногорск</city>
+            <city i="2826">Курильск</city>
+            <city i="2832">Лесогорск</city>
+            <city i="2836">Макаров</city>
+            <city i="2830">Невельск</city>
+            <city i="483">Оха</city>
+            <city i="2828">Поронайск</city>
+            <city i="2824">Северо-Курильск</city>
+            <city i="2827">Томари</city>
+            <city i="2831">Углегорск</city>
+            <city i="484">Холмск</city>
+            <city i="2834">Чехов</city>
+            <city i="2835">Шахтерск</city>
+            <city i="486">Южно-Сахалинск</city>
+        </region>
+        <region i="279" n="Свердловская обл.">
+            <city i="1526">Алапаевск</city>
+            <city i="1527">Арамиль</city>
+            <city i="2691">Артемовский</city>
+            <city i="1528">Асбест</city>
+            <city i="2707">Березовский</city>
+            <city i="1529">Богданович</city>
+            <city i="2698">Верхний Тагил</city>
+            <city i="1530">Верхняя Пышма</city>
+            <city i="1531">Верхняя Салда</city>
+            <city i="1532">Верхняя Синячиха</city>
+            <city i="2696">Верхняя Тура</city>
+            <city i="2692">Верхотурье</city>
+            <city i="2706">Волчанск</city>
+            <city i="2709">Дегтярск</city>
+            <city i="1533">Екатеринбург</city>
+            <city i="1534">Заречный</city>
+            <city i="1535">Ивдель</city>
+            <city i="1536">Ирбит</city>
+            <city i="1537">Каменск-Уральский</city>
+            <city i="1538">Камышлов</city>
+            <city i="2708">Карпинск</city>
+            <city i="1539">Качканар</city>
+            <city i="2712">Кировград</city>
+            <city i="1540">Краснотурьинск</city>
+            <city i="2694">Красноуральск</city>
+            <city i="2693">Красноуфимск</city>
+            <city i="1541">Кушва</city>
+            <city i="2711">Михайловск</city>
+            <city i="2713">Михайловск</city>
+            <city i="1542">Невьянск</city>
+            <city i="2702">Нижние Серги</city>
+            <city i="1543">Нижний Тагил</city>
+            <city i="2695">Нижняя Салда</city>
+            <city i="2697">Нижняя Тура</city>
+            <city i="2699">Новая Ляля</city>
+            <city i="2909">Новоуральск</city>
+            <city i="1544">Первоуральск</city>
+            <city i="1545">Полевской</city>
+            <city i="1546">Ревда</city>
+            <city i="1547">Реж</city>
+            <city i="2700">Североуральск</city>
+            <city i="1548">Серов</city>
+            <city i="2710">Среднеуральск</city>
+            <city i="2701">Сухой Лог</city>
+            <city i="2703">Сысерть</city>
+            <city i="1549">Тавда</city>
+            <city i="2704">Талица</city>
+            <city i="2705">Туринск</city>
+        </region>
+        <region i="311" n="Северная Осетия - Алания">
+            <city i="2630">Алагир</city>
+            <city i="2631">Ардон</city>
+            <city i="2628">Беслан</city>
+            <city i="1839">Владикавказ</city>
+            <city i="2629">Дигора</city>
+            <city i="2627">Моздок</city>
+        </region>
+        <region i="296" n="Смоленская обл.">
+            <city i="2095">Велиж</city>
+            <city i="1743">Вязьма</city>
+            <city i="1744">Гагарин</city>
+            <city i="2096">Демидов</city>
+            <city i="1746">Дорогобуж</city>
+            <city i="2097">Духовщина</city>
+            <city i="2098">Ельня</city>
+            <city i="2099">Починок</city>
+            <city i="2100">Рославль</city>
+            <city i="2101">Рудня</city>
+            <city i="1747">Сафоново</city>
+            <city i="1742">Смоленск</city>
+            <city i="2102">Сычевка</city>
+            <city i="1748">Ярцево</city>
+        </region>
+        <region i="312" n="Ставропольский край">
+            <city i="2644">Благодарный</city>
+            <city i="1841">Буденновск</city>
+            <city i="1842">Георгиевск</city>
+            <city i="1843">Ессентуки</city>
+            <city i="1844">Железноводск</city>
+            <city i="2647">Зеленокумск</city>
+            <city i="2641">Изобильный</city>
+            <city i="2642">Ипатово</city>
+            <city i="1845">Кисловодск</city>
+            <city i="1847">Лермонтов</city>
+            <city i="1848">Минеральные Воды</city>
+            <city i="3523">Михайловск</city>
+            <city i="1849">Невинномысск</city>
+            <city i="2645">Нефтекумск</city>
+            <city i="2643">Новоалександровск</city>
+            <city i="1850">Новопавловск</city>
+            <city i="1852">Пятигорск</city>
+            <city i="2646">Светлоград</city>
+            <city i="2640">Ставрополь</city>
+        </region>
+        <region i="297" n="Тамбовская обл.">
+            <city i="2198">Жердевка</city>
+            <city i="2199">Кирсанов</city>
+            <city i="1752">Котовск</city>
+            <city i="1751">Мичуринск</city>
+            <city i="2196">Моршанск</city>
+            <city i="1750">Рассказово</city>
+            <city i="1749">Тамбов</city>
+            <city i="2197">Уварово</city>
+            <city i="3652">Умёт</city>
+        </region>
+        <region i="248" n="Татарстан">
+            <city i="2569">Агрыз</city>
+            <city i="2575">Азнакаево</city>
+            <city i="569">Альметьевск</city>
+            <city i="571">Бугульма</city>
+            <city i="2570">Буинск</city>
+            <city i="573">Елабуга</city>
+            <city i="2576">Заинск</city>
+            <city i="574">Зеленодольск</city>
+            <city i="575">Казань</city>
+            <city i="2577">Лениногорск</city>
+            <city i="2572">Мамадыш</city>
+            <city i="576">Менделеевск</city>
+            <city i="2573">Мензелинск</city>
+            <city i="577">Набережные Челны</city>
+            <city i="578">Нижнекамск</city>
+            <city i="579">Нурлат</city>
+            <city i="2574">Тетюши</city>
+            <city i="580">Чистополь</city>
+        </region>
+        <region i="298" n="Тверская обл.">
+            <city i="2103">Андреаполь</city>
+            <city i="2104">Бежецк</city>
+            <city i="2105">Белый</city>
+            <city i="2106">Бологое</city>
+            <city i="2107">Весьегонск</city>
+            <city i="1753">Вышний Волочек</city>
+            <city i="2108">Западная Двина</city>
+            <city i="2109">Зубцов</city>
+            <city i="2110">Калязин</city>
+            <city i="2111">Кашин</city>
+            <city i="1758">Кимры</city>
+            <city i="1756">Конаково</city>
+            <city i="2112">Красный Холм</city>
+            <city i="1759">Кувшиново</city>
+            <city i="1760">Лихославль</city>
+            <city i="1761">Нелидово</city>
+            <city i="2113">Осташков</city>
+            <city i="1757">Ржев</city>
+            <city i="2114">Старица</city>
+            <city i="1754">Тверь</city>
+            <city i="2115">Торжок</city>
+            <city i="2116">Торопец</city>
+            <city i="1755">Удомля</city>
+        </region>
+        <region i="272" n="Томская обл.">
+            <city i="1488">Асино</city>
+            <city i="1491">Колпашево</city>
+            <city i="1492">Северск</city>
+            <city i="1493">Стрежевой</city>
+            <city i="1490">Томск</city>
+        </region>
+        <region i="299" n="Тульская обл.">
+            <city i="2127">Алексин</city>
+            <city i="2126">Белев</city>
+            <city i="2118">Богородицк</city>
+            <city i="2122">Болохово</city>
+            <city i="2129">Венев</city>
+            <city i="1762">Донской</city>
+            <city i="2128">Ефремов</city>
+            <city i="2124">Киреевск</city>
+            <city i="2123">Липки</city>
+            <city i="1764">Новомосковск</city>
+            <city i="2117">Плавск</city>
+            <city i="2130">Северо-Задонск</city>
+            <city i="2120">Советск</city>
+            <city i="2119">Сокольники</city>
+            <city i="2125">Суворов</city>
+            <city i="1765">Тула</city>
+            <city i="1766">Узловая</city>
+            <city i="2131">Чекалин</city>
+            <city i="2121">Щекино</city>
+            <city i="1767">Ясногорск</city>
+        </region>
+        <region i="273" n="Тыва">
+            <city i="2766">Ак-Довурак</city>
+            <city i="1494">Кызыл</city>
+            <city i="2768">Новый Шаногар</city>
+            <city i="2767">Туран</city>
+            <city i="2765">Чадан</city>
+        </region>
+        <region i="280" n="Тюменская обл.">
+            <city i="1550">Заводоуковск</city>
+            <city i="1551">Ишим</city>
+            <city i="1552">Тобольск</city>
+            <city i="1553">Тюмень</city>
+            <city i="2748">Ялуторовск</city>
+        </region>
+        <region i="249" n="Удмуртия">
+            <city i="581">Воткинск</city>
+            <city i="582">Глазов</city>
+            <city i="584">Ижевск</city>
+            <city i="2665">Камбарка</city>
+            <city i="585">Можга</city>
+            <city i="586">Сарапул</city>
+        </region>
+        <region i="250" n="Ульяновская обл.">
+            <city i="2614">Барыш</city>
+            <city i="588">Димитровград</city>
+            <city i="2615">Инза</city>
+            <city i="2616">Новоульяновск</city>
+            <city i="590">Сенгилей</city>
+            <city i="591">Ульяновск</city>
+        </region>
+        <region i="235" n="Хабаровский край">
+            <city i="487">Амурск</city>
+            <city i="2821">Бикин</city>
+            <city i="2820">Вяземский</city>
+            <city i="489">Комсомольск-на-Амуре</city>
+            <city i="490">Николаевск-на-Амуре</city>
+            <city i="491">Советская Гавань</city>
+            <city i="492">Хабаровск</city>
+        </region>
+        <region i="275" n="Хакасия">
+            <city i="2769">Абаза</city>
+            <city i="1496">Абакан</city>
+            <city i="1497">Саяногорск</city>
+            <city i="2770">Сорск</city>
+            <city i="2771">Черногорск</city>
+        </region>
+        <region i="281" n="Ханты-Мансийский - Югра АО">
+            <city i="2749">Белоярский</city>
+            <city i="3428">Берёзово</city>
+            <city i="3511">Излучинск</city>
+            <city i="1556">Лангепас</city>
+            <city i="3732">Лянтор</city>
+            <city i="1561">Мегион</city>
+            <city i="1562">Нефтеюганск</city>
+            <city i="1559">Нижневартовск</city>
+            <city i="2853">Нягань</city>
+            <city i="2852">Нягань</city>
+            <city i="3391">Покачи</city>
+            <city i="2854">Пыть-Ях</city>
+            <city i="1560">Радужный</city>
+            <city i="1563">Советский</city>
+            <city i="3326">Сургут</city>
+            <city i="2747">Сургут</city>
+            <city i="1557">Урай</city>
+            <city i="1558">Ханты-Мансийск</city>
+            <city i="3344">Югорск</city>
+        </region>
+        <region i="282" n="Челябинская обл.">
+            <city i="1564">Аша</city>
+            <city i="2723">Бакал</city>
+            <city i="2724">Верхнеуральск</city>
+            <city i="2716">Верхний Уфалей</city>
+            <city i="2725">Еманжелинск</city>
+            <city i="1565">Златоуст</city>
+            <city i="2722">Карабаш</city>
+            <city i="1566">Карталы</city>
+            <city i="2718">Касли</city>
+            <city i="2720">Катав-Ивановск</city>
+            <city i="1567">Копейск</city>
+            <city i="2721">Коркино</city>
+            <city i="2715">Куса</city>
+            <city i="1568">Кыштым</city>
+            <city i="1569">Магнитогорск</city>
+            <city i="1570">Миасс</city>
+            <city i="2726">Миньяр</city>
+            <city i="2717">Нязепетровск</city>
+            <city i="3100">Озерск</city>
+            <city i="1571">Пласт</city>
+            <city i="2719">Сатка</city>
+            <city i="2727">Сим</city>
+            <city i="1572">Снежинск</city>
+            <city i="3332">Трехгорный</city>
+            <city i="1573">Троицк</city>
+            <city i="1574">Усть-Катав</city>
+            <city i="1575">Чебаркуль</city>
+            <city i="1576">Челябинск</city>
+            <city i="1577">Южноуральск</city>
+            <city i="2714">Юрюзань</city>
+        </region>
+        <region i="313" n="Чечня">
+            <city i="2632">Аргун</city>
+            <city i="1853">Грозный</city>
+            <city i="2633">Гудермес</city>
+        </region>
+        <region i="251" n="Чувашия">
+            <city i="2158">Алатырь</city>
+            <city i="2156">Канаш</city>
+            <city i="2151">Козловка</city>
+            <city i="2152">Марьинский Посад</city>
+            <city i="2155">Новочебоксарск</city>
+            <city i="2153">Цивильск</city>
+            <city i="592">Чебоксары</city>
+            <city i="2157">Шумерля</city>
+            <city i="2154">Ядрин</city>
+        </region>
+        <region i="236" n="Чукотский АО">
+            <city i="493">Анадырь</city>
+        </region>
+        <region i="283" n="Ямало-Ненецкий АО">
+            <city i="3298">Губкинский</city>
+            <city i="1578">Лабытнанги</city>
+            <city i="1579">Надым</city>
+            <city i="1580">Новый Уренгой</city>
+            <city i="1581">Ноябрьск</city>
+            <city i="1582">Салехард</city>
+        </region>
+        <region i="300" n="Ярославская обл.">
+            <city i="1773">Гаврилов-Ям</city>
+            <city i="2132">Данилов</city>
+            <city i="2133">Любим</city>
+            <city i="3270">Мокеевское</city>
+            <city i="1775">Переславль-Залесский</city>
+            <city i="2134">Пошехонье</city>
+            <city i="1769">Ростов</city>
+            <city i="1771">Рыбинск</city>
+            <city i="1772">Тутаев</city>
+            <city i="1770">Углич</city>
+            <city i="1768">Ярославль</city>
+        </region>
+    </country>
+    <country i="84" n="Казахстан">
+        <region i="1093">Астана</region>
+        <region i="1092">Алма-Ата</region>
+        <region i="3438" n="Акмолинская обл.">
+            <city i="1098">Кокшетау</city>
+            <city i="1104">Степногорск</city>
+            <city i="3726">Щучинск</city>
+        </region>
+        <region i="3435" n="Актюбинская обл.">
+            <city i="1091">Актюбинск</city>
+        </region>
+        <region i="3431" n="Алматинская обл.">
+            <city i="1096">Капчагай</city>
+            <city i="3166">Талгар</city>
+            <city i="1105">Талды-Курган</city>
+        </region>
+        <region i="3441" n="Атырауская обл.">
+            <city i="1094">Атырау (Гурьев)</city>
+        </region>
+        <region i="1095">Байконур</region>
+        <region i="3430" n="Восточно-Казахстанская обл.">
+            <city i="3528">Курчатов</city>
+            <city i="1103">Семипалатинск</city>
+            <city i="1108">Усть-Каменогорск</city>
+        </region>
+        <region i="3432" n="Жамбылская обл.">
+            <city i="2927">Тараз</city>
+        </region>
+        <region i="3440" n="Западно-Казахстанская обл.">
+            <city i="3615">Аксай</city>
+            <city i="1107">Уральск</city>
+        </region>
+        <region i="3429" n="Карагандинская обл.">
+            <city i="1090">Актау</city>
+            <city i="3245">Балхаш</city>
+            <city i="3083">Жезказган</city>
+            <city i="1097">Караганда</city>
+            <city i="1106">Темиртау</city>
+        </region>
+        <region i="3436" n="Костанайская обл.">
+            <city i="1099">Кустанай</city>
+            <city i="2868">Лисаковск</city>
+            <city i="1102">Рудный</city>
+        </region>
+        <region i="3434" n="Кызылординская обл.">
+            <city i="3468">Кызылорда</city>
+        </region>
+        <region i="3442" n="Мангистауская обл.">
+            <city i="3470">Актау</city>
+        </region>
+        <region i="3439" n="Павлодарская обл.">
+            <city i="1100">Павлодар</city>
+            <city i="1110">Экибастуз</city>
+        </region>
+        <region i="3437" n="Северо-Казахстанская обл.">
+            <city i="1101">Петропавловск</city>
+        </region>
+        <region i="3433" n="Южно-Казахстанская обл.">
+            <city i="1109">Чимкент</city>
+        </region>
+    </country>
+    <country i="93" n="Узбекистан">
+        <region i="1161">Ташкент</region>
+        <region i="3453" n="Ташкентская обл.">
+            <city i="3691">Аккурган</city>
+            <city i="3362">Алмалык</city>
+            <city i="3584">Ангрен</city>
+            <city i="1156">Ахангаран</city>
+            <city i="1164">Чирчик</city>
+        </region>
+        <region i="3443" n="Андижанская обл.">
+            <city i="3137">Андижан</city>
+            <city i="3273">Асака</city>
+        </region>
+        <region i="3444" n="Бухарская обл.">
+            <city i="1157">Бухара</city>
+        </region>
+        <region i="3446" n="Джизакская обл.">
+            <city i="3167">Джизак</city>
+        </region>
+        <region i="3455" n="Каракалпакстан">
+            <city i="3347">Кунград</city>
+            <city i="3388">Нукус</city>
+        </region>
+        <region i="3449" n="Кашкадарьинская обл.">
+            <city i="3478">Карши</city>
+            <city i="3778">Китаб</city>
+        </region>
+        <region i="3448" n="Навоийская обл.">
+            <city i="3519">Зарафшан</city>
+            <city i="1158">Навои</city>
+        </region>
+        <region i="3447" n="Наманганская обл.">
+            <city i="1159">Наманган</city>
+        </region>
+        <region i="3450" n="Самаркандская обл.">
+            <city i="1160">Самарканд</city>
+        </region>
+        <region i="3452" n="Сурхандарьинская обл.">
+            <city i="3484">Термез</city>
+        </region>
+        <region i="3451" n="Сырдарьинская обл.">
+            <city i="3486">Гулистан</city>
+        </region>
+        <region i="3445" n="Ферганская обл.">
+            <city i="1163">Фергана</city>
+        </region>
+        <region i="3454" n="Хорезмская обл.">
+            <city i="1162">Ургенч</city>
+        </region>
+    </country>
+    <country i="92" n="Киргизия">
+        <region i="1116">Бишкек</region>
+        <region i="1117">Джалал-Абад</region>
+        <region i="3027">Кара-Балта</region>
+        <region i="1118">Каракол</region>
+        <region i="1119">Ош</region>
+        <region i="1120">Талас</region>
+        <region i="2933">Хайдаркен</region>
+    </country>
+    <country i="90" n="Туркмения">
+        <region i="1150">Ашхабад</region>
+        <region i="3671">Балканабад</region>
+        <region i="3079">Безмеин</region>
+    </country>
+    <country i="340" n="Беларусь">
+        <region i="342" n="Брестская обл.">
+            <city i="725">Барановичи</city>
+            <city i="726">Белоозерск</city>
+            <city i="727">Береза</city>
+            <city i="728">Брест</city>
+            <city i="3172">Дрогичин</city>
+            <city i="729">Кобрин</city>
+            <city i="3569">Лунинец</city>
+            <city i="730">Ляховичи</city>
+            <city i="731">Малорита</city>
+            <city i="732">Пинск</city>
+        </region>
+        <region i="343" n="Витебская обл.">
+            <city i="733">Браслав</city>
+            <city i="3399">Верхнедвинск</city>
+            <city i="735">Витебск</city>
+            <city i="734">Новолукомоль</city>
+            <city i="736">Новополоцк</city>
+            <city i="737">Орша</city>
+            <city i="3456">Полоцк</city>
+            <city i="3556">Поставы</city>
+            <city i="3793">Россоны</city>
+            <city i="738">Толочин</city>
+        </region>
+        <region i="344" n="Гомельская обл.">
+            <city i="739">Гомель</city>
+            <city i="740">Жлобин</city>
+            <city i="3559">Калинковичи</city>
+            <city i="741">Мозырь</city>
+            <city i="3723">Мозырь</city>
+            <city i="742">Речица</city>
+            <city i="743">Рогачев</city>
+            <city i="744">Светлогорск</city>
+        </region>
+        <region i="345" n="Гродненская обл.">
+            <city i="745">Волковыск</city>
+            <city i="746">Гродно</city>
+            <city i="3650">Дятлово</city>
+            <city i="747">Лида</city>
+            <city i="3581">Новогрудок</city>
+            <city i="3244">Слоним</city>
+            <city i="748">Сморгонь</city>
+        </region>
+        <region i="341">Минск</region>
+        <region i="346" n="Минская обл.">
+            <city i="3149">Березино</city>
+            <city i="749">Борисов</city>
+            <city i="750">Вилейка</city>
+            <city i="3666">Воложин</city>
+            <city i="3629">Дзержинск</city>
+            <city i="751">Жодино</city>
+            <city i="3607">Логойск</city>
+            <city i="752">Марьина Горка</city>
+            <city i="753">Молодечно</city>
+            <city i="3558">Несвиж</city>
+            <city i="2896">Слуцк</city>
+            <city i="754">Смолевичи</city>
+            <city i="755">Солигорск</city>
+            <city i="756">Червень</city>
+        </region>
+        <region i="347" n="Могилевская обл.">
+            <city i="757">Бобруйск</city>
+            <city i="3673">Быхов</city>
+            <city i="3400">Глуск</city>
+            <city i="758">Могилев</city>
+            <city i="759">Осиповичи</city>
+            <city i="3597">Чаусы</city>
+        </region>
+    </country>
+    <country i="91" n="Таджикистан">
+        <region i="1145">Душанбе</region>
+        <region i="3678">Исфара</region>
+        <region i="3307">Кайраккум</region>
+        <region i="3654">Хорог</region>
+        <region i="3308">Худжанд</region>
+    </country>
+    <country i="39" n="Украина">
+        <region i="314">Киев</region>
+        <region i="323" n="Киевская обл.">
+            <city i="648">Белая Церковь</city>
+            <city i="649">Борисполь</city>
+            <city i="3496">Боярка</city>
+            <city i="651">Бровары</city>
+            <city i="650">Васильков</city>
+            <city i="3675">Вишневое</city>
+            <city i="652">Ирпень</city>
+            <city i="3341">Переяслав-Хмельницкий</city>
+            <city i="653">Славутич</city>
+            <city i="654">Фастов</city>
+            <city i="655">Чернобыль</city>
+        </region>
+        <region i="665">Севастополь</region>
+        <region i="315" n="Винницкая обл.">
+            <city i="3728">Бар</city>
+            <city i="3518">Бершадь</city>
+            <city i="614">Винница</city>
+            <city i="3685">Липовец</city>
+            <city i="615">Хмельник</city>
+        </region>
+        <region i="316" n="Волынская обл.">
+            <city i="3605">Владимир-Волынский</city>
+            <city i="3704">Горохов</city>
+            <city i="2940">Ковель</city>
+            <city i="616">Луцк</city>
+        </region>
+        <region i="317" n="Днепропетровская обл.">
+            <city i="617">Днепродзержинск</city>
+            <city i="618">Днепропетровск</city>
+            <city i="3592">Желтые Воды</city>
+            <city i="619">Кривой Рог</city>
+            <city i="3515">Марганец</city>
+            <city i="620">Никополь</city>
+            <city i="621">Новомосковск</city>
+            <city i="622">Орджоникидзе</city>
+            <city i="623">Павлоград</city>
+        </region>
+        <region i="318" n="Донецкая обл.">
+            <city i="624">Артемовск</city>
+            <city i="3786">Великая Новосёлка</city>
+            <city i="3710">Волноваха</city>
+            <city i="625">Горловка</city>
+            <city i="626">Донецк</city>
+            <city i="627">Дружковка</city>
+            <city i="628">Енакиево</city>
+            <city i="3555">Кировское</city>
+            <city i="629">Константиновка</city>
+            <city i="630">Краматорск</city>
+            <city i="2944">Красноармейск</city>
+            <city i="631">Макеевка</city>
+            <city i="3787">Мангуш</city>
+            <city i="632">Мариуполь</city>
+            <city i="633">Николаевка</city>
+            <city i="634">Славянск</city>
+            <city i="3716">Торез</city>
+            <city i="635">Харцызск</city>
+            <city i="3713">Шахтерск</city>
+        </region>
+        <region i="319" n="Житомирская обл.">
+            <city i="636">Бердичев</city>
+            <city i="637">Житомир</city>
+            <city i="2942">Коростень</city>
+            <city i="638">Коростышев</city>
+            <city i="2907">Малин</city>
+            <city i="639">Новоград-Волынский</city>
+        </region>
+        <region i="320" n="Закарпатская обл.">
+            <city i="640">Берегово</city>
+            <city i="641">Воловец</city>
+            <city i="3733">Иршава</city>
+            <city i="3690">Межгорье</city>
+            <city i="3119">Мукачево</city>
+            <city i="3162">Свалява</city>
+            <city i="642">Ужгород</city>
+            <city i="643">Хуст</city>
+            <city i="3539">Ясиня</city>
+        </region>
+        <region i="321" n="Запорожская обл.">
+            <city i="644">Бердянск</city>
+            <city i="3128">Гуляйполе</city>
+            <city i="645">Запорожье</city>
+            <city i="646">Мелитополь</city>
+            <city i="3598">Пологи</city>
+            <city i="3121">Приморск</city>
+            <city i="3378">Энергодар</city>
+        </region>
+        <region i="322" n="Ивано-Франковская обл.">
+            <city i="3693">Богородчани</city>
+            <city i="3379">Галич</city>
+            <city i="647">Ивано-Франковск</city>
+            <city i="3670">Калуш</city>
+            <city i="3501">Коломыя</city>
+            <city i="3628">Рожнятов</city>
+            <city i="3170">Яремче</city>
+        </region>
+        <region i="324" n="Кировоградская обл.">
+            <city i="656">Александрия</city>
+            <city i="657">Кировоград</city>
+            <city i="658">Светловодск</city>
+        </region>
+        <region i="325" n="Крым">
+            <city i="3679">Севастополь</city>
+            <city i="659">Алушта</city>
+            <city i="2984">Армянск</city>
+            <city i="3042">Балаклава</city>
+            <city i="660">Бахчисарай</city>
+            <city i="662">Гурзуф</city>
+            <city i="3382">Джанкой</city>
+            <city i="663">Евпатория</city>
+            <city i="667">Керчь</city>
+            <city i="666">Коктебель</city>
+            <city i="3634">Красноперекопск</city>
+            <city i="668">Мысовое</city>
+            <city i="669">Саки</city>
+            <city i="661">Симферополь</city>
+            <city i="3370">Старый Крым</city>
+            <city i="670">Судак</city>
+            <city i="664">Феодосия</city>
+            <city i="3148">Черноморское</city>
+            <city i="671">Ялта</city>
+        </region>
+        <region i="326" n="Луганская обл.">
+            <city i="672">Алчевск</city>
+            <city i="673">Антрацит</city>
+            <city i="674">Лисичанск</city>
+            <city i="675">Луганск</city>
+            <city i="3364">Молодогвардейск</city>
+            <city i="676">Петровское</city>
+            <city i="677">Ровеньки</city>
+            <city i="678">Рубежное</city>
+            <city i="3631">Сватово</city>
+            <city i="3405">Свердловск</city>
+            <city i="679">Северодонецк</city>
+            <city i="3720">Станица Луганская</city>
+            <city i="680">Стаханов</city>
+        </region>
+        <region i="327" n="Львовская обл.">
+            <city i="3703">Городок</city>
+            <city i="3284">Дрогобыч</city>
+            <city i="3516">Каменка-Бугская</city>
+            <city i="681">Львов</city>
+            <city i="682">Трускавец</city>
+        </region>
+        <region i="328" n="Николаевская обл.">
+            <city i="3780">Арбузинка</city>
+            <city i="3322">Вознесенск</city>
+            <city i="2870">Жовтневое</city>
+            <city i="3418">Коблево</city>
+            <city i="683">Николаев</city>
+            <city i="3118">Очаков</city>
+            <city i="3325">Южноукраинск</city>
+        </region>
+        <region i="329" n="Одесская обл.">
+            <city i="3637">Балта</city>
+            <city i="684">Белгород-Днестровский</city>
+            <city i="685">Измаил</city>
+            <city i="689">Ильичевск</city>
+            <city i="3620">Килия</city>
+            <city i="3527">Котовск</city>
+            <city i="3590">Овидиополь</city>
+            <city i="686">Одесса</city>
+            <city i="688">Рени</city>
+            <city i="687">Слободка</city>
+        </region>
+        <region i="330" n="Полтавская обл.">
+            <city i="690">Гадяч</city>
+            <city i="691">Комсомольск</city>
+            <city i="693">Кременчуг</city>
+            <city i="694">Лубны</city>
+            <city i="695">Миргород</city>
+            <city i="692">Полтава</city>
+        </region>
+        <region i="331" n="Ровенская обл.">
+            <city i="3669">Дубно</city>
+            <city i="696">Здолбунов</city>
+            <city i="3619">Радивилов</city>
+            <city i="697">Ровно</city>
+            <city i="3361">Сарны</city>
+        </region>
+        <region i="332" n="Сумская обл.">
+            <city i="3498">Ахтырка</city>
+            <city i="3601">Белополье</city>
+            <city i="3356">Бурынь</city>
+            <city i="698">Конотоп</city>
+            <city i="700">Ромны</city>
+            <city i="699">Сумы</city>
+            <city i="701">Шостка</city>
+        </region>
+        <region i="333" n="Тернопольская обл.">
+            <city i="702">Бережаны</city>
+            <city i="3171">Борщев</city>
+            <city i="3779">Теребовля</city>
+            <city i="703">Тернополь</city>
+            <city i="704">Чортков</city>
+        </region>
+        <region i="334" n="Харьковская обл.">
+            <city i="3545">Барвенково</city>
+            <city i="705">Изюм</city>
+            <city i="3346">Купянск</city>
+            <city i="3351">Купянск</city>
+            <city i="706">Лозовая</city>
+            <city i="708">Мерефа</city>
+            <city i="3724">Песочин</city>
+            <city i="707">Харьков</city>
+            <city i="709">Чугуев</city>
+        </region>
+        <region i="335" n="Херсонская обл.">
+            <city i="710">Геническ</city>
+            <city i="711">Каховка</city>
+            <city i="712">Новая Каховка</city>
+            <city i="3280">Скадовск</city>
+            <city i="713">Херсон</city>
+            <city i="3623">Цюрупинск</city>
+        </region>
+        <region i="336" n="Хмельницкая обл.">
+            <city i="714">Каменец-Подольский</city>
+            <city i="715">Красилов</city>
+            <city i="2941">Нетишин</city>
+            <city i="716">Полонное</city>
+            <city i="3120">Сатанов</city>
+            <city i="2943">Славута</city>
+            <city i="3672">Староконстантинов</city>
+            <city i="717">Хмельницкий</city>
+            <city i="3155">Чемировцы</city>
+            <city i="3585">Шепетовка</city>
+        </region>
+        <region i="337" n="Черкасская обл.">
+            <city i="3622">Жашков</city>
+            <city i="3169">Золотоноша</city>
+            <city i="3016">Канев</city>
+            <city i="3457">Корсунь-Шевченковский</city>
+            <city i="3333">Полонное</city>
+            <city i="718">Умань</city>
+            <city i="719">Христиновка</city>
+            <city i="720">Черкассы</city>
+        </region>
+        <region i="338" n="Черниговская обл.">
+            <city i="3711">Городня</city>
+            <city i="721">Нежин</city>
+            <city i="722">Прилуки</city>
+            <city i="723">Чернигов</city>
+        </region>
+        <region i="339" n="Черновицкая обл.">
+            <city i="724">Черновцы</city>
+        </region>
+    </country>
+    <country i="3788" n="Абхазия">
+        <region i="3789">Гагра</region>
+        <region i="1069">Сухуми</region>
+    </country>
+    <country i="81" n="Азербайджан">
+        <region i="1055">Баку</region>
+        <region i="1058">Гянджа</region>
+        <region i="3402" n="Нагорный Карабах">
+            <city i="3401">Степанакерт</city>
+        </region>
+        <region i="1056">Нахичевань</region>
+        <region i="3505">Степанакерт</region>
+        <region i="1057">Ханкенди</region>
+        <region i="3153">Шеки</region>
+    </country>
+    <country i="82" n="Армения">
+        <region i="2932">Абовян</region>
+        <region i="1060">Аштарак</region>
+        <region i="3084">Ванадзор</region>
+        <region i="3011">Гюмри</region>
+        <region i="3306">Дилижан</region>
+        <region i="1059">Ереван</region>
+        <region i="3145">Ханкенди</region>
+    </country>
+    <country i="83" n="Грузия">
+        <region i="3587">Ахалкалаки</region>
+        <region i="1067">Батуми</region>
+        <region i="3537">Болниси</region>
+        <region i="3158">Боржоми</region>
+        <region i="3506">Гори</region>
+        <region i="3665">Кутаиси</region>
+        <region i="1068">Поти</region>
+        <region i="3129">Рустави</region>
+        <region i="1070">Тбилиси</region>
+    </country>
+    <country i="53" n="Латвия">
+        <region i="2939">Айзкраукле</region>
+        <region i="3054">Валка</region>
+        <region i="909">Даугавпилс</region>
+        <region i="2934">Екабпилс</region>
+        <region i="913">Елгава</region>
+        <region i="2935">Кокнесе</region>
+        <region i="912">Лиепая</region>
+        <region i="3504">Лудза</region>
+        <region i="2905">Резекне</region>
+        <region i="911">Рига</region>
+        <region i="2936">Саласпилс</region>
+        <region i="2937">Смилтене</region>
+        <region i="910">Юрмала</region>
+    </country>
+    <country i="54" n="Литва">
+        <region i="914">Вильнюс</region>
+        <region i="915">Висагинас</region>
+        <region i="916">Каунас</region>
+        <region i="918">Клайпеда</region>
+        <region i="919">Паланга</region>
+        <region i="3173">Пеневежис</region>
+        <region i="3535">Шальчининкай</region>
+        <region i="917">Шауляй</region>
+    </country>
+    <country i="59" n="Молдова">
+        <region i="925">Бельцы</region>
+        <region i="926">Бендеры</region>
+        <region i="3699">Григориополь</region>
+        <region i="3234">Дубоссары</region>
+        <region i="3275">Кахул</region>
+        <region i="927">Кишинев</region>
+        <region i="3392">Комрат</region>
+        <region i="3321">Резина</region>
+        <region i="928">Рыбница</region>
+        <region i="3752">Тараклия</region>
+        <region i="929">Тирасполь</region>
+        <region i="3647">Унгены</region>
+        <region i="3281">Чадыр-Лунга</region>
+    </country>
+    <country i="73" n="Эстония">
+        <region i="3013">Валга</region>
+        <region i="1044">Кейла</region>
+        <region i="3696">Кехра</region>
+        <region i="1045">Кохтла-Ярве</region>
+        <region i="1046">Маарду</region>
+        <region i="1047">Мыйзакюла</region>
+        <region i="1048">Нарва</region>
+        <region i="3630">Палдиски</region>
+        <region i="1049">Пярну</region>
+        <region i="1050">Раквере</region>
+        <region i="1051">Силламяэ</region>
+        <region i="3641">Табасалу Харку</region>
+        <region i="1052">Таллин</region>
+        <region i="1053">Тарту</region>
+        <region i="1054">Хаапсалу</region>
+    </country>
+    <country i="3791" n="Южная Осетия">
+        <region i="3792">Цхинвали</region>
+    </country>
+</countries>

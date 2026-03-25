@@ -748,7 +748,7 @@ public final class StringUtils {
             return;
         }
         AppState.getVector(StateKeys.VEC_MAP_POINTS).removeAllElements();
-        String configUrl = element.getIntAttribute(594023);
+        String configUrl = element.getIntAttribute(PackedStringKeys.ATTR_TIMESTAMP);
         if (configUrl != null) {
             AppState.setObject(StateKeys.URL_GEO_CONFIG, (Object) configUrl);
         }
@@ -766,7 +766,7 @@ public final class StringUtils {
                     region.precision = regionElem.getAttrAsInt(2054709613);
                     addGeoRegion(region);
                 }
-            } else if (matchesKey(397424, str)) {
+            } else if (matchesKey(PackedStringKeys.TAG_POINTS, str)) {
                 ServiceRegistry.parseServiceConfig(1, childElem, true);
             }
         }

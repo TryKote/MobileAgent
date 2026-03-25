@@ -252,7 +252,7 @@ public final class XmppContactGroup extends ContactGroup {
             } while (c0043nM1349s == null);
             if (c0043nM1349s.peekIntAt(12) == MrimCommand.CS_HELLO_ACK) {
                 updateLastCheckTime();
-                c0028ba.sendData(ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(1442808).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
+                c0028ba.sendData(ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(PackedStringKeys.MMP_AGENT_ID).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
                 Thread.sleep(5000L);
             }
         } catch (Throwable unused) {
@@ -477,7 +477,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: d */
     public static final String buildAuthData() {
-        return new ByteBuffer().writeCompressed(986750).writeExtendedInt(2098527).writeExtendedInt(2097374).writeLongBytes(4423776686951391594L).writeExtendedInt(2098526).writeUInt(1030516845).writeExtendedInt(2098528).writeUInt(1030712676).writeExtendedInt(2098529).writeUInt(1953653104).writeLongBytes(465624460605L).getStringAndClear();
+        return new ByteBuffer().writeCompressed(PackedStringKeys.USERAGENT_MOBILEJME).writeExtendedInt(2098527).writeExtendedInt(2097374).writeLongBytes(4423776686951391594L).writeExtendedInt(2098526).writeUInt(1030516845).writeExtendedInt(2098528).writeUInt(1030712676).writeExtendedInt(2098529).writeUInt(1953653104).writeLongBytes(465624460605L).getStringAndClear();
     }
 
     /* renamed from: s */
@@ -685,9 +685,9 @@ public final class XmppContactGroup extends ContactGroup {
         while (true) {
             size--;
             if (size < 0) {
-                ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(3216135).writeUInt(15713);
+                ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_VIEW).writeUInt(15713);
                 String strM1215a = ObjectPool.toStringAndRelease(stringBufferM1217h);
-                new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, c0043nM1385u.writeRawString(strM1215a).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(strM1215a).writeCompressed(660328).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(j).writeUInt(4023334).writeLongAsString(j2).getStringAndClear());
+                new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, c0043nM1385u.writeRawString(strM1215a).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(strM1215a).writeCompressed(PackedStringKeys.SECRET_KEY_389).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(j).writeUInt(4023334).writeLongAsString(j2).getStringAndClear());
                 return;
             } else {
                 stringBufferM1217h.append(vectorM1140a.elementAt(size));

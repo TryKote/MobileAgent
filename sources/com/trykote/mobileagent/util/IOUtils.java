@@ -104,7 +104,7 @@ public final class IOUtils {
     public static final void playSound(int i) {
         stopSound();
         try {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(590318).writeCompressed(i + 430).writeIntLE(3145472).toByteArray());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(PackedStringKeys.MIDI_HEADER).writeCompressed(i + 430).writeIntLE(3145472).toByteArray());
             Object resource = registerResource((Object) byteArrayInputStream);
             AppState.pool[StateKeys.RANGE_MEDIA_RESOURCES_START] = resource;
             if (null != resource) {
@@ -458,7 +458,7 @@ public final class IOUtils {
             String encodedQuery = Conversation.replaceText(query, 1046, 199350);
             Image mapImage = AppState.getImage(StateKeys.OBJ_FONT_2);
             long currentLat = MapRenderer.currentLat;
-            new AsyncTask(AsyncTaskId.FETCH_MAP_POINTS, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(659815).writeLongAsString(currentLat).writeCompressed(659825).writeLongAsString(MapRenderer.currentLon).writeCompressed(659835).writeIntAsString(mapImage.getWidth()).writeCompressed(659845).writeIntAsString(mapImage.getHeight()).getStringAndClear());
+            new AsyncTask(AsyncTaskId.FETCH_MAP_POINTS, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_MAPSSEARCH).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(PackedStringKeys.PARAM_USER_LAT).writeLongAsString(currentLat).writeCompressed(PackedStringKeys.PARAM_USER_LON).writeLongAsString(MapRenderer.currentLon).writeCompressed(PackedStringKeys.PARAM_X_SCREEN).writeIntAsString(mapImage.getWidth()).writeCompressed(PackedStringKeys.PARAM_Y_SCREEN).writeIntAsString(mapImage.getHeight()).getStringAndClear());
         }
         return AppState.getBool(StateKeys.FLAG_LOADING) ? 161 : 6;
     }
@@ -482,7 +482,7 @@ public final class IOUtils {
 
     /* renamed from: f */
     public static final void requestNearbyPeople() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(1901187).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(393954).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(393960).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(393966).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(1376928);
+        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(pixelToLatitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(pixelToLongitude((int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_QUANTITY_DENSITY);
         long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
         int iM586d = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
         long j = MapRenderer.currentPixelX;
@@ -1031,7 +1031,7 @@ public final class IOUtils {
                             }
                             strM1370r = strM1368E;
                             if (strM1368E != null && strM1370r.length() > 0) {
-                                protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(3213718)));
+                                protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER_2)));
                                 break;
                             }
                         } else {
@@ -1041,7 +1041,7 @@ public final class IOUtils {
                     strM1368E = null;
                     strM1370r = strM1368E;
                     if (strM1368E != null) {
-                        protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(3213669).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(3213718)));
+                        protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER_2)));
                     }
                 } else {
                     strM1368E = null;
@@ -1250,7 +1250,7 @@ public final class IOUtils {
                     Vector vectorM516c = Utils.splitNonEmpty(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
                         objArr[2] = ResourceManager.integerOf(1);
-                        objArr[1] = new ByteBuffer().writeCompressed(2365173).writeCompressed(2692947).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
+                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
                         new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, objArr);
                     } else {
                         setAuthResult(objArr, vectorM516c.elementAt(0));

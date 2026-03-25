@@ -255,7 +255,7 @@ public final class MmpContact extends Contact {
 
     /* renamed from: o */
     public static final String buildLocationString() {
-        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(1442705).writeCompressed(3085016).writeRawString(IOUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.pixelToLatitude(lastTokenPair[1]));
+        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_TRACKPOINTS).writeRawString(IOUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.pixelToLatitude(lastTokenPair[1]));
         int size = routePoints.size();
         int i = 0;
         while (i <= size) {
