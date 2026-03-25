@@ -1025,7 +1025,7 @@ public final class ResourceManager {
         }
         ByteBuffer buffer = new ByteBuffer();
         ByteBuffer passwordHash = hashPassword(mrimAccount);
-        XmppContactGroup.encryptRC4(passwordHash.data, passwordHash.length, payload.data, payload.length);
+        XmppContactGroup.encryptBlowfish(passwordHash.data, passwordHash.length, payload.data, payload.length);
         passwordHash.clear();
         return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4132, buffer.writeBufferIntLen(payload)), integerOf(17), targetAccount});
     }
@@ -1036,7 +1036,7 @@ public final class ResourceManager {
             buffer.readInt();
             buffer.ensureCapacity(0);
             ByteBuffer passwordHash = hashPassword(mrimAccount);
-            XmppContactGroup.decryptRC4(passwordHash.data, passwordHash.length, buffer.data, buffer.length);
+            XmppContactGroup.decryptBlowfish(passwordHash.data, passwordHash.length, buffer.data, buffer.length);
             passwordHash.clear();
             buffer.readInt();
             MmpProtocol protocol = (MmpProtocol) objArr[2];

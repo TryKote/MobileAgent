@@ -22,7 +22,7 @@ resources: $(BUILD)/.resources
 
 $(BUILD)/.resources: $(RESOURCES_SRC)/config.json \
                      $(RESOURCES_SRC)/cities.xml $(RESOURCES_SRC)/images/mapping.json \
-                     $(RESOURCES_SRC)/xmpp_data.bin
+                     $(RESOURCES_SRC)/blowfish_constants.bin
 	@mkdir -p $(RESOURCES_OUT)
 	python3 tools/cfg_tool.py --serialize $(RESOURCES_SRC) $(RESOURCES_OUT)/cfg
 	tools/pack_cities.sh $(RESOURCES_OUT)

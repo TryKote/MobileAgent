@@ -704,7 +704,7 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     /* renamed from: a */
-    private static final int[] expandRC4Key(byte[] bArr, int i) {
+    private static final int[] expandBlowfishKey(byte[] bArr, int i) {
         ByteBuffer c0043n = new ByteBuffer(ObjectPool.unpackChars(24879), 4200);
         int[] iArr = new int[1060];
         System.arraycopy(Utils.bytesToInts(c0043n.data), 0, iArr, 0, 1042);
@@ -719,24 +719,24 @@ public final class XmppContactGroup extends ContactGroup {
             }
             iArr[i3 + 1024 + 18] = iArr[i3 + 1024] ^ i4;
         }
-        long jM1035a = performRC4Round(iArr, 0, 0);
+        long jM1035a = performBlowfishRound(iArr, 0, 0);
         iArr[1042] = (int) (jM1035a >>> 32);
         iArr[1043] = (int) jM1035a;
         int i7 = 2;
         do {
-            long jM1035a2 = performRC4Round(iArr, iArr[((i7 + 1024) + 18) - 2], iArr[((i7 + 1024) + 18) - 1]);
+            long jM1035a2 = performBlowfishRound(iArr, iArr[((i7 + 1024) + 18) - 2], iArr[((i7 + 1024) + 18) - 1]);
             int i8 = i7;
             int i9 = i7 + 1;
             iArr[1042 + i8] = (int) (jM1035a2 >>> 32);
             i7 = i9 + 1;
             iArr[1042 + i9] = (int) jM1035a2;
         } while (i7 != 18);
-        long jM1035a3 = performRC4Round(iArr, iArr[1058], iArr[1059]);
+        long jM1035a3 = performBlowfishRound(iArr, iArr[1058], iArr[1059]);
         iArr[0] = (int) (jM1035a3 >>> 32);
         iArr[1] = (int) jM1035a3;
         int i10 = 2;
         do {
-            long jM1035a4 = performRC4Round(iArr, iArr[i10 - 2], iArr[i10 - 1]);
+            long jM1035a4 = performBlowfishRound(iArr, iArr[i10 - 2], iArr[i10 - 1]);
             int i11 = i10;
             int i12 = i10 + 1;
             iArr[i11] = (int) (jM1035a4 >>> 32);
@@ -747,7 +747,7 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     /* renamed from: a */
-    private static final long performRC4Round(int[] iArr, int i, int i2) {
+    private static final long performBlowfishRound(int[] iArr, int i, int i2) {
         int i3 = i ^ iArr[1042];
         int i4 = 0;
         while (i4 < 16) {
@@ -771,8 +771,8 @@ public final class XmppContactGroup extends ContactGroup {
     /* JADX WARN: Type inference failed for: r2v28, types: [int] */
     /* JADX WARN: Type inference failed for: r2v42, types: [int] */
     /* renamed from: a */
-    public static final void encryptRC4(byte[] bArr, int i, byte[] bArr2, int i2) {
-        int[] iArrM1034a = expandRC4Key(bArr, i);
+    public static final void encryptBlowfish(byte[] bArr, int i, byte[] bArr2, int i2) {
+        int[] iArrM1034a = expandBlowfishKey(bArr, i);
         int i3 = i2 >> 3;
         for (int i4 = 0; i4 < i3; i4++) {
             int i5 = i4 << 3;
@@ -810,8 +810,8 @@ public final class XmppContactGroup extends ContactGroup {
     /* JADX WARN: Type inference failed for: r2v28, types: [int] */
     /* JADX WARN: Type inference failed for: r2v42, types: [int] */
     /* renamed from: b */
-    public static final void decryptRC4(byte[] bArr, int i, byte[] bArr2, int i2) {
-        int[] iArrM1034a = expandRC4Key(bArr, i);
+    public static final void decryptBlowfish(byte[] bArr, int i, byte[] bArr2, int i2) {
+        int[] iArrM1034a = expandBlowfishKey(bArr, i);
         int i3 = i2 >> 3;
         for (int i4 = 0; i4 < i3; i4++) {
             int i5 = i4 << 3;

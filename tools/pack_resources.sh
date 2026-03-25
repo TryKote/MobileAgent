@@ -21,5 +21,5 @@ print(f'Copied {count} images')
 "
 
 # Copy binary resource
-cp "$SRC_DIR/xmpp_data.bin" "$DST_DIR/a"
-echo "Copied xmpp_data.bin -> a"
+cp "$SRC_DIR/blowfish_constants.bin" "$DST_DIR/a"
+echo "Copied blowfish_constants.bin -> a"

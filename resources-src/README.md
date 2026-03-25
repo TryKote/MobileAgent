@@ -16,7 +16,7 @@ the binary format expected by the application and placed into `build/resources/`
 |------|-------------|
 | `config.json` | Main configuration: object pool + screen definitions |
 | `cities.xml` | City database in UTF-8 with human-readable tags |
-| `xmpp_data.bin` | XMPP protocol data (binary, stored as-is) |
+| `blowfish_constants.bin` | Blowfish S-boxes and P-array (standard pi-derived constants, 1042 ints) |
 | `images/` | PNG images with descriptive names |
 | `images/mapping.json` | Maps runtime filenames to descriptive source names |
 | `META-INF/MANIFEST.MF` | JAR manifest |
@@ -28,7 +28,7 @@ resources-src/                      build/resources/
   config.json        --cfg_tool.py---->  cfg          (binary config)
   cities.xml         --pack_cities.sh->  b            (CP1251 + obfuscated tags)
   images/*.png       --pack_resources.sh-> *.png      (renamed per mapping.json)
-  xmpp_data.bin      --pack_resources.sh-> a          (copied as-is)
+  blowfish_constants.bin --pack_resources.sh-> a       (copied as-is)
   META-INF/MANIFEST.MF                   (copied to JAR)
 ```
 
@@ -526,7 +526,7 @@ City database in UTF-8. Converted to CP1251 with obfuscated tags on pack.
 |------|----------|
 | `config.json` | Основная конфигурация: пул объектов + определения экранов |
 | `cities.xml` | База городов в UTF-8 с читаемыми тегами |
-| `xmpp_data.bin` | Данные протокола XMPP (бинарные, как есть) |
+| `blowfish_constants.bin` | S-box'ы и P-array Blowfish (стандартные константы из π, 1042 int) |
 | `images/` | PNG-изображения с описательными именами |
 | `images/mapping.json` | Маппинг рантайм-имён в описательные |
 | `META-INF/MANIFEST.MF` | Манифест JAR |
@@ -538,7 +538,7 @@ resources-src/                      build/resources/
   config.json        --cfg_tool.py---->  cfg          (бинарный конфиг)
   cities.xml         --pack_cities.sh->  b            (CP1251 + обфусцированные теги)
   images/*.png       --pack_resources.sh-> *.png      (переименованы по mapping.json)
-  xmpp_data.bin      --pack_resources.sh-> a          (копируется как есть)
+  blowfish_constants.bin --pack_resources.sh-> a       (копируется как есть)
   META-INF/MANIFEST.MF                   (копируется в JAR)
 ```
 
