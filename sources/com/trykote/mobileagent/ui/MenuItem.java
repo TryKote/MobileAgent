@@ -171,7 +171,7 @@ public final class MenuItem {
             NotificationHelper.showMessageById(429);
             return 0;
         }
-        Screen choiceScreen = ScreenManager.createScreen(2351);
+        Screen choiceScreen = ScreenManager.createScreen(ScreenDef.CHOICE_DIALOG);
         Object[] objArr = (Object[]) this.data;
         String[] strArr = (String[]) objArr[1];
         int iIntValue = ((Integer) objArr[0]).intValue();

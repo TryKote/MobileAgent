@@ -23,62 +23,62 @@ public final class SettingsHandler extends BaseScreenHandler {
                 AppController.showSettingsScreen();
                 return;
             case ScreenId.SETTINGS_MENU:
-                ScreenManager.showScreen(ScreenManager.createScreen(3959));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SETTINGS_MENU));
                 return;
             case ScreenId.GPS_SETTINGS:
                 boolean flag = AppState.getBool(StateKeys.MAP_GPS_ENABLED);
                 boolean flag2 = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE);
                 AppState.setBool(StateKeys.FLAG_GPS_NO_MAP, !flag && flag2);
                 AppState.setBool(StateKeys.FLAG_GPS_WITH_MAP, flag && flag2);
-                ScreenManager.showScreen(ScreenManager.createScreen(1632));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.GPS_SETTINGS));
                 return;
             case ScreenId.THEME_SETTINGS:
                 AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_COLOR_THEME));
-                ScreenManager.showScreen(ScreenManager.createScreen(2917));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_SETTINGS));
                 return;
             case ScreenId.NOTIFICATION_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(3214));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_SETTINGS));
                 return;
             case ScreenId.SOUND_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(2978));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SOUND_SETTINGS));
                 return;
             case ScreenId.PRIVACY_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(2817));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PRIVACY_SETTINGS));
                 return;
             case ScreenId.CONNECTION_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(5157));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONNECTION_SETTINGS));
                 return;
             case ScreenId.NOTIFICATION_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(4747));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_OPTIONS));
                 return;
             case ScreenId.THEME_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(4836));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_OPTIONS));
                 return;
             case ScreenId.VIEW_MODE:
                 boolean isOnline4 = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE);
                 boolean isCustom = AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE);
                 AppState.setBool(StateKeys.FLAG_ONLINE_CUSTOM_OFF, isOnline4 && !isCustom);
                 AppState.setBool(StateKeys.FLAG_ONLINE_CUSTOM_ON, isOnline4 && isCustom);
-                ScreenManager.showScreen(ScreenManager.createScreen(1600));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VIEW_MODE));
                 return;
             case ScreenId.COLOR_PICKER:
-                ScreenManager.showScreen(ScreenManager.createScreen(4204));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.COLOR_PICKER));
                 return;
             case ScreenId.KEY_MAPPING:
-                ScreenManager.showScreen(ScreenManager.createScreen(2421));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.KEY_MAPPING));
                 return;
             case ScreenId.FORM_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(5090));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.FORM_SETTINGS));
                 return;
             case ScreenId.EXT_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(3272));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.EXT_SETTINGS));
                 return;
             case ScreenId.MAP_VIEW_SETTINGS:
                 MapController.showMapView();
-                ScreenManager.showScreen(ScreenManager.createScreen(3302));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_VIEW_SETTINGS));
                 return;
             case ScreenId.NEARBY_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(2218));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NEARBY_SETTINGS));
                 return;
         }
     }

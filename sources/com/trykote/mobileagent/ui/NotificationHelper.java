@@ -40,7 +40,7 @@ public final class NotificationHelper {
     /* renamed from: r */
     public static final void clearNotifications() {
         ResourceManager.playNotificationSound(5);
-        ScreenManager.showScreen(ScreenManager.createScreen(3328));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_DIALOG));
         AppState.clearIndex(StateKeys.SLOT_NOTIFICATION_TITLE);
     }
 
@@ -48,7 +48,7 @@ public final class NotificationHelper {
     public static final void showAlertBuffer(int i, StringBuffer stringBuffer) {
         AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, i);
         AppState.setFromBuffer(StateKeys.SLOT_MAP_POINT_1, stringBuffer);
-        ScreenManager.showScreen(ScreenManager.createScreen(4485));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
         AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
     }
 
@@ -56,7 +56,7 @@ public final class NotificationHelper {
     public static final void showAlertById(int i, int i2) {
         AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, i);
         AppState.setFromPool(StateKeys.SLOT_MAP_POINT_1, i2);
-        ScreenManager.showScreen(ScreenManager.createScreen(4485));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
         AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
     }
 
@@ -73,6 +73,6 @@ public final class NotificationHelper {
     public static final void showConfirmDialog(int i, int i2) {
         AppState.setInt(StateKeys.INT_HTTP_PARAM_1, i);
         AppState.setInt(StateKeys.INT_HTTP_PARAM_2, i2);
-        ScreenManager.showScreen(ScreenManager.createScreen(4497));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONFIRM_DIALOG));
     }
 }

@@ -275,7 +275,7 @@ public final class ResourceManager {
         int costCents = (int) ((j * AppState.getInt(StateKeys.SETTING_TRAFFIC_COST)) / 1048576);
         AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_COST_TEXT, ObjectPool.newStringBuffer().append(costCents / 100).append('.').append(Utils.zeroPad(costCents % 100)).append(' ').append(AppState.getString(StateKeys.STR_CURRENCY_SYMBOL)));
         AppState.setInt(StateKeys.INT_TRAFFIC_PERIOD_LABEL, periodIndex + 745);
-        ScreenManager.showScreen(ScreenManager.createScreen(3985));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.TRAFFIC_STATS));
         AppState.clearRange(StateKeys.SLOT_GROUP_LIST_INDEX, StateKeys.RANGE_SEARCH_LABEL_END);
     }
 
@@ -524,7 +524,7 @@ public final class ResourceManager {
         if (vector == null) {
             return;
         }
-        Screen screen = ScreenManager.createScreen(4292);
+        Screen screen = ScreenManager.createScreen(ScreenDef.MAIL_ACCOUNT_LIST);
         int size = vector.size();
         while (true) {
             size--;
@@ -559,7 +559,7 @@ public final class ResourceManager {
     /* renamed from: k */
     public static final void showMailAccountList() {
         AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
-        Screen screen = ScreenManager.createScreen(4507);
+        Screen screen = ScreenManager.createScreen(ScreenDef.GENERIC_LIST);
         Vector accounts = AccountManager.getMrimAccountList();
         int size = accounts.size();
         if (size > 0) {
@@ -630,7 +630,7 @@ public final class ResourceManager {
             NotificationHelper.showMessageById(404);
             return;
         }
-        Screen screen = ScreenManager.createScreen(2075);
+        Screen screen = ScreenManager.createScreen(ScreenDef.SAVED_LOCATIONS);
         while (true) {
             i--;
             if (i < 0) {
@@ -982,7 +982,7 @@ public final class ResourceManager {
             if (parseVersionNumber(AppState.getString(StateKeys.STR_APP_NAME)) >= parseVersionNumber(AppState.getString(StateKeys.SLOT_SCREEN_TITLE))) {
                 throw new Throwable();
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(3850));
+            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_LIST));
         } catch (Throwable unused) {
             if (showMessage) {
                 NotificationHelper.showMessageById(731);
@@ -1046,7 +1046,7 @@ public final class ResourceManager {
 
     /* renamed from: t */
     public static final void showTosScreen() {
-        ScreenManager.showScreen(ScreenManager.createScreen(5141));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.WIFI_NETWORKS));
         NotificationHelper.showMessageById(1027);
     }
 

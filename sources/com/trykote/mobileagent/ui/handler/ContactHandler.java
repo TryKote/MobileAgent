@@ -36,7 +36,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 }
                 ObjectPool.releaseVector(nameParts);
                 AppState.setInt(StateKeys.INT_CONTACT_TYPE_CODE, (!(contact instanceof MrimContact) || contact.isSystem()) ? 1 : 4);
-                ScreenManager.showScreen(ScreenManager.createScreen(3501));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_EDITOR));
                 return;
             case ScreenId.ADD_CONTACT:
                 int accountType = AppState.getAccount().getType();
@@ -46,7 +46,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 }
                 if (accountType == 1) {
                     AppState.setInt(StateKeys.INT_REG_DOMAIN_INDEX, -1);
-                    ScreenManager.showScreen(ScreenManager.createScreen(3569));
+                    ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ADD_CONTACT));
                     return;
                 }
                 StringUtils.resetRegForm();
@@ -54,25 +54,25 @@ public final class ContactHandler extends BaseScreenHandler {
                     IOUtils.postNotification(AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
                     return;
                 } else {
-                    ScreenManager.showScreen(ScreenManager.createScreen(3939));
+                    ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ADD_CONTACT_FORM));
                     return;
                 }
             case ScreenId.ADD_MRIM_CONTACT:
-                ScreenManager.showScreen(ScreenManager.createScreen(3535));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ADD_MRIM_CONTACT));
                 return;
             case ScreenId.CONTACT_GROUP_MENU:
                 AppState.setInt(StateKeys.FLAG_CONTACT_MENU_MODE, 1);
                 Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
                 if (obj instanceof ContactGroup) {
                     AppState.setInt(StateKeys.FLAG_IS_MRIM_CONTACT, 1);
-                    ScreenManager.showScreen(ScreenManager.createScreen(3686));
+                    ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_GROUP_MENU));
                     return;
                 }
                 Contact selectedContact = (Contact) obj;
                 if (selectedContact.isSystem()) {
                     AppState.setInt(StateKeys.INT_CANCEL_MENU_ACTION, 30);
                     AppState.setInt(StateKeys.INT_CANCEL_MENU_TYPE, 4);
-                    ScreenManager.showScreen(ScreenManager.createScreen(3783));
+                    ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_MENU));
                     return;
                 }
                 IOUtils.updateContactFlags(selectedContact);
@@ -88,16 +88,16 @@ public final class ContactHandler extends BaseScreenHandler {
                 AppState.setBool(StateKeys.FLAG_CONTACT_HAS_VCARD, z3 && !z4 && ((MrimContact) selectedContact).hasVCard());
                 AppState.setInt(StateKeys.INT_OK_MENU_TYPE, 4);
                 AppState.setInt(StateKeys.INT_OK_MENU_ACTION, 30);
-                ScreenManager.showScreen(ScreenManager.createScreen(3704));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ACTIONS_MENU));
                 return;
             case ScreenId.CONTACT_GROUPS:
-                ScreenManager.showScreen(ScreenManager.createScreen(2697));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_GROUPS));
                 return;
             case ScreenId.CONTACT_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(3052));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_SETTINGS));
                 return;
             case ScreenId.GROUP_SELECTOR:
-                ScreenManager.showScreen(ScreenManager.createScreen(4729));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.GROUP_SELECTOR));
                 return;
             case ScreenId.PHONE_GROUPS:
                 Vector phoneGroups = Utils.splitNonEmpty(AppState.getCurrentMrimContact().contactGroupsStr, ',');
@@ -112,17 +112,17 @@ public final class ContactHandler extends BaseScreenHandler {
                 }
                 AppState.setFromBuffer(StateKeys.SLOT_SEARCH_LABEL_1, sb);
                 AppState.setInt(StateKeys.INT_SELECTED_GROUP_INDEX, 0);
-                ScreenManager.showScreen(ScreenManager.createScreen(3627));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PHONE_GROUPS));
                 return;
             case ScreenId.ADD_CONTACT_INFO:
                 IOUtils.showAddContactScreen();
                 return;
             case ScreenId.CREATE_GROUP:
-                ScreenManager.showScreen(ScreenManager.createScreen(3340));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CREATE_GROUP));
                 return;
             case ScreenId.RENAME_GROUP:
                 AppState.setObject(StateKeys.SLOT_SEARCH_RESULT, (Object) AppState.getCurrentGroup().name);
-                ScreenManager.showScreen(ScreenManager.createScreen(3553));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.RENAME_GROUP));
                 return;
             case ScreenId.DELETE_ENTITY:
                 StringBuffer sbAlert = ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ALERT_PREFIX));
@@ -159,7 +159,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     return;
                 }
             case ScreenId.GROUP_MOVE:
-                Screen screen4 = ScreenManager.createScreen(4238);
+                Screen screen4 = ScreenManager.createScreen(ScreenDef.GROUP_MOVE);
                 Contact contact4 = AppState.getCurrentContact();
                 Vector vector = contact4.account.groups;
                 int size8 = vector.size();
@@ -178,7 +178,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 if (contact5.isSystem()) {
                     AppState.setInt(StateKeys.INT_CANCEL_MENU_ACTION, 92);
                     AppState.setInt(StateKeys.INT_CANCEL_MENU_TYPE, 3);
-                    ScreenManager.showScreen(ScreenManager.createScreen(3783));
+                    ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_MENU));
                     return;
                 }
                 IOUtils.updateContactFlags(contact5);
@@ -193,7 +193,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 AppState.setBool(StateKeys.FLAG_CONTACT_HAS_VCARD, z8 && !z9 && ((MrimContact) contact5).hasVCard());
                 AppState.setInt(StateKeys.INT_OK_MENU_TYPE, 3);
                 AppState.setInt(StateKeys.INT_OK_MENU_ACTION, 92);
-                ScreenManager.showScreen(ScreenManager.createScreen(3704));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ACTIONS_MENU));
                 return;
             case ScreenId.CONTACT_INFO_VIEW:
                 ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_1];
@@ -224,7 +224,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     }
                 }
                 if (contacts11.size() > 0) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(4070), contacts11));
+                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.BLOCK_CONTACT_LIST), contacts11));
                 } else {
                     NotificationHelper.showMessageById(762);
                 }
@@ -241,7 +241,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     }
                 }
                 if (contacts12.size() > 0) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(4060), contacts12));
+                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.UNBLOCK_CONTACT_LIST), contacts12));
                 } else {
                     NotificationHelper.showMessageById(762);
                 }
@@ -258,14 +258,14 @@ public final class ContactHandler extends BaseScreenHandler {
                     }
                 }
                 if (contacts13.size() > 0) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(4050), contacts13));
+                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.DELETE_CONTACT_LIST), contacts13));
                 } else {
                     NotificationHelper.showMessageById(762);
                 }
                 ObjectPool.releaseVector(contacts13);
                 return;
             case ScreenId.GROUP_MEMBERS:
-                Screen screen15 = ScreenManager.createScreen(4159);
+                Screen screen15 = ScreenManager.createScreen(ScreenDef.GROUP_MEMBERS);
                 MrimContact mrimContact = (MrimContact) AppState.getCurrentContact();
                 MrimAccount mrimAccount4 = (MrimAccount) mrimContact.account;
                 Vector groupMembers = AppState.getVector(StateKeys.SLOT_REG_PARAM_4);
@@ -290,7 +290,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_4);
                 return;
             case ScreenId.EDIT_MEMBERS:
-                ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(4169), (Account) null, AppState.getCurrentContact()));
+                ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(ScreenDef.EDIT_MEMBERS), (Account) null, AppState.getCurrentContact()));
                 return;
             case ScreenId.CONTACT_DELETE_MRIM:
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_1);
@@ -298,7 +298,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 return;
             case ScreenId.GROUP_MANAGEMENT:
                 AppState.setBool(StateKeys.FLAG_HAS_MULTIPLE_MRIM, AccountManager.getMrimAccountList().size() > 1);
-                ScreenManager.showScreen(ScreenManager.createScreen(2523));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.GROUP_MANAGEMENT));
                 return;
             case ScreenId.CONTACT_MODIFY:
                 AppController.prepareFormData();
@@ -313,7 +313,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     NotificationHelper.showMessageById(404);
                     return;
                 }
-                Screen screen16 = ScreenManager.createScreen(2101);
+                Screen screen16 = ScreenManager.createScreen(ScreenDef.GROUP_MANAGEMENT_ALT);
                 for (int i23 = 0; i23 < count; i23++) {
                     Object contactId = contactIds.elementAt(i23);
                     screen16.addItem(MenuItem.createCheckbox(ServiceRegistry.getPhotoHost(contactId), !ServiceRegistry.hiddenContacts.contains(contactId)));

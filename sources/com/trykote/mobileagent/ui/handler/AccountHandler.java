@@ -25,15 +25,15 @@ public final class AccountHandler extends BaseScreenHandler {
                 AppState.setBool(StateKeys.FLAG_HAS_MULTIPLE_MRIM, size2 > 1);
                 AppState.setBool(StateKeys.FLAG_HAS_MRIM_ACCOUNTS_2, AppState.getBool(StateKeys.FLAG_HAS_MRIM_ACCOUNTS));
                 AppState.setBool(StateKeys.FLAG_HAS_XMPP_ACCOUNTS, size2 > 0);
-                ScreenManager.showScreen(ScreenManager.createScreen(2361));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_LIST));
                 return;
             case ScreenId.ACCOUNTS_MENU:
                 AppState.setBool(StateKeys.FLAG_MULTIPLE_MRIM, AccountManager.getMrimAccountList().size() > 1);
                 AppState.setBool(StateKeys.FLAG_MULTIPLE_XMPP, AccountManager.getXmppAccountList().size() > 1);
-                ScreenManager.showScreen(ScreenManager.createScreen(2733));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ACCOUNTS_MENU));
                 return;
             case ScreenId.ACCOUNT_SWITCHER:
-                Screen contactListScreen = ContactListManager.addContactItems(ScreenManager.createScreen(2719), AppState.getVector(StateKeys.VEC_ACCOUNTS));
+                Screen contactListScreen = ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.ACCOUNT_SWITCHER), AppState.getVector(StateKeys.VEC_ACCOUNTS));
                 Account currentAccount = TabBar.currentAccount;
                 if (currentAccount != null) {
                     contactListScreen.selectByTitle(currentAccount.getSignature());
@@ -42,10 +42,10 @@ public final class AccountHandler extends BaseScreenHandler {
                 return;
             case ScreenId.REGISTRATION:
                 AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, 0);
-                ScreenManager.showScreen(ScreenManager.createScreen(4467));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGISTRATION));
                 return;
             case ScreenId.MULTI_ACCOUNT_LIST: {
-                Screen screen = ScreenManager.createScreen(2581);
+                Screen screen = ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_LIST);
                 Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
                 int size3 = accounts.size();
                 for (int i6 = 0; i6 < size3; i6++) {
@@ -56,14 +56,14 @@ public final class AccountHandler extends BaseScreenHandler {
             }
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_MULTI_ACCOUNT));
-                ScreenManager.showScreen(ScreenManager.createScreen(3102));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_SETTINGS));
                 return;
             case ScreenId.MAIL_ACCOUNT_LIST:
                 ResourceManager.showMailAccountList();
                 return;
             case ScreenId.ACCOUNT_CHECKBOX_LIST: {
                 Vector accountList = AppState.getVector(StateKeys.VEC_FILTERED_ACCOUNTS);
-                Screen screen2 = ScreenManager.createScreen(2581);
+                Screen screen2 = ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_LIST);
                 screen2.screenId = ScreenId.ACCOUNT_CHECKBOX_LIST;
                 screen2.showCheckboxes = true;
                 int size4 = accountList.size();
@@ -111,7 +111,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 Contact contact2 = AppState.getCurrentContact();
                 AppState.setInt(StateKeys.INT_DELETE_BUTTON_ICON, contact2.canDelete() ? 25 : 24);
                 AppState.setInt(StateKeys.INT_BLOCK_BUTTON_ICON, contact2.canBlock() ? 25 : 24);
-                ScreenManager.showScreen(ScreenManager.createScreen(4100));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SWITCH_OPTIONS));
                 return;
             }
             case ScreenId.XMPP_LOGIN:
@@ -135,7 +135,7 @@ public final class AccountHandler extends BaseScreenHandler {
                     if (i21 < 0) {
                         AppState.setInt(StateKeys.INT_ACCOUNT_INDEX, i20);
                         AppState.setObject(StateKeys.SLOT_ACCOUNT_LIST_TEXT, (Object) ObjectPool.toStringAndRelease(sbAccounts));
-                        ScreenManager.showScreen(ScreenManager.createScreen(1990));
+                        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MMP_ACCOUNT_SELECT));
                         return;
                     } else {
                         String str3 = ((MrimAccount) mmpAccounts.elementAt(i21)).login;
@@ -150,7 +150,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 }
             }
             case ScreenId.MRIM_ACCOUNT_SELECT: {
-                Screen screen19 = ScreenManager.createScreen(2186);
+                Screen screen19 = ScreenManager.createScreen(ScreenDef.MRIM_ACCOUNT_SELECT);
                 Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
                 int size15 = onlineAccounts.size();
                 while (true) {
@@ -170,7 +170,7 @@ public final class AccountHandler extends BaseScreenHandler {
                     int size13 = mmpAccounts2.size();
                     int i24 = size13;
                     if (size13 > 0) {
-                        Screen screen17 = ScreenManager.createScreen(2140);
+                        Screen screen17 = ScreenManager.createScreen(ScreenDef.WIFI_ACCOUNT_LIST);
                         while (true) {
                             i24--;
                             if (i24 < 0) {

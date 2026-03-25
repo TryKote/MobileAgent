@@ -219,7 +219,7 @@ public abstract class ContactListManager {
         MergedContactGroup c0054y;
         int iM586d = 1 + AppState.getInt(StateKeys.SETTING_CONTACT_SORT_MODE);
         AppState.setInt(StateKeys.INT_CONTACT_ICON_SIZE, iM586d == 1 ? 1 : 12);
-        Screen c0013amM75b = ScreenManager.createScreen(2571);
+        Screen c0013amM75b = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
         int i = c0013amM75b.contentWidth - 1;
         if (!AppState.getBool(StateKeys.SETTING_SHOW_OFFLINE)) {
             boolean z = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);

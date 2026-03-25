@@ -38,7 +38,7 @@ public final class Screen {
     public int offsetY;
 
     /* renamed from: g */
-    public int screenFlags;
+    public int definitionOffset;
 
     /* renamed from: C */
     private MenuItem headerItem;

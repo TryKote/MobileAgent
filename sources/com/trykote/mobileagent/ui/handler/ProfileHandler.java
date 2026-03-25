@@ -21,7 +21,7 @@ public final class ProfileHandler extends BaseScreenHandler {
         switch (screenId) {
             case ScreenId.SEARCH_RESULTS:
                 AppController.resetSearchResults();
-                ScreenManager.showScreen(ScreenManager.createScreen(4769));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_RESULTS));
                 return;
             case ScreenId.SEARCH_RESULT_LIST:
                 int errorMsgId = AppState.getInt(StateKeys.INT_ERROR_MSG_INDEX);
@@ -32,7 +32,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                 }
                 Vector searchResults = AppState.getVector(StateKeys.SLOT_REG_PARAM_4);
                 if (0 != searchResults.size()) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(3868), searchResults));
+                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEARCH_RESULT_LIST), searchResults));
                     return;
                 } else {
                     AppController.clearSearchResults2();
@@ -56,21 +56,21 @@ public final class ProfileHandler extends BaseScreenHandler {
                 NotificationHelper.showErrorOrConfirm(107, 728, contactInfo.getAccount().getResourceId((Object) contactInfo.getEmailOrMmpId()));
                 return;
             case ScreenId.VCARD_ACTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(4892));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VCARD_ACTIONS));
                 return;
             case ScreenId.PEOPLE_SEARCH:
-                ScreenManager.showScreen(ScreenManager.createScreen(2043));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PEOPLE_SEARCH));
                 return;
             case ScreenId.PROFILE_EDIT:
                 StringBuffer stringBuffer = new StringBuffer(AppState.getString(StateKeys.STR_REGISTRATION_TEXT));
                 stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).accountProfile.gender + 780));
                 AppState.setFromBuffer(StateKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
                 ResourceManager.lastTileLoadTime = System.currentTimeMillis();
-                ScreenManager.showScreen(ScreenManager.createScreen(4258));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_EDIT));
                 return;
             case ScreenId.SEARCH_ENTRY:
                 AppState.setCurrentEntity((Object) null);
-                ScreenManager.showScreen(ScreenManager.createScreen(2247));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_ENTRY));
                 return;
         }
         AppController.finishScreenBuild();

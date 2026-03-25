@@ -50,7 +50,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 AppState.setObject(StateKeys.SLOT_SCREEN_TITLE, (Object) str);
                 AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) Utils.normalizeSpaces(message4.getSubject()));
                 AppState.setObject(StateKeys.SLOT_SCREEN_VALUE, (Object) Utils.normalizeSpaces(message4.body));
-                Screen screen3 = ScreenManager.createScreen(4537);
+                Screen screen3 = ScreenManager.createScreen(ScreenDef.MESSAGE_PREVIEW);
                 Object[] objArr = message4.attachments;
                 if (objArr != null) {
                     for (Object obj2 : objArr) {
@@ -61,13 +61,13 @@ public final class MessageHandler extends BaseScreenHandler {
                 AppController.clearPreviewState();
                 return;
             case ScreenId.COMPOSE_RECIPIENTS:
-                ScreenManager.showScreen(ScreenManager.createScreen(4551));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.COMPOSE_RECIPIENTS));
                 return;
             case ScreenId.COMPOSE_MESSAGE:
-                ScreenManager.showScreen(ScreenManager.createScreen(4806));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.COMPOSE_MESSAGE));
                 return;
             case ScreenId.MAIL_MENU:
-                ScreenManager.showScreen(ScreenManager.createScreen(4667));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAIL_MENU));
                 return;
             case ScreenId.SEND_MAIL:
                 NotificationHelper.showConfirmDialog(81, 872);
@@ -88,7 +88,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 IOUtils.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_3), IOUtils.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_2)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
                 return;
             case ScreenId.MESSAGE_INPUT:
-                ScreenManager.showScreen(ScreenManager.createScreen(2501));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MESSAGE_INPUT));
                 AppController.clearPreviewState();
                 return;
             case ScreenId.SEND_TO_CONTACT:
@@ -101,7 +101,7 @@ public final class MessageHandler extends BaseScreenHandler {
                             NotificationHelper.showMessageById(762);
                         } else {
                             AppController.sortContacts(allContacts);
-                            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(1930), allContacts));
+                            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEND_TO_CONTACT), allContacts));
                         }
                         ObjectPool.releaseVector(allContacts);
                         return;
@@ -124,7 +124,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 NotificationHelper.showAlertBuffer(163, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_NOTIFY_MESSAGE)));
                 return;
             case ScreenId.MAILBOX_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(2158));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAILBOX_OPTIONS));
                 return;
             case ScreenId.SEND_DATA:
                 NotificationHelper.showConfirmDialog(179, 504);

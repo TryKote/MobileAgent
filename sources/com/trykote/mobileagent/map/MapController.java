@@ -27,7 +27,7 @@ public final class MapController {
     public static final void showMapScreen() {
         initMapState();
         AppState.setInt(StateKeys.INT_CONNECTION_STATE, 6);
-        Screen c0013amM75b = ScreenManager.createScreen(1578);
+        Screen c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_VIEW);
         mapScreen = c0013amM75b;
         setMapSoftKeys(c0013amM75b);
         ScreenManager.pushScreen(c0013amM75b);
@@ -61,7 +61,7 @@ public final class MapController {
             return;
         }
         mapInitialized = true;
-        int i = ScreenManager.createScreen(1578).contentHeight;
+        int i = ScreenManager.createScreen(ScreenDef.MAP_VIEW).contentHeight;
         AppState.setLong(StateKeys.MAP_SCROLL_LON, 4178628L);
         AppState.setLong(StateKeys.MAP_SCROLL_LAT, 7482960L);
         AppState.pool[StateKeys.VEC_CONTACT_GROUPS] = XmppContactGroup.loadMapPoints(225);
@@ -190,7 +190,7 @@ public final class MapController {
         if (size == 0) {
             return NotificationHelper.showError(327);
         }
-        Screen c0013amM75b = ScreenManager.createScreen(1717);
+        Screen c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_OVERLAY);
         for (int i = 0; i < size; i++) {
             MapPoint c0014an = (MapPoint) vectorM614m.elementAt(i);
             c0013amM75b.addIconItemWithData(-1, c0014an.name, 6, c0014an);

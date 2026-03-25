@@ -313,7 +313,7 @@ public abstract class Contact implements Sortable {
             icon += 4;
         }
         AppState.setInt(StateKeys.INT_MESSAGE_ICON, icon);
-        Screen msgScreen = ScreenManager.createScreen(2591);
+        Screen msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_SUMMARY);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         int dateCode = AppState.getDateCode();
         while (dupe.length > 0) {
@@ -375,7 +375,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: J */
     public final Screen showMessageSummary() {
         String truncated;
-        Screen msgScreen = ScreenManager.createScreen(2631);
+        Screen msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_DETAIL);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         while (dupe.length > 0) {
             int entryLen = dupe.readShortBE();

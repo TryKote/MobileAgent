@@ -580,7 +580,7 @@ public final class AppController {
 
     /* renamed from: w */
     public static final void processEventQueue() {
-        Screen screen = ScreenManager.createScreen(4852);
+        Screen screen = ScreenManager.createScreen(ScreenDef.DIALOG_SCREEN);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Enumeration chatRooms = account.chatRoomsList.elements();
         while (chatRooms.hasMoreElements()) {
@@ -980,8 +980,8 @@ public final class AppController {
     public static final void showSettingsScreen() {
         AppState.setInt(StateKeys.FLAG_INIT_COMPLETE, 0);
         AppState.setInt(StateKeys.FLAG_FULLSCREEN_ACTIVE, 1);
-        RemoteLogger.log("UI", "showSettingsScreen: before createScreen(4038)");
-        Screen s = ScreenManager.createScreen(4038);
+        RemoteLogger.log("UI", "showSettingsScreen: before createScreen(ScreenDef.SETTINGS_MAIN)");
+        Screen s = ScreenManager.createScreen(ScreenDef.SETTINGS_MAIN);
         RemoteLogger.log("UI", "showSettingsScreen: screenId=" + s.screenId);
         RemoteLogger.log("UI", "showSettingsScreen: pushScreen, stack=" + AppState.getVector(StateKeys.VEC_SCREEN_STACK).size());
         ScreenManager.pushScreen(s);
@@ -1107,7 +1107,7 @@ public final class AppController {
 
     /* renamed from: M */
     public static final void initChatRoomList() {
-        Screen screen = ScreenManager.createScreen(4517);
+        Screen screen = ScreenManager.createScreen(ScreenDef.INPUT_FORM);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Enumeration chatRooms = account.chatRoomsList.elements();
         while (chatRooms.hasMoreElements()) {
@@ -1382,7 +1382,7 @@ public final class AppController {
                 int accountCount = AccountManager.getActiveAccountCount();
                 RemoteLogger.log("INIT", "accountCount=" + accountCount);
                 if (accountCount == 0) {
-                    ScreenManager.pushScreen(ScreenManager.createScreen(4381));
+                    ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.PHOTO_VIEW));
                     refreshContactList();
                 } else {
                     while (true) {
@@ -1823,7 +1823,7 @@ public final class AppController {
                                             MrimAccount mrimAccount6 = (MrimAccount) evtData[0];
                                             mrimAccount6.chatRoomsLoaded = true;
                                             AppState.pool[StateKeys.SLOT_TEMP_ACCOUNT] = mrimAccount6;
-                                            ScreenManager.showScreen(ScreenManager.createScreen(4485));
+                                            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
                                             AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
                                             needsRepaint = true;
                                         } else {
@@ -1845,7 +1845,7 @@ public final class AppController {
                                                 AppState.pool[StateKeys.VEC_PHONE_RESULTS] = vector4;
                                                 int iIntValue = ((Integer) objArr3[2]).intValue();
                                                 AppState.setInt(StateKeys.INT_PHONE_SCROLL_OFFSET, iIntValue);
-                                                Screen popupScreen = ScreenManager.createScreen(2237);
+                                                Screen popupScreen = ScreenManager.createScreen(ScreenDef.CONTACT_POPUP);
                                                 if (iIntValue >= 10) {
                                                     popupScreen.addIconItemWithData(6, AppState.getString(StateKeys.STR_MENU_SMS), 1, null);
                                                 }

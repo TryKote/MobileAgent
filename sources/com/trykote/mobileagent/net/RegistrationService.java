@@ -77,7 +77,7 @@ public abstract class RegistrationService {
         AppState.setInt(StateKeys.INT_COUNTRY_CODE, ((Integer) objArr[19]).intValue());
         AppState.pool[StateKeys.SLOT_DISPLAY_NAME] = objArr[20];
         AppState.setInt(StateKeys.INT_REGION_CODE, ((Integer) objArr[21]).intValue());
-        ScreenManager.showScreen(ScreenManager.createScreen(4399));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGISTRATION_FORM));
         String statusStr = AppState.getString(StateKeys.SLOT_DISPLAY_NAME);
         if (statusStr == null) {
             RemoteLogger.log("NET", "triggering refreshContactList from RegistrationService");

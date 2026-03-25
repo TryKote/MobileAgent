@@ -99,7 +99,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setObject(StateKeys.SLOT_CHAT_NAME, (Object) account.login);
                 AppState.setObject(StateKeys.SLOT_PASSWORD, (Object) account.password);
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(2803));
+            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN));
             return;
         }
         if (getAccountType() == TYPE_XMPP) {
@@ -130,7 +130,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setObject(StateKeys.SLOT_PASSWORD, (Object) xmppAccount.password);
                 AppState.setObject(StateKeys.SLOT_DISPLAY_NAME, (Object) xmppAccount.displayName);
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(3443));
+            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN_ALT));
             return;
         }
         if (getAccountType() == TYPE_XMPP_MAILRU) {
@@ -145,7 +145,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 AppState.setObject(StateKeys.SLOT_PASSWORD, (Object) mailRuAccount.password);
                 AppState.setObject(StateKeys.SLOT_DISPLAY_NAME, (Object) mailRuAccount.displayName);
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(3463));
+            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN_ALT2));
             return;
         }
         clearLoginFields();
@@ -174,7 +174,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 i++;
             }
         }
-        ScreenManager.showScreen(ScreenManager.createScreen(2777));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_CONTEXT_MENU));
     }
 
     /* renamed from: s */
@@ -657,7 +657,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         while (true) {
             int i4 = i3;
             if (i4 >= 16384) {
-                ScreenManager.showScreen(ScreenManager.createScreen(1753));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_MAP_CONTEXT));
                 return;
             }
             int i5 = i2;

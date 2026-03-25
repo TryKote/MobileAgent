@@ -37,7 +37,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 AppController.processEventQueue();
                 return;
             case ScreenId.PHONE_INPUT: {
-                Screen screen6 = ScreenManager.createScreen(2611);
+                Screen screen6 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT);
                 for (int i14 = 0; i14 < 15; i14++) {
                     screen6.addTextItem(AppState.getString(i14 + 48));
                 }
@@ -45,7 +45,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.SERVER_ADDRESS: {
-                Screen screen7 = ScreenManager.createScreen(2601);
+                Screen screen7 = ScreenManager.createScreen(ScreenDef.SERVER_ADDRESS);
                 for (int i15 = 0; i15 < 15; i15++) {
                     screen7.addTextItem(AppState.getString(i15 + 48));
                 }
@@ -59,7 +59,7 @@ public final class MiscHandler extends BaseScreenHandler {
                     NotificationHelper.showMessageById(397);
                     return;
                 }
-                Screen screen8 = ScreenManager.createScreen(1691);
+                Screen screen8 = ScreenManager.createScreen(ScreenDef.REGION_SELECTOR);
                 for (int i16 = 0; i16 < size9; i16++) {
                     GeoRegion region = (GeoRegion) regions.elementAt(i16);
                     screen8.addIconItemWithData(-1, region.name, 6, region);
@@ -70,7 +70,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.PHONE_INPUT_ALT: {
-                Screen screen9 = ScreenManager.createScreen(4080);
+                Screen screen9 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT_ALT);
                 for (int i17 = 0; i17 < 15; i17++) {
                     screen9.addTextItem(AppState.getString(i17 + 48));
                 }
@@ -78,7 +78,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.URL_OPEN: {
-                Screen screen10 = ScreenManager.createScreen(4090);
+                Screen screen10 = ScreenManager.createScreen(ScreenDef.URL_OPEN);
                 for (int i18 = 0; i18 < 15; i18++) {
                     screen10.addTextItem(AppState.getString(i18 + 48));
                 }
@@ -88,10 +88,10 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.CONVERSATION:
                 return;
             case ScreenId.VERSION_SELECT:
-                ScreenManager.showScreen(ScreenManager.createScreen(4862).selectByTitle(AppState.getString(StateKeys.STR_PRIVACY_MODE_BASE + ((MmpProtocol) AppState.getAccount()).getPendingVersion())));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VERSION_SELECT).selectByTitle(AppState.getString(StateKeys.STR_PRIVACY_MODE_BASE + ((MmpProtocol) AppState.getAccount()).getPendingVersion())));
                 return;
             case ScreenId.EMPTY_SCREEN:
-                ScreenManager.showScreen(ScreenManager.createScreen(3479));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.EMPTY_SCREEN));
                 return;
             case ScreenId.WIFI_NETWORKS:
                 ResourceManager.showWiFiNetworks();
@@ -103,7 +103,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 ResourceManager.showTosScreen();
                 return;
             case ScreenId.FORM_LIST: {
-                Screen screen18 = ScreenManager.createScreen(2176);
+                Screen screen18 = ScreenManager.createScreen(ScreenDef.FORM_LIST);
                 Vector vector2 = ((Conversation) AppState.pool[StateKeys.SLOT_TEMP_OBJECT_1]).items;
                 int size14 = vector2.size();
                 while (true) {
@@ -121,12 +121,12 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.PHONE_CONTACTS:
                 return;
             case ScreenId.EDIT_SCREEN:
-                ScreenManager.showScreen(ScreenManager.createScreen(2279));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.EDIT_SCREEN));
                 return;
             case ScreenId.ASYNC_TASK:
                 break;
             case ScreenId.MAIN_SCREEN:
-                ScreenManager.showScreen(ScreenManager.createScreen(4369));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAIN_SCREEN));
                 if (AppState.getBool(StateKeys.FLAG_HAS_XMPP_ACCOUNT)) {
                     AppController.processBackgroundTasks();
                     return;
@@ -146,7 +146,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 IOUtils.showPhotoSelector();
                 return;
             case ScreenId.PHOTO_VIEW:
-                ScreenManager.pushScreen(ScreenManager.createScreen(4381));
+                ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.PHOTO_VIEW));
                 return;
         }
         AppController.finishScreenBuild();

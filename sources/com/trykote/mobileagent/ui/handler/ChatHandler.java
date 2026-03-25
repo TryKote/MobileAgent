@@ -83,10 +83,10 @@ public final class ChatHandler extends BaseScreenHandler {
                 IOUtils.showChatRoomMessages();
                 return;
             case ScreenId.CHAT_ROOM_CONFIG:
-                ScreenManager.showScreen(ScreenManager.createScreen(4302));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_ROOM_CONFIG));
                 return;
             case ScreenId.CHAT_VIEW_MODE:
-                ScreenManager.showScreen(ScreenManager.createScreen(3170));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_VIEW_MODE));
                 return;
             case ScreenId.CHAT_ROOM_CONTEXT:
                 String msgId2 = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
@@ -106,32 +106,32 @@ public final class ChatHandler extends BaseScreenHandler {
                 AppState.setBool(StateKeys.FLAG_CHATROOM_HAS_MEMBERS, size5 != 0);
                 AppState.setBool(StateKeys.FLAG_CHATROOM_HAS_MORE, chatRoom2 != mrimAccount3.getLastChatRoom());
                 AppState.setFromBuffer(StateKeys.SLOT_UNREAD_COUNT_TEXT, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_UNREAD_COUNT_PREFIX)).append(size5).append(')'));
-                ScreenManager.showScreen(ScreenManager.createScreen(4589));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_ROOM_CONTEXT));
                 return;
             case ScreenId.CHAT_ROOM_ALERT:
                 NotificationHelper.showAlertById(61, 857);
                 return;
             case ScreenId.CHAT_ROOM_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(1940));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_ROOM_OPTIONS));
                 return;
             case ScreenId.CHAT_LIST_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(1968));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_LIST_OPTIONS));
                 return;
             case ScreenId.CREATE_CHAT_ROOM:
                 AppState.setInt(StateKeys.FLAG_CHAT_ROOM_CREATED, 0);
                 AppState.setFromBuffer(StateKeys.SLOT_CHAT_NAME, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_CHAT_NAME_PREFIX)).append(1 + (AppState.getInt(StateKeys.UI_COUNTER) % 1000)));
-                ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(4138), (MrimAccount) AppState.getAccount(), (Contact) null));
+                ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(ScreenDef.CREATE_CHAT_ROOM), (MrimAccount) AppState.getAccount(), (Contact) null));
                 return;
             case ScreenId.CHAT_STATUS:
                 AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, Utils.nonEmpty(AppState.getString(StateKeys.SLOT_STATUS_TEXT)));
-                ScreenManager.showScreen(ScreenManager.createScreen(3647));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_STATUS));
                 return;
             case ScreenId.CHAT_DETAIL:
                 Conversation.updateStatusText(411);
-                ScreenManager.showScreen(ScreenManager.createScreen(4270));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_DETAIL));
                 return;
             case ScreenId.CHAT_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(4179));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_OPTIONS));
                 return;
         }
         AppController.finishScreenBuild();

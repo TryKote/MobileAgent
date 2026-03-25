@@ -383,7 +383,7 @@ public final class StringUtils {
             sb.append((char) 0).append(getXmlText((XmlElement) items.elementAt(i)));
         }
         AppState.setFromBuffer(StateKeys.SLOT_REG_FIELD_1, sb);
-        ScreenManager.showScreen(ScreenManager.createScreen(3356));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGION_CHOICE));
     }
 
     /* renamed from: f */

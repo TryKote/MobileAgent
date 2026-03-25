@@ -17,6 +17,41 @@ import javax.microedition.lcdui.Image;
 /* renamed from: ad */
 /* loaded from: MobileAgent_3.9.jar:ad.class */
 public abstract class ScreenManager {
+
+    // Screen types (lower 4 bits of typeAndFlags in createScreen header)
+    private static final int TYPE_FULLSCREEN = 0;
+    private static final int TYPE_FULLSCREEN_ALT = 1;
+    private static final int TYPE_DIALOG_CENTER = 2;
+    private static final int TYPE_DIALOG_BOTTOM = 3;
+    private static final int TYPE_DIALOG_CORNER = 4;
+    private static final int TYPE_FULLSCREEN_NOSCROLL = 5;
+    private static final int TYPE_MAP = 6;
+    private static final int TYPE_TOAST = 7;
+    private static final int TYPE_TOAST_CENTER = 8;
+    private static final int TYPE_FULLSCREEN_NOSCROLL_ALT = 9;
+    private static final int TYPE_POPUP = 10;
+    private static final int TYPE_DIALOG_LOW = 11;
+    private static final int TYPE_MAP_ALT = 12;
+
+    // Item types (lower 4 bits in parseScreenItem/processFormField)
+    private static final int ITEM_ACTION = 0;
+    private static final int ITEM_SEPARATOR = 1;
+    private static final int ITEM_CHECKBOX = 2;
+    private static final int ITEM_DROPDOWN = 3;
+    private static final int ITEM_TEXT_SEPARATOR = 4;
+    private static final int ITEM_TEXT_INPUT = 5;
+    private static final int ITEM_LABEL_SEPARATOR = 6;
+    private static final int ITEM_CONDITIONAL_IF = 7;
+    private static final int ITEM_CONDITIONAL_UNLESS = 8;
+    private static final int ITEM_LOGIN = 9;
+    private static final int ITEM_PASSWORD = 10;
+    private static final int ITEM_IMAGE = 11;
+    private static final int ITEM_REDIRECT = 12;
+
+    // Masks and flags
+    private static final int MASK_TYPE = 15;
+    private static final int FLAG_CHECKBOXES = 16;
+    private static final int FLAG_DYNAMIC = 32;
     /* renamed from: a */
     public static final void initializeFonts() {
         int iM586d = AppState.getInt(StateKeys.SETTING_FONT_SIZE_CHAT);
@@ -128,18 +163,18 @@ public abstract class ScreenManager {
         int iM586d = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - i5;
         int screenH = AppState.getHeight() - i6;
         switch (i4) {
-            case 2:
-            case 7:
-            case 8:
+            case TYPE_DIALOG_CENTER:
+            case TYPE_TOAST:
+            case TYPE_TOAST_CENTER:
                 screen.setOffset(iM586d >> 1, screenH >> 1);
                 break;
-            case 3:
+            case TYPE_DIALOG_BOTTOM:
                 screen.setOffset(0, screenH);
                 break;
-            case 4:
+            case TYPE_DIALOG_CORNER:
                 screen.setOffset(iM586d, screenH);
                 break;
-            case 10:
+            case TYPE_POPUP:
                 Screen curScreen = getCurrentScreen();
                 if (curScreen != null) {
                     int iM586d2 = curScreen.offsetX + curScreen.containerWidth;
@@ -154,13 +189,13 @@ public abstract class ScreenManager {
                     break;
                 }
                 break;
-            case 11:
+            case TYPE_DIALOG_LOW:
                 screen.setOffset(iM586d >> 1, (AppState.getHeight() - i6) - (i6 / 10));
                 break;
         }
         int size3 = screens.size();
         for (int i7 = 0; i7 < size3; i7++) {
-            if (((Screen) screens.elementAt(i7)).screenType == 7) {
+            if (((Screen) screens.elementAt(i7)).screenType == TYPE_TOAST) {
                 size3 = i7;
             }
         }
@@ -202,87 +237,78 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: b */
-    public static final Screen createScreen(int i) {
+    public static final Screen createScreen(int offset) {
         Screen screen;
-        int i2 = i + 1;
-        String title = Utils.defaultStr(AppState.getString(AppState.getInt(i)));
-        int i3 = i2 + 1;
-        int iM586d = AppState.getInt(i2);
-        int i4 = i3 + 1;
-        int iM586d2 = AppState.getInt(i3);
-        boolean z = (iM586d2 & 16) != 0;
-        int i5 = iM586d2 & 15;
-        int i6 = i4 + 1;
-        int iM586d3 = AppState.getInt(i4);
-        int i7 = i6 + 1;
-        int iM586d4 = AppState.getInt(i6);
-        int i8 = i7 + 1;
-        int iM586d5 = AppState.getInt(i7);
-        int i9 = i8 + 1;
-        int iM586d6 = AppState.getInt(i8);
-        int i10 = i9 + 1;
-        int iM586d7 = AppState.getInt(i9);
-        int i11 = i10 + 1;
-        int iM586d8 = AppState.getInt(i10);
-        int pos = i11 + 1;
-        int itemCount = AppState.getInt(i11);
-        RemoteLogger.log("SCR", "createScreen(" + i + "): type=" + i5 + " items=" + itemCount + " id=" + iM586d);
+        int pos = offset;
+        String title = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
+        int screenId = AppState.getInt(pos++);
+        int typeAndFlags = AppState.getInt(pos++);
+        boolean showCheckboxes = (typeAndFlags & FLAG_CHECKBOXES) != 0;
+        int screenType = typeAndFlags & MASK_TYPE;
+        int headerMode = AppState.getInt(pos++);
+        int leftKeyLabel = AppState.getInt(pos++);
+        int rightKeyLabel = AppState.getInt(pos++);
+        int leftKeyCmd = AppState.getInt(pos++);
+        int rightKeyCmd = AppState.getInt(pos++);
+        int extraKeyCmd = AppState.getInt(pos++);
+        int itemCount = AppState.getInt(pos++);
+        RemoteLogger.log("SCR", "createScreen(" + offset + "): type=" + screenType + " items=" + itemCount + " id=" + screenId);
         int screenW = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
         int screenH = AppState.getHeight();
-        switch (i5) {
-            case 0:
-            case 1:
-                screen = new Screen(0, iM586d, screenW, screenH, true);
+        switch (screenType) {
+            case TYPE_FULLSCREEN:
+            case TYPE_FULLSCREEN_ALT:
+                screen = new Screen(0, screenId, screenW, screenH, true);
                 break;
-            case 2:
-            case 3:
-            case 4:
-            case 10:
-            case 11:
-                screen = new Screen(0, iM586d, (screenW * 9) / 10, (screenH * 9) / 10, true);
+            case TYPE_DIALOG_CENTER:
+            case TYPE_DIALOG_BOTTOM:
+            case TYPE_DIALOG_CORNER:
+            case TYPE_POPUP:
+            case TYPE_DIALOG_LOW:
+                screen = new Screen(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, true);
                 break;
-            case 5:
-            case 9:
-                screen = new Screen(0, iM586d, screenW, screenH, false);
+            case TYPE_FULLSCREEN_NOSCROLL:
+            case TYPE_FULLSCREEN_NOSCROLL_ALT:
+                screen = new Screen(0, screenId, screenW, screenH, false);
                 break;
-            case 6:
-            case 12:
-                screen = new Screen(1, iM586d, screenW, screenH, true);
+            case TYPE_MAP:
+            case TYPE_MAP_ALT:
+                screen = new Screen(1, screenId, screenW, screenH, true);
                 break;
-            case 7:
-            case 8:
-                screen = new Screen(0, iM586d, (screenW * 9) / 10, (screenH * 9) / 10, false);
+            case TYPE_TOAST:
+            case TYPE_TOAST_CENTER:
+                screen = new Screen(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, false);
                 break;
             default:
                 screen = null;
                 break;
         }
         RemoteLogger.log("SCR", "Screen created OK");
-        if (i5 != 3 && i5 != 4 && i5 != 2 && i5 != 11 && i5 != 10 && i5 != 8) {
-            if (i5 != 7) {
-                RemoteLogger.log("SCR", "setHeader(" + iM586d3 + ", " + title + ")");
-                screen.setHeader(iM586d3, title);
+        if (screenType != TYPE_DIALOG_BOTTOM && screenType != TYPE_DIALOG_CORNER && screenType != TYPE_DIALOG_CENTER && screenType != TYPE_DIALOG_LOW && screenType != TYPE_POPUP && screenType != TYPE_TOAST_CENTER) {
+            if (screenType != TYPE_TOAST) {
+                RemoteLogger.log("SCR", "setHeader(" + headerMode + ", " + title + ")");
+                screen.setHeader(headerMode, title);
                 RemoteLogger.log("SCR", "setHeader done");
             } else {
                 screen.addItem(new MenuItem(0, title).addText(title, 1, 0));
             }
         }
-        screen.showCheckboxes = z;
-        screen.screenFlags = i;
+        screen.showCheckboxes = showCheckboxes;
+        screen.definitionOffset = offset;
         RemoteLogger.log("SCR", "items loop start");
-        for (int i12 = 0; i12 < itemCount; i12++) {
-            pos = parseScreenItem(screen, pos, iM586d);
+        for (int i = 0; i < itemCount; i++) {
+            pos = parseScreenItem(screen, pos, screenId);
         }
-        Screen configuredScreen = screen.setSoftKeys(iM586d4 > 0 ? AppState.getString(iM586d4) : null, iM586d5 > 0 ? AppState.getString(iM586d5) : null, iM586d6, iM586d7, iM586d8);
-        configuredScreen.screenType = i5;
-        RemoteLogger.log("SCR", "createScreen(" + i + ") done: items=" + screen.menuItems.size() + " skL=" + iM586d6 + " skR=" + iM586d8);
+        Screen configuredScreen = screen.setSoftKeys(leftKeyLabel > 0 ? AppState.getString(leftKeyLabel) : null, rightKeyLabel > 0 ? AppState.getString(rightKeyLabel) : null, leftKeyCmd, rightKeyCmd, extraKeyCmd);
+        configuredScreen.screenType = screenType;
+        RemoteLogger.log("SCR", "createScreen(" + offset + ") done: items=" + screen.menuItems.size() + " skL=" + leftKeyCmd + " skR=" + extraKeyCmd);
         return configuredScreen;
     }
 
     /* renamed from: c */
     public static final Screen createDialogScreen(int i) {
         Screen screen = new Screen(0, i, (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
-        screen.screenType = 2;
+        screen.screenType = TYPE_DIALOG_CENTER;
         screen.showCheckboxes = true;
         return screen;
     }
@@ -301,128 +327,101 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: a */
-    private static final int addItemToScreen(boolean z, Screen screen, int i, boolean z2) {
-        int i2 = i + 1;
-        int iM586d = AppState.getInt(i);
-        int i3 = i2 + 1;
-        int iM586d2 = AppState.getInt(i2);
-        int i4 = i3 + 1;
-        int iM586d3 = AppState.getInt(i3);
-        if (z) {
-            if (z2) {
-                screen.addActionById(iM586d2, iM586d3, iM586d);
+    private static final int addItemToScreen(boolean isVisible, Screen screen, int pos, boolean isAction) {
+        int labelKey = AppState.getInt(pos++);
+        int iconKey = AppState.getInt(pos++);
+        int cmdKey = AppState.getInt(pos++);
+        if (isVisible) {
+            if (isAction) {
+                screen.addActionById(iconKey, cmdKey, labelKey);
             } else {
-                screen.addIconById(iM586d2, iM586d3, iM586d);
+                screen.addIconById(iconKey, cmdKey, labelKey);
             }
         }
-        return i4;
+        return pos;
     }
 
     /* renamed from: a */
-    private static final int parseScreenItem(Screen screen, int i, int i2) {
-        int i3;
+    private static final int parseScreenItem(Screen screen, int pos, int screenId) {
+        int nextPos;
         Object itemData;
-        int i4;
+        int afterPos;
         String title;
-        int i5 = i + 1;
-        int iM586d = AppState.getInt(i);
-        RemoteLogger.log("SCR", "parseItem pos=" + i + " type=" + (iM586d & 15));
-        boolean z = (iM586d & 16) != 0;
-        boolean z2 = (iM586d & 32) != 0;
-        switch (iM586d & 15) {
-            case 0:
-                boolean isEnabled = z;
-                int i6 = i5;
-                if (z2) {
-                    i6++;
-                    isEnabled = AppState.getBool(AppState.getInt(i6));
+        int typeFlags = AppState.getInt(pos++);
+        RemoteLogger.log("SCR", "parseItem pos=" + (pos - 1) + " type=" + (typeFlags & MASK_TYPE));
+        boolean isEnabled = (typeFlags & FLAG_CHECKBOXES) != 0;
+        boolean isDynamic = (typeFlags & FLAG_DYNAMIC) != 0;
+        switch (typeFlags & MASK_TYPE) {
+            case ITEM_ACTION:
+                if (isDynamic) {
+                    pos++;
+                    isEnabled = AppState.getBool(AppState.getInt(pos));
                 }
-                int i7 = i6;
-                int i8 = i6 + 1;
-                int iM586d2 = AppState.getInt(i7);
-                int i9 = i8 + 1;
-                int iM586d3 = AppState.getInt(i8);
-                int i10 = i9 + 1;
-                int iM586d4 = AppState.getInt(i9);
+                int labelKey = AppState.getInt(pos++);
+                int iconKey = AppState.getInt(pos++);
+                int cmdKey = AppState.getInt(pos++);
                 if (isEnabled) {
-                    screen.addActionById(iM586d3, iM586d4, iM586d2);
+                    screen.addActionById(iconKey, cmdKey, labelKey);
                 } else {
-                    screen.addIconById(iM586d3, iM586d4, iM586d2);
+                    screen.addIconById(iconKey, cmdKey, labelKey);
                 }
-                return i10;
-            case 1:
-                int i11 = i5 + 1;
-                MenuItem separator = MenuItem.createSeparator().addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))).append(' ')), 0, 0);
-                int i12 = i11 + 1;
-                String sublabel = Utils.defaultStr(AppState.getString(AppState.getInt(i11)));
+                return pos;
+            case ITEM_SEPARATOR:
+                MenuItem separator = MenuItem.createSeparator().addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.defaultStr(AppState.getString(AppState.getInt(pos++)))).append(' ')), 0, 0);
+                String sublabel = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
                 if (!StringUtils.isEmpty(sublabel)) {
                     separator.addText(sublabel, 0, 6);
                 }
                 screen.addItem(separator);
-                return i12;
-            case 2:
-                int i13 = i5 + 1;
-                String checkLabel = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
-                int i14 = i13 + 1;
-                screen.addItem(MenuItem.createCheckbox(checkLabel, AppState.getBool(AppState.getInt(i13))));
-                return i14;
-            case 3:
-                int i15 = i5 + 1;
-                String choiceLabel = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
-                int i16 = i15 + 1;
-                Vector choices = Utils.splitByNull(Utils.defaultStr(AppState.getString(AppState.getInt(i15))));
-                int i17 = i16 + 1;
-                screen.addItem(new MenuItem(9, choiceLabel).setChoices(choices, AppState.getInt(AppState.getInt(i16)), choiceLabel));
-                return i17;
-            case 4:
-                int i18 = i5 + 1;
-                screen.addItem(MenuItem.createSeparator().addText(Utils.defaultStr(AppState.getString(AppState.getInt(i5))), 1, 0));
-                return i18;
-            case 5:
-                if (i2 == 49) {
-                    i3 = i5 + 1;
-                    int iM586d5 = AppState.getInt(i5);
-                    itemData = (iM586d5 < 268 || iM586d5 > 304) ? (iM586d5 < 161 || iM586d5 > 210) ? AppState.getString(iM586d5) : ResourceManager.integerOf(iM586d5) : ResourceManager.integerOf(iM586d5);
+                return pos;
+            case ITEM_CHECKBOX:
+                String checkLabel = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
+                screen.addItem(MenuItem.createCheckbox(checkLabel, AppState.getBool(AppState.getInt(pos++))));
+                return pos;
+            case ITEM_DROPDOWN:
+                String choiceLabel = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
+                Vector choices = Utils.splitByNull(Utils.defaultStr(AppState.getString(AppState.getInt(pos++))));
+                screen.addItem(new MenuItem(9, choiceLabel).setChoices(choices, AppState.getInt(AppState.getInt(pos++)), choiceLabel));
+                return pos;
+            case ITEM_TEXT_SEPARATOR:
+                screen.addItem(MenuItem.createSeparator().addText(Utils.defaultStr(AppState.getString(AppState.getInt(pos++))), 1, 0));
+                return pos;
+            case ITEM_TEXT_INPUT:
+                if (screenId == 49) {
+                    int dataKey = AppState.getInt(pos++);
+                    itemData = (dataKey < 268 || dataKey > 304) ? (dataKey < 161 || dataKey > 210) ? AppState.getString(dataKey) : ResourceManager.integerOf(dataKey) : ResourceManager.integerOf(dataKey);
                 } else {
-                    i3 = i5 + 1;
-                    itemData = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
+                    itemData = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
                 }
                 Object obj = itemData;
-                int i19 = i3;
-                int i20 = i3 + 1;
-                int iM586d6 = AppState.getInt(i19);
-                int i21 = i20 + 1;
-                String hintText = Utils.defaultStr(AppState.getString(AppState.getInt(i20)));
-                int i22 = i21 + 1;
-                int iM586d7 = AppState.getInt(i21);
-                if (iM586d7 == 2) {
-                    int i23 = i22 + 3;
-                    i4 = i23 + 1;
-                    int iM586d8 = AppState.getInt(AppState.getInt(i23));
-                    title = iM586d8 >= 0 ? StringUtils.intern(Integer.toString(iM586d8)) : AppState.emptyStr;
+                int inputType = AppState.getInt(pos++);
+                String hintText = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
+                int validationType = AppState.getInt(pos++);
+                if (validationType == 2) {
+                    pos += 3;
+                    int numValue = AppState.getInt(AppState.getInt(pos++));
+                    title = numValue >= 0 ? StringUtils.intern(Integer.toString(numValue)) : AppState.emptyStr;
                 } else {
-                    i4 = i22 + 1;
-                    title = Utils.defaultStr(Utils.defaultStr(AppState.getString(AppState.getInt(i22))));
+                    title = Utils.defaultStr(Utils.defaultStr(AppState.getString(AppState.getInt(pos++))));
                 }
-                screen.addItem(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, title, ResourceManager.integerOf(iM586d6), ResourceManager.integerOf(iM586d7), hintText));
-                return i4;
-            case 6:
-                int i24 = i5 + 1;
-                screen.addItem(MenuItem.createSeparator().setLabel(Utils.defaultStr(AppState.getString(AppState.getInt(i5)))));
-                return i24;
-            case 7:
-                return addItemToScreen(AppState.getBool(AppState.getInt(i5)), screen, i5 + 1, z);
-            case 8:
-                return addItemToScreen(!AppState.getBool(AppState.getInt(i5)), screen, i5 + 1, z);
-            case 9:
-                String loginLabel = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
-                String loginValue = Utils.defaultStr(AppState.getString(AppState.getInt(i5 + 1)));
+                screen.addItem(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, title, ResourceManager.integerOf(inputType), ResourceManager.integerOf(validationType), hintText));
+                return pos;
+            case ITEM_LABEL_SEPARATOR:
+                screen.addItem(MenuItem.createSeparator().setLabel(Utils.defaultStr(AppState.getString(AppState.getInt(pos++)))));
+                return pos;
+            case ITEM_CONDITIONAL_IF:
+                return addItemToScreen(AppState.getBool(AppState.getInt(pos)), screen, pos + 1, isEnabled);
+            case ITEM_CONDITIONAL_UNLESS:
+                return addItemToScreen(!AppState.getBool(AppState.getInt(pos)), screen, pos + 1, isEnabled);
+            case ITEM_LOGIN:
+                String loginLabel = Utils.defaultStr(AppState.getString(AppState.getInt(pos)));
+                String loginValue = Utils.defaultStr(AppState.getString(AppState.getInt(pos + 1)));
                 MenuItem loginItem = new MenuItem(4, (String) null).clear().setIcon(221).addText(Utils.nonEmpty(loginValue) ? loginValue : loginLabel, 1, 7);
                 loginItem.data = new String[]{loginLabel, loginValue};
                 screen.addItem(loginItem);
-                return i5 + 2;
-            case 10:
-                String passwordStr = Utils.defaultStr(AppState.getString(AppState.getInt(i5)));
+                return pos + 2;
+            case ITEM_PASSWORD:
+                String passwordStr = Utils.defaultStr(AppState.getString(AppState.getInt(pos)));
                 MenuItem menuItem = new MenuItem(5, (String) null);
                 menuItem.clear();
                 menuItem.setIcon(219);
@@ -434,39 +433,39 @@ public abstract class ScreenManager {
                 }
                 menuItem.data = passwordStr;
                 screen.addItem(menuItem);
-                return i5 + 1;
-            case 11:
-                screen.addItem(MenuItem.createGraphics(new GraphicsContext((Image) AppState.pool[AppState.getInt(i5)])));
-                return i5 + 1;
+                return pos + 1;
+            case ITEM_IMAGE:
+                screen.addItem(MenuItem.createGraphics(new GraphicsContext((Image) AppState.pool[AppState.getInt(pos)])));
+                return pos + 1;
             default:
-                RemoteLogger.log("SCR", "parseItem DEFAULT type=" + (iM586d & 15) + " recurse to " + AppState.getInt(i5));
-                parseScreenItem(screen, AppState.getInt(i5), i2);
-                return i5 + 1;
+                RemoteLogger.log("SCR", "parseItem DEFAULT type=" + (typeFlags & MASK_TYPE) + " recurse to " + AppState.getInt(pos));
+                parseScreenItem(screen, AppState.getInt(pos), screenId);
+                return pos + 1;
         }
     }
 
     /* renamed from: a */
-    private static final int processFormField(int i, Object obj) {
+    private static final int processFormField(int pos, Object data) {
         int nextIdx;
-        int idx = i + 1;
-        switch (AppState.getInt(i)) {
-            case 1:
+        int idx = pos + 1;
+        switch (AppState.getInt(pos)) {
+            case ITEM_SEPARATOR:
                 idx += 2;
                 break;
-            case 2:
-                AppState.setBool(AppState.getInt(idx + 1), ((Boolean) obj).booleanValue());
+            case ITEM_CHECKBOX:
+                AppState.setBool(AppState.getInt(idx + 1), ((Boolean) data).booleanValue());
                 idx += 2;
                 break;
-            case 3:
-                AppState.setIntInd(idx + 2, ((Integer) ((Object[]) obj)[0]).intValue());
+            case ITEM_DROPDOWN:
+                AppState.setIntInd(idx + 2, ((Integer) ((Object[]) data)[0]).intValue());
                 idx += 3;
                 break;
-            case 4:
+            case ITEM_TEXT_SEPARATOR:
                 idx++;
                 break;
-            case 5:
+            case ITEM_TEXT_INPUT:
                 int baseIdx = idx + 3;
-                String value = (String) ((Object[]) obj)[0];
+                String value = (String) ((Object[]) data)[0];
                 int curIdx = baseIdx + 1;
                 if (AppState.getInt(baseIdx) == 2) {
                     int minIdx = curIdx + 1;
@@ -483,26 +482,26 @@ public abstract class ScreenManager {
                 }
                 idx += nextIdx - idx;
                 break;
-            case 6:
+            case ITEM_LABEL_SEPARATOR:
                 idx++;
                 break;
-            case 7:
-            case 8:
+            case ITEM_CONDITIONAL_IF:
+            case ITEM_CONDITIONAL_UNLESS:
                 idx += 3;
                 break;
-            case 9:
-                AppState.setStringInd(idx + 1, ((String[]) obj)[1]);
+            case ITEM_LOGIN:
+                AppState.setStringInd(idx + 1, ((String[]) data)[1]);
                 idx += 2;
                 break;
-            case 10:
-                AppState.setStringInd(idx, (String) obj);
+            case ITEM_PASSWORD:
+                AppState.setStringInd(idx, (String) data);
                 idx++;
                 break;
-            case 11:
+            case ITEM_IMAGE:
                 idx++;
                 break;
-            case 12:
-                processFormField(AppState.getInt(idx), obj);
+            case ITEM_REDIRECT:
+                processFormField(AppState.getInt(idx), data);
                 idx++;
                 break;
         }
@@ -512,7 +511,7 @@ public abstract class ScreenManager {
     /* renamed from: d */
     public static final int processScreenForm() {
         Screen screen = getCurrentScreen();
-        int i = screen.screenFlags + 9;
+        int i = screen.definitionOffset + 9;
         Vector items = screen.menuItems;
         int fieldIdx = i + 1;
         int fieldCount = AppState.getInt(i);

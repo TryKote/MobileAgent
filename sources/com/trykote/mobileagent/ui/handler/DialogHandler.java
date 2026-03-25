@@ -45,7 +45,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getAppVersion());
                 AppState.setFromBuffer(StateKeys.SLOT_APP_VERSION_STRING, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_APP_NAME)).append(AppState.getString(StateKeys.STR_APP_BUILD_SUFFIX)));
                 AppState.setObject(StateKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(StateKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
-                ScreenManager.showScreen(ScreenManager.createScreen(2448));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ABOUT));
                 return;
             case ScreenId.BLOCK_CONFIRM:
                 NotificationHelper.showAlertById(10, 710);
@@ -60,7 +60,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 StringBuffer sb = ObjectPool.newStringBuffer();
                 int intVal = AppState.getInt(StateKeys.SETTING_TRAFFIC_COST);
                 AppState.setFromBuffer(StateKeys.SLOT_SCREEN_VALUE, sb.append(intVal / 100).append('.').append(Utils.zeroPad(intVal % 100)));
-                ScreenManager.showScreen(ScreenManager.createScreen(3183));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.TRAFFIC_COST));
                 return;
             case ScreenId.EMOTICON_DIALOG:
                 Screen dialogScreen2 = ScreenManager.createDialogScreen(17);
@@ -81,7 +81,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 NotificationHelper.showConfirmDialog(55, 761);
                 return;
             case ScreenId.INPUT_DIALOG:
-                ScreenManager.showScreen(ScreenManager.createScreen(4711));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.INPUT_DIALOG));
                 return;
             case ScreenId.STATUS_INPUT:
                 XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(StateKeys.SLOT_STATUS_TEXT), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(StateKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new TextInputHandler());
@@ -91,10 +91,10 @@ public final class DialogHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(new Screen());
                 return;
             case ScreenId.SOFTKEY_MENU:
-                ScreenManager.showScreen(ScreenManager.createScreen(4633));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SOFTKEY_MENU));
                 return;
             case ScreenId.EMOTICON_PICKER:
-                Screen screen5 = ScreenManager.createScreen(2621);
+                Screen screen5 = ScreenManager.createScreen(ScreenDef.EMOTICON_PICKER);
                 if (AppState.getCurrentContact() instanceof MmpContact) {
                     for (int i10 = 0; i10 < 43; i10++) {
                         if (AppState.getString(i10 + 1141) != null) {
@@ -122,7 +122,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(screen5);
                 return;
             case ScreenId.CAPTCHA:
-                Screen screen12 = ScreenManager.createScreen(3840);
+                Screen screen12 = ScreenManager.createScreen(ScreenDef.CAPTCHA);
                 Object obj4 = ((Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA])[2];
                 if (obj4 instanceof javax.microedition.lcdui.Image) {
                     screen12.addItem(MenuItem.createGraphics(new GraphicsContext((javax.microedition.lcdui.Image) obj4)));
@@ -145,7 +145,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 String inputText = XmppContactGroup.getTextInputValue();
                 AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) inputText);
                 AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(inputText));
-                ScreenManager.showScreen(ScreenManager.createScreen(2299));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.STATUS_PREVIEW));
                 return;
             case ScreenId.PRESENCE_ACTION:
                 NotificationHelper.showAlertById(122, 535);
@@ -164,7 +164,7 @@ public final class DialogHandler extends BaseScreenHandler {
                         AppState.setFromPool(StateKeys.SLOT_SCREEN_VALUE, StateKeys.SLOT_SCREEN_DESCRIPTION);
                         AppState.clearIndex(StateKeys.SLOT_SCREEN_DESCRIPTION);
                     }
-                    ScreenManager.showScreen(ScreenManager.createScreen(2482));
+                    ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.BLOG_POST));
                     return;
                 }
                 break;

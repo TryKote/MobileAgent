@@ -201,7 +201,7 @@ public final class IOUtils {
         if (acctRef.getType() == Account.TYPE_MMP) {
             AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getString(60));
             AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getDisplayNameOrId());
-            ScreenManager.showScreen(ScreenManager.createScreen(3920));
+            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_LIST_SCREEN));
             return;
         }
         if (((MrimAccount) acctRef).hasCustomDomain) {
@@ -213,7 +213,7 @@ public final class IOUtils {
         }
         AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getEmailOrMmpId());
         AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
-        ScreenManager.showScreen(ScreenManager.createScreen(3888));
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ADD_SCREEN));
     }
 
     /* renamed from: a */
@@ -252,7 +252,7 @@ public final class IOUtils {
     /* renamed from: c */
     public static final void showChatRoomMessages() {
         ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
-        Screen screen = ScreenManager.createScreen(4527);
+        Screen screen = ScreenManager.createScreen(ScreenDef.CONTACT_DETAILS);
         screen.setHeader(234, chatRoom.getDisplayName());
         Vector messages = ObjectPool.newVector();
         Enumeration elements = chatRoom.messageIds.elements();
@@ -357,7 +357,7 @@ public final class IOUtils {
             }
         }
         int size = candidates.size();
-        Screen screen = ScreenManager.createScreen(4248);
+        Screen screen = ScreenManager.createScreen(ScreenDef.CONTACT_INFO_EDITOR);
         contactIdList = ObjectPool.newVector();
         for (int i = 0; i < size; i++) {
             MrimContact mrimContact = (MrimContact) candidates.elementAt(i);

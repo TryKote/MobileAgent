@@ -23,10 +23,10 @@ public final class MapHandler extends BaseScreenHandler {
                 MapController.showMapScreen();
                 break;
             case ScreenId.MAP_MENU:
-                ScreenManager.showScreen(ScreenManager.createScreen(2641));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_MENU));
                 break;
             case ScreenId.MAP_POINTS:
-                Screen screen11 = ScreenManager.createScreen(1701);
+                Screen screen11 = ScreenManager.createScreen(ScreenDef.MAP_POINTS);
                 Vector mapPoints = AppState.getVector(StateKeys.VEC_CONTACT_GROUPS);
                 for (int i19 = 0; i19 < mapPoints.size(); i19++) {
                     MapPoint mapPoint = (MapPoint) mapPoints.elementAt(i19);
@@ -40,7 +40,7 @@ public final class MapHandler extends BaseScreenHandler {
                 if (tooltipText != null) {
                     AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_1, (Object) tooltipText);
                 }
-                ScreenManager.showScreen(ScreenManager.createScreen(1727));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_TOOLTIP));
                 break;
             case ScreenId.PEOPLE_NEARBY:
                 Vector allContacts = AccountManager.getAllAccountsList();
@@ -52,7 +52,7 @@ public final class MapHandler extends BaseScreenHandler {
                             NotificationHelper.showMessageById(762);
                         } else {
                             AppController.sortContacts(allContacts);
-                            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(1743), allContacts));
+                            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.PEOPLE_NEARBY), allContacts));
                         }
                         ObjectPool.releaseVector(allContacts);
                         return;
@@ -70,10 +70,10 @@ public final class MapHandler extends BaseScreenHandler {
                 if (tooltipText2 != null) {
                     AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_2, (Object) tooltipText2);
                 }
-                ScreenManager.showScreen(ScreenManager.createScreen(1876));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SAVE_LOCATION));
                 break;
             case ScreenId.MAP_ROUTE:
-                Screen screen13 = ScreenManager.createScreen(1892);
+                Screen screen13 = ScreenManager.createScreen(ScreenDef.MAP_ROUTE);
                 Enumeration routeEnum = MapController.getRouteElements();
                 while (routeEnum.hasMoreElements()) {
                     MapPoint mapPoint2 = (MapPoint) routeEnum.nextElement();
@@ -83,10 +83,10 @@ public final class MapHandler extends BaseScreenHandler {
                 break;
             case ScreenId.MAP_STATUS:
                 Conversation.updateStatusText(375);
-                ScreenManager.showScreen(ScreenManager.createScreen(1902));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_STATUS));
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
-                Screen screen14 = ScreenManager.createScreen(1958);
+                Screen screen14 = ScreenManager.createScreen(ScreenDef.MAP_ROUTE_SELECT);
                 Enumeration routeEnum2 = MapController.getRouteElements();
                 while (routeEnum2.hasMoreElements()) {
                     MapPoint mapPoint3 = (MapPoint) routeEnum2.nextElement();
@@ -95,18 +95,18 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(screen14);
                 break;
             case ScreenId.SHARE_LOCATION:
-                ScreenManager.showScreen(ScreenManager.createScreen(2085));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SHARE_LOCATION));
                 break;
             case ScreenId.MAP_SEARCH:
                 AppState.setInt(StateKeys.INT_SCREEN_BUILDER_ACTION, AppState.getBool(StateKeys.FLAG_MAP_MODE_ACTIVE) ? 407 : 408);
                 Conversation.updateStatusText(411);
-                ScreenManager.showScreen(ScreenManager.createScreen(2111));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_SEARCH));
                 break;
             case ScreenId.SAVED_LOCATIONS:
                 ResourceManager.showSavedLocations();
                 break;
             case ScreenId.MAP_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(2198));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_OPTIONS));
                 break;
         }
         AppController.finishScreenBuild();
