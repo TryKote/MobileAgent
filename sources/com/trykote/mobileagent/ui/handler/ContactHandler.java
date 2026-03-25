@@ -202,12 +202,12 @@ public final class ContactHandler extends BaseScreenHandler {
                     NotificationHelper.showNotification(str);
                 } else {
                     AppState.setInt(StateKeys.INT_INFO_SCREEN_MODE, contactInfo.isXmppContact() ? 0 : 503);
-                    ScreenManager.showScreen(contactInfo.buildContactScreen(3830));
+                    ScreenManager.showScreen(contactInfo.buildContactScreen(ScreenDef.CONTACT_INFO_VIEW_SCREEN));
                 }
                 AppState.setInt(StateKeys.INT_CURRENT_SCREEN_ID, ScreenId.USER_PROFILE);
                 return;
             case ScreenId.CONTACT_INFO_DETAIL:
-                ScreenManager.showScreen(((ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO]).buildContactScreen(3878));
+                ScreenManager.showScreen(((ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO]).buildContactScreen(ScreenDef.CONTACT_INFO_DETAIL_SCREEN));
                 AppState.clearIndex(StateKeys.SLOT_REG_PARAM_1);
                 AppState.setInt(StateKeys.INT_CURRENT_SCREEN_ID, ScreenId.PROFILE_LOAD);
                 return;

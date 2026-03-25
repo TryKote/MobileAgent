@@ -11,7 +11,7 @@ GEN_CFG  = config/remote_logger.cfg
 GEN_SRC  = $(SRC)/com/trykote/mobileagent/util/RemoteLoggerConfig.java
 SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java')
 
-.PHONY: all compile jar clean resources
+.PHONY: all compile jar clean resources screen-defs
 
 all: jar
 
@@ -55,6 +55,9 @@ $(BUILD)/$(JAR): $(BUILD)/.compiled $(BUILD)/.resources
 	cp $(RESOURCES_SRC)/META-INF/MANIFEST.MF $(BUILD)/jar/META-INF/
 	cd $(BUILD)/jar && jar cfm ../$(JAR) META-INF/MANIFEST.MF .
 	@echo "Built: $(BUILD)/$(JAR)"
+
+screen-defs:
+	python3 tools/cfg_tool.py --gen-screens $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/ScreenDef.java
 
 clean:
 	rm -rf $(BUILD)
