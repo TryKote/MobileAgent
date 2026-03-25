@@ -72,13 +72,22 @@ public abstract class AppState {
         delta = new Object[295];
         pool = new Object[1406];
         intPool = new int[3773];
+        // Non-zero defaults for runtime variables (intPool[0..171])
+        intPool[1417 - 1406] = 1;
+        intPool[1420 - 1406] = 1;
+        intPool[StateKeys.FLAG_MRIM_DATA_LOADED - 1406] = 1;
+        intPool[1461 - 1406] = 1;
+        intPool[StateKeys.FLAG_HAS_XMPP_ACCOUNTS - 1406] = 1;
+        intPool[StateKeys.FLAG_CAPTCHA_SHOWN - 1406] = 1;
+        intPool[StateKeys.INT_MAP_SCROLL_DIRECTION - 1406] = -1;
+        intPool[1571 - 1406] = 400;
         ByteBuffer buffer = new ByteBuffer(ObjectPool.unpackChars(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
             pool[i2] = decodeObject(buffer, i2);
         }
-        for (int i3 = 0; i3 < 3773; i3++) {
+        for (int i3 = 0; i3 < 3601; i3++) {
             int[] iArr = intPool;
-            int i4 = i3;
+            int i4 = i3 + 172;
             byte flag = buffer.readByte();
             if ((flag & 64) != 0) {
                 value = flag & 63;

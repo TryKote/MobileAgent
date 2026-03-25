@@ -24,7 +24,7 @@ $(BUILD)/.resources: $(RESOURCES_SRC)/config.json \
                      $(RESOURCES_SRC)/cities.xml $(RESOURCES_SRC)/images/mapping.json \
                      $(RESOURCES_SRC)/xmpp_data.bin
 	@mkdir -p $(RESOURCES_OUT)
-	python3 tools/cfg_tool.py --pack $(RESOURCES_SRC) $(RESOURCES_OUT)/cfg
+	python3 tools/cfg_tool.py --serialize $(RESOURCES_SRC) $(RESOURCES_OUT)/cfg
 	tools/pack_cities.sh $(RESOURCES_OUT)
 	tools/pack_resources.sh $(RESOURCES_OUT)
 	@touch $@

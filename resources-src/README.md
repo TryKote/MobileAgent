@@ -8,20 +8,20 @@
 
 This directory contains human-readable resource sources for MobileAgent 3.9.
 During build (`make jar` or `make resources`), these files are converted into
-the obfuscated format expected by the application and placed into `build/resources/`.
+the binary format expected by the application and placed into `build/resources/`.
 
-### Files
+## Files
 
 | File | Description |
 |------|-------------|
-| `config.json` | Main configuration: object pool (including packed strings) + int pool |
+| `config.json` | Main configuration: object pool + screen definitions |
 | `cities.xml` | City database in UTF-8 with human-readable tags |
 | `xmpp_data.bin` | XMPP protocol data (binary, stored as-is) |
 | `images/` | PNG images with descriptive names |
-| `images/mapping.json` | Maps obfuscated filenames to descriptive names |
+| `images/mapping.json` | Maps runtime filenames to descriptive source names |
 | `META-INF/MANIFEST.MF` | JAR manifest |
 
-### Build Pipeline
+## Build Pipeline
 
 ```
 resources-src/                      build/resources/
@@ -32,225 +32,482 @@ resources-src/                      build/resources/
   META-INF/MANIFEST.MF                   (copied to JAR)
 ```
 
-### Tools
+## Tools
 
 | Tool | Purpose |
 |------|---------|
-| `tools/cfg_tool.py --dump <cfg> <dir>` | Binary cfg → config.json |
-| `tools/cfg_tool.py --pack <dir> <cfg>` | config.json → binary cfg |
-| `tools/cfg_tool.py --verify <cfg> <dir>` | Round-trip verification (dump → pack → compare) |
-| `tools/cfg_tool.py --gen-java <dir> <java>` | Generate `PackedStringKeys.java` from config.json |
-| `tools/pack_cities.sh <out_dir>` | Convert cities.xml (UTF-8 → CP1251, rename tags) |
+| `tools/cfg_tool.py --deserialize <cfg> <dir>` | Deserialize binary cfg to config.json |
+| `tools/cfg_tool.py --serialize <dir> <cfg>` | Serialize config.json to binary cfg |
+| `tools/cfg_tool.py --round-trip <cfg> <dir>` | Round-trip verify |
+| `tools/cfg_tool.py --gen-java <dir> <java>` | Generate `PackedStringKeys.java` |
+| `tools/cfg_tool.py --gen-screens <dir> <java>` | Generate `ScreenDef.java` |
+| `tools/pack_cities.sh <out_dir>` | Convert cities.xml (UTF-8 -> CP1251) |
 | `tools/pack_resources.sh <out_dir>` | Copy and rename images per mapping.json |
 
 ---
 
-### File Schemas
+# config.json
 
-#### config.json
+The main configuration file. Format version: `mobileagent-cfg-v2`.
+
+It has two top-level sections:
 
 ```jsonc
 {
-  "format": "mobileagent-cfg-v1",    // DO NOT change
-  "objectPool": [                      // ordered array; indices must be contiguous
-    // Integer entry:
-    { "index": 0, "type": "int", "value": 42 },
+  "format": "mobileagent-cfg-v2",
+  "objectPool": [ ... ],   // data storage (strings, ints, binaries)
+  "screens": [ ... ]        // UI screen definitions
+}
+```
 
-    // String entry (decoded from CP1251):
-    { "index": 43, "type": "string", "value": "Настройка учетной записи" },
+## objectPool
 
-    // Binary entry (non-text byte array, base64-encoded):
-    { "index": 296, "type": "bytes", "value": "AEBBQlBY..." },
+An ordered array of data entries. Each entry has an `index` (must match its
+position in the array) and a `type`. The application accesses entries by index
+at runtime through `AppState.getString(index)`, `AppState.getInt(index)`, etc.
 
-    // Null entry:
-    { "index": 222, "type": "null" },
+### Entry types
 
-    // Packed strings (null-separated segments + named sub-string references):
-    {
-      "index": 295,
-      "type": "packed_strings",
-      "entries": [
-        {"value": "statisticsq=data/adddata/get_phone_info"},
-        {"bytes": "AQIDBAUGBwgJ..."},
-        {"value": "http://mobile.mail.ru/"}
-      ],
-      "names": [
-        {"name": "URL_STATS", "offset": 0, "length": 39},
-        {"name": "TAG_A", "offset": 2, "length": 1}
-      ]
-    }
+| Type | JSON format | Description |
+|------|-------------|-------------|
+| `int` | `{"index": 0, "type": "int", "value": 42}` | Integer value |
+| `string` | `{"index": 43, "type": "string", "value": "Hello"}` | Text string (stored as CP1251 in binary) |
+| `bytes` | `{"index": 296, "type": "bytes", "value": "base64..."}` | Raw binary data |
+| `string_list` | `{"index": 694, "type": "string_list", "value": ["a", "b"]}` | Null-separated CP1251 string list (dropdown choices, etc.) |
+| `null` | `{"index": 222, "type": "null"}` | Empty slot |
+| `packed_strings` | *(see below)* | Compact string blob with named references |
+
+**What can you edit?**
+- `value` of `string` and `int` entries: freely
+- `value` of `bytes` entries: only if you know what's inside
+- `index` and `type`: never change these
+
+### packed_strings
+
+A single blob containing many short strings (URL fragments, tag names, status
+codes) packed together. Instead of storing each as a separate pool entry,
+they're concatenated with null-byte separators into one binary blob.
+
+```jsonc
+{
+  "index": 295,
+  "type": "packed_strings",
+  "entries": [
+    {"value": "statisticsq=data/add"},    // text segment
+    {"bytes": "AQIDBAUGBwgJ..."},          // binary segment
+    {"value": "http://mobile.mail.ru/"}    // text segment
   ],
-  "intPool": [0, 0, 15, ...]          // flat array of integers
+  "names": [
+    {"name": "URL_STATS", "offset": 0, "length": 20},
+    {"name": "TAG_A", "offset": 2, "length": 1}
+  ]
 }
 ```
 
-| Field | Editable? | Notes |
-|-------|-----------|-------|
-| `format` | No | Must be `"mobileagent-cfg-v1"` |
-| `objectPool[].index` | No | Sequential index, must match position in array |
-| `objectPool[].type` | No | Determined by dump heuristic; changing type breaks pack |
-| `objectPool[].value` | **Yes** | Edit freely for `string` and `int` entries |
-| `intPool[]` | **Yes** | Integer values, edit freely |
-
-**Object types explained:**
-
-| Type | Stored as | Description |
-|------|-----------|-------------|
-| `int` | JSON number | Integer value |
-| `string` | JSON string | CP1251 string, shown as Unicode. Encoded back to CP1251 on pack |
-| `bytes` | base64 string | Raw binary (MIDI, hashes, null-delimited arrays). Not human-readable |
-| `null` | (no value) | Null entry. In binary format, encoded as the CP1251 string `"null"` |
-| `packed_strings` | entries + names | Packed strings blob stored as readable segments (see below) |
-
-**Packed strings entry format:**
-
-The `packed_strings` object contains:
-- `entries[]` — null-separated segments of the blob. Each is either:
-  - `{"value": "text"}` — CP1251-encodable text string
-  - `{"bytes": "base64..."}` — raw binary data
-  - `{"value": ""}` — empty segment (represents consecutive null bytes)
-- `names[]` — named sub-string references for `PackedStringKeys.java`. Each has:
-  - `name` — Java constant name (`UPPER_SNAKE_CASE`)
-  - `offset` — byte offset within the reconstructed blob
-  - `length` — byte length of the sub-string
-
-Entries are joined with null bytes on pack to reconstruct the original blob.
-Names reference arbitrary sub-strings within the blob (not necessarily aligned
-to entry boundaries) and are used solely for `--gen-java` code generation.
-
-| Field | Editable? | Notes |
-|-------|-----------|-------|
-| `entries[].value` | **Yes** | Edit text content freely |
-| `entries[].bytes` | Caution | Base64-encoded binary; edit only if you know what you're doing |
-| `names[].name` | **Yes** | Add/edit to define a Java constant in `PackedStringKeys.java` |
-| `names[].offset` | Caution | Byte offset in blob; must match actual content position |
-| `names[].length` | Caution | Byte length; must match actual content |
-
-#### images/mapping.json
-
-```jsonc
-{
-  "a.png": "sprite_messaging_contacts.png",   // key = runtime name, value = source name
-  "b.png": "sprite_settings_profile.png",
-  "icon.png": "icon.png",                     // may be identity mapping
-  "splash.png": "splash.png"
-}
-```
-
-| Field | Editable? | Notes |
-|-------|-----------|-------|
-| Keys (e.g. `"a.png"`) | **Yes** | Obfuscated filename used at runtime. Must match what Java code expects in `Image.createImage()` calls |
-| Values (e.g. `"sprite_messaging_contacts.png"`) | **Yes** | Human-readable source filename. The PNG with this name must exist in `images/` |
-
-To add a new image: place the PNG in `images/`, add a mapping entry, and
-reference the obfuscated name in Java.
-
-#### cities.xml
-
-```xml
-<countries>
-    <country i="24" n="Россия">
-        <region i="25" n="Москва">
-            <city i="1734">Зеленоград</city>
-        </region>
-    </country>
-</countries>
-```
-
-| Field | Editable? | Notes |
-|-------|-----------|-------|
-| Tag names (`country`, `region`, `city`) | No | Renamed to single-letter tags during pack (`c`, `r`, `i`) |
-| Attribute `i` (ID) | **Yes** | Numeric city/region/country ID |
-| Attribute `n` (name) | **Yes** | Region/country display name |
-| City text content | **Yes** | City display name |
-
-The file is UTF-8. During pack, `pack_cities.sh` converts it to CP1251 and
-renames tags to single-letter equivalents.
+- `entries[]` are null-separated segments. On pack, they're joined with `\0` bytes.
+- `names[]` define Java constants for `PackedStringKeys.java`. Each name points
+  to a substring within the blob by `offset` and `length` (in bytes).
+  The runtime ID is `(length << 16) | offset`.
 
 ---
 
-### How to Add and Use Resources
+## screens
 
-#### Editing string values in config.json
+This is the most important section for UI work. It defines **136 screen
+definitions** — the structure of every screen, dialog, menu, and popup in the
+application. The runtime code reads these definitions and builds the UI from them.
 
-Entries of type `string` can be edited directly — write the value as
-plain Unicode text. `cfg_tool.py` encodes it to CP1251 on `--pack`.
+### How it works (the big picture)
 
-In Java, entries are accessed by pool index via `AppState`:
+1. Each screen definition is a block of integers in the binary `cfg` file.
+2. `config.json` represents these blocks as structured JSON objects.
+3. `cfg_tool.py --serialize` converts JSON back to binary integers.
+4. At runtime, `ScreenManager.createScreen(offset)` reads integers starting
+   at `offset` and builds a `Screen` object with menu items.
+5. Screen handlers (in `ui/handler/`) call `createScreen(ScreenDef.SOME_SCREEN)`
+   and then show the result.
 
-```java
-// Defined in core/StateKeys.java:
-public static final int STR_MY_LABEL = 500;
-
-// Read:
-String label = AppState.getString(StateKeys.STR_MY_LABEL);
-
-// Write at runtime:
-AppState.setString(StateKeys.STR_MY_LABEL, "new value");
+```
+config.json "screens" array
+        |
+        | cfg_tool.py --serialize
+        v
+    cfg binary (intPool)
+        |
+        | ScreenManager.createScreen(offset)
+        v
+    Screen object (runtime UI)
 ```
 
-Main `AppState` accessors:
+### Screen definition structure
 
-| Method | Description |
-|--------|-------------|
-| `getString(int)` / `setString(int, String)` | String values |
-| `getInt(int)` / `setInt(int, int)` | Integer values |
-| `getBool(int)` / `setBool(int, boolean)` | Boolean (stored as int 0/1) |
-| `getLong(int)` / `setLong(int, long)` | Long (stored as two consecutive ints) |
-| `getBytes(int)` | Raw byte array |
-| `getImage(int)` | Image object |
-| `clearIndex(int)` | Reset to null |
+Each screen is a JSON object:
 
-Each pool index should have a named constant in `core/StateKeys.java`.
+```jsonc
+{
+  "name": "GPS_SETTINGS",          // unique name (becomes a ScreenDef constant)
+  "title": 1038,                   // objectPool index for title string
+  "title_": "Карта",               // (comment) human-readable title text
+  "screenId": 20,                  // ScreenId constant for handler dispatch
+  "screenId_": "GPS_SETTINGS",     // (comment) ScreenId constant name
+  "type": "dialog_bottom",         // screen type (see table below)
+  "checkboxes": true,              // (optional) show radio-button markers
+  "headerMode": 0,                 // header icon code (see below)
+  "leftSoftKey": {                 // left soft key (phone button)
+    "label": 1048,                 //   objectPool index for label text
+    "cmd": 199,                    //   command ID sent on press
+    "label_": "Выбрать"            //   (comment) label text
+  },
+  "rightSoftKey": {                // right soft key
+    "label": 1050,
+    "cmd": 12,
+    "label_": "Назад"
+  },
+  "extraCmd": 199,                 // command ID for "select" action (Enter key)
+  "items": [ ... ],                // list of UI elements (see item types below)
+  "trailingData": [23, 1462, ...]  // (rare) raw ints shared with other screens
+}
+```
 
-#### Adding images
+**Fields ending with `_` (like `title_`, `label_`, `screenId_`) are comments.**
+They are ignored during packing and exist only for human readability.
+`cfg_tool.py --deserialize` generates them automatically from objectPool values.
 
-1. Place the PNG in `resources-src/images/` with a descriptive name.
-2. Add a mapping entry in `images/mapping.json`:
-   ```json
-   "ad.png": "my_new_icon.png"
-   ```
-3. In Java, load by the obfuscated name:
-   ```java
-   Image icon = Image.createImage("/ad.png");
-   ```
+### Screen types
 
-#### Naming packed string constants
+The `type` field determines how the screen is displayed:
 
-Packed strings are short string literals (tag names, URL fragments, status codes)
-stored compactly in a single binary blob. Each is referenced by an integer ID
-encoding its offset and length: `id = (length << 16) | offset`.
+| Type | Description |
+|------|-------------|
+| `fullscreen` | Full-screen with header and scrolling |
+| `fullscreen_alt` | Full-screen, alternate style |
+| `fullscreen_noscroll` | Full-screen without scrolling |
+| `fullscreen_noscroll_alt` | Full-screen without scrolling, alternate |
+| `dialog_center` | Dialog box centered on screen |
+| `dialog_bottom` | Dialog anchored to bottom |
+| `dialog_corner` | Dialog anchored to corner |
+| `dialog_low` | Dialog in lower area |
+| `popup` | Popup menu overlay |
+| `toast` | Brief notification toast |
+| `toast_center` | Centered toast notification |
+| `map` | Map view |
+| `map_alt` | Map view, alternate |
 
-To give a sub-string a Java constant name, add an entry to the `names` array
-in the `packed_strings` object in `config.json`, then regenerate:
+### headerMode (header icon)
+
+The `headerMode` field is the **icon code** for the small 16x16 icon displayed
+in the screen header, next to the title text. The app stores all icons as
+sprites in a single sprite sheet; the icon code selects which sprite to draw.
+
+| Value | Meaning |
+|-------|---------|
+| `0` | Icon at sprite code 0 (default/generic icon) |
+| `1`..`354`+ | Specific icon from the sprite sheet |
+| `4294967295` | No icon (this is -1 as unsigned 32-bit; no header icon is drawn) |
+
+The header (with icon and title) is only rendered for **fullscreen** and **map**
+screen types. For dialog, popup, and toast types the header is not shown at all,
+so the `headerMode` value is irrelevant (but still stored in the definition).
+
+### Soft keys
+
+Mobile phones had two physical buttons below the screen — the left and right
+soft keys. Each soft key has:
+
+- `label` — objectPool index pointing to the button text (e.g., "Menu", "Back")
+- `cmd` — a command ID. When the user presses the button, this command is sent
+  to the application's event handler.
+- `label_` — (comment) the actual text, for readability
+
+If `label` is `0`, the soft key is hidden.
+
+`extraCmd` is the command triggered by pressing the center/Enter key.
+
+### Item types
+
+The `items` array defines the content of the screen. Each item has a `type`
+field and type-specific properties. Here are all 13 item types:
+
+#### `action` — Menu item / button
+
+The most common type. A tappable menu entry with an icon and a label.
+
+```jsonc
+{"type": "action", "label": 100, "icon": 303, "cmd": 339}
+// label: objectPool index for text
+// icon:  objectPool index for icon image
+// cmd:   command ID sent when selected
+```
+
+Optional: `"style": "text"` — renders as a text-style action (no icon background).
+
+**Dynamic variant** — label is determined at runtime by a condition key:
+
+```jsonc
+{"type": "action", "extra": 1473, "condKey": 21, "icon": 7, "cmd": 552}
+// extra:   runtime data reference
+// condKey: AppState key that determines the label
+```
+
+#### `separator` — Info row with two columns
+
+Displays a label on the left and a value on the right. Not interactive.
+
+```jsonc
+{"type": "separator", "label": 512, "sublabel": 1288, "label_": "Version:"}
+// label:    objectPool index for left text
+// sublabel: objectPool index for right text (or packed string ID)
+```
+
+#### `checkbox` — Toggle switch
+
+A boolean setting that the user can flip on/off.
+
+```jsonc
+{"type": "checkbox", "label": 391, "stateKey": 255, "label_": "Correct GPS coords"}
+// label:    objectPool index for description text
+// stateKey: AppState key where the boolean value is stored (0/1)
+```
+
+#### `dropdown` — Selection list
+
+A setting with multiple predefined options.
+
+```jsonc
+{"type": "dropdown", "label": 382, "choices": 385, "indexKey": 45,
+ "label_": "Turn off GPS after:"}
+// label:    objectPool index for description text
+// choices:  objectPool index for the list of option strings
+// indexKey: AppState key where the selected index is stored
+```
+
+#### `text_separator` — Section header
+
+A non-interactive text label that separates groups of items.
+
+```jsonc
+{"type": "text_separator", "label": 393, "label_": "GPS Device:"}
+```
+
+#### `label_separator` — Static text block
+
+Similar to `text_separator`, but rendered as a block of text (like a paragraph).
+
+```jsonc
+{"type": "label_separator", "label": 332,
+ "label_": "Not enough RAM for map display..."}
+```
+
+#### `text_input` — Text field
+
+An editable text field. Has two variants depending on `validation`:
+
+**Standard (validation != 2):**
+```jsonc
+{"type": "text_input", "dataKey": 350, "inputType": 255,
+ "hint": 424, "validation": 0, "valueKey": 1248}
+// dataKey:    objectPool index for field label
+// inputType:  keyboard constraint flags
+// hint:       objectPool index for placeholder text
+// validation: validation mode (0 = none, 1 = required)
+// valueKey:   AppState key where text value is stored
+```
+
+**Numeric with range (validation == 2):**
+```jsonc
+{"type": "text_input", "dataKey": 814, "inputType": 6,
+ "hint": 425, "validation": 2,
+ "min": 0, "max": 9999, "default": 100, "stateKey": 1350}
+// min/max:    allowed numeric range
+// default:   default value
+// stateKey:  AppState key where the number is stored
+```
+
+#### `login` — Login field
+
+A special text field for usernames/logins.
+
+```jsonc
+{"type": "login", "label": 390, "value": 233}
+// label: objectPool index for field label
+// value: objectPool index for current value
+```
+
+#### `password` — Password field
+
+A masked text field for passwords.
+
+```jsonc
+{"type": "password", "value": 239}
+// value: objectPool index for current value
+```
+
+#### `image` — Image display
+
+Displays an image from the object pool.
+
+```jsonc
+{"type": "image", "poolIndex": 1341}
+// poolIndex: objectPool index containing the image data
+```
+
+#### `redirect` — Include items from another screen
+
+Inserts items from another screen definition at this point. Used to share
+common item groups between screens without duplicating them.
+
+```jsonc
+{"type": "redirect", "targetOffset": 2787}
+// targetOffset: intPool offset of the screen whose items to include
+```
+
+#### `conditional_if` — Conditional action (show if true)
+
+Like `action`, but only visible when an AppState flag is set to a truthy value.
+
+```jsonc
+{"type": "conditional_if", "condKey": 276, "label": 1, "icon": 365, "cmd": 348}
+// condKey: AppState key to check; item is shown only if value != 0
+```
+
+#### `conditional_unless` — Conditional action (show if false)
+
+The opposite of `conditional_if` — shown only when the flag is zero/false.
+
+```jsonc
+{"type": "conditional_unless", "condKey": 1462, "label": 147, "icon": 2, "cmd": 528}
+```
+
+Both conditional types also support `"style": "text"`.
+
+### Integer references
+
+Most numeric fields in screen definitions are **not literal values** — they are
+references to the objectPool. For example:
+
+- `"title": 1038` means "get the title string from `objectPool[1038]`"
+- `"label": 391` means "get the label text from `objectPool[391]`"
+- `"icon": 303` means "get the icon image from `objectPool[303]`"
+
+The `cmd` fields are literal command IDs (not pool references).
+`stateKey`, `condKey`, `indexKey`, `valueKey`, `dataKey` are AppState key indices.
+
+### trailingData
+
+Some screens have a `trailingData` array — raw integers that come after the
+screen's items in the binary. These are typically shared data fragments
+referenced by `redirect` items from other screens. Don't edit these unless
+you understand the cross-references.
+
+---
+
+## How to create a new screen
+
+### Step 1: Define the screen in config.json
+
+Add a new object to the `screens` array. Place it in alphabetical order
+or near related screens.
+
+```jsonc
+{
+  "name": "MY_NEW_SCREEN",
+  "title": 500,
+  "screenId": 170,
+  "type": "dialog_center",
+  "checkboxes": true,
+  "headerMode": 0,
+  "leftSoftKey": {"label": 1048, "cmd": 199},
+  "rightSoftKey": {"label": 1050, "cmd": 12},
+  "extraCmd": 199,
+  "items": [
+    {"type": "action", "label": 501, "icon": 303, "cmd": 600},
+    {"type": "action", "label": 502, "icon": 304, "cmd": 601}
+  ]
+}
+```
+
+- `name` must be unique and in `UPPER_SNAKE_CASE`.
+- `screenId` should be a ScreenId constant (or a new one).
+- `title`, `label`, `icon` values must be valid objectPool indices.
+- `cmd` values are command IDs you'll handle in Java.
+
+### Step 2: Register the screen offset
+
+Add your screen to the `KNOWN_SCREENS` list in `tools/cfg_tool.py` so the
+tool knows how to parse it. Then regenerate constants:
+
 ```bash
-tools/cfg_tool.py --gen-java resources-src/ sources/.../core/PackedStringKeys.java
+# Rebuild binary and regenerate ScreenDef.java
+make resources
+make screen-defs
 ```
 
-Constants appear in `core/PackedStringKeys.java` and are used with
-`StringUtils.matchesKey()` for comparisons and `ByteBuffer.writeCompressed()`
-for protocol encoding:
+This creates a `ScreenDef.MY_NEW_SCREEN` constant with the correct offset.
+
+### Step 3: Add a ScreenId (if needed)
+
+If your screen needs a new screen ID, add a constant to
+`core/ScreenId.java`:
 
 ```java
-if (StringUtils.matchesKey(PackedStringKeys.TAG_STATUS, tagName)) { ... }
-
-ByteBuffer buf = new ByteBuffer()
-    .writeCompressed(PackedStringKeys.URL_PROFILE_PHOTO)
-    .writeRawString(userId);
+public static final int MY_NEW_SCREEN = 170;
 ```
 
-#### Using ScreenId
+### Step 4: Show the screen from a handler
 
-Screen identifiers are defined in `core/ScreenId.java` and used in handler
-dispatch (switch/case) and navigation:
+In the appropriate screen handler (e.g., `ui/handler/SettingsHandler.java`),
+add a case to build and show your screen:
 
 ```java
 case ScreenId.MY_NEW_SCREEN:
-    // build screen content
+    ScreenManager.showScreen(
+        ScreenManager.createScreen(ScreenDef.MY_NEW_SCREEN));
     return;
+```
 
-// Navigation:
-return ScreenId.MY_NEW_SCREEN;
+### Step 5: Handle commands
+
+In `AppController` (or the relevant handler), add cases for your command IDs
+(600, 601 in the example) to define what happens when the user selects items.
+
+### Step 6: Build and test
+
+```bash
+make resources    # pack config.json -> binary cfg
+make compile      # compile Java
+make jar          # build JAR
+```
+
+---
+
+## Other resources
+
+### images/mapping.json
+
+Maps runtime filenames to human-readable source filenames:
+
+```jsonc
+{
+  "a.png": "sprite_messaging_contacts.png",
+  "icon.png": "icon.png"
+}
+```
+
+To add an image: place PNG in `images/`, add a mapping entry, reference the
+runtime name in Java via `Image.createImage("/a.png")`.
+
+### cities.xml
+
+City database in UTF-8. Converted to CP1251 with obfuscated tags on pack.
+
+```xml
+<countries>
+    <country i="24" n="Russia">
+        <region i="25" n="Moscow">
+            <city i="1734">Zelenograd</city>
+        </region>
+    </country>
+</countries>
 ```
 
 ---
@@ -260,21 +517,21 @@ return ScreenId.MY_NEW_SCREEN;
 # Исходники ресурсов
 
 Этот каталог содержит ресурсы MobileAgent 3.9 в человекочитаемом формате.
-При сборке (`make jar` или `make resources`) файлы конвертируются в обфусцированный
-формат, ожидаемый приложением, и помещаются в `build/resources/`.
+При сборке (`make jar` или `make resources`) файлы конвертируются в бинарный
+формат и помещаются в `build/resources/`.
 
-### Файлы
+## Файлы
 
 | Файл | Описание |
 |------|----------|
-| `config.json` | Основная конфигурация: пул объектов (включая упакованные строки) + пул int |
+| `config.json` | Основная конфигурация: пул объектов + определения экранов |
 | `cities.xml` | База городов в UTF-8 с читаемыми тегами |
-| `xmpp_data.bin` | Данные протокола XMPP (бинарные, хранятся как есть) |
+| `xmpp_data.bin` | Данные протокола XMPP (бинарные, как есть) |
 | `images/` | PNG-изображения с описательными именами |
-| `images/mapping.json` | Маппинг обфусцированных имён в описательные |
+| `images/mapping.json` | Маппинг рантайм-имён в описательные |
 | `META-INF/MANIFEST.MF` | Манифест JAR |
 
-### Конвейер сборки
+## Конвейер сборки
 
 ```
 resources-src/                      build/resources/
@@ -285,120 +542,467 @@ resources-src/                      build/resources/
   META-INF/MANIFEST.MF                   (копируется в JAR)
 ```
 
-### Инструменты
+## Инструменты
 
 | Инструмент | Назначение |
 |------------|------------|
-| `tools/cfg_tool.py --dump <cfg> <dir>` | Бинарный cfg → config.json |
-| `tools/cfg_tool.py --pack <dir> <cfg>` | config.json → бинарный cfg |
-| `tools/cfg_tool.py --verify <cfg> <dir>` | Round-trip проверка (dump → pack → сравнение) |
-| `tools/cfg_tool.py --gen-java <dir> <java>` | Генерация `PackedStringKeys.java` из config.json |
-| `tools/pack_cities.sh <out_dir>` | Конвертация cities.xml (UTF-8 → CP1251, переименование тегов) |
-| `tools/pack_resources.sh <out_dir>` | Копирование и переименование изображений по mapping.json |
+| `tools/cfg_tool.py --deserialize <cfg> <dir>` | Десериализация бинарного cfg в config.json |
+| `tools/cfg_tool.py --serialize <dir> <cfg>` | Сериализация config.json в бинарный cfg |
+| `tools/cfg_tool.py --round-trip <cfg> <dir>` | Round-trip верификация |
+| `tools/cfg_tool.py --gen-java <dir> <java>` | Генерация `PackedStringKeys.java` |
+| `tools/cfg_tool.py --gen-screens <dir> <java>` | Генерация `ScreenDef.java` |
+| `tools/pack_cities.sh <out_dir>` | Конвертация cities.xml (UTF-8 -> CP1251) |
+| `tools/pack_resources.sh <out_dir>` | Копирование и переименование изображений |
 
 ---
 
-### Схемы файлов
+# config.json
 
-#### config.json
+Основной конфигурационный файл. Версия формата: `mobileagent-cfg-v2`.
+
+Два раздела верхнего уровня:
 
 ```jsonc
 {
-  "format": "mobileagent-cfg-v1",    // НЕ менять
-  "objectPool": [                      // упорядоченный массив; индексы непрерывные
-    // Целое число:
-    { "index": 0, "type": "int", "value": 42 },
+  "format": "mobileagent-cfg-v2",
+  "objectPool": [ ... ],   // хранилище данных (строки, числа, бинарные)
+  "screens": [ ... ]        // определения экранов UI
+}
+```
 
-    // Строка (декодированная из CP1251):
-    { "index": 43, "type": "string", "value": "Настройка учетной записи" },
+## objectPool
 
-    // Бинарные данные (не текст, base64):
-    { "index": 296, "type": "bytes", "value": "AEBBQlBY..." },
+Упорядоченный массив записей данных. У каждой записи есть `index` (должен
+совпадать с позицией в массиве) и `type`. Приложение обращается к записям
+по индексу через `AppState.getString(index)`, `AppState.getInt(index)` и т.д.
 
-    // Null-запись:
-    { "index": 222, "type": "null" },
+### Типы записей
 
-    // Упакованные строки (null-разделённые сегменты + именованные ссылки):
-    {
-      "index": 295,
-      "type": "packed_strings",
-      "entries": [
-        {"value": "statisticsq=data/adddata/get_phone_info"},
-        {"bytes": "AQIDBAUGBwgJ..."},
-        {"value": "http://mobile.mail.ru/"}
-      ],
-      "names": [
-        {"name": "URL_STATS", "offset": 0, "length": 39},
-        {"name": "TAG_A", "offset": 2, "length": 1}
-      ]
-    }
+| Тип | Формат JSON | Описание |
+|-----|-------------|----------|
+| `int` | `{"index": 0, "type": "int", "value": 42}` | Целое число |
+| `string` | `{"index": 43, "type": "string", "value": "Привет"}` | Текстовая строка (в бинарном файле хранится как CP1251) |
+| `bytes` | `{"index": 296, "type": "bytes", "value": "base64..."}` | Бинарные данные |
+| `string_list` | `{"index": 694, "type": "string_list", "value": ["a", "b"]}` | Список строк CP1251 через null-байт (варианты dropdown и т.п.) |
+| `null` | `{"index": 222, "type": "null"}` | Пустой слот |
+| `packed_strings` | *(см. ниже)* | Компактный блоб строк с именованными ссылками |
+
+**Что можно редактировать?**
+- `value` у записей `string` и `int`: свободно
+- `value` у записей `bytes`: только если знаете, что внутри
+- `index` и `type`: никогда не меняйте
+
+### packed_strings
+
+Единый блоб, содержащий множество коротких строк (фрагменты URL, имена тегов,
+коды статусов), упакованных вместе. Вместо хранения каждой строки отдельной
+записью пула, они склеены null-байтами в один бинарный блоб.
+
+```jsonc
+{
+  "index": 295,
+  "type": "packed_strings",
+  "entries": [
+    {"value": "statisticsq=data/add"},    // текстовый сегмент
+    {"bytes": "AQIDBAUGBwgJ..."},          // бинарный сегмент
+    {"value": "http://mobile.mail.ru/"}    // текстовый сегмент
   ],
-  "intPool": [0, 0, 15, ...]          // плоский массив целых чисел
+  "names": [
+    {"name": "URL_STATS", "offset": 0, "length": 20},
+    {"name": "TAG_A", "offset": 2, "length": 1}
+  ]
 }
 ```
 
-| Поле | Можно менять? | Примечания |
-|------|---------------|------------|
-| `format` | Нет | Должно быть `"mobileagent-cfg-v1"` |
-| `objectPool[].index` | Нет | Последовательный индекс, должен совпадать с позицией в массиве |
-| `objectPool[].type` | Нет | Определяется эвристикой при дампе; смена типа ломает упаковку |
-| `objectPool[].value` | **Да** | Свободно редактируйте для `string` и `int` |
-| `intPool[]` | **Да** | Целые числа, редактируйте свободно |
+- `entries[]` — сегменты, разделённые null-байтами. При упаковке склеиваются через `\0`.
+- `names[]` — именованные ссылки на подстроки для `PackedStringKeys.java`.
+  Каждое имя указывает на подстроку в блобе по `offset` и `length` (в байтах).
+  Рантайм-ID: `(length << 16) | offset`.
 
-**Типы объектов:**
+---
 
-| Тип | Хранение | Описание |
-|-----|----------|----------|
-| `int` | JSON-число | Целое число |
-| `string` | JSON-строка | CP1251-строка, показана как Unicode. При упаковке кодируется обратно в CP1251 |
-| `bytes` | base64-строка | Бинарные данные (MIDI, хеши, массивы с null-разделителями). Не человекочитаемые |
-| `null` | (нет значения) | Null-запись. В бинарном формате кодируется CP1251-строкой `"null"` |
-| `packed_strings` | entries + names | Упакованные строки в читаемом виде (подробнее ниже) |
+## screens
 
-**Формат packed_strings:**
+Это самый важный раздел для работы с UI. Он содержит **136 определений
+экранов** — структуру каждого экрана, диалога, меню и всплывающего окна
+в приложении. Рантайм-код читает эти определения и строит из них UI.
 
-Объект `packed_strings` содержит:
-- `entries[]` — null-разделённые сегменты blob'а. Каждый — один из:
-  - `{"value": "текст"}` — текстовая CP1251-строка
-  - `{"bytes": "base64..."}` — бинарные данные
-  - `{"value": ""}` — пустой сегмент (двойной null-байт)
-- `names[]` — именованные ссылки на подстроки для `PackedStringKeys.java`. Каждая содержит:
-  - `name` — имя Java-константы (`UPPER_SNAKE_CASE`)
-  - `offset` — смещение в байтах внутри собранного blob'а
-  - `length` — длина подстроки в байтах
+### Как это работает (общая картина)
 
-При упаковке entries соединяются null-байтами для восстановления blob'а.
-Names ссылаются на произвольные подстроки внутри blob'а (не обязательно
-совпадающие с границами entries) и используются только для `--gen-java`.
+1. Каждое определение экрана — это блок целых чисел в бинарном файле `cfg`.
+2. `config.json` представляет эти блоки как структурированные JSON-объекты.
+3. `cfg_tool.py --serialize` конвертирует JSON обратно в бинарные числа.
+4. В рантайме `ScreenManager.createScreen(offset)` читает числа начиная
+   с `offset` и строит объект `Screen` с элементами меню.
+5. Обработчики экранов (в `ui/handler/`) вызывают
+   `createScreen(ScreenDef.SOME_SCREEN)` и показывают результат.
 
-| Поле | Можно менять? | Примечания |
-|------|---------------|------------|
-| `entries[].value` | **Да** | Текстовое содержимое, редактируйте свободно |
-| `entries[].bytes` | Осторожно | Base64-кодированные бинарные данные; редактируйте только если знаете что делаете |
-| `names[].name` | **Да** | Добавьте/измените для Java-константы в `PackedStringKeys.java` |
-| `names[].offset` | Осторожно | Смещение в blob'е; должно соответствовать позиции в содержимом |
-| `names[].length` | Осторожно | Длина; должна соответствовать содержимому |
+```
+config.json массив "screens"
+        |
+        | cfg_tool.py --serialize
+        v
+    cfg бинарный (intPool)
+        |
+        | ScreenManager.createScreen(offset)
+        v
+    Объект Screen (рантайм UI)
+```
 
-#### images/mapping.json
+### Структура определения экрана
+
+Каждый экран — это JSON-объект:
 
 ```jsonc
 {
-  "a.png": "sprite_messaging_contacts.png",   // ключ = имя в рантайме, значение = имя исходника
-  "b.png": "sprite_settings_profile.png",
-  "icon.png": "icon.png",                     // может быть тождественным
-  "splash.png": "splash.png"
+  "name": "GPS_SETTINGS",          // уникальное имя (становится константой ScreenDef)
+  "title": 1038,                   // индекс objectPool для строки заголовка
+  "title_": "Карта",               // (комментарий) текст заголовка
+  "screenId": 20,                  // константа ScreenId для диспетчеризации обработчика
+  "screenId_": "GPS_SETTINGS",     // (комментарий) имя константы ScreenId
+  "type": "dialog_bottom",         // тип экрана (см. таблицу ниже)
+  "checkboxes": true,              // (опционально) показывать радио-кнопки
+  "headerMode": 0,                 // код иконки заголовка (см. ниже)
+  "leftSoftKey": {                 // левая софт-клавиша (кнопка телефона)
+    "label": 1048,                 //   индекс objectPool для текста кнопки
+    "cmd": 199,                    //   ID команды при нажатии
+    "label_": "Выбрать"            //   (комментарий) текст кнопки
+  },
+  "rightSoftKey": {                // правая софт-клавиша
+    "label": 1050,
+    "cmd": 12,
+    "label_": "Назад"
+  },
+  "extraCmd": 199,                 // команда для действия "выбор" (Enter)
+  "items": [ ... ],                // список элементов UI (см. типы ниже)
+  "trailingData": [23, 1462, ...]  // (редко) сырые числа, общие с другими экранами
 }
 ```
 
-| Поле | Можно менять? | Примечания |
-|------|---------------|------------|
-| Ключи (напр. `"a.png"`) | **Да** | Обфусцированное имя файла в рантайме. Должно совпадать с тем, что ожидает Java-код в вызовах `Image.createImage()` |
-| Значения (напр. `"sprite_messaging_contacts.png"`) | **Да** | Человекочитаемое имя исходника. PNG с таким именем должен существовать в `images/` |
+**Поля, заканчивающиеся на `_` (как `title_`, `label_`, `screenId_`) — это
+комментарии.** Они игнорируются при упаковке и существуют только для
+читабельности. `cfg_tool.py --deserialize` генерирует их автоматически из значений
+objectPool.
+
+### Типы экранов
+
+Поле `type` определяет, как экран отображается:
+
+| Тип | Описание |
+|-----|----------|
+| `fullscreen` | Полноэкранный с заголовком и прокруткой |
+| `fullscreen_alt` | Полноэкранный, альтернативный стиль |
+| `fullscreen_noscroll` | Полноэкранный без прокрутки |
+| `fullscreen_noscroll_alt` | Полноэкранный без прокрутки, альтернативный |
+| `dialog_center` | Диалог по центру экрана |
+| `dialog_bottom` | Диалог внизу экрана |
+| `dialog_corner` | Диалог в углу |
+| `dialog_low` | Диалог в нижней части |
+| `popup` | Всплывающее меню |
+| `toast` | Кратковременное уведомление |
+| `toast_center` | Уведомление по центру |
+| `map` | Карта |
+| `map_alt` | Карта, альтернативный |
+
+### headerMode (иконка заголовка)
+
+Поле `headerMode` — это **код иконки** для маленькой 16x16 иконки, которая
+рисуется в заголовке экрана рядом с текстом. Все иконки приложения хранятся
+как спрайты в одном спрайт-листе; код иконки определяет, какой спрайт
+отрисовать.
+
+| Значение | Смысл |
+|----------|-------|
+| `0` | Иконка с кодом 0 (стандартная/общая) |
+| `1`..`354`+ | Конкретная иконка из спрайт-листа |
+| `4294967295` | Без иконки (это -1 как беззнаковое 32-бит; иконка не рисуется) |
+
+Заголовок (с иконкой и текстом) отображается только для **полноэкранных** и
+**карточных** типов экрана. Для диалогов, попапов и тостов заголовок не
+показывается вообще, поэтому значение `headerMode` не влияет ни на что
+(но всё равно хранится в определении).
+
+### Софт-клавиши
+
+У мобильных телефонов было две физические кнопки под экраном — левая и
+правая софт-клавиши. У каждой:
+
+- `label` — индекс objectPool, указывающий на текст кнопки ("Меню", "Назад")
+- `cmd` — ID команды. При нажатии кнопки эта команда отправляется
+  обработчику событий приложения.
+- `label_` — (комментарий) сам текст, для читабельности
+
+Если `label` равен `0`, софт-клавиша скрыта.
+
+`extraCmd` — команда, срабатывающая при нажатии центральной кнопки / Enter.
+
+### Типы элементов
+
+Массив `items` определяет содержимое экрана. У каждого элемента есть поле
+`type` и свойства, зависящие от типа. Вот все 13 типов:
+
+#### `action` — Пункт меню / кнопка
+
+Самый частый тип. Нажимаемый пункт меню с иконкой и текстом.
+
+```jsonc
+{"type": "action", "label": 100, "icon": 303, "cmd": 339}
+// label: индекс objectPool для текста
+// icon:  индекс objectPool для иконки
+// cmd:   ID команды при выборе
+```
+
+Опционально: `"style": "text"` — текстовый стиль (без фона иконки).
+
+**Динамический вариант** — текст определяется в рантайме:
+
+```jsonc
+{"type": "action", "extra": 1473, "condKey": 21, "icon": 7, "cmd": 552}
+// extra:   ссылка на рантайм-данные
+// condKey: ключ AppState, определяющий текст
+```
+
+#### `separator` — Информационная строка с двумя колонками
+
+Показывает метку слева и значение справа. Не интерактивный.
+
+```jsonc
+{"type": "separator", "label": 512, "sublabel": 1288, "label_": "Версия:"}
+```
+
+#### `checkbox` — Переключатель
+
+Булева настройка, которую пользователь включает/выключает.
+
+```jsonc
+{"type": "checkbox", "label": 391, "stateKey": 255, "label_": "Корректировать GPS"}
+// stateKey: ключ AppState, где хранится значение (0/1)
+```
+
+#### `dropdown` — Список выбора
+
+Настройка с несколькими предопределёнными вариантами.
+
+```jsonc
+{"type": "dropdown", "label": 382, "choices": 385, "indexKey": 45,
+ "label_": "Выключать GPS через:"}
+// choices:  индекс objectPool со списком вариантов
+// indexKey: ключ AppState, где хранится выбранный индекс
+```
+
+#### `text_separator` — Заголовок секции
+
+Неинтерактивная текстовая метка, разделяющая группы элементов.
+
+```jsonc
+{"type": "text_separator", "label": 393, "label_": "Устройство GPS:"}
+```
+
+#### `label_separator` — Блок статического текста
+
+Похож на `text_separator`, но отрисовывается как блок текста (абзац).
+
+```jsonc
+{"type": "label_separator", "label": 332,
+ "label_": "Недостаточно памяти для карт..."}
+```
+
+#### `text_input` — Текстовое поле
+
+Редактируемое текстовое поле. Два варианта в зависимости от `validation`:
+
+**Стандартный (validation != 2):**
+```jsonc
+{"type": "text_input", "dataKey": 350, "inputType": 255,
+ "hint": 424, "validation": 0, "valueKey": 1248}
+// dataKey:    индекс objectPool для метки поля
+// inputType:  флаги ограничений клавиатуры
+// hint:       индекс objectPool для плейсхолдера
+// validation: режим валидации (0 = нет, 1 = обязательное)
+// valueKey:   ключ AppState, где хранится текст
+```
+
+**Числовой с диапазоном (validation == 2):**
+```jsonc
+{"type": "text_input", "dataKey": 814, "inputType": 6,
+ "hint": 425, "validation": 2,
+ "min": 0, "max": 9999, "default": 100, "stateKey": 1350}
+// min/max:   допустимый числовой диапазон
+// default:  значение по умолчанию
+// stateKey: ключ AppState, где хранится число
+```
+
+#### `login` — Поле логина
+
+Специальное текстовое поле для логинов.
+
+```jsonc
+{"type": "login", "label": 390, "value": 233}
+```
+
+#### `password` — Поле пароля
+
+Замаскированное текстовое поле для паролей.
+
+```jsonc
+{"type": "password", "value": 239}
+```
+
+#### `image` — Отображение изображения
+
+Показывает изображение из пула объектов.
+
+```jsonc
+{"type": "image", "poolIndex": 1341}
+```
+
+#### `redirect` — Вставка элементов из другого экрана
+
+Вставляет элементы из другого определения экрана в текущее место. Используется
+для переиспользования общих групп элементов без дублирования.
+
+```jsonc
+{"type": "redirect", "targetOffset": 2787}
+// targetOffset: смещение intPool экрана, чьи элементы вставляются
+```
+
+#### `conditional_if` — Условное действие (показать если истина)
+
+Как `action`, но видимо только когда флаг AppState установлен в ненулевое значение.
+
+```jsonc
+{"type": "conditional_if", "condKey": 276, "label": 1, "icon": 365, "cmd": 348}
+// condKey: ключ AppState для проверки; элемент виден только если значение != 0
+```
+
+#### `conditional_unless` — Условное действие (показать если ложь)
+
+Противоположность `conditional_if` — виден только когда флаг равен нулю.
+
+```jsonc
+{"type": "conditional_unless", "condKey": 1462, "label": 147, "icon": 2, "cmd": 528}
+```
+
+Оба условных типа также поддерживают `"style": "text"`.
+
+### Целочисленные ссылки
+
+Большинство числовых полей в определениях экранов — **не литеральные значения**,
+а ссылки на objectPool. Например:
+
+- `"title": 1038` означает "взять строку заголовка из `objectPool[1038]`"
+- `"label": 391` означает "взять текст метки из `objectPool[391]`"
+- `"icon": 303` означает "взять иконку из `objectPool[303]`"
+
+Поля `cmd` — это литеральные ID команд (не ссылки на пул).
+`stateKey`, `condKey`, `indexKey`, `valueKey`, `dataKey` — это индексы ключей AppState.
+
+### trailingData
+
+У некоторых экранов есть массив `trailingData` — сырые целые числа, идущие
+после элементов экрана в бинарном файле. Обычно это общие фрагменты данных,
+на которые ссылаются `redirect`-элементы из других экранов. Не редактируйте
+их, если не понимаете перекрёстные ссылки.
+
+---
+
+## Как создать новый экран
+
+### Шаг 1: Определите экран в config.json
+
+Добавьте новый объект в массив `screens`:
+
+```jsonc
+{
+  "name": "MY_NEW_SCREEN",
+  "title": 500,
+  "screenId": 170,
+  "type": "dialog_center",
+  "checkboxes": true,
+  "headerMode": 0,
+  "leftSoftKey": {"label": 1048, "cmd": 199},
+  "rightSoftKey": {"label": 1050, "cmd": 12},
+  "extraCmd": 199,
+  "items": [
+    {"type": "action", "label": 501, "icon": 303, "cmd": 600},
+    {"type": "action", "label": 502, "icon": 304, "cmd": 601}
+  ]
+}
+```
+
+- `name` должно быть уникальным и в `UPPER_SNAKE_CASE`.
+- `screenId` — константа ScreenId (или новая).
+- `title`, `label`, `icon` — валидные индексы objectPool.
+- `cmd` — ID команд, которые вы обработаете в Java.
+
+### Шаг 2: Зарегистрируйте смещение экрана
+
+Добавьте экран в список `KNOWN_SCREENS` в `tools/cfg_tool.py`, чтобы
+инструмент мог его распарсить. Затем перегенерируйте константы:
+
+```bash
+# Пересобрать бинарный файл и перегенерировать ScreenDef.java
+make resources
+make screen-defs
+```
+
+Это создаст константу `ScreenDef.MY_NEW_SCREEN` с правильным смещением.
+
+### Шаг 3: Добавьте ScreenId (если нужно)
+
+Если экрану нужен новый ID, добавьте константу в `core/ScreenId.java`:
+
+```java
+public static final int MY_NEW_SCREEN = 170;
+```
+
+### Шаг 4: Покажите экран из обработчика
+
+В подходящем обработчике (например, `ui/handler/SettingsHandler.java`)
+добавьте кейс для построения и показа экрана:
+
+```java
+case ScreenId.MY_NEW_SCREEN:
+    ScreenManager.showScreen(
+        ScreenManager.createScreen(ScreenDef.MY_NEW_SCREEN));
+    return;
+```
+
+### Шаг 5: Обработайте команды
+
+В `AppController` (или соответствующем обработчике) добавьте кейсы для ваших
+ID команд (600, 601 в примере), чтобы определить, что происходит при выборе
+элементов.
+
+### Шаг 6: Соберите и протестируйте
+
+```bash
+make resources    # упаковать config.json -> бинарный cfg
+make compile      # скомпилировать Java
+make jar          # собрать JAR
+```
+
+---
+
+## Другие ресурсы
+
+### images/mapping.json
+
+Маппинг рантайм-имён файлов в человекочитаемые исходные имена:
+
+```jsonc
+{
+  "a.png": "sprite_messaging_contacts.png",
+  "icon.png": "icon.png"
+}
+```
 
 Чтобы добавить изображение: положите PNG в `images/`, добавьте маппинг,
-ссылайтесь на обфусцированное имя в Java.
+используйте рантайм-имя в Java через `Image.createImage("/a.png")`.
 
-#### cities.xml
+### cities.xml
+
+База городов в UTF-8. При упаковке конвертируется в CP1251 с обфусцированными тегами.
 
 ```xml
 <countries>
@@ -408,101 +1012,4 @@ Names ссылаются на произвольные подстроки вну
         </region>
     </country>
 </countries>
-```
-
-| Поле | Можно менять? | Примечания |
-|------|---------------|------------|
-| Имена тегов (`country`, `region`, `city`) | Нет | При упаковке переименовываются в однобуквенные (`c`, `r`, `i`) |
-| Атрибут `i` (ID) | **Да** | Числовой ID города/региона/страны |
-| Атрибут `n` (название) | **Да** | Отображаемое название региона/страны |
-| Текст внутри `<city>` | **Да** | Отображаемое название города |
-
-Файл в UTF-8. При упаковке `pack_cities.sh` конвертирует его в CP1251 и
-переименовывает теги в однобуквенные.
-
----
-
-### Как добавлять и использовать ресурсы
-
-#### Редактирование строковых значений в config.json
-
-Записи типа `string` можно редактировать прямо в файле — пишите
-значение обычным Unicode-текстом. `cfg_tool.py` закодирует его в CP1251
-при `--pack`.
-
-В Java записи доступны по индексу пула через `AppState`:
-
-```java
-// Определено в core/StateKeys.java:
-public static final int STR_MY_LABEL = 500;
-
-// Чтение:
-String label = AppState.getString(StateKeys.STR_MY_LABEL);
-
-// Запись в рантайме:
-AppState.setString(StateKeys.STR_MY_LABEL, "новое значение");
-```
-
-Основные методы `AppState`:
-
-| Метод | Описание |
-|-------|----------|
-| `getString(int)` / `setString(int, String)` | Строковые значения |
-| `getInt(int)` / `setInt(int, int)` | Целые числа |
-| `getBool(int)` / `setBool(int, boolean)` | Булевы (хранятся как int 0/1) |
-| `getLong(int)` / `setLong(int, long)` | Long (хранится как два последовательных int) |
-| `getBytes(int)` | Байтовый массив |
-| `getImage(int)` | Объект Image |
-| `clearIndex(int)` | Сброс в null |
-
-Для каждого индекса пула должна быть именованная константа в `core/StateKeys.java`.
-
-#### Добавление изображений
-
-1. Поместите PNG в `resources-src/images/` с описательным именем.
-2. Добавьте маппинг в `images/mapping.json`:
-   ```json
-   "ad.png": "my_new_icon.png"
-   ```
-3. В Java загружайте по обфусцированному имени:
-   ```java
-   Image icon = Image.createImage("/ad.png");
-   ```
-
-#### Именование констант упакованных строк
-
-Упакованные строки — короткие строковые литералы (имена тегов, фрагменты URL,
-коды статусов), компактно хранящиеся в одном бинарном blob'е. Каждая адресуется
-целочисленным ID, кодирующим смещение и длину: `id = (length << 16) | offset`.
-
-Чтобы дать подстроке имя Java-константы, добавьте запись в массив `names`
-объекта `packed_strings` в `config.json`, затем перегенерируйте:
-```bash
-tools/cfg_tool.py --gen-java resources-src/ sources/.../core/PackedStringKeys.java
-```
-
-Константы появляются в `core/PackedStringKeys.java` и используются с
-`StringUtils.matchesKey()` для сравнений и `ByteBuffer.writeCompressed()`
-для протокольного кодирования:
-
-```java
-if (StringUtils.matchesKey(PackedStringKeys.TAG_STATUS, tagName)) { ... }
-
-ByteBuffer buf = new ByteBuffer()
-    .writeCompressed(PackedStringKeys.URL_PROFILE_PHOTO)
-    .writeRawString(userId);
-```
-
-#### Использование ScreenId
-
-Идентификаторы экранов определены в `core/ScreenId.java` и используются
-в диспетчеризации обработчиков (switch/case) и навигации:
-
-```java
-case ScreenId.MY_NEW_SCREEN:
-    // построение содержимого экрана
-    return;
-
-// Навигация:
-return ScreenId.MY_NEW_SCREEN;
 ```

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Tool for dumping/packing the MobileAgent cfg resource file.
+Tool for serializing/deserializing the MobileAgent cfg resource file.
 
 The cfg file contains:
   - Object pool (1406 entries): strings (CP1251), integers, byte arrays, nulls
-  - Int pool (3773 entries): integers only
-    - Header (172 ints): non-screen data (settings, flags, etc.)
-    - Screens (3601 ints): 136 screen definitions with items and trailing data
+  - Screen data (3601 ints): 136 screen definitions with items and trailing data
+    (runtime variable defaults formerly in intPool header are now set in AppState.java)
 
 The packed strings blob (index 295, RES_STRING_DATA) is stored inline in
 config.json as a "packed_strings" entry with an "entries" array. Each entry
@@ -15,11 +14,11 @@ Named sub-string references are stored in a separate "names" array with
 offset/length pairs used to generate PackedStringKeys.java constants.
 
 Subcommands:
-  --dump <cfg_path> <output_dir>   Dump cfg to config.json (v2 format with screens)
-  --pack <input_dir> <cfg_path>    Pack config.json to cfg (auto-detects v1/v2)
-  --verify <cfg_path> <input_dir>  Round-trip verify: dump -> pack -> compare
-  --gen-java <input_dir> <output_java>  Generate PackedStringKeys.java from config.json
-  --gen-screens <input_dir> <output_java>  Generate ScreenDef.java from config.json
+  --deserialize <cfg_path> <output_dir>   Deserialize binary cfg to config.json
+  --serialize <input_dir> <cfg_path>      Serialize config.json to binary cfg
+  --round-trip <cfg_path> <input_dir>     Round-trip verify: serialize -> deserialize -> compare
+  --gen-java <input_dir> <output_java>    Generate PackedStringKeys.java from config.json
+  --gen-screens <input_dir> <output_java> Generate ScreenDef.java from config.json
 """
 
 import argparse
@@ -29,7 +28,7 @@ import os
 import sys
 
 OBJECT_POOL_SIZE = 1406
-INT_POOL_SIZE = 3773
+SCREEN_DATA_SIZE = 3601
 INT_POOL_HEADER_SIZE = 172
 DELTA_SIZE = 295
 RAW_BYTES_START = 295
@@ -301,6 +300,17 @@ def is_cp1251_text(data):
     return len(data) > 0 and all(b >= 0x20 or b in (0x0A, 0x0D, 0x09) for b in data)
 
 
+def is_null_separated_text(data):
+    """Heuristic: byte array is a null-separated list of CP1251 text strings."""
+    segments = data.split(b'\x00')
+    if len(segments) < 2:
+        return False
+    non_empty = sum(1 for s in segments if len(s) > 0)
+    if non_empty < 2:
+        return False
+    return all(len(s) == 0 or is_cp1251_text(s) for s in segments)
+
+
 def decode_cp1251(data):
     return ''.join(win1251_to_char(b) for b in data)
 
@@ -455,6 +465,12 @@ def _obj_comment(obj_pool, key):
     if obj.get('type') == 'string':
         val = obj.get('value', '')
         return val if len(val) <= 60 else val[:57] + '...'
+    if obj.get('type') == 'string_list':
+        items = obj.get('value', [])
+        preview = ', '.join(items[:4])
+        if len(items) > 4:
+            preview += f', ... ({len(items)} total)'
+        return preview if len(preview) <= 60 else preview[:57] + '...'
     return None
 
 
@@ -826,10 +842,10 @@ def compile_screens(screens):
     return result
 
 
-# ---- dump/pack/verify ----
+# ---- serialize/deserialize/round-trip ----
 
-def dump_cfg(cfg_path, output_dir):
-    """Dump cfg binary to config.json (v2 format with screens)."""
+def deserialize_cfg(cfg_path, output_dir):
+    """Deserialize binary cfg to config.json."""
     with open(cfg_path, 'rb') as f:
         data = f.read()
 
@@ -856,7 +872,14 @@ def dump_cfg(cfg_path, output_dir):
                 obj['names'] = existing_names
             objects.append(obj)
         elif obj_type == 'bytes':
-            if is_cp1251_text(value):
+            if is_null_separated_text(value):
+                segments = value.split(b'\x00')
+                objects.append({
+                    'index': i,
+                    'type': 'string_list',
+                    'value': [decode_cp1251(s) for s in segments]
+                })
+            elif is_cp1251_text(value):
                 objects.append({
                     'index': i,
                     'type': 'string',
@@ -875,24 +898,24 @@ def dump_cfg(cfg_path, output_dir):
         elif obj_type == 'int':
             objects.append({'index': i, 'type': 'int', 'value': value})
 
-    # Read int pool
-    int_pool = []
-    for i in range(INT_POOL_SIZE):
-        int_pool.append(reader.read_int_value())
+    # Read screen data (3601 ints, no header — defaults are in AppState.java)
+    int_pool_raw = []
+    while reader.offset < len(data):
+        int_pool_raw.append(reader.read_int_value())
 
-    if reader.offset != len(data):
-        print(f"Warning: {len(data) - reader.offset} bytes remaining after reading",
-              file=sys.stderr)
+    if len(int_pool_raw) != SCREEN_DATA_SIZE:
+        print(f"Warning: unexpected screen data size {len(int_pool_raw)}, "
+              f"expected {SCREEN_DATA_SIZE}", file=sys.stderr)
 
-    # Decompile screens from intPool
-    int_pool_header = int_pool[:INT_POOL_HEADER_SIZE]
+    # Pad with zeros for header so KNOWN_SCREENS offsets work
+    int_pool = [0] * INT_POOL_HEADER_SIZE + int_pool_raw
+
     screens = decompile_screens(int_pool, objects)
 
-    # Write config.json (v2 format)
+    # Write config.json (v2 format — screens only, no header)
     config = {
         'format': 'mobileagent-cfg-v2',
         'objectPool': objects,
-        'intPoolHeader': int_pool_header,
         'screens': screens,
     }
 
@@ -908,18 +931,13 @@ def dump_cfg(cfg_path, output_dir):
           f"{entry_count} packed string entries)")
 
 
-def _build_int_pool(config):
-    """Build flat intPool from config (supports both v1 and v2 formats)."""
-    if 'intPool' in config:
-        return config['intPool']
-    # v2 format
-    header = config['intPoolHeader']
-    screen_data = compile_screens(config['screens'])
-    return header + screen_data
+def _build_screen_data(config):
+    """Build screen data ints from config screens array."""
+    return compile_screens(config['screens'])
 
 
-def pack_cfg(input_dir, cfg_path):
-    """Pack config.json to cfg binary (auto-detects v1/v2 format)."""
+def serialize_cfg(input_dir, cfg_path):
+    """Serialize config.json to binary cfg."""
     config_path = os.path.join(input_dir, 'config.json')
 
     with open(config_path, 'r', encoding='utf-8') as f:
@@ -947,10 +965,10 @@ def pack_cfg(input_dir, cfg_path):
                     segments.append(encode_cp1251(entry['value']))
             blob = b'\x00'.join(segments)
             writer.encode_byte_array(blob)
-        elif obj_type == 'packed_strings_blob':
-            # Legacy format support
-            raw = base64.b64decode(obj['value'])
-            writer.encode_byte_array(raw)
+        elif obj_type == 'string_list':
+            segments = [encode_cp1251(s) for s in obj['value']]
+            blob = b'\x00'.join(segments)
+            writer.encode_byte_array(blob)
         elif obj_type == 'bytes':
             raw = base64.b64decode(obj['value'])
             writer.encode_byte_array(raw)
@@ -963,9 +981,9 @@ def pack_cfg(input_dir, cfg_path):
         else:
             raise ValueError(f"Unknown type '{obj_type}' at index {i}")
 
-    # Write int pool
-    int_pool = _build_int_pool(config)
-    for val in int_pool:
+    # Write screen data (no header — defaults are set in AppState.java)
+    screen_data = _build_screen_data(config)
+    for val in screen_data:
         writer.encode_int(val)
 
     result = writer.get_bytes()
@@ -977,36 +995,77 @@ def pack_cfg(input_dir, cfg_path):
     return result
 
 
-def verify_cfg(cfg_path, input_dir):
-    """Verify round-trip: dump original, pack from JSON, compare bytes."""
+def _compare_binaries(first, second):
+    """Compare two byte sequences and return a detailed report.
+
+    Returns (is_equal, report_lines) tuple.
+    """
+    lines = []
+    if first == second:
+        lines.append(f"Byte-exact match ({len(first)} bytes)")
+        return True, lines
+
+    lines.append(f"Size: first={len(first)} bytes, second={len(second)} bytes")
+
+    diffs = []
+    min_len = min(len(first), len(second))
+    for i in range(min_len):
+        if first[i] != second[i]:
+            diffs.append(i)
+
+    if len(first) != len(second):
+        lines.append(f"Size mismatch: {len(first)} vs {len(second)} "
+                     f"(delta={len(second) - len(first):+d})")
+
+    if diffs:
+        lines.append(f"Content differences: {len(diffs)} bytes differ")
+        for offset in diffs[:10]:
+            lines.append(f"  offset {offset}: 0x{first[offset]:02x} -> 0x{second[offset]:02x}")
+        if len(diffs) > 10:
+            lines.append(f"  ... and {len(diffs) - 10} more")
+
+    return False, lines
+
+
+def round_trip_cfg(cfg_path, input_dir):
+    """Round-trip verify: serialize -> deserialize -> serialize -> compare.
+
+    Steps:
+      1. Serialize config.json -> binary cfg (A)
+      2. Deserialize binary cfg (A) -> config.json (intermediate)
+      3. Serialize config.json (intermediate) -> binary cfg (B)
+      4. Compare A and B byte-by-byte
+    """
     import tempfile
 
-    with open(cfg_path, 'rb') as f:
-        original = f.read()
-
     with tempfile.TemporaryDirectory() as tmpdir:
-        dump_cfg(cfg_path, tmpdir)
-        packed_path = os.path.join(tmpdir, 'cfg_packed')
-        pack_cfg(tmpdir, packed_path)
+        first_path = os.path.join(tmpdir, 'cfg_first')
+        serialize_cfg(input_dir, first_path)
+        with open(first_path, 'rb') as f:
+            first = f.read()
 
-        with open(packed_path, 'rb') as f:
-            packed = f.read()
+        intermediate_dir = os.path.join(tmpdir, 'intermediate')
+        deserialize_cfg(first_path, intermediate_dir)
 
-    if original == packed:
-        print(f"PASS: Round-trip verified ({len(original)} bytes)")
-        return True
+        second_path = os.path.join(tmpdir, 'cfg_second')
+        serialize_cfg(intermediate_dir, second_path)
+        with open(second_path, 'rb') as f:
+            second = f.read()
+
+    print("--- Round-trip report ---")
+    print(f"  Step 1: serialize config.json -> {len(first)} bytes")
+    print(f"  Step 2: deserialize -> intermediate config.json")
+    print(f"  Step 3: serialize intermediate -> {len(second)} bytes")
+
+    is_equal, report = _compare_binaries(first, second)
+    if is_equal:
+        print(f"  Result: PASS — {report[0]}")
     else:
-        min_len = min(len(original), len(packed))
-        for i in range(min_len):
-            if original[i] != packed[i]:
-                print(f"FAIL: First difference at offset {i}: "
-                      f"original=0x{original[i]:02x} packed=0x{packed[i]:02x}",
-                      file=sys.stderr)
-                break
-        if len(original) != len(packed):
-            print(f"FAIL: Size mismatch: original={len(original)} packed={len(packed)}",
-                  file=sys.stderr)
-        return False
+        print(f"  Result: FAIL", file=sys.stderr)
+        for line in report:
+            print(f"    {line}", file=sys.stderr)
+
+    return is_equal
 
 
 def gen_java(input_dir, output_java):
@@ -1080,7 +1139,7 @@ def gen_screens(input_dir, output_java):
         config = json.load(f)
 
     if 'screens' not in config:
-        print("Error: No 'screens' key in config.json (v1 format?)", file=sys.stderr)
+        print("Error: No 'screens' key in config.json", file=sys.stderr)
         sys.exit(1)
 
     lines = []
@@ -1123,12 +1182,12 @@ def gen_screens(input_dir, output_java):
 def main():
     parser = argparse.ArgumentParser(description='MobileAgent cfg resource tool')
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--dump', nargs=2, metavar=('CFG_PATH', 'OUTPUT_DIR'),
-                       help='Dump cfg to config.json')
-    group.add_argument('--pack', nargs=2, metavar=('INPUT_DIR', 'CFG_PATH'),
-                       help='Pack config.json to cfg')
-    group.add_argument('--verify', nargs=2, metavar=('CFG_PATH', 'INPUT_DIR'),
-                       help='Round-trip verify: dump -> pack -> compare')
+    group.add_argument('--deserialize', nargs=2, metavar=('CFG_PATH', 'OUTPUT_DIR'),
+                       help='Deserialize binary cfg to config.json')
+    group.add_argument('--serialize', nargs=2, metavar=('INPUT_DIR', 'CFG_PATH'),
+                       help='Serialize config.json to binary cfg')
+    group.add_argument('--round-trip', nargs=2, metavar=('CFG_PATH', 'INPUT_DIR'),
+                       help='Round-trip verify: serialize -> deserialize -> compare')
     group.add_argument('--gen-java', nargs=2, metavar=('INPUT_DIR', 'OUTPUT_JAVA'),
                        help='Generate PackedStringKeys.java from config.json')
     group.add_argument('--gen-screens', nargs=2, metavar=('INPUT_DIR', 'OUTPUT_JAVA'),
@@ -1136,12 +1195,12 @@ def main():
 
     args = parser.parse_args()
 
-    if args.dump:
-        dump_cfg(args.dump[0], args.dump[1])
-    elif args.pack:
-        pack_cfg(args.pack[0], args.pack[1])
-    elif args.verify:
-        success = verify_cfg(args.verify[0], args.verify[1])
+    if args.deserialize:
+        deserialize_cfg(args.deserialize[0], args.deserialize[1])
+    elif args.serialize:
+        serialize_cfg(args.serialize[0], args.serialize[1])
+    elif args.round_trip:
+        success = round_trip_cfg(args.round_trip[0], args.round_trip[1])
         sys.exit(0 if success else 1)
     elif args.gen_java:
         gen_java(args.gen_java[0], args.gen_java[1])

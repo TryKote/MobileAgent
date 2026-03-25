@@ -3387,8 +3387,21 @@
     },
     {
       "index": 312,
-      "type": "bytes",
-      "value": "z/Hl4uTu7ejsAMjs/wDU4Ozo6+j/AEUtbWFpbADP7usAwu7n8ODx8gDE4PLgINDu5uTl7ej/AMft4Oogx+7k6ODq4ADM5fHy7iDm6PLl6/zx8uLgANLl6+X07u0A0fLg8vPxAM7v6PHg7ejlIPHy4PLz8eA="
+      "type": "string_list",
+      "value": [
+        "Псевдоним",
+        "Имя",
+        "Фамилия",
+        "E-mail",
+        "Пол",
+        "Возраст",
+        "Дата Рождения",
+        "Знак Зодиака",
+        "Место жительства",
+        "Телефон",
+        "Статус",
+        "Описание статуса"
+      ]
     },
     {
       "index": 313,
@@ -3747,13 +3760,22 @@
     },
     {
       "index": 384,
-      "type": "bytes",
-      "value": "5OAA7eXyAO/w6CDi9e7k5SDiIOrg8PL7"
+      "type": "string_list",
+      "value": [
+        "да",
+        "нет",
+        "при входе в карты"
+      ]
     },
     {
       "index": 385,
-      "type": "bytes",
-      "value": "7ejq7uPk4AA1IOzo7QAxNSDs6O0AMzAg7Ojt"
+      "type": "string_list",
+      "value": [
+        "никогда",
+        "5 мин",
+        "15 мин",
+        "30 мин"
+      ]
     },
     {
       "index": 386,
@@ -4657,13 +4679,25 @@
     },
     {
       "index": 566,
-      "type": "bytes",
-      "value": "zODr5e386ujpANHw5eTt6OkAwe7r/Pju6Q=="
+      "type": "string_list",
+      "value": [
+        "Маленький",
+        "Средний",
+        "Большой"
+      ]
     },
     {
       "index": 567,
-      "type": "bytes",
-      "value": "zvDg7ebl4uD/ANTo7uvl8u7i4P8Ax+Xr5e3g/wDQ7ufu4uD/ANHl8OD/ACLI7eTo4+4iACLE5ujt8SI="
+      "type": "string_list",
+      "value": [
+        "Оранжевая",
+        "Фиолетовая",
+        "Зеленая",
+        "Розовая",
+        "Серая",
+        "\"Индиго\"",
+        "\"Джинс\""
+      ]
     },
     {
       "index": 568,
@@ -4677,8 +4711,12 @@
     },
     {
       "index": 570,
-      "type": "bytes",
-      "value": "Le3l8i0Ayujw6Ovr6PbgAMvg8ujt6Pbg"
+      "type": "string_list",
+      "value": [
+        "-нет-",
+        "Кириллица",
+        "Латиница"
+      ]
     },
     {
       "index": 571,
@@ -4697,8 +4735,37 @@
     },
     {
       "index": 574,
-      "type": "bytes",
-      "value": "LTEzAC0xMgAtMTEALTEwAC05AC04AC03AC02AC01AC00AC0zAC0yAC0xAC3t5fItACsxACsyACszACs0ACs1ACs2ACs3ACs4ACs5ACsxMAArMTEAKzEyACsxMwA="
+      "type": "string_list",
+      "value": [
+        "-13",
+        "-12",
+        "-11",
+        "-10",
+        "-9",
+        "-8",
+        "-7",
+        "-6",
+        "-5",
+        "-4",
+        "-3",
+        "-2",
+        "-1",
+        "-нет-",
+        "+1",
+        "+2",
+        "+3",
+        "+4",
+        "+5",
+        "+6",
+        "+7",
+        "+8",
+        "+9",
+        "+10",
+        "+11",
+        "+12",
+        "+13",
+        ""
+      ]
     },
     {
       "index": 575,
@@ -4722,8 +4789,20 @@
     },
     {
       "index": 579,
-      "type": "bytes",
-      "value": "7+4g8+zu6/fg7ej+ADE2MHgxMjAAMzIweDI0MAA2NDB4NDgwADExNTJ4ODY0ADE2MDB4MTIwMAAxMjB4MTYwADI0MHgzMjAANDgweDY0MAA4NjR4MTE1MgAxMjAweDE2MDA="
+      "type": "string_list",
+      "value": [
+        "по умолчанию",
+        "160x120",
+        "320x240",
+        "640x480",
+        "1152x864",
+        "1600x1200",
+        "120x160",
+        "240x320",
+        "480x640",
+        "864x1152",
+        "1200x1600"
+      ]
     },
     {
       "index": 580,
@@ -4782,8 +4861,21 @@
     },
     {
       "index": 591,
-      "type": "bytes",
-      "value": "Le3l8i0Ab25saW5lAGtub2NrAGhlbGxvAG1lbG9keQBkaW5nAGF1dGgAZXJyb3IAbGV0dGVyAG1lc3NhZ2UAcmluZwBzZW5k"
+      "type": "string_list",
+      "value": [
+        "-нет-",
+        "online",
+        "knock",
+        "hello",
+        "melody",
+        "ding",
+        "auth",
+        "error",
+        "letter",
+        "message",
+        "ring",
+        "send"
+      ]
     },
     {
       "index": 592,
@@ -4937,8 +5029,14 @@
     },
     {
       "index": 622,
-      "type": "bytes",
-      "value": "MQAyADMANAA1"
+      "type": "string_list",
+      "value": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
     },
     {
       "index": 623,
@@ -5032,8 +5130,22 @@
     },
     {
       "index": 641,
-      "type": "bytes",
-      "value": "zeXyIOTl6fHy4uj/AMru7fLg6vL7AM/u9/LgAMrg8PL7ANLo9ejpIPDl5ujsANHy8ODt6PbgIOLi5fD1ANHy8ODt6PbgIOLt6OcAwiDt4Pfg6+4g8e/o8ergAMIg6u7t5fYg8e/o8ergAMHr7uro8O7i6uAA0eLl8O3z8vwAzu3r4OntL+Lx5SDq7u3y4Ory+wDA7erl8uA="
+      "type": "string_list",
+      "value": [
+        "Нет действия",
+        "Контакты",
+        "Почта",
+        "Карты",
+        "Тихий режим",
+        "Страница вверх",
+        "Страница вниз",
+        "В начало списка",
+        "В конец списка",
+        "Блокировка",
+        "Свернуть",
+        "Онлайн/все контакты",
+        "Анкета"
+      ]
     },
     {
       "index": 642,
@@ -5227,8 +5339,12 @@
     },
     {
       "index": 680,
-      "type": "bytes",
-      "value": "Lev+4e7pLQDM8+bx6u7pAMbl7fHq6Ok="
+      "type": "string_list",
+      "value": [
+        "-любой-",
+        "Мужской",
+        "Женский"
+      ]
     },
     {
       "index": 681,
@@ -5252,18 +5368,79 @@
     },
     {
       "index": 685,
-      "type": "bytes",
-      "value": "Lev+4e7pLQDO4uXtANLl6+X2AMHr6Oft5fb7ANDg6gDL5eIAxOXi4ADC5fH7ANHq7vDv6O7tANHy8OXr5fYAyu7n5fDu4wDC7uTu6+XpAND74fs="
+      "type": "string_list",
+      "value": [
+        "-любой-",
+        "Овен",
+        "Телец",
+        "Близнецы",
+        "Рак",
+        "Лев",
+        "Дева",
+        "Весы",
+        "Скорпион",
+        "Стрелец",
+        "Козерог",
+        "Водолей",
+        "Рыбы"
+      ]
     },
     {
       "index": 686,
-      "type": "bytes",
-      "value": "Lev+4e7pLQDf7eLg8PwA1OXi8ODr/ADM4PDyAMDv8OXr/ADM4OkAyP7t/ADI/uv8AMDi4/Px8gDR5e3y/+Hw/ADO6vL/4fD8AM3u/+Hw/ADE5erg4fD8"
+      "type": "string_list",
+      "value": [
+        "-любой-",
+        "Январь",
+        "Февраль",
+        "Март",
+        "Апрель",
+        "Май",
+        "Июнь",
+        "Июль",
+        "Август",
+        "Сентябрь",
+        "Октябрь",
+        "Ноябрь",
+        "Декабрь"
+      ]
     },
     {
       "index": 687,
-      "type": "bytes",
-      "value": "Lev+4e7pLQAxADIAMwA0ADUANgA3ADgAOQAxMAAxMQAxMgAxMwAxNAAxNQAxNgAxNwAxOAAxOQAyMAAyMQAyMgAyMwAyNAAyNQAyNgAyNwAyOAAyOQAzMAAzMQ=="
+      "type": "string_list",
+      "value": [
+        "-любой-",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31"
+      ]
     },
     {
       "index": 688,
@@ -5297,18 +5474,36 @@
     },
     {
       "index": 694,
-      "type": "bytes",
-      "value": "QG1haWwucnUAQGluYm94LnJ1AEBiay5ydQBAbGlzdC5ydQ=="
+      "type": "string_list",
+      "value": [
+        "@mail.ru",
+        "@inbox.ru",
+        "@bk.ru",
+        "@list.ru"
+      ]
     },
     {
       "index": 695,
-      "type": "bytes",
-      "value": "QGNvcnAubWFpbC5ydQBAbXBvcC5uZXRicmlkZ2UucnUAQG1wb3AuY29ycC5tYWlsLnJ1"
+      "type": "string_list",
+      "value": [
+        "@corp.mail.ru",
+        "@mpop.netbridge.ru",
+        "@mpop.corp.mail.ru"
+      ]
     },
     {
       "index": 696,
-      "type": "bytes",
-      "value": "LeTw8+Pu6S0AQGdtYWlsLmNvbQBAeWEucnUAQGphYmJlci5vcmcAQGphYmJlci5ydQBAcWlwLnJ1AEBsaXZlam91cm5hbC5jb20AQGNoYXQuZmFjZWJvb2suY29t"
+      "type": "string_list",
+      "value": [
+        "-другой-",
+        "@gmail.com",
+        "@ya.ru",
+        "@jabber.org",
+        "@jabber.ru",
+        "@qip.ru",
+        "@livejournal.com",
+        "@chat.facebook.com"
+      ]
     },
     {
       "index": 697,
@@ -5877,8 +6072,14 @@
     },
     {
       "index": 810,
-      "type": "bytes",
-      "value": "LcL74eXw6PLlIOLu7/Du8S0AxOXi6Pf8/yD04Ozo6+j/IOzg8uXw6ADK4Oog5+7i8/IgwuD48yDx7uHg6vMAze7s5fAg7+Dx7+7w8uAAwuD45SDr/uHo7O7lIOHr/uTu"
+      "type": "string_list",
+      "value": [
+        "-Выберите вопрос-",
+        "Девичья фамилия матери",
+        "Как зовут Вашу собаку",
+        "Номер паспорта",
+        "Ваше любимое блюдо"
+      ]
     },
     {
       "index": 811,
@@ -6402,8 +6603,27 @@
     },
     {
       "index": 915,
-      "type": "bytes",
-      "value": "dXNlcm5hbWUAZG9tYWluAG5pY2tuYW1lAGZpcnN0bmFtZQBsYXN0bmFtZQBzZXgAYmlydGhkYXkAY2l0eV9pZABsb2NhdGlvbgB6b2RpYWMAYm1vbnRoAGJkYXkAY291bnRyeV9pZABwaG9uZQBtcmltX3N0YXR1cwBzdGF0dXNfdXJpAHN0YXR1c190aXRsZQBzdGF0dXNfZGVzYw=="
+      "type": "string_list",
+      "value": [
+        "username",
+        "domain",
+        "nickname",
+        "firstname",
+        "lastname",
+        "sex",
+        "birthday",
+        "city_id",
+        "location",
+        "zodiac",
+        "bmonth",
+        "bday",
+        "country_id",
+        "phone",
+        "mrim_status",
+        "status_uri",
+        "status_title",
+        "status_desc"
+      ]
     },
     {
       "index": 916,
@@ -6617,8 +6837,81 @@
     },
     {
       "index": 958,
-      "type": "bytes",
-      "value": "4ADhAOIA4wDkAOUA5wDoAOkA6gDrAOwA7QDuAO8A8ADxAPIA8wD0APUA9gD6APwAuAC4AP4A/gD/AP8A5gD3APgA4fsA4vsA4vsA5PsA5/sA6/sA7PsA7fsA7/sA8PsA8fsA8vsA9vsA+QD4/CAA4f8A4v8A4v8A5P8A5P4A5/8A5/4A6/8A6/4A7P8A7P4A7f8A7f4A7/8A7/4A8P8A8P4A8LgA8f8A8f4A8v8A8rgA8v4A+fwg"
+      "type": "string_list",
+      "value": [
+        "а",
+        "б",
+        "в",
+        "г",
+        "д",
+        "е",
+        "з",
+        "и",
+        "й",
+        "к",
+        "л",
+        "м",
+        "н",
+        "о",
+        "п",
+        "р",
+        "с",
+        "т",
+        "у",
+        "ф",
+        "х",
+        "ц",
+        "ъ",
+        "ь",
+        "ё",
+        "ё",
+        "ю",
+        "ю",
+        "я",
+        "я",
+        "ж",
+        "ч",
+        "ш",
+        "бы",
+        "вы",
+        "вы",
+        "ды",
+        "зы",
+        "лы",
+        "мы",
+        "ны",
+        "пы",
+        "ры",
+        "сы",
+        "ты",
+        "цы",
+        "щ",
+        "шь ",
+        "бя",
+        "вя",
+        "вя",
+        "дя",
+        "дю",
+        "зя",
+        "зю",
+        "ля",
+        "лю",
+        "мя",
+        "мю",
+        "ня",
+        "ню",
+        "пя",
+        "пю",
+        "ря",
+        "рю",
+        "рё",
+        "ся",
+        "сю",
+        "тя",
+        "тё",
+        "тю",
+        "щь "
+      ]
     },
     {
       "index": 959,
@@ -6692,8 +6985,27 @@
     },
     {
       "index": 973,
-      "type": "bytes",
-      "value": "MzAg7AAxMDAwIOrsADEwMDAg6uwAMjAwMCDq7AAyNTAg6uwAMTI1IOrsADY1IOrsADM1IOrsADE1IOrsADgg6uwANCDq7AAyIOrsADEg6uwANTAwIOwAMjUwIOwAMTUwIOwANTAg7AAzMCDs"
+      "type": "string_list",
+      "value": [
+        "30 м",
+        "1000 км",
+        "1000 км",
+        "2000 км",
+        "250 км",
+        "125 км",
+        "65 км",
+        "35 км",
+        "15 км",
+        "8 км",
+        "4 км",
+        "2 км",
+        "1 км",
+        "500 м",
+        "250 м",
+        "150 м",
+        "50 м",
+        "30 м"
+      ]
     },
     {
       "index": 974,
@@ -6902,8 +7214,14 @@
     },
     {
       "index": 1015,
-      "type": "bytes",
-      "value": "wOLy7uzg8uj35fHq6AD35fDl5yAxNSDx5erz7eQA9+Xw5ecgMzAg8eXq8+3kAPfl8OXnIDEg7Ojt8/LzAPfl8OXnIDUg7Ojt8/I="
+      "type": "string_list",
+      "value": [
+        "Автоматически",
+        "через 15 секунд",
+        "через 30 секунд",
+        "через 1 минуту",
+        "через 5 минут"
+      ]
     },
     {
       "index": 1016,
@@ -8670,180 +8988,6 @@
       "type": "null"
     }
   ],
-  "intPoolHeader": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    4294967295,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    400,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  ],
   "screens": [
     {
       "name": "MAP_VIEW",
@@ -9600,14 +9744,16 @@
           "label": 381,
           "choices": 384,
           "indexKey": 44,
-          "label_": "Включать встроенный GPS:"
+          "label_": "Включать встроенный GPS:",
+          "choices_": "да, нет, при входе в карты"
         },
         {
           "type": "dropdown",
           "label": 382,
           "choices": 385,
           "indexKey": 45,
-          "label_": "Выключать встроенный GPS через:"
+          "label_": "Выключать встроенный GPS через:",
+          "choices_": "никогда, 5 мин, 15 мин, 30 мин"
         },
         {
           "type": "checkbox",
@@ -11055,7 +11201,8 @@
           "label": 674,
           "choices": 694,
           "indexKey": 1474,
-          "label_": "Домен:"
+          "label_": "Домен:",
+          "choices_": "@mail.ru, @inbox.ru, @bk.ru, @list.ru"
         },
         {
           "type": "text_input",
@@ -11289,14 +11436,16 @@
           "label": 565,
           "choices": 566,
           "indexKey": 73,
-          "label_": "Размер шрифта:"
+          "label_": "Размер шрифта:",
+          "choices_": "Маленький, Средний, Большой"
         },
         {
           "type": "dropdown",
           "label": 560,
           "choices": 567,
           "indexKey": 72,
-          "label_": "Цветовая схема:"
+          "label_": "Цветовая схема:",
+          "choices_": "Оранжевая, Фиолетовая, Зеленая, Розовая, ... (7 total)"
         },
         {
           "type": "checkbox",
@@ -11315,14 +11464,16 @@
           "label": 569,
           "choices": 570,
           "indexKey": 74,
-          "label_": "Язык по умолчанию:"
+          "label_": "Язык по умолчанию:",
+          "choices_": "-нет-, Кириллица, Латиница"
         },
         {
           "type": "dropdown",
           "label": 573,
           "choices": 574,
           "indexKey": 246,
-          "label_": "Коррекция времени:"
+          "label_": "Коррекция времени:",
+          "choices_": "-13, -12, -11, -10, ... (28 total)"
         },
         {
           "type": "checkbox",
@@ -11373,7 +11524,8 @@
           "label": 581,
           "choices": 591,
           "indexKey": 75,
-          "label_": "Новое сообщение:"
+          "label_": "Новое сообщение:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11386,7 +11538,8 @@
           "label": 582,
           "choices": 591,
           "indexKey": 77,
-          "label_": "Контакт в онлайне:"
+          "label_": "Контакт в онлайне:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11399,7 +11552,8 @@
           "label": 583,
           "choices": 591,
           "indexKey": 79,
-          "label_": "Новое письмо:"
+          "label_": "Новое письмо:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11412,7 +11566,8 @@
           "label": 584,
           "choices": 591,
           "indexKey": 81,
-          "label_": "Запрос авторизации:"
+          "label_": "Запрос авторизации:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11425,7 +11580,8 @@
           "label": 585,
           "choices": 591,
           "indexKey": 83,
-          "label_": "Отправка сообщения:"
+          "label_": "Отправка сообщения:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11438,7 +11594,8 @@
           "label": 587,
           "choices": 591,
           "indexKey": 240,
-          "label_": "Новый микроблог:"
+          "label_": "Новый микроблог:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11451,7 +11608,8 @@
           "label": 586,
           "choices": 591,
           "indexKey": 85,
-          "label_": "Ошибка:"
+          "label_": "Ошибка:",
+          "choices_": "-нет-, online, knock, hello, ... (12 total)"
         },
         {
           "type": "checkbox",
@@ -11626,7 +11784,8 @@
           "label": 619,
           "choices": 622,
           "indexKey": 242,
-          "label_": "Столбцы:"
+          "label_": "Столбцы:",
+          "choices_": "1, 2, 3, 4, ... (5 total)"
         },
         {
           "type": "text_separator",
@@ -11811,84 +11970,96 @@
           "label": 629,
           "choices": 641,
           "indexKey": 205,
-          "label_": "*:"
+          "label_": "*:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 630,
           "choices": 641,
           "indexKey": 206,
-          "label_": "#:"
+          "label_": "#:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 631,
           "choices": 641,
           "indexKey": 207,
-          "label_": "0:"
+          "label_": "0:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 632,
           "choices": 641,
           "indexKey": 208,
-          "label_": "1:"
+          "label_": "1:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 633,
           "choices": 641,
           "indexKey": 209,
-          "label_": "2:"
+          "label_": "2:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 634,
           "choices": 641,
           "indexKey": 210,
-          "label_": "3:"
+          "label_": "3:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 635,
           "choices": 641,
           "indexKey": 211,
-          "label_": "4:"
+          "label_": "4:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 636,
           "choices": 641,
           "indexKey": 212,
-          "label_": "5:"
+          "label_": "5:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 637,
           "choices": 641,
           "indexKey": 213,
-          "label_": "6:"
+          "label_": "6:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 638,
           "choices": 641,
           "indexKey": 214,
-          "label_": "7:"
+          "label_": "7:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 639,
           "choices": 641,
           "indexKey": 215,
-          "label_": "8:"
+          "label_": "8:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 640,
           "choices": 641,
           "indexKey": 216,
-          "label_": "9:"
+          "label_": "9:",
+          "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         }
       ]
     },
@@ -12083,14 +12254,16 @@
           "label": 674,
           "choices": 694,
           "indexKey": 1480,
-          "label_": "Домен:"
+          "label_": "Домен:",
+          "choices_": "@mail.ru, @inbox.ru, @bk.ru, @list.ru"
         },
         {
           "type": "dropdown",
           "label": 679,
           "choices": 680,
           "indexKey": 1481,
-          "label_": "Пол:"
+          "label_": "Пол:",
+          "choices_": "-любой-, Мужской, Женский"
         },
         {
           "type": "text_input",
@@ -12119,7 +12292,8 @@
           "label": 688,
           "choices": 685,
           "indexKey": 1484,
-          "label_": "Знак Зодиака:"
+          "label_": "Знак Зодиака:",
+          "choices_": "-любой-, Овен, Телец, Близнецы, ... (13 total)"
         },
         {
           "type": "dropdown",
@@ -12173,14 +12347,16 @@
           "label": 693,
           "choices": 686,
           "indexKey": 1488,
-          "label_": "Месяц рождения:"
+          "label_": "Месяц рождения:",
+          "choices_": "-любой-, Январь, Февраль, Март, ... (13 total)"
         },
         {
           "type": "dropdown",
           "label": 692,
           "choices": 687,
           "indexKey": 1489,
-          "label_": "День рождения:"
+          "label_": "День рождения:",
+          "choices_": "-любой-, 1, 2, 3, ... (32 total)"
         },
         {
           "type": "checkbox",
@@ -12219,7 +12395,8 @@
           "label": 674,
           "choices": 696,
           "indexKey": 1474,
-          "label_": "Домен:"
+          "label_": "Домен:",
+          "choices_": "-другой-, @gmail.com, @ya.ru, @jabber.org, ... (8 total)"
         },
         {
           "type": "redirect",
@@ -13935,7 +14112,8 @@
           "label": 809,
           "choices": 810,
           "indexKey": 4305,
-          "label_": "Секретный вопрос:"
+          "label_": "Секретный вопрос:",
+          "choices_": "-Выберите вопрос-, Девичья фамилия матери, Как зовут Вашу..."
         },
         {
           "type": "text_input",
@@ -15042,7 +15220,8 @@
           "label": 1013,
           "choices": 1015,
           "indexKey": 271,
-          "label_": "Выключать:"
+          "label_": "Выключать:",
+          "choices_": "Автоматически, через 15 секунд, через 30 секунд, через 1 ..."
         },
         {
           "type": "checkbox",
