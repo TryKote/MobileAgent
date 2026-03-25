@@ -3,6 +3,7 @@ package com.trykote.mobileagent.net;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
@@ -107,7 +108,7 @@ public final class ServiceRegistry {
                 } catch (Throwable unused) {
                     if (pendingPhotoKey == null) {
                         pendingPhotoKey = str;
-                        new AsyncTask(14, (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
+                        new AsyncTask(AsyncTaskId.DOWNLOAD_CACHED_PHOTO, (!AppState.getBool(StateKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
                     }
                 }
                 image = image3;

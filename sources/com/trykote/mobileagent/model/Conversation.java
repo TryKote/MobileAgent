@@ -163,7 +163,7 @@ public final class Conversation implements ListItem {
                             throw new RuntimeException(StringUtils.intern(Integer.toString(statusCode)));
                         }
                         XmlElement resultElement = responseXml.findChildByKey(262156);
-                        new AsyncTask(31, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(461648).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(527196).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(854884).textContent), objArr[3]});
+                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(461648).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(330583).findChildByKey(65538).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(527196).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(854884).textContent), objArr[3]});
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
@@ -647,7 +647,7 @@ public final class Conversation implements ListItem {
             if (account.syncSeq == 1) {
                 String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(StateKeys.SLOT_SESSION_TOKEN)).toLowerCase());
                 if (!StringUtils.isEmpty(searchQuery)) {
-                    new AsyncTask(27, new Object[]{searchQuery, account});
+                    new AsyncTask(AsyncTaskId.WAIT_FOR_COMPLETION, new Object[]{searchQuery, account});
                 }
                 if (AccountManager.getActiveScreenId() == 1) {
                     AppState.setInt(StateKeys.FLAG_CONVERSATION_ACTIVE, 1);
@@ -846,7 +846,7 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void loadContacts() {
-        new AsyncTask(11, MmpContact.buildLocationString());
+        new AsyncTask(AsyncTaskId.FETCH_MMP_ROUTE, MmpContact.buildLocationString());
     }
 
     /* renamed from: c */

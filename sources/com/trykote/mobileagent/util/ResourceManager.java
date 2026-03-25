@@ -184,7 +184,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void dialPhoneUrl(String str, PhoneContact contact, int i) {
-        new AsyncTask(21, new Object[]{str, contact, integerOf(i)});
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_ASYNC, new Object[]{str, contact, integerOf(i)});
     }
 
     /* renamed from: a */
@@ -553,7 +553,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void startGeoSearch(String str, long j, long j2) {
-        new AsyncTask(19, new Object[]{str, new long[]{j, j2}});
+        new AsyncTask(AsyncTaskId.FETCH_SAVED_LOCATIONS, new Object[]{str, new long[]{j, j2}});
     }
 
     /* renamed from: k */
@@ -809,7 +809,7 @@ public final class ResourceManager {
         objArr[1] = targetAccount;
         objArr[2] = null;
         AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = objArr;
-        new AsyncTask(1, objArr);
+        new AsyncTask(AsyncTaskId.DOWNLOAD_PHOTO, objArr);
         return 0;
     }
 
@@ -829,7 +829,7 @@ public final class ResourceManager {
             if (!isUpdatePending() && System.currentTimeMillis() > AppState.getLong(StateKeys.TIMESTAMP_LAST_UPDATE_CHECK) + 86400000) {
                 AppState.setLong(StateKeys.TIMESTAMP_LAST_UPDATE_CHECK, System.currentTimeMillis());
                 setUpdateFlag((byte) 1);
-                new AsyncTask(32);
+                new AsyncTask(AsyncTaskId.FETCH_UPDATE_STATUS);
             }
             if (isUpdatePending()) {
                 return -1;

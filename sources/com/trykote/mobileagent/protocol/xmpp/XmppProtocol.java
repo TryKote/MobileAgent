@@ -250,7 +250,7 @@ public class XmppProtocol extends Account {
                         } else {
                             String hashPrefix = StringUtils.prefix(Utils.generateRandomHash(), 16);
                             Object[] authArgs = {this, hashPrefix, new ByteBuffer().writeCompressed(5249005).writeRawString(hashPrefix).readAllByteStr(), ResourceManager.integerCache[0], this.login, this.password};
-                            new AsyncTask(34, authArgs);
+                            new AsyncTask(AsyncTaskId.XMPP_HTTP_AUTH, authArgs);
                             taskArgs = authArgs;
                         }
                         this.authState = taskArgs;
@@ -260,7 +260,7 @@ public class XmppProtocol extends Account {
                 } else {
                     this.progress = PROGRESS_RESOLVING;
                     Object[] resolveArgs = {this};
-                    new AsyncTask(33, resolveArgs);
+                    new AsyncTask(AsyncTaskId.RESOLVE_XMPP_SERVER, resolveArgs);
                     this.authState = resolveArgs;
                 }
                 AppController.needsRepaint = true;
@@ -286,7 +286,7 @@ public class XmppProtocol extends Account {
                 this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
                 this.progress = PROGRESS_OPENING_STREAM;
                 if (isMailRuXmpp()) {
-                    new AsyncTask(30, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
+                    new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, new Object[]{this, new ByteBuffer().writeCompressed(2365173).writeCompressed(3807001).writeRawString(this.shortName).writeCompressed(1316577).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
                 }
                 AppController.needsRepaint = true;
                 break;
@@ -302,7 +302,7 @@ public class XmppProtocol extends Account {
                         parserArgs[1] = new ByteBuffer();
                         parserArgs[2] = null;
                         parserArgs[2] = new XmlParser(parserArgs);
-                        new AsyncTask(29, parserArgs);
+                        new AsyncTask(AsyncTaskId.PROCESS_XMPP_STREAM, parserArgs);
                         this.parserState = parserArgs;
                         AppController.needsRepaint = true;
                         sendPresenceSubscription();

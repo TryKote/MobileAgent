@@ -458,7 +458,7 @@ public final class IOUtils {
             String encodedQuery = Conversation.replaceText(query, 1046, 199350);
             Image mapImage = AppState.getImage(StateKeys.OBJ_FONT_2);
             long currentLat = MapRenderer.currentLat;
-            new AsyncTask(9, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(659815).writeLongAsString(currentLat).writeCompressed(659825).writeLongAsString(MapRenderer.currentLon).writeCompressed(659835).writeIntAsString(mapImage.getWidth()).writeCompressed(659845).writeIntAsString(mapImage.getHeight()).getStringAndClear());
+            new AsyncTask(AsyncTaskId.FETCH_MAP_POINTS, new ByteBuffer().writeCompressed(1442705).writeCompressed(1511760).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(659815).writeLongAsString(currentLat).writeCompressed(659825).writeLongAsString(MapRenderer.currentLon).writeCompressed(659835).writeIntAsString(mapImage.getWidth()).writeCompressed(659845).writeIntAsString(mapImage.getHeight()).getStringAndClear());
         }
         return AppState.getBool(StateKeys.FLAG_LOADING) ? 161 : 6;
     }
@@ -496,7 +496,7 @@ public final class IOUtils {
         VCard.staticTs3 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs4 = (int) MapUtils.pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs5 = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
-        new AsyncTask(20, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL))});
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL))});
     }
 
     /* renamed from: g */
@@ -1251,7 +1251,7 @@ public final class IOUtils {
                     if (((Integer) objArr[2]).intValue() == 0) {
                         objArr[2] = ResourceManager.integerOf(1);
                         objArr[1] = new ByteBuffer().writeCompressed(2365173).writeCompressed(2692947).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
-                        new AsyncTask(30, objArr);
+                        new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, objArr);
                     } else {
                         setAuthResult(objArr, vectorM516c.elementAt(0));
                     }

@@ -1335,7 +1335,7 @@ public final class AppController {
             AppState.pool[StateKeys.SLOT_MEDIA_CONTROL] = ObjectPool.newVector();
             AppState.pool[StateKeys.SLOT_MEDIA_VOLUME] = ObjectPool.newVector();
             RemoteLogger.log("INIT", "fonts done, starting AsyncTask(3)");
-            new AsyncTask(3);
+            new AsyncTask(AsyncTaskId.CONNECTION_LOOP);
             AccountManager.loadSavedAccounts();
             RemoteLogger.log("INIT", "accounts loaded: " + AppState.getVector(StateKeys.VEC_ACCOUNTS).size());
             AppState.pool[StateKeys.VEC_POPUP_ITEMS] = ObjectPool.newVector();
@@ -1399,8 +1399,8 @@ public final class AppController {
                 }
             }
             RemoteLogger.log("INIT", "starting event loop threads");
-            new AsyncTask(13);
-            new AsyncTask(0);
+            new AsyncTask(AsyncTaskId.PERIODIC_TIME_SYNC);
+            new AsyncTask(AsyncTaskId.PROCESS_SOFTKEY);
             RemoteLogger.log("INIT", "dispatchCommand DONE");
         }
     }

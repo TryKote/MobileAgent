@@ -236,7 +236,7 @@ public final class DialogHandler extends BaseScreenHandler {
                     errorCode2 = NotificationHelper.showError(523);
                 } else {
                     MrimAccount mrimAccount5 = (MrimAccount) AppState.getAccount();
-                    new AsyncTask(17, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN) ? AppState.getString(StateKeys.SLOT_SCREEN_SUBTITLE) : null)).getStringAndClear());
+                    new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCompressed(1442705).writeCompressed(1049531).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(459757).writeCompressed(459750).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN) ? AppState.getString(StateKeys.SLOT_SCREEN_SUBTITLE) : null)).getStringAndClear());
                     AppState.addInt(StateKeys.COUNTER_SEARCH_RESULTS, 1);
                     errorCode2 = 0;
                 }

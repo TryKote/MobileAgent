@@ -97,7 +97,7 @@ public final class MapController {
         new GraphicsContext(graphics).drawIcon(312, 56, 56);
         AppState.pool[StateKeys.OBJ_MENU_LABELS] = imageCreateImage;
         AppState.pool[StateKeys.OBJ_SEARCH_PARAMS_2] = ObjectPool.newVector();
-        new AsyncTask(8);
+        new AsyncTask(AsyncTaskId.TILE_LOADER);
         MapRenderer.syncLock = new Object();
         StringUtils.initGeoRegions();
         MapRenderer.invalidate();
@@ -113,7 +113,7 @@ public final class MapController {
         AppState.pool[StateKeys.SLOT_MAP_DATA] = ObjectPool.newVector();
         MapRenderer.needsRedraw = true;
         AppState.setLong(StateKeys.TIMESTAMP_MAP_SCROLL, System.currentTimeMillis() - 90);
-        new AsyncTask(10);
+        new AsyncTask(AsyncTaskId.FETCH_GEO_CONFIG);
         ServiceRegistry.loadSavedData();
     }
 

@@ -286,7 +286,7 @@ public final class MmpProtocol extends Account {
                     break;
                 }
             case PROGRESS_WAIT_ACCOUNTS:
-                new AsyncTask(31, new Object[]{this, ResourceManager.integerOf(0), this.login, getFormattedName()});
+                new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{this, ResourceManager.integerOf(0), this.login, getFormattedName()});
                 this.msgCount = 20;
                 this.progress = PROGRESS_WAIT_AUTH;
                 AppController.needsRepaint = true;

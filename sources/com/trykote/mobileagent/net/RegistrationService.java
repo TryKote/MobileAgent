@@ -110,7 +110,7 @@ public abstract class RegistrationService {
         objArr[0] = null;
         objArr[1] = ResourceManager.integerOf(i);
         objArr[2] = str;
-        new AsyncTask(24, objArr);
+        new AsyncTask(AsyncTaskId.EXECUTE_REGISTRATION, objArr);
         return objArr;
     }
 

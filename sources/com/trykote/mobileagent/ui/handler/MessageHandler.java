@@ -416,7 +416,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 Object objElement = vec.elementAt(0);
                 if (objElement instanceof String) {
                     Object[] objArr = {(String) objElement, StringUtils.concatKey(5510023, Conversation.percentEncode((String) vec.lastElement())), null};
-                    new AsyncTask(26, objArr);
+                    new AsyncTask(AsyncTaskId.SEND_SMS_DIRECT, objArr);
                     vec.setElementAt(objArr, 0);
                 } else {
                     Object obj = ((Object[]) objElement)[2];

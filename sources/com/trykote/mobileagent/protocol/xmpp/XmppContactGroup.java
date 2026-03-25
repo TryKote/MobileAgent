@@ -687,7 +687,7 @@ public final class XmppContactGroup extends ContactGroup {
             if (size < 0) {
                 ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(3216135).writeUInt(15713);
                 String strM1215a = ObjectPool.toStringAndRelease(stringBufferM1217h);
-                new AsyncTask(15, c0043nM1385u.writeRawString(strM1215a).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(strM1215a).writeCompressed(660328).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(j).writeUInt(4023334).writeLongAsString(j2).getStringAndClear());
+                new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, c0043nM1385u.writeRawString(strM1215a).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(strM1215a).writeCompressed(660328).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(j).writeUInt(4023334).writeLongAsString(j2).getStringAndClear());
                 return;
             } else {
                 stringBufferM1217h.append(vectorM1140a.elementAt(size));

@@ -26,7 +26,7 @@ public final class ApiClient {
     }
 
     public static final Object[] submitAsync(Object[] objArr) {
-        objArr[7] = new AsyncTask(5, objArr);
+        objArr[7] = new AsyncTask(AsyncTaskId.API_REAUTH, objArr);
         return objArr;
     }
 

@@ -24,7 +24,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 AppState.setLong(StateKeys.TIMESTAMP_FIRST_RUN, System.currentTimeMillis());
                 Object[] objArr2 = new Object[1];
                 AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = objArr2;
-                new AsyncTask(2, objArr2);
+                new AsyncTask(AsyncTaskId.FETCH_TILE_BUFFER, objArr2);
                 DiagnosticReporter.checkCrashReport();
                 return;
             case ScreenId.VERSION_CHECK:

@@ -202,7 +202,7 @@ public final class MapHandler extends BaseScreenHandler {
                             requestBuf.writeUInt(4024102).writeEncodedString(msgId3);
                         }
                     }
-                    new AsyncTask(16, requestBuf.getStringAndClear());
+                    new AsyncTask(AsyncTaskId.HTTP_FIRE_AND_FORGET, requestBuf.getStringAndClear());
                 }
                 MapRenderer.needsRedraw = true;
                 nextScreen = 0;
@@ -420,7 +420,7 @@ public final class MapHandler extends BaseScreenHandler {
                         size3--;
                         if (size3 < 0) {
                             MapRenderer.needsRedraw = true;
-                            new AsyncTask(6);
+                            new AsyncTask(AsyncTaskId.FETCH_CITY_ZOOM);
                             break;
                         } else if (3 == ((ResourceManager) vec4.elementAt(size3)).tileType) {
                             vec4.removeElementAt(size3);

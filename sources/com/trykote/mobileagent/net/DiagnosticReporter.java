@@ -13,7 +13,7 @@ public abstract class DiagnosticReporter {
         long jCurrentTimeMillis = System.currentTimeMillis();
         if (jCurrentTimeMillis > AppState.getLong(StateKeys.TIMESTAMP_LAST_CLEANUP) + 7776000000L) {
             AppState.setLong(StateKeys.TIMESTAMP_LAST_CLEANUP, jCurrentTimeMillis);
-            new AsyncTask(18);
+            new AsyncTask(AsyncTaskId.SEND_DIAGNOSTIC);
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class DiagnosticReporter {
                             report.addChild(createDiagElement('e', propName, (Object) classExists(propName)));
                         }
                     }
-                    new AsyncTask(18, report.toString());
+                    new AsyncTask(AsyncTaskId.SEND_DIAGNOSTIC, report.toString());
                 }
             } else {
                 ByteBuffer urlBuffer = new ByteBuffer().writeCompressed(131082);

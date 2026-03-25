@@ -2,6 +2,7 @@ package com.trykote.mobileagent.net;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.IOUtils;
@@ -59,7 +60,7 @@ public final class SocketWrapper {
             wrapper.outputStream = (OutputStream) IOUtils.registerResource((Object) socketConnection.openOutputStream());
             if (async) {
                 wrapper.asyncBuffer = new ByteBuffer();
-                new AsyncTask(4, wrapper);
+                new AsyncTask(AsyncTaskId.SOCKET_READER, wrapper);
             }
             AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
             return wrapper;
@@ -124,7 +125,7 @@ public final class SocketWrapper {
         if (conn == null || immediate) {
             IOUtils.closeConn(conn);
         } else {
-            new AsyncTask(7, conn);
+            new AsyncTask(AsyncTaskId.DELAYED_CLOSE, conn);
         }
         this.connection = null;
         this.inputStream = null;
