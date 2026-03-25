@@ -145,7 +145,7 @@ public final class AccountManager {
     public static void loadSavedAccounts() {
         RemoteLogger.log("ACCT", "loadSavedAccounts START");
         Vector accounts = ObjectPool.newVector();
-        ByteBuffer buffer = XmppMailRuProtocol.readChunkedRecord(ObjectPool.unpackChars(6513505));
+        ByteBuffer buffer = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(6513505));
         while (buffer.length > 0) {
             try {
                 Account account = null;
@@ -218,7 +218,7 @@ public final class AccountManager {
                     ((Account) accounts.elementAt(i)).serializeAccount(buffer, z, false).saveProperties(buffer);
                 }
             }
-            XmppMailRuProtocol.writeRecord(ObjectPool.unpackChars(6513505), buffer, z);
+            ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(6513505), buffer, z);
         } catch (Throwable unused) {
         }
     }

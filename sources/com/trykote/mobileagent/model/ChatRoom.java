@@ -79,8 +79,8 @@ public final class ChatRoom {
             buffer.writeStringLatin1(msgId);
             Message msg = getMessage(msgId);
             buffer.writeLong(msg.timestamp);
-            XmppMailRuProtocol.writeAddressPairs(msg.toList, buffer);
-            XmppMailRuProtocol.writeAddressPairs(msg.ccList, buffer);
+            MailHelper.writeAddressPairs(msg.toList, buffer);
+            MailHelper.writeAddressPairs(msg.ccList, buffer);
             buffer.writeIntLE(msg.priority).writeIntLE(msg.flags).writeStringUTF16(Utils.defaultStr(msg.subject));
             if (msg.body == null || msg.body.length() > 3072) {
                 buffer.writeIntLE(0).writeIntLE(0);

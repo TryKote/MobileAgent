@@ -11,7 +11,7 @@ GEN_CFG  = config/remote_logger.cfg
 GEN_SRC  = $(SRC)/com/trykote/mobileagent/util/RemoteLoggerConfig.java
 SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java')
 
-.PHONY: all compile jar clean resources screen-defs
+.PHONY: all compile jar clean resources screen-defs palette-keys
 
 all: jar
 
@@ -58,6 +58,9 @@ $(BUILD)/$(JAR): $(BUILD)/.compiled $(BUILD)/.resources
 
 screen-defs:
 	python3 tools/cfg_tool.py --gen-screens $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/ScreenDef.java
+
+palette-keys:
+	python3 tools/cfg_tool.py --gen-palette $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/PaletteKeys.java
 
 clean:
 	rm -rf $(BUILD)

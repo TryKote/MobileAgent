@@ -50,7 +50,7 @@ public final class IOUtils {
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
-        XmppMailRuProtocol.getFirstRecipient(toList);
+        MailHelper.getFirstRecipient(toList);
         boolean needsAuth = AppState.getBool(StateKeys.SETTING_AUTH_REQUIRED);
         String replyPrefix = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
         String forwardPrefix = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
@@ -61,23 +61,23 @@ public final class IOUtils {
         }
         if (StringUtils.matchesKey(839, str)) {
             if (!needsAuth) {
-                return ResourceManager.composeEmail(XmppMailRuProtocol.getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
+                return ResourceManager.composeEmail(MailHelper.getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
             }
-            XmppMailRuProtocol.setMailAction(54, 0);
+            MailHelper.setMailAction(54, 0);
             return 0;
         }
         if (StringUtils.matchesKey(840, str)) {
             if (!needsAuth) {
-                return ResourceManager.composeEmail(XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
+                return ResourceManager.composeEmail(MailHelper.mergeAddressLists(MailHelper.copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
             }
-            XmppMailRuProtocol.setMailAction(54, 1);
+            MailHelper.setMailAction(54, 1);
             return 0;
         }
         if (StringUtils.matchesKey(841, str)) {
             if (!needsAuth) {
                 return ResourceManager.composeEmail(ObjectPool.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
             }
-            XmppMailRuProtocol.setMailAction(54, 2);
+            MailHelper.setMailAction(54, 2);
             return 0;
         }
         if (StringUtils.matchesKey(855, str)) {
@@ -591,7 +591,7 @@ public final class IOUtils {
         wrapInVector(strM584b);
         if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
-            ResourceManager.composeEmail(XmppMailRuProtocol.getFirstAddress(toList), StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+            ResourceManager.composeEmail(MailHelper.getFirstAddress(toList), StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
             return 0;
         }
         if (!StringUtils.matchesKey(840, str)) {
@@ -607,7 +607,7 @@ public final class IOUtils {
             return 0;
         }
         ScreenBuilder.onScreenClosed();
-        Vector vectorM865a = XmppMailRuProtocol.mergeAddressLists(XmppMailRuProtocol.copyAddressList(ccList), toList);
+        Vector vectorM865a = MailHelper.mergeAddressLists(MailHelper.copyAddressList(ccList), toList);
         int iM541c = Utils.vectorSize(vectorM865a);
         while (true) {
             iM541c--;
@@ -734,7 +734,7 @@ public final class IOUtils {
             AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo(contact);
         } else if (i == 54) {
             AppState.setAccount(contact.account);
-            ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
+            ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem item = (ListItem) contact;
             item.deselect();
@@ -1071,7 +1071,7 @@ public final class IOUtils {
 
     /* renamed from: a */
     public static final void updateContactFlags(Contact contact) {
-        AppState.setBool(StateKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).mo83f());
+        AppState.setBool(StateKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
     }
 
     /* renamed from: c */
@@ -1106,7 +1106,7 @@ public final class IOUtils {
             AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
-            ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
+            ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem item = (ListItem) obj;
             item.deselect();

@@ -145,8 +145,8 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.PHOTO_SELECTOR:
                 IOUtils.showPhotoSelector();
                 return;
-            case ScreenId.PHOTO_VIEW:
-                ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.PHOTO_VIEW));
+            case ScreenId.ACCOUNT_SETUP:
+                ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SETUP));
                 return;
         }
         AppController.finishScreenBuild();
@@ -218,7 +218,10 @@ public final class MiscHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.PHOTO_SELECTOR:
                 return IOUtils.applyPhotoSelection();
-            case ScreenId.PHOTO_VIEW:
+            case ScreenId.ACCOUNT_SETUP:
+                if (action == ScreenId.XMPP_LOGIN) {
+                    AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
+                }
                 return 0;
         }
         return 0;
@@ -274,7 +277,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.PHOTO_SELECTOR:
                 return 0;
-            case ScreenId.PHOTO_VIEW:
+            case ScreenId.ACCOUNT_SETUP:
                 return 0;
         }
         return 0;
@@ -371,7 +374,10 @@ public final class MiscHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.PHOTO_SELECTOR:
                 return IOUtils.applyPhotoSelection();
-            case ScreenId.PHOTO_VIEW:
+            case ScreenId.ACCOUNT_SETUP:
+                if (selectedOption == ScreenId.XMPP_LOGIN) {
+                    AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
+                }
                 return 0;
         }
         return 0;
@@ -457,7 +463,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.PHOTO_SELECTOR:
                 return 0;
-            case ScreenId.PHOTO_VIEW:
+            case ScreenId.ACCOUNT_SETUP:
                 return 0;
         }
         return 0;

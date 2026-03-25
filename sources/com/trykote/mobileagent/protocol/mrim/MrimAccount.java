@@ -414,7 +414,7 @@ public final class MrimAccount extends Account implements ListItem {
                         break;
                     }
                 case MrimCommand.CS_CONTACT_LIST_REPLY:
-                    XmppMailRuProtocol.handleMrimResponse(this, packet, seqId);
+                    handleMrimResponse(packet, seqId);
                     break;
                 case MrimCommand.CS_LOGOUT_FORCE:
                     handleTimeout();
@@ -440,10 +440,10 @@ public final class MrimAccount extends Account implements ListItem {
                     }
                     break;
                 case MrimCommand.CS_ADD_CONTACT_ACK:
-                    XmppMailRuProtocol.handleMrimResponse(this, packet, seqId);
+                    handleMrimResponse(packet, seqId);
                     break;
                 case MrimCommand.CS_MODIFY_CONTACT_ACK:
-                    XmppMailRuProtocol.handleMrimResponse(this, packet, seqId);
+                    handleMrimResponse(packet, seqId);
                     break;
                 case MrimCommand.CS_OFFLINE_MESSAGE_ACK:
                     trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_DELETE_OFFLINE_MESSAGE, new ByteBuffer().writeIntLE(packet.readInt()).writeIntLE(packet.readInt())));
@@ -534,16 +534,16 @@ public final class MrimAccount extends Account implements ListItem {
                         break;
                     }
                 case MrimCommand.CS_CONTACT_LIST_ACK:
-                    XmppMailRuProtocol.handleMrimResponse(this, packet, seqId);
+                    handleMrimResponse(packet, seqId);
                     break;
                 case MrimCommand.CS_ANKETA_UPDATE_ACK:
-                    XmppMailRuProtocol.handleMrimResponse(this, packet, seqId);
+                    handleMrimResponse(packet, seqId);
                     break;
                 case MrimCommand.CS_CONTACT_LIST2:
                     Conversation.parseContactList(this, packet);
                     break;
                 case MrimCommand.CS_SEARCH_RESULT_ACK:
-                    XmppMailRuProtocol.handleMrimResponse(this, packet, seqId);
+                    handleMrimResponse(packet, seqId);
                     break;
                 case MrimCommand.CS_ANKETA_INFO:
                     if (packet.readInt() != 1 || packet.readInt() <= 0) {
@@ -1447,5 +1447,186 @@ public final class MrimAccount extends Account implements ListItem {
             sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST2, new ByteBuffer().writeIntLE(1).writeStringLatin1(entry.query)));
             this.searchEntryList.addElement(entry);
         }
+    }
+
+    public final void handleMrimResponse(ByteBuffer buf, int i) {
+        Object[] objArr;
+        int resultCode = buf.readInt();
+        Vector vector = this.extras;
+        int size = vector.size();
+        do {
+            size--;
+            if (size < 0) {
+                return;
+            } else {
+                objArr = (Object[]) vector.elementAt(size);
+            }
+        } while (((Integer) objArr[0]).intValue() != i);
+        switch (((Integer) objArr[1]).intValue()) {
+            case 0:
+                if (resultCode != 0) {
+                    IOUtils.postRenameError(objArr, resultCode);
+                    break;
+                } else {
+                    ((MrimContact) objArr[2]).updateDisplayNameAndGroups((String) objArr[3], (String) objArr[4]);
+                    break;
+                }
+            case 1:
+                if (resultCode != 0) {
+                    IOUtils.postRenameError(objArr, resultCode);
+                    break;
+                } else {
+                    ((MrimContactGroup) objArr[2]).setNameIfChanged((String) objArr[3]);
+                    break;
+                }
+            case 2:
+                if (resultCode != 0) {
+                    IOUtils.postDeleteError(objArr, resultCode);
+                    break;
+                } else {
+                    removeContact((Contact) objArr[2], true);
+                    break;
+                }
+            case 3:
+                if (resultCode != 0) {
+                    IOUtils.postDeleteError(objArr, resultCode);
+                    break;
+                } else {
+                    MrimContactGroup mrimGroup = (MrimContactGroup) objArr[2];
+                    int i2 = mrimGroup.groupId >> 24;
+                    int size2 = this.groups.size();
+                    while (true) {
+                        size2--;
+                        if (size2 < 0) {
+                            removeGroup((ContactGroup) mrimGroup);
+                            break;
+                        } else {
+                            MrimContactGroup mrimGroup2 = (MrimContactGroup) getGroup(size2);
+                            if ((mrimGroup2.groupId >> 24) > i2) {
+                                mrimGroup2.groupId -= 16777216;
+                            }
+                        }
+                    }
+                }
+            case 4:
+                if (resultCode != 0) {
+                    IOUtils.postAddGroupError(objArr, resultCode);
+                    break;
+                } else {
+                    this.groups.addElement(new MrimContactGroup(this, findAvailableGroupId(), ((Integer) objArr[3]).intValue(), (String) objArr[2]));
+                    break;
+                }
+            case 5:
+                if (resultCode != 0) {
+                    IOUtils.postAddGroupError(objArr, resultCode);
+                    break;
+                } else {
+                    MrimContactGroup mrimGroup3 = (MrimContactGroup) objArr[4];
+                    int contactId2 = buf.readInt();
+                    String statusStr = AppState.getString(StateKeys.STR_PHONE_SUFFIX);
+                    String str = (String) objArr[2];
+                    String str2 = (String) objArr[3];
+                    String str3 = AppState.emptyStr;
+                    mrimGroup3.addContact((Object) new MrimContact(this, contactId2, 1048576, 103, statusStr, str, 0, 1, str2, str3, str3));
+                    break;
+                }
+            case 6:
+                if (resultCode != 1) {
+                    IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    break;
+                }
+                break;
+            case 7:
+                MrimContactParser.createSingleContact(this, resultCode, buf);
+                break;
+            case 8:
+                MrimContactParser.parseContactInfoResponse(this, resultCode, buf);
+                break;
+            case 9:
+                if (resultCode != 0) {
+                    if (resultCode != 5) {
+                        IOUtils.postAddGroupError(objArr, resultCode);
+                        break;
+                    }
+                } else {
+                    MrimContactGroup mrimGroup4 = (MrimContactGroup) objArr[4];
+                    int contactId3 = buf.readInt();
+                    int flags = ((Integer) objArr[5]).intValue();
+                    int i3 = mrimGroup4.serverId;
+                    String str4 = (String) objArr[2];
+                    String str5 = (String) objArr[3];
+                    String str6 = AppState.emptyStr;
+                    mrimGroup4.addContact((Object) new MrimContact(this, contactId3, flags, i3, str4, str5, 1, 0, str6, str6, str6));
+                    break;
+                }
+                break;
+            case 10:
+                MrimContact mrimContact = (MrimContact) objArr[2];
+                switch (resultCode) {
+                    case 0:
+                        mrimContact.updateMessageFlag(((Long) objArr[3]).longValue(), 64);
+                        break;
+                    case 32769:
+                        if (mrimContact.isSystem()) {
+                            IOUtils.postNotification(AppState.getString(StateKeys.STR_AUTH_GRANTED));
+                            break;
+                        }
+                    default:
+                        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                        break;
+                }
+                break;
+            case 11:
+                if (resultCode != 0) {
+                    IOUtils.postRenameError(objArr, resultCode);
+                    break;
+                } else {
+                    ((MrimContact) objArr[2]).statusFlags = ((Integer) objArr[3]).intValue();
+                    break;
+                }
+            case 12:
+                if (resultCode != 0) {
+                    IOUtils.postRenameError(objArr, resultCode);
+                    break;
+                } else {
+                    MrimContact mrimContact2 = (MrimContact) objArr[2];
+                    MrimContactGroup mrimGroup5 = (MrimContactGroup) objArr[3];
+                    mrimContact2.groupId = mrimGroup5.serverId;
+                    int size3 = this.groups.size();
+                    while (true) {
+                        size3--;
+                        if (size3 < 0) {
+                            mrimGroup5.addContact((Object) mrimContact2);
+                            break;
+                        } else {
+                            getGroup(size3).removeElement(mrimContact2);
+                        }
+                    }
+                }
+            case 13:
+                MrimContactParser.updateContactName(this, resultCode, buf);
+                break;
+            case 15:
+                if (resultCode != 0) {
+                    IOUtils.postAddGroupError(objArr, resultCode);
+                    break;
+                } else {
+                    MrimContactGroup defaultGroup = getFirstContactGroup();
+                    int contactId4 = buf.readInt();
+                    int i4 = defaultGroup.serverId;
+                    String contactName = buf.readWideStr();
+                    String str7 = (String) objArr[2];
+                    String str8 = AppState.emptyStr;
+                    defaultGroup.addContact(new MrimContact(this, contactId4, 128, i4, contactName, str7, 0, 1, str8, str8, str8));
+                    break;
+                }
+            case 16:
+                MrimContactParser.addContactToGroup(this, resultCode, buf);
+                break;
+            case 17:
+                ResourceManager.handleAuthResponse(this, resultCode, objArr, buf);
+                break;
+        }
+        vector.removeElementAt(size);
     }
 }

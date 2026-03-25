@@ -289,6 +289,7 @@ public final class StateKeys {
     public static final int STR_LABEL_AGE_RANGE = 692;
     public static final int STR_LABEL_GENDER = 693;
     public static final int STR_DOMAIN_LIST = 694;
+    public static final int STR_SERVER_SUFFIX_LIST = 695;
     public static final int STR_SERVER_LIST = 696;
     public static final int STR_DEFAULT_GROUP_NAME = 741;
     public static final int STR_NOTIFICATION_NEW_MSG = 743;
@@ -735,16 +736,11 @@ public final class StateKeys {
     public static final int INT_SETTINGS_ACTION = 4308;
     public static final int INT_SETTINGS_VALUE_1 = 4313;
     public static final int INT_SETTINGS_VALUE_2 = 4317;
-    public static final int INT_HTTP_RESULT_SCREEN = 4486;
-    public static final int INT_HTTP_PARAM_2 = 4497;
-    public static final int INT_HTTP_PARAM_1 = 4498;
-    public static final int INT_CHAT_LIST_MODE = 4778;
-    public static final int INT_ASYNC_TASK_ID = 4895;
-
-    // === Palette & Colors ===
-    public static final int PALETTE_COLORS_BASE = 4914;
-    public static final int PALETTE_SCREEN_BASE = 5042;
-    public static final int PALETTE_MAP_BASE = 5050;
+    public static final int INT_HTTP_RESULT_SCREEN = 4490;
+    public static final int INT_HTTP_PARAM_2 = 4501;
+    public static final int INT_HTTP_PARAM_1 = 4502;
+    public static final int INT_CHAT_LIST_MODE = 4782;
+    public static final int INT_ASYNC_TASK_ID = 4899;
 
     // === Ranges ===
     public static final int RANGE_TEMP_DATA_START = 332;

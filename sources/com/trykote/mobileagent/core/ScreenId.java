@@ -158,7 +158,7 @@ public final class ScreenId {
     public static final int SHARE_LOCATION = 154;
     public static final int VISIBLE_CONTACTS = 155;
     public static final int PHOTO_SELECTOR = 156;
-    public static final int PHOTO_VIEW = 157;
+    public static final int ACCOUNT_SETUP = 157;
     public static final int MAP_SEARCH = 158;
     public static final int WIFI_ACCOUNT_LIST = 159;
     public static final int PROFILE_EDIT = 160;

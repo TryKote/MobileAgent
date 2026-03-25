@@ -749,7 +749,7 @@ public abstract class Account {
     }
 
     /* renamed from: p */
-    public int mo110p() {
+    public int getSessionStringKey() {
         return 0;
     }
 }

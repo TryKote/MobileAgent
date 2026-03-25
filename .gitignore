@@ -2,6 +2,7 @@
 .idea
 build
 config
+resources
 rms
 out
 *.iml

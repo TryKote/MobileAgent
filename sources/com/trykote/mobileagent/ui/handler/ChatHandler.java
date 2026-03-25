@@ -297,9 +297,9 @@ public final class ChatHandler extends BaseScreenHandler {
                     AppState.setObject(StateKeys.SLOT_MESSAGE_ID, (Object) msg.from);
                     ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
                     if (StringUtils.matchesKey(894, chatRoom.name) || StringUtils.matchesKey(899, chatRoom.name)) {
-                        XmppMailRuProtocol.setMailAction(54, 3);
+                        MailHelper.setMailAction(54, 3);
                     } else {
-                        XmppMailRuProtocol.setMailAction(52, 0);
+                        MailHelper.setMailAction(52, 0);
                     }
                     i = 0;
                 }

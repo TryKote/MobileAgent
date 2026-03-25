@@ -41,10 +41,10 @@ public final class MessageHandler extends BaseScreenHandler {
                 Message message4 = chatRoom3.getMessage(msgId3);
                 String str;
                 if (roomType == 2) {
-                    String[] ccRecipient = XmppMailRuProtocol.getFirstRecipient(message4.ccList);
+                    String[] ccRecipient = MailHelper.getFirstRecipient(message4.ccList);
                     str = ccRecipient != null ? ccRecipient[1] : AppState.emptyStr;
                 } else {
-                    String[] toRecipient = XmppMailRuProtocol.getFirstRecipient(message4.toList);
+                    String[] toRecipient = MailHelper.getFirstRecipient(message4.toList);
                     str = toRecipient != null ? toRecipient[1] : AppState.emptyStr;
                 }
                 AppState.setObject(StateKeys.SLOT_SCREEN_TITLE, (Object) str);
@@ -82,7 +82,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 return;
             case ScreenId.REPLY_MAIL:
                 NotificationHelper.showConfirmDialog(82, 877);
-                Message newMessage = new Message(XmppMailRuProtocol.parseRecipientList(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_2))), Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_3)), Utils.defaultStr(AppState.getString(StateKeys.SLOT_TRAFFIC_STATUS_TEXT)));
+                Message newMessage = new Message(MailHelper.parseRecipientList(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_2))), Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_3)), Utils.defaultStr(AppState.getString(StateKeys.SLOT_TRAFFIC_STATUS_TEXT)));
                 Vector params10 = ObjectPool.newVector();
                 params10.addElement(newMessage.toHashtable());
                 IOUtils.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_3), IOUtils.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_2)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
@@ -327,7 +327,7 @@ public final class MessageHandler extends BaseScreenHandler {
     public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
-                return XmppMailRuProtocol.processMailResponse();
+                return MailHelper.processMailResponse();
             case ScreenId.MESSAGE_PREVIEW:
                 return 0;
             case ScreenId.COMPOSE_RECIPIENTS:

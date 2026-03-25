@@ -71,7 +71,7 @@ public abstract class AppState {
         emptyBytes = new byte[0];
         delta = new Object[295];
         pool = new Object[1406];
-        intPool = new int[3773];
+        intPool = new int[3777];
         // Non-zero defaults for runtime variables (intPool[0..171])
         intPool[1417 - 1406] = 1;
         intPool[1420 - 1406] = 1;
@@ -85,7 +85,7 @@ public abstract class AppState {
         for (int i2 = 0; i2 < 1406; i2++) {
             pool[i2] = decodeObject(buffer, i2);
         }
-        for (int i3 = 0; i3 < 3601; i3++) {
+        for (int i3 = 0; i3 < 3605; i3++) {
             int[] iArr = intPool;
             int i4 = i3 + 172;
             byte flag = buffer.readByte();
@@ -109,7 +109,7 @@ public abstract class AppState {
             iArr[i4] = value;
         }
         emptyStr = (String) pool[StateKeys.STR_EMPTY];
-        ByteBuffer recordBuf = XmppMailRuProtocol.readChunkedRecord(ObjectPool.unpackChars(1164404323));
+        ByteBuffer recordBuf = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(1164404323));
         while (recordBuf.length > 0) {
             try {
                 delta[((Integer) decodeObject(recordBuf, 0)).intValue()] = decodeObject(recordBuf, 0);
@@ -475,7 +475,7 @@ public abstract class AppState {
                     }
                 }
             }
-            XmppMailRuProtocol.writeRecord(ObjectPool.unpackChars(1164404323), buffer, z);
+            ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(1164404323), buffer, z);
         } catch (Throwable unused) {
         }
     }

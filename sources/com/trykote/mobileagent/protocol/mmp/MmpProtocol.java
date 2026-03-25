@@ -11,6 +11,7 @@ import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -389,7 +390,7 @@ public final class MmpProtocol extends Account {
                         while (true) {
                             size--;
                             if (size < 0) {
-                                XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, 0);
+                                handleMmpResponse(packet, seqNum, 0);
                                 break;
                             } else {
                                 Object[] queuedCmd = (Object[]) vector.elementAt(size);
@@ -437,7 +438,7 @@ public final class MmpProtocol extends Account {
                         parseContactStatus(packet.readLenPrefixStr(), packet);
                         break;
                     case MmpCommand.ACK:
-                        XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
+                        removeQueuedCommand(seqNum);
                         break;
                     case MmpCommand.FILE_TRANSFER:
                         IOUtils.handleFileTransfer(this, packet);
@@ -466,10 +467,10 @@ public final class MmpProtocol extends Account {
                         if (this.contactListIndex == 0) {
                             removeAllContacts();
                         }
-                        XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, flags);
+                        handleMmpResponse(packet, seqNum, flags);
                         break;
                     case MmpCommand.CONTACT_INFO_RESPONSE:
-                        XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, 0);
+                        handleMmpResponse(packet, seqNum, 0);
                         break;
                     case MmpCommand.TYPING_NOTIFY:
                         Contact typingContact = getContact((Object) packet.readLenPrefixStr());
@@ -496,10 +497,10 @@ public final class MmpProtocol extends Account {
                         break;
                     case MmpCommand.SPAM_REPORT_ACK:
                         IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
-                        XmppMailRuProtocol.removeQueuedCommand(this, seqNum);
+                        removeQueuedCommand(seqNum);
                         break;
                     case MmpCommand.SEARCH_RESPONSE:
-                        XmppMailRuProtocol.handleMmpResponse(this, packet, seqNum, flags);
+                        handleMmpResponse(packet, seqNum, flags);
                         break;
                 }
                 AppController.needsLayoutUpdate = true;
@@ -693,7 +694,7 @@ public final class MmpProtocol extends Account {
         }
         this.configFlags = i;
         if (isConnected()) {
-            trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
+            trySendData(sendContactListRequest(this.groupSequenceId));
             trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.integerOf(17)}));
             return trySendData(ProtocolFactory.createAuthData(this));
         }
@@ -977,7 +978,7 @@ public final class MmpProtocol extends Account {
         if (!isConnected()) {
             return 0;
         }
-        trySendData(XmppMailRuProtocol.sendContactListRequest(this, this.groupSequenceId));
+        trySendData(sendContactListRequest(this.groupSequenceId));
         return ScreenId.CONTACT_LIST;
     }
 
@@ -990,7 +991,514 @@ public final class MmpProtocol extends Account {
 
     @Override // p000.Account
     /* renamed from: p */
-    public final int mo110p() {
+    public final int getSessionStringKey() {
         return 197381;
+    }
+
+    public final ByteBuffer sendContactListRequest(int i) {
+        return queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, new ByteBuffer().writeIntLE(0).writeShortBE(i).writeShortBE(4).writeShortBE(5).writeShortBE(202).writeShortBE(1).writeByte(getPendingVersion())), ResourceManager.integerOf(20)});
+    }
+
+    public final void removeQueuedCommand(int i) {
+        Vector vector = this.extras;
+        int size = vector.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                return;
+            }
+            if (((Integer) ((Object[]) vector.elementAt(size))[0]).intValue() == i) {
+                vector.removeElementAt(size);
+            }
+        }
+    }
+
+    public final void handleMmpResponse(ByteBuffer buf, int i, int i2) {
+        Object[] objArr;
+        boolean z = false;
+        boolean z2;
+        MmpContactGroup group;
+        Vector vector = this.extras;
+        int size = vector.size();
+        do {
+            size--;
+            if (size < 0) {
+                return;
+            } else {
+                objArr = (Object[]) vector.elementAt(size);
+            }
+        } while (((Integer) objArr[0]).intValue() != i);
+        boolean z3 = true;
+        switch (((Integer) objArr[1]).intValue()) {
+            case 0:
+                int status = buf.readShortBE();
+                if (status == 0) {
+                    ((MmpContact) objArr[2]).setDisplayName((String) objArr[3]);
+                } else {
+                    IOUtils.postRenameError(objArr, status);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 1:
+                int status2 = buf.readShortBE();
+                if (status2 == 0) {
+                    ((MmpContactGroup) objArr[2]).setNameIfChanged((String) objArr[3]);
+                } else {
+                    IOUtils.postRenameError(objArr, status2);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 2:
+                int status3 = buf.readShortBE();
+                if (status3 == 0) {
+                    removeGroup((ContactGroup) objArr[2]);
+                    trySendData(ResourceManager.createSyncGroupsCmd(this));
+                } else {
+                    IOUtils.postDeleteError(objArr, status3);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 3:
+                int status4 = buf.readShortBE();
+                if (status4 == 0) {
+                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                } else {
+                    IOUtils.postOperationError(status4);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 4:
+                int status5 = buf.readShortBE();
+                if (status5 == 0) {
+                    addGroup(new MmpContactGroup(this, ((Integer) objArr[3]).intValue(), (String) objArr[2]));
+                    trySendData(ResourceManager.createSyncGroupsCmd(this));
+                } else {
+                    IOUtils.postAddGroupError(objArr, status5);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 5:
+                int status6 = buf.readShortBE();
+                if (status6 == 0) {
+                    removeContact((Contact) objArr[2], true);
+                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                } else {
+                    IOUtils.postDeleteError(objArr, status6);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 6:
+                boolean z4 = (i2 & 1) == 0;
+                buf.skip(1);
+                Vector results = ObjectPool.newVector();
+                int contactCount = buf.readShortBE();
+                for (int i3 = 0; i3 < contactCount; i3++) {
+                    String name = buf.readVarLenStr();
+                    int groupId = buf.readShortBE();
+                    int contactId = buf.readShortBE();
+                    int entryType = buf.readShortBE();
+                    int dataRemaining = buf.readShortBE();
+                    switch (entryType) {
+                        case 0:
+                            String displayName = name;
+                            boolean z5 = false;
+                            while (dataRemaining > 0) {
+                                int attrType = buf.readShortBE();
+                                int dataLen = buf.peekShortBE(0);
+                                if (attrType == 305) {
+                                    displayName = buf.readVarLenStr();
+                                } else {
+                                    if (attrType == 102) {
+                                        z5 = true;
+                                    }
+                                    buf.skip(dataLen + 2);
+                                }
+                                dataRemaining -= dataLen + 4;
+                            }
+                            results.addElement(new MmpContact(this, contactId, groupId, name, displayName, z5));
+                            continue;
+                        case 1:
+                            if (groupId != 0) {
+                                this.groups.addElement(new MmpContactGroup(this, groupId, name));
+                            }
+                            buf.skip(dataRemaining);
+                            continue;
+                        case 2:
+                            this.contactsByIdMap.put(name, ResourceManager.integerOf(contactId));
+                            buf.skip(dataRemaining);
+                            continue;
+                        case 3:
+                            this.contactGroupsMap.put(name, ResourceManager.integerOf(contactId));
+                            buf.skip(dataRemaining);
+                            continue;
+                        case 4:
+                            break;
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        default:
+                            buf.skip(dataRemaining);
+                            continue;
+                        case 14:
+                            this.additionalDataMap.put(name, ResourceManager.integerOf(contactId));
+                            buf.skip(dataRemaining);
+                            continue;
+                    }
+                    while (dataRemaining > 0) {
+                        if (buf.readShortBE() == 202) {
+                            this.groupSequenceId = contactId;
+                        }
+                        int entryLen = buf.readShortBE();
+                        buf.skip(entryLen);
+                        dataRemaining -= entryLen + 4;
+                    }
+                }
+                this.contactListIndex = contactCount;
+                int size2 = results.size();
+                while (true) {
+                    size2--;
+                    if (size2 < 0) {
+                        if (z4) {
+                            sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.CONTACT_LIST_ACK, (ByteBuffer) null));
+                            int i4 = this.groupSequenceId;
+                            if (i4 != 0) {
+                                sendData(sendContactListRequest(i4));
+                            }
+                            sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_TRANSFER_HEADER)));
+                            sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(this.serverId).writeShortLE(60).writeShortBE(0)), ResourceManager.integerOf(8)}));
+                            Enumeration elements = this.contactMap.elements();
+                            while (elements.hasMoreElements()) {
+                                Hashtable hashtable = this.contactsByIdMap;
+                                MmpContact mmpContact = (MmpContact) elements.nextElement();
+                                Object obj = hashtable.get(mmpContact.identifier);
+                                if (null != obj) {
+                                    mmpContact.canDelete = ((Integer) obj).intValue();
+                                }
+                                Object obj2 = this.contactGroupsMap.get(mmpContact.identifier);
+                                if (null != obj2) {
+                                    mmpContact.canBlock = ((Integer) obj2).intValue();
+                                }
+                                Object obj3 = this.additionalDataMap.get(mmpContact.identifier);
+                                if (null != obj3) {
+                                    mmpContact.canUnblock = ((Integer) obj3).intValue();
+                                }
+                            }
+                            this.contactsByIdMap.clear();
+                            this.contactGroupsMap.clear();
+                            this.additionalDataMap.clear();
+                            if (this.groups.size() == 0) {
+                                sendData(ResourceManager.sendAddGroupCommand(this, AppState.getString(StateKeys.STR_RES_MENU_ITEM_2)));
+                            }
+                            this.progress = PROGRESS_CONNECTED;
+                            this.msgCount = PROGRESS_CONNECTED;
+                        }
+                        ObjectPool.releaseVector(results);
+                        z = z4;
+                        z3 = z;
+                        break;
+                    } else {
+                        MmpContact mmpContact2 = (MmpContact) results.elementAt(size2);
+                        int i5 = mmpContact2.onlineSemaphore;
+                        int size3 = this.groups.size();
+                        while (true) {
+                            size3--;
+                            if (size3 < 0) {
+                                group = null;
+                                break;
+                            } else {
+                                MmpContactGroup group2 = (MmpContactGroup) getGroup(size3);
+                                if (group2.groupId == i5) {
+                                    group = group2;
+                                    break;
+                                }
+                            }
+                        }
+                        MmpContactGroup group3 = group;
+                        if (null != group) {
+                            group3.addContact((Object) mmpContact2);
+                        }
+                    }
+                }
+            case 7:
+                buf.skip(10);
+                if (buf.readShortLE() == 2010) {
+                    buf.readShortLE();
+                    int subType = buf.readShortLE();
+                    buf.readByte();
+                    ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_REG_PARAM_2];
+                    ContactInfo contactInfo2 = contactInfo;
+                    if (contactInfo == null) {
+                        contactInfo2 = ContactInfo.createAccountInfo(this);
+                    }
+                    switch (subType) {
+                        case 200:
+                            String nickName = buf.readPascalStr();
+                            ContactInfo contactInfo3 = contactInfo2.setDisplayName(nickName).setFirstName(buf.readPascalStr()).setLastName(buf.readPascalStr()).setEmailAddress(buf.readPascalStr()).setCustomField1(buf.readPascalStr());
+                            buf.readPascalStr();
+                            contactInfo3.setJobTitle(buf.readPascalStr()).setCustomField2(buf.readPascalStr()).setCustomField3(buf.readPascalStr()).setCustomField4(buf.readPascalStr());
+                            if (this.serverId == ((Integer) objArr[2]).intValue()) {
+                                setDisplayName(nickName);
+                                break;
+                            }
+                            break;
+                        case 220:
+                            ContactInfo contactInfo4 = contactInfo2.setAge(buf.readShortLE()).setMaritalStatus(buf.readByte()).setCustomField6(buf.readPascalStr());
+                            int birthYear = buf.readShortLE();
+                            byte birthDay = buf.readByte();
+                            byte birthMonth = buf.readByte();
+                            if (birthMonth >= 0) {
+                                contactInfo4.setCompany(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(birthMonth + 1)).append('/').append(Utils.zeroPad(birthDay)).append('/').append(birthYear)));
+                                break;
+                            }
+                            break;
+                        case 230:
+                            contactInfo2.setCustomField5(buf.readPascalStr());
+                            break;
+                    }
+                    boolean z6 = (i2 & 1) == 0;
+                    boolean z7 = z6;
+                    if (z6) {
+                        AppState.pool[StateKeys.SLOT_REG_PARAM_1] = AppState.pool[StateKeys.SLOT_REG_PARAM_2];
+                        AppState.pool[StateKeys.SLOT_REG_PARAM_1] = AppState.pool[StateKeys.SLOT_REG_PARAM_2];
+                        AppState.clearIndex(StateKeys.SLOT_REG_PARAM_2);
+                    }
+                    z = z7;
+                } else {
+                    z = true;
+                }
+                z3 = z;
+                break;
+            case 8:
+                int i6 = this.reserved1;
+                this.reserved1 = i6 + 1;
+                if (0 != i6) {
+                    AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 0);
+                }
+                buf.skip(10);
+                int subType3 = buf.readShortLE();
+                buf.readShortLE();
+                switch (subType3) {
+                    case 65:
+                        int resultCode = buf.readInt();
+                        int year = buf.readShortLE();
+                        byte month = buf.readByte();
+                        byte dayOfYear = buf.readByte();
+                        byte hour = buf.readByte();
+                        byte minute = buf.readByte();
+                        byte b = (year % 4 != 0 || year == 2000) ? (byte) 28 : (byte) 29;
+                        int i7 = (((((year - 1970) * 365) + ((year - 1968) / 4)) + dayOfYear) + 28) - b;
+                        if (year >= 2000) {
+                            i7--;
+                        }
+                        byte[] monthDays = AppState.getBytes(StateKeys.RES_MONTH_DAYS);
+                        int i8 = 0;
+                        while (i8 < month - 1) {
+                            i7 += i8 == 1 ? b : monthDays[i8];
+                            i8++;
+                        }
+                        long j = 1000 * ((86400 * i7) + (hour * 3600) + (minute * 60));
+                        buf.readShortBE();
+                        if (resultCode != 1004) {
+                            onMessage(Integer.toString(resultCode), j, buf.readModifiedStr());
+                        }
+                        z = false;
+                        break;
+                    case 66:
+                        AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
+                        trySendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(this.serverId).writeShortLE(62).writeShortBE(0)));
+                        break;
+                    default:
+                        z = false;
+                        break;
+                }
+                z3 = z;
+                break;
+            case 9:
+                Vector searchResults = AppState.getVector(StateKeys.SLOT_REG_PARAM_3);
+                buf.skip(10);
+                if (buf.readShortLE() == 2010) {
+                    buf.readShortLE();
+                    int subType5 = buf.readShortLE();
+                    if ((420 == subType5 || 430 == subType5) && buf.readByte() == 10) {
+                        buf.readShortBE();
+                        ContactInfo searchResult = ContactInfo.createAccountInfo(this).setMmpContactId(buf.readInt()).setDisplayName(buf.readPascalStr()).setFirstName(buf.readPascalStr()).setLastName(buf.readPascalStr()).setEmailAddress(buf.readPascalStr());
+                        buf.readByte();
+                        searchResults.addElement(searchResult.setMmpTypeId(buf.readShortLE()).setMaritalStatus(buf.readByte()).setAge(buf.readShortLE()));
+                    }
+                    if (subType5 == 430) {
+                        AppState.pool[StateKeys.SLOT_REG_PARAM_4] = AppState.getVector(StateKeys.SLOT_REG_PARAM_3);
+                        AppState.clearIndex(StateKeys.SLOT_REG_PARAM_3);
+                        z2 = true;
+                        z3 = z2;
+                        break;
+                    } else {
+                        z2 = false;
+                        z3 = z2;
+                    }
+                } else {
+                    z2 = true;
+                    z3 = z2;
+                }
+                break;
+            case 10:
+                int status14 = buf.readShortBE();
+                if (status14 == 0) {
+                    MmpContact mmpContact3 = (MmpContact) objArr[2];
+                    MmpContactGroup srcGroup4 = (MmpContactGroup) objArr[3];
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, srcGroup4.createUpdatePacket(srcGroup4.name, mmpContact3.userId, -1)), ResourceManager.integerOf(11), mmpContact3, srcGroup4, objArr[4]}));
+                } else {
+                    IOUtils.postRenameError(objArr, status14);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 11:
+                int status15 = buf.readShortBE();
+                if (status15 == 0) {
+                    MmpContact mmpContact4 = (MmpContact) objArr[2];
+                    Object obj4 = objArr[3];
+                    MmpContactGroup destGroup5 = (MmpContactGroup) objArr[4];
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, mmpContact4.encodeContactUpdate(4, mmpContact4.displayName, destGroup5.groupId)), ResourceManager.integerOf(12), mmpContact4, obj4, destGroup5}));
+                } else {
+                    IOUtils.postRenameError(objArr, status15);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 12:
+                int status16 = buf.readShortBE();
+                if (status16 == 0) {
+                    MmpContact mmpContact5 = (MmpContact) objArr[2];
+                    Object obj5 = objArr[3];
+                    MmpContactGroup destGroup6 = (MmpContactGroup) objArr[4];
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup6.createUpdatePacket(destGroup6.name, -1, mmpContact5.userId)), ResourceManager.integerOf(13), mmpContact5, obj5, destGroup6}));
+                } else {
+                    IOUtils.postRenameError(objArr, status16);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 13:
+                int status17 = buf.readShortBE();
+                if (status17 == 0) {
+                    MmpContactGroup srcGroup7 = (MmpContactGroup) objArr[3];
+                    MmpContact mmpContact6 = (MmpContact) objArr[2];
+                    srcGroup7.removeElement(mmpContact6);
+                    MmpContactGroup destGroup8 = (MmpContactGroup) objArr[4];
+                    destGroup8.addContact((Object) mmpContact6);
+                    mmpContact6.onlineSemaphore = destGroup8.groupId;
+                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                } else {
+                    IOUtils.postRenameError(objArr, status17);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 14:
+                int status18 = buf.readShortBE();
+                if (status18 == 0) {
+                    MmpContactGroup destGroup9 = (MmpContactGroup) objArr[4];
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup9.createUpdatePacket(destGroup9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.integerOf(15), objArr[2], objArr[3], destGroup9, objArr[5], objArr[6]}));
+                } else {
+                    IOUtils.postRenameError(objArr, status18);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 15:
+                int status19 = buf.readShortBE();
+                if (status19 == 0) {
+                    MmpContactGroup destGroup10 = (MmpContactGroup) objArr[4];
+                    MmpContact mmpContact7 = new MmpContact(this, ((Integer) objArr[5]).intValue(), destGroup10.groupId, (String) objArr[2], (String) objArr[3], true);
+                    destGroup10.addContact((Object) mmpContact7);
+                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(ResourceManager.createGetContactsCmd(this));
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, mmpContact7.encodeContactUpdate(5, mmpContact7.displayName, mmpContact7.onlineSemaphore)), ResourceManager.integerOf(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], mmpContact7}));
+                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                } else {
+                    IOUtils.postRenameError(objArr, status19);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 16:
+                int status20 = buf.readShortBE();
+                if (status20 == 0) {
+                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(IOUtils.createSendMessageCmd(this, (MmpContact) objArr[7], (String) objArr[6]));
+                } else {
+                    IOUtils.postRenameError(objArr, status20);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 17:
+                this.lastError = this.configFlags & 65535;
+                z3 = z;
+                break;
+            case 18:
+                int status21 = buf.readShortBE();
+                if (status21 == 0) {
+                    ((MmpContact) objArr[2]).updatePermissionFlags(((Integer) objArr[3]).intValue(), ((Integer) objArr[4]).intValue());
+                } else {
+                    IOUtils.postRenameError(objArr, status21);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 19:
+                int status22 = buf.readShortBE();
+                if (status22 == 0) {
+                    ((MmpContact) objArr[2]).updatePermissionFlags(((Integer) objArr[3]).intValue(), 0);
+                } else {
+                    IOUtils.postRenameError(objArr, status22);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 20:
+                int status23 = buf.readShortBE();
+                if (status23 != 0) {
+                    IOUtils.postOperationError(status23);
+                }
+                z = true;
+                z3 = z;
+                break;
+            case 21:
+                buf.skip(10);
+                if (buf.readShortLE() == 2010) {
+                    buf.readShortLE();
+                    int subType6 = buf.readShortLE();
+                    if ((420 == subType6 || 430 == subType6) && buf.readByte() == 10) {
+                        buf.readShortBE();
+                        ContactInfo searchResult2 = ContactInfo.createAccountInfo(this).setMmpContactId(buf.readInt()).setDisplayName(buf.readPascalStr()).setFirstName(buf.readPascalStr()).setLastName(buf.readPascalStr()).setEmailAddress(buf.readPascalStr());
+                        buf.readByte();
+                        ContactInfo searchResult3 = searchResult2.setMmpTypeId(buf.readShortLE()).setMaritalStatus(buf.readByte()).setAge(buf.readShortLE());
+                        MmpContact mmpContact8 = (MmpContact) this.contactMap.get(searchResult3.getString(60));
+                        if (null != mmpContact8) {
+                            mmpContact8.setDisplayName(searchResult3.getDisplayNameOrId());
+                        }
+                    }
+                    z = subType6 == 430;
+                    z3 = z;
+                    break;
+                }
+                break;
+        }
+        if (z3) {
+            vector.removeElementAt(size);
+        }
     }
 }

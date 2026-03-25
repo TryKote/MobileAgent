@@ -6,7 +6,6 @@ import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
-import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.util.*;
 
 import javax.microedition.lcdui.Image;
@@ -103,7 +102,7 @@ public final class ServiceRegistry {
             if (image2 == null) {
                 try {
                     Hashtable hashtable = photoCache;
-                    Image imageM1348r = XmppMailRuProtocol.readChunkedRecord(StringUtils.concat("upi", str)).toImage();
+                    Image imageM1348r = ChunkedRecordStore.readChunkedRecord(StringUtils.concat("upi", str)).toImage();
                     image3 = imageM1348r;
                     hashtable.put(str, imageM1348r);
                 } catch (Throwable unused) {

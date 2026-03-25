@@ -162,7 +162,7 @@ public abstract class ChatRenderer {
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
         int themeIdx = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
-        graphics.setColor(AppState.getInt(themeIdx + 5050));
+        graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
         int arrowSize = Utils.min(boxWidth / 25, 3);
         int arrowH = arrowSize << 1;
         int boxX = i2 - (boxWidth / 2);
@@ -171,12 +171,12 @@ public abstract class ChatRenderer {
         graphics.setColor(0);
         graphics.drawRoundRect(boxX, boxY, boxWidth, i4, 10, 10);
         graphics.setFont(font);
-        graphics.setColor(AppState.getInt(themeIdx + 4914));
+        graphics.setColor(AppState.getInt(PaletteKeys.COLORS_BASE + themeIdx));
         int i8 = size;
         while (true) {
             i8--;
             if (i8 < 0) {
-                graphics.setColor(AppState.getInt(themeIdx + 5050));
+                graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
                 graphics.fillTriangle(i2 + arrowSize, i3 - (arrowSize << 1), i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
                 graphics.setColor(0);
                 graphics.drawLine(i2 + arrowSize, i3 - (arrowSize << 1), i2, i3);
@@ -241,7 +241,7 @@ public abstract class ChatRenderer {
             i14 = iStringWidth;
         }
         int themeIdx = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
-        graphics.setColor(AppState.getInt(themeIdx + 5050));
+        graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
         int i15 = i14 / 25;
         int i16 = i15;
         if (i15 < 3) {
@@ -267,7 +267,7 @@ public abstract class ChatRenderer {
             gfx.drawIcon(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
         }
         graphics.setFont(font);
-        graphics.setColor(AppState.getInt(themeIdx + 4914));
+        graphics.setColor(AppState.getInt(PaletteKeys.COLORS_BASE + themeIdx));
         for (int i19 = 0; i19 < size; i19++) {
             graphics.drawString((String) textLines.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
         }
@@ -286,7 +286,7 @@ public abstract class ChatRenderer {
             graphics.drawImage(buttonImage, i20, i21, 6);
             graphics.drawString(AppState.getString(StateKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
         }
-        graphics.setColor(AppState.getInt(themeIdx + 5050));
+        graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
         graphics.setColor(0);
         graphics.drawLine(i9 + i16, i10 - i18, i9, i10);

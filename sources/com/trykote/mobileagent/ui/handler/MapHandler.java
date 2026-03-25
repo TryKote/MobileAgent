@@ -62,7 +62,7 @@ public final class MapHandler extends BaseScreenHandler {
                     }
                 }
             case ScreenId.MAP_CONTEXT_MENU:
-                XmppMailRuProtocol.showMapContextMenu();
+                MapController.showMapContextMenu();
                 break;
             case ScreenId.SAVE_LOCATION:
                 AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_2, (Object) AppState.emptyStr);
@@ -135,7 +135,7 @@ public final class MapHandler extends BaseScreenHandler {
                 nextScreen = AppController.handleMapSearchAction(obj);
                 break;
             case ScreenId.MAP_CONTEXT_MENU:
-                nextScreen = XmppMailRuProtocol.handleMapAction(action);
+                nextScreen = MapController.handleMapAction(action);
                 break;
             case ScreenId.SAVE_LOCATION:
                 ScreenManager.processScreenForm();
@@ -290,7 +290,7 @@ public final class MapHandler extends BaseScreenHandler {
                 AppState.clearIndex(StateKeys.SLOT_SEARCH_QUERY);
                 break;
             case ScreenId.MAP_CONTEXT_MENU:
-                XmppMailRuProtocol.mapContextItem = null;
+                MapController.mapContextItem = null;
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
                 AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
@@ -335,7 +335,7 @@ public final class MapHandler extends BaseScreenHandler {
                 actionResult = AppController.handleMapSearchAction(data);
                 break;
             case ScreenId.MAP_CONTEXT_MENU:
-                actionResult = XmppMailRuProtocol.handleMapAction(selectedOption);
+                actionResult = MapController.handleMapAction(selectedOption);
                 break;
             case ScreenId.SAVE_LOCATION:
                 actionResult = 0;

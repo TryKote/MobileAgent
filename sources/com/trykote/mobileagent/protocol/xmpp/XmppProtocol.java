@@ -119,12 +119,12 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: f */
-    public boolean mo83f() {
+    public boolean isMailRuVariant() {
         return false;
     }
 
     /* renamed from: j */
-    public String mo84j() {
+    public String getStreamDomain() {
         return StringUtils.getDomain(this.login);
     }
 
@@ -239,7 +239,7 @@ public class XmppProtocol extends Account {
                 break;
             case PROGRESS_STARTING:
                 this.msgCount = 10;
-                if (mo83f()) {
+                if (isMailRuVariant()) {
                     if (Utils.nonEmpty(this.serverResourceId)) {
                         this.progress = PROGRESS_CONNECTING;
                     } else {
@@ -267,7 +267,7 @@ public class XmppProtocol extends Account {
                 break;
             case PROGRESS_RESOLVING:
                 this.msgCount = 20;
-                if (mo83f()) {
+                if (isMailRuVariant()) {
                     if (Utils.nonEmpty(this.serverResourceId)) {
                         this.progress = PROGRESS_CONNECTING;
                     } else if (this.lastException != null) {
@@ -305,7 +305,7 @@ public class XmppProtocol extends Account {
                         new AsyncTask(AsyncTaskId.PROCESS_XMPP_STREAM, parserArgs);
                         this.parserState = parserArgs;
                         AppController.needsRepaint = true;
-                        sendPresenceSubscription();
+                        sendStreamHeader();
                     } else if (this.connection.getState() <= ConnectionThread.STATE_CLOSED) {
                         closeConnection();
                     }
@@ -366,7 +366,7 @@ public class XmppProtocol extends Account {
                             int idx = decoded.indexOf(AppState.getString(StateKeys.STR_RES_LABEL_TEXT_1));
                             if (idx >= 0) {
                                 int nonceStart = idx + 7;
-                                String username = mo128m();
+                                String username = getAuthUsername();
                                 String password = this.password;
                                 String realm = this.serverAddress;
                                 String nonce = StringUtils.substring(decoded, nonceStart, decoded.indexOf(34, nonceStart));
@@ -376,7 +376,7 @@ public class XmppProtocol extends Account {
                             }
                             sendXmlElement(challengeResponse);
                         } else if (StringUtils.matchesKey(PackedStringKeys.TAG_SUCCESS, tagName)) {
-                            sendPresenceSubscription();
+                            sendStreamHeader();
                         } else if (StringUtils.matchesKey(PackedStringKeys.TAG_PRESENCE, tagName)) {
                             String nameAttr = element.getNameAttr();
                             String presenceType = nameAttr != null ? nameAttr : AppState.getString(StateKeys.STR_RES_XMPP_STANZA_1);
@@ -532,7 +532,7 @@ public class XmppProtocol extends Account {
                 return;
         }
         if (isConnected()) {
-            sendError(statusMode);
+            sendPresence(statusMode);
             return;
         }
         this.configFlags = statusMode;
@@ -543,8 +543,8 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: h */
-    private final void sendError(int i) {
-        if (mo83f()) {
+    private final void sendPresence(int i) {
+        if (isMailRuVariant()) {
             i = 1;
         }
         this.lastError = i;
@@ -589,7 +589,7 @@ public class XmppProtocol extends Account {
         if (result != 0) {
             return result;
         }
-        if (mo83f()) {
+        if (isMailRuVariant()) {
             this.serverResourceId = AppState.emptyStr;
             return 0;
         }
@@ -601,7 +601,7 @@ public class XmppProtocol extends Account {
     public final int setStatusMode(int i) {
         this.configFlags = i;
         if (isConnected()) {
-            sendError(i);
+            sendPresence(i);
             return 0;
         }
         if (isConnecting()) {
@@ -644,13 +644,13 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: u */
-    private void sendPresenceSubscription() {
-        sendRawBytes(new ByteBuffer().writeCompressed(PackedStringKeys.XML_XMPP_STREAM_HEADER).writeRawString(mo84j()).writeCompressed(PackedStringKeys.XML_CLOSE_TAG_END).toByteArray());
+    private void sendStreamHeader() {
+        sendRawBytes(new ByteBuffer().writeCompressed(PackedStringKeys.XML_XMPP_STREAM_HEADER).writeRawString(getStreamDomain()).writeCompressed(PackedStringKeys.XML_CLOSE_TAG_END).toByteArray());
     }
 
     @Override // p000.Account
     /* renamed from: p */
-    public int mo110p() {
+    public int getSessionStringKey() {
         return 398518;
     }
 
@@ -896,7 +896,7 @@ public class XmppProtocol extends Account {
     }
 
     /* renamed from: m */
-    public String mo128m() {
+    public String getAuthUsername() {
         return this.shortName;
     }
 

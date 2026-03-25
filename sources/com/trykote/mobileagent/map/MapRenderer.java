@@ -279,11 +279,11 @@ public abstract class MapRenderer {
                     Font labelFont = AppState.getFont();
                     graphics.setFont(labelFont);
                     int colorScheme = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
-                    graphics.setColor(AppState.getInt(StateKeys.PALETTE_MAP_BASE + colorScheme));
+                    graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + colorScheme));
                     int labelWidth = labelFont.stringWidth(str) + 10;
                     int labelHeight = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
                     graphics.fillRoundRect(5, 5, labelWidth, labelHeight, 10, 10);
-                    graphics.setColor(AppState.getInt(colorScheme + 4914));
+                    graphics.setColor(AppState.getInt(PaletteKeys.COLORS_BASE + colorScheme));
                     graphics.drawRoundRect(5, 5, labelWidth, labelHeight, 10, 10);
                     graphics.drawString(str, 10, 5, 20);
                     graphics.setFont(font);
@@ -631,11 +631,11 @@ public abstract class MapRenderer {
                 graphics.setFont(zoomFont);
                 int fontHeight = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
                 int schemeIndex = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
-                int borderColor = AppState.getInt(schemeIndex + 4914);
+                int borderColor = AppState.getInt(PaletteKeys.COLORS_BASE + schemeIndex);
                 int i70 = fontHeight > 18 ? fontHeight : 18;
                 int clipHeight = (graphics.getClipHeight() - i70) - 1;
                 if (showDetails) {
-                    graphics.setColor(AppState.getInt(schemeIndex + 5050));
+                    graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + schemeIndex));
                     graphics.fillRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
                 }
                 graphics.setColor(borderColor);
@@ -671,7 +671,7 @@ public abstract class MapRenderer {
                 if (elapsed >= 200) {
                     int i74 = elapsed < 300 ? 40 : elapsed < 400 ? 80 : elapsed < 500 ? 120 : 140;
                     int color5 = graphics.getColor();
-                    graphics.setColor(AppState.getInt(StateKeys.PALETTE_MAP_BASE + AppState.getInt(StateKeys.SETTING_COLOR_THEME)));
+                    graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + AppState.getInt(StateKeys.SETTING_COLOR_THEME)));
                     int i75 = i74;
                     graphics.fillArc(i72 - (i74 / 2), i73 - (i74 / 2), i75, i74, 0, 360);
                     graphics.setColor(color5);

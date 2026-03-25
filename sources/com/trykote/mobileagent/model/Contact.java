@@ -235,7 +235,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void updateMessageFlag(long j, int i) {
         this.dirty = true;
-        ByteBuffer msgBuf = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
+        ByteBuffer msgBuf = this.messageBuffer == null ? ChunkedRecordStore.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = msgBuf;
         int i2 = msgBuf.length;
         int i3 = 0;
@@ -257,7 +257,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void appendMessage(int i, String str, long j, long j2) {
         this.dirty = true;
-        ByteBuffer msgBuf = this.messageBuffer == null ? XmppMailRuProtocol.readChunkedRecord(this.identifier) : this.messageBuffer;
+        ByteBuffer msgBuf = this.messageBuffer == null ? ChunkedRecordStore.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = msgBuf;
         int maxCount = AppState.getInt(StateKeys.SETTING_MAX_CONTACTS) - 1;
         ByteBuffer buffer = this.messageBuffer;
@@ -309,7 +309,7 @@ public abstract class Contact implements Sortable {
         String str = this.displayName;
         AppState.setObject(StateKeys.SLOT_CURRENT_MSG_TEXT, (Object) str);
         int icon = getIcon();
-        if ((this instanceof XmppContact) && ((XmppProtocol) this.account).mo83f() && icon >= 381 && icon <= 384) {
+        if ((this instanceof XmppContact) && ((XmppProtocol) this.account).isMailRuVariant() && icon >= 381 && icon <= 384) {
             icon += 4;
         }
         AppState.setInt(StateKeys.INT_MESSAGE_ICON, icon);
@@ -362,14 +362,14 @@ public abstract class Contact implements Sortable {
     /* renamed from: f */
     private final ByteBuffer getMessageBuffer() {
         if (this.messageBuffer == null) {
-            this.messageBuffer = XmppMailRuProtocol.readChunkedRecord(this.identifier);
+            this.messageBuffer = ChunkedRecordStore.readChunkedRecord(this.identifier);
         }
         return this.messageBuffer;
     }
 
     /* renamed from: o */
     private final void saveMessageBuffer() {
-        XmppMailRuProtocol.writeChunkedRecord(this.identifier, getMessageBuffer().duplicate());
+        ChunkedRecordStore.writeChunkedRecord(this.identifier, getMessageBuffer().duplicate());
     }
 
     /* renamed from: J */

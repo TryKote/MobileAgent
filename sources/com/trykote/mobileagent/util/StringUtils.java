@@ -285,10 +285,10 @@ public final class StringUtils {
             objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(StateKeys.INT_XMPP_TRAFFIC_BYTES))).toString();
             XmppContactGroup.addContactInfoToQueue(objArr);
             try {
-                Image cachedImage = (tileReq.tileType == 1 && AppState.getBool(StateKeys.FLAG_TILE_CACHE_ENABLED)) ? XmppMailRuProtocol.loadTileFromCache(tileReq) : null;
+                Image cachedImage = (tileReq.tileType == 1 && AppState.getBool(StateKeys.FLAG_TILE_CACHE_ENABLED)) ? TileCache.loadTileFromCache(tileReq) : null;
                 tileImage = cachedImage;
                 if (cachedImage == null) {
-                    tileImage = XmppMailRuProtocol.fetchTileImage(tileReq);
+                    tileImage = TileCache.fetchTileImage(tileReq);
                 }
             } catch (IOException unused2) {
                 int i3 = i;

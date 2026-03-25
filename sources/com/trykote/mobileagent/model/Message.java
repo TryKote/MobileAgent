@@ -51,8 +51,8 @@ public final class Message {
     public Message(Hashtable hashtable) {
         this.from = JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_3));
         this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_SEMICOLON)) * 1000;
-        this.toList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_HEADER_NAME_2)));
-        this.ccList = XmppMailRuProtocol.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_INFO_PREFIX)));
+        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_HEADER_NAME_2)));
+        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StateKeys.STR_RES_INFO_PREFIX)));
         this.priority = JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_XMPP_NAMESPACE_1));
         setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_5)) != 0);
         setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_4)) != 0);
@@ -61,7 +61,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        this.toList = XmppMailRuProtocol.addUniqueAddress(ObjectPool.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.accountNickname)));
+        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.accountNickname)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;
@@ -70,8 +70,8 @@ public final class Message {
     public Message(ByteBuffer buffer, String str) {
         this.from = str;
         this.timestamp = buffer.readLong();
-        this.toList = XmppMailRuProtocol.readAddressPairs(buffer);
-        this.ccList = XmppMailRuProtocol.readAddressPairs(buffer);
+        this.toList = MailHelper.readAddressPairs(buffer);
+        this.ccList = MailHelper.readAddressPairs(buffer);
         this.priority = buffer.readInt();
         this.flags = buffer.readInt();
         this.subject = buffer.readUTF8Str((String) null);
@@ -142,11 +142,11 @@ public final class Message {
         }
         int i7 = roomType;
         boolean z3 = false;
-        if ((i7 & 1) != 0 && (toRecipient = XmppMailRuProtocol.getFirstRecipient(getToList())) != null) {
+        if ((i7 & 1) != 0 && (toRecipient = MailHelper.getFirstRecipient(getToList())) != null) {
             mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
             z3 = true;
         }
-        if ((i7 & 2) != 0 && (ccRecipient = XmppMailRuProtocol.getFirstRecipient(getCcList())) != null) {
+        if ((i7 & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
             mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
         }
         boolean z4 = chatRoom == account.getLastChatRoom();
@@ -219,7 +219,7 @@ public final class Message {
     /* renamed from: e */
     public final Object toHashtable() {
         Hashtable hashtable = new Hashtable();
-        String[] ccRecipient = XmppMailRuProtocol.getFirstRecipient(this.toList);
+        String[] ccRecipient = MailHelper.getFirstRecipient(this.toList);
         if (ccRecipient != null) {
             hashtable.put(AppState.getString(StateKeys.STR_RES_OPEN_TAG), ccRecipient[1]);
         }

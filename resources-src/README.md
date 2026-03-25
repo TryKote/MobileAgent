@@ -15,6 +15,7 @@ the binary format expected by the application and placed into `build/resources/`
 | File | Description |
 |------|-------------|
 | `config.json` | Main configuration: object pool + screen definitions |
+| `palette.json` | Color palette: 22 entries x 8 themes (auto-injected into cfg) |
 | `cities.xml` | City database in UTF-8 with human-readable tags |
 | `blowfish_constants.bin` | Blowfish S-boxes and P-array (standard pi-derived constants, 1042 ints) |
 | `images/` | PNG images with descriptive names |
@@ -25,7 +26,8 @@ the binary format expected by the application and placed into `build/resources/`
 
 ```
 resources-src/                      build/resources/
-  config.json        --cfg_tool.py---->  cfg          (binary config)
+  config.json  ─┐
+  palette.json ─┴─ cfg_tool.py ──────>  cfg          (binary config)
   cities.xml         --pack_cities.sh->  b            (CP1251 + obfuscated tags)
   images/*.png       --pack_resources.sh-> *.png      (renamed per mapping.json)
   blowfish_constants.bin --pack_resources.sh-> a       (copied as-is)
@@ -41,6 +43,7 @@ resources-src/                      build/resources/
 | `tools/cfg_tool.py --round-trip <cfg> <dir>` | Round-trip verify |
 | `tools/cfg_tool.py --gen-java <dir> <java>` | Generate `PackedStringKeys.java` |
 | `tools/cfg_tool.py --gen-screens <dir> <java>` | Generate `ScreenDef.java` |
+| `tools/cfg_tool.py --gen-palette <dir> <java>` | Generate `PaletteKeys.java` |
 | `tools/pack_cities.sh <out_dir>` | Convert cities.xml (UTF-8 -> CP1251) |
 | `tools/pack_resources.sh <out_dir>` | Copy and rename images per mapping.json |
 
@@ -512,6 +515,81 @@ City database in UTF-8. Converted to CP1251 with obfuscated tags on pack.
 
 ---
 
+## palette.json
+
+Color palette for 8 themes. Each theme is a set of 22 named colors in `#RRGGBB`
+hex format.
+
+### Example: changing the header gradient
+
+Open `palette.json`, find the theme you want to change, edit the hex value:
+
+```jsonc
+{
+  "_": "Theme 0 — Copper",
+  "gradient_start": "#DF9F6F",  // ← change this to "#FF0000" for a red header
+  "gradient_end":   "#FFFFFF",
+  // ...
+}
+```
+
+Then rebuild: `make resources`.
+
+### Themes
+
+| # | Name | Style |
+|---|------|-------|
+| 0 | Copper | Light, warm copper gradient |
+| 1 | Violet | Light, purple gradient |
+| 2 | Mint | Light, green gradient |
+| 3 | Rose | Light, pink gradient |
+| 4 | Silver | Light, gray gradient |
+| 5 | Dark Purple | Dark, purple UI |
+| 6 | Dark Blue | Dark, blue UI |
+| 7 | Sky | Light, soft blue |
+
+### Color roles
+
+| Role | What it colors |
+|------|----------------|
+| `text` | Primary text and map element borders |
+| `background` | Main screen background, active tab fill |
+| `background_alt` | Secondary background (bottom-anchored dialogs) |
+| `link` | Links and highlighted text |
+| `online` | Online status indicator |
+| `away` | Away/idle status indicator |
+| `offline` | Offline status indicator |
+| `accent` | Accent color |
+| `selection_bg` | Background of selected items |
+| `selection_text` | Text of selected items |
+| `separator` | Separator lines between items |
+| `disabled` | Disabled/inactive text |
+| `border` | UI element borders |
+| `scrollbar` | Scrollbar track |
+| `popup_bg` | Popup/tooltip background |
+| `popup_text` | Popup/tooltip text |
+| `gradient_start` | Header gradient top color (also tab bar borders) |
+| `gradient_end` | Header gradient bottom color |
+| `map_fill` | Map tooltip fill (also inactive tab fill) |
+| `map_border` | Map detail panel border |
+| `map_bg` | Map detail panel background |
+| `map_pulse` | Pulsing location circle on map |
+
+When `gradient_start` equals `gradient_end`, the header is a solid color
+(no gradient).
+
+### How to edit
+
+1. Open `palette.json`
+2. Find the theme (0-7)
+3. Change the `#RRGGBB` hex value for any color role
+4. Run `make resources`
+
+To regenerate `PaletteKeys.java` (only needed if you add/remove/rename roles):
+`make palette-keys`
+
+---
+
 ## Русский
 
 # Исходники ресурсов
@@ -525,6 +603,7 @@ City database in UTF-8. Converted to CP1251 with obfuscated tags on pack.
 | Файл | Описание |
 |------|----------|
 | `config.json` | Основная конфигурация: пул объектов + определения экранов |
+| `palette.json` | Цветовая палитра: 22 записи x 8 тем (автоматически встраивается в cfg) |
 | `cities.xml` | База городов в UTF-8 с читаемыми тегами |
 | `blowfish_constants.bin` | S-box'ы и P-array Blowfish (стандартные константы из π, 1042 int) |
 | `images/` | PNG-изображения с описательными именами |
@@ -535,7 +614,8 @@ City database in UTF-8. Converted to CP1251 with obfuscated tags on pack.
 
 ```
 resources-src/                      build/resources/
-  config.json        --cfg_tool.py---->  cfg          (бинарный конфиг)
+  config.json  ─┐
+  palette.json ─┴─ cfg_tool.py ──────>  cfg          (бинарный конфиг)
   cities.xml         --pack_cities.sh->  b            (CP1251 + обфусцированные теги)
   images/*.png       --pack_resources.sh-> *.png      (переименованы по mapping.json)
   blowfish_constants.bin --pack_resources.sh-> a       (копируется как есть)
@@ -551,6 +631,7 @@ resources-src/                      build/resources/
 | `tools/cfg_tool.py --round-trip <cfg> <dir>` | Round-trip верификация |
 | `tools/cfg_tool.py --gen-java <dir> <java>` | Генерация `PackedStringKeys.java` |
 | `tools/cfg_tool.py --gen-screens <dir> <java>` | Генерация `ScreenDef.java` |
+| `tools/cfg_tool.py --gen-palette <dir> <java>` | Генерация `PaletteKeys.java` |
 | `tools/pack_cities.sh <out_dir>` | Конвертация cities.xml (UTF-8 -> CP1251) |
 | `tools/pack_resources.sh <out_dir>` | Копирование и переименование изображений |
 
@@ -1013,3 +1094,78 @@ make jar          # собрать JAR
     </country>
 </countries>
 ```
+
+---
+
+## palette.json
+
+Цветовая палитра для 8 тем. Каждая тема — набор из 22 именованных цветов
+в hex-формате `#RRGGBB`.
+
+### Пример: смена градиента заголовка
+
+Откройте `palette.json`, найдите нужную тему, поменяйте hex-значение:
+
+```jsonc
+{
+  "_": "Theme 0 — Copper",
+  "gradient_start": "#DF9F6F",  // ← замените на "#FF0000" для красного заголовка
+  "gradient_end":   "#FFFFFF",
+  // ...
+}
+```
+
+Пересоберите: `make resources`.
+
+### Темы
+
+| # | Название | Стиль |
+|---|----------|-------|
+| 0 | Copper | Светлая, тёплый медный градиент |
+| 1 | Violet | Светлая, фиолетовый градиент |
+| 2 | Mint | Светлая, зелёный градиент |
+| 3 | Rose | Светлая, розовый градиент |
+| 4 | Silver | Светлая, серый градиент |
+| 5 | Dark Purple | Тёмная, фиолетовый UI |
+| 6 | Dark Blue | Тёмная, синий UI |
+| 7 | Sky | Светлая, мягко-голубая |
+
+### Роли цветов
+
+| Роль | Что красит |
+|------|------------|
+| `text` | Основной текст и рамки элементов на карте |
+| `background` | Фон экрана, заливка активной вкладки |
+| `background_alt` | Вторичный фон (диалоги, привязанные к низу) |
+| `link` | Ссылки и выделенный текст |
+| `online` | Индикатор статуса «в сети» |
+| `away` | Индикатор статуса «отошёл» |
+| `offline` | Индикатор статуса «не в сети» |
+| `accent` | Акцентный цвет |
+| `selection_bg` | Фон выделенных элементов |
+| `selection_text` | Текст выделенных элементов |
+| `separator` | Линии-разделители между пунктами |
+| `disabled` | Неактивный/отключённый текст |
+| `border` | Рамки элементов UI |
+| `scrollbar` | Дорожка скроллбара |
+| `popup_bg` | Фон попапов/тултипов |
+| `popup_text` | Текст попапов/тултипов |
+| `gradient_start` | Верхний цвет градиента заголовка (также рамки вкладок) |
+| `gradient_end` | Нижний цвет градиента заголовка |
+| `map_fill` | Заливка тултипа карты (также фон неактивной вкладки) |
+| `map_border` | Рамка панели деталей карты |
+| `map_bg` | Фон панели деталей карты |
+| `map_pulse` | Пульсирующий круг местоположения на карте |
+
+Когда `gradient_start` совпадает с `gradient_end`, заголовок заливается
+сплошным цветом (без градиента).
+
+### Как редактировать
+
+1. Откройте `palette.json`
+2. Найдите тему (0-7)
+3. Измените hex-значение `#RRGGBB` нужной роли
+4. Запустите `make resources`
+
+Для перегенерации `PaletteKeys.java` (только если добавили/удалили/переименовали роли):
+`make palette-keys`

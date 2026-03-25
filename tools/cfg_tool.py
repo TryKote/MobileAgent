@@ -4,7 +4,7 @@ Tool for serializing/deserializing the MobileAgent cfg resource file.
 
 The cfg file contains:
   - Object pool (1406 entries): strings (CP1251), integers, byte arrays, nulls
-  - Screen data (3601 ints): 136 screen definitions with items and trailing data
+  - Screen data (3605 ints): 136 screen definitions with items and trailing data
     (runtime variable defaults formerly in intPool header are now set in AppState.java)
 
 The packed strings blob (index 295, RES_STRING_DATA) is stored inline in
@@ -19,6 +19,7 @@ Subcommands:
   --round-trip <cfg_path> <input_dir>     Round-trip verify: serialize -> deserialize -> compare
   --gen-java <input_dir> <output_java>    Generate PackedStringKeys.java from config.json
   --gen-screens <input_dir> <output_java> Generate ScreenDef.java from config.json
+  --gen-palette <input_dir> <output_java> Generate PaletteKeys.java from palette.json
 """
 
 import argparse
@@ -28,7 +29,7 @@ import os
 import sys
 
 OBJECT_POOL_SIZE = 1406
-SCREEN_DATA_SIZE = 3601
+SCREEN_DATA_SIZE = 3605
 INT_POOL_HEADER_SIZE = 172
 DELTA_SIZE = 295
 RAW_BYTES_START = 295
@@ -182,33 +183,33 @@ KNOWN_SCREENS = [
     ('FILE_SELECTOR', 4318),
     ('PHOTO_SELECTOR_ALT', 4331),
     ('MAIN_SCREEN', 4369),
-    ('PHOTO_VIEW', 4381),
-    ('REGISTRATION_FORM', 4399),
-    ('REGISTRATION', 4467),
-    ('ERROR_ALERT', 4485),
-    ('CONFIRM_DIALOG', 4497),
-    ('GENERIC_LIST', 4507),
-    ('INPUT_FORM', 4517),
-    ('CONTACT_DETAILS', 4527),
-    ('MESSAGE_PREVIEW', 4537),
-    ('COMPOSE_RECIPIENTS', 4551),
-    ('CHAT_ROOM_CONTEXT', 4589),
-    ('SOFTKEY_MENU', 4633),
-    ('MAIL_MENU', 4667),
-    ('INPUT_DIALOG', 4711),
-    ('GROUP_SELECTOR', 4729),
-    ('NOTIFICATION_OPTIONS', 4747),
-    ('SEARCH_RESULTS', 4769),
-    ('COMPOSE_MESSAGE', 4806),
-    ('THEME_OPTIONS', 4836),
-    ('DIALOG_SCREEN', 4852),
-    ('VERSION_SELECT', 4862),
-    ('VCARD_ACTIONS', 4892),
-    ('FORM_SETTINGS', 5090),
-    ('INVITE_TOS_SCREEN', 5116),
-    ('ASYNC_CONFIRM_SCREEN', 5131),
-    ('WIFI_NETWORKS', 5141),
-    ('CONNECTION_SETTINGS', 5157),
+    ('ACCOUNT_SETUP', 4381),
+    ('REGISTRATION_FORM', 4403),
+    ('REGISTRATION', 4471),
+    ('ERROR_ALERT', 4489),
+    ('CONFIRM_DIALOG', 4501),
+    ('GENERIC_LIST', 4511),
+    ('INPUT_FORM', 4521),
+    ('CONTACT_DETAILS', 4531),
+    ('MESSAGE_PREVIEW', 4541),
+    ('COMPOSE_RECIPIENTS', 4555),
+    ('CHAT_ROOM_CONTEXT', 4593),
+    ('SOFTKEY_MENU', 4637),
+    ('MAIL_MENU', 4671),
+    ('INPUT_DIALOG', 4715),
+    ('GROUP_SELECTOR', 4733),
+    ('NOTIFICATION_OPTIONS', 4751),
+    ('SEARCH_RESULTS', 4773),
+    ('COMPOSE_MESSAGE', 4810),
+    ('THEME_OPTIONS', 4840),
+    ('DIALOG_SCREEN', 4856),
+    ('VERSION_SELECT', 4866),
+    ('VCARD_ACTIONS', 4896),
+    ('FORM_SETTINGS', 5094),
+    ('INVITE_TOS_SCREEN', 5120),
+    ('ASYNC_CONFIRM_SCREEN', 5135),
+    ('WIFI_NETWORKS', 5145),
+    ('CONNECTION_SETTINGS', 5161),
 ]
 
 # ScreenId reverse lookup (value -> name)
@@ -261,7 +262,7 @@ SCREEN_ID_NAMES = {
     147: 'BLOG_POST', 149: 'UNUSED_149', 150: 'CONTACT_MODIFY',
     151: 'EXT_SETTINGS', 152: 'MAP_VIEW_SETTINGS', 153: 'WIFI_NETWORKS',
     154: 'SHARE_LOCATION', 155: 'VISIBLE_CONTACTS', 156: 'PHOTO_SELECTOR',
-    157: 'PHOTO_VIEW', 158: 'MAP_SEARCH', 159: 'WIFI_ACCOUNT_LIST',
+    157: 'ACCOUNT_SETUP', 158: 'MAP_SEARCH', 159: 'WIFI_ACCOUNT_LIST',
     160: 'PROFILE_EDIT', 161: 'SEND_CONFIRM', 162: 'CHAT_DETAIL',
     163: 'NOTIFY_MESSAGE', 164: 'REG_FORM', 165: 'ASYNC_CONFIRM',
     166: 'CHAT_OPTIONS', 167: 'MAILBOX_OPTIONS', 168: 'INVITE_TOS',
@@ -842,6 +843,131 @@ def compile_screens(screens):
     return result
 
 
+PALETTE_THEME_COUNT = 8
+PALETTE_TOTAL_INTS = 176  # 22 roles * 8 themes
+
+# Fixed role order — defines binary layout in the cfg file.
+# First 16 are indexed colors (accessed by setColorFromPalette(0..15)),
+# last 6 are extended entries (accessed by named PaletteKeys constants).
+PALETTE_ROLES = [
+    'text', 'background', 'background_alt', 'link',
+    'online', 'away', 'offline', 'accent',
+    'selection_bg', 'selection_text', 'separator', 'disabled',
+    'border', 'scrollbar', 'popup_bg', 'popup_text',
+    'gradient_start', 'map_fill', 'map_border', 'map_bg',
+    'map_pulse', 'gradient_end',
+]
+PALETTE_INDEXED_COUNT = 16  # roles[0:16] are indexed colors
+PALETTE_EXTENDED_ROLES = PALETTE_ROLES[PALETTE_INDEXED_COUNT:]  # roles[16:] get named constants
+
+
+def _parse_hex_color(s):
+    """Parse '#RRGGBB' to int."""
+    s = s.strip()
+    if s.startswith('#'):
+        s = s[1:]
+    if len(s) != 6:
+        raise ValueError(f"Invalid hex color: #{s}")
+    return int(s, 16)
+
+
+def load_palette(palette_path):
+    """Load theme-oriented palette.json and return a flat list of 176 ints.
+
+    Binary layout: for each role (in PALETTE_ROLES order), 8 ints
+    (one per theme). This matches how the runtime indexes the palette.
+    """
+    with open(palette_path, 'r', encoding='utf-8') as f:
+        palette = json.load(f)
+
+    themes = palette['themes']
+    if len(themes) != PALETTE_THEME_COUNT:
+        raise ValueError(f"Expected {PALETTE_THEME_COUNT} themes, got {len(themes)}")
+
+    flat = []
+    for role in PALETTE_ROLES:
+        for theme in themes:
+            if role not in theme:
+                raise ValueError(f"Theme '{theme.get('_', '?')}' missing role '{role}'")
+            flat.append(_parse_hex_color(theme[role]))
+
+    if len(flat) != PALETTE_TOTAL_INTS:
+        raise ValueError(f"Palette has {len(flat)} ints, expected {PALETTE_TOTAL_INTS}")
+    return flat
+
+
+def _inject_palette(config, input_dir):
+    """If palette.json exists, inject it as VCARD_ACTIONS trailingData."""
+    palette_path = os.path.join(input_dir, 'palette.json')
+    if not os.path.exists(palette_path):
+        return
+    flat = load_palette(palette_path)
+    for screen in config['screens']:
+        if screen['name'] == 'VCARD_ACTIONS':
+            screen['trailingData'] = flat
+            return
+    raise ValueError("VCARD_ACTIONS screen not found in config.json")
+
+
+def _compute_screen_offset_and_size(config, screen_name):
+    """Compute the intPool offset and block size for a named screen."""
+    offset = OBJECT_POOL_SIZE + INT_POOL_HEADER_SIZE
+    for screen in config['screens']:
+        items_size = 0
+        for item in screen.get('items', []):
+            items_size += len(_compile_item(item))
+        trailing_size = len(screen.get('trailingData', []))
+        block_size = 10 + items_size + trailing_size
+        if screen['name'] == screen_name:
+            return offset, 10 + items_size, block_size
+        offset += block_size
+    raise ValueError(f"Screen {screen_name} not found")
+
+
+def gen_palette(input_dir, output_java):
+    """Generate PaletteKeys.java from palette.json + config.json."""
+    config_path = os.path.join(input_dir, 'config.json')
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+
+    # Inject palette so offset computation includes it
+    _inject_palette(config, input_dir)
+
+    # Compute VCARD_ACTIONS offset and header+items size
+    vcard_offset, header_items_size, _ = _compute_screen_offset_and_size(config, 'VCARD_ACTIONS')
+
+    colors_base = vcard_offset + header_items_size
+
+    lines = []
+    lines.append('package com.trykote.mobileagent.core;')
+    lines.append('')
+    lines.append('/**')
+    lines.append(' * Palette intPool offsets.')
+    lines.append(' * Generated by tools/cfg_tool.py --gen-palette. Do not edit manually.')
+    lines.append(' */')
+    lines.append('public final class PaletteKeys {')
+    lines.append('    private PaletteKeys() {}')
+    lines.append('')
+    lines.append(f'    public static final int COLORS_BASE = {colors_base};')
+    lines.append('')
+
+    ext_base = colors_base + PALETTE_INDEXED_COUNT * PALETTE_THEME_COUNT
+    for role in PALETTE_EXTENDED_ROLES:
+        name = role.upper()
+        lines.append(f'    public static final int {name} = {ext_base};')
+        ext_base += PALETTE_THEME_COUNT
+    lines.append('}')
+    lines.append('')
+
+    os.makedirs(os.path.dirname(os.path.abspath(output_java)) or '.', exist_ok=True)
+    with open(output_java, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines))
+
+    count = 1 + len(PALETTE_EXTENDED_ROLES)
+    print(f"Wrote {output_java} ({count} palette constants)")
+
+
 # ---- serialize/deserialize/round-trip ----
 
 def deserialize_cfg(cfg_path, output_dir):
@@ -931,8 +1057,14 @@ def deserialize_cfg(cfg_path, output_dir):
           f"{entry_count} packed string entries)")
 
 
-def _build_screen_data(config):
-    """Build screen data ints from config screens array."""
+def _build_screen_data(config, input_dir=None):
+    """Build screen data ints from config screens array.
+
+    If input_dir is given and palette.json exists, inject palette as
+    VCARD_ACTIONS trailingData before compiling.
+    """
+    if input_dir:
+        _inject_palette(config, input_dir)
     return compile_screens(config['screens'])
 
 
@@ -982,7 +1114,7 @@ def serialize_cfg(input_dir, cfg_path):
             raise ValueError(f"Unknown type '{obj_type}' at index {i}")
 
     # Write screen data (no header — defaults are set in AppState.java)
-    screen_data = _build_screen_data(config)
+    screen_data = _build_screen_data(config, input_dir)
     for val in screen_data:
         writer.encode_int(val)
 
@@ -1142,6 +1274,9 @@ def gen_screens(input_dir, output_java):
         print("Error: No 'screens' key in config.json", file=sys.stderr)
         sys.exit(1)
 
+    # Inject palette so VCARD_ACTIONS trailingData is included in offset computation
+    _inject_palette(config, input_dir)
+
     lines = []
     lines.append('package com.trykote.mobileagent.core;')
     lines.append('')
@@ -1192,6 +1327,8 @@ def main():
                        help='Generate PackedStringKeys.java from config.json')
     group.add_argument('--gen-screens', nargs=2, metavar=('INPUT_DIR', 'OUTPUT_JAVA'),
                        help='Generate ScreenDef.java from config.json')
+    group.add_argument('--gen-palette', nargs=2, metavar=('INPUT_DIR', 'OUTPUT_JAVA'),
+                       help='Generate PaletteKeys.java from palette.json')
 
     args = parser.parse_args()
 
@@ -1206,6 +1343,8 @@ def main():
         gen_java(args.gen_java[0], args.gen_java[1])
     elif args.gen_screens:
         gen_screens(args.gen_screens[0], args.gen_screens[1])
+    elif args.gen_palette:
+        gen_palette(args.gen_palette[0], args.gen_palette[1])
 
 
 if __name__ == '__main__':

@@ -563,7 +563,7 @@ public final class AppController {
             case 1:
                 return ScreenId.PHOTO_SELECTOR;
             case 2:
-                return ScreenId.PHOTO_VIEW;
+                return ScreenId.ACCOUNT_SETUP;
             case 3:
                 return ScreenId.SHARE_LOCATION;
             default:
@@ -814,7 +814,7 @@ public final class AppController {
 
     /* renamed from: f */
     public static final int handleFormSubmit(Object obj) {
-        XmppMailRuProtocol.mapContextItem = (ListItem) obj;
+        MapController.mapContextItem = (ListItem) obj;
         return 0;
     }
 
@@ -841,7 +841,7 @@ public final class AppController {
         }
         MrimContact contact = AppState.getCurrentMrimContact();
         AppState.setAccount(contact.account);
-        ResourceManager.composeEmail(XmppMailRuProtocol.parseRecipientList(contact.simpleIdentifier), (String) null, (String) null);
+        ResourceManager.composeEmail(MailHelper.parseRecipientList(contact.simpleIdentifier), (String) null, (String) null);
         ScreenBuilder.onScreenClosed();
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -1352,7 +1352,7 @@ public final class AppController {
             AppState.setInt(StateKeys.TRAFFIC_TOTAL_SENT_BYTES, 0);
             AppState.setInt(StateKeys.TRAFFIC_TOTAL_RECV_BYTES, 0);
             AppState.pool[StateKeys.VEC_TILE_QUEUE] = ObjectPool.newVector();
-            XmppMailRuProtocol.calculateCacheSize();
+            TileCache.calculateCacheSize();
             RemoteLogger.log("INIT", "creating MainCanvas w=" + i + " h=" + i2);
             AppState.pool[StateKeys.OBJ_CANVAS] = new MainCanvas(i, i2);
             RemoteLogger.log("INIT", "MainCanvas created");
@@ -1382,7 +1382,7 @@ public final class AppController {
                 int accountCount = AccountManager.getActiveAccountCount();
                 RemoteLogger.log("INIT", "accountCount=" + accountCount);
                 if (accountCount == 0) {
-                    ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.PHOTO_VIEW));
+                    ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SETUP));
                     refreshContactList();
                 } else {
                     while (true) {

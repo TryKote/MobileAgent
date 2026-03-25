@@ -51,7 +51,7 @@ public final class GraphicsContext {
 
     /* renamed from: b */
     public final GraphicsContext setColorFromPalette(int i) {
-        this.graphics.setColor(AppState.getInt(StateKeys.PALETTE_COLORS_BASE + (i << 3) + AppState.getInt(StateKeys.SETTING_COLOR_THEME)));
+        this.graphics.setColor(AppState.getInt(PaletteKeys.COLORS_BASE + (i << 3) + AppState.getInt(StateKeys.SETTING_COLOR_THEME)));
         return this;
     }
 

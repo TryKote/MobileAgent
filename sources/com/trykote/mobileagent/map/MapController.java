@@ -24,6 +24,8 @@ public final class MapController {
 
     public static ListItem activeMapItem;
 
+    public static ListItem mapContextItem;
+
     public static final void showMapScreen() {
         initMapState();
         AppState.setInt(StateKeys.INT_CONNECTION_STATE, 6);
@@ -270,5 +272,210 @@ public final class MapController {
         initMapState();
         AppState.setInt(StateKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
         MapRenderer.invalidate();
+    }
+
+    public static final void showMapContextMenu() {
+        ListItem item;
+        int i = 3072;
+        if (AccountManager.getOnlineMrimAccounts().size() > 0) {
+            i = 11264;
+        }
+        if (mapContextItem != null) {
+            item = mapContextItem;
+        } else {
+            item = MapRenderer.tooltipItem;
+            mapContextItem = item;
+        }
+        ListItem item2 = item;
+        if (item != null && item2.isSelected()) {
+            switch (item2.getHeight()) {
+                case 3:
+                    i = 4384;
+                    break;
+                case 4:
+                    i |= 3;
+                    break;
+                case 5:
+                    i = 128;
+                    break;
+                case 6:
+                    i = 2064;
+                    break;
+                case 7:
+                    i = 64;
+                    break;
+                case 8:
+                    i = 4640;
+                    break;
+                case 10:
+                    i &= -1025;
+                    break;
+            }
+        }
+        if (!AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE)) {
+            i &= -1025;
+        }
+        int i2 = 1424;
+        int i3 = 1;
+        while (true) {
+            int i4 = i3;
+            if (i4 >= 16384) {
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_MAP_CONTEXT));
+                return;
+            }
+            int i5 = i2;
+            i2++;
+            AppState.setInt(i5, i & i4);
+            i3 = i4 << 1;
+        }
+    }
+
+    public static final int handleMapAction(int i) {
+        long lon;
+        long lat;
+        ListItem item = mapContextItem;
+        int itemType = item == null ? 0 : item.getHeight();
+        switch (i) {
+            case 0:
+                AppState.setCurrentEntity(item);
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.STATUS_INPUT;
+            case 1:
+                if (itemType == 8) {
+                    AppState.setInt(StateKeys.INT_ASYNC_TASK_ID, 0);
+                    AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) item).userId);
+                } else {
+                    AppState.setCurrentEntity(mapContextItem);
+                }
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.USER_PROFILE;
+            case 2:
+                if (itemType == 3) {
+                    AppState.setCurrentEntity(mapContextItem);
+                    ScreenBuilder.onScreenClosed();
+                    return ScreenId.CONTACT_DELETE;
+                }
+                AppState.setCurrentEntity((Object) null);
+                Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
+                if (onlineAccounts == null || onlineAccounts.size() <= 0) {
+                    return NotificationHelper.showError(422);
+                }
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 1));
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.CONTACT_DELETE;
+            case 3:
+                Vector onlineAccounts2 = AccountManager.getOnlineMrimAccounts();
+                if (onlineAccounts2 == null || onlineAccounts2.size() <= 0) {
+                    return NotificationHelper.showError(422);
+                }
+                ((MrimAccount) onlineAccounts2.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 2));
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.MAP;
+            case 4:
+                ScreenBuilder.onScreenClosed();
+                AppState.pool[StateKeys.SLOT_TEMP_OBJECT_1] = (Conversation) item;
+                return ScreenId.FORM_LIST;
+            case 5:
+                ResourceManager.dialPhoneUrl(VCard.formatPhoneContactUrl((PhoneContact) item, 0), (PhoneContact) item, 0);
+                return ScreenId.CLOSE;
+            case 6:
+                AppState.setAccount(item);
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.MAILBOX_OPTIONS;
+            case 7:
+                AppState.setAccount(item);
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.EXT_SETTINGS;
+            case 8:
+            case 9:
+            default:
+                return ScreenId.MAP;
+            case 10:
+                if (MapRenderer.hasRouteEndpoints()) {
+                    MmpContact.clearRouteProgress();
+                }
+                ListItem item2 = MapRenderer.tooltipItem;
+                if (item2 == null || !item2.isSelected()) {
+                    lon = MapRenderer.currentLon;
+                    lat = MapRenderer.currentLat;
+                } else {
+                    lon = item2.getWidth();
+                    lat = item2.getBaseHeight();
+                    item2.select();
+                }
+                int[] coords = {(int) lon, (int) lat};
+                MmpContact.routePoints.addElement(coords);
+                MmpContact.nearestPoints.addElement(new Object[]{null, coords});
+                MapRenderer.needsRedraw = true;
+                if (!MapRenderer.hasRouteEndpoints()) {
+                    return ScreenId.MAP;
+                }
+                Conversation.loadContacts();
+                return ScreenId.MAP;
+            case 11:
+                if (MapRenderer.hasRouteEndpoints()) {
+                    MmpContact.clearRouteProgress();
+                }
+                if (MmpContact.mapDataCache != null) {
+                    MmpContact.routePoints.removeElement((int[]) MmpContact.mapDataCache[1]);
+                    MmpContact.nearestPoints.removeElement(MmpContact.mapDataCache);
+                }
+                AppState.setInt(StateKeys.FLAG_TYPING_HIDDEN, 0);
+                AppState.setBool(StateKeys.FLAG_TYPING_VISIBLE, AppState.getBool(StateKeys.FLAG_TYPING_INDICATOR));
+                MapRenderer.needsRedraw = true;
+                if (!MapRenderer.hasRouteEndpoints()) {
+                    return ScreenId.MAP;
+                }
+                Conversation.loadContacts();
+                return ScreenId.MAP;
+            case 12:
+                MmpContact.clearLocationData();
+                MapRenderer.needsRedraw = true;
+                return ScreenId.MAP;
+            case 13:
+                ListItem tooltipItem3 = MapRenderer.tooltipItem;
+                if (tooltipItem3 != null && tooltipItem3.isSelected()) {
+                    tooltipItem3.select();
+                }
+                MapRenderer.needsRedraw = true;
+                return ScreenId.MAP;
+            case 14:
+                setRouteStart();
+                if (MmpContact.hasSecondToken()) {
+                    return ScreenId.MAP;
+                }
+                AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 1);
+                return ScreenId.MAP_SEARCH;
+            case 15:
+                setRouteEnd();
+                if (MmpContact.hasFirstToken()) {
+                    return ScreenId.MAP;
+                }
+                AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 0);
+                return ScreenId.MAP_SEARCH;
+            case 16:
+                return ScreenId.WIFI_ACCOUNT_LIST;
+            case 17:
+                return ScreenId.SAVE_LOCATION;
+            case 18:
+                ScreenBuilder.onScreenClosed();
+                Vector onlineAccounts3 = AccountManager.getOnlineMrimAccounts();
+                if (onlineAccounts3.size() > 1) {
+                    return ScreenId.MRIM_ACCOUNT_SELECT;
+                }
+                AppState.setAccount(onlineAccounts3.elementAt(0));
+                return ScreenId.INVITE_ALERT;
+            case 19:
+                return ScreenId.MAP_TOOLTIP;
+            case 20:
+                removeRoutePoint((MapPoint) mapContextItem);
+                return ScreenId.MAP;
+            case 21:
+                Conversation.incrementZoom();
+                return ScreenId.MAP;
+            case 22:
+                Conversation.decrementZoom();
+                return ScreenId.MAP;
+        }
     }
 }

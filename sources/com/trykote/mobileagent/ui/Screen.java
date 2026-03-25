@@ -337,8 +337,8 @@ public final class Screen {
         int i7 = this.offsetY + 1;
         g.setClip(i6, i7, this.innerWidth, this.headerHeight);
         int stateVal = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
-        int stateVal2 = AppState.getInt(StateKeys.PALETTE_SCREEN_BASE + stateVal);
-        if (stateVal2 != AppState.getInt(stateVal + 5082)) {
+        int stateVal2 = AppState.getInt(PaletteKeys.GRADIENT_START + stateVal);
+        if (stateVal2 != AppState.getInt(PaletteKeys.GRADIENT_END + stateVal)) {
             for (int i8 = 1; i8 < this.headerHeight; i8++) {
                 g.setColor(((255 - ((i8 * (255 - (stateVal2 >> 16))) / this.headerHeight)) << 16) | ((255 - ((i8 * (255 - ((stateVal2 >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((i8 * (255 - (stateVal2 & 255))) / this.headerHeight)));
                 g.drawRect(i6, i7 + i8, this.innerWidth, 0);

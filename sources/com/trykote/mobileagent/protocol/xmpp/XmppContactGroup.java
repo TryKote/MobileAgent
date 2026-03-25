@@ -468,7 +468,7 @@ public final class XmppContactGroup extends ContactGroup {
             Account abstractC0037h = (Account) vectorM443V.elementAt(size);
             if (!(abstractC0037h instanceof MrimAccount)) {
                 ByteBuffer c0043nM1390v = c0043nM1360p.writeIntMixed(816);
-                ByteBuffer c0043nM1360p2 = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(AppState.getString(StateKeys.SESSION_KEY))).writeIntMixed(305).writeStringLatin1(abstractC0037h.login).writeIntMixed(306).writeStringLatin1(AppState.getString(abstractC0037h.mo110p())).writeIntMixed(563).writeIntLE(abstractC0037h.syncSeq).writeIntMixed(564).writeIntLE(abstractC0037h.sentCount).writeIntMixed(565).writeIntLE(abstractC0037h.recvCount);
+                ByteBuffer c0043nM1360p2 = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(AppState.getString(StateKeys.SESSION_KEY))).writeIntMixed(305).writeStringLatin1(abstractC0037h.login).writeIntMixed(306).writeStringLatin1(AppState.getString(abstractC0037h.getSessionStringKey())).writeIntMixed(563).writeIntLE(abstractC0037h.syncSeq).writeIntMixed(564).writeIntLE(abstractC0037h.sentCount).writeIntMixed(565).writeIntLE(abstractC0037h.recvCount);
                 abstractC0037h.resetCounters();
                 c0043nM1390v.writeBufferIntLen(c0043nM1360p2);
             }

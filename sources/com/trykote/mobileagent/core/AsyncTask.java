@@ -316,7 +316,7 @@ public final class AsyncTask implements Runnable {
                 ByteBuffer responseBuffer = new ByteBuffer(httpClient);
                 synchronized (ServiceRegistry.photoCache) {
                     String photoKey = ServiceRegistry.pendingPhotoKey;
-                    XmppMailRuProtocol.writeChunkedRecord(StringUtils.concat("upi", photoKey), responseBuffer);
+                    ChunkedRecordStore.writeChunkedRecord(StringUtils.concat("upi", photoKey), responseBuffer);
                     try {
                         ServiceRegistry.photoCache.put(photoKey, responseBuffer.toImage());
                     } catch (Throwable ignored) {

@@ -85,7 +85,7 @@ public final class ScreenHandlerRegistry {
             ScreenId.WIFI_NETWORKS, ScreenId.REG_FORM, ScreenId.INVITE_TOS,
             ScreenId.FORM_LIST, ScreenId.PHONE_CONTACTS, ScreenId.EDIT_SCREEN,
             ScreenId.ASYNC_TASK, ScreenId.MAIN_SCREEN, ScreenId.SHARE_MEDIA,
-            ScreenId.SHARE_ALERT, ScreenId.PHOTO_SELECTOR, ScreenId.PHOTO_VIEW});
+            ScreenId.SHARE_ALERT, ScreenId.PHOTO_SELECTOR, ScreenId.ACCOUNT_SETUP});
     }
 
     private ScreenHandlerRegistry() {
