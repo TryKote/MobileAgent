@@ -230,7 +230,7 @@ public final class XmppContactGroup extends ContactGroup {
             if (c0039j != null) {
                 c0039j.state = ConnectionThread.STATE_CLOSING;
             }
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

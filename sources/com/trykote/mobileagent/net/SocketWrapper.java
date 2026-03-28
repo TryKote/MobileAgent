@@ -32,9 +32,12 @@ public final class SocketWrapper {
     }
 
     public static SocketWrapper open(String url, boolean async) throws IOException {
+        RemoteLogger.log("NET", "SocketWrapper.open url=" + url + " async=" + async);
+        long t0 = System.currentTimeMillis();
         SocketWrapper wrapper = new SocketWrapper(async);
         try {
             SocketConnection socketConnection = (SocketConnection) IOUtils.registerResource((Object) Connector.open(url, 3));
+            RemoteLogger.log("NET", "SocketWrapper.open connected in " + (System.currentTimeMillis() - t0) + "ms");
             wrapper.connection = socketConnection;
             try {
                 if (socketConnection instanceof SocketConnection) {
@@ -65,12 +68,15 @@ public final class SocketWrapper {
             AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
             return wrapper;
         } catch (IOException e) {
+            RemoteLogger.log("NET", "SocketWrapper.open FAILED after " + (System.currentTimeMillis() - t0) + "ms", e);
             wrapper.closeImmediate();
             throw e;
         } catch (RuntimeException e) {
+            RemoteLogger.log("NET", "SocketWrapper.open FAILED (RE) after " + (System.currentTimeMillis() - t0) + "ms", e);
             wrapper.closeImmediate();
             throw e;
         } catch (Error e) {
+            RemoteLogger.log("NET", "SocketWrapper.open FAILED (Error) after " + (System.currentTimeMillis() - t0) + "ms: " + e);
             wrapper.closeImmediate();
             throw e;
         }
@@ -94,7 +100,7 @@ public final class SocketWrapper {
                 if (th instanceof IOException) throw (IOException) th;
                 if (th instanceof RuntimeException) throw (RuntimeException) th;
                 if (th instanceof Error) throw (Error) th;
-                throw new RuntimeException(th);
+                throw new RuntimeException(th.toString());
             }
             return 0;
         }
@@ -140,6 +146,7 @@ public final class SocketWrapper {
     }
 
     public void asyncReaderLoop() {
+        RemoteLogger.log("NET", "asyncReaderLoop started");
         int bytesRead;
         byte[] buf = new byte[1024];
         do {
@@ -154,6 +161,7 @@ public final class SocketWrapper {
                     Thread.sleep(100L);
                 }
             } catch (Throwable th) {
+                RemoteLogger.log("NET", "asyncReaderLoop error", th);
                 try {
                     Thread.sleep(3000);
                 } catch (Throwable unused) {
@@ -163,7 +171,7 @@ public final class SocketWrapper {
                 return;
             }
         } while (bytesRead >= 0);
-        throw new RuntimeException(new EOFException());
+        throw new RuntimeException("EOFException");
     }
 
     private int readWithTimeout(byte[] buf) throws IOException {
@@ -187,7 +195,7 @@ public final class SocketWrapper {
             if (elapsed >= 50000 && elapsed <= 70000) {
                 return 0;
             }
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

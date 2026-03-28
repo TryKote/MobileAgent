@@ -195,7 +195,7 @@ public abstract class DiagnosticReporter {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             NetworkLock.releaseNetworkLock();
             ObjectPool.releaseBytes(outputBuffer);
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

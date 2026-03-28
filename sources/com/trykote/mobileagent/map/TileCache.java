@@ -102,7 +102,7 @@ public final class TileCache {
             throw th;
         } catch (Throwable th) {
             IOUtils.closeRecordStore(recordStore);
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 
@@ -135,7 +135,7 @@ public final class TileCache {
                         throw th;
                     } catch (Throwable th) {
                         IOUtils.closeRecordStore(store);
-                        throw new RuntimeException(th);
+                        throw new RuntimeException(th.toString());
                     }
                 }
             }

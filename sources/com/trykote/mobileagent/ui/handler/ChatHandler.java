@@ -272,6 +272,12 @@ public final class ChatHandler extends BaseScreenHandler {
                 AppState.clearIndex(ChatKeys.SLOT_CHAT_NAME);
                 break;
         }
+        clearScreenFlags();
+    }
+
+    private static void clearScreenFlags() {
+        AppState.clearRange(ChatKeys.SCREEN_FLAGS_START, ChatKeys.SCREEN_FLAGS_END);
+        AppState.setInt(ChatKeys.FLAG_CHAT_ROOM_CREATED, 0);
     }
 
     public int onItemSelected(ListView screen, MenuItem menuItem, String title, int selectedOption,

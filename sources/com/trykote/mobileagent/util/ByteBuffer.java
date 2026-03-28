@@ -842,7 +842,7 @@ public final class ByteBuffer {
             IOUtils.closeOutput((OutputStream) byteArrayOutputStream);
             if (th instanceof RuntimeException) throw (RuntimeException) th;
             if (th instanceof Error) throw (Error) th;
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

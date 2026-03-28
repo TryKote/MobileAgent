@@ -618,6 +618,12 @@ public final class ContactHandler extends BaseScreenHandler {
                 AppState.clearIndex(UIKeys.OBJ_PHOTO_CACHE_1);
                 break;
         }
+        clearScreenFlags();
+    }
+
+    private static void clearScreenFlags() {
+        AppState.clearRange(ContactKeys.SCREEN_FLAGS_START, ContactKeys.SCREEN_FLAGS_END);
+        AppState.setInt(ContactKeys.FLAG_CONTACT_MENU_MODE, 0);
     }
 
     public int onItemSelected(ListView screen, MenuItem menuItem, String title, int selectedOption,

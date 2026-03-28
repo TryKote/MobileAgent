@@ -237,6 +237,7 @@ public class XmppProtocol extends Account {
                 this.msgCount = 0;
                 break;
             case PROGRESS_STARTING:
+                RemoteLogger.log("XMPP", "progress STARTING, login=" + this.login + " isMailRu=" + isMailRuVariant());
                 this.msgCount = 10;
                 if (isMailRuVariant()) {
                     if (Utils.nonEmpty(this.serverResourceId)) {
@@ -282,7 +283,9 @@ public class XmppProtocol extends Account {
             case PROGRESS_CONNECTING:
                 this.msgCount = 30;
                 this.state = 0;
-                this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort)));
+                String connAddr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort));
+                RemoteLogger.log("XMPP", "progress CONNECTING to " + connAddr);
+                this.connection = new ConnectionThread(connAddr);
                 this.progress = PROGRESS_OPENING_STREAM;
                 if (isMailRuXmpp()) {
                     new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, new Object[]{this, new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_CLIENT_AUTH).writeRawString(this.shortName).writeCompressed(PackedStringKeys.GMAIL_PASSWD).writeRawString(this.password).readAllByteStr(), ResourceManager.integerCache[0]});
@@ -294,6 +297,7 @@ public class XmppProtocol extends Account {
                 this.msgCount = 40;
                 if (!isMailRuXmpp()) {
                     if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
+                        RemoteLogger.log("XMPP", "stream connected, opening XMPP stream");
                         this.msgCount = 50;
                         this.progress = PROGRESS_PROCESSING;
                         Object[] parserArgs = new Object[3];
@@ -492,6 +496,7 @@ public class XmppProtocol extends Account {
 
     /* renamed from: b */
     private void handleException(Throwable th) {
+        RemoteLogger.log("XMPP", "handleException login=" + this.login, th);
         EventDispatcher.postAccountMessage(this, th.toString());
         closeConnection();
         this.lastError = getDefaultError();

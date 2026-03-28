@@ -248,16 +248,25 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     public static final void resolveXmppServer(Object[] taskArgs) {
         try {
             String login = ((XmppProtocol) taskArgs[0]).login;
-            String srvRecord = dnsLookupSrv(StringUtils.concatKey(PackedStringKeys.SRV_XMPP_CLIENT_TCP, StringUtils.suffix(login, login.indexOf('@') + 1)));
+            String srvQuery = StringUtils.concatKey(PackedStringKeys.SRV_XMPP_CLIENT_TCP, StringUtils.suffix(login, login.indexOf('@') + 1));
+            RemoteLogger.log("XMPP", "DNS SRV lookup: " + srvQuery);
+            String srvRecord = dnsLookupSrv(srvQuery);
+            RemoteLogger.log("XMPP", "DNS SRV result: " + srvRecord);
             if (srvRecord == null || srvRecord.indexOf(':') <= 0) {
                 XmppProtocol xmppAccount = (XmppProtocol) taskArgs[0];
-                xmppAccount.setAuthParameters(xmppAccount.getStreamDomain(), DEFAULT_PORT);
+                String fallback = xmppAccount.getStreamDomain();
+                RemoteLogger.log("XMPP", "SRV failed, using fallback: " + fallback + ":" + DEFAULT_PORT);
+                xmppAccount.setAuthParameters(fallback, DEFAULT_PORT);
             } else {
                 Vector parts = Utils.splitNonEmpty(srvRecord, ':');
-                ((XmppProtocol) taskArgs[0]).setAuthParameters(Utils.getVectorString(parts, 0), Integer.parseInt(Utils.getVectorString(parts, 1)));
+                String host = Utils.getVectorString(parts, 0);
+                int port = Integer.parseInt(Utils.getVectorString(parts, 1));
+                RemoteLogger.log("XMPP", "SRV resolved: " + host + ":" + port);
+                ((XmppProtocol) taskArgs[0]).setAuthParameters(host, port);
                 ObjectPool.releaseVector(parts);
             }
         } catch (Throwable th) {
+            RemoteLogger.log("XMPP", "resolveXmppServer FAILED", th);
             ((XmppProtocol) taskArgs[0]).setException(th);
         }
     }
@@ -267,7 +276,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         String result;
         DatagramConnection datagramConnection = null;
         try {
+            RemoteLogger.log("XMPP", "dnsLookupSrv acquiring network lock");
             NetworkLock.acquireNetworkLock();
+            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + AppState.getString(StringResKeys.STR_RES_VERY_LONG_API_4));
             Vector parts = Utils.splitNonEmpty(srvName, '.');
             ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.MMP_PADDING_12);
             for (int i = 0; i < Utils.vectorSize(parts); i++) {
@@ -330,7 +341,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         } catch (Throwable th) {
             IOUtils.closeConn((Connection) datagramConnection);
             NetworkLock.releaseNetworkLock();
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

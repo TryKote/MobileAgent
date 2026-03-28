@@ -19,6 +19,9 @@ public abstract class BaseScreenHandler implements ScreenHandler {
     public void onScreenClosed(ListView screen) {
     }
 
+    public void onScreenResumed(ListView screen, int closedScreenId) {
+    }
+
     public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         return 0;

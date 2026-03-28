@@ -132,6 +132,11 @@ public final class AppController {
 
     public static void clearInitParamsAndReport() {
         AppState.clearRange(UIKeys.SLOT_INIT_PARAMS, UIKeys.SLOT_LANGUAGE_OPTION);
+        AppState.setInt(UIKeys.INT_OK_MENU_ACTION, 0);
+        AppState.setInt(UIKeys.INT_OK_MENU_TYPE, 0);
+        AppState.setInt(UIKeys.INT_CANCEL_MENU_ACTION, 0);
+        AppState.setInt(UIKeys.INT_CANCEL_MENU_TYPE, 0);
+        TransitionData.get().clear();
         Telemetry.sendReport(true, (MrimAccount) AppState.getAccount());
     }
 

@@ -13,6 +13,8 @@ public interface ScreenHandler {
 
     void onScreenClosed(ListView screen);
 
+    void onScreenResumed(ListView screen, int closedScreenId);
+
     int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                        Object data, Object headerData);
 

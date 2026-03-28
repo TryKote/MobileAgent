@@ -73,6 +73,7 @@ public abstract class AppState {
     public static void init(Object midlet) {
         initPools();
         initObjectPool();
+        pool[UIKeys.OBJ_TRANSITION_DATA] = new TransitionData();
         loadDelta();
         initSessionState(midlet);
         initGraphics();
@@ -244,7 +245,9 @@ public abstract class AppState {
     }
 
     public static void clearIndex(int key) {
-        if (key >= DELTA_SIZE) {
+        if (key >= OBJECT_POOL_SIZE) {
+            intPool[key - OBJECT_POOL_SIZE] = 0;
+        } else if (key >= DELTA_SIZE) {
             pool[key] = null;
         } else {
             delta[key] = null;

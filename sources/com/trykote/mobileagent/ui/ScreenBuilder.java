@@ -224,12 +224,21 @@ public final class ScreenBuilder {
                 ContactListManager.refreshContactList();
                 break;
         }
+        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 0);
         Vector screenStack = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screenStack.size() - 1;
         ListView closedScreen = (ListView) screenStack.elementAt(size);
+        int closedScreenId = closedScreen.screenId;
         ObjectPool.releaseVector(closedScreen.tabItems);
         ObjectPool.releaseVector(closedScreen.menuItems);
         screenStack.removeElementAt(size);
         Utils.trimIfEmpty(screenStack);
+        if (screenStack.size() > 0) {
+            ListView resumedScreen = (ListView) screenStack.lastElement();
+            ScreenHandler resumedHandler = ScreenHandlerRegistry.getHandler(resumedScreen.screenId);
+            if (resumedHandler != null) {
+                resumedHandler.onScreenResumed(resumedScreen, closedScreenId);
+            }
+        }
     }
 }

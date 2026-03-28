@@ -13,6 +13,8 @@ public final class ContactKeys {
     public static final int FLAG_CONTACT_IS_ONLINE = 1498;
     public static final int FLAG_CONTACT_HAS_UNREAD = 1499;
     public static final int FLAG_CONTACT_HAS_VCARD = 1501;
+    public static final int SCREEN_FLAGS_START = FLAG_IS_MRIM_CONTACT;  // 1494
+    public static final int SCREEN_FLAGS_END = FLAG_CONTACT_HAS_VCARD;  // 1501
     public static final int FLAG_GROUP_ADD_RESULT = 1509;
     public static final int FLAG_CONTACT_MENU_MODE = 3707;
     public static final int SLOT_CURRENT_CONTACT_ID = 1237;

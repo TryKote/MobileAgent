@@ -91,7 +91,7 @@ public final class ChunkedRecordStore {
             } catch (Throwable th) {
                 IOUtils.closeRecordStore(recordStore);
                 RemoteLogger.log("PERSIST", "writeRecord FAILED: " + th);
-                throw new RuntimeException(th);
+                throw new RuntimeException(th.toString());
             }
         }
         buf.clear();
@@ -147,7 +147,7 @@ public final class ChunkedRecordStore {
             throw th;
         } catch (Throwable th) {
             IOUtils.closeRecordStore(recordStore);
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

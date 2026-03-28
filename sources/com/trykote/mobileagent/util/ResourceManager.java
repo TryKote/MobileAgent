@@ -776,7 +776,7 @@ public final class ResourceManager {
         } catch (Throwable th) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             NetworkLock.releaseNetworkLock();
-            throw new RuntimeException(th);
+            throw new RuntimeException(th.toString());
         }
     }
 

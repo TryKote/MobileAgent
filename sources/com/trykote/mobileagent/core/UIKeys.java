@@ -74,6 +74,7 @@ public final class UIKeys {
     public static final int OBJ_GFX_CONTEXTS_ARRAY = 1361;
     public static final int ARR_GFX_HEIGHTS = 1362;
     public static final int VEC_PHOTO_QUEUE = 1401;
+    public static final int OBJ_TRANSITION_DATA = 1385;
     public static final int OBJ_HTTP_CALLBACK = 1404;
     public static final int INT_IMAGE_COUNTER = 1407;
     public static final int INT_POPUP_HEIGHT = 1408;

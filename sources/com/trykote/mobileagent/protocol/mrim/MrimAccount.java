@@ -229,6 +229,7 @@ public final class MrimAccount extends Account implements ListItem {
                 this.msgCount = 0;
                 break;
             case PROGRESS_STARTING:
+                RemoteLogger.log("MRIM", "progress STARTING, connecting to redirect server");
                 this.msgCount = 20;
                 this.state = 0;
                 this.connection = new ConnectionThread(AppState.getString(StringResKeys.STR_RES_LONG_URL_4));
@@ -238,6 +239,7 @@ public final class MrimAccount extends Account implements ListItem {
             case PROGRESS_CONNECTING_REDIRECT:
                 this.msgCount = 30;
                 if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
+                    RemoteLogger.log("MRIM", "redirect server connected, reading address");
                     this.msgCount = 40;
                     this.progress = PROGRESS_READING_REDIRECT;
                     AppController.needsRepaint = true;
@@ -258,13 +260,16 @@ public final class MrimAccount extends Account implements ListItem {
                         }
                     }
                     this.connection.state = ConnectionThread.STATE_CLOSING;
-                    this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(sb));
+                    String mainServer = ObjectPool.toStringAndRelease(sb);
+                    RemoteLogger.log("MRIM", "redirect resolved to: " + mainServer);
+                    this.connection = new ConnectionThread(mainServer);
                     this.progress = PROGRESS_CONNECTING_MAIN;
                     AppController.needsRepaint = true;
                 }
                 break;
             case PROGRESS_CONNECTING_MAIN:
                 if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
+                    RemoteLogger.log("MRIM", "main server connected, sending auth packet");
                     this.msgCount = 80;
                     sendData(ProtocolFactory.createMrimAuthPacket(this));
                     this.progress = PROGRESS_AUTHENTICATING;
