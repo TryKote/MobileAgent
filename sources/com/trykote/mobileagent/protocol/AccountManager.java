@@ -218,8 +218,11 @@ public final class AccountManager {
                     ((Account) accounts.elementAt(i)).serializeAccount(buffer, z, false).saveProperties(buffer);
                 }
             }
+            RemoteLogger.log("PERSIST", "saveAccounts: " + buffer.length + " bytes, chunked=" + z + ", destructive=" + z2);
             ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(6513505), buffer, z);
-        } catch (Throwable unused) {
+            RemoteLogger.log("PERSIST", "saveAccounts: writeRecord done");
+        } catch (Throwable th) {
+            RemoteLogger.log("PERSIST", "saveAccounts FAILED", th);
         }
     }
 

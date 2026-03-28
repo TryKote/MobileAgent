@@ -51,8 +51,10 @@ public final class AsyncTask implements Runnable {
                     }
                 }
                 SocketWrapper.closeAll();
+                RemoteLogger.log("PERSIST", "SHUTDOWN: saveOnExit=" + AppController.saveOnExit);
                 AccountManager.saveState(AppController.saveOnExit, true);
                 AppState.saveDelta(AppController.saveOnExit);
+                RemoteLogger.log("PERSIST", "SHUTDOWN: save complete");
             }
         }
     }

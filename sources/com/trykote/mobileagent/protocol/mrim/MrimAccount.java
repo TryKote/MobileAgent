@@ -104,24 +104,24 @@ public final class MrimAccount extends Account implements ListItem {
             buffer.skip(extraLen);
         }
         try {
+            if (extraBuffer.length == 0) {
+                throw new RuntimeException();
+            }
+            this.accountNickname = extraBuffer.readUTF8Str((String) null);
+            extraBuffer.readWideStr();
+            this.chatRoomsList = ObjectPool.newVector();
+            int chatRoomCount = extraBuffer.readInt();
+            for (int i = 0; i < chatRoomCount; i++) {
+                this.chatRoomsList.addElement(ChatRoom.deserialize(extraBuffer));
+            }
+            if (extraBuffer.readShortBE() != 21554) {
+                throw new RuntimeException();
+            }
+            assignDefaultChatRoom(false);
         } catch (Throwable unused) {
             this.accountNickname = null;
             this.chatRoomsList = null;
         }
-        if (extraBuffer.length == 0) {
-            throw new RuntimeException();
-        }
-        this.accountNickname = extraBuffer.readUTF8Str((String) null);
-        extraBuffer.readWideStr();
-        this.chatRoomsList = ObjectPool.newVector();
-        int chatRoomCount = extraBuffer.readInt();
-        for (int i = 0; i < chatRoomCount; i++) {
-            this.chatRoomsList.addElement(ChatRoom.deserialize(extraBuffer));
-        }
-        if (extraBuffer.readShortBE() != 21554) {
-            throw new RuntimeException();
-        }
-        assignDefaultChatRoom(false);
         this.accountProfile = new VCard();
         this.isHighlighted = true;
         this.accountSizeCache = new SizeCache();

@@ -110,13 +110,16 @@ public abstract class AppState {
         }
         emptyStr = (String) pool[StateKeys.STR_EMPTY];
         ByteBuffer recordBuf = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(1164404323));
+        RemoteLogger.log("PERSIST", "delta RMS read: " + recordBuf.length + " bytes");
         while (recordBuf.length > 0) {
             try {
                 delta[((Integer) decodeObject(recordBuf, 0)).intValue()] = decodeObject(recordBuf, 0);
             } catch (Throwable unused) {
             }
         }
+        RemoteLogger.log("PERSIST", "delta[0]=" + delta[0]);
         if (delta[0] == null) {
+            RemoteLogger.log("PERSIST", "FACTORY RESET — deleting all record stores!");
             delta = new Object[295];
             try {
                 String[] stores = StringUtils.listRecordStores();
@@ -475,8 +478,11 @@ public abstract class AppState {
                     }
                 }
             }
+            RemoteLogger.log("PERSIST", "saveDelta: " + buffer.length + " bytes, chunked=" + z);
             ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(1164404323), buffer, z);
-        } catch (Throwable unused) {
+            RemoteLogger.log("PERSIST", "saveDelta: writeRecord done");
+        } catch (Throwable th) {
+            RemoteLogger.log("PERSIST", "saveDelta FAILED", th);
         }
     }
 
