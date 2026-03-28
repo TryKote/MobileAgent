@@ -38,7 +38,7 @@ public final class IOUtils {
     public static String[] photoUrlList;
 
     /* renamed from: f */
-    private static Screen selectionScreen;
+    private static ListView selectionScreen;
 
     /* renamed from: a */
     public static final int handleMailMenuAction(String str, int i) {
@@ -46,7 +46,7 @@ public final class IOUtils {
         wrapInVector(messageId);
         int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        Message message = account.findChatRoomById(chatRoomId).getMessage(messageId);
+        Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
@@ -91,7 +91,7 @@ public final class IOUtils {
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.findDefaultChatRoom().id);
+        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
         return 0;
     }
 
@@ -251,8 +251,8 @@ public final class IOUtils {
 
     /* renamed from: c */
     public static final void showChatRoomMessages() {
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
-        Screen screen = ScreenManager.createScreen(ScreenDef.CONTACT_DETAILS);
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
+        ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_DETAILS);
         screen.setHeader(234, chatRoom.getDisplayName());
         Vector messages = ObjectPool.newVector();
         Enumeration elements = chatRoom.messageIds.elements();
@@ -347,7 +347,7 @@ public final class IOUtils {
     public static final void showPhotoSelector() {
         boolean z;
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        photoUrlList = account.accountProfile.photoUrls;
+        photoUrlList = account.profileManager.profile.photoUrls;
         Vector candidates = ObjectPool.newVector();
         Enumeration elements = account.contactMap.elements();
         while (elements.hasMoreElements()) {
@@ -357,7 +357,7 @@ public final class IOUtils {
             }
         }
         int size = candidates.size();
-        Screen screen = ScreenManager.createScreen(ScreenDef.CONTACT_INFO_EDITOR);
+        ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_INFO_EDITOR);
         contactIdList = ObjectPool.newVector();
         for (int i = 0; i < size; i++) {
             MrimContact mrimContact = (MrimContact) candidates.elementAt(i);
@@ -395,14 +395,14 @@ public final class IOUtils {
             }
         }
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        VCard profile = account.accountProfile;
+        VCard profile = account.profileManager.profile;
         profile.prevPhotoUrls = profile.photoUrls;
         int size2 = selected.size();
         profile.photoUrls = new String[size2];
         for (int i2 = 0; i2 < size2; i2++) {
             profile.photoUrls[i2] = (String) selected.elementAt(i2);
         }
-        String[] strArr = account.accountProfile.photoUrls;
+        String[] strArr = account.profileManager.profile.photoUrls;
         XmlElement root = new XmlElement(114);
         XmlElement visibleEl = new XmlElement("visible", root, null);
         root.addChild(visibleEl);
@@ -412,10 +412,10 @@ public final class IOUtils {
             visibleEl.addChild(userEl);
         }
         account.trySendData(ProtocolFactory.createMrimPacket(account, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(root.toString())));
-        if (account.accountProfile.gender != 3) {
+        if (account.profileManager.profile.gender != 3) {
             return 0;
         }
-        account.setProfileGroups();
+        account.profileManager.setGroups();
         return 0;
     }
 
@@ -474,8 +474,8 @@ public final class IOUtils {
             return ScreenId.MAP;
         }
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        account.setLocationProfile((MapPoint) obj);
-        account.syncProfile();
+        account.profileManager.setMapLocation((MapPoint) obj);
+        account.profileManager.sync();
         AppState.setInt(StateKeys.FLAG_LOADING, 0);
         return ScreenId.PROFILE_EDIT;
     }
@@ -581,7 +581,7 @@ public final class IOUtils {
         String strM584b = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
         int iM586d = AppState.getInt(StateKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        Message message = account.findChatRoomById(iM586d).getMessage(strM584b);
+        Message message = account.chatRoomManager.findById(iM586d).getMessage(strM584b);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
@@ -603,7 +603,7 @@ public final class IOUtils {
             if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
-            AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.findDefaultChatRoom().id);
+            AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
             return 0;
         }
         ScreenBuilder.onScreenClosed();
@@ -656,7 +656,7 @@ public final class IOUtils {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final Screen buildContactListScreen(Screen screen, Account acct, Contact contact) {
+    public static final ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
         MenuItem menuItem = null;
         if (contact != null) {
             acct = contact.account;
@@ -690,7 +690,7 @@ public final class IOUtils {
     }
 
     /* renamed from: a */
-    public static final Vector getCheckedItems(Screen screen, int i) {
+    public static final Vector getCheckedItems(ListView screen, int i) {
         Vector vectorM1213g = ObjectPool.newVector();
         Vector vector = screen.menuItems;
         int size = vector.size();

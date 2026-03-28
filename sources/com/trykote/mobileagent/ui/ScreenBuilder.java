@@ -23,7 +23,7 @@ public final class ScreenBuilder {
                 int size = screenStack.size();
                 z = false;
                 while (--size >= 0) {
-                    i2 = ((Screen) screenStack.elementAt(size)).screenType;
+                    i2 = ((ListView) screenStack.elementAt(size)).screenType;
                     if (i2 == 7 || i2 == 8) {
                         z = true;
                         break;
@@ -90,7 +90,7 @@ public final class ScreenBuilder {
     public static final void onMenuItemSelected() {
         AppController.needsRepaint = true;
         AppController.needsLayoutUpdate = true;
-        Screen currentScreen = ScreenManager.getCurrentScreen();
+        ListView currentScreen = ScreenManager.getCurrentScreen();
         String title = ScreenManager.getCurrentTitle();
         int action = ScreenManager.getCurrentWidth();
         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
@@ -181,7 +181,7 @@ public final class ScreenBuilder {
     public static final void onMenuItemAction() {
         AppController.needsRepaint = true;
         AppController.needsLayoutUpdate = true;
-        Screen currentScreen = ScreenManager.getCurrentScreen();
+        ListView currentScreen = ScreenManager.getCurrentScreen();
         int i = ScreenManager.getCurrentScreen().screenId;
         ScreenManager.getCurrentTitle();
         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
@@ -226,7 +226,7 @@ public final class ScreenBuilder {
         }
         Vector screenStack = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         int size = screenStack.size() - 1;
-        Screen closedScreen = (Screen) screenStack.elementAt(size);
+        ListView closedScreen = (ListView) screenStack.elementAt(size);
         ObjectPool.releaseVector(closedScreen.tabItems);
         ObjectPool.releaseVector(closedScreen.menuItems);
         screenStack.removeElementAt(size);

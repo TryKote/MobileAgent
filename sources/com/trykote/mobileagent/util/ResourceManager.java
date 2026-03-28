@@ -192,7 +192,7 @@ public final class ResourceManager {
         Object[] objArr = (Object[]) menuItem.data;
         Object[] objArr2 = (Object[]) objArr[0];
         MenuItem targetItem = (MenuItem) objArr[1];
-        Screen parentScreen = (Screen) objArr[2];
+        ListView parentScreen = (ListView) objArr[2];
         String[] strArr = (String[]) objArr2[1];
         int i = 0;
         int length = strArr.length;
@@ -323,7 +323,7 @@ public final class ResourceManager {
             } else {
                 phoneSb.append(phoneNumber);
             }
-            errorCode = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4153, new ByteBuffer().writeIntLE(0).writeStringLatin1(ObjectPool.toStringAndRelease(phoneSb)).writeStringUTF16(messageText)), integerOf(6), mrimContact, messageText, phoneNumber}));
+            errorCode = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE_EXT, new ByteBuffer().writeIntLE(0).writeStringLatin1(ObjectPool.toStringAndRelease(phoneSb)).writeStringUTF16(messageText)), integerOf(MrimAccount.RESP_XMPP_SERVICE), mrimContact, messageText, phoneNumber}));
         } else {
             errorCode = 299;
         }
@@ -474,7 +474,7 @@ public final class ResourceManager {
 
     /* renamed from: h */
     public static final int syncAndReturn() {
-        ((MrimAccount) AppState.getAccount()).syncProfile();
+        ((MrimAccount) AppState.getAccount()).profileManager.sync();
         if (AppState.getBool(StateKeys.FLAG_UPDATE_AVAILABLE)) {
             return AppState.getInt(StateKeys.INT_CONNECTION_STATE);
         }
@@ -524,7 +524,7 @@ public final class ResourceManager {
         if (vector == null) {
             return;
         }
-        Screen screen = ScreenManager.createScreen(ScreenDef.MAIL_ACCOUNT_LIST);
+        ListView screen = ScreenManager.createScreen(ScreenDef.MAIL_ACCOUNT_LIST);
         int size = vector.size();
         while (true) {
             size--;
@@ -543,7 +543,7 @@ public final class ResourceManager {
     public static final int applyLocationProfile(Object obj) {
         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
         MapPoint mapPoint = (MapPoint) obj;
-        mrimAccount.setLocationProfile(mapPoint);
+        mrimAccount.profileManager.setMapLocation(mapPoint);
         XmppContactGroup.addMapPointIfNew(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
         XmppContactGroup.saveMapPoints(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), 225);
         AppState.setInt(StateKeys.FLAG_LOADING, 0);
@@ -559,7 +559,7 @@ public final class ResourceManager {
     /* renamed from: k */
     public static final void showMailAccountList() {
         AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
-        Screen screen = ScreenManager.createScreen(ScreenDef.GENERIC_LIST);
+        ListView screen = ScreenManager.createScreen(ScreenDef.GENERIC_LIST);
         Vector accounts = AccountManager.getMrimAccountList();
         int size = accounts.size();
         if (size > 0) {
@@ -630,7 +630,7 @@ public final class ResourceManager {
             NotificationHelper.showMessageById(404);
             return;
         }
-        Screen screen = ScreenManager.createScreen(ScreenDef.SAVED_LOCATIONS);
+        ListView screen = ScreenManager.createScreen(ScreenDef.SAVED_LOCATIONS);
         while (true) {
             i--;
             if (i < 0) {
@@ -870,7 +870,7 @@ public final class ResourceManager {
         String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
         int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
-        ChatRoom chatRoom = mrimAccount.findChatRoomById(chatRoomId);
+        ChatRoom chatRoom = mrimAccount.chatRoomManager.findById(chatRoomId);
         if (StringUtils.matchesKey(848, str)) {
             chatRoom.readMessages.addElement(messageId);
             return 0;
@@ -898,7 +898,7 @@ public final class ResourceManager {
         }
         AppState.setInt(StateKeys.INT_SCROLL_OFFSET, 0);
         AppState.clearIndex(StateKeys.SLOT_MAP_POINT_2);
-        mrimAccount.chatRoomsLoaded = true;
+        mrimAccount.chatRoomManager.loaded = true;
         chatRoom.setActive(false);
         AppState.setInt(StateKeys.INT_SCREEN_ACTION, 41);
         return 0;
@@ -1027,7 +1027,7 @@ public final class ResourceManager {
         ByteBuffer passwordHash = hashPassword(mrimAccount);
         XmppContactGroup.encryptBlowfish(passwordHash.data, passwordHash.length, payload.data, payload.length);
         passwordHash.clear();
-        return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4132, buffer.writeBufferIntLen(payload)), integerOf(17), targetAccount});
+        return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_AUTH_UPDATE, buffer.writeBufferIntLen(payload)), integerOf(MrimAccount.RESP_AUTH_RESPONSE), targetAccount});
     }
 
     /* renamed from: a */
@@ -1051,7 +1051,7 @@ public final class ResourceManager {
     }
 
     /* renamed from: a */
-    public static final int collectInvitees(Screen parentScreen) {
+    public static final int collectInvitees(ListView parentScreen) {
         ScreenManager.processScreenForm();
         String[] phoneNumbers = Utils.getPhoneNumbers(true);
         Vector invitees = IOUtils.getCheckedItems(parentScreen, 1);
@@ -1073,11 +1073,11 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final ByteBuffer createMoveContactCmd(MrimAccount mrimAccount, MrimContact mrimContact, int i) {
-        return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4123, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(i).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), integerOf(11), mrimContact, integerOf(i)});
+        return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(i).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), integerOf(MrimAccount.RESP_MOVE_FLAG), mrimContact, integerOf(i)});
     }
 
     /* renamed from: a */
     public static final ByteBuffer createAddToGroupCmd(MrimAccount mrimAccount, MrimContact mrimContact, MrimContactGroup group) {
-        return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4123, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(group.serverId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), integerOf(12), mrimContact, group});
+        return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(group.serverId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), integerOf(MrimAccount.RESP_MOVE_TO_GROUP), mrimContact, group});
     }
 }

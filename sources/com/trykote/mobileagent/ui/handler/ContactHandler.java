@@ -159,7 +159,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     return;
                 }
             case ScreenId.GROUP_MOVE:
-                Screen screen4 = ScreenManager.createScreen(ScreenDef.GROUP_MOVE);
+                ListView screen4 = ScreenManager.createScreen(ScreenDef.GROUP_MOVE);
                 Contact contact4 = AppState.getCurrentContact();
                 Vector vector = contact4.account.groups;
                 int size8 = vector.size();
@@ -265,7 +265,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 ObjectPool.releaseVector(contacts13);
                 return;
             case ScreenId.GROUP_MEMBERS:
-                Screen screen15 = ScreenManager.createScreen(ScreenDef.GROUP_MEMBERS);
+                ListView screen15 = ScreenManager.createScreen(ScreenDef.GROUP_MEMBERS);
                 MrimContact mrimContact = (MrimContact) AppState.getCurrentContact();
                 MrimAccount mrimAccount4 = (MrimAccount) mrimContact.account;
                 Vector groupMembers = AppState.getVector(StateKeys.SLOT_REG_PARAM_4);
@@ -283,7 +283,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 }
                 if (screen15.menuItems.size() == 0) {
                     screen15.selectable = false;
-                    Screen labelScreen = screen15.addLabelById(772);
+                    ListView labelScreen = screen15.addLabelById(772);
                     labelScreen.setSoftKeys(AppState.getString(StateKeys.STR_EMPTY), AppState.getString(StateKeys.STR_SOFTKEY_NO), labelScreen.softKeyLeft, labelScreen.softKeyCenter, labelScreen.softKeyRight);
                 }
                 ScreenManager.showScreen(screen15);
@@ -304,7 +304,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 AppController.prepareFormData();
                 MrimContact mrimContact3 = (MrimContact) AppState.getCurrentContact();
                 MrimAccount mrimAccount5 = (MrimAccount) mrimContact3.account;
-                NotificationHelper.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount5, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(10), mrimContact3, new Long(1L)})));
+                NotificationHelper.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount5, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(MrimAccount.RESP_AUTH), mrimContact3, new Long(1L)})));
                 return;
             case ScreenId.VISIBLE_CONTACTS:
                 Vector contactIds = ServiceRegistry.getAllContactIds();
@@ -313,7 +313,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     NotificationHelper.showMessageById(404);
                     return;
                 }
-                Screen screen16 = ScreenManager.createScreen(ScreenDef.GROUP_MANAGEMENT_ALT);
+                ListView screen16 = ScreenManager.createScreen(ScreenDef.GROUP_MANAGEMENT_ALT);
                 for (int i23 = 0; i23 < count; i23++) {
                     Object contactId = contactIds.elementAt(i23);
                     screen16.addItem(MenuItem.createCheckbox(ServiceRegistry.getPhotoHost(contactId), !ServiceRegistry.hiddenContacts.contains(contactId)));
@@ -323,7 +323,7 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    public int onMenuItemSelected(Screen currentScreen, MenuItem menuItem, String title, int action, Object obj) {
+    public int onMenuItemSelected(ListView currentScreen, MenuItem menuItem, String title, int action, Object obj) {
         switch (currentScreen.screenId) {
             case ScreenId.CONTACT_LIST:
                 return ContactListManager.getSelectedContact();
@@ -377,7 +377,7 @@ public final class ContactHandler extends BaseScreenHandler {
                                 MrimContactGroup contactGroup = mrimAccount.getFirstContactGroup();
                                 ByteBuffer packetBuf = new ByteBuffer().writeIntLE(1048576).writeIntLE(103).writeStringLatin1(AppState.getString(StateKeys.STR_PHONE_SUFFIX)).writeStringUTF16(displayName);
                                 String emailsJoined = Utils.joinComma(phoneNumbers2);
-                                sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, 4121, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ResourceManager.integerOf(5), displayName, emailsJoined, contactGroup}));
+                                sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_ADD_CONTACT, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ResourceManager.integerOf(MrimAccount.RESP_ADD_PHONE_CONTACT), displayName, emailsJoined, contactGroup}));
                             }
                         }
                     }
@@ -467,7 +467,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     while (true) {
                         i6--;
                         if (i6 < 0) {
-                            int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, 4104, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ResourceManager.integerOf(10), mrimContact2, new Long(2L)}));
+                            int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ResourceManager.integerOf(MrimAccount.RESP_AUTH), mrimContact2, new Long(2L)}));
                             errorCode3 = 0 != sendResult4 ? NotificationHelper.showError(sendResult4) : 0;
                         } else {
                             membersBuf.writeStringLatin1((String) checkedItems.elementAt(i6));
@@ -500,7 +500,7 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    public int onMenuItemAction(Screen currentScreen, MenuItem menuItem, Object obj) {
+    public int onMenuItemAction(ListView currentScreen, MenuItem menuItem, Object obj) {
         switch (currentScreen.screenId) {
             case ScreenId.CONTACT_LIST:
                 return ContactListManager.onContactAction(obj);
@@ -567,7 +567,7 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.CONTACT_EDITOR:
                 AppController.clearFormFields();
@@ -620,7 +620,7 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem menuItem, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem menuItem, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.CONTACT_LIST:
@@ -687,7 +687,7 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.CONTACT_LIST:
                 return ContactListManager.updateContextMenu(screen, data);
@@ -761,7 +761,7 @@ public final class ContactHandler extends BaseScreenHandler {
                                 Object jsonObj = JsonParser.getVectorElement(payload, size);
                                 int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
                                 String jsonStr = JsonParser.getStringByInt(jsonObj, 329240);
-                                ChatRoom selectedChatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomByName(jsonStr);
+                                ChatRoom selectedChatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findByName(jsonStr);
                                 Message message = selectedChatRoom.getMessage(jsonStr);
                                 if (selectedChatRoom != null) {
                                     selectedChatRoom.markMessageRead(jsonStr);

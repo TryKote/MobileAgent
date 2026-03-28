@@ -20,7 +20,7 @@ public final class MapController {
 
     public static boolean mapInitialized;
 
-    private static Screen mapScreen;
+    private static ListView mapScreen;
 
     public static ListItem activeMapItem;
 
@@ -29,7 +29,7 @@ public final class MapController {
     public static final void showMapScreen() {
         initMapState();
         AppState.setInt(StateKeys.INT_CONNECTION_STATE, 6);
-        Screen c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_VIEW);
+        ListView c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_VIEW);
         mapScreen = c0013amM75b;
         setMapSoftKeys(c0013amM75b);
         ScreenManager.pushScreen(c0013amM75b);
@@ -119,11 +119,11 @@ public final class MapController {
         ServiceRegistry.loadSavedData();
     }
 
-    private static final void setMapSoftKeys(Screen c0013am) {
+    private static final void setMapSoftKeys(ListView c0013am) {
         c0013am.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_MENU), AppState.getString(AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE) ? 1050 : 328), 20, 0, 0);
     }
 
-    public static final void toggleMapControls(Screen c0013am) {
+    public static final void toggleMapControls(ListView c0013am) {
         if (AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
             return;
         }
@@ -131,7 +131,7 @@ public final class MapController {
         setMapSoftKeys(c0013am);
     }
 
-    public static final int handleMapBack(Screen c0013am) {
+    public static final int handleMapBack(ListView c0013am) {
         MrimAccount c0028ba;
         if (AppState.getBool(StateKeys.FLAG_MAP_TILES_PENDING)) {
             ((MrimAccount) AppState.getAccount()).isHighlighted = false;
@@ -147,7 +147,7 @@ public final class MapController {
         return 0;
     }
 
-    public static final void handleMapSwitch(Screen c0013am) {
+    public static final void handleMapSwitch(ListView c0013am) {
         if (AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
             AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 3);
         } else {
@@ -192,7 +192,7 @@ public final class MapController {
         if (size == 0) {
             return NotificationHelper.showError(327);
         }
-        Screen c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_OVERLAY);
+        ListView c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_OVERLAY);
         for (int i = 0; i < size; i++) {
             MapPoint c0014an = (MapPoint) vectorM614m.elementAt(i);
             c0013amM75b.addIconItemWithData(-1, c0014an.name, 6, c0014an);

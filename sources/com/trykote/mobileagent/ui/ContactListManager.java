@@ -23,9 +23,9 @@ public abstract class ContactListManager {
         AppState.clearIndex(StateKeys.SLOT_CURRENT_ENTITY);
         AppState.setInt(StateKeys.INT_CONNECTION_STATE, 4);
         TabBar.findTab(4, TabBar.currentAccount);
-        Screen c0013amM161g = buildContactList();
+        ListView c0013amM161g = buildContactList();
         TabBar c0008ahM175i = TabBar.getCurrentTab();
-        Screen c0013amM257b = c0013amM161g.selectByTitle(c0008ahM175i.selectedTitle);
+        ListView c0013amM257b = c0013amM161g.selectByTitle(c0008ahM175i.selectedTitle);
         ScreenManager.pushScreen(c0013amM257b);
         c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
         c0013amM257b.invalidateLayout();
@@ -42,7 +42,7 @@ public abstract class ContactListManager {
     /* renamed from: f */
     private static final void updateState() {
         TabBar c0008ahM175i = TabBar.getCurrentTab();
-        Screen c0013amM66b = ScreenManager.getCurrentScreen();
+        ListView c0013amM66b = ScreenManager.getCurrentScreen();
         c0008ahM175i.selectedIndex = c0013amM66b.scrollOffset;
         c0008ahM175i.selectedTitle = c0013amM66b.getSelectedTitle();
     }
@@ -59,7 +59,7 @@ public abstract class ContactListManager {
         RemoteLogger.log("CL", "refreshList called");
         clearState();
         TabBar c0008ahM175i = TabBar.getCurrentTab();
-        Screen c0013amM257b = buildContactList().selectByTitle(c0008ahM175i.selectedTitle);
+        ListView c0013amM257b = buildContactList().selectByTitle(c0008ahM175i.selectedTitle);
         ScreenManager.pushScreen(c0013amM257b);
         c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
         c0013amM257b.invalidateLayout();
@@ -114,7 +114,7 @@ public abstract class ContactListManager {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final int updateContextMenu(Screen c0013am, Object obj) {
+    public static final int updateContextMenu(ListView c0013am, Object obj) {
         Account abstractC0037h;
         int iM1250M = -1;
         if (AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] != null) {
@@ -213,13 +213,13 @@ public abstract class ContactListManager {
     }
 
     /* renamed from: g */
-    private static final Screen buildContactList() {
+    private static final ListView buildContactList() {
         RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
         boolean zM1056C;
         MergedContactGroup c0054y;
         int iM586d = 1 + AppState.getInt(StateKeys.SETTING_CONTACT_SORT_MODE);
         AppState.setInt(StateKeys.INT_CONTACT_ICON_SIZE, iM586d == 1 ? 1 : 12);
-        Screen c0013amM75b = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
+        ListView c0013amM75b = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
         int i = c0013amM75b.contentWidth - 1;
         if (!AppState.getBool(StateKeys.SETTING_SHOW_OFFLINE)) {
             boolean z = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
@@ -562,7 +562,7 @@ public abstract class ContactListManager {
     }
 
     /* renamed from: a */
-    public static final Screen addContactItems(Screen screen, Vector vector) {
+    public static final ListView addContactItems(ListView screen, Vector vector) {
         MenuItem menuItem;
         int count = Utils.vectorSize(vector);
         for (int i = 0; i < count; i++) {
@@ -590,5 +590,42 @@ public abstract class ContactListManager {
             screen.addItem(menuItem);
         }
         return screen;
+    }
+
+    public static void paintPopup(GraphicsContext g, int clipX, int clipY, int clipW, int clipH) {
+        g.setClip(clipX, clipY, clipW, clipH);
+        int popupHeight = AppState.getInt(StateKeys.INT_POPUP_HEIGHT);
+        if (popupHeight <= 0) {
+            return;
+        }
+        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
+        int screenHeight = AppState.getHeight() - 1;
+        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        g.setClip(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
+        g.setColorFromPalette(16);
+        g.fillRect(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
+        g.setClip(1, screenHeight - popupHeight, screenWidth - 2, popupHeight);
+        g.setColorFromPalette(1);
+        g.fillRect(0, 0, 2048, 2048);
+        int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
+        Vector tabs = AppState.getVector(StateKeys.VEC_POPUP_ITEMS);
+        int size = tabs.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                return;
+            }
+            Account account = (Account) tabs.elementAt(size);
+            int barTop = screenHeight;
+            int fontHeight = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
+            int barHeight3 = Utils.max(fontHeight, 16);
+            g.setColorFromPalette(13);
+            int textY = barTop - fontHeight;
+            g.fillRect(1, textY, ((AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 2) * account.msgCount) / 100, barHeight3);
+            g.drawIcon(account.getIconId(), 3, textY + ScreenManager.getCenterOffset());
+            g.setColorFromPalette(0);
+            g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, barTop, 36);
+            screenHeight -= barHeight;
+        }
     }
 }

@@ -33,7 +33,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ACCOUNTS_MENU));
                 return;
             case ScreenId.ACCOUNT_SWITCHER:
-                Screen contactListScreen = ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.ACCOUNT_SWITCHER), AppState.getVector(StateKeys.VEC_ACCOUNTS));
+                ListView contactListScreen = ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.ACCOUNT_SWITCHER), AppState.getVector(StateKeys.VEC_ACCOUNTS));
                 Account currentAccount = TabBar.currentAccount;
                 if (currentAccount != null) {
                     contactListScreen.selectByTitle(currentAccount.getSignature());
@@ -45,7 +45,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGISTRATION));
                 return;
             case ScreenId.MULTI_ACCOUNT_LIST: {
-                Screen screen = ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_LIST);
+                ListView screen = ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_LIST);
                 Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
                 int size3 = accounts.size();
                 for (int i6 = 0; i6 < size3; i6++) {
@@ -63,7 +63,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return;
             case ScreenId.ACCOUNT_CHECKBOX_LIST: {
                 Vector accountList = AppState.getVector(StateKeys.VEC_FILTERED_ACCOUNTS);
-                Screen screen2 = ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_LIST);
+                ListView screen2 = ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_LIST);
                 screen2.screenId = ScreenId.ACCOUNT_CHECKBOX_LIST;
                 screen2.showCheckboxes = true;
                 int size4 = accountList.size();
@@ -150,7 +150,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 }
             }
             case ScreenId.MRIM_ACCOUNT_SELECT: {
-                Screen screen19 = ScreenManager.createScreen(ScreenDef.MRIM_ACCOUNT_SELECT);
+                ListView screen19 = ScreenManager.createScreen(ScreenDef.MRIM_ACCOUNT_SELECT);
                 Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
                 int size15 = onlineAccounts.size();
                 while (true) {
@@ -170,7 +170,7 @@ public final class AccountHandler extends BaseScreenHandler {
                     int size13 = mmpAccounts2.size();
                     int i24 = size13;
                     if (size13 > 0) {
-                        Screen screen17 = ScreenManager.createScreen(ScreenDef.WIFI_ACCOUNT_LIST);
+                        ListView screen17 = ScreenManager.createScreen(ScreenDef.WIFI_ACCOUNT_LIST);
                         while (true) {
                             i24--;
                             if (i24 < 0) {
@@ -189,7 +189,7 @@ public final class AccountHandler extends BaseScreenHandler {
         }
     }
 
-    public int onMenuItemSelected(Screen screen, MenuItem item, String title, int action, Object data) {
+    public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.ACCOUNT_LIST:
                 return AppController.handleMapMenuOption(action);
@@ -242,7 +242,7 @@ public final class AccountHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onMenuItemAction(Screen screen, MenuItem item, Object data) {
+    public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.ACCOUNT_LIST:
                 return 0;
@@ -280,7 +280,7 @@ public final class AccountHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.MULTI_ACCOUNT_LIST:
                 AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
@@ -300,7 +300,7 @@ public final class AccountHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem item, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.ACCOUNT_LIST:
@@ -339,7 +339,7 @@ public final class AccountHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.ACCOUNT_LIST:
                 return 0;

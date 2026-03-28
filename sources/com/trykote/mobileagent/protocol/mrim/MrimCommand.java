@@ -45,5 +45,8 @@ public final class MrimCommand {
     public static final int CS_LOGIN2 = 4216;
     public static final int CS_PROFILE_DATA = 4229;
 
+    public static final int CS_AUTH_UPDATE = 4132;
+    public static final int CS_MESSAGE_EXT = 4153;
+
     private MrimCommand() {}
 }

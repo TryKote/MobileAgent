@@ -135,7 +135,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                             if (i < 0) {
                                 break;
                             }
-                        } while (((Screen) events.elementAt(i)).offsetY != 0);
+                        } while (((ListView) events.elementAt(i)).offsetY != 0);
                         int w = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
                         int h = AppState.getInt(StateKeys.INT_SCREEN_HEIGHT);
                         gfx.setClip(0, 0, w, h);
@@ -167,7 +167,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                                     }
                                 }
                             }
-                            ((Screen) events.elementAt(i)).paint(gfx, z2, false);
+                            ((ListView) events.elementAt(i)).paint(gfx, z2, false);
                             gfx.setClip(0, 0, w, h);
                             i++;
                         }

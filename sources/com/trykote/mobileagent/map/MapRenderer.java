@@ -529,7 +529,7 @@ public abstract class MapRenderer {
                     if (!hasTooltip()) {
                         if (nearestProfile != null) {
                             showTooltip(nearestProfile);
-                            if (nearestProfile.accountProfile.dirty) {
+                            if (nearestProfile.profileManager.profile.dirty) {
                                 AppState.setInt(StateKeys.FLAG_MAP_TILES_PENDING, 1);
                             }
                             AppState.setAccount(nearestProfile);
@@ -900,5 +900,26 @@ public abstract class MapRenderer {
         int zoomLevel = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
         setPosition((int) MapUtils.pixelToCoord(screenToTileX(i), zoomLevel), (int) MapUtils.pixelToCoord(screenToTileY(i2), zoomLevel));
         needsRedraw = true;
+    }
+
+    public static void paintOverlay(GraphicsContext g, int mapX, int mapY, int width, int height) {
+        g.setClip(mapX, mapY, width, height);
+        try {
+            int viewportW = AppState.getInt(StateKeys.MAP_VIEWPORT_WIDTH);
+            int viewportH = AppState.getInt(StateKeys.MAP_VIEWPORT_HEIGHT);
+            Graphics gfx = g.graphics;
+            gfx.drawImage(AppState.getImage(StateKeys.OBJ_FONT_2), viewportW >> 1, mapY + (viewportH >> 1), 3);
+            if (!AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE) && AppState.getBool(StateKeys.FLAG_SUPPORTS_ALPHA)) {
+                int[] overlay = new int[viewportW];
+                for (int col = viewportW - 1; col >= 0; col--) {
+                    overlay[col] = 1006632960;
+                }
+                for (int row = viewportH - 1; row >= 0; row--) {
+                    gfx.drawRGB(overlay, 0, viewportW, 0, mapY + row, viewportW, 1, true);
+                }
+            }
+        } catch (Throwable unused) {
+        }
+        AppState.setInt(StateKeys.FLAG_MAP_SCROLLING, 0);
     }
 }

@@ -442,6 +442,47 @@ public final class TabBar {
         }
     }
 
+    public static void paintTopBar(GraphicsContext g) {
+        int paintMode;
+        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_BOLD));
+        TabBar tab = (TabBar) AppState.getVector(StateKeys.VEC_TAB_BARS).elementAt(TabBar.currentIndex);
+        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_ITEMS);
+        int size2 = tabs.size();
+        while (true) {
+            size2--;
+            if (size2 < 0) {
+                break;
+            }
+            Object objElementAt2 = tabs.elementAt(size2);
+            if (objElementAt2 instanceof TabBar) {
+                TabBar tab2 = (TabBar) objElementAt2;
+                boolean isSelected = objElementAt2 == tab && !TabBar.scrollEnabled;
+                GraphicsContext gfx = g.setColorFromPalette(16);
+                int tabX = tab2.xOffset;
+                int tabWidth = tab2.width;
+                int textOffset = AppState.getIntOffset(StateKeys.OFFSET_BOLD_FONT_HEIGHT) + 7;
+                gfx.setClip(tabX, 2, tabWidth, textOffset - 2).drawLine(tab2.xOffset, textOffset, tab2.xOffset, 6).drawLine(tab2.xOffset, 6, tab2.xOffset + 4, 2).drawLine(tab2.xOffset + 4, 2, (tab2.xOffset + tab2.width) - 2, 2).drawLine((tab2.xOffset + tab2.width) - 2, 2, (tab2.xOffset + tab2.width) - 2, textOffset).setColorFromPalette(isSelected ? 1 : 17);
+                int fillBottom = isSelected ? textOffset : textOffset - 1;
+                for (int row = 3; row < fillBottom; row++) {
+                    g.drawLine(tab2.xOffset + 1 + (row < 6 ? 6 - row : 0), row, (tab2.xOffset + tab2.width) - 3, row);
+                }
+                if (tab2.account == null) {
+                    int iconId = tab2.iconId;
+                    paintMode = (iconId == 240 && AccountManager.hasActiveConnection()) ? 16385 : (iconId == 240 || iconId == 264 || AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS).size() <= 0) ? iconId : 16384;
+                } else {
+                    paintMode = AccountManager.getAccountStatus(tab2.account);
+                }
+                g.drawIcon(paintMode, tab2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(tab2.xOffset, 2, tab2.width - 3, textOffset - 2).drawString(tab2.title, tab2.xOffset + 6 + 16, 4, 20);
+            } else {
+                int[] iconData = (int[]) objElementAt2;
+                int iconX = iconData[0];
+                int centerY2 = 4 + ScreenManager.getCenterOffset();
+                g.setClip(iconX, centerY2, 16, 16);
+                g.drawIcon(iconData[1], iconX, centerY2);
+            }
+        }
+    }
+
     /* renamed from: a */
     public static final Object hitTest(int i, int i2) {
         Vector tabs = AppState.getVector(StateKeys.VEC_TAB_ITEMS);

@@ -146,7 +146,7 @@ public final class MenuItem {
     }
 
     /* renamed from: a */
-    public final int execute(Screen screen) {
+    public final int execute(ListView screen) {
         if (this.id == 2) {
             if (this.data != null) {
                 Boolean checked = ResourceManager.booleanOf(!((Boolean) this.data).booleanValue());
@@ -171,7 +171,7 @@ public final class MenuItem {
             NotificationHelper.showMessageById(429);
             return 0;
         }
-        Screen choiceScreen = ScreenManager.createScreen(ScreenDef.CHOICE_DIALOG);
+        ListView choiceScreen = ScreenManager.createScreen(ScreenDef.CHOICE_DIALOG);
         Object[] objArr = (Object[]) this.data;
         String[] strArr = (String[]) objArr[1];
         int iIntValue = ((Integer) objArr[0]).intValue();

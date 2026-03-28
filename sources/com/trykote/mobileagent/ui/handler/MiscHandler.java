@@ -37,7 +37,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 AppController.processEventQueue();
                 return;
             case ScreenId.PHONE_INPUT: {
-                Screen screen6 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT);
+                ListView screen6 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT);
                 for (int i14 = 0; i14 < 15; i14++) {
                     screen6.addTextItem(AppState.getString(i14 + 48));
                 }
@@ -45,7 +45,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.SERVER_ADDRESS: {
-                Screen screen7 = ScreenManager.createScreen(ScreenDef.SERVER_ADDRESS);
+                ListView screen7 = ScreenManager.createScreen(ScreenDef.SERVER_ADDRESS);
                 for (int i15 = 0; i15 < 15; i15++) {
                     screen7.addTextItem(AppState.getString(i15 + 48));
                 }
@@ -59,7 +59,7 @@ public final class MiscHandler extends BaseScreenHandler {
                     NotificationHelper.showMessageById(397);
                     return;
                 }
-                Screen screen8 = ScreenManager.createScreen(ScreenDef.REGION_SELECTOR);
+                ListView screen8 = ScreenManager.createScreen(ScreenDef.REGION_SELECTOR);
                 for (int i16 = 0; i16 < size9; i16++) {
                     GeoRegion region = (GeoRegion) regions.elementAt(i16);
                     screen8.addIconItemWithData(-1, region.name, 6, region);
@@ -70,7 +70,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.PHONE_INPUT_ALT: {
-                Screen screen9 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT_ALT);
+                ListView screen9 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT_ALT);
                 for (int i17 = 0; i17 < 15; i17++) {
                     screen9.addTextItem(AppState.getString(i17 + 48));
                 }
@@ -78,7 +78,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.URL_OPEN: {
-                Screen screen10 = ScreenManager.createScreen(ScreenDef.URL_OPEN);
+                ListView screen10 = ScreenManager.createScreen(ScreenDef.URL_OPEN);
                 for (int i18 = 0; i18 < 15; i18++) {
                     screen10.addTextItem(AppState.getString(i18 + 48));
                 }
@@ -103,7 +103,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 ResourceManager.showTosScreen();
                 return;
             case ScreenId.FORM_LIST: {
-                Screen screen18 = ScreenManager.createScreen(ScreenDef.FORM_LIST);
+                ListView screen18 = ScreenManager.createScreen(ScreenDef.FORM_LIST);
                 Vector vector2 = ((Conversation) AppState.pool[StateKeys.SLOT_TEMP_OBJECT_1]).items;
                 int size14 = vector2.size();
                 while (true) {
@@ -152,7 +152,7 @@ public final class MiscHandler extends BaseScreenHandler {
         AppController.finishScreenBuild();
     }
 
-    public int onMenuItemSelected(Screen screen, MenuItem item, String title, int action, Object data) {
+    public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.FIRST_RUN:
                 return -1;
@@ -227,7 +227,7 @@ public final class MiscHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onMenuItemAction(Screen screen, MenuItem item, Object data) {
+    public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.FIRST_RUN:
                 return 0;
@@ -283,7 +283,7 @@ public final class MiscHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.VERSION_CHECK:
                 AppState.clearIndex(StateKeys.SLOT_SCREEN_TITLE);
@@ -323,7 +323,7 @@ public final class MiscHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem item, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.FIRST_RUN:
@@ -383,7 +383,7 @@ public final class MiscHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.FIRST_RUN:
                 return AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[0] == null ? 0 : ScreenId.VERSION_CHECK;
@@ -441,7 +441,7 @@ public final class MiscHandler extends BaseScreenHandler {
                             if (size6 >= 0) {
                                 String jsonValue = JsonParser.getVectorString(jsonArray, size6);
                                 MrimAccount mrimAccount4 = (MrimAccount) AppState.getAccount();
-                                ChatRoom selectedChatRoom3 = mrimAccount4.findChatRoomByName(jsonValue);
+                                ChatRoom selectedChatRoom3 = mrimAccount4.chatRoomManager.findByName(jsonValue);
                                 Message message;
                                 if (selectedChatRoom3 != null && (message = selectedChatRoom3.getMessage(jsonValue)) != null) {
                                     if (message.hasFlag(4)) {
@@ -449,7 +449,7 @@ public final class MiscHandler extends BaseScreenHandler {
                                     }
                                     selectedChatRoom3.decrementMembers();
                                 }
-                                mrimAccount4.removeUserFromChatRooms(jsonValue);
+                                mrimAccount4.chatRoomManager.removeUser(jsonValue);
                             } else {
                                 break;
                             }

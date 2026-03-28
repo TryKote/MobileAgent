@@ -632,7 +632,7 @@ public final class Conversation implements ListItem {
                 contactId++;
                 for (int i6 = 12; i6 < contactFormatLen; i6++) {
                     if (i6 == 18) {
-                        account.receiveProfileData(addr, buffer.readBufferArray());
+                        account.profileManager.receiveContactProfile(addr, buffer.readBufferArray());
                     } else if (contactFormat.charAt(i6) == 'u') {
                         buffer.readInt();
                     } else {

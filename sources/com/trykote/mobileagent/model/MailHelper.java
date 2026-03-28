@@ -159,7 +159,7 @@ public final class MailHelper {
             return validationResult;
         }
         String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(4);
         Object jsonPayload = IOUtils.getJsonPayload();
@@ -211,7 +211,7 @@ public final class MailHelper {
     private static final int handleMailRedirect() {
         int action = AppState.getInt(StateKeys.INT_XMPP_ACTION);
         if (action == 54) {
-            Message message = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(StateKeys.SLOT_MESSAGE_ID));
+            Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(StateKeys.SLOT_MESSAGE_ID));
             Vector toList = message.getToList();
             Vector ccList = message.getCcList();
             getFirstRecipient(toList);

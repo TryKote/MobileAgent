@@ -18,7 +18,7 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:ad.class */
 public abstract class ScreenManager {
 
-    // Screen types (lower 4 bits of typeAndFlags in createScreen header)
+    // ListView types (lower 4 bits of typeAndFlags in createScreen header)
     private static final int TYPE_FULLSCREEN = 0;
     private static final int TYPE_FULLSCREEN_ALT = 1;
     private static final int TYPE_DIALOG_CENTER = 2;
@@ -78,18 +78,18 @@ public abstract class ScreenManager {
             if (size < 0) {
                 return;
             } else {
-                ((Screen) screens.elementAt(size)).rebuildItems();
+                ((ListView) screens.elementAt(size)).rebuildItems();
             }
         }
     }
 
     /* renamed from: b */
-    public static final Screen getCurrentScreen() {
+    public static final ListView getCurrentScreen() {
         Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         if (screens.isEmpty()) {
             return null;
         }
-        return (Screen) screens.lastElement();
+        return (ListView) screens.lastElement();
     }
 
     /* renamed from: c */
@@ -117,7 +117,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: a */
-    public static final void pushScreen(Screen screen) {
+    public static final void pushScreen(ListView screen) {
         Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         while (screens.size() > 0) {
             ScreenBuilder.onScreenClosed();
@@ -131,14 +131,14 @@ public abstract class ScreenManager {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final void showScreen(Screen screen) {
+    public static final void showScreen(ListView screen) {
         RemoteLogger.log("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
-        Screen prevScreen = null;
+        ListView prevScreen = null;
         Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
         int size = screens.size() - 1;
-        int i = size >= 0 ? ((Screen) screens.elementAt(size)).screenId : -1;
+        int i = size >= 0 ? ((ListView) screens.elementAt(size)).screenId : -1;
         if (i == 137 || i == 63) {
-            Screen savedScreen = (Screen) screens.elementAt(size);
+            ListView savedScreen = (ListView) screens.elementAt(size);
             prevScreen = savedScreen;
             screens.removeElement(savedScreen);
         }
@@ -146,7 +146,7 @@ public abstract class ScreenManager {
         if (i2 != 112) {
             int size2 = screens.size();
             for (int i3 = 0; i3 < size2; i3++) {
-                if (((Screen) screens.elementAt(i3)).screenId == i2) {
+                if (((ListView) screens.elementAt(i3)).screenId == i2) {
                     size2 = i3;
                 }
             }
@@ -175,7 +175,7 @@ public abstract class ScreenManager {
                 screen.setOffset(iM586d, screenH);
                 break;
             case TYPE_POPUP:
-                Screen curScreen = getCurrentScreen();
+                ListView curScreen = getCurrentScreen();
                 if (curScreen != null) {
                     int iM586d2 = curScreen.offsetX + curScreen.containerWidth;
                     int selectedY = curScreen.getSelectedY();
@@ -195,7 +195,7 @@ public abstract class ScreenManager {
         }
         int size3 = screens.size();
         for (int i7 = 0; i7 < size3; i7++) {
-            if (((Screen) screens.elementAt(i7)).screenType == TYPE_TOAST) {
+            if (((ListView) screens.elementAt(i7)).screenType == TYPE_TOAST) {
                 size3 = i7;
             }
         }
@@ -218,7 +218,7 @@ public abstract class ScreenManager {
             if (size < 0) {
                 return false;
             }
-        } while (((Screen) screens.elementAt(size)).screenId != i);
+        } while (((ListView) screens.elementAt(size)).screenId != i);
         return true;
     }
 
@@ -237,8 +237,8 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: b */
-    public static final Screen createScreen(int offset) {
-        Screen screen;
+    public static final ListView createScreen(int offset) {
+        ListView screen;
         int pos = offset;
         String title = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
         int screenId = AppState.getInt(pos++);
@@ -258,32 +258,32 @@ public abstract class ScreenManager {
         switch (screenType) {
             case TYPE_FULLSCREEN:
             case TYPE_FULLSCREEN_ALT:
-                screen = new Screen(0, screenId, screenW, screenH, true);
+                screen = new ListView(0, screenId, screenW, screenH, true);
                 break;
             case TYPE_DIALOG_CENTER:
             case TYPE_DIALOG_BOTTOM:
             case TYPE_DIALOG_CORNER:
             case TYPE_POPUP:
             case TYPE_DIALOG_LOW:
-                screen = new Screen(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, true);
+                screen = new ListView(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, true);
                 break;
             case TYPE_FULLSCREEN_NOSCROLL:
             case TYPE_FULLSCREEN_NOSCROLL_ALT:
-                screen = new Screen(0, screenId, screenW, screenH, false);
+                screen = new ListView(0, screenId, screenW, screenH, false);
                 break;
             case TYPE_MAP:
             case TYPE_MAP_ALT:
-                screen = new Screen(1, screenId, screenW, screenH, true);
+                screen = new ListView(1, screenId, screenW, screenH, true);
                 break;
             case TYPE_TOAST:
             case TYPE_TOAST_CENTER:
-                screen = new Screen(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, false);
+                screen = new ListView(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, false);
                 break;
             default:
                 screen = null;
                 break;
         }
-        RemoteLogger.log("SCR", "Screen created OK");
+        RemoteLogger.log("SCR", "ListView created OK");
         if (screenType != TYPE_DIALOG_BOTTOM && screenType != TYPE_DIALOG_CORNER && screenType != TYPE_DIALOG_CENTER && screenType != TYPE_DIALOG_LOW && screenType != TYPE_POPUP && screenType != TYPE_TOAST_CENTER) {
             if (screenType != TYPE_TOAST) {
                 RemoteLogger.log("SCR", "setHeader(" + headerMode + ", " + title + ")");
@@ -299,15 +299,15 @@ public abstract class ScreenManager {
         for (int i = 0; i < itemCount; i++) {
             pos = parseScreenItem(screen, pos, screenId);
         }
-        Screen configuredScreen = screen.setSoftKeys(leftKeyLabel > 0 ? AppState.getString(leftKeyLabel) : null, rightKeyLabel > 0 ? AppState.getString(rightKeyLabel) : null, leftKeyCmd, rightKeyCmd, extraKeyCmd);
+        ListView configuredScreen = screen.setSoftKeys(leftKeyLabel > 0 ? AppState.getString(leftKeyLabel) : null, rightKeyLabel > 0 ? AppState.getString(rightKeyLabel) : null, leftKeyCmd, rightKeyCmd, extraKeyCmd);
         configuredScreen.screenType = screenType;
         RemoteLogger.log("SCR", "createScreen(" + offset + ") done: items=" + screen.menuItems.size() + " skL=" + leftKeyCmd + " skR=" + extraKeyCmd);
         return configuredScreen;
     }
 
     /* renamed from: c */
-    public static final Screen createDialogScreen(int i) {
-        Screen screen = new Screen(0, i, (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
+    public static final ListView createDialogScreen(int i) {
+        ListView screen = new ListView(0, i, (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
         screen.screenType = TYPE_DIALOG_CENTER;
         screen.showCheckboxes = true;
         return screen;
@@ -322,12 +322,12 @@ public abstract class ScreenManager {
             if (size <= 0) {
                 return false;
             }
-        } while (((Screen) screens.elementAt(size)).offsetY != 0);
+        } while (((ListView) screens.elementAt(size)).offsetY != 0);
         return true;
     }
 
     /* renamed from: a */
-    private static final int addItemToScreen(boolean isVisible, Screen screen, int pos, boolean isAction) {
+    private static final int addItemToScreen(boolean isVisible, ListView screen, int pos, boolean isAction) {
         int labelKey = AppState.getInt(pos++);
         int iconKey = AppState.getInt(pos++);
         int cmdKey = AppState.getInt(pos++);
@@ -342,7 +342,7 @@ public abstract class ScreenManager {
     }
 
     /* renamed from: a */
-    private static final int parseScreenItem(Screen screen, int pos, int screenId) {
+    private static final int parseScreenItem(ListView screen, int pos, int screenId) {
         int nextPos;
         Object itemData;
         int afterPos;
@@ -510,7 +510,7 @@ public abstract class ScreenManager {
 
     /* renamed from: d */
     public static final int processScreenForm() {
-        Screen screen = getCurrentScreen();
+        ListView screen = getCurrentScreen();
         int i = screen.definitionOffset + 9;
         Vector items = screen.menuItems;
         int fieldIdx = i + 1;

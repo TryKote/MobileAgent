@@ -294,13 +294,13 @@ public final class ContactInfo extends Hashtable {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public final Screen buildContactScreen(int i) {
+    public final ListView buildContactScreen(int i) {
         int i2 = 0;
         int endIdx;
         int endIdx2;
         int endIdx3;
         Account acct = getAccount();
-        Screen screen = ScreenManager.createScreen(i);
+        ListView screen = ScreenManager.createScreen(i);
         Vector labels = Utils.splitByNull(AppState.getString(StateKeys.STR_CONTACT_FIELD_LABELS));
         int size = labels.size();
         if (acct instanceof MrimAccount) {

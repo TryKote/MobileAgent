@@ -18,7 +18,7 @@ public final class DialogHandler extends BaseScreenHandler {
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.STATUS_DIALOG:
-                Screen dialogScreen = ScreenManager.createDialogScreen(3);
+                ListView dialogScreen = ScreenManager.createDialogScreen(3);
                 Account account = AppState.getAccount();
                 switch (account.getType()) {
                     case 0:
@@ -63,7 +63,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.TRAFFIC_COST));
                 return;
             case ScreenId.EMOTICON_DIALOG:
-                Screen dialogScreen2 = ScreenManager.createDialogScreen(17);
+                ListView dialogScreen2 = ScreenManager.createDialogScreen(17);
                 if (AppState.getAccount() instanceof MmpProtocol) {
                     for (int i3 = 0; i3 <= 36; i3++) {
                         dialogScreen2.addIconById(i3 + 268, i3 + 118, i3);
@@ -88,13 +88,13 @@ public final class DialogHandler extends BaseScreenHandler {
                 AppState.setInt(StateKeys.INT_LAST_POLL_TIMESTAMP, 0);
                 AppState.setInt(StateKeys.INT_LAST_CHECK_TIMESTAMP, 0);
                 AppState.setInt(StateKeys.INT_LAST_LIST_SIZE, 0);
-                ScreenManager.showScreen(new Screen());
+                ScreenManager.showScreen(new ListView());
                 return;
             case ScreenId.SOFTKEY_MENU:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SOFTKEY_MENU));
                 return;
             case ScreenId.EMOTICON_PICKER:
-                Screen screen5 = ScreenManager.createScreen(ScreenDef.EMOTICON_PICKER);
+                ListView screen5 = ScreenManager.createScreen(ScreenDef.EMOTICON_PICKER);
                 if (AppState.getCurrentContact() instanceof MmpContact) {
                     for (int i10 = 0; i10 < 43; i10++) {
                         if (AppState.getString(i10 + 1141) != null) {
@@ -122,7 +122,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(screen5);
                 return;
             case ScreenId.CAPTCHA:
-                Screen screen12 = ScreenManager.createScreen(ScreenDef.CAPTCHA);
+                ListView screen12 = ScreenManager.createScreen(ScreenDef.CAPTCHA);
                 Object obj4 = ((Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA])[2];
                 if (obj4 instanceof javax.microedition.lcdui.Image) {
                     screen12.addItem(MenuItem.createGraphics(new GraphicsContext((javax.microedition.lcdui.Image) obj4)));
@@ -189,7 +189,7 @@ public final class DialogHandler extends BaseScreenHandler {
         AppController.finishScreenBuild();
     }
 
-    public int onMenuItemSelected(Screen screen, MenuItem item, String title, int action, Object data) {
+    public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.STATUS_DIALOG:
                 return IOUtils.handleStatusChange(action);
@@ -266,7 +266,7 @@ public final class DialogHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onMenuItemAction(Screen screen, MenuItem item, Object data) {
+    public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.STATUS_DIALOG:
                 return 0;
@@ -333,7 +333,7 @@ public final class DialogHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.ABOUT:
                 AppController.clearPreviewState();
@@ -358,7 +358,7 @@ public final class DialogHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem item, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.STATUS_DIALOG:
@@ -436,7 +436,7 @@ public final class DialogHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.STATUS_DIALOG:
                 return 0;

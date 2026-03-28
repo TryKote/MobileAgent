@@ -403,7 +403,7 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final void updateRegDropdowns(Screen screen, Object obj) {
+    public static final void updateRegDropdowns(ListView screen, Object obj) {
         MenuItem menuItem = (MenuItem) obj;
         int selectedIdx = ((Integer) ((Object[]) menuItem.data)[0]).intValue();
         String str = menuItem.title;

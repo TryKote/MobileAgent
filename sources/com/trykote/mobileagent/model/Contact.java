@@ -304,7 +304,7 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: I */
-    public final Screen showMessages() {
+    public final ListView showMessages() {
         this.dirty = false;
         String str = this.displayName;
         AppState.setObject(StateKeys.SLOT_CURRENT_MSG_TEXT, (Object) str);
@@ -313,7 +313,7 @@ public abstract class Contact implements Sortable {
             icon += 4;
         }
         AppState.setInt(StateKeys.INT_MESSAGE_ICON, icon);
-        Screen msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_SUMMARY);
+        ListView msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_SUMMARY);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         int dateCode = AppState.getDateCode();
         while (dupe.length > 0) {
@@ -345,7 +345,7 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: a */
-    private final void addMessageLines(Screen screen, String str, int i) {
+    private final void addMessageLines(ListView screen, String str, int i) {
         Vector lines = Conversation.parseConversation(str);
         int size = lines.size();
         for (int i2 = 0; i2 < size; i2++) {
@@ -373,9 +373,9 @@ public abstract class Contact implements Sortable {
     }
 
     /* renamed from: J */
-    public final Screen showMessageSummary() {
+    public final ListView showMessageSummary() {
         String truncated;
-        Screen msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_DETAIL);
+        ListView msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_DETAIL);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         while (dupe.length > 0) {
             int entryLen = dupe.readShortBE();

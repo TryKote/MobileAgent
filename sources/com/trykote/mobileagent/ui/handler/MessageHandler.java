@@ -23,7 +23,7 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MESSAGE_DETAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 String msgId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
-                Message message = (Message) ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).messages.get(msgId);
+                Message message = (Message) ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).messages.get(msgId);
                 Message messageWithBody = message.body != null ? message : null;
                 NotificationHelper.showConfirmDialog(48, 837);
                 if (messageWithBody == null) {
@@ -36,7 +36,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 return;
             case ScreenId.MESSAGE_PREVIEW:
                 String msgId3 = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
-                ChatRoom chatRoom3 = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
+                ChatRoom chatRoom3 = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
                 int roomType = chatRoom3.getType();
                 Message message4 = chatRoom3.getMessage(msgId3);
                 String str;
@@ -50,7 +50,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 AppState.setObject(StateKeys.SLOT_SCREEN_TITLE, (Object) str);
                 AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) Utils.normalizeSpaces(message4.getSubject()));
                 AppState.setObject(StateKeys.SLOT_SCREEN_VALUE, (Object) Utils.normalizeSpaces(message4.body));
-                Screen screen3 = ScreenManager.createScreen(ScreenDef.MESSAGE_PREVIEW);
+                ListView screen3 = ScreenManager.createScreen(ScreenDef.MESSAGE_PREVIEW);
                 Object[] objArr = message4.attachments;
                 if (objArr != null) {
                     for (Object obj2 : objArr) {
@@ -132,7 +132,7 @@ public final class MessageHandler extends BaseScreenHandler {
         }
     }
 
-    public int onMenuItemSelected(Screen screen, MenuItem item, String title, int action, Object data) {
+    public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
                 return -1;
@@ -227,7 +227,7 @@ public final class MessageHandler extends BaseScreenHandler {
         }
     }
 
-    public int onMenuItemAction(Screen screen, MenuItem item, Object data) {
+    public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
@@ -265,7 +265,7 @@ public final class MessageHandler extends BaseScreenHandler {
         }
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
@@ -285,7 +285,7 @@ public final class MessageHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem item, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
@@ -324,7 +324,7 @@ public final class MessageHandler extends BaseScreenHandler {
         }
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
                 return MailHelper.processMailResponse();
@@ -343,7 +343,7 @@ public final class MessageHandler extends BaseScreenHandler {
                     if (responseCode != 0) {
                         return responseCode;
                     }
-                    ChatRoom lastChatRoom = ((MrimAccount) AppState.getAccount()).getLastChatRoom();
+                    ChatRoom lastChatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast();
                     Vector vector = (Vector) IOUtils.getJsonPayload();
                     lastChatRoom.clear();
                     int size = vector.size();
@@ -366,7 +366,7 @@ public final class MessageHandler extends BaseScreenHandler {
                         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
                         for (int i2 = 0; i2 < vecSize; i2++) {
                             String messageId = Utils.getVectorString(lastChatRoom.messageIds, i2);
-                            Message message = mrimAccount.findChatRoomById(Utils.parseInt(lastChatRoom.metadata.get(messageId))).getMessage(messageId);
+                            Message message = mrimAccount.chatRoomManager.findById(Utils.parseInt(lastChatRoom.metadata.get(messageId))).getMessage(messageId);
                             if (message != null) {
                                 lastChatRoom.messages.put(messageId, message);
                             } else {

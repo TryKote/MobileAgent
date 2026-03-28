@@ -63,7 +63,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                 return;
             case ScreenId.PROFILE_EDIT:
                 StringBuffer stringBuffer = new StringBuffer(AppState.getString(StateKeys.STR_REGISTRATION_TEXT));
-                stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).accountProfile.gender + 780));
+                stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).profileManager.profile.gender + 780));
                 AppState.setFromBuffer(StateKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
                 ResourceManager.lastTileLoadTime = System.currentTimeMillis();
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_EDIT));
@@ -76,7 +76,7 @@ public final class ProfileHandler extends BaseScreenHandler {
         AppController.finishScreenBuild();
     }
 
-    public int onMenuItemSelected(Screen screen, MenuItem item, String title, int action, Object data) {
+    public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
                 return AppController.handleEnterKey();
@@ -99,7 +99,7 @@ public final class ProfileHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onMenuItemAction(Screen screen, MenuItem item, Object data) {
+    public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
                 return AppController.handleBackKey();
@@ -124,7 +124,7 @@ public final class ProfileHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
                 AppController.resetSearchResults();
@@ -135,7 +135,7 @@ public final class ProfileHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem item, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
@@ -159,7 +159,7 @@ public final class ProfileHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
                 return 0;

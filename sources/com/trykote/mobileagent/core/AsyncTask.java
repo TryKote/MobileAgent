@@ -434,16 +434,16 @@ public final class AsyncTask implements Runnable {
                 long[] coords = (long[]) args[3];
                 MrimAccount account = (MrimAccount) args[0];
                 Vector mapPoints = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
-                account.setLocationProfile((MapPoint) mapPoints.firstElement());
+                account.profileManager.setMapLocation((MapPoint) mapPoints.firstElement());
                 IOUtils.postAccountEvent(account);
             } else {
                 MrimAccount account = (MrimAccount) args[0];
-                account.setSimpleProfile((String) args[1], (String) args[2]);
+                account.profileManager.setSimpleLocation((String) args[1], (String) args[2]);
                 IOUtils.postAccountEvent(account);
             }
         } catch (Throwable e) {
             MrimAccount account = (MrimAccount) args[0];
-            account.setSimpleProfile((String) args[1], (String) args[2]);
+            account.profileManager.setSimpleLocation((String) args[1], (String) args[2]);
             IOUtils.postAccountEvent(account);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);

@@ -83,7 +83,7 @@ public final class SettingsHandler extends BaseScreenHandler {
         }
     }
 
-    public int onMenuItemSelected(Screen screen, MenuItem item, String title, int action, Object data) {
+    public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.SETTINGS:
                 return 0;
@@ -133,7 +133,7 @@ public final class SettingsHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onMenuItemAction(Screen screen, MenuItem item, Object data) {
+    public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.SETTINGS:
                 return 0;
@@ -174,7 +174,7 @@ public final class SettingsHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.SETTINGS:
                 AppState.setBool(StateKeys.SETTING_STATUS_BAR_VISIBLE, AppState.getBool(StateKeys.FLAG_FULLSCREEN_REQUESTED));
@@ -187,7 +187,7 @@ public final class SettingsHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem item, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem item, String title, int selectedOption,
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.SETTINGS:
@@ -228,7 +228,7 @@ public final class SettingsHandler extends BaseScreenHandler {
         return 0;
     }
 
-    public int onIdleProcess(Screen screen, MenuItem item, Object data, String title) {
+    public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         return 0;
     }
 }

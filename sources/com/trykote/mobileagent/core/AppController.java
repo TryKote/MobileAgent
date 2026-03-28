@@ -91,7 +91,7 @@ public final class AppController {
     public static final int handleSoftKeyAction(String str) {
         int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        ChatRoom chatRoom = account.findChatRoomById(chatRoomId);
+        ChatRoom chatRoom = account.chatRoomManager.findById(chatRoomId);
         IOUtils.setSelectedItems(chatRoom.readMessages);
         if (StringUtils.matchesKey(852, str)) {
             chatRoom.readMessages.removeAllElements();
@@ -108,7 +108,7 @@ public final class AppController {
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.findDefaultChatRoom().id);
+        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
         return 0;
     }
 
@@ -141,7 +141,7 @@ public final class AppController {
 
     /* renamed from: ad */
     private static final void restoreState() {
-        ((MrimAccount) AppState.getAccount()).getLastChatRoom().clear();
+        ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast().clear();
     }
 
     /* renamed from: d */
@@ -312,7 +312,7 @@ public final class AppController {
 
     /* renamed from: f */
     public static final int handleGroupSelection(int i) {
-        Message message = ((MrimAccount) AppState.getAccount()).findChatRoomById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(StateKeys.SLOT_MESSAGE_ID));
+        Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(StateKeys.SLOT_MESSAGE_ID));
         String body = message.body;
         message.body = i == 0 ? Conversation.encodeAlternate(body) : Conversation.decodeAlternate(body);
         return ScreenId.MESSAGE_PREVIEW;
@@ -454,7 +454,7 @@ public final class AppController {
         switch (i) {
             case 0:
                 if (account != null) {
-                    account.markProfileForPublish();
+                    account.profileManager.publishLocation();
                     break;
                 } else {
                     Vector accounts = AccountManager.getMrimAccountList();
@@ -465,13 +465,13 @@ public final class AppController {
                             ObjectPool.releaseVector(accounts);
                             break;
                         } else {
-                            AccountManager.findMrimAccount(accounts, size).markProfileForPublish();
+                            AccountManager.findMrimAccount(accounts, size).profileManager.publishLocation();
                         }
                     }
                 }
             case 1:
                 if (account != null) {
-                    account.markProfileForHide();
+                    account.profileManager.hideLocation();
                     break;
                 } else {
                     Vector accounts2 = AccountManager.getMrimAccountList();
@@ -482,13 +482,13 @@ public final class AppController {
                             ObjectPool.releaseVector(accounts2);
                             break;
                         } else {
-                            AccountManager.findMrimAccount(accounts2, size2).markProfileForHide();
+                            AccountManager.findMrimAccount(accounts2, size2).profileManager.hideLocation();
                         }
                     }
                 }
             case 2:
                 if (account != null) {
-                    account.setProfileGroups();
+                    account.profileManager.setGroups();
                     break;
                 } else {
                     Vector accounts3 = AccountManager.getMrimAccountList();
@@ -499,13 +499,13 @@ public final class AppController {
                             ObjectPool.releaseVector(accounts3);
                             break;
                         } else {
-                            AccountManager.findMrimAccount(accounts3, size3).setProfileGroups();
+                            AccountManager.findMrimAccount(accounts3, size3).profileManager.setGroups();
                         }
                     }
                 }
             case 3:
                 if (account != null) {
-                    account.clearProfileGroups();
+                    account.profileManager.clearGroups();
                     break;
                 } else {
                     Vector accounts4 = AccountManager.getMrimAccountList();
@@ -516,7 +516,7 @@ public final class AppController {
                             ObjectPool.releaseVector(accounts4);
                             break;
                         } else {
-                            AccountManager.findMrimAccount(accounts4, size4).clearProfileGroups();
+                            AccountManager.findMrimAccount(accounts4, size4).profileManager.clearGroups();
                         }
                     }
                 }
@@ -580,12 +580,12 @@ public final class AppController {
 
     /* renamed from: w */
     public static final void processEventQueue() {
-        Screen screen = ScreenManager.createScreen(ScreenDef.DIALOG_SCREEN);
+        ListView screen = ScreenManager.createScreen(ScreenDef.DIALOG_SCREEN);
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        Enumeration chatRooms = account.chatRoomsList.elements();
+        Enumeration chatRooms = account.chatRoomManager.list.elements();
         while (chatRooms.hasMoreElements()) {
             ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
-            if (chatRoom != account.getLastChatRoom()) {
+            if (chatRoom != account.chatRoomManager.getLast()) {
                 MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(chatRoom.name);
                 menuItem.data = chatRoom;
                 screen.addItem(menuItem);
@@ -615,7 +615,7 @@ public final class AppController {
         if (i != 37) {
             return 0;
         }
-        ((MrimAccount) AppState.getAccount()).chatRoomsLoaded = true;
+        ((MrimAccount) AppState.getAccount()).chatRoomManager.loaded = true;
         return 0;
     }
 
@@ -858,7 +858,7 @@ public final class AppController {
             return 0;
         }
         MapPoint mapPoint = (MapPoint) obj;
-        ((MrimAccount) AppState.getAccount()).setLocationProfile(mapPoint);
+        ((MrimAccount) AppState.getAccount()).profileManager.setMapLocation(mapPoint);
         XmppContactGroup.addMapPointIfNew(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
         XmppContactGroup.saveMapPoints(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), 225);
         AppState.setInt(StateKeys.FLAG_LOADING, 0);
@@ -981,7 +981,7 @@ public final class AppController {
         AppState.setInt(StateKeys.FLAG_INIT_COMPLETE, 0);
         AppState.setInt(StateKeys.FLAG_FULLSCREEN_ACTIVE, 1);
         RemoteLogger.log("UI", "showSettingsScreen: before createScreen(ScreenDef.SETTINGS_MAIN)");
-        Screen s = ScreenManager.createScreen(ScreenDef.SETTINGS_MAIN);
+        ListView s = ScreenManager.createScreen(ScreenDef.SETTINGS_MAIN);
         RemoteLogger.log("UI", "showSettingsScreen: screenId=" + s.screenId);
         RemoteLogger.log("UI", "showSettingsScreen: pushScreen, stack=" + AppState.getVector(StateKeys.VEC_SCREEN_STACK).size());
         ScreenManager.pushScreen(s);
@@ -1107,12 +1107,12 @@ public final class AppController {
 
     /* renamed from: M */
     public static final void initChatRoomList() {
-        Screen screen = ScreenManager.createScreen(ScreenDef.INPUT_FORM);
+        ListView screen = ScreenManager.createScreen(ScreenDef.INPUT_FORM);
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        Enumeration chatRooms = account.chatRoomsList.elements();
+        Enumeration chatRooms = account.chatRoomManager.list.elements();
         while (chatRooms.hasMoreElements()) {
             ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
-            if (chatRoom != account.getLastChatRoom()) {
+            if (chatRoom != account.chatRoomManager.getLast()) {
                 MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(chatRoom.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(chatRoom.unreadCount)), 1, 0).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('/').append(chatRoom.memberCount).append(']')));
                 menuItem.data = chatRoom;
                 screen.addItem(menuItem);
@@ -1282,7 +1282,7 @@ public final class AppController {
                 return result;
             }
             MrimAccount account = AccountManager.findMrimAccount(mrimAccounts, size);
-            if (account.accountProfile.hasCoordinates()) {
+            if (account.profileManager.profile.hasCoordinates()) {
                 result.addElement(account);
             }
         }
@@ -1431,7 +1431,7 @@ public final class AppController {
         boolean z4 = false;
         int[] keyArr;
         int[] configArr;
-        Screen screen;
+        ListView screen;
         int action = 0;
         Message message;
         TextBox textBox;
@@ -1474,7 +1474,7 @@ public final class AppController {
                                     }
                                     Object event = Utils.dequeue(AppState.getVector(StateKeys.VEC_EVENT_QUEUE));
                                     if (event == null) {
-                                        Screen currentScreen = ScreenManager.getCurrentScreen();
+                                        ListView currentScreen = ScreenManager.getCurrentScreen();
                                         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
                                         Object obj = menuItem == null ? null : menuItem.data;
                                         String str = menuItem == null ? null : menuItem.title;
@@ -1490,7 +1490,7 @@ public final class AppController {
                                         }
                                     } else if (event instanceof KeyEvent) {
                                         KeyEvent keyEvt = (KeyEvent) event;
-                                                Screen screen3 = ScreenManager.getCurrentScreen();
+                                                ListView screen3 = ScreenManager.getCurrentScreen();
                                                 if (screen3 != null) {
                                                     if (screen3.screenId != ScreenId.MAP) {
                                                         needsRepaint = true;
@@ -1667,7 +1667,7 @@ public final class AppController {
                                                         }
                                                         break;
                                                     } else {
-                                                        Screen screen4 = ScreenManager.getCurrentScreen();
+                                                        ListView screen4 = ScreenManager.getCurrentScreen();
                                                         if (screen4 != null) {
                                                             screen4.touchConsumed = true;
                                                             screen4.marginLeft = 0;
@@ -1754,7 +1754,7 @@ public final class AppController {
                                         } else if (ptrAction == PointerEvent.DRAG) {
                                                 int i27 = ptrEvt.x;
                                                 int i28 = ptrEvt.y;
-                                                Screen screen5 = ScreenManager.getCurrentScreen();
+                                                ListView screen5 = ScreenManager.getCurrentScreen();
                                                 if (screen5 != null && screen5.touchConsumed) {
                                                     int i29 = i27 - screen5.offsetX;
                                                     int i30 = i28 - (screen5.offsetY + screen5.contentTop);
@@ -1793,14 +1793,14 @@ public final class AppController {
                                                 int i35 = ptrEvt.startX;
                                                 int i36 = ptrEvt.startY;
                                                 boolean i37 = ptrEvt.wasDragged;
-                                                Screen screen6 = ScreenManager.getCurrentScreen();
+                                                ListView screen6 = ScreenManager.getCurrentScreen();
                                                 if (screen6 != null) {
                                                     screen6.onPointerEvent(i33, i34, i35, i36, i37);
                                                 }
                                         } else if (ptrAction == PointerEvent.LONG_PRESS) {
                                                 int i38 = ptrEvt.x;
                                                 int i39 = ptrEvt.y;
-                                                Screen screen7 = ScreenManager.getCurrentScreen();
+                                                ListView screen7 = ScreenManager.getCurrentScreen();
                                                 if (screen7 != null) {
                                                     int i40 = i38 - screen7.offsetX;
                                                     int i41 = i39 - screen7.offsetY;
@@ -1821,7 +1821,7 @@ public final class AppController {
                                             AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, 108);
                                             AppState.setObject(StateKeys.SLOT_MAP_POINT_1, evtData[1]);
                                             MrimAccount mrimAccount6 = (MrimAccount) evtData[0];
-                                            mrimAccount6.chatRoomsLoaded = true;
+                                            mrimAccount6.chatRoomManager.loaded = true;
                                             AppState.pool[StateKeys.SLOT_TEMP_ACCOUNT] = mrimAccount6;
                                             ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
                                             AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
@@ -1845,7 +1845,7 @@ public final class AppController {
                                                 AppState.pool[StateKeys.VEC_PHONE_RESULTS] = vector4;
                                                 int iIntValue = ((Integer) objArr3[2]).intValue();
                                                 AppState.setInt(StateKeys.INT_PHONE_SCROLL_OFFSET, iIntValue);
-                                                Screen popupScreen = ScreenManager.createScreen(ScreenDef.CONTACT_POPUP);
+                                                ListView popupScreen = ScreenManager.createScreen(ScreenDef.CONTACT_POPUP);
                                                 if (iIntValue >= 10) {
                                                     popupScreen.addIconItemWithData(6, AppState.getString(StateKeys.STR_MENU_SMS), 1, null);
                                                 }
@@ -1870,7 +1870,7 @@ public final class AppController {
                                                 IOUtils.showAddContactScreen();
                                                 break;
                                             case ProtocolEvent.ACCOUNT_SYNC:
-                                                ((MrimAccount) obj6).syncProfile();
+                                                ((MrimAccount) obj6).profileManager.sync();
                                                 break;
                                             case ProtocolEvent.MAP_CONTROL:
                                                 break;
@@ -1879,7 +1879,7 @@ public final class AppController {
                                     } else if (event instanceof MenuItemEvent) {
                                         needsRepaint = true;
                                         needsLayoutUpdate = true;
-                                        Screen screen8 = ScreenManager.getCurrentScreen();
+                                        ListView screen8 = ScreenManager.getCurrentScreen();
                                         int i44 = ScreenManager.getCurrentScreen().screenId;
                                         MenuItem eventItem = ((MenuItemEvent) event).item;
                                         if (eventItem.id == 2) {
@@ -2028,7 +2028,7 @@ public final class AppController {
         int i2;
         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
         if (menuItem == null || menuItem.execute(ScreenManager.getCurrentScreen()) == -1) {
-            Screen screen = ScreenManager.getCurrentScreen();
+            ListView screen = ScreenManager.getCurrentScreen();
             String title = ScreenManager.getCurrentTitle();
             int selectedOption = ScreenManager.getCurrentWidth();
             MenuItem menuItem2 = ScreenManager.getCurrentMenuItem();
@@ -2090,7 +2090,7 @@ public final class AppController {
         if (ScreenManager.getCurrentScreen().screenId == ScreenId.MAIN_SCREEN) {
             return 0;
         }
-        Screen screen = ScreenManager.getCurrentScreen();
+        ListView screen = ScreenManager.getCurrentScreen();
         int i2 = ScreenManager.getCurrentScreen().screenId;
         switch (i) {
             case 4:
@@ -2213,8 +2213,8 @@ public final class AppController {
         }
         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
         MapPoint mapPoint = (MapPoint) obj;
-        mrimAccount.setSimpleProfile(IOUtils.pixelToLongitude(mapPoint.longitude), IOUtils.pixelToLatitude(mapPoint.latitude));
-        mrimAccount.syncProfile();
+        mrimAccount.profileManager.setSimpleLocation(IOUtils.pixelToLongitude(mapPoint.longitude), IOUtils.pixelToLatitude(mapPoint.latitude));
+        mrimAccount.profileManager.sync();
         AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
         return ScreenId.PROFILE_EDIT;
     }

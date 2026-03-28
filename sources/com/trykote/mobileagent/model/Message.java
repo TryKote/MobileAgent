@@ -61,7 +61,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.accountNickname)));
+        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.chatRoomManager.nickname)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;
@@ -104,7 +104,7 @@ public final class Message {
         MenuItem item = MenuItem.create(this.from);
         item.data = this;
         String str = this.from;
-        Enumeration elements = account.chatRoomsList.elements();
+        Enumeration elements = account.chatRoomManager.list.elements();
         while (true) {
             if (!elements.hasMoreElements()) {
                 z = false;
@@ -135,10 +135,10 @@ public final class Message {
         if (z2) {
             textWidth += 20;
         }
-        if (chatRoom == account.getLastChatRoom()) {
-            roomType = account.findChatRoomById(chatRoom.getPriority(this.from)).getType();
+        if (chatRoom == account.chatRoomManager.getLast()) {
+            roomType = account.chatRoomManager.findById(chatRoom.getPriority(this.from)).getType();
         } else {
-            roomType = (chatRoom == account.getLastChatRoom() || !chatRoom.hasMessage(this.from)) ? 3 : chatRoom.getType();
+            roomType = (chatRoom == account.chatRoomManager.getLast() || !chatRoom.hasMessage(this.from)) ? 3 : chatRoom.getType();
         }
         int i7 = roomType;
         boolean z3 = false;
@@ -149,11 +149,11 @@ public final class Message {
         if ((i7 & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
             mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
         }
-        boolean z4 = chatRoom == account.getLastChatRoom();
+        boolean z4 = chatRoom == account.chatRoomManager.getLast();
         mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), i2, availWidth - 22, ellipsisWidth, z4), i2, i3);
         if (z4) {
             mainItem.setIcon(234);
-            mainItem.addText(truncateText(account.findChatRoomById(chatRoom.getPriority(this.from)).name, i2, availWidth - 22, ellipsisWidth, false), i2, i3);
+            mainItem.addText(truncateText(account.chatRoomManager.findById(chatRoom.getPriority(this.from)).name, i2, availWidth - 22, ellipsisWidth, false), i2, i3);
         }
         return mainItem;
     }

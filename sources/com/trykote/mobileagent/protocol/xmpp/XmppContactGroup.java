@@ -113,7 +113,7 @@ public final class XmppContactGroup extends ContactGroup {
             length2++;
         }
         objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_MESSAGE, c0043nM1308a.writeStringUTF16(ObjectPool.toStringAndRelease(stringBufferM1217h)).writeIntLE(0));
-        objArr[1] = ResourceManager.integerOf(10);
+        objArr[1] = ResourceManager.integerOf(MrimAccount.RESP_AUTH);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
         return c0028ba.createAndQueueCommand(objArr);
@@ -563,7 +563,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final ByteBuffer createContactCommand(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
         objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_ADD_CONTACT, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
-        objArr[1] = ResourceManager.integerOf(9);
+        objArr[1] = ResourceManager.integerOf(MrimAccount.RESP_ADD_CONTACT);
         objArr[2] = str;
         objArr[3] = str2;
         objArr[4] = c0010aj;

@@ -20,7 +20,7 @@ public final class TextInputHandler implements CommandListener {
     public TextInputHandler() {
     }
 
-    public TextInputHandler(Screen screen, MenuItem menuItem) {
+    public TextInputHandler(ListView screen, MenuItem menuItem) {
         Object[] objArr = (Object[]) menuItem.data;
         this.context = new Object[]{screen, menuItem};
         String str = (String) objArr[0];
@@ -43,7 +43,7 @@ public final class TextInputHandler implements CommandListener {
         }
         if (command.getPriority() == 0) {
             String inputText = StringUtils.intern(((TextBox) displayable).getString());
-            Screen screen = (Screen) this.context[0];
+            ListView screen = (ListView) this.context[0];
             MenuItem menuItem = (MenuItem) this.context[1];
             Object[] objArr = (Object[]) menuItem.data;
             if (!StringUtils.equalsObj(inputText, objArr[0])) {

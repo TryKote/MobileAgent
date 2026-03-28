@@ -226,7 +226,7 @@ public final class ChatRoom {
 
     /* renamed from: f */
     public final String getDisplayName() {
-        if (this == ((MrimAccount) AppState.getAccount()).getLastChatRoom()) {
+        if (this == ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast()) {
             return this.name;
         }
         return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));

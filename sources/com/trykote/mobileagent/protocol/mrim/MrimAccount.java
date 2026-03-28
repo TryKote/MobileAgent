@@ -15,8 +15,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: ba */
-/* loaded from: MobileAgent_3.9.jar:ba.class */
 public final class MrimAccount extends Account implements ListItem {
 
     // MRIM progress states
@@ -34,51 +32,49 @@ public final class MrimAccount extends Account implements ListItem {
     public static final int STATUS_AWAY = 260;
     public static final int STATUS_INVISIBLE = 516;
 
-    /* renamed from: a */
+    // Response type IDs for command queue (used in createAndQueueCommand/handleMrimResponse)
+    public static final int RESP_MODIFY_CONTACT = 0;
+    public static final int RESP_RENAME_GROUP = 1;
+    public static final int RESP_DELETE_CONTACT = 2;
+    public static final int RESP_DELETE_GROUP = 3;
+    public static final int RESP_ADD_GROUP = 4;
+    public static final int RESP_ADD_PHONE_CONTACT = 5;
+    public static final int RESP_XMPP_SERVICE = 6;
+    public static final int RESP_SINGLE_CONTACT = 7;
+    public static final int RESP_CONTACT_INFO = 8;
+    public static final int RESP_ADD_CONTACT = 9;
+    public static final int RESP_AUTH = 10;
+    public static final int RESP_MOVE_FLAG = 11;
+    public static final int RESP_MOVE_TO_GROUP = 12;
+    public static final int RESP_UPDATE_NAME = 13;
+    public static final int RESP_RENAME_CONTACT = 14;
+    public static final int RESP_ADD_PHONE = 15;
+    public static final int RESP_ADD_TO_GROUP = 16;
+    public static final int RESP_AUTH_RESPONSE = 17;
+
     public String jabberId;
-
-    /* renamed from: b */
     public String customDomain;
-
-    /* renamed from: c */
     public boolean hasCustomDomain;
 
-    /* renamed from: d */
-    public Vector chatRoomsList;
+    public final MrimChatRoomManager chatRoomManager = new MrimChatRoomManager();
+    private final MrimResponseHandler responseHandler = new MrimResponseHandler(this);
+    public final MrimProfileManager profileManager = new MrimProfileManager(this);
 
-    /* renamed from: e */
-    public boolean chatRoomsLoaded;
-
-    /* renamed from: f */
-    public String accountNickname;
-
-    /* renamed from: g */
-    public VCard accountProfile;
-
-    /* renamed from: h */
     public boolean isHighlighted;
-
-    /* renamed from: K */
-    private SizeCache accountSizeCache;
-
-    /* renamed from: L */
     private Vector searchEntryList;
 
-    public MrimAccount(int i, String str, String str2) {
-        super(i, str, str2);
+    public MrimAccount(int accountId, String login, String password) {
+        super(accountId, login, password);
         this.lastError = 0;
         this.configFlags = 1;
-        MrimContactGroup mrimGroup = new MrimContactGroup(this, -1, 102, AppState.getString(StateKeys.STR_GROUP_DEFAULT));
-        mrimGroup.isSpecial = true;
-        this.defaultGroup = mrimGroup;
-        this.accountProfile = new VCard();
+        MrimContactGroup defaultGrp = new MrimContactGroup(this, -1, 102, AppState.getString(StateKeys.STR_GROUP_DEFAULT));
+        defaultGrp.isSpecial = true;
+        this.defaultGroup = defaultGrp;
         this.isHighlighted = true;
-        this.accountSizeCache = new SizeCache();
         this.searchEntryList = ObjectPool.newVector();
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
+    @Override
     public final int getType() {
         return TYPE_MRIM;
     }
@@ -86,65 +82,48 @@ public final class MrimAccount extends Account implements ListItem {
     public MrimAccount(ByteBuffer buffer) {
         super(buffer);
         int groupCount = buffer.readInt();
-        while (true) {
-            groupCount--;
-            if (groupCount < 0) {
-                break;
-            } else {
-                this.groups.addElement(new MrimContactGroup(this, buffer));
-            }
+        for (int i = 0; i < groupCount; i++) {
+            this.groups.addElement(new MrimContactGroup(this, buffer));
         }
-        MrimContactGroup mrimGroup = new MrimContactGroup(this, buffer);
-        mrimGroup.isSpecial = true;
-        this.defaultGroup = mrimGroup;
+        MrimContactGroup defaultGrp = new MrimContactGroup(this, buffer);
+        defaultGrp.isSpecial = true;
+        this.defaultGroup = defaultGrp;
         ByteBuffer extraBuffer = new ByteBuffer();
         int extraLen = buffer.readInt();
         if (extraLen > 0) {
             extraBuffer.writeBytesAt(buffer.data, buffer.offset, extraLen);
             buffer.skip(extraLen);
         }
-        try {
-            if (extraBuffer.length == 0) {
-                throw new RuntimeException();
+        if (extraBuffer.length > 0) {
+            try {
+                this.chatRoomManager.deserialize(extraBuffer);
+            } catch (Throwable unused) {
+                this.chatRoomManager.nickname = null;
+                this.chatRoomManager.list = null;
             }
-            this.accountNickname = extraBuffer.readUTF8Str((String) null);
-            extraBuffer.readWideStr();
-            this.chatRoomsList = ObjectPool.newVector();
-            int chatRoomCount = extraBuffer.readInt();
-            for (int i = 0; i < chatRoomCount; i++) {
-                this.chatRoomsList.addElement(ChatRoom.deserialize(extraBuffer));
-            }
-            if (extraBuffer.readShortBE() != 21554) {
-                throw new RuntimeException();
-            }
-            assignDefaultChatRoom(false);
-        } catch (Throwable unused) {
-            this.accountNickname = null;
-            this.chatRoomsList = null;
+        } else {
+            this.chatRoomManager.nickname = null;
+            this.chatRoomManager.list = null;
         }
-        this.accountProfile = new VCard();
         this.isHighlighted = true;
-        this.accountSizeCache = new SizeCache();
         this.searchEntryList = ObjectPool.newVector();
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
-    public final Account serializeAccount(ByteBuffer buffer, boolean z, boolean z2) {
-        super.serializeAccount(buffer, z, z2);
-        if (z2) {
-            buffer.writeBufferIntLen(serializePrivateData(z));
+    @Override
+    public final Account serializeAccount(ByteBuffer buffer, boolean includeGroups, boolean includePrivate) {
+        super.serializeAccount(buffer, includeGroups, includePrivate);
+        if (includePrivate) {
+            buffer.writeBufferIntLen(serializePrivateData(includeGroups));
         } else {
             buffer.writeIntLE(0);
         }
         return this;
     }
 
-    @Override // p000.Account
-    /* renamed from: b */
+    @Override
     public final void saveProperties(ByteBuffer buffer) {
         buffer.writeIntLE(13).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount);
-        VCard profile = this.accountProfile;
+        VCard profile = this.profileManager.profile;
         boolean hasCoords = profile.hasCoordinates();
         buffer.writeBoolean(hasCoords);
         if (hasCoords) {
@@ -152,8 +131,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
+    @Override
     public final void loadProperties(ByteBuffer buffer) {
         int version = buffer.readInt();
         if (version == 12) {
@@ -167,30 +145,16 @@ public final class MrimAccount extends Account implements ListItem {
             this.syncSeq = buffer.readInt();
             this.sentCount = buffer.readInt();
             this.recvCount = buffer.readInt();
-            this.accountProfile = VCard.deserializeFromBuffer(buffer);
+            this.profileManager.profile = VCard.deserializeFromBuffer(buffer);
         }
     }
 
-    /* renamed from: a */
-    private final ByteBuffer serializePrivateData(boolean z) {
+    private final ByteBuffer serializePrivateData(boolean includeChats) {
         ByteBuffer buffer = new ByteBuffer();
-        if (z) {
+        if (includeChats && this.jabberId != null && this.chatRoomManager.getCount() >= 3) {
             try {
-                int roomCount = getChatRoomCount();
-                if (this.accountNickname == null || this.jabberId == null || roomCount < 3) {
-                    throw new Throwable();
-                }
                 buffer.ensureCapacity(20480);
-                buffer.writeStringUTF16(this.accountNickname);
-                buffer.writeIntLE(0);
-                buffer.writeIntLE(roomCount - 1);
-                for (int i = 0; i < roomCount; i++) {
-                    ChatRoom chatRoom = (ChatRoom) this.chatRoomsList.elementAt(i);
-                    if (chatRoom != getLastChatRoom()) {
-                        chatRoom.serialize(buffer);
-                    }
-                }
-                buffer.writeShortBE(21554);
+                this.chatRoomManager.serialize(buffer);
             } catch (Throwable unused) {
                 buffer.clear();
             }
@@ -198,42 +162,35 @@ public final class MrimAccount extends Account implements ListItem {
         return buffer;
     }
 
-    /* renamed from: f */
-    public final MrimContact findContactByIdentifier(String str) {
-        return (MrimContact) getContact((Object) str);
+    public final MrimContact findContactByIdentifier(String identifier) {
+        return (MrimContact) getContact((Object) identifier);
     }
 
-    @Override // p000.Account
-    /* renamed from: b */
+    @Override
     public final ContactGroup createOnlineGroup() {
         return new MrimContactGroup(this, -1, 101, AppState.getString(StateKeys.STR_GROUP_NOT_IN_LIST));
     }
 
-    @Override // p000.Account
-    /* renamed from: c */
+    @Override
     public final ContactGroup createBlockedGroup() {
         return new MrimContactGroup(this, -1, 104, AppState.getString(StateKeys.STR_GROUP_TEMPORARY));
     }
 
-    @Override // p000.Account
-    /* renamed from: d */
+    @Override
     public final ContactGroup createOfflineGroup() {
         return new MrimContactGroup(this, -1, 103, AppState.getString(StateKeys.STR_GROUP_IGNORE));
     }
 
-    @Override // p000.Account
-    /* renamed from: e */
+    @Override
     public final ContactGroup createSpecialGroup() {
         return new MrimContactGroup(this, -1, 105, AppState.getString(StateKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
-    /* renamed from: f */
     public final MrimContactGroup getFirstContactGroup() {
         return (MrimContactGroup) this.groups.elementAt(0);
     }
 
-    @Override // p000.Account
-    /* renamed from: g */
+    @Override
     public final int getDefaultError() {
         closeConnection();
         this.deadline = 0L;
@@ -243,8 +200,7 @@ public final class MrimAccount extends Account implements ListItem {
         return 0;
     }
 
-    @Override // p000.Account
-    /* renamed from: h */
+    @Override
     public final int getIconId() {
         if (this.progress >= PROGRESS_STARTING && this.progress < PROGRESS_CONNECTED) {
             return 153;
@@ -267,26 +223,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:107:0x0608  */
-    /* JADX WARN: Removed duplicated region for block: B:108:0x060c A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
-    /* JADX WARN: Removed duplicated region for block: B:111:0x0617  */
-    /* JADX WARN: Removed duplicated region for block: B:112:0x061b A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
-    /* JADX WARN: Removed duplicated region for block: B:115:0x067c A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
-    /* JADX WARN: Removed duplicated region for block: B:119:0x06a3 A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
-    /* JADX WARN: Removed duplicated region for block: B:130:0x06e7 A[Catch: Throwable -> 0x073d, all -> 0x0748, TryCatch #3 {Throwable -> 0x073d, all -> 0x0748, blocks: (B:84:0x0544, B:86:0x0553, B:87:0x055a, B:88:0x0585, B:92:0x0599, B:96:0x05a8, B:102:0x05e5, B:97:0x05b8, B:100:0x05ca, B:101:0x05dd, B:105:0x05ef, B:113:0x063b, B:115:0x067c, B:117:0x068c, B:130:0x06e7, B:119:0x06a3, B:112:0x061b, B:108:0x060c), top: B:236:0x0544 }] */
-    @Override // p000.Account
-    /* renamed from: i */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public final void loadData() throws Throwable {
-        int i;
-        String senderName;
-        String str;
-        int i2;
-        long timestamp;
-        int i3;
-        String messageBody = null;
+    private void handleConnectionProgress() throws Throwable {
         switch (this.progress) {
             case PROGRESS_DISCONNECTED:
                 this.dataBuffer.clear();
@@ -305,33 +242,26 @@ public final class MrimAccount extends Account implements ListItem {
                     this.msgCount = 40;
                     this.progress = PROGRESS_READING_REDIRECT;
                     AppController.needsRepaint = true;
-                    break;
                 }
                 break;
             case PROGRESS_READING_REDIRECT:
                 this.connection.drainInput(this.dataBuffer);
-                int i4 = this.dataBuffer.length;
-                int i5 = i4;
-                if (i4 > 0) {
-                    AccountManager.updateAccountStatus((Account) this, i5);
+                int dataLen = this.dataBuffer.length;
+                if (dataLen > 0) {
+                    AccountManager.updateAccountStatus((Account) this, dataLen);
                     this.msgCount = 60;
                     StringBuffer sb = ObjectPool.newStringBuffer();
-                    while (true) {
-                        int i6 = i5;
-                        i5 = i6 - 1;
-                        if (i6 <= 0) {
-                            this.connection.state = ConnectionThread.STATE_CLOSING;
-                            this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(sb));
-                            this.progress = PROGRESS_CONNECTING_MAIN;
-                            AppController.needsRepaint = true;
-                            break;
-                        } else {
-                            char ch = (char) this.dataBuffer.readByte();
-                            if (Utils.isDigitOrSep(ch)) {
-                                sb.append(ch);
-                            }
+                    while (dataLen > 0) {
+                        dataLen--;
+                        char ch = (char) this.dataBuffer.readByte();
+                        if (Utils.isDigitOrSep(ch)) {
+                            sb.append(ch);
                         }
                     }
+                    this.connection.state = ConnectionThread.STATE_CLOSING;
+                    this.connection = new ConnectionThread(ObjectPool.toStringAndRelease(sb));
+                    this.progress = PROGRESS_CONNECTING_MAIN;
+                    AppController.needsRepaint = true;
                 }
                 break;
             case PROGRESS_CONNECTING_MAIN:
@@ -340,10 +270,14 @@ public final class MrimAccount extends Account implements ListItem {
                     sendData(ProtocolFactory.createMrimAuthPacket(this));
                     this.progress = PROGRESS_AUTHENTICATING;
                     AppController.needsRepaint = true;
-                    break;
                 }
                 break;
         }
+    }
+
+    @Override
+    public final void loadData() throws Throwable {
+        handleConnectionProgress();
         if (this.progress < PROGRESS_AUTHENTICATING) {
             return;
         }
@@ -367,13 +301,7 @@ public final class MrimAccount extends Account implements ListItem {
             packet.skip(44);
             switch (msgType) {
                 case MrimCommand.CS_HELLO_ACK:
-                    long pingInterval = Utils.min(packet.readInt(), AppState.getBool(StateKeys.FLAG_WIFI_CONNECTION) ? 25 : 45) * 1000;
-                    this.timeout = pingInterval;
-                    this.deadline = System.currentTimeMillis() + pingInterval;
-                    ByteBuffer authPacket = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
-                    boolean useExtended = AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS);
-                    sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_LOGIN2, authPacket.writeIntLE(useExtended ? -1 : 22).writeStringLatin1(useExtended ? null : new ByteBuffer().writeCompressed(PackedStringKeys.MRIM_CLIENT_VERSION).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(PackedStringKeys.MRIM_GEO_LIST_PACKET).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
-                    this.progress = PROGRESS_LOGGED_IN;
+                    handleHelloAck(packet);
                     break;
                 case MrimCommand.CS_LOGOUT:
                     this.msgCount = 85;
@@ -386,192 +314,46 @@ public final class MrimAccount extends Account implements ListItem {
                     Conversation.handleMessage(this, packet, 0L);
                     break;
                 case MrimCommand.CS_USER_STATUS:
-                    int statusCode = packet.readInt();
-                    String statusTitle = packet.readWideStr();
-                    packet.readUTF8Str((String) null);
-                    packet.readUTF8Str((String) null);
-                    MrimContact contact = findContactByIdentifier(packet.readHexStr());
-                    if (contact != null && !contact.isOnline()) {
-                        packet.readInt();
-                        String statusMsg = packet.readWideStr();
-                        int i7 = contact.unreadCount;
-                        contact.unreadCount = statusCode;
-                        contact.statusMessage = statusMsg;
-                        contact.defaultIcon = AppController.handleServerAction(statusCode, statusTitle);
-                        contact.highlighted = statusCode != 0;
-                        if (statusCode == 0) {
-                            contact.clearVCard();
-                        }
-                        contact.dirty = true;
-                        contact.updateRenderState();
-                        if (i7 == 0 && statusCode != 0) {
-                            ResourceManager.playNotificationSound(1);
-                            break;
-                        } else {
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
+                    handleUserStatus(packet);
+                    break;
                 case MrimCommand.CS_CONTACT_LIST_REPLY:
-                    handleMrimResponse(packet, seqId);
+                    this.responseHandler.dispatch(packet, seqId);
                     break;
                 case MrimCommand.CS_LOGOUT_FORCE:
                     handleTimeout();
                     break;
                 case MrimCommand.CS_USER_INFO:
-                    while (packet.length > 0) {
-                        String paramKey = packet.readWideStr();
-                        if (StringUtils.matchesKey(PackedStringKeys.MRIM_NICKNAME, paramKey)) {
-                            setDisplayName(packet.readUTF8Str((String) null));
-                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MESSAGES_UNREAD, paramKey)) {
-                            IOUtils.notifyNewMail(this, Utils.parseInt((Object) packet.readUTF8Str((String) null)), (String) null, (String) null);
-                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_CLIENT_ENDPOINT, paramKey)) {
-                            String domainStr = packet.readUTF8Str((String) null);
-                            this.customDomain = StringUtils.prefix(domainStr, domainStr.indexOf(58));
-                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_HAS_MYMAIL, paramKey)) {
-                            packet.readWideStr();
-                            this.hasCustomDomain = true;
-                        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_SUGGEST, paramKey)) {
-                            packet.skip((((((((packet.readInt() - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + (packet.readUTF8Str((String) null).length() << 1))) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length()));
-                        } else {
-                            packet.readWideStr();
-                        }
-                    }
+                    handleUserInfo(packet);
                     break;
                 case MrimCommand.CS_ADD_CONTACT_ACK:
-                    handleMrimResponse(packet, seqId);
+                    this.responseHandler.dispatch(packet, seqId);
                     break;
                 case MrimCommand.CS_MODIFY_CONTACT_ACK:
-                    handleMrimResponse(packet, seqId);
+                    this.responseHandler.dispatch(packet, seqId);
                     break;
                 case MrimCommand.CS_OFFLINE_MESSAGE_ACK:
-                    trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_DELETE_OFFLINE_MESSAGE, new ByteBuffer().writeIntLE(packet.readInt()).writeIntLE(packet.readInt())));
-                    try {
-                        int i8 = this.reserved1;
-                        this.reserved1 = i8 + 1;
-                        if (0 != i8) {
-                            AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 0);
-                        }
-                        Hashtable hashtable = new Hashtable();
-                        String headerKey = null;
-                        String rawText = Utils.removeChar(packet.readWideStr(), '\r');
-                        int length = rawText.length();
-                        StringBuffer sb2 = ObjectPool.newStringBuffer();
-                        boolean z = false;
-                        int i9 = 0;
-                        while (i9 < length) {
-                            char ch2 = rawText.charAt(i9);
-                            if (!z) {
-                                if (ch2 == '\n' && sb2.length() == 0) {
-                                    ObjectPool.toStringAndRelease(sb2);
-                                    String str2 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
-                                    int i10 = str2 != null ? -1 : Integer.parseInt(str2);
-                                    i = i10;
-                                    senderName = i10 >= 0 ? null : Base64.decode(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
-                                    str = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
-                                    i2 = Integer.parseInt((String) hashtable.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
-                                    timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
-                                    i3 = 1;
-                                    if ((i2 & 128) != 0) {
-                                        String bodyText = StringUtils.suffix(rawText, i9);
-                                        if ((i2 & 2097160) == 0) {
-                                            messageBody = Base64.decode(bodyText).readAllWideStr();
-                                        } else {
-                                            messageBody = bodyText;
-                                            i3 = 0;
-                                        }
-                                    } else {
-                                        int tagIdx = AppState.indexOfLong(rawText, 57408234938722L);
-                                        messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StateKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
-                                    }
-                                    if (i != -1 || (i >= 0 && i <= 5 && i != 1 && i != 3)) {
-                                        Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
-                                    }
-                                    AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
-                                    break;
-                                } else if (ch2 == ':') {
-                                    headerKey = ObjectPool.toString(sb2, false);
-                                    z = true;
-                                    i9++;
-                                } else {
-                                    sb2.append(ch2);
-                                }
-                            } else if (ch2 == '\n') {
-                                hashtable.put(headerKey, ObjectPool.toString(sb2, false));
-                                z = false;
-                            } else {
-                                sb2.append(ch2);
-                            }
-                            i9++;
-                        }
-                        ObjectPool.toStringAndRelease(sb2);
-                        String str22 = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
-                        int i10_2 = str22 != null ? -1 : Integer.parseInt(str22);
-                        i = i10_2;
-                        senderName = i10_2 >= 0 ? null : Base64.decode(StringUtils.suffix((String) hashtable.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
-                        str = (String) hashtable.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
-                        i2 = Integer.parseInt((String) hashtable.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
-                        timestamp = Utils.parseDateTime((String) hashtable.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
-                        i3 = 1;
-                        if ((i2 & 128) != 0) {
-                        }
-                        if (i != -1) {
-                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(i2 | 4 | 128).writeStringLatin1((String) hashtable.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, i3).writeIntLE(0).writeIntLE(0).writeIntLE(i).writeStringUTF16(senderName).writeStringLatin1(str), timestamp);
-                            AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
-                        }
-                    } catch (Throwable th) {
-                        AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
-                        throw th;
-                    }
+                    handleOfflineMessage(packet);
                     break;
                 case MrimCommand.CS_AUTHORIZE_ACK:
                     MrimContact readContact = findContactByIdentifier(packet.readWideStr());
-                    if (null == readContact) {
-                        break;
-                    } else {
+                    if (readContact != null) {
                         readContact.hasUnreadFlag &= -2;
-                        break;
                     }
+                    break;
                 case MrimCommand.CS_CONTACT_LIST_ACK:
-                    handleMrimResponse(packet, seqId);
+                    this.responseHandler.dispatch(packet, seqId);
                     break;
                 case MrimCommand.CS_ANKETA_UPDATE_ACK:
-                    handleMrimResponse(packet, seqId);
+                    this.responseHandler.dispatch(packet, seqId);
                     break;
                 case MrimCommand.CS_CONTACT_LIST2:
                     Conversation.parseContactList(this, packet);
                     break;
                 case MrimCommand.CS_SEARCH_RESULT_ACK:
-                    handleMrimResponse(packet, seqId);
+                    this.responseHandler.dispatch(packet, seqId);
                     break;
                 case MrimCommand.CS_ANKETA_INFO:
-                    if (packet.readInt() != 1 || packet.readInt() <= 0) {
-                        break;
-                    } else {
-                        String foundEmail = packet.readWideStr();
-                        int size = this.searchEntryList.size();
-                        while (true) {
-                            size--;
-                            if (size < 0) {
-                                break;
-                            }
-                            SearchEntry entry = (SearchEntry) this.searchEntryList.elementAt(size);
-                            if (seqId == entry.id) {
-                                this.searchEntryList.removeElementAt(size);
-                                int i11 = entry.type;
-                                if (i11 == 1) {
-                                    sendDeleteCommand(foundEmail);
-                                    AppController.openUserProfile(this, foundEmail);
-                                } else if (i11 == 2) {
-                                    ContactInfo contactInfo = ContactInfo.createForAccount(this);
-                                    contactInfo.setEmailAddress(foundEmail);
-                                    AppState.pool[StateKeys.SLOT_CONTACT_INFO] = contactInfo;
-                                    IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.ADD_CONTACT_CONFIRM, null));
-                                }
-                            }
-                        }
-                    }
+                    handleAnketaInfo(packet, seqId);
                     break;
                 case MrimCommand.CS_MAILBOX_STATUS:
                     IOUtils.notifyNewMail(this, packet.readInt(), packet.readUnicodeStr(), packet.readUnicodeStr());
@@ -579,113 +361,269 @@ public final class MrimAccount extends Account implements ListItem {
                 case MrimCommand.CS_MPOP_SESSION:
                     String sectionKey = packet.readWideStr();
                     String xmlData = packet.readWideStr();
-                    if (!StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_LIST, sectionKey)) {
-                        break;
-                    } else {
-                        this.accountProfile.updatePhotos(new XmlParser(xmlData).parse());
-                        syncProfile();
-                        break;
+                    if (StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_LIST, sectionKey)) {
+                        this.profileManager.profile.updatePhotos(new XmlParser(xmlData).parse());
+                        this.profileManager.sync();
                     }
+                    break;
                 case MrimCommand.CS_MPOP_SESSION_ACK:
                     packet.readInt();
                     break;
                 case MrimCommand.CS_CUSTOM_NOTE:
-                    int noteFlags = packet.readInt();
-                    String contactAddr = StringUtils.intern(packet.readWideStr().toLowerCase());
-                    long sentTime = packet.readLong();
-                    int noteTimestamp = packet.readInt();
-                    String noteText = packet.readUTF8Str((String) null);
-                    MrimContact noteContact = findContactByIdentifier(contactAddr);
-                    if (noteContact != null && !noteContact.isOnline()) {
-                        if ((noteFlags & 2) == 0) {
-                            if ((noteFlags & 5) != 0) {
-                                if (AppState.getBool(StateKeys.SETTING_CUSTOM_NOTE_ENABLED) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
-                                    AppState.setObject(StateKeys.SLOT_CURRENT_CONTACT_ID, (Object) noteContact.identifier);
-                                    ResourceManager.playNotificationSound(6);
-                                    noteContact.addFlag(2);
-                                    noteContact.appendMessage(16, noteText, 0L, sentTime);
-                                    ContactGroup contactGroup = noteContact.account.findGroup(noteContact);
-                                    if (contactGroup != null && contactGroup.isSpecial) {
-                                        contactGroup.toggleSpecial();
-                                    }
-                                    noteContact.updateRenderState();
-                                }
-                                noteContact.customNote = noteText;
-                                break;
-                            } else {
-                                break;
-                            }
-                        } else {
-                            noteContact.customLink = noteText;
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
+                    handleCustomNote(packet);
+                    break;
                 case MrimCommand.CS_ANKETA_INFO_ACK:
-                    receiveProfileData(packet.readWideStr(), packet.readBufferArray());
+                    this.profileManager.receiveContactProfile(packet.readWideStr(), packet.readBufferArray());
                     break;
                 case MrimCommand.CS_PROFILE_DATA:
-                    if (!AppState.hasMemory()) {
-                        break;
-                    } else {
-                        Vector buffers = packet.readBufferArray();
-                        if (!buffers.isEmpty()) {
-                            String[] cardFields = VCard.parseCardFromBuffer((ByteBuffer) buffers.elementAt(0));
-                            if (cardFields.length >= 8 && !this.accountProfile.hasCoordinates()) {
-                                String str3 = cardFields[2];
-                                if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPPOINT, str3)) {
-                                    setSimpleProfile(cardFields[1], cardFields[0]);
-                                } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, str3)) {
-                                    String str4 = cardFields[1];
-                                    String str5 = cardFields[0];
-                                    String str6 = cardFields[6];
-                                    String str7 = cardFields[7];
-                                    try {
-                                        VCard profile = this.accountProfile;
-                                        String typeStr = AppState.getString(StateKeys.STR_RES_HTTP_METHOD);
-                                        String str8 = AppState.emptyStr;
-                                        profile.setCardData(str5, str4, typeStr, str8, str8, str8, str6, str7);
-                                    } catch (Throwable unused) {
-                                        this.accountProfile.clearCoordinates();
-                                    }
-                                    this.accountSizeCache.lastScale = -1;
-                                    this.accountProfile.phone = cardFields[3];
-                                }
-                                this.accountProfile.dirty = true;
-                                if (AccountManager.getActiveScreenId() != 10) {
-                                    break;
-                                } else {
-                                    IOUtils.postNotification(AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
-                                    break;
-                                }
-                            } else {
-                                break;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
+                    handleProfileData(packet);
+                    break;
             }
             packet.clear();
             AppController.needsLayoutUpdate = true;
         }
     }
 
-    /* renamed from: a */
-    public final ByteBuffer createAndQueueCommand(Object obj) {
+    private void handleHelloAck(ByteBuffer packet) throws Throwable {
+        long pingInterval = Utils.min(packet.readInt(), AppState.getBool(StateKeys.FLAG_WIFI_CONNECTION) ? 25 : 45) * 1000;
+        this.timeout = pingInterval;
+        this.deadline = System.currentTimeMillis() + pingInterval;
+        ByteBuffer authPacket = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
+        boolean useExtended = AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS);
+        sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_LOGIN2, authPacket.writeIntLE(useExtended ? -1 : 22).writeStringLatin1(useExtended ? null : new ByteBuffer().writeCompressed(PackedStringKeys.MRIM_CLIENT_VERSION).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(PackedStringKeys.MRIM_GEO_LIST_PACKET).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
+        this.progress = PROGRESS_LOGGED_IN;
+    }
+
+    private void handleUserStatus(ByteBuffer packet) {
+        int statusCode = packet.readInt();
+        String statusTitle = packet.readWideStr();
+        packet.readUTF8Str((String) null);
+        packet.readUTF8Str((String) null);
+        MrimContact contact = findContactByIdentifier(packet.readHexStr());
+        if (contact != null && !contact.isOnline()) {
+            packet.readInt();
+            String statusMsg = packet.readWideStr();
+            int prevCount = contact.unreadCount;
+            contact.unreadCount = statusCode;
+            contact.statusMessage = statusMsg;
+            contact.defaultIcon = AppController.handleServerAction(statusCode, statusTitle);
+            contact.highlighted = statusCode != 0;
+            if (statusCode == 0) {
+                contact.clearVCard();
+            }
+            contact.dirty = true;
+            contact.updateRenderState();
+            if (prevCount == 0 && statusCode != 0) {
+                ResourceManager.playNotificationSound(1);
+            }
+        }
+    }
+
+    private void handleUserInfo(ByteBuffer packet) {
+        while (packet.length > 0) {
+            String paramKey = packet.readWideStr();
+            if (StringUtils.matchesKey(PackedStringKeys.MRIM_NICKNAME, paramKey)) {
+                setDisplayName(packet.readUTF8Str((String) null));
+            } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MESSAGES_UNREAD, paramKey)) {
+                IOUtils.notifyNewMail(this, Utils.parseInt((Object) packet.readUTF8Str((String) null)), (String) null, (String) null);
+            } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_CLIENT_ENDPOINT, paramKey)) {
+                String domainStr = packet.readUTF8Str((String) null);
+                this.customDomain = StringUtils.prefix(domainStr, domainStr.indexOf(58));
+            } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_HAS_MYMAIL, paramKey)) {
+                packet.readWideStr();
+                this.hasCustomDomain = true;
+            } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_SUGGEST, paramKey)) {
+                packet.skip((((((((packet.readInt() - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + (packet.readUTF8Str((String) null).length() << 1))) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length())) - (4 + packet.readWideStr().length()));
+            } else {
+                packet.readWideStr();
+            }
+        }
+    }
+
+    private void handleOfflineMessage(ByteBuffer packet) throws Throwable {
+        int messageType;
+        String senderName;
+        String headerRef;
+        int messageFlags;
+        long timestamp;
+        int encodingType;
+        String messageBody = null;
+        trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_DELETE_OFFLINE_MESSAGE, new ByteBuffer().writeIntLE(packet.readInt()).writeIntLE(packet.readInt())));
+        try {
+            int prevReserved = this.reserved1;
+            this.reserved1 = prevReserved + 1;
+            if (prevReserved != 0) {
+                AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 0);
+            }
+            Hashtable headers = new Hashtable();
+            String headerKey = null;
+            String rawText = Utils.removeChar(packet.readWideStr(), '\r');
+            int length = rawText.length();
+            StringBuffer lineBuffer = ObjectPool.newStringBuffer();
+            boolean parsingValue = false;
+            int pos = 0;
+            while (pos < length) {
+                char ch = rawText.charAt(pos);
+                if (!parsingValue) {
+                    if (ch == '\n' && lineBuffer.length() == 0) {
+                        ObjectPool.toStringAndRelease(lineBuffer);
+                        String typeCodeStr = (String) headers.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
+                        int typeCode = typeCodeStr != null ? -1 : Integer.parseInt(typeCodeStr);
+                        messageType = typeCode;
+                        senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
+                        headerRef = (String) headers.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
+                        messageFlags = Integer.parseInt((String) headers.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
+                        timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
+                        encodingType = 1;
+                        if ((messageFlags & 128) != 0) {
+                            String bodyText = StringUtils.suffix(rawText, pos);
+                            if ((messageFlags & 2097160) == 0) {
+                                messageBody = Base64.decode(bodyText).readAllWideStr();
+                            } else {
+                                messageBody = bodyText;
+                                encodingType = 0;
+                            }
+                        } else {
+                            int tagIdx = AppState.indexOfLong(rawText, 57408234938722L);
+                            messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StateKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
+                        }
+                        if (messageType != -1 || (messageType >= 0 && messageType <= 5 && messageType != 1 && messageType != 3)) {
+                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
+                        }
+                        AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
+                        return;
+                    } else if (ch == ':') {
+                        headerKey = ObjectPool.toString(lineBuffer, false);
+                        parsingValue = true;
+                        pos++;
+                    } else {
+                        lineBuffer.append(ch);
+                    }
+                } else if (ch == '\n') {
+                    headers.put(headerKey, ObjectPool.toString(lineBuffer, false));
+                    parsingValue = false;
+                } else {
+                    lineBuffer.append(ch);
+                }
+                pos++;
+            }
+            ObjectPool.toStringAndRelease(lineBuffer);
+            String typeCodeStr = (String) headers.get(AppState.getString(StateKeys.STR_RES_API_URL_4));
+            int typeCode = typeCodeStr != null ? -1 : Integer.parseInt(typeCodeStr);
+            messageType = typeCode;
+            senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(StateKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
+            headerRef = (String) headers.get(AppState.getString(StateKeys.STR_RES_HEADER_2));
+            messageFlags = Integer.parseInt((String) headers.get(AppState.getString(StateKeys.STR_RES_LONG_LABEL_1)), 16);
+            timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(StateKeys.STR_RES_SEMICOLON)));
+            encodingType = 1;
+            if ((messageFlags & 128) != 0) {
+            }
+            if (messageType != -1) {
+                Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(StateKeys.STR_RES_OPEN_TAG))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
+                AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
+            }
+        } catch (Throwable th) {
+            AppState.setInt(StateKeys.FLAG_MRIM_DATA_LOADED, 1);
+            throw th;
+        }
+    }
+
+    private void handleAnketaInfo(ByteBuffer packet, int seqId) {
+        if (packet.readInt() != 1 || packet.readInt() <= 0) {
+            return;
+        }
+        String foundEmail = packet.readWideStr();
+        for (int i = this.searchEntryList.size() - 1; i >= 0; i--) {
+            SearchEntry entry = (SearchEntry) this.searchEntryList.elementAt(i);
+            if (seqId == entry.id) {
+                this.searchEntryList.removeElementAt(i);
+                int entryType = entry.type;
+                if (entryType == 1) {
+                    sendDeleteCommand(foundEmail);
+                    AppController.openUserProfile(this, foundEmail);
+                } else if (entryType == 2) {
+                    ContactInfo contactInfo = ContactInfo.createForAccount(this);
+                    contactInfo.setEmailAddress(foundEmail);
+                    AppState.pool[StateKeys.SLOT_CONTACT_INFO] = contactInfo;
+                    IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.ADD_CONTACT_CONFIRM, null));
+                }
+            }
+        }
+    }
+
+    private void handleCustomNote(ByteBuffer packet) {
+        int noteFlags = packet.readInt();
+        String contactAddr = StringUtils.intern(packet.readWideStr().toLowerCase());
+        long sentTime = packet.readLong();
+        int noteTimestamp = packet.readInt();
+        String noteText = packet.readUTF8Str((String) null);
+        MrimContact noteContact = findContactByIdentifier(contactAddr);
+        if (noteContact == null || noteContact.isOnline()) {
+            return;
+        }
+        if ((noteFlags & 2) != 0) {
+            noteContact.customLink = noteText;
+        } else if ((noteFlags & 5) != 0) {
+            if (AppState.getBool(StateKeys.SETTING_CUSTOM_NOTE_ENABLED) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
+                AppState.setObject(StateKeys.SLOT_CURRENT_CONTACT_ID, (Object) noteContact.identifier);
+                ResourceManager.playNotificationSound(6);
+                noteContact.addFlag(2);
+                noteContact.appendMessage(16, noteText, 0L, sentTime);
+                ContactGroup contactGroup = noteContact.account.findGroup(noteContact);
+                if (contactGroup != null && contactGroup.isSpecial) {
+                    contactGroup.toggleSpecial();
+                }
+                noteContact.updateRenderState();
+            }
+            noteContact.customNote = noteText;
+        }
+    }
+
+    private void handleProfileData(ByteBuffer packet) {
+        if (!AppState.hasMemory()) {
+            return;
+        }
+        Vector buffers = packet.readBufferArray();
+        if (buffers.isEmpty()) {
+            return;
+        }
+        String[] cardFields = VCard.parseCardFromBuffer((ByteBuffer) buffers.elementAt(0));
+        if (cardFields.length < 8 || this.profileManager.profile.hasCoordinates()) {
+            return;
+        }
+        String cardType = cardFields[2];
+        if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPPOINT, cardType)) {
+            this.profileManager.setSimpleLocation(cardFields[1], cardFields[0]);
+        } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, cardType)) {
+            try {
+                VCard profile = this.profileManager.profile;
+                String typeStr = AppState.getString(StateKeys.STR_RES_HTTP_METHOD);
+                String empty = AppState.emptyStr;
+                profile.setCardData(cardFields[0], cardFields[1], typeStr, empty, empty, empty, cardFields[6], cardFields[7]);
+            } catch (Throwable unused) {
+                this.profileManager.profile.clearCoordinates();
+            }
+            this.profileManager.sizeCache.lastScale = -1;
+            this.profileManager.profile.phone = cardFields[3];
+        }
+        this.profileManager.profile.dirty = true;
+        if (AccountManager.getActiveScreenId() == 10) {
+            IOUtils.postNotification(AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
+        }
+    }
+
+    public final ByteBuffer createAndQueueCommand(Object commandData) {
         if (!isConnected()) {
             return null;
         }
-        Object[] objArr = (Object[]) obj;
-        ByteBuffer buffer = (ByteBuffer) objArr[0];
-        objArr[0] = ResourceManager.integerOf(buffer.peekIntAt(8));
-        this.extras.addElement(obj);
+        Object[] tuple = (Object[]) commandData;
+        ByteBuffer buffer = (ByteBuffer) tuple[0];
+        tuple[0] = ResourceManager.integerOf(buffer.peekIntAt(8));
+        this.extras.addElement(commandData);
         return buffer;
     }
 
-    @Override // p000.Account
-    /* renamed from: O */
+    @Override
     public final Vector getPendingContacts() {
         Vector pendingList = super.getPendingContacts();
         Enumeration elements = this.contactMap.elements();
@@ -698,35 +636,43 @@ public final class MrimAccount extends Account implements ListItem {
         return pendingList;
     }
 
-    /* renamed from: d */
-    public final int setConfiguration(int i) {
+    public final int setConfiguration(int statusCode) {
         String statusText;
         String typeStr;
-        this.configFlags = i;
+        this.configFlags = statusCode;
         if (!isConnected()) {
             if (isConnecting()) {
                 return 487;
             }
             return connect(0);
         }
-        this.lastError = i;
-        int i2 = this.configFlags & 7;
-        int i3 = 1225;
+        this.lastError = statusCode;
+        int rawStatus = this.configFlags & 7;
+        int statusTextId;
         switch (this.configFlags) {
             case STATUS_ONLINE:
-                i3 = 1225 - 1;
+                statusTextId = 1221;
+                break;
             case STATUS_DND:
-                i3++;
+                statusTextId = 1222;
+                break;
             case STATUS_FREE_CHAT:
-                i3 -= 3;
+                statusTextId = 1221;
+                break;
             case STATUS_AWAY:
-                i3--;
+                statusTextId = 1224;
+                break;
             case STATUS_INVISIBLE:
-                statusText = AppState.getString(i3);
+                statusTextId = 1225;
                 break;
             default:
-                statusText = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
+                statusTextId = -1;
                 break;
+        }
+        if (statusTextId >= 0) {
+            statusText = AppState.getString(statusTextId);
+        } else {
+            statusText = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
         }
         switch (this.configFlags) {
             case STATUS_ONLINE:
@@ -748,356 +694,198 @@ public final class MrimAccount extends Account implements ListItem {
                 typeStr = AppState.getString(StateKeys.STR_CONFIG_TYPE_BASE + (this.configFlags >> 8));
                 break;
         }
-        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_CHANGE_STATUS, new ByteBuffer().writeIntLE(i2 != 3 ? i2 : -2147483647).writeStringLatin1(statusText).writeStringUTF16(typeStr).writeStringUTF16(AppState.emptyStr).writeIntLE(AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS) ? -1 : 22)));
+        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_CHANGE_STATUS, new ByteBuffer().writeIntLE(rawStatus != 3 ? rawStatus : -2147483647).writeStringLatin1(statusText).writeStringUTF16(typeStr).writeStringUTF16(AppState.emptyStr).writeIntLE(AppState.getBool(StateKeys.SETTING_EXTENDED_STATUS) ? -1 : 22)));
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
-    public final int validateSend(Contact baseContact, String str, long j) {
-        int result = super.validateSend(baseContact, str, j);
-        if (0 != result) {
+    @Override
+    public final int validateSend(Contact baseContact, String message, long timestamp) {
+        int result = super.validateSend(baseContact, message, timestamp);
+        if (result != 0) {
             return result;
         }
         this.sentCount++;
-        return trySendData(XmppContactGroup.createContactAddCommand(this, (MrimContact) baseContact, str, j));
+        return trySendData(XmppContactGroup.createContactAddCommand(this, (MrimContact) baseContact, message, timestamp));
     }
 
-    /* renamed from: a */
-    private int sendProfileUpdate(int i, String[] strArr, VCard profile) {
-        if (!profile.hasCoordinates() || profile.dirty) {
-            return 0;
-        }
-        String[] strArr2 = {profile.latStr, profile.lonStr, profile.mapTypeStr, profile.phone, profile.email, profile.nickname, profile.address, profile.zoomStr};
-        trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(AppState.getString(StateKeys.STR_RES_USER_AGENT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
-        return 0;
-    }
-
-    /* renamed from: a */
-    private int sendGroupRename(String[] strArr, String str) {
-        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ANKETA_UPDATE_PHOTOS, new ByteBuffer().writeStringArr(strArr).writeStringLatin1(str)));
-    }
-
-    /* renamed from: j */
-    public final void syncProfile() {
-        if (isConnected()) {
-            int i = this.accountProfile.gender;
-            if (i == 1) {
-                sendProfileUpdate(1, new String[0], this.accountProfile);
-            } else if (i == 2) {
-                sendProfileUpdate(0, new String[0], this.accountProfile);
-            } else if (i == 3) {
-                sendProfileUpdate(0, this.accountProfile.photoUrls, this.accountProfile);
-            }
-        }
-    }
-
-    /* renamed from: k */
-    public final void markProfileForPublish() {
-        int i = this.accountProfile.gender;
-        this.accountProfile.gender = 1;
-        if (isConnected()) {
-            if (i == 3) {
-                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
-            }
-            sendProfileUpdate(1, new String[0], this.accountProfile);
-        }
-    }
-
-    /* renamed from: m */
-    public final void markProfileForHide() {
-        int i = this.accountProfile.gender;
-        this.accountProfile.gender = 2;
-        if (isConnected()) {
-            if (i == 3) {
-                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
-            }
-            sendProfileUpdate(0, new String[0], this.accountProfile);
-        }
-    }
-
-    /* renamed from: S */
-    public final void clearProfileGroups() {
-        int i = this.accountProfile.gender;
-        this.accountProfile.gender = 4;
-        if (isConnected()) {
-            if (i == 3) {
-                sendGroupRename(this.accountProfile.photoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
-            }
-            sendGroupRename(new String[0], AppState.getString(StateKeys.STR_RES_USER_AGENT));
-        }
-    }
-
-    /* renamed from: T */
-    public final void setProfileGroups() {
-        int i = this.accountProfile.gender;
-        this.accountProfile.gender = 3;
-        if (isConnected()) {
-            if (i == 3) {
-                sendGroupRename(this.accountProfile.prevPhotoUrls, AppState.getString(StateKeys.STR_RES_USER_AGENT));
-            } else if (i == 1 || i == 2) {
-                sendGroupRename(new String[0], AppState.getString(StateKeys.STR_RES_USER_AGENT));
-            }
-            sendProfileUpdate(0, this.accountProfile.photoUrls, this.accountProfile);
-        }
-    }
-
-    /* renamed from: a */
-    public final void receiveProfileData(String str, Vector vector) {
-        for (int i = 0; i < vector.size(); i++) {
-            ByteBuffer buffer = (ByteBuffer) vector.elementAt(i);
-            buffer.readInt();
-            if (StringUtils.matchesKey(PackedStringKeys.MRIM_GEO_POINT, buffer.readWideStr())) {
-                String[] cardFields = VCard.parseCardFromBuffer(buffer);
-                MrimContact contact = findContactByIdentifier(str);
-                if (contact != null) {
-                    if (cardFields == null) {
-                        contact.clearVCard();
-                    } else {
-                        try {
-                            contact.vCardInfo = new VCard();
-                            contact.vCardInfo.setCardData(cardFields[0], cardFields[1], cardFields[2], cardFields[3], cardFields[4], cardFields[5], cardFields[6], cardFields[7]);
-                            contact.isSelected = true;
-                        } catch (Throwable unused) {
-                            contact.clearVCard();
-                        }
-                        contact.sizeCache.lastScale = -1;
-                    }
-                }
-            }
-        }
-        ObjectPool.releaseVector(vector);
-    }
-
-    /* renamed from: b */
-    public final void setSimpleProfile(String str, String str2) {
-        try {
-            VCard profile = this.accountProfile;
-            String typeStr = AppState.getString(StateKeys.STR_RES_CONTENT_TYPE);
-            String str3 = AppState.emptyStr;
-            profile.setCardData(str2, str, typeStr, str3, str3, str3, str3, str3);
-        } catch (Throwable unused) {
-            this.accountProfile.clearCoordinates();
-        }
-        this.accountSizeCache.lastScale = -1;
-    }
-
-    /* renamed from: a */
-    public final void setLocationProfile(MapPoint mapPoint) {
-        try {
-            VCard profile = this.accountProfile;
-            String latStr = IOUtils.pixelToLatitude(mapPoint.latitude);
-            String lonStr = IOUtils.pixelToLongitude(mapPoint.longitude);
-            String typeStr = AppState.getString(StateKeys.STR_RES_HTTP_METHOD);
-            String pointName = mapPoint.getDisplayName();
-            String str = AppState.emptyStr;
-            profile.setCardData(latStr, lonStr, typeStr, pointName, str, str, StringUtils.intern(Integer.toString(mapPoint.objectCode)), StringUtils.intern(Integer.toString(mapPoint.typeCode)));
-        } catch (Throwable unused) {
-            this.accountProfile.clearCoordinates();
-        }
-        this.accountSizeCache.lastScale = -1;
-    }
-
-    @Override // p000.Account
-    /* renamed from: a */
-    public final int validateGroupRename(ContactGroup group, String str) {
-        int result = super.validateGroupRename(group, str);
-        if (0 != result) {
+    @Override
+    public final int validateGroupRename(ContactGroup group, String newName) {
+        int result = super.validateGroupRename(group, newName);
+        if (result != 0) {
             return result;
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) group;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimGroup.serverId).writeIntLE(mrimGroup.groupId).writeIntLE(0).writeStringUTF16(str).writeStringUTF16(str).writeIntLE(0)), ResourceManager.integerOf(1), mrimGroup, str}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimGroup.serverId).writeIntLE(mrimGroup.groupId).writeIntLE(0).writeStringUTF16(newName).writeStringUTF16(newName).writeIntLE(0)), ResourceManager.integerOf(RESP_RENAME_GROUP), mrimGroup, newName}));
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
-    public final int validateGroupCreate(String str) {
-        int result = super.validateGroupCreate(str);
-        if (0 != result) {
+    @Override
+    public final int validateGroupCreate(String groupName) {
+        int result = super.validateGroupCreate(groupName);
+        if (result != 0) {
             return result;
         }
         ByteBuffer buffer = new ByteBuffer();
         int size = (this.groups.size() << 24) | 2;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ADD_CONTACT, buffer.writeIntLE(size).writeZeros(8).writeStringUTF16(str).writeZeros(12)), ResourceManager.integerOf(4), str, ResourceManager.integerOf(size)}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ADD_CONTACT, buffer.writeIntLE(size).writeZeros(8).writeStringUTF16(groupName).writeZeros(12)), ResourceManager.integerOf(RESP_ADD_GROUP), groupName, ResourceManager.integerOf(size)}));
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
+    @Override
     public final int validateGroupDelete(ContactGroup group) {
         int result = super.validateGroupDelete(group);
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) group;
         ByteBuffer deletePacket = new ByteBuffer().writeIntLE(mrimGroup.serverId).writeIntLE(mrimGroup.groupId | 1).writeIntLE(0);
-        String str = mrimGroup.name;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, deletePacket.writeStringUTF16(str).writeStringUTF16(str).writeIntLE(0)), ResourceManager.integerOf(3), mrimGroup}));
+        String name = mrimGroup.name;
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, deletePacket.writeStringUTF16(name).writeStringUTF16(name).writeIntLE(0)), ResourceManager.integerOf(RESP_DELETE_GROUP), mrimGroup}));
     }
 
-    @Override // p000.Account
-    /* renamed from: b */
+    @Override
     public final int validateResend(Contact baseContact) {
         int result = super.validateResend(baseContact);
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         if (baseContact.isOnline()) {
             return removeContact(baseContact, true);
         }
         MrimContact mrimContact = (MrimContact) baseContact;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags | 1).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), ResourceManager.integerOf(2), mrimContact}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags | 1).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), ResourceManager.integerOf(RESP_DELETE_CONTACT), mrimContact}));
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
+    @Override
     public final int validateDelete(Contact baseContact) {
         return sendDeleteCommand(((MrimContact) baseContact).simpleIdentifier);
     }
 
-    /* renamed from: g */
-    public final int sendDeleteCommand(String str) {
-        return trySendData(ProtocolFactory.createChatRoomCmd(this, str, 7));
+    public final int sendDeleteCommand(String contactAddress) {
+        return trySendData(ProtocolFactory.createChatRoomCmd(this, contactAddress, 7));
     }
 
-    @Override // p000.Account
-    /* renamed from: b */
-    public final int validateObject(Object obj) {
-        String[] strArr = (String[]) obj;
+    @Override
+    public final int validateObject(Object searchFields) {
+        String[] fields = (String[]) searchFields;
         ByteBuffer buffer = new ByteBuffer();
-        for (int i = 0; i < strArr.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
             if (i != 9) {
-                String str = strArr[i];
-                if (Utils.nonEmpty(str)) {
-                    buffer.writeIntLE(i).writeString(str, (1 << i) & 28);
+                String value = fields[i];
+                if (Utils.nonEmpty(value)) {
+                    buffer.writeIntLE(i).writeString(value, (1 << i) & 28);
                 }
             }
         }
-        if (Utils.nonEmpty(strArr[9])) {
-            buffer.writeIntLE(9).writeStringLatin1(strArr[9]);
+        if (Utils.nonEmpty(fields[9])) {
+            buffer.writeIntLE(9).writeStringLatin1(fields[9]);
         }
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST, buffer), ResourceManager.integerOf(8)}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST, buffer), ResourceManager.integerOf(RESP_CONTACT_INFO)}));
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
-    public final int validateModify(Contact baseContact, Object[] objArr) {
-        int result = super.validateModify(baseContact, objArr);
-        if (0 != result) {
+    @Override
+    public final int validateModify(Contact baseContact, Object[] fieldValues) {
+        int result = super.validateModify(baseContact, fieldValues);
+        if (result != 0) {
             return result;
         }
-        String str = (String) objArr[0];
-        int length = objArr.length - 1;
-        String[] strArr = new String[length];
-        for (int i = 0; i < length; i++) {
-            strArr[i] = Utils.extractDigits((String) objArr[i + 1]);
+        String displayName = (String) fieldValues[0];
+        int groupCount = fieldValues.length - 1;
+        String[] groupIds = new String[groupCount];
+        for (int i = 0; i < groupCount; i++) {
+            groupIds[i] = Utils.extractDigits((String) fieldValues[i + 1]);
         }
         MrimContact mrimContact = (MrimContact) baseContact;
-        if (mrimContact.isOffline() && length == 0) {
+        if (mrimContact.isOffline() && groupCount == 0) {
             return 709;
         }
         Enumeration elements = this.contactMap.elements();
         while (elements.hasMoreElements()) {
             MrimContact otherContact = (MrimContact) elements.nextElement();
-            int i2 = length;
-            while (true) {
-                i2--;
-                if (i2 < 0) {
-                    break;
-                }
-                if (otherContact != baseContact && otherContact.isInGroup(strArr[i2])) {
+            for (int j = groupCount - 1; j >= 0; j--) {
+                if (otherContact != baseContact && otherContact.isInGroup(groupIds[j])) {
                     return 486;
                 }
             }
         }
-        String groupsStr = Utils.joinComma(strArr);
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(str).writeStringLatin1(groupsStr)), ResourceManager.integerOf(0), mrimContact, str, groupsStr}));
+        String groupsStr = Utils.joinComma(groupIds);
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(displayName).writeStringLatin1(groupsStr)), ResourceManager.integerOf(RESP_MODIFY_CONTACT), mrimContact, displayName, groupsStr}));
     }
 
-    /* renamed from: U */
     public final int findAvailableGroupId() {
-        int i;
-        Vector vector = this.groups;
-        int size = vector.size();
-        for (int i2 = 0; i2 < 20; i2++) {
-            for (i = 0; i <= size; i = i + 1) {
-                if (i == size) {
-                    return i2;
+        int idx;
+        int size = this.groups.size();
+        for (int candidateId = 0; candidateId < 20; candidateId++) {
+            for (idx = 0; idx <= size; idx = idx + 1) {
+                if (idx == size) {
+                    return candidateId;
                 }
-                i = ((MrimContactGroup) vector.elementAt(i)).serverId != i2 ? i + 1 : 0;
+                idx = ((MrimContactGroup) this.groups.elementAt(idx)).serverId != candidateId ? idx + 1 : 0;
             }
         }
         return 0;
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
-    public final int validateGroupAdd(String str, String str2, String str3, ContactGroup group, boolean z) {
-        int result = super.validateGroupAdd(str, str2, str3, group, z);
-        if (0 != result) {
+    @Override
+    public final int validateGroupAdd(String contactAddress, String displayName, String authMessage, ContactGroup group, boolean requestAuth) {
+        int result = super.validateGroupAdd(contactAddress, displayName, authMessage, group, requestAuth);
+        if (result != 0) {
             return result;
         }
-        MrimContact contact = findContactByIdentifier(str);
+        MrimContact contact = findContactByIdentifier(contactAddress);
         if (contact == null || contact.isOnline()) {
-            trySendData(ProtocolFactory.createPasswordAuthCmd(this, str));
-            return trySendData(XmppContactGroup.createContactCommand(this, 0, str, str2, str3, (MrimContactGroup) group, z));
+            trySendData(ProtocolFactory.createPasswordAuthCmd(this, contactAddress));
+            return trySendData(XmppContactGroup.createContactCommand(this, 0, contactAddress, displayName, authMessage, (MrimContactGroup) group, requestAuth));
         }
         trySendData(ResourceManager.createAddToGroupCmd(this, contact, (MrimContactGroup) group));
-        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(z ? 524300 : 12).writeStringLatin1(str).writeStringArray(new String[]{this.displayName, str3}).writeIntLE(0)));
+        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(requestAuth ? 524300 : 12).writeStringLatin1(contactAddress).writeStringArray(new String[]{this.displayName, authMessage}).writeIntLE(0)));
     }
 
-    @Override // p000.Account
-    /* renamed from: c */
+    @Override
     public final int validateContactDelete(Contact baseContact) {
         MrimContact mrimContact = (MrimContact) baseContact;
         if (mrimContact.isOnline()) {
             return trySendData(XmppContactGroup.createContactCommand(this, 48, mrimContact.simpleIdentifier, mrimContact.displayName, AppState.emptyStr, getFirstContactGroup(), false));
         }
-        int i = mrimContact.statusFlags;
-        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, (i & 16) != 0 ? i & (-49) : i | 16 | 32));
+        int flags = mrimContact.statusFlags;
+        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, (flags & 16) != 0 ? flags & (-49) : flags | 16 | 32));
     }
 
-    @Override // p000.Account
-    /* renamed from: d */
+    @Override
     public final int validateContactBlock(Contact baseContact) {
         MrimContact mrimContact = (MrimContact) baseContact;
-        int i = mrimContact.statusFlags ^ 8;
-        int i2 = i;
-        if ((i & 8) != 0) {
-            i2 &= -5;
+        int flags = mrimContact.statusFlags ^ 8;
+        int newFlags = flags;
+        if ((flags & 8) != 0) {
+            newFlags &= -5;
         }
-        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, i2));
+        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, newFlags));
     }
 
-    @Override // p000.Account
-    /* renamed from: e */
+    @Override
     public final int validateContactUnblock(Contact baseContact) {
         MrimContact mrimContact = (MrimContact) baseContact;
-        int i = mrimContact.statusFlags ^ 4;
-        int i2 = i;
-        if ((i & 4) != 0) {
-            i2 &= -9;
+        int flags = mrimContact.statusFlags ^ 4;
+        int newFlags = flags;
+        if ((flags & 4) != 0) {
+            newFlags &= -9;
         }
-        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, i2));
+        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, newFlags));
     }
 
-    @Override // p000.Account
-    /* renamed from: f */
+    @Override
     public final int validateContactResend(Contact baseContact) {
         int result = super.validateContactResend(baseContact);
-        return 0 != result ? result : trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(1024).writeStringLatin1(((MrimContact) baseContact).simpleIdentifier).writeIntLE(0).writeIntLE(0)));
+        return result != 0 ? result : trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(1024).writeStringLatin1(((MrimContact) baseContact).simpleIdentifier).writeIntLE(0).writeIntLE(0)));
     }
 
-    @Override // p000.Account
-    /* renamed from: a */
+    @Override
     public final int validateMove(Contact baseContact, ContactGroup group, ContactGroup destGroup) {
         int result = super.validateMove(baseContact, group, destGroup);
-        return 0 != result ? result : trySendData(ResourceManager.createAddToGroupCmd(this, (MrimContact) baseContact, (MrimContactGroup) destGroup));
+        return result != 0 ? result : trySendData(ResourceManager.createAddToGroupCmd(this, (MrimContact) baseContact, (MrimContactGroup) destGroup));
     }
 
-    @Override // p000.Account
-    /* renamed from: l */
+    @Override
     public final int disconnect() {
         int result = super.disconnect();
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_LOGOUT_CMD, (ByteBuffer) null));
@@ -1106,276 +894,138 @@ public final class MrimAccount extends Account implements ListItem {
         return 0;
     }
 
-    /* renamed from: k */
-    private final String getContactDisplayName(String str) {
-        MrimContact contact = findContactByIdentifier(str);
-        return contact != null ? contact.displayName : str;
+    private final String getContactDisplayName(String identifier) {
+        MrimContact contact = findContactByIdentifier(identifier);
+        return contact != null ? contact.displayName : identifier;
     }
 
-    /* renamed from: l */
-    private final StringBuffer formatContactName(String str) {
-        return Utils.appendCommaIf(ObjectPool.newStringBuffer().append(getContactDisplayName(str)), true).append('\n');
+    private final StringBuffer formatContactName(String identifier) {
+        return Utils.appendCommaIf(ObjectPool.newStringBuffer().append(getContactDisplayName(identifier)), true).append('\n');
     }
 
-    /* renamed from: a */
-    public final void receivePrivateMessage(String str, String str2, String str3, String str4, long j) {
-        MrimContact contact = findContactByIdentifier(str);
-        MrimContact mrimContact = contact;
-        if (null == contact) {
-            String str5 = AppState.emptyStr;
+    public final void receivePrivateMessage(String senderAddress, String messageBody, String senderName, String messageAuthor, long timestamp) {
+        MrimContact contact = findContactByIdentifier(senderAddress);
+        MrimContact targetContact = contact;
+        if (contact == null) {
+            String emptyStr = AppState.emptyStr;
             ContactGroup group = this.defaultGroup;
-            MrimContact otherContact = new MrimContact(this, 0, 65664, 3, str, str3, 0, 0, str5, str5, str5);
-            group.addContact((Object) otherContact);
+            MrimContact newContact = new MrimContact(this, 0, 65664, 3, senderAddress, senderName, 0, 0, emptyStr, emptyStr, emptyStr);
+            group.addContact((Object) newContact);
             if (this.groups.size() > 0) {
-                trySendData(XmppContactGroup.createContactCommand(this, 128, str, str3, str5, getFirstContactGroup(), false));
+                trySendData(XmppContactGroup.createContactCommand(this, 128, senderAddress, senderName, emptyStr, getFirstContactGroup(), false));
             }
-            mrimContact = otherContact;
+            targetContact = newContact;
         }
         this.recvCount++;
-        mrimContact.receiveMessage(j, formatContactName(str4).append(str2));
+        targetContact.receiveMessage(timestamp, formatContactName(messageAuthor).append(messageBody));
     }
 
-    /* renamed from: a */
-    public final void receiveGroupMessage(String str, String str2, String str3, String str4, ByteBuffer buffer, long j) {
-        MrimContact contact = findContactByIdentifier(str);
-        if (null == contact) {
+    public final void receiveGroupMessage(String roomAddress, String messageBody, String roomName, String messageAuthor, ByteBuffer buffer, long timestamp) {
+        MrimContact contact = findContactByIdentifier(roomAddress);
+        if (contact == null) {
             return;
         }
         this.recvCount++;
-        StringBuffer msgBuf = formatContactName(str4).append(str2);
+        StringBuffer msgBuf = formatContactName(messageAuthor).append(messageBody);
         buffer.readInt();
         int memberCount = buffer.readInt();
-        while (true) {
-            memberCount--;
-            if (memberCount < 0) {
-                contact.receiveMessage(j, msgBuf);
-                return;
-            }
-            Utils.appendCommaIf(msgBuf.append(getContactDisplayName(buffer.readWideStr())), memberCount != 0);
+        for (int i = 0; i < memberCount; i++) {
+            Utils.appendCommaIf(msgBuf.append(getContactDisplayName(buffer.readWideStr())), i < memberCount - 1);
         }
+        contact.receiveMessage(timestamp, msgBuf);
     }
 
-    /* renamed from: h */
-    public final void addOfflineContact(String str) {
-        if (StringUtils.equals(str, this.login) || findContactByIdentifier(str) != null) {
+    public final void addOfflineContact(String contactAddress) {
+        if (StringUtils.equals(contactAddress, this.login) || findContactByIdentifier(contactAddress) != null) {
             return;
         }
-        createNewContact(str, 16);
+        createNewContact(contactAddress, 16);
     }
 
-    @Override // p000.Account
-    /* renamed from: b */
-    public final Contact newContact(String str) {
-        return createNewContact(str, 13);
+    @Override
+    public final Contact newContact(String contactAddress) {
+        return createNewContact(contactAddress, 13);
     }
 
-    /* renamed from: a */
-    private final Contact createNewContact(String str, int i) {
-        String str2 = AppState.emptyStr;
+    private final Contact createNewContact(String contactAddress, int commandType) {
+        String emptyStr = AppState.emptyStr;
         ContactGroup group = this.defaultGroup;
-        MrimContact mrimContact = new MrimContact(this, 0, 65536, 3, str, str, 0, 0, str2, str2, str2);
+        MrimContact mrimContact = new MrimContact(this, 0, 65536, 3, contactAddress, contactAddress, 0, 0, emptyStr, emptyStr, emptyStr);
         group.addContact((Object) mrimContact);
-        trySendData(ProtocolFactory.createChatRoomCmd(this, str, i));
+        trySendData(ProtocolFactory.createChatRoomCmd(this, contactAddress, commandType));
         return mrimContact;
     }
 
-    @Override // p000.Account
-    /* renamed from: c */
-    public final void onError(int i) {
-        int i2;
-        switch (i) {
+    @Override
+    public final void onError(int errorCode) {
+        int statusCode;
+        switch (errorCode) {
             case 0:
-                i2 = STATUS_ONLINE;
+                statusCode = STATUS_ONLINE;
                 break;
             case 1:
-                i2 = STATUS_AWAY;
+                statusCode = STATUS_AWAY;
                 break;
             case 2:
-                i2 = STATUS_DND;
+                statusCode = STATUS_DND;
                 break;
             case 3:
-                i2 = STATUS_INVISIBLE;
+                statusCode = STATUS_INVISIBLE;
                 break;
             case 4:
-                i2 = STATUS_FREE_CHAT;
+                statusCode = STATUS_FREE_CHAT;
                 break;
             default:
                 disconnect();
                 return;
         }
-        setConfiguration(i2);
+        setConfiguration(statusCode);
     }
 
-    /* renamed from: V */
-    public final int getChatRoomCount() {
-        if (this.chatRoomsList == null) {
-            return 0;
-        }
-        return this.chatRoomsList.size();
-    }
-
-    /* renamed from: e */
-    public final void parseChatRoomsFromJson(Object obj) {
-        this.chatRoomsLoaded = false;
-        boolean z = true;
-        if (this.chatRoomsList == null) {
-            z = false;
-            this.chatRoomsList = ObjectPool.newVector();
-        }
-        Object roomsArray = JsonParser.getValue(obj, AppState.getString(StateKeys.STR_RES_PARAM_3));
-        for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
-            Object roomObj = JsonParser.getVectorElement(roomsArray, i);
-            ChatRoom existingRoom = findChatRoomById(JsonParser.getIntValue(roomObj, AppState.getString(StateKeys.STR_RES_AT_SIGN)));
-            if (existingRoom == null) {
-                this.chatRoomsList.addElement(new ChatRoom(roomObj));
-            } else {
-                existingRoom.parseJson(roomObj);
-            }
-        }
-        this.accountNickname = JsonParser.getStringValue(obj, AppState.getString(StateKeys.STR_RES_HEADER_NAME_3));
-        assignDefaultChatRoom(z);
-    }
-
-    /* renamed from: b */
-    private void assignDefaultChatRoom(boolean z) {
-        boolean z2;
-        if (z) {
-            return;
-        }
-        int i = 0;
-        do {
-            z2 = false;
-            i++;
-            Enumeration elements = this.chatRoomsList.elements();
-            while (elements.hasMoreElements()) {
-                if (((ChatRoom) elements.nextElement()).id == i) {
-                    z2 = true;
-                }
-            }
-        } while (z2);
-        this.chatRoomsList.addElement(new ChatRoom(i));
-    }
-
-    /* renamed from: h */
-    public final ChatRoom findChatRoomById(int i) {
-        Enumeration elements = this.chatRoomsList.elements();
-        while (elements.hasMoreElements()) {
-            ChatRoom chatRoom = (ChatRoom) elements.nextElement();
-            if (chatRoom.id == i) {
-                return chatRoom;
-            }
-        }
-        return null;
-    }
-
-    /* renamed from: W */
-    public final ChatRoom getLastChatRoom() {
-        return (ChatRoom) this.chatRoomsList.lastElement();
-    }
-
-    /* renamed from: i */
-    public final ChatRoom findChatRoomByName(String str) {
-        Enumeration elements = this.chatRoomsList.elements();
-        while (elements.hasMoreElements()) {
-            ChatRoom chatRoom = (ChatRoom) elements.nextElement();
-            if (chatRoom.hasMessage(str)) {
-                return chatRoom;
-            }
-        }
-        return null;
-    }
-
-    /* renamed from: j */
-    public final void removeUserFromChatRooms(String str) {
-        int roomCount = getChatRoomCount();
-        while (true) {
-            roomCount--;
-            if (roomCount < 0) {
-                return;
-            }
-            ChatRoom chatRoom = (ChatRoom) this.chatRoomsList.elementAt(roomCount);
-            if (chatRoom.hasMessage(str)) {
-                chatRoom.messageIds.removeElement(str);
-                chatRoom.readMessages.removeElement(str);
-                chatRoom.messages.remove(str);
-                if (str.equals(chatRoom.subject)) {
-                    chatRoom.subject = AppState.emptyStr;
-                }
-            }
-        }
-    }
-
-    /* renamed from: X */
-    public final ChatRoom findDefaultChatRoom() {
-        ChatRoom defaultRoom = findChatRoomByNameHelper(AppState.getString(StateKeys.STR_MAIN_CHATROOM));
-        return defaultRoom != null ? defaultRoom : findChatRoomByNameHelper(AppState.getString(StateKeys.STR_DEFAULT_CHATROOM));
-    }
-
-    /* renamed from: m */
-    private ChatRoom findChatRoomByNameHelper(String str) {
-        Enumeration elements = this.chatRoomsList.elements();
-        while (elements.hasMoreElements()) {
-            ChatRoom chatRoom = (ChatRoom) elements.nextElement();
-            if (chatRoom.name.equals(str)) {
-                return chatRoom;
-            }
-        }
-        return null;
-    }
-
-    @Override // p000.ListItem
-    /* renamed from: r */
+    @Override
     public final int getHeight() {
         return 6;
     }
 
-    @Override // p000.ListItem
-    /* renamed from: s */
+    @Override
     public final boolean isSelected() {
-        return this.isHighlighted && this.accountProfile != null && this.accountProfile.hasCoordinates();
+        return this.isHighlighted && this.profileManager.profile != null && this.profileManager.profile.hasCoordinates();
     }
 
-    @Override // p000.ListItem
-    /* renamed from: t */
+    @Override
     public final void select() {
         this.isHighlighted = false;
     }
 
-    @Override // p000.ListItem
-    /* renamed from: u */
+    @Override
     public final void deselect() {
         this.isHighlighted = true;
     }
 
-    @Override // p000.ListItem
-    /* renamed from: v */
+    @Override
     public final int getWidth() {
-        if (this.accountProfile != null) {
-            return (int) this.accountProfile.getLongitude();
+        if (this.profileManager.profile != null) {
+            return (int) this.profileManager.profile.getLongitude();
         }
         return 0;
     }
 
-    @Override // p000.ListItem
-    /* renamed from: w */
+    @Override
     public final int getBaseHeight() {
-        if (this.accountProfile != null) {
-            return (int) this.accountProfile.getLatitude();
+        if (this.profileManager.profile != null) {
+            return (int) this.profileManager.profile.getLatitude();
         }
         return 0;
     }
 
-    @Override // p000.ListItem
-    /* renamed from: x */
+    @Override
     public final String getText() {
-        String typeStr;
-        int i;
         StringBuffer sb = ObjectPool.newStringBuffer();
-        if (this.accountProfile.dirty) {
+        if (this.profileManager.profile.dirty) {
             sb.append(AppState.getString(StateKeys.STR_MRIM_AWAY_SUFFIX));
-            String str = this.accountProfile.phone;
-            if (Utils.nonEmpty(str)) {
-                sb.append(str).append('.').append(' ');
+            String phone = this.profileManager.profile.phone;
+            if (Utils.nonEmpty(phone)) {
+                sb.append(phone).append('.').append(' ');
             }
             sb.append("Уточнить?");
         } else {
@@ -1383,64 +1033,55 @@ public final class MrimAccount extends Account implements ListItem {
             if (AccountManager.getMrimAccountList().size() > 1) {
                 sb.append(' ').append('(').append(this.login).append(')').append('.').append(' ');
             }
-            String str2 = this.accountProfile.phone;
-            if (Utils.nonEmpty(str2)) {
-                sb.append(str2).append('.').append(' ');
+            String phone = this.profileManager.profile.phone;
+            if (Utils.nonEmpty(phone)) {
+                sb.append(phone).append('.').append(' ');
             }
-            switch (this.accountProfile.gender) {
+            String genderText;
+            switch (this.profileManager.profile.gender) {
                 case 1:
-                    i = 781;
-                    typeStr = AppState.getString(i);
+                    genderText = AppState.getString(781);
                     break;
                 case 2:
-                    i = 782;
-                    typeStr = AppState.getString(i);
+                    genderText = AppState.getString(782);
                     break;
                 case 3:
-                    i = 783;
-                    typeStr = AppState.getString(i);
+                    genderText = AppState.getString(783);
                     break;
                 case 4:
-                    i = 784;
-                    typeStr = AppState.getString(i);
+                    genderText = AppState.getString(784);
                     break;
                 default:
-                    typeStr = null;
+                    genderText = null;
                     break;
             }
-            String str3 = typeStr;
-            if (Utils.nonEmpty(typeStr)) {
-                sb.append(str3).append('.');
+            if (Utils.nonEmpty(genderText)) {
+                sb.append(genderText).append('.');
             }
         }
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    @Override // p000.ListItem
-    /* renamed from: y */
+    @Override
     public final int getCommandCount() {
-        return this.accountProfile.getCommandCount();
+        return this.profileManager.profile.getCommandCount();
     }
 
-    @Override // p000.ListItem
-    /* renamed from: z */
+    @Override
     public final boolean isHighlighted() {
-        return this.accountProfile.hasCoordinates() && !this.accountProfile.dirty;
+        return this.profileManager.profile.hasCoordinates() && !this.profileManager.profile.dirty;
     }
 
-    @Override // p000.ListItem
-    /* renamed from: a */
-    public final int getCommandId(int i) {
-        return this.accountSizeCache.getWidth(i, this);
+    @Override
+    public final int getCommandId(int index) {
+        return this.profileManager.sizeCache.getWidth(index, this);
     }
 
-    @Override // p000.ListItem
-    /* renamed from: b */
-    public final int executeCommand(int i) {
-        return this.accountSizeCache.getHeight(i, this);
+    @Override
+    public final int executeCommand(int index) {
+        return this.profileManager.sizeCache.getHeight(index, this);
     }
 
-    /* renamed from: a */
     public final void performUserSearch(SearchEntry entry) {
         if (isConnected()) {
             entry.id = this.state;
@@ -1449,184 +1090,4 @@ public final class MrimAccount extends Account implements ListItem {
         }
     }
 
-    public final void handleMrimResponse(ByteBuffer buf, int i) {
-        Object[] objArr;
-        int resultCode = buf.readInt();
-        Vector vector = this.extras;
-        int size = vector.size();
-        do {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                objArr = (Object[]) vector.elementAt(size);
-            }
-        } while (((Integer) objArr[0]).intValue() != i);
-        switch (((Integer) objArr[1]).intValue()) {
-            case 0:
-                if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
-                    break;
-                } else {
-                    ((MrimContact) objArr[2]).updateDisplayNameAndGroups((String) objArr[3], (String) objArr[4]);
-                    break;
-                }
-            case 1:
-                if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
-                    break;
-                } else {
-                    ((MrimContactGroup) objArr[2]).setNameIfChanged((String) objArr[3]);
-                    break;
-                }
-            case 2:
-                if (resultCode != 0) {
-                    IOUtils.postDeleteError(objArr, resultCode);
-                    break;
-                } else {
-                    removeContact((Contact) objArr[2], true);
-                    break;
-                }
-            case 3:
-                if (resultCode != 0) {
-                    IOUtils.postDeleteError(objArr, resultCode);
-                    break;
-                } else {
-                    MrimContactGroup mrimGroup = (MrimContactGroup) objArr[2];
-                    int i2 = mrimGroup.groupId >> 24;
-                    int size2 = this.groups.size();
-                    while (true) {
-                        size2--;
-                        if (size2 < 0) {
-                            removeGroup((ContactGroup) mrimGroup);
-                            break;
-                        } else {
-                            MrimContactGroup mrimGroup2 = (MrimContactGroup) getGroup(size2);
-                            if ((mrimGroup2.groupId >> 24) > i2) {
-                                mrimGroup2.groupId -= 16777216;
-                            }
-                        }
-                    }
-                }
-            case 4:
-                if (resultCode != 0) {
-                    IOUtils.postAddGroupError(objArr, resultCode);
-                    break;
-                } else {
-                    this.groups.addElement(new MrimContactGroup(this, findAvailableGroupId(), ((Integer) objArr[3]).intValue(), (String) objArr[2]));
-                    break;
-                }
-            case 5:
-                if (resultCode != 0) {
-                    IOUtils.postAddGroupError(objArr, resultCode);
-                    break;
-                } else {
-                    MrimContactGroup mrimGroup3 = (MrimContactGroup) objArr[4];
-                    int contactId2 = buf.readInt();
-                    String statusStr = AppState.getString(StateKeys.STR_PHONE_SUFFIX);
-                    String str = (String) objArr[2];
-                    String str2 = (String) objArr[3];
-                    String str3 = AppState.emptyStr;
-                    mrimGroup3.addContact((Object) new MrimContact(this, contactId2, 1048576, 103, statusStr, str, 0, 1, str2, str3, str3));
-                    break;
-                }
-            case 6:
-                if (resultCode != 1) {
-                    IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
-                    break;
-                }
-                break;
-            case 7:
-                MrimContactParser.createSingleContact(this, resultCode, buf);
-                break;
-            case 8:
-                MrimContactParser.parseContactInfoResponse(this, resultCode, buf);
-                break;
-            case 9:
-                if (resultCode != 0) {
-                    if (resultCode != 5) {
-                        IOUtils.postAddGroupError(objArr, resultCode);
-                        break;
-                    }
-                } else {
-                    MrimContactGroup mrimGroup4 = (MrimContactGroup) objArr[4];
-                    int contactId3 = buf.readInt();
-                    int flags = ((Integer) objArr[5]).intValue();
-                    int i3 = mrimGroup4.serverId;
-                    String str4 = (String) objArr[2];
-                    String str5 = (String) objArr[3];
-                    String str6 = AppState.emptyStr;
-                    mrimGroup4.addContact((Object) new MrimContact(this, contactId3, flags, i3, str4, str5, 1, 0, str6, str6, str6));
-                    break;
-                }
-                break;
-            case 10:
-                MrimContact mrimContact = (MrimContact) objArr[2];
-                switch (resultCode) {
-                    case 0:
-                        mrimContact.updateMessageFlag(((Long) objArr[3]).longValue(), 64);
-                        break;
-                    case 32769:
-                        if (mrimContact.isSystem()) {
-                            IOUtils.postNotification(AppState.getString(StateKeys.STR_AUTH_GRANTED));
-                            break;
-                        }
-                    default:
-                        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
-                        break;
-                }
-                break;
-            case 11:
-                if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
-                    break;
-                } else {
-                    ((MrimContact) objArr[2]).statusFlags = ((Integer) objArr[3]).intValue();
-                    break;
-                }
-            case 12:
-                if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
-                    break;
-                } else {
-                    MrimContact mrimContact2 = (MrimContact) objArr[2];
-                    MrimContactGroup mrimGroup5 = (MrimContactGroup) objArr[3];
-                    mrimContact2.groupId = mrimGroup5.serverId;
-                    int size3 = this.groups.size();
-                    while (true) {
-                        size3--;
-                        if (size3 < 0) {
-                            mrimGroup5.addContact((Object) mrimContact2);
-                            break;
-                        } else {
-                            getGroup(size3).removeElement(mrimContact2);
-                        }
-                    }
-                }
-            case 13:
-                MrimContactParser.updateContactName(this, resultCode, buf);
-                break;
-            case 15:
-                if (resultCode != 0) {
-                    IOUtils.postAddGroupError(objArr, resultCode);
-                    break;
-                } else {
-                    MrimContactGroup defaultGroup = getFirstContactGroup();
-                    int contactId4 = buf.readInt();
-                    int i4 = defaultGroup.serverId;
-                    String contactName = buf.readWideStr();
-                    String str7 = (String) objArr[2];
-                    String str8 = AppState.emptyStr;
-                    defaultGroup.addContact(new MrimContact(this, contactId4, 128, i4, contactName, str7, 0, 1, str8, str8, str8));
-                    break;
-                }
-            case 16:
-                MrimContactParser.addContactToGroup(this, resultCode, buf);
-                break;
-            case 17:
-                ResourceManager.handleAuthResponse(this, resultCode, objArr, buf);
-                break;
-        }
-        vector.removeElementAt(size);
-    }
 }

@@ -26,7 +26,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_MENU));
                 break;
             case ScreenId.MAP_POINTS:
-                Screen screen11 = ScreenManager.createScreen(ScreenDef.MAP_POINTS);
+                ListView screen11 = ScreenManager.createScreen(ScreenDef.MAP_POINTS);
                 Vector mapPoints = AppState.getVector(StateKeys.VEC_CONTACT_GROUPS);
                 for (int i19 = 0; i19 < mapPoints.size(); i19++) {
                     MapPoint mapPoint = (MapPoint) mapPoints.elementAt(i19);
@@ -73,7 +73,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SAVE_LOCATION));
                 break;
             case ScreenId.MAP_ROUTE:
-                Screen screen13 = ScreenManager.createScreen(ScreenDef.MAP_ROUTE);
+                ListView screen13 = ScreenManager.createScreen(ScreenDef.MAP_ROUTE);
                 Enumeration routeEnum = MapController.getRouteElements();
                 while (routeEnum.hasMoreElements()) {
                     MapPoint mapPoint2 = (MapPoint) routeEnum.nextElement();
@@ -86,7 +86,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_STATUS));
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
-                Screen screen14 = ScreenManager.createScreen(ScreenDef.MAP_ROUTE_SELECT);
+                ListView screen14 = ScreenManager.createScreen(ScreenDef.MAP_ROUTE_SELECT);
                 Enumeration routeEnum2 = MapController.getRouteElements();
                 while (routeEnum2.hasMoreElements()) {
                     MapPoint mapPoint3 = (MapPoint) routeEnum2.nextElement();
@@ -112,7 +112,7 @@ public final class MapHandler extends BaseScreenHandler {
         AppController.finishScreenBuild();
     }
 
-    public int onMenuItemSelected(Screen currentScreen, MenuItem menuItem, String title, int action, Object obj) {
+    public int onMenuItemSelected(ListView currentScreen, MenuItem menuItem, String title, int action, Object obj) {
         int nextScreen;
         switch (currentScreen.screenId) {
             case ScreenId.MAP:
@@ -223,7 +223,7 @@ public final class MapHandler extends BaseScreenHandler {
         return nextScreen;
     }
 
-    public int onMenuItemAction(Screen currentScreen, MenuItem menuItem, Object data) {
+    public int onMenuItemAction(ListView currentScreen, MenuItem menuItem, Object data) {
         int result;
         switch (currentScreen.screenId) {
             case ScreenId.MAP:
@@ -280,7 +280,7 @@ public final class MapHandler extends BaseScreenHandler {
         return result;
     }
 
-    public void onScreenClosed(Screen screen) {
+    public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.MAP:
                 TabBar.scrollEnabled = false;
@@ -302,7 +302,7 @@ public final class MapHandler extends BaseScreenHandler {
         }
     }
 
-    public int onItemSelected(Screen screen, MenuItem menuItem, String title, int selectedOption,
+    public int onItemSelected(ListView screen, MenuItem menuItem, String title, int selectedOption,
                               Object data, Object headerData) {
         int actionResult;
         switch (screen.screenId) {
@@ -368,7 +368,7 @@ public final class MapHandler extends BaseScreenHandler {
         return actionResult;
     }
 
-    public int onIdleProcess(Screen currentScreen, MenuItem menuItem, Object data, String title) {
+    public int onIdleProcess(ListView currentScreen, MenuItem menuItem, Object data, String title) {
         boolean z5;
         long currentTime = System.currentTimeMillis();
         switch (currentScreen.screenId) {

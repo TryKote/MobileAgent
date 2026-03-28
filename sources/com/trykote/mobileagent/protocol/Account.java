@@ -17,8 +17,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.io.ConnectionNotFoundException;
 
-/* renamed from: h */
-/* loaded from: MobileAgent_3.9.jar:h.class */
 public abstract class Account {
 
     // Account type constants
@@ -32,99 +30,70 @@ public abstract class Account {
     public static final int PROGRESS_STARTING = 1;
     public static final int PROGRESS_CONNECTED = 100;
 
-    /* renamed from: i */
     public final Vector groups;
 
-    /* renamed from: j */
     public int accountId;
 
-    /* renamed from: k */
     public String login;
 
-    /* renamed from: l */
     public String password;
 
-    /* renamed from: m */
     public final int[] syncArray;
 
-    /* renamed from: n */
     public final ByteBuffer dataBuffer;
 
-    /* renamed from: o */
     public int state;
 
-    /* renamed from: p */
     public ConnectionThread connection;
 
-    /* renamed from: q */
     public final Hashtable contactMap;
 
-    /* renamed from: r */
     public int progress;
 
-    /* renamed from: s */
     public int msgCount;
 
-    /* renamed from: t */
     public int lastError;
 
-    /* renamed from: u */
     public int configFlags;
 
-    /* renamed from: v */
     public int syncSeq;
 
-    /* renamed from: w */
     public int sentCount;
 
-    /* renamed from: x */
     public int recvCount;
 
-    /* renamed from: y */
     public int reserved1;
 
-    /* renamed from: z */
     public long timeout;
 
-    /* renamed from: A */
     public long deadline;
 
-    /* renamed from: B */
     public int reserved2;
 
-    /* renamed from: C */
     public final Vector extras;
 
-    /* renamed from: D */
     public ContactGroup defaultGroup;
 
-    /* renamed from: E */
     public final ContactGroup onlineGroup;
 
-    /* renamed from: F */
     public final ContactGroup offlineGroup;
 
-    /* renamed from: G */
     public final ContactGroup blockedGroup;
 
-    /* renamed from: H */
     public final ContactGroup specialGroup;
 
-    /* renamed from: I */
     public String displayName;
 
-    /* renamed from: J */
     public String shortName;
 
-    /* renamed from: a */
     private int authMode;
 
-    public Account(int i, String str, String str2) {
+    public Account(int accountId, String login, String password) {
         this.groups = ObjectPool.newVector();
-        this.accountId = i;
-        this.login = str;
-        this.displayName = str;
-        this.password = str2;
+        this.accountId = accountId;
+        this.login = login;
+        this.displayName = login;
+        this.password = password;
         this.syncArray = new int[9];
         this.dataBuffer = new ByteBuffer();
         this.contactMap = new Hashtable();
@@ -141,7 +110,7 @@ public abstract class Account {
         ContactGroup specialGrp = createSpecialGroup();
         specialGrp.isSpecial = true;
         this.specialGroup = specialGrp;
-        this.shortName = Utils.beforeAt(str);
+        this.shortName = Utils.beforeAt(login);
     }
 
     public Account(ByteBuffer buffer) {
@@ -154,32 +123,24 @@ public abstract class Account {
         this.displayName = buffer.readUTF8Str((String) null);
     }
 
-    /* renamed from: q */
     public final ByteBuffer encodeId() {
         return new ByteBuffer().writeIntAsString(this.accountId).writeByte(95);
     }
 
-    /* renamed from: A */
     public final String getSignature() {
         return new ByteBuffer().writeByte(35).writeIntAsString(this.accountId).writeByte(35).writeRawString(this.login).readAllByteStr();
     }
 
-    /* renamed from: b */
     public abstract ContactGroup createOnlineGroup();
 
-    /* renamed from: d */
     public abstract ContactGroup createOfflineGroup();
 
-    /* renamed from: c */
     public abstract ContactGroup createBlockedGroup();
 
-    /* renamed from: e */
     public abstract ContactGroup createSpecialGroup();
 
-    /* renamed from: h */
     public abstract int getIconId();
 
-    /* renamed from: a */
     public void loadProperties(ByteBuffer buffer) {
         if (buffer.readInt() == 12) {
             this.syncSeq = buffer.readInt();
@@ -189,13 +150,11 @@ public abstract class Account {
         }
     }
 
-    /* renamed from: b */
     public void saveProperties(ByteBuffer buffer) {
         buffer.writeIntLE(12).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount).writeIntLE(0);
     }
 
-    /* renamed from: a */
-    public Account serializeAccount(ByteBuffer buffer, boolean z, boolean z2) {
+    public Account serializeAccount(ByteBuffer buffer, boolean includeGroups, boolean includePrivate) {
         buffer.writeByte(getType() | 8).writeIntLE(this.accountId).writeStringLatin1(this.login).writeStringLatin1(this.password).writeIntLE(0);
         for (int i = 2; i < 9; i++) {
             buffer.writeIntLE(this.syncArray[i]);
@@ -206,19 +165,19 @@ public abstract class Account {
         } else {
             buffer.writeIntLE(0);
         }
-        if (z2) {
-            if (!z) {
+        if (includePrivate) {
+            if (!includeGroups) {
                 this.groups.removeAllElements();
             }
             int size = this.groups.size();
-            int i2 = size;
+            int remaining = size;
             buffer.writeIntLE(size);
             while (true) {
-                i2--;
-                if (i2 < 0) {
+                remaining--;
+                if (remaining < 0) {
                     break;
                 }
-                getGroup(i2).serialize(buffer, true);
+                getGroup(remaining).serialize(buffer, true);
             }
             this.defaultGroup.serialize(buffer, true);
             this.contactMap.clear();
@@ -228,7 +187,6 @@ public abstract class Account {
         return this;
     }
 
-    /* renamed from: c */
     public final int trySendData(ByteBuffer buffer) {
         if (isConnected()) {
             return sendData(buffer);
@@ -236,7 +194,6 @@ public abstract class Account {
         return 299;
     }
 
-    /* renamed from: d */
     public final int sendData(ByteBuffer buffer) {
         AccountManager.setAccountOption(this, buffer.length);
         ConnectionThread conn = this.connection;
@@ -244,13 +201,13 @@ public abstract class Account {
             throw new RuntimeException();
         }
         ByteBuffer outBuf = conn.outBuffer;
-        int i = buffer.length;
-        if (i > 0) {
+        int dataLen = buffer.length;
+        if (dataLen > 0) {
             synchronized (outBuf) {
-                outBuf.ensureCapacity(i);
-                Utils.arraycopy((Object) buffer.data, buffer.offset, (Object) outBuf.data, outBuf.length, i);
+                outBuf.ensureCapacity(dataLen);
+                Utils.arraycopy((Object) buffer.data, buffer.offset, (Object) outBuf.data, outBuf.length, dataLen);
                 buffer.clear();
-                outBuf.length += i;
+                outBuf.length += dataLen;
                 outBuf.compact();
             }
         }
@@ -261,30 +218,25 @@ public abstract class Account {
         return 0;
     }
 
-    /* renamed from: c */
-    public final Account setDisplayName(String str) {
-        this.displayName = Utils.defaultIfBlank(str, this.login);
+    public final Account setDisplayName(String name) {
+        this.displayName = Utils.defaultIfBlank(name, this.login);
         return this;
     }
 
-    /* renamed from: B */
     public final boolean isConnecting() {
         return this.progress > 0;
     }
 
-    /* renamed from: C */
     public final boolean isConnected() {
         return this.progress == PROGRESS_CONNECTED;
     }
 
-    /* renamed from: D */
     public final MenuItem createMenuItem() {
         MenuItem item = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login);
         item.data = this;
         return item;
     }
 
-    /* renamed from: E */
     public final MenuItem createFlagMenuItem() {
         MenuItem item = MenuItem.create(getSignature()).setIcon(getIconId()).setLabel(this.login).setIcon(244);
         item.enabled = true;
@@ -292,21 +244,19 @@ public abstract class Account {
         return item;
     }
 
-    /* renamed from: a */
     public abstract int getType();
 
-    /* renamed from: a_ */
-    public int connect(int i) {
-        RemoteLogger.log("ACCT", "connect(" + i + ") login=" + this.login + " progress=" + this.progress);
+    public int connect(int authModeParam) {
+        RemoteLogger.log("ACCT", "connect(" + authModeParam + ") login=" + this.login + " progress=" + this.progress);
         if (isConnecting()) {
             RemoteLogger.log("ACCT", "already connecting, returning 297");
             return 297;
         }
-        if (i == 0) {
+        if (authModeParam == 0) {
             char firstChar = this.password.charAt(0);
             this.authMode = (firstChar < 'A' || firstChar > 'Z') ? 1 : 2;
         } else {
-            this.authMode = i;
+            this.authMode = authModeParam;
         }
         this.msgCount = 0;
         this.progress = PROGRESS_STARTING;
@@ -314,39 +264,33 @@ public abstract class Account {
         return 0;
     }
 
-    /* renamed from: l */
     public int disconnect() {
         RemoteLogger.log("ACCT", "disconnect login=" + this.login + " isConnecting=" + isConnecting());
         return !isConnecting() ? 298 : 0;
     }
 
-    /* renamed from: e */
-    public final void resetSyncIfChanged(int i) {
+    public final void resetSyncIfChanged(int newValue) {
         int[] iArr = this.syncArray;
-        int i2 = iArr[8];
-        if (i != i2) {
+        int oldValue = iArr[8];
+        if (newValue != oldValue) {
             iArr[2] = 0;
             iArr[3] = 0;
-            if ((i >>> 8) != (i2 >>> 8)) {
+            if ((newValue >>> 8) != (oldValue >>> 8)) {
                 iArr[4] = 0;
                 iArr[5] = 0;
             }
-            iArr[8] = i;
+            iArr[8] = newValue;
         }
     }
 
-    /* renamed from: a */
-    public final int getSyncValue(int i, int i2) {
-        return this.syncArray[i + i + i2];
+    public final int getSyncValue(int base, int offset) {
+        return this.syncArray[base + base + offset];
     }
 
-    /* renamed from: i */
     public abstract void loadData() throws Throwable;
 
-    /* renamed from: g */
     public abstract int getDefaultError();
 
-    /* renamed from: F */
     public final void closeConnection() {
         RemoteLogger.log("ACCT", "closeConnection login=" + this.login);
         if (this.connection != null) {
@@ -356,7 +300,6 @@ public abstract class Account {
         this.progress = PROGRESS_DISCONNECTED;
     }
 
-    /* renamed from: G */
     public final void handleConnError() {
         String errorMsg;
         Throwable th = this.connection.exception;
@@ -371,7 +314,6 @@ public abstract class Account {
         this.lastError = getDefaultError();
     }
 
-    /* renamed from: H */
     public final void handleTimeout() {
         RemoteLogger.log("ACCT", "handleTimeout login=" + this.login);
         IOUtils.postAccountError(this, 462);
@@ -379,12 +321,10 @@ public abstract class Account {
         this.lastError = getDefaultError();
     }
 
-    /* renamed from: I */
     public final String getFormattedName() {
         return this.authMode != 3 ? this.password : ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append((char) (this.password.charAt(0) + ' ')).append(StringUtils.suffix(this.password, 1)));
     }
 
-    /* renamed from: J */
     public final void handleComplete() {
         closeConnection();
         this.lastError = getDefaultError();
@@ -395,14 +335,12 @@ public abstract class Account {
         }
     }
 
-    /* renamed from: f */
-    public final void handleError(int i) {
-        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+    public final void handleError(int errorCode) {
+        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
         closeConnection();
         this.lastError = getDefaultError();
     }
 
-    /* renamed from: K */
     public final void removeAllContacts() {
         int size = this.groups.size();
         while (true) {
@@ -425,7 +363,6 @@ public abstract class Account {
         }
     }
 
-    /* renamed from: L */
     public final void markAllRead() {
         Enumeration elements = this.contactMap.elements();
         while (elements.hasMoreElements()) {
@@ -434,14 +371,12 @@ public abstract class Account {
         AppController.needsLayoutUpdate = true;
     }
 
-    /* renamed from: c */
     public final Contact getContact(Object obj) {
         return (Contact) this.contactMap.get(obj);
     }
 
-    /* renamed from: d */
-    public final void deleteContact(String str) {
-        Contact contact = getContact((Object) str);
+    public final void deleteContact(String contactId) {
+        Contact contact = getContact((Object) contactId);
         if (contact == null || contact.isOnline() || contact.hasUnread() || contact.isSystem()) {
             return;
         }
@@ -451,43 +386,37 @@ public abstract class Account {
         contact.dirty = true;
     }
 
-    /* renamed from: e */
-    public final void markRead(String str) {
-        Contact contact = getContact((Object) str);
+    public final void markRead(String contactId) {
+        Contact contact = getContact((Object) contactId);
         if (contact != null) {
             AppController.deleteContact(contact);
         }
     }
 
-    /* renamed from: a */
-    public final void onMessage(String str, long j, String str2) {
-        Contact contact = getContact((Object) str);
+    public final void onMessage(String contactId, long timestamp, String messageText) {
+        Contact contact = getContact((Object) contactId);
         Contact target = contact;
         if (contact == null) {
-            target = newContact(str);
+            target = newContact(contactId);
         }
         this.recvCount++;
-        target.receiveMessageFull(j, str2, 1);
+        target.receiveMessageFull(timestamp, messageText, 1);
     }
 
-    /* renamed from: b */
-    public abstract Contact newContact(String str);
+    public abstract Contact newContact(String contactAddress);
 
-    /* renamed from: a */
-    public final void updateStatus(String str, long j, int i) {
-        Contact contact = getContact((Object) str);
+    public final void updateStatus(String contactId, long timestamp, int flag) {
+        Contact contact = getContact((Object) contactId);
         if (contact != null) {
-            contact.updateMessageFlag(j, i);
+            contact.updateMessageFlag(timestamp, flag);
         }
     }
 
-    /* renamed from: a */
-    public int validateSend(Contact contact, String str, long j) {
+    public int validateSend(Contact contact, String message, long timestamp) {
         return isConnected() ? 0 : 299;
     }
 
-    /* renamed from: a */
-    public final int removeContact(Contact contact, boolean z) {
+    public final int removeContact(Contact contact, boolean removeFromGroups) {
         if (contact == null) {
             return 0;
         }
@@ -515,68 +444,60 @@ public abstract class Account {
         }
     }
 
-    /* renamed from: a */
-    public int validateGroupAdd(String str, String str2, String str3, ContactGroup group, boolean z) {
+    public int validateGroupAdd(String contactAddress, String displayName, String authMessage, ContactGroup group, boolean requestAuth) {
         if (!isConnected()) {
             return 299;
         }
-        if (StringUtils.isEmpty(str2)) {
+        if (StringUtils.isEmpty(displayName)) {
             return 301;
         }
-        return StringUtils.isEmpty(str3) ? 302 : 0;
+        return StringUtils.isEmpty(authMessage) ? 302 : 0;
     }
 
-    /* renamed from: a */
-    public int validateModify(Contact contact, Object[] objArr) {
+    public int validateModify(Contact contact, Object[] fieldValues) {
         if (isConnected()) {
-            return StringUtils.isEmpty((String) objArr[0]) ? 301 : 0;
+            return StringUtils.isEmpty((String) fieldValues[0]) ? 301 : 0;
         }
         return 299;
     }
 
-    /* renamed from: b */
-    public abstract int validateObject(Object obj);
+    public abstract int validateObject(Object searchFields);
 
-    /* renamed from: a */
     public abstract int validateDelete(Contact contact);
 
-    /* renamed from: a */
-    public int validateGroupCreate(String str) {
+    public int validateGroupCreate(String groupName) {
         if (isConnected()) {
-            return StringUtils.isEmpty(str) ? 301 : 0;
+            return StringUtils.isEmpty(groupName) ? 301 : 0;
         }
         return 299;
     }
 
-    /* renamed from: a */
-    public int validateGroupRename(ContactGroup group, String str) {
+    public int validateGroupRename(ContactGroup group, String newName) {
         if (group == this.defaultGroup || group == this.onlineGroup || group == this.specialGroup || group == this.offlineGroup) {
             return 304;
         }
         if (isConnected()) {
-            return StringUtils.isEmpty(str) ? 301 : 0;
+            return StringUtils.isEmpty(newName) ? 301 : 0;
         }
         return 299;
     }
 
-    /* renamed from: a */
-    public int setCredentials(String str, String str2) {
-        if (StringUtils.isEmpty(str)) {
+    public int setCredentials(String newLogin, String newPassword) {
+        if (StringUtils.isEmpty(newLogin)) {
             return 301;
         }
-        if (this.login.equals(str) && this.password.equals(str2)) {
+        if (this.login.equals(newLogin) && this.password.equals(newPassword)) {
             return 0;
         }
         if (isConnecting()) {
             return 300;
         }
-        this.login = str;
-        this.shortName = Utils.beforeAt(str);
-        this.password = str2;
+        this.login = newLogin;
+        this.shortName = Utils.beforeAt(newLogin);
+        this.password = newPassword;
         return 0;
     }
 
-    /* renamed from: a */
     public int validateGroupDelete(ContactGroup group) {
         if (group == this.defaultGroup || group == this.onlineGroup) {
             return 304;
@@ -584,31 +505,24 @@ public abstract class Account {
         return group.contacts.size() > 0 ? 303 : 0;
     }
 
-    /* renamed from: b */
     public int validateResend(Contact contact) {
         return (contact.isOnline() || isConnected()) ? 0 : 299;
     }
 
-    /* renamed from: d */
-    public final int getResourceId(Object obj) {
-        return ResourceManager.loadUserProfile((String) obj, this);
+    public final int getResourceId(Object key) {
+        return ResourceManager.loadUserProfile((String) key, this);
     }
 
-    /* renamed from: c */
     public abstract int validateContactDelete(Contact contact);
 
-    /* renamed from: d */
     public abstract int validateContactBlock(Contact contact);
 
-    /* renamed from: e */
     public abstract int validateContactUnblock(Contact contact);
 
-    /* renamed from: f */
     public int validateContactResend(Contact contact) {
         return !isConnected() ? 299 : 0;
     }
 
-    /* renamed from: M */
     public final Vector getUnreadContacts() {
         Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
@@ -621,7 +535,6 @@ public abstract class Account {
         return result;
     }
 
-    /* renamed from: N */
     public final Vector getOfflineContacts() {
         Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
@@ -634,12 +547,10 @@ public abstract class Account {
         return result;
     }
 
-    /* renamed from: O */
     public Vector getPendingContacts() {
         return ObjectPool.newVector();
     }
 
-    /* renamed from: P */
     public final Vector getAllContacts() {
         Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
@@ -649,7 +560,6 @@ public abstract class Account {
         return result;
     }
 
-    /* renamed from: a */
     public int validateMove(Contact contact, ContactGroup group, ContactGroup toGroup) {
         if (group == toGroup) {
             return 305;
@@ -657,7 +567,6 @@ public abstract class Account {
         return !isConnected() ? 299 : 0;
     }
 
-    /* renamed from: Q */
     public final Vector getOnlineContacts() {
         Vector result = ObjectPool.newVector();
         Enumeration elements = this.contactMap.elements();
@@ -670,7 +579,6 @@ public abstract class Account {
         return result;
     }
 
-    /* renamed from: g */
     public final ContactGroup findGroup(Contact contact) {
         ContactGroup group;
         if (contact.isOnline() || this.defaultGroup.containsContact(contact)) {
@@ -696,7 +604,6 @@ public abstract class Account {
         return group;
     }
 
-    /* renamed from: h */
     public final void registerContact(Contact contact) {
         Contact existing = (Contact) this.contactMap.get(contact.getIdentifier());
         if (existing != null && existing != contact) {
@@ -709,46 +616,38 @@ public abstract class Account {
         this.contactMap.put(contact.getIdentifier(), contact);
     }
 
-    /* renamed from: g */
-    public final ContactGroup getGroup(int i) {
-        return (ContactGroup) this.groups.elementAt(i);
+    public final ContactGroup getGroup(int index) {
+        return (ContactGroup) this.groups.elementAt(index);
     }
 
-    /* renamed from: b */
     public final void addGroup(ContactGroup group) {
         this.groups.addElement(group);
     }
 
-    /* renamed from: c */
     public final void removeGroup(ContactGroup group) {
         this.groups.removeElement(group);
     }
 
-    /* renamed from: c */
-    public abstract void onError(int i);
+    public abstract void onError(int errorCode);
 
     public final String toString() {
         return this.login;
     }
 
-    /* renamed from: n */
     public int getExtType() {
         return -1;
     }
 
-    /* renamed from: R */
     public final void incrementSync() {
         this.password = getFormattedName();
         this.syncSeq++;
     }
 
-    /* renamed from: o */
     public void resetCounters() {
         this.sentCount = 0;
         this.recvCount = 0;
     }
 
-    /* renamed from: p */
     public int getSessionStringKey() {
         return 0;
     }
