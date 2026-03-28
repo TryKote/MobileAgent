@@ -83,8 +83,8 @@ public final class MapPoint implements ListItem {
     public MapPoint(String str) {
         try {
             this.name = Conversation.decodeMessage(str);
-            this.longitude = IOUtils.longitudeToPixel(Conversation.extractFrom(str));
-            this.latitude = IOUtils.latitudeToPixel(Conversation.extractTo(str));
+            this.longitude = MapUtils.longitudeToPixel(Conversation.extractFrom(str));
+            this.latitude = MapUtils.latitudeToPixel(Conversation.extractTo(str));
             this.zoomLevel = Integer.parseInt(Conversation.extractSubject(str));
         } catch (Throwable unused) {
         }

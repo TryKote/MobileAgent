@@ -16,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.TextBox;
@@ -784,5 +785,69 @@ public final class StringUtils {
         } catch (Throwable unused) {
             AppState.resetToEmpty(StateKeys.URL_GEO_CONFIG);
         }
+    }
+
+    /* renamed from: d */
+    public static final String transliterate(String str) {
+        boolean zIsUpperCase = false;
+        String str2 = null;
+        String str3;
+        Vector vectorM512e = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_MEGA_URL_4));
+        Vector vectorM512e2 = Utils.splitByNull(AppState.getString(StateKeys.STR_SOUND_LIST));
+        Hashtable hashtable = new Hashtable();
+        int size = vectorM512e.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                break;
+            }
+            hashtable.put(vectorM512e.elementAt(size), vectorM512e2.elementAt(size));
+        }
+        String strM584b = AppState.getString(StateKeys.STR_SOUND_TYPE_1);
+        String strM584b2 = AppState.getString(StateKeys.STR_SOUND_TYPE_2);
+        Hashtable hashtable2 = new Hashtable();
+        StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
+        int length = strM584b.length();
+        while (true) {
+            length--;
+            if (length < 0) {
+                break;
+            }
+            hashtable2.put(extractBuffer(stringBufferM1217h.append(strM584b.charAt(length))), extractBuffer(stringBufferM1217h.append(strM584b2.charAt(length))));
+        }
+        int length2 = str.length();
+        int i = 0;
+        while (i < length2) {
+            String strM9b = null;
+            int i2 = 3;
+            while (true) {
+                if (i2 < 1) {
+                    break;
+                }
+                try {
+                    String strM12a = substring(str, i, i + i2);
+                    zIsUpperCase = Character.isUpperCase(strM12a.charAt(0));
+                    str2 = (String) hashtable.get(intern(strM12a.toLowerCase()));
+                    strM9b = str2;
+                } catch (Throwable unused) {
+                }
+                if (str2 != null) {
+                    if (zIsUpperCase && (str3 = (String) hashtable2.get(prefix(strM9b, 1))) != null) {
+                        strM9b = strM9b.length() == 1 ? str3 : concat(str3, suffix(strM9b, 1));
+                    }
+                    i += i2 - 1;
+                    stringBufferM1217h.append(strM9b);
+                } else {
+                    i2--;
+                }
+            }
+            if (strM9b == null) {
+                stringBufferM1217h.append(str.charAt(i));
+            }
+            i++;
+        }
+        ObjectPool.releaseVector(vectorM512e);
+        ObjectPool.releaseVector(vectorM512e2);
+        return ObjectPool.toStringAndRelease(stringBufferM1217h);
     }
 }

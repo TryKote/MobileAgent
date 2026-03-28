@@ -66,7 +66,7 @@ public abstract class MrimContactParser {
                 nameIndex = 914;
                 break;
         }
-        IOUtils.postNotification(AppState.getString(nameIndex));
+        EventDispatcher.postNotification(AppState.getString(nameIndex));
     }
 
     /* renamed from: d */

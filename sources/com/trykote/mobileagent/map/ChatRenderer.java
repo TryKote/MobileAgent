@@ -79,7 +79,7 @@ public abstract class ChatRenderer {
             scaleTimestamp = j;
             scaleZoom = i;
             int i3 = i;
-            int metersPerBar = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * MapUtils.getZoomNumerator(i3)) / MapUtils.getZoomDenominator(i3))));
+            int metersPerBar = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(MapUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * MapUtils.getZoomNumerator(i3)) / MapUtils.getZoomDenominator(i3))));
             int step = metersPerBar < 100 ? 25 : metersPerBar < 1000 ? 100 : metersPerBar < 10000 ? 1000 : metersPerBar < 100000 ? 10000 : 100000;
             int roundedMeters = (metersPerBar / step) * step;
             scaleBarWidth = scaleToPixels(roundedMeters, i, j);
@@ -324,7 +324,7 @@ public abstract class ChatRenderer {
 
     /* renamed from: a */
     private static int scaleToPixels(int i, int i2, long j) {
-        return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(MapUtils.coordToPixel(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(IOUtils.pixelToLatitude(j))))));
+        return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(MapUtils.coordToPixel(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(MapUtils.pixelToLatitude(j))))));
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:132:0x0416, code lost:

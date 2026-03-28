@@ -190,7 +190,7 @@ public final class Conversation implements ListItem {
             } catch (Throwable th) {
                 MmpProtocol protocol2 = (MmpProtocol) objArr[0];
                 protocol2.lastError = protocol2.getDefaultError();
-                IOUtils.postAccountMessage(protocol2, th.toString());
+                EventDispatcher.postAccountMessage(protocol2, th.toString());
                 protocol2.progress = Account.PROGRESS_DISCONNECTED;
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
@@ -654,7 +654,7 @@ public final class Conversation implements ListItem {
                 }
             }
         } else {
-            IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_STATUS_CHANGED)).append(status)));
+            EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_STATUS_CHANGED)).append(status)));
             account.closeConnection();
             account.lastError = account.getDefaultError();
             account.markAllRead();

@@ -824,7 +824,7 @@ public final class AppController {
         do {
             remaining -= 500;
             if (remaining < 0) {
-                IOUtils.postEvent(new AccountDataEvent(objArr));
+                EventDispatcher.postEvent(new AccountDataEvent(objArr));
                 return;
             }
             Thread.sleep(500L);
@@ -1062,7 +1062,7 @@ public final class AppController {
             lat = MapRenderer.currentLat;
         }
         AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
-        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), IOUtils.pixelToLongitude(lon), IOUtils.pixelToLatitude(lat)), lon, lat);
+        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), MapUtils.pixelToLongitude(lon), MapUtils.pixelToLatitude(lat)), lon, lat);
         return ScreenId.MAP;
     }
 
@@ -1561,7 +1561,7 @@ public final class AppController {
                                                                 ScreenBuilder.openScreen(ScreenId.MAP);
                                                                 z4 = true;
                                                             } else if (i13 == 51) {
-                                                                IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.MAP_CONTROL, null));
+                                                                EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.MAP_CONTROL, null));
                                                                 z4 = true;
                                                             } else if (i13 == 53) {
                                                                 AppState.setBool(StateKeys.SETTING_CUSTOM_VIEW_MODE, !AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE));
@@ -1867,7 +1867,7 @@ public final class AppController {
                                                 }
                                             case ProtocolEvent.ADD_CONTACT_CONFIRM:
                                                 AppState.setInt(StateKeys.FLAG_SHOW_PHOTO, 1);
-                                                IOUtils.showAddContactScreen();
+                                                ContactListManager.showAddContactScreen();
                                                 break;
                                             case ProtocolEvent.ACCOUNT_SYNC:
                                                 ((MrimAccount) obj6).profileManager.sync();
@@ -1929,7 +1929,7 @@ public final class AppController {
                                     if (!AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE) && null != (screen = ScreenManager.getCurrentScreen())) {
                                         AppState.getCanvas().setCommands(screen.titleLeft, screen.titleRight);
                                     }
-                                    IOUtils.checkSoundTimer();
+                                    SoundPlayer.checkSoundTimer();
                                     if (isTimerExpired(timers[0]) && (!AppState.getBool(StateKeys.FLAG_KEEP_SCREEN_ON) || ScreenManager.getCurrentScreen().screenId != ScreenId.MAP)) {
                                         if (AppState.getCanvas().isShown()) {
                                             updateTimerSlot(0);
@@ -2196,7 +2196,7 @@ public final class AppController {
 
     /* renamed from: a */
     private static final void processMrimMailData(MrimAccount mrimAccount, int i) {
-        IOUtils.postAccountError(mrimAccount, i);
+        EventDispatcher.postAccountError(mrimAccount, i);
         mrimAccount.closeConnection();
         mrimAccount.lastError = mrimAccount.getDefaultError();
     }
@@ -2213,7 +2213,7 @@ public final class AppController {
         }
         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
         MapPoint mapPoint = (MapPoint) obj;
-        mrimAccount.profileManager.setSimpleLocation(IOUtils.pixelToLongitude(mapPoint.longitude), IOUtils.pixelToLatitude(mapPoint.latitude));
+        mrimAccount.profileManager.setSimpleLocation(MapUtils.pixelToLongitude(mapPoint.longitude), MapUtils.pixelToLatitude(mapPoint.latitude));
         mrimAccount.profileManager.sync();
         AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
         return ScreenId.PROFILE_EDIT;

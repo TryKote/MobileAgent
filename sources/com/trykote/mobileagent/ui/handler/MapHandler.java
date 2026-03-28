@@ -125,7 +125,7 @@ public final class MapHandler extends BaseScreenHandler {
                 nextScreen = 0;
                 break;
             case ScreenId.MAP_POINTS:
-                nextScreen = IOUtils.handleMapSearch(action, obj);
+                nextScreen = MapUtils.handleMapSearch(action, obj);
                 break;
             case ScreenId.MAP_TOOLTIP:
                 ScreenManager.processScreenForm();
@@ -312,8 +312,8 @@ public final class MapHandler extends BaseScreenHandler {
                     MapController.toggleMapControls(screen);
                     i2 = -1;
                 } else if (AppState.getBool(StateKeys.FLAG_MAP_LOADING)) {
-                    String lonStr = IOUtils.pixelToLongitude(MapRenderer.currentLon);
-                    String latStr = IOUtils.pixelToLatitude(MapRenderer.currentLat);
+                    String lonStr = MapUtils.pixelToLongitude(MapRenderer.currentLon);
+                    String latStr = MapUtils.pixelToLatitude(MapRenderer.currentLat);
                     AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
                     ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
                     i2 = 0;
@@ -326,7 +326,7 @@ public final class MapHandler extends BaseScreenHandler {
                 actionResult = 0;
                 break;
             case ScreenId.MAP_POINTS:
-                actionResult = IOUtils.handleMapPointAction(data);
+                actionResult = MapUtils.handleMapPointAction(data);
                 break;
             case ScreenId.MAP_TOOLTIP:
                 actionResult = 0;
@@ -379,7 +379,7 @@ public final class MapHandler extends BaseScreenHandler {
                 if (AppController.isTimerType(10) && MapRenderer.crosshairVisible) {
                     if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE)) {
                         if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)) != VCard.staticTs5) && AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
-                            IOUtils.requestNearbyPeople();
+                            MapUtils.requestNearbyPeople();
                         }
                     }
                     MapRenderer.setCrosshairVisible(false);

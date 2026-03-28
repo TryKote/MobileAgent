@@ -309,14 +309,14 @@ public abstract class Account {
             errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
-        IOUtils.postAccountMessage(this, errorMsg);
+        EventDispatcher.postAccountMessage(this, errorMsg);
         closeConnection();
         this.lastError = getDefaultError();
     }
 
     public final void handleTimeout() {
         RemoteLogger.log("ACCT", "handleTimeout login=" + this.login);
-        IOUtils.postAccountError(this, 462);
+        EventDispatcher.postAccountError(this, 462);
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -331,12 +331,12 @@ public abstract class Account {
         if (this.authMode == 2) {
             connect(3);
         } else {
-            IOUtils.postAccountError(this, 461);
+            EventDispatcher.postAccountError(this, 461);
         }
     }
 
     public final void handleError(int errorCode) {
-        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
         closeConnection();
         this.lastError = getDefaultError();
     }

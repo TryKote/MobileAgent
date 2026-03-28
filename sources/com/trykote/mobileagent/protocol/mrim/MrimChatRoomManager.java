@@ -1,9 +1,13 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
+import com.trykote.mobileagent.protocol.*;
+import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 public final class MrimChatRoomManager {
@@ -149,5 +153,41 @@ public final class MrimChatRoomManager {
             throw new RuntimeException();
         }
         assignDefault(false);
+    }
+
+    /* renamed from: c */
+    public static final void showChatRoomMessages() {
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
+        ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_DETAILS);
+        screen.setHeader(234, chatRoom.getDisplayName());
+        Vector messages = ObjectPool.newVector();
+        Enumeration elements = chatRoom.messageIds.elements();
+        while (elements.hasMoreElements()) {
+            Hashtable hashtable = chatRoom.messages;
+            Object key = elements.nextElement();
+            if (hashtable.containsKey(key)) {
+                messages.addElement(chatRoom.messages.get(key));
+            }
+        }
+        Enumeration elements2 = messages.elements();
+        while (elements2.hasMoreElements()) {
+            screen.addItem(((Message) elements2.nextElement()).createMenuItem(chatRoom));
+        }
+        if (screen.menuItems.size() == 0) {
+            screen.selectable = false;
+            screen.addLabelById(835);
+        } else {
+            screen.scrollOffset = AppState.getInt(StateKeys.INT_SCROLL_OFFSET);
+            screen.selectByTitle(AppState.getString(StateKeys.SLOT_MAP_POINT_2));
+            screen.invalidateLayout();
+        }
+        screen.reverseScroll = true;
+        ScreenManager.showScreen(screen);
+    }
+
+    /* renamed from: b */
+    public static final void sendChatRoomRequest(Object[] objArr) {
+        AccountManager.markAccountHighlighted((MrimAccount) AppState.getAccount());
+        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = ApiClient.submitAsync(objArr);
     }
 }

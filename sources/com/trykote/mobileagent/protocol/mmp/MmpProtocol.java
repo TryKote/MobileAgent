@@ -277,7 +277,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.vectorSize(accounts) == 0) {
-                        IOUtils.postNotification(AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
+                        EventDispatcher.postNotification(AppState.getString(StateKeys.STR_MMP_AUTH_ERROR));
                         this.progress = PROGRESS_DISCONNECTED;
                     }
                     ObjectPool.releaseVector(accounts);
@@ -441,7 +441,7 @@ public final class MmpProtocol extends Account {
                         removeQueuedCommand(seqNum);
                         break;
                     case MmpCommand.FILE_TRANSFER:
-                        IOUtils.handleFileTransfer(this, packet);
+                        handleFileTransfer(this, packet);
                         break;
                     case MmpCommand.MSG_DELIVERED:
                         long timestamp = packet.readLong();
@@ -496,7 +496,7 @@ public final class MmpProtocol extends Account {
                         onMessage(packet.readLenPrefixStr(), 0L, AppState.getString(StateKeys.STR_MMP_SYSTEM_MESSAGE));
                         break;
                     case MmpCommand.SPAM_REPORT_ACK:
-                        IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
+                        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_MMP_SPAM_REPORT)).append(1501).append('/').append(packet.readShortBE()).append(AppState.getString(StateKeys.STR_MMP_SPAM_SUFFIX))));
                         removeQueuedCommand(seqNum);
                         break;
                     case MmpCommand.SEARCH_RESPONSE:
@@ -774,13 +774,13 @@ public final class MmpProtocol extends Account {
             return 0;
         }
         if (contact.canUnblock()) {
-            trySendData(IOUtils.unblockContact(this, contact));
+            trySendData(unblockContact(this, contact));
         }
         if (contact.canDelete()) {
-            trySendData(IOUtils.deleteContact(this, contact));
+            trySendData(deleteContact(this, contact));
         }
         if (contact.canBlock()) {
-            trySendData(IOUtils.blockContact(this, contact));
+            trySendData(blockContact(this, contact));
         }
         return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(5), contact}));
     }
@@ -795,7 +795,7 @@ public final class MmpProtocol extends Account {
         trySendData(ProtocolFactory.createMmpCommand(this, MmpCommand.AUTH_GRANT, new ByteBuffer().writeByteLenStr(str).writeIntLE(0)));
         MmpContact contact = (MmpContact) getContact((Object) str);
         if (null != contact && !contact.isOnline()) {
-            return trySendData(IOUtils.createSendMessageCmd(this, contact, str3));
+            return trySendData(createSendMessageCmd(this, contact, str3));
         }
         trySendData(ResourceManager.createGetContactsCmd(this));
         MmpContactGroup group = (MmpContactGroup) groupParam;
@@ -863,7 +863,7 @@ public final class MmpProtocol extends Account {
         if (contactParam.isOnline()) {
             return 310;
         }
-        return trySendData(IOUtils.unblockContact(this, (MmpContact) contactParam));
+        return trySendData(unblockContact(this, (MmpContact) contactParam));
     }
 
     @Override // p000.Account
@@ -871,9 +871,9 @@ public final class MmpProtocol extends Account {
     public final int validateContactBlock(Contact contactParam) {
         MmpContact contact = (MmpContact) contactParam;
         if (contact.canBlock() && !contact.canDelete()) {
-            trySendData(IOUtils.blockContact(this, contact));
+            trySendData(blockContact(this, contact));
         }
-        return trySendData(IOUtils.deleteContact(this, contact));
+        return trySendData(deleteContact(this, contact));
     }
 
     @Override // p000.Account
@@ -881,9 +881,9 @@ public final class MmpProtocol extends Account {
     public final int validateContactUnblock(Contact contactParam) {
         MmpContact contact = (MmpContact) contactParam;
         if (!contact.canBlock() && contact.canDelete()) {
-            trySendData(IOUtils.deleteContact(this, contact));
+            trySendData(deleteContact(this, contact));
         }
-        return trySendData(IOUtils.blockContact(this, contact));
+        return trySendData(blockContact(this, contact));
     }
 
     @Override // p000.Account
@@ -1035,7 +1035,7 @@ public final class MmpProtocol extends Account {
                 if (status == 0) {
                     ((MmpContact) objArr[2]).setDisplayName((String) objArr[3]);
                 } else {
-                    IOUtils.postRenameError(objArr, status);
+                    EventDispatcher.postRenameError(objArr, status);
                 }
                 z = true;
                 z3 = z;
@@ -1045,7 +1045,7 @@ public final class MmpProtocol extends Account {
                 if (status2 == 0) {
                     ((MmpContactGroup) objArr[2]).setNameIfChanged((String) objArr[3]);
                 } else {
-                    IOUtils.postRenameError(objArr, status2);
+                    EventDispatcher.postRenameError(objArr, status2);
                 }
                 z = true;
                 z3 = z;
@@ -1056,7 +1056,7 @@ public final class MmpProtocol extends Account {
                     removeGroup((ContactGroup) objArr[2]);
                     trySendData(ResourceManager.createSyncGroupsCmd(this));
                 } else {
-                    IOUtils.postDeleteError(objArr, status3);
+                    EventDispatcher.postDeleteError(objArr, status3);
                 }
                 z = true;
                 z3 = z;
@@ -1066,7 +1066,7 @@ public final class MmpProtocol extends Account {
                 if (status4 == 0) {
                     trySendData(ResourceManager.createSyncContactsCmd(this));
                 } else {
-                    IOUtils.postOperationError(status4);
+                    EventDispatcher.postOperationError(status4);
                 }
                 z = true;
                 z3 = z;
@@ -1077,7 +1077,7 @@ public final class MmpProtocol extends Account {
                     addGroup(new MmpContactGroup(this, ((Integer) objArr[3]).intValue(), (String) objArr[2]));
                     trySendData(ResourceManager.createSyncGroupsCmd(this));
                 } else {
-                    IOUtils.postAddGroupError(objArr, status5);
+                    EventDispatcher.postAddGroupError(objArr, status5);
                 }
                 z = true;
                 z3 = z;
@@ -1088,7 +1088,7 @@ public final class MmpProtocol extends Account {
                     removeContact((Contact) objArr[2], true);
                     trySendData(ResourceManager.createSyncContactsCmd(this));
                 } else {
-                    IOUtils.postDeleteError(objArr, status6);
+                    EventDispatcher.postDeleteError(objArr, status6);
                 }
                 z = true;
                 z3 = z;
@@ -1359,7 +1359,7 @@ public final class MmpProtocol extends Account {
                     MmpContactGroup srcGroup4 = (MmpContactGroup) objArr[3];
                     trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, srcGroup4.createUpdatePacket(srcGroup4.name, mmpContact3.userId, -1)), ResourceManager.integerOf(11), mmpContact3, srcGroup4, objArr[4]}));
                 } else {
-                    IOUtils.postRenameError(objArr, status14);
+                    EventDispatcher.postRenameError(objArr, status14);
                 }
                 z = true;
                 z3 = z;
@@ -1372,7 +1372,7 @@ public final class MmpProtocol extends Account {
                     MmpContactGroup destGroup5 = (MmpContactGroup) objArr[4];
                     trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, mmpContact4.encodeContactUpdate(4, mmpContact4.displayName, destGroup5.groupId)), ResourceManager.integerOf(12), mmpContact4, obj4, destGroup5}));
                 } else {
-                    IOUtils.postRenameError(objArr, status15);
+                    EventDispatcher.postRenameError(objArr, status15);
                 }
                 z = true;
                 z3 = z;
@@ -1385,7 +1385,7 @@ public final class MmpProtocol extends Account {
                     MmpContactGroup destGroup6 = (MmpContactGroup) objArr[4];
                     trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup6.createUpdatePacket(destGroup6.name, -1, mmpContact5.userId)), ResourceManager.integerOf(13), mmpContact5, obj5, destGroup6}));
                 } else {
-                    IOUtils.postRenameError(objArr, status16);
+                    EventDispatcher.postRenameError(objArr, status16);
                 }
                 z = true;
                 z3 = z;
@@ -1401,7 +1401,7 @@ public final class MmpProtocol extends Account {
                     mmpContact6.onlineSemaphore = destGroup8.groupId;
                     trySendData(ResourceManager.createSyncContactsCmd(this));
                 } else {
-                    IOUtils.postRenameError(objArr, status17);
+                    EventDispatcher.postRenameError(objArr, status17);
                 }
                 z = true;
                 z3 = z;
@@ -1412,7 +1412,7 @@ public final class MmpProtocol extends Account {
                     MmpContactGroup destGroup9 = (MmpContactGroup) objArr[4];
                     trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup9.createUpdatePacket(destGroup9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.integerOf(15), objArr[2], objArr[3], destGroup9, objArr[5], objArr[6]}));
                 } else {
-                    IOUtils.postRenameError(objArr, status18);
+                    EventDispatcher.postRenameError(objArr, status18);
                 }
                 z = true;
                 z3 = z;
@@ -1428,7 +1428,7 @@ public final class MmpProtocol extends Account {
                     trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, mmpContact7.encodeContactUpdate(5, mmpContact7.displayName, mmpContact7.onlineSemaphore)), ResourceManager.integerOf(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], mmpContact7}));
                     trySendData(ResourceManager.createSyncContactsCmd(this));
                 } else {
-                    IOUtils.postRenameError(objArr, status19);
+                    EventDispatcher.postRenameError(objArr, status19);
                 }
                 z = true;
                 z3 = z;
@@ -1437,9 +1437,9 @@ public final class MmpProtocol extends Account {
                 int status20 = buf.readShortBE();
                 if (status20 == 0) {
                     trySendData(ResourceManager.createSyncContactsCmd(this));
-                    trySendData(IOUtils.createSendMessageCmd(this, (MmpContact) objArr[7], (String) objArr[6]));
+                    trySendData(createSendMessageCmd(this, (MmpContact) objArr[7], (String) objArr[6]));
                 } else {
-                    IOUtils.postRenameError(objArr, status20);
+                    EventDispatcher.postRenameError(objArr, status20);
                 }
                 z = true;
                 z3 = z;
@@ -1453,7 +1453,7 @@ public final class MmpProtocol extends Account {
                 if (status21 == 0) {
                     ((MmpContact) objArr[2]).updatePermissionFlags(((Integer) objArr[3]).intValue(), ((Integer) objArr[4]).intValue());
                 } else {
-                    IOUtils.postRenameError(objArr, status21);
+                    EventDispatcher.postRenameError(objArr, status21);
                 }
                 z = true;
                 z3 = z;
@@ -1463,7 +1463,7 @@ public final class MmpProtocol extends Account {
                 if (status22 == 0) {
                     ((MmpContact) objArr[2]).updatePermissionFlags(((Integer) objArr[3]).intValue(), 0);
                 } else {
-                    IOUtils.postRenameError(objArr, status22);
+                    EventDispatcher.postRenameError(objArr, status22);
                 }
                 z = true;
                 z3 = z;
@@ -1471,7 +1471,7 @@ public final class MmpProtocol extends Account {
             case 20:
                 int status23 = buf.readShortBE();
                 if (status23 != 0) {
-                    IOUtils.postOperationError(status23);
+                    EventDispatcher.postOperationError(status23);
                 }
                 z = true;
                 z3 = z;
@@ -1500,5 +1500,163 @@ public final class MmpProtocol extends Account {
         if (z3) {
             vector.removeElementAt(size);
         }
+    }
+
+    /* renamed from: a */
+    public static final ByteBuffer createSendMessageCmd(MmpProtocol protocol, MmpContact mmpContact, String str) {
+        return ProtocolFactory.createMmpCommand(protocol, 4888, new ByteBuffer().writeByteLenStr(mmpContact.identifier).writeUTF(str).writeShortBE(0));
+    }
+
+    /* renamed from: a */
+    private static final ByteBuffer createContactCommand(MmpProtocol protocol, MmpContact mmpContact, int i) {
+        ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(mmpContact.identifier).writeShortBE(0);
+        int iM920k = protocol.generateUniqueGroupId();
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.integerOf(18), mmpContact, ResourceManager.integerOf(i), ResourceManager.integerOf(iM920k)});
+    }
+
+    /* renamed from: a */
+    private static final ByteBuffer updateContactCommand(MmpProtocol protocol, MmpContact mmpContact, int i, int i2) {
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4874, new ByteBuffer().writeShortString(mmpContact.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.integerOf(19), mmpContact, ResourceManager.integerOf(i2)});
+    }
+
+    /* renamed from: a */
+    public static final ByteBuffer deleteContact(MmpProtocol protocol, MmpContact mmpContact) {
+        return mmpContact.canDelete() ? updateContactCommand(protocol, mmpContact, mmpContact.canDelete, 2) : createContactCommand(protocol, mmpContact, 2);
+    }
+
+    /* renamed from: b */
+    public static final ByteBuffer blockContact(MmpProtocol protocol, MmpContact mmpContact) {
+        return mmpContact.canBlock() ? updateContactCommand(protocol, mmpContact, mmpContact.canBlock, 3) : createContactCommand(protocol, mmpContact, 3);
+    }
+
+    /* renamed from: c */
+    public static final ByteBuffer unblockContact(MmpProtocol protocol, MmpContact mmpContact) {
+        return mmpContact.canUnblock() ? updateContactCommand(protocol, mmpContact, mmpContact.canUnblock, 14) : createContactCommand(protocol, mmpContact, 14);
+    }
+
+    /* JADX WARN: Removed duplicated region for block: B:28:0x00a9  */
+    /* renamed from: a */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public static final void handleFileTransfer(MmpProtocol protocol, ByteBuffer c0043n) {
+        int iM1353u;
+        String strM1370r;
+        String strM1368E;
+        String strM1369q;
+        long jM1341m = c0043n.readLong();
+        int iM1353u2 = c0043n.readShortBE();
+        String strM1363z = c0043n.readLenPrefixStr();
+        c0043n.readShortBE();
+        int iM1353u3 = c0043n.readShortBE();
+        while (true) {
+            iM1353u3--;
+            if (iM1353u3 < 0) {
+                break;
+            }
+            c0043n.readShortBE();
+            c0043n.skip(c0043n.readShortBE());
+        }
+        while (true) {
+            int iM1353u4 = c0043n.readShortBE();
+            iM1353u = c0043n.readShortBE();
+            if (iM1353u4 == 2 || iM1353u4 == 5) {
+                break;
+            } else {
+                c0043n.skip(iM1353u);
+            }
+        }
+        switch (iM1353u2) {
+            case 1:
+                int i = iM1353u;
+                while (true) {
+                    if (i <= 0) {
+                        strM1369q = null;
+                        break;
+                    } else {
+                        int iM1353u5 = c0043n.readShortBE();
+                        int iM1353u6 = c0043n.readShortBE();
+                        int i2 = i - 4;
+                        if (iM1353u5 == 257) {
+                            int iM1353u7 = c0043n.readShortBE();
+                            c0043n.readShortBE();
+                            strM1369q = iM1353u7 == 2 ? c0043n.readUnicodeChars(iM1353u6 - 4) : c0043n.readByteChars(iM1353u6 - 4);
+                            break;
+                        } else {
+                            c0043n.skip(iM1353u6);
+                            i = i2 - iM1353u6;
+                        }
+                    }
+                }
+                strM1370r = strM1369q;
+                break;
+            case 2:
+                if (c0043n.readShortBE() == 0) {
+                    c0043n.skip(24);
+                    int i3 = iM1353u - 26;
+                    while (i3 > 0) {
+                        int iM1353u8 = c0043n.readShortBE();
+                        int iM1353u9 = c0043n.readShortBE();
+                        i3 -= iM1353u9 + 4;
+                        if (iM1353u8 == 10001) {
+                            c0043n.readShortLE();
+                            c0043n.readShortLE();
+                            int iM1355w = c0043n.readIntBE();
+                            int iM1355w2 = c0043n.readIntBE();
+                            int iM1355w3 = c0043n.readIntBE();
+                            int iM1355w4 = c0043n.readIntBE();
+                            c0043n.readShortBE();
+                            c0043n.readInt();
+                            c0043n.readByte();
+                            c0043n.readShortBE();
+                            int iM1354v = c0043n.readShortLE();
+                            c0043n.readShortBE();
+                            c0043n.skip(iM1354v - 2);
+                            if ((iM1355w | iM1355w2 | iM1355w3 | iM1355w4) == 0) {
+                                c0043n.readShortBE();
+                                c0043n.readShortLE();
+                                c0043n.readShortLE();
+                                strM1368E = c0043n.readModifiedStrTrim();
+                            } else {
+                                strM1368E = null;
+                            }
+                            strM1370r = strM1368E;
+                            if (strM1368E != null && strM1370r.length() > 0) {
+                                protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER_2)));
+                                break;
+                            }
+                        } else {
+                            c0043n.skip(iM1353u9);
+                        }
+                    }
+                    strM1368E = null;
+                    strM1370r = strM1368E;
+                    if (strM1368E != null) {
+                        protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 1035, new ByteBuffer().writeLong(jM1341m).writeShortBE(2).writeByteLenStr(strM1363z).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER_2)));
+                    }
+                } else {
+                    strM1368E = null;
+                    strM1370r = strM1368E;
+                    if (strM1368E != null) {
+                    }
+                }
+                break;
+            case 3:
+            default:
+                strM1370r = null;
+                break;
+            case 4:
+                c0043n.readIntBE();
+                int iM1353u10 = c0043n.readShortBE();
+                strM1370r = (iM1353u10 == 1 || iM1353u10 == 4) ? c0043n.readByteChars(c0043n.readShortLE() - 1) : null;
+                break;
+        }
+        if (!Utils.nonEmpty(strM1370r) || StringUtils.matchesEncoded(strM1363z, 875573297)) {
+            return;
+        }
+        if (StringUtils.matchesEncoded(strM1363z, 49)) {
+            throw new RuntimeException();
+        }
+        protocol.onMessage(strM1363z, 0L, strM1370r);
     }
 }

@@ -126,7 +126,7 @@ public final class SettingsHandler extends BaseScreenHandler {
             case ScreenId.NEARBY_SETTINGS:
                 ScreenManager.processScreenForm();
                 if (AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
-                    IOUtils.requestNearbyPeople();
+                    MapUtils.requestNearbyPeople();
                 }
                 return 0;
         }

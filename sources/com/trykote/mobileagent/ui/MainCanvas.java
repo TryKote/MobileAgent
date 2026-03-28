@@ -87,13 +87,13 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     public final void hideNotify() {
         this.isShown = false;
-        IOUtils.postBackEvent();
+        EventDispatcher.postBackEvent();
         AppController.timers[0] = 0;
     }
 
     public final void showNotify() {
         this.isShown = true;
-        IOUtils.postBackEvent();
+        EventDispatcher.postBackEvent();
         AppController.setTimer(0, AppController.getSessionTimestamp());
     }
 
@@ -203,7 +203,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     public final void keyReleased(int i) {
         AppController.setTimer(3, 10000L);
-        IOUtils.postBackEvent();
+        EventDispatcher.postBackEvent();
     }
 
     /* renamed from: a */
@@ -227,7 +227,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         } catch (Throwable unused) {
         }
         if (gameAction == 1 || gameAction == 2 || gameAction == 5 || gameAction == 6) {
-            IOUtils.postNavigationEvent(i, gameAction, i2);
+            EventDispatcher.postNavigationEvent(i, gameAction, i2);
             return;
         }
         if (gameAction == 8 && (i == -6 || i == -7 || i == -1 || i == -4)) {
@@ -235,16 +235,16 @@ public final class MainCanvas extends Canvas implements CommandListener {
         }
         if (gameAction == 8) {
             if (!isFullScreen) {
-                IOUtils.postSelectEvent();
+                EventDispatcher.postSelectEvent();
                 return;
             } else {
                 AppState.setBool(StateKeys.FLAG_FULLSCREEN_REQUESTED, false);
-                IOUtils.postOkEvent();
+                EventDispatcher.postOkEvent();
                 return;
             }
         }
         if ((i >= 48 && i <= 57) || i == 42 || i == 35) {
-            IOUtils.postNavigationEvent(i, gameAction, i2);
+            EventDispatcher.postNavigationEvent(i, gameAction, i2);
             return;
         }
         if (i2 == 0) {
@@ -252,17 +252,17 @@ public final class MainCanvas extends Canvas implements CommandListener {
                 if (AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE)) {
                     String keyName = getKeyNameUpper(i);
                     if (i == -6 || keyName.indexOf("SEND") >= 0 || keyName.indexOf("SOFT1") >= 0 || keyName.equals("SOFTKEY 1")) {
-                        IOUtils.postOkEvent();
+                        EventDispatcher.postOkEvent();
                         return;
                     }
                     if (i == -7 || i == 11 || keyName.indexOf("CLEAR") >= 0 || keyName.indexOf("SOFT2") >= 0 || keyName.equals("SOFTKEY 4")) {
                         if (isFullScreen) {
                             AppState.setBool(StateKeys.FLAG_FULLSCREEN_REQUESTED, false);
                         }
-                        IOUtils.postCancelEvent();
+                        EventDispatcher.postCancelEvent();
                     } else if (isFullScreen) {
                         AppState.setBool(StateKeys.FLAG_FULLSCREEN_REQUESTED, false);
-                        IOUtils.postOkEvent();
+                        EventDispatcher.postOkEvent();
                     }
                 }
             } catch (Throwable unused2) {
@@ -328,10 +328,10 @@ public final class MainCanvas extends Canvas implements CommandListener {
         if (command != null) {
             if (command == this.okCommand) {
                 RemoteLogger.log("UI", "commandAction: OK pressed");
-                IOUtils.postOkEvent();
+                EventDispatcher.postOkEvent();
             } else if (command == this.cancelCommand) {
                 RemoteLogger.log("UI", "commandAction: Cancel pressed");
-                IOUtils.postCancelEvent();
+                EventDispatcher.postCancelEvent();
             } else {
                 RemoteLogger.log("UI", "commandAction: unknown cmd " + command.getLabel());
             }

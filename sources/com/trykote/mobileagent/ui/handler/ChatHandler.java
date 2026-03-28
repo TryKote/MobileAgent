@@ -33,7 +33,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 JsonParser.addIntToVector(params, 0);
                 params.addElement(AppState.emptyStr);
                 JsonParser.addIntToVector(params, 1);
-                IOUtils.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_LONG_URL_1)).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_HUGE_URL_1)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_LONG_URL_1)).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_HUGE_URL_1)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 return;
             case ScreenId.CHAT_ROOM_INIT:
                 AppController.initChatRoomList();
@@ -42,7 +42,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
                 if (!chatRoom.isInitialized) {
-                    IOUtils.showChatRoomMessages();
+                    MrimChatRoomManager.showChatRoomMessages();
                     return;
                 }
                 NotificationHelper.showConfirmDialog(41, 836);
@@ -70,17 +70,17 @@ public final class ChatHandler extends BaseScreenHandler {
                     params2.addElement(messageIdParams);
                     request = ApiClient.createAuthRequest(ObjectPool.newBufferFromState(1050207).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_5)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 }
-                IOUtils.sendChatRoomRequest(request);
+                MrimChatRoomManager.sendChatRoomRequest(request);
                 return;
             case ScreenId.CHAT_ROOM_INVITE:
                 NotificationHelper.showConfirmDialog(42, 862);
                 Vector params4 = ObjectPool.newVector();
                 JsonParser.addIntToVector(params4, AppState.getInt(StateKeys.INT_ACTIVE_CHATROOM_ID));
                 params4.addElement(AppState.getVector(StateKeys.SLOT_MEDIA_STREAM));
-                IOUtils.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_LONG_URL_1), ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_4)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_LONG_URL_1), ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_4)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
                 return;
             case ScreenId.CHAT_ROOM_VIEW:
-                IOUtils.showChatRoomMessages();
+                MrimChatRoomManager.showChatRoomMessages();
                 return;
             case ScreenId.CHAT_ROOM_CONFIG:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_ROOM_CONFIG));
@@ -120,7 +120,7 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CREATE_CHAT_ROOM:
                 AppState.setInt(StateKeys.FLAG_CHAT_ROOM_CREATED, 0);
                 AppState.setFromBuffer(StateKeys.SLOT_CHAT_NAME, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_CHAT_NAME_PREFIX)).append(1 + (AppState.getInt(StateKeys.UI_COUNTER) % 1000)));
-                ScreenManager.showScreen(IOUtils.buildContactListScreen(ScreenManager.createScreen(ScreenDef.CREATE_CHAT_ROOM), (MrimAccount) AppState.getAccount(), (Contact) null));
+                ScreenManager.showScreen(ContactListManager.buildContactListScreen(ScreenManager.createScreen(ScreenDef.CREATE_CHAT_ROOM), (MrimAccount) AppState.getAccount(), (Contact) null));
                 return;
             case ScreenId.CHAT_STATUS:
                 AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, Utils.nonEmpty(AppState.getString(StateKeys.SLOT_STATUS_TEXT)));
@@ -175,7 +175,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 if (StringUtils.isEmpty(chatName)) {
                     errorCode4 = NotificationHelper.showError(301);
                 } else {
-                    Vector checkedItems = IOUtils.getCheckedItems(currentScreen, 3);
+                    Vector checkedItems = ContactListManager.getCheckedItems(currentScreen, 3);
                     if (checkedItems.size() == 0) {
                         errorCode4 = NotificationHelper.showError(775);
                     } else {
@@ -336,14 +336,14 @@ public final class ChatHandler extends BaseScreenHandler {
         ChatRoom chatRoom;
         switch (currentScreen.screenId) {
             case ScreenId.CHAT_ROOMS:
-                Object[] asyncResult = ApiClient.getAsyncResult(IOUtils.pollAsyncResult());
+                Object[] asyncResult = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult != null) {
                     int stateInt4 = AppState.getInt(StateKeys.INT_SCREEN_ACTION);
-                    int responseCode = IOUtils.validateJsonResponse(asyncResult);
+                    int responseCode = ApiClient.validateJsonResponse(asyncResult);
                     if (responseCode != 0) {
                         action = responseCode;
                     } else {
-                        ((MrimAccount) AppState.getAccount()).chatRoomManager.parseFromJson(IOUtils.getJsonPayload());
+                        ((MrimAccount) AppState.getAccount()).chatRoomManager.parseFromJson(ApiClient.getJsonPayload());
                         action = stateInt4;
                     }
                 } else {
@@ -353,13 +353,13 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOM_INIT:
                 return 0;
             case ScreenId.CHAT_ROOM_MESSAGES:
-                Object[] asyncResult2 = ApiClient.getAsyncResult(IOUtils.pollAsyncResult());
+                Object[] asyncResult2 = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult2 != null) {
-                    int responseCode2 = IOUtils.validateJsonResponse(asyncResult2);
+                    int responseCode2 = ApiClient.validateJsonResponse(asyncResult2);
                     if (responseCode2 != 0) {
                         action = responseCode2;
                     } else {
-                        Object payload = IOUtils.getJsonPayload();
+                        Object payload = ApiClient.getJsonPayload();
                         MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
                         ChatRoom chatRoom2 = mrimAccount2.chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
                         if (chatRoom2 != mrimAccount2.chatRoomManager.getLast()) {
@@ -403,13 +403,13 @@ public final class ChatHandler extends BaseScreenHandler {
                 }
                 return action;
             case ScreenId.CHAT_ROOM_INVITE:
-                Object[] asyncResult3 = ApiClient.getAsyncResult(IOUtils.pollAsyncResult());
+                Object[] asyncResult3 = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult3 != null) {
-                    int responseCode3 = IOUtils.validateJsonResponse(asyncResult3);
+                    int responseCode3 = ApiClient.validateJsonResponse(asyncResult3);
                     if (responseCode3 != 0) {
                         action = responseCode3;
                     } else {
-                        Object payload2 = IOUtils.getJsonPayload();
+                        Object payload2 = ApiClient.getJsonPayload();
                         MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
                         int size4 = ((Vector) payload2).size();
                         for (int i6 = 0; i6 < size4; i6++) {

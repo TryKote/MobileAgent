@@ -3,6 +3,7 @@ package com.trykote.mobileagent.net;
 
 import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.mrim.*;
 import com.trykote.mobileagent.util.*;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public final class ApiClient {
             objArr[4] = objArrM1151a;
             return;
         }
-        if (IOUtils.isHttpSuccess(objArrM1151a) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
+        if (isHttpSuccess(objArrM1151a) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
             objArr[4] = objArrM1151a;
             return;
         }
@@ -71,24 +72,24 @@ public final class ApiClient {
                         NetworkLock.releaseNetworkLock();
                         return objArrM1152a;
                     } catch (ConnectionNotFoundException e) {
-                        Object[] objArrM798a = IOUtils.createConnectError((Throwable) null);
+                        Object[] objArrM798a = createConnectError((Throwable) null);
                         HttpClient.closeAndUpdateStats(c0024ax);
                         NetworkLock.releaseNetworkLock();
                         return objArrM798a;
                     }
                 } catch (Throwable th) {
-                    Object[] objArrM801d = IOUtils.createReceiveError((Throwable) null);
+                    Object[] objArrM801d = createReceiveError((Throwable) null);
                     HttpClient.closeAndUpdateStats(c0024ax);
                     NetworkLock.releaseNetworkLock();
                     return objArrM801d;
                 }
             } catch (IllegalArgumentException e2) {
-                Object[] objArrM799b = IOUtils.createAuthError((Throwable) null);
+                Object[] objArrM799b = createAuthError((Throwable) null);
                 HttpClient.closeAndUpdateStats(c0024ax);
                 NetworkLock.releaseNetworkLock();
                 return objArrM799b;
             } catch (SecurityException e3) {
-                Object[] objArrM800c = IOUtils.createSendError((Throwable) null);
+                Object[] objArrM800c = createSendError((Throwable) null);
                 HttpClient.closeAndUpdateStats(c0024ax);
                 NetworkLock.releaseNetworkLock();
                 return objArrM800c;
@@ -115,7 +116,7 @@ public final class ApiClient {
             M1155b = readHttpResponse(objArr, c0024ax);
             return M1155b;
         } catch (Throwable th) {
-            return IOUtils.createProtocolError(th);
+            return createProtocolError(th);
         }
     }
 
@@ -148,10 +149,10 @@ public final class ApiClient {
                 } catch (Throwable unused) {
                 }
             }
-            M804a = IOUtils.createHttpRequest(iM634a, StringUtils.intern(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
+            M804a = createHttpRequest(iM634a, StringUtils.intern(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
             return M804a;
         } catch (Throwable th) {
-            return IOUtils.createGenericError(th);
+            return createGenericError(th);
         }
     }
 
@@ -161,5 +162,102 @@ public final class ApiClient {
             return objArr2;
         }
         return null;
+    }
+
+    /* renamed from: a */
+    public static final Object[] createHttpRequest(int i, String str, ByteBuffer c0043n) {
+        return createHttpResult(0, str, i, c0043n);
+    }
+
+    /* renamed from: a */
+    private static final Object[] createHttpResult(int i, Object obj, int i2, ByteBuffer c0043n) {
+        return new Object[]{ResourceManager.integerOf(i), ResourceManager.integerOf(i2), obj.toString(), c0043n};
+    }
+
+    /* renamed from: a */
+    private static final Object[] createErrorResult(int i, int i2, Object obj) {
+        return createHttpResult(i, ObjectPool.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
+    }
+
+    /* renamed from: a */
+    public static final Object[] createConnectError(Throwable th) {
+        return createErrorResult(1, 948, th);
+    }
+
+    /* renamed from: b */
+    public static final Object[] createAuthError(Throwable th) {
+        return createErrorResult(2, 947, th);
+    }
+
+    /* renamed from: c */
+    public static final Object[] createSendError(Throwable th) {
+        return createErrorResult(4, 950, th);
+    }
+
+    /* renamed from: d */
+    public static final Object[] createReceiveError(Throwable th) {
+        return createErrorResult(3, 949, th);
+    }
+
+    /* renamed from: e */
+    public static final Object[] createProtocolError(Throwable th) {
+        return createErrorResult(5, 951, th);
+    }
+
+    /* renamed from: f */
+    public static final Object[] createGenericError(Throwable th) {
+        return createErrorResult(6, 951, th);
+    }
+
+    /* renamed from: a */
+    public static final boolean isHttpSuccess(Object[] objArr) {
+        return ((Integer) objArr[0]).intValue() == 0 && ((Integer) objArr[1]).intValue() == 200;
+    }
+
+    /* renamed from: e */
+    private static Object parseJsonResponse(Object[] objArr) {
+        try {
+            return JsonParser.parseJson((ByteBuffer) objArr[3]);
+        } catch (Throwable unused) {
+            return null;
+        }
+    }
+
+    /* renamed from: k */
+    public static final Object[] pollAsyncResult() {
+        Object[] objArrM609l = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA);
+        if (objArrM609l != null && getAsyncResult(objArrM609l) != null) {
+            AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+        }
+        return objArrM609l;
+    }
+
+    /* renamed from: a */
+    public static final StringBuffer appendAuthParams(StringBuffer stringBuffer, String str) {
+        return stringBuffer.append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(str);
+    }
+
+    /* renamed from: c */
+    public static final int validateJsonResponse(Object[] objArr) {
+        AppState.clearIndex(StateKeys.SLOT_MEDIA_PLAYER);
+        if (!isHttpSuccess(objArr)) {
+            return NotificationHelper.showError(888);
+        }
+        Object objM806e = parseJsonResponse(objArr);
+        if (objM806e == null) {
+            return NotificationHelper.showError(889);
+        }
+        if (!JsonParser.isSuccess(objM806e)) {
+            return NotificationHelper.showError(890);
+        }
+        AppState.pool[StateKeys.SLOT_MEDIA_PLAYER] = objM806e;
+        return 0;
+    }
+
+    /* renamed from: l */
+    public static final Object getJsonPayload() {
+        Object obj = AppState.pool[StateKeys.SLOT_MEDIA_PLAYER];
+        AppState.clearIndex(StateKeys.SLOT_MEDIA_PLAYER);
+        return JsonParser.getVectorElement(obj, 2);
     }
 }

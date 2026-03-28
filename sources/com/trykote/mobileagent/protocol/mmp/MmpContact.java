@@ -255,12 +255,12 @@ public final class MmpContact extends Contact {
 
     /* renamed from: o */
     public static final String buildLocationString() {
-        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_TRACKPOINTS).writeRawString(IOUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(IOUtils.pixelToLatitude(lastTokenPair[1]));
+        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_TRACKPOINTS).writeRawString(MapUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(1026586918).writeRawString(MapUtils.pixelToLatitude(lastTokenPair[1]));
         int size = routePoints.size();
         int i = 0;
         while (i <= size) {
             int[] iArr = i < size ? (int[]) routePoints.elementAt(i) : new int[]{(int) currentTokenPair[0], (int) currentTokenPair[1]};
-            urlBuf.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLongitude(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(IOUtils.pixelToLatitude(iArr[1]));
+            urlBuf.writeUInt(30758).writeIntAsString(i + 1).writeByte(61).writeRawString(MapUtils.pixelToLongitude(iArr[0])).writeUInt(31014).writeIntAsString(i + 1).writeByte(61).writeRawString(MapUtils.pixelToLatitude(iArr[1]));
             i++;
         }
         return urlBuf.getStringAndClear();

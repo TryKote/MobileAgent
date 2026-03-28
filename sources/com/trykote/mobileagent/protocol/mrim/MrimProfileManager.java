@@ -6,6 +6,7 @@ import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.util.*;
+import java.util.Enumeration;
 import java.util.Vector;
 
 public final class MrimProfileManager {
@@ -13,6 +14,15 @@ public final class MrimProfileManager {
     private final MrimAccount account;
     public VCard profile;
     public SizeCache sizeCache;
+
+    /* renamed from: d */
+    public static Vector contactIdList;
+
+    /* renamed from: e */
+    public static String[] photoUrlList;
+
+    /* renamed from: f */
+    private static ListView selectionScreen;
 
     MrimProfileManager(MrimAccount account) {
         this.account = account;
@@ -120,8 +130,8 @@ public final class MrimProfileManager {
     public void setMapLocation(MapPoint mapPoint) {
         try {
             VCard vcard = this.profile;
-            String latStr = IOUtils.pixelToLatitude(mapPoint.latitude);
-            String lonStr = IOUtils.pixelToLongitude(mapPoint.longitude);
+            String latStr = MapUtils.pixelToLatitude(mapPoint.latitude);
+            String lonStr = MapUtils.pixelToLongitude(mapPoint.longitude);
             String typeStr = AppState.getString(StateKeys.STR_RES_HTTP_METHOD);
             String pointName = mapPoint.getDisplayName();
             String str = AppState.emptyStr;
@@ -143,5 +153,81 @@ public final class MrimProfileManager {
 
     private int sendRename(String[] strArr, String str) {
         return this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE_PHOTOS, new ByteBuffer().writeStringArr(strArr).writeStringLatin1(str)));
+    }
+
+    /* renamed from: d */
+    public static final void showPhotoSelector() {
+        boolean z;
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        photoUrlList = account.profileManager.profile.photoUrls;
+        Vector candidates = ObjectPool.newVector();
+        Enumeration elements = account.contactMap.elements();
+        while (elements.hasMoreElements()) {
+            Contact contact = (Contact) elements.nextElement();
+            if (!contact.isOffline() && !contact.isOnline()) {
+                candidates.addElement(contact);
+            }
+        }
+        int size = candidates.size();
+        ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_INFO_EDITOR);
+        contactIdList = ObjectPool.newVector();
+        for (int i = 0; i < size; i++) {
+            MrimContact mrimContact = (MrimContact) candidates.elementAt(i);
+            String identifier = mrimContact.getIdentifier();
+            String str = mrimContact.displayName;
+            String[] strArr = photoUrlList;
+            int length = strArr.length;
+            while (true) {
+                length--;
+                if (length >= 0) {
+                    if (StringUtils.equals(identifier, strArr[length])) {
+                        z = true;
+                        break;
+                    }
+                } else {
+                    z = false;
+                    break;
+                }
+            }
+            screen.addItem(MenuItem.createCheckbox(str, z));
+            contactIdList.addElement(identifier);
+        }
+        selectionScreen = screen;
+        ScreenManager.showScreen(screen);
+    }
+
+    /* renamed from: e */
+    public static final int applyPhotoSelection() {
+        Vector vector = selectionScreen.menuItems;
+        Vector selected = ObjectPool.newVector();
+        int size = vector.size();
+        for (int i = 0; i < size; i++) {
+            if (((Boolean) ((MenuItem) vector.elementAt(i)).data).booleanValue()) {
+                selected.addElement(contactIdList.elementAt(i));
+            }
+        }
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        VCard profile = account.profileManager.profile;
+        profile.prevPhotoUrls = profile.photoUrls;
+        int size2 = selected.size();
+        profile.photoUrls = new String[size2];
+        for (int i2 = 0; i2 < size2; i2++) {
+            profile.photoUrls[i2] = (String) selected.elementAt(i2);
+        }
+        String[] strArr = account.profileManager.profile.photoUrls;
+        XmlElement root = new XmlElement(114);
+        XmlElement visibleEl = new XmlElement("visible", root, null);
+        root.addChild(visibleEl);
+        for (String str : strArr) {
+            XmlElement userEl = new XmlElement("u", visibleEl, null);
+            userEl.setAttrValue(328413, str);
+            visibleEl.addChild(userEl);
+        }
+        account.trySendData(ProtocolFactory.createMrimPacket(account, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(root.toString())));
+        if (account.profileManager.profile.gender != 3) {
+            return 0;
+        }
+        account.profileManager.setGroups();
+        return 0;
     }
 }

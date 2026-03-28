@@ -192,7 +192,7 @@ public final class DialogHandler extends BaseScreenHandler {
     public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.STATUS_DIALOG:
-                return IOUtils.handleStatusChange(action);
+                return AccountManager.handleStatusChange(action);
             case ScreenId.ABOUT:
                 return 0;
             case ScreenId.BLOCK_CONFIRM:
@@ -291,7 +291,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 String inputText = XmppContactGroup.getTextInputValue();
                 if (!StringUtils.isEmpty(inputText) && 0 != (sendMsgResult = AppState.getCurrentContact().sendMessage(inputText))) {
                     ScreenBuilder.onScreenClosed();
-                    IOUtils.postNotification(AppState.getString(sendMsgResult));
+                    EventDispatcher.postNotification(AppState.getString(sendMsgResult));
                 }
                 AppState.setInt(StateKeys.FLAG_STATUS_TEXT_SET, 0);
                 AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
@@ -362,7 +362,7 @@ public final class DialogHandler extends BaseScreenHandler {
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.STATUS_DIALOG:
-                return IOUtils.handleStatusChange(selectedOption);
+                return AccountManager.handleStatusChange(selectedOption);
             case ScreenId.ABOUT:
                 return 0;
             case ScreenId.BLOCK_CONFIRM:

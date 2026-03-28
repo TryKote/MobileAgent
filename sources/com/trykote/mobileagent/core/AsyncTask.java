@@ -293,10 +293,10 @@ public final class AsyncTask implements Runnable {
                             !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
                 }
             } else {
-                IOUtils.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
+                EventDispatcher.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
             }
         } catch (Throwable e) {
-            IOUtils.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
+            EventDispatcher.postNotification(AppState.getString(StateKeys.STR_DOWNLOAD_COMPLETE));
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             XmppContactGroup.removeContactInfoFromQueue(contactInfo);
@@ -373,7 +373,7 @@ public final class AsyncTask implements Runnable {
             if (httpClient.getResponseCode() == 200) {
                 long[] coords = (long[]) args[1];
                 ResourceManager.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
-                IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
+                EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
             }
         } catch (Throwable ignored) {
         } finally {
@@ -435,16 +435,16 @@ public final class AsyncTask implements Runnable {
                 MrimAccount account = (MrimAccount) args[0];
                 Vector mapPoints = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
                 account.profileManager.setMapLocation((MapPoint) mapPoints.firstElement());
-                IOUtils.postAccountEvent(account);
+                EventDispatcher.postAccountEvent(account);
             } else {
                 MrimAccount account = (MrimAccount) args[0];
                 account.profileManager.setSimpleLocation((String) args[1], (String) args[2]);
-                IOUtils.postAccountEvent(account);
+                EventDispatcher.postAccountEvent(account);
             }
         } catch (Throwable e) {
             MrimAccount account = (MrimAccount) args[0];
             account.profileManager.setSimpleLocation((String) args[1], (String) args[2]);
-            IOUtils.postAccountEvent(account);
+            EventDispatcher.postAccountEvent(account);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             XmppContactGroup.removeContactInfoFromQueue(contactInfo);
@@ -492,7 +492,7 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskPerformXmppAuth() {
-        IOUtils.performXmppAuth((Object[]) this.taskData);
+        XmppMailRuProtocol.performXmppAuth((Object[]) this.taskData);
     }
 
     private void taskFetchHistory() {

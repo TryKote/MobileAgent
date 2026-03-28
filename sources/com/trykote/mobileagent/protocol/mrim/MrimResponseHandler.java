@@ -29,7 +29,7 @@ final class MrimResponseHandler {
         switch (((Integer) objArr[1]).intValue()) {
             case MrimAccount.RESP_MODIFY_CONTACT:
                 if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
+                    EventDispatcher.postRenameError(objArr, resultCode);
                     break;
                 } else {
                     ((MrimContact) objArr[2]).updateDisplayNameAndGroups((String) objArr[3], (String) objArr[4]);
@@ -37,7 +37,7 @@ final class MrimResponseHandler {
                 }
             case MrimAccount.RESP_RENAME_GROUP:
                 if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
+                    EventDispatcher.postRenameError(objArr, resultCode);
                     break;
                 } else {
                     ((MrimContactGroup) objArr[2]).setNameIfChanged((String) objArr[3]);
@@ -45,7 +45,7 @@ final class MrimResponseHandler {
                 }
             case MrimAccount.RESP_DELETE_CONTACT:
                 if (resultCode != 0) {
-                    IOUtils.postDeleteError(objArr, resultCode);
+                    EventDispatcher.postDeleteError(objArr, resultCode);
                     break;
                 } else {
                     this.account.removeContact((Contact) objArr[2], true);
@@ -56,7 +56,7 @@ final class MrimResponseHandler {
                 break;
             case MrimAccount.RESP_ADD_GROUP:
                 if (resultCode != 0) {
-                    IOUtils.postAddGroupError(objArr, resultCode);
+                    EventDispatcher.postAddGroupError(objArr, resultCode);
                     break;
                 } else {
                     this.account.groups.addElement(new MrimContactGroup(this.account, this.account.findAvailableGroupId(), ((Integer) objArr[3]).intValue(), (String) objArr[2]));
@@ -67,7 +67,7 @@ final class MrimResponseHandler {
                 break;
             case MrimAccount.RESP_XMPP_SERVICE:
                 if (resultCode != 1) {
-                    IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                     break;
                 }
                 break;
@@ -85,7 +85,7 @@ final class MrimResponseHandler {
                 break;
             case MrimAccount.RESP_MOVE_FLAG:
                 if (resultCode != 0) {
-                    IOUtils.postRenameError(objArr, resultCode);
+                    EventDispatcher.postRenameError(objArr, resultCode);
                     break;
                 } else {
                     ((MrimContact) objArr[2]).statusFlags = ((Integer) objArr[3]).intValue();
@@ -112,7 +112,7 @@ final class MrimResponseHandler {
 
     private void handleDeleteGroupResponse(int resultCode, Object[] objArr) {
         if (resultCode != 0) {
-            IOUtils.postDeleteError(objArr, resultCode);
+            EventDispatcher.postDeleteError(objArr, resultCode);
             return;
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[2];
@@ -133,7 +133,7 @@ final class MrimResponseHandler {
 
     private void handleAddPhoneContactResponse(int resultCode, Object[] objArr, ByteBuffer buf) {
         if (resultCode != 0) {
-            IOUtils.postAddGroupError(objArr, resultCode);
+            EventDispatcher.postAddGroupError(objArr, resultCode);
             return;
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[4];
@@ -148,7 +148,7 @@ final class MrimResponseHandler {
     private void handleAddContactResponse(int resultCode, Object[] objArr, ByteBuffer buf) {
         if (resultCode != 0) {
             if (resultCode != 5) {
-                IOUtils.postAddGroupError(objArr, resultCode);
+                EventDispatcher.postAddGroupError(objArr, resultCode);
             }
             return;
         }
@@ -170,18 +170,18 @@ final class MrimResponseHandler {
                 break;
             case 32769:
                 if (mrimContact.isSystem()) {
-                    IOUtils.postNotification(AppState.getString(StateKeys.STR_AUTH_GRANTED));
+                    EventDispatcher.postNotification(AppState.getString(StateKeys.STR_AUTH_GRANTED));
                     break;
                 }
             default:
-                IOUtils.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                 break;
         }
     }
 
     private void handleMoveToGroupResponse(int resultCode, Object[] objArr) {
         if (resultCode != 0) {
-            IOUtils.postRenameError(objArr, resultCode);
+            EventDispatcher.postRenameError(objArr, resultCode);
             return;
         }
         MrimContact mrimContact = (MrimContact) objArr[2];
@@ -200,7 +200,7 @@ final class MrimResponseHandler {
 
     private void handleAddPhoneResponse(int resultCode, Object[] objArr, ByteBuffer buf) {
         if (resultCode != 0) {
-            IOUtils.postAddGroupError(objArr, resultCode);
+            EventDispatcher.postAddGroupError(objArr, resultCode);
             return;
         }
         MrimContactGroup defaultGroup = this.account.getFirstContactGroup();

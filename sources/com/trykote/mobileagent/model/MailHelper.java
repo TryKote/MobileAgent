@@ -2,6 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.protocol.mrim.*;
 import com.trykote.mobileagent.util.*;
@@ -146,7 +147,7 @@ public final class MailHelper {
 
     public static final int processMailResponse() {
         String bodyText;
-        Object[] asyncResult = IOUtils.pollAsyncResult();
+        Object[] asyncResult = ApiClient.pollAsyncResult();
         if (asyncResult == null) {
             return handleMailRedirect();
         }
@@ -154,7 +155,7 @@ public final class MailHelper {
         if (responseData == null) {
             return 0;
         }
-        int validationResult = IOUtils.validateJsonResponse(responseData);
+        int validationResult = ApiClient.validateJsonResponse(responseData);
         if (validationResult != 0) {
             return validationResult;
         }
@@ -162,7 +163,7 @@ public final class MailHelper {
         ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(4);
-        Object jsonPayload = IOUtils.getJsonPayload();
+        Object jsonPayload = ApiClient.getJsonPayload();
         Object attachmentsList = JsonParser.getValueByInt(jsonPayload, 722874);
         int size = ((Vector) attachmentsList).size();
         int i = size;
@@ -236,5 +237,115 @@ public final class MailHelper {
             }
         }
         return action;
+    }
+
+    /* renamed from: a */
+    public static final int handleMailMenuAction(String str, int i) {
+        String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
+        wrapInVector(messageId);
+        int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
+        String subject = message.getSubject();
+        Vector toList = message.getToList();
+        Vector ccList = message.getCcList();
+        getFirstRecipient(toList);
+        boolean needsAuth = AppState.getBool(StateKeys.SETTING_AUTH_REQUIRED);
+        String replyPrefix = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
+        String forwardPrefix = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
+        String body = AppState.emptyStr;
+        if (i == 48) {
+            ScreenBuilder.onScreenClosed();
+            ScreenBuilder.onScreenClosed();
+        }
+        if (StringUtils.matchesKey(839, str)) {
+            if (!needsAuth) {
+                return ResourceManager.composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
+            }
+            setMailAction(54, 0);
+            return 0;
+        }
+        if (StringUtils.matchesKey(840, str)) {
+            if (!needsAuth) {
+                return ResourceManager.composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
+            }
+            setMailAction(54, 1);
+            return 0;
+        }
+        if (StringUtils.matchesKey(841, str)) {
+            if (!needsAuth) {
+                return ResourceManager.composeEmail(ObjectPool.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
+            }
+            setMailAction(54, 2);
+            return 0;
+        }
+        if (StringUtils.matchesKey(855, str)) {
+            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 2);
+            return 0;
+        }
+        if (StringUtils.matchesKey(856, str)) {
+            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 1);
+            return 0;
+        }
+        if (!StringUtils.matchesKey(845, str)) {
+            return 0;
+        }
+        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final int handleMailForwardAction(String str) {
+        String strM584b = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
+        int iM586d = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Message message = account.chatRoomManager.findById(iM586d).getMessage(strM584b);
+        Vector toList = message.getToList();
+        Vector ccList = message.getCcList();
+        String subject = message.getSubject();
+        String strM584b2 = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
+        String strM584b3 = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
+        String str2 = ((MrimAccount) AppState.getAccount()).login;
+        wrapInVector(strM584b);
+        if (StringUtils.matchesKey(839, str)) {
+            ScreenBuilder.onScreenClosed();
+            ResourceManager.composeEmail(getFirstAddress(toList), StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+            return 0;
+        }
+        if (!StringUtils.matchesKey(840, str)) {
+            if (StringUtils.matchesKey(841, str)) {
+                ScreenBuilder.onScreenClosed();
+                ResourceManager.composeEmail(ObjectPool.newVector(), StringUtils.concat(strM584b3, subject), Utils.quoteText(message.body));
+                return 0;
+            }
+            if (!StringUtils.matchesKey(845, str)) {
+                return 0;
+            }
+            AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+            return 0;
+        }
+        ScreenBuilder.onScreenClosed();
+        Vector vectorM865a = mergeAddressLists(copyAddressList(ccList), toList);
+        int iM541c = Utils.vectorSize(vectorM865a);
+        while (true) {
+            iM541c--;
+            if (iM541c < 0) {
+                break;
+            }
+            Object objElementAt = vectorM865a.elementAt(iM541c);
+            if (StringUtils.equals(str2, ((String[]) objElementAt)[0])) {
+                vectorM865a.removeElement(objElementAt);
+                break;
+            }
+        }
+        ResourceManager.composeEmail(vectorM865a, StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+        return 0;
+    }
+
+    /* renamed from: g */
+    private static void wrapInVector(String str) {
+        Vector vectorM1213g = ObjectPool.newVector();
+        vectorM1213g.addElement(str);
+        IOUtils.setSelectedItems(vectorM1213g);
     }
 }

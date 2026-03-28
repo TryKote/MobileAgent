@@ -489,4 +489,62 @@ public final class AccountManager {
     public static final MrimAccount findMrimAccount(Vector vector, int i) {
         return (MrimAccount) vector.elementAt(i);
     }
+
+    /* renamed from: d */
+    public static final int handleStatusChange(int i) {
+        Account acctM616i = AppState.getAccount();
+        switch (acctM616i.getType()) {
+            case Account.TYPE_MRIM:
+                MrimAccount account = (MrimAccount) acctM616i;
+                if (i == 6) {
+                    return ScreenId.EMOTICON_DIALOG;
+                }
+                if (i == 5) {
+                    int iMo120l = account.disconnect();
+                    if (0 != iMo120l) {
+                        return NotificationHelper.showError(iMo120l);
+                    }
+                    return ScreenId.CONTACT_LIST;
+                }
+                int iM721d = account.setConfiguration(new int[]{1, 260, 2, 516, 3}[i]);
+                if (0 != iM721d) {
+                    return NotificationHelper.showError(iM721d);
+                }
+                return ScreenId.CONTACT_LIST;
+            case Account.TYPE_MMP:
+                MmpProtocol protocol = (MmpProtocol) acctM616i;
+                if (i == 13) {
+                    return ScreenId.EMOTICON_DIALOG;
+                }
+                if (i == 14) {
+                    return ScreenId.VERSION_SELECT;
+                }
+                if (i == 12) {
+                    int iMo120l2 = protocol.disconnect();
+                    if (0 != iMo120l2) {
+                        return NotificationHelper.showError(iMo120l2);
+                    }
+                    return ScreenId.CONTACT_LIST;
+                }
+                int iM918b = protocol.updateConnectionMode(new int[]{0, 32, 256, 2, 1, 4, 16, 24576, 20480, 16384, 12288, 8193}[i]);
+                if (0 != iM918b) {
+                    return NotificationHelper.showError(iM918b);
+                }
+                return ScreenId.CONTACT_LIST;
+            default:
+                XmppProtocol c0005ae = (XmppProtocol) acctM616i;
+                if (i == 0) {
+                    int iMo120l3 = c0005ae.disconnect();
+                    if (0 != iMo120l3) {
+                        return NotificationHelper.showError(iMo120l3);
+                    }
+                    return ScreenId.CONTACT_LIST;
+                }
+                int iM103b = c0005ae.setStatusMode(i);
+                if (0 != iM103b) {
+                    return NotificationHelper.showError(iM103b);
+                }
+                return ScreenId.CONTACT_LIST;
+        }
+    }
 }

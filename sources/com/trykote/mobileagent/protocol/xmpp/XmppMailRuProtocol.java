@@ -174,11 +174,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             return 0;
         }
         if (getAccountType() == TYPE_XMPP) {
-            return IOUtils.loginXmpp(TYPE_XMPP);
+            return loginXmpp(TYPE_XMPP);
         }
         if (getAccountType() == TYPE_XMPP_MAILRU) {
             AppState.setInt(StateKeys.INT_SERVER_INDEX, 0);
-            return IOUtils.loginXmpp(TYPE_XMPP_MAILRU);
+            return loginXmpp(TYPE_XMPP_MAILRU);
         }
         String password = Utils.defaultStr(AppState.getString(StateKeys.SLOT_PASSWORD));
         String login = getLoginLowerCase();
@@ -333,5 +333,70 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             NetworkLock.releaseNetworkLock();
             throw new RuntimeException(th);
         }
+    }
+
+    /* renamed from: c */
+    public static final int loginXmpp(int i) {
+        String strM522f = Utils.defaultStr(AppState.getString(StateKeys.SLOT_PASSWORD));
+        String strM843u = getLoginLowerCase();
+        String strM1215a = strM843u;
+        if (StringUtils.isEmpty(strM843u)) {
+            return NotificationHelper.showError(301);
+        }
+        int iM586d = AppState.getInt(StateKeys.INT_SERVER_INDEX);
+        if (iM586d != 0 && strM1215a.indexOf(64) < 0) {
+            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(strM1215a).append(Utils.splitByNull(AppState.getString(StateKeys.STR_SERVER_LIST)).elementAt(iM586d)));
+        }
+        if (i == 2 && strM1215a.indexOf(64) < 0) {
+            return NotificationHelper.showError(699);
+        }
+        int iM437a = AccountManager.validateCredentials(i, AppState.getAccount(), strM1215a, strM522f);
+        if (0 != iM437a) {
+            return NotificationHelper.showError(iM437a);
+        }
+        AccountManager.setCurrentAccount(AccountManager.createAccount(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(StateKeys.SLOT_DISPLAY_NAME))));
+        return 0;
+    }
+
+    /* renamed from: d */
+    public static final void performXmppAuth(Object[] objArr) {
+        try {
+            try {
+                NetworkLock.acquireNetworkLock();
+                HttpClient c0024axM629a = HttpClient.createHttpClient((String) objArr[1], (Account) objArr[0], 0);
+                int iM634a = c0024axM629a.getResponseCode();
+                if (iM634a == 200) {
+                    Vector vectorM516c = Utils.splitNonEmpty(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
+                    if (((Integer) objArr[2]).intValue() == 0) {
+                        objArr[2] = ResourceManager.integerOf(1);
+                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
+                        new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, objArr);
+                    } else {
+                        setAuthResult(objArr, vectorM516c.elementAt(0));
+                    }
+                    ObjectPool.releaseVector(vectorM516c);
+                } else {
+                    if (iM634a != 403) {
+                        throw new Throwable(StringUtils.intern(Integer.toString(iM634a)));
+                    }
+                    ((XmppProtocol) objArr[0]).handleComplete();
+                }
+                HttpClient.closeAndUpdateStats(c0024axM629a);
+                NetworkLock.releaseNetworkLock();
+            } catch (Throwable th) {
+                setAuthResult(objArr, th);
+                HttpClient.closeAndUpdateStats((HttpClient) null);
+                NetworkLock.releaseNetworkLock();
+            }
+        } catch (Throwable th2) {
+            HttpClient.closeAndUpdateStats((HttpClient) null);
+            NetworkLock.releaseNetworkLock();
+            throw th2;
+        }
+    }
+
+    /* renamed from: a */
+    private static final void setAuthResult(Object[] objArr, Object obj) {
+        ((XmppProtocol) objArr[0]).authResult = obj;
     }
 }

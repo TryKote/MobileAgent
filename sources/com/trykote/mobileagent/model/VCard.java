@@ -127,12 +127,12 @@ public final class VCard {
 
     /* renamed from: a */
     public final long getLongitude() {
-        return IOUtils.longitudeToPixel(this.lonStr);
+        return MapUtils.longitudeToPixel(this.lonStr);
     }
 
     /* renamed from: b */
     public final long getLatitude() {
-        return IOUtils.latitudeToPixel(this.latStr);
+        return MapUtils.latitudeToPixel(this.latStr);
     }
 
     /* renamed from: b */

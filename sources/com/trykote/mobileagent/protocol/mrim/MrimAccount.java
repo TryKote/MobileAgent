@@ -356,7 +356,7 @@ public final class MrimAccount extends Account implements ListItem {
                     handleAnketaInfo(packet, seqId);
                     break;
                 case MrimCommand.CS_MAILBOX_STATUS:
-                    IOUtils.notifyNewMail(this, packet.readInt(), packet.readUnicodeStr(), packet.readUnicodeStr());
+                    notifyNewMail(packet.readInt(), packet.readUnicodeStr(), packet.readUnicodeStr());
                     break;
                 case MrimCommand.CS_MPOP_SESSION:
                     String sectionKey = packet.readWideStr();
@@ -425,7 +425,7 @@ public final class MrimAccount extends Account implements ListItem {
             if (StringUtils.matchesKey(PackedStringKeys.MRIM_NICKNAME, paramKey)) {
                 setDisplayName(packet.readUTF8Str((String) null));
             } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MESSAGES_UNREAD, paramKey)) {
-                IOUtils.notifyNewMail(this, Utils.parseInt((Object) packet.readUTF8Str((String) null)), (String) null, (String) null);
+                notifyNewMail(Utils.parseInt((Object) packet.readUTF8Str((String) null)), (String) null, (String) null);
             } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_CLIENT_ENDPOINT, paramKey)) {
                 String domainStr = packet.readUTF8Str((String) null);
                 this.customDomain = StringUtils.prefix(domainStr, domainStr.indexOf(58));
@@ -545,7 +545,7 @@ public final class MrimAccount extends Account implements ListItem {
                     ContactInfo contactInfo = ContactInfo.createForAccount(this);
                     contactInfo.setEmailAddress(foundEmail);
                     AppState.pool[StateKeys.SLOT_CONTACT_INFO] = contactInfo;
-                    IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.ADD_CONTACT_CONFIRM, null));
+                    EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.ADD_CONTACT_CONFIRM, null));
                 }
             }
         }
@@ -608,7 +608,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         this.profileManager.profile.dirty = true;
         if (AccountManager.getActiveScreenId() == 10) {
-            IOUtils.postNotification(AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
+            EventDispatcher.postNotification(AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
         }
     }
 
@@ -1087,6 +1087,38 @@ public final class MrimAccount extends Account implements ListItem {
             entry.id = this.state;
             sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST2, new ByteBuffer().writeIntLE(1).writeStringLatin1(entry.query)));
             this.searchEntryList.addElement(entry);
+        }
+    }
+
+    public final void notifyNewMail(int i, String str, String str2) {
+        boolean showPopup = AppState.getBool(StateKeys.SETTING_SHOW_POPUP);
+        boolean showInList = AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST);
+        if (showInList || showPopup) {
+            if (str != null) {
+                int iLastIndexOf = str.lastIndexOf(60);
+                if (str.length() > 30 && iLastIndexOf > 1) {
+                    StringUtils.prefix(str, iLastIndexOf - 1);
+                }
+                ResourceManager.playNotificationSound(0);
+            }
+            if (showPopup && (AccountManager.getActiveScreenId() != 10 || !AppState.hasMemory())) {
+                StringBuffer sb = ObjectPool.newStringBuffer();
+                if (str2 != null && str != null) {
+                    EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(StateKeys.STR_MAIL_PREFIX)).toString())));
+                } else if (i > 0) {
+                    EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').append(AppState.getString(StateKeys.STR_MAIL_PREFIX))));
+                }
+            }
+            if (showInList) {
+                if (i > 0 || !(str2 == null || str == null)) {
+                    AppController.markScreenDirty();
+                    AccountManager.markAccountHighlighted(this);
+                    if (AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST)) {
+                        AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).addElement(this);
+                    }
+                    TabBar.layout();
+                }
+            }
         }
     }
 

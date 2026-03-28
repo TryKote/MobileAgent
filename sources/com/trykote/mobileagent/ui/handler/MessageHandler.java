@@ -31,7 +31,7 @@ public final class MessageHandler extends BaseScreenHandler {
                     params.addElement(msgId);
                     params.addElement(AppState.emptyStr);
                     params.addElement(ObjectPool.unpackChars(6775156));
-                    IOUtils.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_API_URL_2)).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_3)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+                    MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_API_URL_2)).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_3)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 }
                 return;
             case ScreenId.MESSAGE_PREVIEW:
@@ -78,14 +78,14 @@ public final class MessageHandler extends BaseScreenHandler {
                 params9.addElement(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_SENDER)));
                 params9.addElement(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_BODY)));
                 params9.addElement(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_1)));
-                IOUtils.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_LONG_URL_1), ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_API_URL_6)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params9)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_LONG_URL_1), ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_API_URL_6)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params9)))));
                 return;
             case ScreenId.REPLY_MAIL:
                 NotificationHelper.showConfirmDialog(82, 877);
                 Message newMessage = new Message(MailHelper.parseRecipientList(Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_2))), Utils.defaultStr(AppState.getString(StateKeys.SLOT_MSG_EXTRA_3)), Utils.defaultStr(AppState.getString(StateKeys.SLOT_TRAFFIC_STATUS_TEXT)));
                 Vector params10 = ObjectPool.newVector();
                 params10.addElement(newMessage.toHashtable());
-                IOUtils.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_3), IOUtils.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_2)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_3), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_2)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
                 return;
             case ScreenId.MESSAGE_INPUT:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MESSAGE_INPUT));
@@ -139,7 +139,7 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MESSAGE_PREVIEW:
                 return 0;
             case ScreenId.COMPOSE_RECIPIENTS:
-                return IOUtils.handleMailForwardAction(title);
+                return MailHelper.handleMailForwardAction(title);
             case ScreenId.COMPOSE_MESSAGE:
                 ScreenManager.processScreenForm();
                 Vector params = ObjectPool.newVector();
@@ -182,7 +182,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 }
                 return errorCode;
             case ScreenId.MAIL_MENU:
-                return IOUtils.handleMailMenuAction(title, action);
+                return MailHelper.handleMailMenuAction(title, action);
             case ScreenId.SEND_MAIL:
                 return -1;
             case ScreenId.REPLY_MAIL:
@@ -199,7 +199,7 @@ public final class MessageHandler extends BaseScreenHandler {
                     long timestamp = AppState.getLong(StateKeys.TIMESTAMP_SELECTED_MSG);
                     int sendResult;
                     if (mrimAccount.isConnected()) {
-                        IOUtils.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
+                        EventDispatcher.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
                         sendResult = mrimAccount.trySendData(ProtocolFactory.createMrimPacket(mrimAccount, 4196, new ByteBuffer().writeIntLE(flag ? 5 : 20).writeStringUTF16(messageText).writeLong(timestamp)));
                     } else {
                         sendResult = 299;
@@ -293,11 +293,11 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MESSAGE_PREVIEW:
                 return 0;
             case ScreenId.COMPOSE_RECIPIENTS:
-                return IOUtils.handleMailForwardAction(title);
+                return MailHelper.handleMailForwardAction(title);
             case ScreenId.COMPOSE_MESSAGE:
                 return 0;
             case ScreenId.MAIL_MENU:
-                return IOUtils.handleMailMenuAction(title, selectedOption);
+                return MailHelper.handleMailMenuAction(title, selectedOption);
             case ScreenId.SEND_MAIL:
                 return -1;
             case ScreenId.REPLY_MAIL:
@@ -337,14 +337,14 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MAIL_MENU:
                 return 0;
             case ScreenId.SEND_MAIL: {
-                Object[] asyncResult = ApiClient.getAsyncResult(IOUtils.pollAsyncResult());
+                Object[] asyncResult = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult != null) {
-                    int responseCode = IOUtils.validateJsonResponse(asyncResult);
+                    int responseCode = ApiClient.validateJsonResponse(asyncResult);
                     if (responseCode != 0) {
                         return responseCode;
                     }
                     ChatRoom lastChatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast();
-                    Vector vector = (Vector) IOUtils.getJsonPayload();
+                    Vector vector = (Vector) ApiClient.getJsonPayload();
                     lastChatRoom.clear();
                     int size = vector.size();
                     for (int i = 0; i < size; i++) {
@@ -385,10 +385,10 @@ public final class MessageHandler extends BaseScreenHandler {
                 return 0;
             }
             case ScreenId.REPLY_MAIL: {
-                Object[] asyncResult = ApiClient.getAsyncResult(IOUtils.pollAsyncResult());
+                Object[] asyncResult = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult != null) {
-                    int responseCode = IOUtils.validateJsonResponse(asyncResult);
-                    return responseCode != 0 ? responseCode : StringUtils.isEmpty((String) IOUtils.getJsonPayload()) ? NotificationHelper.showError(878) : 83;
+                    int responseCode = ApiClient.validateJsonResponse(asyncResult);
+                    return responseCode != 0 ? responseCode : StringUtils.isEmpty((String) ApiClient.getJsonPayload()) ? NotificationHelper.showError(878) : 83;
                 }
                 return 0;
             }
@@ -410,7 +410,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 Vector vec = AppState.getVector(StateKeys.SLOT_SCREEN_TITLE);
                 if (Utils.vectorSize(vec) <= 1) {
                     ObjectPool.releaseVector(vec);
-                    IOUtils.postNotification(AppState.getString(StateKeys.STR_EXIT_CONFIRM));
+                    EventDispatcher.postNotification(AppState.getString(StateKeys.STR_EXIT_CONFIRM));
                     return ScreenId.CONTACT_LIST;
                 }
                 Object objElement = vec.elementAt(0);
@@ -422,7 +422,7 @@ public final class MessageHandler extends BaseScreenHandler {
                     Object obj = ((Object[]) objElement)[2];
                     if (obj != null) {
                         if (obj instanceof Throwable) {
-                            IOUtils.postNotification(StringUtils.concatKeyObj(1030, obj));
+                            EventDispatcher.postNotification(StringUtils.concatKeyObj(1030, obj));
                         } else {
                             Utils.dequeue(vec);
                         }

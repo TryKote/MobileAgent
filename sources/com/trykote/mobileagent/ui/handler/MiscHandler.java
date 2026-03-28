@@ -137,13 +137,13 @@ public final class MiscHandler extends BaseScreenHandler {
                 Vector params8 = ObjectPool.newVector();
                 params8.addElement(AppState.getVector(StateKeys.SLOT_MEDIA_STREAM));
                 JsonParser.addIntToVector(params8, AppState.getBool(StateKeys.FLAG_SPECIAL_KEY_MODE) ? 1 : 0);
-                IOUtils.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_5), IOUtils.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_3)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StateKeys.STR_RES_API_URL_5), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_LONG_API_URL_3)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
                 return;
             case ScreenId.SHARE_ALERT:
                 NotificationHelper.showAlertById(79, 863);
                 return;
             case ScreenId.PHOTO_SELECTOR:
-                IOUtils.showPhotoSelector();
+                MrimProfileManager.showPhotoSelector();
                 return;
             case ScreenId.ACCOUNT_SETUP:
                 ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SETUP));
@@ -217,7 +217,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 ScreenBuilder.onScreenClosed();
                 return 0;
             case ScreenId.PHOTO_SELECTOR:
-                return IOUtils.applyPhotoSelection();
+                return MrimProfileManager.applyPhotoSelection();
             case ScreenId.ACCOUNT_SETUP:
                 if (action == ScreenId.XMPP_LOGIN) {
                     AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
@@ -298,8 +298,8 @@ public final class MiscHandler extends BaseScreenHandler {
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 break;
             case ScreenId.PHOTO_SELECTOR:
-                IOUtils.photoUrlList = null;
-                IOUtils.contactIdList = null;
+                MrimProfileManager.photoUrlList = null;
+                MrimProfileManager.contactIdList = null;
                 break;
             case ScreenId.REG_FORM:
                 AppState.clearIndex(StateKeys.SLOT_CHAT_NAME);
@@ -373,7 +373,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 ScreenBuilder.onScreenClosed();
                 return 0;
             case ScreenId.PHOTO_SELECTOR:
-                return IOUtils.applyPhotoSelection();
+                return MrimProfileManager.applyPhotoSelection();
             case ScreenId.ACCOUNT_SETUP:
                 if (selectedOption == ScreenId.XMPP_LOGIN) {
                     AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
@@ -426,13 +426,13 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.MAIN_SCREEN:
                 return 0;
             case ScreenId.SHARE_MEDIA: {
-                Object[] asyncResult5 = ApiClient.getAsyncResult(IOUtils.pollAsyncResult());
+                Object[] asyncResult5 = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult5 != null) {
-                    int responseCode5 = IOUtils.validateJsonResponse(asyncResult5);
+                    int responseCode5 = ApiClient.validateJsonResponse(asyncResult5);
                     if (responseCode5 != 0) {
                         return responseCode5;
                     }
-                    Object payload4 = IOUtils.getJsonPayload();
+                    Object payload4 = ApiClient.getJsonPayload();
                     Object jsonArray = JsonParser.getValueByInt(payload4, 329636);
                     if (JsonParser.getIntByInt(payload4, 198543) == 1) {
                         int size6 = ((Vector) jsonArray).size();

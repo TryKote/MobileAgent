@@ -105,7 +105,7 @@ public final class ResourceManager {
             if (i == 0 || AppState.getBool(StateKeys.SETTING_NOTIFICATION_ENABLED) || !AppController.checkTimer(8, 1000L)) {
                 return;
             }
-            IOUtils.playSound(i);
+            SoundPlayer.playSound(i);
         }
     }
 
@@ -201,7 +201,7 @@ public final class ResourceManager {
             if (length < 0) {
                 targetItem.clear().setLabel(Utils.appendSpace(targetItem.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{integerOf(i), strArr};
                 parentScreen.rebuildItems();
-                IOUtils.postEvent(new MenuItemEvent(targetItem));
+                EventDispatcher.postEvent(new MenuItemEvent(targetItem));
                 return 0;
             }
             if (str == strArr[length]) {
@@ -365,14 +365,14 @@ public final class ResourceManager {
                     }
                     if (z && str != null) {
                         ObjectPool.releaseVector(vector);
-                        IOUtils.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
+                        EventDispatcher.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
                     }
                 }
             } catch (Throwable th) {
-                IOUtils.postNotification(StringUtils.concatKeyObj(493, (Object) null));
+                EventDispatcher.postNotification(StringUtils.concatKeyObj(493, (Object) null));
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
             }
@@ -666,7 +666,7 @@ public final class ResourceManager {
             AppState.setObject(StateKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
             AppState.setBool(StateKeys.FLAG_RESOURCE_LOADING, true);
         } else if (StringUtils.matchesKey(478, str)) {
-            AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) IOUtils.transliterate(messageText));
+            AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) StringUtils.transliterate(messageText));
         }
         if (i == 93 || i == 123 || i == 95 || i == 94) {
             return 0;
@@ -908,9 +908,9 @@ public final class ResourceManager {
     public static final String buildTileRequestUrl(long j, long j2, int i, String str) {
         String encodedQuery;
         ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAPS_MAIL_RU).writeUInt(1031283503);
-        String longitude = IOUtils.pixelToLongitude(j);
+        String longitude = MapUtils.pixelToLongitude(j);
         ByteBuffer urlBuf2 = urlBuf.writeRawString(longitude).writeUInt(4028710);
-        String latitude = IOUtils.pixelToLatitude(j2);
+        String latitude = MapUtils.pixelToLatitude(j2);
         ByteBuffer urlBuffer = urlBuf2.writeRawString(latitude).writeUInt(4028966).writeIntAsString(i).writeCompressed(PackedStringKeys.PARAM_MAP_FULLSCREEN);
         if (str != null) {
             ByteBuffer urlBuf3 = urlBuffer.writeUInt(1031302438).writeRawString(longitude).writeUInt(1031367974).writeRawString(latitude).writeUInt(1031040294);
@@ -1054,7 +1054,7 @@ public final class ResourceManager {
     public static final int collectInvitees(ListView parentScreen) {
         ScreenManager.processScreenForm();
         String[] phoneNumbers = Utils.getPhoneNumbers(true);
-        Vector invitees = IOUtils.getCheckedItems(parentScreen, 1);
+        Vector invitees = ContactListManager.getCheckedItems(parentScreen, 1);
         int length = phoneNumbers.length;
         while (true) {
             length--;

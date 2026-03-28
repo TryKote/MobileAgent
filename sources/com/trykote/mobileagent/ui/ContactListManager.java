@@ -592,6 +592,194 @@ public abstract class ContactListManager {
         return screen;
     }
 
+    /* renamed from: a */
+    public static final void updateContactFlags(Contact contact) {
+        AppState.setBool(StateKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
+    }
+
+    /* renamed from: a */
+    public static final int getGroupCount(Account acct) {
+        Vector vector = acct.groups;
+        int count = Utils.vectorSize(vector);
+        if (count > 0) {
+            StringBuffer sb = ObjectPool.newStringBuffer();
+            for (int i = 0; i < count; i++) {
+                sb.append(((ContactGroup) vector.elementAt(i)).name).append((char) 0);
+            }
+            AppState.setFromBuffer(StateKeys.SLOT_MENU_ITEM_1, sb);
+            AppState.pool[StateKeys.VEC_GROUP_LIST] = vector;
+            AppState.setInt(StateKeys.INT_GROUP_OPERATION_RESULT, 0);
+        }
+        return count;
+    }
+
+    /* renamed from: b */
+    public static final void showAddContactScreen() {
+        ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO];
+        Account acctRef = contactInfo.getAccount();
+        if (getGroupCount(acctRef) == 0) {
+            EventDispatcher.postNotification(AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
+            return;
+        }
+        if (AppState.getBool(StateKeys.FLAG_SHOW_PHOTO)) {
+            AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_SOFTKEY_OK);
+            AppState.setInt(StateKeys.FLAG_SHOW_PHOTO, 0);
+        } else {
+            AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_DEFAULT_GROUP_NAME);
+        }
+        if (acctRef.getType() == Account.TYPE_MMP) {
+            AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getString(60));
+            AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getDisplayNameOrId());
+            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_LIST_SCREEN));
+            return;
+        }
+        if (((MrimAccount) acctRef).hasCustomDomain) {
+            AppState.setInt(StateKeys.FLAG_GROUP_ADD_RESULT, 1);
+            AppState.setInt(StateKeys.INT_ADD_CONTACT_MODE, 5);
+        } else {
+            AppState.setInt(StateKeys.FLAG_GROUP_ADD_RESULT, 0);
+            AppState.setInt(StateKeys.INT_ADD_CONTACT_MODE, 4);
+        }
+        AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getEmailOrMmpId());
+        AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ADD_SCREEN));
+    }
+
+    /* JADX WARN: Removed duplicated region for block: B:28:0x00a9  */
+    /* renamed from: a */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public static final ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
+        MenuItem menuItem = null;
+        if (contact != null) {
+            acct = contact.account;
+        }
+        Vector contacts = acct.getAllContacts();
+        int size = contacts.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                break;
+            }
+            MrimContact mrimContact = (MrimContact) contacts.elementAt(size);
+            if (mrimContact.isSystem() || mrimContact.isOnline() || mrimContact.isOffline() || mrimContact.hasUnread()) {
+                contacts.removeElementAt(size);
+            }
+        }
+        AppController.sortContacts(contacts);
+        for (int i = 0; i < contacts.size(); i++) {
+            MrimContact mrimContact2 = (MrimContact) contacts.elementAt(i);
+            String str = mrimContact2.simpleIdentifier;
+            String str2 = mrimContact2.displayName;
+            if (contact != null) {
+                MrimContact mrimContact3 = (MrimContact) contact;
+                menuItem = mrimContact3.groupsList != null && mrimContact3.groupsList.contains(str) ? new MenuItem(2, str2).setIconAndLabel(375, str2) : MenuItem.createCheckbox(str2, false);
+            }
+            menuItem.title = str;
+            screen.addItem(menuItem);
+        }
+        ObjectPool.releaseVector(contacts);
+        return screen;
+    }
+
+    /* renamed from: a */
+    public static final Vector getCheckedItems(ListView screen, int i) {
+        Vector vectorM1213g = ObjectPool.newVector();
+        Vector vector = screen.menuItems;
+        int size = vector.size();
+        while (true) {
+            size--;
+            if (size < i) {
+                return vectorM1213g;
+            }
+            MenuItem menuItem = (MenuItem) vector.elementAt(size);
+            Object obj = menuItem.data;
+            if (obj != null && ((Boolean) obj).booleanValue()) {
+                vectorM1213g.addElement(menuItem.title);
+            }
+        }
+    }
+
+    /* JADX DEBUG: Multi-variable search result rejected for r0v1, resolved type: l */
+    /* JADX WARN: Multi-variable type inference failed */
+    /* renamed from: b */
+    public static final int handleContactMenuAction(String str, int i) {
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        Contact contact = AppState.getCurrentContact();
+        if (i == 63 && !contact.account.isConnected()) {
+            return NotificationHelper.showError(299);
+        }
+        if (i == 54 || i == 63 || i == 85) {
+            ScreenBuilder.onScreenClosed();
+        }
+        if (StringUtils.matchesKey(717, str)) {
+            int iM993f = ((MrimContact) contact).requestUserDetails();
+            return 0 != iM993f ? NotificationHelper.showError(iM993f) : i;
+        }
+        if (i == 65) {
+            ScreenBuilder.onScreenClosed();
+            return ResourceManager.clearSmsFields();
+        }
+        if (i == 66) {
+            if (contact instanceof XmppContact) {
+                return ((XmppContact) contact).sendPresence(40);
+            }
+            AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo(contact);
+        } else if (i == 54) {
+            AppState.setAccount(contact.account);
+            ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
+        } else if (i == 6) {
+            ListItem item = (ListItem) contact;
+            item.deselect();
+            MapController.selectMapItem(item);
+        }
+        return i;
+    }
+
+    /* renamed from: c */
+    public static final int handleContactGroupAction(String str, int i) {
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
+        if (i == 63 && !((Contact) obj).account.isConnected()) {
+            return NotificationHelper.showError(299);
+        }
+        if (i == 40 || i == 63 || i == 85) {
+            ScreenBuilder.onScreenClosed();
+            if (i != 85) {
+                AppController.clearSearchState();
+            }
+        }
+        if (StringUtils.matchesKey(717, str)) {
+            int iM993f = ((MrimContact) obj).requestUserDetails();
+            if (0 != iM993f) {
+                return NotificationHelper.showError(iM993f);
+            }
+            return ScreenId.CLEAR_SEARCH;
+        }
+        if (i == 65) {
+            ScreenBuilder.onScreenClosed();
+            AppController.clearSearchState();
+            return ResourceManager.clearSmsFields();
+        }
+        if (i == 66) {
+            if (obj instanceof XmppContact) {
+                return ((XmppContact) obj).sendPresence(4);
+            }
+            AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo((Contact) obj);
+        } else if (i == 54) {
+            AppState.setAccount(((MrimContact) obj).account);
+            ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
+        } else if (i == 6) {
+            ListItem item = (ListItem) obj;
+            item.deselect();
+            MapController.selectMapItem(item);
+            AppController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
+            AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
+        }
+        return i;
+    }
+
     public static void paintPopup(GraphicsContext g, int clipX, int clipY, int clipW, int clipH) {
         g.setClip(clipX, clipY, clipW, clipH);
         int popupHeight = AppState.getInt(StateKeys.INT_POPUP_HEIGHT);

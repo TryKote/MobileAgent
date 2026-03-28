@@ -27,7 +27,7 @@ public abstract class ContactListParser implements ListItem {
 
     /* renamed from: a */
     public static final void parseContactsAsync(ByteBuffer buffer, Object obj, Object obj2) {
-        IOUtils.postEvent(new ProtocolEvent(ProtocolEvent.PHONE_SEARCH_RESULT, new Object[]{obj, parseContactsInternal(buffer, 10, true), obj2}));
+        EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.PHONE_SEARCH_RESULT, new Object[]{obj, parseContactsInternal(buffer, 10, true), obj2}));
     }
 
     /* renamed from: a */
@@ -73,10 +73,10 @@ public abstract class ContactListParser implements ListItem {
                 if (str.startsWith("group_")) {
                     Hashtable hashtable2 = (Hashtable) hashtable.get(str);
                     Hashtable hashtable3 = (Hashtable) hashtable2.get("mass-center");
-                    result.addElement(new PhoneContact(str, (int) IOUtils.longitudeToPixel((String) hashtable3.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable3.get("lat")), (String) hashtable2.get("lat1"), (String) hashtable2.get("lon1"), (String) hashtable2.get("lat2"), (String) hashtable2.get("lon2"), Integer.parseInt((String) hashtable2.get("users")), zoomLevel));
+                    result.addElement(new PhoneContact(str, (int) MapUtils.longitudeToPixel((String) hashtable3.get("lon")), (int) MapUtils.latitudeToPixel((String) hashtable3.get("lat")), (String) hashtable2.get("lat1"), (String) hashtable2.get("lon1"), (String) hashtable2.get("lat2"), (String) hashtable2.get("lon2"), Integer.parseInt((String) hashtable2.get("users")), zoomLevel));
                 } else {
                     Hashtable hashtable4 = (Hashtable) hashtable.get(str);
-                    UserSearchResult searchResult = new UserSearchResult((int) IOUtils.longitudeToPixel((String) hashtable4.get("lon")), (int) IOUtils.latitudeToPixel((String) hashtable4.get("lat")), (String) hashtable4.get("object"), zoomLevel);
+                    UserSearchResult searchResult = new UserSearchResult((int) MapUtils.longitudeToPixel((String) hashtable4.get("lon")), (int) MapUtils.latitudeToPixel((String) hashtable4.get("lat")), (String) hashtable4.get("object"), zoomLevel);
                     searchResult.userId = (String) hashtable4.get("email");
                     searchResult.nickname = (String) hashtable4.get("nick");
                     String str2 = (String) hashtable4.get("age");

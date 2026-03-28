@@ -406,7 +406,7 @@ public final class ListView {
     public final void onActionKey() {
         MenuItem selectedItem = getSelectedItem();
         if (null != selectedItem && selectedItem.enabled) {
-            IOUtils.postSelectEvent();
+            EventDispatcher.postSelectEvent();
             return;
         }
         if (this.screenId == ScreenId.MAP) {
