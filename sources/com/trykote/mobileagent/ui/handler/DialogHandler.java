@@ -42,7 +42,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.ABOUT:
                 AppState.setInt(StateKeys.FLAG_SHOW_NOTIFICATION, 1);
                 AppState.setObject(StateKeys.SLOT_SCREEN_TITLE, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
-                AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getAppVersion());
+                AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getFreeMemoryString());
                 AppState.setFromBuffer(StateKeys.SLOT_APP_VERSION_STRING, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_APP_NAME)).append(AppState.getString(StateKeys.STR_APP_BUILD_SUFFIX)));
                 AppState.setObject(StateKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(StateKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ABOUT));
@@ -151,7 +151,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 NotificationHelper.showAlertById(122, 535);
                 return;
             case ScreenId.BLOG_POST:
-                String[] langOptions = AppController.getLanguageOptions();
+                String[] langOptions = ScreenManager.getLanguageOptions();
                 if (langOptions != null) {
                     AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) langOptions[0]);
                     AppState.setFromBuffer(StateKeys.SLOT_SCREEN_TITLE, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_LANGUAGE_PREFIX)).append(langOptions[1]));
@@ -169,7 +169,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 }
                 break;
             case ScreenId.CLEAR_SEARCH:
-                AppController.clearSearchState();
+                ContactListManager.openContactMessages();
                 return;
             case ScreenId.ASYNC_CONFIRM:
                 NotificationHelper.showConfirmDialog(165, 505);
@@ -186,7 +186,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 ResourceManager.showTrafficStats();
                 return;
         }
-        AppController.finishScreenBuild();
+        AppController.clearInitParamsAndReport();
     }
 
     public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
@@ -198,36 +198,36 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.BLOCK_CONFIRM:
                 return ScreenId.DELETE_CONFIRM;
             case ScreenId.UNBLOCK_CONFIRM:
-                return AppController.handleLeftKey();
+                return handleLeftKey();
             case ScreenId.CONFIRM_EXIT:
                 return -1;
             case ScreenId.TRAFFIC_COST:
                 return ResourceManager.parseBalance();
             case ScreenId.EMOTICON_DIALOG:
-                return AppController.handleAccountOption(action);
+                return handleAccountOption(action);
             case ScreenId.DELETE_CONFIRM:
                 return -1;
             case ScreenId.INPUT_DIALOG:
-                return AppController.processInputText(title);
+                return ScreenManager.processInputText(title);
             case ScreenId.STATUS_INPUT:
                 AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas().updateCommands());
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.STATUS_PREVIEW;
             case ScreenId.SOFTKEY_MENU:
-                return AppController.handleSoftKeyAction(title);
+                return handleSoftKeyAction(title);
             case ScreenId.EMOTICON_PICKER:
-                return AppController.handleSoundOption(action);
+                return ScreenManager.handleSoundOption(action);
             case ScreenId.CAPTCHA:
                 return 0;
             case ScreenId.CLEAR_NOTIFICATIONS:
                 return -1;
             case ScreenId.PRIVACY_MODE:
-                return AppController.handleHashKey();
+                return handleHashKey();
             case ScreenId.STATUS_PREVIEW:
                 return ResourceManager.handleMessageInputAction(title, action);
             case ScreenId.PRESENCE_ACTION:
-                return AppController.handlePresenceAction();
+                return AccountManager.handlePresenceAction();
             case ScreenId.BLOG_POST:
                 int errorCode2;
                 ScreenManager.processScreenForm();
@@ -246,9 +246,9 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.ASYNC_CONFIRM:
                 return -1;
             case ScreenId.UPDATE_ALERT:
-                return AppController.handleRightKey();
+                return handleRightKey();
             case ScreenId.INVITE_ALERT:
-                return AppController.handleInviteAction();
+                return MapHandler.handleGeoSearch();
             case ScreenId.TRAFFIC_STATS:
                 int intVal = AppState.getInt(StateKeys.INT_PERIOD_INDEX);
                 Account account2 = AppState.getAccount();
@@ -308,7 +308,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.CLEAR_NOTIFICATIONS:
                 return 0;
             case ScreenId.PRIVACY_MODE:
-                return AppController.handleHashKey();
+                return handleHashKey();
             case ScreenId.STATUS_PREVIEW:
                 ScreenBuilder.onScreenClosed();
                 return 0;
@@ -368,33 +368,33 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.BLOCK_CONFIRM:
                 return ScreenId.DELETE_CONFIRM;
             case ScreenId.UNBLOCK_CONFIRM:
-                return AppController.handleLeftKey();
+                return handleLeftKey();
             case ScreenId.CONFIRM_EXIT:
                 return -1;
             case ScreenId.TRAFFIC_COST:
                 return 0;
             case ScreenId.EMOTICON_DIALOG:
-                return AppController.handleAccountOption(selectedOption);
+                return handleAccountOption(selectedOption);
             case ScreenId.DELETE_CONFIRM:
                 return -1;
             case ScreenId.INPUT_DIALOG:
-                return AppController.processInputText(title);
+                return ScreenManager.processInputText(title);
             case ScreenId.STATUS_INPUT:
                 return 0;
             case ScreenId.SOFTKEY_MENU:
-                return AppController.handleSoftKeyAction(title);
+                return handleSoftKeyAction(title);
             case ScreenId.EMOTICON_PICKER:
-                return AppController.handleSoundOption(selectedOption);
+                return ScreenManager.handleSoundOption(selectedOption);
             case ScreenId.CAPTCHA:
                 return 0;
             case ScreenId.CLEAR_NOTIFICATIONS:
                 return 0;
             case ScreenId.PRIVACY_MODE:
-                return AppController.handleHashKey();
+                return handleHashKey();
             case ScreenId.STATUS_PREVIEW:
                 return ResourceManager.handleMessageInputAction(title, selectedOption);
             case ScreenId.PRESENCE_ACTION:
-                return AppController.handlePresenceAction();
+                return AccountManager.handlePresenceAction();
             case ScreenId.BLOG_POST:
                 return 0;
             case ScreenId.CLEAR_SEARCH:
@@ -427,9 +427,9 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.ASYNC_CONFIRM:
                 return -1;
             case ScreenId.UPDATE_ALERT:
-                return AppController.handleRightKey();
+                return handleRightKey();
             case ScreenId.INVITE_ALERT:
-                return AppController.handleInviteAction();
+                return MapHandler.handleGeoSearch();
             case ScreenId.TRAFFIC_STATS:
                 return 0;
         }
@@ -514,5 +514,81 @@ public final class DialogHandler extends BaseScreenHandler {
                 return 0;
         }
         return 0;
+    }
+
+    public void onMenuItemEvent(ListView screen, MenuItem item) {
+        if (item.id == 2 && screen.screenId == ScreenId.BLOG_POST
+                && AppState.setBool(StateKeys.FLAG_CAPTCHA_SHOWN, ((Boolean) item.data).booleanValue())) {
+            ScreenManager.processScreenForm();
+            AppState.setFromPool(StateKeys.SLOT_SCREEN_DESCRIPTION, StateKeys.SLOT_SCREEN_VALUE);
+            AppController.clearInitParamsAndReport();
+        }
+    }
+
+    public static int handleSoftKeyAction(String label) {
+        int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        ChatRoom chatRoom = account.chatRoomManager.findById(chatRoomId);
+        IOUtils.setSelectedItems(chatRoom.readMessages);
+        if (StringUtils.matchesKey(852, label)) {
+            chatRoom.readMessages.removeAllElements();
+            return 0;
+        }
+        if (StringUtils.matchesKey(853, label)) {
+            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 2);
+            return 0;
+        }
+        if (StringUtils.matchesKey(854, label)) {
+            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 1);
+            return 0;
+        }
+        if (!StringUtils.matchesKey(845, label)) {
+            return 0;
+        }
+        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+        return 0;
+    }
+
+    public static int handleLeftKey() {
+        int errorCode = AppState.getCurrentContact().validateDelete();
+        if (errorCode != 0) {
+            return NotificationHelper.showError(errorCode);
+        }
+        return ScreenId.CONTACT_LIST;
+    }
+
+    public static int handleRightKey() {
+        AppState.setInt(StateKeys.FLAG_APP_STARTING, 1);
+        MapController.toggleScrollMode();
+        return ScreenId.MAP;
+    }
+
+    public static int handleHashKey() {
+        if (ScreenManager.hasScreen(ScreenId.CHAT_ROOM_VIEW)) {
+            return ScreenId.CHAT_ROOM_VIEW;
+        }
+        ScreenBuilder.onScreenClosed();
+        ScreenBuilder.onScreenClosed();
+        return -1;
+    }
+
+    public static int handleAccountOption(int optionId) {
+        Account account = AppState.getAccount();
+        if (!(account instanceof MmpProtocol)) {
+            return openSettingsScreen((optionId + 161) - 4, (optionId + 155) - 4, 4);
+        }
+        ((MmpProtocol) account).reserved2 = optionId;
+        if (optionId == 0) {
+            return ScreenId.STATUS_DIALOG;
+        }
+        return openSettingsScreen(optionId + 268, optionId + 118, 3);
+    }
+
+    private static int openSettingsScreen(int themeId, int valueId, int actionId) {
+        AppState.setInt(StateKeys.INT_SETTINGS_THEME, themeId);
+        AppState.setInt(StateKeys.INT_SETTINGS_VALUE_1, themeId);
+        AppState.setInt(StateKeys.INT_SETTINGS_VALUE_2, valueId);
+        AppState.setInt(StateKeys.INT_SETTINGS_ACTION, actionId);
+        return ScreenId.CHAT_ROOM_CONFIG;
     }
 }

@@ -20,13 +20,13 @@ public final class ProfileHandler extends BaseScreenHandler {
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.SEARCH_RESULTS:
-                AppController.resetSearchResults();
+                resetSearchResults();
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_RESULTS));
                 return;
             case ScreenId.SEARCH_RESULT_LIST:
                 int errorMsgId = AppState.getInt(StateKeys.INT_ERROR_MSG_INDEX);
                 if (0 != errorMsgId) {
-                    AppController.clearSearchResults2();
+                    clearSearchResults2();
                     NotificationHelper.showMessageById(errorMsgId);
                     return;
                 }
@@ -35,20 +35,20 @@ public final class ProfileHandler extends BaseScreenHandler {
                     ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEARCH_RESULT_LIST), searchResults));
                     return;
                 } else {
-                    AppController.clearSearchResults2();
+                    clearSearchResults2();
                     NotificationHelper.showMessageById(736);
                     return;
                 }
             case ScreenId.USER_PROFILE:
                 if (AppController.pendingAccount == null && AppController.pendingUrl == null) {
                     Contact contact = AppState.getCurrentContact();
-                    String statusText = AppController.getStatusText();
+                    String statusText = AppController.getPendingDisplayText();
                     NotificationHelper.showErrorOrConfirm(102, 728, statusText != null ? contact.account.getResourceId((Object) statusText) : ResourceManager.loadUserProfile(contact.getIdentifier(), contact.account));
                     return;
                 } else {
                     NotificationHelper.showErrorOrConfirm(102, 728, 0);
                     ResourceManager.loadUserProfile(AppController.pendingUrl, AppController.pendingAccount);
-                    AppController.clearMapPoints();
+                    AppController.clearPendingProfile();
                     return;
                 }
             case ScreenId.PROFILE_LOAD:
@@ -73,13 +73,13 @@ public final class ProfileHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_ENTRY));
                 return;
         }
-        AppController.finishScreenBuild();
+        AppController.clearInitParamsAndReport();
     }
 
     public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
-                return AppController.handleEnterKey();
+                return handleEnterKey();
             case ScreenId.SEARCH_RESULT_LIST:
                 AppState.pool[StateKeys.SLOT_CONTACT_INFO] = data;
                 return 0;
@@ -88,9 +88,9 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.PROFILE_LOAD:
                 return -1;
             case ScreenId.VCARD_ACTIONS:
-                return AppController.handleScreenAction(action);
+                return handleScreenAction(action);
             case ScreenId.PEOPLE_SEARCH:
-                return AppController.processSearchQuery(title);
+                return MapController.processSearchQuery(title);
             case ScreenId.PROFILE_EDIT:
                 return ResourceManager.syncAndReturn();
             case ScreenId.SEARCH_ENTRY:
@@ -102,7 +102,7 @@ public final class ProfileHandler extends BaseScreenHandler {
     public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
-                return AppController.handleBackKey();
+                return handleBackKey();
             case ScreenId.SEARCH_RESULT_LIST:
                 return 0;
             case ScreenId.USER_PROFILE:
@@ -127,10 +127,10 @@ public final class ProfileHandler extends BaseScreenHandler {
     public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.SEARCH_RESULTS:
-                AppController.resetSearchResults();
+                resetSearchResults();
                 break;
             case ScreenId.SEARCH_RESULT_LIST:
-                AppController.clearSearchResults2();
+                clearSearchResults2();
                 break;
         }
     }
@@ -148,9 +148,9 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.PROFILE_LOAD:
                 return -1;
             case ScreenId.VCARD_ACTIONS:
-                return AppController.handleScreenAction(selectedOption);
+                return handleScreenAction(selectedOption);
             case ScreenId.PEOPLE_SEARCH:
-                return AppController.processSearchQuery(title);
+                return MapController.processSearchQuery(title);
             case ScreenId.PROFILE_EDIT:
                 return ResourceManager.syncAndReturn();
             case ScreenId.SEARCH_ENTRY:
@@ -179,5 +179,33 @@ public final class ProfileHandler extends BaseScreenHandler {
                 return 0;
         }
         return 0;
+    }
+
+    public static int handleScreenAction(int taskId) {
+        ScreenBuilder.onScreenClosed();
+        AppState.setInt(StateKeys.INT_ASYNC_TASK_ID, taskId);
+        return AppState.getInt(StateKeys.INT_CURRENT_SCREEN_ID);
+    }
+
+    public static int handleEnterKey() {
+        restoreState();
+        return ScreenManager.processScreenForm();
+    }
+
+    public static int handleBackKey() {
+        restoreState();
+        return 0;
+    }
+
+    public static void resetSearchResults() {
+        AppState.clearRange(StateKeys.SLOT_MSG_SUBJECT, StateKeys.SLOT_MSG_EXTRA_1);
+    }
+
+    private static void restoreState() {
+        ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast().clear();
+    }
+
+    public static void clearSearchResults2() {
+        AppState.clearRange(StateKeys.SLOT_REG_PARAM_3, StateKeys.SLOT_CONTACT_INFO);
     }
 }

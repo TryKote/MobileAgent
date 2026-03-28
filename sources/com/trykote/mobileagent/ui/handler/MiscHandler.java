@@ -34,7 +34,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 ResourceManager.showTosScreen();
                 return;
             case ScreenId.EVENT_QUEUE:
-                AppController.processEventQueue();
+                MrimChatRoomManager.showChatRoomSelector();
                 return;
             case ScreenId.PHONE_INPUT: {
                 ListView screen6 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT);
@@ -128,7 +128,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.MAIN_SCREEN:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAIN_SCREEN));
                 if (AppState.getBool(StateKeys.FLAG_HAS_XMPP_ACCOUNT)) {
-                    AppController.processBackgroundTasks();
+                    TimerManager.disableBacklight();
                     return;
                 }
                 return;
@@ -149,7 +149,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SETUP));
                 return;
         }
-        AppController.finishScreenBuild();
+        AppController.clearInitParamsAndReport();
     }
 
     public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
@@ -161,19 +161,19 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.TOS_SCREEN:
                 return -1;
             case ScreenId.EVENT_QUEUE:
-                return AppController.handleEventObject(data);
+                return handleEventObject(data);
             case ScreenId.PHONE_INPUT:
-                return AppController.processPhoneInput(title);
+                return ScreenManager.processPhoneInput(title);
             case ScreenId.SERVER_ADDRESS:
-                return AppController.validateServerAddress(title);
+                return ScreenManager.validateServerAddress(title);
             case ScreenId.REGION_SELECTOR:
-                return AppController.handleSearchResultAction(data);
+                return MapController.handleSearchResultAction(data);
             case ScreenId.PHONE_INPUT_ALT:
-                return AppController.processPhoneInput(title);
+                return ScreenManager.processPhoneInput(title);
             case ScreenId.URL_OPEN:
-                return AppController.openUrl(title);
+                return openUrl(title);
             case ScreenId.CONVERSATION:
-                return AppController.handleConversationAction(data);
+                return MapController.handleMapPointAction(data);
             case ScreenId.VERSION_SELECT:
                 return ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(action);
             case ScreenId.EMPTY_SCREEN:
@@ -201,11 +201,11 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.INVITE_TOS:
                 return ResourceManager.collectInvitees(screen);
             case ScreenId.FORM_LIST:
-                return AppController.handleFormSubmit(data);
+                return ScreenManager.handleFormSubmit(data);
             case ScreenId.PHONE_CONTACTS:
-                return AppController.handleStarAction(data);
+                return handleStarAction(data);
             case ScreenId.EDIT_SCREEN:
-                return AppController.handleEditAction(action);
+                return handleEditAction(action);
             case ScreenId.ASYNC_TASK:
                 return -1;
             case ScreenId.MAIN_SCREEN:
@@ -312,7 +312,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 StringUtils.resetRegForm();
                 break;
             case ScreenId.INVITE_TOS:
-                AppController.clearFormFields();
+                ScreenManager.clearFormFields();
                 break;
             case ScreenId.PHONE_CONTACTS:
                 AppState.clearRange(StateKeys.RANGE_PHONE_CONTACT_START, StateKeys.OBJ_SEARCH_RESULT);
@@ -333,19 +333,19 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.TOS_SCREEN:
                 return -1;
             case ScreenId.EVENT_QUEUE:
-                return AppController.handleEventObject(data);
+                return handleEventObject(data);
             case ScreenId.PHONE_INPUT:
-                return AppController.processPhoneInput(title);
+                return ScreenManager.processPhoneInput(title);
             case ScreenId.SERVER_ADDRESS:
-                return AppController.validateServerAddress(title);
+                return ScreenManager.validateServerAddress(title);
             case ScreenId.REGION_SELECTOR:
-                return AppController.handleSearchResultAction(data);
+                return MapController.handleSearchResultAction(data);
             case ScreenId.PHONE_INPUT_ALT:
-                return AppController.processPhoneInput(title);
+                return ScreenManager.processPhoneInput(title);
             case ScreenId.URL_OPEN:
-                return AppController.openUrl(title);
+                return openUrl(title);
             case ScreenId.CONVERSATION:
-                return AppController.handleConversationAction(data);
+                return MapController.handleMapPointAction(data);
             case ScreenId.VERSION_SELECT:
                 return ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(selectedOption);
             case ScreenId.EMPTY_SCREEN:
@@ -357,11 +357,11 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.INVITE_TOS:
                 return 0;
             case ScreenId.FORM_LIST:
-                return AppController.handleFormSubmit(data);
+                return ScreenManager.handleFormSubmit(data);
             case ScreenId.PHONE_CONTACTS:
-                return selectedOption == 1 ? AppController.showPeopleSearch() : selectedOption == 2 ? AppController.showPeopleNearby() : AppController.handleStarAction(data);
+                return selectedOption == 1 ? AppController.dialPhoneContactPrev() : selectedOption == 2 ? AppController.dialPhoneContactNext() : handleStarAction(data);
             case ScreenId.EDIT_SCREEN:
-                return AppController.handleEditAction(selectedOption);
+                return handleEditAction(selectedOption);
             case ScreenId.ASYNC_TASK:
                 return -1;
             case ScreenId.MAIN_SCREEN:
@@ -467,5 +467,55 @@ public final class MiscHandler extends BaseScreenHandler {
                 return 0;
         }
         return 0;
+    }
+
+    public static int handleStarAction(Object searchResult) {
+        AppState.pool[StateKeys.OBJ_SEARCH_RESULT] = searchResult;
+        return ScreenId.SEARCH_ENTRY;
+    }
+
+    public static int handleEventObject(Object chatRoomObj) {
+        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, ((ChatRoom) chatRoomObj).id);
+        return 0;
+    }
+
+    public static int handleEditAction(int mode) {
+        MapController.applyViewMode(mode == 0, mode != 0, true);
+        AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
+        return 0;
+    }
+
+    public static int openUrl(String url) {
+        AppState.setObject(StateKeys.SLOT_STATUS_TEXT, new StringBuffer().append(Utils.getMessageBuffer()).append(url).toString());
+        return 0;
+    }
+
+    public void onMenuItemEvent(ListView screen, MenuItem item) {
+        if (screen.screenId != ScreenId.REG_FORM) {
+            return;
+        }
+        Object[] itemData = (Object[]) item.data;
+        int selectedIndex = ((Integer) itemData[0]).intValue();
+        String[] options = (String[]) itemData[1];
+        MenuItem phoneItem = null;
+        Vector items = screen.menuItems;
+        int itemIdx = items.size();
+        while (true) {
+            itemIdx--;
+            if (itemIdx < 0) {
+                if (item.title.equals(AppState.getString(StateKeys.STR_MENU_OPTIONS))) {
+                    String optionStr = selectedIndex == 0 ? Utils.defaultStr(AppState.getString(StateKeys.SLOT_DEVICE_ID)) : options[selectedIndex];
+                    Object[] phoneData = (Object[]) phoneItem.data;
+                    phoneItem.clear().setAction(phoneData[4], optionStr, phoneData[1], phoneData[2], phoneData[3]);
+                }
+                screen.rebuildItems();
+                break;
+            } else {
+                MenuItem entry = (MenuItem) items.elementAt(itemIdx);
+                if (entry.id == 15 && entry.title.startsWith(AppState.getString(StateKeys.STR_MENU_PHONE_PREFIX))) {
+                    phoneItem = entry;
+                }
+            }
+        }
     }
 }

@@ -73,7 +73,7 @@ public final class MrimContact extends Contact implements ListItem {
         this.contactGroupsStr = str3;
         this.statusMessage = str5;
         setDisplayName(Utils.defaultIfBlank(str2, str));
-        this.defaultIcon = AppController.handleServerAction(i5, str4);
+        this.defaultIcon = AppController.resolveServerIcon(i5, str4);
         this.highlighted = i5 != 0;
         updateIdentifierAndRegister();
         this.sizeCache = new SizeCache();
@@ -109,7 +109,7 @@ public final class MrimContact extends Contact implements ListItem {
         byte flags = buffer.readByte();
         this.flags = flags;
         if (flags != 0) {
-            AppController.markContactRead((Contact) this);
+            ContactListManager.markContactRead((Contact) this);
         }
         this.statusMessage = str;
         this.defaultIcon = 155;

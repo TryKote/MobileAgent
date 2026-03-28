@@ -25,7 +25,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
                 MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
                 if (mrimAccount.chatRoomManager.getCount() != 0 && !mrimAccount.chatRoomManager.loaded) {
-                    AppController.initChatRoomList();
+                    MrimChatRoomManager.showChatRoomListWithCounts();
                     return;
                 }
                 NotificationHelper.showConfirmDialog(37, 833);
@@ -36,7 +36,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_LONG_URL_1)).append('?').append(AppState.getString(StateKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StateKeys.STR_RES_HUGE_URL_1)).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 return;
             case ScreenId.CHAT_ROOM_INIT:
-                AppController.initChatRoomList();
+                MrimChatRoomManager.showChatRoomListWithCounts();
                 return;
             case ScreenId.CHAT_ROOM_MESSAGES:
                 AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
@@ -134,7 +134,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_OPTIONS));
                 return;
         }
-        AppController.finishScreenBuild();
+        AppController.clearInitParamsAndReport();
     }
 
     public int onMenuItemSelected(ListView currentScreen, MenuItem menuItem, String title, int action, Object obj) {
@@ -166,9 +166,9 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOM_ALERT:
                 return ScreenId.CHAT_ROOM_INVITE;
             case ScreenId.CHAT_ROOM_OPTIONS:
-                return AppController.handleChatRoomOption(action);
+                return handleRoutePointOption(action);
             case ScreenId.CHAT_LIST_OPTIONS:
-                return AppController.handleChatListOption(action);
+                return handleRouteListOption(action);
             case ScreenId.CREATE_CHAT_ROOM:
                 ScreenManager.processScreenForm();
                 String chatName = Utils.defaultStr(AppState.getString(StateKeys.SLOT_CHAT_NAME));
@@ -210,7 +210,7 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_STATUS:
                 return ResourceManager.handleChatInputAction(title);
             case ScreenId.CHAT_DETAIL:
-                return AppController.handleChatDetailOption(action);
+                return handleMapViewOption(action);
             case ScreenId.CHAT_OPTIONS:
                 return AppController.handleChatOption(action);
         }
@@ -314,15 +314,15 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOM_ALERT:
                 return ScreenId.CHAT_ROOM_INVITE;
             case ScreenId.CHAT_ROOM_OPTIONS:
-                return AppController.handleChatRoomOption(selectedOption);
+                return handleRoutePointOption(selectedOption);
             case ScreenId.CHAT_LIST_OPTIONS:
-                return AppController.handleChatListOption(selectedOption);
+                return handleRouteListOption(selectedOption);
             case ScreenId.CREATE_CHAT_ROOM:
                 return 0;
             case ScreenId.CHAT_STATUS:
                 return ResourceManager.handleChatInputAction(title);
             case ScreenId.CHAT_DETAIL:
-                return AppController.handleChatDetailOption(selectedOption);
+                return handleMapViewOption(selectedOption);
             case ScreenId.CHAT_OPTIONS:
                 return AppController.handleChatOption(selectedOption);
         }
@@ -485,6 +485,62 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_OPTIONS:
                 return 0;
         }
+        return 0;
+    }
+
+    public static final int handleRoutePointOption(int optionId) {
+        if (optionId == 0) {
+            MapController.setRouteStart();
+            if (MmpContact.hasSecondToken()) {
+                return ScreenId.MAP;
+            }
+            AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 1);
+            return ScreenId.MAP_SEARCH;
+        }
+        MapController.setRouteEnd();
+        if (MmpContact.hasFirstToken()) {
+            return ScreenId.MAP;
+        }
+        AppState.setInt(StateKeys.FLAG_MAP_MODE_ACTIVE, 0);
+        return ScreenId.MAP_SEARCH;
+    }
+
+    public static final int handleRouteListOption(int optionId) {
+        MapPoint mapPoint = MapController.pendingMapPoint;
+        if (mapPoint == null) {
+            return NotificationHelper.showError(354);
+        }
+        if (optionId == 6) {
+            MapRenderer.navigateToMapPoint(MapController.pendingMapPoint);
+            return 0;
+        }
+        if (optionId == 118) {
+            AppState.setObject(StateKeys.MAP_RESOURCE_URL, (Object) mapPoint.getResourceUrl());
+            return 0;
+        }
+        if (optionId != 120) {
+            return 0;
+        }
+        MapController.removeRoutePoint(mapPoint);
+        return 0;
+    }
+
+    public static final int handleMapViewOption(int optionId) {
+        MapController.showMapView();
+        if (optionId == 6) {
+            MapController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
+            AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
+            AppState.setInt(StateKeys.FLAG_MAP_LOADING, 1);
+            return 0;
+        }
+        if (optionId == 100) {
+            AppState.setInt(StateKeys.FLAG_LOADING, 1);
+            return 0;
+        }
+        if (!MapController.hasRoutePoints()) {
+            return NotificationHelper.showError(354);
+        }
+        AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 1);
         return 0;
     }
 }

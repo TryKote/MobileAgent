@@ -88,9 +88,9 @@ public final class SettingsHandler extends BaseScreenHandler {
             case ScreenId.SETTINGS:
                 return 0;
             case ScreenId.SETTINGS_MENU:
-                return AppController.handleSettingsOption(action);
+                return handleSettingsOption(action);
             case ScreenId.GPS_SETTINGS:
-                return AppController.handleProfileAction(action);
+                return handleProfileAction(action);
             case ScreenId.THEME_SETTINGS:
                 ScreenManager.processScreenForm();
                 AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_COLOR_THEME));
@@ -106,23 +106,23 @@ public final class SettingsHandler extends BaseScreenHandler {
             case ScreenId.PRIVACY_SETTINGS:
                 return ScreenManager.processScreenForm();
             case ScreenId.CONNECTION_SETTINGS:
-                return AppController.handleConnectionOption(action);
+                return AccountManager.handleConnectionOption(action);
             case ScreenId.NOTIFICATION_OPTIONS:
-                return AppController.handleNotificationOption(action);
+                return handleNotificationOption(action);
             case ScreenId.THEME_OPTIONS:
-                return AppController.handleThemeOption(action);
+                return ScreenManager.handleThemeOption(action);
             case ScreenId.VIEW_MODE:
-                return AppController.getThemeBackground(action);
+                return ScreenManager.getThemeBackground(action);
             case ScreenId.COLOR_PICKER:
-                return AppController.getThemeColor(action);
+                return ScreenManager.getThemeColor(action);
             case ScreenId.KEY_MAPPING:
-                return AppController.mapKeyToAction(action);
+                return mapKeyToAction(action);
             case ScreenId.FORM_SETTINGS:
                 return ScreenManager.processScreenForm();
             case ScreenId.EXT_SETTINGS:
-                return AppController.handleExtSettingsOption(action);
+                return handleExtSettingsOption(action);
             case ScreenId.MAP_VIEW_SETTINGS:
-                return AppController.handleContactOption(action);
+                return handleContactOption(action);
             case ScreenId.NEARBY_SETTINGS:
                 ScreenManager.processScreenForm();
                 if (AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
@@ -193,9 +193,9 @@ public final class SettingsHandler extends BaseScreenHandler {
             case ScreenId.SETTINGS:
                 return 0;
             case ScreenId.SETTINGS_MENU:
-                return AppController.handleSettingsOption(selectedOption);
+                return handleSettingsOption(selectedOption);
             case ScreenId.GPS_SETTINGS:
-                return AppController.handleProfileAction(selectedOption);
+                return handleProfileAction(selectedOption);
             case ScreenId.THEME_SETTINGS:
                 return 0;
             case ScreenId.NOTIFICATION_SETTINGS:
@@ -205,23 +205,23 @@ public final class SettingsHandler extends BaseScreenHandler {
             case ScreenId.PRIVACY_SETTINGS:
                 return 0;
             case ScreenId.CONNECTION_SETTINGS:
-                return AppController.handleConnectionOption(selectedOption);
+                return AccountManager.handleConnectionOption(selectedOption);
             case ScreenId.NOTIFICATION_OPTIONS:
-                return AppController.handleNotificationOption(selectedOption);
+                return handleNotificationOption(selectedOption);
             case ScreenId.THEME_OPTIONS:
-                return AppController.handleThemeOption(selectedOption);
+                return ScreenManager.handleThemeOption(selectedOption);
             case ScreenId.VIEW_MODE:
-                return AppController.getThemeBackground(selectedOption);
+                return ScreenManager.getThemeBackground(selectedOption);
             case ScreenId.COLOR_PICKER:
-                return AppController.getThemeColor(selectedOption);
+                return ScreenManager.getThemeColor(selectedOption);
             case ScreenId.KEY_MAPPING:
-                return AppController.mapKeyToAction(selectedOption);
+                return mapKeyToAction(selectedOption);
             case ScreenId.FORM_SETTINGS:
                 return 0;
             case ScreenId.EXT_SETTINGS:
-                return AppController.handleExtSettingsOption(selectedOption);
+                return handleExtSettingsOption(selectedOption);
             case ScreenId.MAP_VIEW_SETTINGS:
-                return AppController.handleContactOption(selectedOption);
+                return handleContactOption(selectedOption);
             case ScreenId.NEARBY_SETTINGS:
                 return 0;
         }
@@ -229,6 +229,116 @@ public final class SettingsHandler extends BaseScreenHandler {
     }
 
     public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
+        return 0;
+    }
+
+    public void onMenuItemEvent(ListView screen, MenuItem item) {
+        if (screen.screenId == ScreenId.THEME_SETTINGS) {
+            Object[] themeData = (Object[]) item.data;
+            if (AppState.getString(StateKeys.STR_MENU_SETTINGS).equals(item.title)) {
+                AppState.setInt(StateKeys.SETTING_COLOR_THEME, ((Integer) themeData[0]).intValue());
+            }
+        } else if (screen.screenId == ScreenId.SOUND_SETTINGS) {
+            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) item.data)[0]).intValue(), false);
+        }
+    }
+
+    public static int handleContactOption(int optionId) {
+        if (optionId != 6) {
+            return 0;
+        }
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        account.isHighlighted = true;
+        if (!account.isSelected()) {
+            return NotificationHelper.showError(667);
+        }
+        MapController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
+        AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
+        MapController.selectMapItem((ListItem) account);
+        return 0;
+    }
+
+    public static int handleProfileAction(int actionId) {
+        switch (actionId) {
+            case 0: Telemetry.sendReport(false, null); return ScreenId.CLOSE;
+            case 1: MapController.applyViewMode(false, true, true); return ScreenId.CLOSE;
+            case 2: MapController.applyViewMode(true, false, true); return ScreenId.CLOSE;
+            case 3: Conversation.setMapEnabled(true); return ScreenId.CLOSE;
+            case 4: Conversation.setMapEnabled(false); return ScreenId.CLOSE;
+            case 5: return ScreenManager.getIconOffset();
+            default: return 0;
+        }
+    }
+
+    public static int handleSettingsOption(int optionId) {
+        AppState.setInt(StateKeys.INT_PERIOD_INDEX, optionId);
+        return ScreenId.TRAFFIC_STATS;
+    }
+
+    public static int handleExtSettingsOption(int actionId) {
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        switch (actionId) {
+            case 0: case 1: case 2: case 3:
+                if (account != null) {
+                    applyProfileAction(account.profileManager, actionId);
+                } else {
+                    forEachMrimProfile(actionId);
+                }
+                break;
+            case 4: return ScreenId.PHOTO_SELECTOR;
+        }
+        if (AppState.getBool(StateKeys.FLAG_UPDATE_AVAILABLE)) {
+            return AppState.getInt(StateKeys.INT_CONNECTION_STATE);
+        }
+        ScreenBuilder.onScreenClosed();
+        return ScreenId.UPDATE_ALERT;
+    }
+
+    private static void forEachMrimProfile(int actionId) {
+        Vector accounts = AccountManager.getMrimAccountList();
+        for (int i = accounts.size() - 1; i >= 0; i--) {
+            applyProfileAction(AccountManager.getMrimAccount(accounts, i).profileManager, actionId);
+        }
+        ObjectPool.releaseVector(accounts);
+    }
+
+    private static void applyProfileAction(MrimProfileManager profileManager, int actionId) {
+        switch (actionId) {
+            case 0: profileManager.publishLocation(); break;
+            case 1: profileManager.hideLocation(); break;
+            case 2: profileManager.setGroups(); break;
+            case 3: profileManager.clearGroups(); break;
+        }
+    }
+
+    public static int handleNotificationOption(int optionId) {
+        if (optionId == 54) {
+            ScreenBuilder.onScreenClosed();
+            ResourceManager.composeEmail((Vector) null, (String) null, (String) null);
+            return 0;
+        }
+        if (optionId == 68) {
+            ScreenBuilder.onScreenClosed();
+            AppController.toggleOnlineMode(true);
+            return 0;
+        }
+        if (optionId != 37) {
+            return 0;
+        }
+        ((MrimAccount) AppState.getAccount()).chatRoomManager.loaded = true;
+        return 0;
+    }
+
+    public static int mapKeyToAction(int keyCode) {
+        if (keyCode == 4) {
+            ScreenManager.handleScreenClose();
+            return 0;
+        }
+        if (keyCode != 137) {
+            return 0;
+        }
+        ScreenBuilder.onScreenClosed();
+        ScreenBuilder.onScreenClosed();
         return 0;
     }
 }

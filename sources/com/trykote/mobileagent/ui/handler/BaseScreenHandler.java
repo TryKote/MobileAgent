@@ -27,4 +27,7 @@ public abstract class BaseScreenHandler implements ScreenHandler {
     public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         return 0;
     }
+
+    public void onMenuItemEvent(ListView screen, MenuItem item) {
+    }
 }

@@ -113,7 +113,7 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskProcessSoftkey() {
-        AppController.onSoftKeyPressed();
+        AppController.runEventLoop();
     }
 
     private void taskDownloadPhoto() {

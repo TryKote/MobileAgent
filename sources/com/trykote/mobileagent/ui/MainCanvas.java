@@ -88,13 +88,13 @@ public final class MainCanvas extends Canvas implements CommandListener {
     public final void hideNotify() {
         this.isShown = false;
         EventDispatcher.postBackEvent();
-        AppController.timers[0] = 0;
+        TimerManager.timers[TimerManager.SLOT_BACKLIGHT] = 0;
     }
 
     public final void showNotify() {
         this.isShown = true;
         EventDispatcher.postBackEvent();
-        AppController.setTimer(0, AppController.getSessionTimestamp());
+        TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
     }
 
     public final boolean isShown() {
@@ -175,7 +175,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                     if (ScreenManager.hasModal()) {
                         gfx.setClip(0, 0, 2048, 2048);
                         int iconX = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 17;
-                        if (AccountManager.handleTabAction() != 0) {
+                        if (AccountManager.getCombinedContactFlags() != 0) {
                             gfx.drawIcon(16384, iconX, 1);
                             iconX -= 17;
                         }
@@ -202,7 +202,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void keyReleased(int i) {
-        AppController.setTimer(3, 10000L);
+        TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
         EventDispatcher.postBackEvent();
     }
 
@@ -217,9 +217,9 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     /* renamed from: a */
     private final void handleKeyInput(int i, int i2) {
-        AppController.processTimers();
-        AppController.setTimer(0, AppController.getSessionTimestamp());
-        AppController.setTimer(3, 10000L);
+        TimerManager.enableBacklight();
+        TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
+        TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
         int gameAction = 0;
         boolean isFullScreen = AppState.getBool(StateKeys.FLAG_FULLSCREEN_ACTIVE);
         try {
@@ -273,15 +273,15 @@ public final class MainCanvas extends Canvas implements CommandListener {
     public final void pointerPressed(int i, int i2) {
         pointerDownX = i;
         pointerDownY = i2;
-        AppController.setTimer(3, 10000L);
-        AppController.setTimer(0, AppController.getSessionTimestamp());
+        TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
+        TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
         Vector events = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
         synchronized (events) {
             events.addElement(PointerEvent.press(i, i2));
         }
         pointerDownTime = System.currentTimeMillis();
         pointerDragged = false;
-        AppController.processTimers();
+        TimerManager.enableBacklight();
     }
 
     public final void pointerDragged(int i, int i2) {
@@ -324,7 +324,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void commandAction(Command command, Displayable displayable) {
-        AppController.setTimer(3, 10000L);
+        TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
         if (command != null) {
             if (command == this.okCommand) {
                 RemoteLogger.log("UI", "commandAction: OK pressed");

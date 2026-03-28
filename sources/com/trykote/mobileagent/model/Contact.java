@@ -79,7 +79,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: c */
     public final void addFlag(int i) {
         this.flags = (byte) (this.flags | i);
-        AppController.markContactRead(this);
+        ContactListManager.markContactRead(this);
         this.dirty = true;
         this.lastMessageTime = AppState.getLong(StateKeys.TIMESTAMP_CURRENT);
         updateRenderState();

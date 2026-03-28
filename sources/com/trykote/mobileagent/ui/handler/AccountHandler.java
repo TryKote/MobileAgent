@@ -29,7 +29,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return;
             case ScreenId.ACCOUNTS_MENU:
                 AppState.setBool(StateKeys.FLAG_MULTIPLE_MRIM, AccountManager.getMrimAccountList().size() > 1);
-                AppState.setBool(StateKeys.FLAG_MULTIPLE_XMPP, AccountManager.getXmppAccountList().size() > 1);
+                AppState.setBool(StateKeys.FLAG_MULTIPLE_XMPP, AccountManager.copyAllAccounts().size() > 1);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ACCOUNTS_MENU));
                 return;
             case ScreenId.ACCOUNT_SWITCHER:
@@ -87,7 +87,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.SUBMIT_REGISTRATION: {
-                AppController.prepareFormData();
+                ScreenManager.prepareFormData();
                 Account account2 = AppState.getAccount();
                 String[] regData;
                 if (AppState.getAccount().getType() == Account.TYPE_MRIM) {
@@ -126,7 +126,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return;
             case ScreenId.MMP_ACCOUNT_SELECT: {
                 StringBuffer sbAccounts = ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNTS_HEADER));
-                Vector mmpAccounts = AccountManager.getMmpAccountList();
+                Vector mmpAccounts = AccountManager.getSyncedMrimAccounts();
                 int i20 = 0;
                 int size12 = mmpAccounts.size();
                 int i21 = size12;
@@ -166,7 +166,7 @@ public final class AccountHandler extends BaseScreenHandler {
             }
             case ScreenId.WIFI_ACCOUNT_LIST:
                 if (!AppState.getBool(StateKeys.FLAG_REGISTRATION_DONE)) {
-                    Vector mmpAccounts2 = AccountManager.getMmpAccountList();
+                    Vector mmpAccounts2 = AccountManager.getSyncedMrimAccounts();
                     int size13 = mmpAccounts2.size();
                     int i24 = size13;
                     if (size13 > 0) {
@@ -192,15 +192,15 @@ public final class AccountHandler extends BaseScreenHandler {
     public int onMenuItemSelected(ListView screen, MenuItem item, String title, int action, Object data) {
         switch (screen.screenId) {
             case ScreenId.ACCOUNT_LIST:
-                return AppController.handleMapMenuOption(action);
+                return MapController.handleMapMenuOption(action);
             case ScreenId.ACCOUNTS_MENU:
-                return AppController.handleChatSettingsOption(action);
+                return handleChatSettingsOption(action);
             case ScreenId.ACCOUNT_SWITCHER:
-                return AppController.handleMenuAction(title, data);
+                return AccountManager.handleMenuAction(title, data);
             case ScreenId.REGISTRATION:
                 return 0;
             case ScreenId.MULTI_ACCOUNT_LIST:
-                return AppController.handleInputAction(action, data);
+                return AccountManager.handleInputAction(action, data);
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 ScreenManager.processScreenForm();
                 if (AppState.getInt(StateKeys.INT_SETTINGS_THEME) != AppState.getInt(StateKeys.SETTING_MULTI_ACCOUNT)) {
@@ -210,15 +210,15 @@ public final class AccountHandler extends BaseScreenHandler {
             case ScreenId.MAIL_ACCOUNT_LIST:
                 return 0;
             case ScreenId.ACCOUNT_CHECKBOX_LIST:
-                return AppController.handleAction(data);
+                return AccountManager.handleAction(data);
             case ScreenId.SUBMIT_REGISTRATION:
                 return -1;
             case ScreenId.ACCOUNT_SWITCH_OPTIONS:
-                return AppController.handleAccountSwitchOption(action);
+                return handleAccountSwitchOption(action);
             case ScreenId.XMPP_LOGIN:
                 return XmppMailRuProtocol.performLogin();
             case ScreenId.ACCOUNT_DELETE_CONFIRM:
-                return AppController.handleInviteResult();
+                return AccountManager.handleInviteResult();
             case ScreenId.XMPP_LOGIN_ALT: {
                 int loginResult = XmppMailRuProtocol.performLogin();
                 return 0 == loginResult ? ScreenId.CONTACT_LIST : loginResult;
@@ -235,9 +235,9 @@ public final class AccountHandler extends BaseScreenHandler {
                 }
                 return 0;
             case ScreenId.MRIM_ACCOUNT_SELECT:
-                return AppController.handleObjectAction(data);
+                return AccountManager.handleObjectAction(data);
             case ScreenId.WIFI_ACCOUNT_LIST:
-                return AppController.handleItemAction(data);
+                return handleItemAction(data);
         }
         return 0;
     }
@@ -304,39 +304,78 @@ public final class AccountHandler extends BaseScreenHandler {
                               Object data, Object headerData) {
         switch (screen.screenId) {
             case ScreenId.ACCOUNT_LIST:
-                return AppController.handleMapMenuOption(selectedOption);
+                return MapController.handleMapMenuOption(selectedOption);
             case ScreenId.ACCOUNTS_MENU:
-                return AppController.handleChatSettingsOption(selectedOption);
+                return handleChatSettingsOption(selectedOption);
             case ScreenId.ACCOUNT_SWITCHER:
-                return AppController.handleMenuAction(title, data);
+                return AccountManager.handleMenuAction(title, data);
             case ScreenId.REGISTRATION:
                 return 0;
             case ScreenId.MULTI_ACCOUNT_LIST:
-                return AppController.handleInputAction(selectedOption, data);
+                return AccountManager.handleInputAction(selectedOption, data);
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 return 0;
             case ScreenId.MAIL_ACCOUNT_LIST:
                 return ResourceManager.selectMailAccount(data);
             case ScreenId.ACCOUNT_CHECKBOX_LIST:
-                return AppController.handleAction(data);
+                return AccountManager.handleAction(data);
             case ScreenId.SUBMIT_REGISTRATION:
                 return -1;
             case ScreenId.ACCOUNT_SWITCH_OPTIONS:
-                return AppController.handleAccountSwitchOption(selectedOption);
+                return handleAccountSwitchOption(selectedOption);
             case ScreenId.XMPP_LOGIN:
                 return 0;
             case ScreenId.ACCOUNT_DELETE_CONFIRM:
-                return AppController.handleInviteResult();
+                return AccountManager.handleInviteResult();
             case ScreenId.XMPP_LOGIN_ALT:
                 return 0;
             case ScreenId.MMP_ACCOUNT_SELECT:
                 return 0;
             case ScreenId.MRIM_ACCOUNT_SELECT:
-                return AppController.handleObjectAction(data);
+                return AccountManager.handleObjectAction(data);
             case ScreenId.WIFI_ACCOUNT_LIST:
-                return AppController.handleItemAction(data);
+                return handleItemAction(data);
         }
         return 0;
+    }
+
+    public static int handleChatSettingsOption(int optionId) {
+        if (optionId == 22 || optionId == 143 || optionId == 24 || optionId == 23) {
+            return AccountManager.showAccountList(AccountManager.getMrimAccountList(), optionId, false);
+        }
+        if (optionId == 21 || optionId == 69 || optionId == 124) {
+            return AccountManager.showAccountList(AccountManager.copyAllAccounts(), optionId, false);
+        }
+        return 0;
+    }
+
+    public static int handleItemAction(Object accountName) {
+        AppState.setInt(StateKeys.FLAG_REGISTRATION_DONE, 1);
+        if (accountName != null) {
+            AppState.pool[StateKeys.LAST_ACCOUNT_NAME] = accountName;
+        }
+        ScreenBuilder.onScreenClosed();
+        return 0;
+    }
+
+    public static int handleAccountSwitchOption(int optionId) {
+        Contact contact = AppState.getCurrentContact();
+        switch (optionId) {
+            case 0:
+                int blockError = contact.validateBlock();
+                if (blockError != 0) {
+                    return NotificationHelper.showError(blockError);
+                }
+                return ScreenId.CONTACT_LIST;
+            case 1:
+                int unblockError = contact.validateUnblock();
+                if (unblockError != 0) {
+                    return NotificationHelper.showError(unblockError);
+                }
+                return ScreenId.CONTACT_LIST;
+            default:
+                return 0;
+        }
     }
 
     public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {

@@ -77,8 +77,8 @@ public final class HttpClient {
     public static final void closeAndUpdateStats(HttpClient client) {
         try {
             if (client.account != null && client.requestType == 0) {
-                AccountManager.updateAccountStatus(client.account, client.bytesReceived);
-                AccountManager.setAccountOption(client.account, client.bytesSent);
+                AccountManager.recordInboundTraffic(client.account, client.bytesReceived);
+                AccountManager.recordOutboundTraffic(client.account, client.bytesSent);
             } else if (client.requestType == 1) {
                 TrafficAccounting.addSentBytes(client.bytesReceived);
                 TrafficAccounting.addReceivedBytes(client.bytesSent);

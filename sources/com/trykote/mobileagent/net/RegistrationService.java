@@ -22,7 +22,7 @@ public abstract class RegistrationService {
                 if (0 != errorCode) {
                     return NotificationHelper.showError(errorCode);
                 }
-                AccountManager.setCurrentAccount(AccountManager.createAccount(0, email));
+                AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(0, email));
                 return 4;
             }
             if (Utils.parseInt((Object) statusCode) == 4004) {
@@ -81,7 +81,7 @@ public abstract class RegistrationService {
         String statusStr = AppState.getString(StateKeys.SLOT_DISPLAY_NAME);
         if (statusStr == null) {
             RemoteLogger.log("NET", "triggering refreshContactList from RegistrationService");
-            AppController.refreshContactList();
+            ContactListManager.refreshContactList();
             return;
         }
         int statusCode = Utils.parseInt((Object) statusStr);

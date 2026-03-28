@@ -17,4 +17,6 @@ public interface ScreenHandler {
                        Object data, Object headerData);
 
     int onIdleProcess(ListView screen, MenuItem item, Object data, String title);
+
+    void onMenuItemEvent(ListView screen, MenuItem item);
 }

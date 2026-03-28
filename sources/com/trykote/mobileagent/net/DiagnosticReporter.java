@@ -40,7 +40,7 @@ public abstract class DiagnosticReporter {
                 httpClient = diagClient;
                 if (diagClient.getResponseCode() == 200) {
                     Vector children = new ByteBuffer(httpClient).parseXmlStr().children;
-                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(StateKeys.SESSION_KEY)).setLongKeyAttr(102, AppController.getAppVersion()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
+                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(StateKeys.SESSION_KEY)).setLongKeyAttr(102, AppController.getFreeMemoryString()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
                     for (int i6 = 0; i6 < children.size(); i6++) {
                         XmlElement element = (XmlElement) children.elementAt(i6);
                         String tag = element.tagName;

@@ -520,4 +520,137 @@ public abstract class ScreenManager {
         }
         return 0;
     }
+
+    public static final int processPhoneInput(String fieldId) {
+        String newValue = AppState.getString(StateKeys.SLOT_STATUS_TEXT);
+        int i = 15;
+        do {
+            i--;
+            if (i < 0) {
+                return 0;
+            }
+        } while (AppState.getString(i + 48) != fieldId);
+        AppState.setObject(i + 48, (Object) newValue);
+        return 0;
+    }
+
+    public static final void setFormFields(String param1, String param2, String param3, String param4, String param5) {
+        AppState.setObject(StateKeys.SLOT_LANGUAGE_OPTION, (Object) param5);
+        AppState.setFromBuffer(StateKeys.SLOT_INIT_PARAMS, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer(), 262572, param1), 262576, param2), 524724, param3), 590268, param4), 524741, param5));
+        TimerManager.setTimer(TimerManager.SLOT_SCREEN_INIT, computeInitialState());
+    }
+
+    public static final String[] getLanguageOptions() {
+        if (!AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN)) {
+            setFormFields(null, null, null, null, null);
+        } else if (TimerManager.checkTimer(13, computeInitialState())) {
+            AppState.clearIndex(StateKeys.SLOT_INIT_PARAMS);
+        }
+        String formData = AppState.getString(StateKeys.SLOT_INIT_PARAMS);
+        if (formData == null) {
+            return null;
+        }
+        String[] strArr = new String[2];
+        strArr[0] = formData;
+        String langOption = AppState.getString(StateKeys.SLOT_LANGUAGE_OPTION);
+        strArr[1] = langOption != null ? langOption : AppState.getString(StateKeys.STR_DEFAULT_LANGUAGE);
+        return strArr;
+    }
+
+    public static final void prepareFormData() {
+        AppState.setInt(StateKeys.INT_ERROR_MSG_INDEX, 0);
+        AppState.clearIndex(StateKeys.SLOT_REG_PARAM_4);
+        AppState.pool[StateKeys.SLOT_REG_PARAM_3] = ObjectPool.newVector();
+    }
+
+    public static final void clearFormFields() {
+        AppState.clearRange(StateKeys.SLOT_INPUT_TEXT, StateKeys.RANGE_INPUT_TEXT_END);
+    }
+
+    public static final int validateServerAddress(String address) {
+        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(address));
+        return 0;
+    }
+
+    public static final int processInputText(String label) {
+        AppState.setBool(StateKeys.FLAG_SPECIAL_KEY_MODE, StringUtils.matchesKey(859, label));
+        return 0;
+    }
+
+    public static final int handleFormSubmit(Object listItem) {
+        MapController.mapContextItem = (ListItem) listItem;
+        return 0;
+    }
+
+    private static final int computeInitialState() {
+        return AppState.getBytes(StateKeys.RES_UPDATE_DATA) != null ? 60000 : 300000;
+    }
+
+    public static final int getThemeColor(int errorId) {
+        int size = AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                return 0;
+            }
+            AccountManager.getAccountByIndex(size).onError(errorId);
+        }
+    }
+
+    public static final int getThemeBackground(int optionId) {
+        switch (optionId) {
+            case 0:
+                Conversation.incrementZoom();
+                break;
+            case 1:
+                Conversation.decrementZoom();
+                break;
+            case 2:
+                AppState.setInt(StateKeys.SETTING_CUSTOM_VIEW_MODE, 1);
+                break;
+            case 3:
+                AppState.setInt(StateKeys.SETTING_CUSTOM_VIEW_MODE, 0);
+                break;
+            default:
+                return 0;
+        }
+        MapRenderer.needsRedraw = true;
+        return ScreenId.MAP;
+    }
+
+    public static final int getScreenMode1() {
+        return computeLayoutParam(1004);
+    }
+
+    public static final int getScreenMode2() {
+        return computeLayoutParam(1005);
+    }
+
+    public static final int getScreenMode3() {
+        return Integer.parseInt(StringUtils.getSystemProp(1006));
+    }
+
+    public static final int getScreenMode4() {
+        return Integer.parseInt(StringUtils.getSystemProp(1007));
+    }
+
+    public static final int computeLayoutParam(int i) {
+        return Integer.parseInt(StringUtils.getSystemProp(i), 16);
+    }
+
+    public static final int handleThemeOption(int optionId) {
+        if (optionId == 10) {
+            return ScreenManager.getIconOffset();
+        }
+        return 0;
+    }
+
+    public static final int handleSoundOption(int statusIndex) {
+        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(statusIndex + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
+        return ScreenId.STATUS_INPUT;
+    }
+
+    public static final int getIconOffset() {
+        return AppState.getBool(StateKeys.SETTING_FAST_CONNECTION) ? 10 : 55;
+    }
 }

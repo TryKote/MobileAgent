@@ -649,7 +649,7 @@ public final class Conversation implements ListItem {
                 if (!StringUtils.isEmpty(searchQuery)) {
                     new AsyncTask(AsyncTaskId.WAIT_FOR_COMPLETION, new Object[]{searchQuery, account});
                 }
-                if (AccountManager.getActiveScreenId() == 1) {
+                if (AccountManager.getTotalSyncCount() == 1) {
                     AppState.setInt(StateKeys.FLAG_CONVERSATION_ACTIVE, 1);
                 }
             }

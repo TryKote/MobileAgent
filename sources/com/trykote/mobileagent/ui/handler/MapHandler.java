@@ -43,7 +43,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_TOOLTIP));
                 break;
             case ScreenId.PEOPLE_NEARBY:
-                Vector allContacts = AccountManager.getAllAccountsList();
+                Vector allContacts = AccountManager.getAllContacts();
                 int size10 = allContacts.size();
                 while (true) {
                     size10--;
@@ -51,7 +51,7 @@ public final class MapHandler extends BaseScreenHandler {
                         if (allContacts.size() == 0) {
                             NotificationHelper.showMessageById(762);
                         } else {
-                            AppController.sortContacts(allContacts);
+                            ContactListManager.sortContacts(allContacts);
                             ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.PEOPLE_NEARBY), allContacts));
                         }
                         ObjectPool.releaseVector(allContacts);
@@ -109,7 +109,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_OPTIONS));
                 break;
         }
-        AppController.finishScreenBuild();
+        AppController.clearInitParamsAndReport();
     }
 
     public int onMenuItemSelected(ListView currentScreen, MenuItem menuItem, String title, int action, Object obj) {
@@ -132,7 +132,7 @@ public final class MapHandler extends BaseScreenHandler {
                 nextScreen = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_1))) ? NotificationHelper.showError(352) : 0;
                 break;
             case ScreenId.PEOPLE_NEARBY:
-                nextScreen = AppController.handleMapSearchAction(obj);
+                nextScreen = handleMapSearchAction(obj);
                 break;
             case ScreenId.MAP_CONTEXT_MENU:
                 nextScreen = MapController.handleMapAction(action);
@@ -163,13 +163,13 @@ public final class MapHandler extends BaseScreenHandler {
                 nextScreen = errorCode7;
                 break;
             case ScreenId.MAP_ROUTE:
-                nextScreen = AppController.handleMapResultAction(obj);
+                nextScreen = handleMapResultAction(obj);
                 break;
             case ScreenId.MAP_STATUS:
-                nextScreen = AppController.processLoginField(title);
+                nextScreen = processLoginField(title);
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
-                nextScreen = AppController.handleIncomingCall(obj);
+                nextScreen = handleMapLocationSelect(obj);
                 break;
             case ScreenId.SHARE_LOCATION:
                 ScreenManager.processScreenForm();
@@ -208,7 +208,7 @@ public final class MapHandler extends BaseScreenHandler {
                 nextScreen = 0;
                 break;
             case ScreenId.MAP_SEARCH:
-                nextScreen = AppController.handleViewOption(action);
+                nextScreen = MapController.handleViewOption(action);
                 break;
             case ScreenId.SAVED_LOCATIONS:
                 nextScreen = ResourceManager.applyLocationProfile(obj);
@@ -332,7 +332,7 @@ public final class MapHandler extends BaseScreenHandler {
                 actionResult = 0;
                 break;
             case ScreenId.PEOPLE_NEARBY:
-                actionResult = AppController.handleMapSearchAction(data);
+                actionResult = handleMapSearchAction(data);
                 break;
             case ScreenId.MAP_CONTEXT_MENU:
                 actionResult = MapController.handleMapAction(selectedOption);
@@ -341,19 +341,19 @@ public final class MapHandler extends BaseScreenHandler {
                 actionResult = 0;
                 break;
             case ScreenId.MAP_ROUTE:
-                actionResult = AppController.handleMapResultAction(data);
+                actionResult = handleMapResultAction(data);
                 break;
             case ScreenId.MAP_STATUS:
-                actionResult = AppController.processLoginField(title);
+                actionResult = processLoginField(title);
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
-                actionResult = AppController.handleIncomingCall(data);
+                actionResult = handleMapLocationSelect(data);
                 break;
             case ScreenId.SHARE_LOCATION:
                 actionResult = 0;
                 break;
             case ScreenId.MAP_SEARCH:
-                actionResult = AppController.handleViewOption(selectedOption);
+                actionResult = MapController.handleViewOption(selectedOption);
                 break;
             case ScreenId.SAVED_LOCATIONS:
                 actionResult = ResourceManager.applyLocationProfile(data);
@@ -368,6 +368,74 @@ public final class MapHandler extends BaseScreenHandler {
         return actionResult;
     }
 
+    public static final int handleMapSearchAction(Object contactObj) {
+        long lon;
+        long lat;
+        Contact contact = (Contact) contactObj;
+        String query = AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_1);
+        ListItem item = MapRenderer.tooltipItem;
+        if (item == null || !item.isSelected()) {
+            lon = MapRenderer.currentLon;
+            lat = MapRenderer.currentLat;
+        } else {
+            lon = item.getWidth();
+            lat = item.getBaseHeight();
+        }
+        int errorCode = contact.sendMessage(ResourceManager.buildTileRequestUrl(lon, lat, AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), query));
+        if (0 != errorCode) {
+            return NotificationHelper.showError(errorCode);
+        }
+        return 0;
+    }
+
+    public static final int handleMapResultAction(Object mapPointObj) {
+        AppState.setObject(StateKeys.MAP_RESOURCE_URL, (Object) ((MapPoint) mapPointObj).getResourceUrl());
+        return 0;
+    }
+
+    public static final int handleGeoSearch() {
+        long lon;
+        long lat;
+        ListItem item = MapRenderer.tooltipItem;
+        if (item != null) {
+            lon = item.getWidth();
+            lat = item.getBaseHeight();
+        } else {
+            lon = MapRenderer.currentLon;
+            lat = MapRenderer.currentLat;
+        }
+        AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
+        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), MapUtils.pixelToLongitude(lon), MapUtils.pixelToLatitude(lat)), lon, lat);
+        return ScreenId.MAP;
+    }
+
+    public static final int handleMapLocationSelect(Object obj) {
+        if (AppState.getBool(StateKeys.FLAG_NEW_MESSAGE)) {
+            MapRenderer.confirmMapPoint((MapPoint) obj);
+            return ScreenId.MAP;
+        }
+        if (!AppState.getBool(StateKeys.FLAG_CONTACTS_LOADED)) {
+            MapController.pendingMapPoint = (MapPoint) obj;
+            return ScreenId.CHAT_LIST_OPTIONS;
+        }
+        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        MapPoint mapPoint = (MapPoint) obj;
+        mrimAccount.profileManager.setSimpleLocation(MapUtils.pixelToLongitude(mapPoint.longitude), MapUtils.pixelToLatitude(mapPoint.latitude));
+        mrimAccount.profileManager.sync();
+        AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
+        return ScreenId.PROFILE_EDIT;
+    }
+
+    public static final int handleMapModeOption(int optionId) {
+        if (optionId != 0) {
+            AppState.setInt(StateKeys.FLAG_LOADING, 1);
+            return ScreenId.MAP_POINTS;
+        }
+        AppState.setInt(StateKeys.FLAG_MAP_LOADING, 1);
+        ((MrimAccount) AppState.getAccount()).isHighlighted = false;
+        return ScreenId.CLOSE;
+    }
+
     public int onIdleProcess(ListView currentScreen, MenuItem menuItem, Object data, String title) {
         boolean z5;
         long currentTime = System.currentTimeMillis();
@@ -376,7 +444,7 @@ public final class MapHandler extends BaseScreenHandler {
                 if (currentTime - AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) > 45) {
                     AppState.setLong(StateKeys.TIMESTAMP_MAP_SCROLL, currentTime);
                 }
-                if (AppController.isTimerType(10) && MapRenderer.crosshairVisible) {
+                if (TimerManager.isTimerType(TimerManager.SLOT_MAP_CROSSHAIR) && MapRenderer.crosshairVisible) {
                     if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE)) {
                         if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)) != VCard.staticTs5) && AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
                             MapUtils.requestNearbyPeople();
@@ -405,14 +473,14 @@ public final class MapHandler extends BaseScreenHandler {
                             break;
                     }
                     MapRenderer.setPosition(AppState.getLong(StateKeys.MAP_SCROLL_LON), AppState.getLong(StateKeys.MAP_SCROLL_LAT));
-                    AppController.setTimer(10, 500L);
+                    TimerManager.setTimer(TimerManager.SLOT_MAP_CROSSHAIR, 500L);
                     MapRenderer.resetInteraction();
                 }
                 if (AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) == currentTime) {
                     MapRenderer.render();
                 }
-                if (AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE) && AppController.checkTimer(7, 300000L)) {
-                    AppController.setTimer(7, 300000L);
+                if (AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE) && TimerManager.checkTimer(TimerManager.SLOT_MAP_IDLE, 300000L)) {
+                    TimerManager.setTimer(TimerManager.SLOT_MAP_IDLE, 300000L);
                     StringUtils.clearSatelliteTiles();
                     Vector vec4 = AppState.getVector(StateKeys.SLOT_MAP_DATA);
                     int size3 = vec4.size();
@@ -440,5 +508,28 @@ public final class MapHandler extends BaseScreenHandler {
             default:
                 return 0;
         }
+    }
+
+    public static int processLoginField(String protocol) {
+        if (AppState.getString(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME).equals(protocol)) {
+            ScreenBuilder.onScreenClosed();
+            if (MapController.hasRoutePoints()) {
+                return 0;
+            }
+            return NotificationHelper.showError(354);
+        }
+        if (AppState.getString(StateKeys.STR_PROTOCOL_MRIM).equals(protocol)) {
+            AppState.setInt(StateKeys.FLAG_GPS_ACTIVE, 1);
+            XmppContactGroup.stopMapAnimation(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE));
+            MapRenderer.needsRedraw = true;
+            return ScreenId.MAP;
+        }
+        if (!AppState.getString(StateKeys.STR_PROTOCOL_MMP).equals(protocol)) {
+            return 0;
+        }
+        AppState.setInt(StateKeys.FLAG_GPS_ACTIVE, 0);
+        XmppContactGroup.startMapAnimation(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE));
+        MapRenderer.needsRedraw = true;
+        return ScreenId.MAP;
     }
 }

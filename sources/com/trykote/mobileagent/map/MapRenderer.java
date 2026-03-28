@@ -425,7 +425,7 @@ public abstract class MapRenderer {
             int i47 = viewportWidth;
             int i48 = viewportHeight;
             if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE) && AppState.getBool(StateKeys.FLAG_MAP_ROUTE_SEARCH) && !XmppContactGroup.isMapDataRecent()) {
-                Vector mapContacts = AppController.getMapContacts();
+                Vector mapContacts = ContactListManager.getMapContacts();
                 int size7 = mapContacts.size();
                 if (size7 > 0) {
                     long j18 = (j16 - (i47 / 2)) / 32;
@@ -507,7 +507,7 @@ public abstract class MapRenderer {
             int i58 = viewportHeight;
             if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE) && AppState.getBool(StateKeys.FLAG_MAP_POI_SEARCH) && !XmppContactGroup.isMapDataRecent()) {
                 AppState.setInt(StateKeys.FLAG_MAP_TILES_PENDING, 0);
-                Vector mapProfiles = AppController.getMapProfiles();
+                Vector mapProfiles = ContactListManager.getMapProfiles();
                 int size8 = mapProfiles.size();
                 if (size8 != 0) {
                     MrimAccount nearestProfile = null;
@@ -683,7 +683,7 @@ public abstract class MapRenderer {
                 needsRedraw = false;
             }
         }
-        if (AppController.checkTimer(11, 2000L)) {
+        if (TimerManager.checkTimer(11, 2000L)) {
             AppState.setInt(StateKeys.FLAG_TILES_READY, 0);
         }
         Vector vector2 = animationSteps;

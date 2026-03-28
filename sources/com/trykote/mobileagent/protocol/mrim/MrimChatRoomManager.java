@@ -185,9 +185,39 @@ public final class MrimChatRoomManager {
         ScreenManager.showScreen(screen);
     }
 
+    public static final void showChatRoomSelector() {
+        ListView screen = ScreenManager.createScreen(ScreenDef.DIALOG_SCREEN);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Enumeration chatRooms = account.chatRoomManager.list.elements();
+        while (chatRooms.hasMoreElements()) {
+            ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
+            if (chatRoom != account.chatRoomManager.getLast()) {
+                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(chatRoom.name);
+                menuItem.data = chatRoom;
+                screen.addItem(menuItem);
+            }
+        }
+        ScreenManager.showScreen(screen);
+    }
+
+    public static final void showChatRoomListWithCounts() {
+        ListView screen = ScreenManager.createScreen(ScreenDef.INPUT_FORM);
+        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Enumeration chatRooms = account.chatRoomManager.list.elements();
+        while (chatRooms.hasMoreElements()) {
+            ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
+            if (chatRoom != account.chatRoomManager.getLast()) {
+                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(chatRoom.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(chatRoom.unreadCount)), 1, 0).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('/').append(chatRoom.memberCount).append(']')));
+                menuItem.data = chatRoom;
+                screen.addItem(menuItem);
+            }
+        }
+        ScreenManager.showScreen(screen);
+    }
+
     /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
-        AccountManager.markAccountHighlighted((MrimAccount) AppState.getAccount());
+        AccountManager.clearAccountHighlight((MrimAccount) AppState.getAccount());
         AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = ApiClient.submitAsync(objArr);
     }
 }

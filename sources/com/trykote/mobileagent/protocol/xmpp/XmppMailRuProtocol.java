@@ -170,7 +170,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             if (errorCode != 0) {
                 return NotificationHelper.showError(errorCode);
             }
-            AccountManager.setCurrentAccount(AccountManager.createAccount(TYPE_MMP, login));
+            AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(TYPE_MMP, login));
             return 0;
         }
         if (getAccountType() == TYPE_XMPP) {
@@ -196,7 +196,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (errorCode != 0) {
             return NotificationHelper.showError(errorCode);
         }
-        AccountManager.setCurrentAccount(AccountManager.createAccount(TYPE_MRIM, fullLogin));
+        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(TYPE_MRIM, fullLogin));
         return 0;
     }
 
@@ -354,7 +354,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (0 != iM437a) {
             return NotificationHelper.showError(iM437a);
         }
-        AccountManager.setCurrentAccount(AccountManager.createAccount(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(StateKeys.SLOT_DISPLAY_NAME))));
+        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(i, strM1215a).setDisplayName(Utils.defaultStr(AppState.getString(StateKeys.SLOT_DISPLAY_NAME))));
         return 0;
     }
 

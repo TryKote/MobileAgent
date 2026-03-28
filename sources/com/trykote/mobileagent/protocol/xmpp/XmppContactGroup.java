@@ -154,7 +154,7 @@ public final class XmppContactGroup extends ContactGroup {
             }
             if (System.currentTimeMillis() - AppState.getLong(StateKeys.TIMESTAMP_LAST_XMPP_AUTH) >= 7200000) {
                 boolean z = false;
-                Vector vectorM443V = AccountManager.getXmppAccountList();
+                Vector vectorM443V = AccountManager.copyAllAccounts();
                 int size = vectorM443V.size();
                 while (true) {
                     size--;
@@ -456,7 +456,7 @@ public final class XmppContactGroup extends ContactGroup {
     /* renamed from: a */
     public static final ByteBuffer buildSyncPayload(MrimAccount c0028ba) {
         ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(AppState.getString(StateKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(AppState.getString(StateKeys.SESSION_KEY))).writeIntMixed(513).writeIntLE(c0028ba.syncSeq).writeIntMixed(335).writeStringLatin1(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getInt(StateKeys.INT_SCREEN_WIDTH)).append('x').append(AppState.getInt(StateKeys.INT_SCREEN_HEIGHT)))).writeIntMixed(592).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_MAP_CACHE_MISS)).writeIntMixed(573).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_MAP_CACHE_HIT)).writeIntMixed(636).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_SCREEN_OPENS)).writeIntMixed(514).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_APP_STARTS)).writeIntMixed(638).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_ERRORS)).writeIntMixed(639).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_RESERVED)).writeIntMixed(640).writeIntLE(AppState.getAndClearInt(StateKeys.COUNTER_TOTAL_TRAFFIC));
-        Vector vectorM443V = AccountManager.getXmppAccountList();
+        Vector vectorM443V = AccountManager.copyAllAccounts();
         int size = vectorM443V.size();
         while (true) {
             size--;
@@ -860,7 +860,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: c */
     public static final Object[] getContactInfoFromState(int i) {
-        return addContactInfoToQueue(AppController.getUrlComponents(AppState.getString(i)));
+        return addContactInfoToQueue(ResourceManager.getUrlComponents(AppState.getString(i)));
     }
 
     /* renamed from: a */

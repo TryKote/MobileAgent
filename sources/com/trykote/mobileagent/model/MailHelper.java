@@ -84,7 +84,7 @@ public final class MailHelper {
         Vector decodedNames = splitCommaSeparated(Conversation.decodeHtmlSpecial(str2));
         Vector rawAddresses = splitCommaSeparated(str);
         for (int i = 0; i < Utils.vectorSize(rawAddresses); i++) {
-            addUniqueAddress(results, AppController.createAddressPair((String) rawAddresses.elementAt(i), (String) decodedNames.elementAt(i)));
+            addUniqueAddress(results, createAddressPair((String) rawAddresses.elementAt(i), (String) decodedNames.elementAt(i)));
         }
         ObjectPool.releaseVector(decodedNames);
         ObjectPool.releaseVector(rawAddresses);
@@ -347,5 +347,9 @@ public final class MailHelper {
         Vector vectorM1213g = ObjectPool.newVector();
         vectorM1213g.addElement(str);
         IOUtils.setSelectedItems(vectorM1213g);
+    }
+
+    public static String[] createAddressPair(String address1, String address2) {
+        return new String[]{address1, address2};
     }
 }

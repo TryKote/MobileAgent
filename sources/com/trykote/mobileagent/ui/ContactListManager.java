@@ -36,7 +36,7 @@ public abstract class ContactListManager {
         updateState();
         MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
         AppState.setCurrentEntity(c0032cM69e == null ? null : c0032cM69e.data);
-        return AppController.handleGameAction();
+        return validateContactAction();
     }
 
     /* renamed from: f */
@@ -91,7 +91,7 @@ public abstract class ContactListManager {
             return 0;
         }
         AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
-        AppController.clearSearchState();
+        openContactMessages();
         return ((Contact) obj).getDefaultAction();
     }
 
@@ -224,9 +224,9 @@ public abstract class ContactListManager {
         if (!AppState.getBool(StateKeys.SETTING_SHOW_OFFLINE)) {
             boolean z = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
             Account abstractC0037h = TabBar.currentAccount;
-            Vector vectorM445W = abstractC0037h == null ? AccountManager.getAllAccountsList() : abstractC0037h.getAllContacts();
+            Vector vectorM445W = abstractC0037h == null ? AccountManager.getAllContacts() : abstractC0037h.getAllContacts();
             Vector vector = vectorM445W;
-            int iM353a = AppController.sortContacts(vectorM445W);
+            int iM353a = sortContacts(vectorM445W);
             for (int i2 = 0; i2 < iM353a; i2++) {
                 Contact abstractC0041l = (Contact) vector.elementAt(i2);
                 if (!abstractC0041l.canUnblock() && (abstractC0041l.hasMessages() || abstractC0041l.isOnline() || (!abstractC0041l.canUnblock() && (z || (((zM1056C = abstractC0041l.account.isConnected()) && abstractC0041l.highlighted) || (!zM1056C && abstractC0041l.isOffline())))))) {
@@ -239,7 +239,7 @@ public abstract class ContactListManager {
             boolean zM587e = AppState.getBool(StateKeys.SETTING_SHOW_GROUPS);
             boolean z2 = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
             Vector vectorM1213g = ObjectPool.newVector();
-            Vector vectorM446d = AccountManager.getAccountConversations(TabBar.currentAccount);
+            Vector vectorM446d = AccountManager.getContactGroups(TabBar.currentAccount);
             int size = vectorM446d.size();
             while (true) {
                 size--;
@@ -278,7 +278,7 @@ public abstract class ContactListManager {
                 }
             }
             ObjectPool.releaseVector(vectorM446d);
-            int iM353a2 = AppController.sortContacts(vectorM1213g);
+            int iM353a2 = sortContacts(vectorM1213g);
             for (int i4 = 0; i4 < iM353a2; i4++) {
                 ContactGroup abstractC0046q2 = (ContactGroup) vectorM1213g.elementAt(i4);
                 boolean z3 = false;
@@ -288,7 +288,7 @@ public abstract class ContactListManager {
                 }
                 if (abstractC0046q2.isNotSpecial()) {
                     Vector vector3 = abstractC0046q2.contacts;
-                    int iM353a3 = AppController.sortContacts(vector3);
+                    int iM353a3 = sortContacts(vector3);
                     for (int i5 = 0; i5 < iM353a3; i5++) {
                         Contact abstractC0041l2 = (Contact) vector3.elementAt(i5);
                         if (shouldDisplayContact(z2, abstractC0041l2)) {
@@ -383,7 +383,7 @@ public abstract class ContactListManager {
             }
             if (c0054y8 != null) {
                 Vector vector4 = c0054y8.contacts;
-                int iM353a4 = AppController.sortContacts(vector4);
+                int iM353a4 = sortContacts(vector4);
                 c0013amM75b.addItem(c0054y8.createMenuItem(iM353a4).setLayout(iM586d, i));
                 if (c0054y8.isNotSpecial()) {
                     for (int i10 = 0; i10 < iM353a4; i10++) {
@@ -394,7 +394,7 @@ public abstract class ContactListManager {
             }
             if (c0054y5 != null) {
                 Vector vector5 = c0054y5.contacts;
-                int iM353a5 = AppController.sortContacts(vector5);
+                int iM353a5 = sortContacts(vector5);
                 c0013amM75b.addItem(c0054y5.createMenuItem(iM353a5).setLayout(iM586d, i));
                 if (c0054y5.isNotSpecial()) {
                     for (int i11 = 0; i11 < iM353a5; i11++) {
@@ -405,7 +405,7 @@ public abstract class ContactListManager {
             }
             if (c0054y7 != null) {
                 Vector vector6 = c0054y7.contacts;
-                int iM353a6 = AppController.sortContacts(vector6);
+                int iM353a6 = sortContacts(vector6);
                 c0013amM75b.addItem(c0054y7.createMenuItem(iM353a6).setLayout(iM586d, i));
                 if (c0054y7.isNotSpecial()) {
                     for (int i12 = 0; i12 < iM353a6; i12++) {
@@ -416,7 +416,7 @@ public abstract class ContactListManager {
             }
             if (c0054y6 != null) {
                 Vector vector7 = c0054y6.contacts;
-                int iM353a7 = AppController.sortContacts(vector7);
+                int iM353a7 = sortContacts(vector7);
                 c0013amM75b.addItem(c0054y6.createMenuItem(iM353a7).setLayout(iM586d, i));
                 if (c0054y6.isNotSpecial()) {
                     for (int i13 = 0; i13 < iM353a7; i13++) {
@@ -427,8 +427,8 @@ public abstract class ContactListManager {
             }
         } else {
             int i14 = i / iM586d;
-            Vector vectorM446d2 = AccountManager.getAccountConversations(TabBar.currentAccount);
-            int iM353a8 = AppController.sortContacts(vectorM446d2);
+            Vector vectorM446d2 = AccountManager.getContactGroups(TabBar.currentAccount);
+            int iM353a8 = sortContacts(vectorM446d2);
             boolean zM587e2 = AppState.getBool(StateKeys.SETTING_SHOW_GROUPS);
             boolean z4 = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
             for (int i15 = 0; i15 < iM353a8; i15++) {
@@ -440,7 +440,7 @@ public abstract class ContactListManager {
                 }
                 if (abstractC0046q3.isNotSpecial()) {
                     Vector vector8 = abstractC0046q3.contacts;
-                    int iM353a9 = AppController.sortContacts(vector8);
+                    int iM353a9 = sortContacts(vector8);
                     for (int i16 = 0; i16 < iM353a9; i16++) {
                         Contact abstractC0041l3 = (Contact) vector8.elementAt(i16);
                         if (shouldDisplayContact(z4, abstractC0041l3)) {
@@ -470,7 +470,7 @@ public abstract class ContactListManager {
                     if (size8 > 0) {
                         c0013amM75b.addItem(abstractC0046q4.createMenuItem(size8).setLayout(iM586d, i));
                         if (abstractC0046q4.isNotSpecial()) {
-                            AppController.sortContacts(vectorMo720O2);
+                            sortContacts(vectorMo720O2);
                             for (int i18 = 0; i18 < size8; i18++) {
                                 c0013amM75b.addItem(((Contact) vectorMo720O2.elementAt(i18)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -494,7 +494,7 @@ public abstract class ContactListManager {
                     if (size9 > 0) {
                         c0013amM75b.addItem(abstractC0046q5.createMenuItem(size9).setLayout(iM586d, i));
                         if (abstractC0046q5.isNotSpecial()) {
-                            AppController.sortContacts(vectorM1077N2);
+                            sortContacts(vectorM1077N2);
                             for (int i20 = 0; i20 < size9; i20++) {
                                 c0013amM75b.addItem(((Contact) vectorM1077N2.elementAt(i20)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -518,7 +518,7 @@ public abstract class ContactListManager {
                     if (size10 > 0) {
                         c0013amM75b.addItem(abstractC0046q6.createMenuItem(size10).setLayout(iM586d, i));
                         if (abstractC0046q6.isNotSpecial()) {
-                            AppController.sortContacts(vectorM1079Q2);
+                            sortContacts(vectorM1079Q2);
                             for (int i22 = 0; i22 < size10; i22++) {
                                 c0013amM75b.addItem(((Contact) vectorM1079Q2.elementAt(i22)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -542,7 +542,7 @@ public abstract class ContactListManager {
                     if (size11 > 0) {
                         c0013amM75b.addItem(abstractC0046q7.createMenuItem(size11).setLayout(iM586d, i));
                         if (abstractC0046q7.isNotSpecial()) {
-                            AppController.sortContacts(vectorM1076M2);
+                            sortContacts(vectorM1076M2);
                             for (int i24 = 0; i24 < size11; i24++) {
                                 c0013amM75b.addItem(((Contact) vectorM1076M2.elementAt(i24)).createMenuItem().setLayout(iM586d, i14));
                             }
@@ -574,7 +574,7 @@ public abstract class ContactListManager {
             } else if (item instanceof ContactInfo) {
                 ContactInfo contactInfo = (ContactInfo) item;
                 if (contactInfo.getAccount() instanceof MrimAccount) {
-                    MenuItem entry = MenuItem.createDefault().setIcon(AppController.handleServerAction(Utils.parseIntBounded(contactInfo.getString(10), 0, 4, 0), contactInfo.getString(12))).addText(Utils.withComma(contactInfo.getDisplayName()), 1, 0).setLabel(contactInfo.getString(3));
+                    MenuItem entry = MenuItem.createDefault().setIcon(AppController.resolveServerIcon(Utils.parseIntBounded(contactInfo.getString(10), 0, 4, 0), contactInfo.getString(12))).addText(Utils.withComma(contactInfo.getDisplayName()), 1, 0).setLabel(contactInfo.getString(3));
                     entry.data = contactInfo;
                     menuItem = entry;
                 } else {
@@ -667,7 +667,7 @@ public abstract class ContactListManager {
                 contacts.removeElementAt(size);
             }
         }
-        AppController.sortContacts(contacts);
+        sortContacts(contacts);
         for (int i = 0; i < contacts.size(); i++) {
             MrimContact mrimContact2 = (MrimContact) contacts.elementAt(i);
             String str = mrimContact2.simpleIdentifier;
@@ -747,7 +747,7 @@ public abstract class ContactListManager {
         if (i == 40 || i == 63 || i == 85) {
             ScreenBuilder.onScreenClosed();
             if (i != 85) {
-                AppController.clearSearchState();
+                openContactMessages();
             }
         }
         if (StringUtils.matchesKey(717, str)) {
@@ -759,7 +759,7 @@ public abstract class ContactListManager {
         }
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
-            AppController.clearSearchState();
+            openContactMessages();
             return ResourceManager.clearSmsFields();
         }
         if (i == 66) {
@@ -774,10 +774,123 @@ public abstract class ContactListManager {
             ListItem item = (ListItem) obj;
             item.deselect();
             MapController.selectMapItem(item);
-            AppController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
+            MapController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
             AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
         }
         return i;
+    }
+
+    public static final int sortContacts(Vector vector) {
+        int size = vector.size();
+        sortRange(vector, 0, size - 1);
+        return size;
+    }
+
+    private static final void sortRange(Vector vector, int left, int right) {
+        if (left < right) {
+            if (left + 1 == right) {
+                if (((Sortable) vector.elementAt(left)).compareTo(vector.elementAt(right)) > 0) {
+                    Utils.swapElements(vector, left, right);
+                    return;
+                }
+                return;
+            }
+            int lo = left;
+            int hi = right;
+            boolean moveLow = true;
+            while (lo < hi) {
+                if (((Sortable) vector.elementAt(lo)).compareTo(vector.elementAt(hi)) > 0) {
+                    Utils.swapElements(vector, lo, hi);
+                    moveLow = !moveLow;
+                }
+                if (moveLow) {
+                    lo++;
+                } else {
+                    hi--;
+                }
+            }
+            sortRange(vector, left, lo - 1);
+            sortRange(vector, hi + 1, right);
+        }
+    }
+
+    public static final Vector getMapContacts() {
+        Vector result = ObjectPool.newVector();
+        Vector mrimAccounts = AccountManager.getMrimAccountList();
+        int size = mrimAccounts.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                return result;
+            }
+            Vector contacts = AccountManager.getMrimAccount(mrimAccounts, size).getAllContacts();
+            int size2 = contacts.size();
+            while (true) {
+                size2--;
+                if (size2 < 0) {
+                    break;
+                }
+                MrimContact contact = (MrimContact) contacts.elementAt(size2);
+                if (contact.hasVCard()) {
+                    result.addElement(contact);
+                }
+            }
+            ObjectPool.releaseVector(contacts);
+        }
+    }
+
+    public static final Vector getMapProfiles() {
+        Vector result = ObjectPool.newVector();
+        Vector mrimAccounts = AccountManager.getMrimAccountList();
+        int size = mrimAccounts.size();
+        while (true) {
+            size--;
+            if (size < 0) {
+                return result;
+            }
+            MrimAccount account = AccountManager.getMrimAccount(mrimAccounts, size);
+            if (account.profileManager.profile.hasCoordinates()) {
+                result.addElement(account);
+            }
+        }
+    }
+
+    public static final void openContactMessages() {
+        Contact contact = AppState.getCurrentContact();
+        markContactUnread(contact);
+        contact.flags = (byte) 0;
+        contact.dirty = true;
+        contact.updateRenderState();
+        ScreenManager.showScreen(contact.showMessages().measureContent());
+    }
+
+    public static final void markContactRead(Contact contact) {
+        TimerManager.resetBacklightTimer();
+        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        if (contacts.contains(contact)) {
+            return;
+        }
+        contacts.addElement(contact);
+        TabBar.layout();
+    }
+
+    public static final void markContactUnread(Contact contact) {
+        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        if (contacts.contains(contact)) {
+            Utils.removeFrom(contacts, contact);
+            TabBar.layout();
+        }
+    }
+
+    public static final void deleteContact(Contact contact) {
+        contact.clearStatus();
+        AppState.getVector(StateKeys.VEC_PENDING_CONNECTIONS).removeElement(contact);
+        AppController.needsLayoutUpdate = true;
+    }
+
+    public static final void refreshContactList() {
+        RemoteLogger.log("CL", "refreshContactList called");
+        AppState.clearRange(StateKeys.RANGE_ACCOUNT_CACHE_START, StateKeys.RANGE_ACCOUNT_CACHE_END);
     }
 
     public static void paintPopup(GraphicsContext g, int clipX, int clipY, int clipW, int clipH) {
@@ -815,5 +928,18 @@ public abstract class ContactListManager {
             g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, barTop, 36);
             screenHeight -= barHeight;
         }
+    }
+
+    public static int validateContactAction() {
+        Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
+        if (obj == null || !(obj instanceof Contact)) {
+            return 0;
+        }
+        Contact contact = (Contact) obj;
+        if (!contact.account.isConnected()) {
+            return NotificationHelper.showError(299);
+        }
+        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        return (contact.isSystem() || contact.isOffline()) ? 0 : ScreenId.CONTACT_DELETE;
     }
 }

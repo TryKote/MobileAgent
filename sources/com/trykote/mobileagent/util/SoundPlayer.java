@@ -38,7 +38,7 @@ public final class SoundPlayer {
                     playerCreatePlayer.start();
                 } catch (Throwable unused4) {
                 }
-                AppController.setTimer(6, 10000L);
+                TimerManager.setTimer(TimerManager.SLOT_SOUND, 10000L);
             }
         } catch (Throwable unused5) {
         }
@@ -65,7 +65,7 @@ public final class SoundPlayer {
     /* renamed from: a */
     public static final void checkSoundTimer() {
         boolean z;
-        long[] jArr = AppController.timers;
+        long[] jArr = TimerManager.timers;
         long j = jArr[6];
         if (j == 0 || j >= System.currentTimeMillis()) {
             z = false;

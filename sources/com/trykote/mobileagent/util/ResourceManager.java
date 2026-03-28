@@ -102,7 +102,7 @@ public final class ResourceManager {
             if (z) {
                 Display.getDisplay(AppState.getMidlet()).vibrate(250);
             }
-            if (i == 0 || AppState.getBool(StateKeys.SETTING_NOTIFICATION_ENABLED) || !AppController.checkTimer(8, 1000L)) {
+            if (i == 0 || AppState.getBool(StateKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(8, 1000L)) {
                 return;
             }
             SoundPlayer.playSound(i);
@@ -111,7 +111,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void resetClock() {
-        AppController.timers[4] = 0;
+        TimerManager.timers[4] = 0;
         lastMinute = -1;
         clockWidth = 0;
         AppState.clearIndex(StateKeys.SLOT_CLOCK_STRING);
@@ -122,7 +122,7 @@ public final class ResourceManager {
     public static final void updateClock() {
         Calendar calendar;
         int i;
-        if (!AppController.checkTimer(4, 1000L) || (i = (calendar = AppState.getCalendar()).get(12)) == lastMinute) {
+        if (!TimerManager.checkTimer(4, 1000L) || (i = (calendar = AppState.getCalendar()).get(12)) == lastMinute) {
             return;
         }
         String timeStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(calendar.get(11))).append(':').append(Utils.zeroPad(i)));
@@ -595,22 +595,22 @@ public final class ResourceManager {
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(AppController.getCurrentSearchResult().userId, 1));
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[StateKeys.OBJ_SEARCH_RESULT]).userId, 1));
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.CONTACT_DELETE;
             case 1:
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(AppController.getCurrentSearchResult().userId, 2));
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[StateKeys.OBJ_SEARCH_RESULT]).userId, 2));
                 return ScreenId.MAP;
             case 2:
-                return AppController.showPeopleNearby();
+                return AppController.dialPhoneContactNext();
             case 3:
-                return AppController.showPeopleSearch();
+                return AppController.dialPhoneContactPrev();
             default:
                 AppState.setInt(StateKeys.INT_ASYNC_TASK_ID, 0);
-                AppController.openUserProfile((MrimAccount) null, AppController.getCurrentSearchResult().userId);
+                AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) AppState.pool[StateKeys.OBJ_SEARCH_RESULT]).userId);
                 ScreenBuilder.onScreenClosed();
                 return 0;
         }
@@ -1079,5 +1079,9 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final ByteBuffer createAddToGroupCmd(MrimAccount mrimAccount, MrimContact mrimContact, MrimContactGroup group) {
         return mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(group.serverId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), integerOf(MrimAccount.RESP_MOVE_TO_GROUP), mrimContact, group});
+    }
+
+    public static Object[] getUrlComponents(String str) {
+        return new Object[]{integerOf(20), str};
     }
 }

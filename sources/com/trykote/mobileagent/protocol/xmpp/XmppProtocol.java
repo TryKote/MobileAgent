@@ -320,7 +320,7 @@ public class XmppProtocol extends Account {
                 break;
             default:
                 this.connection.drainInput(this.dataBuffer);
-                AccountManager.updateAccountStatus(this, this.dataBuffer.length);
+                AccountManager.recordInboundTraffic(this, this.dataBuffer.length);
                 Object[] state = this.parserState;
                 ByteBuffer inputBuffer = this.dataBuffer;
                 ByteBuffer parserBuffer = (ByteBuffer) state[1];
@@ -485,7 +485,7 @@ public class XmppProtocol extends Account {
             closeConnection();
             this.lastError = getDefaultError();
         }
-        if (this.timeout <= 0 || !AppController.isTimerExpired(this.deadline)) {
+        if (this.timeout <= 0 || !TimerManager.isTimerExpired(this.deadline)) {
             return;
         }
         sendRawBytes(new byte[]{32});

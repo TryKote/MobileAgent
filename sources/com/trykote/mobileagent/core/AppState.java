@@ -159,7 +159,7 @@ public abstract class AppState {
         pool[StateKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
         // Event type arrays removed — replaced by CommandEvent singletons
         StringUtils.initPlatform();
-        AppController.timers = new long[14];
+        TimerManager.timers = new long[14];
         pool[StateKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
         ObjectPool.cacheString(separator);
         ObjectPool.cacheString(getEllipsis());
@@ -344,7 +344,7 @@ public abstract class AppState {
     /* renamed from: b */
     public static final void setScreen(Object obj) {
         currentScreen = obj;
-        AppController.setTimer(0, AppController.getSessionTimestamp());
+        TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
     }
 
     /* renamed from: e */

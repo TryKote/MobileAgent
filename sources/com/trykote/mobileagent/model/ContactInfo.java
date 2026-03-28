@@ -315,7 +315,7 @@ public final class ContactInfo extends Hashtable {
                             screen.addLabelValue(label, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.substring(fieldVal, 8, 10)).append('/').append(StringUtils.substring(fieldVal, 5, 7)).append('/').append(StringUtils.prefix(fieldVal, 4))));
                         } else {
                             if (i3 == 10) {
-                                screen.addItem(MenuItem.createSeparator().addText(label, 0, 6).setIcon(mrimContact == null ? AppController.handleServerAction(Utils.parseIntBounded(fieldVal, 0, 4, 0), Utils.defaultStr(getString(12))) : mrimContact.getIcon()).setLabel(Utils.defaultStr(getString(13))));
+                                screen.addItem(MenuItem.createSeparator().addText(label, 0, 6).setIcon(mrimContact == null ? AppController.resolveServerIcon(Utils.parseIntBounded(fieldVal, 0, 4, 0), Utils.defaultStr(getString(12))) : mrimContact.getIcon()).setLabel(Utils.defaultStr(getString(13))));
                                 break;
                             }
                             screen.addLabelValue(label, i3 == 9 ? Utils.formatPhone(Utils.extractDigits(fieldVal)) : fieldVal);

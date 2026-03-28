@@ -195,7 +195,7 @@ public abstract class Account {
     }
 
     public final int sendData(ByteBuffer buffer) {
-        AccountManager.setAccountOption(this, buffer.length);
+        AccountManager.recordOutboundTraffic(this, buffer.length);
         ConnectionThread conn = this.connection;
         if (conn.exception != null) {
             throw new RuntimeException();
@@ -357,7 +357,7 @@ public abstract class Account {
                 }
                 Contact contact = group.getContact(size2);
                 removeContact(contact, false);
-                AppController.markContactUnread(contact);
+                ContactListManager.markContactUnread(contact);
             }
             removeGroup(group);
         }
@@ -380,7 +380,7 @@ public abstract class Account {
         if (contact == null || contact.isOnline() || contact.hasUnread() || contact.isSystem()) {
             return;
         }
-        AppController.deleteContact(contact);
+        ContactListManager.deleteContact(contact);
         AppState.getVector(StateKeys.VEC_PENDING_CONNECTIONS).addElement(contact);
         contact.statusCode = AppState.getInt(StateKeys.INT_CURRENT_TIMESTAMP);
         contact.dirty = true;
@@ -389,7 +389,7 @@ public abstract class Account {
     public final void markRead(String contactId) {
         Contact contact = getContact((Object) contactId);
         if (contact != null) {
-            AppController.deleteContact(contact);
+            ContactListManager.deleteContact(contact);
         }
     }
 
@@ -437,7 +437,7 @@ public abstract class Account {
             size--;
             if (size < 0) {
                 this.defaultGroup.removeElement(contact);
-                AppController.markContactUnread(contact);
+                ContactListManager.markContactUnread(contact);
                 return 0;
             }
             getGroup(size).removeElement(contact);

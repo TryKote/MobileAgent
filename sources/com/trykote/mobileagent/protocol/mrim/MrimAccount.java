@@ -248,7 +248,7 @@ public final class MrimAccount extends Account implements ListItem {
                 this.connection.drainInput(this.dataBuffer);
                 int dataLen = this.dataBuffer.length;
                 if (dataLen > 0) {
-                    AccountManager.updateAccountStatus((Account) this, dataLen);
+                    AccountManager.recordInboundTraffic((Account) this, dataLen);
                     this.msgCount = 60;
                     StringBuffer sb = ObjectPool.newStringBuffer();
                     while (dataLen > 0) {
@@ -289,13 +289,13 @@ public final class MrimAccount extends Account implements ListItem {
                     closeConnection();
                     this.lastError = getDefaultError();
                 }
-                if (this.timeout <= 0 || !AppController.isTimerExpired(this.deadline)) {
+                if (this.timeout <= 0 || !TimerManager.isTimerExpired(this.deadline)) {
                     return;
                 }
                 trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_PING, (ByteBuffer) null));
                 return;
             }
-            AccountManager.processAccountData((Account) this, packet);
+            AccountManager.recordInboundPacket((Account) this, packet);
             int msgType = packet.peekIntAt(12);
             int seqId = packet.peekIntAt(8);
             packet.skip(44);
@@ -308,7 +308,7 @@ public final class MrimAccount extends Account implements ListItem {
                     incrementSync();
                     break;
                 case MrimCommand.CS_MAIL_NOTIFY:
-                    AppController.handleMrimMailNotify(this, packet);
+                    handleMailNotify(packet);
                     break;
                 case MrimCommand.CS_MESSAGE_ACK:
                     Conversation.handleMessage(this, packet, 0L);
@@ -406,7 +406,7 @@ public final class MrimAccount extends Account implements ListItem {
             int prevCount = contact.unreadCount;
             contact.unreadCount = statusCode;
             contact.statusMessage = statusMsg;
-            contact.defaultIcon = AppController.handleServerAction(statusCode, statusTitle);
+            contact.defaultIcon = AppController.resolveServerIcon(statusCode, statusTitle);
             contact.highlighted = statusCode != 0;
             if (statusCode == 0) {
                 contact.clearVCard();
@@ -607,7 +607,7 @@ public final class MrimAccount extends Account implements ListItem {
             this.profileManager.profile.phone = cardFields[3];
         }
         this.profileManager.profile.dirty = true;
-        if (AccountManager.getActiveScreenId() == 10) {
+        if (AccountManager.getTotalSyncCount() == 10) {
             EventDispatcher.postNotification(AppState.getString(StateKeys.STR_MRIM_DISCONNECT));
         }
     }
@@ -1090,6 +1090,39 @@ public final class MrimAccount extends Account implements ListItem {
         }
     }
 
+    public final void handleMailNotify(ByteBuffer buffer) {
+        buffer.readInt();
+        switch (buffer.readInt() & 255) {
+            case 65:
+                processMailData(490);
+                break;
+            case 66:
+                processMailData(491);
+                break;
+            case 67:
+            case 69:
+            case 70:
+            case 71:
+            case 72:
+            default:
+                handleError(0);
+                DiagnosticReporter.checkCrashReport();
+                break;
+            case 68:
+                processMailData(492);
+                break;
+            case 73:
+                handleComplete();
+                break;
+        }
+    }
+
+    private final void processMailData(int errorCode) {
+        EventDispatcher.postAccountError(this, errorCode);
+        closeConnection();
+        lastError = getDefaultError();
+    }
+
     public final void notifyNewMail(int i, String str, String str2) {
         boolean showPopup = AppState.getBool(StateKeys.SETTING_SHOW_POPUP);
         boolean showInList = AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST);
@@ -1101,7 +1134,7 @@ public final class MrimAccount extends Account implements ListItem {
                 }
                 ResourceManager.playNotificationSound(0);
             }
-            if (showPopup && (AccountManager.getActiveScreenId() != 10 || !AppState.hasMemory())) {
+            if (showPopup && (AccountManager.getTotalSyncCount() != 10 || !AppState.hasMemory())) {
                 StringBuffer sb = ObjectPool.newStringBuffer();
                 if (str2 != null && str != null) {
                     EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StateKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(StateKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StateKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(StateKeys.STR_MAIL_PREFIX)).toString())));
@@ -1111,8 +1144,8 @@ public final class MrimAccount extends Account implements ListItem {
             }
             if (showInList) {
                 if (i > 0 || !(str2 == null || str == null)) {
-                    AppController.markScreenDirty();
-                    AccountManager.markAccountHighlighted(this);
+                    TimerManager.resetBacklightTimer();
+                    AccountManager.clearAccountHighlight(this);
                     if (AppState.getBool(StateKeys.SETTING_SHOW_IN_LIST)) {
                         AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).addElement(this);
                     }

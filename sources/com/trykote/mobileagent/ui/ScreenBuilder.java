@@ -15,7 +15,7 @@ public final class ScreenBuilder {
         RemoteLogger.log("UI", "openScreen(" + i + ")");
         boolean z;
         int i2;
-        AppController.markScreenDirty();
+        TimerManager.resetBacklightTimer();
         AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
@@ -38,7 +38,7 @@ public final class ScreenBuilder {
         ScreenHandler handler = ScreenHandlerRegistry.getHandler(i);
         if (handler != null) {
             handler.buildScreen(i);
-            AppController.finishScreenBuild();
+            AppController.clearInitParamsAndReport();
             return;
         }
         switch (i) {
@@ -221,7 +221,7 @@ public final class ScreenBuilder {
             handler.onScreenClosed(ScreenManager.getCurrentScreen());
         } else switch (ScreenManager.getCurrentScreen().screenId) {
             case ScreenId.UNUSED_138:
-                AppController.refreshContactList();
+                ContactListManager.refreshContactList();
                 break;
         }
         Vector screenStack = AppState.getVector(StateKeys.VEC_SCREEN_STACK);

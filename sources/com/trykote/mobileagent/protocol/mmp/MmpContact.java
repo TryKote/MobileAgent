@@ -119,7 +119,7 @@ public final class MmpContact extends Contact {
         byte savedFlags = buffer.readByte();
         this.flags = savedFlags;
         if (savedFlags != 0) {
-            AppController.markContactRead((Contact) this);
+            ContactListManager.markContactRead((Contact) this);
         }
         this.defaultIcon = 255;
         this.identifier = account.encodeId().writeRawString(this.identifier).readAllByteStr();

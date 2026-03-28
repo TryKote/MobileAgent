@@ -26,6 +26,8 @@ public final class MapController {
 
     public static ListItem mapContextItem;
 
+    public static MapPoint pendingMapPoint;
+
     public static final void showMapScreen() {
         initMapState();
         AppState.setInt(StateKeys.INT_CONNECTION_STATE, 6);
@@ -83,7 +85,7 @@ public final class MapController {
         StringUtils.initTileCache();
         AppState.pool[StateKeys.VEC_CHATROOM_LIST] = ObjectPool.newVector();
         AppState.pool[StateKeys.OBJ_SEARCH_PARAMS_1] = ObjectPool.newVector();
-        Object[] objArrM332c = AppController.getUrlComponents(AppState.emptyStr);
+        Object[] objArrM332c = ResourceManager.getUrlComponents(AppState.emptyStr);
         AppState.pool[StateKeys.OBJ_TILE_REQUEST_ARRAY] = objArrM332c;
         XmppContactGroup.addContactInfoToQueue(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
@@ -477,5 +479,123 @@ public final class MapController {
                 Conversation.decrementZoom();
                 return ScreenId.MAP;
         }
+    }
+
+    public static final void applyViewMode(boolean showMap, boolean showList, boolean shouldInvalidate) {
+        AppState.setBool(StateKeys.FLAG_MAP_VIEW_ACTIVE, showMap);
+        AppState.setBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE, showList);
+        if (!shouldInvalidate || !MapController.mapInitialized) {
+            return;
+        }
+        int i = 11;
+        while (true) {
+            i--;
+            if (i < 0) {
+                MmpContact.clearLocationData();
+                StringUtils.initTileCache();
+                ServiceRegistry.clearPhotoCache();
+                MapRenderer.needsRedraw = true;
+                return;
+            }
+            XmppContactGroup.invalidateCachedImage(i + 18);
+        }
+    }
+
+    public static final int handleMapMenuOption(int optionId) {
+        int activeCount = AccountManager.getActiveAccountCount();
+        if (optionId == 15) {
+            if (activeCount == 0) {
+                return NotificationHelper.showError(551);
+            }
+            if (activeCount == 1) {
+                AccountManager.toggleAllConnections();
+                return ScreenId.CONTACT_LIST;
+            }
+        } else {
+            if (optionId == 3) {
+                Vector accounts = AccountManager.copyAllAccounts();
+                int result = AccountManager.showAccountList(accounts, 3, true);
+                if (result != 39) {
+                    return result;
+                }
+                accounts.insertElementAt(accounts, 0);
+                return ScreenId.ACCOUNT_CHECKBOX_LIST;
+            }
+            if (optionId == 152) {
+                return AccountManager.showAccountList(AccountManager.getMrimAccountList(), 152, true);
+            }
+        }
+        if (optionId == 10) {
+            return ScreenManager.getIconOffset();
+        }
+        if (optionId != 6) {
+            return 0;
+        }
+        AppState.setInt(StateKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
+        return 0;
+    }
+
+    public static final int handleMapPointAction(Object obj) {
+        if (AppState.getBool(StateKeys.FLAG_NEW_MESSAGE)) {
+            MapRenderer.confirmMapPoint((MapPoint) obj);
+            return 0;
+        }
+        if (!AppState.getBool(StateKeys.FLAG_LOADING)) {
+            MapController.navigateToPoint((MapPoint) obj, true);
+            return 0;
+        }
+        MapPoint mapPoint = (MapPoint) obj;
+        ((MrimAccount) AppState.getAccount()).profileManager.setMapLocation(mapPoint);
+        XmppContactGroup.addMapPointIfNew(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
+        XmppContactGroup.saveMapPoints(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), 225);
+        AppState.setInt(StateKeys.FLAG_LOADING, 0);
+        return ScreenId.PROFILE_EDIT;
+    }
+
+    public static final int handleViewOption(int optionId) {
+        if (optionId == 120) {
+            if (!MapController.hasRoutePoints()) {
+                return NotificationHelper.showError(354);
+            }
+            AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 1);
+            return 0;
+        }
+        if (optionId != 100) {
+            return optionId == 0 ? ScreenId.MAP : 0;
+        }
+        AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 1);
+        return 0;
+    }
+
+    public static final int handleSearchResultAction(Object regionObj) {
+        MapRenderer.invalidate();
+        GeoRegion region = (GeoRegion) regionObj;
+        MapRenderer.setPosition(region.centerLat, region.centerLon);
+        MapRenderer.setZoom(region == StringUtils.getGeoRegion() ? 3 : 11);
+        return 0;
+    }
+
+    public static final int processSearchQuery(String str) {
+        if (!AppState.getString(StateKeys.STR_PROTOCOL_XMPP).equals(str)) {
+            return 0;
+        }
+        if (MapRenderer.selectedMapPoint != null) {
+            MapRenderer.selectedMapPoint.markInactive();
+        }
+        XmppContactGroup.startMapAnimation(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE));
+        AppState.setInt(StateKeys.FLAG_GPS_ACTIVE, 0);
+        MmpContact.clearLocationData();
+        MapRenderer.needsRedraw = true;
+        XmppContactGroup.lastCheckTs = System.currentTimeMillis();
+        MapRenderer.needsRedraw = true;
+        return 0;
+    }
+
+    public static final int handleLocationAction(Object locationData) {
+        if (locationData == null) {
+            return 0;
+        }
+        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(locationData));
+        return 0;
     }
 }

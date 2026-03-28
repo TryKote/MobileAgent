@@ -61,7 +61,7 @@ public final class Message {
 
     public Message(Vector vector, String str, String str2) {
         MrimAccount account = (MrimAccount) AppState.getAccount();
-        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), AppController.createAddressPair(account.login, Utils.defaultStr(account.chatRoomManager.nickname)));
+        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), MailHelper.createAddressPair(account.login, Utils.defaultStr(account.chatRoomManager.nickname)));
         this.ccList = vector;
         this.subject = str;
         this.body = str2;

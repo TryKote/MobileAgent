@@ -92,7 +92,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 AppController.clearPreviewState();
                 return;
             case ScreenId.SEND_TO_CONTACT:
-                Vector allContacts = AccountManager.getAllAccountsList();
+                Vector allContacts = AccountManager.getAllContacts();
                 int size = allContacts.size();
                 while (true) {
                     size--;
@@ -100,7 +100,7 @@ public final class MessageHandler extends BaseScreenHandler {
                         if (allContacts.size() == 0) {
                             NotificationHelper.showMessageById(762);
                         } else {
-                            AppController.sortContacts(allContacts);
+                            ContactListManager.sortContacts(allContacts);
                             ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEND_TO_CONTACT), allContacts));
                         }
                         ObjectPool.releaseVector(allContacts);
@@ -208,18 +208,18 @@ public final class MessageHandler extends BaseScreenHandler {
                 }
                 return errorCode6;
             case ScreenId.SEND_TO_CONTACT:
-                return AppController.handleFileAction(data);
+                return handleFileAction(data);
             case ScreenId.MESSAGE_SUMMARY:
-                return AppController.handleLocationAction(data);
+                return MapController.handleLocationAction(data);
             case ScreenId.DELETE_MESSAGES:
                 AppState.getCurrentContact().initMessageBuffer();
                 return ScreenId.CONTACT_LIST;
             case ScreenId.SEND_CONFIRM:
                 return -1;
             case ScreenId.NOTIFY_MESSAGE:
-                return AppController.handleSendKey();
+                return AccountManager.handleSendKey();
             case ScreenId.MAILBOX_OPTIONS:
-                return AppController.handleMailboxOption(action);
+                return MapHandler.handleMapModeOption(action);
             case ScreenId.SEND_DATA:
                 return -1;
             default:
@@ -305,23 +305,31 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MESSAGE_INPUT:
                 return 0;
             case ScreenId.SEND_TO_CONTACT:
-                return AppController.handleFileAction(data);
+                return handleFileAction(data);
             case ScreenId.MESSAGE_SUMMARY:
-                return AppController.handleLocationAction(data);
+                return MapController.handleLocationAction(data);
             case ScreenId.DELETE_MESSAGES:
                 AppState.getCurrentContact().initMessageBuffer();
                 return ScreenId.CONTACT_LIST;
             case ScreenId.SEND_CONFIRM:
                 return -1;
             case ScreenId.NOTIFY_MESSAGE:
-                return AppController.handleSendKey();
+                return AccountManager.handleSendKey();
             case ScreenId.MAILBOX_OPTIONS:
-                return AppController.handleMailboxOption(selectedOption);
+                return MapHandler.handleMapModeOption(selectedOption);
             case ScreenId.SEND_DATA:
                 return -1;
             default:
                 return 0;
         }
+    }
+
+    public static int handleFileAction(Object contactObj) {
+        int errorCode = ((Contact) contactObj).sendMessage(AppState.getString(StateKeys.MAP_RESOURCE_URL));
+        if (errorCode != 0) {
+            return NotificationHelper.showError(errorCode);
+        }
+        return 0;
     }
 
     public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {

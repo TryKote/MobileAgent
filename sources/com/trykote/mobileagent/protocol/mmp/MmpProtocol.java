@@ -323,7 +323,7 @@ public final class MmpProtocol extends Account {
                 if (handshakePacket != null) {
                     AppController.needsRepaint = true;
                     this.msgCount = 85;
-                    AccountManager.processAccountData((Account) this, handshakePacket);
+                    AccountManager.recordInboundPacket((Account) this, handshakePacket);
                     if (handshakePacket.peekByteAt(1) == MmpCommand.PACKET_HANDSHAKE) {
                         long j = AppState.getBool(StateKeys.FLAG_WIFI_CONNECTION) ? 25000L : 60000L;
                         this.timeout = j;
@@ -365,13 +365,13 @@ public final class MmpProtocol extends Account {
                     closeConnection();
                     this.lastError = getDefaultError();
                 }
-                if (this.timeout > 0 && isConnected() && AppController.isTimerExpired(this.deadline)) {
+                if (this.timeout > 0 && isConnected() && TimerManager.isTimerExpired(this.deadline)) {
                     trySendData(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_KEEPALIVE));
                     return;
                 }
                 return;
             }
-            AccountManager.processAccountData((Account) this, packet);
+            AccountManager.recordInboundPacket((Account) this, packet);
             this.msgCount = 90;
             if (packet.peekByteAt(1) == MmpCommand.PACKET_COMMAND) {
                 int commandId = (packet.peekByteAt(6) << 24) | (packet.peekByteAt(8) << 16) | (packet.peekByteAt(7) << 8) | packet.peekByteAt(9);
@@ -506,7 +506,7 @@ public final class MmpProtocol extends Account {
                 AppController.needsLayoutUpdate = true;
             } else {
                 if (packet.peekByteAt(1) == MmpCommand.PACKET_NOTIFICATION) {
-                    AppController.handleMmpPacket(this, packet);
+                    handleStatusPacket(packet);
                     AppController.needsLayoutUpdate = true;
                 }
             }
@@ -1658,5 +1658,25 @@ public final class MmpProtocol extends Account {
             throw new RuntimeException();
         }
         protocol.onMessage(strM1363z, 0L, strM1370r);
+    }
+
+    public final void handleStatusPacket(ByteBuffer buffer) {
+        buffer.skip(6);
+        while (buffer.length > 0) {
+            int tag = buffer.readShortBE();
+            int length = buffer.readShortBE();
+            if (tag == 9 && length == 2) {
+                int statusCode = buffer.readShortBE();
+                if (statusCode == 1) {
+                    handleTimeout();
+                    return;
+                } else {
+                    handleError(statusCode);
+                    return;
+                }
+            }
+            buffer.skip(length);
+        }
+        handleError(-1);
     }
 }
