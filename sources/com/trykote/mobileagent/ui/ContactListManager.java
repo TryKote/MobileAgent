@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -19,9 +18,9 @@ public abstract class ContactListManager {
     /* renamed from: a */
     public static final void showContactList() {
         RemoteLogger.log("CL", "showContactList called");
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ENTITY);
-        AppState.setInt(StateKeys.INT_CONNECTION_STATE, 4);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(ContactKeys.SLOT_CURRENT_ENTITY);
+        AppState.setInt(SessionKeys.INT_CONNECTION_STATE, 4);
         TabBar.findTab(4, TabBar.currentAccount);
         ListView c0013amM161g = buildContactList();
         TabBar c0008ahM175i = TabBar.getCurrentTab();
@@ -49,8 +48,8 @@ public abstract class ContactListManager {
 
     /* renamed from: c */
     public static final void clearState() {
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ENTITY);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(ContactKeys.SLOT_CURRENT_ENTITY);
         updateState();
     }
 
@@ -90,7 +89,7 @@ public abstract class ContactListManager {
         if (!(obj instanceof Contact)) {
             return 0;
         }
-        AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
+        AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
         openContactMessages();
         return ((Contact) obj).getDefaultAction();
     }
@@ -117,13 +116,13 @@ public abstract class ContactListManager {
     public static final int updateContextMenu(ListView c0013am, Object obj) {
         Account abstractC0037h;
         int iM1250M = -1;
-        if (AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] != null) {
+        if (AppState.pool[SessionKeys.VEC_ACCOUNT_SELECTION] != null) {
             return ScreenId.PRESENCE_ACTION;
         }
-        if (!AppState.getBool(StateKeys.FLAG_CLEANUP_DONE)) {
-            AppState.setInt(StateKeys.FLAG_CLEANUP_DONE, 1);
-            if (System.currentTimeMillis() - AppState.getLong(StateKeys.TIMESTAMP_FIRST_RUN) > 604800000) {
-                AppState.setInt(StateKeys.FLAG_SHOW_NOTIFICATION, 0);
+        if (!AppState.getBool(SessionKeys.FLAG_CLEANUP_DONE)) {
+            AppState.setInt(SessionKeys.FLAG_CLEANUP_DONE, 1);
+            if (System.currentTimeMillis() - AppState.getLong(SessionKeys.TIMESTAMP_FIRST_RUN) > 604800000) {
+                AppState.setInt(UIKeys.FLAG_SHOW_NOTIFICATION, 0);
                 return ScreenId.FIRST_RUN;
             }
         }
@@ -144,7 +143,7 @@ public abstract class ContactListManager {
             Account abstractC0037h2 = abstractC0037h;
             int iMo108h = abstractC0037h.getIconId();
             String str = abstractC0037h2.shortName;
-            if (!AppState.getBool(StateKeys.SETTING_MULTI_ACCOUNT)) {
+            if (!AppState.getBool(SettingsKeys.SETTING_MULTI_ACCOUNT)) {
                 TabBar.updateTitle(iMo108h, str);
             }
             if (vector != null) {
@@ -209,7 +208,7 @@ public abstract class ContactListManager {
             vector.removeAllElements();
             AppController.needsRepaint = true;
         }
-        return AppState.getBool(StateKeys.FLAG_CONVERSATION_ACTIVE) ? 163 : 0;
+        return AppState.getBool(UIKeys.FLAG_CONVERSATION_ACTIVE) ? 163 : 0;
     }
 
     /* renamed from: g */
@@ -217,12 +216,12 @@ public abstract class ContactListManager {
         RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
         boolean zM1056C;
         MergedContactGroup c0054y;
-        int iM586d = 1 + AppState.getInt(StateKeys.SETTING_CONTACT_SORT_MODE);
-        AppState.setInt(StateKeys.INT_CONTACT_ICON_SIZE, iM586d == 1 ? 1 : 12);
+        int iM586d = 1 + AppState.getInt(SettingsKeys.SETTING_CONTACT_SORT_MODE);
+        AppState.setInt(ContactKeys.INT_CONTACT_ICON_SIZE, iM586d == 1 ? 1 : 12);
         ListView c0013amM75b = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
         int i = c0013amM75b.contentWidth - 1;
-        if (!AppState.getBool(StateKeys.SETTING_SHOW_OFFLINE)) {
-            boolean z = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
+        if (!AppState.getBool(SettingsKeys.SETTING_SHOW_OFFLINE)) {
+            boolean z = !AppState.getBool(SettingsKeys.SETTING_SORT_ORDER);
             Account abstractC0037h = TabBar.currentAccount;
             Vector vectorM445W = abstractC0037h == null ? AccountManager.getAllContacts() : abstractC0037h.getAllContacts();
             Vector vector = vectorM445W;
@@ -234,10 +233,10 @@ public abstract class ContactListManager {
                 }
             }
             ObjectPool.releaseVector(vector);
-        } else if (AppState.getBool(StateKeys.SETTING_GROUP_BY_STATUS)) {
+        } else if (AppState.getBool(SettingsKeys.SETTING_GROUP_BY_STATUS)) {
             int i3 = i / iM586d;
-            boolean zM587e = AppState.getBool(StateKeys.SETTING_SHOW_GROUPS);
-            boolean z2 = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
+            boolean zM587e = AppState.getBool(SettingsKeys.SETTING_SHOW_GROUPS);
+            boolean z2 = !AppState.getBool(SettingsKeys.SETTING_SORT_ORDER);
             Vector vectorM1213g = ObjectPool.newVector();
             Vector vectorM446d = AccountManager.getContactGroups(TabBar.currentAccount);
             int size = vectorM446d.size();
@@ -429,8 +428,8 @@ public abstract class ContactListManager {
             int i14 = i / iM586d;
             Vector vectorM446d2 = AccountManager.getContactGroups(TabBar.currentAccount);
             int iM353a8 = sortContacts(vectorM446d2);
-            boolean zM587e2 = AppState.getBool(StateKeys.SETTING_SHOW_GROUPS);
-            boolean z4 = !AppState.getBool(StateKeys.SETTING_SORT_ORDER);
+            boolean zM587e2 = AppState.getBool(SettingsKeys.SETTING_SHOW_GROUPS);
+            boolean z4 = !AppState.getBool(SettingsKeys.SETTING_SORT_ORDER);
             for (int i15 = 0; i15 < iM353a8; i15++) {
                 ContactGroup abstractC0046q3 = (ContactGroup) vectorM446d2.elementAt(i15);
                 boolean z5 = false;
@@ -594,7 +593,7 @@ public abstract class ContactListManager {
 
     /* renamed from: a */
     public static final void updateContactFlags(Contact contact) {
-        AppState.setBool(StateKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
+        AppState.setBool(UIKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
     }
 
     /* renamed from: a */
@@ -606,42 +605,42 @@ public abstract class ContactListManager {
             for (int i = 0; i < count; i++) {
                 sb.append(((ContactGroup) vector.elementAt(i)).name).append((char) 0);
             }
-            AppState.setFromBuffer(StateKeys.SLOT_MENU_ITEM_1, sb);
-            AppState.pool[StateKeys.VEC_GROUP_LIST] = vector;
-            AppState.setInt(StateKeys.INT_GROUP_OPERATION_RESULT, 0);
+            AppState.setFromBuffer(UIKeys.SLOT_MENU_ITEM_1, sb);
+            AppState.pool[ContactKeys.VEC_GROUP_LIST] = vector;
+            AppState.setInt(ContactKeys.INT_GROUP_OPERATION_RESULT, 0);
         }
         return count;
     }
 
     /* renamed from: b */
     public static final void showAddContactScreen() {
-        ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO];
+        ContactInfo contactInfo = (ContactInfo) AppState.pool[ContactKeys.SLOT_CONTACT_INFO];
         Account acctRef = contactInfo.getAccount();
         if (getGroupCount(acctRef) == 0) {
-            EventDispatcher.postNotification(AppState.getString(StateKeys.STR_NOTIFICATION_NEW_MSG));
+            EventDispatcher.postNotification(AppState.getString(StringResKeys.STR_NOTIFICATION_NEW_MSG));
             return;
         }
-        if (AppState.getBool(StateKeys.FLAG_SHOW_PHOTO)) {
-            AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_SOFTKEY_OK);
-            AppState.setInt(StateKeys.FLAG_SHOW_PHOTO, 0);
+        if (AppState.getBool(UIKeys.FLAG_SHOW_PHOTO)) {
+            AppState.setFromPool(ContactKeys.SLOT_GROUP_ADD_GROUP, StringResKeys.STR_SOFTKEY_OK);
+            AppState.setInt(UIKeys.FLAG_SHOW_PHOTO, 0);
         } else {
-            AppState.setFromPool(StateKeys.SLOT_GROUP_ADD_GROUP, StateKeys.STR_DEFAULT_GROUP_NAME);
+            AppState.setFromPool(ContactKeys.SLOT_GROUP_ADD_GROUP, StringResKeys.STR_DEFAULT_GROUP_NAME);
         }
         if (acctRef.getType() == Account.TYPE_MMP) {
-            AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getString(60));
-            AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getDisplayNameOrId());
+            AppState.setObject(ContactKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getString(60));
+            AppState.setObject(ContactKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getDisplayNameOrId());
             ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_LIST_SCREEN));
             return;
         }
         if (((MrimAccount) acctRef).hasCustomDomain) {
-            AppState.setInt(StateKeys.FLAG_GROUP_ADD_RESULT, 1);
-            AppState.setInt(StateKeys.INT_ADD_CONTACT_MODE, 5);
+            AppState.setInt(ContactKeys.FLAG_GROUP_ADD_RESULT, 1);
+            AppState.setInt(ContactKeys.INT_ADD_CONTACT_MODE, 5);
         } else {
-            AppState.setInt(StateKeys.FLAG_GROUP_ADD_RESULT, 0);
-            AppState.setInt(StateKeys.INT_ADD_CONTACT_MODE, 4);
+            AppState.setInt(ContactKeys.FLAG_GROUP_ADD_RESULT, 0);
+            AppState.setInt(ContactKeys.INT_ADD_CONTACT_MODE, 4);
         }
-        AppState.setObject(StateKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getEmailOrMmpId());
-        AppState.setObject(StateKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
+        AppState.setObject(ContactKeys.SLOT_GROUP_ADD_NAME, (Object) contactInfo.getEmailOrMmpId());
+        AppState.setObject(ContactKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ADD_SCREEN));
     }
 
@@ -705,7 +704,7 @@ public abstract class ContactListManager {
     /* JADX WARN: Multi-variable type inference failed */
     /* renamed from: b */
     public static final int handleContactMenuAction(String str, int i) {
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Contact contact = AppState.getCurrentContact();
         if (i == 63 && !contact.account.isConnected()) {
             return NotificationHelper.showError(299);
@@ -725,7 +724,7 @@ public abstract class ContactListManager {
             if (contact instanceof XmppContact) {
                 return ((XmppContact) contact).sendPresence(40);
             }
-            AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo(contact);
+            AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = new ContactInfo(contact);
         } else if (i == 54) {
             AppState.setAccount(contact.account);
             ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
@@ -739,8 +738,8 @@ public abstract class ContactListManager {
 
     /* renamed from: c */
     public static final int handleContactGroupAction(String str, int i) {
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
-        Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
+        Object obj = AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
         if (i == 63 && !((Contact) obj).account.isConnected()) {
             return NotificationHelper.showError(299);
         }
@@ -766,7 +765,7 @@ public abstract class ContactListManager {
             if (obj instanceof XmppContact) {
                 return ((XmppContact) obj).sendPresence(4);
             }
-            AppState.pool[StateKeys.SLOT_CONTACT_INFO] = new ContactInfo((Contact) obj);
+            AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
             ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
@@ -774,8 +773,8 @@ public abstract class ContactListManager {
             ListItem item = (ListItem) obj;
             item.deselect();
             MapController.selectMapItem(item);
-            MapController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
-            AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
+            MapController.applyViewMode(true, false, !AppState.getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE));
+            AppState.setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
         }
         return i;
     }
@@ -866,7 +865,7 @@ public abstract class ContactListManager {
 
     public static final void markContactRead(Contact contact) {
         TimerManager.resetBacklightTimer();
-        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        Vector contacts = AppState.getVector(UIKeys.VEC_ONLINE_CONTACTS);
         if (contacts.contains(contact)) {
             return;
         }
@@ -875,7 +874,7 @@ public abstract class ContactListManager {
     }
 
     public static final void markContactUnread(Contact contact) {
-        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        Vector contacts = AppState.getVector(UIKeys.VEC_ONLINE_CONTACTS);
         if (contacts.contains(contact)) {
             Utils.removeFrom(contacts, contact);
             TabBar.layout();
@@ -884,32 +883,32 @@ public abstract class ContactListManager {
 
     public static final void deleteContact(Contact contact) {
         contact.clearStatus();
-        AppState.getVector(StateKeys.VEC_PENDING_CONNECTIONS).removeElement(contact);
+        AppState.getVector(UIKeys.VEC_PENDING_CONNECTIONS).removeElement(contact);
         AppController.needsLayoutUpdate = true;
     }
 
     public static final void refreshContactList() {
         RemoteLogger.log("CL", "refreshContactList called");
-        AppState.clearRange(StateKeys.RANGE_ACCOUNT_CACHE_START, StateKeys.RANGE_ACCOUNT_CACHE_END);
+        AppState.clearRange(UIKeys.RANGE_ACCOUNT_CACHE_START, UIKeys.RANGE_ACCOUNT_CACHE_END);
     }
 
     public static void paintPopup(GraphicsContext g, int clipX, int clipY, int clipW, int clipH) {
         g.setClip(clipX, clipY, clipW, clipH);
-        int popupHeight = AppState.getInt(StateKeys.INT_POPUP_HEIGHT);
+        int popupHeight = AppState.getInt(UIKeys.INT_POPUP_HEIGHT);
         if (popupHeight <= 0) {
             return;
         }
-        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
+        g.setFont(AppState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         int screenHeight = AppState.getHeight() - 1;
-        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        int screenWidth = AppState.getInt(UIKeys.INT_SCREEN_WIDTH);
         g.setClip(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
         g.setColorFromPalette(16);
         g.fillRect(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
         g.setClip(1, screenHeight - popupHeight, screenWidth - 2, popupHeight);
         g.setColorFromPalette(1);
         g.fillRect(0, 0, 2048, 2048);
-        int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
-        Vector tabs = AppState.getVector(StateKeys.VEC_POPUP_ITEMS);
+        int barHeight = Utils.max(AppState.getInt(UIKeys.INT_FONT_HEIGHT), 16);
+        Vector tabs = AppState.getVector(UIKeys.VEC_POPUP_ITEMS);
         int size = tabs.size();
         while (true) {
             size--;
@@ -918,11 +917,11 @@ public abstract class ContactListManager {
             }
             Account account = (Account) tabs.elementAt(size);
             int barTop = screenHeight;
-            int fontHeight = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
+            int fontHeight = AppState.getInt(UIKeys.INT_FONT_HEIGHT);
             int barHeight3 = Utils.max(fontHeight, 16);
             g.setColorFromPalette(13);
             int textY = barTop - fontHeight;
-            g.fillRect(1, textY, ((AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - 2) * account.msgCount) / 100, barHeight3);
+            g.fillRect(1, textY, ((AppState.getInt(UIKeys.INT_SCREEN_WIDTH) - 2) * account.msgCount) / 100, barHeight3);
             g.drawIcon(account.getIconId(), 3, textY + ScreenManager.getCenterOffset());
             g.setColorFromPalette(0);
             g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, barTop, 36);
@@ -931,7 +930,7 @@ public abstract class ContactListManager {
     }
 
     public static int validateContactAction() {
-        Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
+        Object obj = AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
         if (obj == null || !(obj instanceof Contact)) {
             return 0;
         }
@@ -939,7 +938,7 @@ public abstract class ContactListManager {
         if (!contact.account.isConnected()) {
             return NotificationHelper.showError(299);
         }
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         return (contact.isSystem() || contact.isOffline()) ? 0 : ScreenId.CONTACT_DELETE;
     }
 }

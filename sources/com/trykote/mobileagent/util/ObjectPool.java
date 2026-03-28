@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import java.util.Hashtable;
 import java.util.Vector;

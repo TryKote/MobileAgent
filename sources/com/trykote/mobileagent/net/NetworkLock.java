@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -16,7 +15,7 @@ public final class NetworkLock {
 
     /* renamed from: ae */
     public static final Object[] createSyncState() {
-        return (Object[]) AppState.pool[StateKeys.OBJ_CALLBACK_ARRAY];
+        return (Object[]) AppState.pool[SessionKeys.OBJ_CALLBACK_ARRAY];
     }
 
     /* renamed from: s */

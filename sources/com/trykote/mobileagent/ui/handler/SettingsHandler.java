@@ -26,14 +26,14 @@ public final class SettingsHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SETTINGS_MENU));
                 return;
             case ScreenId.GPS_SETTINGS:
-                boolean flag = AppState.getBool(StateKeys.MAP_GPS_ENABLED);
-                boolean flag2 = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE);
-                AppState.setBool(StateKeys.FLAG_GPS_NO_MAP, !flag && flag2);
-                AppState.setBool(StateKeys.FLAG_GPS_WITH_MAP, flag && flag2);
+                boolean flag = AppState.getBool(MapKeys.MAP_GPS_ENABLED);
+                boolean flag2 = AppState.getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE);
+                AppState.setBool(MapKeys.FLAG_GPS_NO_MAP, !flag && flag2);
+                AppState.setBool(MapKeys.FLAG_GPS_WITH_MAP, flag && flag2);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.GPS_SETTINGS));
                 return;
             case ScreenId.THEME_SETTINGS:
-                AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_COLOR_THEME));
+                AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, AppState.getInt(SettingsKeys.SETTING_COLOR_THEME));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_SETTINGS));
                 return;
             case ScreenId.NOTIFICATION_SETTINGS:
@@ -55,10 +55,10 @@ public final class SettingsHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_OPTIONS));
                 return;
             case ScreenId.VIEW_MODE:
-                boolean isOnline4 = AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE);
-                boolean isCustom = AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE);
-                AppState.setBool(StateKeys.FLAG_ONLINE_CUSTOM_OFF, isOnline4 && !isCustom);
-                AppState.setBool(StateKeys.FLAG_ONLINE_CUSTOM_ON, isOnline4 && isCustom);
+                boolean isOnline4 = AppState.getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE);
+                boolean isCustom = AppState.getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE);
+                AppState.setBool(UIKeys.FLAG_ONLINE_CUSTOM_OFF, isOnline4 && !isCustom);
+                AppState.setBool(UIKeys.FLAG_ONLINE_CUSTOM_ON, isOnline4 && isCustom);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VIEW_MODE));
                 return;
             case ScreenId.COLOR_PICKER:
@@ -93,7 +93,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 return handleProfileAction(action);
             case ScreenId.THEME_SETTINGS:
                 ScreenManager.processScreenForm();
-                AppState.setInt(StateKeys.INT_SETTINGS_THEME, AppState.getInt(StateKeys.SETTING_COLOR_THEME));
+                AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, AppState.getInt(SettingsKeys.SETTING_COLOR_THEME));
                 ScreenManager.initializeFonts();
                 AppState.getCanvas().updateFullScreenMode();
                 TabBar.initialize();
@@ -125,7 +125,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 return handleContactOption(action);
             case ScreenId.NEARBY_SETTINGS:
                 ScreenManager.processScreenForm();
-                if (AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
+                if (AppState.getBool(MapKeys.FLAG_MAP_DATA_LOADED)) {
                     MapUtils.requestNearbyPeople();
                 }
                 return 0;
@@ -177,12 +177,12 @@ public final class SettingsHandler extends BaseScreenHandler {
     public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.SETTINGS:
-                AppState.setBool(StateKeys.SETTING_STATUS_BAR_VISIBLE, AppState.getBool(StateKeys.FLAG_FULLSCREEN_REQUESTED));
+                AppState.setBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE, AppState.getBool(UIKeys.FLAG_FULLSCREEN_REQUESTED));
                 AppState.getCanvas().updateFullScreenMode();
-                AppState.setInt(StateKeys.FLAG_FULLSCREEN_ACTIVE, 0);
+                AppState.setInt(UIKeys.FLAG_FULLSCREEN_ACTIVE, 0);
                 break;
             case ScreenId.THEME_SETTINGS:
-                AppState.setInt(StateKeys.SETTING_COLOR_THEME, AppState.getInt(StateKeys.INT_SETTINGS_THEME));
+                AppState.setInt(SettingsKeys.SETTING_COLOR_THEME, AppState.getInt(SettingsKeys.INT_SETTINGS_THEME));
                 break;
         }
     }
@@ -235,8 +235,8 @@ public final class SettingsHandler extends BaseScreenHandler {
     public void onMenuItemEvent(ListView screen, MenuItem item) {
         if (screen.screenId == ScreenId.THEME_SETTINGS) {
             Object[] themeData = (Object[]) item.data;
-            if (AppState.getString(StateKeys.STR_MENU_SETTINGS).equals(item.title)) {
-                AppState.setInt(StateKeys.SETTING_COLOR_THEME, ((Integer) themeData[0]).intValue());
+            if (AppState.getString(StringResKeys.STR_MENU_SETTINGS).equals(item.title)) {
+                AppState.setInt(SettingsKeys.SETTING_COLOR_THEME, ((Integer) themeData[0]).intValue());
             }
         } else if (screen.screenId == ScreenId.SOUND_SETTINGS) {
             ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) item.data)[0]).intValue(), false);
@@ -252,8 +252,8 @@ public final class SettingsHandler extends BaseScreenHandler {
         if (!account.isSelected()) {
             return NotificationHelper.showError(667);
         }
-        MapController.applyViewMode(true, false, !AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE));
-        AppState.setInt(StateKeys.FLAG_REFRESH_CONTACTS, 1);
+        MapController.applyViewMode(true, false, !AppState.getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE));
+        AppState.setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
         MapController.selectMapItem((ListItem) account);
         return 0;
     }
@@ -271,7 +271,7 @@ public final class SettingsHandler extends BaseScreenHandler {
     }
 
     public static int handleSettingsOption(int optionId) {
-        AppState.setInt(StateKeys.INT_PERIOD_INDEX, optionId);
+        AppState.setInt(RuntimeKeys.INT_PERIOD_INDEX, optionId);
         return ScreenId.TRAFFIC_STATS;
     }
 
@@ -287,8 +287,8 @@ public final class SettingsHandler extends BaseScreenHandler {
                 break;
             case 4: return ScreenId.PHOTO_SELECTOR;
         }
-        if (AppState.getBool(StateKeys.FLAG_UPDATE_AVAILABLE)) {
-            return AppState.getInt(StateKeys.INT_CONNECTION_STATE);
+        if (AppState.getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
+            return AppState.getInt(SessionKeys.INT_CONNECTION_STATE);
         }
         ScreenBuilder.onScreenClosed();
         return ScreenId.UPDATE_ALERT;

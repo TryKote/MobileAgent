@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -54,24 +53,24 @@ public abstract class ScreenManager {
     private static final int FLAG_DYNAMIC = 32;
     /* renamed from: a */
     public static final void initializeFonts() {
-        int iM586d = AppState.getInt(StateKeys.SETTING_FONT_SIZE_CHAT);
+        int iM586d = AppState.getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
         int i = iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16;
         GraphicsContext normalGfx = new GraphicsContext(0, i);
-        AppState.pool[StateKeys.GFX_CONTEXT_BASE] = normalGfx;
+        AppState.pool[UIKeys.GFX_CONTEXT_BASE] = normalGfx;
         GraphicsContext boldGfx = new GraphicsContext(1, i);
-        AppState.pool[StateKeys.GFX_CONTEXT_BOLD] = boldGfx;
-        GraphicsContext titleGfx = AppState.getBool(StateKeys.SETTING_BOLD_TITLE_FONT) ? new GraphicsContext(2, i) : normalGfx;
-        AppState.pool[StateKeys.GFX_CONTEXT_TITLE] = titleGfx;
-        AppState.pool[StateKeys.GFX_CONTEXT_NORMAL] = normalGfx;
-        AppState.pool[StateKeys.GFX_CONTEXT_NORMAL_2] = normalGfx;
-        AppState.pool[StateKeys.GFX_CONTEXT_BOLD_2] = boldGfx;
-        AppState.setInt(StateKeys.INT_FONT_HEIGHT, normalGfx.font.getHeight());
-        AppState.setInt(StateKeys.INT_NORMAL_FONT_HEIGHT, normalGfx.font.getHeight());
-        AppState.setInt(StateKeys.INT_NORMAL_FONT_HEIGHT_2, normalGfx.font.getHeight());
-        AppState.setInt(StateKeys.INT_BOLD_FONT_HEIGHT_2, boldGfx.font.getHeight());
-        AppState.setInt(StateKeys.INT_BOLD_FONT_HEIGHT, boldGfx.font.getHeight());
-        AppState.setInt(StateKeys.INT_TITLE_FONT_HEIGHT, titleGfx.font.getHeight());
-        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        AppState.pool[UIKeys.GFX_CONTEXT_BOLD] = boldGfx;
+        GraphicsContext titleGfx = AppState.getBool(SettingsKeys.SETTING_BOLD_TITLE_FONT) ? new GraphicsContext(2, i) : normalGfx;
+        AppState.pool[UIKeys.GFX_CONTEXT_TITLE] = titleGfx;
+        AppState.pool[UIKeys.GFX_CONTEXT_NORMAL] = normalGfx;
+        AppState.pool[UIKeys.GFX_CONTEXT_NORMAL_2] = normalGfx;
+        AppState.pool[UIKeys.GFX_CONTEXT_BOLD_2] = boldGfx;
+        AppState.setInt(UIKeys.INT_FONT_HEIGHT, normalGfx.font.getHeight());
+        AppState.setInt(UIKeys.INT_NORMAL_FONT_HEIGHT, normalGfx.font.getHeight());
+        AppState.setInt(UIKeys.INT_NORMAL_FONT_HEIGHT_2, normalGfx.font.getHeight());
+        AppState.setInt(UIKeys.INT_BOLD_FONT_HEIGHT_2, boldGfx.font.getHeight());
+        AppState.setInt(UIKeys.INT_BOLD_FONT_HEIGHT, boldGfx.font.getHeight());
+        AppState.setInt(UIKeys.INT_TITLE_FONT_HEIGHT, titleGfx.font.getHeight());
+        Vector screens = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screens.size();
         while (true) {
             size--;
@@ -85,7 +84,7 @@ public abstract class ScreenManager {
 
     /* renamed from: b */
     public static final ListView getCurrentScreen() {
-        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        Vector screens = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         if (screens.isEmpty()) {
             return null;
         }
@@ -94,7 +93,7 @@ public abstract class ScreenManager {
 
     /* renamed from: c */
     public static final String getCurrentTitle() {
-        if (AppState.getVector(StateKeys.VEC_SCREEN_STACK).size() > 0) {
+        if (AppState.getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedTitle();
         }
         return null;
@@ -102,7 +101,7 @@ public abstract class ScreenManager {
 
     /* renamed from: d */
     public static final int getCurrentWidth() {
-        if (AppState.getVector(StateKeys.VEC_SCREEN_STACK).size() > 0) {
+        if (AppState.getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedWidth();
         }
         return 200;
@@ -110,7 +109,7 @@ public abstract class ScreenManager {
 
     /* renamed from: e */
     public static final MenuItem getCurrentMenuItem() {
-        if (AppState.getVector(StateKeys.VEC_SCREEN_STACK).size() > 0) {
+        if (AppState.getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedItem();
         }
         return null;
@@ -118,7 +117,7 @@ public abstract class ScreenManager {
 
     /* renamed from: a */
     public static final void pushScreen(ListView screen) {
-        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        Vector screens = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         while (screens.size() > 0) {
             ScreenBuilder.onScreenClosed();
         }
@@ -134,7 +133,7 @@ public abstract class ScreenManager {
     public static final void showScreen(ListView screen) {
         RemoteLogger.log("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
         ListView prevScreen = null;
-        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        Vector screens = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screens.size() - 1;
         int i = size >= 0 ? ((ListView) screens.elementAt(size)).screenId : -1;
         if (i == 137 || i == 63) {
@@ -160,7 +159,7 @@ public abstract class ScreenManager {
         }
         int i5 = screen.containerWidth;
         int i6 = screen.containerHeight;
-        int iM586d = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - i5;
+        int iM586d = AppState.getInt(UIKeys.INT_SCREEN_WIDTH) - i5;
         int screenH = AppState.getHeight() - i6;
         switch (i4) {
             case TYPE_DIALOG_CENTER:
@@ -179,8 +178,8 @@ public abstract class ScreenManager {
                 if (curScreen != null) {
                     int iM586d2 = curScreen.offsetX + curScreen.containerWidth;
                     int selectedY = curScreen.getSelectedY();
-                    if (iM586d2 + screen.containerWidth > AppState.getInt(StateKeys.INT_SCREEN_WIDTH)) {
-                        iM586d2 = AppState.getInt(StateKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
+                    if (iM586d2 + screen.containerWidth > AppState.getInt(UIKeys.INT_SCREEN_WIDTH)) {
+                        iM586d2 = AppState.getInt(UIKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
                     }
                     if (selectedY + screen.containerHeight > AppState.getHeight()) {
                         selectedY = AppState.getHeight() - screen.containerHeight;
@@ -211,7 +210,7 @@ public abstract class ScreenManager {
 
     /* renamed from: a */
     public static final boolean hasScreen(int i) {
-        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        Vector screens = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screens.size();
         do {
             size--;
@@ -224,12 +223,12 @@ public abstract class ScreenManager {
 
     /* renamed from: f */
     public static final int getCenterOffset() {
-        return Utils.max(0, (AppState.getInt(StateKeys.INT_FONT_HEIGHT) - 16) >> 1);
+        return Utils.max(0, (AppState.getInt(UIKeys.INT_FONT_HEIGHT) - 16) >> 1);
     }
 
     /* renamed from: g */
     public static final int handleScreenClose() {
-        if (!AppState.getBool(StateKeys.FLAG_KNOWN_DEVICE)) {
+        if (!AppState.getBool(UIKeys.FLAG_KNOWN_DEVICE)) {
             return NotificationHelper.showError(470);
         }
         AppState.setScreen(new Object());
@@ -253,7 +252,7 @@ public abstract class ScreenManager {
         int extraKeyCmd = AppState.getInt(pos++);
         int itemCount = AppState.getInt(pos++);
         RemoteLogger.log("SCR", "createScreen(" + offset + "): type=" + screenType + " items=" + itemCount + " id=" + screenId);
-        int screenW = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        int screenW = AppState.getInt(UIKeys.INT_SCREEN_WIDTH);
         int screenH = AppState.getHeight();
         switch (screenType) {
             case TYPE_FULLSCREEN:
@@ -307,7 +306,7 @@ public abstract class ScreenManager {
 
     /* renamed from: c */
     public static final ListView createDialogScreen(int i) {
-        ListView screen = new ListView(0, i, (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
+        ListView screen = new ListView(0, i, (AppState.getInt(UIKeys.INT_SCREEN_WIDTH) * 9) / 10, (AppState.getHeight() * 9) / 10, true);
         screen.screenType = TYPE_DIALOG_CENTER;
         screen.showCheckboxes = true;
         return screen;
@@ -315,7 +314,7 @@ public abstract class ScreenManager {
 
     /* renamed from: h */
     public static final boolean hasModal() {
-        Vector screens = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        Vector screens = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screens.size();
         do {
             size--;
@@ -522,7 +521,7 @@ public abstract class ScreenManager {
     }
 
     public static final int processPhoneInput(String fieldId) {
-        String newValue = AppState.getString(StateKeys.SLOT_STATUS_TEXT);
+        String newValue = AppState.getString(UIKeys.SLOT_STATUS_TEXT);
         int i = 15;
         do {
             i--;
@@ -535,45 +534,45 @@ public abstract class ScreenManager {
     }
 
     public static final void setFormFields(String param1, String param2, String param3, String param4, String param5) {
-        AppState.setObject(StateKeys.SLOT_LANGUAGE_OPTION, (Object) param5);
-        AppState.setFromBuffer(StateKeys.SLOT_INIT_PARAMS, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer(), 262572, param1), 262576, param2), 524724, param3), 590268, param4), 524741, param5));
+        AppState.setObject(UIKeys.SLOT_LANGUAGE_OPTION, (Object) param5);
+        AppState.setFromBuffer(UIKeys.SLOT_INIT_PARAMS, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer(), 262572, param1), 262576, param2), 524724, param3), 590268, param4), 524741, param5));
         TimerManager.setTimer(TimerManager.SLOT_SCREEN_INIT, computeInitialState());
     }
 
     public static final String[] getLanguageOptions() {
-        if (!AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN)) {
+        if (!AppState.getBool(SessionKeys.FLAG_CAPTCHA_SHOWN)) {
             setFormFields(null, null, null, null, null);
         } else if (TimerManager.checkTimer(13, computeInitialState())) {
-            AppState.clearIndex(StateKeys.SLOT_INIT_PARAMS);
+            AppState.clearIndex(UIKeys.SLOT_INIT_PARAMS);
         }
-        String formData = AppState.getString(StateKeys.SLOT_INIT_PARAMS);
+        String formData = AppState.getString(UIKeys.SLOT_INIT_PARAMS);
         if (formData == null) {
             return null;
         }
         String[] strArr = new String[2];
         strArr[0] = formData;
-        String langOption = AppState.getString(StateKeys.SLOT_LANGUAGE_OPTION);
-        strArr[1] = langOption != null ? langOption : AppState.getString(StateKeys.STR_DEFAULT_LANGUAGE);
+        String langOption = AppState.getString(UIKeys.SLOT_LANGUAGE_OPTION);
+        strArr[1] = langOption != null ? langOption : AppState.getString(StringResKeys.STR_DEFAULT_LANGUAGE);
         return strArr;
     }
 
     public static final void prepareFormData() {
-        AppState.setInt(StateKeys.INT_ERROR_MSG_INDEX, 0);
-        AppState.clearIndex(StateKeys.SLOT_REG_PARAM_4);
-        AppState.pool[StateKeys.SLOT_REG_PARAM_3] = ObjectPool.newVector();
+        AppState.setInt(RuntimeKeys.INT_ERROR_MSG_INDEX, 0);
+        AppState.clearIndex(RegistrationKeys.SLOT_REG_PARAM_4);
+        AppState.pool[RegistrationKeys.SLOT_REG_PARAM_3] = ObjectPool.newVector();
     }
 
     public static final void clearFormFields() {
-        AppState.clearRange(StateKeys.SLOT_INPUT_TEXT, StateKeys.RANGE_INPUT_TEXT_END);
+        AppState.clearRange(UIKeys.SLOT_INPUT_TEXT, UIKeys.RANGE_INPUT_TEXT_END);
     }
 
     public static final int validateServerAddress(String address) {
-        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(address));
+        AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(address));
         return 0;
     }
 
     public static final int processInputText(String label) {
-        AppState.setBool(StateKeys.FLAG_SPECIAL_KEY_MODE, StringUtils.matchesKey(859, label));
+        AppState.setBool(UIKeys.FLAG_SPECIAL_KEY_MODE, StringUtils.matchesKey(859, label));
         return 0;
     }
 
@@ -583,11 +582,11 @@ public abstract class ScreenManager {
     }
 
     private static final int computeInitialState() {
-        return AppState.getBytes(StateKeys.RES_UPDATE_DATA) != null ? 60000 : 300000;
+        return AppState.getBytes(StringResKeys.RES_UPDATE_DATA) != null ? 60000 : 300000;
     }
 
     public static final int getThemeColor(int errorId) {
-        int size = AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
+        int size = AppState.getVector(SessionKeys.VEC_ACCOUNTS).size();
         while (true) {
             size--;
             if (size < 0) {
@@ -606,10 +605,10 @@ public abstract class ScreenManager {
                 Conversation.decrementZoom();
                 break;
             case 2:
-                AppState.setInt(StateKeys.SETTING_CUSTOM_VIEW_MODE, 1);
+                AppState.setInt(SettingsKeys.SETTING_CUSTOM_VIEW_MODE, 1);
                 break;
             case 3:
-                AppState.setInt(StateKeys.SETTING_CUSTOM_VIEW_MODE, 0);
+                AppState.setInt(SettingsKeys.SETTING_CUSTOM_VIEW_MODE, 0);
                 break;
             default:
                 return 0;
@@ -646,11 +645,11 @@ public abstract class ScreenManager {
     }
 
     public static final int handleSoundOption(int statusIndex) {
-        AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(statusIndex + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
+        AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(statusIndex + (AppState.getCurrentContact() instanceof MmpContact ? 1141 : AppState.getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
         return ScreenId.STATUS_INPUT;
     }
 
     public static final int getIconOffset() {
-        return AppState.getBool(StateKeys.SETTING_FAST_CONNECTION) ? 10 : 55;
+        return AppState.getBool(SettingsKeys.SETTING_FAST_CONNECTION) ? 10 : 55;
     }
 }

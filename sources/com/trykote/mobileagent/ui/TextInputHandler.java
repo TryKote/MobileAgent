@@ -3,7 +3,7 @@ package com.trykote.mobileagent.ui;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.EventDispatcher;
-import com.trykote.mobileagent.core.StateKeys;
+import com.trykote.mobileagent.core.UIKeys;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
@@ -31,8 +31,8 @@ public final class TextInputHandler implements CommandListener {
     public final void commandAction(Command command, Displayable displayable) {
         if (this.context == null) {
             String text = StringUtils.getTextBoxString((TextBox) displayable);
-            AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) text);
-            AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(text));
+            AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) text);
+            AppState.setBool(UIKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(text));
             if (command.getPriority() == 0) {
                 EventDispatcher.postOkEvent();
                 return;

@@ -3,7 +3,7 @@ package com.trykote.mobileagent.net;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
-import com.trykote.mobileagent.core.StateKeys;
+import com.trykote.mobileagent.core.MapKeys;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.IOUtils;
 import com.trykote.mobileagent.util.RemoteLogger;
@@ -62,7 +62,7 @@ public final class SocketWrapper {
                 wrapper.asyncBuffer = new ByteBuffer();
                 new AsyncTask(AsyncTaskId.SOCKET_READER, wrapper);
             }
-            AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
+            AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
             return wrapper;
         } catch (Throwable th) {
             wrapper.closeImmediate();
@@ -130,7 +130,7 @@ public final class SocketWrapper {
         this.connection = null;
         this.inputStream = null;
         this.outputStream = null;
-        Utils.removeFrom(AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST), this);
+        Utils.removeFrom(AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST), this);
     }
 
     public void asyncReaderLoop() {
@@ -188,7 +188,7 @@ public final class SocketWrapper {
     /* renamed from: c */
     public static final void closeAll() {
         RemoteLogger.log("NET", "closeAllConnections");
-        java.util.Vector connections = AppState.getVector(StateKeys.SLOT_MAP_TILE_REQUEST);
+        java.util.Vector connections = AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST);
         int size = connections.size();
         while (true) {
             size--;

@@ -1,14 +1,13 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.net.*;
 
 public final class Base64 {
 
     private static char base64Char(int i) {
-        return (char) AppState.getBytes(StateKeys.RES_BASE64_TABLE)[i & 63];
+        return (char) AppState.getBytes(StringResKeys.RES_BASE64_TABLE)[i & 63];
     }
 
     public static String encode(byte[] data, int offset, int length) {

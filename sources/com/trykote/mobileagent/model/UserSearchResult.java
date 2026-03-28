@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
@@ -101,7 +100,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
     */
     public final String getText() {
         int i;
-        StringBuffer sb = ObjectPool.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(StateKeys.STR_ANONYMOUS_NAME));
+        StringBuffer sb = ObjectPool.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : AppState.getString(StringResKeys.STR_ANONYMOUS_NAME));
         if (this.age > 0) {
             StringBuffer sb2 = sb.append(',').append(' ').append(this.age);
             if (this.age >= 100) {

@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.protocol;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -43,8 +42,8 @@ public final class AccountManager {
     private static final int XMPP_STATUS_DISCONNECT = 0;
 
     public static int showAccountList(Vector accounts, int targetScreenId, boolean showStatusFlags) {
-        AppState.setBool(StateKeys.FLAG_SHOW_STATUS_FLAGS, showStatusFlags);
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.setBool(UIKeys.FLAG_SHOW_STATUS_FLAGS, showStatusFlags);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         int size = accounts.size();
         if (size == 0) {
             return NotificationHelper.showError(MSG_NO_ACCOUNTS);
@@ -53,37 +52,37 @@ public final class AccountManager {
             AppState.setAccount(accounts.firstElement());
             return targetScreenId;
         }
-        AppState.pool[StateKeys.VEC_FILTERED_ACCOUNTS] = accounts;
-        AppState.setInt(StateKeys.INT_TARGET_STATE, targetScreenId);
+        AppState.pool[SessionKeys.VEC_FILTERED_ACCOUNTS] = accounts;
+        AppState.setInt(SessionKeys.INT_TARGET_STATE, targetScreenId);
         return ScreenId.ACCOUNT_CHECKBOX_LIST;
     }
 
     public static void addToAccountSelection(Account account) {
-        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNT_SELECTION);
+        Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNT_SELECTION);
         if (accounts == null) {
             accounts = ObjectPool.newVector();
-            AppState.pool[StateKeys.VEC_ACCOUNT_SELECTION] = accounts;
+            AppState.pool[SessionKeys.VEC_ACCOUNT_SELECTION] = accounts;
         }
         accounts.addElement(account);
     }
 
     public static boolean hasActiveConnection() {
-        return AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).size() != 0;
+        return AppState.getVector(UIKeys.VEC_ACTIVE_CONNECTIONS).size() != 0;
     }
 
     public static void clearAccountHighlight(MrimAccount account) {
-        AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).removeElement(account);
+        AppState.getVector(UIKeys.VEC_ACTIVE_CONNECTIONS).removeElement(account);
         TabBar.layout();
     }
 
     public static void clearAllHighlights() {
-        AppState.getVector(StateKeys.VEC_ACTIVE_CONNECTIONS).removeAllElements();
+        AppState.getVector(UIKeys.VEC_ACTIVE_CONNECTIONS).removeAllElements();
         TabBar.layout();
     }
 
     public static int getCombinedContactFlags() {
         int combinedFlags = 0;
-        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        Vector contacts = AppState.getVector(UIKeys.VEC_ONLINE_CONTACTS);
         for (int i = contacts.size() - 1; i >= 0; i--) {
             combinedFlags |= ((Contact) contacts.elementAt(i)).flags;
         }
@@ -94,7 +93,7 @@ public final class AccountManager {
         if (account == null) {
             return false;
         }
-        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        Vector contacts = AppState.getVector(UIKeys.VEC_ONLINE_CONTACTS);
         for (int i = contacts.size() - 1; i >= 0; i--) {
             if (((Contact) contacts.elementAt(i)).account == account) {
                 return true;
@@ -107,7 +106,7 @@ public final class AccountManager {
         if (account == null) {
             return ICON_DEFAULT;
         }
-        Vector contacts = AppState.getVector(StateKeys.VEC_ONLINE_CONTACTS);
+        Vector contacts = AppState.getVector(UIKeys.VEC_ONLINE_CONTACTS);
         for (int i = contacts.size() - 1; i >= 0; i--) {
             if (((Contact) contacts.elementAt(i)).account == account) {
                 return ICON_DEFAULT;
@@ -123,11 +122,11 @@ public final class AccountManager {
         sync[2] = sync[2] + byteCount;
         sync[4] = sync[4] + byteCount;
         sync[6] = sync[6] + byteCount;
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_BYTES, byteCount);
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_PACKETS, byteCount);
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_MSGS, byteCount);
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_SENT_FILES, byteCount);
-        AppState.addInt(StateKeys.COUNTER_TOTAL_TRAFFIC, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_SENT_PACKETS, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_SENT_MSGS, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_SENT_FILES, byteCount);
+        AppState.addInt(SessionKeys.COUNTER_TOTAL_TRAFFIC, byteCount);
     }
 
     public static void recordOutboundTraffic(Account account, int byteCount) {
@@ -137,11 +136,11 @@ public final class AccountManager {
         sync[3] = sync[3] + byteCount;
         sync[5] = sync[5] + byteCount;
         sync[7] = sync[7] + byteCount;
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_BYTES, byteCount);
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_PACKETS, byteCount);
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_MSGS, byteCount);
-        AppState.addInt(StateKeys.TRAFFIC_MRIM_RECV_FILES, byteCount);
-        AppState.addInt(StateKeys.COUNTER_RESERVED, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_RECV_BYTES, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_RECV_PACKETS, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_RECV_MSGS, byteCount);
+        AppState.addInt(TrafficKeys.TRAFFIC_MRIM_RECV_FILES, byteCount);
+        AppState.addInt(SessionKeys.COUNTER_RESERVED, byteCount);
     }
 
     public static void recordInboundPacket(Account account, ByteBuffer buffer) {
@@ -189,15 +188,15 @@ public final class AccountManager {
             }
         }
         RemoteLogger.log("ACCT", "loadSavedAccounts: loaded " + accounts.size() + " accounts");
-        AppState.pool[StateKeys.VEC_ACCOUNTS] = accounts;
+        AppState.pool[SessionKeys.VEC_ACCOUNTS] = accounts;
     }
 
     public static int getActiveAccountCount() {
-        return AppState.getVector(StateKeys.VEC_ACCOUNTS).size();
+        return AppState.getVector(SessionKeys.VEC_ACCOUNTS).size();
     }
 
     public static Account getAccountByIndex(int index) {
-        return (Account) AppState.getVector(StateKeys.VEC_ACCOUNTS).elementAt(index);
+        return (Account) AppState.getVector(SessionKeys.VEC_ACCOUNTS).elementAt(index);
     }
 
     public static void saveAccountList() {
@@ -208,7 +207,7 @@ public final class AccountManager {
     public static void saveState(boolean chunked, boolean destructive) {
         try {
             ByteBuffer buffer = new ByteBuffer();
-            Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+            Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
             if (destructive) {
                 buffer.ensureCapacity(SAVE_BUFFER_DESTRUCTIVE);
                 while (accounts.size() > 0) {
@@ -247,13 +246,13 @@ public final class AccountManager {
         }
         int newId = allocateNewAccountId();
         if (protocolType == Account.TYPE_MRIM) {
-            AppState.getVector(StateKeys.VEC_ACCOUNTS).addElement(new MrimAccount(newId, login, password));
+            AppState.getVector(SessionKeys.VEC_ACCOUNTS).addElement(new MrimAccount(newId, login, password));
         } else if (protocolType == Account.TYPE_MMP) {
-            AppState.getVector(StateKeys.VEC_ACCOUNTS).addElement(new MmpProtocol(newId, login, password));
+            AppState.getVector(SessionKeys.VEC_ACCOUNTS).addElement(new MmpProtocol(newId, login, password));
         } else if (protocolType == Account.TYPE_XMPP) {
-            AppState.getVector(StateKeys.VEC_ACCOUNTS).addElement(new XmppProtocol(newId, login, password));
+            AppState.getVector(SessionKeys.VEC_ACCOUNTS).addElement(new XmppProtocol(newId, login, password));
         } else if (protocolType == Account.TYPE_XMPP_MAILRU) {
-            AppState.getVector(StateKeys.VEC_ACCOUNTS).addElement(new XmppMailRuProtocol(newId, login, password));
+            AppState.getVector(SessionKeys.VEC_ACCOUNTS).addElement(new XmppMailRuProtocol(newId, login, password));
         }
         RemoteLogger.log("ACCT", "validateCredentials OK, new account type=" + protocolType + " login=" + login);
         TabBar.initialize();
@@ -262,7 +261,7 @@ public final class AccountManager {
     }
 
     private static Account findAccountByType(int protocolType, String login) {
-        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+        Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
         for (int i = accounts.size() - 1; i >= 0; i--) {
             Account candidate = (Account) accounts.elementAt(i);
             if (protocolType == candidate.getType() && login.equals(candidate.login)) {
@@ -273,7 +272,7 @@ public final class AccountManager {
     }
 
     private static int allocateNewAccountId() {
-        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+        Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
         int totalSize = accounts.size();
         int newId = 0;
         while (true) {
@@ -292,7 +291,7 @@ public final class AccountManager {
     }
 
     public static Account findAccountByLogin(int protocolType, String login) {
-        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+        Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
         for (int i = accounts.size() - 1; i >= 0; i--) {
             Account account = (Account) accounts.elementAt(i);
             if (login.equals(account.login) && account.getType() == protocolType) {
@@ -304,7 +303,7 @@ public final class AccountManager {
 
     public static Vector getMrimAccountList() {
         Vector result = ObjectPool.newVector();
-        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+        Vector allAccounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
         for (int i = allAccounts.size() - 1; i >= 0; i--) {
             Object element = allAccounts.elementAt(i);
             if (element instanceof MrimAccount) {
@@ -346,7 +345,7 @@ public final class AccountManager {
 
     public static Vector copyAllAccounts() {
         Vector result = ObjectPool.newVector();
-        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+        Vector allAccounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
         for (int i = allAccounts.size() - 1; i >= 0; i--) {
             result.insertElementAt(allAccounts.elementAt(i), 0);
         }
@@ -355,12 +354,12 @@ public final class AccountManager {
 
     public static void toggleAllConnections() {
         boolean allDisconnected = true;
-        for (int i = AppState.getVector(StateKeys.VEC_ACCOUNTS).size() - 1; i >= 0; i--) {
+        for (int i = AppState.getVector(SessionKeys.VEC_ACCOUNTS).size() - 1; i >= 0; i--) {
             if (getAccountByIndex(i).isConnecting()) {
                 allDisconnected = false;
             }
         }
-        for (int i = AppState.getVector(StateKeys.VEC_ACCOUNTS).size() - 1; i >= 0; i--) {
+        for (int i = AppState.getVector(SessionKeys.VEC_ACCOUNTS).size() - 1; i >= 0; i--) {
             Account account = getAccountByIndex(i);
             if (account.isConnecting()) {
                 if (!allDisconnected) {
@@ -374,7 +373,7 @@ public final class AccountManager {
 
     public static Vector getAllContacts() {
         Vector result = ObjectPool.newVector();
-        Vector allAccounts = AppState.getVector(StateKeys.VEC_ACCOUNTS);
+        Vector allAccounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
         for (int accountIdx = Utils.vectorSize(allAccounts) - 1; accountIdx >= 0; accountIdx--) {
             Vector contacts = ((Account) allAccounts.elementAt(accountIdx)).getAllContacts();
             for (int contactIdx = Utils.vectorSize(contacts) - 1; contactIdx >= 0; contactIdx--) {
@@ -416,7 +415,7 @@ public final class AccountManager {
     }
 
     public static int handleAction(Object account) {
-        int targetState = AppState.getInt(StateKeys.INT_TARGET_STATE);
+        int targetState = AppState.getInt(SessionKeys.INT_TARGET_STATE);
         if (account != null) {
             AppState.setAccount(account);
             return targetState;
@@ -424,7 +423,7 @@ public final class AccountManager {
         if (targetState != ScreenId.MAP_VIEW_SETTINGS) {
             return ScreenId.COLOR_PICKER;
         }
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         return ScreenId.MAP_VIEW_SETTINGS;
     }
 
@@ -455,7 +454,7 @@ public final class AccountManager {
         if (protocolType > Account.TYPE_XMPP_MAILRU) {
             return protocolType;
         }
-        AppState.setInt(StateKeys.INT_PROTOCOL_TYPE, protocolType);
+        AppState.setInt(SessionKeys.INT_PROTOCOL_TYPE, protocolType);
         return ScreenId.XMPP_LOGIN;
     }
 
@@ -464,7 +463,7 @@ public final class AccountManager {
         if (account.isConnecting()) {
             return NotificationHelper.showError(MSG_ACCOUNT_ACTIVE);
         }
-        AppState.getVector(StateKeys.VEC_ACCOUNTS).removeElement(account);
+        AppState.getVector(SessionKeys.VEC_ACCOUNTS).removeElement(account);
         TabBar.initialize();
         saveAccountList();
         return ScreenId.MULTI_ACCOUNT_LIST;
@@ -476,7 +475,7 @@ public final class AccountManager {
     }
 
     public static int handlePresenceAction() {
-        Vector accounts = AppState.getVector(StateKeys.VEC_ACCOUNT_SELECTION);
+        Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNT_SELECTION);
         for (int i = accounts.size() - 1; i >= 0; i--) {
             ((Account) accounts.elementAt(i)).connect(0);
         }
@@ -505,7 +504,7 @@ public final class AccountManager {
     }
 
     public static int handleGroupSelection(int optionId) {
-        Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(StateKeys.SLOT_MESSAGE_ID));
+        Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID));
         String body = message.body;
         message.body = optionId == 0 ? Conversation.encodeAlternate(body) : Conversation.decodeAlternate(body);
         return ScreenId.MESSAGE_PREVIEW;

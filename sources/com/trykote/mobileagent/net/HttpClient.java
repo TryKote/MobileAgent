@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -114,7 +113,7 @@ public final class HttpClient {
     private HttpClient(String str) {
         this.mockMode = 1;
         this.requestType = 2;
-        this.url = str.startsWith(AppState.getString(StateKeys.STR_RES_MENU_ITEM_1)) ? StringUtils.suffix(str, 7) : str;
+        this.url = str.startsWith(AppState.getString(StringResKeys.STR_RES_MENU_ITEM_1)) ? StringUtils.suffix(str, 7) : str;
     }
 
     private HttpClient(String str, Account account, int i) throws IOException {
@@ -205,7 +204,7 @@ public final class HttpClient {
             setRequestHeader(788628, 2164851);
             setRequestHeader(919726, 788668);
         }
-        return setRequestProperty(AppState.getString(StateKeys.STR_RES_URL_TEMPLATE_2), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
+        return setRequestProperty(AppState.getString(StringResKeys.STR_RES_URL_TEMPLATE_2), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
     }
 
     /* renamed from: a */
@@ -218,7 +217,7 @@ public final class HttpClient {
         int i;
         ByteBuffer headerBuf = readHeaders();
         String str = new String(headerBuf.data, 0, headerBuf.length);
-        int idx = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(StateKeys.STR_RES_LONG_URL_3)) + 16;
+        int idx = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(StringResKeys.STR_RES_LONG_URL_3)) + 16;
         int i2 = Integer.parseInt(StringUtils.substring(str, idx, str.indexOf(13, idx)));
         ByteBuffer buffer = new ByteBuffer();
         byte[] readBuf = ObjectPool.newBytes(i2);

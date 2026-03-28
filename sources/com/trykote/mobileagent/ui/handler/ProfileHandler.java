@@ -24,13 +24,13 @@ public final class ProfileHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_RESULTS));
                 return;
             case ScreenId.SEARCH_RESULT_LIST:
-                int errorMsgId = AppState.getInt(StateKeys.INT_ERROR_MSG_INDEX);
+                int errorMsgId = AppState.getInt(RuntimeKeys.INT_ERROR_MSG_INDEX);
                 if (0 != errorMsgId) {
                     clearSearchResults2();
                     NotificationHelper.showMessageById(errorMsgId);
                     return;
                 }
-                Vector searchResults = AppState.getVector(StateKeys.SLOT_REG_PARAM_4);
+                Vector searchResults = AppState.getVector(RegistrationKeys.SLOT_REG_PARAM_4);
                 if (0 != searchResults.size()) {
                     ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEARCH_RESULT_LIST), searchResults));
                     return;
@@ -52,7 +52,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                     return;
                 }
             case ScreenId.PROFILE_LOAD:
-                ContactInfo contactInfo = (ContactInfo) AppState.pool[StateKeys.SLOT_CONTACT_INFO];
+                ContactInfo contactInfo = (ContactInfo) AppState.pool[ContactKeys.SLOT_CONTACT_INFO];
                 NotificationHelper.showErrorOrConfirm(107, 728, contactInfo.getAccount().getResourceId((Object) contactInfo.getEmailOrMmpId()));
                 return;
             case ScreenId.VCARD_ACTIONS:
@@ -62,9 +62,9 @@ public final class ProfileHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PEOPLE_SEARCH));
                 return;
             case ScreenId.PROFILE_EDIT:
-                StringBuffer stringBuffer = new StringBuffer(AppState.getString(StateKeys.STR_REGISTRATION_TEXT));
+                StringBuffer stringBuffer = new StringBuffer(AppState.getString(StringResKeys.STR_REGISTRATION_TEXT));
                 stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).profileManager.profile.gender + 780));
-                AppState.setFromBuffer(StateKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
+                AppState.setFromBuffer(UIKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
                 ResourceManager.lastTileLoadTime = System.currentTimeMillis();
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_EDIT));
                 return;
@@ -81,7 +81,7 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULTS:
                 return handleEnterKey();
             case ScreenId.SEARCH_RESULT_LIST:
-                AppState.pool[StateKeys.SLOT_CONTACT_INFO] = data;
+                AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = data;
                 return 0;
             case ScreenId.USER_PROFILE:
                 return -1;
@@ -106,10 +106,10 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULT_LIST:
                 return 0;
             case ScreenId.USER_PROFILE:
-                AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 return 0;
             case ScreenId.PROFILE_LOAD:
-                AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 return 0;
             case ScreenId.VCARD_ACTIONS:
                 return 0;
@@ -141,7 +141,7 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULTS:
                 return 0;
             case ScreenId.SEARCH_RESULT_LIST:
-                AppState.pool[StateKeys.SLOT_CONTACT_INFO] = data;
+                AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = data;
                 return 0;
             case ScreenId.USER_PROFILE:
                 return -1;
@@ -166,9 +166,9 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULT_LIST:
                 return 0;
             case ScreenId.USER_PROFILE:
-                return AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
+                return AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
             case ScreenId.PROFILE_LOAD:
-                return AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
+                return AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
             case ScreenId.VCARD_ACTIONS:
                 return 0;
             case ScreenId.PEOPLE_SEARCH:
@@ -183,8 +183,8 @@ public final class ProfileHandler extends BaseScreenHandler {
 
     public static int handleScreenAction(int taskId) {
         ScreenBuilder.onScreenClosed();
-        AppState.setInt(StateKeys.INT_ASYNC_TASK_ID, taskId);
-        return AppState.getInt(StateKeys.INT_CURRENT_SCREEN_ID);
+        AppState.setInt(RuntimeKeys.INT_ASYNC_TASK_ID, taskId);
+        return AppState.getInt(UIKeys.INT_CURRENT_SCREEN_ID);
     }
 
     public static int handleEnterKey() {
@@ -198,7 +198,7 @@ public final class ProfileHandler extends BaseScreenHandler {
     }
 
     public static void resetSearchResults() {
-        AppState.clearRange(StateKeys.SLOT_MSG_SUBJECT, StateKeys.SLOT_MSG_EXTRA_1);
+        AppState.clearRange(RuntimeKeys.SLOT_MSG_SUBJECT, RuntimeKeys.SLOT_MSG_EXTRA_1);
     }
 
     private static void restoreState() {
@@ -206,6 +206,6 @@ public final class ProfileHandler extends BaseScreenHandler {
     }
 
     public static void clearSearchResults2() {
-        AppState.clearRange(StateKeys.SLOT_REG_PARAM_3, StateKeys.SLOT_CONTACT_INFO);
+        AppState.clearRange(RegistrationKeys.SLOT_REG_PARAM_3, ContactKeys.SLOT_CONTACT_INFO);
     }
 }

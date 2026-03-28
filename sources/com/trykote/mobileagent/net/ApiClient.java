@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -44,7 +43,7 @@ public final class ApiClient {
         }
         objArr[8] = objArr;
         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_VERY_LONG_API_1)).append(c0028ba2.login).append(AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_3)).append(c0028ba2.password).append(AppState.getString(StateKeys.SLOT_SESSION_HASH)));
+        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_VERY_LONG_API_1)).append(c0028ba2.login).append(AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_3)).append(c0028ba2.password).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) submitAsync(objArrM1147a)[7]).thread.join();
         c0028ba.jabberId = (String) objArrM1147a[6];
@@ -61,7 +60,7 @@ public final class ApiClient {
                         NetworkLock.acquireNetworkLock();
                         String str = (String) objArr[5];
                         if (str == null) {
-                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_LONG_URL_5)).append(objArr[2]));
+                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_LONG_URL_5)).append(objArr[2]));
                         } else {
                             strM1215a = str;
                         }
@@ -142,7 +141,7 @@ public final class ApiClient {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(StateKeys.STR_RES_PARAM_4)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(StringResKeys.STR_RES_PARAM_4)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;
@@ -176,7 +175,7 @@ public final class ApiClient {
 
     /* renamed from: a */
     private static final Object[] createErrorResult(int i, int i2, Object obj) {
-        return createHttpResult(i, ObjectPool.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StateKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
+        return createHttpResult(i, ObjectPool.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StringResKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
     }
 
     /* renamed from: a */
@@ -225,21 +224,21 @@ public final class ApiClient {
 
     /* renamed from: k */
     public static final Object[] pollAsyncResult() {
-        Object[] objArrM609l = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA);
+        Object[] objArrM609l = AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA);
         if (objArrM609l != null && getAsyncResult(objArrM609l) != null) {
-            AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+            AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         }
         return objArrM609l;
     }
 
     /* renamed from: a */
     public static final StringBuffer appendAuthParams(StringBuffer stringBuffer, String str) {
-        return stringBuffer.append(AppState.getString(StateKeys.SLOT_SESSION_HASH)).append(AppState.getString(StateKeys.STR_RES_STATUS_LABEL)).append(str);
+        return stringBuffer.append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(str);
     }
 
     /* renamed from: c */
     public static final int validateJsonResponse(Object[] objArr) {
-        AppState.clearIndex(StateKeys.SLOT_MEDIA_PLAYER);
+        AppState.clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
         if (!isHttpSuccess(objArr)) {
             return NotificationHelper.showError(888);
         }
@@ -250,14 +249,14 @@ public final class ApiClient {
         if (!JsonParser.isSuccess(objM806e)) {
             return NotificationHelper.showError(890);
         }
-        AppState.pool[StateKeys.SLOT_MEDIA_PLAYER] = objM806e;
+        AppState.pool[UIKeys.SLOT_MEDIA_PLAYER] = objM806e;
         return 0;
     }
 
     /* renamed from: l */
     public static final Object getJsonPayload() {
-        Object obj = AppState.pool[StateKeys.SLOT_MEDIA_PLAYER];
-        AppState.clearIndex(StateKeys.SLOT_MEDIA_PLAYER);
+        Object obj = AppState.pool[UIKeys.SLOT_MEDIA_PLAYER];
+        AppState.clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
         return JsonParser.getVectorElement(obj, 2);
     }
 }

@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -19,21 +18,21 @@ public final class NotificationHelper {
         if (ScreenManager.getCurrentScreen().screenType == 8) {
             ScreenBuilder.onScreenClosed();
         }
-        AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, i);
+        AppState.setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
         return ScreenId.CLEAR_NOTIFICATIONS;
     }
 
     /* renamed from: e */
     public static final void showNotification(String str) {
-        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
-        AppState.setObject(StateKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
+        AppState.setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
+        AppState.setObject(UIKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
         clearNotifications();
     }
 
     /* renamed from: m */
     public static final void showMessageById(int i) {
-        AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
-        AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, i);
+        AppState.setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
+        AppState.setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
         clearNotifications();
     }
 
@@ -41,23 +40,23 @@ public final class NotificationHelper {
     public static final void clearNotifications() {
         ResourceManager.playNotificationSound(5);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_DIALOG));
-        AppState.clearIndex(StateKeys.SLOT_NOTIFICATION_TITLE);
+        AppState.clearIndex(UIKeys.SLOT_NOTIFICATION_TITLE);
     }
 
     /* renamed from: a */
     public static final void showAlertBuffer(int i, StringBuffer stringBuffer) {
-        AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, i);
-        AppState.setFromBuffer(StateKeys.SLOT_MAP_POINT_1, stringBuffer);
+        AppState.setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
+        AppState.setFromBuffer(MapKeys.SLOT_MAP_POINT_1, stringBuffer);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-        AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
+        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_1);
     }
 
     /* renamed from: a */
     public static final void showAlertById(int i, int i2) {
-        AppState.setInt(StateKeys.INT_HTTP_RESULT_SCREEN, i);
-        AppState.setFromPool(StateKeys.SLOT_MAP_POINT_1, i2);
+        AppState.setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
+        AppState.setFromPool(MapKeys.SLOT_MAP_POINT_1, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-        AppState.clearIndex(StateKeys.SLOT_MAP_POINT_1);
+        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_1);
     }
 
     /* renamed from: a */
@@ -71,8 +70,8 @@ public final class NotificationHelper {
 
     /* renamed from: b */
     public static final void showConfirmDialog(int i, int i2) {
-        AppState.setInt(StateKeys.INT_HTTP_PARAM_1, i);
-        AppState.setInt(StateKeys.INT_HTTP_PARAM_2, i2);
+        AppState.setInt(UIKeys.INT_HTTP_PARAM_1, i);
+        AppState.setInt(UIKeys.INT_HTTP_PARAM_2, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONFIRM_DIALOG));
     }
 }

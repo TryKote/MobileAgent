@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -79,7 +78,7 @@ public final class MenuItem {
 
     /* renamed from: c */
     public static final MenuItem createDefault() {
-        return new MenuItem(1, AppState.getString(StateKeys.STR_EMPTY));
+        return new MenuItem(1, AppState.getString(StringResKeys.STR_EMPTY));
     }
 
     /* renamed from: a */
@@ -162,7 +161,7 @@ public final class MenuItem {
         }
         if (this.id != 9) {
             if (this.id == 4) {
-                NotificationHelper.showMessageById(Utils.defaultStr(AppState.getString(StateKeys.SLOT_ACCOUNT_DISPLAY_NAME)).length() > 0 ? 427 : 428);
+                NotificationHelper.showMessageById(Utils.defaultStr(AppState.getString(SessionKeys.SLOT_ACCOUNT_DISPLAY_NAME)).length() > 0 ? 427 : 428);
                 return 0;
             }
             if (this.id != 5) {
@@ -188,7 +187,7 @@ public final class MenuItem {
 
     /* renamed from: e */
     public final MenuItem setDefaultFont() {
-        return addElement(new SpacerElement(16, AppState.getInt(StateKeys.INT_FONT_HEIGHT)));
+        return addElement(new SpacerElement(16, AppState.getInt(UIKeys.INT_FONT_HEIGHT)));
     }
 
     /* renamed from: a */
@@ -321,7 +320,7 @@ public final class MenuItem {
 
     /* renamed from: h */
     public final int getTotalHeight() {
-        return Utils.max(this.maxHeight, AppState.getInt(StateKeys.INT_FONT_HEIGHT)) + 4;
+        return Utils.max(this.maxHeight, AppState.getInt(UIKeys.INT_FONT_HEIGHT)) + 4;
     }
 
     /* renamed from: a */

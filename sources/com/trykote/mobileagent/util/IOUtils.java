@@ -2,7 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.StateKeys;
+import com.trykote.mobileagent.core.UIKeys;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
@@ -72,6 +72,6 @@ public final class IOUtils {
     }
 
     public static final void setSelectedItems(Object obj) {
-        AppState.pool[StateKeys.SLOT_MEDIA_STREAM] = obj;
+        AppState.pool[UIKeys.SLOT_MEDIA_STREAM] = obj;
     }
 }

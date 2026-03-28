@@ -1,0 +1,45 @@
+package com.trykote.mobileagent.core;
+
+public final class RuntimeKeys {
+    private RuntimeKeys() {}
+
+    public static final int TIMESTAMP_SELECTED_MSG = 1469;
+    public static final int SLOT_MSG_ID_1 = 1253;
+    public static final int SLOT_MSG_ID_2 = 1254;
+    public static final int SLOT_XMPP_COMMAND_1 = 1260;
+    public static final int SLOT_XMPP_COMMAND_2 = 1261;
+    public static final int SLOT_CURRENT_MSG_TEXT = 1290;
+    public static final int SLOT_TRAFFIC_COST_TEXT = 1327;
+    public static final int SLOT_MESSAGE_ID = 1346;
+    public static final int SLOT_MSG_SUBJECT = 1348;
+    public static final int SLOT_MSG_SENDER = 1349;
+    public static final int SLOT_MSG_BODY = 1350;
+    public static final int SLOT_MSG_EXTRA_1 = 1351;
+    public static final int SLOT_MSG_EXTRA_2 = 1352;
+    public static final int SLOT_MSG_EXTRA_3 = 1353;
+    public static final int SLOT_TRAFFIC_STATUS_TEXT = 1354;
+    public static final int OBJ_SEARCH_PARAMS_1 = 1396;
+    public static final int OBJ_SEARCH_PARAMS_2 = 1397;
+    public static final int INT_PHONE_SCROLL_OFFSET = 1444;
+    public static final int INT_XMPP_COMMAND_INDEX = 1447;
+    public static final int INT_XMPP_SELECTION_INDEX = 1448;
+    public static final int INT_LAST_POLL_TIMESTAMP = 1457;
+    public static final int INT_LAST_CHECK_TIMESTAMP = 1458;
+    public static final int INT_LAST_LIST_SIZE = 1459;
+    public static final int INT_ERROR_MSG_INDEX = 1506;
+    public static final int INT_PERIOD_INDEX = 1510;
+    public static final int INT_XMPP_ACTION = 1515;
+    public static final int INT_XMPP_ACTION_TYPE = 1516;
+    public static final int INT_CURRENT_TIMESTAMP = 1531;
+    public static final int INT_XMPP_TRAFFIC_BYTES = 1548;
+    public static final int INT_MAX_PENDING_REQUESTS = 1550;
+    public static final int INT_MESSAGE_ICON = 2594;
+    public static final int INT_INFO_SCREEN_MODE = 3834;
+    public static final int INT_TRAFFIC_PERIOD_LABEL = 3985;
+    public static final int INT_STAT_ROWS = 3987;
+    public static final int INT_STAT_COLS = 3994;
+    public static final int INT_DELETE_BUTTON_ICON = 4113;
+    public static final int INT_BLOCK_BUTTON_ICON = 4118;
+    public static final int INT_ASYNC_TASK_ID = 4899;
+
+}

@@ -1,0 +1,64 @@
+package com.trykote.mobileagent.core;
+
+public final class MapKeys {
+    private MapKeys() {}
+
+    public static final int MAP_LONGITUDE = 35;
+    public static final int MAP_LATITUDE = 37;
+    public static final int MAP_ZOOM_LEVEL = 39;
+    public static final int MAP_GPS_ENABLED = 41;
+    public static final int MAP_RESOURCE_URL = 43;
+    public static final int MAP_INITIALIZED = 44;
+    public static final int GEO_SAVED_DATA = 227;
+    public static final int MAP_SAVED_LONGITUDE = 1410;
+    public static final int MAP_SAVED_LATITUDE = 1412;
+    public static final int MAP_VIEWPORT_WIDTH = 1415;
+    public static final int MAP_VIEWPORT_HEIGHT = 1416;
+    public static final int MAP_SCROLL_LON = 1558;
+    public static final int MAP_SCROLL_LAT = 1560;
+    public static final int FLAG_GPS_ACTIVE = 253;
+    public static final int FLAG_MAP_VIEW_ACTIVE = 276;
+    public static final int FLAG_MAP_POI_SEARCH = 278;
+    public static final int FLAG_MAP_ROUTE_SEARCH = 279;
+    public static final int FLAG_MAP_DATA_LOADED = 280;
+    public static final int FLAG_MAP_SCREEN_VISIBLE = 1409;
+    public static final int FLAG_MAP_OVERLAY_ACTIVE = 1414;
+    public static final int FLAG_GPS_NO_MAP = 1422;
+    public static final int FLAG_GPS_WITH_MAP = 1423;
+    public static final int FLAG_MAP_MODE_ACTIVE = 1442;
+    public static final int FLAG_MAP_LOADING = 1479;
+    public static final int FLAG_CHAT_HAS_ITEMS = 1546;
+    public static final int FLAG_MAP_TILES_PENDING = 1547;
+    public static final int FLAG_TILES_READY = 1549;
+    public static final int FLAG_TILE_CACHE_ENABLED = 1551;
+    public static final int FLAG_MAP_SCROLLING = 1553;
+    public static final int COUNTER_MAP_CACHE_HIT = 250;
+    public static final int COUNTER_MAP_CACHE_MISS = 251;
+    public static final int TIMESTAMP_MAP_SCROLL = 1556;
+    public static final int URL_GEO_CONFIG = 254;
+    public static final int STR_MAP_LOCATION_NAME = 1342;
+    public static final int STR_MAP_LOCATION_URL = 1343;
+    public static final int SLOT_TOOLTIP_TEXT_1 = 1249;
+    public static final int SLOT_TOOLTIP_TEXT_2 = 1250;
+    public static final int SLOT_MAP_SEARCH_QUERY = 1341;
+    public static final int SLOT_MAP_POINT_1 = 1344;
+    public static final int SLOT_MAP_POINT_2 = 1345;
+    public static final int OBJ_FONT_1 = 1363;
+    public static final int OBJ_FONT_2 = 1364;
+    public static final int SLOT_MAP_TILE_REQUEST = 1373;
+    public static final int SLOT_MAP_TILE_DATA = 1374;
+    public static final int SLOT_MAP_DATA = 1383;
+    public static final int SLOT_XMPP_SESSION_ID = 1384;
+    public static final int VEC_MAP_POINTS = 1389;
+    public static final int OBJ_GEO_REGION = 1390;
+    public static final int OBJ_GEO_REGION_2 = 1391;
+    public static final int OBJ_MENU_ACTIONS = 1392;
+    public static final int OBJ_MENU_LABELS = 1393;
+    public static final int OBJ_TILE_CACHE = 1394;
+    public static final int OBJ_TILE_REQUEST_ARRAY = 1395;
+    public static final int VEC_TILE_QUEUE = 1402;
+    public static final int INT_TILE_CACHE_SIZE = 1552;
+    public static final int INT_MAP_SCROLL_DIRECTION = 1564;
+    public static final int INT_SCREEN_BUILDER_ACTION = 2122;
+
+}

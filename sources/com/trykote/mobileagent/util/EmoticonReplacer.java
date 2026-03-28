@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import java.util.Vector;
@@ -64,7 +63,7 @@ public final class EmoticonReplacer {
                     vector.addElement(new IconElement(16, iconCode));
                     wrapText(vector, str, i12 + AppState.getString(i13 + 1063).length(), i2, i3, i4, 0);
                 }
-            } else if (str != AppState.getString(StateKeys.STR_PLACEHOLDER_TEXT)) {
+            } else if (str != AppState.getString(StringResKeys.STR_PLACEHOLDER_TEXT)) {
                 GraphicsContext fontGfx = AppState.getGfxContext(i3);
                 int offsetH = AppState.getIntOffset(i3);
                 int i15 = i;
@@ -108,7 +107,7 @@ public final class EmoticonReplacer {
 
     private static void wrapTextLine(Vector vector, String str, GraphicsContext gfx, int i, int i2, int i3, int i4, int i5) {
         int textW = gfx.substringWidth(str, i2, i3);
-        if (textW < (AppState.getInt(StateKeys.INT_SCREEN_WIDTH) << 2) / 5) {
+        if (textW < (AppState.getInt(UIKeys.INT_SCREEN_WIDTH) << 2) / 5) {
             vector.addElement(new TextElement(str, textW, i, i2, i3, i4, i5));
             return;
         }

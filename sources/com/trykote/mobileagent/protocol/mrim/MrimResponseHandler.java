@@ -67,7 +67,7 @@ final class MrimResponseHandler {
                 break;
             case MrimAccount.RESP_XMPP_SERVICE:
                 if (resultCode != 1) {
-                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                     break;
                 }
                 break;
@@ -138,7 +138,7 @@ final class MrimResponseHandler {
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[4];
         int contactId = buf.readInt();
-        String statusStr = AppState.getString(StateKeys.STR_PHONE_SUFFIX);
+        String statusStr = AppState.getString(StringResKeys.STR_PHONE_SUFFIX);
         String str = (String) objArr[2];
         String str2 = (String) objArr[3];
         String str3 = AppState.emptyStr;
@@ -170,11 +170,11 @@ final class MrimResponseHandler {
                 break;
             case 32769:
                 if (mrimContact.isSystem()) {
-                    EventDispatcher.postNotification(AppState.getString(StateKeys.STR_AUTH_GRANTED));
+                    EventDispatcher.postNotification(AppState.getString(StringResKeys.STR_AUTH_GRANTED));
                     break;
                 }
             default:
-                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                 break;
         }
     }

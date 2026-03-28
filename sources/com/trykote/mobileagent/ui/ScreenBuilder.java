@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.handler.*;
 import com.trykote.mobileagent.util.*;
@@ -19,7 +18,7 @@ public final class ScreenBuilder {
         AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
-                Vector screenStack = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+                Vector screenStack = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
                 int size = screenStack.size();
                 z = false;
                 while (--size >= 0) {
@@ -224,7 +223,7 @@ public final class ScreenBuilder {
                 ContactListManager.refreshContactList();
                 break;
         }
-        Vector screenStack = AppState.getVector(StateKeys.VEC_SCREEN_STACK);
+        Vector screenStack = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screenStack.size() - 1;
         ListView closedScreen = (ListView) screenStack.elementAt(size);
         ObjectPool.releaseVector(closedScreen.tabItems);

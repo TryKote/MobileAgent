@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -197,7 +196,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: L */
     public final void mo148L() {
-        AppState.clearIndex(StateKeys.SLOT_REG_PARAM_2);
+        AppState.clearIndex(RegistrationKeys.SLOT_REG_PARAM_2);
     }
 
     /* renamed from: a */

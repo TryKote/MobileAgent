@@ -27,7 +27,7 @@ public final class MapHandler extends BaseScreenHandler {
                 break;
             case ScreenId.MAP_POINTS:
                 ListView screen11 = ScreenManager.createScreen(ScreenDef.MAP_POINTS);
-                Vector mapPoints = AppState.getVector(StateKeys.VEC_CONTACT_GROUPS);
+                Vector mapPoints = AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS);
                 for (int i19 = 0; i19 < mapPoints.size(); i19++) {
                     MapPoint mapPoint = (MapPoint) mapPoints.elementAt(i19);
                     screen11.addIconItemWithData(-1, mapPoint.name, 6, mapPoint);
@@ -35,10 +35,10 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(screen11);
                 break;
             case ScreenId.MAP_TOOLTIP:
-                AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_1, (Object) AppState.emptyStr);
+                AppState.setObject(MapKeys.SLOT_TOOLTIP_TEXT_1, (Object) AppState.emptyStr);
                 String tooltipText = MapRenderer.getTooltipText();
                 if (tooltipText != null) {
-                    AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_1, (Object) tooltipText);
+                    AppState.setObject(MapKeys.SLOT_TOOLTIP_TEXT_1, (Object) tooltipText);
                 }
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_TOOLTIP));
                 break;
@@ -65,10 +65,10 @@ public final class MapHandler extends BaseScreenHandler {
                 MapController.showMapContextMenu();
                 break;
             case ScreenId.SAVE_LOCATION:
-                AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_2, (Object) AppState.emptyStr);
+                AppState.setObject(MapKeys.SLOT_TOOLTIP_TEXT_2, (Object) AppState.emptyStr);
                 String tooltipText2 = MapRenderer.getTooltipText();
                 if (tooltipText2 != null) {
-                    AppState.setObject(StateKeys.SLOT_TOOLTIP_TEXT_2, (Object) tooltipText2);
+                    AppState.setObject(MapKeys.SLOT_TOOLTIP_TEXT_2, (Object) tooltipText2);
                 }
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SAVE_LOCATION));
                 break;
@@ -98,7 +98,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SHARE_LOCATION));
                 break;
             case ScreenId.MAP_SEARCH:
-                AppState.setInt(StateKeys.INT_SCREEN_BUILDER_ACTION, AppState.getBool(StateKeys.FLAG_MAP_MODE_ACTIVE) ? 407 : 408);
+                AppState.setInt(MapKeys.INT_SCREEN_BUILDER_ACTION, AppState.getBool(MapKeys.FLAG_MAP_MODE_ACTIVE) ? 407 : 408);
                 Conversation.updateStatusText(411);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_SEARCH));
                 break;
@@ -116,7 +116,7 @@ public final class MapHandler extends BaseScreenHandler {
         int nextScreen;
         switch (currentScreen.screenId) {
             case ScreenId.MAP:
-                if (!AppState.getBool(StateKeys.FLAG_MAP_TILES_PENDING)) {
+                if (!AppState.getBool(MapKeys.FLAG_MAP_TILES_PENDING)) {
                     MapController.toggleMapControls(currentScreen);
                 }
                 nextScreen = 0;
@@ -129,7 +129,7 @@ public final class MapHandler extends BaseScreenHandler {
                 break;
             case ScreenId.MAP_TOOLTIP:
                 ScreenManager.processScreenForm();
-                nextScreen = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_1))) ? NotificationHelper.showError(352) : 0;
+                nextScreen = StringUtils.isEmpty(Utils.defaultStr(AppState.getString(MapKeys.SLOT_TOOLTIP_TEXT_1))) ? NotificationHelper.showError(352) : 0;
                 break;
             case ScreenId.PEOPLE_NEARBY:
                 nextScreen = handleMapSearchAction(obj);
@@ -139,7 +139,7 @@ public final class MapHandler extends BaseScreenHandler {
                 break;
             case ScreenId.SAVE_LOCATION:
                 ScreenManager.processScreenForm();
-                String locationName = Utils.defaultStr(AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_2));
+                String locationName = Utils.defaultStr(AppState.getString(MapKeys.SLOT_TOOLTIP_TEXT_2));
                 int errorCode7;
                 if (StringUtils.isEmpty(locationName)) {
                     errorCode7 = NotificationHelper.showError(372);
@@ -152,9 +152,9 @@ public final class MapHandler extends BaseScreenHandler {
                         lat = listItem.getBaseHeight();
                         listItem.select();
                     }
-                    MapPoint mapPoint = new MapPoint(locationName, 0L, 0L, 0L, 0L, lon, lat, AppState.getInt(StateKeys.MAP_ZOOM_LEVEL));
+                    MapPoint mapPoint = new MapPoint(locationName, 0L, 0L, 0L, 0L, lon, lat, AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
                     mapPoint.height = 4;
-                    Vector screenStack = AppState.getVector(StateKeys.VEC_PHOTO_QUEUE);
+                    Vector screenStack = AppState.getVector(UIKeys.VEC_PHOTO_QUEUE);
                     XmppContactGroup.addMapPointIfNew(screenStack, mapPoint, 0, 50);
                     XmppContactGroup.saveMapPoints(screenStack, 226);
                     MapRenderer.navigateToMapPoint(mapPoint);
@@ -173,7 +173,7 @@ public final class MapHandler extends BaseScreenHandler {
                 break;
             case ScreenId.SHARE_LOCATION:
                 ScreenManager.processScreenForm();
-                String msgId = AppState.getString(StateKeys.SLOT_MSG_ID_1);
+                String msgId = AppState.getString(RuntimeKeys.SLOT_MSG_ID_1);
                 long lon2 = MapRenderer.currentLon;
                 long lat2 = MapRenderer.currentLat;
                 ListItem tooltipItem2 = MapRenderer.tooltipItem;
@@ -182,7 +182,7 @@ public final class MapHandler extends BaseScreenHandler {
                     lat2 = tooltipItem2.getBaseHeight();
                     tooltipItem2.select();
                 }
-                String msgId2 = AppState.getString(StateKeys.SLOT_MSG_ID_2);
+                String msgId2 = AppState.getString(RuntimeKeys.SLOT_MSG_ID_2);
                 long j = lon2;
                 long j2 = lat2;
                 if (msgId != null) {
@@ -191,13 +191,13 @@ public final class MapHandler extends BaseScreenHandler {
                 long j3 = lon2;
                 long j4 = lat2;
                 if (msgId != null) {
-                    String sessionKey = Utils.defaultStr(AppState.getString(StateKeys.SESSION_KEY));
+                    String sessionKey = Utils.defaultStr(AppState.getString(SessionKeys.SESSION_KEY));
                     ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_ADD).writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(j3).writeUInt(4023078).writeLongAsString(j4).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCompressed(PackedStringKeys.TAG_SECRET).writeLongAsString(j3).encryptMD5().toHexString());
                     if (msgId2 != null) {
                         requestBuf.writeUInt(4023846).writeEncodedString(msgId2);
                     }
-                    if (AppState.getBool(StateKeys.FLAG_REGISTRATION_DONE)) {
-                        String msgId3 = AppState.getString(StateKeys.LAST_ACCOUNT_NAME);
+                    if (AppState.getBool(RegistrationKeys.FLAG_REGISTRATION_DONE)) {
+                        String msgId3 = AppState.getString(SessionKeys.LAST_ACCOUNT_NAME);
                         if (Utils.nonEmpty(msgId3)) {
                             requestBuf.writeUInt(4024102).writeEncodedString(msgId3);
                         }
@@ -233,8 +233,8 @@ public final class MapHandler extends BaseScreenHandler {
                 result = 0;
                 break;
             case ScreenId.MAP_POINTS:
-                AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
-                AppState.setInt(StateKeys.FLAG_LOADING, 0);
+                AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
+                AppState.setInt(UIKeys.FLAG_LOADING, 0);
                 result = 0;
                 break;
             case ScreenId.MAP_TOOLTIP:
@@ -250,14 +250,14 @@ public final class MapHandler extends BaseScreenHandler {
                 result = 0;
                 break;
             case ScreenId.MAP_ROUTE:
-                AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
+                AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
                 result = 0;
                 break;
             case ScreenId.MAP_STATUS:
                 result = 0;
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
-                AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
+                AppState.setInt(ContactKeys.FLAG_CONTACTS_LOADED, 0);
                 result = 0;
                 break;
             case ScreenId.SHARE_LOCATION:
@@ -287,17 +287,17 @@ public final class MapHandler extends BaseScreenHandler {
                 TabBar.removeSearchTab();
                 break;
             case ScreenId.MAP_POINTS:
-                AppState.clearIndex(StateKeys.SLOT_SEARCH_QUERY);
+                AppState.clearIndex(RegistrationKeys.SLOT_SEARCH_QUERY);
                 break;
             case ScreenId.MAP_CONTEXT_MENU:
                 MapController.mapContextItem = null;
                 break;
             case ScreenId.MAP_ROUTE_SELECT:
-                AppState.setInt(StateKeys.FLAG_NEW_MESSAGE, 0);
+                AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
                 break;
             case ScreenId.SHARE_LOCATION:
-                AppState.clearIndex(StateKeys.SLOT_MSG_ID_1);
-                AppState.clearIndex(StateKeys.SLOT_MSG_ID_2);
+                AppState.clearIndex(RuntimeKeys.SLOT_MSG_ID_1);
+                AppState.clearIndex(RuntimeKeys.SLOT_MSG_ID_2);
                 break;
         }
     }
@@ -308,14 +308,14 @@ public final class MapHandler extends BaseScreenHandler {
         switch (screen.screenId) {
             case ScreenId.MAP:
                 int i2;
-                if (!AppState.getBool(StateKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
+                if (!AppState.getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
                     MapController.toggleMapControls(screen);
                     i2 = -1;
-                } else if (AppState.getBool(StateKeys.FLAG_MAP_LOADING)) {
+                } else if (AppState.getBool(MapKeys.FLAG_MAP_LOADING)) {
                     String lonStr = MapUtils.pixelToLongitude(MapRenderer.currentLon);
                     String latStr = MapUtils.pixelToLatitude(MapRenderer.currentLat);
-                    AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
-                    ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
+                    AppState.setInt(MapKeys.FLAG_MAP_LOADING, 0);
+                    ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
                     i2 = 0;
                 } else {
                     i2 = ScreenId.MAP_CONTEXT_MENU;
@@ -372,7 +372,7 @@ public final class MapHandler extends BaseScreenHandler {
         long lon;
         long lat;
         Contact contact = (Contact) contactObj;
-        String query = AppState.getString(StateKeys.SLOT_TOOLTIP_TEXT_1);
+        String query = AppState.getString(MapKeys.SLOT_TOOLTIP_TEXT_1);
         ListItem item = MapRenderer.tooltipItem;
         if (item == null || !item.isSelected()) {
             lon = MapRenderer.currentLon;
@@ -381,7 +381,7 @@ public final class MapHandler extends BaseScreenHandler {
             lon = item.getWidth();
             lat = item.getBaseHeight();
         }
-        int errorCode = contact.sendMessage(ResourceManager.buildTileRequestUrl(lon, lat, AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), query));
+        int errorCode = contact.sendMessage(ResourceManager.buildTileRequestUrl(lon, lat, AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), query));
         if (0 != errorCode) {
             return NotificationHelper.showError(errorCode);
         }
@@ -389,7 +389,7 @@ public final class MapHandler extends BaseScreenHandler {
     }
 
     public static final int handleMapResultAction(Object mapPointObj) {
-        AppState.setObject(StateKeys.MAP_RESOURCE_URL, (Object) ((MapPoint) mapPointObj).getResourceUrl());
+        AppState.setObject(MapKeys.MAP_RESOURCE_URL, (Object) ((MapPoint) mapPointObj).getResourceUrl());
         return 0;
     }
 
@@ -404,17 +404,17 @@ public final class MapHandler extends BaseScreenHandler {
             lon = MapRenderer.currentLon;
             lat = MapRenderer.currentLat;
         }
-        AppState.setInt(StateKeys.FLAG_MAP_LOADING, 0);
-        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL), MapUtils.pixelToLongitude(lon), MapUtils.pixelToLatitude(lat)), lon, lat);
+        AppState.setInt(MapKeys.FLAG_MAP_LOADING, 0);
+        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), MapUtils.pixelToLongitude(lon), MapUtils.pixelToLatitude(lat)), lon, lat);
         return ScreenId.MAP;
     }
 
     public static final int handleMapLocationSelect(Object obj) {
-        if (AppState.getBool(StateKeys.FLAG_NEW_MESSAGE)) {
+        if (AppState.getBool(UIKeys.FLAG_NEW_MESSAGE)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
             return ScreenId.MAP;
         }
-        if (!AppState.getBool(StateKeys.FLAG_CONTACTS_LOADED)) {
+        if (!AppState.getBool(ContactKeys.FLAG_CONTACTS_LOADED)) {
             MapController.pendingMapPoint = (MapPoint) obj;
             return ScreenId.CHAT_LIST_OPTIONS;
         }
@@ -422,16 +422,16 @@ public final class MapHandler extends BaseScreenHandler {
         MapPoint mapPoint = (MapPoint) obj;
         mrimAccount.profileManager.setSimpleLocation(MapUtils.pixelToLongitude(mapPoint.longitude), MapUtils.pixelToLatitude(mapPoint.latitude));
         mrimAccount.profileManager.sync();
-        AppState.setInt(StateKeys.FLAG_CONTACTS_LOADED, 0);
+        AppState.setInt(ContactKeys.FLAG_CONTACTS_LOADED, 0);
         return ScreenId.PROFILE_EDIT;
     }
 
     public static final int handleMapModeOption(int optionId) {
         if (optionId != 0) {
-            AppState.setInt(StateKeys.FLAG_LOADING, 1);
+            AppState.setInt(UIKeys.FLAG_LOADING, 1);
             return ScreenId.MAP_POINTS;
         }
-        AppState.setInt(StateKeys.FLAG_MAP_LOADING, 1);
+        AppState.setInt(MapKeys.FLAG_MAP_LOADING, 1);
         ((MrimAccount) AppState.getAccount()).isHighlighted = false;
         return ScreenId.CLOSE;
     }
@@ -441,48 +441,48 @@ public final class MapHandler extends BaseScreenHandler {
         long currentTime = System.currentTimeMillis();
         switch (currentScreen.screenId) {
             case ScreenId.MAP:
-                if (currentTime - AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) > 45) {
-                    AppState.setLong(StateKeys.TIMESTAMP_MAP_SCROLL, currentTime);
+                if (currentTime - AppState.getLong(MapKeys.TIMESTAMP_MAP_SCROLL) > 45) {
+                    AppState.setLong(MapKeys.TIMESTAMP_MAP_SCROLL, currentTime);
                 }
                 if (TimerManager.isTimerType(TimerManager.SLOT_MAP_CROSSHAIR) && MapRenderer.crosshairVisible) {
-                    if (AppState.getBool(StateKeys.FLAG_MAP_VIEW_ACTIVE)) {
-                        if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(StateKeys.MAP_ZOOM_LEVEL)) != VCard.staticTs5) && AppState.getBool(StateKeys.FLAG_MAP_DATA_LOADED)) {
+                    if (AppState.getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE)) {
+                        if ((MapRenderer.currentLon < VCard.staticTs1 || MapRenderer.currentLon > VCard.staticTs3 || MapRenderer.currentLat > VCard.staticTs4 || MapRenderer.currentLat < VCard.staticTs2 || ((long) AppState.getInt(MapKeys.MAP_ZOOM_LEVEL)) != VCard.staticTs5) && AppState.getBool(MapKeys.FLAG_MAP_DATA_LOADED)) {
                             MapUtils.requestNearbyPeople();
                         }
                     }
                     MapRenderer.setCrosshairVisible(false);
                 }
-                int stateInt2 = AppState.getInt(StateKeys.INT_MAP_SCROLL_DIRECTION);
-                if (stateInt2 >= 0 && AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) == currentTime && !AppState.getBool(StateKeys.FLAG_MAP_SCROLLING)) {
-                    AppState.setLong(StateKeys.MAP_SCROLL_LON, MapRenderer.currentLon);
-                    AppState.setLong(StateKeys.MAP_SCROLL_LAT, MapRenderer.currentLat);
-                    int stateInt3 = AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
+                int stateInt2 = AppState.getInt(MapKeys.INT_MAP_SCROLL_DIRECTION);
+                if (stateInt2 >= 0 && AppState.getLong(MapKeys.TIMESTAMP_MAP_SCROLL) == currentTime && !AppState.getBool(MapKeys.FLAG_MAP_SCROLLING)) {
+                    AppState.setLong(MapKeys.MAP_SCROLL_LON, MapRenderer.currentLon);
+                    AppState.setLong(MapKeys.MAP_SCROLL_LAT, MapRenderer.currentLat);
+                    int stateInt3 = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
                     long scrollDelta = (MapUtils.getZoomNumerator(stateInt3) / MapUtils.getZoomDenominator(stateInt3)) * 9;
                     switch (stateInt2) {
                         case 0:
-                            AppState.setLong(StateKeys.MAP_SCROLL_LON, AppState.getLong(StateKeys.MAP_SCROLL_LON) + scrollDelta);
+                            AppState.setLong(MapKeys.MAP_SCROLL_LON, AppState.getLong(MapKeys.MAP_SCROLL_LON) + scrollDelta);
                             break;
                         case 1:
-                            AppState.setLong(StateKeys.MAP_SCROLL_LON, AppState.getLong(StateKeys.MAP_SCROLL_LON) - scrollDelta);
+                            AppState.setLong(MapKeys.MAP_SCROLL_LON, AppState.getLong(MapKeys.MAP_SCROLL_LON) - scrollDelta);
                             break;
                         case 2:
-                            AppState.setLong(StateKeys.MAP_SCROLL_LAT, AppState.getLong(StateKeys.MAP_SCROLL_LAT) + scrollDelta);
+                            AppState.setLong(MapKeys.MAP_SCROLL_LAT, AppState.getLong(MapKeys.MAP_SCROLL_LAT) + scrollDelta);
                             break;
                         case 3:
-                            AppState.setLong(StateKeys.MAP_SCROLL_LAT, AppState.getLong(StateKeys.MAP_SCROLL_LAT) - scrollDelta);
+                            AppState.setLong(MapKeys.MAP_SCROLL_LAT, AppState.getLong(MapKeys.MAP_SCROLL_LAT) - scrollDelta);
                             break;
                     }
-                    MapRenderer.setPosition(AppState.getLong(StateKeys.MAP_SCROLL_LON), AppState.getLong(StateKeys.MAP_SCROLL_LAT));
+                    MapRenderer.setPosition(AppState.getLong(MapKeys.MAP_SCROLL_LON), AppState.getLong(MapKeys.MAP_SCROLL_LAT));
                     TimerManager.setTimer(TimerManager.SLOT_MAP_CROSSHAIR, 500L);
                     MapRenderer.resetInteraction();
                 }
-                if (AppState.getLong(StateKeys.TIMESTAMP_MAP_SCROLL) == currentTime) {
+                if (AppState.getLong(MapKeys.TIMESTAMP_MAP_SCROLL) == currentTime) {
                     MapRenderer.render();
                 }
-                if (AppState.getBool(StateKeys.FLAG_CONTACT_LIST_ACTIVE) && TimerManager.checkTimer(TimerManager.SLOT_MAP_IDLE, 300000L)) {
+                if (AppState.getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && TimerManager.checkTimer(TimerManager.SLOT_MAP_IDLE, 300000L)) {
                     TimerManager.setTimer(TimerManager.SLOT_MAP_IDLE, 300000L);
                     StringUtils.clearSatelliteTiles();
-                    Vector vec4 = AppState.getVector(StateKeys.SLOT_MAP_DATA);
+                    Vector vec4 = AppState.getVector(MapKeys.SLOT_MAP_DATA);
                     int size3 = vec4.size();
                     while (true) {
                         size3--;
@@ -495,7 +495,7 @@ public final class MapHandler extends BaseScreenHandler {
                         }
                     }
                 }
-                if (AppState.getBool(StateKeys.FLAG_MAP_SCROLLING)) {
+                if (AppState.getBool(MapKeys.FLAG_MAP_SCROLLING)) {
                     AppController.needsRepaint = true;
                 }
                 if (MapRenderer.tapConsumed) {
@@ -511,24 +511,24 @@ public final class MapHandler extends BaseScreenHandler {
     }
 
     public static int processLoginField(String protocol) {
-        if (AppState.getString(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME).equals(protocol)) {
+        if (AppState.getString(SessionKeys.SLOT_ACTIVE_PROTOCOL_NAME).equals(protocol)) {
             ScreenBuilder.onScreenClosed();
             if (MapController.hasRoutePoints()) {
                 return 0;
             }
             return NotificationHelper.showError(354);
         }
-        if (AppState.getString(StateKeys.STR_PROTOCOL_MRIM).equals(protocol)) {
-            AppState.setInt(StateKeys.FLAG_GPS_ACTIVE, 1);
-            XmppContactGroup.stopMapAnimation(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE));
+        if (AppState.getString(StringResKeys.STR_PROTOCOL_MRIM).equals(protocol)) {
+            AppState.setInt(MapKeys.FLAG_GPS_ACTIVE, 1);
+            XmppContactGroup.stopMapAnimation(AppState.getVector(UIKeys.VEC_PHOTO_QUEUE));
             MapRenderer.needsRedraw = true;
             return ScreenId.MAP;
         }
-        if (!AppState.getString(StateKeys.STR_PROTOCOL_MMP).equals(protocol)) {
+        if (!AppState.getString(StringResKeys.STR_PROTOCOL_MMP).equals(protocol)) {
             return 0;
         }
-        AppState.setInt(StateKeys.FLAG_GPS_ACTIVE, 0);
-        XmppContactGroup.startMapAnimation(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE));
+        AppState.setInt(MapKeys.FLAG_GPS_ACTIVE, 0);
+        XmppContactGroup.startMapAnimation(AppState.getVector(UIKeys.VEC_PHOTO_QUEUE));
         MapRenderer.needsRedraw = true;
         return ScreenId.MAP;
     }

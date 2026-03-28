@@ -141,8 +141,8 @@ public final class MailHelper {
     }
 
     public static final void setMailAction(int i, int i2) {
-        AppState.setInt(StateKeys.INT_XMPP_ACTION, i);
-        AppState.setInt(StateKeys.INT_XMPP_ACTION_TYPE, i2);
+        AppState.setInt(RuntimeKeys.INT_XMPP_ACTION, i);
+        AppState.setInt(RuntimeKeys.INT_XMPP_ACTION_TYPE, i2);
     }
 
     public static final int processMailResponse() {
@@ -159,8 +159,8 @@ public final class MailHelper {
         if (validationResult != 0) {
             return validationResult;
         }
-        String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
+        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(4);
         Object jsonPayload = ApiClient.getJsonPayload();
@@ -210,18 +210,18 @@ public final class MailHelper {
     }
 
     private static final int handleMailRedirect() {
-        int action = AppState.getInt(StateKeys.INT_XMPP_ACTION);
+        int action = AppState.getInt(RuntimeKeys.INT_XMPP_ACTION);
         if (action == 54) {
-            Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(StateKeys.SLOT_MESSAGE_ID));
+            Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID));
             Vector toList = message.getToList();
             Vector ccList = message.getCcList();
             getFirstRecipient(toList);
             String subject = message.getSubject();
             String str = message.body;
-            String replyPrefix = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
-            String fwdPrefix = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
-            String string = new StringBuffer().append(AppState.getString(StateKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(str)).toString();
-            switch (AppState.getInt(StateKeys.INT_XMPP_ACTION_TYPE)) {
+            String replyPrefix = AppState.getString(StringResKeys.STR_RES_HTTPS_PREFIX);
+            String fwdPrefix = AppState.getString(StringResKeys.STR_RES_HTTP_PREFIX);
+            String string = new StringBuffer().append(AppState.getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(str)).toString();
+            switch (AppState.getInt(RuntimeKeys.INT_XMPP_ACTION_TYPE)) {
                 case 0:
                     ResourceManager.composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
                     break;
@@ -241,18 +241,18 @@ public final class MailHelper {
 
     /* renamed from: a */
     public static final int handleMailMenuAction(String str, int i) {
-        String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
+        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
         wrapInVector(messageId);
-        int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         getFirstRecipient(toList);
-        boolean needsAuth = AppState.getBool(StateKeys.SETTING_AUTH_REQUIRED);
-        String replyPrefix = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
-        String forwardPrefix = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
+        boolean needsAuth = AppState.getBool(SettingsKeys.SETTING_AUTH_REQUIRED);
+        String replyPrefix = AppState.getString(StringResKeys.STR_RES_HTTPS_PREFIX);
+        String forwardPrefix = AppState.getString(StringResKeys.STR_RES_HTTP_PREFIX);
         String body = AppState.emptyStr;
         if (i == 48) {
             ScreenBuilder.onScreenClosed();
@@ -280,31 +280,31 @@ public final class MailHelper {
             return 0;
         }
         if (StringUtils.matchesKey(855, str)) {
-            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 2);
+            AppState.setInt(ChatKeys.INT_CHAT_VIEW_MODE, 2);
             return 0;
         }
         if (StringUtils.matchesKey(856, str)) {
-            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 1);
+            AppState.setInt(ChatKeys.INT_CHAT_VIEW_MODE, 1);
             return 0;
         }
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+        AppState.setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
         return 0;
     }
 
     /* renamed from: a */
     public static final int handleMailForwardAction(String str) {
-        String strM584b = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
-        int iM586d = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        String strM584b = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        int iM586d = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Message message = account.chatRoomManager.findById(iM586d).getMessage(strM584b);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String strM584b2 = AppState.getString(StateKeys.STR_RES_HTTPS_PREFIX);
-        String strM584b3 = AppState.getString(StateKeys.STR_RES_HTTP_PREFIX);
+        String strM584b2 = AppState.getString(StringResKeys.STR_RES_HTTPS_PREFIX);
+        String strM584b3 = AppState.getString(StringResKeys.STR_RES_HTTP_PREFIX);
         String str2 = ((MrimAccount) AppState.getAccount()).login;
         wrapInVector(strM584b);
         if (StringUtils.matchesKey(839, str)) {
@@ -321,7 +321,7 @@ public final class MailHelper {
             if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
-            AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+            AppState.setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
             return 0;
         }
         ScreenBuilder.onScreenClosed();

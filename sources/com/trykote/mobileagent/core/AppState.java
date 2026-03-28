@@ -75,11 +75,11 @@ public abstract class AppState {
         // Non-zero defaults for runtime variables (intPool[0..171])
         intPool[1417 - 1406] = 1;
         intPool[1420 - 1406] = 1;
-        intPool[StateKeys.FLAG_MRIM_DATA_LOADED - 1406] = 1;
+        intPool[SessionKeys.FLAG_MRIM_DATA_LOADED - 1406] = 1;
         intPool[1461 - 1406] = 1;
-        intPool[StateKeys.FLAG_HAS_XMPP_ACCOUNTS - 1406] = 1;
-        intPool[StateKeys.FLAG_CAPTCHA_SHOWN - 1406] = 1;
-        intPool[StateKeys.INT_MAP_SCROLL_DIRECTION - 1406] = -1;
+        intPool[SessionKeys.FLAG_HAS_XMPP_ACCOUNTS - 1406] = 1;
+        intPool[SessionKeys.FLAG_CAPTCHA_SHOWN - 1406] = 1;
+        intPool[MapKeys.INT_MAP_SCROLL_DIRECTION - 1406] = -1;
         intPool[1571 - 1406] = 400;
         ByteBuffer buffer = new ByteBuffer(ObjectPool.unpackChars(1734763311), 45000);
         for (int i2 = 0; i2 < 1406; i2++) {
@@ -108,7 +108,7 @@ public abstract class AppState {
             }
             iArr[i4] = value;
         }
-        emptyStr = (String) pool[StateKeys.STR_EMPTY];
+        emptyStr = (String) pool[StringResKeys.STR_EMPTY];
         ByteBuffer recordBuf = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(1164404323));
         RemoteLogger.log("PERSIST", "delta RMS read: " + recordBuf.length + " bytes");
         while (recordBuf.length > 0) {
@@ -139,38 +139,38 @@ public abstract class AppState {
                 }
             } catch (Throwable unused4) {
             }
-            setInt(StateKeys.DELTA_VERSION, 3096);
+            setInt(TrafficKeys.DELTA_VERSION, 3096);
         }
         if (((Integer) delta[0]).intValue() != 3096) {
             throw new RuntimeException();
         }
-        setInt(StateKeys.DELTA_VERSION, 3096);
-        setObject(StateKeys.STR_SEPARATOR, (Object) separator);
-        pool[StateKeys.OBJ_MIDLET] = obj;
-        pool[StateKeys.ARR_EMPTY_INT] = new int[0];
+        setInt(TrafficKeys.DELTA_VERSION, 3096);
+        setObject(StringResKeys.STR_SEPARATOR, (Object) separator);
+        pool[SessionKeys.OBJ_MIDLET] = obj;
+        pool[SessionKeys.ARR_EMPTY_INT] = new int[0];
         Date date = new Date();
-        pool[StateKeys.OBJ_DATE] = date;
-        pool[StateKeys.OBJ_CALENDAR] = Calendar.getInstance();
-        setLong(StateKeys.TIMESTAMP_OFFSET, date.getTime() - System.currentTimeMillis());
+        pool[SessionKeys.OBJ_DATE] = date;
+        pool[SessionKeys.OBJ_CALENDAR] = Calendar.getInstance();
+        setLong(SessionKeys.TIMESTAMP_OFFSET, date.getTime() - System.currentTimeMillis());
         updateTime();
-        pool[StateKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
-        pool[StateKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[58];
-        pool[StateKeys.ARR_GFX_HEIGHTS] = new int[29];
-        pool[StateKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
+        pool[SessionKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
+        pool[UIKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[58];
+        pool[UIKeys.ARR_GFX_HEIGHTS] = new int[29];
+        pool[SessionKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
         // Event type arrays removed — replaced by CommandEvent singletons
         StringUtils.initPlatform();
         TimerManager.timers = new long[14];
-        pool[StateKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
+        pool[SessionKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
         ObjectPool.cacheString(separator);
         ObjectPool.cacheString(getEllipsis());
-        ObjectPool.cacheString(getString(StateKeys.STR_PHONE_SUFFIX));
-        ObjectPool.cacheString(getString(StateKeys.STR_PHONE_PREFIX));
-        ObjectPool.cacheString(getString(StateKeys.STR_EMPTY));
-        ObjectPool.cacheString(getString(StateKeys.STR_RES_CONTENT_TYPE));
-        ObjectPool.cacheString(getString(StateKeys.STR_RES_HTTP_METHOD));
-        pool[StateKeys.SETTING_COMPRESSION_ENABLED] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
+        ObjectPool.cacheString(getString(StringResKeys.STR_PHONE_SUFFIX));
+        ObjectPool.cacheString(getString(StringResKeys.STR_PHONE_PREFIX));
+        ObjectPool.cacheString(getString(StringResKeys.STR_EMPTY));
+        ObjectPool.cacheString(getString(StringResKeys.STR_RES_CONTENT_TYPE));
+        ObjectPool.cacheString(getString(StringResKeys.STR_RES_HTTP_METHOD));
+        pool[SettingsKeys.SETTING_COMPRESSION_ENABLED] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
         try {
-            setBool(StateKeys.FLAG_SUPPORTS_ALPHA, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
+            setBool(UIKeys.FLAG_SUPPORTS_ALPHA, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
         } catch (Throwable unused5) {
         }
     }
@@ -183,8 +183,8 @@ public abstract class AppState {
     /* renamed from: b */
     public static final void updateTime() {
         long now = System.currentTimeMillis();
-        setLong(StateKeys.TIMESTAMP_CURRENT, now);
-        setBool(StateKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % 2000 < 1000);
+        setLong(SessionKeys.TIMESTAMP_CURRENT, now);
+        setBool(UIKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % 2000 < 1000);
     }
 
     /* renamed from: a */
@@ -194,7 +194,7 @@ public abstract class AppState {
 
     /* renamed from: c */
     public static final MainCanvas getCanvas() {
-        return (MainCanvas) pool[StateKeys.OBJ_CANVAS];
+        return (MainCanvas) pool[SessionKeys.OBJ_CANVAS];
     }
 
     /* renamed from: p */
@@ -206,7 +206,7 @@ public abstract class AppState {
     /* renamed from: b */
     public static final String getString(int i) {
         if (i > 5179) {
-            return StringUtils.intern(new String(getBytes(StateKeys.RES_STRING_DATA), i & 65535, i >> 16));
+            return StringUtils.intern(new String(getBytes(StringResKeys.RES_STRING_DATA), i & 65535, i >> 16));
         }
         Object result = getOrDefault(i);
         if (result == null) {
@@ -333,7 +333,7 @@ public abstract class AppState {
 
     /* renamed from: d */
     public static final Midlet getMidlet() {
-        return (Midlet) pool[StateKeys.OBJ_MIDLET];
+        return (Midlet) pool[SessionKeys.OBJ_MIDLET];
     }
 
     /* renamed from: i */
@@ -349,13 +349,13 @@ public abstract class AppState {
 
     /* renamed from: e */
     public static final int getHeight() {
-        return getInt(StateKeys.INT_SCREEN_HEIGHT) - (getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE) ? getInt(StateKeys.INT_FONT_HEIGHT) + 2 : 0);
+        return getInt(UIKeys.INT_SCREEN_HEIGHT) - (getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE) ? getInt(UIKeys.INT_FONT_HEIGHT) + 2 : 0);
     }
 
     /* renamed from: f */
     public static final void setDimensions(int i, int i2) {
-        setInt(StateKeys.INT_SCREEN_WIDTH, i);
-        setInt(StateKeys.INT_SCREEN_HEIGHT, i2);
+        setInt(UIKeys.INT_SCREEN_WIDTH, i);
+        setInt(UIKeys.INT_SCREEN_HEIGHT, i2);
     }
 
     /* renamed from: j */
@@ -365,7 +365,7 @@ public abstract class AppState {
 
     /* renamed from: k */
     public static final GraphicsContext getGfxContext(int i) {
-        return (GraphicsContext) pool[i + StateKeys.GFX_CONTEXT_BASE];
+        return (GraphicsContext) pool[i + UIKeys.GFX_CONTEXT_BASE];
     }
 
     /* renamed from: l */
@@ -375,22 +375,22 @@ public abstract class AppState {
 
     /* renamed from: f */
     public static final ContactGroup getCurrentGroup() {
-        return (ContactGroup) pool[StateKeys.SLOT_CURRENT_ENTITY];
+        return (ContactGroup) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
     /* renamed from: g */
     public static final Contact getCurrentContact() {
-        return (Contact) pool[StateKeys.SLOT_CURRENT_ENTITY];
+        return (Contact) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
     /* renamed from: h */
     public static final MrimContact getCurrentMrimContact() {
-        return (MrimContact) pool[StateKeys.SLOT_CURRENT_ENTITY];
+        return (MrimContact) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
     /* renamed from: c */
     public static final void setCurrentEntity(Object obj) {
-        pool[StateKeys.SLOT_CURRENT_ENTITY] = obj;
+        pool[ContactKeys.SLOT_CURRENT_ENTITY] = obj;
     }
 
     /* renamed from: m */
@@ -405,12 +405,12 @@ public abstract class AppState {
 
     /* renamed from: i */
     public static final Account getAccount() {
-        return (Account) pool[StateKeys.SLOT_CURRENT_ACCOUNT];
+        return (Account) pool[SessionKeys.SLOT_CURRENT_ACCOUNT];
     }
 
     /* renamed from: d */
     public static final void setAccount(Object obj) {
-        pool[StateKeys.SLOT_CURRENT_ACCOUNT] = obj;
+        pool[SessionKeys.SLOT_CURRENT_ACCOUNT] = obj;
     }
 
     /* renamed from: a */
@@ -521,16 +521,16 @@ public abstract class AppState {
 
     /* renamed from: k */
     public static final Calendar getCalendar() {
-        Calendar calendar = (Calendar) pool[StateKeys.OBJ_CALENDAR];
-        Date date = (Date) pool[StateKeys.OBJ_DATE];
-        date.setTime((getLong(StateKeys.TIMESTAMP_CURRENT) - getLong(StateKeys.TIMESTAMP_OFFSET)) + ((getInt(StateKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000));
+        Calendar calendar = (Calendar) pool[SessionKeys.OBJ_CALENDAR];
+        Date date = (Date) pool[SessionKeys.OBJ_DATE];
+        date.setTime((getLong(SessionKeys.TIMESTAMP_CURRENT) - getLong(SessionKeys.TIMESTAMP_OFFSET)) + ((getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000));
         calendar.setTime(date);
         return calendar;
     }
 
     /* renamed from: o */
     public static final int getIntOffset(int i) {
-        return getInt(i + StateKeys.INT_FONT_HEIGHT);
+        return getInt(i + UIKeys.INT_FONT_HEIGHT);
     }
 
     /* renamed from: l */
@@ -541,7 +541,7 @@ public abstract class AppState {
 
     /* renamed from: m */
     public static final Font getFont() {
-        return ((GraphicsContext) pool[StateKeys.GFX_CONTEXT_BASE]).font;
+        return ((GraphicsContext) pool[UIKeys.GFX_CONTEXT_BASE]).font;
     }
 
     /* renamed from: a */

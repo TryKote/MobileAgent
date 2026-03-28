@@ -32,34 +32,34 @@ public final class EventDispatcher {
     }
 
     public static final void postEvent(Object obj) {
-        Vector vectorM614m = AppState.getVector(StateKeys.VEC_EVENT_QUEUE);
+        Vector vectorM614m = AppState.getVector(SessionKeys.VEC_EVENT_QUEUE);
         synchronized (vectorM614m) {
             vectorM614m.addElement(obj);
         }
     }
 
     public static final void postRenameError(Object[] objArr, int i) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_REMOVED_FROM_LIST)).append(objArr[2]).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     public static final void postAddGroupError(Object[] objArr, int i) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TYPING_NOTIFICATION)).append(objArr[2]).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     public static final void postDeleteError(Object[] objArr, int i) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_ADDED_TO_LIST)).append(objArr[2]).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     public static final void postOperationError(int i) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_NETWORK_ERROR)).append(AppState.getString(StateKeys.STR_MESSAGE_SEPARATOR)).append(i)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_NETWORK_ERROR)).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(i)));
     }
 
     public static final void postAccountError(Account acct, int i) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(i))));
     }
 
     public static final void postAccountMessage(Account acct, String str) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StateKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(AppState.getString(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(str)));
     }
 
     public static void postAccountNotification(Account acct, String str) {

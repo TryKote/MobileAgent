@@ -1,0 +1,41 @@
+package com.trykote.mobileagent.core;
+
+public final class TrafficKeys {
+    private TrafficKeys() {}
+
+    public static final int DELTA_VERSION = 0;
+    public static final int TRAFFIC_SAVED_DATE = 1;
+    public static final int TRAFFIC_MRIM_SENT_BYTES = 2;
+    public static final int TRAFFIC_MRIM_RECV_BYTES = 3;
+    public static final int TRAFFIC_MRIM_SENT_PACKETS = 4;
+    public static final int TRAFFIC_MRIM_RECV_PACKETS = 5;
+    public static final int TRAFFIC_MRIM_SENT_MSGS = 6;
+    public static final int TRAFFIC_MRIM_RECV_MSGS = 7;
+    public static final int TRAFFIC_MRIM_SENT_FILES = 8;
+    public static final int TRAFFIC_MRIM_RECV_FILES = 9;
+    public static final int TRAFFIC_MMP_SENT_BYTES = 10;
+    public static final int TRAFFIC_MMP_RECV_BYTES = 11;
+    public static final int TRAFFIC_MMP_SENT_PACKETS = 12;
+    public static final int TRAFFIC_MMP_RECV_PACKETS = 13;
+    public static final int TRAFFIC_MMP_SENT_MSGS = 14;
+    public static final int TRAFFIC_MMP_RECV_MSGS = 15;
+    public static final int TRAFFIC_MMP_SENT_FILES = 16;
+    public static final int TRAFFIC_MMP_RECV_FILES = 17;
+    public static final int TRAFFIC_XMPP_SENT_BYTES = 18;
+    public static final int TRAFFIC_XMPP_RECV_BYTES = 19;
+    public static final int TRAFFIC_XMPP_SENT_PACKETS = 20;
+    public static final int TRAFFIC_XMPP_RECV_PACKETS = 21;
+    public static final int TRAFFIC_XMPP_SENT_MSGS = 22;
+    public static final int TRAFFIC_XMPP_RECV_MSGS = 23;
+    public static final int TRAFFIC_XMPP_SENT_FILES = 24;
+    public static final int TRAFFIC_XMPP_RECV_FILES = 25;
+    public static final int TRAFFIC_TOTAL_SENT_BYTES = 26;
+    public static final int TRAFFIC_TOTAL_RECV_BYTES = 27;
+    public static final int TRAFFIC_TOTAL_SENT_PACKETS = 28;
+    public static final int TRAFFIC_TOTAL_RECV_PACKETS = 29;
+    public static final int TRAFFIC_TOTAL_SENT_MSGS = 30;
+    public static final int TRAFFIC_TOTAL_RECV_MSGS = 31;
+    public static final int TRAFFIC_TOTAL_SENT_FILES = 32;
+    public static final int TRAFFIC_TOTAL_RECV_FILES = 33;
+
+}

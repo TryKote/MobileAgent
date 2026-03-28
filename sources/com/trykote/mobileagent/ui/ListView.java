@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -61,7 +60,7 @@ public final class ListView {
         this.screenId = ScreenId.STATUS_INPUT;
     }
     public final ListView initTabs() {
-        if (AppState.getBool(StateKeys.SETTING_HEADER_VISIBLE)) {
+        if (AppState.getBool(SettingsKeys.SETTING_HEADER_VISIBLE)) {
             this.tabItems = ObjectPool.newVector();
             recalcLayout();
         }
@@ -100,7 +99,7 @@ public final class ListView {
         this.contentHeight = this.contentBottom - 2;
         if (this.tabItems != null) {
             int prevBottom = this.contentBottom;
-            int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16) + 3;
+            int barHeight = Utils.max(AppState.getInt(UIKeys.INT_FONT_HEIGHT), 16) + 3;
             this.contentBottom = prevBottom - barHeight;
             this.contentHeight -= barHeight;
         }
@@ -132,7 +131,7 @@ public final class ListView {
         return getItemAt(expandedIdx);
     }
     public final ListView setHeader(int iconId, String title) {
-        this.headerItem = MenuItem.createSeparator().addText(AppState.getString(StateKeys.STR_PLACEHOLDER_TEXT), 1, 0).setLabelInternal(iconId, title, 1, 0);
+        this.headerItem = MenuItem.createSeparator().addText(AppState.getString(StringResKeys.STR_PLACEHOLDER_TEXT), 1, 0).setLabelInternal(iconId, title, 1, 0);
         recalcLayout();
         return this;
     }
@@ -203,7 +202,7 @@ public final class ListView {
             if (this.tabItems != null) {
                 paintBottomTabBar(g);
             }
-            if (isTop && AppState.getBool(StateKeys.SETTING_STATUS_BAR_VISIBLE)) {
+            if (isTop && AppState.getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE)) {
                 paintSoftKeys(g);
             }
         }
@@ -235,7 +234,7 @@ public final class ListView {
         int x = this.offsetX + 1;
         int y = this.offsetY + 1;
         g.setClip(x, y, this.innerWidth, this.headerHeight);
-        int themeIdx = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
+        int themeIdx = AppState.getInt(SettingsKeys.SETTING_COLOR_THEME);
         int startColor = AppState.getInt(PaletteKeys.GRADIENT_START + themeIdx);
         if (startColor != AppState.getInt(PaletteKeys.GRADIENT_END + themeIdx)) {
             for (int row = 1; row < this.headerHeight; row++) {
@@ -332,10 +331,10 @@ public final class ListView {
     }
 
     private void paintBottomTabBar(GraphicsContext g) {
-        int barHeight = Utils.max(AppState.getInt(StateKeys.INT_FONT_HEIGHT), 16);
+        int barHeight = Utils.max(AppState.getInt(UIKeys.INT_FONT_HEIGHT), 16);
         int screenHeight = AppState.getHeight() - 1;
-        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
-        g.setClip(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, screenWidth - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
+        int screenWidth = AppState.getInt(UIKeys.INT_SCREEN_WIDTH);
+        g.setClip(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, screenWidth - 2, barHeight + 2).setColorFromPalette(0).setFont(AppState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         Vector tabs = this.tabItems;
         int tabX = 3;
         boolean pastLabel = false;
@@ -357,10 +356,10 @@ public final class ListView {
     }
 
     private void paintSoftKeys(GraphicsContext g) {
-        int screenWidth = AppState.getInt(StateKeys.INT_SCREEN_WIDTH);
+        int screenWidth = AppState.getInt(UIKeys.INT_SCREEN_WIDTH);
         int screenHeight = AppState.getHeight();
         g.setClip(0, 0, screenWidth, 2048 + screenHeight);
-        g.setFont(AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT));
+        g.setFont(AppState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         g.setColorFromPalette(15);
         if (this.titleLeft != null) {
             g.drawString(this.titleLeft, 1, screenHeight, 20);
@@ -369,7 +368,7 @@ public final class ListView {
             g.drawString(this.titleRight, screenWidth - 1, screenHeight, 24);
         }
         if (ResourceManager.clockWidth + this.titleMaxWidth < screenWidth - 6) {
-            g.drawString(Utils.defaultStr(AppState.getString(StateKeys.SLOT_CLOCK_STRING)), screenWidth >> 1, screenHeight, 17);
+            g.drawString(Utils.defaultStr(AppState.getString(UIKeys.SLOT_CLOCK_STRING)), screenWidth >> 1, screenHeight, 17);
         }
     }
 
@@ -410,7 +409,7 @@ public final class ListView {
             return;
         }
         if (this.screenId == ScreenId.MAP) {
-            AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 0);
+            AppState.setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, 0);
             return;
         }
         if (this.screenId != ScreenId.CONTACT_LIST) {
@@ -501,7 +500,7 @@ public final class ListView {
         return 0;
     }    public final void scrollUp() {
         if (this.screenId == ScreenId.MAP) {
-            AppState.setInt(StateKeys.INT_MAP_SCROLL_DIRECTION, 2);
+            AppState.setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, 2);
             return;
         }
         if (this.menuItems.size() == 0) {
@@ -934,7 +933,7 @@ public final class ListView {
         }
     }
     public final ListView setSoftKeys(String left, String right, int leftCmd, int centerCmd, int rightCmd) {
-        GraphicsContext gfxCtx = AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT);
+        GraphicsContext gfxCtx = AppState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT);
         this.titleLeft = left;
         int textWidth = gfxCtx.stringWidth(left);
         this.titleRight = right;

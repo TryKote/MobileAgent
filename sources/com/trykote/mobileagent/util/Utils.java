@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -29,7 +28,7 @@ public abstract class Utils {
     public static final long parseDateTime(String str) {
         Vector parts = splitImpl(str, ' ', false);
         int day = parseInt(parts.elementAt(1));
-        int idx = AppState.getString(StateKeys.STR_RES_HUGE_URL_4).indexOf(getVectorString(parts, 2)) / 3;
+        int idx = AppState.getString(StringResKeys.STR_RES_HUGE_URL_4).indexOf(getVectorString(parts, 2)) / 3;
         int year = parseInt(parts.elementAt(3));
         String timeStr = getVectorString(parts, 4);
         ObjectPool.releaseVector(parts);
@@ -47,9 +46,9 @@ public abstract class Utils {
         while (true) {
             i2--;
             if (i2 < 0) {
-                return (1000 * (((86400 * i) + (hours * 3600)) + (minutes * 60))) - ((AppState.getInt(StateKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000);
+                return (1000 * (((86400 * i) + (hours * 3600)) + (minutes * 60))) - ((AppState.getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000);
             }
-            i += i2 == 1 ? b : AppState.getBytes(StateKeys.RES_MONTH_DAYS)[i2];
+            i += i2 == 1 ? b : AppState.getBytes(StringResKeys.RES_MONTH_DAYS)[i2];
         }
     }
 
@@ -307,7 +306,7 @@ public abstract class Utils {
 
     /* renamed from: a */
     public static final int nextRandom() {
-        return ((Random) AppState.pool[StateKeys.OBJ_RANDOM]).nextInt();
+        return ((Random) AppState.pool[SessionKeys.OBJ_RANDOM]).nextInt();
     }
 
     /* renamed from: a */
@@ -604,7 +603,7 @@ public abstract class Utils {
             length = str.length();
         }
         int i3 = 0;
-        int spaceWidth = font.stringWidth(AppState.getString(StateKeys.STR_SPACE));
+        int spaceWidth = font.stringWidth(AppState.getString(StringResKeys.STR_SPACE));
         while (length != -1) {
             String word = StringUtils.substring(str, i2, length);
             int wordWidth = font.stringWidth(word);
@@ -646,7 +645,7 @@ public abstract class Utils {
     /* renamed from: e */
     public static final StringBuffer getMessageBuffer() {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String prefix = defaultStr(AppState.getString(StateKeys.SLOT_STATUS_TEXT));
+        String prefix = defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
         StringBuffer result = sb.append(prefix);
         int length = prefix.length();
         if (length != 0 && prefix.charAt(length - 1) != ' ') {

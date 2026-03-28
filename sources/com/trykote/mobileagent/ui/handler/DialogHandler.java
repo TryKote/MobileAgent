@@ -37,29 +37,29 @@ public final class DialogHandler extends BaseScreenHandler {
                         }
                         break;
                 }
-                ScreenManager.showScreen(dialogScreen.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_YES), AppState.getString(StateKeys.STR_SOFTKEY_NO), 199, 12, 199));
+                ScreenManager.showScreen(dialogScreen.setSoftKeys(AppState.getString(StringResKeys.STR_SOFTKEY_YES), AppState.getString(StringResKeys.STR_SOFTKEY_NO), 199, 12, 199));
                 return;
             case ScreenId.ABOUT:
-                AppState.setInt(StateKeys.FLAG_SHOW_NOTIFICATION, 1);
-                AppState.setObject(StateKeys.SLOT_SCREEN_TITLE, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
-                AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getFreeMemoryString());
-                AppState.setFromBuffer(StateKeys.SLOT_APP_VERSION_STRING, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_APP_NAME)).append(AppState.getString(StateKeys.STR_APP_BUILD_SUFFIX)));
-                AppState.setObject(StateKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(StateKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
+                AppState.setInt(UIKeys.FLAG_SHOW_NOTIFICATION, 1);
+                AppState.setObject(UIKeys.SLOT_SCREEN_TITLE, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
+                AppState.setObject(UIKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getFreeMemoryString());
+                AppState.setFromBuffer(UIKeys.SLOT_APP_VERSION_STRING, ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_APP_NAME)).append(AppState.getString(StringResKeys.STR_APP_BUILD_SUFFIX)));
+                AppState.setObject(RegistrationKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(AppState.getAppProperty(StringResKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ABOUT));
                 return;
             case ScreenId.BLOCK_CONFIRM:
                 NotificationHelper.showAlertById(10, 710);
                 return;
             case ScreenId.UNBLOCK_CONFIRM:
-                NotificationHelper.showAlertBuffer(11, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_BLOCK_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167)));
+                NotificationHelper.showAlertBuffer(11, ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_BLOCK_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167)));
                 return;
             case ScreenId.CONFIRM_EXIT:
                 NotificationHelper.showConfirmDialog(13, 505);
                 return;
             case ScreenId.TRAFFIC_COST:
                 StringBuffer sb = ObjectPool.newStringBuffer();
-                int intVal = AppState.getInt(StateKeys.SETTING_TRAFFIC_COST);
-                AppState.setFromBuffer(StateKeys.SLOT_SCREEN_VALUE, sb.append(intVal / 100).append('.').append(Utils.zeroPad(intVal % 100)));
+                int intVal = AppState.getInt(SettingsKeys.SETTING_TRAFFIC_COST);
+                AppState.setFromBuffer(UIKeys.SLOT_SCREEN_VALUE, sb.append(intVal / 100).append('.').append(Utils.zeroPad(intVal % 100)));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.TRAFFIC_COST));
                 return;
             case ScreenId.EMOTICON_DIALOG:
@@ -75,7 +75,7 @@ public final class DialogHandler extends BaseScreenHandler {
                         }
                     }
                 }
-                ScreenManager.showScreen(dialogScreen2.setSoftKeys(AppState.getString(StateKeys.STR_SOFTKEY_YES), AppState.getString(StateKeys.STR_SOFTKEY_NO), 199, 12, 199));
+                ScreenManager.showScreen(dialogScreen2.setSoftKeys(AppState.getString(StringResKeys.STR_SOFTKEY_YES), AppState.getString(StringResKeys.STR_SOFTKEY_NO), 199, 12, 199));
                 return;
             case ScreenId.DELETE_CONFIRM:
                 NotificationHelper.showConfirmDialog(55, 761);
@@ -84,10 +84,10 @@ public final class DialogHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.INPUT_DIALOG));
                 return;
             case ScreenId.STATUS_INPUT:
-                XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(StateKeys.SLOT_STATUS_TEXT), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(StateKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new TextInputHandler());
-                AppState.setInt(StateKeys.INT_LAST_POLL_TIMESTAMP, 0);
-                AppState.setInt(StateKeys.INT_LAST_CHECK_TIMESTAMP, 0);
-                AppState.setInt(StateKeys.INT_LAST_LIST_SIZE, 0);
+                XmppContactGroup.showTextInputDialog(AppState.getCurrentContact().displayName, AppState.getString(UIKeys.SLOT_STATUS_TEXT), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, AppState.getString(StringResKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new TextInputHandler());
+                AppState.setInt(RuntimeKeys.INT_LAST_POLL_TIMESTAMP, 0);
+                AppState.setInt(RuntimeKeys.INT_LAST_CHECK_TIMESTAMP, 0);
+                AppState.setInt(RuntimeKeys.INT_LAST_LIST_SIZE, 0);
                 ScreenManager.showScreen(new ListView());
                 return;
             case ScreenId.SOFTKEY_MENU:
@@ -123,28 +123,28 @@ public final class DialogHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CAPTCHA:
                 ListView screen12 = ScreenManager.createScreen(ScreenDef.CAPTCHA);
-                Object obj4 = ((Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA])[2];
+                Object obj4 = ((Object[]) AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA])[2];
                 if (obj4 instanceof javax.microedition.lcdui.Image) {
                     screen12.addItem(MenuItem.createGraphics(new GraphicsContext((javax.microedition.lcdui.Image) obj4)));
                 } else {
                     screen12.addLabelById(((Integer) obj4).intValue());
                 }
                 ScreenManager.showScreen(screen12);
-                AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 return;
             case ScreenId.CLEAR_NOTIFICATIONS:
                 NotificationHelper.clearNotifications();
                 return;
             case ScreenId.PRIVACY_MODE:
                 ResourceManager.playNotificationSound(4);
-                AppState.setInt(StateKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.PRIVACY_MODE);
-                AppState.setFromPool(StateKeys.SLOT_NOTIFICATION_TITLE, StateKeys.STR_PRIVACY_MODE_BASE);
+                AppState.setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.PRIVACY_MODE);
+                AppState.setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, StringResKeys.STR_PRIVACY_MODE_BASE);
                 NotificationHelper.clearNotifications();
                 return;
             case ScreenId.STATUS_PREVIEW:
                 String inputText = XmppContactGroup.getTextInputValue();
-                AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) inputText);
-                AppState.setBool(StateKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(inputText));
+                AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) inputText);
+                AppState.setBool(UIKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(inputText));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.STATUS_PREVIEW));
                 return;
             case ScreenId.PRESENCE_ACTION:
@@ -153,16 +153,16 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.BLOG_POST:
                 String[] langOptions = ScreenManager.getLanguageOptions();
                 if (langOptions != null) {
-                    AppState.setObject(StateKeys.SLOT_SCREEN_SUBTITLE, (Object) langOptions[0]);
-                    AppState.setFromBuffer(StateKeys.SLOT_SCREEN_TITLE, ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_LANGUAGE_PREFIX)).append(langOptions[1]));
-                    if (AppState.getInt(StateKeys.COUNTER_SEARCH_RESULTS) != 0) {
-                        AppState.clearIndex(StateKeys.SLOT_LANG_OPTION_1);
-                        AppState.clearIndex(StateKeys.SLOT_LANG_OPTION_2);
+                    AppState.setObject(UIKeys.SLOT_SCREEN_SUBTITLE, (Object) langOptions[0]);
+                    AppState.setFromBuffer(UIKeys.SLOT_SCREEN_TITLE, ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_LANGUAGE_PREFIX)).append(langOptions[1]));
+                    if (AppState.getInt(RegistrationKeys.COUNTER_SEARCH_RESULTS) != 0) {
+                        AppState.clearIndex(UIKeys.SLOT_LANG_OPTION_1);
+                        AppState.clearIndex(UIKeys.SLOT_LANG_OPTION_2);
                     }
-                    AppState.setFromPool(StateKeys.SLOT_SCREEN_VALUE, StateKeys.SLOT_LANG_OPTION_1);
-                    if (AppState.getString(StateKeys.SLOT_SCREEN_DESCRIPTION) != null) {
-                        AppState.setFromPool(StateKeys.SLOT_SCREEN_VALUE, StateKeys.SLOT_SCREEN_DESCRIPTION);
-                        AppState.clearIndex(StateKeys.SLOT_SCREEN_DESCRIPTION);
+                    AppState.setFromPool(UIKeys.SLOT_SCREEN_VALUE, UIKeys.SLOT_LANG_OPTION_1);
+                    if (AppState.getString(UIKeys.SLOT_SCREEN_DESCRIPTION) != null) {
+                        AppState.setFromPool(UIKeys.SLOT_SCREEN_VALUE, UIKeys.SLOT_SCREEN_DESCRIPTION);
+                        AppState.clearIndex(UIKeys.SLOT_SCREEN_DESCRIPTION);
                     }
                     ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.BLOG_POST));
                     return;
@@ -173,11 +173,11 @@ public final class DialogHandler extends BaseScreenHandler {
                 return;
             case ScreenId.ASYNC_CONFIRM:
                 NotificationHelper.showConfirmDialog(165, 505);
-                AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = RegistrationService.newRequest();
+                AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = RegistrationService.newRequest();
                 return;
             case ScreenId.UPDATE_ALERT:
                 NotificationHelper.showAlertById(171, 787);
-                AppState.setInt(StateKeys.FLAG_UPDATE_AVAILABLE, 1);
+                AppState.setInt(SessionKeys.FLAG_UPDATE_AVAILABLE, 1);
                 return;
             case ScreenId.INVITE_ALERT:
                 NotificationHelper.showAlertById(173, 416);
@@ -231,13 +231,13 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.BLOG_POST:
                 int errorCode2;
                 ScreenManager.processScreenForm();
-                String messageText6 = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SCREEN_VALUE));
+                String messageText6 = Utils.defaultStr(AppState.getString(UIKeys.SLOT_SCREEN_VALUE));
                 if (StringUtils.isEmpty(messageText6)) {
                     errorCode2 = NotificationHelper.showError(523);
                 } else {
                     MrimAccount mrimAccount5 = (MrimAccount) AppState.getAccount();
-                    new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_AGENTUPLOAD).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(PackedStringKeys.PARAM_Z_JAVA).writeCompressed(PackedStringKeys.PARAM_CE).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(StateKeys.FLAG_CAPTCHA_SHOWN) ? AppState.getString(StateKeys.SLOT_SCREEN_SUBTITLE) : null)).getStringAndClear());
-                    AppState.addInt(StateKeys.COUNTER_SEARCH_RESULTS, 1);
+                    new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_AGENTUPLOAD).writeUInt(4022591).writeRawString(mrimAccount5.login).writeUInt(4022822).writeRawString(mrimAccount5.password).writeCompressed(PackedStringKeys.PARAM_Z_JAVA).writeCompressed(PackedStringKeys.PARAM_CE).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText6)).writeRawString(Utils.defaultStr(AppState.getBool(SessionKeys.FLAG_CAPTCHA_SHOWN) ? AppState.getString(UIKeys.SLOT_SCREEN_SUBTITLE) : null)).getStringAndClear());
+                    AppState.addInt(RegistrationKeys.COUNTER_SEARCH_RESULTS, 1);
                     errorCode2 = 0;
                 }
                 return errorCode2;
@@ -250,7 +250,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.INVITE_ALERT:
                 return MapHandler.handleGeoSearch();
             case ScreenId.TRAFFIC_STATS:
-                int intVal = AppState.getInt(StateKeys.INT_PERIOD_INDEX);
+                int intVal = AppState.getInt(RuntimeKeys.INT_PERIOD_INDEX);
                 Account account2 = AppState.getAccount();
                 if (account2 != null) {
                     account2.syncArray[intVal + intVal + 1] = 0;
@@ -293,8 +293,8 @@ public final class DialogHandler extends BaseScreenHandler {
                     ScreenBuilder.onScreenClosed();
                     EventDispatcher.postNotification(AppState.getString(sendMsgResult));
                 }
-                AppState.setInt(StateKeys.FLAG_STATUS_TEXT_SET, 0);
-                AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
+                AppState.setInt(UIKeys.FLAG_STATUS_TEXT_SET, 0);
+                AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
                 AppController.needsLayoutUpdate = true;
                 AppState.setScreen(AppState.getCanvas());
                 ScreenBuilder.onScreenClosed();
@@ -321,7 +321,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.ASYNC_CONFIRM:
                 return 0;
             case ScreenId.UPDATE_ALERT:
-                AppState.setInt(StateKeys.FLAG_APP_STARTING, 0);
+                AppState.setInt(SessionKeys.FLAG_APP_STARTING, 0);
                 MapController.toggleScrollMode();
                 return ScreenId.MAP;
             case ScreenId.INVITE_ALERT:
@@ -339,18 +339,18 @@ public final class DialogHandler extends BaseScreenHandler {
                 AppController.clearPreviewState();
                 break;
             case ScreenId.TRAFFIC_COST:
-                AppState.clearIndex(StateKeys.SLOT_SCREEN_VALUE);
+                AppState.clearIndex(UIKeys.SLOT_SCREEN_VALUE);
                 break;
             case ScreenId.SOFTKEY_MENU:
                 IOUtils.setSelectedItems((Object) null);
                 break;
             case ScreenId.CLEAR_SEARCH:
-                AppState.clearIndex(StateKeys.SLOT_CURRENT_MSG_TEXT);
-                AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
+                AppState.clearIndex(RuntimeKeys.SLOT_CURRENT_MSG_TEXT);
+                AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
                 break;
             case ScreenId.PRESENCE_ACTION:
-                ObjectPool.releaseVector(AppState.getVector(StateKeys.VEC_ACCOUNT_SELECTION));
-                AppState.clearIndex(StateKeys.VEC_ACCOUNT_SELECTION);
+                ObjectPool.releaseVector(AppState.getVector(SessionKeys.VEC_ACCOUNT_SELECTION));
+                AppState.clearIndex(SessionKeys.VEC_ACCOUNT_SELECTION);
                 break;
             case ScreenId.BLOG_POST:
                 AppController.clearPreviewState();
@@ -405,21 +405,21 @@ public final class DialogHandler extends BaseScreenHandler {
                         MapPoint mapPoint = new MapPoint((String) objArr[1]);
                         mapPoint.height = 2;
                         MapController.navigateToPoint(mapPoint, false);
-                        AppState.setInt(StateKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
+                        AppState.setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
                         nextState = ScreenId.MAP;
                     } else {
                         String str = (String) objArr[1];
                         String str2 = (String) objArr[2];
                         long jLongValue = ((Long) objArr[3]).longValue();
                         AppController.clearPreviewState();
-                        AppState.setInt(StateKeys.INT_GROUP_OPERATION_RESULT, 0);
-                        AppState.setObject(StateKeys.SLOT_DEVICE_ID, (Object) str);
-                        AppState.setFromBuffer(StateKeys.SLOT_SCREEN_TITLE, ObjectPool.newStringBuffer().append(str2).append(':'));
-                        AppState.setLong(StateKeys.TIMESTAMP_SELECTED_MSG, jLongValue);
+                        AppState.setInt(ContactKeys.INT_GROUP_OPERATION_RESULT, 0);
+                        AppState.setObject(RegistrationKeys.SLOT_DEVICE_ID, (Object) str);
+                        AppState.setFromBuffer(UIKeys.SLOT_SCREEN_TITLE, ObjectPool.newStringBuffer().append(str2).append(':'));
+                        AppState.setLong(RuntimeKeys.TIMESTAMP_SELECTED_MSG, jLongValue);
                         nextState = ScreenId.MESSAGE_INPUT;
                     }
                 } else {
-                    AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
+                    AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
                     Contact currentContact = AppState.getCurrentContact();
                     nextState = !currentContact.account.isConnected() ? NotificationHelper.showError(299) : currentContact.isOffline() ? ResourceManager.clearSmsFields() : 63;
                 }
@@ -447,7 +447,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.UNBLOCK_CONFIRM:
                 return 0;
             case ScreenId.CONFIRM_EXIT:
-                Object[] objArr = (Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA];
+                Object[] objArr = (Object[]) AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA];
                 Object obj2 = objArr[0];
                 if (obj2 == null) {
                     String str2 = (String) objArr[20];
@@ -471,7 +471,7 @@ public final class DialogHandler extends BaseScreenHandler {
                     Thread.sleep(50);
                 } catch (Throwable unused) {
                 }
-                AppState.addInt(StateKeys.COUNTER_ERRORS, 1);
+                AppState.addInt(SessionKeys.COUNTER_ERRORS, 1);
                 AppController.saveOnExit = true;
                 AppController.isBackgrounded = true;
                 return 0;
@@ -499,7 +499,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 Contact currentContact = AppState.getCurrentContact();
                 return (currentContact.flags != 0) || currentContact.dirty ? ScreenId.CLEAR_SEARCH : 0;
             case ScreenId.ASYNC_CONFIRM:
-                Object[] stateArr = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA);
+                Object[] stateArr = AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 Object obj4 = stateArr[0];
                 if (obj4 != null) {
                     NotificationHelper.showNotification(StringUtils.concatKeyObj(506, obj4));
@@ -518,15 +518,15 @@ public final class DialogHandler extends BaseScreenHandler {
 
     public void onMenuItemEvent(ListView screen, MenuItem item) {
         if (item.id == 2 && screen.screenId == ScreenId.BLOG_POST
-                && AppState.setBool(StateKeys.FLAG_CAPTCHA_SHOWN, ((Boolean) item.data).booleanValue())) {
+                && AppState.setBool(SessionKeys.FLAG_CAPTCHA_SHOWN, ((Boolean) item.data).booleanValue())) {
             ScreenManager.processScreenForm();
-            AppState.setFromPool(StateKeys.SLOT_SCREEN_DESCRIPTION, StateKeys.SLOT_SCREEN_VALUE);
+            AppState.setFromPool(UIKeys.SLOT_SCREEN_DESCRIPTION, UIKeys.SLOT_SCREEN_VALUE);
             AppController.clearInitParamsAndReport();
         }
     }
 
     public static int handleSoftKeyAction(String label) {
-        int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) AppState.getAccount();
         ChatRoom chatRoom = account.chatRoomManager.findById(chatRoomId);
         IOUtils.setSelectedItems(chatRoom.readMessages);
@@ -535,17 +535,17 @@ public final class DialogHandler extends BaseScreenHandler {
             return 0;
         }
         if (StringUtils.matchesKey(853, label)) {
-            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 2);
+            AppState.setInt(ChatKeys.INT_CHAT_VIEW_MODE, 2);
             return 0;
         }
         if (StringUtils.matchesKey(854, label)) {
-            AppState.setInt(StateKeys.INT_CHAT_VIEW_MODE, 1);
+            AppState.setInt(ChatKeys.INT_CHAT_VIEW_MODE, 1);
             return 0;
         }
         if (!StringUtils.matchesKey(845, label)) {
             return 0;
         }
-        AppState.setInt(StateKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+        AppState.setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
         return 0;
     }
 
@@ -558,7 +558,7 @@ public final class DialogHandler extends BaseScreenHandler {
     }
 
     public static int handleRightKey() {
-        AppState.setInt(StateKeys.FLAG_APP_STARTING, 1);
+        AppState.setInt(SessionKeys.FLAG_APP_STARTING, 1);
         MapController.toggleScrollMode();
         return ScreenId.MAP;
     }
@@ -585,10 +585,10 @@ public final class DialogHandler extends BaseScreenHandler {
     }
 
     private static int openSettingsScreen(int themeId, int valueId, int actionId) {
-        AppState.setInt(StateKeys.INT_SETTINGS_THEME, themeId);
-        AppState.setInt(StateKeys.INT_SETTINGS_VALUE_1, themeId);
-        AppState.setInt(StateKeys.INT_SETTINGS_VALUE_2, valueId);
-        AppState.setInt(StateKeys.INT_SETTINGS_ACTION, actionId);
+        AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, themeId);
+        AppState.setInt(SettingsKeys.INT_SETTINGS_VALUE_1, themeId);
+        AppState.setInt(SettingsKeys.INT_SETTINGS_VALUE_2, valueId);
+        AppState.setInt(SettingsKeys.INT_SETTINGS_ACTION, actionId);
         return ScreenId.CHAT_ROOM_CONFIG;
     }
 }

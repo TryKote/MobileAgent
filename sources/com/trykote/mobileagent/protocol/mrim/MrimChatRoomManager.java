@@ -30,17 +30,17 @@ public final class MrimChatRoomManager {
             hasExisting = false;
             this.list = ObjectPool.newVector();
         }
-        Object roomsArray = JsonParser.getValue(obj, AppState.getString(StateKeys.STR_RES_PARAM_3));
+        Object roomsArray = JsonParser.getValue(obj, AppState.getString(StringResKeys.STR_RES_PARAM_3));
         for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
             Object roomObj = JsonParser.getVectorElement(roomsArray, i);
-            ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, AppState.getString(StateKeys.STR_RES_AT_SIGN)));
+            ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, AppState.getString(StringResKeys.STR_RES_AT_SIGN)));
             if (existingRoom == null) {
                 this.list.addElement(new ChatRoom(roomObj));
             } else {
                 existingRoom.parseJson(roomObj);
             }
         }
-        this.nickname = JsonParser.getStringValue(obj, AppState.getString(StateKeys.STR_RES_HEADER_NAME_3));
+        this.nickname = JsonParser.getStringValue(obj, AppState.getString(StringResKeys.STR_RES_HEADER_NAME_3));
         assignDefault(hasExisting);
     }
 
@@ -90,8 +90,8 @@ public final class MrimChatRoomManager {
     }
 
     public ChatRoom findDefault() {
-        ChatRoom defaultRoom = findByNameExact(AppState.getString(StateKeys.STR_MAIN_CHATROOM));
-        return defaultRoom != null ? defaultRoom : findByNameExact(AppState.getString(StateKeys.STR_DEFAULT_CHATROOM));
+        ChatRoom defaultRoom = findByNameExact(AppState.getString(StringResKeys.STR_MAIN_CHATROOM));
+        return defaultRoom != null ? defaultRoom : findByNameExact(AppState.getString(StringResKeys.STR_DEFAULT_CHATROOM));
     }
 
     void assignDefault(boolean hasExisting) {
@@ -157,7 +157,7 @@ public final class MrimChatRoomManager {
 
     /* renamed from: c */
     public static final void showChatRoomMessages() {
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(StateKeys.INT_CHATROOM_ID));
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
         ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_DETAILS);
         screen.setHeader(234, chatRoom.getDisplayName());
         Vector messages = ObjectPool.newVector();
@@ -177,8 +177,8 @@ public final class MrimChatRoomManager {
             screen.selectable = false;
             screen.addLabelById(835);
         } else {
-            screen.scrollOffset = AppState.getInt(StateKeys.INT_SCROLL_OFFSET);
-            screen.selectByTitle(AppState.getString(StateKeys.SLOT_MAP_POINT_2));
+            screen.scrollOffset = AppState.getInt(ChatKeys.INT_SCROLL_OFFSET);
+            screen.selectByTitle(AppState.getString(MapKeys.SLOT_MAP_POINT_2));
             screen.invalidateLayout();
         }
         screen.reverseScroll = true;
@@ -218,6 +218,6 @@ public final class MrimChatRoomManager {
     /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
         AccountManager.clearAccountHighlight((MrimAccount) AppState.getAccount());
-        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = ApiClient.submitAsync(objArr);
+        AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = ApiClient.submitAsync(objArr);
     }
 }

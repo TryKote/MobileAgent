@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -222,7 +221,7 @@ public final class ByteBuffer {
 
     /* renamed from: c */
     public final ByteBuffer writeCompressed(int i) {
-        return i > 5179 ? writeBytesAt(AppState.getBytes(StateKeys.RES_STRING_DATA), i & 65535, i >> 16) : writeBytes(AppState.getBytes(i));
+        return i > 5179 ? writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), i & 65535, i >> 16) : writeBytes(AppState.getBytes(i));
     }
 
     /* renamed from: d */

@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -98,11 +97,11 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void playAlertIfEnabled(int i, boolean z) {
-        if (AppState.getBool(StateKeys.FLAG_MRIM_DATA_LOADED)) {
+        if (AppState.getBool(SessionKeys.FLAG_MRIM_DATA_LOADED)) {
             if (z) {
                 Display.getDisplay(AppState.getMidlet()).vibrate(250);
             }
-            if (i == 0 || AppState.getBool(StateKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(8, 1000L)) {
+            if (i == 0 || AppState.getBool(SettingsKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(8, 1000L)) {
                 return;
             }
             SoundPlayer.playSound(i);
@@ -114,7 +113,7 @@ public final class ResourceManager {
         TimerManager.timers[4] = 0;
         lastMinute = -1;
         clockWidth = 0;
-        AppState.clearIndex(StateKeys.SLOT_CLOCK_STRING);
+        AppState.clearIndex(UIKeys.SLOT_CLOCK_STRING);
         updateClock();
     }
 
@@ -126,8 +125,8 @@ public final class ResourceManager {
             return;
         }
         String timeStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(calendar.get(11))).append(':').append(Utils.zeroPad(i)));
-        AppState.setObject(StateKeys.SLOT_CLOCK_STRING, (Object) timeStr);
-        clockWidth = AppState.getGfxContext(StateKeys.GFX_INDEX_DEFAULT).stringWidth(timeStr);
+        AppState.setObject(UIKeys.SLOT_CLOCK_STRING, (Object) timeStr);
+        clockWidth = AppState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT).stringWidth(timeStr);
         lastMinute = i;
         AppController.needsRepaint = true;
     }
@@ -235,7 +234,7 @@ public final class ResourceManager {
     public static final void showTrafficStats() {
         int i;
         int i2;
-        int periodIndex = AppState.getInt(StateKeys.INT_PERIOD_INDEX);
+        int periodIndex = AppState.getInt(RuntimeKeys.INT_PERIOD_INDEX);
         Account account = AppState.getAccount();
         if (account != null) {
             int sentBytes = account.getSyncValue(periodIndex, 0);
@@ -244,8 +243,8 @@ public final class ResourceManager {
             int recvBytes = account.getSyncValue(periodIndex, 1);
             i2 = recvBytes;
             formatTrafficItem(1325, recvBytes);
-            AppState.setInt(StateKeys.INT_STAT_ROWS, 8);
-            AppState.setInt(StateKeys.INT_STAT_COLS, 3);
+            AppState.setInt(RuntimeKeys.INT_STAT_ROWS, 8);
+            AppState.setInt(RuntimeKeys.INT_STAT_COLS, 3);
         } else {
             formatTrafficItem(1329, TrafficAccounting.getTrafficCount(0, periodIndex, 0));
             formatTrafficItem(1328, TrafficAccounting.getTrafficCount(0, periodIndex, 1));
@@ -261,22 +260,22 @@ public final class ResourceManager {
             int totalRecv = TrafficAccounting.getTotalTraffic(periodIndex, 1);
             i2 = totalRecv;
             formatTrafficItem(1325, totalRecv);
-            AppState.setInt(StateKeys.INT_STAT_ROWS, 5);
-            AppState.setInt(StateKeys.INT_STAT_COLS, 16);
+            AppState.setInt(RuntimeKeys.INT_STAT_ROWS, 5);
+            AppState.setInt(RuntimeKeys.INT_STAT_COLS, 16);
         }
         long j = i + i2;
-        int blockSize = AppState.getInt(StateKeys.SETTING_BLOCK_SIZE_KB) << 10;
+        int blockSize = AppState.getInt(SettingsKeys.SETTING_BLOCK_SIZE_KB) << 10;
         if (blockSize > 0) {
             long j2 = j % blockSize;
             if (j2 > 0) {
                 j += blockSize - j2;
             }
         }
-        int costCents = (int) ((j * AppState.getInt(StateKeys.SETTING_TRAFFIC_COST)) / 1048576);
-        AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_COST_TEXT, ObjectPool.newStringBuffer().append(costCents / 100).append('.').append(Utils.zeroPad(costCents % 100)).append(' ').append(AppState.getString(StateKeys.STR_CURRENCY_SYMBOL)));
-        AppState.setInt(StateKeys.INT_TRAFFIC_PERIOD_LABEL, periodIndex + 745);
+        int costCents = (int) ((j * AppState.getInt(SettingsKeys.SETTING_TRAFFIC_COST)) / 1048576);
+        AppState.setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_COST_TEXT, ObjectPool.newStringBuffer().append(costCents / 100).append('.').append(Utils.zeroPad(costCents % 100)).append(' ').append(AppState.getString(StringResKeys.STR_CURRENCY_SYMBOL)));
+        AppState.setInt(RuntimeKeys.INT_TRAFFIC_PERIOD_LABEL, periodIndex + 745);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.TRAFFIC_STATS));
-        AppState.clearRange(StateKeys.SLOT_GROUP_LIST_INDEX, StateKeys.RANGE_SEARCH_LABEL_END);
+        AppState.clearRange(ContactKeys.SLOT_GROUP_LIST_INDEX, UIKeys.RANGE_SEARCH_LABEL_END);
     }
 
     /* renamed from: a */
@@ -294,29 +293,29 @@ public final class ResourceManager {
     /* renamed from: a */
     public static final int handleChatInputAction(String str) {
         int errorCode;
-        String messageText = Utils.defaultStr(AppState.getString(StateKeys.SLOT_STATUS_TEXT));
-        if (str != AppState.getString(StateKeys.STR_NOTIFICATION_SOUND)) {
+        String messageText = Utils.defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
+        if (str != AppState.getString(StringResKeys.STR_NOTIFICATION_SOUND)) {
             StringBuffer sb = Utils.getMessageBuffer();
             if (StringUtils.matchesKey(473, str)) {
-                AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, sb.append(AppState.getString(StateKeys.SLOT_NOTIFICATION_TEXT)));
+                AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, sb.append(AppState.getString(UIKeys.SLOT_NOTIFICATION_TEXT)));
                 return 0;
             }
             if (StringUtils.matchesKey(474, str)) {
-                AppState.setObject(StateKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
-                AppState.setBool(StateKeys.FLAG_RESOURCE_LOADING, true);
+                AppState.setObject(UIKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
+                AppState.setBool(UIKeys.FLAG_RESOURCE_LOADING, true);
                 return 0;
             }
             if (!StringUtils.matchesKey(476, str)) {
                 return 0;
             }
-            AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) Conversation.transliterateRussian(messageText));
+            AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) Conversation.transliterateRussian(messageText));
             return 0;
         }
-        String phoneNumber = AppState.getString(StateKeys.SLOT_SELECTED_GROUP);
-        MrimContact mrimContact = (MrimContact) AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
+        String phoneNumber = AppState.getString(ContactKeys.SLOT_SELECTED_GROUP);
+        MrimContact mrimContact = (MrimContact) AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
         MrimAccount mrimAccount = (MrimAccount) mrimContact.account;
         if (mrimAccount.isConnected()) {
-            mrimContact.appendMessage(1, ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
+            mrimContact.appendMessage(1, ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
             StringBuffer phoneSb = ObjectPool.newStringBuffer().append('+');
             if (phoneNumber.charAt(0) == '8') {
                 phoneSb.append('7').append(StringUtils.suffix(phoneNumber, 1));
@@ -365,7 +364,7 @@ public final class ResourceManager {
                     }
                     if (z && str != null) {
                         ObjectPool.releaseVector(vector);
-                        EventDispatcher.postNotification(AppState.getString(StateKeys.STR_OPERATION_COMPLETE));
+                        EventDispatcher.postNotification(AppState.getString(StringResKeys.STR_OPERATION_COMPLETE));
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
@@ -385,20 +384,20 @@ public final class ResourceManager {
 
     /* renamed from: d */
     public static final void initMathTables() {
-        AppState.pool[StateKeys.RES_LOG_BASE_TABLE] = readLongArray(986);
-        AppState.pool[StateKeys.RES_POW_BASE_TABLE] = readLongArray(987);
-        AppState.pool[StateKeys.RES_MULTIPLY_COEFFICIENTS] = readLongArray(990);
-        AppState.pool[StateKeys.RES_LOOKUP_TABLE] = readLongArray(991);
-        AppState.pool[StateKeys.RES_SHORT_INDEX_TABLE_2] = Utils.readShortArray(989);
-        AppState.pool[StateKeys.RES_SHORT_INDEX_TABLE_1] = Utils.readShortArray(988);
-        AppState.pool[StateKeys.RES_PALETTE_MAP_1] = Utils.bytesToInts(AppState.getBytes(StateKeys.RES_PALETTE_MAP_1));
-        AppState.pool[StateKeys.RES_PALETTE_MAP_2] = Utils.bytesToInts(AppState.getBytes(StateKeys.RES_PALETTE_MAP_2));
-        AppState.pool[StateKeys.RES_ICON_MAP] = Utils.bytesToInts(AppState.getBytes(StateKeys.RES_ICON_MAP));
+        AppState.pool[StringResKeys.RES_LOG_BASE_TABLE] = readLongArray(986);
+        AppState.pool[StringResKeys.RES_POW_BASE_TABLE] = readLongArray(987);
+        AppState.pool[StringResKeys.RES_MULTIPLY_COEFFICIENTS] = readLongArray(990);
+        AppState.pool[StringResKeys.RES_LOOKUP_TABLE] = readLongArray(991);
+        AppState.pool[StringResKeys.RES_SHORT_INDEX_TABLE_2] = Utils.readShortArray(989);
+        AppState.pool[StringResKeys.RES_SHORT_INDEX_TABLE_1] = Utils.readShortArray(988);
+        AppState.pool[StringResKeys.RES_PALETTE_MAP_1] = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_PALETTE_MAP_1));
+        AppState.pool[StringResKeys.RES_PALETTE_MAP_2] = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_PALETTE_MAP_2));
+        AppState.pool[StringResKeys.RES_ICON_MAP] = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_ICON_MAP));
     }
 
     /* renamed from: e */
     public static final void clearMathTables() {
-        AppState.clearRange(StateKeys.STR_INFINITY, StateKeys.RES_PALETTE_MAP_2);
+        AppState.clearRange(StringResKeys.STR_INFINITY, StringResKeys.RES_PALETTE_MAP_2);
     }
 
     /* renamed from: f */
@@ -425,18 +424,18 @@ public final class ResourceManager {
 
     /* renamed from: b */
     public static final long getTrigConstant(int i) {
-        return ((long[]) AppState.pool[StateKeys.RES_LOOKUP_TABLE])[i];
+        return ((long[]) AppState.pool[StringResKeys.RES_LOOKUP_TABLE])[i];
     }
 
     /* renamed from: c */
     public static final int getPiMultiple(int i) {
-        return ((int[]) AppState.pool[StateKeys.RES_PALETTE_MAP_1])[i];
+        return ((int[]) AppState.pool[StringResKeys.RES_PALETTE_MAP_1])[i];
     }
 
     /* renamed from: f */
     public static final int parseBalance() {
         ScreenManager.processScreenForm();
-        String balanceStr = Utils.defaultStr(AppState.getString(StateKeys.SLOT_SCREEN_VALUE));
+        String balanceStr = Utils.defaultStr(AppState.getString(UIKeys.SLOT_SCREEN_VALUE));
         int i = 0;
         int sepIdx = balanceStr.lastIndexOf(46);
         int dotIdx = sepIdx;
@@ -460,23 +459,23 @@ public final class ResourceManager {
             } catch (Throwable unused3) {
             }
         }
-        AppState.setInt(StateKeys.SETTING_TRAFFIC_COST, i);
+        AppState.setInt(SettingsKeys.SETTING_TRAFFIC_COST, i);
         return 0;
     }
 
     /* renamed from: g */
     public static final int clearSmsFields() {
-        AppState.clearIndex(StateKeys.SLOT_SEARCH_LABEL_1);
-        AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
-        AppState.clearIndex(StateKeys.SLOT_SELECTED_GROUP);
+        AppState.clearIndex(RegistrationKeys.SLOT_SEARCH_LABEL_1);
+        AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
+        AppState.clearIndex(ContactKeys.SLOT_SELECTED_GROUP);
         return ScreenId.PHONE_GROUPS;
     }
 
     /* renamed from: h */
     public static final int syncAndReturn() {
         ((MrimAccount) AppState.getAccount()).profileManager.sync();
-        if (AppState.getBool(StateKeys.FLAG_UPDATE_AVAILABLE)) {
-            return AppState.getInt(StateKeys.INT_CONNECTION_STATE);
+        if (AppState.getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
+            return AppState.getInt(SessionKeys.INT_CONNECTION_STATE);
         }
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -484,7 +483,7 @@ public final class ResourceManager {
 
     /* renamed from: a */
     public static final void removeTileRequest(ResourceManager tile) {
-        Vector requestQueue = AppState.getVector(StateKeys.VEC_CHATROOM_LIST);
+        Vector requestQueue = AppState.getVector(ChatKeys.VEC_CHATROOM_LIST);
         synchronized (requestQueue) {
             requestQueue.removeElement(tile);
         }
@@ -493,7 +492,7 @@ public final class ResourceManager {
     /* renamed from: i */
     public static final ResourceManager peekTileRequest() {
         ResourceManager tile;
-        Vector requestQueue = AppState.getVector(StateKeys.VEC_CHATROOM_LIST);
+        Vector requestQueue = AppState.getVector(ChatKeys.VEC_CHATROOM_LIST);
         synchronized (requestQueue) {
             tile = (ResourceManager) (requestQueue.size() != 0 ? requestQueue.firstElement() : null);
         }
@@ -502,7 +501,7 @@ public final class ResourceManager {
 
     /* renamed from: b */
     public static final void enqueueTileRequest(ResourceManager tile) {
-        Vector requestQueue = AppState.getVector(StateKeys.VEC_CHATROOM_LIST);
+        Vector requestQueue = AppState.getVector(ChatKeys.VEC_CHATROOM_LIST);
         synchronized (requestQueue) {
             if (!requestQueue.contains(tile)) {
                 if (tile.tileType == 3) {
@@ -544,9 +543,9 @@ public final class ResourceManager {
         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
         MapPoint mapPoint = (MapPoint) obj;
         mrimAccount.profileManager.setMapLocation(mapPoint);
-        XmppContactGroup.addMapPointIfNew(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
-        XmppContactGroup.saveMapPoints(AppState.getVector(StateKeys.VEC_CONTACT_GROUPS), 225);
-        AppState.setInt(StateKeys.FLAG_LOADING, 0);
+        XmppContactGroup.addMapPointIfNew(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
+        XmppContactGroup.saveMapPoints(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
+        AppState.setInt(UIKeys.FLAG_LOADING, 0);
         mrimAccount.isHighlighted = true;
         return ScreenId.PROFILE_EDIT;
     }
@@ -558,7 +557,7 @@ public final class ResourceManager {
 
     /* renamed from: k */
     public static final void showMailAccountList() {
-        AppState.clearIndex(StateKeys.SLOT_CURRENT_ACCOUNT);
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         ListView screen = ScreenManager.createScreen(ScreenDef.GENERIC_LIST);
         Vector accounts = AccountManager.getMrimAccountList();
         int size = accounts.size();
@@ -582,7 +581,7 @@ public final class ResourceManager {
         if (obj == null) {
             return -1;
         }
-        AppState.setInt(StateKeys.INT_SCREEN_ACTION, 38);
+        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 38);
         AppState.setAccount(obj);
         return 0;
     }
@@ -595,22 +594,22 @@ public final class ResourceManager {
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[StateKeys.OBJ_SEARCH_RESULT]).userId, 1));
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId, 1));
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.CONTACT_DELETE;
             case 1:
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[StateKeys.OBJ_SEARCH_RESULT]).userId, 2));
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId, 2));
                 return ScreenId.MAP;
             case 2:
                 return AppController.dialPhoneContactNext();
             case 3:
                 return AppController.dialPhoneContactPrev();
             default:
-                AppState.setInt(StateKeys.INT_ASYNC_TASK_ID, 0);
-                AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) AppState.pool[StateKeys.OBJ_SEARCH_RESULT]).userId);
+                AppState.setInt(RuntimeKeys.INT_ASYNC_TASK_ID, 0);
+                AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId);
                 ScreenBuilder.onScreenClosed();
                 return 0;
         }
@@ -618,7 +617,7 @@ public final class ResourceManager {
 
     /* renamed from: l */
     public static final void clearImageCache() {
-        AppState.clearRange(StateKeys.SLOT_MEDIA_CALLBACK, StateKeys.OBJ_FONT_2);
+        AppState.clearRange(UIKeys.SLOT_MEDIA_CALLBACK, MapKeys.OBJ_FONT_2);
     }
 
     /* renamed from: m */
@@ -645,28 +644,28 @@ public final class ResourceManager {
 
     /* renamed from: d */
     public static final int setSelectedObject(Object obj) {
-        AppState.pool[StateKeys.SLOT_MSG_ID_1] = obj;
+        AppState.pool[RuntimeKeys.SLOT_MSG_ID_1] = obj;
         return 0;
     }
 
     /* renamed from: a */
     public static final int handleMessageInputAction(String str, int i) {
-        String messageText = Utils.defaultStr(AppState.getString(StateKeys.SLOT_STATUS_TEXT));
+        String messageText = Utils.defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
         if (StringUtils.matchesKey(1060, str)) {
             int sendResult = AppState.getCurrentContact().sendMessage(messageText);
             if (0 != sendResult) {
                 ScreenBuilder.onScreenClosed();
                 return NotificationHelper.showError(sendResult);
             }
-            AppState.setInt(StateKeys.FLAG_STATUS_TEXT_SET, 0);
-            AppState.clearIndex(StateKeys.SLOT_STATUS_TEXT);
+            AppState.setInt(UIKeys.FLAG_STATUS_TEXT_SET, 0);
+            AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
         } else if (StringUtils.matchesKey(473, str)) {
-            AppState.setFromBuffer(StateKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(StateKeys.SLOT_NOTIFICATION_TEXT)));
+            AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(UIKeys.SLOT_NOTIFICATION_TEXT)));
         } else if (StringUtils.matchesKey(474, str)) {
-            AppState.setObject(StateKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
-            AppState.setBool(StateKeys.FLAG_RESOURCE_LOADING, true);
+            AppState.setObject(UIKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
+            AppState.setBool(UIKeys.FLAG_RESOURCE_LOADING, true);
         } else if (StringUtils.matchesKey(478, str)) {
-            AppState.setObject(StateKeys.SLOT_STATUS_TEXT, (Object) StringUtils.transliterate(messageText));
+            AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) StringUtils.transliterate(messageText));
         }
         if (i == 93 || i == 123 || i == 95 || i == 94) {
             return 0;
@@ -707,18 +706,18 @@ public final class ResourceManager {
             } else {
                 XmppContactGroup.setTextInputScreen(1060, 1055);
             }
-            if (AppState.getBool(StateKeys.SETTING_EXTENDED_PRESENCE)) {
-                int timestamp = AppState.getInt(StateKeys.INT_CURRENT_TIMESTAMP);
-                if (Utils.abs(timestamp - AppState.getInt(StateKeys.INT_LAST_CHECK_TIMESTAMP)) > 5000) {
-                    AppState.setInt(StateKeys.INT_LAST_CHECK_TIMESTAMP, timestamp);
+            if (AppState.getBool(SettingsKeys.SETTING_EXTENDED_PRESENCE)) {
+                int timestamp = AppState.getInt(RuntimeKeys.INT_CURRENT_TIMESTAMP);
+                if (Utils.abs(timestamp - AppState.getInt(RuntimeKeys.INT_LAST_CHECK_TIMESTAMP)) > 5000) {
+                    AppState.setInt(RuntimeKeys.INT_LAST_CHECK_TIMESTAMP, timestamp);
                     int length = XmppContactGroup.getTextInputValue().length();
-                    if (length != AppState.getInt(StateKeys.INT_LAST_LIST_SIZE) && Utils.abs(timestamp - AppState.getInt(StateKeys.INT_LAST_POLL_TIMESTAMP)) > 10000) {
+                    if (length != AppState.getInt(RuntimeKeys.INT_LAST_LIST_SIZE) && Utils.abs(timestamp - AppState.getInt(RuntimeKeys.INT_LAST_POLL_TIMESTAMP)) > 10000) {
                         Contact currentContact = AppState.getCurrentContact();
                         if (!currentContact.isOnline() && !currentContact.hasUnread() && !currentContact.isOffline()) {
                             currentContact.account.validateContactResend(currentContact);
                         }
-                        AppState.setInt(StateKeys.INT_LAST_POLL_TIMESTAMP, timestamp);
-                        AppState.setInt(StateKeys.INT_LAST_LIST_SIZE, length);
+                        AppState.setInt(RuntimeKeys.INT_LAST_POLL_TIMESTAMP, timestamp);
+                        AppState.setInt(RuntimeKeys.INT_LAST_LIST_SIZE, length);
                     }
                 }
             }
@@ -775,10 +774,10 @@ public final class ResourceManager {
             recipientsSb.append(i > 0 ? separator : str3).append(((String[]) vector.elementAt(i))[0]);
             i++;
         }
-        AppState.setObject(StateKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
-        AppState.setObject(StateKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(str));
+        AppState.setObject(RuntimeKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
+        AppState.setObject(RuntimeKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(str));
         String str4 = AppState.emptyStr;
-        AppState.setFromBuffer(StateKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : str4).append(AppState.getBool(StateKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(StateKeys.STR_TRAFFIC_LABEL)));
+        AppState.setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(AppState.getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : str4).append(AppState.getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : str4).append(Utils.defaultStr(str2)).append(AppState.getString(StringResKeys.STR_TRAFFIC_LABEL)));
         return ScreenId.COMPOSE_MESSAGE;
     }
 
@@ -803,38 +802,38 @@ public final class ResourceManager {
         } else {
             ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(PackedStringKeys.URL_OBRAZ_FOTO);
             int dotIndex = domain.indexOf(46);
-            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(StateKeys.INT_ASYNC_TASK_ID));
+            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(RuntimeKeys.INT_ASYNC_TASK_ID));
         }
         objArr[0] = urlBuffer.getStringAndClear();
         objArr[1] = targetAccount;
         objArr[2] = null;
-        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = objArr;
+        AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr;
         new AsyncTask(AsyncTaskId.DOWNLOAD_PHOTO, objArr);
         return 0;
     }
 
     /* renamed from: a */
     private static final void setUpdateFlag(byte b) {
-        AppState.getBytes(StateKeys.SLOT_MEDIA_RESOURCE)[0] = b;
+        AppState.getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] = b;
     }
 
     /* renamed from: u */
     private static final boolean isUpdatePending() {
-        return AppState.getBytes(StateKeys.SLOT_MEDIA_RESOURCE)[0] != 0;
+        return AppState.getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] != 0;
     }
 
     /* renamed from: o */
     public static final int checkForUpdates() {
-        synchronized (AppState.pool[StateKeys.SLOT_MEDIA_RESOURCE]) {
-            if (!isUpdatePending() && System.currentTimeMillis() > AppState.getLong(StateKeys.TIMESTAMP_LAST_UPDATE_CHECK) + 86400000) {
-                AppState.setLong(StateKeys.TIMESTAMP_LAST_UPDATE_CHECK, System.currentTimeMillis());
+        synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+            if (!isUpdatePending() && System.currentTimeMillis() > AppState.getLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK) + 86400000) {
+                AppState.setLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK, System.currentTimeMillis());
                 setUpdateFlag((byte) 1);
                 new AsyncTask(AsyncTaskId.FETCH_UPDATE_STATUS);
             }
             if (isUpdatePending()) {
                 return -1;
             }
-            return AppState.getInt(StateKeys.SETTING_UPDATE_STATUS);
+            return AppState.getInt(SettingsKeys.SETTING_UPDATE_STATUS);
         }
     }
 
@@ -843,21 +842,21 @@ public final class ResourceManager {
     public static final void fetchUpdateStatus() {
         try {
             NetworkLock.acquireNetworkLock();
-            HttpClient httpConn = HttpClient.createHttpClient(AppState.getString(StateKeys.STR_RES_MEGA_URL_1), (Account) null, 3);
+            HttpClient httpConn = HttpClient.createHttpClient(AppState.getString(StringResKeys.STR_RES_MEGA_URL_1), (Account) null, 3);
             if (httpConn.getResponseCode() != 200) {
                 throw new Throwable();
             }
             ByteBuffer buffer = new ByteBuffer(httpConn);
-            synchronized (AppState.pool[StateKeys.SLOT_MEDIA_RESOURCE]) {
-                AppState.setInt(StateKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(PackedStringKeys.TAG_SNAP_LOGINS)) != 0 ? 1 : 0);
+            synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                AppState.setInt(SettingsKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(PackedStringKeys.TAG_SNAP_LOGINS)) != 0 ? 1 : 0);
             }
-            synchronized (AppState.pool[StateKeys.SLOT_MEDIA_RESOURCE]) {
+            synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
                 setUpdateFlag((byte) 0);
             }
             HttpClient.closeAndUpdateStats(httpConn);
             NetworkLock.releaseNetworkLock();
         } catch (Throwable unused) {
-            synchronized (AppState.pool[StateKeys.SLOT_MEDIA_RESOURCE]) {
+            synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
                 setUpdateFlag((byte) 0);
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
@@ -867,8 +866,8 @@ public final class ResourceManager {
 
     /* renamed from: c */
     public static final int handleChatRoomAction(String str) {
-        String messageId = AppState.getString(StateKeys.SLOT_MESSAGE_ID);
-        int chatRoomId = AppState.getInt(StateKeys.INT_CHATROOM_ID);
+        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
         MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
         ChatRoom chatRoom = mrimAccount.chatRoomManager.findById(chatRoomId);
         if (StringUtils.matchesKey(848, str)) {
@@ -896,11 +895,11 @@ public final class ResourceManager {
         if (!StringUtils.matchesKey(851, str)) {
             return 0;
         }
-        AppState.setInt(StateKeys.INT_SCROLL_OFFSET, 0);
-        AppState.clearIndex(StateKeys.SLOT_MAP_POINT_2);
+        AppState.setInt(ChatKeys.INT_SCROLL_OFFSET, 0);
+        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_2);
         mrimAccount.chatRoomManager.loaded = true;
         chatRoom.setActive(false);
-        AppState.setInt(StateKeys.INT_SCREEN_ACTION, 41);
+        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 41);
         return 0;
     }
 
@@ -939,7 +938,7 @@ public final class ResourceManager {
     /* renamed from: q */
     public static final int deleteSelectedEntity() {
         int groupError;
-        Object obj = AppState.pool[StateKeys.SLOT_CURRENT_ENTITY];
+        Object obj = AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
         if ((obj instanceof ContactGroup) && 0 != (groupError = ((ContactGroup) obj).getSortIndex())) {
             return NotificationHelper.showError(groupError);
         }
@@ -958,8 +957,8 @@ public final class ResourceManager {
     public static final void processUpdateResult() {
         int charVal2;
         int charVal1;
-        boolean showMessage = AppState.getBool(StateKeys.FLAG_SHOW_NOTIFICATION);
-        Object obj = AppState.getObjectArray(StateKeys.OBJ_REGISTRATION_DATA)[0];
+        boolean showMessage = AppState.getBool(UIKeys.FLAG_SHOW_NOTIFICATION);
+        Object obj = AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[0];
         if (obj instanceof Integer) {
             if (showMessage) {
                 NotificationHelper.showMessageById(((Integer) obj).intValue());
@@ -977,9 +976,9 @@ public final class ResourceManager {
             while (buffer.length > 0 && 32 != (charVal2 = buffer.readUByte())) {
                 urlSb.append((char) charVal2);
             }
-            AppState.setFromBuffer(StateKeys.SLOT_SCREEN_TITLE, versionSb);
-            AppState.setFromBuffer(StateKeys.SLOT_SCREEN_SUBTITLE, urlSb);
-            if (parseVersionNumber(AppState.getString(StateKeys.STR_APP_NAME)) >= parseVersionNumber(AppState.getString(StateKeys.SLOT_SCREEN_TITLE))) {
+            AppState.setFromBuffer(UIKeys.SLOT_SCREEN_TITLE, versionSb);
+            AppState.setFromBuffer(UIKeys.SLOT_SCREEN_SUBTITLE, urlSb);
+            if (parseVersionNumber(AppState.getString(StringResKeys.STR_APP_NAME)) >= parseVersionNumber(AppState.getString(UIKeys.SLOT_SCREEN_TITLE))) {
                 throw new Throwable();
             }
             ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_LIST));
@@ -992,7 +991,7 @@ public final class ResourceManager {
 
     /* renamed from: s */
     public static final int applyVersionLabel() {
-        AppState.setFromPool(StateKeys.SLOT_SAVED_STRING, StateKeys.SLOT_SCREEN_SUBTITLE);
+        AppState.setFromPool(UIKeys.SLOT_SAVED_STRING, UIKeys.SLOT_SCREEN_SUBTITLE);
         return 0;
     }
 
@@ -1067,7 +1066,7 @@ public final class ResourceManager {
             return NotificationHelper.showError(775);
         }
         invitees.addElement(((MrimAccount) AppState.getAccount()).login);
-        AppState.pool[StateKeys.SLOT_SCREEN_TITLE] = invitees;
+        AppState.pool[UIKeys.SLOT_SCREEN_TITLE] = invitees;
         return ScreenId.SEND_DATA;
     }
 

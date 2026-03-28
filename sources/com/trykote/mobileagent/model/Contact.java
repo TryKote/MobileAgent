@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
@@ -81,7 +80,7 @@ public abstract class Contact implements Sortable {
         this.flags = (byte) (this.flags | i);
         ContactListManager.markContactRead(this);
         this.dirty = true;
-        this.lastMessageTime = AppState.getLong(StateKeys.TIMESTAMP_CURRENT);
+        this.lastMessageTime = AppState.getLong(SessionKeys.TIMESTAMP_CURRENT);
         updateRenderState();
     }
 
@@ -141,7 +140,7 @@ public abstract class Contact implements Sortable {
     /* renamed from: a */
     public final void receiveMessageFull(long j, String str, int i) {
         TabBar tabBar;
-        AppState.setObject(StateKeys.SLOT_CURRENT_CONTACT_ID, (Object) this.identifier);
+        AppState.setObject(ContactKeys.SLOT_CURRENT_CONTACT_ID, (Object) this.identifier);
         ResourceManager.playNotificationSound(2);
         addFlag(i);
         this.account.markRead(getIdentifier());
@@ -157,7 +156,7 @@ public abstract class Contact implements Sortable {
         if (acct == null || str2 == null) {
             return;
         }
-        Vector tabs = AppState.getVector(StateKeys.VEC_TAB_BARS);
+        Vector tabs = AppState.getVector(UIKeys.VEC_TAB_BARS);
         int size = tabs.size();
         do {
             size--;
@@ -178,13 +177,13 @@ public abstract class Contact implements Sortable {
             return 309;
         }
         Account acct = this.account;
-        long now = AppState.getLong(StateKeys.TIMESTAMP_CURRENT);
+        long now = AppState.getLong(SessionKeys.TIMESTAMP_CURRENT);
         int sendResult = acct.validateSend(this, str, now);
         if (0 != sendResult) {
             return sendResult;
         }
         appendMessage(1, str, now, now);
-        this.lastMessageTime = AppState.getLong(StateKeys.TIMESTAMP_CURRENT);
+        this.lastMessageTime = AppState.getLong(SessionKeys.TIMESTAMP_CURRENT);
         updateRenderState();
         return 0;
     }
@@ -259,7 +258,7 @@ public abstract class Contact implements Sortable {
         this.dirty = true;
         ByteBuffer msgBuf = this.messageBuffer == null ? ChunkedRecordStore.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = msgBuf;
-        int maxCount = AppState.getInt(StateKeys.SETTING_MAX_CONTACTS) - 1;
+        int maxCount = AppState.getInt(SettingsKeys.SETTING_MAX_CONTACTS) - 1;
         ByteBuffer buffer = this.messageBuffer;
         int i2 = 0;
         int i3 = 0;
@@ -274,9 +273,9 @@ public abstract class Contact implements Sortable {
             buffer.skip(buffer.readShortBE());
             i2--;
         }
-        msgBuf.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.getInt(StateKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
+        msgBuf.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((AppState.getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
         saveMessageBuffer();
-        this.lastMessageTime = AppState.getLong(StateKeys.TIMESTAMP_CURRENT);
+        this.lastMessageTime = AppState.getLong(SessionKeys.TIMESTAMP_CURRENT);
         updateRenderState();
     }
 
@@ -307,27 +306,27 @@ public abstract class Contact implements Sortable {
     public final ListView showMessages() {
         this.dirty = false;
         String str = this.displayName;
-        AppState.setObject(StateKeys.SLOT_CURRENT_MSG_TEXT, (Object) str);
+        AppState.setObject(RuntimeKeys.SLOT_CURRENT_MSG_TEXT, (Object) str);
         int icon = getIcon();
         if ((this instanceof XmppContact) && ((XmppProtocol) this.account).isMailRuVariant() && icon >= 381 && icon <= 384) {
             icon += 4;
         }
-        AppState.setInt(StateKeys.INT_MESSAGE_ICON, icon);
+        AppState.setInt(RuntimeKeys.INT_MESSAGE_ICON, icon);
         ListView msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_SUMMARY);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         int dateCode = AppState.getDateCode();
         while (dupe.length > 0) {
             int entryLen = dupe.readShortBE();
             byte msgType = dupe.readByte();
-            long msgTime = dupe.readLong() - AppState.getLong(StateKeys.TIMESTAMP_OFFSET);
+            long msgTime = dupe.readLong() - AppState.getLong(SessionKeys.TIMESTAMP_OFFSET);
             long sentTime = dupe.readLong();
             String msgText = Utils.normalizeSpaces(dupe.readUnicodeChars(entryLen - 17));
             int i = (msgType == 0 || msgType == 16 || msgType == 8) ? 0 : msgType == 1 ? 11 : (msgType & 64) == 0 ? 12 : 0;
             if (msgType == 16) {
-                msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.displayName).append(AppState.getString(StateKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
+                msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.displayName).append(AppState.getString(StringResKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
                 msgScreen.addIconItem(2, msgText, 0);
                 if (this.account.isConnected()) {
-                    msgScreen.addExpandableItem(-1, AppState.getString(StateKeys.STR_EXPAND_MESSAGE), i, new Object[]{ResourceManager.integerOf(1), msgText, str, new Long(sentTime)});
+                    msgScreen.addExpandableItem(-1, AppState.getString(StringResKeys.STR_EXPAND_MESSAGE), i, new Object[]{ResourceManager.integerOf(1), msgText, str, new Long(sentTime)});
                 }
             } else if (msgType == 8) {
                 int nlIdx = msgText.indexOf(10);

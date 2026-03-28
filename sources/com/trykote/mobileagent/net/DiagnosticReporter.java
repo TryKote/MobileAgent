@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
@@ -11,8 +10,8 @@ public abstract class DiagnosticReporter {
     /* renamed from: a */
     public static final void checkCrashReport() {
         long jCurrentTimeMillis = System.currentTimeMillis();
-        if (jCurrentTimeMillis > AppState.getLong(StateKeys.TIMESTAMP_LAST_CLEANUP) + 7776000000L) {
-            AppState.setLong(StateKeys.TIMESTAMP_LAST_CLEANUP, jCurrentTimeMillis);
+        if (jCurrentTimeMillis > AppState.getLong(SessionKeys.TIMESTAMP_LAST_CLEANUP) + 7776000000L) {
+            AppState.setLong(SessionKeys.TIMESTAMP_LAST_CLEANUP, jCurrentTimeMillis);
             new AsyncTask(AsyncTaskId.SEND_DIAGNOSTIC);
         }
     }
@@ -40,7 +39,7 @@ public abstract class DiagnosticReporter {
                 httpClient = diagClient;
                 if (diagClient.getResponseCode() == 200) {
                     Vector children = new ByteBuffer(httpClient).parseXmlStr().children;
-                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(StateKeys.SESSION_KEY)).setLongKeyAttr(102, AppController.getFreeMemoryString()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
+                    XmlElement report = new XmlElement(103).setLongKeyAttr(103, AppState.getString(SessionKeys.SESSION_KEY)).setLongKeyAttr(102, AppController.getFreeMemoryString()).setLongKeyAttr(116, StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory()))).setLongKeyAttr(112, StringUtils.intern(Integer.toString(0))).setLongKeyAttr(115, StringUtils.intern(ResourceManager.booleanOf(false).toString()));
                     for (int i6 = 0; i6 < children.size(); i6++) {
                         XmlElement element = (XmlElement) children.elementAt(i6);
                         String tag = element.tagName;
@@ -61,7 +60,7 @@ public abstract class DiagnosticReporter {
                 for (int i7 = 0; i7 < dataBuffer.length; i7 += 600) {
                     int pos = i7;
                     int limit = Utils.min(pos + 600, dataBuffer.length);
-                    byte[] base64Table = AppState.getBytes(StateKeys.RES_BASE64_TABLE);
+                    byte[] base64Table = AppState.getBytes(StringResKeys.RES_BASE64_TABLE);
                     int outPos = 0;
                     boolean z = true;
                     while (z) {

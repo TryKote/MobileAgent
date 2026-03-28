@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
@@ -113,10 +112,10 @@ public final class Conversation implements ListItem {
         StringBuffer sb = ObjectPool.newStringBuffer();
         int size = this.items.size();
         if (this.height == 5) {
-            sb.append(AppState.getString(StateKeys.STR_CONV_UNREAD_PREFIX)).append(size);
+            sb.append(AppState.getString(StringResKeys.STR_CONV_UNREAD_PREFIX)).append(size);
         } else {
             int i = size - 1;
-            sb.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(StateKeys.STR_CONV_SEPARATOR)).append(i).append(AppState.getString(StateKeys.STR_CONV_SUFFIX_BASE + Utils.pluralForm(i)));
+            sb.append(((ListItem) this.items.firstElement()).getText()).append(AppState.getString(StringResKeys.STR_CONV_SEPARATOR)).append(i).append(AppState.getString(StringResKeys.STR_CONV_SUFFIX_BASE + Utils.pluralForm(i)));
         }
         return ObjectPool.toStringAndRelease(sb);
     }
@@ -143,7 +142,7 @@ public final class Conversation implements ListItem {
                 if (((Integer) objArr[1]).intValue() == 0) {
                     protocol.msgCount = 30;
                     AppController.needsRepaint = true;
-                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(StateKeys.STR_RES_HUGE_URL_5), protocol, 0);
+                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(StringResKeys.STR_RES_HUGE_URL_5), protocol, 0);
                     httpClient.setRequestMethod(ObjectPool.unpackChars(1414745936));
                     ByteBuffer requestBody = new ByteBuffer().writeCompressed(PackedStringKeys.ICQ_AUTH_PARAMS).writeConversationStr(objArr[2]).writeCompressed(PackedStringKeys.PARAM_PWD).writeConversationStr(objArr[3]);
                     ApiClient.setHeaderFromState(httpClient, 788628, 2164851);
@@ -173,7 +172,7 @@ public final class Conversation implements ListItem {
                     AppController.needsRepaint = true;
                     ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_OSCAR_SESSION).writeByte(63);
                     String queryStr = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_A_EQ).writeConversationStr(objArr[3]).writeCompressed(PackedStringKeys.ICQ_OSCAR_PARAMS).writeObjectStr(objArr[4]).readAllByteStr();
-                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(AppState.getString(StateKeys.STR_RES_HUGE_URL_8), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(AppState.getString(StringResKeys.STR_RES_HUGE_URL_8), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
                     int responseCode2 = httpClient2.getResponseCode();
                     i = responseCode2;
                     if (responseCode2 == 200) {
@@ -215,7 +214,7 @@ public final class Conversation implements ListItem {
             int i2 = 0;
             while (true) {
                 try {
-                    int idx = str.indexOf(AppState.getString(StateKeys.STR_RES_VERY_LONG_URL_1), i);
+                    int idx = str.indexOf(AppState.getString(StringResKeys.STR_RES_VERY_LONG_URL_1), i);
                     if (idx < 0) {
                         break;
                     }
@@ -248,7 +247,7 @@ public final class Conversation implements ListItem {
         try {
             if (!isEncodedFormat(str)) {
                 if (isSimpleFormat(str)) {
-                    return AppState.getString(StateKeys.STR_CHAT_DEFAULT_TOPIC);
+                    return AppState.getString(StringResKeys.STR_CHAT_DEFAULT_TOPIC);
                 }
                 return null;
             }
@@ -383,9 +382,9 @@ public final class Conversation implements ListItem {
         if ((flags & 8) == 0) {
             String decoded = decodeHtmlEntities(rawBody);
             StringBuffer sb = ObjectPool.newStringBuffer();
-            String openTag = AppState.getString(StateKeys.STR_RES_PROTOCOL_TAG_6);
-            String midTag = AppState.getString(StateKeys.STR_RES_HEADER_1);
-            String closeTag = AppState.getString(StateKeys.STR_RES_XMPP_TAG_1);
+            String openTag = AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_6);
+            String midTag = AppState.getString(StringResKeys.STR_RES_HEADER_1);
+            String closeTag = AppState.getString(StringResKeys.STR_RES_XMPP_TAG_1);
             int i2 = 0;
             while (true) {
                 int i3 = i2;
@@ -437,17 +436,17 @@ public final class Conversation implements ListItem {
                     while (true) {
                         memberCount--;
                         if (memberCount < 0) {
-                            AppState.pool[StateKeys.SLOT_REG_PARAM_4] = members;
+                            AppState.pool[RegistrationKeys.SLOT_REG_PARAM_4] = members;
                             break;
                         } else {
                             members.addElement(buffer.readWideStr());
                         }
                     }
                 case 3:
-                    account.receiveGroupMessage(sender, AppState.getString(StateKeys.STR_GROUP_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, j);
+                    account.receiveGroupMessage(sender, AppState.getString(StringResKeys.STR_GROUP_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, j);
                     break;
                 case 5:
-                    account.receivePrivateMessage(sender, AppState.getString(StateKeys.STR_PRIVATE_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
+                    account.receivePrivateMessage(sender, AppState.getString(StringResKeys.STR_PRIVATE_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
                     break;
             }
             return;
@@ -455,7 +454,7 @@ public final class Conversation implements ListItem {
         boolean isNotify = (flags & 2048) != 0;
         boolean isGroupMsg = (flags & 8192) != 0;
         if ((flags & 4) == 0) {
-            account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(StateKeys.STR_RES_LONG_URL_2) : sender).writeIntLE(msgId)));
+            account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(StringResKeys.STR_RES_LONG_URL_2) : sender).writeIntLE(msgId)));
         }
         if (isGroupMsg) {
             Enumeration elements = account.contactMap.elements();
@@ -497,7 +496,7 @@ public final class Conversation implements ListItem {
             return;
         }
         if ((flags & 16384) != 0) {
-            account.onMessage(sender, j, AppState.getString(StateKeys.STR_CONFERENCE_INVITE));
+            account.onMessage(sender, j, AppState.getString(StringResKeys.STR_CONFERENCE_INVITE));
         } else if ((flags & 1024) != 0) {
             account.deleteContact(sender);
         } else {
@@ -509,7 +508,7 @@ public final class Conversation implements ListItem {
     /* renamed from: p */
     private static final String decodeHtmlEntities(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String entityPrefix = AppState.getString(StateKeys.STR_RES_LONG_LABEL_2);
+        String entityPrefix = AppState.getString(StringResKeys.STR_RES_LONG_LABEL_2);
         int i = 0;
         while (true) {
             int i2 = i;
@@ -570,8 +569,8 @@ public final class Conversation implements ListItem {
             Vector groups2 = account.groups;
             int contactFormatLen = contactFormat.length();
             groups2.size();
-            String phoneSuffix = AppState.getString(StateKeys.STR_PHONE_SUFFIX);
-            String botSuffix = AppState.getString(StateKeys.STR_BOT_SUFFIX);
+            String phoneSuffix = AppState.getString(StringResKeys.STR_PHONE_SUFFIX);
+            String botSuffix = AppState.getString(StringResKeys.STR_BOT_SUFFIX);
             while (buffer.length > 0) {
                 int contactFlags = buffer.readInt();
                 int groupId = buffer.readInt();
@@ -645,16 +644,16 @@ public final class Conversation implements ListItem {
             account.setConfiguration(account.configFlags);
             account.trySendData(ProtocolFactory.createMrimPacket(account, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
             if (account.syncSeq == 1) {
-                String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(StateKeys.SLOT_SESSION_TOKEN)).toLowerCase());
+                String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(SessionKeys.SLOT_SESSION_TOKEN)).toLowerCase());
                 if (!StringUtils.isEmpty(searchQuery)) {
                     new AsyncTask(AsyncTaskId.WAIT_FOR_COMPLETION, new Object[]{searchQuery, account});
                 }
                 if (AccountManager.getTotalSyncCount() == 1) {
-                    AppState.setInt(StateKeys.FLAG_CONVERSATION_ACTIVE, 1);
+                    AppState.setInt(UIKeys.FLAG_CONVERSATION_ACTIVE, 1);
                 }
             }
         } else {
-            EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_STATUS_CHANGED)).append(status)));
+            EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_STATUS_CHANGED)).append(status)));
             account.closeConnection();
             account.lastError = account.getDefaultError();
             account.markAllRead();
@@ -690,10 +689,10 @@ public final class Conversation implements ListItem {
     public static final String urlEncode(Object obj) {
         String string = obj.toString().toString();
         StringBuffer sb = ObjectPool.newStringBuffer();
-        AppState.getString(StateKeys.STR_RES_DASH_SEPARATOR);
-        AppState.getString(StateKeys.STR_RES_SPACE_DASH_SPACE);
-        AppState.getString(StateKeys.STR_RES_FIELD_NAME_1);
-        AppState.getString(StateKeys.STR_RES_FIELD_NAME_2);
+        AppState.getString(StringResKeys.STR_RES_DASH_SEPARATOR);
+        AppState.getString(StringResKeys.STR_RES_SPACE_DASH_SPACE);
+        AppState.getString(StringResKeys.STR_RES_FIELD_NAME_1);
+        AppState.getString(StringResKeys.STR_RES_FIELD_NAME_2);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
@@ -712,10 +711,10 @@ public final class Conversation implements ListItem {
     public static final String urlEncodeCyrillic(Object obj) {
         String string = obj.toString();
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String hexPrefixLo = AppState.getString(StateKeys.STR_RES_DASH_SEPARATOR);
-        String hexPrefixHi = AppState.getString(StateKeys.STR_RES_SPACE_DASH_SPACE);
-        String yoUpper = AppState.getString(StateKeys.STR_RES_FIELD_NAME_1);
-        String yoLower = AppState.getString(StateKeys.STR_RES_FIELD_NAME_2);
+        String hexPrefixLo = AppState.getString(StringResKeys.STR_RES_DASH_SEPARATOR);
+        String hexPrefixHi = AppState.getString(StringResKeys.STR_RES_SPACE_DASH_SPACE);
+        String yoUpper = AppState.getString(StringResKeys.STR_RES_FIELD_NAME_1);
+        String yoLower = AppState.getString(StringResKeys.STR_RES_FIELD_NAME_2);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
@@ -755,8 +754,8 @@ public final class Conversation implements ListItem {
 
     /* renamed from: j */
     public static final String decodeHtmlSpecial(String str) {
-        Vector entityNames = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_API_URL_7));
-        Vector entityValues = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_COMMAND_1));
+        Vector entityNames = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_API_URL_7));
+        Vector entityValues = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_COMMAND_1));
         StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         int length2 = 0;
@@ -789,7 +788,7 @@ public final class Conversation implements ListItem {
     /* renamed from: k */
     public static final String transliterateRussian(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        Vector translitTable = Utils.splitByNull(AppState.getString(StateKeys.STR_RES_MEGA_URL_3));
+        Vector translitTable = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_MEGA_URL_3));
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);
@@ -831,17 +830,17 @@ public final class Conversation implements ListItem {
     /* renamed from: a */
     public static final void setMapEnabled(boolean z) {
         MapRenderer.needsRedraw = true;
-        AppState.setBool(StateKeys.MAP_GPS_ENABLED, z);
+        AppState.setBool(MapKeys.MAP_GPS_ENABLED, z);
     }
 
     /* renamed from: a */
     public static final void incrementZoom() {
-        MapRenderer.setZoom(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL) + 1);
+        MapRenderer.setZoom(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL) + 1);
     }
 
     /* renamed from: b */
     public static final void decrementZoom() {
-        MapRenderer.setZoom(AppState.getInt(StateKeys.MAP_ZOOM_LEVEL) - 1);
+        MapRenderer.setZoom(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL) - 1);
     }
 
     /* renamed from: c */
@@ -851,6 +850,6 @@ public final class Conversation implements ListItem {
 
     /* renamed from: c */
     public static final void updateStatusText(int i) {
-        AppState.setFromBuffer(StateKeys.SLOT_ACTIVE_PROTOCOL_NAME, ObjectPool.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(StateKeys.VEC_PHOTO_QUEUE).size()).append(')'));
+        AppState.setFromBuffer(SessionKeys.SLOT_ACTIVE_PROTOCOL_NAME, ObjectPool.newStringBuffer().append(AppState.getString(i)).append(' ').append('(').append(AppState.getVector(UIKeys.VEC_PHOTO_QUEUE).size()).append(')'));
     }
 }

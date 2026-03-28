@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -13,7 +12,7 @@ public abstract class RegistrationService {
 
     /* renamed from: a */
     public static final int handleRegSubmit(Object[] objArr) {
-        AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+        AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         String statusCode = (String) objArr[20];
         if (statusCode != null) {
             if (Utils.parseInt((Object) statusCode) == 0) {
@@ -29,15 +28,15 @@ public abstract class RegistrationService {
                 objArr[21] = ResourceManager.integerOf(-1);
             }
         }
-        AppState.pool[StateKeys.OBJ_REGISTRATION_DATA] = objArr;
+        AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr;
         return 164;
     }
 
     /* renamed from: b */
     public static final void processRegForm() {
         String domain;
-        Object[] objArr = (Object[]) AppState.pool[StateKeys.OBJ_REGISTRATION_DATA];
-        AppState.clearIndex(StateKeys.OBJ_REGISTRATION_DATA);
+        Object[] objArr = (Object[]) AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA];
+        AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         String email = (String) objArr[7];
         String login = email;
         int atIndex = email.indexOf(64);
@@ -48,7 +47,7 @@ public abstract class RegistrationService {
             domain = AppState.emptyStr;
         }
         int i = 0;
-        Vector domains = Utils.splitNonEmpty(AppState.getString(StateKeys.STR_DOMAIN_LIST), (char) 0);
+        Vector domains = Utils.splitNonEmpty(AppState.getString(StringResKeys.STR_DOMAIN_LIST), (char) 0);
         int size = domains.size();
         while (true) {
             size--;
@@ -59,26 +58,26 @@ public abstract class RegistrationService {
             }
         }
         ObjectPool.releaseVector(domains);
-        AppState.pool[StateKeys.SLOT_MAP_SEARCH_QUERY] = objArr[3];
-        AppState.pool[StateKeys.STR_MAP_LOCATION_NAME] = objArr[4];
-        AppState.pool[StateKeys.STR_MAP_LOCATION_URL] = objArr[5];
-        AppState.pool[StateKeys.SLOT_CHAT_NAME] = login;
-        AppState.setInt(StateKeys.INT_SERVER_INDEX, i);
-        AppState.pool[StateKeys.SLOT_PASSWORD] = objArr[9];
-        AppState.pool[StateKeys.SLOT_SCREEN_TITLE] = objArr[10];
-        AppState.setInt(StateKeys.INT_SETTINGS_THEME, ((Integer) objArr[11]).intValue());
-        AppState.pool[StateKeys.SLOT_DEVICE_ID] = objArr[12];
-        AppState.pool[StateKeys.SLOT_APP_VERSION_STRING] = objArr[13];
-        AppState.pool[StateKeys.SLOT_FIRST_NAME] = objArr[14];
-        AppState.pool[StateKeys.SLOT_LAST_NAME] = objArr[15];
-        AppState.setInt(StateKeys.INT_SEARCH_GENDER, ((Integer) objArr[16]).intValue());
-        AppState.setInt(StateKeys.INT_SEARCH_AGE, ((Integer) objArr[17]).intValue());
-        AppState.setInt(StateKeys.INT_REG_DOMAIN_INDEX, ((Integer) objArr[18]).intValue());
-        AppState.setInt(StateKeys.INT_COUNTRY_CODE, ((Integer) objArr[19]).intValue());
-        AppState.pool[StateKeys.SLOT_DISPLAY_NAME] = objArr[20];
-        AppState.setInt(StateKeys.INT_REGION_CODE, ((Integer) objArr[21]).intValue());
+        AppState.pool[MapKeys.SLOT_MAP_SEARCH_QUERY] = objArr[3];
+        AppState.pool[MapKeys.STR_MAP_LOCATION_NAME] = objArr[4];
+        AppState.pool[MapKeys.STR_MAP_LOCATION_URL] = objArr[5];
+        AppState.pool[ChatKeys.SLOT_CHAT_NAME] = login;
+        AppState.setInt(SessionKeys.INT_SERVER_INDEX, i);
+        AppState.pool[RegistrationKeys.SLOT_PASSWORD] = objArr[9];
+        AppState.pool[UIKeys.SLOT_SCREEN_TITLE] = objArr[10];
+        AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, ((Integer) objArr[11]).intValue());
+        AppState.pool[RegistrationKeys.SLOT_DEVICE_ID] = objArr[12];
+        AppState.pool[UIKeys.SLOT_APP_VERSION_STRING] = objArr[13];
+        AppState.pool[RegistrationKeys.SLOT_FIRST_NAME] = objArr[14];
+        AppState.pool[RegistrationKeys.SLOT_LAST_NAME] = objArr[15];
+        AppState.setInt(RegistrationKeys.INT_SEARCH_GENDER, ((Integer) objArr[16]).intValue());
+        AppState.setInt(RegistrationKeys.INT_SEARCH_AGE, ((Integer) objArr[17]).intValue());
+        AppState.setInt(RegistrationKeys.INT_REG_DOMAIN_INDEX, ((Integer) objArr[18]).intValue());
+        AppState.setInt(RegistrationKeys.INT_COUNTRY_CODE, ((Integer) objArr[19]).intValue());
+        AppState.pool[ContactKeys.SLOT_DISPLAY_NAME] = objArr[20];
+        AppState.setInt(RegistrationKeys.INT_REGION_CODE, ((Integer) objArr[21]).intValue());
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGISTRATION_FORM));
-        String statusStr = AppState.getString(StateKeys.SLOT_DISPLAY_NAME);
+        String statusStr = AppState.getString(ContactKeys.SLOT_DISPLAY_NAME);
         if (statusStr == null) {
             RemoteLogger.log("NET", "triggering refreshContactList from RegistrationService");
             ContactListManager.refreshContactList();
@@ -93,7 +92,7 @@ public abstract class RegistrationService {
 
     /* renamed from: i */
     public static final Object[] newRequest() {
-        String url = AppState.getString(StateKeys.STR_RES_HUGE_URL_6);
+        String url = AppState.getString(StringResKeys.STR_RES_HUGE_URL_6);
         String empty = AppState.emptyStr;
         Integer zero = ResourceManager.integerCache[0];
         Integer minusOne = ResourceManager.integerOf(-1);
@@ -102,7 +101,7 @@ public abstract class RegistrationService {
 
     /* renamed from: a */
     public static final Object[] createRegRequest(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(AppState.getString(StateKeys.STR_RES_HUGE_URL_2)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(StateKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
+        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_HUGE_URL_2)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
     }
 
     /* renamed from: a */

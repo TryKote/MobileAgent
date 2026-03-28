@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.map;
 
 
-import com.trykote.mobileagent.core.StateKeys;
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -95,10 +94,10 @@ public abstract class ChatRenderer {
         int color = graphics.getColor();
         Font scaleFont = AppState.getFont();
         graphics.setFont(scaleFont);
-        int softKeyHeight = AppState.getInt(StateKeys.INT_FONT_HEIGHT);
+        int softKeyHeight = AppState.getInt(UIKeys.INT_FONT_HEIGHT);
         int barWidth = Utils.max(scaleBarWidth, scaleFont.stringWidth(scaleLabel));
         int height = scaleFont.getHeight();
-        if (AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE)) {
+        if (AppState.getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE)) {
             i2 = -(softKeyHeight > 16 ? softKeyHeight : 18);
         } else {
             i2 = 0;
@@ -161,7 +160,7 @@ public abstract class ChatRenderer {
         int i4 = (height * size) + 6;
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
-        int themeIdx = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
+        int themeIdx = AppState.getInt(SettingsKeys.SETTING_COLOR_THEME);
         graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
         int arrowSize = Utils.min(boxWidth / 25, 3);
         int arrowH = arrowSize << 1;
@@ -194,7 +193,7 @@ public abstract class ChatRenderer {
         if (item == null || !item.isSelected()) {
             return;
         }
-        int fontSize = AppState.getInt(StateKeys.SETTING_FONT_SIZE_CHAT);
+        int fontSize = AppState.getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
         Font font = Font.getFont(64, 0, fontSize == 0 ? 8 : fontSize == 1 ? 0 : 16);
         int bubbleX = (int) ((i / 2) + (item.getCommandId(i3) - j));
         int bubbleY = (int) ((i2 / 2) + (j2 - item.executeCommand(i3)));
@@ -229,7 +228,7 @@ public abstract class ChatRenderer {
         Vector textLines = Utils.wrapText(Utils.defaultStr(item.getText()), font, i - 40);
         int size = textLines.size();
         int textWidth = getMaxTextWidth(textLines, font);
-        int iStringWidth = font.stringWidth(AppState.getString(StateKeys.STR_SHOW_ROUTE)) + 6 + 24;
+        int iStringWidth = font.stringWidth(AppState.getString(StringResKeys.STR_SHOW_ROUTE)) + 6 + 24;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
@@ -240,7 +239,7 @@ public abstract class ChatRenderer {
         if (i13 < iStringWidth) {
             i14 = iStringWidth;
         }
-        int themeIdx = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
+        int themeIdx = AppState.getInt(SettingsKeys.SETTING_COLOR_THEME);
         graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
         int i15 = i14 / 25;
         int i16 = i15;
@@ -284,7 +283,7 @@ public abstract class ChatRenderer {
             int i21 = ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)) + (i11 / 2);
             buttonBounds[1] = i21;
             graphics.drawImage(buttonImage, i20, i21, 6);
-            graphics.drawString(AppState.getString(StateKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
+            graphics.drawString(AppState.getString(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
         }
         graphics.setColor(AppState.getInt(PaletteKeys.MAP_FILL + themeIdx));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
@@ -437,7 +436,7 @@ public abstract class ChatRenderer {
     
         r0 = p000.Utils.abs(r0 - r0);
         r0 = p000.Utils.abs(r0 - r0);
-        r0 = p000.AppState.getInt(StateKeys.MAP_ZOOM_LEVEL);
+        r0 = p000.AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
      */
     /* JADX WARN: Code restructure failed: missing block: B:162:0x0555, code lost:
     
@@ -623,11 +622,11 @@ public abstract class ChatRenderer {
         boolean z;
         int i4;
         if (!MmpContact.locationEnabled && !MmpContact.hasFirstToken() && !MmpContact.hasSecondToken()) {
-            AppState.setInt(StateKeys.FLAG_CHAT_HAS_ITEMS, 0);
+            AppState.setInt(MapKeys.FLAG_CHAT_HAS_ITEMS, 0);
             return;
         }
         int color = graphics.getColor();
-        int fontSize = AppState.getInt(StateKeys.SETTING_FONT_SIZE_CHAT);
+        int fontSize = AppState.getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
         Font font = Font.getFont(64, 0, fontSize == 0 ? 8 : fontSize == 1 ? 0 : 16);
         int halfSpan = (i2 / 2) * SoftFloat.floatToInt(SoftFloat.multiply(SoftFloat.longToFloat(1 << (17 - i)), 4608057598812004689L));
         int i5 = (int) (j3 - halfSpan);
@@ -654,7 +653,7 @@ public abstract class ChatRenderer {
         }
         int size2 = visibleRegions.size();
         int totalPoints = MmpContact.getTotalRoutePoints();
-        AppState.setBool(StateKeys.FLAG_CHAT_HAS_ITEMS, size2 > 0);
+        AppState.setBool(MapKeys.FLAG_CHAT_HAS_ITEMS, size2 > 0);
         String str = null;
         int i18 = 0;
         int i19 = 0;
@@ -736,15 +735,15 @@ public abstract class ChatRenderer {
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
                     if (Utils.absLong(j - px13) >= 20 || Utils.absLong(j2 - px14) >= 20 || z2) {
                         if (!z2) {
-                            AppState.setInt(StateKeys.FLAG_TYPING_HIDDEN, 0);
-                            AppState.setBool(StateKeys.FLAG_TYPING_VISIBLE, AppState.getBool(StateKeys.FLAG_TYPING_INDICATOR) && !AppState.getBool(StateKeys.FLAG_TYPING_HIDDEN));
+                            AppState.setInt(UIKeys.FLAG_TYPING_HIDDEN, 0);
+                            AppState.setBool(UIKeys.FLAG_TYPING_VISIBLE, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR) && !AppState.getBool(UIKeys.FLAG_TYPING_HIDDEN));
                             MmpContact.mapDataCache = null;
                         }
                         i4 = 9;
                         graphics.setColor(40, 221, 22);
                     } else {
-                        AppState.setBool(StateKeys.FLAG_TYPING_HIDDEN, AppState.getBool(StateKeys.FLAG_TYPING_INDICATOR));
-                        AppState.setBool(StateKeys.FLAG_TYPING_VISIBLE, AppState.getBool(StateKeys.FLAG_TYPING_INDICATOR) && !AppState.getBool(StateKeys.FLAG_TYPING_HIDDEN));
+                        AppState.setBool(UIKeys.FLAG_TYPING_HIDDEN, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR));
+                        AppState.setBool(UIKeys.FLAG_TYPING_VISIBLE, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR) && !AppState.getBool(UIKeys.FLAG_TYPING_HIDDEN));
                         i4 = 11;
                         graphics.setColor(45, 253, 24);
                         MmpContact.mapDataCache = objArr3;
@@ -815,13 +814,13 @@ public abstract class ChatRenderer {
                 int height = font.getHeight();
                 int clipHeight = (graphics.getClipHeight() - height) - 1;
                 int i34 = 22;
-                if (AppState.getBool(StateKeys.SETTING_CUSTOM_VIEW_MODE)) {
+                if (AppState.getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE)) {
                     clipHeight -= (height > 18 ? height : 18) + 2;
                     i34 = 22 - 20;
                 }
-                String routeLabel = AppState.getString(StateKeys.STR_ROUTE_LABEL);
+                String routeLabel = AppState.getString(StringResKeys.STR_ROUTE_LABEL);
                 int labelWidth = font.stringWidth(routeLabel) + 6;
-                int themeIdx2 = AppState.getInt(StateKeys.SETTING_COLOR_THEME);
+                int themeIdx2 = AppState.getInt(SettingsKeys.SETTING_COLOR_THEME);
                 graphics.setColor(AppState.getInt(themeIdx2 + 5050));
                 graphics.fillRoundRect(i34, clipHeight, labelWidth, height, 10, 10);
                 graphics.setColor(AppState.getInt(themeIdx2 + 4914));
