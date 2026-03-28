@@ -221,7 +221,7 @@ public final class ByteBuffer {
 
     /* renamed from: c */
     public final ByteBuffer writeCompressed(int i) {
-        return i > 5179 ? writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), i & 65535, i >> 16) : writeBytes(AppState.getBytes(i));
+        return i > AppState.PACKED_STRING_THRESHOLD ? writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), i & 65535, i >> 16) : writeBytes(AppState.getBytes(i));
     }
 
     /* renamed from: d */

@@ -57,6 +57,18 @@ public final class ResourceManager {
     /* renamed from: l */
     public static Boolean boolFalse;
 
+    public static final int INTEGER_CACHE_SIZE = 32;
+
+    public static void initCaches() {
+        boolTrue = new Boolean(true);
+        boolFalse = new Boolean(false);
+        syncObject = new Object();
+        integerCache = new Integer[INTEGER_CACHE_SIZE];
+        for (int i = INTEGER_CACHE_SIZE - 1; i >= 0; i--) {
+            integerCache[i] = new Integer(i);
+        }
+    }
+
     public ResourceManager(int i, int i2, int i3, int i4) {
         this.tileType = i;
         ByteBuffer urlBuf = new ByteBuffer().writeUInt(4027430).writeUInt(i == 3 ? 1936548170 : 1936744781).writeUInt(4028966);
@@ -375,10 +387,14 @@ public final class ResourceManager {
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
             }
-        } catch (Throwable th2) {
+        } catch (RuntimeException e) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             NetworkLock.releaseNetworkLock();
-            throw th2;
+            throw e;
+        } catch (Error e) {
+            HttpClient.closeAndUpdateStats((HttpClient) null);
+            NetworkLock.releaseNetworkLock();
+            throw e;
         }
     }
 

@@ -329,17 +329,17 @@ public final class ContactInfo extends Hashtable {
                 int i4 = Conversation.hasKey(statusMsg, 927) ? 936 : Conversation.hasKey(statusMsg, 926) ? 935 : Conversation.hasKey(statusMsg, 929) ? 937 : Conversation.hasKey(statusMsg, 928) ? 938 : Conversation.hasKey(statusMsg, 930) ? 939 : Conversation.hasKey(statusMsg, 931) ? 940 : Conversation.hasKey(statusMsg, 932) ? 941 : Conversation.hasKey(statusMsg, 933) ? 942 : 934;
                 StringBuffer sb = ObjectPool.newStringBuffer();
                 if (i4 == 934) {
-                    int startIdx = AppState.indexOfLong(statusMsg, 2467256188365532259L);
+                    int startIdx = StringUtils.indexOfPackedLong(statusMsg, 2467256188365532259L);
                     if (startIdx >= 0 && (endIdx3 = statusMsg.indexOf(34, startIdx + 9)) >= 0) {
                         sb.append(StringUtils.substring(statusMsg, startIdx + 8, endIdx3));
                     }
                 } else {
                     sb.append(AppState.getString(i4));
                 }
-                int titleIdx = AppState.indexOfPool(statusMsg, 943);
+                int titleIdx = StringUtils.indexOfPoolString(statusMsg, 943);
                 if (titleIdx >= 0 && (endIdx = statusMsg.indexOf(34, titleIdx + 11)) >= 0) {
                     sb.append(AppState.getString(StringResKeys.STR_STATUS_TITLE_PREFIX)).append(StringUtils.substring(statusMsg, titleIdx + 10, endIdx));
-                    int trackIdx = AppState.indexOfPool(statusMsg, 527990);
+                    int trackIdx = StringUtils.indexOfPoolString(statusMsg, 527990);
                     if (trackIdx >= 0 && (endIdx2 = statusMsg.indexOf(34, trackIdx + 9)) >= 0) {
                         sb.append('.').append(StringUtils.substring(statusMsg, trackIdx + 8, endIdx2));
                     }

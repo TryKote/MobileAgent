@@ -483,7 +483,7 @@ public final class MrimAccount extends Account implements ListItem {
                                 encodingType = 0;
                             }
                         } else {
-                            int tagIdx = AppState.indexOfLong(rawText, 57408234938722L);
+                            int tagIdx = StringUtils.indexOfPackedLong(rawText, 57408234938722L);
                             messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StringResKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
                         }
                         if (messageType != -1 || (messageType >= 0 && messageType <= 5 && messageType != 1 && messageType != 3)) {
@@ -521,9 +521,12 @@ public final class MrimAccount extends Account implements ListItem {
                 Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(StringResKeys.STR_RES_OPEN_TAG))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
                 AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
             }
-        } catch (Throwable th) {
+        } catch (RuntimeException e) {
             AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
-            throw th;
+            throw e;
+        } catch (Error e) {
+            AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
+            throw e;
         }
     }
 

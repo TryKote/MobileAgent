@@ -64,9 +64,15 @@ public final class SocketWrapper {
             }
             AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
             return wrapper;
-        } catch (Throwable th) {
+        } catch (IOException e) {
             wrapper.closeImmediate();
-            throw th;
+            throw e;
+        } catch (RuntimeException e) {
+            wrapper.closeImmediate();
+            throw e;
+        } catch (Error e) {
+            wrapper.closeImmediate();
+            throw e;
         }
     }
 

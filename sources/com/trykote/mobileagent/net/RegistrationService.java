@@ -146,10 +146,14 @@ public abstract class RegistrationService {
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
             }
-        } catch (Throwable th2) {
+        } catch (RuntimeException e) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             NetworkLock.releaseNetworkLock();
-            throw th2;
+            throw e;
+        } catch (Error e) {
+            HttpClient.closeAndUpdateStats((HttpClient) null);
+            NetworkLock.releaseNetworkLock();
+            throw e;
         }
     }
 

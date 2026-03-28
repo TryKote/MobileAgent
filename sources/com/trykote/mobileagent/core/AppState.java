@@ -12,141 +12,142 @@ import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
-/* renamed from: aw */
-/* loaded from: MobileAgent_3.9.jar:aw.class */
+
 public abstract class AppState {
 
-    /* renamed from: a */
     public static byte[] emptyBytes;
-
-    /* renamed from: b */
     public static Object[] pool;
-
-    /* renamed from: e */
     private static Object[] delta;
-
-    /* renamed from: f */
     private static int[] intPool;
-
-    /* renamed from: c */
     public static Object currentScreen;
-
-    /* renamed from: d */
     public static String emptyStr;
-
-    /* renamed from: g */
     private static String separator;
 
-    /* JADX WARN: Type inference failed for: r0v9, types: [byte[], byte[][]] */
-    /* renamed from: a */
-    public static final void init(Object obj) {
-        int value;
-        ResourceManager.boolTrue = new Boolean(true);
-        ResourceManager.boolFalse = new Boolean(false);
-        ResourceManager.syncObject = new Object();
-        ResourceManager.integerCache = new Integer[32];
-        int i = 32;
-        while (true) {
-            i--;
-            if (i < 0) {
-                break;
-            } else {
-                ResourceManager.integerCache[i] = new Integer(i);
-            }
-        }
-        StringUtils.internCache = new Vector(128);
-        ObjectPool.bytePool = new byte[20][];
-        ObjectPool.bufferPool = new StringBuffer[5];
-        ObjectPool.vectorPool = new Vector[5];
-        ObjectPool.stringCache = new Hashtable();
-        IOUtils.openResources = ObjectPool.newVector();
-        separator = ObjectPool.unpackChars(1819047278);
+    // Pool structure sizes
+    private static final int DELTA_SIZE = 295;
+    private static final int OBJECT_POOL_SIZE = 1406;
+    private static final int INT_POOL_SIZE = 3777;
+    private static final int SCREEN_DATA_COUNT = 3605;
+    private static final int RUNTIME_DEFAULTS_COUNT = 172;
+
+    // Packed string encoding
+    public static final int PACKED_STRING_THRESHOLD = 5179;
+    private static final int RAW_BYTES_END = 1036;
+
+    // Persistence
+    private static final int DELTA_FORMAT_VERSION = 3096;
+    private static final int CFG_BUFFER_CAPACITY = 45000;
+
+    // Memory threshold (1.5 MB)
+    private static final int MEMORY_THRESHOLD = 1572864;
+
+    // Packed resource identifiers
+    private static final int PACKED_SEPARATOR = 1819047278;       // "null" separator marker
+    private static final int PACKED_CFG_RESOURCE = 1734763311;    // "/cfg" config binary
+    private static final int PACKED_DELTA_STORE = 1164404323;     // "cfgE" delta record store
+
+    // Ellipsis character
+    private static final char CHAR_ELLIPSIS = '\u2026';
+
+    // Timezone constants
+    private static final int TIMEZONE_UTC_INDEX = 13;
+    private static final int MILLIS_PER_HOUR = 3600000;
+
+    // Write-only legacy defaults (from original binary, never read by name)
+    private static final int LEGACY_FLAG_1417 = 1417;
+    private static final int LEGACY_FLAG_1420 = 1420;
+    private static final int LEGACY_FLAG_1461 = 1461;
+    private static final int LEGACY_DEFAULT_1571 = 1571;
+    private static final int LEGACY_VALUE_1571 = 400;
+
+    // Blink timing
+    private static final int BLINK_CYCLE_MS = 2000;
+    private static final int BLINK_ON_MS = 1000;
+
+    public static void init(Object midlet) {
+        initPools();
+        initObjectPool();
+        loadDelta();
+        initSessionState(midlet);
+        initGraphics();
+        initCaches();
+    }
+
+    private static void initPools() {
+        ResourceManager.initCaches();
+        StringUtils.initInternCache();
+        ObjectPool.initPools();
+        IOUtils.initResourceTracking();
+        separator = ObjectPool.unpackChars(PACKED_SEPARATOR);
         emptyBytes = new byte[0];
-        delta = new Object[295];
-        pool = new Object[1406];
-        intPool = new int[3777];
+        delta = new Object[DELTA_SIZE];
+        pool = new Object[OBJECT_POOL_SIZE];
+        intPool = new int[INT_POOL_SIZE];
         // Non-zero defaults for runtime variables (intPool[0..171])
-        intPool[1417 - 1406] = 1;
-        intPool[1420 - 1406] = 1;
-        intPool[SessionKeys.FLAG_MRIM_DATA_LOADED - 1406] = 1;
-        intPool[1461 - 1406] = 1;
-        intPool[SessionKeys.FLAG_HAS_XMPP_ACCOUNTS - 1406] = 1;
-        intPool[SessionKeys.FLAG_CAPTCHA_SHOWN - 1406] = 1;
-        intPool[MapKeys.INT_MAP_SCROLL_DIRECTION - 1406] = -1;
-        intPool[1571 - 1406] = 400;
-        ByteBuffer buffer = new ByteBuffer(ObjectPool.unpackChars(1734763311), 45000);
-        for (int i2 = 0; i2 < 1406; i2++) {
-            pool[i2] = decodeObject(buffer, i2);
+        initRuntimeDefaults();
+    }
+
+    private static void initRuntimeDefaults() {
+        intPool[LEGACY_FLAG_1417 - OBJECT_POOL_SIZE] = 1;
+        intPool[LEGACY_FLAG_1420 - OBJECT_POOL_SIZE] = 1;
+        intPool[SessionKeys.FLAG_MRIM_DATA_LOADED - OBJECT_POOL_SIZE] = 1;
+        intPool[LEGACY_FLAG_1461 - OBJECT_POOL_SIZE] = 1;
+        intPool[SessionKeys.FLAG_HAS_XMPP_ACCOUNTS - OBJECT_POOL_SIZE] = 1;
+        intPool[SessionKeys.FLAG_CAPTCHA_SHOWN - OBJECT_POOL_SIZE] = 1;
+        intPool[MapKeys.INT_MAP_SCROLL_DIRECTION - OBJECT_POOL_SIZE] = -1;
+        intPool[LEGACY_DEFAULT_1571 - OBJECT_POOL_SIZE] = LEGACY_VALUE_1571;
+    }
+
+    private static void initObjectPool() {
+        ByteBuffer buffer = new ByteBuffer(ObjectPool.unpackChars(PACKED_CFG_RESOURCE), CFG_BUFFER_CAPACITY);
+        for (int poolIndex = 0; poolIndex < OBJECT_POOL_SIZE; poolIndex++) {
+            pool[poolIndex] = StateCodec.decodeObject(buffer, poolIndex, DELTA_SIZE, RAW_BYTES_END, separator);
         }
-        for (int i3 = 0; i3 < 3605; i3++) {
-            int[] iArr = intPool;
-            int i4 = i3 + 172;
-            byte flag = buffer.readByte();
-            if ((flag & 64) != 0) {
-                value = flag & 63;
-            } else if ((flag & 32) != 0) {
-                value = ((flag & 31) << 8) + buffer.readUByte();
-            } else {
-                int accum = 0;
-                int i5 = flag & 7;
-                while (true) {
-                    i5--;
-                    if (i5 < 0) {
-                        break;
-                    } else {
-                        accum = (accum << 8) + buffer.readUByte();
-                    }
-                }
-                value = accum;
-            }
-            iArr[i4] = value;
+        for (int screenIndex = 0; screenIndex < SCREEN_DATA_COUNT; screenIndex++) {
+            intPool[screenIndex + RUNTIME_DEFAULTS_COUNT] = StateCodec.decodeInt(buffer);
         }
         emptyStr = (String) pool[StringResKeys.STR_EMPTY];
-        ByteBuffer recordBuf = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(1164404323));
-        RemoteLogger.log("PERSIST", "delta RMS read: " + recordBuf.length + " bytes");
+    }
+
+    private static void loadDelta() {
+        ByteBuffer recordBuf = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(PACKED_DELTA_STORE));
         while (recordBuf.length > 0) {
             try {
-                delta[((Integer) decodeObject(recordBuf, 0)).intValue()] = decodeObject(recordBuf, 0);
+                delta[((Integer) StateCodec.decodeObject(recordBuf, 0, DELTA_SIZE, RAW_BYTES_END, separator)).intValue()] = StateCodec.decodeObject(recordBuf, 0, DELTA_SIZE, RAW_BYTES_END, separator);
             } catch (Throwable unused) {
             }
         }
-        RemoteLogger.log("PERSIST", "delta[0]=" + delta[0]);
         if (delta[0] == null) {
-            RemoteLogger.log("PERSIST", "FACTORY RESET — deleting all record stores!");
-            delta = new Object[295];
+            delta = new Object[DELTA_SIZE];
             try {
                 String[] stores = StringUtils.listRecordStores();
                 if (stores != null) {
-                    int length = stores.length;
-                    while (true) {
-                        length--;
-                        if (length < 0) {
-                            break;
-                        } else {
-                            try {
-                                RecordStore.deleteRecordStore(stores[length]);
-                            } catch (Throwable unused3) {
-                            }
+                    for (int idx = stores.length - 1; idx >= 0; idx--) {
+                        try {
+                            RecordStore.deleteRecordStore(stores[idx]);
+                        } catch (Throwable unused2) {
                         }
                     }
                 }
-            } catch (Throwable unused4) {
+            } catch (Throwable unused3) {
             }
-            setInt(TrafficKeys.DELTA_VERSION, 3096);
+            setInt(TrafficKeys.DELTA_VERSION, DELTA_FORMAT_VERSION);
         }
-        if (((Integer) delta[0]).intValue() != 3096) {
+        if (((Integer) delta[0]).intValue() != DELTA_FORMAT_VERSION) {
             throw new RuntimeException();
         }
-        setInt(TrafficKeys.DELTA_VERSION, 3096);
-        setObject(StringResKeys.STR_SEPARATOR, (Object) separator);
-        pool[SessionKeys.OBJ_MIDLET] = obj;
+        setInt(TrafficKeys.DELTA_VERSION, DELTA_FORMAT_VERSION);
+        setObject(StringResKeys.STR_SEPARATOR, separator);
+    }
+
+    private static void initSessionState(Object midlet) {
+        pool[SessionKeys.OBJ_MIDLET] = midlet;
         pool[SessionKeys.ARR_EMPTY_INT] = new int[0];
         Date date = new Date();
         pool[SessionKeys.OBJ_DATE] = date;
@@ -154,13 +155,22 @@ public abstract class AppState {
         setLong(SessionKeys.TIMESTAMP_OFFSET, date.getTime() - System.currentTimeMillis());
         updateTime();
         pool[SessionKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
-        pool[UIKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[58];
-        pool[UIKeys.ARR_GFX_HEIGHTS] = new int[29];
         pool[SessionKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
-        // Event type arrays removed — replaced by CommandEvent singletons
         StringUtils.initPlatform();
-        TimerManager.timers = new long[14];
+        TimerManager.timers = new long[TimerManager.SLOT_COUNT];
         pool[SessionKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
+    }
+
+    private static void initGraphics() {
+        pool[UIKeys.OBJ_GFX_CONTEXTS_ARRAY] = new Object[UIKeys.GFX_CONTEXT_COUNT];
+        pool[UIKeys.ARR_GFX_HEIGHTS] = new int[UIKeys.GFX_HEIGHT_COUNT];
+        try {
+            setBool(UIKeys.FLAG_SUPPORTS_ALPHA, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
+        } catch (Throwable unused) {
+        }
+    }
+
+    private static void initCaches() {
         ObjectPool.cacheString(separator);
         ObjectPool.cacheString(getEllipsis());
         ObjectPool.cacheString(getString(StringResKeys.STR_PHONE_SUFFIX));
@@ -169,393 +179,245 @@ public abstract class AppState {
         ObjectPool.cacheString(getString(StringResKeys.STR_RES_CONTENT_TYPE));
         ObjectPool.cacheString(getString(StringResKeys.STR_RES_HTTP_METHOD));
         pool[SettingsKeys.SETTING_COMPRESSION_ENABLED] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
-        try {
-            setBool(UIKeys.FLAG_SUPPORTS_ALPHA, Display.getDisplay(getMidlet()).numAlphaLevels() > 2);
-        } catch (Throwable unused5) {
-        }
     }
 
-    /* renamed from: a */
-    public static final boolean hasMemory() {
-        return Runtime.getRuntime().totalMemory() > 1572864;
+    public static boolean hasMemory() {
+        return Runtime.getRuntime().totalMemory() > MEMORY_THRESHOLD;
     }
 
-    /* renamed from: b */
-    public static final void updateTime() {
+    public static void updateTime() {
         long now = System.currentTimeMillis();
         setLong(SessionKeys.TIMESTAMP_CURRENT, now);
-        setBool(UIKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % 2000 < 1000);
+        setBool(UIKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % BLINK_CYCLE_MS < BLINK_ON_MS);
     }
 
-    /* renamed from: a */
-    public static final byte[] getBytes(int i) {
-        return (byte[]) pool[i];
+    public static byte[] getBytes(int key) {
+        return (byte[]) pool[key];
     }
 
-    /* renamed from: c */
-    public static final MainCanvas getCanvas() {
+    public static MainCanvas getCanvas() {
         return (MainCanvas) pool[SessionKeys.OBJ_CANVAS];
     }
 
-    /* renamed from: p */
-    private static final Object getOrDefault(int i) {
-        Object obj;
-        return (i >= 295 || (obj = delta[i]) == null) ? pool[i] : obj;
+    private static Object getOrDefault(int key) {
+        Object override;
+        return (key >= DELTA_SIZE || (override = delta[key]) == null) ? pool[key] : override;
     }
 
-    /* renamed from: b */
-    public static final String getString(int i) {
-        if (i > 5179) {
-            return StringUtils.intern(new String(getBytes(StringResKeys.RES_STRING_DATA), i & 65535, i >> 16));
+    public static String getString(int key) {
+        if (key > PACKED_STRING_THRESHOLD) {
+            return StringUtils.intern(new String(getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16));
         }
-        Object result = getOrDefault(i);
+        Object result = getOrDefault(key);
         if (result == null) {
             return null;
         }
         return result instanceof byte[] ? ObjectPool.decodeWin1251((byte[]) result) : (String) result;
     }
 
-    /* renamed from: c */
-    public static final int getAndClearInt(int i) {
-        int val = getInt(i);
-        setInt(i, 0);
+    public static int getAndClearInt(int key) {
+        int val = getInt(key);
+        setInt(key, 0);
         return val;
     }
 
-    /* renamed from: d */
-    public static final int getInt(int i) {
-        return i < 1406 ? ((Integer) getOrDefault(i)).intValue() : intPool[i - 1406];
+    public static int getInt(int key) {
+        return key < OBJECT_POOL_SIZE ? ((Integer) getOrDefault(key)).intValue() : intPool[key - OBJECT_POOL_SIZE];
     }
 
-    /* renamed from: e */
-    public static final boolean getBool(int i) {
-        return getInt(i) != 0;
+    public static boolean getBool(int key) {
+        return getInt(key) != 0;
     }
 
-    /* renamed from: a */
-    public static final void setFromBuffer(int i, StringBuffer stringBuffer) {
-        setObject(i, (Object) ObjectPool.toStringAndRelease(stringBuffer));
+    public static void setFromBuffer(int key, StringBuffer stringBuffer) {
+        setObject(key, ObjectPool.toStringAndRelease(stringBuffer));
     }
 
-    /* renamed from: a */
-    public static final void setFromPool(int i, int i2) {
-        setObject(i, (Object) getString(i2));
+    public static void setFromPool(int key, int sourceKey) {
+        setObject(key, getString(sourceKey));
     }
 
-    /* renamed from: b */
-    public static final void clearRange(int i, int i2) {
-        while (i <= i2) {
-            int i3 = i;
-            i++;
-            clearIndex(i3);
+    public static void clearRange(int from, int to) {
+        for (int key = from; key <= to; key++) {
+            clearIndex(key);
         }
     }
 
-    /* renamed from: f */
-    public static final void clearIndex(int i) {
-        if (i >= 295) {
-            pool[i] = null;
+    public static void clearIndex(int key) {
+        if (key >= DELTA_SIZE) {
+            pool[key] = null;
         } else {
-            delta[i] = null;
+            delta[key] = null;
         }
     }
 
-    /* renamed from: a */
-    public static final void setString(int i, String str) {
-        setObject(i, (Object) Utils.defaultStr(str));
+    public static void setString(int key, String value) {
+        setObject(key, Utils.defaultStr(value));
     }
 
-    /* renamed from: b */
-    public static final void setStringInd(int i, String str) {
-        setObject(getInt(i), (Object) str);
+    public static void setStringIndirect(int key, String value) {
+        setObject(getInt(key), value);
     }
 
-    /* renamed from: c */
-    public static final void setInt(int i, int i2) {
-        if (i < 1406) {
-            setObject(i, ResourceManager.integerOf(i2));
+    public static void setInt(int key, int value) {
+        if (key < OBJECT_POOL_SIZE) {
+            setObject(key, ResourceManager.integerOf(value));
         } else {
-            intPool[i - 1406] = i2;
+            intPool[key - OBJECT_POOL_SIZE] = value;
         }
     }
 
-    /* renamed from: d */
-    public static final void addInt(int i, int i2) {
-        setInt(i, getInt(i) + i2);
+    public static void addInt(int key, int value) {
+        setInt(key, getInt(key) + value);
     }
 
-    /* renamed from: e */
-    public static final void setIntInd(int i, int i2) {
-        setInt(getInt(i), i2);
+    public static void setIntIndirect(int key, int value) {
+        setInt(getInt(key), value);
     }
 
-    /* renamed from: a */
-    public static final void setLong(int i, long j) {
-        setInt(i, (int) (j >>> 32));
-        setInt(i + 1, (int) j);
+    public static void setLong(int key, long value) {
+        setInt(key, (int) (value >>> 32));
+        setInt(key + 1, (int) value);
     }
 
-    /* renamed from: g */
-    public static final long getLong(int i) {
-        return (getInt(i) << 32) | (getInt(i + 1) & 4294967295L);
+    public static long getLong(int key) {
+        return (getInt(key) << 32) | (getInt(key + 1) & 0xFFFFFFFFL);
     }
 
-    /* renamed from: a */
-    public static final boolean setBool(int i, boolean z) {
-        setInt(i, z ? 1 : 0);
-        return z;
+    public static boolean setBool(int key, boolean value) {
+        setInt(key, value ? 1 : 0);
+        return value;
     }
 
-    /* renamed from: h */
-    public static final boolean toggleBool(int i) {
-        boolean z = !getBool(i);
-        boolean z2 = z;
-        setBool(i, z);
-        return z2;
+    public static boolean toggleBool(int key) {
+        boolean newVal = !getBool(key);
+        setBool(key, newVal);
+        return newVal;
     }
 
-    /* renamed from: a */
-    public static final Object setObject(int i, Object obj) {
-        if (i >= delta.length) {
-            pool[i] = obj;
+    public static Object setObject(int key, Object value) {
+        if (key >= delta.length) {
+            pool[key] = value;
         } else {
-            Object obj2 = pool[i];
-            if (obj2 == null && obj != null) {
-                delta[i] = obj;
-            } else if (obj2 == null || obj2.equals(obj)) {
-                delta[i] = null;
+            Object poolValue = pool[key];
+            if (poolValue == null && value != null) {
+                delta[key] = value;
+            } else if (poolValue == null || poolValue.equals(value)) {
+                delta[key] = null;
             } else {
-                delta[i] = obj;
+                delta[key] = value;
             }
         }
-        return obj;
+        return value;
     }
 
-    /* renamed from: d */
-    public static final Midlet getMidlet() {
+    public static Midlet getMidlet() {
         return (Midlet) pool[SessionKeys.OBJ_MIDLET];
     }
 
-    /* renamed from: i */
-    public static final String getAppProperty(int i) {
-        return StringUtils.intern(getMidlet().getAppProperty(getString(i)));
+    public static String getAppProperty(int key) {
+        return StringUtils.intern(getMidlet().getAppProperty(getString(key)));
     }
 
-    /* renamed from: b */
-    public static final void setScreen(Object obj) {
-        currentScreen = obj;
+    public static void setScreen(Object screen) {
+        currentScreen = screen;
         TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
     }
 
-    /* renamed from: e */
-    public static final int getHeight() {
+    public static int getHeight() {
         return getInt(UIKeys.INT_SCREEN_HEIGHT) - (getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE) ? getInt(UIKeys.INT_FONT_HEIGHT) + 2 : 0);
     }
 
-    /* renamed from: f */
-    public static final void setDimensions(int i, int i2) {
-        setInt(UIKeys.INT_SCREEN_WIDTH, i);
-        setInt(UIKeys.INT_SCREEN_HEIGHT, i2);
+    public static void setDimensions(int width, int height) {
+        setInt(UIKeys.INT_SCREEN_WIDTH, width);
+        setInt(UIKeys.INT_SCREEN_HEIGHT, height);
     }
 
-    /* renamed from: j */
-    public static final void resetToEmpty(int i) {
-        setObject(i, (Object) emptyStr);
+    public static void resetToEmpty(int key) {
+        setObject(key, emptyStr);
     }
 
-    /* renamed from: k */
-    public static final GraphicsContext getGfxContext(int i) {
-        return (GraphicsContext) pool[i + UIKeys.GFX_CONTEXT_BASE];
+    public static GraphicsContext getGfxContext(int index) {
+        return (GraphicsContext) pool[index + UIKeys.GFX_CONTEXT_BASE];
     }
 
-    /* renamed from: l */
-    public static final Object[] getObjectArray(int i) {
-        return (Object[]) pool[i];
+    public static Object[] getObjectArray(int key) {
+        return (Object[]) pool[key];
     }
 
-    /* renamed from: f */
-    public static final ContactGroup getCurrentGroup() {
+    public static ContactGroup getCurrentGroup() {
         return (ContactGroup) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
-    /* renamed from: g */
-    public static final Contact getCurrentContact() {
+    public static Contact getCurrentContact() {
         return (Contact) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
-    /* renamed from: h */
-    public static final MrimContact getCurrentMrimContact() {
+    public static MrimContact getCurrentMrimContact() {
         return (MrimContact) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
-    /* renamed from: c */
-    public static final void setCurrentEntity(Object obj) {
-        pool[ContactKeys.SLOT_CURRENT_ENTITY] = obj;
+    public static void setCurrentEntity(Object entity) {
+        pool[ContactKeys.SLOT_CURRENT_ENTITY] = entity;
     }
 
-    /* renamed from: m */
-    public static final Vector getVector(int i) {
-        return (Vector) pool[i];
+    public static Vector getVector(int key) {
+        return (Vector) pool[key];
     }
 
-    /* renamed from: n */
-    public static final Image getImage(int i) {
-        return (Image) pool[i];
+    public static Image getImage(int key) {
+        return (Image) pool[key];
     }
 
-    /* renamed from: i */
-    public static final Account getAccount() {
+    public static Account getAccount() {
         return (Account) pool[SessionKeys.SLOT_CURRENT_ACCOUNT];
     }
 
-    /* renamed from: d */
-    public static final void setAccount(Object obj) {
-        pool[SessionKeys.SLOT_CURRENT_ACCOUNT] = obj;
+    public static void setAccount(Object account) {
+        pool[SessionKeys.SLOT_CURRENT_ACCOUNT] = account;
     }
 
-    /* renamed from: a */
-    private static final Object decodeObject(ByteBuffer buffer, int i) {
-        byte flag = buffer.readByte();
-        if ((flag & 128) != 0) {
-            byte[] bArr = new byte[(flag & 64) != 0 ? flag & 63 : ((flag & 31) << 8) + buffer.readUByte()];
-            buffer.readIntoBytes(bArr);
-            if (i >= 295 && i < 1036) {
-                return bArr;
-            }
-            StringBuffer sb = ObjectPool.newStringBuffer();
-            for (byte b : bArr) {
-                sb.append(Utils.win1251ToChar((int) b));
-            }
-            ObjectPool.releaseBytes(bArr);
-            String str = separator;
-            String decoded = ObjectPool.toStringAndRelease(sb);
-            if (str.equals(decoded)) {
-                return null;
-            }
-            return decoded;
-        }
-        if ((flag & 64) != 0) {
-            return ResourceManager.integerOf(flag & 63);
-        }
-        if ((flag & 32) != 0) {
-            return ResourceManager.integerOf(((flag & 31) << 8) + buffer.readUByte());
-        }
-        int value = 0;
-        int i2 = flag & 7;
-        while (true) {
-            i2--;
-            if (i2 < 0) {
-                return ResourceManager.integerOf(value);
-            }
-            value = (value << 8) + buffer.readUByte();
-        }
-    }
-
-    /* renamed from: a */
-    public static void saveDelta(boolean z) {
+    public static void saveDelta(boolean chunked) {
         try {
             ByteBuffer buffer = new ByteBuffer();
-            for (int i = 0; i < 295; i++) {
-                Object obj = delta[i];
-                if (obj != null) {
-                    encodeIndex(buffer, i);
-                    if (obj instanceof String) {
-                        String str = (String) obj;
-                        int length = str.length();
-                        byte[] bArr = new byte[length];
-                        for (int i2 = 0; i2 < length; i2++) {
-                            bArr[i2] = Utils.charToWin1251(str.charAt(i2));
-                        }
-                        int length2 = str.length();
-                        if (length2 <= 0 || length2 >= 64) {
-                            buffer.writeShortBE(length2 | 32768);
-                        } else {
-                            buffer.writeByte(192 | length2);
-                        }
-                        buffer.writeBytes(bArr);
+            for (int key = 0; key < DELTA_SIZE; key++) {
+                Object value = delta[key];
+                if (value != null) {
+                    StateCodec.encodeIndex(buffer, key);
+                    if (value instanceof String) {
+                        StateCodec.encodeString(buffer, (String) value);
                     } else {
-                        encodeIndex(buffer, ((Integer) obj).intValue());
+                        StateCodec.encodeIndex(buffer, ((Integer) value).intValue());
                     }
                 }
             }
-            RemoteLogger.log("PERSIST", "saveDelta: " + buffer.length + " bytes, chunked=" + z);
-            ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(1164404323), buffer, z);
-            RemoteLogger.log("PERSIST", "saveDelta: writeRecord done");
-        } catch (Throwable th) {
-            RemoteLogger.log("PERSIST", "saveDelta FAILED", th);
+            ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(PACKED_DELTA_STORE), buffer, chunked);
+        } catch (Throwable unused) {
         }
     }
 
-    /* renamed from: j */
-    public static final String getEllipsis() {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append((char) 8230));
+    public static String getEllipsis() {
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(CHAR_ELLIPSIS));
     }
 
-    /* renamed from: b */
-    private static final void encodeIndex(ByteBuffer buffer, int i) {
-        if (i >= 0 && i <= 63) {
-            buffer.writeByte(64 | i);
-            return;
-        }
-        ByteBuffer tempBuf = new ByteBuffer();
-        int[] iArr = new int[8];
-        int i2 = 24;
-        int i3 = -1;
-        for (int i4 = 0; i4 < 4; i4++) {
-            iArr[i4] = (i >> i2) & 255;
-            i2 -= 8;
-            if (i3 == -1 && iArr[i4] != 0) {
-                i3 = i4;
-            }
-        }
-        if (i3 < 0) {
-            i3 = 3;
-        }
-        for (int i5 = i3; i5 < 4; i5++) {
-            tempBuf.writeByte(iArr[i5]);
-        }
-        byte[] bytes = tempBuf.toByteArray();
-        buffer.writeByte(8 | bytes.length);
-        buffer.writeBytes(bytes);
-    }
-
-    /* renamed from: k */
-    public static final Calendar getCalendar() {
+    public static Calendar getCalendar() {
         Calendar calendar = (Calendar) pool[SessionKeys.OBJ_CALENDAR];
         Date date = (Date) pool[SessionKeys.OBJ_DATE];
-        date.setTime((getLong(SessionKeys.TIMESTAMP_CURRENT) - getLong(SessionKeys.TIMESTAMP_OFFSET)) + ((getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000));
+        date.setTime((getLong(SessionKeys.TIMESTAMP_CURRENT) - getLong(SessionKeys.TIMESTAMP_OFFSET)) + ((getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - TIMEZONE_UTC_INDEX) * MILLIS_PER_HOUR));
         calendar.setTime(date);
         return calendar;
     }
 
-    /* renamed from: o */
-    public static final int getIntOffset(int i) {
-        return getInt(i + UIKeys.INT_FONT_HEIGHT);
+    public static int getIntOffset(int index) {
+        return getInt(index + UIKeys.INT_FONT_HEIGHT);
     }
 
-    /* renamed from: l */
-    public static final int getDateCode() {
+    public static int getDateCode() {
         Calendar cal = getCalendar();
-        return (cal.get(1) << 16) + (cal.get(2) << 8) + cal.get(5);
+        return (cal.get(Calendar.YEAR) << 16) + (cal.get(Calendar.MONTH) << 8) + cal.get(Calendar.DAY_OF_MONTH);
     }
 
-    /* renamed from: m */
-    public static final Font getFont() {
+    public static Font getFont() {
         return ((GraphicsContext) pool[UIKeys.GFX_CONTEXT_BASE]).font;
-    }
-
-    /* renamed from: a */
-    public static final int indexOf(String str, int i) {
-        return str.indexOf(ObjectPool.unpackChars(i));
-    }
-
-    /* renamed from: a */
-    public static final int indexOfLong(String str, long j) {
-        return str.indexOf(ObjectPool.unpackChars(j));
-    }
-
-    /* renamed from: b */
-    public static final int indexOfPool(String str, int i) {
-        return str.indexOf(getString(i));
     }
 }

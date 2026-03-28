@@ -194,10 +194,14 @@ public final class Conversation implements ListItem {
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
             }
-        } catch (Throwable th2) {
+        } catch (RuntimeException e) {
             HttpClient.closeAndUpdateStats((HttpClient) null);
             NetworkLock.releaseNetworkLock();
-            throw th2;
+            throw e;
+        } catch (Error e) {
+            HttpClient.closeAndUpdateStats((HttpClient) null);
+            NetworkLock.releaseNetworkLock();
+            throw e;
         }
     }
 
@@ -251,8 +255,8 @@ public final class Conversation implements ListItem {
                 }
                 return null;
             }
-            int bodyStart = AppState.indexOf(str, 1031040294);
-            int idx = str.indexOf(ObjectPool.unpackChars(1031302438), AppState.indexOf(str, 1031302438) + 4);
+            int bodyStart = StringUtils.indexOfPacked(str, 1031040294);
+            int idx = str.indexOf(ObjectPool.unpackChars(1031302438), StringUtils.indexOfPacked(str, 1031302438) + 4);
             String encoded = idx < 0 ? StringUtils.suffix(str, bodyStart + 4) : StringUtils.substring(str, bodyStart + 4, idx);
             if (StringUtils.matchesEncoded(encoded, 1094795585)) {
                 return AppState.emptyStr;
@@ -275,10 +279,10 @@ public final class Conversation implements ListItem {
     public static final String extractFrom(String str) {
         try {
             if (isEncodedFormat(str)) {
-                return StringUtils.substring(str, AppState.indexOf(str, 1031302438) + 4, AppState.indexOf(str, 1031367974));
+                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 1031302438) + 4, StringUtils.indexOfPacked(str, 1031367974));
             }
             if (isSimpleFormat(str)) {
-                return StringUtils.substring(str, AppState.indexOf(str, 4028451) + 3, AppState.indexOf(str, 4028710));
+                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 4028451) + 3, StringUtils.indexOfPacked(str, 4028710));
             }
             return null;
         } catch (Throwable unused) {
@@ -290,10 +294,10 @@ public final class Conversation implements ListItem {
     public static final String extractTo(String str) {
         try {
             if (isEncodedFormat(str)) {
-                return StringUtils.substring(str, AppState.indexOf(str, 1031367974) + 4, AppState.indexOf(str, 1031040294));
+                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 1031367974) + 4, StringUtils.indexOfPacked(str, 1031040294));
             }
             if (isSimpleFormat(str)) {
-                return StringUtils.substring(str, AppState.indexOf(str, 4028710) + 3, AppState.indexOf(str, 4028966));
+                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 4028710) + 3, StringUtils.indexOfPacked(str, 4028966));
             }
             return null;
         } catch (Throwable unused) {
@@ -304,7 +308,7 @@ public final class Conversation implements ListItem {
     /* renamed from: e */
     public static final String extractSubject(String str) {
         try {
-            return StringUtils.substring(str, AppState.indexOf(str, 4028966) + 3, AppState.indexOfPool(str, 397364));
+            return StringUtils.substring(str, StringUtils.indexOfPacked(str, 4028966) + 3, StringUtils.indexOfPoolString(str, 397364));
         } catch (Throwable unused) {
             return null;
         }
@@ -312,17 +316,17 @@ public final class Conversation implements ListItem {
 
     /* renamed from: m */
     private static final boolean isFormatted(String str) {
-        return AppState.indexOfPool(str, 1245774) >= 0;
+        return StringUtils.indexOfPoolString(str, 1245774) >= 0;
     }
 
     /* renamed from: a */
     public static final boolean hasKey(String str, int i) {
-        return AppState.indexOfPool(str, i) >= 0;
+        return StringUtils.indexOfPoolString(str, i) >= 0;
     }
 
     /* renamed from: b */
     private static final boolean hasFlag(String str, int i) {
-        return AppState.indexOf(str, i) >= 0;
+        return StringUtils.indexOfPacked(str, i) >= 0;
     }
 
     /* renamed from: f */

@@ -14,6 +14,10 @@ import java.util.Vector;
  */
 public abstract class ObjectPool {
 
+    private static final int BYTE_POOL_SIZE = 20;
+    private static final int BUFFER_POOL_SIZE = 5;
+    private static final int VECTOR_POOL_SIZE = 5;
+
     /** Pool of reusable byte arrays (max 20 entries, each up to 2048 bytes). */
     public static byte[][] bytePool;
 
@@ -25,6 +29,13 @@ public abstract class ObjectPool {
 
     /** Interning cache — maps strings to their canonical instances. */
     public static Hashtable stringCache;
+
+    public static void initPools() {
+        bytePool = new byte[BYTE_POOL_SIZE][];
+        bufferPool = new StringBuffer[BUFFER_POOL_SIZE];
+        vectorPool = new Vector[VECTOR_POOL_SIZE];
+        stringCache = new Hashtable();
+    }
 
     /**
      * Obtains a zeroed byte array of at least {@code size} bytes.

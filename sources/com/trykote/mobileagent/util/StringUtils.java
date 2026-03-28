@@ -34,6 +34,12 @@ public final class StringUtils {
     /* renamed from: c */
     public static boolean isKnownDevice2;
 
+    private static final int INTERN_CACHE_INITIAL_CAPACITY = 128;
+
+    public static void initInternCache() {
+        internCache = new Vector(INTERN_CACHE_INITIAL_CAPACITY);
+    }
+
     /* renamed from: a */
     public static final String decodeFromBytes(byte[] bArr, int i) {
         ByteArrayInputStream byteArrayInputStream = null;
@@ -54,10 +60,14 @@ public final class StringUtils {
                 IOUtils.closeInput((InputStream) byteArrayInputStream);
                 return str;
             }
-        } catch (Throwable th) {
+        } catch (RuntimeException e) {
             IOUtils.closeInput((InputStream) dataInputStream);
             IOUtils.closeInput((InputStream) byteArrayInputStream);
-            throw th;
+            throw e;
+        } catch (Error e) {
+            IOUtils.closeInput((InputStream) dataInputStream);
+            IOUtils.closeInput((InputStream) byteArrayInputStream);
+            throw e;
         }
     }
 
@@ -84,7 +94,7 @@ public final class StringUtils {
         if (str == null) {
             return false;
         }
-        if (i <= 5179) {
+        if (i <= AppState.PACKED_STRING_THRESHOLD) {
             return equals(AppState.getString(i), str);
         }
         byte[] bytes = AppState.getBytes(StringResKeys.RES_STRING_DATA);
@@ -563,11 +573,11 @@ public final class StringUtils {
             }
             AppState.clearIndex(SessionKeys.SESSION_PLATFORM_INFO);
             String result = intern(concat(AppState.getString(SessionKeys.SLOT_ACCOUNT_LOGIN), AppState.getString(SessionKeys.SLOT_ACCOUNT_PASSWORD)).toLowerCase());
-            isKnownDevice2 = AppState.indexOfLong(result, 7163382462464028531L) >= 0 || AppState.indexOf(result, 842019699) == 0 || AppState.indexOf(result, 842019703) == 0;
-            isKnownDevice1 = AppState.indexOfLong(result, 418380476270L) >= 0;
-            AppState.setBool(UIKeys.FLAG_WIFI_CONNECTION, AppState.indexOf(result, 761620851) == 0 || AppState.indexOf(result, 1903060322) == 0);
+            isKnownDevice2 = indexOfPackedLong(result, 7163382462464028531L) >= 0 || indexOfPacked(result, 842019699) == 0 || indexOfPacked(result, 842019703) == 0;
+            isKnownDevice1 = indexOfPackedLong(result, 418380476270L) >= 0;
+            AppState.setBool(UIKeys.FLAG_WIFI_CONNECTION, indexOfPacked(result, 761620851) == 0 || indexOfPacked(result, 1903060322) == 0);
             AppState.setBool(UIKeys.FLAG_KNOWN_DEVICE, isKnownDevice1 || isKnownDevice2);
-            AppState.setBool(UIKeys.FLAG_ADVANCED_FEATURES, AppState.getBool(UIKeys.FLAG_KNOWN_PLATFORM) || AppState.indexOfLong(result, 29113373327974771L) >= 0 || AppState.indexOf(result, 6514035) == 0 || AppState.indexOf(result, 6841203) == 0 || AppState.indexOf(result, 6842227) == 0 || AppState.indexOf(result, 29799) == 0);
+            AppState.setBool(UIKeys.FLAG_ADVANCED_FEATURES, AppState.getBool(UIKeys.FLAG_KNOWN_PLATFORM) || indexOfPackedLong(result, 29113373327974771L) >= 0 || indexOfPacked(result, 6514035) == 0 || indexOfPacked(result, 6841203) == 0 || indexOfPacked(result, 6842227) == 0 || indexOfPacked(result, 29799) == 0);
             byte major = parseVersionByte(0);
             byte minor = parseVersionByte(1);
             byte patch = parseVersionByte(2);
@@ -735,7 +745,7 @@ public final class StringUtils {
                 return false;
             }
             GeoRegion region = (GeoRegion) items.elementAt(size);
-            if (region.containsPoint(j, j2) && AppState.indexOfPool(region.name, 995) < 0) {
+            if (region.containsPoint(j, j2) && indexOfPoolString(region.name, 995) < 0) {
                 return true;
             }
         }
@@ -784,6 +794,18 @@ public final class StringUtils {
         } catch (Throwable unused) {
             AppState.resetToEmpty(MapKeys.URL_GEO_CONFIG);
         }
+    }
+
+    public static int indexOfPacked(String text, int packedChars) {
+        return text.indexOf(ObjectPool.unpackChars(packedChars));
+    }
+
+    public static int indexOfPackedLong(String text, long packedChars) {
+        return text.indexOf(ObjectPool.unpackChars(packedChars));
+    }
+
+    public static int indexOfPoolString(String text, int poolKey) {
+        return text.indexOf(AppState.getString(poolKey));
     }
 
     /* renamed from: d */

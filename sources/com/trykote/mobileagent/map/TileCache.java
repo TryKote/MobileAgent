@@ -67,9 +67,12 @@ public final class TileCache {
                     evictOldestCache();
                     IOUtils.closeRecordStore((RecordStore) null);
                 }
-            } catch (Throwable th) {
+            } catch (RuntimeException e) {
                 IOUtils.closeRecordStore((RecordStore) null);
-                throw th;
+                throw e;
+            } catch (Error e) {
+                IOUtils.closeRecordStore((RecordStore) null);
+                throw e;
             }
         }
     }
@@ -298,7 +301,7 @@ public final class TileCache {
 
     private static final int parseContentLength(String str) {
         try {
-            int headerOffset = AppState.indexOfPool(StringUtils.intern(str.toLowerCase()), 1052310) + 16;
+            int headerOffset = StringUtils.indexOfPoolString(StringUtils.intern(str.toLowerCase()), 1052310) + 16;
             return Integer.parseInt(StringUtils.substring(str, headerOffset, str.indexOf(13, headerOffset)));
         } catch (Throwable unused) {
             return -1;

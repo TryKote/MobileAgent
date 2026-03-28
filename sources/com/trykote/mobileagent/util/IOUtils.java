@@ -14,6 +14,10 @@ public final class IOUtils {
 
     public static Vector openResources;
 
+    public static void initResourceTracking() {
+        openResources = ObjectPool.newVector();
+    }
+
     public static final Object registerResource(Object obj) {
         if (obj != null) {
             openResources.addElement(obj);

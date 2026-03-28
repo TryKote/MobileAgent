@@ -93,10 +93,14 @@ public final class ApiClient {
                 NetworkLock.releaseNetworkLock();
                 return objArrM800c;
             }
-        } catch (Throwable th2) {
+        } catch (RuntimeException e) {
             HttpClient.closeAndUpdateStats(c0024ax);
             NetworkLock.releaseNetworkLock();
-            throw th2;
+            throw e;
+        } catch (Error e) {
+            HttpClient.closeAndUpdateStats(c0024ax);
+            NetworkLock.releaseNetworkLock();
+            throw e;
         }
     }
 

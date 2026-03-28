@@ -456,7 +456,7 @@ public abstract class ScreenManager {
                 idx += 2;
                 break;
             case ITEM_DROPDOWN:
-                AppState.setIntInd(idx + 2, ((Integer) ((Object[]) data)[0]).intValue());
+                AppState.setIntIndirect(idx + 2, ((Integer) ((Object[]) data)[0]).intValue());
                 idx += 3;
                 break;
             case ITEM_TEXT_SEPARATOR:
@@ -474,10 +474,10 @@ public abstract class ScreenManager {
                     int defIdx = maxIdx + 1;
                     int parsedValue = Utils.parseIntBounded(value, minValue, maxValue, AppState.getInt(maxIdx));
                     nextIdx = defIdx + 1;
-                    AppState.setIntInd(defIdx, parsedValue);
+                    AppState.setIntIndirect(defIdx, parsedValue);
                 } else {
                     nextIdx = curIdx + 1;
-                    AppState.setStringInd(curIdx, value);
+                    AppState.setStringIndirect(curIdx, value);
                 }
                 idx += nextIdx - idx;
                 break;
@@ -489,11 +489,11 @@ public abstract class ScreenManager {
                 idx += 3;
                 break;
             case ITEM_LOGIN:
-                AppState.setStringInd(idx + 1, ((String[]) data)[1]);
+                AppState.setStringIndirect(idx + 1, ((String[]) data)[1]);
                 idx += 2;
                 break;
             case ITEM_PASSWORD:
-                AppState.setStringInd(idx, (String) data);
+                AppState.setStringIndirect(idx, (String) data);
                 idx++;
                 break;
             case ITEM_IMAGE:

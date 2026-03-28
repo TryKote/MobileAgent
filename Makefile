@@ -3,6 +3,8 @@ CP      = $(LIBS)/cldcapi11.jar:$(LIBS)/midpapi20.jar:$(LIBS)/jsr75.jar:$(LIBS)/
 SRC     = sources
 BUILD   = build
 JAR     = TK_MobileAgent_3.9.jar
+JAVAC8  = /usr/lib/jvm/java-8-openjdk/bin/javac
+PROGUARD = tools/proguard.jar
 
 RESOURCES_SRC = resources-src
 RESOURCES_OUT = $(BUILD)/resources
@@ -41,7 +43,23 @@ $(GEN_DIR)/RemoteLoggerConfig.java: $(GEN_SRC) $(GEN_CFG)
 
 $(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
 	@mkdir -p $(BUILD)/classes
-	javac --release 8 -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
+	$(JAVAC8) -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
+	python3 tools/patch_stringbuilder.py $(BUILD)/classes
+	@rm -rf $(BUILD)/preverified
+	java -jar $(PROGUARD) \
+		-injars $(BUILD)/classes \
+		-outjars $(BUILD)/preverified \
+		-libraryjars $(LIBS)/cldcapi11.jar \
+		-libraryjars $(LIBS)/midpapi20.jar \
+		-libraryjars $(LIBS)/jsr75.jar \
+		-libraryjars $(LIBS)/nokiaui.jar \
+		-libraryjars $(LIBS)/wma.jar \
+		-microedition \
+		-dontshrink \
+		-dontobfuscate \
+		-dontoptimize \
+		-dontwarn
+	python3 tools/patch_class_version.py $(BUILD)/preverified 45.3
 	@touch $@
 
 jar: $(BUILD)/$(JAR)
@@ -49,7 +67,7 @@ jar: $(BUILD)/$(JAR)
 $(BUILD)/$(JAR): $(BUILD)/.compiled $(BUILD)/.resources
 	@mkdir -p $(BUILD)/jar
 	cp -r $(RESOURCES_OUT)/* $(BUILD)/jar/
-	cp -r $(BUILD)/classes/* $(BUILD)/jar/
+	cp -r $(BUILD)/preverified/* $(BUILD)/jar/
 	rm -rf $(BUILD)/jar/META-INF
 	mkdir -p $(BUILD)/jar/META-INF
 	cp $(RESOURCES_SRC)/META-INF/MANIFEST.MF $(BUILD)/jar/META-INF/

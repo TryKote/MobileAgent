@@ -109,5 +109,7 @@ public final class UIKeys {
     public static final int RANGE_UPDATE_DATA_END = 1007;
     public static final int RANGE_INPUT_TEXT_END = 1305;
     public static final int RANGE_SEARCH_LABEL_END = 1335;
+    public static final int GFX_CONTEXT_COUNT = 58;
+    public static final int GFX_HEIGHT_COUNT = 29;
 
 }
