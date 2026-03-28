@@ -585,10 +585,10 @@ public final class DialogHandler extends BaseScreenHandler {
     }
 
     private static int openSettingsScreen(int themeId, int valueId, int actionId) {
-        AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, themeId);
-        AppState.setInt(SettingsKeys.INT_SETTINGS_VALUE_1, themeId);
-        AppState.setInt(SettingsKeys.INT_SETTINGS_VALUE_2, valueId);
-        AppState.setInt(SettingsKeys.INT_SETTINGS_ACTION, actionId);
+        AppState.setInt(SettingsKeys.INT_EMOTICON_CONFIG_ID, themeId);
+        AppState.setInt(SettingsKeys.INT_EMOTICON_CONFIG_VALUE_1, themeId);
+        AppState.setInt(SettingsKeys.INT_EMOTICON_CONFIG_VALUE_2, valueId);
+        AppState.setInt(SettingsKeys.INT_EMOTICON_CONFIG_ACTION, actionId);
         return ScreenId.CHAT_ROOM_CONFIG;
     }
 }

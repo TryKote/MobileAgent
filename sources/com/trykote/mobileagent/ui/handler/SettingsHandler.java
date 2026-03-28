@@ -33,7 +33,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.GPS_SETTINGS));
                 return;
             case ScreenId.THEME_SETTINGS:
-                AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, AppState.getInt(SettingsKeys.SETTING_COLOR_THEME));
+                AppState.setInt(SettingsKeys.INT_THEME_CACHE, AppState.getInt(SettingsKeys.SETTING_COLOR_THEME));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_SETTINGS));
                 return;
             case ScreenId.NOTIFICATION_SETTINGS:
@@ -93,7 +93,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 return handleProfileAction(action);
             case ScreenId.THEME_SETTINGS:
                 ScreenManager.processScreenForm();
-                AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, AppState.getInt(SettingsKeys.SETTING_COLOR_THEME));
+                AppState.setInt(SettingsKeys.INT_THEME_CACHE, AppState.getInt(SettingsKeys.SETTING_COLOR_THEME));
                 ScreenManager.initializeFonts();
                 AppState.getCanvas().updateFullScreenMode();
                 TabBar.initialize();
@@ -182,7 +182,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 AppState.setInt(UIKeys.FLAG_FULLSCREEN_ACTIVE, 0);
                 break;
             case ScreenId.THEME_SETTINGS:
-                AppState.setInt(SettingsKeys.SETTING_COLOR_THEME, AppState.getInt(SettingsKeys.INT_SETTINGS_THEME));
+                AppState.setInt(SettingsKeys.SETTING_COLOR_THEME, AppState.getInt(SettingsKeys.INT_THEME_CACHE));
                 break;
         }
     }

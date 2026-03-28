@@ -735,15 +735,15 @@ public abstract class ChatRenderer {
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
                     if (Utils.absLong(j - px13) >= 20 || Utils.absLong(j2 - px14) >= 20 || z2) {
                         if (!z2) {
-                            AppState.setInt(UIKeys.FLAG_TYPING_HIDDEN, 0);
-                            AppState.setBool(UIKeys.FLAG_TYPING_VISIBLE, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR) && !AppState.getBool(UIKeys.FLAG_TYPING_HIDDEN));
+                            AppState.setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
+                            AppState.setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, AppState.getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE) && !AppState.getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
                             MmpContact.mapDataCache = null;
                         }
                         i4 = 9;
                         graphics.setColor(40, 221, 22);
                     } else {
-                        AppState.setBool(UIKeys.FLAG_TYPING_HIDDEN, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR));
-                        AppState.setBool(UIKeys.FLAG_TYPING_VISIBLE, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR) && !AppState.getBool(UIKeys.FLAG_TYPING_HIDDEN));
+                        AppState.setBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN, AppState.getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE));
+                        AppState.setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, AppState.getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE) && !AppState.getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
                         i4 = 11;
                         graphics.setColor(45, 253, 24);
                         MmpContact.mapDataCache = objArr3;

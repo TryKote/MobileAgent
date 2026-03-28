@@ -196,7 +196,7 @@ public final class TileCache {
             byte[] bArr = requestBuf.data;
             int i = requestBuf.length;
             socket.write(bArr, i);
-            TrafficAccounting.addUploadBytes(i);
+            TrafficAccounting.addXmppOutbound(i);
         } catch (Throwable unused) {
             if (!reconnectHttp()) {
                 throw new IOException();
@@ -205,7 +205,7 @@ public final class TileCache {
             byte[] bArr2 = requestBuf.data;
             int i2 = requestBuf.length;
             socket2.write(bArr2, i2);
-            TrafficAccounting.addUploadBytes(i2);
+            TrafficAccounting.addXmppOutbound(i2);
         } finally {
             requestBuf.clear();
         }
@@ -239,7 +239,7 @@ public final class TileCache {
         if (AppState.getBool(MapKeys.FLAG_TILE_CACHE_ENABLED)) {
             saveTileToCache(resource, bArr3, 0, i3);
         }
-        TrafficAccounting.addDownloadBytes(bodyBuf.length + 255);
+        TrafficAccounting.addXmppInbound(bodyBuf.length + 255);
         return bodyBuf.toImage();
     }
 

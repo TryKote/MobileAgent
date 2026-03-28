@@ -421,8 +421,8 @@ public final class MapController {
                     MmpContact.routePoints.removeElement((int[]) MmpContact.mapDataCache[1]);
                     MmpContact.nearestPoints.removeElement(MmpContact.mapDataCache);
                 }
-                AppState.setInt(UIKeys.FLAG_TYPING_HIDDEN, 0);
-                AppState.setBool(UIKeys.FLAG_TYPING_VISIBLE, AppState.getBool(UIKeys.FLAG_TYPING_INDICATOR));
+                AppState.setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
+                AppState.setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, AppState.getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE));
                 MapRenderer.needsRedraw = true;
                 if (!MapRenderer.hasRouteEndpoints()) {
                     return ScreenId.MAP;

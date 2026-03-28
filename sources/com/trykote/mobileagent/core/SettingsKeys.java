@@ -45,8 +45,11 @@ public final class SettingsKeys {
     public static final int SETTING_NETWORK_MODE = 271;
     public static final int SETTING_UPDATE_STATUS = 289;
     public static final int INT_SETTINGS_THEME = 4305;
-    public static final int INT_SETTINGS_ACTION = 4308;
-    public static final int INT_SETTINGS_VALUE_1 = 4313;
-    public static final int INT_SETTINGS_VALUE_2 = 4317;
+    public static final int INT_THEME_CACHE = 4306;
+    public static final int INT_MULTI_ACCOUNT_CACHE = 4307;
+    public static final int INT_EMOTICON_CONFIG_ACTION = 4308;
+    public static final int INT_EMOTICON_CONFIG_ID = 4309;
+    public static final int INT_EMOTICON_CONFIG_VALUE_1 = 4313;
+    public static final int INT_EMOTICON_CONFIG_VALUE_2 = 4317;
 
 }

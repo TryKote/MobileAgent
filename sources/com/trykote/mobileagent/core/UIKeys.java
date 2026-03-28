@@ -25,9 +25,9 @@ public final class UIKeys {
     public static final int FLAG_ADVANCED_FEATURES = 1538;
     public static final int FLAG_KNOWN_DEVICE = 1543;
     public static final int FLAG_XMPP_ROSTER_LOADED = 1566;
-    public static final int FLAG_TYPING_INDICATOR = 1573;
-    public static final int FLAG_TYPING_VISIBLE = 1574;
-    public static final int FLAG_TYPING_HIDDEN = 1575;
+    public static final int FLAG_ROUTE_LOCATION_ACTIVE = 1573;
+    public static final int FLAG_ROUTE_POINT_VISIBLE = 1574;
+    public static final int FLAG_ROUTE_POINT_HIDDEN = 1575;
     public static final int FLAG_PHOTO_REGISTRY_READY = 1576;
     public static final int FLAG_CONVERSATION_ACTIVE = 1577;
     public static final int SLOT_LANG_OPTION_1 = 524;

@@ -157,7 +157,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.CHAT_ROOM_CONFIG:
                 ScreenManager.processScreenForm();
-                return (AppState.getInt(SettingsKeys.INT_SETTINGS_ACTION) != 4 || 0 == (configResult = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(SettingsKeys.INT_SETTINGS_THEME) - 157) << 8) + 4))) ? 0 : NotificationHelper.showError(configResult);
+                return (AppState.getInt(SettingsKeys.INT_EMOTICON_CONFIG_ACTION) != 4 || 0 == (configResult = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(SettingsKeys.INT_EMOTICON_CONFIG_ID) - 157) << 8) + 4))) ? 0 : NotificationHelper.showError(configResult);
             case ScreenId.CHAT_VIEW_MODE:
                 ScreenManager.processScreenForm();
                 return 0;

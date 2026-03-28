@@ -32,8 +32,7 @@ public final class TrafficAccounting {
         return currentDate;
     }
 
-    /* renamed from: C */
-    public static final void addSentBytes(int i) {
+    public static final void addMmpInbound(int i) {
         initStartupState();
         AppState.addInt(TrafficKeys.TRAFFIC_MMP_SENT_BYTES, i);
         AppState.addInt(TrafficKeys.TRAFFIC_MMP_SENT_PACKETS, i);
@@ -42,8 +41,7 @@ public final class TrafficAccounting {
         AppState.addInt(SessionKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
-    /* renamed from: D */
-    public static final void addReceivedBytes(int i) {
+    public static final void addMmpOutbound(int i) {
         initStartupState();
         AppState.addInt(TrafficKeys.TRAFFIC_MMP_RECV_BYTES, i);
         AppState.addInt(TrafficKeys.TRAFFIC_MMP_RECV_PACKETS, i);
@@ -52,8 +50,7 @@ public final class TrafficAccounting {
         AppState.addInt(SessionKeys.COUNTER_RESERVED, i);
     }
 
-    /* renamed from: E */
-    public static final void addDownloadBytes(int i) {
+    public static final void addXmppInbound(int i) {
         initStartupState();
         AppState.addInt(TrafficKeys.TRAFFIC_XMPP_SENT_BYTES, i);
         AppState.addInt(TrafficKeys.TRAFFIC_XMPP_SENT_PACKETS, i);
@@ -62,8 +59,7 @@ public final class TrafficAccounting {
         AppState.addInt(SessionKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
-    /* renamed from: F */
-    public static final void addUploadBytes(int i) {
+    public static final void addXmppOutbound(int i) {
         initStartupState();
         AppState.addInt(TrafficKeys.TRAFFIC_XMPP_RECV_BYTES, i);
         AppState.addInt(TrafficKeys.TRAFFIC_XMPP_RECV_PACKETS, i);
@@ -72,23 +68,21 @@ public final class TrafficAccounting {
         AppState.addInt(SessionKeys.COUNTER_RESERVED, i);
     }
 
-    /* renamed from: G */
-    public static final void addConnectionBytes(int i) {
+    public static final void addHttpInbound(int i) {
         initStartupState();
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_SENT_BYTES, i);
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_SENT_PACKETS, i);
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_SENT_MSGS, i);
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_SENT_FILES, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_SENT_BYTES, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_SENT_PACKETS, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_SENT_MSGS, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_SENT_FILES, i);
         AppState.addInt(SessionKeys.COUNTER_TOTAL_TRAFFIC, i);
     }
 
-    /* renamed from: H */
-    public static final void addProtocolBytes(int i) {
+    public static final void addHttpOutbound(int i) {
         initStartupState();
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_RECV_BYTES, i);
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_RECV_PACKETS, i);
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_RECV_MSGS, i);
-        AppState.addInt(TrafficKeys.TRAFFIC_TOTAL_RECV_FILES, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_RECV_BYTES, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_RECV_PACKETS, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_RECV_MSGS, i);
+        AppState.addInt(TrafficKeys.TRAFFIC_HTTP_RECV_FILES, i);
         AppState.addInt(SessionKeys.COUNTER_RESERVED, i);
     }
 

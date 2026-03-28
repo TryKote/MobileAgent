@@ -29,13 +29,13 @@ public final class TrafficKeys {
     public static final int TRAFFIC_XMPP_RECV_MSGS = 23;
     public static final int TRAFFIC_XMPP_SENT_FILES = 24;
     public static final int TRAFFIC_XMPP_RECV_FILES = 25;
-    public static final int TRAFFIC_TOTAL_SENT_BYTES = 26;
-    public static final int TRAFFIC_TOTAL_RECV_BYTES = 27;
-    public static final int TRAFFIC_TOTAL_SENT_PACKETS = 28;
-    public static final int TRAFFIC_TOTAL_RECV_PACKETS = 29;
-    public static final int TRAFFIC_TOTAL_SENT_MSGS = 30;
-    public static final int TRAFFIC_TOTAL_RECV_MSGS = 31;
-    public static final int TRAFFIC_TOTAL_SENT_FILES = 32;
-    public static final int TRAFFIC_TOTAL_RECV_FILES = 33;
+    public static final int TRAFFIC_HTTP_SENT_BYTES = 26;
+    public static final int TRAFFIC_HTTP_RECV_BYTES = 27;
+    public static final int TRAFFIC_HTTP_SENT_PACKETS = 28;
+    public static final int TRAFFIC_HTTP_RECV_PACKETS = 29;
+    public static final int TRAFFIC_HTTP_SENT_MSGS = 30;
+    public static final int TRAFFIC_HTTP_RECV_MSGS = 31;
+    public static final int TRAFFIC_HTTP_SENT_FILES = 32;
+    public static final int TRAFFIC_HTTP_RECV_FILES = 33;
 
 }

@@ -79,14 +79,14 @@ public final class HttpClient {
                 AccountManager.recordInboundTraffic(client.account, client.bytesReceived);
                 AccountManager.recordOutboundTraffic(client.account, client.bytesSent);
             } else if (client.requestType == 1) {
-                TrafficAccounting.addSentBytes(client.bytesReceived);
-                TrafficAccounting.addReceivedBytes(client.bytesSent);
+                TrafficAccounting.addMmpInbound(client.bytesReceived);
+                TrafficAccounting.addMmpOutbound(client.bytesSent);
             } else if (client.requestType == 2) {
-                TrafficAccounting.addDownloadBytes(client.bytesReceived);
-                TrafficAccounting.addUploadBytes(client.bytesSent);
+                TrafficAccounting.addXmppInbound(client.bytesReceived);
+                TrafficAccounting.addXmppOutbound(client.bytesSent);
             } else {
-                TrafficAccounting.addConnectionBytes(client.bytesReceived);
-                TrafficAccounting.addProtocolBytes(client.bytesSent);
+                TrafficAccounting.addHttpInbound(client.bytesReceived);
+                TrafficAccounting.addHttpOutbound(client.bytesSent);
             }
             if (client.mockMode == 0) {
                 try {

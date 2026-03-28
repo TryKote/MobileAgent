@@ -232,8 +232,8 @@ public final class MmpContact extends Contact {
     /* renamed from: a */
     public static final void setLocationEnabled(boolean z) {
         locationEnabled = z;
-        AppState.setBool(UIKeys.FLAG_TYPING_INDICATOR, z);
-        AppState.setBool(UIKeys.FLAG_TYPING_VISIBLE, z && !AppState.getBool(UIKeys.FLAG_TYPING_HIDDEN));
+        AppState.setBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, z);
+        AppState.setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, z && !AppState.getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
     }
 
     /* renamed from: f */
@@ -247,9 +247,9 @@ public final class MmpContact extends Contact {
         nearestPoints.removeAllElements();
         setLocationEnabled(false);
         currentRouteIndex = 0;
-        AppState.setInt(UIKeys.FLAG_TYPING_INDICATOR, 0);
-        AppState.setInt(UIKeys.FLAG_TYPING_VISIBLE, 0);
-        AppState.setInt(UIKeys.FLAG_TYPING_HIDDEN, 0);
+        AppState.setInt(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, 0);
+        AppState.setInt(UIKeys.FLAG_ROUTE_POINT_VISIBLE, 0);
+        AppState.setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
     }
 
     /* renamed from: o */

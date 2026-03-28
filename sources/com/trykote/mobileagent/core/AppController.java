@@ -240,8 +240,8 @@ public final class AppController {
         AppState.setInt(TrafficKeys.TRAFFIC_MMP_RECV_BYTES, 0);
         AppState.setInt(TrafficKeys.TRAFFIC_XMPP_SENT_BYTES, 0);
         AppState.setInt(TrafficKeys.TRAFFIC_XMPP_RECV_BYTES, 0);
-        AppState.setInt(TrafficKeys.TRAFFIC_TOTAL_SENT_BYTES, 0);
-        AppState.setInt(TrafficKeys.TRAFFIC_TOTAL_RECV_BYTES, 0);
+        AppState.setInt(TrafficKeys.TRAFFIC_HTTP_SENT_BYTES, 0);
+        AppState.setInt(TrafficKeys.TRAFFIC_HTTP_RECV_BYTES, 0);
         AppState.pool[MapKeys.VEC_TILE_QUEUE] = ObjectPool.newVector();
         TileCache.calculateCacheSize();
         AppState.pool[SessionKeys.OBJ_CANVAS] = new MainCanvas(width, height);

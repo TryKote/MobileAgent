@@ -11,6 +11,7 @@ import java.util.Vector;
 public final class ScreenBuilder {
     /* renamed from: a */
     public static final void openScreen(int i) {
+        Debug.assertState(i >= 0 && i <= 180, "screenId out of range: " + i);
         RemoteLogger.log("UI", "openScreen(" + i + ")");
         boolean z;
         int i2;

@@ -55,7 +55,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return;
             }
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
-                AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, AppState.getInt(SettingsKeys.SETTING_MULTI_ACCOUNT));
+                AppState.setInt(SettingsKeys.INT_MULTI_ACCOUNT_CACHE, AppState.getInt(SettingsKeys.SETTING_MULTI_ACCOUNT));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_SETTINGS));
                 return;
             case ScreenId.MAIL_ACCOUNT_LIST:
@@ -203,7 +203,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return AccountManager.handleInputAction(action, data);
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 ScreenManager.processScreenForm();
-                if (AppState.getInt(SettingsKeys.INT_SETTINGS_THEME) != AppState.getInt(SettingsKeys.SETTING_MULTI_ACCOUNT)) {
+                if (AppState.getInt(SettingsKeys.INT_MULTI_ACCOUNT_CACHE) != AppState.getInt(SettingsKeys.SETTING_MULTI_ACCOUNT)) {
                     TabBar.initialize();
                 }
                 return 0;
