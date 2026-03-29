@@ -32,15 +32,15 @@ public final class TextElement implements RenderElement {
     }
 
     public void render(GraphicsContext gfx, int x, int y, int baseX, int containerWidth) {
-        GraphicsContext fontGfx = AppState.getGfxContext(this.fontIdx);
+        GraphicsContext fontGfx = Storage.state().getGfxContext(this.fontIdx);
         gfx.setFont(fontGfx).setColorFromPalette(this.colorIdx);
-        if (y > 0 && y < AppState.getInt(UIKeys.INT_SCREEN_HEIGHT)) {
+        if (y > 0 && y < Storage.state().getInt(UIKeys.INT_SCREEN_HEIGHT)) {
             gfx.graphics.drawSubstring(this.text, this.startIdx, this.length, x, y, 20);
         }
         if (this.fontIdx == 3) {
-            gfx.drawRect(x, y + (AppState.getInt(UIKeys.INT_FONT_HEIGHT) >> 1), fontGfx.substringWidth(this.text, this.startIdx, this.length), 0);
+            gfx.drawRect(x, y + (Storage.state().getInt(UIKeys.INT_FONT_HEIGHT) >> 1), fontGfx.substringWidth(this.text, this.startIdx, this.length), 0);
         } else if (this.fontIdx == 5) {
-            gfx.drawRect(x, y + AppState.getInt(UIKeys.INT_FONT_HEIGHT), fontGfx.substringWidth(this.text, this.startIdx, this.length), 0);
+            gfx.drawRect(x, y + Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), fontGfx.substringWidth(this.text, this.startIdx, this.length), 0);
         }
     }
 }

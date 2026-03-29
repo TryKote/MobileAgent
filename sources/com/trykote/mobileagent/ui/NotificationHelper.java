@@ -19,21 +19,21 @@ public final class NotificationHelper {
         if (ScreenManager.getCurrentScreen().screenType == 8) {
             ScreenBuilder.onScreenClosed();
         }
-        AppState.setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
+        Storage.state().setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
         return ScreenId.CLEAR_NOTIFICATIONS;
     }
 
     /* renamed from: e */
     public static final void showNotification(String str) {
-        AppState.setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
-        AppState.setObject(UIKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
+        Storage.state().setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
+        Storage.state().setObject(UIKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
         clearNotifications();
     }
 
     /* renamed from: m */
     public static final void showMessageById(int i) {
-        AppState.setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
-        AppState.setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
+        Storage.state().setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
+        Storage.state().setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
         clearNotifications();
     }
 
@@ -41,23 +41,23 @@ public final class NotificationHelper {
     public static final void clearNotifications() {
         playNotificationSound(5);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_DIALOG));
-        AppState.clearIndex(UIKeys.SLOT_NOTIFICATION_TITLE);
+        Storage.state().clearIndex(UIKeys.SLOT_NOTIFICATION_TITLE);
     }
 
     /* renamed from: a */
     public static final void showAlertBuffer(int i, StringBuffer stringBuffer) {
-        AppState.setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
-        AppState.setFromBuffer(MapKeys.SLOT_MAP_POINT_1, stringBuffer);
+        Storage.state().setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
+        Storage.state().setFromBuffer(MapKeys.SLOT_MAP_POINT_1, stringBuffer);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_1);
+        Storage.state().clearIndex(MapKeys.SLOT_MAP_POINT_1);
     }
 
     /* renamed from: a */
     public static final void showAlertById(int i, int i2) {
-        AppState.setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
-        AppState.setFromPool(MapKeys.SLOT_MAP_POINT_1, i2);
+        Storage.state().setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
+        Storage.state().setFromPool(MapKeys.SLOT_MAP_POINT_1, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_1);
+        Storage.state().clearIndex(MapKeys.SLOT_MAP_POINT_1);
     }
 
     /* renamed from: a */
@@ -71,8 +71,8 @@ public final class NotificationHelper {
 
     /* renamed from: b */
     public static final void showConfirmDialog(int i, int i2) {
-        AppState.setInt(UIKeys.INT_HTTP_PARAM_1, i);
-        AppState.setInt(UIKeys.INT_HTTP_PARAM_2, i2);
+        Storage.state().setInt(UIKeys.INT_HTTP_PARAM_1, i);
+        Storage.state().setInt(UIKeys.INT_HTTP_PARAM_2, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONFIRM_DIALOG));
     }
 
@@ -91,15 +91,15 @@ public final class NotificationHelper {
         } else if (soundType == 6) {
             soundIndex = 165;
         }
-        playAlertIfEnabled(AppState.getInt(soundIndex + 75), AppState.getBool(soundIndex + 76));
+        playAlertIfEnabled(Storage.state().getBlockInt(SettingsKeys.SOUND_CONFIG_BASE, soundIndex), Storage.state().getBool(SettingsKeys.SOUND_CONFIG_BASE + soundIndex + 1));
     }
 
     public static void playAlertIfEnabled(int alertTone, boolean vibrateEnabled) {
-        if (AppState.getBool(SessionKeys.FLAG_MRIM_DATA_LOADED)) {
+        if (Storage.state().getBool(SessionKeys.FLAG_MRIM_DATA_LOADED)) {
             if (vibrateEnabled) {
-                Display.getDisplay(AppState.getMidlet()).vibrate(250);
+                Display.getDisplay(Storage.state().getMidlet()).vibrate(250);
             }
-            if (alertTone == 0 || AppState.getBool(SettingsKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(8, 1000L)) {
+            if (alertTone == 0 || Storage.state().getBool(SettingsKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(8, 1000L)) {
                 return;
             }
             SoundPlayer.playSound(alertTone);

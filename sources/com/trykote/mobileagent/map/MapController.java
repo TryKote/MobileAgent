@@ -29,34 +29,34 @@ public final class MapController {
 
     public static final void showMapScreen() {
         initMapState();
-        AppState.setInt(SessionKeys.INT_CONNECTION_STATE, 6);
+        Storage.state().setInt(SessionKeys.INT_CONNECTION_STATE, 6);
         ListView c0013amM75b = ScreenManager.createScreen(ScreenDef.MAP_VIEW);
         mapScreen = c0013amM75b;
         setMapSoftKeys(c0013amM75b);
         ScreenManager.pushScreen(c0013amM75b);
         TabBar.ensureSearchTab();
         TabBar.findTab(6, (Account) null);
-        TabBar.scrollEnabled = AppState.getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE);
-        if (AppState.getBool(ContactKeys.FLAG_REFRESH_CONTACTS)) {
+        TabBar.scrollEnabled = Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE);
+        if (Storage.state().getBool(ContactKeys.FLAG_REFRESH_CONTACTS)) {
             return;
         }
         ScreenBuilder.openScreen(ScreenId.EDIT_SCREEN);
     }
 
     public static final void updateMapSoftKeys() {
-        if (AppState.getBool(MapKeys.FLAG_MAP_TILES_PENDING)) {
-            if (AppState.getBool(MapKeys.FLAG_MAP_SCREEN_VISIBLE) || mapScreen == null) {
+        if (Storage.state().getBool(MapKeys.FLAG_MAP_TILES_PENDING)) {
+            if (Storage.state().getBool(MapKeys.FLAG_MAP_SCREEN_VISIBLE) || mapScreen == null) {
                 return;
             }
-            mapScreen.setSoftKeys(AppState.getString(StringResKeys.STR_SOFTKEY_MAP), AppState.getString(StringResKeys.STR_SOFTKEY_CLOSE), 167, 4, 167);
-            AppState.setInt(MapKeys.FLAG_MAP_SCREEN_VISIBLE, 1);
+            mapScreen.setSoftKeys(Storage.resources().getString(StringResKeys.STR_SOFTKEY_MAP), Storage.resources().getString(StringResKeys.STR_SOFTKEY_CLOSE), 167, 4, 167);
+            Storage.state().setInt(MapKeys.FLAG_MAP_SCREEN_VISIBLE, 1);
             return;
         }
-        if (!AppState.getBool(MapKeys.FLAG_MAP_SCREEN_VISIBLE) || mapScreen == null) {
+        if (!Storage.state().getBool(MapKeys.FLAG_MAP_SCREEN_VISIBLE) || mapScreen == null) {
             return;
         }
         setMapSoftKeys(mapScreen);
-        AppState.setInt(MapKeys.FLAG_MAP_SCREEN_VISIBLE, 0);
+        Storage.state().setInt(MapKeys.FLAG_MAP_SCREEN_VISIBLE, 0);
     }
 
     private static final void initMapState() {
@@ -65,27 +65,27 @@ public final class MapController {
         }
         mapInitialized = true;
         int i = ScreenManager.createScreen(ScreenDef.MAP_VIEW).contentHeight;
-        AppState.setLong(MapKeys.MAP_SCROLL_LON, 4178628L);
-        AppState.setLong(MapKeys.MAP_SCROLL_LAT, 7482960L);
-        AppState.pool[ContactKeys.VEC_CONTACT_GROUPS] = XmppContactGroup.loadMapPoints(225);
-        AppState.pool[UIKeys.VEC_PHOTO_QUEUE] = XmppContactGroup.loadMapPoints(226);
-        AppState.setInt(MapKeys.MAP_VIEWPORT_WIDTH, AppState.getInt(UIKeys.INT_SCREEN_WIDTH));
-        AppState.setInt(MapKeys.MAP_VIEWPORT_HEIGHT, i);
-        AppState.setLong(MapKeys.MAP_SAVED_LONGITUDE, AppState.getLong(MapKeys.MAP_LONGITUDE));
-        AppState.setLong(MapKeys.MAP_SAVED_LATITUDE, AppState.getLong(MapKeys.MAP_LATITUDE));
-        MapRenderer.viewportWidth = AppState.getInt(MapKeys.MAP_VIEWPORT_WIDTH);
-        MapRenderer.viewportHeight = AppState.getInt(MapKeys.MAP_VIEWPORT_HEIGHT);
-        MapRenderer.currentLat = AppState.getLong(MapKeys.MAP_SAVED_LATITUDE);
-        MapRenderer.currentLon = AppState.getLong(MapKeys.MAP_SAVED_LONGITUDE);
-        int iM586d = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
+        Storage.state().setLong(MapKeys.MAP_SCROLL_LON, 4178628L);
+        Storage.state().setLong(MapKeys.MAP_SCROLL_LAT, 7482960L);
+        Storage.state().setObject(ContactKeys.VEC_CONTACT_GROUPS, XmppContactGroup.loadMapPoints(225));
+        Storage.state().setObject(UIKeys.VEC_PHOTO_QUEUE, XmppContactGroup.loadMapPoints(226));
+        Storage.state().setInt(MapKeys.MAP_VIEWPORT_WIDTH, Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH));
+        Storage.state().setInt(MapKeys.MAP_VIEWPORT_HEIGHT, i);
+        Storage.state().setLong(MapKeys.MAP_SAVED_LONGITUDE, Storage.state().getLong(MapKeys.MAP_LONGITUDE));
+        Storage.state().setLong(MapKeys.MAP_SAVED_LATITUDE, Storage.state().getLong(MapKeys.MAP_LATITUDE));
+        MapRenderer.viewportWidth = Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH);
+        MapRenderer.viewportHeight = Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT);
+        MapRenderer.currentLat = Storage.state().getLong(MapKeys.MAP_SAVED_LATITUDE);
+        MapRenderer.currentLon = Storage.state().getLong(MapKeys.MAP_SAVED_LONGITUDE);
+        int iM586d = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
         MapRenderer.currentPixelX = MapUtils.coordToPixel(MapRenderer.currentLon, iM586d);
         MapRenderer.currentPixelY = MapUtils.coordToPixel(MapRenderer.currentLat, iM586d);
-        AppState.pool[MapKeys.OBJ_FONT_2] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
+        Storage.state().setObject(MapKeys.OBJ_FONT_2, Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight));
         StringUtils.initTileCache();
-        AppState.pool[ChatKeys.VEC_TILE_REQUEST_QUEUE] = ObjectPool.newVector();
-        AppState.pool[RuntimeKeys.OBJ_SEARCH_PARAMS_1] = ObjectPool.newVector();
-        Object[] objArrM332c = ApiClient.getUrlComponents(AppState.emptyStr);
-        AppState.pool[MapKeys.OBJ_TILE_REQUEST_ARRAY] = objArrM332c;
+        Storage.state().setObject(ChatKeys.VEC_TILE_REQUEST_QUEUE, ObjectPool.newVector());
+        Storage.state().setObject(RuntimeKeys.OBJ_SEARCH_PARAMS_1, ObjectPool.newVector());
+        Object[] objArrM332c = ApiClient.getUrlComponents(Storage.emptyStr);
+        Storage.state().setObject(MapKeys.OBJ_TILE_REQUEST_ARRAY, objArrM332c);
         XmppContactGroup.addContactInfoToQueue(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
         Graphics graphics = imageCreateImage.getGraphics();
@@ -98,8 +98,8 @@ public final class MapController {
             i2 ^= 2;
         }
         new GraphicsContext(graphics).drawIcon(312, 56, 56);
-        AppState.pool[MapKeys.OBJ_MENU_LABELS] = imageCreateImage;
-        AppState.pool[RuntimeKeys.OBJ_SEARCH_PARAMS_2] = ObjectPool.newVector();
+        Storage.state().setObject(MapKeys.OBJ_MENU_LABELS, imageCreateImage);
+        Storage.state().setObject(RuntimeKeys.OBJ_SEARCH_PARAMS_2, ObjectPool.newVector());
         new AsyncTask(AsyncTaskId.TILE_LOADER);
         MapRenderer.syncLock = new Object();
         StringUtils.initGeoRegions();
@@ -110,22 +110,22 @@ public final class MapController {
         MmpContact.lastTokenPair = new long[2];
         MmpContact.currentTokenPair = new long[2];
         MapRenderer.animationSteps = ObjectPool.newVector();
-        if (AppState.getBool(MapKeys.FLAG_GPS_ACTIVE)) {
-            XmppContactGroup.stopMapAnimation(AppState.getVector(UIKeys.VEC_PHOTO_QUEUE));
+        if (Storage.state().getBool(MapKeys.FLAG_GPS_ACTIVE)) {
+            XmppContactGroup.stopMapAnimation(Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE));
         }
-        AppState.pool[MapKeys.SLOT_MAP_DATA] = ObjectPool.newVector();
+        Storage.state().setObject(MapKeys.SLOT_MAP_DATA, ObjectPool.newVector());
         MapRenderer.needsRedraw = true;
-        AppState.setLong(MapKeys.TIMESTAMP_MAP_SCROLL, System.currentTimeMillis() - 90);
+        Storage.state().setLong(MapKeys.TIMESTAMP_MAP_SCROLL, System.currentTimeMillis() - 90);
         new AsyncTask(AsyncTaskId.FETCH_GEO_CONFIG);
         ServiceRegistry.loadSavedData();
     }
 
     private static final void setMapSoftKeys(ListView c0013am) {
-        c0013am.setSoftKeys(AppState.getString(StringResKeys.STR_SOFTKEY_MENU), AppState.getString(AppState.getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE) ? 1050 : 328), 20, 0, 0);
+        c0013am.setSoftKeys(Storage.resources().getString(StringResKeys.STR_SOFTKEY_MENU), Storage.state().getString(Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE) ? 1050 : 328), 20, 0, 0);
     }
 
     public static final void toggleMapControls(ListView c0013am) {
-        if (AppState.getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
+        if (Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
             return;
         }
         toggleScrollMode();
@@ -134,13 +134,13 @@ public final class MapController {
 
     public static final int handleMapBack(ListView c0013am) {
         MrimAccount c0028ba;
-        if (AppState.getBool(MapKeys.FLAG_MAP_TILES_PENDING)) {
-            ((MrimAccount) AppState.getAccount()).isHighlighted = false;
+        if (Storage.state().getBool(MapKeys.FLAG_MAP_TILES_PENDING)) {
+            ((MrimAccount) Storage.state().getAccount()).isHighlighted = false;
             MapRenderer.needsRedraw = true;
             toggleScrollMode();
             return 0;
         }
-        if (AppState.getBool(MapKeys.FLAG_MAP_LOADING) && (c0028ba = (MrimAccount) AppState.getAccount()) != null) {
+        if (Storage.state().getBool(MapKeys.FLAG_MAP_LOADING) && (c0028ba = (MrimAccount) Storage.state().getAccount()) != null) {
             c0028ba.deselect();
         }
         toggleScrollMode();
@@ -149,19 +149,19 @@ public final class MapController {
     }
 
     public static final void handleMapSwitch(ListView c0013am) {
-        if (AppState.getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
-            AppState.setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, 3);
+        if (Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
+            Storage.state().setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, 3);
         } else {
             toggleMapControls(c0013am);
         }
     }
 
     public static final void toggleScrollMode() {
-        boolean z = !AppState.getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE);
+        boolean z = !Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE);
         boolean z2 = z;
-        AppState.setBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, z);
+        Storage.state().setBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, z);
         if (!z2) {
-            AppState.setInt(MapKeys.FLAG_MAP_LOADING, 0);
+            Storage.state().setInt(MapKeys.FLAG_MAP_LOADING, 0);
         }
         TabBar.scrollEnabled = z2;
     }
@@ -169,8 +169,8 @@ public final class MapController {
     public static final void navigateToPoint(MapPoint c0014an, boolean z) {
         initMapState();
         if (z) {
-            XmppContactGroup.addMapPointIfNew(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), c0014an, 0, 5);
-            XmppContactGroup.saveMapPoints(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
+            XmppContactGroup.addMapPointIfNew(Storage.state().getVector(ContactKeys.VEC_CONTACT_GROUPS), c0014an, 0, 5);
+            XmppContactGroup.saveMapPoints(Storage.state().getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
         }
         MapRenderer.selectedMapPoint = c0014an;
         MapRenderer.invalidate();
@@ -181,9 +181,9 @@ public final class MapController {
     }
 
     public static final int showMapSearchResults() {
-        Vector vectorM614m = AppState.getVector(ChatKeys.VEC_MESSAGE_LIST);
+        Vector vectorM614m = Storage.state().getVector(ChatKeys.VEC_MESSAGE_LIST);
         if (vectorM614m != null) {
-            AppState.clearIndex(ChatKeys.VEC_MESSAGE_LIST);
+            Storage.state().clearIndex(ChatKeys.VEC_MESSAGE_LIST);
         }
         if (vectorM614m == null) {
             return 0;
@@ -203,15 +203,15 @@ public final class MapController {
     }
 
     public static final Enumeration getRouteElements() {
-        return AppState.getVector(UIKeys.VEC_PHOTO_QUEUE).elements();
+        return Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE).elements();
     }
 
     public static final boolean hasRoutePoints() {
-        return AppState.getVector(UIKeys.VEC_PHOTO_QUEUE).size() > 0;
+        return Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE).size() > 0;
     }
 
     public static final void removeRoutePoint(MapPoint c0014an) {
-        Vector vectorM614m = AppState.getVector(UIKeys.VEC_PHOTO_QUEUE);
+        Vector vectorM614m = Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE);
         vectorM614m.removeElement(c0014an);
         XmppContactGroup.saveMapPoints(vectorM614m, 226);
     }
@@ -271,7 +271,7 @@ public final class MapController {
 
     public static final void showMapView() {
         initMapState();
-        AppState.setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
+        Storage.state().setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
         MapRenderer.invalidate();
     }
 
@@ -313,7 +313,7 @@ public final class MapController {
                     break;
             }
         }
-        if (!AppState.getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE)) {
+        if (!Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE)) {
             i &= -1025;
         }
         int i2 = 1424;
@@ -326,7 +326,7 @@ public final class MapController {
             }
             int i5 = i2;
             i2++;
-            AppState.setInt(i5, i & i4);
+            Storage.state().setInt(i5, i & i4);
             i3 = i4 << 1;
         }
     }
@@ -338,25 +338,25 @@ public final class MapController {
         int itemType = item == null ? 0 : item.getHeight();
         switch (i) {
             case 0:
-                AppState.setCurrentEntity(item);
+                Storage.state().setCurrentEntity(item);
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.STATUS_INPUT;
             case 1:
                 if (itemType == 8) {
-                    AppState.setInt(RuntimeKeys.INT_ASYNC_TASK_ID, 0);
+                    Storage.state().setInt(RuntimeKeys.INT_ASYNC_TASK_ID, 0);
                     AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) item).userId);
                 } else {
-                    AppState.setCurrentEntity(mapContextItem);
+                    Storage.state().setCurrentEntity(mapContextItem);
                 }
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.USER_PROFILE;
             case 2:
                 if (itemType == 3) {
-                    AppState.setCurrentEntity(mapContextItem);
+                    Storage.state().setCurrentEntity(mapContextItem);
                     ScreenBuilder.onScreenClosed();
                     return ScreenId.CONTACT_DELETE;
                 }
-                AppState.setCurrentEntity((Object) null);
+                Storage.state().setCurrentEntity((Object) null);
                 Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
                 if (onlineAccounts == null || onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
@@ -374,17 +374,17 @@ public final class MapController {
                 return ScreenId.MAP;
             case 4:
                 ScreenBuilder.onScreenClosed();
-                AppState.pool[UIKeys.SLOT_TEMP_OBJECT_1] = (Conversation) item;
+                Storage.state().setObject(UIKeys.SLOT_TEMP_OBJECT_1, (Conversation) item);
                 return ScreenId.FORM_LIST;
             case 5:
                 ContactListManager.dialPhoneUrl(VCard.formatPhoneContactUrl((PhoneContact) item, 0), (PhoneContact) item, 0);
                 return ScreenId.CLOSE;
             case 6:
-                AppState.setAccount(item);
+                Storage.state().setAccount(item);
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.MAILBOX_OPTIONS;
             case 7:
-                AppState.setAccount(item);
+                Storage.state().setAccount(item);
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.EXT_SETTINGS;
             case 8:
@@ -421,8 +421,8 @@ public final class MapController {
                     MmpContact.routePoints.removeElement((int[]) MmpContact.mapDataCache[1]);
                     MmpContact.nearestPoints.removeElement(MmpContact.mapDataCache);
                 }
-                AppState.setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
-                AppState.setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, AppState.getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE));
+                Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
+                Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE));
                 MapRenderer.needsRedraw = true;
                 if (!MapRenderer.hasRouteEndpoints()) {
                     return ScreenId.MAP;
@@ -445,14 +445,14 @@ public final class MapController {
                 if (MmpContact.hasSecondToken()) {
                     return ScreenId.MAP;
                 }
-                AppState.setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 1);
+                Storage.state().setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 1);
                 return ScreenId.MAP_SEARCH;
             case 15:
                 setRouteEnd();
                 if (MmpContact.hasFirstToken()) {
                     return ScreenId.MAP;
                 }
-                AppState.setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 0);
+                Storage.state().setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 0);
                 return ScreenId.MAP_SEARCH;
             case 16:
                 return ScreenId.WIFI_ACCOUNT_LIST;
@@ -464,7 +464,7 @@ public final class MapController {
                 if (onlineAccounts3.size() > 1) {
                     return ScreenId.MRIM_ACCOUNT_SELECT;
                 }
-                AppState.setAccount(onlineAccounts3.elementAt(0));
+                Storage.state().setAccount(onlineAccounts3.elementAt(0));
                 return ScreenId.INVITE_ALERT;
             case 19:
                 return ScreenId.MAP_TOOLTIP;
@@ -481,8 +481,8 @@ public final class MapController {
     }
 
     public static final void applyViewMode(boolean showMap, boolean showList, boolean shouldInvalidate) {
-        AppState.setBool(MapKeys.FLAG_MAP_VIEW_ACTIVE, showMap);
-        AppState.setBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE, showList);
+        Storage.state().setBool(MapKeys.FLAG_MAP_VIEW_ACTIVE, showMap);
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE, showList);
         if (!shouldInvalidate || !MapController.mapInitialized) {
             return;
         }
@@ -530,24 +530,24 @@ public final class MapController {
         if (optionId != 6) {
             return 0;
         }
-        AppState.setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
+        Storage.state().setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 1);
         return 0;
     }
 
     public static final int handleMapPointAction(Object obj) {
-        if (AppState.getBool(UIKeys.FLAG_NEW_MESSAGE)) {
+        if (Storage.state().getBool(UIKeys.FLAG_NEW_MESSAGE)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
             return 0;
         }
-        if (!AppState.getBool(UIKeys.FLAG_LOADING)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_LOADING)) {
             MapController.navigateToPoint((MapPoint) obj, true);
             return 0;
         }
         MapPoint mapPoint = (MapPoint) obj;
-        ((MrimAccount) AppState.getAccount()).profileManager.setMapLocation(mapPoint);
-        XmppContactGroup.addMapPointIfNew(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
-        XmppContactGroup.saveMapPoints(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
-        AppState.setInt(UIKeys.FLAG_LOADING, 0);
+        ((MrimAccount) Storage.state().getAccount()).profileManager.setMapLocation(mapPoint);
+        XmppContactGroup.addMapPointIfNew(Storage.state().getVector(ContactKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
+        XmppContactGroup.saveMapPoints(Storage.state().getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
+        Storage.state().setInt(UIKeys.FLAG_LOADING, 0);
         return ScreenId.PROFILE_EDIT;
     }
 
@@ -556,13 +556,13 @@ public final class MapController {
             if (!MapController.hasRoutePoints()) {
                 return NotificationHelper.showError(354);
             }
-            AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 1);
+            Storage.state().setInt(UIKeys.FLAG_NEW_MESSAGE, 1);
             return 0;
         }
         if (optionId != 100) {
             return optionId == 0 ? ScreenId.MAP : 0;
         }
-        AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 1);
+        Storage.state().setInt(UIKeys.FLAG_NEW_MESSAGE, 1);
         return 0;
     }
 
@@ -575,14 +575,14 @@ public final class MapController {
     }
 
     public static final int processSearchQuery(String str) {
-        if (!AppState.getString(StringResKeys.STR_PROTOCOL_XMPP).equals(str)) {
+        if (!Storage.resources().getString(StringResKeys.STR_PROTOCOL_XMPP).equals(str)) {
             return 0;
         }
         if (MapRenderer.selectedMapPoint != null) {
             MapRenderer.selectedMapPoint.markInactive();
         }
-        XmppContactGroup.startMapAnimation(AppState.getVector(UIKeys.VEC_PHOTO_QUEUE));
-        AppState.setInt(MapKeys.FLAG_GPS_ACTIVE, 0);
+        XmppContactGroup.startMapAnimation(Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE));
+        Storage.state().setInt(MapKeys.FLAG_GPS_ACTIVE, 0);
         MmpContact.clearLocationData();
         MapRenderer.needsRedraw = true;
         XmppContactGroup.lastCheckTs = System.currentTimeMillis();
@@ -594,7 +594,7 @@ public final class MapController {
         if (locationData == null) {
             return 0;
         }
-        AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(locationData));
+        Storage.state().setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(locationData));
         return 0;
     }
 
@@ -615,12 +615,12 @@ public final class MapController {
     }
 
     public static int applyLocationProfile(Object obj) {
-        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        MrimAccount mrimAccount = (MrimAccount) Storage.state().getAccount();
         MapPoint mapPoint = (MapPoint) obj;
         mrimAccount.profileManager.setMapLocation(mapPoint);
-        XmppContactGroup.addMapPointIfNew(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
-        XmppContactGroup.saveMapPoints(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
-        AppState.setInt(UIKeys.FLAG_LOADING, 0);
+        XmppContactGroup.addMapPointIfNew(Storage.state().getVector(ContactKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
+        XmppContactGroup.saveMapPoints(Storage.state().getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
+        Storage.state().setInt(UIKeys.FLAG_LOADING, 0);
         mrimAccount.isHighlighted = true;
         return ScreenId.PROFILE_EDIT;
     }

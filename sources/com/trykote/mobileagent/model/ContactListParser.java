@@ -33,7 +33,7 @@ public abstract class ContactListParser implements ListItem {
     public static final void parseContactsSync(ByteBuffer buffer, int i) {
         Vector contacts = parseContactsInternal(buffer, i, false);
         if (contacts != null && contacts.size() > 0) {
-            AppState.pool[UIKeys.OBJ_HTTP_CALLBACK] = contacts;
+            Storage.state().setObject(UIKeys.OBJ_HTTP_CALLBACK, contacts);
         }
         MapRenderer.needsRedraw = true;
     }
@@ -43,7 +43,7 @@ public abstract class ContactListParser implements ListItem {
         boolean z2;
         Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(buffer, 2);
         Vector result = ObjectPool.newVector();
-        Vector existing = AppState.getVector(UIKeys.OBJ_HTTP_CALLBACK);
+        Vector existing = Storage.state().getVector(UIKeys.OBJ_HTTP_CALLBACK);
         if (existing != null && !z) {
             int i2 = updateCounter;
             updateCounter = i2 + 1;
@@ -51,7 +51,7 @@ public abstract class ContactListParser implements ListItem {
                 result.addElement(existing.elementAt(i3));
             }
         }
-        int zoomLevel = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
         addedCount = 0;
         Enumeration keys = hashtable.keys();
         while (keys.hasMoreElements()) {

@@ -18,28 +18,28 @@ import java.util.Vector;
 public final class VCard {
 
     /* renamed from: a */
-    public String latStr = AppState.emptyStr;
+    public String latStr = Storage.emptyStr;
 
     /* renamed from: b */
-    public String lonStr = AppState.emptyStr;
+    public String lonStr = Storage.emptyStr;
 
     /* renamed from: c */
-    public String mapTypeStr = AppState.emptyStr;
+    public String mapTypeStr = Storage.emptyStr;
 
     /* renamed from: d */
-    public String phone = AppState.emptyStr;
+    public String phone = Storage.emptyStr;
 
     /* renamed from: e */
-    public String email = AppState.emptyStr;
+    public String email = Storage.emptyStr;
 
     /* renamed from: f */
-    public String nickname = AppState.emptyStr;
+    public String nickname = Storage.emptyStr;
 
     /* renamed from: g */
-    public String zoomStr = AppState.emptyStr;
+    public String zoomStr = Storage.emptyStr;
 
     /* renamed from: h */
-    public String address = AppState.emptyStr;
+    public String address = Storage.emptyStr;
 
     /* renamed from: i */
     public int gender = 2;
@@ -119,8 +119,8 @@ public final class VCard {
             strArr[6] = buffer.readWideStr();
             strArr[7] = buffer.readWideStr();
         } else {
-            strArr[6] = AppState.emptyStr;
-            strArr[7] = AppState.emptyStr;
+            strArr[6] = Storage.emptyStr;
+            strArr[7] = Storage.emptyStr;
         }
         return strArr;
     }
@@ -171,7 +171,7 @@ public final class VCard {
 
     /* renamed from: e */
     public final void clearCoordinates() {
-        String str = AppState.emptyStr;
+        String str = Storage.emptyStr;
         this.lonStr = str;
         this.latStr = str;
         this.dirty = false;

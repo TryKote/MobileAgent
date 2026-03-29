@@ -4,6 +4,8 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.MapKeys;
+import com.trykote.mobileagent.core.SettingsKeys;
+import com.trykote.mobileagent.core.Storage;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.IOUtils;
 import com.trykote.mobileagent.util.RemoteLogger;
@@ -49,7 +51,7 @@ public final class SocketWrapper {
                             break;
                         }
                         try {
-                            int optionValue = AppState.getInt(b + 107);
+                            int optionValue = Storage.state().getBlockInt(SettingsKeys.SOCKET_OPTIONS_BASE, b);
                             if (optionValue >= 0) {
                                 socketConnection.setSocketOption(b, optionValue);
                             }
@@ -65,7 +67,7 @@ public final class SocketWrapper {
                 wrapper.asyncBuffer = new ByteBuffer();
                 new AsyncTask(AsyncTaskId.SOCKET_READER, wrapper);
             }
-            AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
+            Storage.state().getVector(MapKeys.SLOT_MAP_TILE_REQUEST).addElement(wrapper);
             return wrapper;
         } catch (IOException e) {
             RemoteLogger.log("NET", "SocketWrapper.open FAILED after " + (System.currentTimeMillis() - t0) + "ms", e);
@@ -142,7 +144,7 @@ public final class SocketWrapper {
         this.connection = null;
         this.inputStream = null;
         this.outputStream = null;
-        Utils.removeFrom(AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST), this);
+        Utils.removeFrom(Storage.state().getVector(MapKeys.SLOT_MAP_TILE_REQUEST), this);
     }
 
     public void asyncReaderLoop() {
@@ -202,7 +204,7 @@ public final class SocketWrapper {
     /* renamed from: c */
     public static final void closeAll() {
         RemoteLogger.log("NET", "closeAllConnections");
-        java.util.Vector connections = AppState.getVector(MapKeys.SLOT_MAP_TILE_REQUEST);
+        java.util.Vector connections = Storage.state().getVector(MapKeys.SLOT_MAP_TILE_REQUEST);
         int size = connections.size();
         while (true) {
             size--;

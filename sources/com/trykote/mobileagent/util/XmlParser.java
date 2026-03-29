@@ -184,7 +184,7 @@ public final class XmlParser {
                     if (StringUtils.matchesKey(1046, text2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        endTag = text2.endsWith(AppState.getString(StringResKeys.STR_SPACE));
+                        endTag = text2.endsWith(Storage.resources().getString(StringResKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                             length2--;
@@ -202,7 +202,7 @@ public final class XmlParser {
                                 String attrName = StringUtils.prefix(token, eqIdx);
                                 int i3 = eqIdx + 1;
                                 if (i3 >= token.length()) {
-                                    hashtable.put(attrName, AppState.emptyStr);
+                                    hashtable.put(attrName, Storage.emptyStr);
                                 } else {
                                     int i4 = i3;
                                     char c6 = token.charAt(i4);
@@ -233,7 +233,7 @@ public final class XmlParser {
                             z3 = true;
                             length2--;
                         }
-                        endTag = text2.endsWith(AppState.getString(StringResKeys.STR_SPACE));
+                        endTag = text2.endsWith(Storage.resources().getString(StringResKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                         }

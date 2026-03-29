@@ -46,7 +46,7 @@ public final class MapUtils {
             return handleMapPointAction(obj);
         }
         ScreenManager.processScreenForm();
-        String query = Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_SEARCH_QUERY));
+        String query = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_SEARCH_QUERY));
         if (StringUtils.isEmpty(query)) {
             return NotificationHelper.showError(351);
         }
@@ -77,47 +77,47 @@ public final class MapUtils {
             }
         } else {
             String encodedQuery = Conversation.replaceText(query, 1046, 199350);
-            Image mapImage = AppState.getImage(MapKeys.OBJ_FONT_2);
+            Image mapImage = Storage.state().getImage(MapKeys.OBJ_FONT_2);
             long currentLat = MapRenderer.currentLat;
             new AsyncTask(AsyncTaskId.FETCH_MAP_POINTS, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_MAPSSEARCH).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(PackedStringKeys.PARAM_USER_LAT).writeLongAsString(currentLat).writeCompressed(PackedStringKeys.PARAM_USER_LON).writeLongAsString(MapRenderer.currentLon).writeCompressed(PackedStringKeys.PARAM_X_SCREEN).writeIntAsString(mapImage.getWidth()).writeCompressed(PackedStringKeys.PARAM_Y_SCREEN).writeIntAsString(mapImage.getHeight()).getStringAndClear());
         }
-        return AppState.getBool(UIKeys.FLAG_LOADING) ? 161 : 6;
+        return Storage.state().getBool(UIKeys.FLAG_LOADING) ? 161 : 6;
     }
 
     /* renamed from: c */
     public static final int handleMapPointAction(Object obj) {
-        if (AppState.getBool(UIKeys.FLAG_NEW_MESSAGE)) {
+        if (Storage.state().getBool(UIKeys.FLAG_NEW_MESSAGE)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
             return ScreenId.MAP;
         }
-        if (!AppState.getBool(UIKeys.FLAG_LOADING)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_LOADING)) {
             MapController.navigateToPoint((MapPoint) obj, true);
             return ScreenId.MAP;
         }
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         account.profileManager.setMapLocation((MapPoint) obj);
         account.profileManager.sync();
-        AppState.setInt(UIKeys.FLAG_LOADING, 0);
+        Storage.state().setInt(UIKeys.FLAG_LOADING, 0);
         return ScreenId.PROFILE_EDIT;
     }
 
     /* renamed from: f */
     public static final void requestNearbyPeople() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_QUANTITY_DENSITY);
+        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_QUANTITY_DENSITY);
         long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
-        int iM586d = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int iM586d = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
         long j = MapRenderer.currentPixelX;
         int i = MapRenderer.viewportWidth / 2;
         long jM318a = pixelToCoord((int) (j + i), iM586d) - pixelToCoord((int) (MapRenderer.currentPixelX - i), iM586d);
         long j2 = MapRenderer.currentPixelY;
         int i2 = MapRenderer.viewportHeight / 2;
         ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (pixelToCoord((int) (j2 + i2), iM586d) - pixelToCoord((int) (MapRenderer.currentPixelY - i2), iM586d)))), 100));
-        VCard.staticTs1 = (int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
-        VCard.staticTs2 = (int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
-        VCard.staticTs3 = (int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
-        VCard.staticTs4 = (int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
-        VCard.staticTs5 = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
-        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{c0043nM1314d.getStringAndClear(), ObjectPool.integerOf(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL))});
+        VCard.staticTs1 = (int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs2 = (int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs3 = (int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs4 = (int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
+        VCard.staticTs5 = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{c0043nM1314d.getStringAndClear(), ObjectPool.integerOf(Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL))});
     }
 
     /* renamed from: b */

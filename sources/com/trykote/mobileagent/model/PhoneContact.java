@@ -98,7 +98,7 @@ public final class PhoneContact implements ListItem, Identifiable {
     @Override // p000.ListItem
     /* renamed from: x */
     public final String getText() {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(AppState.getString(StringResKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(Storage.resources().getString(StringResKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
     }
 
     @Override // p000.ListItem

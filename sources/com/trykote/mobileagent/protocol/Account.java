@@ -304,9 +304,9 @@ public abstract class Account {
         String errorMsg;
         Throwable th = this.connection.exception;
         if (null == th) {
-            errorMsg = AppState.getString(StringResKeys.STR_TIMEOUT_ERROR);
+            errorMsg = Storage.resources().getString(StringResKeys.STR_TIMEOUT_ERROR);
         } else {
-            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(AppState.getString(StringResKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(Storage.resources().getString(StringResKeys.STR_ERROR_SEPARATOR)).append(Storage.state().getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
         RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
         EventDispatcher.postAccountMessage(this, errorMsg);
@@ -336,7 +336,7 @@ public abstract class Account {
     }
 
     public final void handleError(int errorCode) {
-        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_ACCOUNT_CONNECTED)).append(this).append(AppState.getString(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_ACCOUNT_CONNECTED)).append(this).append(Storage.resources().getString(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(Storage.resources().getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -381,8 +381,8 @@ public abstract class Account {
             return;
         }
         ContactListManager.deleteContact(contact);
-        AppState.getVector(UIKeys.VEC_PENDING_CONNECTIONS).addElement(contact);
-        contact.statusCode = AppState.getInt(RuntimeKeys.INT_CURRENT_TIMESTAMP);
+        Storage.state().getVector(UIKeys.VEC_PENDING_CONNECTIONS).addElement(contact);
+        contact.statusCode = Storage.state().getInt(RuntimeKeys.INT_CURRENT_TIMESTAMP);
         contact.dirty = true;
     }
 

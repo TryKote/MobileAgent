@@ -21,9 +21,9 @@ public final class MiscHandler extends BaseScreenHandler {
         switch (screenId) {
             case ScreenId.FIRST_RUN:
                 NotificationHelper.showConfirmDialog(57, 730);
-                AppState.setLong(SessionKeys.TIMESTAMP_FIRST_RUN, System.currentTimeMillis());
+                Storage.state().setLong(SessionKeys.TIMESTAMP_FIRST_RUN, System.currentTimeMillis());
                 Object[] objArr2 = new Object[1];
-                AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr2;
+                Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, objArr2);
                 new AsyncTask(AsyncTaskId.FETCH_TILE_BUFFER, objArr2);
                 DiagnosticReporter.checkCrashReport();
                 return;
@@ -39,7 +39,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.PHONE_INPUT: {
                 ListView screen6 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT);
                 for (int i14 = 0; i14 < 15; i14++) {
-                    screen6.addTextItem(AppState.getString(i14 + 48));
+                    screen6.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i14));
                 }
                 ScreenManager.showScreen(screen6);
                 return;
@@ -47,13 +47,13 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.SERVER_ADDRESS: {
                 ListView screen7 = ScreenManager.createScreen(ScreenDef.SERVER_ADDRESS);
                 for (int i15 = 0; i15 < 15; i15++) {
-                    screen7.addTextItem(AppState.getString(i15 + 48));
+                    screen7.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i15));
                 }
                 ScreenManager.showScreen(screen7);
                 return;
             }
             case ScreenId.REGION_SELECTOR: {
-                Vector regions = AppState.getVector(MapKeys.VEC_MAP_POINTS);
+                Vector regions = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
                 int size9 = regions.size();
                 if (size9 == 0) {
                     NotificationHelper.showMessageById(397);
@@ -72,7 +72,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.PHONE_INPUT_ALT: {
                 ListView screen9 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT_ALT);
                 for (int i17 = 0; i17 < 15; i17++) {
-                    screen9.addTextItem(AppState.getString(i17 + 48));
+                    screen9.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i17));
                 }
                 ScreenManager.showScreen(screen9);
                 return;
@@ -80,7 +80,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.URL_OPEN: {
                 ListView screen10 = ScreenManager.createScreen(ScreenDef.URL_OPEN);
                 for (int i18 = 0; i18 < 15; i18++) {
-                    screen10.addTextItem(AppState.getString(i18 + 48));
+                    screen10.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i18));
                 }
                 ScreenManager.showScreen(screen10);
                 return;
@@ -88,7 +88,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.CONVERSATION:
                 return;
             case ScreenId.VERSION_SELECT:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VERSION_SELECT).selectByTitle(AppState.getString(StringResKeys.STR_PRIVACY_MODE_BASE + ((MmpProtocol) AppState.getAccount()).getPendingVersion())));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VERSION_SELECT).selectByTitle(Storage.resources().getString(StringResKeys.STR_PRIVACY_MODE_BASE + ((MmpProtocol) Storage.state().getAccount()).getPendingVersion())));
                 return;
             case ScreenId.EMPTY_SCREEN:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.EMPTY_SCREEN));
@@ -104,13 +104,13 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             case ScreenId.FORM_LIST: {
                 ListView screen18 = ScreenManager.createScreen(ScreenDef.FORM_LIST);
-                Vector vector2 = ((Conversation) AppState.pool[UIKeys.SLOT_TEMP_OBJECT_1]).items;
+                Vector vector2 = ((Conversation) Storage.state().getObject(UIKeys.SLOT_TEMP_OBJECT_1)).items;
                 int size14 = vector2.size();
                 while (true) {
                     size14--;
                     if (size14 < 0) {
                         ScreenManager.showScreen(screen18);
-                        AppState.clearIndex(UIKeys.SLOT_TEMP_OBJECT_1);
+                        Storage.state().clearIndex(UIKeys.SLOT_TEMP_OBJECT_1);
                         return;
                     } else {
                         ListItem listItem = (ListItem) vector2.elementAt(size14);
@@ -127,7 +127,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 break;
             case ScreenId.MAIN_SCREEN:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAIN_SCREEN));
-                if (AppState.getBool(SessionKeys.FLAG_HAS_XMPP_ACCOUNT)) {
+                if (Storage.state().getBool(SessionKeys.FLAG_HAS_XMPP_ACCOUNT)) {
                     TimerManager.disableBacklight();
                     return;
                 }
@@ -135,9 +135,9 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.SHARE_MEDIA:
                 NotificationHelper.showConfirmDialog(78, 861);
                 Vector params8 = ObjectPool.newVector();
-                params8.addElement(AppState.getVector(UIKeys.SLOT_MEDIA_STREAM));
-                JsonParser.addIntToVector(params8, AppState.getBool(UIKeys.FLAG_SPECIAL_KEY_MODE) ? 1 : 0);
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_AJAX_SPAMABUSE), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_SPAMABUSE)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
+                params8.addElement(Storage.state().getVector(UIKeys.SLOT_MEDIA_STREAM));
+                JsonParser.addIntToVector(params8, Storage.state().getBool(UIKeys.FLAG_SPECIAL_KEY_MODE) ? 1 : 0);
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_AJAX_SPAMABUSE), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_SPAMABUSE)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
                 return;
             case ScreenId.SHARE_ALERT:
                 NotificationHelper.showAlertById(79, 863);
@@ -175,7 +175,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.CONVERSATION:
                 return MapController.handleMapPointAction(data);
             case ScreenId.VERSION_SELECT:
-                return ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(action);
+                return ((MmpProtocol) Storage.state().getAccount()).scheduleVersionUpdate(action);
             case ScreenId.EMPTY_SCREEN:
                 return 0;
             case ScreenId.WIFI_NETWORKS:
@@ -185,14 +185,14 @@ public final class MiscHandler extends BaseScreenHandler {
                 String loginLower = XmppMailRuProtocol.getLoginLowerCase();
                 String fullLogin = loginLower;
                 if (!XmppMailRuProtocol.isMailRuDomain(loginLower)) {
-                    fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(694, AppState.getInt(SessionKeys.INT_SERVER_INDEX)));
+                    fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(694, Storage.state().getInt(SessionKeys.INT_SERVER_INDEX)));
                 }
                 if (XmppMailRuProtocol.isValidUsername(fullLogin)) {
                     String str2 = fullLogin;
-                    String password = Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_PASSWORD));
-                    String firstName = Utils.defaultStr(AppState.getString(UIKeys.SLOT_SCREEN_TITLE));
-                    int intVal3 = AppState.getInt(SettingsKeys.INT_SETTINGS_THEME);
-                    AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = RegistrationService.createRegRequest(str2, 0, password, firstName, 0 == intVal3 ? Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_DEVICE_ID)) : (String) Utils.splitNonEmpty(AppState.getString(StringResKeys.STR_MENU_REG_SMS), (char) 0).elementAt(intVal3), Utils.defaultStr(AppState.getString(UIKeys.SLOT_APP_VERSION_STRING)), Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_FIRST_NAME)), Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_LAST_NAME)), AppState.getInt(RegistrationKeys.INT_SEARCH_GENDER), AppState.getInt(RegistrationKeys.INT_SEARCH_AGE), AppState.getInt(RegistrationKeys.INT_REG_DOMAIN_INDEX), AppState.getInt(RegistrationKeys.INT_COUNTRY_CODE), AppState.getInt(RegistrationKeys.INT_REGION_CODE), AppState.getString(MapKeys.STR_MAP_LOCATION_NAME), AppState.getString(MapKeys.STR_MAP_LOCATION_URL));
+                    String password = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD));
+                    String firstName = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_SCREEN_TITLE));
+                    int intVal3 = Storage.state().getInt(SettingsKeys.INT_SETTINGS_THEME);
+                    Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, RegistrationService.createRegRequest(str2, 0, password, firstName, 0 == intVal3 ? Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_DEVICE_ID)) : (String) Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_MENU_REG_SMS), (char) 0).elementAt(intVal3), Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_APP_VERSION_STRING)), Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_FIRST_NAME)), Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_LAST_NAME)), Storage.state().getInt(RegistrationKeys.INT_SEARCH_GENDER), Storage.state().getInt(RegistrationKeys.INT_SEARCH_AGE), Storage.state().getInt(RegistrationKeys.INT_REG_DOMAIN_INDEX), Storage.state().getInt(RegistrationKeys.INT_COUNTRY_CODE), Storage.state().getInt(RegistrationKeys.INT_REGION_CODE), Storage.state().getString(MapKeys.STR_MAP_LOCATION_NAME), Storage.state().getString(MapKeys.STR_MAP_LOCATION_URL)));
                     return 13;
                 } else {
                     return NotificationHelper.showError(559);
@@ -220,7 +220,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return MrimProfileManager.applyPhotoSelection();
             case ScreenId.ACCOUNT_SETUP:
                 if (action == ScreenId.XMPP_LOGIN) {
-                    AppState.setInt(SessionKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
+                    Storage.state().setInt(SessionKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
                 }
                 return 0;
         }
@@ -248,8 +248,8 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.URL_OPEN:
                 return 0;
             case ScreenId.CONVERSATION:
-                AppState.setInt(ContactKeys.FLAG_CONTACTS_LOADED, 0);
-                AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
+                Storage.state().setInt(ContactKeys.FLAG_CONTACTS_LOADED, 0);
+                Storage.state().setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
                 return 0;
             case ScreenId.VERSION_SELECT:
                 return 0;
@@ -286,28 +286,28 @@ public final class MiscHandler extends BaseScreenHandler {
     public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.VERSION_CHECK:
-                AppState.clearIndex(UIKeys.SLOT_SCREEN_TITLE);
-                AppState.clearIndex(UIKeys.SLOT_SCREEN_SUBTITLE);
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(UIKeys.SLOT_SCREEN_TITLE);
+                Storage.state().clearIndex(UIKeys.SLOT_SCREEN_SUBTITLE);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 break;
             case ScreenId.CONVERSATION:
-                AppState.setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
-                AppState.setInt(UIKeys.FLAG_LOADING, 0);
+                Storage.state().setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
+                Storage.state().setInt(UIKeys.FLAG_LOADING, 0);
                 break;
             case ScreenId.SHARE_MEDIA:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 break;
             case ScreenId.PHOTO_SELECTOR:
                 MrimProfileManager.photoUrlList = null;
                 MrimProfileManager.contactIdList = null;
                 break;
             case ScreenId.REG_FORM:
-                AppState.clearIndex(ChatKeys.SLOT_CHAT_NAME);
-                AppState.clearIndex(RegistrationKeys.SLOT_PASSWORD);
-                AppState.clearIndex(UIKeys.SLOT_SCREEN_TITLE);
-                AppState.setInt(SessionKeys.INT_SERVER_INDEX, 0);
-                AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, 0);
-                AppState.clearRange(MapKeys.SLOT_MAP_SEARCH_QUERY, MapKeys.STR_MAP_LOCATION_URL);
+                Storage.state().clearIndex(ChatKeys.SLOT_CHAT_NAME);
+                Storage.state().clearIndex(RegistrationKeys.SLOT_PASSWORD);
+                Storage.state().clearIndex(UIKeys.SLOT_SCREEN_TITLE);
+                Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, 0);
+                Storage.state().setInt(SettingsKeys.INT_SETTINGS_THEME, 0);
+                Storage.state().clearRange(MapKeys.SLOT_MAP_SEARCH_QUERY, MapKeys.STR_MAP_LOCATION_URL);
                 AppController.clearPreviewState();
                 StringUtils.resetRegForm();
                 break;
@@ -315,10 +315,10 @@ public final class MiscHandler extends BaseScreenHandler {
                 ScreenManager.clearFormFields();
                 break;
             case ScreenId.PHONE_CONTACTS:
-                AppState.clearRange(UIKeys.RANGE_PHONE_CONTACT_START, RegistrationKeys.OBJ_SEARCH_RESULT);
+                Storage.state().clearRange(UIKeys.RANGE_PHONE_CONTACT_START, RegistrationKeys.OBJ_SEARCH_RESULT);
                 break;
             case ScreenId.ASYNC_TASK:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 break;
         }
     }
@@ -347,7 +347,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.CONVERSATION:
                 return MapController.handleMapPointAction(data);
             case ScreenId.VERSION_SELECT:
-                return ((MmpProtocol) AppState.getAccount()).scheduleVersionUpdate(selectedOption);
+                return ((MmpProtocol) Storage.state().getAccount()).scheduleVersionUpdate(selectedOption);
             case ScreenId.EMPTY_SCREEN:
                 return 0;
             case ScreenId.WIFI_NETWORKS:
@@ -376,7 +376,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return MrimProfileManager.applyPhotoSelection();
             case ScreenId.ACCOUNT_SETUP:
                 if (selectedOption == ScreenId.XMPP_LOGIN) {
-                    AppState.setInt(SessionKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
+                    Storage.state().setInt(SessionKeys.INT_PROTOCOL_TYPE, Account.TYPE_XMPP);
                 }
                 return 0;
         }
@@ -386,7 +386,7 @@ public final class MiscHandler extends BaseScreenHandler {
     public int onIdleProcess(ListView screen, MenuItem item, Object data, String title) {
         switch (screen.screenId) {
             case ScreenId.FIRST_RUN:
-                return AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[0] == null ? 0 : ScreenId.VERSION_CHECK;
+                return Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[0] == null ? 0 : ScreenId.VERSION_CHECK;
             case ScreenId.VERSION_CHECK:
                 return 0;
             case ScreenId.TOS_SCREEN:
@@ -422,7 +422,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.EDIT_SCREEN:
                 return 0;
             case ScreenId.ASYNC_TASK:
-                return AppState.getString(UIKeys.SLOT_INIT_PARAMS) == null ? 0 : ScreenId.BLOG_POST;
+                return Storage.state().getString(UIKeys.SLOT_INIT_PARAMS) == null ? 0 : ScreenId.BLOG_POST;
             case ScreenId.MAIN_SCREEN:
                 return 0;
             case ScreenId.SHARE_MEDIA: {
@@ -440,7 +440,7 @@ public final class MiscHandler extends BaseScreenHandler {
                             size6--;
                             if (size6 >= 0) {
                                 String jsonValue = JsonParser.getVectorString(jsonArray, size6);
-                                MrimAccount mrimAccount4 = (MrimAccount) AppState.getAccount();
+                                MrimAccount mrimAccount4 = (MrimAccount) Storage.state().getAccount();
                                 ChatRoom selectedChatRoom3 = mrimAccount4.chatRoomManager.findByName(jsonValue);
                                 Message message;
                                 if (selectedChatRoom3 != null && (message = selectedChatRoom3.getMessage(jsonValue)) != null) {
@@ -491,8 +491,8 @@ public final class MiscHandler extends BaseScreenHandler {
         if (invitees.size() == 0) {
             return NotificationHelper.showError(775);
         }
-        invitees.addElement(((MrimAccount) AppState.getAccount()).login);
-        AppState.pool[UIKeys.SLOT_SCREEN_TITLE] = invitees;
+        invitees.addElement(((MrimAccount) Storage.state().getAccount()).login);
+        Storage.state().setObject(UIKeys.SLOT_SCREEN_TITLE, invitees);
         return ScreenId.SEND_DATA;
     }
 
@@ -520,28 +520,28 @@ public final class MiscHandler extends BaseScreenHandler {
 
     /* renamed from: d */
     public static final int setSelectedObject(Object obj) {
-        AppState.pool[RuntimeKeys.SLOT_MSG_ID_1] = obj;
+        Storage.state().setObject(RuntimeKeys.SLOT_MSG_ID_1, obj);
         return 0;
     }
 
     public static int handleStarAction(Object searchResult) {
-        AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT] = searchResult;
+        Storage.state().setObject(RegistrationKeys.OBJ_SEARCH_RESULT, searchResult);
         return ScreenId.SEARCH_ENTRY;
     }
 
     public static int handleEventObject(Object chatRoomObj) {
-        AppState.setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, ((ChatRoom) chatRoomObj).id);
+        Storage.state().setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, ((ChatRoom) chatRoomObj).id);
         return 0;
     }
 
     public static int handleEditAction(int mode) {
         MapController.applyViewMode(mode == 0, mode != 0, true);
-        AppState.setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
+        Storage.state().setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
         return 0;
     }
 
     public static int openUrl(String url) {
-        AppState.setObject(UIKeys.SLOT_STATUS_TEXT, new StringBuffer().append(Utils.getMessageBuffer()).append(url).toString());
+        Storage.state().setObject(UIKeys.SLOT_STATUS_TEXT, new StringBuffer().append(Utils.getMessageBuffer()).append(url).toString());
         return 0;
     }
 
@@ -558,8 +558,8 @@ public final class MiscHandler extends BaseScreenHandler {
         while (true) {
             itemIdx--;
             if (itemIdx < 0) {
-                if (item.title.equals(AppState.getString(StringResKeys.STR_MENU_OPTIONS))) {
-                    String optionStr = selectedIndex == 0 ? Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_DEVICE_ID)) : options[selectedIndex];
+                if (item.title.equals(Storage.resources().getString(StringResKeys.STR_MENU_OPTIONS))) {
+                    String optionStr = selectedIndex == 0 ? Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_DEVICE_ID)) : options[selectedIndex];
                     Object[] phoneData = (Object[]) phoneItem.data;
                     phoneItem.clear().setAction(phoneData[4], optionStr, phoneData[1], phoneData[2], phoneData[3]);
                 }
@@ -567,7 +567,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 break;
             } else {
                 MenuItem entry = (MenuItem) items.elementAt(itemIdx);
-                if (entry.id == 15 && entry.title.startsWith(AppState.getString(StringResKeys.STR_MENU_PHONE_PREFIX))) {
+                if (entry.id == 15 && entry.title.startsWith(Storage.resources().getString(StringResKeys.STR_MENU_PHONE_PREFIX))) {
                     phoneItem = entry;
                 }
             }

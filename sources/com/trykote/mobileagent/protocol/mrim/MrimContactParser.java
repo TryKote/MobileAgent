@@ -15,16 +15,16 @@ public abstract class MrimContactParser {
         ContactInfo contactInfo = ContactInfo.createForAccount(account);
         switch (i) {
             case 0:
-                contactInfo.setContactName(AppState.getString(StringResKeys.STR_DEFAULT_CONTACT_NAME));
+                contactInfo.setContactName(Storage.resources().getString(StringResKeys.STR_DEFAULT_CONTACT_NAME));
                 break;
             case 1:
                 contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
                 break;
             default:
-                contactInfo.setContactName(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
+                contactInfo.setContactName(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
                 break;
         }
-        AppState.pool[RegistrationKeys.SLOT_REG_PARAM_1] = contactInfo;
+        Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_1, contactInfo);
     }
 
     /* renamed from: b */
@@ -42,8 +42,8 @@ public abstract class MrimContactParser {
                 nameIndex = 914;
                 break;
         }
-        AppState.setInt(RuntimeKeys.INT_ERROR_MSG_INDEX, nameIndex);
-        AppState.pool[RegistrationKeys.SLOT_REG_PARAM_4] = contacts;
+        Storage.state().setInt(RuntimeKeys.INT_ERROR_MSG_INDEX, nameIndex);
+        Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_4, contacts);
     }
 
     /* renamed from: c */
@@ -65,7 +65,7 @@ public abstract class MrimContactParser {
                 nameIndex = 914;
                 break;
         }
-        EventDispatcher.postNotification(AppState.getString(nameIndex));
+        EventDispatcher.postNotification(Storage.state().getString(nameIndex));
     }
 
     /* renamed from: d */
@@ -78,7 +78,7 @@ public abstract class MrimContactParser {
             if (null != contact) {
                 String fullName = contactInfo.getFullName();
                 contact.setDisplayName(fullName);
-                account.validateGroupAdd(email, fullName, AppState.getString(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
+                account.validateGroupAdd(email, fullName, Storage.resources().getString(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
             }
         }
     }
@@ -108,7 +108,7 @@ public abstract class MrimContactParser {
     */
     private static final Vector parseMrimContacts(MrimAccount account, ByteBuffer buffer) {
         Vector result = ObjectPool.newVector();
-        Vector fieldNames = Utils.splitByNull(AppState.getString(StringResKeys.STR_REG_FIELD_NAMES));
+        Vector fieldNames = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_REG_FIELD_NAMES));
         int fieldCount = buffer.readInt();
         int contactCount = buffer.readInt();
         buffer.readInt();

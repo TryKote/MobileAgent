@@ -27,13 +27,13 @@ public final class ProfileHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_RESULTS));
                 return;
             case ScreenId.SEARCH_RESULT_LIST:
-                int errorMsgId = AppState.getInt(RuntimeKeys.INT_ERROR_MSG_INDEX);
+                int errorMsgId = Storage.state().getInt(RuntimeKeys.INT_ERROR_MSG_INDEX);
                 if (0 != errorMsgId) {
                     clearSearchResults2();
                     NotificationHelper.showMessageById(errorMsgId);
                     return;
                 }
-                Vector searchResults = AppState.getVector(RegistrationKeys.SLOT_REG_PARAM_4);
+                Vector searchResults = Storage.state().getVector(RegistrationKeys.SLOT_REG_PARAM_4);
                 if (0 != searchResults.size()) {
                     ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEARCH_RESULT_LIST), searchResults));
                     return;
@@ -44,7 +44,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                 }
             case ScreenId.USER_PROFILE:
                 if (AppController.pendingAccount == null && AppController.pendingUrl == null) {
-                    Contact contact = AppState.getCurrentContact();
+                    Contact contact = Storage.state().getCurrentContact();
                     String statusText = AppController.getPendingDisplayText();
                     NotificationHelper.showErrorOrConfirm(102, 728, statusText != null ? contact.account.getResourceId((Object) statusText) : loadUserProfile(contact.getIdentifier(), contact.account));
                     return;
@@ -55,7 +55,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                     return;
                 }
             case ScreenId.PROFILE_LOAD:
-                ContactInfo contactInfo = (ContactInfo) AppState.pool[ContactKeys.SLOT_CONTACT_INFO];
+                ContactInfo contactInfo = (ContactInfo) Storage.state().getObject(ContactKeys.SLOT_CONTACT_INFO);
                 NotificationHelper.showErrorOrConfirm(107, 728, contactInfo.getAccount().getResourceId((Object) contactInfo.getEmailOrMmpId()));
                 return;
             case ScreenId.VCARD_ACTIONS:
@@ -65,14 +65,14 @@ public final class ProfileHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PEOPLE_SEARCH));
                 return;
             case ScreenId.PROFILE_EDIT:
-                StringBuffer stringBuffer = new StringBuffer(AppState.getString(StringResKeys.STR_REGISTRATION_TEXT));
-                stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).profileManager.profile.gender + 780));
-                AppState.setFromBuffer(UIKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
+                StringBuffer stringBuffer = new StringBuffer(Storage.resources().getString(StringResKeys.STR_REGISTRATION_TEXT));
+                stringBuffer.append(Storage.state().getString(((MrimAccount) Storage.state().getAccount()).profileManager.profile.gender + 780));
+                Storage.state().setFromBuffer(UIKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
                 lastTileLoadTime = System.currentTimeMillis();
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_EDIT));
                 return;
             case ScreenId.SEARCH_ENTRY:
-                AppState.setCurrentEntity((Object) null);
+                Storage.state().setCurrentEntity((Object) null);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SEARCH_ENTRY));
                 return;
         }
@@ -84,7 +84,7 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULTS:
                 return handleEnterKey();
             case ScreenId.SEARCH_RESULT_LIST:
-                AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = data;
+                Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, data);
                 return 0;
             case ScreenId.USER_PROFILE:
                 return -1;
@@ -109,10 +109,10 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULT_LIST:
                 return 0;
             case ScreenId.USER_PROFILE:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 return 0;
             case ScreenId.PROFILE_LOAD:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 return 0;
             case ScreenId.VCARD_ACTIONS:
                 return 0;
@@ -144,7 +144,7 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULTS:
                 return 0;
             case ScreenId.SEARCH_RESULT_LIST:
-                AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = data;
+                Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, data);
                 return 0;
             case ScreenId.USER_PROFILE:
                 return -1;
@@ -169,9 +169,9 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.SEARCH_RESULT_LIST:
                 return 0;
             case ScreenId.USER_PROFILE:
-                return AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
+                return Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
             case ScreenId.PROFILE_LOAD:
-                return AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
+                return Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[2] == null ? 0 : ScreenId.CAPTCHA;
             case ScreenId.VCARD_ACTIONS:
                 return 0;
             case ScreenId.PEOPLE_SEARCH:
@@ -186,9 +186,9 @@ public final class ProfileHandler extends BaseScreenHandler {
 
     /* renamed from: h */
     public static final int syncAndReturn() {
-        ((MrimAccount) AppState.getAccount()).profileManager.sync();
-        if (AppState.getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
-            return AppState.getInt(SessionKeys.INT_CONNECTION_STATE);
+        ((MrimAccount) Storage.state().getAccount()).profileManager.sync();
+        if (Storage.state().getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
+            return Storage.state().getInt(SessionKeys.INT_CONNECTION_STATE);
         }
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -205,12 +205,12 @@ public final class ProfileHandler extends BaseScreenHandler {
         } else {
             ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(PackedStringKeys.URL_OBRAZ_FOTO);
             int dotIndex = domain.indexOf(46);
-            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(RuntimeKeys.INT_ASYNC_TASK_ID));
+            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + Storage.state().getInt(RuntimeKeys.INT_ASYNC_TASK_ID));
         }
         objArr[0] = urlBuffer.getStringAndClear();
         objArr[1] = targetAccount;
         objArr[2] = null;
-        AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr;
+        Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, objArr);
         new AsyncTask(AsyncTaskId.DOWNLOAD_PHOTO, objArr);
         return 0;
     }
@@ -223,22 +223,22 @@ public final class ProfileHandler extends BaseScreenHandler {
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId, 1));
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) Storage.state().getObject(RegistrationKeys.OBJ_SEARCH_RESULT)).userId, 1));
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.CONTACT_DELETE;
             case 1:
                 if (onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId, 2));
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) Storage.state().getObject(RegistrationKeys.OBJ_SEARCH_RESULT)).userId, 2));
                 return ScreenId.MAP;
             case 2:
                 return AppController.dialPhoneContactNext();
             case 3:
                 return AppController.dialPhoneContactPrev();
             default:
-                AppState.setInt(RuntimeKeys.INT_ASYNC_TASK_ID, 0);
-                AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId);
+                Storage.state().setInt(RuntimeKeys.INT_ASYNC_TASK_ID, 0);
+                AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) Storage.state().getObject(RegistrationKeys.OBJ_SEARCH_RESULT)).userId);
                 ScreenBuilder.onScreenClosed();
                 return 0;
         }
@@ -246,8 +246,8 @@ public final class ProfileHandler extends BaseScreenHandler {
 
     public static int handleScreenAction(int taskId) {
         ScreenBuilder.onScreenClosed();
-        AppState.setInt(RuntimeKeys.INT_ASYNC_TASK_ID, taskId);
-        return AppState.getInt(UIKeys.INT_CURRENT_SCREEN_ID);
+        Storage.state().setInt(RuntimeKeys.INT_ASYNC_TASK_ID, taskId);
+        return Storage.state().getInt(UIKeys.INT_CURRENT_SCREEN_ID);
     }
 
     public static int handleEnterKey() {
@@ -261,14 +261,14 @@ public final class ProfileHandler extends BaseScreenHandler {
     }
 
     public static void resetSearchResults() {
-        AppState.clearRange(RuntimeKeys.SLOT_MSG_SUBJECT, RuntimeKeys.SLOT_MSG_EXTRA_1);
+        Storage.state().clearRange(RuntimeKeys.SLOT_MSG_SUBJECT, RuntimeKeys.SLOT_MSG_EXTRA_1);
     }
 
     private static void restoreState() {
-        ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast().clear();
+        ((MrimAccount) Storage.state().getAccount()).chatRoomManager.getLast().clear();
     }
 
     public static void clearSearchResults2() {
-        AppState.clearRange(RegistrationKeys.SLOT_REG_PARAM_3, ContactKeys.SLOT_CONTACT_INFO);
+        Storage.state().clearRange(RegistrationKeys.SLOT_REG_PARAM_3, ContactKeys.SLOT_CONTACT_INFO);
     }
 }

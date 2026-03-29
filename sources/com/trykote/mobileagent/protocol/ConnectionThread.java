@@ -38,7 +38,7 @@ public final class ConnectionThread {
     public ConnectionThread(String str) {
         this.connUrl = str;
         RemoteLogger.log("CONN", "new ConnectionThread url=" + str);
-        Vector vectorM614m = AppState.getVector(UIKeys.SLOT_MEDIA_CONTROL);
+        Vector vectorM614m = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
         if (vectorM614m != null) {
             synchronized (vectorM614m) {
                 vectorM614m.addElement(IOUtils.registerResource(this));
@@ -79,7 +79,7 @@ public final class ConnectionThread {
         switch (this.state) {
             case STATE_CONNECTING:
                 try {
-                    this.socket = SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeRawString(this.connUrl).getStringAndClear(), AppState.getBool(SettingsKeys.SETTING_COMPRESSION_ENABLED));
+                    this.socket = SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeRawString(this.connUrl).getStringAndClear(), Storage.state().getBool(SettingsKeys.SETTING_COMPRESSION_ENABLED));
                     if (this.state == STATE_CONNECTING) {
                         this.state = STATE_CONNECTED;
                         RemoteLogger.log("CONN", "state 1->2 (socket opened)");
@@ -107,7 +107,7 @@ public final class ConnectionThread {
                 this.state = STATE_CLOSED;
                 return;
             default:
-                Vector vectorM614m = AppState.getVector(UIKeys.SLOT_MEDIA_CONTROL);
+                Vector vectorM614m = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
                 if (vectorM614m != null) {
                     synchronized (vectorM614m) {
                         vectorM614m.removeElement(this);

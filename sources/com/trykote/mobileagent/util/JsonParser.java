@@ -183,7 +183,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final void putIntKey(Hashtable hashtable, int i, Object obj) {
-        hashtable.put(AppState.getString(i), obj);
+        hashtable.put(Storage.state().getString(i), obj);
     }
 
     /* renamed from: a */
@@ -198,7 +198,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final Object getValueByInt(Object obj, int i) {
-        return ((Hashtable) obj).get(AppState.getString(i));
+        return ((Hashtable) obj).get(Storage.state().getString(i));
     }
 
     /* renamed from: b */
@@ -208,7 +208,7 @@ public abstract class JsonParser {
 
     /* renamed from: b */
     public static final int getIntByInt(Object obj, int i) {
-        return ((Integer) getValue(obj, AppState.getString(i))).intValue();
+        return ((Integer) getValue(obj, Storage.state().getString(i))).intValue();
     }
 
     /* renamed from: c */
@@ -218,7 +218,7 @@ public abstract class JsonParser {
 
     /* renamed from: c */
     public static final String getStringByInt(Object obj, int i) {
-        return (String) getValue(obj, AppState.getString(i));
+        return (String) getValue(obj, Storage.state().getString(i));
     }
 
     /* renamed from: d */
@@ -244,7 +244,7 @@ public abstract class JsonParser {
     /* renamed from: a */
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ObjectPool.JSON_NULL) {
-            stringBuffer.append(AppState.getString(StringResKeys.STR_SEPARATOR));
+            stringBuffer.append(Storage.resources().getString(StringResKeys.STR_SEPARATOR));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);
         } else if (obj instanceof String) {

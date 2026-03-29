@@ -430,6 +430,43 @@ class CfgWriter:
         return bytes(self.data)
 
 
+def _flatten_zones(config):
+    """Reconstruct a flat objectPool array from zone-grouped config.
+
+    Supports both formats:
+    - Legacy: config['objectPool'] (flat array)
+    - Zones: config['zones'] (array of {name, items} objects)
+
+    Returns a flat list of 1406 entries in positional order.
+    """
+    if 'objectPool' in config:
+        return config['objectPool']
+
+    flat = [None] * OBJECT_POOL_SIZE
+
+    for zone in config['zones']:
+        next_auto_pos = 0  # for state zone items 0-294 without explicit position
+        for item in zone['items']:
+            if 'position' in item:
+                pos = item['position']
+            else:
+                # Auto-assign sequential position (state zone 0-294)
+                while flat[next_auto_pos] is not None:
+                    next_auto_pos += 1
+                pos = next_auto_pos
+                next_auto_pos += 1
+            if flat[pos] is not None:
+                raise ValueError(f"Duplicate position {pos} in zone '{zone['name']}'")
+            flat[pos] = item
+
+    # Fill remaining None slots with null entries
+    for i in range(OBJECT_POOL_SIZE):
+        if flat[i] is None:
+            flat[i] = {'type': 'null'}
+
+    return flat
+
+
 def _blob_to_entries(blob):
     """Split packed strings blob into entries with value or bytes.
 
@@ -521,7 +558,8 @@ def _load_existing_names(config_path):
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        for obj in config['objectPool']:
+        pool = _flatten_zones(config)
+        for obj in pool:
             if obj.get('type') == 'packed_strings' and 'names' in obj:
                 return obj['names']
     except (json.JSONDecodeError, KeyError, TypeError):
@@ -1152,15 +1190,11 @@ def serialize_cfg(input_dir, cfg_path):
     writer = CfgWriter()
     names_edited = False
 
-    # Index objects by position
-    obj_map = {}
-    for obj in config['objectPool']:
-        obj_map[obj['index']] = obj
+    # Reconstruct flat pool from zones (or use legacy flat objectPool)
+    pool = _flatten_zones(config)
 
     for i in range(OBJECT_POOL_SIZE):
-        obj = obj_map.get(i)
-        if obj is None:
-            raise ValueError(f"Missing object at index {i}")
+        obj = pool[i]
 
         obj_type = obj['type']
         if obj_type == 'packed_strings':
@@ -1299,7 +1333,7 @@ def gen_java(input_dir, output_java):
 
     # Find the packed_strings entry
     ps_obj = None
-    for obj in config['objectPool']:
+    for obj in _flatten_zones(config):
         if obj.get('type') == 'packed_strings':
             ps_obj = obj
             break
@@ -1405,6 +1439,170 @@ def gen_screens(input_dir, output_java):
     print(f"Wrote {output_java} ({count} screen definitions)")
 
 
+def gen_keys(input_dir, output_dir):
+    """Generate all *Keys.java from annotated config.json.
+
+    Reads key/class/zone annotations from objectPool entries, plus intPoolKeys
+    and constants sections, and generates one Java file per class.
+    Also generates PackedStringKeys.java (absorbing --gen-java functionality).
+    """
+    config_path = os.path.join(input_dir, 'config.json')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+
+    # Collect constants per class: class_name -> [(name, value, comment)]
+    class_constants = {}
+
+    # 1. Pool entries with "key" annotation
+    pool = _flatten_zones(config)
+    for idx, obj in enumerate(pool):
+        key = obj.get('key')
+        cls = obj.get('class')
+        if key and cls:
+            comment = None
+            if obj['type'] == 'string':
+                val = obj.get('value', '')
+                comment = val if len(val) <= 60 else val[:57] + '...'
+            elif obj['type'] in ('bytes', 'string_list', 'packed_strings'):
+                comment = obj['type']
+            class_constants.setdefault(cls, []).append((key, idx, comment))
+
+    # 2. Block base constants
+    for block in config.get('blocks', []):
+        cls = block['class']
+        base = block['base']
+        count = block['count']
+        class_constants.setdefault(cls, []).append(
+            (block['key'] + '_BASE', base, f"block of {count}"))
+        class_constants.setdefault(cls, []).append(
+            (block['key'] + '_COUNT', count, None))
+
+    # 3. intPool keys
+    for entry in config.get('intPoolKeys', []):
+        cls = entry['class']
+        class_constants.setdefault(cls, []).append(
+            (entry['key'], entry['value'], None))
+
+    # 4. Pure constants
+    for entry in config.get('constants', []):
+        cls = entry['class']
+        class_constants.setdefault(cls, []).append(
+            (entry['key'], entry['value'], None))
+
+    # Generate Java files
+    total_count = 0
+    for cls, constants in sorted(class_constants.items()):
+        # Sort by value for readability
+        constants.sort(key=lambda c: c[1])
+
+        lines = []
+        lines.append('package com.trykote.mobileagent.core;')
+        lines.append('')
+        lines.append('/**')
+        lines.append(f' * Generated by tools/cfg_tool.py --gen-keys. Do not edit manually.')
+        lines.append(' */')
+        lines.append(f'public final class {cls} {{')
+        lines.append(f'    private {cls}() {{}}')
+        lines.append('')
+
+        for name, value, comment in constants:
+            if comment:
+                safe = comment.replace('*/', '* /')
+                lines.append(f'    /** {safe} */')
+            lines.append(f'    public static final int {name} = {value};')
+
+        lines.append('}')
+        lines.append('')
+
+        out_path = os.path.join(output_dir, f'{cls}.java')
+        os.makedirs(os.path.dirname(os.path.abspath(out_path)) or '.', exist_ok=True)
+        with open(out_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines))
+
+        total_count += len(constants)
+        print(f"  {cls}.java ({len(constants)} constants)")
+
+    print(f"Generated {len(class_constants)} key classes ({total_count} constants total)")
+
+
+def validate_keys(input_dir, source_dir):
+    """Compare generated Keys against existing hand-maintained ones.
+
+    Generates keys in memory and compares with actual Java files.
+    Reports missing, extra, and value-mismatched constants.
+    """
+    import re as _re
+    config_path = os.path.join(input_dir, 'config.json')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+
+    # Build expected constants from config (same logic as gen_keys)
+    expected = {}  # class -> {name: value}
+
+    pool = _flatten_zones(config)
+    for idx, obj in enumerate(pool):
+        key = obj.get('key')
+        cls = obj.get('class')
+        if key and cls:
+            expected.setdefault(cls, {})[key] = idx
+
+    for block in config.get('blocks', []):
+        cls = block['class']
+        expected.setdefault(cls, {})[block['key'] + '_BASE'] = block['base']
+        expected.setdefault(cls, {})[block['key'] + '_COUNT'] = block['count']
+
+    for entry in config.get('intPoolKeys', []):
+        cls = entry['class']
+        expected.setdefault(cls, {})[entry['key']] = entry['value']
+
+    for entry in config.get('constants', []):
+        cls = entry['class']
+        expected.setdefault(cls, {})[entry['key']] = entry['value']
+
+    # Read actual Java files
+    core_dir = os.path.join(source_dir, 'com/trykote/mobileagent/core')
+    total_issues = 0
+
+    for cls in sorted(expected.keys()):
+        java_path = os.path.join(core_dir, f'{cls}.java')
+        if not os.path.exists(java_path):
+            print(f"MISSING FILE: {java_path}")
+            total_issues += 1
+            continue
+
+        with open(java_path) as f:
+            content = f.read()
+
+        actual = {}
+        for name, val in _re.findall(
+                r'public static final int (\w+)\s*=\s*(\d+);', content):
+            actual[name] = int(val)
+
+        exp = expected[cls]
+        missing = set(exp.keys()) - set(actual.keys())
+        extra = set(actual.keys()) - set(exp.keys())
+        mismatched = {n for n in exp.keys() & actual.keys() if exp[n] != actual[n]}
+
+        issues = len(missing) + len(extra) + len(mismatched)
+        if issues == 0:
+            print(f"  {cls}: OK ({len(exp)} expected, {len(actual)} actual)")
+        else:
+            print(f"  {cls}: {issues} issue(s)")
+            for n in sorted(missing):
+                print(f"    MISSING in Java: {n} = {exp[n]}")
+            for n in sorted(extra):
+                print(f"    EXTRA in Java (not in config): {n} = {actual[n]}")
+            for n in sorted(mismatched):
+                print(f"    VALUE MISMATCH: {n} = {actual[n]} (Java) vs {exp[n]} (config)")
+            total_issues += issues
+
+    if total_issues == 0:
+        print(f"\nValidation PASSED — all {len(expected)} classes match")
+    else:
+        print(f"\nValidation found {total_issues} issue(s)")
+    return total_issues == 0
+
+
 def main():
     parser = argparse.ArgumentParser(description='MobileAgent cfg resource tool')
     group = parser.add_mutually_exclusive_group(required=True)
@@ -1420,6 +1618,10 @@ def main():
                        help='Generate ScreenDef.java from config.json')
     group.add_argument('--gen-palette', nargs=2, metavar=('INPUT_DIR', 'OUTPUT_JAVA'),
                        help='Generate PaletteKeys.java from palette.json')
+    group.add_argument('--gen-keys', nargs=2, metavar=('INPUT_DIR', 'OUTPUT_DIR'),
+                       help='Generate all *Keys.java from annotated config.json')
+    group.add_argument('--validate', nargs=2, metavar=('INPUT_DIR', 'SOURCE_DIR'),
+                       help='Validate config.json annotations against existing Keys')
 
     args = parser.parse_args()
 
@@ -1436,6 +1638,11 @@ def main():
         gen_screens(args.gen_screens[0], args.gen_screens[1])
     elif args.gen_palette:
         gen_palette(args.gen_palette[0], args.gen_palette[1])
+    elif args.gen_keys:
+        gen_keys(args.gen_keys[0], args.gen_keys[1])
+    elif args.validate:
+        success = validate_keys(args.validate[0], args.validate[1])
+        sys.exit(0 if success else 1)
 
 
 if __name__ == '__main__':

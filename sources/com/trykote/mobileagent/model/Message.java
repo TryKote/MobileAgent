@@ -48,18 +48,18 @@ public final class Message {
     public Object[] attachments;
 
     public Message(Hashtable hashtable) {
-        this.from = JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
-        this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
-        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
-        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_TO_NAME)));
-        this.priority = JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
-        setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
-        setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
-        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT)));
+        this.from = JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
+        this.timestamp = JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
+        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
+        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO_NAME)));
+        this.priority = JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
+        setFlag(4, JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
+        setFlag(1, JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
+        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT)));
     }
 
     public Message(Vector vector, String str, String str2) {
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), MailHelper.createAddressPair(account.login, Utils.defaultStr(account.chatRoomManager.nickname)));
         this.ccList = vector;
         this.subject = str;
@@ -117,10 +117,10 @@ public final class Message {
         boolean isUnread = hasFlag(4);
         int i = isUnread ? 1 : 0;
         int i2 = i;
-        int ellipsisWidth = AppState.getGfxContext(i).stringWidth(AppState.getEllipsis());
-        int availWidth = (((AppState.getInt(UIKeys.INT_SCREEN_WIDTH) - ellipsisWidth) - 240) + 227) - 10;
+        int ellipsisWidth = Storage.state().getGfxContext(i).stringWidth(Storage.state().getEllipsis());
+        int availWidth = (((Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - ellipsisWidth) - 240) + 227) - 10;
         int i3 = isUnread ? 0 : 19;
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         MenuItem item = MenuItem.create(this.from);
         item.data = this;
         String str = this.from;
@@ -137,7 +137,7 @@ public final class Message {
         }
         boolean z2 = z;
         MenuItem iconItem = item.setIcon(z ? 25 : -1);
-        Calendar cal = AppState.getCalendar();
+        Calendar cal = Storage.state().getCalendar();
         int i4 = cal.get(1);
         int i5 = cal.get(2);
         int i6 = cal.get(5);
@@ -145,9 +145,9 @@ public final class Message {
         StringBuffer sb = ObjectPool.newStringBuffer();
         String dateStr = Utils.appendSpace(ObjectPool.toStringAndRelease((i4 == cal.get(1) && i5 == cal.get(2) && i6 == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
         MenuItem textItem = iconItem.addText(dateStr, i2, 10);
-        String priorityStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('[').append(this.priority).append(AppState.getString(StringResKeys.STR_PRIORITY_SUFFIX)));
+        String priorityStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('[').append(this.priority).append(Storage.resources().getString(StringResKeys.STR_PRIORITY_SUFFIX)));
         MenuItem mainItem = textItem.addText(priorityStr, i2, i3);
-        int textWidth = AppState.getGfxContext(i2).stringWidth(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(dateStr).append(priorityStr)));
+        int textWidth = Storage.state().getGfxContext(i2).stringWidth(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(dateStr).append(priorityStr)));
         if (hasFlag(1)) {
             mainItem.setIcon(221);
             textWidth += 20;
@@ -163,11 +163,11 @@ public final class Message {
         int i7 = roomType;
         boolean z3 = false;
         if ((i7 & 1) != 0 && (toRecipient = MailHelper.getFirstRecipient(getToList())) != null) {
-            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
             z3 = true;
         }
         if ((i7 & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
-            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
         }
         boolean z4 = chatRoom == account.chatRoomManager.getLast();
         mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), i2, availWidth - 22, ellipsisWidth, z4), i2, i3);
@@ -207,7 +207,7 @@ public final class Message {
     private static String truncateText(String str, int i, int i2, int i3, boolean z) {
         int i4;
         int substringW;
-        GraphicsContext gfx = AppState.getGfxContext(i);
+        GraphicsContext gfx = Storage.state().getGfxContext(i);
         if (gfx.stringWidth(str) > i2 + i3) {
             int i5 = 4;
             int i6 = 4;
@@ -233,7 +233,7 @@ public final class Message {
 
     /* renamed from: d */
     public final String getSubject() {
-        return (this.subject == null || this.subject.length() == 0) ? AppState.getString(StringResKeys.STR_NO_SUBJECT) : this.subject;
+        return (this.subject == null || this.subject.length() == 0) ? Storage.resources().getString(StringResKeys.STR_NO_SUBJECT) : this.subject;
     }
 
     /* renamed from: e */
@@ -241,13 +241,13 @@ public final class Message {
         Hashtable hashtable = new Hashtable();
         String[] ccRecipient = MailHelper.getFirstRecipient(this.toList);
         if (ccRecipient != null) {
-            hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_FROM), ccRecipient[1]);
+            hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM), ccRecipient[1]);
         }
-        String ccKey = AppState.getString(PackedStringKeys.MAIL_FIELD_TO);
+        String ccKey = Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO);
         Vector vector = this.ccList;
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (vector != null) {
-            String str = AppState.emptyStr;
+            String str = Storage.emptyStr;
             ObjectPool.unpackChars(60);
             ObjectPool.unpackChars(62);
             String separator = ObjectPool.unpackChars(44);
@@ -257,26 +257,26 @@ public final class Message {
             }
         }
         hashtable.put(ccKey, ObjectPool.toStringAndRelease(sb));
-        hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
-        hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_BODY), this.body);
-        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_ACTION_COPY), 1);
-        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.ACTION_SEND), 1);
-        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
-        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
-        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
+        hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
+        hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_BODY), this.body);
+        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_ACTION_COPY), 1);
+        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.ACTION_SEND), 1);
+        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
+        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
+        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
         Vector attachList = ObjectPool.newVector();
         int length = this.attachments == null ? 0 : this.attachments.length;
         for (int i = 0; i < length; i++) {
             String[] strArr = (String[]) this.attachments[i];
             Hashtable hashtable2 = new Hashtable();
             for (int i2 = 1227; i2 <= 1232; i2++) {
-                hashtable2.put(AppState.getString(i2), strArr[i2 - 1227]);
+                hashtable2.put(Storage.state().getString(i2), strArr[i2 - 1227]);
             }
             attachList.addElement(hashtable2);
         }
-        hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
+        hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
         if (attachList.size() > 0) {
-            JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
+            JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
         }
         return hashtable;
     }

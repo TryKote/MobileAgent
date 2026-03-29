@@ -70,8 +70,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
         this.parentWidth = i;
         this.parentHeight = i2;
         updateFullScreenMode();
-        AppState.setDimensions(getEffectiveWidth(), getEffectiveHeight());
-        AppState.setScreen(this);
+        Storage.state().setDimensions(getEffectiveWidth(), getEffectiveHeight());
+        Storage.state().setScreen(this);
     }
 
     /* renamed from: c */
@@ -102,7 +102,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
 
     /* renamed from: a */
     public final void updateFullScreenMode() {
-        boolean isFullScreen = AppState.getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE);
+        boolean isFullScreen = Storage.state().getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE);
         if (isFullScreen) {
             if (this.okCommand != null) {
                 removeCommand(this.okCommand);
@@ -115,7 +115,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         }
         setFullScreenMode(isFullScreen);
         this.fullScreen = isFullScreen;
-        AppState.setDimensions(getEffectiveWidth(), getEffectiveHeight());
+        Storage.state().setDimensions(getEffectiveWidth(), getEffectiveHeight());
     }
 
     public final void paint(Graphics graphics) {
@@ -125,7 +125,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
             synchronized (AppController.appLock) {
                 if (!AppController.isShuttingDown) {
                     XmppContactGroup.incrementCacheCounter();
-                    Vector events = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
+                    Vector events = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
                     int size = events.size();
                     if (size > 0) {
                         int i = size;
@@ -135,16 +135,16 @@ public final class MainCanvas extends Canvas implements CommandListener {
                                 break;
                             }
                         } while (((ListView) events.elementAt(i)).offsetY != 0);
-                        int w = AppState.getInt(UIKeys.INT_SCREEN_WIDTH);
-                        int h = AppState.getInt(UIKeys.INT_SCREEN_HEIGHT);
+                        int w = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH);
+                        int h = Storage.state().getInt(UIKeys.INT_SCREEN_HEIGHT);
                         gfx.setClip(0, 0, w, h);
                         gfx.setColorFromPalette(14);
                         gfx.fillRect(0, 0, w, h);
                         while (i < size) {
                             boolean z = i == size - 1;
                             boolean z2 = z;
-                            if (z && AppState.getBool(SettingsKeys.SETTING_TRANSPARENCY) && AppState.getBool(UIKeys.FLAG_SUPPORTS_ALPHA)) {
-                                int scanW = AppState.getInt(UIKeys.INT_SCREEN_WIDTH);
+                            if (z && Storage.state().getBool(SettingsKeys.SETTING_TRANSPARENCY) && Storage.state().getBool(UIKeys.FLAG_SUPPORTS_ALPHA)) {
+                                int scanW = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH);
                                 int[] iArr = new int[scanW];
                                 int i2 = scanW;
                                 while (true) {
@@ -156,7 +156,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                                     }
                                 }
                                 Graphics graphics2 = gfx.graphics;
-                                int y = AppState.getHeight();
+                                int y = Storage.state().getHeight();
                                 while (true) {
                                     y--;
                                     if (y < 0) {
@@ -173,7 +173,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                     }
                     if (ScreenManager.hasModal()) {
                         gfx.setClip(0, 0, 2048, 2048);
-                        int iconX = AppState.getInt(UIKeys.INT_SCREEN_WIDTH) - 17;
+                        int iconX = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - 17;
                         if (AccountManager.getCombinedContactFlags() != 0) {
                             gfx.drawIcon(16384, iconX, 1);
                             iconX -= 17;
@@ -195,7 +195,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void keyRepeated(int i) {
-        if (AppState.getVector(SessionKeys.VEC_EVENT_QUEUE).size() < 3) {
+        if (Storage.state().getVector(SessionKeys.VEC_EVENT_QUEUE).size() < 3) {
             handleKeyInput(i, 1);
         }
     }
@@ -210,7 +210,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         try {
             return getKeyName(i).toUpperCase();
         } catch (Throwable unused) {
-            return AppState.emptyStr;
+            return Storage.emptyStr;
         }
     }
 
@@ -220,7 +220,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
         TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
         int gameAction = 0;
-        boolean isFullScreen = AppState.getBool(UIKeys.FLAG_FULLSCREEN_ACTIVE);
+        boolean isFullScreen = Storage.state().getBool(UIKeys.FLAG_FULLSCREEN_ACTIVE);
         try {
             gameAction = getGameAction(i);
         } catch (Throwable unused) {
@@ -237,7 +237,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                 EventDispatcher.postSelectEvent();
                 return;
             } else {
-                AppState.setBool(UIKeys.FLAG_FULLSCREEN_REQUESTED, false);
+                Storage.state().setBool(UIKeys.FLAG_FULLSCREEN_REQUESTED, false);
                 EventDispatcher.postOkEvent();
                 return;
             }
@@ -248,7 +248,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         }
         if (i2 == 0) {
             try {
-                if (AppState.getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE)) {
+                if (Storage.state().getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE)) {
                     String keyName = getKeyNameUpper(i);
                     if (i == -6 || keyName.indexOf("SEND") >= 0 || keyName.indexOf("SOFT1") >= 0 || keyName.equals("SOFTKEY 1")) {
                         EventDispatcher.postOkEvent();
@@ -256,11 +256,11 @@ public final class MainCanvas extends Canvas implements CommandListener {
                     }
                     if (i == -7 || i == 11 || keyName.indexOf("CLEAR") >= 0 || keyName.indexOf("SOFT2") >= 0 || keyName.equals("SOFTKEY 4")) {
                         if (isFullScreen) {
-                            AppState.setBool(UIKeys.FLAG_FULLSCREEN_REQUESTED, false);
+                            Storage.state().setBool(UIKeys.FLAG_FULLSCREEN_REQUESTED, false);
                         }
                         EventDispatcher.postCancelEvent();
                     } else if (isFullScreen) {
-                        AppState.setBool(UIKeys.FLAG_FULLSCREEN_REQUESTED, false);
+                        Storage.state().setBool(UIKeys.FLAG_FULLSCREEN_REQUESTED, false);
                         EventDispatcher.postOkEvent();
                     }
                 }
@@ -274,7 +274,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         pointerDownY = i2;
         TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
         TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
-        Vector events = AppState.getVector(SessionKeys.VEC_EVENT_QUEUE);
+        Vector events = Storage.state().getVector(SessionKeys.VEC_EVENT_QUEUE);
         synchronized (events) {
             events.addElement(PointerEvent.press(i, i2));
         }
@@ -287,7 +287,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         if (Utils.abs(i - pointerDownX) > 5 || Utils.abs(i2 - pointerDownY) > 5) {
             int i3 = pointerDownX;
             int i4 = pointerDownY;
-            Vector events = AppState.getVector(SessionKeys.VEC_EVENT_QUEUE);
+            Vector events = Storage.state().getVector(SessionKeys.VEC_EVENT_QUEUE);
             synchronized (events) {
                 int idx = Utils.vectorSize(events);
                 while (true) {
@@ -315,7 +315,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         int i3 = pointerDownX;
         int i4 = pointerDownY;
         boolean z = pointerDragged;
-        Vector events = AppState.getVector(SessionKeys.VEC_EVENT_QUEUE);
+        Vector events = Storage.state().getVector(SessionKeys.VEC_EVENT_QUEUE);
         synchronized (events) {
             events.addElement(PointerEvent.release(i, i2, i3, i4, z));
         }
@@ -360,7 +360,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         if (this.cancelCommand != null) {
             removeCommand(this.cancelCommand);
         }
-        boolean isFullScreen = AppState.getBool(SettingsKeys.SETTING_FULLSCREEN);
+        boolean isFullScreen = Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN);
         if (str != null) {
             Command command = new Command(str, isFullScreen ? 3 : 4, 1);
             this.okCommand = command;

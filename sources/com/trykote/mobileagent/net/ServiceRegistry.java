@@ -2,6 +2,7 @@ package com.trykote.mobileagent.net;
 
 
 import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.Storage;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
@@ -28,9 +29,9 @@ public final class ServiceRegistry {
 
     public static final void loadSavedData() {
         XmppContactGroup.sharedContactList = ObjectPool.newVector();
-        hiddenContacts = Utils.split(AppState.getString(ContactKeys.HIDDEN_CONTACTS_LIST), (char) 0);
+        hiddenContacts = Utils.split(Storage.state().getString(ContactKeys.HIDDEN_CONTACTS_LIST), (char) 0);
         try {
-            ByteBuffer c0043nM986d = Base64.decode(AppState.getString(ContactKeys.CONTACT_REGISTRY_DATA));
+            ByteBuffer c0043nM986d = Base64.decode(Storage.state().getString(ContactKeys.CONTACT_REGISTRY_DATA));
             photoRegistry = new Hashtable();
             try {
                 if (c0043nM986d.length > 0) {
@@ -47,7 +48,7 @@ public final class ServiceRegistry {
             } catch (Throwable unused) {
             }
             clearPhotoCache();
-            AppState.setInt(UIKeys.FLAG_PHOTO_REGISTRY_READY, 1);
+            Storage.state().setInt(UIKeys.FLAG_PHOTO_REGISTRY_READY, 1);
         } catch (Throwable unused2) {
         }
     }
@@ -75,18 +76,18 @@ public final class ServiceRegistry {
             photoRegistry.put(strM555c, c0040k);
         }
         photoCache = new Hashtable();
-        AppState.setInt(UIKeys.FLAG_PHOTO_REGISTRY_READY, 1);
+        Storage.state().setInt(UIKeys.FLAG_PHOTO_REGISTRY_READY, 1);
         try {
-            AppState.setObject(ContactKeys.CONTACT_REGISTRY_DATA, (Object) AppState.emptyStr);
-            AppState.setObject(ContactKeys.CONTACT_REGISTRY_DATA, (Object) serializeRegistry().toBase64());
+            Storage.state().setObject(ContactKeys.CONTACT_REGISTRY_DATA, (Object) Storage.emptyStr);
+            Storage.state().setObject(ContactKeys.CONTACT_REGISTRY_DATA, (Object) serializeRegistry().toBase64());
         } catch (Throwable unused) {
-            AppState.setObject(MapKeys.URL_GEO_CONFIG, (Object) AppState.emptyStr);
+            Storage.state().setObject(MapKeys.URL_GEO_CONFIG, (Object) Storage.emptyStr);
         }
     }
 
     public static final String getPhotoHost(Object obj) {
         NetworkUtils c0040k;
-        if (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(obj)) == null) {
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(obj)) == null) {
             return null;
         }
         return c0040k.host;
@@ -95,7 +96,7 @@ public final class ServiceRegistry {
     public static final Image getProfileImage(String str) {
         NetworkUtils c0040k;
         Image image;
-        if (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         synchronized (photoCache) {
@@ -110,7 +111,7 @@ public final class ServiceRegistry {
                 } catch (Throwable unused) {
                     if (pendingPhotoKey == null) {
                         pendingPhotoKey = str;
-                        new AsyncTask(AsyncTaskId.DOWNLOAD_CACHED_PHOTO, (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
+                        new AsyncTask(AsyncTaskId.DOWNLOAD_CACHED_PHOTO, (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
                     }
                 }
                 image = image3;
@@ -122,7 +123,7 @@ public final class ServiceRegistry {
     }
 
     public static final Vector getServiceContactIds(int i) {
-        if (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         Vector vectorM1213g = ObjectPool.newVector();
@@ -140,7 +141,7 @@ public final class ServiceRegistry {
     }
 
     public static final Vector getAllContactIds() {
-        if (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         Vector vectorM1213g = ObjectPool.newVector();
@@ -155,7 +156,7 @@ public final class ServiceRegistry {
     }
 
     public static final Vector getActiveContactIds() {
-        if (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         Vector vectorM1213g = ObjectPool.newVector();
@@ -170,7 +171,7 @@ public final class ServiceRegistry {
     }
 
     private static final int getContactStatus(Object obj) {
-        if (!AppState.getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return 2;
         }
         try {

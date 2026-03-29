@@ -113,7 +113,7 @@ public final class HttpClient {
     private HttpClient(String str) {
         this.mockMode = 1;
         this.requestType = 2;
-        this.url = str.startsWith(AppState.getString(PackedStringKeys.SCHEME_HTTP)) ? StringUtils.suffix(str, 7) : str;
+        this.url = str.startsWith(Storage.resources().getString(PackedStringKeys.SCHEME_HTTP)) ? StringUtils.suffix(str, 7) : str;
     }
 
     private HttpClient(String str, Account account, int i) throws IOException {
@@ -204,12 +204,12 @@ public final class HttpClient {
             setRequestHeader(788628, 2164851);
             setRequestHeader(919726, 788668);
         }
-        return setRequestProperty(AppState.getString(PackedStringKeys.HEADER_CONTENT_LENGTH), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
+        return setRequestProperty(Storage.resources().getString(PackedStringKeys.HEADER_CONTENT_LENGTH), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
     }
 
     /* renamed from: a */
     private final HttpClient setRequestHeader(int i, int i2) throws IOException {
-        return setRequestProperty(AppState.getString(i), AppState.getString(i2));
+        return setRequestProperty(Storage.state().getString(i), Storage.state().getString(i2));
     }
 
     /* renamed from: b */
@@ -217,7 +217,7 @@ public final class HttpClient {
         int i;
         ByteBuffer headerBuf = readHeaders();
         String str = new String(headerBuf.data, 0, headerBuf.length);
-        int idx = StringUtils.intern(str.toLowerCase()).indexOf(AppState.getString(PackedStringKeys.HEADER_CONTENT_LENGTH_LC)) + 16;
+        int idx = StringUtils.intern(str.toLowerCase()).indexOf(Storage.resources().getString(PackedStringKeys.HEADER_CONTENT_LENGTH_LC)) + 16;
         int i2 = Integer.parseInt(StringUtils.substring(str, idx, str.indexOf(13, idx)));
         ByteBuffer buffer = new ByteBuffer();
         byte[] readBuf = ObjectPool.newBytes(i2);

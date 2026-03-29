@@ -141,8 +141,8 @@ public final class MailHelper {
     }
 
     public static final void setMailAction(int i, int i2) {
-        AppState.setInt(RuntimeKeys.INT_XMPP_ACTION, i);
-        AppState.setInt(RuntimeKeys.INT_XMPP_ACTION_TYPE, i2);
+        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION, i);
+        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION_TYPE, i2);
     }
 
     public static final int processMailResponse() {
@@ -159,8 +159,8 @@ public final class MailHelper {
         if (validationResult != 0) {
             return validationResult;
         }
-        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
+        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(4);
         Object jsonPayload = ApiClient.getJsonPayload();
@@ -179,7 +179,7 @@ public final class MailHelper {
         message.attachments = objArr;
         String str = (String) JsonParser.getValueByInt(jsonPayload, 919493);
         if (str == null) {
-            bodyText = AppState.emptyStr;
+            bodyText = Storage.emptyStr;
         } else {
             StringBuffer sb = ObjectPool.newStringBuffer();
             int length = str.length();
@@ -210,18 +210,18 @@ public final class MailHelper {
     }
 
     private static final int handleMailRedirect() {
-        int action = AppState.getInt(RuntimeKeys.INT_XMPP_ACTION);
+        int action = Storage.state().getInt(RuntimeKeys.INT_XMPP_ACTION);
         if (action == 54) {
-            Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID)).getMessage(AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID));
+            Message message = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID)).getMessage(Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID));
             Vector toList = message.getToList();
             Vector ccList = message.getCcList();
             getFirstRecipient(toList);
             String subject = message.getSubject();
             String str = message.body;
-            String replyPrefix = AppState.getString(PackedStringKeys.PREFIX_REPLY);
-            String fwdPrefix = AppState.getString(PackedStringKeys.PREFIX_FORWARD);
-            String string = new StringBuffer().append(AppState.getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(str)).toString();
-            switch (AppState.getInt(RuntimeKeys.INT_XMPP_ACTION_TYPE)) {
+            String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
+            String fwdPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
+            String string = new StringBuffer().append(Storage.resources().getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(str)).toString();
+            switch (Storage.state().getInt(RuntimeKeys.INT_XMPP_ACTION_TYPE)) {
                 case 0:
                     composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
                     break;
@@ -241,19 +241,19 @@ public final class MailHelper {
 
     /* renamed from: a */
     public static final int handleMailMenuAction(String str, int i) {
-        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
         wrapInVector(messageId);
-        int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         getFirstRecipient(toList);
-        boolean needsAuth = AppState.getBool(SettingsKeys.SETTING_AUTH_REQUIRED);
-        String replyPrefix = AppState.getString(PackedStringKeys.PREFIX_REPLY);
-        String forwardPrefix = AppState.getString(PackedStringKeys.PREFIX_FORWARD);
-        String body = AppState.emptyStr;
+        boolean needsAuth = Storage.state().getBool(SettingsKeys.SETTING_AUTH_REQUIRED);
+        String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
+        String body = Storage.emptyStr;
         if (i == 48) {
             ScreenBuilder.onScreenClosed();
             ScreenBuilder.onScreenClosed();
@@ -280,32 +280,32 @@ public final class MailHelper {
             return 0;
         }
         if (StringUtils.matchesKey(855, str)) {
-            AppState.setInt(ChatKeys.INT_CHAT_VIEW_MODE, 2);
+            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, 2);
             return 0;
         }
         if (StringUtils.matchesKey(856, str)) {
-            AppState.setInt(ChatKeys.INT_CHAT_VIEW_MODE, 1);
+            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, 1);
             return 0;
         }
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        AppState.setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+        Storage.state().setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
         return 0;
     }
 
     /* renamed from: a */
     public static final int handleMailForwardAction(String str) {
-        String strM584b = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
-        int iM586d = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        String strM584b = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        int iM586d = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         Message message = account.chatRoomManager.findById(iM586d).getMessage(strM584b);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String strM584b2 = AppState.getString(PackedStringKeys.PREFIX_REPLY);
-        String strM584b3 = AppState.getString(PackedStringKeys.PREFIX_FORWARD);
-        String str2 = ((MrimAccount) AppState.getAccount()).login;
+        String strM584b2 = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
+        String strM584b3 = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
+        String str2 = ((MrimAccount) Storage.state().getAccount()).login;
         wrapInVector(strM584b);
         if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
@@ -321,7 +321,7 @@ public final class MailHelper {
             if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
-            AppState.setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+            Storage.state().setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
             return 0;
         }
         ScreenBuilder.onScreenClosed();
@@ -355,17 +355,17 @@ public final class MailHelper {
 
     public static int composeEmail(Vector recipients, String subject, String bodyText) {
         StringBuffer recipientsSb = ObjectPool.newStringBuffer();
-        String empty = AppState.emptyStr;
+        String empty = Storage.emptyStr;
         String separator = ObjectPool.unpackChars(8236);
         int i = 0;
         while (i < Utils.vectorSize(recipients)) {
             recipientsSb.append(i > 0 ? separator : empty).append(((String[]) recipients.elementAt(i))[0]);
             i++;
         }
-        AppState.setObject(RuntimeKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
-        AppState.setObject(RuntimeKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(subject));
-        String empty2 = AppState.emptyStr;
-        AppState.setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(AppState.getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : empty2).append(AppState.getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : empty2).append(Utils.defaultStr(bodyText)).append(AppState.getString(StringResKeys.STR_TRAFFIC_LABEL)));
+        Storage.state().setObject(RuntimeKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
+        Storage.state().setObject(RuntimeKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(subject));
+        String empty2 = Storage.emptyStr;
+        Storage.state().setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : empty2).append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : empty2).append(Utils.defaultStr(bodyText)).append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_LABEL)));
         return ScreenId.COMPOSE_MESSAGE;
     }
 }

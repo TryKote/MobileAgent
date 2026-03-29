@@ -39,7 +39,7 @@ public final class XmlElement {
 
     /* renamed from: a */
     public static final XmlElement createFromState(int i) {
-        return new XmlElement(AppState.getString(i));
+        return new XmlElement(Storage.state().getString(i));
     }
 
     public XmlElement(int i) {
@@ -58,7 +58,7 @@ public final class XmlElement {
 
     /* renamed from: a */
     public final XmlElement setIntAttribute(int i, int i2) {
-        addTextChild(AppState.getString(i), AppState.getString(i2));
+        addTextChild(Storage.state().getString(i), Storage.state().getString(i2));
         return this;
     }
 
@@ -82,7 +82,7 @@ public final class XmlElement {
 
     /* renamed from: b */
     public final String getIntAttribute(int i) {
-        return getAttribute(AppState.getString(i));
+        return getAttribute(Storage.state().getString(i));
     }
 
     /* renamed from: c */
@@ -107,7 +107,7 @@ public final class XmlElement {
 
     /* renamed from: a */
     public final XmlElement setAttrValue(int i, String str) {
-        return setAttrImpl(AppState.getString(i), str);
+        return setAttrImpl(Storage.state().getString(i), str);
     }
 
     /* renamed from: b */
@@ -132,7 +132,7 @@ public final class XmlElement {
 
     /* renamed from: f */
     public final XmlElement findChildByKey(int i) {
-        return findChildByName(AppState.getString(i));
+        return findChildByName(Storage.state().getString(i));
     }
 
     /* renamed from: e */
@@ -228,12 +228,12 @@ public final class XmlElement {
 
     /* renamed from: h */
     public final XmlElement addIdAttr(int i) {
-        return setAttrValue(333027, AppState.getString(i));
+        return setAttrValue(333027, Storage.state().getString(i));
     }
 
     /* renamed from: i */
     public final XmlElement addNameAttr(int i) {
-        return setAttrValue(262589, AppState.getString(i));
+        return setAttrValue(262589, Storage.state().getString(i));
     }
 
     /* renamed from: a */
@@ -248,17 +248,17 @@ public final class XmlElement {
 
     /* renamed from: b */
     public final XmlElement addChildWithId(int i, int i2) {
-        return addTextChild(AppState.getString(i), (String) null).addIdAttr(i2);
+        return addTextChild(Storage.state().getString(i), (String) null).addIdAttr(i2);
     }
 
     /* renamed from: c */
     public final XmlElement addSimpleChild(int i, int i2) {
-        return addChild(new XmlElement(AppState.getString(i)).addIdAttr(i2));
+        return addChild(new XmlElement(Storage.state().getString(i)).addIdAttr(i2));
     }
 
     /* renamed from: a */
     public final String getNameAttr() {
-        return getAttribute(AppState.getString(PackedStringKeys.ATTR_TYPE));
+        return getAttribute(Storage.resources().getString(PackedStringKeys.ATTR_TYPE));
     }
 
     /* renamed from: c */
@@ -266,7 +266,7 @@ public final class XmlElement {
         try {
             return StringUtils.fromBuffer(findChildByName(str).textContent);
         } catch (Throwable unused) {
-            return AppState.emptyStr;
+            return Storage.emptyStr;
         }
     }
 
@@ -279,7 +279,7 @@ public final class XmlElement {
                 return null;
             }
             XmlElement child = getChildAt(idx);
-            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(AppState.getString(PackedStringKeys.XML_ATTR_XMLNS)))) {
+            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(Storage.resources().getString(PackedStringKeys.XML_ATTR_XMLNS)))) {
                 return child;
             }
         }
@@ -287,6 +287,6 @@ public final class XmlElement {
 
     /* renamed from: b */
     public final XmlElement cloneElement() {
-        return addNameAttr(398982).setAttrValue(131590, getAttribute(AppState.getString(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
+        return addNameAttr(398982).setAttrValue(131590, getAttribute(Storage.resources().getString(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
     }
 }

@@ -12,7 +12,7 @@ public abstract class RegistrationService {
 
     /* renamed from: a */
     public static final int handleRegSubmit(Object[] objArr) {
-        AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+        Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         String statusCode = (String) objArr[20];
         if (statusCode != null) {
             if (Utils.parseInt((Object) statusCode) == 0) {
@@ -28,15 +28,15 @@ public abstract class RegistrationService {
                 objArr[21] = ObjectPool.integerOf(-1);
             }
         }
-        AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr;
+        Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, objArr);
         return 164;
     }
 
     /* renamed from: b */
     public static final void processRegForm() {
         String domain;
-        Object[] objArr = (Object[]) AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA];
-        AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+        Object[] objArr = (Object[]) Storage.state().getObject(RegistrationKeys.OBJ_REGISTRATION_DATA);
+        Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         String email = (String) objArr[7];
         String login = email;
         int atIndex = email.indexOf(64);
@@ -44,10 +44,10 @@ public abstract class RegistrationService {
             domain = StringUtils.suffix(login, atIndex);
             login = StringUtils.prefix(login, atIndex);
         } else {
-            domain = AppState.emptyStr;
+            domain = Storage.emptyStr;
         }
         int i = 0;
-        Vector domains = Utils.splitNonEmpty(AppState.getString(StringResKeys.STR_DOMAIN_LIST), (char) 0);
+        Vector domains = Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_DOMAIN_LIST), (char) 0);
         int size = domains.size();
         while (true) {
             size--;
@@ -58,26 +58,26 @@ public abstract class RegistrationService {
             }
         }
         ObjectPool.releaseVector(domains);
-        AppState.pool[MapKeys.SLOT_MAP_SEARCH_QUERY] = objArr[3];
-        AppState.pool[MapKeys.STR_MAP_LOCATION_NAME] = objArr[4];
-        AppState.pool[MapKeys.STR_MAP_LOCATION_URL] = objArr[5];
-        AppState.pool[ChatKeys.SLOT_CHAT_NAME] = login;
-        AppState.setInt(SessionKeys.INT_SERVER_INDEX, i);
-        AppState.pool[RegistrationKeys.SLOT_PASSWORD] = objArr[9];
-        AppState.pool[UIKeys.SLOT_SCREEN_TITLE] = objArr[10];
-        AppState.setInt(SettingsKeys.INT_SETTINGS_THEME, ((Integer) objArr[11]).intValue());
-        AppState.pool[RegistrationKeys.SLOT_DEVICE_ID] = objArr[12];
-        AppState.pool[UIKeys.SLOT_APP_VERSION_STRING] = objArr[13];
-        AppState.pool[RegistrationKeys.SLOT_FIRST_NAME] = objArr[14];
-        AppState.pool[RegistrationKeys.SLOT_LAST_NAME] = objArr[15];
-        AppState.setInt(RegistrationKeys.INT_SEARCH_GENDER, ((Integer) objArr[16]).intValue());
-        AppState.setInt(RegistrationKeys.INT_SEARCH_AGE, ((Integer) objArr[17]).intValue());
-        AppState.setInt(RegistrationKeys.INT_REG_DOMAIN_INDEX, ((Integer) objArr[18]).intValue());
-        AppState.setInt(RegistrationKeys.INT_COUNTRY_CODE, ((Integer) objArr[19]).intValue());
-        AppState.pool[ContactKeys.SLOT_DISPLAY_NAME] = objArr[20];
-        AppState.setInt(RegistrationKeys.INT_REGION_CODE, ((Integer) objArr[21]).intValue());
+        Storage.state().setObject(MapKeys.SLOT_MAP_SEARCH_QUERY, objArr[3]);
+        Storage.state().setObject(MapKeys.STR_MAP_LOCATION_NAME, objArr[4]);
+        Storage.state().setObject(MapKeys.STR_MAP_LOCATION_URL, objArr[5]);
+        Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, login);
+        Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, i);
+        Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, objArr[9]);
+        Storage.state().setObject(UIKeys.SLOT_SCREEN_TITLE, objArr[10]);
+        Storage.state().setInt(SettingsKeys.INT_SETTINGS_THEME, ((Integer) objArr[11]).intValue());
+        Storage.state().setObject(RegistrationKeys.SLOT_DEVICE_ID, objArr[12]);
+        Storage.state().setObject(UIKeys.SLOT_APP_VERSION_STRING, objArr[13]);
+        Storage.state().setObject(RegistrationKeys.SLOT_FIRST_NAME, objArr[14]);
+        Storage.state().setObject(RegistrationKeys.SLOT_LAST_NAME, objArr[15]);
+        Storage.state().setInt(RegistrationKeys.INT_SEARCH_GENDER, ((Integer) objArr[16]).intValue());
+        Storage.state().setInt(RegistrationKeys.INT_SEARCH_AGE, ((Integer) objArr[17]).intValue());
+        Storage.state().setInt(RegistrationKeys.INT_REG_DOMAIN_INDEX, ((Integer) objArr[18]).intValue());
+        Storage.state().setInt(RegistrationKeys.INT_COUNTRY_CODE, ((Integer) objArr[19]).intValue());
+        Storage.state().setObject(ContactKeys.SLOT_DISPLAY_NAME, objArr[20]);
+        Storage.state().setInt(RegistrationKeys.INT_REGION_CODE, ((Integer) objArr[21]).intValue());
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGISTRATION_FORM));
-        String statusStr = AppState.getString(ContactKeys.SLOT_DISPLAY_NAME);
+        String statusStr = Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME);
         if (statusStr == null) {
             RemoteLogger.log("NET", "triggering refreshContactList from RegistrationService");
             ContactListManager.refreshContactList();
@@ -86,14 +86,14 @@ public abstract class RegistrationService {
         int statusCode = Utils.parseInt((Object) statusStr);
         int messageId = statusCode == 78 ? 818 : statusCode == 101 ? 819 : statusCode == 114 ? 820 : statusCode == 150 ? 821 : statusCode == 152 ? 822 : statusCode == 154 ? 823 : statusCode == 155 ? 824 : statusCode == 175 ? 825 : statusCode == 555 ? 826 : statusCode == 573 ? 827 : statusCode == 4003 ? 828 : statusCode == 4004 ? 829 : statusCode == 5005 ? 830 : 831;
         int msgIdx = messageId;
-        String message = AppState.getString(messageId);
+        String message = Storage.state().getString(messageId);
         NotificationHelper.showNotification(msgIdx != 831 ? message : new StringBuffer().append(message).append(statusCode).toString());
     }
 
     /* renamed from: i */
     public static final Object[] newRequest() {
-        String url = AppState.getString(PackedStringKeys.URL_SIGNUP);
-        String empty = AppState.emptyStr;
+        String url = Storage.resources().getString(PackedStringKeys.URL_SIGNUP);
+        String empty = Storage.emptyStr;
         Integer zero = ObjectPool.integerOf(0);
         Integer minusOne = ObjectPool.integerOf(-1);
         return startAsyncRequest(0, url, new Object[]{null, null, null, null, null, null, null, empty, zero, empty, empty, zero, empty, empty, empty, empty, zero, zero, minusOne, zero, null, minusOne});
@@ -101,7 +101,7 @@ public abstract class RegistrationService {
 
     /* renamed from: a */
     public static final Object[] createRegRequest(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_XHTML_WAP_MAIL_RU)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ObjectPool.integerOf(0), str2, str3, ObjectPool.integerOf(0), str4, str5, str6, str7, ObjectPool.integerOf(i2), ObjectPool.integerOf(i3), ObjectPool.integerOf(i4), ObjectPool.integerOf(i5), null, ObjectPool.integerOf(i6)});
+        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_XHTML_WAP_MAIL_RU)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, Storage.resources().getString(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ObjectPool.integerOf(0), str2, str3, ObjectPool.integerOf(0), str4, str5, str6, str7, ObjectPool.integerOf(i2), ObjectPool.integerOf(i3), ObjectPool.integerOf(i4), ObjectPool.integerOf(i5), null, ObjectPool.integerOf(i6)});
     }
 
     /* renamed from: a */
@@ -158,50 +158,50 @@ public abstract class RegistrationService {
     }
 
     private static void setUpdateFlag(byte b) {
-        AppState.getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] = b;
+        Storage.state().getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] = b;
     }
 
     private static boolean isUpdatePending() {
-        return AppState.getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] != 0;
+        return Storage.state().getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] != 0;
     }
 
     public static int checkForUpdates() {
-        synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
-            if (!isUpdatePending() && System.currentTimeMillis() > AppState.getLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK) + 86400000) {
-                AppState.setLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK, System.currentTimeMillis());
+        synchronized (Storage.state().getObject(UIKeys.SLOT_MEDIA_RESOURCE)) {
+            if (!isUpdatePending() && System.currentTimeMillis() > Storage.state().getLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK) + 86400000) {
+                Storage.state().setLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK, System.currentTimeMillis());
                 setUpdateFlag((byte) 1);
                 new AsyncTask(AsyncTaskId.FETCH_UPDATE_STATUS);
             }
             if (isUpdatePending()) {
                 return -1;
             }
-            return AppState.getInt(SettingsKeys.SETTING_UPDATE_STATUS);
+            return Storage.state().getInt(SettingsKeys.SETTING_UPDATE_STATUS);
         }
     }
 
     public static void fetchUpdateStatus() {
         try {
             NetworkLock.acquireNetworkLock();
-            HttpClient httpConn = HttpClient.createHttpClient(AppState.getString(PackedStringKeys.URL_SETTINGS_XML), (Account) null, 3);
+            HttpClient httpConn = HttpClient.createHttpClient(Storage.resources().getString(PackedStringKeys.URL_SETTINGS_XML), (Account) null, 3);
             if (httpConn.getResponseCode() == 200) {
                 ByteBuffer buffer = new ByteBuffer(httpConn);
-                synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
-                    AppState.setInt(SettingsKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(PackedStringKeys.TAG_SNAP_LOGINS)) != 0 ? 1 : 0);
+                synchronized (Storage.state().getObject(UIKeys.SLOT_MEDIA_RESOURCE)) {
+                    Storage.state().setInt(SettingsKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(PackedStringKeys.TAG_SNAP_LOGINS)) != 0 ? 1 : 0);
                 }
-                synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                synchronized (Storage.state().getObject(UIKeys.SLOT_MEDIA_RESOURCE)) {
                     setUpdateFlag((byte) 0);
                 }
                 HttpClient.closeAndUpdateStats(httpConn);
                 NetworkLock.releaseNetworkLock();
             } else {
-                synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                synchronized (Storage.state().getObject(UIKeys.SLOT_MEDIA_RESOURCE)) {
                     setUpdateFlag((byte) 0);
                     HttpClient.closeAndUpdateStats((HttpClient) null);
                     NetworkLock.releaseNetworkLock();
                 }
             }
         } catch (Throwable unused) {
-            synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+            synchronized (Storage.state().getObject(UIKeys.SLOT_MEDIA_RESOURCE)) {
                 setUpdateFlag((byte) 0);
                 HttpClient.closeAndUpdateStats((HttpClient) null);
                 NetworkLock.releaseNetworkLock();
@@ -210,8 +210,8 @@ public abstract class RegistrationService {
     }
 
     public static void processUpdateResult() {
-        boolean showMessage = AppState.getBool(UIKeys.FLAG_SHOW_NOTIFICATION);
-        Object obj = AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[0];
+        boolean showMessage = Storage.state().getBool(UIKeys.FLAG_SHOW_NOTIFICATION);
+        Object obj = Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[0];
         if (obj instanceof Integer) {
             if (showMessage) {
                 NotificationHelper.showMessageById(((Integer) obj).intValue());
@@ -236,9 +236,9 @@ public abstract class RegistrationService {
                 }
                 urlSb.append((char) ch);
             }
-            AppState.setFromBuffer(UIKeys.SLOT_SCREEN_TITLE, versionSb);
-            AppState.setFromBuffer(UIKeys.SLOT_SCREEN_SUBTITLE, urlSb);
-            if (parseVersionNumber(AppState.getString(StringResKeys.STR_APP_NAME)) >= parseVersionNumber(AppState.getString(UIKeys.SLOT_SCREEN_TITLE))) {
+            Storage.state().setFromBuffer(UIKeys.SLOT_SCREEN_TITLE, versionSb);
+            Storage.state().setFromBuffer(UIKeys.SLOT_SCREEN_SUBTITLE, urlSb);
+            if (parseVersionNumber(Storage.resources().getString(StringResKeys.STR_APP_NAME)) >= parseVersionNumber(Storage.state().getString(UIKeys.SLOT_SCREEN_TITLE))) {
                 if (showMessage) {
                     NotificationHelper.showMessageById(731);
                 }
@@ -253,7 +253,7 @@ public abstract class RegistrationService {
     }
 
     public static int applyVersionLabel() {
-        AppState.setFromPool(UIKeys.SLOT_SAVED_STRING, UIKeys.SLOT_SCREEN_SUBTITLE);
+        Storage.state().setFromPool(UIKeys.SLOT_SAVED_STRING, UIKeys.SLOT_SCREEN_SUBTITLE);
         return 0;
     }
 

@@ -66,7 +66,7 @@ public final class MrimAccount extends Account implements ListItem {
         super(accountId, login, password);
         this.lastError = 0;
         this.configFlags = 1;
-        MrimContactGroup defaultGrp = new MrimContactGroup(this, -1, 102, AppState.getString(StringResKeys.STR_GROUP_DEFAULT));
+        MrimContactGroup defaultGrp = new MrimContactGroup(this, -1, 102, Storage.resources().getString(StringResKeys.STR_GROUP_DEFAULT));
         defaultGrp.isSpecial = true;
         this.defaultGroup = defaultGrp;
         this.isHighlighted = true;
@@ -167,22 +167,22 @@ public final class MrimAccount extends Account implements ListItem {
 
     @Override
     public final ContactGroup createOnlineGroup() {
-        return new MrimContactGroup(this, -1, 101, AppState.getString(StringResKeys.STR_GROUP_NOT_IN_LIST));
+        return new MrimContactGroup(this, -1, 101, Storage.resources().getString(StringResKeys.STR_GROUP_NOT_IN_LIST));
     }
 
     @Override
     public final ContactGroup createBlockedGroup() {
-        return new MrimContactGroup(this, -1, 104, AppState.getString(StringResKeys.STR_GROUP_TEMPORARY));
+        return new MrimContactGroup(this, -1, 104, Storage.resources().getString(StringResKeys.STR_GROUP_TEMPORARY));
     }
 
     @Override
     public final ContactGroup createOfflineGroup() {
-        return new MrimContactGroup(this, -1, 103, AppState.getString(StringResKeys.STR_GROUP_IGNORE));
+        return new MrimContactGroup(this, -1, 103, Storage.resources().getString(StringResKeys.STR_GROUP_IGNORE));
     }
 
     @Override
     public final ContactGroup createSpecialGroup() {
-        return new MrimContactGroup(this, -1, 105, AppState.getString(StringResKeys.STR_GROUP_PHONE_CONTACTS));
+        return new MrimContactGroup(this, -1, 105, Storage.resources().getString(StringResKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
     public final MrimContactGroup getFirstContactGroup() {
@@ -232,7 +232,7 @@ public final class MrimAccount extends Account implements ListItem {
                 RemoteLogger.log("MRIM", "progress STARTING, connecting to redirect server");
                 this.msgCount = 20;
                 this.state = 0;
-                this.connection = new ConnectionThread(AppState.getString(PackedStringKeys.HOST_MRIM_REDIRECT));
+                this.connection = new ConnectionThread(Storage.resources().getString(PackedStringKeys.HOST_MRIM_REDIRECT));
                 this.progress = PROGRESS_CONNECTING_REDIRECT;
                 AppController.needsRepaint = true;
                 break;
@@ -389,11 +389,11 @@ public final class MrimAccount extends Account implements ListItem {
     }
 
     private void handleHelloAck(ByteBuffer packet) throws Throwable {
-        long pingInterval = Utils.min(packet.readInt(), AppState.getBool(UIKeys.FLAG_WIFI_CONNECTION) ? 25 : 45) * 1000;
+        long pingInterval = Utils.min(packet.readInt(), Storage.state().getBool(UIKeys.FLAG_WIFI_CONNECTION) ? 25 : 45) * 1000;
         this.timeout = pingInterval;
         this.deadline = System.currentTimeMillis() + pingInterval;
         ByteBuffer authPacket = new ByteBuffer().writeStringLatin1(this.login).writeStringLatin1(getFormattedName());
-        boolean useExtended = AppState.getBool(SettingsKeys.SETTING_EXTENDED_STATUS);
+        boolean useExtended = Storage.state().getBool(SettingsKeys.SETTING_EXTENDED_STATUS);
         sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_LOGIN2, authPacket.writeIntLE(useExtended ? -1 : 22).writeStringLatin1(useExtended ? null : new ByteBuffer().writeCompressed(PackedStringKeys.MRIM_CLIENT_VERSION).writeExtendedInt(2229599).getStringAndClear()).writeCompressed(PackedStringKeys.MRIM_GEO_LIST_PACKET).writeStringLatin1(XmppContactGroup.buildAuthData()).writeBuffer(XmppContactGroup.buildSyncPayload(this))));
         this.progress = PROGRESS_LOGGED_IN;
     }
@@ -457,7 +457,7 @@ public final class MrimAccount extends Account implements ListItem {
             int prevReserved = this.reserved1;
             this.reserved1 = prevReserved + 1;
             if (prevReserved != 0) {
-                AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 0);
+                Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 0);
             }
             Hashtable headers = new Hashtable();
             String headerKey = null;
@@ -471,13 +471,13 @@ public final class MrimAccount extends Account implements ListItem {
                 if (!parsingValue) {
                     if (ch == '\n' && lineBuffer.length() == 0) {
                         ObjectPool.toStringAndRelease(lineBuffer);
-                        String typeCodeStr = (String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_MULTICHAT));
+                        String typeCodeStr = (String) headers.get(Storage.resources().getString(PackedStringKeys.HEADER_X_MRIM_MULTICHAT));
                         int typeCode = typeCodeStr != null ? -1 : Integer.parseInt(typeCodeStr);
                         messageType = typeCode;
-                        senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT)), 13)).readAllWideStr();
-                        headerRef = (String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SENDER));
-                        messageFlags = Integer.parseInt((String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_FLAGS)), 16);
-                        timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_DATE)));
+                        senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT)), 13)).readAllWideStr();
+                        headerRef = (String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SENDER));
+                        messageFlags = Integer.parseInt((String) headers.get(Storage.resources().getString(PackedStringKeys.HEADER_X_MRIM_FLAGS)), 16);
+                        timestamp = Utils.parseDateTime((String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_DATE)));
                         encodingType = 1;
                         if ((messageFlags & 128) != 0) {
                             String bodyText = StringUtils.suffix(rawText, pos);
@@ -489,12 +489,12 @@ public final class MrimAccount extends Account implements ListItem {
                             }
                         } else {
                             int tagIdx = StringUtils.indexOfPackedLong(rawText, 57408234938722L);
-                            messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(PackedStringKeys.MRIM_MESSAGE_DELIMITER), tagIdx))).readAllWideStr();
+                            messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(Storage.resources().getString(PackedStringKeys.MRIM_MESSAGE_DELIMITER), tagIdx))).readAllWideStr();
                         }
                         if (messageType != -1 || (messageType >= 0 && messageType <= 5 && messageType != 1 && messageType != 3)) {
-                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_FROM))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
+                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
                         }
-                        AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
+                        Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
                         return;
                     } else if (ch == ':') {
                         headerKey = ObjectPool.toString(lineBuffer, false);
@@ -512,25 +512,25 @@ public final class MrimAccount extends Account implements ListItem {
                 pos++;
             }
             ObjectPool.toStringAndRelease(lineBuffer);
-            String typeCodeStr = (String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_MULTICHAT));
+            String typeCodeStr = (String) headers.get(Storage.resources().getString(PackedStringKeys.HEADER_X_MRIM_MULTICHAT));
             int typeCode = typeCodeStr != null ? -1 : Integer.parseInt(typeCodeStr);
             messageType = typeCode;
-            senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT)), 13)).readAllWideStr();
-            headerRef = (String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SENDER));
-            messageFlags = Integer.parseInt((String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_FLAGS)), 16);
-            timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_DATE)));
+            senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT)), 13)).readAllWideStr();
+            headerRef = (String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SENDER));
+            messageFlags = Integer.parseInt((String) headers.get(Storage.resources().getString(PackedStringKeys.HEADER_X_MRIM_FLAGS)), 16);
+            timestamp = Utils.parseDateTime((String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_DATE)));
             encodingType = 1;
             if ((messageFlags & 128) != 0) {
             }
             if (messageType != -1) {
-                Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_FROM))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
-                AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
+                Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
+                Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
             }
         } catch (RuntimeException e) {
-            AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
+            Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
             throw e;
         } catch (Error e) {
-            AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
+            Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
             throw e;
         }
     }
@@ -551,7 +551,7 @@ public final class MrimAccount extends Account implements ListItem {
                 } else if (entryType == 2) {
                     ContactInfo contactInfo = ContactInfo.createForAccount(this);
                     contactInfo.setEmailAddress(foundEmail);
-                    AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = contactInfo;
+                    Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, contactInfo);
                     EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.ADD_CONTACT_CONFIRM, null));
                 }
             }
@@ -571,8 +571,8 @@ public final class MrimAccount extends Account implements ListItem {
         if ((noteFlags & 2) != 0) {
             noteContact.customLink = noteText;
         } else if ((noteFlags & 5) != 0) {
-            if (AppState.getBool(SettingsKeys.SETTING_CUSTOM_NOTE_ENABLED) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
-                AppState.setObject(ContactKeys.SLOT_CURRENT_CONTACT_ID, (Object) noteContact.identifier);
+            if (Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_NOTE_ENABLED) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
+                Storage.state().setObject(ContactKeys.SLOT_CURRENT_CONTACT_ID, (Object) noteContact.identifier);
                 NotificationHelper.playNotificationSound(6);
                 noteContact.addFlag(2);
                 noteContact.appendMessage(16, noteText, 0L, sentTime);
@@ -587,7 +587,7 @@ public final class MrimAccount extends Account implements ListItem {
     }
 
     private void handleProfileData(ByteBuffer packet) {
-        if (!AppState.hasMemory()) {
+        if (!Storage.state().hasMemory()) {
             return;
         }
         Vector buffers = packet.readBufferArray();
@@ -604,8 +604,8 @@ public final class MrimAccount extends Account implements ListItem {
         } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, cardType)) {
             try {
                 VCard profile = this.profileManager.profile;
-                String typeStr = AppState.getString(PackedStringKeys.MRIM_MAPOBJECT);
-                String empty = AppState.emptyStr;
+                String typeStr = Storage.resources().getString(PackedStringKeys.MRIM_MAPOBJECT);
+                String empty = Storage.emptyStr;
                 profile.setCardData(cardFields[0], cardFields[1], typeStr, empty, empty, empty, cardFields[6], cardFields[7]);
             } catch (Throwable unused) {
                 this.profileManager.profile.clearCoordinates();
@@ -615,7 +615,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         this.profileManager.profile.dirty = true;
         if (AccountManager.getTotalSyncCount() == 10) {
-            EventDispatcher.postNotification(AppState.getString(StringResKeys.STR_MRIM_DISCONNECT));
+            EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_MRIM_DISCONNECT));
         }
     }
 
@@ -677,31 +677,31 @@ public final class MrimAccount extends Account implements ListItem {
                 break;
         }
         if (statusTextId >= 0) {
-            statusText = AppState.getString(statusTextId);
+            statusText = Storage.state().getString(statusTextId);
         } else {
-            statusText = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
+            statusText = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_CONFIG_STATUS_PREFIX)).append(this.configFlags >> 8));
         }
         switch (this.configFlags) {
             case STATUS_ONLINE:
-                typeStr = AppState.getString(StringResKeys.STR_STATUS_ONLINE);
+                typeStr = Storage.resources().getString(StringResKeys.STR_STATUS_ONLINE);
                 break;
             case STATUS_DND:
-                typeStr = AppState.getString(StringResKeys.STR_STATUS_DND);
+                typeStr = Storage.resources().getString(StringResKeys.STR_STATUS_DND);
                 break;
             case STATUS_FREE_CHAT:
-                typeStr = AppState.getString(StringResKeys.STR_STATUS_ONLINE);
+                typeStr = Storage.resources().getString(StringResKeys.STR_STATUS_ONLINE);
                 break;
             case STATUS_AWAY:
-                typeStr = AppState.getString(StringResKeys.STR_STATUS_AWAY);
+                typeStr = Storage.resources().getString(StringResKeys.STR_STATUS_AWAY);
                 break;
             case STATUS_INVISIBLE:
-                typeStr = AppState.getString(StringResKeys.STR_STATUS_INVISIBLE);
+                typeStr = Storage.resources().getString(StringResKeys.STR_STATUS_INVISIBLE);
                 break;
             default:
-                typeStr = AppState.getString(StringResKeys.STR_CONFIG_TYPE_BASE + (this.configFlags >> 8));
+                typeStr = Storage.resources().getString(StringResKeys.STR_CONFIG_TYPE_BASE + (this.configFlags >> 8));
                 break;
         }
-        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_CHANGE_STATUS, new ByteBuffer().writeIntLE(rawStatus != 3 ? rawStatus : -2147483647).writeStringLatin1(statusText).writeStringUTF16(typeStr).writeStringUTF16(AppState.emptyStr).writeIntLE(AppState.getBool(SettingsKeys.SETTING_EXTENDED_STATUS) ? -1 : 22)));
+        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_CHANGE_STATUS, new ByteBuffer().writeIntLE(rawStatus != 3 ? rawStatus : -2147483647).writeStringLatin1(statusText).writeStringUTF16(typeStr).writeStringUTF16(Storage.emptyStr).writeIntLE(Storage.state().getBool(SettingsKeys.SETTING_EXTENDED_STATUS) ? -1 : 22)));
     }
 
     @Override
@@ -849,7 +849,7 @@ public final class MrimAccount extends Account implements ListItem {
     public final int validateContactDelete(Contact baseContact) {
         MrimContact mrimContact = (MrimContact) baseContact;
         if (mrimContact.isOnline()) {
-            return trySendData(XmppContactGroup.createContactCommand(this, 48, mrimContact.simpleIdentifier, mrimContact.displayName, AppState.emptyStr, getFirstContactGroup(), false));
+            return trySendData(XmppContactGroup.createContactCommand(this, 48, mrimContact.simpleIdentifier, mrimContact.displayName, Storage.emptyStr, getFirstContactGroup(), false));
         }
         int flags = mrimContact.statusFlags;
         return trySendData(createMoveContactCmd(mrimContact, (flags & 16) != 0 ? flags & (-49) : flags | 16 | 32));
@@ -914,7 +914,7 @@ public final class MrimAccount extends Account implements ListItem {
         MrimContact contact = findContactByIdentifier(senderAddress);
         MrimContact targetContact = contact;
         if (contact == null) {
-            String emptyStr = AppState.emptyStr;
+            String emptyStr = Storage.emptyStr;
             ContactGroup group = this.defaultGroup;
             MrimContact newContact = new MrimContact(this, 0, 65664, 3, senderAddress, senderName, 0, 0, emptyStr, emptyStr, emptyStr);
             group.addContact((Object) newContact);
@@ -955,7 +955,7 @@ public final class MrimAccount extends Account implements ListItem {
     }
 
     private final Contact createNewContact(String contactAddress, int commandType) {
-        String emptyStr = AppState.emptyStr;
+        String emptyStr = Storage.emptyStr;
         ContactGroup group = this.defaultGroup;
         MrimContact mrimContact = new MrimContact(this, 0, 65536, 3, contactAddress, contactAddress, 0, 0, emptyStr, emptyStr, emptyStr);
         group.addContact((Object) mrimContact);
@@ -1029,14 +1029,14 @@ public final class MrimAccount extends Account implements ListItem {
     public final String getText() {
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (this.profileManager.profile.dirty) {
-            sb.append(AppState.getString(StringResKeys.STR_MRIM_AWAY_SUFFIX));
+            sb.append(Storage.resources().getString(StringResKeys.STR_MRIM_AWAY_SUFFIX));
             String phone = this.profileManager.profile.phone;
             if (Utils.nonEmpty(phone)) {
                 sb.append(phone).append('.').append(' ');
             }
             sb.append("Уточнить?");
         } else {
-            sb.append(AppState.getString(StringResKeys.STR_MRIM_OFFLINE_SUFFIX));
+            sb.append(Storage.resources().getString(StringResKeys.STR_MRIM_OFFLINE_SUFFIX));
             if (AccountManager.getMrimAccountList().size() > 1) {
                 sb.append(' ').append('(').append(this.login).append(')').append('.').append(' ');
             }
@@ -1047,16 +1047,16 @@ public final class MrimAccount extends Account implements ListItem {
             String genderText;
             switch (this.profileManager.profile.gender) {
                 case 1:
-                    genderText = AppState.getString(781);
+                    genderText = Storage.state().getString(781);
                     break;
                 case 2:
-                    genderText = AppState.getString(782);
+                    genderText = Storage.state().getString(782);
                     break;
                 case 3:
-                    genderText = AppState.getString(783);
+                    genderText = Storage.state().getString(783);
                     break;
                 case 4:
-                    genderText = AppState.getString(784);
+                    genderText = Storage.state().getString(784);
                     break;
                 default:
                     genderText = null;
@@ -1131,8 +1131,8 @@ public final class MrimAccount extends Account implements ListItem {
     }
 
     public final void notifyNewMail(int i, String str, String str2) {
-        boolean showPopup = AppState.getBool(SettingsKeys.SETTING_SHOW_POPUP);
-        boolean showInList = AppState.getBool(SettingsKeys.SETTING_SHOW_IN_LIST);
+        boolean showPopup = Storage.state().getBool(SettingsKeys.SETTING_SHOW_POPUP);
+        boolean showInList = Storage.state().getBool(SettingsKeys.SETTING_SHOW_IN_LIST);
         if (showInList || showPopup) {
             if (str != null) {
                 int iLastIndexOf = str.lastIndexOf(60);
@@ -1141,20 +1141,20 @@ public final class MrimAccount extends Account implements ListItem {
                 }
                 NotificationHelper.playNotificationSound(0);
             }
-            if (showPopup && (AccountManager.getTotalSyncCount() != 10 || !AppState.hasMemory())) {
+            if (showPopup && (AccountManager.getTotalSyncCount() != 10 || !Storage.state().hasMemory())) {
                 StringBuffer sb = ObjectPool.newStringBuffer();
                 if (str2 != null && str != null) {
-                    EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StringResKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(AppState.getString(StringResKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StringResKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : AppState.emptyStr).append(AppState.getString(StringResKeys.STR_MAIL_PREFIX)).toString())));
+                    EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(Storage.resources().getString(StringResKeys.STR_NEW_MAIL_FROM)).append(str).append(' ').append('\"').append(str2).append('\"').append('.').append('\n').append(new StringBuffer().append(i > 0 ? new StringBuffer().append(Storage.resources().getString(StringResKeys.STR_NEW_MAIL_COUNT)).append(i).append(Storage.resources().getString(StringResKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').toString() : Storage.emptyStr).append(Storage.resources().getString(StringResKeys.STR_MAIL_PREFIX)).toString())));
                 } else if (i > 0) {
-                    EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(AppState.getString(StringResKeys.STR_NEW_MAIL_COUNT)).append(i).append(AppState.getString(StringResKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').append(AppState.getString(StringResKeys.STR_MAIL_PREFIX))));
+                    EventDispatcher.postAccountNotification(this, ObjectPool.toStringAndRelease(sb.append(Storage.resources().getString(StringResKeys.STR_NEW_MAIL_COUNT)).append(i).append(Storage.resources().getString(StringResKeys.STR_NEW_MAIL_SUFFIX + Utils.pluralForm(i))).append('\n').append(Storage.resources().getString(StringResKeys.STR_MAIL_PREFIX))));
                 }
             }
             if (showInList) {
                 if (i > 0 || !(str2 == null || str == null)) {
                     TimerManager.resetBacklightTimer();
                     AccountManager.clearAccountHighlight(this);
-                    if (AppState.getBool(SettingsKeys.SETTING_SHOW_IN_LIST)) {
-                        AppState.getVector(UIKeys.VEC_ACTIVE_CONNECTIONS).addElement(this);
+                    if (Storage.state().getBool(SettingsKeys.SETTING_SHOW_IN_LIST)) {
+                        Storage.state().getVector(UIKeys.VEC_ACTIVE_CONNECTIONS).addElement(this);
                     }
                     TabBar.layout();
                 }

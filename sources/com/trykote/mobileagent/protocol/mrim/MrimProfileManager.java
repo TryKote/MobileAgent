@@ -48,7 +48,7 @@ public final class MrimProfileManager {
         this.profile.gender = 1;
         if (this.account.isConnected()) {
             if (i == 3) {
-                sendRename(this.profile.photoUrls, AppState.getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(1, new String[0], this.profile);
         }
@@ -59,7 +59,7 @@ public final class MrimProfileManager {
         this.profile.gender = 2;
         if (this.account.isConnected()) {
             if (i == 3) {
-                sendRename(this.profile.photoUrls, AppState.getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, new String[0], this.profile);
         }
@@ -70,9 +70,9 @@ public final class MrimProfileManager {
         this.profile.gender = 4;
         if (this.account.isConnected()) {
             if (i == 3) {
-                sendRename(this.profile.photoUrls, AppState.getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
-            sendRename(new String[0], AppState.getString(PackedStringKeys.MRIM_GEO_POINT));
+            sendRename(new String[0], Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
         }
     }
 
@@ -81,9 +81,9 @@ public final class MrimProfileManager {
         this.profile.gender = 3;
         if (this.account.isConnected()) {
             if (i == 3) {
-                sendRename(this.profile.prevPhotoUrls, AppState.getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.prevPhotoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             } else if (i == 1 || i == 2) {
-                sendRename(new String[0], AppState.getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(new String[0], Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, this.profile.photoUrls, this.profile);
         }
@@ -118,8 +118,8 @@ public final class MrimProfileManager {
     public void setSimpleLocation(String str, String str2) {
         try {
             VCard vcard = this.profile;
-            String typeStr = AppState.getString(PackedStringKeys.MRIM_MAPPOINT);
-            String str3 = AppState.emptyStr;
+            String typeStr = Storage.resources().getString(PackedStringKeys.MRIM_MAPPOINT);
+            String str3 = Storage.emptyStr;
             vcard.setCardData(str2, str, typeStr, str3, str3, str3, str3, str3);
         } catch (Throwable unused) {
             this.profile.clearCoordinates();
@@ -132,9 +132,9 @@ public final class MrimProfileManager {
             VCard vcard = this.profile;
             String latStr = MapUtils.pixelToLatitude(mapPoint.latitude);
             String lonStr = MapUtils.pixelToLongitude(mapPoint.longitude);
-            String typeStr = AppState.getString(PackedStringKeys.MRIM_MAPOBJECT);
+            String typeStr = Storage.resources().getString(PackedStringKeys.MRIM_MAPOBJECT);
             String pointName = mapPoint.getDisplayName();
-            String str = AppState.emptyStr;
+            String str = Storage.emptyStr;
             vcard.setCardData(latStr, lonStr, typeStr, pointName, str, str, StringUtils.intern(Integer.toString(mapPoint.objectCode)), StringUtils.intern(Integer.toString(mapPoint.typeCode)));
         } catch (Throwable unused) {
             this.profile.clearCoordinates();
@@ -147,7 +147,7 @@ public final class MrimProfileManager {
             return 0;
         }
         String[] strArr2 = {vcard.latStr, vcard.lonStr, vcard.mapTypeStr, vcard.phone, vcard.email, vcard.nickname, vcard.address, vcard.zoomStr};
-        this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(AppState.getString(PackedStringKeys.MRIM_GEO_POINT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
+        this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
         return 0;
     }
 
@@ -158,7 +158,7 @@ public final class MrimProfileManager {
     /* renamed from: d */
     public static final void showPhotoSelector() {
         boolean z;
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         photoUrlList = account.profileManager.profile.photoUrls;
         Vector candidates = ObjectPool.newVector();
         Enumeration elements = account.contactMap.elements();
@@ -206,7 +206,7 @@ public final class MrimProfileManager {
                 selected.addElement(contactIdList.elementAt(i));
             }
         }
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
         VCard profile = account.profileManager.profile;
         profile.prevPhotoUrls = profile.photoUrls;
         int size2 = selected.size();

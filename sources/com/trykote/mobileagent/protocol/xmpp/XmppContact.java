@@ -196,7 +196,7 @@ public final class XmppContact extends Contact {
     @Override // p000.Contact
     /* renamed from: L */
     public final void mo148L() {
-        AppState.clearIndex(RegistrationKeys.SLOT_REG_PARAM_2);
+        Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_2);
     }
 
     /* renamed from: a */

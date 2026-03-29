@@ -34,7 +34,7 @@ public final class ApiClient {
     }
 
     public static final void executeWithReauth(Object[] objArr) throws InterruptedException {
-        MrimAccount c0028ba = (MrimAccount) AppState.getAccount();
+        MrimAccount c0028ba = (MrimAccount) Storage.state().getAccount();
         Object[] objArrM1151a = executeHttpRequest(objArr, c0028ba);
         if (objArr[8] != null) {
             objArr[4] = objArrM1151a;
@@ -45,8 +45,8 @@ public final class ApiClient {
             return;
         }
         objArr[8] = objArr;
-        MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(c0028ba2.login).append(AppState.getString(PackedStringKeys.PARAM_PASSWORD_EQ)).append(c0028ba2.password).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)));
+        MrimAccount c0028ba2 = (MrimAccount) Storage.state().getAccount();
+        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(c0028ba2.login).append(Storage.resources().getString(PackedStringKeys.PARAM_PASSWORD_EQ)).append(c0028ba2.password).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) submitAsync(objArrM1147a)[7]).thread.join();
         c0028ba.jabberId = (String) objArrM1147a[6];
@@ -63,7 +63,7 @@ public final class ApiClient {
                         NetworkLock.acquireNetworkLock();
                         String str = (String) objArr[5];
                         if (str == null) {
-                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
+                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
                         } else {
                             strM1215a = str;
                         }
@@ -113,7 +113,7 @@ public final class ApiClient {
             c0024ax.setRequestMethod((String) objArr[0]);
             setHeaderFromState(c0024ax, 919726, 788668);
             setHeaderFromState(c0024ax, 657608, 329938);
-            setOptionalHeader(c0024ax, 395489, ((MrimAccount) AppState.getAccount()).jabberId);
+            setOptionalHeader(c0024ax, 395489, ((MrimAccount) Storage.state().getAccount()).jabberId);
             byte[] bArr = (byte[]) objArr[3];
             if (bArr != null) {
                 setHeaderFromState(c0024ax, 788628, 2164851);
@@ -127,12 +127,12 @@ public final class ApiClient {
     }
 
     public static final void setHeaderFromState(HttpClient c0024ax, int i, int i2) throws IOException {
-        setOptionalHeader(c0024ax, i, AppState.getString(i2));
+        setOptionalHeader(c0024ax, i, Storage.state().getString(i2));
     }
 
     private static void setOptionalHeader(HttpClient c0024ax, int i, String str) throws IOException {
         if (str != null) {
-            c0024ax.setRequestProperty(AppState.getString(i), str);
+            c0024ax.setRequestProperty(Storage.state().getString(i), str);
         }
     }
 
@@ -148,7 +148,7 @@ public final class ApiClient {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(Storage.resources().getString(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;
@@ -182,7 +182,7 @@ public final class ApiClient {
 
     /* renamed from: a */
     private static final Object[] createErrorResult(int i, int i2, Object obj) {
-        return createHttpResult(i, ObjectPool.newStringBuffer().append(AppState.getString(i2)).append(AppState.getString(StringResKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
+        return createHttpResult(i, ObjectPool.newStringBuffer().append(Storage.state().getString(i2)).append(Storage.resources().getString(StringResKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
     }
 
     /* renamed from: a */
@@ -231,21 +231,21 @@ public final class ApiClient {
 
     /* renamed from: k */
     public static final Object[] pollAsyncResult() {
-        Object[] objArrM609l = AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA);
+        Object[] objArrM609l = Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA);
         if (objArrM609l != null && getAsyncResult(objArrM609l) != null) {
-            AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+            Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         }
         return objArrM609l;
     }
 
     /* renamed from: a */
     public static final StringBuffer appendAuthParams(StringBuffer stringBuffer, String str) {
-        return stringBuffer.append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(str);
+        return stringBuffer.append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(str);
     }
 
     /* renamed from: c */
     public static final int validateJsonResponse(Object[] objArr) {
-        AppState.clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
+        Storage.state().clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
         if (!isHttpSuccess(objArr)) {
             return NotificationHelper.showError(888);
         }
@@ -256,14 +256,14 @@ public final class ApiClient {
         if (!JsonParser.isSuccess(objM806e)) {
             return NotificationHelper.showError(890);
         }
-        AppState.pool[UIKeys.SLOT_MEDIA_PLAYER] = objM806e;
+        Storage.state().setObject(UIKeys.SLOT_MEDIA_PLAYER, objM806e);
         return 0;
     }
 
     /* renamed from: l */
     public static final Object getJsonPayload() {
-        Object obj = AppState.pool[UIKeys.SLOT_MEDIA_PLAYER];
-        AppState.clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
+        Object obj = Storage.state().getObject(UIKeys.SLOT_MEDIA_PLAYER);
+        Storage.state().clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
         return JsonParser.getVectorElement(obj, 2);
     }
 
@@ -290,7 +290,7 @@ public final class ApiClient {
                     }
                     if (statusOk && url != null) {
                         ObjectPool.releaseVector(children);
-                        EventDispatcher.postNotification(AppState.getString(StringResKeys.STR_OPERATION_COMPLETE));
+                        EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_OPERATION_COMPLETE));
                         break;
                     }
                 }

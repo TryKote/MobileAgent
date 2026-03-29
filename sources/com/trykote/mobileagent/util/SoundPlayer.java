@@ -15,17 +15,17 @@ public final class SoundPlayer {
         try {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(PackedStringKeys.MIDI_HEADER).writeCompressed(i + 430).writeIntLE(3145472).toByteArray());
             Object resource = IOUtils.registerResource((Object) byteArrayInputStream);
-            AppState.pool[UIKeys.RANGE_MEDIA_RESOURCES_START] = resource;
+            Storage.state().setObject(UIKeys.RANGE_MEDIA_RESOURCES_START, resource);
             if (null != resource) {
-                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, AppState.getString(PackedStringKeys.MIME_TYPE_MIDI));
-                AppState.pool[UIKeys.OBJ_MEDIA_PLAYER] = IOUtils.registerResource(playerCreatePlayer);
+                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, Storage.resources().getString(PackedStringKeys.MIME_TYPE_MIDI));
+                Storage.state().setObject(UIKeys.OBJ_MEDIA_PLAYER, IOUtils.registerResource(playerCreatePlayer));
                 try {
                     playerCreatePlayer.realize();
                 } catch (Throwable unused) {
                 }
-                if (AppState.getBool(SettingsKeys.SETTING_SOUND_ENABLED)) {
+                if (Storage.state().getBool(SettingsKeys.SETTING_SOUND_ENABLED)) {
                     try {
-                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(AppState.getString(PackedStringKeys.MIDP_VOLUME_CONTROL))).setLevel(AppState.getInt(SettingsKeys.SETTING_VOLUME_LEVEL));
+                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(Storage.resources().getString(PackedStringKeys.MIDP_VOLUME_CONTROL))).setLevel(Storage.state().getInt(SettingsKeys.SETTING_VOLUME_LEVEL));
                     } catch (Throwable unused2) {
                     }
                 }
@@ -45,7 +45,7 @@ public final class SoundPlayer {
 
     /* renamed from: m */
     private static final void stopSound() {
-        Player player = (Player) AppState.pool[UIKeys.OBJ_MEDIA_PLAYER];
+        Player player = (Player) Storage.state().getObject(UIKeys.OBJ_MEDIA_PLAYER);
         if (player != null) {
             IOUtils.unregisterResource(player);
             try {
@@ -57,8 +57,8 @@ public final class SoundPlayer {
             } catch (Throwable unused2) {
             }
         }
-        IOUtils.closeInput((InputStream) AppState.pool[UIKeys.RANGE_MEDIA_RESOURCES_START]);
-        AppState.clearRange(UIKeys.RANGE_MEDIA_RESOURCES_START, UIKeys.OBJ_MEDIA_PLAYER);
+        IOUtils.closeInput((InputStream) Storage.state().getObject(UIKeys.RANGE_MEDIA_RESOURCES_START));
+        Storage.state().clearRange(UIKeys.RANGE_MEDIA_RESOURCES_START, UIKeys.OBJ_MEDIA_PLAYER);
     }
 
     /* renamed from: a */

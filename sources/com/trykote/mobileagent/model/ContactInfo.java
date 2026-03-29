@@ -110,12 +110,12 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: d */
     public final ContactInfo setMaritalMarried() {
-        return setContactField(4, AppState.getString(StringResKeys.STR_GENDER_MALE));
+        return setContactField(4, Storage.resources().getString(StringResKeys.STR_GENDER_MALE));
     }
 
     /* renamed from: e */
     public final ContactInfo setMaritalSingle() {
-        return setContactField(4, AppState.getString(StringResKeys.STR_GENDER_FEMALE));
+        return setContactField(4, Storage.resources().getString(StringResKeys.STR_GENDER_FEMALE));
     }
 
     /* renamed from: f */
@@ -177,7 +177,7 @@ public final class ContactInfo extends Hashtable {
         String ageStr;
         int i2 = i % 10;
         if (i <= 0 || i >= 100) {
-            ageStr = AppState.getString(StringResKeys.STR_AGE_UNKNOWN);
+            ageStr = Storage.resources().getString(StringResKeys.STR_AGE_UNKNOWN);
         } else if (i < 5 || i > 20) {
             ageStr = i2 == 1 ? formatAge(i, 321) : (i2 < 2 || i2 > 4) ? formatAge(i, 320) : formatAge(i, 322);
         } else {
@@ -188,19 +188,19 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: a */
     private static final String formatAge(int i, int i2) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(i).append(AppState.getString(i2)));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(i).append(Storage.state().getString(i2)));
     }
 
     /* renamed from: c */
     public final ContactInfo setMaritalStatus(int i) {
-        return i == 1 ? setMaritalSingle() : i == 2 ? setMaritalMarried() : setContactField(4, AppState.getString(PackedStringKeys.PLACEHOLDER_UNKNOWN));
+        return i == 1 ? setMaritalSingle() : i == 2 ? setMaritalMarried() : setContactField(4, Storage.resources().getString(PackedStringKeys.PLACEHOLDER_UNKNOWN));
     }
 
     /* renamed from: p */
     public final ContactInfo setBirthdayMonth(String str) {
         int month = Utils.parseIntBounded(str, 1, 12, 0);
         if (month != 0) {
-            Vector labels = Utils.splitByNull(AppState.getString(StringResKeys.STR_MONTH_NAMES));
+            Vector labels = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_MONTH_NAMES));
             setContactField(7, (String) labels.elementAt(month));
             ObjectPool.releaseVector(labels);
         }
@@ -300,7 +300,7 @@ public final class ContactInfo extends Hashtable {
         int endIdx3;
         Account acct = getAccount();
         ListView screen = ScreenManager.createScreen(i);
-        Vector labels = Utils.splitByNull(AppState.getString(StringResKeys.STR_CONTACT_FIELD_LABELS));
+        Vector labels = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_CONTACT_FIELD_LABELS));
         int size = labels.size();
         if (acct instanceof MrimAccount) {
             MrimContact mrimContact = (MrimContact) acct.getContact((Object) getString(3));
@@ -334,11 +334,11 @@ public final class ContactInfo extends Hashtable {
                         sb.append(StringUtils.substring(statusMsg, startIdx + 8, endIdx3));
                     }
                 } else {
-                    sb.append(AppState.getString(i4));
+                    sb.append(Storage.state().getString(i4));
                 }
                 int titleIdx = StringUtils.indexOfPoolString(statusMsg, 943);
                 if (titleIdx >= 0 && (endIdx = statusMsg.indexOf(34, titleIdx + 11)) >= 0) {
-                    sb.append(AppState.getString(StringResKeys.STR_STATUS_TITLE_PREFIX)).append(StringUtils.substring(statusMsg, titleIdx + 10, endIdx));
+                    sb.append(Storage.resources().getString(StringResKeys.STR_STATUS_TITLE_PREFIX)).append(StringUtils.substring(statusMsg, titleIdx + 10, endIdx));
                     int trackIdx = StringUtils.indexOfPoolString(statusMsg, 527990);
                     if (trackIdx >= 0 && (endIdx2 = statusMsg.indexOf(34, trackIdx + 9)) >= 0) {
                         sb.append('.').append(StringUtils.substring(statusMsg, trackIdx + 8, endIdx2));
@@ -346,7 +346,7 @@ public final class ContactInfo extends Hashtable {
                 }
                 String statusDesc = ObjectPool.toStringAndRelease(sb);
                 if (Utils.nonEmpty(statusDesc)) {
-                    MenuItem statusItem = MenuItem.createSeparator().addText(AppState.getString(StringResKeys.STR_LABEL_STATUS), 0, 6);
+                    MenuItem statusItem = MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_LABEL_STATUS), 0, 6);
                     String str = mrimContact.statusMessage;
                     if (str == null) {
                         i2 = -1;
@@ -372,21 +372,21 @@ public final class ContactInfo extends Hashtable {
                 }
                 String str2 = mrimContact.customLink;
                 if (Utils.nonEmpty(str2)) {
-                    screen.addItem(MenuItem.createSeparator().addText(AppState.getString(StringResKeys.STR_SECTION_PHONE), 0, 6).setIcon(242).setLabel(str2));
+                    screen.addItem(MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_SECTION_PHONE), 0, 6).setIcon(242).setLabel(str2));
                 }
                 String str3 = mrimContact.customNote;
                 if (Utils.nonEmpty(str3)) {
-                    screen.addItem(MenuItem.createSeparator().addText(AppState.getString(StringResKeys.STR_SECTION_EMAIL), 0, 6).setIcon(2).setLabel(str3));
+                    screen.addItem(MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_SECTION_EMAIL), 0, 6).setIcon(2).setLabel(str3));
                 }
                 String vCardDesc = mrimContact.getVCardDescription();
                 if (Utils.nonEmpty(vCardDesc)) {
-                    screen.addItem(MenuItem.createSeparator().addText(AppState.getString(StringResKeys.STR_SECTION_ABOUT), 0, 6).setIcon(365).setLabel(vCardDesc));
+                    screen.addItem(MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_SECTION_ABOUT), 0, 6).setIcon(365).setLabel(vCardDesc));
                 }
             }
         } else if (acct instanceof MmpProtocol) {
             String mmpId = getString(60);
             if (null != mmpId) {
-                screen.addLabelValue(Utils.appendSpace(AppState.getString(PackedStringKeys.PREFIX_UIN)), mmpId);
+                screen.addLabelValue(Utils.appendSpace(Storage.resources().getString(PackedStringKeys.PREFIX_UIN)), mmpId);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
@@ -399,19 +399,19 @@ public final class ContactInfo extends Hashtable {
             }
             String age = getString(5);
             if (null != age) {
-                screen.addLabelValue(AppState.getString(StringResKeys.STR_LABEL_AGE), age);
+                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_AGE), age);
             }
             String company = getString(32);
             if (null != company) {
-                screen.addLabelValue(AppState.getString(StringResKeys.STR_LABEL_COMPANY), company);
+                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_COMPANY), company);
             }
             String loc = getString(37);
             if (null != loc) {
-                screen.addLabelValue(AppState.getString(StringResKeys.STR_LABEL_LOCATION), loc);
+                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_LOCATION), loc);
             }
             String website = getString(36);
             if (null != website) {
-                screen.addLabelValue(AppState.getString(StringResKeys.STR_LABEL_WEBSITE), website);
+                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_WEBSITE), website);
             }
         } else if (acct instanceof XmppProtocol) {
             Image image = (Image) get(ObjectPool.integerOf(25));
@@ -419,7 +419,7 @@ public final class ContactInfo extends Hashtable {
                 screen.addItem(MenuItem.createGraphics(new GraphicsContext(image)));
             }
             screen.addIconItem(Utils.parseInt((Object) getString(24)), getFieldDefault(0), 0);
-            screen.addTextPair(AppState.getString(StringResKeys.STR_LABEL_NOTES), getString(26), 0);
+            screen.addTextPair(Storage.resources().getString(StringResKeys.STR_LABEL_NOTES), getString(26), 0);
             String xmppDesc = getString(11);
             if (null != xmppDesc) {
                 screen.addTextItem(xmppDesc);

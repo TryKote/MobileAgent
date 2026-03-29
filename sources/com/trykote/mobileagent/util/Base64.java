@@ -7,7 +7,7 @@ import com.trykote.mobileagent.net.*;
 public final class Base64 {
 
     private static char base64Char(int i) {
-        return (char) AppState.getBytes(StringResKeys.RES_BASE64_TABLE)[i & 63];
+        return (char) Storage.resources().getBytes(StringResKeys.RES_BASE64_TABLE)[i & 63];
     }
 
     public static String encode(byte[] data, int offset, int length) {

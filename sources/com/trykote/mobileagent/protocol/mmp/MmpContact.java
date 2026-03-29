@@ -232,8 +232,8 @@ public final class MmpContact extends Contact {
     /* renamed from: a */
     public static final void setLocationEnabled(boolean z) {
         locationEnabled = z;
-        AppState.setBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, z);
-        AppState.setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, z && !AppState.getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
+        Storage.state().setBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, z);
+        Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, z && !Storage.state().getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
     }
 
     /* renamed from: f */
@@ -247,9 +247,9 @@ public final class MmpContact extends Contact {
         nearestPoints.removeAllElements();
         setLocationEnabled(false);
         currentRouteIndex = 0;
-        AppState.setInt(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, 0);
-        AppState.setInt(UIKeys.FLAG_ROUTE_POINT_VISIBLE, 0);
-        AppState.setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
+        Storage.state().setInt(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, 0);
+        Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_VISIBLE, 0);
+        Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
     }
 
     /* renamed from: o */
@@ -308,7 +308,7 @@ public final class MmpContact extends Contact {
                 r03[0] = new int[]{((Integer) vector5.elementAt(0)).intValue(), ((Integer) vector5.elementAt(1)).intValue()};
                 if (i6 == 4) {
                     if (i4 == 0 && i5 == 1) {
-                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_ROUTE_PREFIX));
+                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_ROUTE_PREFIX));
                         int i7 = 952;
                         int i8 = totalRouteLength;
                         int i9 = 0;
@@ -328,20 +328,20 @@ public final class MmpContact extends Contact {
                             }
                             distBuf.append(trimmed);
                         }
-                        StringBuffer routeInfo2 = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(AppState.getString(i7)))).append(AppState.getString(StringResKeys.STR_DISTANCE_UNIT));
+                        StringBuffer routeInfo2 = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(Storage.state().getString(i7)))).append(Storage.resources().getString(StringResKeys.STR_DISTANCE_UNIT));
                         int i10 = totalRouteDuration;
                         StringBuffer distBuf2 = ObjectPool.newStringBuffer();
                         int i11 = i10 / 60;
                         if (i11 < 90) {
                             distBuf2.append(i11);
                         } else {
-                            distBuf2.append(i11 / 60).append(AppState.getString(StringResKeys.STR_HOUR_SEPARATOR)).append(i11 % 60);
+                            distBuf2.append(i11 / 60).append(Storage.resources().getString(StringResKeys.STR_HOUR_SEPARATOR)).append(i11 % 60);
                         }
-                        r03[1] = routeInfo2.append(ObjectPool.toStringAndRelease(distBuf2.append(AppState.getString(StringResKeys.STR_DISTANCE_SUFFIX)))).toString();
-                        r03[2] = AppState.emptyStr;
+                        r03[1] = routeInfo2.append(ObjectPool.toStringAndRelease(distBuf2.append(Storage.resources().getString(StringResKeys.STR_DISTANCE_SUFFIX)))).toString();
+                        r03[2] = Storage.emptyStr;
                     } else if (i4 == size - 1 && i5 == size2 - 2) {
-                        r03[1] = AppState.getString(StringResKeys.STR_NO_ROUTE);
-                        r03[2] = AppState.emptyStr;
+                        r03[1] = Storage.resources().getString(StringResKeys.STR_NO_ROUTE);
+                        r03[2] = Storage.emptyStr;
                     } else {
                         r03[1] = vector5.elementAt(2);
                         r03[2] = vector5.elementAt(3);
@@ -399,7 +399,7 @@ public final class MmpContact extends Contact {
     /* renamed from: r */
     public static final int[] getNextRoutePoint() {
         int totalPoints = getTotalRoutePoints();
-        int zoom = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
         int[] coords = getRoutePointAt(currentRouteIndex);
         int px = (int) MapUtils.coordToPixel(coords[0], zoom);
         int px2 = (int) MapUtils.coordToPixel(coords[1], zoom);
@@ -421,7 +421,7 @@ public final class MmpContact extends Contact {
         if (currentRouteIndex == 0 && getRouteLabelsAt(currentRouteIndex) != null) {
             return getRoutePointAt(currentRouteIndex);
         }
-        int zoom = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
         int[] coords2 = getRoutePointAt(currentRouteIndex);
         int px = (int) MapUtils.coordToPixel(coords2[0], zoom);
         int px2 = (int) MapUtils.coordToPixel(coords2[1], zoom);

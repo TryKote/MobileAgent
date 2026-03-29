@@ -15,7 +15,7 @@ public final class NetworkLock {
 
     /* renamed from: ae */
     public static final Object[] createSyncState() {
-        return (Object[]) AppState.pool[SessionKeys.OBJ_CALLBACK_ARRAY];
+        return (Object[]) Storage.state().getObject(SessionKeys.OBJ_CALLBACK_ARRAY);
     }
 
     /* renamed from: s */

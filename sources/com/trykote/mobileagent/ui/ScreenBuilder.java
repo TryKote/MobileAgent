@@ -19,7 +19,7 @@ public final class ScreenBuilder {
         AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
-                Vector screenStack = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
+                Vector screenStack = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
                 int size = screenStack.size();
                 z = false;
                 while (--size >= 0) {
@@ -247,8 +247,8 @@ public final class ScreenBuilder {
                 ContactListManager.refreshContactList();
                 break;
         }
-        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 0);
-        Vector screenStack = AppState.getVector(UIKeys.VEC_SCREEN_STACK);
+        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, 0);
+        Vector screenStack = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         int size = screenStack.size() - 1;
         ListView closedScreen = (ListView) screenStack.elementAt(size);
         int closedScreenId = closedScreen.screenId;

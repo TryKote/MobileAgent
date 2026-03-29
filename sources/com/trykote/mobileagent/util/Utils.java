@@ -28,7 +28,7 @@ public abstract class Utils {
     public static final long parseDateTime(String str) {
         Vector parts = splitImpl(str, ' ', false);
         int day = parseInt(parts.elementAt(1));
-        int idx = AppState.getString(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
+        int idx = Storage.resources().getString(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
         int year = parseInt(parts.elementAt(3));
         String timeStr = getVectorString(parts, 4);
         ObjectPool.releaseVector(parts);
@@ -46,15 +46,15 @@ public abstract class Utils {
         while (true) {
             i2--;
             if (i2 < 0) {
-                return (1000 * (((86400 * i) + (hours * 3600)) + (minutes * 60))) - ((AppState.getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000);
+                return (1000 * (((86400 * i) + (hours * 3600)) + (minutes * 60))) - ((Storage.state().getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000);
             }
-            i += i2 == 1 ? b : AppState.getBytes(StringResKeys.RES_MONTH_DAYS)[i2];
+            i += i2 == 1 ? b : Storage.resources().getBytes(StringResKeys.RES_MONTH_DAYS)[i2];
         }
     }
 
     /* renamed from: a */
     private static StringBuffer appendKey(StringBuffer stringBuffer, int i) {
-        return stringBuffer.append(AppState.getString(i));
+        return stringBuffer.append(Storage.state().getString(i));
     }
 
     /* renamed from: a */
@@ -274,7 +274,7 @@ public abstract class Utils {
         Vector result = ObjectPool.newVector();
         for (int i = 0; i < 3; i++) {
             StringBuffer sb = ObjectPool.newStringBuffer();
-            String rawPhone = defaultStr(AppState.getString(i + 1303));
+            String rawPhone = defaultStr(Storage.state().getBlockString(UIKeys.CONTACT_NAME_PARTS_BASE, i));
             int length = rawPhone.length();
             for (int i2 = 0; i2 < length; i2++) {
                 char ch = rawPhone.charAt(i2);
@@ -306,7 +306,7 @@ public abstract class Utils {
 
     /* renamed from: a */
     public static final int nextRandom() {
-        return ((Random) AppState.pool[SessionKeys.OBJ_RANDOM]).nextInt();
+        return ((Random) Storage.state().getObject(SessionKeys.OBJ_RANDOM)).nextInt();
     }
 
     /* renamed from: a */
@@ -316,7 +316,7 @@ public abstract class Utils {
 
     /* renamed from: f */
     public static final String defaultStr(String str) {
-        return str != null ? str : AppState.emptyStr;
+        return str != null ? str : Storage.emptyStr;
     }
 
     /* renamed from: d */
@@ -342,7 +342,7 @@ public abstract class Utils {
             }
             sb.append(frac);
         }
-        return ObjectPool.toStringAndRelease(sb.append(AppState.getString(i2)));
+        return ObjectPool.toStringAndRelease(sb.append(Storage.state().getString(i2)));
     }
 
     /* renamed from: a */
@@ -402,7 +402,7 @@ public abstract class Utils {
     /* renamed from: h */
     public static final String formatPhone(String str) {
         if (str == null) {
-            return AppState.emptyStr;
+            return Storage.emptyStr;
         }
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (startsWithInt(str, 99897)) {
@@ -512,7 +512,7 @@ public abstract class Utils {
 
     /* renamed from: e */
     public static final short[] readShortArray(int i) {
-        byte[] bytes = AppState.getBytes(i);
+        byte[] bytes = Storage.state().getBytes(i);
         int length = bytes.length >> 1;
         short[] sArr = new short[length];
         int i2 = 0;
@@ -586,7 +586,7 @@ public abstract class Utils {
 
     /* renamed from: c */
     public static final String splitAndGet(int i, int i2) {
-        Vector parts = splitImpl(AppState.getString(i), (char) 0, false);
+        Vector parts = splitImpl(Storage.state().getString(i), (char) 0, false);
         String str = (String) parts.elementAt(i2);
         ObjectPool.releaseVector(parts);
         return str;
@@ -603,7 +603,7 @@ public abstract class Utils {
             length = str.length();
         }
         int i3 = 0;
-        int spaceWidth = font.stringWidth(AppState.getString(StringResKeys.STR_SPACE));
+        int spaceWidth = font.stringWidth(Storage.resources().getString(StringResKeys.STR_SPACE));
         while (length != -1) {
             String word = StringUtils.substring(str, i2, length);
             int wordWidth = font.stringWidth(word);
@@ -645,7 +645,7 @@ public abstract class Utils {
     /* renamed from: e */
     public static final StringBuffer getMessageBuffer() {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String prefix = defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
+        String prefix = defaultStr(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT));
         StringBuffer result = sb.append(prefix);
         int length = prefix.length();
         if (length != 0 && prefix.charAt(length - 1) != ' ') {

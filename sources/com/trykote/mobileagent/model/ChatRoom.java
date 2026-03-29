@@ -131,7 +131,7 @@ public final class ChatRoom {
         this.memberCount = JsonParser.getIntByInt(obj, 526252);
         this.id = JsonParser.getIntByInt(obj, 132297);
         this.unreadCount = JsonParser.getIntByInt(obj, 395188);
-        this.subject = AppState.emptyStr;
+        this.subject = Storage.emptyStr;
         this.isInitialized = true;
     }
 
@@ -152,8 +152,8 @@ public final class ChatRoom {
             if (i < 0) {
                 return this.name;
             }
-        } while (!this.name.equals(AppState.getString(i + 891)));
-        return AppState.getString(i + 896);
+        } while (!this.name.equals(Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_EN_BASE, i)));
+        return Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_RU_BASE, i);
     }
 
     /* renamed from: a */
@@ -226,7 +226,7 @@ public final class ChatRoom {
 
     /* renamed from: f */
     public final String getDisplayName() {
-        if (this == ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast()) {
+        if (this == ((MrimAccount) Storage.state().getAccount()).chatRoomManager.getLast()) {
             return this.name;
         }
         return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));

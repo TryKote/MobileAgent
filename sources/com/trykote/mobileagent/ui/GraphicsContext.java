@@ -50,7 +50,7 @@ public final class GraphicsContext {
 
     /* renamed from: b */
     public final GraphicsContext setColorFromPalette(int i) {
-        this.graphics.setColor(AppState.getInt(PaletteKeys.COLORS_BASE + (i << 3) + AppState.getInt(SettingsKeys.SETTING_COLOR_THEME)));
+        this.graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + (i << 3) + Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME)));
         return this;
     }
 
@@ -86,7 +86,7 @@ public final class GraphicsContext {
 
     /* renamed from: a */
     public final GraphicsContext drawString(String str, int i, int i2, int i3) {
-        if (i2 > 0 && i2 < AppState.getInt(UIKeys.INT_SCREEN_HEIGHT)) {
+        if (i2 > 0 && i2 < Storage.state().getInt(UIKeys.INT_SCREEN_HEIGHT)) {
             this.graphics.drawString(str, i, i2, i3);
         }
         return this;
@@ -118,7 +118,7 @@ public final class GraphicsContext {
         if (i4 != 0) {
             return drawIcon(i & 65535, i2, i3).drawIcon(i4, i2, i3);
         }
-        if ((i & 16384) != 0 && AppState.getBool(UIKeys.FLAG_BLINK_STATE)) {
+        if ((i & 16384) != 0 && Storage.state().getBool(UIKeys.FLAG_BLINK_STATE)) {
             return this;
         }
         Graphics graphics = this.graphics;
@@ -131,7 +131,7 @@ public final class GraphicsContext {
             if (clipY - i6 < 16 && (clipWidth2 = (clipX - i7) + (clipWidth = graphics.getClipWidth())) > 0 && (clipHeight2 = (clipY - i6) + (clipHeight = graphics.getClipHeight())) > 0) {
                 int drawW = Utils.min(clipWidth2, 16);
                 int drawW2 = Utils.min(clipHeight2, 16);
-                int i8 = i5 <= 354 ? 255 & AppState.getBytes(StringResKeys.RES_STRING_DATA)[i5 + 39] : 256 + AppState.getBytes(StringResKeys.RES_STRING_DATA)[i5 + 39];
+                int i8 = i5 <= 354 ? 255 & Storage.resources().getBytes(StringResKeys.RES_STRING_DATA)[i5 + 39] : 256 + Storage.resources().getBytes(StringResKeys.RES_STRING_DATA)[i5 + 39];
                 int i9 = i8;
                 int i10 = i8 >> 4;
                 int i11 = i9 & 15;

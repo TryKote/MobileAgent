@@ -39,7 +39,7 @@ public final class ByteBuffer {
     // --- Constructors ---
 
     public ByteBuffer() {
-        this.data = AppState.emptyBytes;
+        this.data = Storage.emptyBytes;
     }
 
     public ByteBuffer(HttpClient client) {
@@ -116,7 +116,7 @@ public final class ByteBuffer {
 
     public ByteBuffer clear() {
         ObjectPool.releaseBytes(this.data);
-        this.data = AppState.emptyBytes;
+        this.data = Storage.emptyBytes;
         this.length = 0;
         this.offset = 0;
         return this;
@@ -532,7 +532,7 @@ public final class ByteBuffer {
         int strLen = peekShortLE() - 1;
         if (strLen <= 0) {
             skip(3);
-            return AppState.emptyStr;
+            return Storage.emptyStr;
         }
         this.data[this.offset] = (byte) (strLen >> 8);
         this.data[this.offset + 1] = (byte) strLen;
@@ -559,7 +559,7 @@ public final class ByteBuffer {
 
     public String getStringAndClear() {
         String result = this.length == 0
-                ? AppState.emptyStr
+                ? Storage.emptyStr
                 : StringUtils.intern(new String(this.data, this.offset, this.length));
         clear();
         return result;
@@ -718,17 +718,17 @@ public final class ByteBuffer {
     // --- Packed string encoding (AppState integration) ---
 
     public ByteBuffer writeCompressed(int key) {
-        return key > AppState.PACKED_STRING_THRESHOLD
-                ? writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16)
-                : writeBytes(AppState.getBytes(key));
+        return key > Storage.PACKED_STRING_THRESHOLD
+                ? writeBytesAt(Storage.resources().getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16)
+                : writeBytes(Storage.state().getBytes(key));
     }
 
     public ByteBuffer writeEncodedInt(int key) {
-        return writeRawString(AppState.getString(key));
+        return writeRawString(Storage.state().getString(key));
     }
 
     public ByteBuffer writeExtendedInt(int key) {
-        writeRawString(AppState.getString(key & 0xFFFF));
+        writeRawString(Storage.state().getString(key & 0xFFFF));
         int highByte = key >>> 16;
         if (highByte != 0) {
             writeByte(highByte);

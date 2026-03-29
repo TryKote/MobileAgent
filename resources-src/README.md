@@ -44,6 +44,8 @@ resources-src/                      build/resources/
 | `tools/cfg_tool.py --gen-java <dir> <java>` | Generate `PackedStringKeys.java` |
 | `tools/cfg_tool.py --gen-screens <dir> <java>` | Generate `ScreenDef.java` |
 | `tools/cfg_tool.py --gen-palette <dir> <java>` | Generate `PaletteKeys.java` |
+| `tools/cfg_tool.py --gen-keys <dir> <out_dir>` | Generate all `*Keys.java` from config annotations |
+| `tools/cfg_tool.py --validate <dir> <src_dir>` | Validate config annotations vs existing Keys |
 | `tools/pack_cities.sh <out_dir>` | Convert cities.xml (UTF-8 -> CP1251) |
 | `tools/pack_resources.sh <out_dir>` | Copy and rename images per mapping.json |
 
@@ -51,66 +53,124 @@ resources-src/                      build/resources/
 
 # config.json
 
-The main configuration file. Format version: `mobileagent-cfg-v2`.
+The main configuration file.
 
-It has two top-level sections:
+Top-level structure:
 
 ```jsonc
 {
   "format": "mobileagent-cfg-v2",
-  "objectPool": [ ... ],   // data storage (strings, ints, binaries)
-  "screens": [ ... ]        // UI screen definitions
+  "zones": [              // data pool, grouped by zone
+    {"name": "state", "items": [...]},
+    {"name": "resources", "items": [...]}
+  ],
+  "screens": [...],       // UI screen definitions
+  "blocks": [...],        // contiguous entry block definitions
+  "intPoolKeys": [...],   // named constants for intPool (screen data area)
+  "constants": [...]      // non-index constants (array sizes, offsets)
 }
 ```
 
-## objectPool
+## Zones
 
-An ordered array of data entries. Each entry has an `index` (must match its
-position in the array) and a `type`. The application accesses entries by index
-at runtime through `AppState.getString(index)`, `AppState.getInt(index)`, etc.
+The data pool (1406 entries total) is split into two zones:
+
+- **state** — read-write runtime data: flags, counters, session slots, vectors.
+  Entries at positions 0-294 are persisted to phone storage (RMS) across restarts.
+- **resources** — read-only data loaded from binary: UI strings, byte arrays,
+  lookup tables, packed strings blob.
+
+### What you CAN edit
+
+| What | How | Rebuild |
+|------|-----|---------|
+| String value (`"value"` of `string` entries) | Edit `value` directly | `make resources` |
+| Integer value | Edit `value` directly | `make resources` |
+| Packed string value (server address, URL, etc.) | Edit `value` in the `names[]` array | `make resources && make gen-keys` |
+| String list (dropdown choices) | Edit `value` array | `make resources` |
+
+### What you should NOT edit
+
+| Field | Why |
+|-------|-----|
+| `type` | Determines binary encoding; changing breaks the pool layout |
+| `position` | Binary slot index, managed by the tool. Changing shifts all dependent entries |
+| `key`, `class` | Annotations for code generation. Change via `tools/annotate_pool.py` |
+| `block`, `block_offset` | Auto-generated block membership annotations |
+| `offset`, `length` in packed_strings `names[]` | Auto-recomputed when you edit `value` |
 
 ### Entry types
 
-| Type | JSON format | Description |
-|------|-------------|-------------|
-| `int` | `{"index": 0, "type": "int", "value": 42}` | Integer value |
-| `string` | `{"index": 43, "type": "string", "value": "Hello"}` | Text string (stored as CP1251 in binary) |
-| `bytes` | `{"index": 296, "type": "bytes", "value": "base64..."}` | Raw binary data |
-| `string_list` | `{"index": 694, "type": "string_list", "value": ["a", "b"]}` | Null-separated CP1251 string list (dropdown choices, etc.) |
-| `null` | `{"index": 222, "type": "null"}` | Empty slot |
+| Type | Example | Description |
+|------|---------|-------------|
+| `int` | `{"type": "int", "value": 42}` | Integer value |
+| `string` | `{"type": "string", "value": "Hello"}` | Text (CP1251 in binary) |
+| `bytes` | `{"type": "bytes", "value": "base64..."}` | Raw binary data |
+| `string_list` | `{"type": "string_list", "value": ["a","b"]}` | Null-separated string list |
+| `null` | `{"type": "null"}` | Empty slot (runtime placeholder) |
 | `packed_strings` | *(see below)* | Compact string blob with named references |
 
-**What can you edit?**
-- `value` of `string` and `int` entries: freely
-- `value` of `bytes` entries: only if you know what's inside
-- `index` and `type`: never change these
+### Position field
+
+Entries at positions 0-294 in the **state** zone don't need `position` — their
+index is their order in the array. All entries in the **resources** zone and
+state entries at positions 295+ have an explicit `"position"` field.
+
+**Why position exists:** The binary `cfg` format is a flat sequence. The
+serializer needs to know exactly which binary slot each entry occupies.
+You don't need to manage positions — they're assigned by `tools/annotate_pool.py`.
+
+### How to add a new pool entry
+
+1. Add the entry to the appropriate zone in config.json:
+   - State zone: if the entry will be read/written at runtime
+   - Resources zone: if it's a static string, byte array, or lookup table
+2. Set `"position"` to the first unused slot (check both zones for gaps)
+3. Add `"key"` and `"class"` to generate a Java constant
+4. Run `make resources && make gen-keys`
+5. Use the generated constant: `Storage.state().getString(MyKeys.MY_KEY)`
+
+### How to delete a pool entry
+
+Replace the entry with `{"type": "null", "position": N}`. Don't remove it —
+the binary format has a fixed size of 1406 entries. Remove the `key`/`class`
+annotations to stop generating the Java constant.
 
 ### packed_strings
 
-A single blob containing many short strings (URL fragments, tag names, status
-codes) packed together. Instead of storing each as a separate pool entry,
-they're concatenated with null-byte separators into one binary blob.
+A single blob containing many short strings (URL fragments, tag names, server
+addresses) packed together. Located at position 295 in the resources zone.
 
 ```jsonc
 {
-  "index": 295,
   "type": "packed_strings",
-  "entries": [
-    {"value": "statisticsq=data/add"},    // text segment
-    {"bytes": "AQIDBAUGBwgJ..."},          // binary segment
-    {"value": "http://mobile.mail.ru/"}    // text segment
-  ],
-  "names": [
-    {"name": "URL_STATS", "offset": 0, "length": 20},
-    {"name": "TAG_A", "offset": 2, "length": 1}
+  "entries": [...],         // raw blob segments (don't edit directly)
+  "names": [                // named references — edit "value" here
+    {"name": "HOST_MRIM_REDIRECT", "offset": 783, "length": 17,
+     "value": "194.32.248.3:2042"},
+    {"name": "HOST_VKMESSENGER", "offset": 6247, "length": 15,
+     "value": "vkmessenger.com"}
   ]
 }
 ```
 
-- `entries[]` are null-separated segments. On pack, they're joined with `\0` bytes.
-- `names[]` define Java constants for `PackedStringKeys.java`. Each name points
-  to a substring within the blob by `offset` and `length` (in bytes).
-  The runtime ID is `(length << 16) | offset`.
+**To change a server address or URL:** edit the `"value"` field in `names[]`
+and run `make resources`. The tool patches the blob and recomputes `offset`
+and `length` automatically. The `entries[]` array is updated too.
+
+### blocks
+
+Contiguous groups of entries accessed via `base + offset` in Java
+(e.g., emoticon names at indices 1063-1122). Defined in the top-level
+`"blocks"` array:
+
+```jsonc
+{"key": "EMOTICON_NAMES", "class": "StringResKeys", "base": 1063, "count": 60}
+```
+
+This generates two Java constants: `EMOTICON_NAMES_BASE = 1063` and
+`EMOTICON_NAMES_COUNT = 60`. Block entries in the pool are annotated
+with `"block"` and `"block_offset"` for traceability.
 
 ---
 
@@ -434,18 +494,14 @@ or near related screens.
 - `title`, `label`, `icon` values must be valid objectPool indices.
 - `cmd` values are command IDs you'll handle in Java.
 
-### Step 2: Register the screen offset
-
-Add your screen to the `KNOWN_SCREENS` list in `tools/cfg_tool.py` so the
-tool knows how to parse it. Then regenerate constants:
+### Step 2: Rebuild and regenerate constants
 
 ```bash
-# Rebuild binary and regenerate ScreenDef.java
-make resources
-make screen-defs
+make resources      # pack config.json -> binary cfg
+make screen-defs    # regenerate ScreenDef.java with the new offset
 ```
 
-This creates a `ScreenDef.MY_NEW_SCREEN` constant with the correct offset.
+This creates a `ScreenDef.MY_NEW_SCREEN` constant.
 
 ### Step 3: Add a ScreenId (if needed)
 
@@ -632,6 +688,8 @@ resources-src/                      build/resources/
 | `tools/cfg_tool.py --gen-java <dir> <java>` | Генерация `PackedStringKeys.java` |
 | `tools/cfg_tool.py --gen-screens <dir> <java>` | Генерация `ScreenDef.java` |
 | `tools/cfg_tool.py --gen-palette <dir> <java>` | Генерация `PaletteKeys.java` |
+| `tools/cfg_tool.py --gen-keys <dir> <out_dir>` | Генерация всех `*Keys.java` из аннотаций config |
+| `tools/cfg_tool.py --validate <dir> <src_dir>` | Проверка аннотаций config vs существующих Keys |
 | `tools/pack_cities.sh <out_dir>` | Конвертация cities.xml (UTF-8 -> CP1251) |
 | `tools/pack_resources.sh <out_dir>` | Копирование и переименование изображений |
 
@@ -639,66 +697,125 @@ resources-src/                      build/resources/
 
 # config.json
 
-Основной конфигурационный файл. Версия формата: `mobileagent-cfg-v2`.
+Основной конфигурационный файл.
 
-Два раздела верхнего уровня:
+Структура верхнего уровня:
 
 ```jsonc
 {
   "format": "mobileagent-cfg-v2",
-  "objectPool": [ ... ],   // хранилище данных (строки, числа, бинарные)
-  "screens": [ ... ]        // определения экранов UI
+  "zones": [              // пул данных, сгруппированный по зонам
+    {"name": "state", "items": [...]},
+    {"name": "resources", "items": [...]}
+  ],
+  "screens": [...],       // определения экранов UI
+  "blocks": [...],        // определения контигуальных блоков
+  "intPoolKeys": [...],   // именованные константы для intPool
+  "constants": [...]      // неиндексные константы (размеры массивов, смещения)
 }
 ```
 
-## objectPool
+## Зоны
 
-Упорядоченный массив записей данных. У каждой записи есть `index` (должен
-совпадать с позицией в массиве) и `type`. Приложение обращается к записям
-по индексу через `AppState.getString(index)`, `AppState.getInt(index)` и т.д.
+Пул данных (1406 записей) разделён на две зоны:
+
+- **state** — читаемые/записываемые данные рантайма: флаги, счётчики,
+  слоты сессии, векторы. Записи на позициях 0-294 сохраняются в память
+  телефона (RMS) между перезапусками.
+- **resources** — read-only данные из бинарника: строки UI, байтовые массивы,
+  таблицы поиска, блоб packed strings.
+
+### Что МОЖНО редактировать
+
+| Что | Как | Пересборка |
+|-----|-----|------------|
+| Строковое значение (`"value"` у `string`) | Редактировать `value` напрямую | `make resources` |
+| Целочисленное значение | Редактировать `value` напрямую | `make resources` |
+| Packed string (адрес сервера, URL и т.п.) | Редактировать `value` в массиве `names[]` | `make resources && make gen-keys` |
+| Список строк (варианты dropdown) | Редактировать массив `value` | `make resources` |
+
+### Что НЕЛЬЗЯ редактировать
+
+| Поле | Почему |
+|------|--------|
+| `type` | Определяет бинарную кодировку; изменение ломает layout пула |
+| `position` | Индекс бинарного слота, управляется инструментом. Изменение сдвигает зависимые записи |
+| `key`, `class` | Аннотации для кодогенерации. Менять через `tools/annotate_pool.py` |
+| `block`, `block_offset` | Автогенерируемые аннотации принадлежности к блоку |
+| `offset`, `length` в `names[]` packed_strings | Автоматически пересчитываются при изменении `value` |
 
 ### Типы записей
 
-| Тип | Формат JSON | Описание |
-|-----|-------------|----------|
-| `int` | `{"index": 0, "type": "int", "value": 42}` | Целое число |
-| `string` | `{"index": 43, "type": "string", "value": "Привет"}` | Текстовая строка (в бинарном файле хранится как CP1251) |
-| `bytes` | `{"index": 296, "type": "bytes", "value": "base64..."}` | Бинарные данные |
-| `string_list` | `{"index": 694, "type": "string_list", "value": ["a", "b"]}` | Список строк CP1251 через null-байт (варианты dropdown и т.п.) |
-| `null` | `{"index": 222, "type": "null"}` | Пустой слот |
+| Тип | Пример | Описание |
+|-----|--------|----------|
+| `int` | `{"type": "int", "value": 42}` | Целое число |
+| `string` | `{"type": "string", "value": "Привет"}` | Текст (CP1251 в бинарнике) |
+| `bytes` | `{"type": "bytes", "value": "base64..."}` | Бинарные данные |
+| `string_list` | `{"type": "string_list", "value": ["a","b"]}` | Список строк через null-байт |
+| `null` | `{"type": "null"}` | Пустой слот (заполнитель для рантайма) |
 | `packed_strings` | *(см. ниже)* | Компактный блоб строк с именованными ссылками |
 
-**Что можно редактировать?**
-- `value` у записей `string` и `int`: свободно
-- `value` у записей `bytes`: только если знаете, что внутри
-- `index` и `type`: никогда не меняйте
+### Поле position
+
+Записи на позициях 0-294 в зоне **state** не нуждаются в `position` — их
+индекс = их порядок в массиве. Все записи в зоне **resources** и записи
+state на позициях 295+ имеют явное поле `"position"`.
+
+**Зачем position:** бинарный формат `cfg` — плоская последовательность.
+Сериализатор должен знать, в какой именно бинарный слот попадает запись.
+Управлять position'ами не нужно — они назначаются `tools/annotate_pool.py`.
+
+### Как добавить новую запись
+
+1. Добавьте запись в нужную зону в config.json:
+   - Зона state: если запись будет читаться/записываться в рантайме
+   - Зона resources: если это статическая строка, байтовый массив или таблица
+2. Укажите `"position"` — первый свободный слот (проверьте обе зоны на пробелы)
+3. Добавьте `"key"` и `"class"` для генерации Java-константы
+4. Запустите `make resources && make gen-keys`
+5. Используйте константу: `Storage.state().getString(MyKeys.MY_KEY)`
+
+### Как удалить запись
+
+Замените запись на `{"type": "null", "position": N}`. Не удаляйте её —
+бинарный формат имеет фиксированный размер 1406 записей. Уберите аннотации
+`key`/`class`, чтобы перестать генерировать Java-константу.
 
 ### packed_strings
 
 Единый блоб, содержащий множество коротких строк (фрагменты URL, имена тегов,
-коды статусов), упакованных вместе. Вместо хранения каждой строки отдельной
-записью пула, они склеены null-байтами в один бинарный блоб.
+адреса серверов), упакованных вместе. Находится на позиции 295 в зоне resources.
 
 ```jsonc
 {
-  "index": 295,
   "type": "packed_strings",
-  "entries": [
-    {"value": "statisticsq=data/add"},    // текстовый сегмент
-    {"bytes": "AQIDBAUGBwgJ..."},          // бинарный сегмент
-    {"value": "http://mobile.mail.ru/"}    // текстовый сегмент
-  ],
-  "names": [
-    {"name": "URL_STATS", "offset": 0, "length": 20},
-    {"name": "TAG_A", "offset": 2, "length": 1}
+  "entries": [...],         // сегменты блоба (не редактировать напрямую)
+  "names": [                // именованные ссылки — редактировать "value" здесь
+    {"name": "HOST_MRIM_REDIRECT", "offset": 783, "length": 17,
+     "value": "194.32.248.3:2042"},
+    {"name": "HOST_VKMESSENGER", "offset": 6247, "length": 15,
+     "value": "vkmessenger.com"}
   ]
 }
 ```
 
-- `entries[]` — сегменты, разделённые null-байтами. При упаковке склеиваются через `\0`.
-- `names[]` — именованные ссылки на подстроки для `PackedStringKeys.java`.
-  Каждое имя указывает на подстроку в блобе по `offset` и `length` (в байтах).
-  Рантайм-ID: `(length << 16) | offset`.
+**Чтобы изменить адрес сервера или URL:** отредактируйте поле `"value"` в
+`names[]` и запустите `make resources`. Инструмент пропатчит блоб и пересчитает
+`offset` и `length` автоматически. Массив `entries[]` тоже обновится.
+
+### blocks
+
+Контигуальные группы записей, доступные через `base + offset` в Java
+(например, имена эмотиконов на индексах 1063-1122). Определены в массиве
+`"blocks"` верхнего уровня:
+
+```jsonc
+{"key": "EMOTICON_NAMES", "class": "StringResKeys", "base": 1063, "count": 60}
+```
+
+Генерирует две Java-константы: `EMOTICON_NAMES_BASE = 1063` и
+`EMOTICON_NAMES_COUNT = 60`. Записи блока в пуле аннотированы полями
+`"block"` и `"block_offset"` для прослеживаемости.
 
 ---
 
@@ -1016,18 +1133,14 @@ objectPool.
 - `title`, `label`, `icon` — валидные индексы objectPool.
 - `cmd` — ID команд, которые вы обработаете в Java.
 
-### Шаг 2: Зарегистрируйте смещение экрана
-
-Добавьте экран в список `KNOWN_SCREENS` в `tools/cfg_tool.py`, чтобы
-инструмент мог его распарсить. Затем перегенерируйте константы:
+### Шаг 2: Пересоберите и перегенерируйте константы
 
 ```bash
-# Пересобрать бинарный файл и перегенерировать ScreenDef.java
-make resources
-make screen-defs
+make resources      # упаковать config.json -> бинарный cfg
+make screen-defs    # перегенерировать ScreenDef.java с новым смещением
 ```
 
-Это создаст константу `ScreenDef.MY_NEW_SCREEN` с правильным смещением.
+Это создаст константу `ScreenDef.MY_NEW_SCREEN`.
 
 ### Шаг 3: Добавьте ScreenId (если нужно)
 

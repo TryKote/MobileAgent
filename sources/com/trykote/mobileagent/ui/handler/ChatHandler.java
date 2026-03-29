@@ -22,8 +22,8 @@ public final class ChatHandler extends BaseScreenHandler {
         Object[] request;
         switch (screenId) {
             case ScreenId.CHAT_ROOMS:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
-                MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                MrimAccount mrimAccount = (MrimAccount) Storage.state().getAccount();
                 if (mrimAccount.chatRoomManager.getCount() != 0 && !mrimAccount.chatRoomManager.loaded) {
                     MrimChatRoomManager.showChatRoomListWithCounts();
                     return;
@@ -31,33 +31,33 @@ public final class ChatHandler extends BaseScreenHandler {
                 NotificationHelper.showConfirmDialog(37, 833);
                 Vector params = ObjectPool.newVector();
                 JsonParser.addIntToVector(params, 0);
-                params.addElement(AppState.emptyStr);
+                params.addElement(Storage.emptyStr);
                 JsonParser.addIntToVector(params, 1);
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_PATH_MAILBOX)).append('?').append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_GET_MAILBOX)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_PATH_MAILBOX)).append('?').append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_GET_MAILBOX)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 return;
             case ScreenId.CHAT_ROOM_INIT:
                 MrimChatRoomManager.showChatRoomListWithCounts();
                 return;
             case ScreenId.CHAT_ROOM_MESSAGES:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
-                ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
                 if (!chatRoom.isInitialized) {
                     MrimChatRoomManager.showChatRoomMessages();
                     return;
                 }
                 NotificationHelper.showConfirmDialog(41, 836);
-                MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
+                MrimAccount mrimAccount2 = (MrimAccount) Storage.state().getAccount();
                 Vector params2 = ObjectPool.newVector();
                 if (chatRoom == mrimAccount2.chatRoomManager.getLast()) {
                     params2.addElement(StringUtils.intern(Integer.toString(0)));
                     params2.addElement(chatRoom.participants);
-                    request = ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newBufferFromState(722608).append(AppState.getString(PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
+                    request = ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newBufferFromState(722608).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 } else {
                     params2.addElement(StringUtils.intern(Integer.toString(chatRoom.id)));
-                    int intVal2 = AppState.getInt(SettingsKeys.SETTING_TIMEOUT_VALUE);
+                    int intVal2 = Storage.state().getInt(SettingsKeys.SETTING_TIMEOUT_VALUE);
                     params2.addElement(StringUtils.intern(Integer.toString(Utils.max(intVal2, chatRoom.messageIds.size() + (chatRoom.isActive ? intVal2 : 0)))));
                     params2.addElement(StringUtils.intern(Integer.toString(1)));
-                    params2.addElement(AppState.emptyStr);
+                    params2.addElement(Storage.emptyStr);
                     Vector messageIdParams = ObjectPool.newVector();
                     Enumeration contactEnum = chatRoom.messageIds.elements();
                     while (contactEnum.hasMoreElements()) {
@@ -68,16 +68,16 @@ public final class ChatHandler extends BaseScreenHandler {
                         }
                     }
                     params2.addElement(messageIdParams);
-                    request = ApiClient.createAuthRequest(ObjectPool.newBufferFromState(1050207).append('?').append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_MAJAX_GET_MSGS)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
+                    request = ApiClient.createAuthRequest(ObjectPool.newBufferFromState(1050207).append('?').append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_MAJAX_GET_MSGS)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 }
                 MrimChatRoomManager.sendChatRoomRequest(request);
                 return;
             case ScreenId.CHAT_ROOM_INVITE:
                 NotificationHelper.showConfirmDialog(42, 862);
                 Vector params4 = ObjectPool.newVector();
-                JsonParser.addIntToVector(params4, AppState.getInt(ChatKeys.INT_ACTIVE_CHATROOM_ID));
-                params4.addElement(AppState.getVector(UIKeys.SLOT_MEDIA_STREAM));
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_MOVE_MSGS)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
+                JsonParser.addIntToVector(params4, Storage.state().getInt(ChatKeys.INT_ACTIVE_CHATROOM_ID));
+                params4.addElement(Storage.state().getVector(UIKeys.SLOT_MEDIA_STREAM));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_MOVE_MSGS)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
                 return;
             case ScreenId.CHAT_ROOM_VIEW:
                 MrimChatRoomManager.showChatRoomMessages();
@@ -89,23 +89,23 @@ public final class ChatHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_VIEW_MODE));
                 return;
             case ScreenId.CHAT_ROOM_CONTEXT:
-                String msgId2 = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
-                int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
-                MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
+                String msgId2 = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
+                int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
+                MrimAccount mrimAccount3 = (MrimAccount) Storage.state().getAccount();
                 boolean z5 = msgId2 != null;
                 boolean z6 = z5;
-                AppState.setBool(ChatKeys.FLAG_IS_CHATROOM, z5);
+                Storage.state().setBool(ChatKeys.FLAG_IS_CHATROOM, z5);
                 ChatRoom chatRoom2 = mrimAccount3.chatRoomManager.findById(chatRoomId);
                 boolean isRead = chatRoom2.isMessageRead(msgId2);
-                AppState.setBool(ChatKeys.FLAG_MSG_READ_SELECTED, z6 && isRead);
-                AppState.setBool(ChatKeys.FLAG_MSG_UNREAD_SELECTED, z6 && !isRead);
+                Storage.state().setBool(ChatKeys.FLAG_MSG_READ_SELECTED, z6 && isRead);
+                Storage.state().setBool(ChatKeys.FLAG_MSG_UNREAD_SELECTED, z6 && !isRead);
                 Message message3 = chatRoom2.getMessage(msgId2);
-                AppState.setBool(ChatKeys.FLAG_MSG_UNREAD, z6 && !message3.isRead());
-                AppState.setBool(ChatKeys.FLAG_MSG_READ, z6 && message3.isRead());
+                Storage.state().setBool(ChatKeys.FLAG_MSG_UNREAD, z6 && !message3.isRead());
+                Storage.state().setBool(ChatKeys.FLAG_MSG_READ, z6 && message3.isRead());
                 int size5 = chatRoom2.readMessages.size();
-                AppState.setBool(ChatKeys.FLAG_CHATROOM_HAS_MEMBERS, size5 != 0);
-                AppState.setBool(ChatKeys.FLAG_CHATROOM_HAS_MORE, chatRoom2 != mrimAccount3.chatRoomManager.getLast());
-                AppState.setFromBuffer(ChatKeys.SLOT_UNREAD_COUNT_TEXT, ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_UNREAD_COUNT_PREFIX)).append(size5).append(')'));
+                Storage.state().setBool(ChatKeys.FLAG_CHATROOM_HAS_MEMBERS, size5 != 0);
+                Storage.state().setBool(ChatKeys.FLAG_CHATROOM_HAS_MORE, chatRoom2 != mrimAccount3.chatRoomManager.getLast());
+                Storage.state().setFromBuffer(ChatKeys.SLOT_UNREAD_COUNT_TEXT, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_UNREAD_COUNT_PREFIX)).append(size5).append(')'));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_ROOM_CONTEXT));
                 return;
             case ScreenId.CHAT_ROOM_ALERT:
@@ -118,12 +118,12 @@ public final class ChatHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_LIST_OPTIONS));
                 return;
             case ScreenId.CREATE_CHAT_ROOM:
-                AppState.setInt(ChatKeys.FLAG_CHAT_ROOM_CREATED, 0);
-                AppState.setFromBuffer(ChatKeys.SLOT_CHAT_NAME, ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_CHAT_NAME_PREFIX)).append(1 + (AppState.getInt(SettingsKeys.UI_COUNTER) % 1000)));
-                ScreenManager.showScreen(ContactListManager.buildContactListScreen(ScreenManager.createScreen(ScreenDef.CREATE_CHAT_ROOM), (MrimAccount) AppState.getAccount(), (Contact) null));
+                Storage.state().setInt(ChatKeys.FLAG_CHAT_ROOM_CREATED, 0);
+                Storage.state().setFromBuffer(ChatKeys.SLOT_CHAT_NAME, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_CHAT_NAME_PREFIX)).append(1 + (Storage.state().getInt(SettingsKeys.UI_COUNTER) % 1000)));
+                ScreenManager.showScreen(ContactListManager.buildContactListScreen(ScreenManager.createScreen(ScreenDef.CREATE_CHAT_ROOM), (MrimAccount) Storage.state().getAccount(), (Contact) null));
                 return;
             case ScreenId.CHAT_STATUS:
-                AppState.setBool(UIKeys.FLAG_STATUS_TEXT_SET, Utils.nonEmpty(AppState.getString(UIKeys.SLOT_STATUS_TEXT)));
+                Storage.state().setBool(UIKeys.FLAG_STATUS_TEXT_SET, Utils.nonEmpty(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT)));
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CHAT_STATUS));
                 return;
             case ScreenId.CHAT_DETAIL:
@@ -150,14 +150,14 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOM_INVITE:
                 return -1;
             case ScreenId.CHAT_ROOM_VIEW:
-                AppState.setInt(ChatKeys.INT_SCROLL_OFFSET, currentScreen.scrollOffset);
-                AppState.setObject(MapKeys.SLOT_MAP_POINT_2, (Object) title);
+                Storage.state().setInt(ChatKeys.INT_SCROLL_OFFSET, currentScreen.scrollOffset);
+                Storage.state().setObject(MapKeys.SLOT_MAP_POINT_2, (Object) title);
                 Message message = (Message) obj;
-                AppState.setObject(RuntimeKeys.SLOT_MESSAGE_ID, (Object) (message != null ? message.from : null));
+                Storage.state().setObject(RuntimeKeys.SLOT_MESSAGE_ID, (Object) (message != null ? message.from : null));
                 return 0;
             case ScreenId.CHAT_ROOM_CONFIG:
                 ScreenManager.processScreenForm();
-                return (AppState.getInt(SettingsKeys.INT_EMOTICON_CONFIG_ACTION) != 4 || 0 == (configResult = ((MrimAccount) AppState.getAccount()).setConfiguration(((AppState.getInt(SettingsKeys.INT_EMOTICON_CONFIG_ID) - 157) << 8) + 4))) ? 0 : NotificationHelper.showError(configResult);
+                return (Storage.state().getInt(SettingsKeys.INT_EMOTICON_CONFIG_ACTION) != 4 || 0 == (configResult = ((MrimAccount) Storage.state().getAccount()).setConfiguration(((Storage.state().getInt(SettingsKeys.INT_EMOTICON_CONFIG_ID) - 157) << 8) + 4))) ? 0 : NotificationHelper.showError(configResult);
             case ScreenId.CHAT_VIEW_MODE:
                 ScreenManager.processScreenForm();
                 return 0;
@@ -171,7 +171,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 return handleRouteListOption(action);
             case ScreenId.CREATE_CHAT_ROOM:
                 ScreenManager.processScreenForm();
-                String chatName = Utils.defaultStr(AppState.getString(ChatKeys.SLOT_CHAT_NAME));
+                String chatName = Utils.defaultStr(Storage.state().getString(ChatKeys.SLOT_CHAT_NAME));
                 if (StringUtils.isEmpty(chatName)) {
                     errorCode4 = NotificationHelper.showError(301);
                 } else {
@@ -179,8 +179,8 @@ public final class ChatHandler extends BaseScreenHandler {
                     if (checkedItems.size() == 0) {
                         errorCode4 = NotificationHelper.showError(775);
                     } else {
-                        MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
-                        boolean flag2 = AppState.getBool(ChatKeys.FLAG_CHAT_ROOM_CREATED);
+                        MrimAccount mrimAccount3 = (MrimAccount) Storage.state().getAccount();
+                        boolean flag2 = Storage.state().getBool(ChatKeys.FLAG_CHAT_ROOM_CREATED);
                         ByteBuffer buffer = new ByteBuffer();
                         int size = checkedItems.size();
                         int i5 = size;
@@ -197,7 +197,7 @@ public final class ChatHandler extends BaseScreenHandler {
                                 if (0 != sendResult3) {
                                     errorCode4 = NotificationHelper.showError(sendResult3);
                                 } else {
-                                    AppState.addInt(SettingsKeys.UI_COUNTER, 1);
+                                    Storage.state().addInt(SettingsKeys.UI_COUNTER, 1);
                                     errorCode4 = 0;
                                 }
                             } else {
@@ -224,7 +224,7 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOM_INIT:
                 return 0;
             case ScreenId.CHAT_ROOM_MESSAGES:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 return 0;
             case ScreenId.CHAT_ROOM_INVITE:
                 return 0;
@@ -257,27 +257,27 @@ public final class ChatHandler extends BaseScreenHandler {
     public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.CHAT_ROOMS:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 break;
             case ScreenId.CHAT_ROOM_MESSAGES:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 break;
             case ScreenId.CHAT_ROOM_INVITE:
-                AppState.clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
                 break;
             case ScreenId.CHAT_ROOM_CONTEXT:
-                AppState.clearIndex(ChatKeys.SLOT_UNREAD_COUNT_TEXT);
+                Storage.state().clearIndex(ChatKeys.SLOT_UNREAD_COUNT_TEXT);
                 break;
             case ScreenId.CREATE_CHAT_ROOM:
-                AppState.clearIndex(ChatKeys.SLOT_CHAT_NAME);
+                Storage.state().clearIndex(ChatKeys.SLOT_CHAT_NAME);
                 break;
         }
         clearScreenFlags();
     }
 
     private static void clearScreenFlags() {
-        AppState.clearRange(ChatKeys.SCREEN_FLAGS_START, ChatKeys.SCREEN_FLAGS_END);
-        AppState.setInt(ChatKeys.FLAG_CHAT_ROOM_CREATED, 0);
+        Storage.state().clearRange(ChatKeys.SCREEN_FLAGS_START, ChatKeys.SCREEN_FLAGS_END);
+        Storage.state().setInt(ChatKeys.FLAG_CHAT_ROOM_CREATED, 0);
     }
 
     public int onItemSelected(ListView screen, MenuItem menuItem, String title, int selectedOption,
@@ -287,21 +287,21 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOMS:
                 return -1;
             case ScreenId.CHAT_ROOM_INIT:
-                AppState.setInt(ChatKeys.INT_CHATROOM_ID, ((ChatRoom) obj).id);
+                Storage.state().setInt(ChatKeys.INT_CHATROOM_ID, ((ChatRoom) obj).id);
                 return 0;
             case ScreenId.CHAT_ROOM_MESSAGES:
                 return -1;
             case ScreenId.CHAT_ROOM_INVITE:
                 return -1;
             case ScreenId.CHAT_ROOM_VIEW:
-                AppState.setInt(ChatKeys.INT_SCROLL_OFFSET, screen.scrollOffset);
-                AppState.setObject(MapKeys.SLOT_MAP_POINT_2, (Object) title);
+                Storage.state().setInt(ChatKeys.INT_SCROLL_OFFSET, screen.scrollOffset);
+                Storage.state().setObject(MapKeys.SLOT_MAP_POINT_2, (Object) title);
                 Message msg = (Message) obj;
                 if (msg == null) {
                     i = -1;
                 } else {
-                    AppState.setObject(RuntimeKeys.SLOT_MESSAGE_ID, (Object) msg.from);
-                    ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
+                    Storage.state().setObject(RuntimeKeys.SLOT_MESSAGE_ID, (Object) msg.from);
+                    ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
                     if (StringUtils.matchesKey(894, chatRoom.name) || StringUtils.matchesKey(899, chatRoom.name)) {
                         MailHelper.setMailAction(54, 3);
                     } else {
@@ -344,12 +344,12 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_ROOMS:
                 Object[] asyncResult = ApiClient.getAsyncResult(ApiClient.pollAsyncResult());
                 if (asyncResult != null) {
-                    int stateInt4 = AppState.getInt(UIKeys.INT_SCREEN_ACTION);
+                    int stateInt4 = Storage.state().getInt(UIKeys.INT_SCREEN_ACTION);
                     int responseCode = ApiClient.validateJsonResponse(asyncResult);
                     if (responseCode != 0) {
                         action = responseCode;
                     } else {
-                        ((MrimAccount) AppState.getAccount()).chatRoomManager.parseFromJson(ApiClient.getJsonPayload());
+                        ((MrimAccount) Storage.state().getAccount()).chatRoomManager.parseFromJson(ApiClient.getJsonPayload());
                         action = stateInt4;
                     }
                 } else {
@@ -366,16 +366,16 @@ public final class ChatHandler extends BaseScreenHandler {
                         action = responseCode2;
                     } else {
                         Object payload = ApiClient.getJsonPayload();
-                        MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
-                        ChatRoom chatRoom2 = mrimAccount2.chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
+                        MrimAccount mrimAccount2 = (MrimAccount) Storage.state().getAccount();
+                        ChatRoom chatRoom2 = mrimAccount2.chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
                         if (chatRoom2 != mrimAccount2.chatRoomManager.getLast()) {
-                            chatRoom2.subject = JsonParser.getStringValue(payload, AppState.getString(PackedStringKeys.MAIL_FIELD_LAST_MSG_ID));
+                            chatRoom2.subject = JsonParser.getStringValue(payload, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_LAST_MSG_ID));
                             chatRoom2.messageIds.removeAllElements();
-                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(payload, AppState.getString(PackedStringKeys.MAIL_PARAM_MLIST_ALL))).elements();
+                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(payload, Storage.resources().getString(PackedStringKeys.MAIL_PARAM_MLIST_ALL))).elements();
                             while (enumerationElements.hasMoreElements()) {
                                 chatRoom2.messageIds.addElement(enumerationElements.nextElement());
                             }
-                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(payload, AppState.getString(PackedStringKeys.MAIL_PARAM_MLIST))).elements();
+                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(payload, Storage.resources().getString(PackedStringKeys.MAIL_PARAM_MLIST))).elements();
                             while (enumerationElements2.hasMoreElements()) {
                                 Message msg = new Message((Hashtable) enumerationElements2.nextElement());
                                 chatRoom2.messages.put(msg.from, msg);
@@ -416,14 +416,14 @@ public final class ChatHandler extends BaseScreenHandler {
                         action = responseCode3;
                     } else {
                         Object payload2 = ApiClient.getJsonPayload();
-                        MrimAccount mrimAccount3 = (MrimAccount) AppState.getAccount();
+                        MrimAccount mrimAccount3 = (MrimAccount) Storage.state().getAccount();
                         int size4 = ((Vector) payload2).size();
                         for (int i6 = 0; i6 < size4; i6++) {
                             Enumeration keys2 = ((Hashtable) JsonParser.getVectorElement(payload2, i6)).keys();
                             while (keys2.hasMoreElements()) {
                                 String str5 = (String) keys2.nextElement();
                                 ChatRoom selectedChatRoom = mrimAccount3.chatRoomManager.findByName(str5);
-                                ChatRoom chatRoom3 = mrimAccount3.chatRoomManager.findById(AppState.getInt(ChatKeys.INT_ACTIVE_CHATROOM_ID));
+                                ChatRoom chatRoom3 = mrimAccount3.chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_ACTIVE_CHATROOM_ID));
                                 if (selectedChatRoom != null && (message2 = selectedChatRoom.getMessage(str5)) != null && chatRoom3 != null) {
                                     if (message2.hasFlag(4)) {
                                         if (chatRoom3 == mrimAccount3.chatRoomManager.findDefault()) {
@@ -450,9 +450,9 @@ public final class ChatHandler extends BaseScreenHandler {
                 }
                 return action;
             case ScreenId.CHAT_ROOM_VIEW:
-                AppState.setInt(ChatKeys.INT_SCROLL_OFFSET, currentScreen.scrollOffset);
-                AppState.setObject(MapKeys.SLOT_MAP_POINT_2, (Object) title);
-                if (title == null || (chatRoom = (mrimAccount = (MrimAccount) AppState.getAccount()).chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID))) == mrimAccount.chatRoomManager.getLast() || title.equals(chatRoom.subject)) {
+                Storage.state().setInt(ChatKeys.INT_SCROLL_OFFSET, currentScreen.scrollOffset);
+                Storage.state().setObject(MapKeys.SLOT_MAP_POINT_2, (Object) title);
+                if (title == null || (chatRoom = (mrimAccount = (MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID))) == mrimAccount.chatRoomManager.getLast() || title.equals(chatRoom.subject)) {
                     return 0;
                 } else {
                     Object obj3 = null;
@@ -500,14 +500,14 @@ public final class ChatHandler extends BaseScreenHandler {
             if (MmpContact.hasSecondToken()) {
                 return ScreenId.MAP;
             }
-            AppState.setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 1);
+            Storage.state().setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 1);
             return ScreenId.MAP_SEARCH;
         }
         MapController.setRouteEnd();
         if (MmpContact.hasFirstToken()) {
             return ScreenId.MAP;
         }
-        AppState.setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 0);
+        Storage.state().setInt(MapKeys.FLAG_MAP_MODE_ACTIVE, 0);
         return ScreenId.MAP_SEARCH;
     }
 
@@ -521,7 +521,7 @@ public final class ChatHandler extends BaseScreenHandler {
             return 0;
         }
         if (optionId == 118) {
-            AppState.setObject(MapKeys.MAP_RESOURCE_URL, (Object) mapPoint.getResourceUrl());
+            Storage.state().setObject(MapKeys.MAP_RESOURCE_URL, (Object) mapPoint.getResourceUrl());
             return 0;
         }
         if (optionId != 120) {
@@ -534,29 +534,29 @@ public final class ChatHandler extends BaseScreenHandler {
     /* renamed from: a */
     public static final int handleChatInputAction(String str) {
         int errorCode;
-        String messageText = Utils.defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
-        if (str != AppState.getString(StringResKeys.STR_NOTIFICATION_SOUND)) {
+        String messageText = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT));
+        if (str != Storage.resources().getString(StringResKeys.STR_NOTIFICATION_SOUND)) {
             StringBuffer sb = Utils.getMessageBuffer();
             if (StringUtils.matchesKey(473, str)) {
-                AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, sb.append(AppState.getString(UIKeys.SLOT_NOTIFICATION_TEXT)));
+                Storage.state().setFromBuffer(UIKeys.SLOT_STATUS_TEXT, sb.append(Storage.state().getString(UIKeys.SLOT_NOTIFICATION_TEXT)));
                 return 0;
             }
             if (StringUtils.matchesKey(474, str)) {
-                AppState.setObject(UIKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
-                AppState.setBool(UIKeys.FLAG_RESOURCE_LOADING, true);
+                Storage.state().setObject(UIKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
+                Storage.state().setBool(UIKeys.FLAG_RESOURCE_LOADING, true);
                 return 0;
             }
             if (!StringUtils.matchesKey(476, str)) {
                 return 0;
             }
-            AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) Conversation.transliterateRussian(messageText));
+            Storage.state().setObject(UIKeys.SLOT_STATUS_TEXT, (Object) Conversation.transliterateRussian(messageText));
             return 0;
         }
-        String phoneNumber = AppState.getString(ContactKeys.SLOT_SELECTED_GROUP);
-        MrimContact mrimContact = (MrimContact) AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
+        String phoneNumber = Storage.state().getString(ContactKeys.SLOT_SELECTED_GROUP);
+        MrimContact mrimContact = (MrimContact) Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
         MrimAccount mrimAccount = (MrimAccount) mrimContact.account;
         if (mrimAccount.isConnected()) {
-            mrimContact.appendMessage(1, ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
+            mrimContact.appendMessage(1, ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
             StringBuffer phoneSb = ObjectPool.newStringBuffer().append('+');
             if (phoneNumber.charAt(0) == '8') {
                 phoneSb.append('7').append(StringUtils.suffix(phoneNumber, 1));
@@ -576,9 +576,9 @@ public final class ChatHandler extends BaseScreenHandler {
 
     /* renamed from: c */
     public static final int handleChatRoomAction(String str) {
-        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
-        int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
-        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
+        MrimAccount mrimAccount = (MrimAccount) Storage.state().getAccount();
         ChatRoom chatRoom = mrimAccount.chatRoomManager.findById(chatRoomId);
         if (StringUtils.matchesKey(848, str)) {
             chatRoom.readMessages.addElement(messageId);
@@ -605,30 +605,30 @@ public final class ChatHandler extends BaseScreenHandler {
         if (!StringUtils.matchesKey(851, str)) {
             return 0;
         }
-        AppState.setInt(ChatKeys.INT_SCROLL_OFFSET, 0);
-        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_2);
+        Storage.state().setInt(ChatKeys.INT_SCROLL_OFFSET, 0);
+        Storage.state().clearIndex(MapKeys.SLOT_MAP_POINT_2);
         mrimAccount.chatRoomManager.loaded = true;
         chatRoom.setActive(false);
-        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 41);
+        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, 41);
         return 0;
     }
 
     public static final int handleMapViewOption(int optionId) {
         MapController.showMapView();
         if (optionId == 6) {
-            MapController.applyViewMode(true, false, !AppState.getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE));
-            AppState.setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
-            AppState.setInt(MapKeys.FLAG_MAP_LOADING, 1);
+            MapController.applyViewMode(true, false, !Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE));
+            Storage.state().setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
+            Storage.state().setInt(MapKeys.FLAG_MAP_LOADING, 1);
             return 0;
         }
         if (optionId == 100) {
-            AppState.setInt(UIKeys.FLAG_LOADING, 1);
+            Storage.state().setInt(UIKeys.FLAG_LOADING, 1);
             return 0;
         }
         if (!MapController.hasRoutePoints()) {
             return NotificationHelper.showError(354);
         }
-        AppState.setInt(ContactKeys.FLAG_CONTACTS_LOADED, 1);
+        Storage.state().setInt(ContactKeys.FLAG_CONTACTS_LOADED, 1);
         return 0;
     }
 }

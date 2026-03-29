@@ -72,7 +72,9 @@ public abstract class AppState {
 
     public static void init(Object midlet) {
         initPools();
+        Storage.init();
         initObjectPool();
+        Storage.initConstants();
         pool[UIKeys.OBJ_TRANSITION_DATA] = new TransitionData();
         loadDelta();
         initSessionState(midlet);
@@ -323,7 +325,7 @@ public abstract class AppState {
     }
 
     public static void setScreen(Object screen) {
-        currentScreen = screen;
+        Storage.currentScreen = screen;
         TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
     }
 

@@ -43,7 +43,7 @@ public final class ProtocolFactory {
             buffer.writeCompressed(fieldIndex + 904);
         }
         if (authSlot != 0) {
-            buffer.writeBytesAt(AppState.getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, 16);
+            buffer.writeBytesAt(Storage.resources().getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, 16);
         }
         return createMmpCommand(protocol, MmpCommand.EXTENDED_AUTH, buffer);
     }

@@ -52,7 +52,7 @@ public final class MergedContactGroup extends ContactGroup {
     public final int toggleSpecial() {
         if (this.isSpecial) {
             String str = this.name;
-            Vector accounts = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
+            Vector accounts = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS);
             int size = accounts.size();
             while (true) {
                 size--;
@@ -86,7 +86,7 @@ public final class MergedContactGroup extends ContactGroup {
             }
         } else {
             String str2 = this.name;
-            Vector accounts2 = AppState.getVector(SessionKeys.VEC_ACCOUNTS);
+            Vector accounts2 = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS);
             int size3 = accounts2.size();
             while (true) {
                 size3--;

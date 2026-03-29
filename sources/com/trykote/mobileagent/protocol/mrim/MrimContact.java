@@ -99,7 +99,7 @@ public final class MrimContact extends Contact implements ListItem {
     public MrimContact(Account account, ByteBuffer buffer) {
         super(account);
         this.contactId = buffer.readInt();
-        String str = AppState.emptyStr;
+        String str = Storage.emptyStr;
         this.statusFlags = buffer.readInt();
         this.simpleIdentifier = StringUtils.intern(buffer.readWideStr().toLowerCase());
         setDisplayName(buffer.readUTF8Str((String) null));
@@ -224,17 +224,17 @@ public final class MrimContact extends Contact implements ListItem {
     /* JADX DEBUG: Possible override for method l.f()Ln; */
     /* renamed from: f */
     public final int requestUserDetails() {
-        long now = AppState.getLong(SessionKeys.TIMESTAMP_CURRENT);
+        long now = Storage.state().getLong(SessionKeys.TIMESTAMP_CURRENT);
         if (now - this.lastStatusCheckTime <= 60000) {
             return 925;
         }
         this.lastStatusCheckTime = now;
         MrimAccount mrimAccount = (MrimAccount) this.account;
-        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(StringResKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(AppState.getString(PackedStringKeys.MRIM_MESSAGE_RTF_BLOB))), ObjectPool.integerOf(MrimAccount.RESP_RENAME_CONTACT)}));
+        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(Storage.resources().getString(StringResKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(Storage.resources().getString(PackedStringKeys.MRIM_MESSAGE_RTF_BLOB))), ObjectPool.integerOf(MrimAccount.RESP_RENAME_CONTACT)}));
         if (0 != sendResult) {
             return sendResult;
         }
-        appendMessage(1, AppState.getString(StringResKeys.STR_WELCOME_MESSAGE), 0L, 0L);
+        appendMessage(1, Storage.resources().getString(StringResKeys.STR_WELCOME_MESSAGE), 0L, 0L);
         return 0;
     }
 

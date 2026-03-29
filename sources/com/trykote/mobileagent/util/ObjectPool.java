@@ -268,7 +268,7 @@ public abstract class ObjectPool {
      * stored at the given {@code stateKey} in AppState.
      */
     public static final StringBuffer newBufferFromState(int stateKey) {
-        return newStringBuffer().append(AppState.getString(stateKey));
+        return newStringBuffer().append(Storage.state().getString(stateKey));
     }
 
     /**
