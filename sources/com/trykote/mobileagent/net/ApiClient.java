@@ -3,9 +3,12 @@ package com.trykote.mobileagent.net;
 
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
+import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.mrim.*;
+import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.util.*;
 import java.io.IOException;
+import java.util.Vector;
 import javax.microedition.io.ConnectionNotFoundException;
 
 public final class ApiClient {
@@ -43,7 +46,7 @@ public final class ApiClient {
         }
         objArr[8] = objArr;
         MrimAccount c0028ba2 = (MrimAccount) AppState.getAccount();
-        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_VERY_LONG_API_1)).append(c0028ba2.login).append(AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_3)).append(c0028ba2.password).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)));
+        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(c0028ba2.login).append(AppState.getString(PackedStringKeys.PARAM_PASSWORD_EQ)).append(c0028ba2.password).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)));
         objArrM1147a[8] = objArrM1147a;
         ((AsyncTask) submitAsync(objArrM1147a)[7]).thread.join();
         c0028ba.jabberId = (String) objArrM1147a[6];
@@ -60,7 +63,7 @@ public final class ApiClient {
                         NetworkLock.acquireNetworkLock();
                         String str = (String) objArr[5];
                         if (str == null) {
-                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_LONG_URL_5)).append(objArr[2]));
+                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
                         } else {
                             strM1215a = str;
                         }
@@ -145,7 +148,7 @@ public final class ApiClient {
                     if (headerFieldKey == null && headerField == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(StringResKeys.STR_RES_PARAM_4)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
+                    if (headerFieldKey != null && headerField != null && headerField.startsWith(AppState.getString(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
                     }
                     i++;
@@ -174,7 +177,7 @@ public final class ApiClient {
 
     /* renamed from: a */
     private static final Object[] createHttpResult(int i, Object obj, int i2, ByteBuffer c0043n) {
-        return new Object[]{ResourceManager.integerOf(i), ResourceManager.integerOf(i2), obj.toString(), c0043n};
+        return new Object[]{ObjectPool.integerOf(i), ObjectPool.integerOf(i2), obj.toString(), c0043n};
     }
 
     /* renamed from: a */
@@ -237,7 +240,7 @@ public final class ApiClient {
 
     /* renamed from: a */
     public static final StringBuffer appendAuthParams(StringBuffer stringBuffer, String str) {
-        return stringBuffer.append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(str);
+        return stringBuffer.append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(str);
     }
 
     /* renamed from: c */
@@ -262,5 +265,81 @@ public final class ApiClient {
         Object obj = AppState.pool[UIKeys.SLOT_MEDIA_PLAYER];
         AppState.clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
         return JsonParser.getVectorElement(obj, 2);
+    }
+
+    public static void sendSmsRequest(Object obj) {
+        if (!(obj instanceof String)) {
+            return;
+        }
+        HttpClient httpClient = null;
+        try {
+            NetworkLock.acquireNetworkLock();
+            httpClient = HttpClient.createWithType3(obj);
+            if (httpClient.getResponseCode() == 200) {
+                String url = null;
+                boolean statusOk = false;
+                Vector children = new ByteBuffer(httpClient).parseXml().children;
+                for (int i = children.size() - 1; i >= 0; i--) {
+                    XmlElement xmlElement = (XmlElement) children.elementAt(i);
+                    String tagName = xmlElement.tagName;
+                    String textValue = StringUtils.fromBuffer(xmlElement.textContent);
+                    if (StringUtils.matchesKey(PackedStringKeys.TAG_STATUS, tagName) && StringUtils.matchesKey(PackedStringKeys.HTTP_STATUS_200, textValue)) {
+                        statusOk = true;
+                    } else if (StringUtils.matchesKey(PackedStringKeys.TAG_LINK, tagName)) {
+                        url = textValue;
+                    }
+                    if (statusOk && url != null) {
+                        ObjectPool.releaseVector(children);
+                        EventDispatcher.postNotification(AppState.getString(StringResKeys.STR_OPERATION_COMPLETE));
+                        break;
+                    }
+                }
+            } else {
+                EventDispatcher.postNotification(StringUtils.concatKeyObj(493, (Object) null));
+            }
+        } catch (RuntimeException e) {
+            EventDispatcher.postNotification(StringUtils.concatKeyObj(493, (Object) null));
+            throw e;
+        } catch (Error e) {
+            EventDispatcher.postNotification(StringUtils.concatKeyObj(493, (Object) null));
+            throw e;
+        } catch (Throwable th) {
+            EventDispatcher.postNotification(StringUtils.concatKeyObj(493, (Object) null));
+        } finally {
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
+        }
+    }
+
+    public static void fetchSharedContacts(String url) {
+        HttpClient http = null;
+        try {
+            NetworkLock.acquireNetworkLock();
+            http = HttpClient.createWithType2((Object) url);
+            if (http.getResponseCode() != 200) {
+                throw new Throwable();
+            }
+            Vector lines = Utils.splitReplace(new ByteBuffer(http).readUTFWithLen(), '\n', '\r');
+            XmppContactGroup.sharedContactList.removeAllElements();
+            for (int i = lines.size() - 1; i >= 0; i--) {
+                Vector fields = Utils.splitMerge((String) lines.elementAt(i), '|');
+                if (fields.size() == 5) {
+                    XmppContactGroup.sharedContactList.addElement(new Object[]{fields.elementAt(0), new long[]{Long.parseLong((String) fields.elementAt(1)), Long.parseLong((String) fields.elementAt(2))}, fields.elementAt(4)});
+                }
+                ObjectPool.releaseVector(fields);
+            }
+            ObjectPool.releaseVector(lines);
+        } catch (RuntimeException th) {
+            throw th;
+        } catch (Throwable th) {
+            throw new RuntimeException(th.toString());
+        } finally {
+            HttpClient.closeAndUpdateStats(http);
+            NetworkLock.releaseNetworkLock();
+        }
+    }
+
+    public static Object[] getUrlComponents(String str) {
+        return new Object[]{ObjectPool.integerOf(20), str};
     }
 }

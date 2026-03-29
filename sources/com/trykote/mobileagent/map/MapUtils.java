@@ -117,7 +117,7 @@ public final class MapUtils {
         VCard.staticTs3 = (int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs4 = (int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), AppState.getInt(MapKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs5 = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
-        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{c0043nM1314d.getStringAndClear(), ResourceManager.integerOf(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL))});
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{c0043nM1314d.getStringAndClear(), ObjectPool.integerOf(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL))});
     }
 
     /* renamed from: b */
@@ -180,5 +180,36 @@ public final class MapUtils {
         } catch (Throwable unused) {
             return null;
         }
+    }
+
+    public static String buildTileRequestUrl(long pixelLon, long pixelLat, int zoomLevel, String query) {
+        String encodedQuery;
+        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAPS_MAIL_RU).writeUInt(1031283503);
+        String longitude = pixelToLongitude(pixelLon);
+        ByteBuffer urlBuf2 = urlBuf.writeRawString(longitude).writeUInt(4028710);
+        String latitude = pixelToLatitude(pixelLat);
+        ByteBuffer urlBuffer = urlBuf2.writeRawString(latitude).writeUInt(4028966).writeIntAsString(zoomLevel).writeCompressed(PackedStringKeys.PARAM_MAP_FULLSCREEN);
+        if (query != null) {
+            ByteBuffer urlBuf3 = urlBuffer.writeUInt(1031302438).writeRawString(longitude).writeUInt(1031367974).writeRawString(latitude).writeUInt(1031040294);
+            if (StringUtils.isEmpty(query)) {
+                encodedQuery = ObjectPool.unpackChars(1094795585);
+            } else {
+                ByteBuffer buffer = new ByteBuffer();
+                int length = query.length();
+                for (int i = 0; i < length; i++) {
+                    int ch = query.charAt(i) & 0xFFFF;
+                    if (ch < 128) {
+                        buffer.writeByte(ch);
+                    } else if (ch < 2048) {
+                        buffer.writeByte(192 + (ch >> 6)).writeByte(128 + (ch & 63));
+                    } else {
+                        buffer.writeByte(224 + (ch >> 12)).writeByte(128 + ((ch >> 6) & 63)).writeByte(128 + (ch & 63));
+                    }
+                }
+                encodedQuery = Conversation.replaceText(Conversation.replaceText(buffer.toBase64(), 65547, 200765), 65552, 200768);
+            }
+            urlBuf3.writeRawString(encodedQuery);
+        }
+        return urlBuffer.getStringAndClear();
     }
 }

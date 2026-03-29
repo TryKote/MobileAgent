@@ -139,12 +139,12 @@ public final class ContactHandler extends BaseScreenHandler {
                     if (size7 < 0) {
                         Vector outerParams = ObjectPool.newVector();
                         outerParams.addElement(itemsParams);
-                        MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StringResKeys.STR_RES_API_URL_1), ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StringResKeys.STR_RES_LONG_API_URL_1)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
+                        MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_AJAX_MARKMSG), ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_MARK_MSG)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
                         return;
                     } else {
                         Hashtable hashtable = new Hashtable();
                         JsonParser.putIntKey(hashtable, 329240, JsonParser.getVectorElement(selectedItems, size7));
-                        JsonParser.putIntKey(hashtable, 263673, ResourceManager.integerOf(AppState.getInt(ChatKeys.INT_CHAT_VIEW_MODE)));
+                        JsonParser.putIntKey(hashtable, 263673, ObjectPool.integerOf(AppState.getInt(ChatKeys.INT_CHAT_VIEW_MODE)));
                         itemsParams.addElement(hashtable);
                     }
                 }
@@ -197,7 +197,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CONTACT_INFO_VIEW:
                 ContactInfo contactInfo = (ContactInfo) AppState.pool[RegistrationKeys.SLOT_REG_PARAM_1];
-                String str = (String) contactInfo.get(ResourceManager.integerOf(-1));
+                String str = (String) contactInfo.get(ObjectPool.integerOf(-1));
                 if (null != str) {
                     NotificationHelper.showNotification(str);
                 } else {
@@ -304,7 +304,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 ScreenManager.prepareFormData();
                 MrimContact mrimContact3 = (MrimContact) AppState.getCurrentContact();
                 MrimAccount mrimAccount5 = (MrimAccount) mrimContact3.account;
-                NotificationHelper.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount5, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ResourceManager.integerOf(MrimAccount.RESP_AUTH), mrimContact3, new Long(1L)})));
+                NotificationHelper.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount5, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ObjectPool.integerOf(MrimAccount.RESP_AUTH), mrimContact3, new Long(1L)})));
                 return;
             case ScreenId.VISIBLE_CONTACTS:
                 Vector contactIds = ServiceRegistry.getAllContactIds();
@@ -377,7 +377,7 @@ public final class ContactHandler extends BaseScreenHandler {
                                 MrimContactGroup contactGroup = mrimAccount.getFirstContactGroup();
                                 ByteBuffer packetBuf = new ByteBuffer().writeIntLE(1048576).writeIntLE(103).writeStringLatin1(AppState.getString(StringResKeys.STR_PHONE_SUFFIX)).writeStringUTF16(displayName);
                                 String emailsJoined = Utils.joinComma(phoneNumbers2);
-                                sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_ADD_CONTACT, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ResourceManager.integerOf(MrimAccount.RESP_ADD_PHONE_CONTACT), displayName, emailsJoined, contactGroup}));
+                                sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_ADD_CONTACT, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ObjectPool.integerOf(MrimAccount.RESP_ADD_PHONE_CONTACT), displayName, emailsJoined, contactGroup}));
                             }
                         }
                     }
@@ -414,7 +414,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 int renameResult = AppState.getCurrentGroup().rename(Utils.defaultStr(AppState.getString(RegistrationKeys.SLOT_SEARCH_RESULT)));
                 return 0 != renameResult ? NotificationHelper.showError(renameResult) : 0;
             case ScreenId.DELETE_ENTITY:
-                return ResourceManager.deleteSelectedEntity();
+                return deleteSelectedEntity();
             case ScreenId.BATCH_DELETE:
                 return -1;
             case ScreenId.CONTACT_DELETE:
@@ -467,7 +467,7 @@ public final class ContactHandler extends BaseScreenHandler {
                     while (true) {
                         i6--;
                         if (i6 < 0) {
-                            int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ResourceManager.integerOf(MrimAccount.RESP_AUTH), mrimContact2, new Long(2L)}));
+                            int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ObjectPool.integerOf(MrimAccount.RESP_AUTH), mrimContact2, new Long(2L)}));
                             errorCode3 = 0 != sendResult4 ? NotificationHelper.showError(sendResult4) : 0;
                         } else {
                             membersBuf.writeStringLatin1((String) checkedItems.elementAt(i6));
@@ -654,7 +654,7 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.RENAME_GROUP:
                 return 0;
             case ScreenId.DELETE_ENTITY:
-                return ResourceManager.deleteSelectedEntity();
+                return deleteSelectedEntity();
             case ScreenId.BATCH_DELETE:
                 return -1;
             case ScreenId.CONTACT_DELETE:
@@ -821,6 +821,24 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
+    /* renamed from: q */
+    public static final int deleteSelectedEntity() {
+        int groupError;
+        Object obj = AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
+        if ((obj instanceof ContactGroup) && 0 != (groupError = ((ContactGroup) obj).getSortIndex())) {
+            return NotificationHelper.showError(groupError);
+        }
+        if (!(obj instanceof Contact)) {
+            return ScreenId.CONTACT_LIST;
+        }
+        Contact selectedContact = (Contact) obj;
+        int contactError = selectedContact.account.validateResend(selectedContact);
+        if (0 != contactError) {
+            return NotificationHelper.showError(contactError);
+        }
+        return ScreenId.CONTACT_LIST;
+    }
+
     public static int handleSearchAction(Object groupObj) {
         ContactGroup group = (ContactGroup) groupObj;
         if (group == null) {
@@ -836,7 +854,7 @@ public final class ContactHandler extends BaseScreenHandler {
 
     public static int handleContactListKey() {
         MrimAccount account = (MrimAccount) AppState.pool[SessionKeys.SLOT_TEMP_ACCOUNT];
-        ResourceManager.showMailAccountList();
+        AccountHandler.showMailAccountList();
         AppState.setAccount(account);
         AppState.setInt(UIKeys.INT_SCREEN_ACTION, 38);
         return ScreenId.CHAT_ROOMS;

@@ -23,7 +23,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     public XmppMailRuProtocol(int id, String login, String password) {
         super(id, login, password);
-        this.serverAddress = AppState.getString(StringResKeys.STR_RES_URL_TEMPLATE_4);
+        this.serverAddress = AppState.getString(PackedStringKeys.HOST_VKMESSENGER);
         this.serverPort = DEFAULT_PORT;
     }
 
@@ -34,7 +34,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     public XmppMailRuProtocol(ByteBuffer buf) {
         super(buf);
-        this.serverAddress = AppState.getString(StringResKeys.STR_RES_URL_TEMPLATE_4);
+        this.serverAddress = AppState.getString(PackedStringKeys.HOST_VKMESSENGER);
         this.serverPort = DEFAULT_PORT;
     }
 
@@ -278,7 +278,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         try {
             RemoteLogger.log("XMPP", "dnsLookupSrv acquiring network lock");
             NetworkLock.acquireNetworkLock();
-            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + AppState.getString(StringResKeys.STR_RES_VERY_LONG_API_4));
+            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + AppState.getString(PackedStringKeys.HOST_NSRPUB_DNS));
             Vector parts = Utils.splitNonEmpty(srvName, '.');
             ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.MMP_PADDING_12);
             for (int i = 0; i < Utils.vectorSize(parts); i++) {
@@ -286,7 +286,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             }
             ObjectPool.releaseVector(parts);
             requestBuf.writeCompressed(PackedStringKeys.MMP_SPACER);
-            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(AppState.getString(StringResKeys.STR_RES_VERY_LONG_API_4)));
+            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(AppState.getString(PackedStringKeys.HOST_NSRPUB_DNS)));
             datagramConnection.send(datagramConnection.newDatagram(requestBuf.data, requestBuf.length));
             requestBuf.clear();
             Datagram datagram = datagramConnection.newDatagram(DNS_BUFFER_SIZE);
@@ -378,8 +378,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 if (iM634a == 200) {
                     Vector vectorM516c = Utils.splitNonEmpty(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
-                        objArr[2] = ResourceManager.integerOf(1);
-                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr(vectorM516c.elementAt(0)).writeByte(38).writeObjectStr(vectorM516c.elementAt(1)).readAllByteStr();
+                        objArr[2] = ObjectPool.integerOf(1);
+                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr((String) vectorM516c.elementAt(0)).writeByte(38).writeObjectStr((String) vectorM516c.elementAt(1)).readAllByteStr();
                         new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, objArr);
                     } else {
                         setAuthResult(objArr, vectorM516c.elementAt(0));

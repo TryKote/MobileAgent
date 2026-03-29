@@ -97,7 +97,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 ScreenManager.initializeFonts();
                 AppState.getCanvas().updateFullScreenMode();
                 TabBar.initialize();
-                ResourceManager.resetClock();
+                AppController.resetClock();
                 return 0;
             case ScreenId.NOTIFICATION_SETTINGS:
                 return ScreenManager.processScreenForm();
@@ -239,7 +239,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 AppState.setInt(SettingsKeys.SETTING_COLOR_THEME, ((Integer) themeData[0]).intValue());
             }
         } else if (screen.screenId == ScreenId.SOUND_SETTINGS) {
-            ResourceManager.playAlertIfEnabled(((Integer) ((Object[]) item.data)[0]).intValue(), false);
+            NotificationHelper.playAlertIfEnabled(((Integer) ((Object[]) item.data)[0]).intValue(), false);
         }
     }
 
@@ -314,7 +314,7 @@ public final class SettingsHandler extends BaseScreenHandler {
     public static int handleNotificationOption(int optionId) {
         if (optionId == 54) {
             ScreenBuilder.onScreenClosed();
-            ResourceManager.composeEmail((Vector) null, (String) null, (String) null);
+            MailHelper.composeEmail((Vector) null, (String) null, (String) null);
             return 0;
         }
         if (optionId == 68) {

@@ -9,6 +9,7 @@ import com.trykote.mobileagent.protocol.mmp.*;
 import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.ui.handler.ProfileHandler;
 import com.trykote.mobileagent.util.*;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -509,7 +510,7 @@ public abstract class Account {
     }
 
     public final int getResourceId(Object key) {
-        return ResourceManager.loadUserProfile((String) key, this);
+        return ProfileHandler.loadUserProfile((String) key, this);
     }
 
     public abstract int validateContactDelete(Contact contact);

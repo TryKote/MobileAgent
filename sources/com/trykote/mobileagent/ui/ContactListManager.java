@@ -188,7 +188,7 @@ public abstract class ContactListManager {
                             if (abstractC0041l != null) {
                                 int iM1250M2 = abstractC0041l.getContextAction();
                                 if (iM1250M2 >= 0) {
-                                    vector.addElement(ResourceManager.integerOf(iM1250M2));
+                                    vector.addElement(ObjectPool.integerOf(iM1250M2));
                                 }
                                 vector.addElement(abstractC0041l.extra);
                             }
@@ -197,7 +197,7 @@ public abstract class ContactListManager {
                             }
                             int iMo922n2 = abstractC0037h2.getExtType();
                             if (iMo922n2 >= 0) {
-                                vector.addElement(ResourceManager.integerOf(iMo922n2));
+                                vector.addElement(ObjectPool.integerOf(iMo922n2));
                             }
                             AppController.needsRepaint = true;
                         }
@@ -718,7 +718,7 @@ public abstract class ContactListManager {
         }
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
-            return ResourceManager.clearSmsFields();
+            return clearSmsFields();
         }
         if (i == 66) {
             if (contact instanceof XmppContact) {
@@ -727,7 +727,7 @@ public abstract class ContactListManager {
             AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = new ContactInfo(contact);
         } else if (i == 54) {
             AppState.setAccount(contact.account);
-            ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
+            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem item = (ListItem) contact;
             item.deselect();
@@ -759,7 +759,7 @@ public abstract class ContactListManager {
         if (i == 65) {
             ScreenBuilder.onScreenClosed();
             openContactMessages();
-            return ResourceManager.clearSmsFields();
+            return clearSmsFields();
         }
         if (i == 66) {
             if (obj instanceof XmppContact) {
@@ -768,7 +768,7 @@ public abstract class ContactListManager {
             AppState.pool[ContactKeys.SLOT_CONTACT_INFO] = new ContactInfo((Contact) obj);
         } else if (i == 54) {
             AppState.setAccount(((MrimContact) obj).account);
-            ResourceManager.composeEmail(MailHelper.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
+            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
         } else if (i == 6) {
             ListItem item = (ListItem) obj;
             item.deselect();
@@ -927,6 +927,24 @@ public abstract class ContactListManager {
             g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, barTop, 36);
             screenHeight -= barHeight;
         }
+    }
+
+    /* renamed from: a */
+    public static final void dialPhoneContact(PhoneContact contact, int i) {
+        dialPhoneUrl(VCard.formatPhoneContactUrl(contact, i), contact, i);
+    }
+
+    /* renamed from: a */
+    public static final void dialPhoneUrl(String str, PhoneContact contact, int i) {
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_ASYNC, new Object[]{str, contact, ObjectPool.integerOf(i)});
+    }
+
+    /* renamed from: g */
+    public static final int clearSmsFields() {
+        AppState.clearIndex(RegistrationKeys.SLOT_SEARCH_LABEL_1);
+        AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
+        AppState.clearIndex(ContactKeys.SLOT_SELECTED_GROUP);
+        return ScreenId.PHONE_GROUPS;
     }
 
     public static int validateContactAction() {

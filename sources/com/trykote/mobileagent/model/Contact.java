@@ -141,7 +141,7 @@ public abstract class Contact implements Sortable {
     public final void receiveMessageFull(long j, String str, int i) {
         TabBar tabBar;
         AppState.setObject(ContactKeys.SLOT_CURRENT_CONTACT_ID, (Object) this.identifier);
-        ResourceManager.playNotificationSound(2);
+        NotificationHelper.playNotificationSound(2);
         addFlag(i);
         this.account.markRead(getIdentifier());
         clearStatus();
@@ -172,7 +172,7 @@ public abstract class Contact implements Sortable {
 
     /* renamed from: b */
     public final int sendMessage(String str) {
-        ResourceManager.playNotificationSound(4);
+        NotificationHelper.playNotificationSound(4);
         if (StringUtils.isEmpty(str)) {
             return 309;
         }
@@ -326,7 +326,7 @@ public abstract class Contact implements Sortable {
                 msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.displayName).append(AppState.getString(StringResKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
                 msgScreen.addIconItem(2, msgText, 0);
                 if (this.account.isConnected()) {
-                    msgScreen.addExpandableItem(-1, AppState.getString(StringResKeys.STR_EXPAND_MESSAGE), i, new Object[]{ResourceManager.integerOf(1), msgText, str, new Long(sentTime)});
+                    msgScreen.addExpandableItem(-1, AppState.getString(StringResKeys.STR_EXPAND_MESSAGE), i, new Object[]{ObjectPool.integerOf(1), msgText, str, new Long(sentTime)});
                 }
             } else if (msgType == 8) {
                 int nlIdx = msgText.indexOf(10);
@@ -350,7 +350,7 @@ public abstract class Contact implements Sortable {
         for (int i2 = 0; i2 < size; i2++) {
             String str2 = (String) lines.elementAt(i2);
             if (Conversation.isValidFormat(str2)) {
-                screen.addExpandableItem(264, Conversation.decodeMessage(str2), i, new Object[]{ResourceManager.integerOf(0), str2});
+                screen.addExpandableItem(264, Conversation.decodeMessage(str2), i, new Object[]{ObjectPool.integerOf(0), str2});
             } else {
                 screen.addItem(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
             }
@@ -399,7 +399,7 @@ public abstract class Contact implements Sortable {
             return 40;
         }
         if (isOffline()) {
-            return ResourceManager.clearSmsFields();
+            return ContactListManager.clearSmsFields();
         }
         return 63;
     }

@@ -232,7 +232,7 @@ public final class MrimAccount extends Account implements ListItem {
                 RemoteLogger.log("MRIM", "progress STARTING, connecting to redirect server");
                 this.msgCount = 20;
                 this.state = 0;
-                this.connection = new ConnectionThread(AppState.getString(StringResKeys.STR_RES_LONG_URL_4));
+                this.connection = new ConnectionThread(AppState.getString(PackedStringKeys.HOST_MRIM_REDIRECT));
                 this.progress = PROGRESS_CONNECTING_REDIRECT;
                 AppController.needsRepaint = true;
                 break;
@@ -418,7 +418,7 @@ public final class MrimAccount extends Account implements ListItem {
             contact.dirty = true;
             contact.updateRenderState();
             if (prevCount == 0 && statusCode != 0) {
-                ResourceManager.playNotificationSound(1);
+                NotificationHelper.playNotificationSound(1);
             }
         }
     }
@@ -471,13 +471,13 @@ public final class MrimAccount extends Account implements ListItem {
                 if (!parsingValue) {
                     if (ch == '\n' && lineBuffer.length() == 0) {
                         ObjectPool.toStringAndRelease(lineBuffer);
-                        String typeCodeStr = (String) headers.get(AppState.getString(StringResKeys.STR_RES_API_URL_4));
+                        String typeCodeStr = (String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_MULTICHAT));
                         int typeCode = typeCodeStr != null ? -1 : Integer.parseInt(typeCodeStr);
                         messageType = typeCode;
-                        senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(StringResKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
-                        headerRef = (String) headers.get(AppState.getString(StringResKeys.STR_RES_HEADER_2));
-                        messageFlags = Integer.parseInt((String) headers.get(AppState.getString(StringResKeys.STR_RES_LONG_LABEL_1)), 16);
-                        timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(StringResKeys.STR_RES_SEMICOLON)));
+                        senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT)), 13)).readAllWideStr();
+                        headerRef = (String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SENDER));
+                        messageFlags = Integer.parseInt((String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_FLAGS)), 16);
+                        timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_DATE)));
                         encodingType = 1;
                         if ((messageFlags & 128) != 0) {
                             String bodyText = StringUtils.suffix(rawText, pos);
@@ -489,10 +489,10 @@ public final class MrimAccount extends Account implements ListItem {
                             }
                         } else {
                             int tagIdx = StringUtils.indexOfPackedLong(rawText, 57408234938722L);
-                            messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(StringResKeys.STR_RES_SLASH), tagIdx))).readAllWideStr();
+                            messageBody = Base64.decode(StringUtils.substring(rawText, tagIdx + 6, rawText.indexOf(AppState.getString(PackedStringKeys.MRIM_MESSAGE_DELIMITER), tagIdx))).readAllWideStr();
                         }
                         if (messageType != -1 || (messageType >= 0 && messageType <= 5 && messageType != 1 && messageType != 3)) {
-                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(StringResKeys.STR_RES_OPEN_TAG))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
+                            Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_FROM))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
                         }
                         AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
                         return;
@@ -512,18 +512,18 @@ public final class MrimAccount extends Account implements ListItem {
                 pos++;
             }
             ObjectPool.toStringAndRelease(lineBuffer);
-            String typeCodeStr = (String) headers.get(AppState.getString(StringResKeys.STR_RES_API_URL_4));
+            String typeCodeStr = (String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_MULTICHAT));
             int typeCode = typeCodeStr != null ? -1 : Integer.parseInt(typeCodeStr);
             messageType = typeCode;
-            senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(StringResKeys.STR_RES_DIALOG_TITLE_3)), 13)).readAllWideStr();
-            headerRef = (String) headers.get(AppState.getString(StringResKeys.STR_RES_HEADER_2));
-            messageFlags = Integer.parseInt((String) headers.get(AppState.getString(StringResKeys.STR_RES_LONG_LABEL_1)), 16);
-            timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(StringResKeys.STR_RES_SEMICOLON)));
+            senderName = typeCode >= 0 ? null : Base64.decode(StringUtils.suffix((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT)), 13)).readAllWideStr();
+            headerRef = (String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_SENDER));
+            messageFlags = Integer.parseInt((String) headers.get(AppState.getString(PackedStringKeys.HEADER_X_MRIM_FLAGS)), 16);
+            timestamp = Utils.parseDateTime((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_DATE)));
             encodingType = 1;
             if ((messageFlags & 128) != 0) {
             }
             if (messageType != -1) {
-                Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(StringResKeys.STR_RES_OPEN_TAG))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
+                Conversation.handleMessage(this, new ByteBuffer().writeIntLE(0).writeIntLE(messageFlags | 4 | 128).writeStringLatin1((String) headers.get(AppState.getString(PackedStringKeys.MAIL_FIELD_FROM))).writeString(messageBody, encodingType).writeIntLE(0).writeIntLE(0).writeIntLE(messageType).writeStringUTF16(senderName).writeStringLatin1(headerRef), timestamp);
                 AppState.setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
             }
         } catch (RuntimeException e) {
@@ -573,7 +573,7 @@ public final class MrimAccount extends Account implements ListItem {
         } else if ((noteFlags & 5) != 0) {
             if (AppState.getBool(SettingsKeys.SETTING_CUSTOM_NOTE_ENABLED) && !StringUtils.equals(noteText, noteContact.customNote) && ((int) (System.currentTimeMillis() / 1000)) - noteTimestamp < 172800 && noteContact.getLastSentTime() != sentTime) {
                 AppState.setObject(ContactKeys.SLOT_CURRENT_CONTACT_ID, (Object) noteContact.identifier);
-                ResourceManager.playNotificationSound(6);
+                NotificationHelper.playNotificationSound(6);
                 noteContact.addFlag(2);
                 noteContact.appendMessage(16, noteText, 0L, sentTime);
                 ContactGroup contactGroup = noteContact.account.findGroup(noteContact);
@@ -604,7 +604,7 @@ public final class MrimAccount extends Account implements ListItem {
         } else if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, cardType)) {
             try {
                 VCard profile = this.profileManager.profile;
-                String typeStr = AppState.getString(StringResKeys.STR_RES_HTTP_METHOD);
+                String typeStr = AppState.getString(PackedStringKeys.MRIM_MAPOBJECT);
                 String empty = AppState.emptyStr;
                 profile.setCardData(cardFields[0], cardFields[1], typeStr, empty, empty, empty, cardFields[6], cardFields[7]);
             } catch (Throwable unused) {
@@ -625,7 +625,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         Object[] tuple = (Object[]) commandData;
         ByteBuffer buffer = (ByteBuffer) tuple[0];
-        tuple[0] = ResourceManager.integerOf(buffer.peekIntAt(8));
+        tuple[0] = ObjectPool.integerOf(buffer.peekIntAt(8));
         this.extras.addElement(commandData);
         return buffer;
     }
@@ -721,7 +721,7 @@ public final class MrimAccount extends Account implements ListItem {
             return result;
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) group;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimGroup.serverId).writeIntLE(mrimGroup.groupId).writeIntLE(0).writeStringUTF16(newName).writeStringUTF16(newName).writeIntLE(0)), ResourceManager.integerOf(RESP_RENAME_GROUP), mrimGroup, newName}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimGroup.serverId).writeIntLE(mrimGroup.groupId).writeIntLE(0).writeStringUTF16(newName).writeStringUTF16(newName).writeIntLE(0)), ObjectPool.integerOf(RESP_RENAME_GROUP), mrimGroup, newName}));
     }
 
     @Override
@@ -732,7 +732,7 @@ public final class MrimAccount extends Account implements ListItem {
         }
         ByteBuffer buffer = new ByteBuffer();
         int size = (this.groups.size() << 24) | 2;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ADD_CONTACT, buffer.writeIntLE(size).writeZeros(8).writeStringUTF16(groupName).writeZeros(12)), ResourceManager.integerOf(RESP_ADD_GROUP), groupName, ResourceManager.integerOf(size)}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ADD_CONTACT, buffer.writeIntLE(size).writeZeros(8).writeStringUTF16(groupName).writeZeros(12)), ObjectPool.integerOf(RESP_ADD_GROUP), groupName, ObjectPool.integerOf(size)}));
     }
 
     @Override
@@ -744,7 +744,7 @@ public final class MrimAccount extends Account implements ListItem {
         MrimContactGroup mrimGroup = (MrimContactGroup) group;
         ByteBuffer deletePacket = new ByteBuffer().writeIntLE(mrimGroup.serverId).writeIntLE(mrimGroup.groupId | 1).writeIntLE(0);
         String name = mrimGroup.name;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, deletePacket.writeStringUTF16(name).writeStringUTF16(name).writeIntLE(0)), ResourceManager.integerOf(RESP_DELETE_GROUP), mrimGroup}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, deletePacket.writeStringUTF16(name).writeStringUTF16(name).writeIntLE(0)), ObjectPool.integerOf(RESP_DELETE_GROUP), mrimGroup}));
     }
 
     @Override
@@ -757,7 +757,7 @@ public final class MrimAccount extends Account implements ListItem {
             return removeContact(baseContact, true);
         }
         MrimContact mrimContact = (MrimContact) baseContact;
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags | 1).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), ResourceManager.integerOf(RESP_DELETE_CONTACT), mrimContact}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags | 1).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), ObjectPool.integerOf(RESP_DELETE_CONTACT), mrimContact}));
     }
 
     @Override
@@ -784,7 +784,7 @@ public final class MrimAccount extends Account implements ListItem {
         if (Utils.nonEmpty(fields[9])) {
             buffer.writeIntLE(9).writeStringLatin1(fields[9]);
         }
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST, buffer), ResourceManager.integerOf(RESP_CONTACT_INFO)}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST, buffer), ObjectPool.integerOf(RESP_CONTACT_INFO)}));
     }
 
     @Override
@@ -813,7 +813,7 @@ public final class MrimAccount extends Account implements ListItem {
             }
         }
         String groupsStr = Utils.joinComma(groupIds);
-        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(displayName).writeStringLatin1(groupsStr)), ResourceManager.integerOf(RESP_MODIFY_CONTACT), mrimContact, displayName, groupsStr}));
+        return trySendData(createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(displayName).writeStringLatin1(groupsStr)), ObjectPool.integerOf(RESP_MODIFY_CONTACT), mrimContact, displayName, groupsStr}));
     }
 
     public final int findAvailableGroupId() {
@@ -841,7 +841,7 @@ public final class MrimAccount extends Account implements ListItem {
             trySendData(ProtocolFactory.createPasswordAuthCmd(this, contactAddress));
             return trySendData(XmppContactGroup.createContactCommand(this, 0, contactAddress, displayName, authMessage, (MrimContactGroup) group, requestAuth));
         }
-        trySendData(ResourceManager.createAddToGroupCmd(this, contact, (MrimContactGroup) group));
+        trySendData(createAddToGroupCmd(contact, (MrimContactGroup) group));
         return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(requestAuth ? 524300 : 12).writeStringLatin1(contactAddress).writeStringArray(new String[]{this.displayName, authMessage}).writeIntLE(0)));
     }
 
@@ -852,7 +852,7 @@ public final class MrimAccount extends Account implements ListItem {
             return trySendData(XmppContactGroup.createContactCommand(this, 48, mrimContact.simpleIdentifier, mrimContact.displayName, AppState.emptyStr, getFirstContactGroup(), false));
         }
         int flags = mrimContact.statusFlags;
-        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, (flags & 16) != 0 ? flags & (-49) : flags | 16 | 32));
+        return trySendData(createMoveContactCmd(mrimContact, (flags & 16) != 0 ? flags & (-49) : flags | 16 | 32));
     }
 
     @Override
@@ -863,7 +863,7 @@ public final class MrimAccount extends Account implements ListItem {
         if ((flags & 8) != 0) {
             newFlags &= -5;
         }
-        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, newFlags));
+        return trySendData(createMoveContactCmd(mrimContact, newFlags));
     }
 
     @Override
@@ -874,7 +874,7 @@ public final class MrimAccount extends Account implements ListItem {
         if ((flags & 4) != 0) {
             newFlags &= -9;
         }
-        return trySendData(ResourceManager.createMoveContactCmd(this, mrimContact, newFlags));
+        return trySendData(createMoveContactCmd(mrimContact, newFlags));
     }
 
     @Override
@@ -886,7 +886,7 @@ public final class MrimAccount extends Account implements ListItem {
     @Override
     public final int validateMove(Contact baseContact, ContactGroup group, ContactGroup destGroup) {
         int result = super.validateMove(baseContact, group, destGroup);
-        return result != 0 ? result : trySendData(ResourceManager.createAddToGroupCmd(this, (MrimContact) baseContact, (MrimContactGroup) destGroup));
+        return result != 0 ? result : trySendData(createAddToGroupCmd((MrimContact) baseContact, (MrimContactGroup) destGroup));
     }
 
     @Override
@@ -1139,7 +1139,7 @@ public final class MrimAccount extends Account implements ListItem {
                 if (str.length() > 30 && iLastIndexOf > 1) {
                     StringUtils.prefix(str, iLastIndexOf - 1);
                 }
-                ResourceManager.playNotificationSound(0);
+                NotificationHelper.playNotificationSound(0);
             }
             if (showPopup && (AccountManager.getTotalSyncCount() != 10 || !AppState.hasMemory())) {
                 StringBuffer sb = ObjectPool.newStringBuffer();
@@ -1162,4 +1162,40 @@ public final class MrimAccount extends Account implements ListItem {
         }
     }
 
+    ByteBuffer createMoveContactCmd(MrimContact mrimContact, int flags) {
+        return createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(flags).writeIntLE(mrimContact.groupId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), ObjectPool.integerOf(RESP_MOVE_FLAG), mrimContact, ObjectPool.integerOf(flags)});
+    }
+
+    ByteBuffer createAddToGroupCmd(MrimContact mrimContact, MrimContactGroup group) {
+        return createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MODIFY_CONTACT, new ByteBuffer().writeIntLE(mrimContact.contactId).writeIntLE(mrimContact.statusFlags).writeIntLE(group.serverId).writeStringLatin1(mrimContact.simpleIdentifier).writeStringUTF16(mrimContact.displayName).writeStringLatin1(mrimContact.contactGroupsStr)), ObjectPool.integerOf(RESP_MOVE_TO_GROUP), mrimContact, group});
+    }
+
+    public ByteBuffer createAuthPacket(Account targetAccount, int authParam1, int authParam2, String authName, boolean enableFlag, byte[] authData) {
+        ByteBuffer payload = new ByteBuffer().writeIntWithLen(266).writeIntWithLen(20200).writeIntLE(authParam1).writeIntLE(authParam2).writeStringLatin1(authName).writeIntLE(enableFlag ? 1 : 0).writeIntLE(authData.length).writeBytes(authData);
+        while ((payload.length & 7) != 0) {
+            payload.writeByte(0);
+        }
+        ByteBuffer buffer = new ByteBuffer();
+        ByteBuffer passwordHash = hashPassword();
+        XmppContactGroup.encryptBlowfish(passwordHash.data, passwordHash.length, payload.data, payload.length);
+        passwordHash.clear();
+        return createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(this, MrimCommand.CS_AUTH_UPDATE, buffer.writeBufferIntLen(payload)), ObjectPool.integerOf(RESP_AUTH_RESPONSE), targetAccount});
+    }
+
+    public void handleAuthResponse(int resultCode, Object[] cmdArgs, ByteBuffer buffer) {
+        if (resultCode == 1) {
+            buffer.readInt();
+            buffer.ensureCapacity(0);
+            ByteBuffer passwordHash = hashPassword();
+            XmppContactGroup.decryptBlowfish(passwordHash.data, passwordHash.length, buffer.data, buffer.length);
+            passwordHash.clear();
+            buffer.readInt();
+            MmpProtocol protocol = (MmpProtocol) cmdArgs[2];
+            protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, 288, new ByteBuffer().writeShortBE(16).writeIntLE(buffer.readInt()).writeIntLE(buffer.readInt()).writeIntLE(buffer.readInt()).writeIntLE(buffer.readInt())));
+        }
+    }
+
+    private ByteBuffer hashPassword() {
+        return new ByteBuffer().writeRawString(this.password).encryptMD5();
+    }
 }

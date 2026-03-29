@@ -11,7 +11,13 @@ The packed strings blob (index 295, RES_STRING_DATA) is stored inline in
 config.json as a "packed_strings" entry with an "entries" array. Each entry
 is either a text string ("value") or raw binary ("bytes" as base64).
 Named sub-string references are stored in a separate "names" array with
-offset/length pairs used to generate PackedStringKeys.java constants.
+offset/length/value fields used to generate PackedStringKeys.java constants.
+
+To edit a named string (e.g. server address), change its "value" field in the
+names array and run `make resources && make palette-keys` — the blob, offsets,
+and entries are rebuilt automatically. Then regenerate Java constants with
+`make screen-defs` (runs --gen-java). For length-changing edits, all subsequent
+offsets are recomputed.
 
 Subcommands:
   --deserialize <cfg_path> <output_dir>   Deserialize binary cfg to config.json
@@ -439,6 +445,73 @@ def _blob_to_entries(blob):
         else:
             entries.append({'bytes': base64.b64encode(raw).decode('ascii')})
     return entries
+
+
+def _populate_name_values(blob, names):
+    """Add decoded 'value' field to each name entry from the blob."""
+    for entry in names:
+        offset = entry['offset']
+        length = entry['length']
+        entry['value'] = decode_cp1251(blob[offset:offset + length])
+
+
+def _apply_name_edits(blob, names):
+    """Patch the blob if any name's 'value' was edited by the user.
+
+    Compares each name's 'value' against what's at offset:length in the blob.
+    If there are differences, the blob is patched and all offsets recomputed.
+
+    Returns (new_blob, True) if changes were applied, (blob, False) otherwise.
+    """
+    # Collect edits: positions where value differs from blob content
+    edits = []  # (offset, old_length, new_bytes)
+    for entry in names:
+        if 'value' not in entry:
+            continue
+        offset = entry['offset']
+        length = entry['length']
+        old_bytes = blob[offset:offset + length]
+        new_bytes = encode_cp1251(entry['value'])
+        if old_bytes != new_bytes:
+            edits.append((offset, length, new_bytes))
+
+    if not edits:
+        return blob, False
+
+    # Sort by offset and check for overlapping edits
+    edits.sort(key=lambda e: e[0])
+    for j in range(len(edits) - 1):
+        end_j = edits[j][0] + edits[j][1]
+        start_next = edits[j + 1][0]
+        if end_j > start_next:
+            raise ValueError(
+                f"Overlapping name edits at offsets {edits[j][0]} and {start_next}. "
+                f"Edit overlapping names together or one at a time."
+            )
+
+    # Apply patches right-to-left so earlier offsets stay valid
+    new_blob = bytearray(blob)
+    for offset, old_len, new_bytes in reversed(edits):
+        new_blob[offset:offset + old_len] = new_bytes
+
+    new_blob = bytes(new_blob)
+
+    # Recompute offsets for all names using cumulative deltas
+    deltas = []
+    for offset, old_len, new_bytes in edits:
+        delta = len(new_bytes) - old_len
+        if delta != 0:
+            deltas.append((offset + old_len, delta))  # shift starts after the edit
+
+    for entry in names:
+        old_offset = entry['offset']
+        shift = sum(d for pos, d in deltas if pos <= old_offset)
+        entry['offset'] = old_offset + shift
+        entry['length'] = len(encode_cp1251(entry['value']))
+
+    print(f"Applied {len(edits)} packed string edit(s), blob {len(blob)} -> {len(new_blob)} bytes")
+
+    return new_blob, True
 
 
 def _load_existing_names(config_path):
@@ -995,6 +1068,7 @@ def deserialize_cfg(cfg_path, output_dir):
                 'entries': entries
             }
             if existing_names is not None:
+                _populate_name_values(value, existing_names)
                 obj['names'] = existing_names
             objects.append(obj)
         elif obj_type == 'bytes':
@@ -1076,6 +1150,7 @@ def serialize_cfg(input_dir, cfg_path):
         config = json.load(f)
 
     writer = CfgWriter()
+    names_edited = False
 
     # Index objects by position
     obj_map = {}
@@ -1096,6 +1171,13 @@ def serialize_cfg(input_dir, cfg_path):
                 else:
                     segments.append(encode_cp1251(entry['value']))
             blob = b'\x00'.join(segments)
+            # Apply edits from names[].value if any were changed by the user
+            names = obj.get('names', [])
+            blob, edited = _apply_name_edits(blob, names)
+            if edited:
+                obj['entries'] = _blob_to_entries(blob)
+                _populate_name_values(blob, names)
+                names_edited = True
             writer.encode_byte_array(blob)
         elif obj_type == 'string_list':
             segments = [encode_cp1251(s) for s in obj['value']]
@@ -1124,6 +1206,15 @@ def serialize_cfg(input_dir, cfg_path):
     with open(cfg_path, 'wb') as f:
         f.write(result)
     print(f"Wrote {cfg_path} ({len(result)} bytes)")
+
+    # If name edits were applied, write back updated config.json
+    # (entries[] and names[] offsets have changed)
+    if names_edited:
+        with open(config_path, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=2, ensure_ascii=False)
+            f.write('\n')
+        print(f"Updated {config_path} (name edits applied)")
+
     return result
 
 

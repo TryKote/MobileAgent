@@ -20,6 +20,7 @@ import com.trykote.mobileagent.util.*;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import java.util.Calendar;
 import java.util.Vector;
 
 public final class AppController {
@@ -86,6 +87,9 @@ public final class AppController {
     private static final int PAGE_ACTION_PREV = 1;
     private static final int PAGE_ACTION_NEXT = 2;
 
+    private static int lastMinute;
+    public static int clockWidth;
+
     public static String pendingUrl;
     public static MrimAccount pendingAccount;
     public static Object appLock;
@@ -113,12 +117,12 @@ public final class AppController {
     }
 
     public static int dialPhoneContactNext() {
-        ResourceManager.dialPhoneContact((PhoneContact) AppState.pool[UIKeys.RANGE_PHONE_CONTACT_START], AppState.getInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET) + PHONE_PAGE_SIZE);
+        ContactListManager.dialPhoneContact((PhoneContact) AppState.pool[UIKeys.RANGE_PHONE_CONTACT_START], AppState.getInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET) + PHONE_PAGE_SIZE);
         return ScreenId.MAP;
     }
 
     public static int dialPhoneContactPrev() {
-        ResourceManager.dialPhoneContact((PhoneContact) AppState.pool[UIKeys.RANGE_PHONE_CONTACT_START], AppState.getInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET) - PHONE_PAGE_SIZE);
+        ContactListManager.dialPhoneContact((PhoneContact) AppState.pool[UIKeys.RANGE_PHONE_CONTACT_START], AppState.getInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET) - PHONE_PAGE_SIZE);
         return ScreenId.MAP;
     }
 
@@ -188,7 +192,7 @@ public final class AppController {
         }
         MrimContact contact = AppState.getCurrentMrimContact();
         AppState.setAccount(contact.account);
-        ResourceManager.composeEmail(MailHelper.parseRecipientList(contact.simpleIdentifier), (String) null, (String) null);
+        MailHelper.composeEmail(MailHelper.parseRecipientList(contact.simpleIdentifier), (String) null, (String) null);
         ScreenBuilder.onScreenClosed();
         ScreenBuilder.onScreenClosed();
         return 0;
@@ -208,6 +212,31 @@ public final class AppController {
     public static void clearPendingProfile() {
         pendingAccount = null;
         pendingUrl = null;
+    }
+
+    public static void resetClock() {
+        TimerManager.timers[4] = 0;
+        lastMinute = -1;
+        clockWidth = 0;
+        AppState.clearIndex(UIKeys.SLOT_CLOCK_STRING);
+        updateClock();
+    }
+
+    public static void updateClock() {
+        Calendar calendar;
+        int i;
+        if (!TimerManager.checkTimer(4, 1000L) || (i = (calendar = AppState.getCalendar()).get(12)) == lastMinute) {
+            return;
+        }
+        String timeStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(calendar.get(11))).append(':').append(Utils.zeroPad(i)));
+        AppState.setObject(UIKeys.SLOT_CLOCK_STRING, (Object) timeStr);
+        clockWidth = AppState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT).stringWidth(timeStr);
+        lastMinute = i;
+        needsRepaint = true;
+    }
+
+    public static void clearImageCache() {
+        AppState.clearRange(UIKeys.SLOT_MEDIA_CALLBACK, MapKeys.OBJ_FONT_2);
     }
 
     public static void dispatchCommand(Object midlet, int width, int height) {
@@ -237,8 +266,8 @@ public final class AppController {
         AppState.pool[UIKeys.VEC_POPUP_ITEMS] = ObjectPool.newVector();
         updatePopupHeight();
         AppState.pool[UIKeys.VEC_PENDING_CONNECTIONS] = ObjectPool.newVector();
-        ResourceManager.resetClock();
-        ResourceManager.initMathTables();
+        resetClock();
+        SoftFloat.initMathTables();
         AppState.setInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES, 0);
         AppState.setInt(TrafficKeys.TRAFFIC_MRIM_RECV_BYTES, 0);
         AppState.setInt(TrafficKeys.TRAFFIC_MMP_SENT_BYTES, 0);
@@ -292,7 +321,7 @@ public final class AppController {
             synchronized (appLock) {
                 if (!isShuttingDown) {
                     AppState.updateTime();
-                    ResourceManager.updateClock();
+                    updateClock();
                     detectLongPress();
                     pollAccountStates();
                     expirePendingConnections();
@@ -775,7 +804,7 @@ public final class AppController {
         Object eventData = protoEvt.data;
         switch (eventType) {
             case ProtocolEvent.MAP_LOCATIONS_LOADED:
-                ResourceManager.showSavedLocations();
+                MapController.showSavedLocations();
                 break;
             case ProtocolEvent.PHONE_SEARCH_RESULT:
                 Object[] resultArr = (Object[]) eventData;

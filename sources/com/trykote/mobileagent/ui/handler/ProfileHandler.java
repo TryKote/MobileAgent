@@ -17,6 +17,9 @@ import javax.microedition.lcdui.Image;
 
 public final class ProfileHandler extends BaseScreenHandler {
 
+    /* renamed from: g */
+    public static long lastTileLoadTime;
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.SEARCH_RESULTS:
@@ -43,11 +46,11 @@ public final class ProfileHandler extends BaseScreenHandler {
                 if (AppController.pendingAccount == null && AppController.pendingUrl == null) {
                     Contact contact = AppState.getCurrentContact();
                     String statusText = AppController.getPendingDisplayText();
-                    NotificationHelper.showErrorOrConfirm(102, 728, statusText != null ? contact.account.getResourceId((Object) statusText) : ResourceManager.loadUserProfile(contact.getIdentifier(), contact.account));
+                    NotificationHelper.showErrorOrConfirm(102, 728, statusText != null ? contact.account.getResourceId((Object) statusText) : loadUserProfile(contact.getIdentifier(), contact.account));
                     return;
                 } else {
                     NotificationHelper.showErrorOrConfirm(102, 728, 0);
-                    ResourceManager.loadUserProfile(AppController.pendingUrl, AppController.pendingAccount);
+                    loadUserProfile(AppController.pendingUrl, AppController.pendingAccount);
                     AppController.clearPendingProfile();
                     return;
                 }
@@ -65,7 +68,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                 StringBuffer stringBuffer = new StringBuffer(AppState.getString(StringResKeys.STR_REGISTRATION_TEXT));
                 stringBuffer.append(AppState.getString(((MrimAccount) AppState.getAccount()).profileManager.profile.gender + 780));
                 AppState.setFromBuffer(UIKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
-                ResourceManager.lastTileLoadTime = System.currentTimeMillis();
+                lastTileLoadTime = System.currentTimeMillis();
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_EDIT));
                 return;
             case ScreenId.SEARCH_ENTRY:
@@ -92,9 +95,9 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.PEOPLE_SEARCH:
                 return MapController.processSearchQuery(title);
             case ScreenId.PROFILE_EDIT:
-                return ResourceManager.syncAndReturn();
+                return syncAndReturn();
             case ScreenId.SEARCH_ENTRY:
-                return ResourceManager.handleSearchResultAction(action);
+                return handleSearchResultAction(action);
         }
         return 0;
     }
@@ -152,9 +155,9 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.PEOPLE_SEARCH:
                 return MapController.processSearchQuery(title);
             case ScreenId.PROFILE_EDIT:
-                return ResourceManager.syncAndReturn();
+                return syncAndReturn();
             case ScreenId.SEARCH_ENTRY:
-                return ResourceManager.handleSearchResultAction(selectedOption);
+                return handleSearchResultAction(selectedOption);
         }
         return 0;
     }
@@ -174,11 +177,71 @@ public final class ProfileHandler extends BaseScreenHandler {
             case ScreenId.PEOPLE_SEARCH:
                 return 0;
             case ScreenId.PROFILE_EDIT:
-                return System.currentTimeMillis() - ResourceManager.lastTileLoadTime > 5000 ? ResourceManager.syncAndReturn() : 0;
+                return System.currentTimeMillis() - lastTileLoadTime > 5000 ? syncAndReturn() : 0;
             case ScreenId.SEARCH_ENTRY:
                 return 0;
         }
         return 0;
+    }
+
+    /* renamed from: h */
+    public static final int syncAndReturn() {
+        ((MrimAccount) AppState.getAccount()).profileManager.sync();
+        if (AppState.getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
+            return AppState.getInt(SessionKeys.INT_CONNECTION_STATE);
+        }
+        ScreenBuilder.onScreenClosed();
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final int loadUserProfile(String str, Account targetAccount) {
+        ByteBuffer urlBuffer;
+        int atIndex = str.indexOf(64);
+        String domain = StringUtils.suffix(str, atIndex + 1);
+        Object[] objArr = new Object[3];
+        if (targetAccount instanceof MmpProtocol) {
+            urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_BUDDY_ICON).writeRawString(str);
+        } else {
+            ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(PackedStringKeys.URL_OBRAZ_FOTO);
+            int dotIndex = domain.indexOf(46);
+            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + AppState.getInt(RuntimeKeys.INT_ASYNC_TASK_ID));
+        }
+        objArr[0] = urlBuffer.getStringAndClear();
+        objArr[1] = targetAccount;
+        objArr[2] = null;
+        AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr;
+        new AsyncTask(AsyncTaskId.DOWNLOAD_PHOTO, objArr);
+        return 0;
+    }
+
+    /* renamed from: d */
+    public static final int handleSearchResultAction(int i) {
+        Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
+        switch (i) {
+            case 0:
+                if (onlineAccounts.size() <= 0) {
+                    return NotificationHelper.showError(422);
+                }
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId, 1));
+                ScreenBuilder.onScreenClosed();
+                return ScreenId.CONTACT_DELETE;
+            case 1:
+                if (onlineAccounts.size() <= 0) {
+                    return NotificationHelper.showError(422);
+                }
+                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId, 2));
+                return ScreenId.MAP;
+            case 2:
+                return AppController.dialPhoneContactNext();
+            case 3:
+                return AppController.dialPhoneContactPrev();
+            default:
+                AppState.setInt(RuntimeKeys.INT_ASYNC_TASK_ID, 0);
+                AppController.openUserProfile((MrimAccount) null, ((UserSearchResult) AppState.pool[RegistrationKeys.OBJ_SEARCH_RESULT]).userId);
+                ScreenBuilder.onScreenClosed();
+                return 0;
+        }
     }
 
     public static int handleScreenAction(int taskId) {

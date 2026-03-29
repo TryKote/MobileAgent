@@ -10,6 +10,7 @@ import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
+import javax.microedition.lcdui.Display;
 /* Extracted from AppController: notification and error display */
 public final class NotificationHelper {
 
@@ -38,7 +39,7 @@ public final class NotificationHelper {
 
     /* renamed from: r */
     public static final void clearNotifications() {
-        ResourceManager.playNotificationSound(5);
+        playNotificationSound(5);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_DIALOG));
         AppState.clearIndex(UIKeys.SLOT_NOTIFICATION_TITLE);
     }
@@ -73,5 +74,35 @@ public final class NotificationHelper {
         AppState.setInt(UIKeys.INT_HTTP_PARAM_1, i);
         AppState.setInt(UIKeys.INT_HTTP_PARAM_2, i2);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONFIRM_DIALOG));
+    }
+
+    public static void playNotificationSound(int soundType) {
+        int soundIndex = 0;
+        if (soundType == 1) {
+            soundIndex = 2;
+        } else if (soundType == 0) {
+            soundIndex = 4;
+        } else if (soundType == 3) {
+            soundIndex = 6;
+        } else if (soundType == 4) {
+            soundIndex = 8;
+        } else if (soundType == 5) {
+            soundIndex = 10;
+        } else if (soundType == 6) {
+            soundIndex = 165;
+        }
+        playAlertIfEnabled(AppState.getInt(soundIndex + 75), AppState.getBool(soundIndex + 76));
+    }
+
+    public static void playAlertIfEnabled(int alertTone, boolean vibrateEnabled) {
+        if (AppState.getBool(SessionKeys.FLAG_MRIM_DATA_LOADED)) {
+            if (vibrateEnabled) {
+                Display.getDisplay(AppState.getMidlet()).vibrate(250);
+            }
+            if (alertTone == 0 || AppState.getBool(SettingsKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(8, 1000L)) {
+                return;
+            }
+            SoundPlayer.playSound(alertTone);
+        }
     }
 }

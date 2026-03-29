@@ -5,6 +5,7 @@ import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.io.IOException;
+import java.util.Vector;
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
 
@@ -21,7 +22,7 @@ public final class TileCache {
                     break;
                 }
                 String str = storeNames[length];
-                if (str.startsWith(AppState.getString(StringResKeys.STR_RES_URL_PARAM_1))) {
+                if (str.startsWith(AppState.getString(PackedStringKeys.MAP_TILES))) {
                     RecordStore recordStore = null;
                     try {
                         RecordStore store = IOUtils.openRecordStore(str, false);
@@ -37,7 +38,7 @@ public final class TileCache {
         AppState.setInt(MapKeys.INT_TILE_CACHE_SIZE, size);
     }
 
-    private static void saveTileToCache(ResourceManager resource, byte[] bArr, int i, int i2) {
+    private static void saveTileToCache(TileRequest resource, byte[] bArr, int i, int i2) {
         if (resource == null || bArr == null) {
             return;
         }
@@ -77,7 +78,7 @@ public final class TileCache {
         }
     }
 
-    public static final Image loadTileFromCache(ResourceManager resource) {
+    public static final Image loadTileFromCache(TileRequest resource) {
         String cacheKey = buildTileCacheKey(resource);
         RecordStore recordStore = null;
         try {
@@ -111,7 +112,7 @@ public final class TileCache {
         long j = 0;
         String[] storeNames = StringUtils.listRecordStores();
         if (storeNames != null) {
-            String cachePrefix = AppState.getString(StringResKeys.STR_RES_URL_PARAM_1);
+            String cachePrefix = AppState.getString(PackedStringKeys.MAP_TILES);
             int length = storeNames.length;
             while (true) {
                 length--;
@@ -169,8 +170,8 @@ public final class TileCache {
         }
     }
 
-    private static final String buildTileCacheKey(ResourceManager resource) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_URL_PARAM_1)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
+    private static final String buildTileCacheKey(TileRequest resource) {
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.MAP_TILES)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
     }
 
     private static final boolean reconnectHttp() {
@@ -189,7 +190,7 @@ public final class TileCache {
         }
     }
 
-    public static final Image fetchTileImage(ResourceManager resource) throws IOException {
+    public static final Image fetchTileImage(TileRequest resource) throws IOException {
         ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_TILESENDER).writeRawString(resource.tileUrl).writeCompressed(PackedStringKeys.HTTP_MAP_TILE_HEADER).writeExtendedInt(2950495).writeEncodedInt(222).writeCompressed(PackedStringKeys.HTTP_TILE_HEADERS);
         try {
             SocketWrapper socket = (SocketWrapper) AppState.pool[MapKeys.OBJ_MENU_ACTIONS];
@@ -305,6 +306,39 @@ public final class TileCache {
             return Integer.parseInt(StringUtils.substring(str, headerOffset, str.indexOf(13, headerOffset)));
         } catch (Throwable unused) {
             return -1;
+        }
+    }
+
+    public static void removeTileRequest(TileRequest tile) {
+        Vector requestQueue = AppState.getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+        synchronized (requestQueue) {
+            requestQueue.removeElement(tile);
+        }
+    }
+
+    public static TileRequest peekTileRequest() {
+        TileRequest tile;
+        Vector requestQueue = AppState.getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+        synchronized (requestQueue) {
+            tile = (TileRequest) (requestQueue.size() != 0 ? requestQueue.firstElement() : null);
+        }
+        return tile;
+    }
+
+    public static void enqueueTileRequest(TileRequest tile) {
+        Vector requestQueue = AppState.getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+        synchronized (requestQueue) {
+            if (!requestQueue.contains(tile)) {
+                if (tile.tileType == TileRequest.TYPE_OVERLAY) {
+                    requestQueue.addElement(tile);
+                } else {
+                    int size = requestQueue.size();
+                    while (size > 0 && ((TileRequest) requestQueue.elementAt(size - 1)).tileType != TileRequest.TYPE_MAP) {
+                        size--;
+                    }
+                    requestQueue.insertElementAt(tile, size);
+                }
+            }
         }
     }
 }

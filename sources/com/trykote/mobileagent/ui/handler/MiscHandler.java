@@ -28,10 +28,10 @@ public final class MiscHandler extends BaseScreenHandler {
                 DiagnosticReporter.checkCrashReport();
                 return;
             case ScreenId.VERSION_CHECK:
-                ResourceManager.processUpdateResult();
+                RegistrationService.processUpdateResult();
                 return;
             case ScreenId.TOS_SCREEN:
-                ResourceManager.showTosScreen();
+                showTosScreen();
                 return;
             case ScreenId.EVENT_QUEUE:
                 MrimChatRoomManager.showChatRoomSelector();
@@ -94,13 +94,13 @@ public final class MiscHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.EMPTY_SCREEN));
                 return;
             case ScreenId.WIFI_NETWORKS:
-                ResourceManager.showWiFiNetworks();
+                showWiFiNetworks();
                 return;
             case ScreenId.REG_FORM:
                 RegistrationService.processRegForm();
                 return;
             case ScreenId.INVITE_TOS:
-                ResourceManager.showTosScreen();
+                showTosScreen();
                 return;
             case ScreenId.FORM_LIST: {
                 ListView screen18 = ScreenManager.createScreen(ScreenDef.FORM_LIST);
@@ -137,7 +137,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 Vector params8 = ObjectPool.newVector();
                 params8.addElement(AppState.getVector(UIKeys.SLOT_MEDIA_STREAM));
                 JsonParser.addIntToVector(params8, AppState.getBool(UIKeys.FLAG_SPECIAL_KEY_MODE) ? 1 : 0);
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StringResKeys.STR_RES_API_URL_5), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StringResKeys.STR_RES_LONG_API_URL_3)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_AJAX_SPAMABUSE), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_SPAMABUSE)), Conversation.urlEncode((Object) JsonParser.toJson(params8)))));
                 return;
             case ScreenId.SHARE_ALERT:
                 NotificationHelper.showAlertById(79, 863);
@@ -157,7 +157,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.FIRST_RUN:
                 return -1;
             case ScreenId.VERSION_CHECK:
-                return ResourceManager.applyVersionLabel();
+                return RegistrationService.applyVersionLabel();
             case ScreenId.TOS_SCREEN:
                 return -1;
             case ScreenId.EVENT_QUEUE:
@@ -179,7 +179,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.EMPTY_SCREEN:
                 return 0;
             case ScreenId.WIFI_NETWORKS:
-                return ResourceManager.setSelectedObject(data);
+                return setSelectedObject(data);
             case ScreenId.REG_FORM: {
                 ScreenManager.processScreenForm();
                 String loginLower = XmppMailRuProtocol.getLoginLowerCase();
@@ -199,7 +199,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 }
             }
             case ScreenId.INVITE_TOS:
-                return ResourceManager.collectInvitees(screen);
+                return collectInvitees(screen);
             case ScreenId.FORM_LIST:
                 return ScreenManager.handleFormSubmit(data);
             case ScreenId.PHONE_CONTACTS:
@@ -329,7 +329,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.FIRST_RUN:
                 return -1;
             case ScreenId.VERSION_CHECK:
-                return ResourceManager.applyVersionLabel();
+                return RegistrationService.applyVersionLabel();
             case ScreenId.TOS_SCREEN:
                 return -1;
             case ScreenId.EVENT_QUEUE:
@@ -351,7 +351,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.EMPTY_SCREEN:
                 return 0;
             case ScreenId.WIFI_NETWORKS:
-                return ResourceManager.setSelectedObject(data);
+                return setSelectedObject(data);
             case ScreenId.REG_FORM:
                 return 0;
             case ScreenId.INVITE_TOS:
@@ -466,6 +466,61 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.ACCOUNT_SETUP:
                 return 0;
         }
+        return 0;
+    }
+
+    /* renamed from: t */
+    public static final void showTosScreen() {
+        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.WIFI_NETWORKS));
+        NotificationHelper.showMessageById(1027);
+    }
+
+    /* renamed from: a */
+    public static final int collectInvitees(ListView parentScreen) {
+        ScreenManager.processScreenForm();
+        String[] phoneNumbers = Utils.getPhoneNumbers(true);
+        Vector invitees = ContactListManager.getCheckedItems(parentScreen, 1);
+        int length = phoneNumbers.length;
+        while (true) {
+            length--;
+            if (length < 0) {
+                break;
+            }
+            invitees.addElement(phoneNumbers[length]);
+        }
+        if (invitees.size() == 0) {
+            return NotificationHelper.showError(775);
+        }
+        invitees.addElement(((MrimAccount) AppState.getAccount()).login);
+        AppState.pool[UIKeys.SLOT_SCREEN_TITLE] = invitees;
+        return ScreenId.SEND_DATA;
+    }
+
+    /* renamed from: m */
+    public static final void showWiFiNetworks() {
+        Vector networks = ServiceRegistry.getActiveContactIds();
+        int size = networks == null ? 0 : networks.size();
+        int i = size;
+        if (size == 0) {
+            NotificationHelper.showMessageById(404);
+            return;
+        }
+        ListView screen = ScreenManager.createScreen(ScreenDef.SAVED_LOCATIONS);
+        while (true) {
+            i--;
+            if (i < 0) {
+                ScreenManager.showScreen(screen);
+                return;
+            } else {
+                Object networkObj = networks.elementAt(i);
+                screen.addIconItemWithData(-1, ServiceRegistry.getPhotoHost(networkObj), 6, networkObj);
+            }
+        }
+    }
+
+    /* renamed from: d */
+    public static final int setSelectedObject(Object obj) {
+        AppState.pool[RuntimeKeys.SLOT_MSG_ID_1] = obj;
         return 0;
     }
 

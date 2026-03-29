@@ -33,7 +33,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 JsonParser.addIntToVector(params, 0);
                 params.addElement(AppState.emptyStr);
                 JsonParser.addIntToVector(params, 1);
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_LONG_URL_1)).append('?').append(AppState.getString(StringResKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StringResKeys.STR_RES_HUGE_URL_1)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_PATH_MAILBOX)).append('?').append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_GET_MAILBOX)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 return;
             case ScreenId.CHAT_ROOM_INIT:
                 MrimChatRoomManager.showChatRoomListWithCounts();
@@ -51,7 +51,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 if (chatRoom == mrimAccount2.chatRoomManager.getLast()) {
                     params2.addElement(StringUtils.intern(Integer.toString(0)));
                     params2.addElement(chatRoom.participants);
-                    request = ApiClient.createUploadRequest(AppState.getString(StringResKeys.STR_RES_LONG_URL_1), ObjectPool.newBufferFromState(722608).append(AppState.getString(StringResKeys.STR_RES_HUGE_URL_7)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
+                    request = ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newBufferFromState(722608).append(AppState.getString(PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 } else {
                     params2.addElement(StringUtils.intern(Integer.toString(chatRoom.id)));
                     int intVal2 = AppState.getInt(SettingsKeys.SETTING_TIMEOUT_VALUE);
@@ -68,7 +68,7 @@ public final class ChatHandler extends BaseScreenHandler {
                         }
                     }
                     params2.addElement(messageIdParams);
-                    request = ApiClient.createAuthRequest(ObjectPool.newBufferFromState(1050207).append('?').append(AppState.getString(StringResKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StringResKeys.STR_RES_LONG_API_URL_5)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
+                    request = ApiClient.createAuthRequest(ObjectPool.newBufferFromState(1050207).append('?').append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_MAJAX_GET_MSGS)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params2))));
                 }
                 MrimChatRoomManager.sendChatRoomRequest(request);
                 return;
@@ -77,7 +77,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 Vector params4 = ObjectPool.newVector();
                 JsonParser.addIntToVector(params4, AppState.getInt(ChatKeys.INT_ACTIVE_CHATROOM_ID));
                 params4.addElement(AppState.getVector(UIKeys.SLOT_MEDIA_STREAM));
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(StringResKeys.STR_RES_LONG_URL_1), ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_XML_TAG_1)).append(AppState.getString(StringResKeys.STR_RES_LONG_API_URL_4)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(StringResKeys.STR_RES_STATUS_LABEL)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(AppState.getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.PARAM_AJAX_CALL)).append(AppState.getString(PackedStringKeys.FUNC_AJAX_MOVE_MSGS)).append(AppState.getString(SessionKeys.SLOT_SESSION_HASH)).append(AppState.getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params4)))));
                 return;
             case ScreenId.CHAT_ROOM_VIEW:
                 MrimChatRoomManager.showChatRoomMessages();
@@ -162,7 +162,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 ScreenManager.processScreenForm();
                 return 0;
             case ScreenId.CHAT_ROOM_CONTEXT:
-                return ResourceManager.handleChatRoomAction(title);
+                return handleChatRoomAction(title);
             case ScreenId.CHAT_ROOM_ALERT:
                 return ScreenId.CHAT_ROOM_INVITE;
             case ScreenId.CHAT_ROOM_OPTIONS:
@@ -191,7 +191,7 @@ public final class ChatHandler extends BaseScreenHandler {
                                 ByteBuffer wrappedBuf = new ByteBuffer().writeBufferIntLen(membersBuf);
                                 Object[] objArr2 = new Object[3];
                                 objArr2[0] = ProtocolFactory.createMrimPacket(mrimAccount3, 4121, new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(chatName).writeZeros(12).writeBufferIntLen(flag2 ? wrappedBuf.writeStringLatin1(mrimAccount3.login) : wrappedBuf));
-                                objArr2[1] = ResourceManager.integerOf(15);
+                                objArr2[1] = ObjectPool.integerOf(15);
                                 objArr2[2] = chatName;
                                 int sendResult3 = mrimAccount3.trySendData(mrimAccount3.createAndQueueCommand(objArr2));
                                 if (0 != sendResult3) {
@@ -208,7 +208,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 }
                 return errorCode4;
             case ScreenId.CHAT_STATUS:
-                return ResourceManager.handleChatInputAction(title);
+                return handleChatInputAction(title);
             case ScreenId.CHAT_DETAIL:
                 return handleMapViewOption(action);
             case ScreenId.CHAT_OPTIONS:
@@ -315,7 +315,7 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CHAT_VIEW_MODE:
                 return 0;
             case ScreenId.CHAT_ROOM_CONTEXT:
-                ResourceManager.handleChatRoomAction(title);
+                handleChatRoomAction(title);
                 return 0;
             case ScreenId.CHAT_ROOM_ALERT:
                 return ScreenId.CHAT_ROOM_INVITE;
@@ -326,7 +326,7 @@ public final class ChatHandler extends BaseScreenHandler {
             case ScreenId.CREATE_CHAT_ROOM:
                 return 0;
             case ScreenId.CHAT_STATUS:
-                return ResourceManager.handleChatInputAction(title);
+                return handleChatInputAction(title);
             case ScreenId.CHAT_DETAIL:
                 return handleMapViewOption(selectedOption);
             case ScreenId.CHAT_OPTIONS:
@@ -369,13 +369,13 @@ public final class ChatHandler extends BaseScreenHandler {
                         MrimAccount mrimAccount2 = (MrimAccount) AppState.getAccount();
                         ChatRoom chatRoom2 = mrimAccount2.chatRoomManager.findById(AppState.getInt(ChatKeys.INT_CHATROOM_ID));
                         if (chatRoom2 != mrimAccount2.chatRoomManager.getLast()) {
-                            chatRoom2.subject = JsonParser.getStringValue(payload, AppState.getString(StringResKeys.STR_RES_CONTENT_ENCODING));
+                            chatRoom2.subject = JsonParser.getStringValue(payload, AppState.getString(PackedStringKeys.MAIL_FIELD_LAST_MSG_ID));
                             chatRoom2.messageIds.removeAllElements();
-                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(payload, AppState.getString(StringResKeys.STR_RES_HEADER_NAME_1))).elements();
+                            Enumeration enumerationElements = ((Vector) JsonParser.getValue(payload, AppState.getString(PackedStringKeys.MAIL_PARAM_MLIST_ALL))).elements();
                             while (enumerationElements.hasMoreElements()) {
                                 chatRoom2.messageIds.addElement(enumerationElements.nextElement());
                             }
-                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(payload, AppState.getString(StringResKeys.STR_RES_PARAM_1))).elements();
+                            Enumeration enumerationElements2 = ((Vector) JsonParser.getValue(payload, AppState.getString(PackedStringKeys.MAIL_PARAM_MLIST))).elements();
                             while (enumerationElements2.hasMoreElements()) {
                                 Message msg = new Message((Hashtable) enumerationElements2.nextElement());
                                 chatRoom2.messages.put(msg.from, msg);
@@ -528,6 +528,88 @@ public final class ChatHandler extends BaseScreenHandler {
             return 0;
         }
         MapController.removeRoutePoint(mapPoint);
+        return 0;
+    }
+
+    /* renamed from: a */
+    public static final int handleChatInputAction(String str) {
+        int errorCode;
+        String messageText = Utils.defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
+        if (str != AppState.getString(StringResKeys.STR_NOTIFICATION_SOUND)) {
+            StringBuffer sb = Utils.getMessageBuffer();
+            if (StringUtils.matchesKey(473, str)) {
+                AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, sb.append(AppState.getString(UIKeys.SLOT_NOTIFICATION_TEXT)));
+                return 0;
+            }
+            if (StringUtils.matchesKey(474, str)) {
+                AppState.setObject(UIKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
+                AppState.setBool(UIKeys.FLAG_RESOURCE_LOADING, true);
+                return 0;
+            }
+            if (!StringUtils.matchesKey(476, str)) {
+                return 0;
+            }
+            AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) Conversation.transliterateRussian(messageText));
+            return 0;
+        }
+        String phoneNumber = AppState.getString(ContactKeys.SLOT_SELECTED_GROUP);
+        MrimContact mrimContact = (MrimContact) AppState.pool[ContactKeys.SLOT_CURRENT_ENTITY];
+        MrimAccount mrimAccount = (MrimAccount) mrimContact.account;
+        if (mrimAccount.isConnected()) {
+            mrimContact.appendMessage(1, ObjectPool.toStringAndRelease(Utils.appendColon(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_FILE_TRANSFER_PREFIX)).append(Utils.formatPhone(phoneNumber))).append(messageText)), 0L, 0L);
+            StringBuffer phoneSb = ObjectPool.newStringBuffer().append('+');
+            if (phoneNumber.charAt(0) == '8') {
+                phoneSb.append('7').append(StringUtils.suffix(phoneNumber, 1));
+            } else {
+                phoneSb.append(phoneNumber);
+            }
+            errorCode = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE_EXT, new ByteBuffer().writeIntLE(0).writeStringLatin1(ObjectPool.toStringAndRelease(phoneSb)).writeStringUTF16(messageText)), ObjectPool.integerOf(MrimAccount.RESP_XMPP_SERVICE), mrimContact, messageText, phoneNumber}));
+        } else {
+            errorCode = 299;
+        }
+        int i = errorCode;
+        if (0 != errorCode) {
+            return NotificationHelper.showError(i);
+        }
+        return 0;
+    }
+
+    /* renamed from: c */
+    public static final int handleChatRoomAction(String str) {
+        String messageId = AppState.getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        int chatRoomId = AppState.getInt(ChatKeys.INT_CHATROOM_ID);
+        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        ChatRoom chatRoom = mrimAccount.chatRoomManager.findById(chatRoomId);
+        if (StringUtils.matchesKey(848, str)) {
+            chatRoom.readMessages.addElement(messageId);
+            return 0;
+        }
+        if (StringUtils.matchesKey(847, str)) {
+            chatRoom.markMessageRead(messageId);
+            return 0;
+        }
+        if (StringUtils.matchesKey(846, str)) {
+            ScreenBuilder.onScreenClosed();
+            MailHelper.composeEmail((Vector) null, (String) null, (String) null);
+            return 0;
+        }
+        if (StringUtils.matchesKey(1347, str)) {
+            IOUtils.setSelectedItems(chatRoom.readMessages);
+            return 0;
+        }
+        if (StringUtils.matchesKey(1061, str)) {
+            ScreenBuilder.onScreenClosed();
+            AppController.toggleOnlineMode(false);
+            return 0;
+        }
+        if (!StringUtils.matchesKey(851, str)) {
+            return 0;
+        }
+        AppState.setInt(ChatKeys.INT_SCROLL_OFFSET, 0);
+        AppState.clearIndex(MapKeys.SLOT_MAP_POINT_2);
+        mrimAccount.chatRoomManager.loaded = true;
+        chatRoom.setActive(false);
+        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 41);
         return 0;
     }
 

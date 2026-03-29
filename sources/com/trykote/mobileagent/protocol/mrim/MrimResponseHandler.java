@@ -104,7 +104,7 @@ final class MrimResponseHandler {
                 MrimContactParser.addContactToGroup(this.account, resultCode, buf);
                 break;
             case MrimAccount.RESP_AUTH_RESPONSE:
-                ResourceManager.handleAuthResponse(this.account, resultCode, objArr, buf);
+                this.account.handleAuthResponse(resultCode, objArr, buf);
                 break;
         }
         vector.removeElementAt(size);

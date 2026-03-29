@@ -17,6 +17,7 @@ public abstract class ObjectPool {
     private static final int BYTE_POOL_SIZE = 20;
     private static final int BUFFER_POOL_SIZE = 5;
     private static final int VECTOR_POOL_SIZE = 5;
+    private static final int INTEGER_CACHE_SIZE = 32;
 
     /** Pool of reusable byte arrays (max 20 entries, each up to 2048 bytes). */
     public static byte[][] bytePool;
@@ -30,11 +31,41 @@ public abstract class ObjectPool {
     /** Interning cache — maps strings to their canonical instances. */
     public static Hashtable stringCache;
 
+    /** Cached Integer instances for values 0..31. */
+    public static Integer[] integerCache;
+
+    /** Cached Boolean.TRUE. */
+    public static Boolean boolTrue;
+
+    /** Cached Boolean.FALSE. */
+    public static Boolean boolFalse;
+
+    /** Shared lock object, also used as JSON null sentinel. */
+    public static Object JSON_NULL;
+
     public static void initPools() {
         bytePool = new byte[BYTE_POOL_SIZE][];
         bufferPool = new StringBuffer[BUFFER_POOL_SIZE];
         vectorPool = new Vector[VECTOR_POOL_SIZE];
         stringCache = new Hashtable();
+    }
+
+    public static void initCaches() {
+        boolTrue = new Boolean(true);
+        boolFalse = new Boolean(false);
+        JSON_NULL = new Object();
+        integerCache = new Integer[INTEGER_CACHE_SIZE];
+        for (int i = INTEGER_CACHE_SIZE - 1; i >= 0; i--) {
+            integerCache[i] = new Integer(i);
+        }
+    }
+
+    public static Integer integerOf(int value) {
+        return (value & 31) == value ? integerCache[value] : new Integer(value);
+    }
+
+    public static Boolean booleanOf(boolean value) {
+        return value ? boolTrue : boolFalse;
     }
 
     /**

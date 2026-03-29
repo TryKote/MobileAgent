@@ -233,7 +233,7 @@ public final class StringUtils {
 
     /* renamed from: a */
     public static final ByteBuffer createContactInfoCmd(MmpProtocol protocol, int i) {
-        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(protocol.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ResourceManager.integerOf(7), ResourceManager.integerOf(i)});
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(protocol.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ObjectPool.integerOf(7), ObjectPool.integerOf(i)});
     }
 
     /* renamed from: b */
@@ -244,10 +244,10 @@ public final class StringUtils {
     }
 
     /* renamed from: a */
-    public static final Image getTileImage(ResourceManager tile) {
+    public static final Image getTileImage(TileRequest tile) {
         Image image = (Image) getTileCache().get(tile);
         if (image == null && !AppState.getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1).contains(tile)) {
-            ResourceManager.enqueueTileRequest(tile);
+            TileCache.enqueueTileRequest(tile);
         }
         return image;
     }
@@ -256,7 +256,7 @@ public final class StringUtils {
     private static final void pruneStaleRequests() {
         Vector items = AppState.getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_2);
         synchronized (items) {
-            Vector pendingReqs = AppState.getVector(ChatKeys.VEC_CHATROOM_LIST);
+            Vector pendingReqs = AppState.getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
             synchronized (pendingReqs) {
                 int size = pendingReqs.size();
                 while (true) {
@@ -281,7 +281,7 @@ public final class StringUtils {
         while (0 == AppState.getInt(MapKeys.FLAG_TILES_READY)) {
             Object[] objArr = (Object[]) AppState.pool[MapKeys.OBJ_TILE_REQUEST_ARRAY];
             while (true) {
-                if (!(AppState.getVector(ChatKeys.VEC_CHATROOM_LIST).size() == 0)) {
+                if (!(AppState.getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE).size() == 0)) {
                     break;
                 }
                 XmppContactGroup.removeContactInfoFromQueue(objArr);
@@ -290,7 +290,7 @@ public final class StringUtils {
                 } catch (Throwable unused) {
                 }
             }
-            ResourceManager tileReq = ResourceManager.peekTileRequest();
+            TileRequest tileReq = TileCache.peekTileRequest();
             int i2 = tileReq.tileType;
             objArr[1] = new StringBuffer().append(AppState.getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(AppState.getInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES))).toString();
             XmppContactGroup.addContactInfoToQueue(objArr);
@@ -305,17 +305,17 @@ public final class StringUtils {
                 i = i3 - 1;
                 if (i3 > 0) {
                     pruneStaleRequests();
-                    Vector items = AppState.getVector(ChatKeys.VEC_CHATROOM_LIST);
+                    Vector items = AppState.getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
                     synchronized (items) {
                         if (items.removeElement(tileReq)) {
-                            ResourceManager.enqueueTileRequest(tileReq);
+                            TileCache.enqueueTileRequest(tileReq);
                         }
                     }
                 } else {
                     AppState.setInt(MapKeys.FLAG_TILES_READY, 1);
                 }
             } catch (Throwable unused3) {
-                ResourceManager.removeTileRequest(tileReq);
+                TileCache.removeTileRequest(tileReq);
             }
             if (tileImage == null) {
                 if (i2 == 3) {
@@ -332,13 +332,13 @@ public final class StringUtils {
             }
             i = 4;
             cacheTileImage(tileReq, tileImage);
-            ResourceManager.removeTileRequest(tileReq);
+            TileCache.removeTileRequest(tileReq);
             pruneStaleRequests();
         }
     }
 
     /* renamed from: a */
-    private static final void cacheTileImage(ResourceManager tile, Image image) {
+    private static final void cacheTileImage(TileRequest tile, Image image) {
         try {
             getTileCache().put(tile, image, 1);
             MapRenderer.needsRedraw = true;
@@ -350,7 +350,7 @@ public final class StringUtils {
     public static final void clearSatelliteTiles() {
         Enumeration keys = getTileCache().keys();
         while (keys.hasMoreElements()) {
-            ResourceManager tile = (ResourceManager) keys.nextElement();
+            TileRequest tile = (TileRequest) keys.nextElement();
             if (tile.tileType == 3) {
                 getTileCache().remove(tile);
             }
@@ -813,7 +813,7 @@ public final class StringUtils {
         boolean zIsUpperCase = false;
         String str2 = null;
         String str3;
-        Vector vectorM512e = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_MEGA_URL_4));
+        Vector vectorM512e = Utils.splitByNull(AppState.getString(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
         Vector vectorM512e2 = Utils.splitByNull(AppState.getString(StringResKeys.STR_SOUND_LIST));
         Hashtable hashtable = new Hashtable();
         int size = vectorM512e.size();

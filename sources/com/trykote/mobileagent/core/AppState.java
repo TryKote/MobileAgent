@@ -81,7 +81,7 @@ public abstract class AppState {
     }
 
     private static void initPools() {
-        ResourceManager.initCaches();
+        ObjectPool.initCaches();
         StringUtils.initInternCache();
         ObjectPool.initPools();
         IOUtils.initResourceTracking();
@@ -177,9 +177,9 @@ public abstract class AppState {
         ObjectPool.cacheString(getString(StringResKeys.STR_PHONE_SUFFIX));
         ObjectPool.cacheString(getString(StringResKeys.STR_PHONE_PREFIX));
         ObjectPool.cacheString(getString(StringResKeys.STR_EMPTY));
-        ObjectPool.cacheString(getString(StringResKeys.STR_RES_CONTENT_TYPE));
-        ObjectPool.cacheString(getString(StringResKeys.STR_RES_HTTP_METHOD));
-        pool[SettingsKeys.SETTING_COMPRESSION_ENABLED] = ResourceManager.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
+        ObjectPool.cacheString(getString(PackedStringKeys.MRIM_MAPPOINT));
+        ObjectPool.cacheString(getString(PackedStringKeys.MRIM_MAPOBJECT));
+        pool[SettingsKeys.SETTING_COMPRESSION_ENABLED] = ObjectPool.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
     }
 
     public static boolean hasMemory() {
@@ -264,7 +264,7 @@ public abstract class AppState {
 
     public static void setInt(int key, int value) {
         if (key < OBJECT_POOL_SIZE) {
-            setObject(key, ResourceManager.integerOf(value));
+            setObject(key, ObjectPool.integerOf(value));
         } else {
             intPool[key - OBJECT_POOL_SIZE] = value;
         }

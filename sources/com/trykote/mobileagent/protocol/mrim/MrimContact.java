@@ -230,7 +230,7 @@ public final class MrimContact extends Contact implements ListItem {
         }
         this.lastStatusCheckTime = now;
         MrimAccount mrimAccount = (MrimAccount) this.account;
-        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(StringResKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(AppState.getString(StringResKeys.STR_RES_MEGA_URL_5))), ResourceManager.integerOf(MrimAccount.RESP_RENAME_CONTACT)}));
+        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(AppState.getString(StringResKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(AppState.getString(PackedStringKeys.MRIM_MESSAGE_RTF_BLOB))), ObjectPool.integerOf(MrimAccount.RESP_RENAME_CONTACT)}));
         if (0 != sendResult) {
             return sendResult;
         }

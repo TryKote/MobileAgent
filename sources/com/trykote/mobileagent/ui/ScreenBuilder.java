@@ -110,7 +110,7 @@ public final class ScreenBuilder {
                 nextScreen = 0;
                 break;
             case ScreenId.UNUSED_32:
-                nextScreen = ResourceManager.handleDropdownSelect(title, menuItem);
+                nextScreen = handleDropdownSelect(title, menuItem);
                 break;
             case ScreenId.UNUSED_45:
                 nextScreen = -1;
@@ -208,6 +208,29 @@ public final class ScreenBuilder {
                 } else if (i2 != 0) {
                     openScreen(i2);
                 }
+            }
+        }
+    }
+
+    /* renamed from: a */
+    public static final int handleDropdownSelect(String str, MenuItem menuItem) {
+        Object[] objArr = (Object[]) menuItem.data;
+        Object[] objArr2 = (Object[]) objArr[0];
+        MenuItem targetItem = (MenuItem) objArr[1];
+        ListView parentScreen = (ListView) objArr[2];
+        String[] strArr = (String[]) objArr2[1];
+        int i = 0;
+        int length = strArr.length;
+        while (true) {
+            length--;
+            if (length < 0) {
+                targetItem.clear().setLabel(Utils.appendSpace(targetItem.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{ObjectPool.integerOf(i), strArr};
+                parentScreen.rebuildItems();
+                EventDispatcher.postEvent(new MenuItemEvent(targetItem));
+                return 0;
+            }
+            if (str == strArr[length]) {
+                i = length;
             }
         }
     }

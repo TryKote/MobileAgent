@@ -30,17 +30,17 @@ public final class MrimChatRoomManager {
             hasExisting = false;
             this.list = ObjectPool.newVector();
         }
-        Object roomsArray = JsonParser.getValue(obj, AppState.getString(StringResKeys.STR_RES_PARAM_3));
+        Object roomsArray = JsonParser.getValue(obj, AppState.getString(PackedStringKeys.MAIL_PARAM_FLIST));
         for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
             Object roomObj = JsonParser.getVectorElement(roomsArray, i);
-            ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, AppState.getString(StringResKeys.STR_RES_AT_SIGN)));
+            ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, AppState.getString(PackedStringKeys.ATTR_ID_UPPER)));
             if (existingRoom == null) {
                 this.list.addElement(new ChatRoom(roomObj));
             } else {
                 existingRoom.parseJson(roomObj);
             }
         }
-        this.nickname = JsonParser.getStringValue(obj, AppState.getString(StringResKeys.STR_RES_HEADER_NAME_3));
+        this.nickname = JsonParser.getStringValue(obj, AppState.getString(PackedStringKeys.MAIL_FIELD_REAL_NAME));
         assignDefault(hasExisting);
     }
 

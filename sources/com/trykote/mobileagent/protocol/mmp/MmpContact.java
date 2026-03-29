@@ -382,7 +382,7 @@ public final class MmpContact extends Contact {
                     i13 = i14;
                 }
             }
-            nearestPoints.addElement(new Object[]{ResourceManager.integerOf(i13), iArr});
+            nearestPoints.addElement(new Object[]{ObjectPool.integerOf(i13), iArr});
         }
     }
 

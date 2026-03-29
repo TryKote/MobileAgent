@@ -2509,799 +2509,1558 @@
       ],
       "names": [
         {
+          "name": "TAG_STATISTICS",
+          "offset": 0,
+          "length": 10,
+          "value": "statistics"
+        },
+        {
           "name": "TAG_A",
           "offset": 2,
-          "length": 1
+          "length": 1,
+          "value": "a"
         },
         {
           "name": "PARAM_Q_EQ",
           "offset": 10,
-          "length": 2
+          "length": 2,
+          "value": "q="
         },
         {
           "name": "TAG_DATA",
           "offset": 12,
-          "length": 4
+          "length": 4,
+          "value": "data"
         },
         {
           "name": "API_DATA_ADD",
           "offset": 12,
-          "length": 8
+          "length": 8,
+          "value": "data/add"
         },
         {
           "name": "API_DATA_GET",
           "offset": 20,
-          "length": 8
+          "length": 8,
+          "value": "data/get"
         },
         {
           "name": "XMPP_TYPE_GET",
           "offset": 25,
-          "length": 3
+          "length": 3,
+          "value": "get"
         },
         {
           "name": "API_PHONE_INFO",
           "offset": 28,
-          "length": 11
+          "length": 11,
+          "value": "_phone_info"
+        },
+        {
+          "name": "XMPP_PRIORITY_DEFAULT",
+          "offset": 211,
+          "length": 1,
+          "value": "5"
+        },
+        {
+          "name": "ATTR_TYPE",
+          "offset": 445,
+          "length": 4,
+          "value": "type"
         },
         {
           "name": "ATTR_NAME",
           "offset": 457,
-          "length": 4
+          "length": 4,
+          "value": "name"
+        },
+        {
+          "name": "PLACEHOLDER_UNKNOWN",
+          "offset": 461,
+          "length": 3,
+          "value": "(?)"
+        },
+        {
+          "name": "MIME_TYPE_MIDI",
+          "offset": 471,
+          "length": 10,
+          "value": "audio/midi"
         },
         {
           "name": "ATTR_ID",
           "offset": 478,
-          "length": 2
+          "length": 2,
+          "value": "id"
+        },
+        {
+          "name": "MIDP_VOLUME_CONTROL",
+          "offset": 481,
+          "length": 13,
+          "value": "VolumeControl"
         },
         {
           "name": "MIDI_HEADER",
           "offset": 494,
-          "length": 9
+          "length": 9,
+          "value": "MThd\u0000\u0000\u0000\u0006\u0000"
+        },
+        {
+          "name": "SCHEME_HTTP",
+          "offset": 503,
+          "length": 7,
+          "value": "http://"
         },
         {
           "name": "URL_OBRAZ_FOTO",
           "offset": 503,
-          "length": 26
+          "length": 26,
+          "value": "http://obraz.foto.mail.ru/"
         },
         {
           "name": "ATTR_TO",
           "offset": 518,
-          "length": 2
+          "length": 2,
+          "value": "to"
         },
         {
           "name": "URL_ICQ_BUDDY_ICON",
           "offset": 529,
-          "length": 61
+          "length": 61,
+          "value": "http://api.icq.net/expressions/get?f=native&type=buddyIcon&t="
         },
         {
           "name": "URL_MAPS_MAIL_RU",
           "offset": 590,
-          "length": 19
+          "length": 19,
+          "value": "http://maps.mail.ru"
         },
         {
           "name": "URL_GEO_SEARCH_ZOOM",
           "offset": 590,
-          "length": 53
+          "length": 53,
+          "value": "http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom="
         },
         {
           "name": "URL_GEO_LAT1",
           "offset": 643,
-          "length": 29
+          "length": 29,
+          "value": "http://geo194.32.248.3/?lat1="
         },
         {
           "name": "PARAM_QUANTITY_DENSITY",
           "offset": 672,
-          "length": 21
+          "length": 21,
+          "value": "&quantity=50&density="
         },
         {
           "name": "PARAM_QUANTITY_IDFROM",
           "offset": 693,
-          "length": 20
+          "length": 20,
+          "value": "&quantity=10&idfrom="
         },
         {
           "name": "ATTR_FROM",
           "offset": 708,
-          "length": 4
+          "length": 4,
+          "value": "from"
         },
         {
           "name": "PARAM_DIST_RAND",
           "offset": 713,
-          "length": 20
+          "length": 20,
+          "value": "&dist=100&sn=1&rand="
         },
         {
           "name": "PARAM_RAND",
           "offset": 727,
-          "length": 6
+          "length": 6,
+          "value": "&rand="
         },
         {
           "name": "ATTR_EMAIL",
           "offset": 733,
-          "length": 5
+          "length": 5,
+          "value": "email"
         },
         {
           "name": "PARAM_LON1",
           "offset": 738,
-          "length": 6
+          "length": 6,
+          "value": "&lon1="
         },
         {
           "name": "PARAM_LAT2",
           "offset": 744,
-          "length": 6
+          "length": 6,
+          "value": "&lat2="
         },
         {
           "name": "PARAM_LON2",
           "offset": 750,
-          "length": 6
+          "length": 6,
+          "value": "&lon2="
         },
         {
           "name": "MRIM_MAPPOINT",
           "offset": 756,
-          "length": 8
+          "length": 8,
+          "value": "MAPPOINT"
         },
         {
           "name": "MRIM_MAPOBJECT",
           "offset": 764,
-          "length": 9
+          "length": 9,
+          "value": "MAPOBJECT"
         },
         {
           "name": "XMPP_GROUP_GENERAL",
           "offset": 776,
-          "length": 7
+          "length": 7,
+          "value": "General"
+        },
+        {
+          "name": "HOST_MRIM_REDIRECT",
+          "offset": 783,
+          "length": 17,
+          "value": "194.32.248.3:2042"
         },
         {
           "name": "MRIM_NICKNAME",
           "offset": 800,
-          "length": 13
+          "length": 13,
+          "value": "MRIM.NICKNAME"
         },
         {
           "name": "MRIM_MESSAGES_UNREAD",
           "offset": 813,
-          "length": 15
+          "length": 15,
+          "value": "MESSAGES.UNREAD"
         },
         {
           "name": "MRIM_CLIENT_ENDPOINT",
           "offset": 828,
-          "length": 15
+          "length": 15,
+          "value": "client.endpoint"
         },
         {
           "name": "MRIM_HAS_MYMAIL",
           "offset": 843,
-          "length": 10
+          "length": 10,
+          "value": "HAS_MYMAIL"
         },
         {
           "name": "MRIM_GEO_SUGGEST",
           "offset": 853,
-          "length": 17
+          "length": 17,
+          "value": "geo.point.suggest"
         },
         {
           "name": "MRIM_GEO_POINT",
           "offset": 870,
-          "length": 9
+          "length": 9,
+          "value": "geo-point"
         },
         {
           "name": "MRIM_GEO_LIST",
           "offset": 879,
-          "length": 8
+          "length": 8,
+          "value": "geo-list"
         },
         {
           "name": "MRIM_GEO_LIST_PACKET",
           "offset": 887,
-          "length": 26
+          "length": 26,
+          "value": "\u0002\u0000\u0000\u0000ru\u0010\u0000\u0000\u0000\u0001\u0000\u0000\u0000\b\u0000\u0000\u0000geo-list"
         },
         {
           "name": "URL_MOBILE_MAIL_RU",
           "offset": 913,
-          "length": 22
+          "length": 22,
+          "value": "http://mobile.mail.ru/"
         },
         {
           "name": "HOST_MOBILE_MAIL_RU_2041",
           "offset": 935,
-          "length": 20
+          "length": 20,
+          "value": "mobile.mail.ru:2041/"
         },
         {
           "name": "API_AGENTUPLOAD",
           "offset": 955,
-          "length": 16
+          "length": 16,
+          "value": "data/agentupload"
         },
         {
           "name": "PARAM_A_EQ",
           "offset": 986,
-          "length": 2
+          "length": 2,
+          "value": "a="
         },
         {
           "name": "HTTP_STATUS_200",
           "offset": 988,
-          "length": 3
+          "length": 3,
+          "value": "200"
         },
         {
           "name": "PARAM_CE",
           "offset": 998,
-          "length": 7
+          "length": 7,
+          "value": "&c=2&e="
         },
         {
           "name": "PARAM_Z_JAVA",
           "offset": 1005,
-          "length": 7
+          "length": 7,
+          "value": "&z=java"
         },
         {
           "name": "TAG_LINK",
           "offset": 1012,
-          "length": 4
+          "length": 4,
+          "value": "link"
         },
         {
           "name": "MMP_AGENT_ID",
           "offset": 1016,
-          "length": 22
+          "length": 22,
+          "value": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000\u0000ru\u0004\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+        },
+        {
+          "name": "PREFIX_UIN",
+          "offset": 1106,
+          "length": 4,
+          "value": "UIN:"
+        },
+        {
+          "name": "URL_SIGNUP",
+          "offset": 1129,
+          "length": 45,
+          "value": "http://win.mail.ru/cgi-bin/signup?mobileagent"
         },
         {
           "name": "URL_XHTML_WAP_MAIL_RU",
           "offset": 1174,
-          "length": 33
+          "length": 33,
+          "value": "http://xhtml.wap.mail.ru/cgi-bin/"
         },
         {
           "name": "ATTR_ID_UPPER",
           "offset": 1225,
-          "length": 2
+          "length": 2,
+          "value": "ID"
         },
         {
           "name": "TAG_SECURITY_IMAGE_ID",
           "offset": 1376,
-          "length": 17
+          "length": 17,
+          "value": "security_image_id"
         },
         {
           "name": "TAG_SECURITY_IMAGE_LINK",
           "offset": 1418,
-          "length": 19
+          "length": 19,
+          "value": "security_image_link"
         },
         {
           "name": "ATTR_VALUE",
           "offset": 1437,
-          "length": 5
+          "length": 5,
+          "value": "value"
         },
         {
           "name": "TAG_STATUS",
           "offset": 1442,
-          "length": 6
+          "length": 6,
+          "value": "status"
+        },
+        {
+          "name": "URL_VERSION_CHECK",
+          "offset": 1448,
+          "length": 35,
+          "value": "http://mrb.mail.ru/java/version.txt"
+        },
+        {
+          "name": "FUNC_AJAX_GET_MAILBOX",
+          "offset": 1483,
+          "length": 32,
+          "value": "&func_name=ajax_get_mailbox_data"
+        },
+        {
+          "name": "URL_PATH_AJAX_MARKMSG",
+          "offset": 1515,
+          "length": 21,
+          "value": "/cgi-bin/ajax_markmsg"
+        },
+        {
+          "name": "FUNC_AJAX_MARK_MSG",
+          "offset": 1536,
+          "length": 24,
+          "value": "&func_name=ajax_mark_msg"
+        },
+        {
+          "name": "PARAM_PASSWORD_EQ",
+          "offset": 1565,
+          "length": 10,
+          "value": "&Password="
+        },
+        {
+          "name": "URL_AJ_MAIL_RU",
+          "offset": 1575,
+          "length": 17,
+          "value": "http://aj.mail.ru"
         },
         {
           "name": "TAG_AJAX_RESPONSE",
           "offset": 1592,
-          "length": 12
+          "length": 12,
+          "value": "AjaxResponse"
+        },
+        {
+          "name": "URL_PATH_AUTH_LOGIN",
+          "offset": 1604,
+          "length": 27,
+          "value": "/cgi-bin/auth?lite=1&Login="
         },
         {
           "name": "TAG_AUTH",
           "offset": 1613,
-          "length": 4
+          "length": 4,
+          "value": "auth"
+        },
+        {
+          "name": "URL_PATH_MAILBOX",
+          "offset": 1631,
+          "length": 16,
+          "value": "/cgi-bin/mailbox"
+        },
+        {
+          "name": "URL_PATH_AJAX_SPAMABUSE",
+          "offset": 1647,
+          "length": 23,
+          "value": "/cgi-bin/ajax_spamabuse"
+        },
+        {
+          "name": "URL_PATH_AJAX_READMSG",
+          "offset": 1670,
+          "length": 21,
+          "value": "/cgi-bin/ajax_readmsg"
+        },
+        {
+          "name": "URL_PATH_AJAX_SENDMSG",
+          "offset": 1691,
+          "length": 21,
+          "value": "/cgi-bin/ajax_sendmsg"
+        },
+        {
+          "name": "ACTION_SEND",
+          "offset": 1705,
+          "length": 4,
+          "value": "send"
+        },
+        {
+          "name": "PARAM_AJAX_CALL",
+          "offset": 1712,
+          "length": 11,
+          "value": "ajax_call=1"
+        },
+        {
+          "name": "FUNC_AJAX_SPAMABUSE",
+          "offset": 1723,
+          "length": 25,
+          "value": "&func_name=ajax_spamabuse"
+        },
+        {
+          "name": "FUNC_AJAX_GET_FOLDER_LIST",
+          "offset": 1748,
+          "length": 45,
+          "value": "&func_name=ajax_get_folder_msg_list_info_part"
+        },
+        {
+          "name": "FUNC_AJAX_MOVE_MSGS",
+          "offset": 1793,
+          "length": 25,
+          "value": "&func_name=ajax_move_msgs"
+        },
+        {
+          "name": "FUNC_MAJAX_GET_MSGS",
+          "offset": 1818,
+          "length": 25,
+          "value": "&func_name=majax_get_msgs"
+        },
+        {
+          "name": "FUNC_AJAX_GET_MSG_DATA",
+          "offset": 1843,
+          "length": 28,
+          "value": "&func_name=ajax_get_msg_data"
+        },
+        {
+          "name": "FUNC_AJAX_SEND_MSG",
+          "offset": 1871,
+          "length": 24,
+          "value": "&func_name=ajax_send_msg"
+        },
+        {
+          "name": "FUNC_MAJAX_SEARCH",
+          "offset": 1895,
+          "length": 23,
+          "value": "&func_name=majax_search"
+        },
+        {
+          "name": "PARAM_DATA_EQ",
+          "offset": 1918,
+          "length": 6,
+          "value": "&data="
         },
         {
           "name": "VALUE_TRUE",
           "offset": 1924,
-          "length": 4
+          "length": 4,
+          "value": "true"
         },
         {
           "name": "VALUE_FALSE",
           "offset": 1928,
-          "length": 5
+          "length": 5,
+          "value": "false"
         },
         {
           "name": "STATUS_OK",
           "offset": 1933,
-          "length": 2
+          "length": 2,
+          "value": "OK"
+        },
+        {
+          "name": "PREFIX_FORWARD",
+          "offset": 1938,
+          "length": 3,
+          "value": "fw:"
+        },
+        {
+          "name": "PREFIX_REPLY",
+          "offset": 1941,
+          "length": 3,
+          "value": "re:"
+        },
+        {
+          "name": "MAIL_FIELD_LAST_MSG_ID",
+          "offset": 1944,
+          "length": 9,
+          "value": "lastMsgId"
+        },
+        {
+          "name": "MAIL_PARAM_MLIST",
+          "offset": 1956,
+          "length": 5,
+          "value": "mList"
+        },
+        {
+          "name": "MAIL_PARAM_MLIST_ALL",
+          "offset": 1956,
+          "length": 8,
+          "value": "mListAll"
+        },
+        {
+          "name": "MAIL_FIELD_ATTACHMENTS",
+          "offset": 1978,
+          "length": 11,
+          "value": "Attachments"
+        },
+        {
+          "name": "MAIL_FIELD_BODY",
+          "offset": 1989,
+          "length": 4,
+          "value": "Body"
+        },
+        {
+          "name": "MAIL_FLAG_ATTACH",
+          "offset": 2003,
+          "length": 10,
+          "value": "FlagAttach"
+        },
+        {
+          "name": "MAIL_FLAG_UNREAD",
+          "offset": 2013,
+          "length": 10,
+          "value": "FlagUnread"
+        },
+        {
+          "name": "MAIL_FIELD_CLEAR_SIZE",
+          "offset": 2023,
+          "length": 9,
+          "value": "ClearSize"
+        },
+        {
+          "name": "MAIL_FIELD_RECEIPT",
+          "offset": 2032,
+          "length": 7,
+          "value": "Receipt"
+        },
+        {
+          "name": "MAIL_FIELD_RECEIPT_ARRIVED",
+          "offset": 2032,
+          "length": 14,
+          "value": "ReceiptArrived"
+        },
+        {
+          "name": "MAIL_FIELD_TO",
+          "offset": 2046,
+          "length": 2,
+          "value": "To"
+        },
+        {
+          "name": "MAIL_FIELD_TO_NAME",
+          "offset": 2046,
+          "length": 6,
+          "value": "ToName"
+        },
+        {
+          "name": "MAIL_FIELD_TO_EMAIL",
+          "offset": 2052,
+          "length": 7,
+          "value": "ToEmail"
+        },
+        {
+          "name": "MAIL_FIELD_FROM",
+          "offset": 2059,
+          "length": 4,
+          "value": "From"
+        },
+        {
+          "name": "MAIL_FIELD_FROM_EMAIL",
+          "offset": 2059,
+          "length": 9,
+          "value": "FromEmail"
+        },
+        {
+          "name": "MAIL_FIELD_MESSAGE_ID",
+          "offset": 2068,
+          "length": 9,
+          "value": "MessageId"
+        },
+        {
+          "name": "MAIL_FIELD_FROM_DISPLAY",
+          "offset": 2077,
+          "length": 8,
+          "value": "FromName"
+        },
+        {
+          "name": "MAIL_FIELD_SUBJECT",
+          "offset": 2085,
+          "length": 7,
+          "value": "Subject"
+        },
+        {
+          "name": "MAIL_FOLDER_DRAFT",
+          "offset": 2092,
+          "length": 5,
+          "value": "draft"
+        },
+        {
+          "name": "MAIL_FIELD_REAL_NAME",
+          "offset": 2097,
+          "length": 8,
+          "value": "realName"
+        },
+        {
+          "name": "MAIL_PARAM_FLIST",
+          "offset": 2105,
+          "length": 5,
+          "value": "fList"
+        },
+        {
+          "name": "MAIL_FIELD_DATE",
+          "offset": 2110,
+          "length": 4,
+          "value": "Date"
+        },
+        {
+          "name": "MAIL_ACTION_COPY",
+          "offset": 2114,
+          "length": 4,
+          "value": "copy"
         },
         {
           "name": "HTTP_REQUEST_HEADER",
           "offset": 2118,
-          "length": 45
+          "length": 45,
+          "value": " HTTP/1.1\r\nUser-Agent: J2ME MailAgent\r\nHost: "
+        },
+        {
+          "name": "HEADER_CONTENT_LENGTH",
+          "offset": 2208,
+          "length": 14,
+          "value": "Content-Length"
         },
         {
           "name": "XMPP_TYPE_SET",
           "offset": 2233,
-          "length": 3
+          "length": 3,
+          "value": "set"
         },
         {
           "name": "HEADER_SET_COOKIE",
           "offset": 2263,
-          "length": 10
+          "length": 10,
+          "value": "set-cookie"
         },
         {
           "name": "TAG_COOKIE",
           "offset": 2267,
-          "length": 6
+          "length": 6,
+          "value": "cookie"
+        },
+        {
+          "name": "COOKIE_MPOP",
+          "offset": 2279,
+          "length": 5,
+          "value": "Mpop="
         },
         {
           "name": "MMP_AUTH_PACKET",
           "offset": 2284,
-          "length": 41
+          "length": 41,
+          "value": "\u0000\f\u0000%АЁ\u0000\u0001\u0000\u0000«Н\u0000\u0000\b\u0000\u0000\u0000\u0000\u0000\u0000\u0000P\u0000\u0000\u0000\u0003j2me Mail.Ru\u0000\u0000"
+        },
+        {
+          "name": "PLATFORM_J2ME",
+          "offset": 2311,
+          "length": 4,
+          "value": "j2me"
         },
         {
           "name": "MMP_TRANSFER_HEADER",
           "offset": 2325,
-          "length": 80
+          "length": 80,
+          "value": "\u0000\u0001\u0000\u0004\u0001\u0010\bд\u0000\u0013\u0000\u0004\u0001\u0010\bд\u0000\u0002\u0000\u0001\u0001\u0010\bд\u0000\u0003\u0000\u0001\u0001\u0010\bд\u0000\u0015\u0000\u0001\u0001\u0010\bд\u0000\u0004\u0000\u0001\u0001\u0010\bд\u0000\u0006\u0000\u0001\u0001\u0010\bд\u0000\t\u0000\u0001\u0001\u0010\bд\u0000\n\u0000\u0001\u0001\u0010\bд\u0000\u000b\u0000\u0001\u0001\u0010\bд"
         },
         {
           "name": "MMP_CAPS_HEADER",
           "offset": 2405,
-          "length": 49
+          "length": 49,
+          "value": "\u0000\u0003\u001b\u0000\b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000e\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a\u0000"
         },
         {
           "name": "MMP_CAPS_HEADER_2",
           "offset": 2454,
-          "length": 49
+          "length": 49,
+          "value": "\u0000\u0000\u0000\u0000'\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000яя\u0000\u0000\u0000\u0000яя\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
         },
         {
           "name": "MMP_LOGIN_HEADER",
           "offset": 2503,
-          "length": 16
+          "length": 16,
+          "value": "\u0000\u0000\u0000\u0000\u0000\u000b\u001f@\u0003з\u0003з\u0000\u0000\u0000\u0000"
+        },
+        {
+          "name": "URL_ICQ_CLIENT_LOGIN",
+          "offset": 2577,
+          "length": 42,
+          "value": "https://api.login.icq.net/auth/clientLogin"
         },
         {
           "name": "ICQ_AUTH_PARAMS",
           "offset": 2619,
-          "length": 42
+          "length": 42,
+          "value": "devId=ic122ravsLx0z-5F&f=xml&idType=ICQ&s="
         },
         {
           "name": "URL_ICQ_OSCAR_SESSION",
           "offset": 2661,
-          "length": 45
+          "length": 45,
+          "value": "http://api.icq.net:5190/aim/startOSCARSession"
         },
         {
           "name": "ICQ_OSCAR_PARAMS",
           "offset": 2706,
-          "length": 168
+          "length": 168,
+          "value": "&buildNumber=1000&clientName=Mail.ru%20J2ME%20Agent&clientVersion=1000&distId=20200&f=xml&k=ic122ravsLx0z-5F&majorVersion=32&minorVersion=0&pointVersion=0&port=5190&ts="
         },
         {
           "name": "TAG_PORT",
           "offset": 2861,
-          "length": 4
+          "length": 4,
+          "value": "port"
         },
         {
           "name": "PARAM_SIG_SHA256",
           "offset": 2874,
-          "length": 12
+          "length": 12,
+          "value": "&sig_sha256="
         },
         {
           "name": "TAG_STATUSCODE",
           "offset": 2886,
-          "length": 10
+          "length": 10,
+          "value": "statuscode"
         },
         {
           "name": "TAG_LOGINID",
           "offset": 2896,
-          "length": 7
+          "length": 7,
+          "value": "loginid"
         },
         {
           "name": "TAG_TOKEN",
           "offset": 2903,
-          "length": 5
+          "length": 5,
+          "value": "token"
         },
         {
           "name": "TAG_HOST",
           "offset": 2908,
-          "length": 4
+          "length": 4,
+          "value": "host"
         },
         {
           "name": "TAG_HOSTTIME",
           "offset": 2908,
-          "length": 8
+          "length": 8,
+          "value": "hosttime"
         },
         {
           "name": "TAG_SESSIONSECRET",
           "offset": 2916,
-          "length": 13
+          "length": 13,
+          "value": "sessionsecret"
         },
         {
           "name": "TAG_SECRET",
           "offset": 2923,
-          "length": 6
+          "length": 6,
+          "value": "secret"
         },
         {
           "name": "PARAM_PWD",
           "offset": 2929,
-          "length": 5
+          "length": 5,
+          "value": "&pwd="
         },
         {
           "name": "HTTP_GET_AMP",
           "offset": 2934,
-          "length": 4
+          "length": 4,
+          "value": "GET&"
+        },
+        {
+          "name": "URL_SETTINGS_XML",
+          "offset": 2938,
+          "length": 55,
+          "value": "http://mra.mail.ru/settings/MobileJMEAgent/settings.xml"
         },
         {
           "name": "TAG_SNAP_LOGINS",
           "offset": 2993,
-          "length": 11
+          "length": 11,
+          "value": "snap_logins"
+        },
+        {
+          "name": "EMOTICON_TAG_PREFIX",
+          "offset": 3004,
+          "length": 13,
+          "value": "<###20###img0"
+        },
+        {
+          "name": "EMOTICON_OPEN_TAG",
+          "offset": 3017,
+          "length": 10,
+          "value": "<SMILE>id="
+        },
+        {
+          "name": "EMOTICON_CLOSE_TAG",
+          "offset": 3027,
+          "length": 9,
+          "value": "'</SMILE>"
+        },
+        {
+          "name": "EMOTICON_TRIGGER_CHARS",
+          "offset": 3036,
+          "length": 9,
+          "value": ":;8}$SB()"
+        },
+        {
+          "name": "EMOTICON_ALT_ATTR",
+          "offset": 3045,
+          "length": 6,
+          "value": " alt='"
+        },
+        {
+          "name": "MRIM_MESSAGE_DELIMITER",
+          "offset": 3051,
+          "length": 2,
+          "value": "--"
+        },
+        {
+          "name": "MAIL_FIELD_SENDER",
+          "offset": 3053,
+          "length": 6,
+          "value": "Sender"
+        },
+        {
+          "name": "HEADER_X_MRIM_MULTICHAT",
+          "offset": 3059,
+          "length": 21,
+          "value": "X-MRIM-Multichat-Type"
         },
         {
           "name": "XMPP_TYPE_CHAT",
           "offset": 3071,
-          "length": 4
+          "length": 4,
+          "value": "chat"
+        },
+        {
+          "name": "HEADER_X_MRIM_FLAGS",
+          "offset": 3080,
+          "length": 12,
+          "value": "X-MRIM-Flags"
+        },
+        {
+          "name": "MONTH_ABBREV_TABLE",
+          "offset": 3092,
+          "length": 39,
+          "value": "+++JanFebMarAprMayJunJulAugSepOctNovDec"
+        },
+        {
+          "name": "MRIM_MESSAGE_RTF_BLOB",
+          "offset": 3131,
+          "length": 516,
+          "value": "eNptUsFugkAQJaYnE/9h0nOji6Kx+g29ND3uBXFBUgSDa3sw/lv7Cf7BalklWFCgaZtoSheMSY297Jt9M/PezmRLkiQ1SpI0xS7VZazaY7M4tJEh15sy7hNdR/lpqbYhI+V2inXHprRniQBh3TYtrGsD1R0TWkcKPKgDZ6h2Z7NKeYo1x3JcUdrFLukjbLiE2Aj3rAlBBVVvNo9kHuS0wPPE32p0XosuVU/t4t0FKzcb/7mdaIFFIr+fJU46LeXIC8zplnJpKdfbXTErfjLJ86Np9xU80WQ8Ut1+sZ6x3MZar4E1sdsewiPXoUSjlfI8WvCYe6EfwDba7hO2iTNYshh2bL1IPT853EDkhSyIIC34NE5YGC03PGRFvOPLbyZa+C72M7hTTat6P4GXNx4mDBZ8LWQ9j+9WgQ8faRh8+j5cvwrhzUF4XldhHrAvlhxAaKY/RxkBe3iPVjzhsPZ4fOjAgNJRp1ZTDWLT6jA3cSe1fDqolGdX4utkWSb9AlobC7Q="
+        },
+        {
+          "name": "MRIM_SMS_ADDRESS",
+          "offset": 3647,
+          "length": 16,
+          "value": "mrim_sms@mail.ru"
         },
         {
           "name": "MRIM_CLIENT_VERSION",
           "offset": 3677,
-          "length": 25
+          "length": 25,
+          "value": "client=\"jagent\" version=\""
         },
         {
           "name": "USERAGENT_MOBILEJME",
           "offset": 3710,
-          "length": 15
+          "length": 15,
+          "value": "MobileJMEAgent "
         },
         {
           "name": "SCHEME_SOCKET",
           "offset": 3725,
-          "length": 9
+          "length": 9,
+          "value": "socket://"
+        },
+        {
+          "name": "HEADER_CONTENT_LENGTH_LC",
+          "offset": 3734,
+          "length": 16,
+          "value": "content-length: "
+        },
+        {
+          "name": "TRANSLIT_TABLE_EXTENDED",
+          "offset": 3750,
+          "length": 218,
+          "value": "a\u0000b\u0000v\u0000g\u0000d\u0000e\u0000z\u0000i\u0000y\u0000k\u0000l\u0000m\u0000n\u0000o\u0000p\u0000r\u0000s\u0000t\u0000u\u0000f\u0000h\u0000c\u0000\"\u0000'\u0000yo\u0000jo\u0000yu\u0000ju\u0000ya\u0000ja\u0000zh\u0000ch\u0000sh\u0000by\u0000vy\u0000wy\u0000dy\u0000zy\u0000ly\u0000my\u0000ny\u0000py\u0000ry\u0000sy\u0000ty\u0000cy\u0000sch\u0000sh \u0000bya\u0000vya\u0000wya\u0000dya\u0000dyu\u0000zya\u0000zyu\u0000lya\u0000lyu\u0000mya\u0000myu\u0000nya\u0000nyu\u0000pya\u0000pyu\u0000rya\u0000ryu\u0000ryo\u0000sya\u0000syu\u0000tya\u0000tyo\u0000tyu\u0000sch "
+        },
+        {
+          "name": "TRANSLIT_TABLE_BASIC",
+          "offset": 3968,
+          "length": 73,
+          "value": "a\u0000b\u0000v\u0000g\u0000d\u0000e\u0000zh\u0000z\u0000i\u0000y\u0000k\u0000l\u0000m\u0000n\u0000o\u0000p\u0000r\u0000s\u0000t\u0000u\u0000f\u0000h\u0000c\u0000ch\u0000sh\u0000sch\u0000\"\u0000i\u0000'\u0000e\u0000yu\u0000ya\u0000yo"
+        },
+        {
+          "name": "HTML_ENTITY_NAMES",
+          "offset": 4041,
+          "length": 23,
+          "value": "&quot;\u0000&nbsp;\u0000&gt;\u0000&lt;"
+        },
+        {
+          "name": "HTML_ENTITY_VALUES",
+          "offset": 4064,
+          "length": 7,
+          "value": "\"\u0000 \u0000>\u0000<"
+        },
+        {
+          "name": "URL_ENCODE_D0",
+          "offset": 4071,
+          "length": 4,
+          "value": "%D0%"
+        },
+        {
+          "name": "URL_ENCODE_YO_UPPER",
+          "offset": 4071,
+          "length": 6,
+          "value": "%D0%81"
+        },
+        {
+          "name": "URL_ENCODE_D1",
+          "offset": 4077,
+          "length": 4,
+          "value": "%D1%"
+        },
+        {
+          "name": "URL_ENCODE_YO_LOWER",
+          "offset": 4077,
+          "length": 6,
+          "value": "%D1%91"
         },
         {
           "name": "PARAM_MAP_FULLSCREEN",
           "offset": 4163,
-          "length": 36
+          "length": 36,
+          "value": "&mode=map&fullscreen=true&jams=false"
         },
         {
           "name": "ATTR_TIMESTAMP",
           "offset": 4199,
-          "length": 9
+          "length": 9,
+          "value": "timestamp"
         },
         {
           "name": "TAG_POINTS",
           "offset": 4208,
-          "length": 6
+          "length": 6,
+          "value": "points"
         },
         {
           "name": "HOST_MOBILEMAPS_2043",
           "offset": 4214,
-          "length": 23
+          "length": 23,
+          "value": "mobilemaps.mail.ru:2043"
         },
         {
           "name": "HTTP_MAP_TILE_HEADER",
           "offset": 4237,
-          "length": 59
+          "length": 59,
+          "value": " HTTP/1.1\r\nAccept: image/png\r\nUser-Agent: J2ME MailAgent v."
         },
         {
           "name": "HTTP_GET_TILESENDER",
           "offset": 4296,
-          "length": 34
+          "length": 34,
+          "value": "GET /TileSender.aspx?ModeKey=tiles"
+        },
+        {
+          "name": "MAP_TILES",
+          "offset": 4325,
+          "length": 5,
+          "value": "tiles"
         },
         {
           "name": "HTTP_TILE_HEADERS",
           "offset": 4330,
-          "length": 102
+          "length": 102,
+          "value": "\r\nConnection: keep-alive\r\nCache-Control: no-transform\r\nContent-Length: 0\r\nHost: mobilemaps.mail.ru\r\n\r\n"
         },
         {
           "name": "API_MAPSSEARCH",
           "offset": 4432,
-          "length": 23
+          "length": 23,
+          "value": "data/mapssearch_ver1?q="
         },
         {
           "name": "PARAM_USER_LAT",
           "offset": 4455,
-          "length": 10
+          "length": 10,
+          "value": "&user_lat="
         },
         {
           "name": "PARAM_USER_LON",
           "offset": 4465,
-          "length": 10
+          "length": 10,
+          "value": "&user_lon="
         },
         {
           "name": "PARAM_X_SCREEN",
           "offset": 4475,
-          "length": 10
+          "length": 10,
+          "value": "&x_screen="
         },
         {
           "name": "PARAM_Y_SCREEN",
           "offset": 4485,
-          "length": 10
+          "length": 10,
+          "value": "&y_screen="
+        },
+        {
+          "name": "URL_GEO_OBJECT_SEARCH_2",
+          "offset": 4495,
+          "length": 58,
+          "value": "http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom=17&x="
+        },
+        {
+          "name": "PARAM_MAP_BESTOBJECT",
+          "offset": 4553,
+          "length": 27,
+          "value": "&dist=100&sn=1&bestobject=1"
+        },
+        {
+          "name": "PARAM_Y_EQ",
+          "offset": 4580,
+          "length": 3,
+          "value": "&y="
         },
         {
           "name": "API_ROAD_INFO",
           "offset": 4583,
-          "length": 29
+          "length": 29,
+          "value": "data/road_info_xml?timestamp="
         },
         {
           "name": "API_JAMS_STATE",
           "offset": 4612,
-          "length": 15
+          "length": 15,
+          "value": "data/jams_state"
         },
         {
           "name": "PARAM_LOGIN",
           "offset": 4765,
-          "length": 7
+          "length": 7,
+          "value": "&login="
         },
         {
           "name": "API_TRACKPOINTS",
           "offset": 4824,
-          "length": 47
+          "length": 47,
+          "value": "data/trackpoints?getPath.aspx?mode=distance&x0="
         },
         {
           "name": "URL_MAP_POINT_VIEW",
           "offset": 4871,
-          "length": 49
+          "length": 49,
+          "value": "http://mobile.mail.ru/data/map_point/view_object?"
         },
         {
           "name": "URL_MAP_POINT_ADD",
           "offset": 4920,
-          "length": 48
+          "length": 48,
+          "value": "http://mobile.mail.ru/data/map_point/add_object?"
         },
         {
           "name": "SECRET_KEY_389",
           "offset": 4968,
-          "length": 10
+          "length": 10,
+          "value": "Secret_389"
         },
         {
           "name": "TAG_LISTLINK",
           "offset": 4978,
-          "length": 8
+          "length": 8,
+          "value": "listlink"
         },
         {
           "name": "ATTR_DIR",
           "offset": 4986,
-          "length": 3
+          "length": 3,
+          "value": "dir"
+        },
+        {
+          "name": "CONTENT_TYPE_TEXT",
+          "offset": 4989,
+          "length": 4,
+          "value": "text"
         },
         {
           "name": "SCHEME_SMS",
           "offset": 4993,
-          "length": 6
+          "length": 6,
+          "value": "sms://"
         },
         {
           "name": "INVITE_MESSAGE_RU",
           "offset": 4999,
-          "length": 84
+          "length": 84,
+          "value": "Privet, ia postavil Mobile Mail.ru Agent, dobavliaiysia - http://m.mail.ru/magent?u="
         },
         {
           "name": "XMPP_SUBSCRIBE",
           "offset": 5102,
-          "length": 9
+          "length": 9,
+          "value": "subscribe"
+        },
+        {
+          "name": "XMPP_MECHANISMS",
+          "offset": 5112,
+          "length": 10,
+          "value": "mechanisms"
+        },
+        {
+          "name": "HEADER_X_GOOGLE_TOKEN",
+          "offset": 5122,
+          "length": 14,
+          "value": "X-GOOGLE-TOKEN"
+        },
+        {
+          "name": "AUTH_MECHANISM_PLAIN",
+          "offset": 5136,
+          "length": 5,
+          "value": "PLAIN"
+        },
+        {
+          "name": "AUTH_DIGEST_MD5",
+          "offset": 5141,
+          "length": 10,
+          "value": "DIGEST-MD5"
         },
         {
           "name": "XMPP_STATUS_AVAILABLE",
           "offset": 5160,
-          "length": 9
+          "length": 9,
+          "value": "available"
         },
         {
           "name": "DIGEST_USERNAME",
           "offset": 5169,
-          "length": 10
+          "length": 10,
+          "value": "username=\""
         },
         {
           "name": "DIGEST_REALM",
           "offset": 5179,
-          "length": 9
+          "length": 9,
+          "value": "\",realm=\""
         },
         {
           "name": "DIGEST_NONCE",
           "offset": 5188,
-          "length": 9
+          "length": 9,
+          "value": "\",nonce=\""
+        },
+        {
+          "name": "DIGEST_NONCE_EQ",
+          "offset": 5190,
+          "length": 6,
+          "value": "nonce="
         },
         {
           "name": "DIGEST_NC_CNONCE",
           "offset": 5197,
-          "length": 22
+          "length": 22,
+          "value": "\",nc=00000001,cnonce=\""
         },
         {
           "name": "DIGEST_QOP_AUTH",
           "offset": 5219,
-          "length": 28
+          "length": 28,
+          "value": "\",qop=auth,digest-uri=\"xmpp/"
         },
         {
           "name": "DIGEST_RESPONSE",
           "offset": 5247,
-          "length": 12
+          "length": 12,
+          "value": "\",response=\""
         },
         {
           "name": "DIGEST_NC",
           "offset": 5259,
-          "length": 10
+          "length": 10,
+          "value": ":00000001:"
         },
         {
           "name": "DIGEST_AUTH_XMPP",
           "offset": 5269,
-          "length": 18
+          "length": 18,
+          "value": "AUTHENTICATE:xmpp/"
         },
         {
           "name": "DIGEST_CHARSET",
           "offset": 5287,
-          "length": 15
+          "length": 15,
+          "value": "\",charset=utf-8"
         },
         {
           "name": "XML_XMPP_STREAM_HEADER",
           "offset": 5311,
-          "length": 124
+          "length": 124,
+          "value": "<?xml version=\"1.0\"?><stream:stream xmlns:stream=\"http://etherx.jabber.org/streams\" version=\"1.0\" xmlns=\"jabber:client\" to=\""
         },
         {
           "name": "XMPP_STREAM_STREAM",
           "offset": 5333,
-          "length": 13
+          "length": 13,
+          "value": "stream:stream"
+        },
+        {
+          "name": "XML_ATTR_XMLNS",
+          "offset": 5347,
+          "length": 5,
+          "value": "xmlns"
+        },
+        {
+          "name": "DOMAIN_GMAIL_COM",
+          "offset": 5447,
+          "length": 10,
+          "value": "@gmail.com"
         },
         {
           "name": "TAG_NICK",
           "offset": 5484,
-          "length": 4
+          "length": 4,
+          "value": "nick"
         },
         {
           "name": "XMPP_IQ",
           "offset": 5532,
-          "length": 2
+          "length": 2,
+          "value": "iq"
+        },
+        {
+          "name": "XMPP_BIND",
+          "offset": 5618,
+          "length": 4,
+          "value": "bind"
         },
         {
           "name": "XMPP_STATUS_AWAY",
           "offset": 5685,
-          "length": 4
+          "length": 4,
+          "value": "away"
         },
         {
           "name": "XMPP_STATUS_XA",
           "offset": 5689,
-          "length": 2
+          "length": 2,
+          "value": "xa"
         },
         {
           "name": "XMPP_STATUS_DND",
           "offset": 5691,
-          "length": 3
+          "length": 3,
+          "value": "dnd"
         },
         {
           "name": "XMPP_STATUS_INV",
           "offset": 5694,
-          "length": 3
+          "length": 3,
+          "value": "inv"
         },
         {
           "name": "XMPP_STREAM_FEATURES",
           "offset": 5697,
-          "length": 15
+          "length": 15,
+          "value": "stream:features"
         },
         {
           "name": "TAG_CHALLENGE",
           "offset": 5712,
-          "length": 9
+          "length": 9,
+          "value": "challenge"
         },
         {
           "name": "TAG_SUCCESS",
           "offset": 5721,
-          "length": 7
+          "length": 7,
+          "value": "success"
         },
         {
           "name": "TAG_PRESENCE",
           "offset": 5728,
-          "length": 8
+          "length": 8,
+          "value": "presence"
         },
         {
           "name": "TAG_MESSAGE",
           "offset": 5736,
-          "length": 7
+          "length": 7,
+          "value": "message"
         },
         {
           "name": "TAG_FAILURE",
           "offset": 5743,
-          "length": 7
+          "length": 7,
+          "value": "failure"
         },
         {
           "name": "TAG_BINVAL",
           "offset": 5750,
-          "length": 6
+          "length": 6,
+          "value": "binval"
         },
         {
           "name": "TAG_PHOTO",
           "offset": 5756,
-          "length": 5
+          "length": 5,
+          "value": "photo"
         },
         {
           "name": "TAG_ERROR",
           "offset": 5761,
-          "length": 5
+          "length": 5,
+          "value": "error"
         },
         {
           "name": "TAG_RESULT",
           "offset": 5766,
-          "length": 6
+          "length": 6,
+          "value": "result"
         },
         {
           "name": "TAG_SHOW",
           "offset": 5783,
-          "length": 4
+          "length": 4,
+          "value": "show"
         },
         {
           "name": "VALUE_NONE",
           "offset": 5787,
-          "length": 4
+          "length": 4,
+          "value": "none"
         },
         {
           "name": "ATTR_ASK",
           "offset": 5795,
-          "length": 3
+          "length": 3,
+          "value": "ask"
         },
         {
           "name": "TAG_ITEM",
           "offset": 5798,
-          "length": 4
+          "length": 4,
+          "value": "item"
         },
         {
           "name": "TAG_BODY",
           "offset": 5802,
-          "length": 4
+          "length": 4,
+          "value": "body"
         },
         {
           "name": "TAG_SUBJECT",
           "offset": 5806,
-          "length": 7
+          "length": 7,
+          "value": "subject"
         },
         {
           "name": "ATTR_JID",
           "offset": 5813,
-          "length": 3
+          "length": 3,
+          "value": "jid"
         },
         {
           "name": "ATTR_SUBSCRIPTION",
           "offset": 5816,
-          "length": 12
+          "length": 12,
+          "value": "subscription"
+        },
+        {
+          "name": "XMPP_GROUP_TAG",
+          "offset": 5828,
+          "length": 5,
+          "value": "group"
         },
         {
           "name": "TAG_REMOVE",
           "offset": 5833,
-          "length": 6
+          "length": 6,
+          "value": "remove"
         },
         {
           "name": "XML_CLOSE_TAG_END",
           "offset": 5839,
-          "length": 2
+          "length": 2,
+          "value": "\">"
+        },
+        {
+          "name": "XMPP_RESOURCE",
+          "offset": 5841,
+          "length": 8,
+          "value": "resource"
+        },
+        {
+          "name": "XMPP_PRIORITY",
+          "offset": 5849,
+          "length": 8,
+          "value": "priority"
         },
         {
           "name": "GMAIL_PASSWD",
           "offset": 5857,
-          "length": 20
+          "length": 20,
+          "value": "%40gmail.com&Passwd="
         },
         {
           "name": "URL_GOOGLE_ACCOUNTS",
           "offset": 5877,
-          "length": 36
+          "length": 36,
+          "value": "https://www.google.com:443/accounts/"
         },
         {
           "name": "GOOGLE_CLIENT_AUTH",
           "offset": 5913,
-          "length": 58
+          "length": 58,
+          "value": "ClientAuth?PersistentCookie=false&source=googletalk&Email="
         },
         {
           "name": "GOOGLE_ISSUE_AUTH_TOKEN",
           "offset": 5971,
-          "length": 41
+          "length": 41,
+          "value": "IssueAuthToken?service=mail&Session=true&"
         },
         {
           "name": "SRV_XMPP_CLIENT_TCP",
           "offset": 6012,
-          "length": 18
+          "length": 18,
+          "value": "_xmpp-client._tcp."
+        },
+        {
+          "name": "HOST_NSRPUB_DNS",
+          "offset": 6030,
+          "length": 28,
+          "value": "datagram://nsrpub.mail.ru:53"
         },
         {
           "name": "MMP_PADDING_12",
           "offset": 6058,
-          "length": 12
+          "length": 12,
+          "value": "\u0012\u0010\u0001\u0000\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000"
         },
         {
           "name": "MMP_SPACER",
           "offset": 6070,
-          "length": 5
+          "length": 5,
+          "value": "\u0000\u0000!\u0000\u0001"
         },
         {
           "name": "VK_API_SECRET",
           "offset": 6075,
-          "length": 50
+          "length": 50,
+          "value": "2DBvQWJBam3xuyYyQ0BeYuWKKfpk5fV4Z6sPc9wTBfeTx442f6"
         },
         {
           "name": "URL_VK_AUTH_GET",
           "offset": 6125,
-          "length": 62
+          "length": 62,
+          "value": "http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.get"
         },
         {
           "name": "URL_VK_AUTH_TOKEN_SECURE",
           "offset": 6125,
-          "length": 80
+          "length": 80,
+          "value": "http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.getTokenSecure&nonce="
         },
         {
           "name": "AUTH_SESSION_NONCE",
           "offset": 6205,
-          "length": 20
+          "length": 20,
+          "value": "SessionSecure&nonce="
         },
         {
           "name": "PARAM_DIGEST",
           "offset": 6225,
-          "length": 8
+          "length": 8,
+          "value": "&digest="
         },
         {
           "name": "DOMAIN_VK_COM",
           "offset": 6233,
-          "length": 8
+          "length": 8,
+          "value": ":vk.com:"
+        },
+        {
+          "name": "HOST_VKMESSENGER",
+          "offset": 6247,
+          "length": 15,
+          "value": "vkmessenger.com"
         }
       ]
     },

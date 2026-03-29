@@ -62,7 +62,7 @@ public final class ProtocolFactory {
     public static final ByteBuffer createChatRoomCmd(MrimAccount account, String str, int i) {
         ByteBuffer buffer = new ByteBuffer().writeIntLE(0);
         int atIndex = str.indexOf(64);
-        return account.createAndQueueCommand(new Object[]{createMrimPacket(account, MrimCommand.CS_WP_REQUEST, buffer.writeStringLatin1(StringUtils.prefix(str, atIndex)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, atIndex + 1))), ResourceManager.integerOf(i)});
+        return account.createAndQueueCommand(new Object[]{createMrimPacket(account, MrimCommand.CS_WP_REQUEST, buffer.writeStringLatin1(StringUtils.prefix(str, atIndex)).writeIntLE(1).writeStringLatin1(StringUtils.suffix(str, atIndex + 1))), ObjectPool.integerOf(i)});
     }
 
     /* renamed from: a */
@@ -70,6 +70,14 @@ public final class ProtocolFactory {
         ByteBuffer cmdBuffer = createPingPacket(protocol, MmpCommand.PACKET_COMMAND).writeShortBE(command >> 8).writeShortBE(command & 255).writeShortBE(0);
         int sequenceNum = protocol.messageSequence + 1;
         protocol.messageSequence = sequenceNum;
-        return cmdBuffer.writeIntBE(sequenceNum).writeBuffer(buffer).updateLength();
+        return updateMmpPacketLength(cmdBuffer.writeIntBE(sequenceNum).writeBuffer(buffer));
+    }
+
+    public static ByteBuffer updateMmpPacketLength(ByteBuffer packet) {
+        packet.ensureCapacity(0);
+        int bodyLength = packet.length - 6;
+        packet.data[4] = (byte) (bodyLength >> 8);
+        packet.data[5] = (byte) bodyLength;
+        return packet;
     }
 }

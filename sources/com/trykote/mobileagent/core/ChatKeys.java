@@ -16,7 +16,7 @@ public final class ChatKeys {
     public static final int FLAG_CHAT_ROOM_CREATED = 2722;
     public static final int SLOT_CHAT_NAME = 1292;
     public static final int SLOT_UNREAD_COUNT_TEXT = 1347;
-    public static final int VEC_CHATROOM_LIST = 1398;
+    public static final int VEC_TILE_REQUEST_QUEUE = 1398;
     public static final int VEC_MESSAGE_LIST = 1399;
     public static final int INT_CHATROOM_ID = 1513;
     public static final int INT_SCROLL_OFFSET = 1514;

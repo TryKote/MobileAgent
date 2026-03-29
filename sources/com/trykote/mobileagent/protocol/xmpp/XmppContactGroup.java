@@ -92,7 +92,7 @@ public final class XmppContactGroup extends ContactGroup {
             String strM584b = AppState.getString(i + 1063);
             hashtable.put(strM584b, StringUtils.intern(strM584b.toLowerCase()));
         }
-        String strM584b2 = AppState.getString(StringResKeys.STR_RES_XMPP_TAG_2);
+        String strM584b2 = AppState.getString(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
         StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
         int length = str.length();
         int length2 = 0;
@@ -103,16 +103,16 @@ public final class XmppContactGroup extends ContactGroup {
                 stringBufferM1217h.append(cCharAt);
             } else {
                 if (iM1002a < 42) {
-                    stringBufferM1217h.append(AppState.getString(StringResKeys.STR_RES_LONG_LABEL_2)).append(Utils.zeroPad(iM1002a)).append('>');
+                    stringBufferM1217h.append(AppState.getString(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(iM1002a)).append('>');
                 } else {
-                    stringBufferM1217h.append(AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_6)).append(iM1002a < 74 ? iM1002a + 258 : iM1002a == 74 ? 410 : iM1002a == 75 ? 412 : iM1002a == 76 ? 417 : 432).append(AppState.getString(StringResKeys.STR_RES_HEADER_1)).append(AppState.getString(iM1002a + 1063)).append(AppState.getString(StringResKeys.STR_RES_XMPP_TAG_1));
+                    stringBufferM1217h.append(AppState.getString(PackedStringKeys.EMOTICON_OPEN_TAG)).append(iM1002a < 74 ? iM1002a + 258 : iM1002a == 74 ? 410 : iM1002a == 75 ? 412 : iM1002a == 76 ? 417 : 432).append(AppState.getString(PackedStringKeys.EMOTICON_ALT_ATTR)).append(AppState.getString(iM1002a + 1063)).append(AppState.getString(PackedStringKeys.EMOTICON_CLOSE_TAG));
                 }
                 length2 += AppState.getString(iM1002a + 1063).length() - 1;
             }
             length2++;
         }
         objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_MESSAGE, c0043nM1308a.writeStringUTF16(ObjectPool.toStringAndRelease(stringBufferM1217h)).writeIntLE(0));
-        objArr[1] = ResourceManager.integerOf(MrimAccount.RESP_AUTH);
+        objArr[1] = ObjectPool.integerOf(MrimAccount.RESP_AUTH);
         objArr[2] = c0035f;
         objArr[3] = new Long(j);
         return c0028ba.createAndQueueCommand(objArr);
@@ -172,7 +172,7 @@ public final class XmppContactGroup extends ContactGroup {
                 }
                 ObjectPool.releaseVector(vectorM443V);
                 if (z) {
-                    authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(AppState.getString(StringResKeys.STR_RES_LONG_URL_4)))));
+                    authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(AppState.getString(PackedStringKeys.HOST_MRIM_REDIRECT)))));
                 }
             }
         }
@@ -239,7 +239,7 @@ public final class XmppContactGroup extends ContactGroup {
     private static final void authenticateAndSync(ConnectionThread c0039j) {
         ByteBuffer c0043nM1349s;
         try {
-            String strM584b = AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_1);
+            String strM584b = AppState.getString(PackedStringKeys.TAG_STATISTICS);
             MrimAccount c0028ba = new MrimAccount(-1, strM584b, strM584b);
             c0028ba.connection = c0039j;
             c0028ba.sendData(ProtocolFactory.createMrimAuthPacket(c0028ba));
@@ -562,11 +562,11 @@ public final class XmppContactGroup extends ContactGroup {
     public static final ByteBuffer createContactCommand(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
         Object[] objArr = new Object[6];
         objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_ADD_CONTACT, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
-        objArr[1] = ResourceManager.integerOf(MrimAccount.RESP_ADD_CONTACT);
+        objArr[1] = ObjectPool.integerOf(MrimAccount.RESP_ADD_CONTACT);
         objArr[2] = str;
         objArr[3] = str2;
         objArr[4] = c0010aj;
-        objArr[5] = ResourceManager.integerOf(i);
+        objArr[5] = ObjectPool.integerOf(i);
         return c0028ba.createAndQueueCommand(objArr);
     }
 
@@ -859,7 +859,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     /* renamed from: c */
     public static final Object[] getContactInfoFromState(int i) {
-        return addContactInfoToQueue(ResourceManager.getUrlComponents(AppState.getString(i)));
+        return addContactInfoToQueue(ApiClient.getUrlComponents(AppState.getString(i)));
     }
 
     /* renamed from: a */

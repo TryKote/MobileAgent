@@ -48,14 +48,14 @@ public final class Message {
     public Object[] attachments;
 
     public Message(Hashtable hashtable) {
-        this.from = JsonParser.getStringValue(hashtable, AppState.getString(StringResKeys.STR_RES_XMPP_NAMESPACE_3));
-        this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_SEMICOLON)) * 1000;
-        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StringResKeys.STR_RES_XMPP_NAMESPACE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StringResKeys.STR_RES_HEADER_NAME_2)));
-        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(StringResKeys.STR_RES_DIALOG_TITLE_2)), JsonParser.getStringValue(hashtable, AppState.getString(StringResKeys.STR_RES_INFO_PREFIX)));
-        this.priority = JsonParser.getIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_XMPP_NAMESPACE_1));
-        setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_5)) != 0);
-        setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_4)) != 0);
-        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, AppState.getString(StringResKeys.STR_RES_DIALOG_TITLE_3)));
+        this.from = JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
+        this.timestamp = JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
+        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
+        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_TO_NAME)));
+        this.priority = JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
+        setFlag(4, JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
+        setFlag(1, JsonParser.getIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
+        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT)));
     }
 
     public Message(Vector vector, String str, String str2) {
@@ -78,7 +78,28 @@ public final class Message {
             this.body = buffer.readUTF8Str((String) null);
         }
         if (buffer.readInt() != 0) {
-            this.attachments = ResourceManager.readAttachmentArray(buffer);
+            this.attachments = readAttachmentArray(buffer);
+        }
+    }
+
+    /* renamed from: a */
+    public static final Object[] readAttachmentArray(ByteBuffer buffer) {
+        try {
+            int count = buffer.readInt();
+            if (count == 0) {
+                return null;
+            }
+            Object[] objArr = new Object[count];
+            for (int i = 0; i < count; i++) {
+                String[] strArr = new String[6];
+                for (int i2 = 0; i2 < 6; i2++) {
+                    strArr[i2] = buffer.readUTF8Str((String) null);
+                }
+                objArr[i] = strArr;
+            }
+            return objArr;
+        } catch (Throwable unused) {
+            return null;
         }
     }
 
@@ -220,9 +241,9 @@ public final class Message {
         Hashtable hashtable = new Hashtable();
         String[] ccRecipient = MailHelper.getFirstRecipient(this.toList);
         if (ccRecipient != null) {
-            hashtable.put(AppState.getString(StringResKeys.STR_RES_OPEN_TAG), ccRecipient[1]);
+            hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_FROM), ccRecipient[1]);
         }
-        String ccKey = AppState.getString(StringResKeys.STR_RES_PROTOCOL_SEPARATOR);
+        String ccKey = AppState.getString(PackedStringKeys.MAIL_FIELD_TO);
         Vector vector = this.ccList;
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (vector != null) {
@@ -236,13 +257,13 @@ public final class Message {
             }
         }
         hashtable.put(ccKey, ObjectPool.toStringAndRelease(sb));
-        hashtable.put(AppState.getString(StringResKeys.STR_RES_DIALOG_TITLE_3), this.subject);
-        hashtable.put(AppState.getString(StringResKeys.STR_RES_CLOSE_TAG), this.body);
-        JsonParser.putIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_COMMA), 1);
-        JsonParser.putIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_QUOTE), 1);
-        JsonParser.putIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_PARAM_2), 0);
-        JsonParser.putIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_DIALOG_TITLE_1), 0);
-        JsonParser.putIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_URL_TEMPLATE_1), 0);
+        hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
+        hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_BODY), this.body);
+        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_ACTION_COPY), 1);
+        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.ACTION_SEND), 1);
+        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
+        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
+        JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
         Vector attachList = ObjectPool.newVector();
         int length = this.attachments == null ? 0 : this.attachments.length;
         for (int i = 0; i < length; i++) {
@@ -253,9 +274,9 @@ public final class Message {
             }
             attachList.addElement(hashtable2);
         }
-        hashtable.put(AppState.getString(StringResKeys.STR_RES_XML_TAG_2), attachList);
+        hashtable.put(AppState.getString(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
         if (attachList.size() > 0) {
-            JsonParser.putIntValue(hashtable, AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_4), 1);
+            JsonParser.putIntValue(hashtable, AppState.getString(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
         }
         return hashtable;
     }

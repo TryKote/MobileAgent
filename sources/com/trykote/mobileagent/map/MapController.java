@@ -82,9 +82,9 @@ public final class MapController {
         MapRenderer.currentPixelY = MapUtils.coordToPixel(MapRenderer.currentLat, iM586d);
         AppState.pool[MapKeys.OBJ_FONT_2] = Image.createImage(MapRenderer.viewportWidth, MapRenderer.viewportHeight);
         StringUtils.initTileCache();
-        AppState.pool[ChatKeys.VEC_CHATROOM_LIST] = ObjectPool.newVector();
+        AppState.pool[ChatKeys.VEC_TILE_REQUEST_QUEUE] = ObjectPool.newVector();
         AppState.pool[RuntimeKeys.OBJ_SEARCH_PARAMS_1] = ObjectPool.newVector();
-        Object[] objArrM332c = ResourceManager.getUrlComponents(AppState.emptyStr);
+        Object[] objArrM332c = ApiClient.getUrlComponents(AppState.emptyStr);
         AppState.pool[MapKeys.OBJ_TILE_REQUEST_ARRAY] = objArrM332c;
         XmppContactGroup.addContactInfoToQueue(objArrM332c);
         Image imageCreateImage = Image.createImage(128, 128);
@@ -377,7 +377,7 @@ public final class MapController {
                 AppState.pool[UIKeys.SLOT_TEMP_OBJECT_1] = (Conversation) item;
                 return ScreenId.FORM_LIST;
             case 5:
-                ResourceManager.dialPhoneUrl(VCard.formatPhoneContactUrl((PhoneContact) item, 0), (PhoneContact) item, 0);
+                ContactListManager.dialPhoneUrl(VCard.formatPhoneContactUrl((PhoneContact) item, 0), (PhoneContact) item, 0);
                 return ScreenId.CLOSE;
             case 6:
                 AppState.setAccount(item);
@@ -596,5 +596,36 @@ public final class MapController {
         }
         AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(locationData));
         return 0;
+    }
+
+    public static Vector savedLocations;
+
+    public static void showSavedLocations() {
+        Vector vector = savedLocations;
+        if (vector == null) {
+            return;
+        }
+        ListView screen = ScreenManager.createScreen(ScreenDef.MAIL_ACCOUNT_LIST);
+        for (int i = vector.size() - 1; i >= 0; i--) {
+            MapPoint mapPoint = (MapPoint) vector.elementAt(i);
+            screen.addIconItemWithData(-1, mapPoint.name, 6, mapPoint);
+        }
+        ScreenManager.showScreen(screen);
+        AppController.needsRepaint = true;
+    }
+
+    public static int applyLocationProfile(Object obj) {
+        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        MapPoint mapPoint = (MapPoint) obj;
+        mrimAccount.profileManager.setMapLocation(mapPoint);
+        XmppContactGroup.addMapPointIfNew(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), mapPoint, 0, 5);
+        XmppContactGroup.saveMapPoints(AppState.getVector(ContactKeys.VEC_CONTACT_GROUPS), 225);
+        AppState.setInt(UIKeys.FLAG_LOADING, 0);
+        mrimAccount.isHighlighted = true;
+        return ScreenId.PROFILE_EDIT;
+    }
+
+    public static void startGeoSearch(String url, long lon, long lat) {
+        new AsyncTask(AsyncTaskId.FETCH_SAVED_LOCATIONS, new Object[]{url, new long[]{lon, lat}});
     }
 }

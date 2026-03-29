@@ -103,7 +103,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_SEARCH));
                 break;
             case ScreenId.SAVED_LOCATIONS:
-                ResourceManager.showSavedLocations();
+                MapController.showSavedLocations();
                 break;
             case ScreenId.MAP_OPTIONS:
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_OPTIONS));
@@ -194,12 +194,12 @@ public final class MapHandler extends BaseScreenHandler {
                     String sessionKey = Utils.defaultStr(AppState.getString(SessionKeys.SESSION_KEY));
                     ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_ADD).writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(j3).writeUInt(4023078).writeLongAsString(j4).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCompressed(PackedStringKeys.TAG_SECRET).writeLongAsString(j3).encryptMD5().toHexString());
                     if (msgId2 != null) {
-                        requestBuf.writeUInt(4023846).writeEncodedString(msgId2);
+                        requestBuf.writeUInt(4023846).writeRawString(Conversation.urlEncodeCyrillic(msgId2));
                     }
                     if (AppState.getBool(RegistrationKeys.FLAG_REGISTRATION_DONE)) {
                         String msgId3 = AppState.getString(SessionKeys.LAST_ACCOUNT_NAME);
                         if (Utils.nonEmpty(msgId3)) {
-                            requestBuf.writeUInt(4024102).writeEncodedString(msgId3);
+                            requestBuf.writeUInt(4024102).writeRawString(Conversation.urlEncodeCyrillic(msgId3));
                         }
                     }
                     new AsyncTask(AsyncTaskId.HTTP_FIRE_AND_FORGET, requestBuf.getStringAndClear());
@@ -211,7 +211,7 @@ public final class MapHandler extends BaseScreenHandler {
                 nextScreen = MapController.handleViewOption(action);
                 break;
             case ScreenId.SAVED_LOCATIONS:
-                nextScreen = ResourceManager.applyLocationProfile(obj);
+                nextScreen = MapController.applyLocationProfile(obj);
                 break;
             case ScreenId.MAP_OPTIONS:
                 nextScreen = 0;
@@ -315,7 +315,7 @@ public final class MapHandler extends BaseScreenHandler {
                     String lonStr = MapUtils.pixelToLongitude(MapRenderer.currentLon);
                     String latStr = MapUtils.pixelToLatitude(MapRenderer.currentLat);
                     AppState.setInt(MapKeys.FLAG_MAP_LOADING, 0);
-                    ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
+                    MapController.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), lonStr, latStr), MapRenderer.currentLon, MapRenderer.currentLat);
                     i2 = 0;
                 } else {
                     i2 = ScreenId.MAP_CONTEXT_MENU;
@@ -356,7 +356,7 @@ public final class MapHandler extends BaseScreenHandler {
                 actionResult = MapController.handleViewOption(selectedOption);
                 break;
             case ScreenId.SAVED_LOCATIONS:
-                actionResult = ResourceManager.applyLocationProfile(data);
+                actionResult = MapController.applyLocationProfile(data);
                 break;
             case ScreenId.MAP_OPTIONS:
                 actionResult = 0;
@@ -381,7 +381,7 @@ public final class MapHandler extends BaseScreenHandler {
             lon = item.getWidth();
             lat = item.getBaseHeight();
         }
-        int errorCode = contact.sendMessage(ResourceManager.buildTileRequestUrl(lon, lat, AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), query));
+        int errorCode = contact.sendMessage(MapUtils.buildTileRequestUrl(lon, lat, AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), query));
         if (0 != errorCode) {
             return NotificationHelper.showError(errorCode);
         }
@@ -405,7 +405,7 @@ public final class MapHandler extends BaseScreenHandler {
             lat = MapRenderer.currentLat;
         }
         AppState.setInt(MapKeys.FLAG_MAP_LOADING, 0);
-        ResourceManager.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), MapUtils.pixelToLongitude(lon), MapUtils.pixelToLatitude(lat)), lon, lat);
+        MapController.startGeoSearch(VCard.formatLocationUrl(AppState.getInt(MapKeys.MAP_ZOOM_LEVEL), MapUtils.pixelToLongitude(lon), MapUtils.pixelToLatitude(lat)), lon, lat);
         return ScreenId.MAP;
     }
 
@@ -490,7 +490,7 @@ public final class MapHandler extends BaseScreenHandler {
                             MapRenderer.needsRedraw = true;
                             new AsyncTask(AsyncTaskId.FETCH_CITY_ZOOM);
                             break;
-                        } else if (3 == ((ResourceManager) vec4.elementAt(size3)).tileType) {
+                        } else if (TileRequest.TYPE_OVERLAY == ((TileRequest) vec4.elementAt(size3)).tileType) {
                             vec4.removeElementAt(size3);
                         }
                     }

@@ -25,7 +25,7 @@ public abstract class RegistrationService {
                 return 4;
             }
             if (Utils.parseInt((Object) statusCode) == 4004) {
-                objArr[21] = ResourceManager.integerOf(-1);
+                objArr[21] = ObjectPool.integerOf(-1);
             }
         }
         AppState.pool[RegistrationKeys.OBJ_REGISTRATION_DATA] = objArr;
@@ -92,22 +92,22 @@ public abstract class RegistrationService {
 
     /* renamed from: i */
     public static final Object[] newRequest() {
-        String url = AppState.getString(StringResKeys.STR_RES_HUGE_URL_6);
+        String url = AppState.getString(PackedStringKeys.URL_SIGNUP);
         String empty = AppState.emptyStr;
-        Integer zero = ResourceManager.integerCache[0];
-        Integer minusOne = ResourceManager.integerOf(-1);
+        Integer zero = ObjectPool.integerOf(0);
+        Integer minusOne = ObjectPool.integerOf(-1);
         return startAsyncRequest(0, url, new Object[]{null, null, null, null, null, null, null, empty, zero, empty, empty, zero, empty, empty, empty, empty, zero, zero, minusOne, zero, null, minusOne});
     }
 
     /* renamed from: a */
     public static final Object[] createRegRequest(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_RES_HUGE_URL_2)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ResourceManager.integerOf(0), str2, str3, ResourceManager.integerCache[0], str4, str5, str6, str7, ResourceManager.integerOf(i2), ResourceManager.integerOf(i3), ResourceManager.integerOf(i4), ResourceManager.integerOf(i5), null, ResourceManager.integerOf(i6)});
+        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(AppState.getString(PackedStringKeys.URL_XHTML_WAP_MAIL_RU)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(64))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, AppState.getString(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ObjectPool.integerOf(0), str2, str3, ObjectPool.integerOf(0), str4, str5, str6, str7, ObjectPool.integerOf(i2), ObjectPool.integerOf(i3), ObjectPool.integerOf(i4), ObjectPool.integerOf(i5), null, ObjectPool.integerOf(i6)});
     }
 
     /* renamed from: a */
     private static final Object[] startAsyncRequest(int i, String str, Object[] objArr) {
         objArr[0] = null;
-        objArr[1] = ResourceManager.integerOf(i);
+        objArr[1] = ObjectPool.integerOf(i);
         objArr[2] = str;
         new AsyncTask(AsyncTaskId.EXECUTE_REGISTRATION, objArr);
         return objArr;
@@ -157,7 +157,121 @@ public abstract class RegistrationService {
         }
     }
 
-    /* renamed from: a */
+    private static void setUpdateFlag(byte b) {
+        AppState.getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] = b;
+    }
+
+    private static boolean isUpdatePending() {
+        return AppState.getBytes(UIKeys.SLOT_MEDIA_RESOURCE)[0] != 0;
+    }
+
+    public static int checkForUpdates() {
+        synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+            if (!isUpdatePending() && System.currentTimeMillis() > AppState.getLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK) + 86400000) {
+                AppState.setLong(SessionKeys.TIMESTAMP_LAST_UPDATE_CHECK, System.currentTimeMillis());
+                setUpdateFlag((byte) 1);
+                new AsyncTask(AsyncTaskId.FETCH_UPDATE_STATUS);
+            }
+            if (isUpdatePending()) {
+                return -1;
+            }
+            return AppState.getInt(SettingsKeys.SETTING_UPDATE_STATUS);
+        }
+    }
+
+    public static void fetchUpdateStatus() {
+        try {
+            NetworkLock.acquireNetworkLock();
+            HttpClient httpConn = HttpClient.createHttpClient(AppState.getString(PackedStringKeys.URL_SETTINGS_XML), (Account) null, 3);
+            if (httpConn.getResponseCode() == 200) {
+                ByteBuffer buffer = new ByteBuffer(httpConn);
+                synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                    AppState.setInt(SettingsKeys.SETTING_UPDATE_STATUS, Integer.parseInt(buffer.parseXmlStr().getIntAttribute(PackedStringKeys.TAG_SNAP_LOGINS)) != 0 ? 1 : 0);
+                }
+                synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                    setUpdateFlag((byte) 0);
+                }
+                HttpClient.closeAndUpdateStats(httpConn);
+                NetworkLock.releaseNetworkLock();
+            } else {
+                synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                    setUpdateFlag((byte) 0);
+                    HttpClient.closeAndUpdateStats((HttpClient) null);
+                    NetworkLock.releaseNetworkLock();
+                }
+            }
+        } catch (Throwable unused) {
+            synchronized (AppState.pool[UIKeys.SLOT_MEDIA_RESOURCE]) {
+                setUpdateFlag((byte) 0);
+                HttpClient.closeAndUpdateStats((HttpClient) null);
+                NetworkLock.releaseNetworkLock();
+            }
+        }
+    }
+
+    public static void processUpdateResult() {
+        boolean showMessage = AppState.getBool(UIKeys.FLAG_SHOW_NOTIFICATION);
+        Object obj = AppState.getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA)[0];
+        if (obj instanceof Integer) {
+            if (showMessage) {
+                NotificationHelper.showMessageById(((Integer) obj).intValue());
+            }
+            return;
+        }
+        try {
+            StringBuffer versionSb = ObjectPool.newStringBuffer();
+            StringBuffer urlSb = ObjectPool.newStringBuffer();
+            ByteBuffer buffer = (ByteBuffer) obj;
+            while (buffer.length > 0) {
+                int ch = buffer.readUByte();
+                if (32 == ch) {
+                    break;
+                }
+                versionSb.append((char) ch);
+            }
+            while (buffer.length > 0) {
+                int ch = buffer.readUByte();
+                if (32 == ch) {
+                    break;
+                }
+                urlSb.append((char) ch);
+            }
+            AppState.setFromBuffer(UIKeys.SLOT_SCREEN_TITLE, versionSb);
+            AppState.setFromBuffer(UIKeys.SLOT_SCREEN_SUBTITLE, urlSb);
+            if (parseVersionNumber(AppState.getString(StringResKeys.STR_APP_NAME)) >= parseVersionNumber(AppState.getString(UIKeys.SLOT_SCREEN_TITLE))) {
+                if (showMessage) {
+                    NotificationHelper.showMessageById(731);
+                }
+            } else {
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_LIST));
+            }
+        } catch (Throwable unused) {
+            if (showMessage) {
+                NotificationHelper.showMessageById(731);
+            }
+        }
+    }
+
+    public static int applyVersionLabel() {
+        AppState.setFromPool(UIKeys.SLOT_SAVED_STRING, UIKeys.SLOT_SCREEN_SUBTITLE);
+        return 0;
+    }
+
+    private static int parseVersionNumber(String str) {
+        int version = 0;
+        int part = 0;
+        for (int idx = 0; idx < str.length(); idx++) {
+            char ch = str.charAt(idx);
+            if (ch == '.') {
+                version = (version * 100) + part;
+                part = 0;
+            } else if (ch >= '0' && ch <= '9') {
+                part = ((part * 10) + ch) - 48;
+            }
+        }
+        return (version * 100) + part;
+    }
+
     private static final void parseRegResponse(Object[] objArr, XmlElement element) {
         Vector children = element.children;
         int size = children.size();
@@ -168,7 +282,7 @@ public abstract class RegistrationService {
                     throw new RuntimeException();
                 }
                 objArr[3] = null;
-                startAsyncRequest(1, new ByteBuffer().writeCompressed(PackedStringKeys.URL_XHTML_WAP_MAIL_RU).writeObjectStr(objArr[6]).getStringAndClear(), objArr);
+                startAsyncRequest(1, new ByteBuffer().writeCompressed(PackedStringKeys.URL_XHTML_WAP_MAIL_RU).writeObjectStr((String) objArr[6]).getStringAndClear(), objArr);
                 return;
             }
             XmlElement child = (XmlElement) children.elementAt(size);

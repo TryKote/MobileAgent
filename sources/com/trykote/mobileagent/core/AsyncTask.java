@@ -2,6 +2,7 @@ package com.trykote.mobileagent.core;
 
 
 import com.trykote.mobileagent.map.GeoRegion;
+import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapPoint;
 import com.trykote.mobileagent.map.MapRenderer;
 import com.trykote.mobileagent.model.ContactListParser;
@@ -42,8 +43,8 @@ public final class AsyncTask implements Runnable {
         if (AppController.appLock != null) {
             synchronized (AppController.appLock) {
                 AppController.isShuttingDown = true;
-                ResourceManager.clearMathTables();
-                ResourceManager.clearImageCache();
+                SoftFloat.clearMathTables();
+                AppController.clearImageCache();
                 Vector tasks = AppState.getVector(UIKeys.SLOT_MEDIA_CONTROL);
                 if (tasks != null) {
                     synchronized (tasks) {
@@ -123,9 +124,9 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType3(args[0]);
-            result = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient).toImage() : ResourceManager.integerOf(465);
+            result = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient).toImage() : ObjectPool.integerOf(465);
         } catch (Throwable e) {
-            result = ResourceManager.integerOf(466);
+            result = ObjectPool.integerOf(466);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
@@ -138,10 +139,10 @@ public final class AsyncTask implements Runnable {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createHttpClient(AppState.getString(StringResKeys.STR_RES_HUGE_URL_3), null, 3);
-            args[0] = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient) : ResourceManager.integerOf(731);
+            httpClient = HttpClient.createHttpClient(AppState.getString(PackedStringKeys.URL_VERSION_CHECK), null, 3);
+            args[0] = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient) : ObjectPool.integerOf(731);
         } catch (Throwable e) {
-            args[0] = ResourceManager.integerOf(731);
+            args[0] = ObjectPool.integerOf(731);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
@@ -335,7 +336,7 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskFetchSharedContacts() {
-        ResourceManager.fetchSharedContacts((String) this.taskData);
+        ApiClient.fetchSharedContacts((String) this.taskData);
     }
 
     private void taskHttpFireAndForget() {
@@ -355,7 +356,7 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskSendSmsRequest() {
-        ResourceManager.sendSmsRequest(this.taskData);
+        ApiClient.sendSmsRequest(this.taskData);
     }
 
     private void taskSendDiagnostic() {
@@ -372,7 +373,7 @@ public final class AsyncTask implements Runnable {
             httpClient = HttpClient.createWithType2(args[0]);
             if (httpClient.getResponseCode() == 200) {
                 long[] coords = (long[]) args[1];
-                ResourceManager.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
+                MapController.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
                 EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
             }
         } catch (Throwable ignored) {
@@ -428,8 +429,8 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(505);
-            String baseUrl = AppState.getString(StringResKeys.STR_RES_MEGA_URL_2);
-            httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(AppState.getString(StringResKeys.STR_RES_NEWLINE)).append(args[2]).append(AppState.getString(StringResKeys.STR_RES_VERY_LONG_API_2))));
+            String baseUrl = AppState.getString(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
+            httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(AppState.getString(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(AppState.getString(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
             if (httpClient.getResponseCode() == 200) {
                 long[] coords = (long[]) args[3];
                 MrimAccount account = (MrimAccount) args[0];
@@ -466,7 +467,7 @@ public final class AsyncTask implements Runnable {
             try {
                 Thread.sleep(100L);
                 msgConn = (MessageConnection) IOUtils.registerResource((Object) Connector.open(smsAddress));
-                TextMessage textMsg = (TextMessage) msgConn.newMessage(AppState.getString(StringResKeys.STR_RES_BRACKET_OPEN));
+                TextMessage textMsg = (TextMessage) msgConn.newMessage(AppState.getString(PackedStringKeys.CONTENT_TYPE_TEXT));
                 textMsg.setAddress(smsAddress);
                 textMsg.setPayloadText(smsText);
                 msgConn.send((Message) textMsg);
@@ -488,7 +489,7 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskProcessXmppStream() {
-        ResourceManager.processXmppStream((Object[]) this.taskData);
+        XmppProtocol.processXmppStream((Object[]) this.taskData);
     }
 
     private void taskPerformXmppAuth() {
@@ -500,7 +501,7 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskFetchUpdateStatus() {
-        ResourceManager.fetchUpdateStatus();
+        RegistrationService.fetchUpdateStatus();
     }
 
     private void taskResolveXmppServer() {
@@ -527,23 +528,23 @@ public final class AsyncTask implements Runnable {
                     String nextUrl = new ByteBuffer()
                         .writeCompressed(PackedStringKeys.URL_VK_AUTH_GET)
                         .writeCompressed(PackedStringKeys.AUTH_SESSION_NONCE)
-                        .writeObjectStr(args[1])
+                        .writeObjectStr((String) args[1])
                         .writeCompressed(PackedStringKeys.PARAM_LOGIN)
-                        .writeObjectStr(args[4])
+                        .writeObjectStr((String) args[4])
                         .writeCompressed(PackedStringKeys.PARAM_DIGEST)
                         .writeRawString(
                             new ByteBuffer()
                                 .writeCompressed(PackedStringKeys.VK_API_SECRET)
                                 .writeByte(58)
-                                .writeObjectStr(args[1])
+                                .writeObjectStr((String) args[1])
                                 .writeByte(58)
                                 .writeRawString(StringUtils.fromBuffer(xmlResponse.findChildByKey(PackedStringKeys.TAG_TOKEN).textContent))
                                 .writeByte(58)
                                 .writeRawString(
                                     new ByteBuffer()
-                                        .writeObjectStr(args[4])
+                                        .writeObjectStr((String) args[4])
                                         .writeCompressed(PackedStringKeys.DOMAIN_VK_COM)
-                                        .writeObjectStr(args[5])
+                                        .writeObjectStr((String) args[5])
                                         .encryptMD5()
                                         .toHexString()
                                 )
@@ -552,7 +553,7 @@ public final class AsyncTask implements Runnable {
                         )
                         .readAllByteStr();
                     args[2] = nextUrl;
-                    args[3] = ResourceManager.integerOf(1);
+                    args[3] = ObjectPool.integerOf(1);
                     new AsyncTask(AsyncTaskId.XMPP_HTTP_AUTH, args);
                 }
             } else {

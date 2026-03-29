@@ -2,13 +2,6 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -17,75 +10,84 @@ import java.io.OutputStream;
 import java.util.Vector;
 import javax.microedition.lcdui.Image;
 
-/* renamed from: n */
-/* loaded from: MobileAgent_3.9.jar:n.class */
 public final class ByteBuffer {
 
-    /* renamed from: a */
+    private static final int DEFAULT_BUFFER_SIZE = 2048;
+    private static final int STREAM_READ_BUFFER_SIZE = 8192;
+    private static final int CAPACITY_PADDING = 32;
+    private static final int MD5_HASH_LENGTH = 16;
+
     public byte[] data;
-
-    /* renamed from: b */
     public int length;
-
-    /* renamed from: c */
     public int offset;
+
+    // --- Low-level byte primitives ---
+
+    private void putByte(int value) {
+        this.data[this.length++] = (byte) value;
+    }
+
+    private int takeByte() {
+        this.length--;
+        return this.data[this.offset++] & 0xFF;
+    }
+
+    private int peekByte(int relOffset) {
+        return this.data[this.offset + relOffset] & 0xFF;
+    }
+
+    // --- Constructors ---
 
     public ByteBuffer() {
         this.data = AppState.emptyBytes;
     }
 
     public ByteBuffer(HttpClient client) {
-        this.data = ObjectPool.newBytes(2048);
+        this.data = ObjectPool.newBytes(DEFAULT_BUFFER_SIZE);
         try {
-            byte[] tempBuf = ObjectPool.newBytes(2048);
-            while (true) {
-                int bytesRead = client.readData(tempBuf);
-                if (bytesRead < 0) {
-                    ObjectPool.releaseBytes(tempBuf);
-                    return;
-                }
-                writeBytesAt(tempBuf, 0, bytesRead);
+            byte[] readBuf = ObjectPool.newBytes(DEFAULT_BUFFER_SIZE);
+            int bytesRead;
+            while ((bytesRead = client.readData(readBuf)) >= 0) {
+                writeBytesAt(readBuf, 0, bytesRead);
             }
+            ObjectPool.releaseBytes(readBuf);
         } catch (Throwable unused) {
         }
     }
 
-    public ByteBuffer(String str) {
-        this(str, 2048);
+    public ByteBuffer(String resourcePath) {
+        this(resourcePath, DEFAULT_BUFFER_SIZE);
     }
 
-    public ByteBuffer(String str, int i) {
-        this((InputStream) IOUtils.registerResource((Object) str.getClass().getResourceAsStream(str)), i);
+    public ByteBuffer(String resourcePath, int initialCapacity) {
+        this((InputStream) IOUtils.registerResource((Object) resourcePath.getClass().getResourceAsStream(resourcePath)), initialCapacity);
     }
 
-    private ByteBuffer(InputStream inputStream, int i) {
-        this.data = ObjectPool.newBytes(i);
+    private ByteBuffer(InputStream stream, int initialCapacity) {
+        this.data = ObjectPool.newBytes(initialCapacity);
         try {
-            byte[] tempBuf = ObjectPool.newBytes(8192);
-            while (true) {
-                int i2 = inputStream.read(tempBuf);
-                if (i2 < 0) {
-                    break;
-                } else {
-                    writeBytesAt(tempBuf, 0, i2);
-                }
+            byte[] readBuf = ObjectPool.newBytes(STREAM_READ_BUFFER_SIZE);
+            int bytesRead;
+            while ((bytesRead = stream.read(readBuf)) >= 0) {
+                writeBytesAt(readBuf, 0, bytesRead);
             }
-            ObjectPool.releaseBytes(tempBuf);
+            ObjectPool.releaseBytes(readBuf);
         } catch (Throwable unused) {
         }
-        IOUtils.closeInput(inputStream);
+        IOUtils.closeInput(stream);
     }
 
-    /* renamed from: a */
-    public final ByteBuffer compact() {
-        int i = this.length;
-        if (i == 0) {
+    // --- Buffer management ---
+
+    public ByteBuffer compact() {
+        int len = this.length;
+        if (len == 0) {
             clear();
         } else {
-            byte[] bArr = this.data;
-            if (i < bArr.length) {
+            byte[] oldData = this.data;
+            if (len < oldData.length) {
                 ensureCapacity(0);
-                byte[] compactData = ObjectPool.reallocBytes(bArr, i);
+                byte[] compactData = ObjectPool.reallocBytes(oldData, len);
                 if (compactData != null) {
                     this.data = compactData;
                 }
@@ -94,28 +96,25 @@ public final class ByteBuffer {
         return this;
     }
 
-    /* renamed from: a */
-    public final ByteBuffer ensureCapacity(int i) {
-        byte[] bArr = this.data;
-        int length = bArr.length;
-        int i2 = this.length;
-        int i3 = i2 + i;
-        boolean z = length < i3;
-        boolean z2 = z;
-        byte[] tempBuf = z ? ObjectPool.newBytes(i3 + 32) : bArr;
-        if (z2 || this.offset != 0) {
-            Utils.arraycopy((Object) bArr, this.offset, (Object) tempBuf, 0, i2);
-            if (z2) {
-                ObjectPool.releaseBytes(bArr);
-                this.data = tempBuf;
+    public ByteBuffer ensureCapacity(int extraBytes) {
+        byte[] oldData = this.data;
+        int oldCapacity = oldData.length;
+        int currentLength = this.length;
+        int requiredCapacity = currentLength + extraBytes;
+        boolean needsRealloc = oldCapacity < requiredCapacity;
+        byte[] target = needsRealloc ? ObjectPool.newBytes(requiredCapacity + CAPACITY_PADDING) : oldData;
+        if (needsRealloc || this.offset != 0) {
+            Utils.arraycopy((Object) oldData, this.offset, (Object) target, 0, currentLength);
+            if (needsRealloc) {
+                ObjectPool.releaseBytes(oldData);
+                this.data = target;
             }
         }
         this.offset = 0;
         return this;
     }
 
-    /* renamed from: b */
-    public final ByteBuffer clear() {
+    public ByteBuffer clear() {
         ObjectPool.releaseBytes(this.data);
         this.data = AppState.emptyBytes;
         this.length = 0;
@@ -123,359 +122,159 @@ public final class ByteBuffer {
         return this;
     }
 
-    /* renamed from: a */
-    public final ByteBuffer writeBytes(byte[] bArr) {
-        if (bArr != null) {
-            writeBytesAt(bArr, 0, bArr.length);
-        }
-        return this;
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeBytesAt(byte[] bArr, int i, int i2) {
-        if (i2 > 0) {
-            ensureCapacity(i2);
-            Utils.arraycopy((Object) bArr, i, (Object) this.data, this.length, i2);
-            this.length += i2;
-        }
-        return this;
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer setData(byte[] bArr) {
-        clear();
-        this.data = bArr;
-        this.length = bArr.length;
-        return this;
-    }
-
-    /* renamed from: b */
-    public final byte[] readInto(byte[] bArr, int i, int i2) {
-        Utils.arraycopy((Object) this.data, this.offset, (Object) bArr, i, i2);
-        this.length -= i2;
-        this.offset += i2;
-        compact();
-        return bArr;
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer writeZeros(int i) {
-        ensureCapacity(i);
-        while (true) {
-            int i2 = i;
-            i = i2 - 1;
-            if (i2 <= 0) {
-                return this;
-            }
-            byte[] bArr = this.data;
-            int i3 = this.length;
-            this.length = i3 + 1;
-            bArr[i3] = 0;
-        }
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeString(String str, int i) {
-        return i != 0 ? writeStringUTF16(str) : writeStringLatin1(str);
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeStringLatin1(String str) {
-        int length;
-        if (str == null || (length = str.length()) <= 0) {
-            return writeIntLE(0);
-        }
-        ensureCapacity(length + 4);
-        writeIntLE(length);
-        for (int i = 0; i < length; i++) {
-            byte[] bArr = this.data;
-            int i2 = this.length;
-            this.length = i2 + 1;
-            bArr[i2] = (byte) str.charAt(i);
-        }
-        return this;
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer writeStringUTF16(String str) {
-        int length;
-        if (str == null || (length = str.length()) <= 0) {
-            return writeIntLE(0);
-        }
-        int i = length << 1;
-        ensureCapacity(i + 4);
-        writeIntLE(i);
-        for (int i2 = 0; i2 < length; i2++) {
-            byte[] bArr = this.data;
-            int i3 = this.length;
-            this.length = i3 + 1;
-            char ch = str.charAt(i2);
-            bArr[i3] = (byte) ch;
-            byte[] bArr2 = this.data;
-            int i4 = this.length;
-            this.length = i4 + 1;
-            bArr2[i4] = (byte) (ch >> '\b');
-        }
-        return this;
-    }
-
-    /* renamed from: c */
-    public final ByteBuffer writeCompressed(int i) {
-        return i > AppState.PACKED_STRING_THRESHOLD ? writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), i & 65535, i >> 16) : writeBytes(AppState.getBytes(i));
-    }
-
-    /* renamed from: d */
-    public final ByteBuffer writeEncodedInt(int i) {
-        return writeRawString(AppState.getString(i));
-    }
-
-    /* renamed from: e */
-    public final ByteBuffer writeExtendedInt(int i) {
-        writeRawString(AppState.getString(i & 65535));
-        int i2 = i >>> 16;
-        if (i2 != 0) {
-            writeByte(i2);
-        }
-        return this;
-    }
-
-    /* renamed from: c */
-    public final ByteBuffer writeEncodedString(String str) {
-        return writeRawString(Conversation.urlEncodeCyrillic((Object) str));
-    }
-
-    /* renamed from: d */
-    public final ByteBuffer writeRawString(String str) {
-        int length;
-        if (str != null && (length = str.length()) > 0) {
-            ensureCapacity(length);
-            byte[] bArr = this.data;
-            for (int i = 0; i < length; i++) {
-                int i2 = this.length;
-                this.length = i2 + 1;
-                bArr[i2] = (byte) str.charAt(i);
-            }
-        }
-        return this;
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeConversationStr(Object obj) {
-        return writeRawString(Conversation.percentEncode((String) obj));
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer writeObjectStr(Object obj) {
-        return writeRawString((String) obj);
-    }
-
-    /* renamed from: c */
-    public final String getStringAndClear() {
-        String result = this.length == 0 ? AppState.emptyStr : StringUtils.intern(new String(this.data, this.offset, this.length));
-        clear();
-        return result;
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeStringArray(String[] strArr) {
-        ByteBuffer buf = new ByteBuffer();
-        buf.writeIntLE(2);
-        for (int i = 0; i < 2; i++) {
-            buf.writeStringUTF16(strArr[i]);
-        }
-        return writeStringLatin1(buf.toBase64());
-    }
-
-    /* renamed from: d */
-    public final String toBase64() {
-        ensureCapacity(0);
-        String result = Base64.encode(this.data, 0, this.length);
-        clear();
-        return result;
-    }
-
-    /* renamed from: f */
-    public final ByteBuffer writeByte(int i) {
-        ensureCapacity(1);
-        byte[] bArr = this.data;
-        int i2 = this.length;
-        this.length = i2 + 1;
-        bArr[i2] = (byte) i;
-        return this;
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeBoolean(boolean z) {
-        return writeByte(z ? 1 : 0);
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeLong(long j) {
-        return writeIntLE((int) j).writeIntLE((int) (j >> 32));
-    }
-
-    /* renamed from: a */
-    ByteBuffer copyFrom(ByteBuffer buf, int i) {
-        byte[] tempBuf = ObjectPool.newBytes(i);
-        buf.readInto(tempBuf, 0, i);
-        writeBytesAt(tempBuf, 0, i);
-        ObjectPool.releaseBytes(tempBuf);
-        return this;
-    }
-
-    /* renamed from: a */
-    public final ByteBuffer writeBuffer(ByteBuffer buf) {
-        if (buf != null) {
-            copyFrom(buf, buf.length);
-        }
-        return this;
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer writeBufferShortLen(ByteBuffer buf) {
-        if (buf != null) {
-            writeShortBE(buf.length).copyFrom(buf, buf.length);
-        }
-        return this;
-    }
-
-    /* renamed from: c */
-    public final ByteBuffer writeBufferIntLen(ByteBuffer buf) {
-        return buf != null ? writeIntLE(buf.length).copyFrom(buf, buf.length) : writeIntLE(0);
-    }
-
-    /* renamed from: e */
-    public final int readInt() {
-        int value = peekIntAt(0);
-        this.offset += 4;
-        this.length -= 4;
-        return value;
-    }
-
-    /* renamed from: g */
-    public final ByteBuffer skip(int i) {
-        this.offset += i;
-        int i2 = this.length - i;
-        this.length = i2;
-        if (i2 == 0) {
+    public ByteBuffer skip(int count) {
+        this.offset += count;
+        int remaining = this.length - count;
+        this.length = remaining;
+        if (remaining == 0) {
             clear();
         }
         return this;
     }
 
-    /* renamed from: h */
-    public final int peekIntAt(int i) {
-        int i2 = this.offset + i;
-        byte[] bArr = this.data;
-        int i3 = i2 + 1;
-        int i4 = (bArr[i2] & 255) | ((bArr[i3] & 255) << 8);
-        int i5 = i3 + 1;
-        return i4 | ((bArr[i5] & 255) << 16) | (bArr[i5 + 1] << 24);
-    }
+    // --- Bulk write ---
 
-    /* renamed from: i */
-    public final int peekByteAt(int i) {
-        return this.data[this.offset + i] & 255;
-    }
-
-    /* renamed from: j */
-    public final String readStringByMode(int i) {
-        return i != 0 ? readUnicodeStr() : readUTF8Str((String) null);
-    }
-
-    /* renamed from: f */
-    public final String readUnicodeStr() {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        int remaining = readInt();
-        while (true) {
-            remaining--;
-            if (remaining < 0) {
-                return ObjectPool.toStringAndRelease(sb);
-            }
-            sb.append(Utils.win1251ToChar((int) readByte()));
+    public ByteBuffer writeBytes(byte[] src) {
+        if (src != null) {
+            writeBytesAt(src, 0, src.length);
         }
+        return this;
     }
 
-    /* renamed from: g */
-    public final String readWideStr() {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        int remaining = readInt();
-        while (true) {
-            remaining--;
-            if (remaining < 0) {
-                return ObjectPool.toStringAndRelease(sb);
-            }
-            sb.append((char) readUByte());
+    public ByteBuffer writeBytesAt(byte[] src, int srcOffset, int count) {
+        if (count > 0) {
+            ensureCapacity(count);
+            Utils.arraycopy((Object) src, srcOffset, (Object) this.data, this.length, count);
+            this.length += count;
         }
+        return this;
     }
 
-    /* renamed from: e */
-    public final String readUTF8Str(String str) {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        int remaining = readInt();
-        while (true) {
-            remaining -= 2;
-            if (remaining < 0) {
-                break;
-            }
-            sb.append((char) (readUByte() | (readByte() << 8)));
+    public ByteBuffer writeZeros(int count) {
+        ensureCapacity(count);
+        for (int n = count; n > 0; n--) {
+            putByte(0);
         }
-        if (remaining == -1) {
-            readByte();
-            if (str != null) {
-                return str;
-            }
-        }
-        return ObjectPool.toStringAndRelease(sb);
+        return this;
     }
 
-    /* renamed from: h */
-    public final String readAllWideStr() {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        while (this.length > 0) {
-            sb.append((char) (readUByte() | (readByte() << 8)));
-        }
+    public ByteBuffer setData(byte[] newData) {
         clear();
-        return ObjectPool.toStringAndRelease(sb);
+        this.data = newData;
+        this.length = newData.length;
+        return this;
     }
 
-    /* renamed from: i */
-    public final String readAllByteStr() {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        while (this.length > 0) {
-            sb.append(Utils.win1251ToChar((int) readByte()));
+    // --- Bulk read ---
+
+    public byte[] readInto(byte[] dst, int dstOffset, int count) {
+        Utils.arraycopy((Object) this.data, this.offset, (Object) dst, dstOffset, count);
+        this.length -= count;
+        this.offset += count;
+        compact();
+        return dst;
+    }
+
+    public int readIntoBytes(byte[] dst) {
+        if (this.length == 0) {
+            return -1;
         }
+        int count = Utils.min(dst.length, this.length);
+        readInto(dst, 0, count);
+        return count;
+    }
+
+    public byte[] toByteArray() {
+        byte[] result = new byte[this.length];
+        Utils.arraycopy((Object) this.data, this.offset, (Object) result, 0, this.length);
         clear();
-        return ObjectPool.toStringAndRelease(sb);
+        return result;
     }
 
-    /* renamed from: j */
-    public final String readHexStr() {
-        return StringUtils.intern(readWideStr().toLowerCase());
+    // --- Write single byte ---
+
+    public ByteBuffer writeByte(int value) {
+        ensureCapacity(1);
+        putByte(value);
+        return this;
     }
 
-    /* renamed from: k */
-    public final byte[] toByteArray() {
-        byte[] bArr = this.data;
-        int i = this.offset;
-        byte[] bArr2 = new byte[this.length];
-        Utils.arraycopy((Object) bArr, i, (Object) bArr2, 0, this.length);
-        clear();
-        return bArr2;
+    public ByteBuffer writeBoolean(boolean flag) {
+        return writeByte(flag ? 1 : 0);
     }
 
-    /* renamed from: l */
-    public final boolean readBoolean() {
-        return readByte() != 0;
+    // --- Write multi-byte integers ---
+
+    public ByteBuffer writeShortBE(int value) {
+        ensureCapacity(2);
+        putByte(value >> 8);
+        putByte(value);
+        return this;
     }
 
-    /* renamed from: m */
-    public final long readLong() {
-        return (readInt() & 4294967295L) | (readInt() << 32);
+    public ByteBuffer writeShortLE(int value) {
+        ensureCapacity(2);
+        putByte(value);
+        putByte(value >> 8);
+        return this;
     }
 
-    /* renamed from: n */
-    public final int readByteOrEOF() {
+    public ByteBuffer writeIntBE(int value) {
+        ensureCapacity(4);
+        putByte(value >> 24);
+        putByte(value >> 16);
+        putByte(value >> 8);
+        putByte(value);
+        return this;
+    }
+
+    public ByteBuffer writeIntLE(int value) {
+        ensureCapacity(4);
+        putByte(value);
+        putByte(value >> 8);
+        putByte(value >> 16);
+        putByte(value >> 24);
+        return this;
+    }
+
+    public ByteBuffer writeLong(long value) {
+        return writeIntLE((int) value).writeIntLE((int) (value >> 32));
+    }
+
+    public ByteBuffer writeIntMixed(int value) {
+        return writeIntLE(value & 0xFF).writeByte(value >>> 8);
+    }
+
+    public ByteBuffer writeUInt(int value) {
+        return writeLongBytes(value & 0xFFFFFFFFL);
+    }
+
+    public ByteBuffer writeLongBytes(long value) {
+        while (value != 0) {
+            writeByte((int) value);
+            value >>>= 8;
+        }
+        return this;
+    }
+
+    // --- Read single byte ---
+
+    public byte readByte() {
+        if (this.length <= 0) {
+            throw new RuntimeException();
+        }
+        this.length--;
+        byte[] buf = this.data;
+        int pos = this.offset;
+        this.offset = pos + 1;
+        return buf[pos];
+    }
+
+    public int readUByte() {
+        return readByte() & 0xFF;
+    }
+
+    public int readByteOrEOF() {
         try {
             return readUByte();
         } catch (Throwable unused) {
@@ -483,253 +282,253 @@ public final class ByteBuffer {
         }
     }
 
-    /* renamed from: k */
-    public final int peekUByteAt(int i) {
-        return this.data[this.offset + i] & 255;
+    // --- Read multi-byte integers ---
+
+    public int readShortBE() {
+        return (takeByte() << 8) | takeByte();
     }
 
-    /* renamed from: o */
-    public final byte readByte() {
-        if (this.length <= 0) {
-            throw new RuntimeException();
-        }
-        this.length--;
-        byte[] bArr = this.data;
-        int i = this.offset;
-        this.offset = i + 1;
-        return bArr[i];
+    public int readShortLE() {
+        int low = takeByte();
+        return low | (takeByte() << 8);
     }
 
-    /* renamed from: p */
-    public final Vector readBufferArray() {
-        Vector buffers = ObjectPool.newVector();
-        readInt();
-        int remaining = readInt();
-        while (true) {
-            remaining--;
-            if (remaining < 0) {
-                return buffers;
-            }
-            buffers.addElement(new ByteBuffer().copyFrom(this, peekIntAt(0) + 4));
-        }
+    public int readIntBE() {
+        return (takeByte() << 24) | (takeByte() << 16) | (takeByte() << 8) | takeByte();
     }
 
-    /* renamed from: q */
-    public final int readUByte() {
-        return readByte() & 255;
-    }
-
-    /* renamed from: c */
-    public final int readIntoBytes(byte[] bArr) {
-        if (this.length == 0) {
-            return -1;
-        }
-        int count = Utils.min(bArr.length, this.length);
-        readInto(bArr, 0, count);
-        return count;
-    }
-
-    /* renamed from: r */
-    public final Image toImage() {
-        try {
-            return ImageExtractor.toImage(this.data, this.offset, this.length);
-        } finally {
-            clear();
-        }
-    }
-
-    /* renamed from: s */
-    public final ByteBuffer extractPNG() {
-        return ImageExtractor.extractPNG(this);
-    }
-
-    /* renamed from: t */
-    public final ByteBuffer extractJPEG() {
-        return ImageExtractor.extractJPEG(this);
-    }
-
-    /* renamed from: l */
-    public final int peekShortBE(int i) {
-        return ((this.data[this.offset + i] & 255) << 8) | (this.data[this.offset + i + 1] & 255);
-    }
-
-    /* renamed from: K */
-    private int peekShortLE() {
-        return ((this.data[this.offset + 1] & 255) << 8) | (this.data[this.offset] & 255);
-    }
-
-    /* renamed from: u */
-    public final int readShortBE() {
-        this.length -= 2;
-        byte[] bArr = this.data;
-        int i = this.offset;
-        this.offset = i + 1;
-        int i2 = (bArr[i] & 255) << 8;
-        byte[] bArr2 = this.data;
-        int i3 = this.offset;
-        this.offset = i3 + 1;
-        return i2 | (bArr2[i3] & 255);
-    }
-
-    /* renamed from: v */
-    public final int readShortLE() {
-        this.length -= 2;
-        byte[] bArr = this.data;
-        int i = this.offset;
-        this.offset = i + 1;
-        int i2 = bArr[i] & 255;
-        byte[] bArr2 = this.data;
-        int i3 = this.offset;
-        this.offset = i3 + 1;
-        return i2 | ((bArr2[i3] & 255) << 8);
-    }
-
-    /* renamed from: w */
-    public final int readIntBE() {
-        int i = ((((((this.data[this.offset] & 255) << 8) | (this.data[this.offset + 1] & 255)) << 8) | (this.data[this.offset + 2] & 255)) << 8) | (this.data[this.offset + 3] & 255);
+    public int readInt() {
+        int value = peekIntAt(0);
         this.offset += 4;
         this.length -= 4;
-        return i;
+        return value;
     }
 
-    /* renamed from: x */
-    public final int readIntBEAt() {
-        return ((((((this.data[this.offset + 12] & 255) << 8) | (this.data[this.offset + 13] & 255)) << 8) | (this.data[this.offset + 14] & 255)) << 8) | (this.data[this.offset + 15] & 255);
+    public boolean readBoolean() {
+        return readByte() != 0;
     }
 
-    /* renamed from: m */
-    public final ByteBuffer writeShortBE(int i) {
-        ensureCapacity(2);
-        byte[] bArr = this.data;
-        int i2 = this.length;
-        this.length = i2 + 1;
-        bArr[i2] = (byte) (i >> 8);
-        byte[] bArr2 = this.data;
-        int i3 = this.length;
-        this.length = i3 + 1;
-        bArr2[i3] = (byte) i;
-        return this;
+    public long readLong() {
+        return (readInt() & 0xFFFFFFFFL) | (readInt() << 32);
     }
 
-    /* renamed from: n */
-    public final ByteBuffer writeShortLE(int i) {
-        ensureCapacity(2);
-        byte[] bArr = this.data;
-        int i2 = this.length;
-        this.length = i2 + 1;
-        bArr[i2] = (byte) i;
-        byte[] bArr2 = this.data;
-        int i3 = this.length;
-        this.length = i3 + 1;
-        bArr2[i3] = (byte) (i >> 8);
-        return this;
+    // --- Peek (read without advancing) ---
+
+    public int peekByteAt(int relOffset) {
+        return peekByte(relOffset);
     }
 
-    /* JADX DEBUG: Multi-variable search result rejected for r0v3, resolved type: byte[] */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Type inference failed for: r2v4, types: [int] */
-    /* renamed from: o */
-    public final ByteBuffer writeIntBE(int i) {
-        ensureCapacity(4);
-        byte[] bArr = this.data;
-        int i2 = this.length;
-        this.length = i2 + 1;
-        bArr[i2] = (byte) (i >> 24);
-        byte[] bArr2 = this.data;
-        int i3 = this.length;
-        this.length = i3 + 1;
-        bArr2[i3] = (byte) (i >> 16);
-        byte[] bArr3 = this.data;
-        int i4 = this.length;
-        this.length = i4 + 1;
-        bArr3[i4] = (byte) (i >> 8);
-        byte[] bArr4 = this.data;
-        int i5 = this.length;
-        this.length = i5 + 1;
-        bArr4[i5] = (byte) i;
-        return this;
+    public int peekShortBE(int relOffset) {
+        return (peekByte(relOffset) << 8) | peekByte(relOffset + 1);
     }
 
-    /* JADX DEBUG: Multi-variable search result rejected for r0v9, resolved type: byte[] */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Type inference failed for: r2v21, types: [int] */
-    /* renamed from: p */
-    public final ByteBuffer writeIntLE(int i) {
-        ensureCapacity(4);
-        byte[] bArr = this.data;
-        int i2 = this.length;
-        this.length = i2 + 1;
-        bArr[i2] = (byte) i;
-        byte[] bArr2 = this.data;
-        int i3 = this.length;
-        this.length = i3 + 1;
-        bArr2[i3] = (byte) (i >> 8);
-        byte[] bArr3 = this.data;
-        int i4 = this.length;
-        this.length = i4 + 1;
-        bArr3[i4] = (byte) (i >> 16);
-        byte[] bArr4 = this.data;
-        int i5 = this.length;
-        this.length = i5 + 1;
-        bArr4[i5] = (byte) (i >> 24);
-        return this;
+    private int peekShortLE() {
+        return peekByte(0) | (peekByte(1) << 8);
     }
 
-    /* renamed from: f */
-    public final ByteBuffer writeShortString(String str) {
-        int length = str.length();
-        ensureCapacity(2 + length);
-        writeShortBE(length);
-        for (int i = 0; i < length; i++) {
-            byte[] bArr = this.data;
-            int i2 = this.length;
-            this.length = i2 + 1;
-            bArr[i2] = (byte) str.charAt(i);
+    public int peekIntAt(int relOffset) {
+        return peekByte(relOffset)
+                | (peekByte(relOffset + 1) << 8)
+                | (peekByte(relOffset + 2) << 16)
+                | (this.data[this.offset + relOffset + 3] << 24);
+    }
+
+    public int peekIntBEAt(int relOffset) {
+        return (peekByte(relOffset) << 24)
+                | (peekByte(relOffset + 1) << 16)
+                | (peekByte(relOffset + 2) << 8)
+                | peekByte(relOffset + 3);
+    }
+
+    // --- Write strings ---
+
+    public ByteBuffer writeRawString(String str) {
+        if (str != null && str.length() > 0) {
+            int len = str.length();
+            ensureCapacity(len);
+            for (int i = 0; i < len; i++) {
+                putByte(str.charAt(i));
+            }
         }
         return this;
     }
 
-    /* renamed from: y */
-    public final ByteBuffer updateLength() {
-        ensureCapacity(0);
-        byte[] bArr = this.data;
-        int i = this.length - 6;
-        bArr[4] = (byte) (i >> 8);
-        this.data[5] = (byte) i;
+    public ByteBuffer writeObjectStr(String str) {
+        return writeRawString(str);
+    }
+
+    public ByteBuffer writeString(String str, int mode) {
+        return mode != 0 ? writeStringUTF16(str) : writeStringLatin1(str);
+    }
+
+    public ByteBuffer writeStringLatin1(String str) {
+        if (str == null || str.length() <= 0) {
+            return writeIntLE(0);
+        }
+        int len = str.length();
+        ensureCapacity(len + 4);
+        writeIntLE(len);
+        for (int i = 0; i < len; i++) {
+            putByte(str.charAt(i));
+        }
         return this;
     }
 
-    /* renamed from: z */
-    public final String readLenPrefixStr() {
-        int i = this.data[this.offset] & 255;
-        byte[] bArr = this.data;
-        int i2 = this.offset + 1;
-        this.offset = i2;
-        String result = StringUtils.intern(new String(bArr, i2, i));
-        this.offset += i;
-        this.length -= i + 1;
+    public ByteBuffer writeStringUTF16(String str) {
+        if (str == null || str.length() <= 0) {
+            return writeIntLE(0);
+        }
+        int charCount = str.length();
+        ensureCapacity(charCount * 2 + 4);
+        writeIntLE(charCount * 2);
+        for (int i = 0; i < charCount; i++) {
+            char ch = str.charAt(i);
+            putByte(ch);
+            putByte(ch >> 8);
+        }
+        return this;
+    }
+
+    public ByteBuffer writeShortString(String str) {
+        int len = str.length();
+        ensureCapacity(2 + len);
+        writeShortBE(len);
+        for (int i = 0; i < len; i++) {
+            putByte(str.charAt(i));
+        }
+        return this;
+    }
+
+    public ByteBuffer writeByteLenStr(String str) {
+        int len = str.length();
+        writeByte(len);
+        for (int i = 0; i < len; i++) {
+            writeByte(str.charAt(i));
+        }
+        return this;
+    }
+
+    public ByteBuffer writeCharBytes(String str) {
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            writeByte(Utils.charToWin1251(str.charAt(i)));
+        }
+        return this;
+    }
+
+    public ByteBuffer writeAsShorts(String str) {
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            writeShortBE(str.charAt(i));
+        }
+        return this;
+    }
+
+    public ByteBuffer writeIntAsString(int value) {
+        return writeRawString(StringUtils.intern(Integer.toString(value)));
+    }
+
+    public ByteBuffer writeLongAsString(long value) {
+        return writeRawString(StringUtils.intern(Long.toString(value)));
+    }
+
+    public ByteBuffer writeIntWithLen(int value) {
+        String str = StringUtils.intern(Integer.toString(value));
+        return writeIntLE(str.length()).writeRawString(str);
+    }
+
+    // --- Read strings ---
+
+    public String readStringByMode(int mode) {
+        return mode != 0 ? readUnicodeStr() : readUTF8Str((String) null);
+    }
+
+    public String readUnicodeStr() {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        for (int remaining = readInt(); remaining > 0; remaining--) {
+            sb.append(Utils.win1251ToChar((int) readByte()));
+        }
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readWideStr() {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        for (int remaining = readInt(); remaining > 0; remaining--) {
+            sb.append((char) readUByte());
+        }
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readUTF8Str(String fallback) {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        int remaining = readInt();
+        for (; remaining >= 2; remaining -= 2) {
+            sb.append((char) (readUByte() | (readByte() << 8)));
+        }
+        if (remaining == 1) {
+            readByte();
+            if (fallback != null) {
+                return fallback;
+            }
+        }
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readAllWideStr() {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        while (this.length > 0) {
+            sb.append((char) (readUByte() | (readByte() << 8)));
+        }
+        clear();
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readAllByteStr() {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        while (this.length > 0) {
+            sb.append(Utils.win1251ToChar((int) readByte()));
+        }
+        clear();
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readUnicodeChars(int byteCount) {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        for (int remaining = byteCount; remaining >= 2; remaining -= 2) {
+            sb.append((char) readShortBE());
+        }
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readByteChars(int count) {
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        for (int n = count; n > 0; n--) {
+            sb.append(Utils.win1251ToChar(readUByte()));
+        }
+        return ObjectPool.toStringAndRelease(sb);
+    }
+
+    public String readHexStr() {
+        return StringUtils.intern(readWideStr().toLowerCase());
+    }
+
+    public String readLenPrefixStr() {
+        int len = peekByte(0);
+        this.offset++;
+        this.length--;
+        String result = StringUtils.intern(new String(this.data, this.offset, len));
+        this.offset += len;
+        this.length -= len;
         return result;
     }
 
-    /* renamed from: A */
-    public final String readVarLenStr() {
+    public String readVarLenStr() {
         String decoded = StringUtils.decodeFromBytes(this.data, this.offset);
         skip(2 + peekShortBE(0));
         return decoded;
     }
 
-    /* renamed from: B */
-    public final ByteBuffer encryptMD5() {
-        ensureCapacity(0);
-        byte[] hash = Md5Hash.hash(this.data, this.length);
-        clear();
-        this.data = hash;
-        this.length = 16;
-        return this;
-    }
-
-    /* renamed from: C */
-    public final String readPascalStr() {
+    public String readPascalStr() {
         int strLen = peekShortLE() - 1;
         if (strLen <= 0) {
             skip(3);
@@ -742,256 +541,246 @@ public final class ByteBuffer {
         return decoded;
     }
 
-    /* renamed from: D */
-    public final String readModifiedStr() {
-        byte[] bArr = this.data;
-        int i = this.offset;
+    public String readModifiedStr() {
         int strLen = peekShortLE();
-        bArr[i] = (byte) (strLen >> 8);
+        this.data[this.offset] = (byte) (strLen >> 8);
         this.data[this.offset + 1] = (byte) strLen;
         return isValidUTF(this.offset + 2, strLen) ? readVarLenStr() : readByteStr();
     }
 
-    /* renamed from: E */
-    public final String readModifiedStrTrim() {
-        byte[] bArr = this.data;
-        int i = this.offset;
+    public String readModifiedStrTrim() {
         int strLen = peekShortLE();
-        bArr[i] = (byte) (strLen >> 8);
+        this.data[this.offset] = (byte) (strLen >> 8);
         this.data[this.offset + 1] = (byte) strLen;
         String decoded = isValidUTF(this.offset + 2, strLen) ? readVarLenStr() : readByteStr();
-        String str = decoded;
-        int length = decoded.length();
-        return length > 0 ? StringUtils.prefix(str, length - 1) : str;
+        int len = decoded.length();
+        return len > 0 ? StringUtils.prefix(decoded, len - 1) : decoded;
     }
 
-    /* renamed from: q */
-    public final String readUnicodeChars(int i) {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        while (true) {
-            i -= 2;
-            if (i < 0) {
-                return ObjectPool.toStringAndRelease(sb);
-            }
-            sb.append((char) readShortBE());
-        }
+    public String getStringAndClear() {
+        String result = this.length == 0
+                ? AppState.emptyStr
+                : StringUtils.intern(new String(this.data, this.offset, this.length));
+        clear();
+        return result;
     }
 
-    /* renamed from: r */
-    public final String readByteChars(int i) {
-        StringBuffer sb = ObjectPool.newStringBuffer();
-        while (true) {
-            i--;
-            if (i < 0) {
-                return ObjectPool.toStringAndRelease(sb);
-            }
-            sb.append(Utils.win1251ToChar(readUByte()));
-        }
+    public String readUTFWithLen() {
+        ensureCapacity(2);
+        byte[] buf = this.data;
+        int len = this.length;
+        Utils.arraycopy((Object) buf, 0, (Object) buf, 2, len);
+        buf[0] = (byte) (len >>> 8);
+        buf[1] = (byte) len;
+        String decoded = StringUtils.decodeFromBytes(buf, this.offset);
+        clear();
+        return decoded;
     }
 
-    /* renamed from: g */
-    public final ByteBuffer writeCharBytes(String str) {
-        int length = str.length();
-        for (int i = 0; i < length; i++) {
-            writeByte(Utils.charToWin1251(str.charAt(i)));
-        }
-        return this;
+    private String readByteStr() {
+        return readByteChars(readShortBE());
     }
 
-    /* renamed from: a */
-    public final ByteBuffer writeProtocolStr(int i, String str) {
-        int length = str.length();
-        return length > 0 ? writeShortBE(i).writeShortLE(length + 3).writeShortLE(length + 1).writeCharBytes(str).writeByte(0) : this;
-    }
+    // --- UTF encoding ---
 
-    /* renamed from: h */
-    public final ByteBuffer writeByteLenStr(String str) {
-        int length = str.length();
-        writeByte(length);
-        for (int i = 0; i < length; i++) {
-            writeByte(str.charAt(i));
-        }
-        return this;
-    }
-
-    /* renamed from: i */
-    public final ByteBuffer writeAsShorts(String str) {
-        int length = str.length();
-        for (int i = 0; i < length; i++) {
-            writeShortBE(str.charAt(i));
-        }
-        return this;
-    }
-
-    /* renamed from: l */
-    private static byte[] encodeUTF(String str) {
-        ByteArrayOutputStream byteArrayOutputStream = null;
-        DataOutputStream dataOutputStream = null;
-        try {
-            ByteArrayOutputStream byteArrayOutputStream2 = (ByteArrayOutputStream) IOUtils.registerResource((Object) new ByteArrayOutputStream());
-            byteArrayOutputStream = byteArrayOutputStream2;
-            DataOutputStream dataOutputStream2 = (DataOutputStream) IOUtils.registerResource((Object) new DataOutputStream(byteArrayOutputStream2));
-            dataOutputStream = dataOutputStream2;
-            dataOutputStream2.writeUTF(str);
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            IOUtils.closeOutput((OutputStream) dataOutputStream);
-            IOUtils.closeOutput((OutputStream) byteArrayOutputStream);
-            return byteArray;
-        } catch (Throwable th) {
-            IOUtils.closeOutput((OutputStream) dataOutputStream);
-            IOUtils.closeOutput((OutputStream) byteArrayOutputStream);
-            if (th instanceof RuntimeException) throw (RuntimeException) th;
-            if (th instanceof Error) throw (Error) th;
-            throw new RuntimeException(th.toString());
-        }
-    }
-
-    /* renamed from: j */
-    public final ByteBuffer writeUTF(String str) {
+    public ByteBuffer writeUTF(String str) {
         byte[] encoded = encodeUTF(str);
         writeBytes(encoded);
         ObjectPool.releaseBytes(encoded);
         return this;
     }
 
-    /* renamed from: k */
-    public final ByteBuffer writeUTFNoLen(String str) {
+    public ByteBuffer writeUTFNoLen(String str) {
         byte[] encoded = encodeUTF(str);
         writeBytesAt(encoded, 2, encoded.length - 2);
         ObjectPool.releaseBytes(encoded);
         return this;
     }
 
-    /* renamed from: L */
-    private String readByteStr() {
-        return readByteChars(readShortBE());
+    private static byte[] encodeUTF(String str) {
+        ByteArrayOutputStream baos = null;
+        DataOutputStream dos = null;
+        try {
+            baos = (ByteArrayOutputStream) IOUtils.registerResource((Object) new ByteArrayOutputStream());
+            dos = (DataOutputStream) IOUtils.registerResource((Object) new DataOutputStream(baos));
+            dos.writeUTF(str);
+            byte[] result = baos.toByteArray();
+            IOUtils.closeOutput((OutputStream) dos);
+            IOUtils.closeOutput((OutputStream) baos);
+            return result;
+        } catch (Throwable th) {
+            IOUtils.closeOutput((OutputStream) dos);
+            IOUtils.closeOutput((OutputStream) baos);
+            if (th instanceof RuntimeException) throw (RuntimeException) th;
+            if (th instanceof Error) throw (Error) th;
+            throw new RuntimeException(th.toString());
+        }
     }
 
-    /* renamed from: a */
-    private final boolean isValidUTF(int i, int i2) {
-        if (i2 <= 0) {
+    private boolean isValidUTF(int startPos, int byteCount) {
+        if (byteCount <= 0) {
             return false;
         }
-        byte[] bArr = this.data;
-        while (i2 > 0) {
-            int i3 = i;
-            i++;
-            byte b = bArr[i3];
-            i2--;
-            int i4 = (b & 224) == 192 ? 1 : (b & 240) == 224 ? 2 : (b & 248) == 240 ? 3 : (b & 252) == 248 ? 4 : (b & 254) == 252 ? 5 : 0;
-            if (i4 != 0) {
-                while (true) {
-                    i4--;
-                    if (i4 < 0) {
-                        if (i2 == 0) {
-                            return true;
-                        }
-                    } else {
-                        if (i2 <= 0) {
-                            return false;
-                        }
-                        int i5 = i;
-                        i++;
-                        if ((bArr[i5] & 192) != 128) {
-                            return false;
-                        }
-                        i2--;
+        byte[] buf = this.data;
+        int pos = startPos;
+        int remaining = byteCount;
+        while (remaining > 0) {
+            byte b = buf[pos++];
+            remaining--;
+            int trailingBytes;
+            if ((b & 0xE0) == 0xC0) trailingBytes = 1;
+            else if ((b & 0xF0) == 0xE0) trailingBytes = 2;
+            else if ((b & 0xF8) == 0xF0) trailingBytes = 3;
+            else if ((b & 0xFC) == 0xF8) trailingBytes = 4;
+            else if ((b & 0xFE) == 0xFC) trailingBytes = 5;
+            else if ((b & 0x80) == 0x80) return false;
+            else {
+                trailingBytes = 0;
+            }
+            if (trailingBytes != 0) {
+                for (int t = trailingBytes; t > 0; t--) {
+                    if (remaining <= 0) {
+                        return false;
                     }
+                    if ((buf[pos++] & 0xC0) != 0x80) {
+                        return false;
+                    }
+                    remaining--;
                 }
-            } else if ((b & 128) == 128) {
-                return false;
+                if (remaining == 0) {
+                    return true;
+                }
             }
         }
         return true;
     }
 
-    /* renamed from: F */
-    public final ByteBuffer duplicate() {
-        return new ByteBuffer().writeBytesAt(this.data, this.offset, this.length);
+    // --- Buffer composition ---
+
+    ByteBuffer copyFrom(ByteBuffer src, int count) {
+        byte[] tempBuf = ObjectPool.newBytes(count);
+        src.readInto(tempBuf, 0, count);
+        writeBytesAt(tempBuf, 0, count);
+        ObjectPool.releaseBytes(tempBuf);
+        return this;
     }
 
-    /* renamed from: G */
-    public final String readUTFWithLen() {
-        ensureCapacity(2);
-        byte[] bArr = this.data;
-        int i = this.length;
-        Utils.arraycopy((Object) bArr, 0, (Object) bArr, 2, i);
-        bArr[0] = (byte) (i >>> 8);
-        bArr[1] = (byte) i;
-        String decoded = StringUtils.decodeFromBytes(bArr, this.offset);
-        clear();
-        return decoded;
-    }
-
-    /* renamed from: s */
-    public final ByteBuffer writeIntAsString(int i) {
-        return writeRawString(StringUtils.intern(Integer.toString(i)));
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer writeLongAsString(long j) {
-        return writeRawString(StringUtils.intern(Long.toString(j)));
-    }
-
-    /* renamed from: t */
-    public final ByteBuffer writeIntWithLen(int i) {
-        String result = StringUtils.intern(Integer.toString(i));
-        return writeIntLE(result.length()).writeRawString(result);
-    }
-
-    /* renamed from: u */
-    public final ByteBuffer writeUInt(int i) {
-        return writeLongBytes(i & 4294967295L);
-    }
-
-    /* renamed from: c */
-    public final ByteBuffer writeLongBytes(long j) {
-        while (j != 0) {
-            writeByte((int) j);
-            j >>>= 8;
+    public ByteBuffer writeBuffer(ByteBuffer src) {
+        if (src != null) {
+            copyFrom(src, src.length);
         }
         return this;
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 2 to block B:11:0x005d */
-    /* renamed from: H */
-    public final String toHexString() {
+    public ByteBuffer writeBufferShortLen(ByteBuffer src) {
+        if (src != null) {
+            writeShortBE(src.length).copyFrom(src, src.length);
+        }
+        return this;
+    }
+
+    public ByteBuffer writeBufferIntLen(ByteBuffer src) {
+        return src != null ? writeIntLE(src.length).copyFrom(src, src.length) : writeIntLE(0);
+    }
+
+    public ByteBuffer duplicate() {
+        return new ByteBuffer().writeBytesAt(this.data, this.offset, this.length);
+    }
+
+    public Vector readBufferArray() {
+        Vector buffers = ObjectPool.newVector();
+        readInt();
+        for (int remaining = readInt(); remaining > 0; remaining--) {
+            buffers.addElement(new ByteBuffer().copyFrom(this, peekIntAt(0) + 4));
+        }
+        return buffers;
+    }
+
+    public ByteBuffer writeStringArray(String[] pair) {
+        ByteBuffer inner = new ByteBuffer();
+        inner.writeIntLE(2);
+        for (int i = 0; i < 2; i++) {
+            inner.writeStringUTF16(pair[i]);
+        }
+        return writeStringLatin1(inner.toBase64());
+    }
+
+    public ByteBuffer writeStringArr(String[] items) {
+        ByteBuffer inner = new ByteBuffer();
+        int count = items == null ? 0 : items.length;
+        inner.writeIntLE(count);
+        for (int i = 0; i < count; i++) {
+            inner.writeStringLatin1(items[i]);
+        }
+        return writeBufferIntLen(inner);
+    }
+
+    // --- Packed string encoding (AppState integration) ---
+
+    public ByteBuffer writeCompressed(int key) {
+        return key > AppState.PACKED_STRING_THRESHOLD
+                ? writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16)
+                : writeBytes(AppState.getBytes(key));
+    }
+
+    public ByteBuffer writeEncodedInt(int key) {
+        return writeRawString(AppState.getString(key));
+    }
+
+    public ByteBuffer writeExtendedInt(int key) {
+        writeRawString(AppState.getString(key & 0xFFFF));
+        int highByte = key >>> 16;
+        if (highByte != 0) {
+            writeByte(highByte);
+        }
+        return this;
+    }
+
+    // --- Conversion delegates (same-package utilities) ---
+
+    public ByteBuffer encryptMD5() {
+        ensureCapacity(0);
+        byte[] hash = Md5Hash.hash(this.data, this.length);
+        clear();
+        this.data = hash;
+        this.length = MD5_HASH_LENGTH;
+        return this;
+    }
+
+    public String toBase64() {
+        ensureCapacity(0);
+        String result = Base64.encode(this.data, 0, this.length);
+        clear();
+        return result;
+    }
+
+    public String toHexString() {
         String result = HexEncoder.encode(this.data, this.offset, this.length);
         clear();
         return result;
     }
 
-    /* renamed from: I */
-    public final XmlElement parseXml() {
+    public XmlElement parseXml() {
         return XmlParser.parseFromBuffer(this);
     }
 
-    /* renamed from: J */
-    public final XmlElement parseXmlStr() {
+    public XmlElement parseXmlStr() {
         return XmlParser.parseFromString(this);
     }
 
-    /* renamed from: v */
-    public final ByteBuffer writeIntMixed(int i) {
-        return writeIntLE(i & 255).writeByte(i >>> 8);
-    }
-
-    /* renamed from: b */
-    public final ByteBuffer writeStringArr(String[] strArr) {
-        ByteBuffer buf = new ByteBuffer();
-        int length = strArr == null ? 0 : strArr.length;
-        int i = length;
-        buf.writeIntLE(length);
-        for (int i2 = 0; i2 < i; i2++) {
-            buf.writeStringLatin1(strArr[i2]);
+    public Image toImage() {
+        try {
+            return ImageExtractor.toImage(this.data, this.offset, this.length);
+        } finally {
+            clear();
         }
-        return writeBufferIntLen(buf);
     }
 
-    /* renamed from: a */
-    public final ByteBuffer writeVector(Vector vector) {
-        ByteBuffer buf = new ByteBuffer();
-        buf.writeIntLE(0);
-        return writeBufferIntLen(buf);
+    public ByteBuffer extractPNG() {
+        return ImageExtractor.extractPNG(this);
+    }
+
+    public ByteBuffer extractJPEG() {
+        return ImageExtractor.extractJPEG(this);
     }
 }

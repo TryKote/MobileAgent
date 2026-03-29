@@ -18,7 +18,7 @@ import javax.microedition.lcdui.Image;
 /* loaded from: MobileAgent_3.9.jar:m.class */
 public final class ContactInfo extends Hashtable {
     public ContactInfo(Contact contact) {
-        put(ResourceManager.integerOf(-2), contact.account);
+        put(ObjectPool.integerOf(-2), contact.account);
         setContactField(0, contact.displayName);
         if (contact instanceof MrimContact) {
             setContactField(3, ((MrimContact) contact).simpleIdentifier);
@@ -33,7 +33,7 @@ public final class ContactInfo extends Hashtable {
     }
 
     private ContactInfo(Account account) {
-        put(ResourceManager.integerOf(-2), account);
+        put(ObjectPool.integerOf(-2), account);
     }
 
     /* renamed from: a */
@@ -67,12 +67,12 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: c */
     public final Account getAccount() {
-        return (Account) get(ResourceManager.integerOf(-2));
+        return (Account) get(ObjectPool.integerOf(-2));
     }
 
     /* renamed from: a */
     public final String getString(int i) {
-        return (String) get(ResourceManager.integerOf(i));
+        return (String) get(ObjectPool.integerOf(i));
     }
 
     /* renamed from: a */
@@ -83,7 +83,7 @@ public final class ContactInfo extends Hashtable {
     /* renamed from: a */
     private final ContactInfo setContactField(int i, String str) {
         if (Utils.nonEmpty(str)) {
-            put(ResourceManager.integerOf(i), str);
+            put(ObjectPool.integerOf(i), str);
         }
         return this;
     }
@@ -193,7 +193,7 @@ public final class ContactInfo extends Hashtable {
 
     /* renamed from: c */
     public final ContactInfo setMaritalStatus(int i) {
-        return i == 1 ? setMaritalSingle() : i == 2 ? setMaritalMarried() : setContactField(4, AppState.getString(StringResKeys.STR_RES_ARROW));
+        return i == 1 ? setMaritalSingle() : i == 2 ? setMaritalMarried() : setContactField(4, AppState.getString(PackedStringKeys.PLACEHOLDER_UNKNOWN));
     }
 
     /* renamed from: p */
@@ -386,7 +386,7 @@ public final class ContactInfo extends Hashtable {
         } else if (acct instanceof MmpProtocol) {
             String mmpId = getString(60);
             if (null != mmpId) {
-                screen.addLabelValue(Utils.appendSpace(AppState.getString(StringResKeys.STR_RES_QUESTION_MARK)), mmpId);
+                screen.addLabelValue(Utils.appendSpace(AppState.getString(PackedStringKeys.PREFIX_UIN)), mmpId);
             }
             for (int i5 = 0; i5 < 5; i5++) {
                 try {
@@ -414,7 +414,7 @@ public final class ContactInfo extends Hashtable {
                 screen.addLabelValue(AppState.getString(StringResKeys.STR_LABEL_WEBSITE), website);
             }
         } else if (acct instanceof XmppProtocol) {
-            Image image = (Image) get(ResourceManager.integerOf(25));
+            Image image = (Image) get(ObjectPool.integerOf(25));
             if (image != null) {
                 screen.addItem(MenuItem.createGraphics(new GraphicsContext(image)));
             }

@@ -17,7 +17,7 @@ public final class SoundPlayer {
             Object resource = IOUtils.registerResource((Object) byteArrayInputStream);
             AppState.pool[UIKeys.RANGE_MEDIA_RESOURCES_START] = resource;
             if (null != resource) {
-                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_2));
+                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, AppState.getString(PackedStringKeys.MIME_TYPE_MIDI));
                 AppState.pool[UIKeys.OBJ_MEDIA_PLAYER] = IOUtils.registerResource(playerCreatePlayer);
                 try {
                     playerCreatePlayer.realize();
@@ -25,7 +25,7 @@ public final class SoundPlayer {
                 }
                 if (AppState.getBool(SettingsKeys.SETTING_SOUND_ENABLED)) {
                     try {
-                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(AppState.getString(StringResKeys.STR_RES_MEDIA_CONTROL))).setLevel(AppState.getInt(SettingsKeys.SETTING_VOLUME_LEVEL));
+                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(AppState.getString(PackedStringKeys.MIDP_VOLUME_CONTROL))).setLevel(AppState.getInt(SettingsKeys.SETTING_VOLUME_LEVEL));
                     } catch (Throwable unused2) {
                     }
                 }

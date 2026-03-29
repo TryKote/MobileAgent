@@ -99,7 +99,7 @@ public final class MenuItem {
     /* renamed from: a */
     public static final MenuItem createCheckbox(String str, boolean z) {
         MenuItem item = new MenuItem(2, str).setIconAndLabel(z ? 25 : 24, str);
-        item.data = ResourceManager.booleanOf(z);
+        item.data = ObjectPool.booleanOf(z);
         return item;
     }
 
@@ -130,7 +130,7 @@ public final class MenuItem {
             if (i2 < 0) {
                 ObjectPool.releaseVector(vector);
                 MenuItem menuItem = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(247);
-                menuItem.data = new Object[]{ResourceManager.integerOf(i), strArr};
+                menuItem.data = new Object[]{ObjectPool.integerOf(i), strArr};
                 return menuItem;
             }
             strArr[i2] = (String) vector.elementAt(i2);
@@ -148,7 +148,7 @@ public final class MenuItem {
     public final int execute(ListView screen) {
         if (this.id == 2) {
             if (this.data != null) {
-                Boolean checked = ResourceManager.booleanOf(!((Boolean) this.data).booleanValue());
+                Boolean checked = ObjectPool.booleanOf(!((Boolean) this.data).booleanValue());
                 this.data = checked;
                 this.elements.setElementAt(createIconData(checked.booleanValue() ? 25 : 24), 0);
             }

@@ -227,7 +227,7 @@ public final class MmpProtocol extends Account {
         }
         Object[] cmdEntry = (Object[]) obj;
         ByteBuffer buffer = (ByteBuffer) cmdEntry[0];
-        cmdEntry[0] = ResourceManager.integerOf(buffer.readIntBEAt());
+        cmdEntry[0] = ObjectPool.integerOf(buffer.peekIntBEAt(12));
         this.extras.addElement(obj);
         return buffer;
     }
@@ -252,7 +252,7 @@ public final class MmpProtocol extends Account {
             case PROGRESS_STARTING:
                 AppController.needsRepaint = true;
                 this.msgCount = 10;
-                this.networkResourceMode = ResourceManager.checkForUpdates();
+                this.networkResourceMode = RegistrationService.checkForUpdates();
                 if (this.networkResourceMode != -1 || this.networkResourceMode == 1) {
                     this.progress = PROGRESS_CHECK_RESOURCES;
                     break;
@@ -286,7 +286,7 @@ public final class MmpProtocol extends Account {
                     break;
                 }
             case PROGRESS_WAIT_ACCOUNTS:
-                new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{this, ResourceManager.integerOf(0), this.login, getFormattedName()});
+                new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{this, ObjectPool.integerOf(0), this.login, getFormattedName()});
                 this.msgCount = 20;
                 this.progress = PROGRESS_WAIT_AUTH;
                 AppController.needsRepaint = true;
@@ -329,13 +329,13 @@ public final class MmpProtocol extends Account {
                         this.deadline = System.currentTimeMillis() + j;
                         incrementSync();
                         byte[] key = this.encryptionKey;
-                        sendData(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_HANDSHAKE).writeIntBE(1).writeShortBE(6).writeShortBE(key.length).writeBytes(key).updateLength());
+                        sendData(ProtocolFactory.updateMmpPacketLength(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_HANDSHAKE).writeIntBE(1).writeShortBE(6).writeShortBE(key.length).writeBytes(key)));
                         this.encryptionKey = null;
                         sendData(ProtocolFactory.createAuthData(this));
                         sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_PREFS, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_LOGIN_HEADER)));
-                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_AUTH_PACKET)), ResourceManager.integerOf(17)}));
+                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_AUTH_PACKET)), ObjectPool.integerOf(17)}));
                         this.contactListIndex = 0;
-                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.GET_CONTACT_LIST, (ByteBuffer) null), ResourceManager.integerOf(6)}));
+                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.GET_CONTACT_LIST, (ByteBuffer) null), ObjectPool.integerOf(6)}));
                         sendData(StringUtils.createContactInfoCmd(this, this.serverId));
                         this.progress = PROGRESS_PROCESSING;
                         break;
@@ -374,7 +374,7 @@ public final class MmpProtocol extends Account {
             this.msgCount = 90;
             if (packet.peekByteAt(1) == MmpCommand.PACKET_COMMAND) {
                 int commandId = (packet.peekByteAt(6) << 24) | (packet.peekByteAt(8) << 16) | (packet.peekByteAt(7) << 8) | packet.peekByteAt(9);
-                int seqNum = packet.readIntBEAt();
+                int seqNum = packet.peekIntBEAt(12);
                 int flags = packet.peekShortBE(10);
                 int headerFlags = packet.peekShortBE(10);
                 packet.skip(16);
@@ -394,7 +394,7 @@ public final class MmpProtocol extends Account {
                             } else {
                                 Object[] queuedCmd = (Object[]) vector.elementAt(size);
                                 if (((Integer) queuedCmd[1]).intValue() == 17) {
-                                    queuedCmd[0] = ResourceManager.integerOf(seqNum);
+                                    queuedCmd[0] = ObjectPool.integerOf(seqNum);
                                 }
                             }
                         }
@@ -425,7 +425,7 @@ public final class MmpProtocol extends Account {
                                 }
                             }
                             MrimAccount mrimAccount = (MrimAccount) AccountManager.getOnlineMrimAccounts().elementAt(0);
-                            mrimAccount.trySendData(ResourceManager.createAuthPacket(mrimAccount, this, authParam1, authParam2, authName, z, authData));
+                            mrimAccount.trySendData(mrimAccount.createAuthPacket(this, authParam1, authParam2, authName, z, authData));
                             break;
                         } catch (Throwable unused) {
                             break;
@@ -479,7 +479,7 @@ public final class MmpProtocol extends Account {
                         }
                         break;
                     case MmpCommand.MESSAGE_RECEIVED:
-                        ResourceManager.playNotificationSound(3);
+                        NotificationHelper.playNotificationSound(3);
                         onMessage(packet.readLenPrefixStr(), 0L, packet.readVarLenStr());
                         break;
                     case MmpCommand.AUTH_RECEIVED:
@@ -628,7 +628,7 @@ public final class MmpProtocol extends Account {
         if (wasHighlighted || !contact.highlighted) {
             return;
         }
-        ResourceManager.playNotificationSound(1);
+        NotificationHelper.playNotificationSound(1);
     }
 
     @Override // p000.Account
@@ -681,7 +681,7 @@ public final class MmpProtocol extends Account {
         }
         MmpContact contact = (MmpContact) contactParam;
         String str = (String) params[0];
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, contact.encodeContactUpdate(3, str, contact.onlineSemaphore)), ResourceManager.integerOf(0), contact, str}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, contact.encodeContactUpdate(3, str, contact.onlineSemaphore)), ObjectPool.integerOf(0), contact, str}));
     }
 
     /* renamed from: b */
@@ -694,7 +694,7 @@ public final class MmpProtocol extends Account {
         this.configFlags = i;
         if (isConnected()) {
             trySendData(sendContactListRequest(this.groupSequenceId));
-            trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ResourceManager.integerOf(17)}));
+            trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(268435456 | getConnectionModeValue())), ObjectPool.integerOf(17)}));
             return trySendData(ProtocolFactory.createAuthData(this));
         }
         if (isConnecting()) {
@@ -721,9 +721,9 @@ public final class MmpProtocol extends Account {
         if (0 != result) {
             return result;
         }
-        trySendData(ResourceManager.createGetContactsCmd(this));
+        trySendData(createGetContactsCmd());
         MmpContact contact = (MmpContact) contactParam;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(10), contact, groupParam, targetGroup}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ObjectPool.integerOf(10), contact, groupParam, targetGroup}));
     }
 
     @Override // p000.Account
@@ -734,7 +734,7 @@ public final class MmpProtocol extends Account {
             return result;
         }
         MmpContactGroup group = (MmpContactGroup) groupParam;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, group.createUpdatePacket(str, -1, -1)), ResourceManager.integerOf(1), group, str}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, group.createUpdatePacket(str, -1, -1)), ObjectPool.integerOf(1), group, str}));
     }
 
     @Override // p000.Account
@@ -744,8 +744,8 @@ public final class MmpProtocol extends Account {
         if (result != 0) {
             return result;
         }
-        trySendData(ResourceManager.createGetContactsCmd(this));
-        return trySendData(ResourceManager.sendAddGroupCommand(this, str));
+        trySendData(createGetContactsCmd());
+        return trySendData(sendAddGroupCommand(str));
     }
 
     @Override // p000.Account
@@ -755,9 +755,9 @@ public final class MmpProtocol extends Account {
         if (0 != result) {
             return result;
         }
-        trySendData(ResourceManager.createGetContactsCmd(this));
+        trySendData(createGetContactsCmd());
         MmpContactGroup group = (MmpContactGroup) groupParam;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, group.createUpdatePacket(group.name, -1, -1)), ResourceManager.integerOf(2), group}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, group.createUpdatePacket(group.name, -1, -1)), ObjectPool.integerOf(2), group}));
     }
 
     @Override // p000.Account
@@ -781,7 +781,7 @@ public final class MmpProtocol extends Account {
         if (contact.canBlock()) {
             trySendData(blockContact(this, contact));
         }
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ResourceManager.integerOf(5), contact}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.DELETE_CONTACT, contact.encodeContactUpdate(2, contact.displayName, contact.onlineSemaphore)), ObjectPool.integerOf(5), contact}));
     }
 
     @Override // p000.Account
@@ -796,11 +796,11 @@ public final class MmpProtocol extends Account {
         if (null != contact && !contact.isOnline()) {
             return trySendData(createSendMessageCmd(this, contact, str3));
         }
-        trySendData(ResourceManager.createGetContactsCmd(this));
+        trySendData(createGetContactsCmd());
         MmpContactGroup group = (MmpContactGroup) groupParam;
         ByteBuffer wrapperBuffer = new ByteBuffer().writeShortString(str).writeShortBE(group.groupId);
         int uniqueId = generateUniqueGroupId();
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, wrapperBuffer.writeShortBE(uniqueId).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ResourceManager.integerOf(14), str, str2, group, ResourceManager.integerOf(uniqueId), str3}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, wrapperBuffer.writeShortBE(uniqueId).writeShortBE(0).writeBufferShortLen(new ByteBuffer().writeShortBE(102).writeShortBE(0).writeShortBE(347).writeShortBE(1).writeByte(32).writeShortBE(305).writeUTF(str2))), ObjectPool.integerOf(14), str, str2, group, ObjectPool.integerOf(uniqueId), str3}));
     }
 
     /* renamed from: j */
@@ -911,11 +911,17 @@ public final class MmpProtocol extends Account {
         if (str.length() > 0) {
             searchBuffer.writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.parseInt((Object) str));
         } else {
-            searchBuffer.writeShortBE(12290).writeShortLE(1).writeByte(searchParams[1].length()).writeProtocolStr(21505, searchParams[2]).writeProtocolStr(16385, searchParams[3]).writeProtocolStr(18945, searchParams[4]).writeProtocolStr(24065, searchParams[5]).writeProtocolStr(36865, searchParams[6]).writeProtocolStr(9730, searchParams[7]);
+            searchBuffer.writeShortBE(12290).writeShortLE(1).writeByte(searchParams[1].length());
+            writeTaggedStr(searchBuffer, 21505, searchParams[2]);
+            writeTaggedStr(searchBuffer, 16385, searchParams[3]);
+            writeTaggedStr(searchBuffer, 18945, searchParams[4]);
+            writeTaggedStr(searchBuffer, 24065, searchParams[5]);
+            writeTaggedStr(searchBuffer, 36865, searchParams[6]);
+            writeTaggedStr(searchBuffer, 9730, searchParams[7]);
         }
         ByteBuffer wrapperBuffer = new ByteBuffer().writeShortBE(1);
         int i = searchBuffer.length;
-        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(searchBuffer)), ResourceManager.integerOf(9)}));
+        return trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(searchBuffer)), ObjectPool.integerOf(9)}));
     }
 
     @Override // p000.Account
@@ -927,7 +933,7 @@ public final class MmpProtocol extends Account {
         ByteBuffer queryBuffer = new ByteBuffer().writeIntLE(this.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1375).writeShortBE(13825).writeShortLE(4).writeIntLE(Utils.parseInt((Object) str));
         ByteBuffer wrapperBuffer = new ByteBuffer().writeShortBE(1);
         int i = queryBuffer.length;
-        trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(queryBuffer)), ResourceManager.integerOf(21)}));
+        trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, wrapperBuffer.writeShortBE(i + 2).writeShortLE(i).writeBuffer(queryBuffer)), ObjectPool.integerOf(21)}));
         return contact;
     }
 
@@ -995,7 +1001,7 @@ public final class MmpProtocol extends Account {
     }
 
     public final ByteBuffer sendContactListRequest(int i) {
-        return queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, new ByteBuffer().writeIntLE(0).writeShortBE(i).writeShortBE(4).writeShortBE(5).writeShortBE(202).writeShortBE(1).writeByte(getPendingVersion())), ResourceManager.integerOf(20)});
+        return queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, new ByteBuffer().writeIntLE(0).writeShortBE(i).writeShortBE(4).writeShortBE(5).writeShortBE(202).writeShortBE(1).writeByte(getPendingVersion())), ObjectPool.integerOf(20)});
     }
 
     public final void removeQueuedCommand(int i) {
@@ -1053,7 +1059,7 @@ public final class MmpProtocol extends Account {
                 int status3 = buf.readShortBE();
                 if (status3 == 0) {
                     removeGroup((ContactGroup) objArr[2]);
-                    trySendData(ResourceManager.createSyncGroupsCmd(this));
+                    trySendData(createSyncGroupsCmd());
                 } else {
                     EventDispatcher.postDeleteError(objArr, status3);
                 }
@@ -1063,7 +1069,7 @@ public final class MmpProtocol extends Account {
             case 3:
                 int status4 = buf.readShortBE();
                 if (status4 == 0) {
-                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(createSyncContactsCmd());
                 } else {
                     EventDispatcher.postOperationError(status4);
                 }
@@ -1074,7 +1080,7 @@ public final class MmpProtocol extends Account {
                 int status5 = buf.readShortBE();
                 if (status5 == 0) {
                     addGroup(new MmpContactGroup(this, ((Integer) objArr[3]).intValue(), (String) objArr[2]));
-                    trySendData(ResourceManager.createSyncGroupsCmd(this));
+                    trySendData(createSyncGroupsCmd());
                 } else {
                     EventDispatcher.postAddGroupError(objArr, status5);
                 }
@@ -1085,7 +1091,7 @@ public final class MmpProtocol extends Account {
                 int status6 = buf.readShortBE();
                 if (status6 == 0) {
                     removeContact((Contact) objArr[2], true);
-                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(createSyncContactsCmd());
                 } else {
                     EventDispatcher.postDeleteError(objArr, status6);
                 }
@@ -1129,11 +1135,11 @@ public final class MmpProtocol extends Account {
                             buf.skip(dataRemaining);
                             continue;
                         case 2:
-                            this.contactsByIdMap.put(name, ResourceManager.integerOf(contactId));
+                            this.contactsByIdMap.put(name, ObjectPool.integerOf(contactId));
                             buf.skip(dataRemaining);
                             continue;
                         case 3:
-                            this.contactGroupsMap.put(name, ResourceManager.integerOf(contactId));
+                            this.contactGroupsMap.put(name, ObjectPool.integerOf(contactId));
                             buf.skip(dataRemaining);
                             continue;
                         case 4:
@@ -1151,7 +1157,7 @@ public final class MmpProtocol extends Account {
                             buf.skip(dataRemaining);
                             continue;
                         case 14:
-                            this.additionalDataMap.put(name, ResourceManager.integerOf(contactId));
+                            this.additionalDataMap.put(name, ObjectPool.integerOf(contactId));
                             buf.skip(dataRemaining);
                             continue;
                     }
@@ -1176,7 +1182,7 @@ public final class MmpProtocol extends Account {
                                 sendData(sendContactListRequest(i4));
                             }
                             sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_TRANSFER_HEADER)));
-                            sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(this.serverId).writeShortLE(60).writeShortBE(0)), ResourceManager.integerOf(8)}));
+                            sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(this.serverId).writeShortLE(60).writeShortBE(0)), ObjectPool.integerOf(8)}));
                             Enumeration elements = this.contactMap.elements();
                             while (elements.hasMoreElements()) {
                                 Hashtable hashtable = this.contactsByIdMap;
@@ -1198,7 +1204,7 @@ public final class MmpProtocol extends Account {
                             this.contactGroupsMap.clear();
                             this.additionalDataMap.clear();
                             if (this.groups.size() == 0) {
-                                sendData(ResourceManager.sendAddGroupCommand(this, AppState.getString(StringResKeys.STR_RES_MENU_ITEM_2)));
+                                sendData(sendAddGroupCommand(AppState.getString(PackedStringKeys.XMPP_GROUP_GENERAL)));
                             }
                             this.progress = PROGRESS_CONNECTED;
                             this.msgCount = PROGRESS_CONNECTED;
@@ -1356,7 +1362,7 @@ public final class MmpProtocol extends Account {
                 if (status14 == 0) {
                     MmpContact mmpContact3 = (MmpContact) objArr[2];
                     MmpContactGroup srcGroup4 = (MmpContactGroup) objArr[3];
-                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, srcGroup4.createUpdatePacket(srcGroup4.name, mmpContact3.userId, -1)), ResourceManager.integerOf(11), mmpContact3, srcGroup4, objArr[4]}));
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, srcGroup4.createUpdatePacket(srcGroup4.name, mmpContact3.userId, -1)), ObjectPool.integerOf(11), mmpContact3, srcGroup4, objArr[4]}));
                 } else {
                     EventDispatcher.postRenameError(objArr, status14);
                 }
@@ -1369,7 +1375,7 @@ public final class MmpProtocol extends Account {
                     MmpContact mmpContact4 = (MmpContact) objArr[2];
                     Object obj4 = objArr[3];
                     MmpContactGroup destGroup5 = (MmpContactGroup) objArr[4];
-                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, mmpContact4.encodeContactUpdate(4, mmpContact4.displayName, destGroup5.groupId)), ResourceManager.integerOf(12), mmpContact4, obj4, destGroup5}));
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.ADD_CONTACT, mmpContact4.encodeContactUpdate(4, mmpContact4.displayName, destGroup5.groupId)), ObjectPool.integerOf(12), mmpContact4, obj4, destGroup5}));
                 } else {
                     EventDispatcher.postRenameError(objArr, status15);
                 }
@@ -1382,7 +1388,7 @@ public final class MmpProtocol extends Account {
                     MmpContact mmpContact5 = (MmpContact) objArr[2];
                     Object obj5 = objArr[3];
                     MmpContactGroup destGroup6 = (MmpContactGroup) objArr[4];
-                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup6.createUpdatePacket(destGroup6.name, -1, mmpContact5.userId)), ResourceManager.integerOf(13), mmpContact5, obj5, destGroup6}));
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup6.createUpdatePacket(destGroup6.name, -1, mmpContact5.userId)), ObjectPool.integerOf(13), mmpContact5, obj5, destGroup6}));
                 } else {
                     EventDispatcher.postRenameError(objArr, status16);
                 }
@@ -1398,7 +1404,7 @@ public final class MmpProtocol extends Account {
                     MmpContactGroup destGroup8 = (MmpContactGroup) objArr[4];
                     destGroup8.addContact((Object) mmpContact6);
                     mmpContact6.onlineSemaphore = destGroup8.groupId;
-                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(createSyncContactsCmd());
                 } else {
                     EventDispatcher.postRenameError(objArr, status17);
                 }
@@ -1409,7 +1415,7 @@ public final class MmpProtocol extends Account {
                 int status18 = buf.readShortBE();
                 if (status18 == 0) {
                     MmpContactGroup destGroup9 = (MmpContactGroup) objArr[4];
-                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup9.createUpdatePacket(destGroup9.name, -1, ((Integer) objArr[5]).intValue())), ResourceManager.integerOf(15), objArr[2], objArr[3], destGroup9, objArr[5], objArr[6]}));
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, destGroup9.createUpdatePacket(destGroup9.name, -1, ((Integer) objArr[5]).intValue())), ObjectPool.integerOf(15), objArr[2], objArr[3], destGroup9, objArr[5], objArr[6]}));
                 } else {
                     EventDispatcher.postRenameError(objArr, status18);
                 }
@@ -1422,10 +1428,10 @@ public final class MmpProtocol extends Account {
                     MmpContactGroup destGroup10 = (MmpContactGroup) objArr[4];
                     MmpContact mmpContact7 = new MmpContact(this, ((Integer) objArr[5]).intValue(), destGroup10.groupId, (String) objArr[2], (String) objArr[3], true);
                     destGroup10.addContact((Object) mmpContact7);
-                    trySendData(ResourceManager.createSyncContactsCmd(this));
-                    trySendData(ResourceManager.createGetContactsCmd(this));
-                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, mmpContact7.encodeContactUpdate(5, mmpContact7.displayName, mmpContact7.onlineSemaphore)), ResourceManager.integerOf(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], mmpContact7}));
-                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(createSyncContactsCmd());
+                    trySendData(createGetContactsCmd());
+                    trySendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.MODIFY_CONTACT, mmpContact7.encodeContactUpdate(5, mmpContact7.displayName, mmpContact7.onlineSemaphore)), ObjectPool.integerOf(16), objArr[2], objArr[3], objArr[4], objArr[5], objArr[6], mmpContact7}));
+                    trySendData(createSyncContactsCmd());
                 } else {
                     EventDispatcher.postRenameError(objArr, status19);
                 }
@@ -1435,7 +1441,7 @@ public final class MmpProtocol extends Account {
             case 16:
                 int status20 = buf.readShortBE();
                 if (status20 == 0) {
-                    trySendData(ResourceManager.createSyncContactsCmd(this));
+                    trySendData(createSyncContactsCmd());
                     trySendData(createSendMessageCmd(this, (MmpContact) objArr[7], (String) objArr[6]));
                 } else {
                     EventDispatcher.postRenameError(objArr, status20);
@@ -1507,15 +1513,22 @@ public final class MmpProtocol extends Account {
     }
 
     /* renamed from: a */
+    private static void writeTaggedStr(ByteBuffer buf, int tag, String str) {
+        int len = str.length();
+        if (len > 0) {
+            buf.writeShortBE(tag).writeShortLE(len + 3).writeShortLE(len + 1).writeCharBytes(str).writeByte(0);
+        }
+    }
+
     private static final ByteBuffer createContactCommand(MmpProtocol protocol, MmpContact mmpContact, int i) {
         ByteBuffer c0043nM1357m = new ByteBuffer().writeShortString(mmpContact.identifier).writeShortBE(0);
         int iM920k = protocol.generateUniqueGroupId();
-        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ResourceManager.integerOf(18), mmpContact, ResourceManager.integerOf(i), ResourceManager.integerOf(iM920k)});
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4872, c0043nM1357m.writeShortBE(iM920k).writeShortBE(i).writeShortBE(0)), ObjectPool.integerOf(18), mmpContact, ObjectPool.integerOf(i), ObjectPool.integerOf(iM920k)});
     }
 
     /* renamed from: a */
     private static final ByteBuffer updateContactCommand(MmpProtocol protocol, MmpContact mmpContact, int i, int i2) {
-        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4874, new ByteBuffer().writeShortString(mmpContact.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ResourceManager.integerOf(19), mmpContact, ResourceManager.integerOf(i2)});
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 4874, new ByteBuffer().writeShortString(mmpContact.identifier).writeShortBE(0).writeShortBE(i).writeShortBE(i2).writeShortBE(0)), ObjectPool.integerOf(19), mmpContact, ObjectPool.integerOf(i2)});
     }
 
     /* renamed from: a */
@@ -1677,5 +1690,32 @@ public final class MmpProtocol extends Account {
             buffer.skip(length);
         }
         handleError(-1);
+    }
+
+    ByteBuffer sendAddGroupCommand(String groupName) {
+        ByteBuffer groupBuffer = new ByteBuffer().writeUTF(groupName);
+        int groupId = generateUniqueGroupId();
+        return queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, 4872, groupBuffer.writeShortBE(groupId).writeShortBE(0).writeShortBE(1).writeShortBE(0)), ObjectPool.integerOf(4), groupName, ObjectPool.integerOf(groupId)});
+    }
+
+    ByteBuffer createGetContactsCmd() {
+        return ProtocolFactory.createMmpCommand(this, 4881, (ByteBuffer) null);
+    }
+
+    ByteBuffer createSyncContactsCmd() {
+        return ProtocolFactory.createMmpCommand(this, 4882, (ByteBuffer) null);
+    }
+
+    ByteBuffer createSyncGroupsCmd() {
+        Object[] cmdArgs = new Object[2];
+        ByteBuffer syncBuf = new ByteBuffer().writeIntLE(0).writeShortBE(0).writeShortBE(1);
+        int size = this.groups.size();
+        ByteBuffer syncBuf2 = syncBuf.writeShortBE((size << 1) + 4).writeShortBE(200).writeShortBE(size << 1);
+        for (int i = 0; i < size; i++) {
+            syncBuf2.writeShortBE(((MmpContactGroup) getGroup(i)).groupId);
+        }
+        cmdArgs[0] = ProtocolFactory.createMmpCommand(this, 4873, syncBuf2);
+        cmdArgs[1] = ObjectPool.integerOf(3);
+        return queueCommand(cmdArgs);
     }
 }

@@ -142,9 +142,9 @@ public final class Conversation implements ListItem {
                 if (((Integer) objArr[1]).intValue() == 0) {
                     protocol.msgCount = 30;
                     AppController.needsRepaint = true;
-                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(StringResKeys.STR_RES_HUGE_URL_5), protocol, 0);
+                    HttpClient httpClient = HttpClient.createHttpClient(AppState.getString(PackedStringKeys.URL_ICQ_CLIENT_LOGIN), protocol, 0);
                     httpClient.setRequestMethod(ObjectPool.unpackChars(1414745936));
-                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(PackedStringKeys.ICQ_AUTH_PARAMS).writeConversationStr(objArr[2]).writeCompressed(PackedStringKeys.PARAM_PWD).writeConversationStr(objArr[3]);
+                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(PackedStringKeys.ICQ_AUTH_PARAMS).writeRawString(percentEncode((String) objArr[2])).writeCompressed(PackedStringKeys.PARAM_PWD).writeRawString(percentEncode((String) objArr[3]));
                     ApiClient.setHeaderFromState(httpClient, 788628, 2164851);
                     httpClient.writeData(requestBody.data, requestBody.length);
                     int responseCode = httpClient.getResponseCode();
@@ -162,7 +162,7 @@ public final class Conversation implements ListItem {
                             throw new RuntimeException(StringUtils.intern(Integer.toString(statusCode)));
                         }
                         XmlElement resultElement = responseXml.findChildByKey(PackedStringKeys.TAG_DATA);
-                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{objArr[0], ResourceManager.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_LOGINID).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_TOKEN).findChildByKey(PackedStringKeys.TAG_A).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_HOSTTIME).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_SESSIONSECRET).textContent), objArr[3]});
+                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{objArr[0], ObjectPool.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_LOGINID).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_TOKEN).findChildByKey(PackedStringKeys.TAG_A).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_HOSTTIME).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_SESSIONSECRET).textContent), objArr[3]});
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
@@ -171,8 +171,8 @@ public final class Conversation implements ListItem {
                     protocol.msgCount = 50;
                     AppController.needsRepaint = true;
                     ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_OSCAR_SESSION).writeByte(63);
-                    String queryStr = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_A_EQ).writeConversationStr(objArr[3]).writeCompressed(PackedStringKeys.ICQ_OSCAR_PARAMS).writeObjectStr(objArr[4]).readAllByteStr();
-                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(AppState.getString(StringResKeys.STR_RES_HUGE_URL_8), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    String queryStr = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_A_EQ).writeRawString(percentEncode((String) objArr[3])).writeCompressed(PackedStringKeys.ICQ_OSCAR_PARAMS).writeObjectStr((String) objArr[4]).readAllByteStr();
+                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(AppState.getString(PackedStringKeys.URL_ICQ_OSCAR_SESSION), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
                     int responseCode2 = httpClient2.getResponseCode();
                     i = responseCode2;
                     if (responseCode2 == 200) {
@@ -218,7 +218,7 @@ public final class Conversation implements ListItem {
             int i2 = 0;
             while (true) {
                 try {
-                    int idx = str.indexOf(AppState.getString(StringResKeys.STR_RES_VERY_LONG_URL_1), i);
+                    int idx = str.indexOf(AppState.getString(PackedStringKeys.URL_MAPS_MAIL_RU), i);
                     if (idx < 0) {
                         break;
                     }
@@ -386,9 +386,9 @@ public final class Conversation implements ListItem {
         if ((flags & 8) == 0) {
             String decoded = decodeHtmlEntities(rawBody);
             StringBuffer sb = ObjectPool.newStringBuffer();
-            String openTag = AppState.getString(StringResKeys.STR_RES_PROTOCOL_TAG_6);
-            String midTag = AppState.getString(StringResKeys.STR_RES_HEADER_1);
-            String closeTag = AppState.getString(StringResKeys.STR_RES_XMPP_TAG_1);
+            String openTag = AppState.getString(PackedStringKeys.EMOTICON_OPEN_TAG);
+            String midTag = AppState.getString(PackedStringKeys.EMOTICON_ALT_ATTR);
+            String closeTag = AppState.getString(PackedStringKeys.EMOTICON_CLOSE_TAG);
             int i2 = 0;
             while (true) {
                 int i3 = i2;
@@ -458,7 +458,7 @@ public final class Conversation implements ListItem {
         boolean isNotify = (flags & 2048) != 0;
         boolean isGroupMsg = (flags & 8192) != 0;
         if ((flags & 4) == 0) {
-            account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(StringResKeys.STR_RES_LONG_URL_2) : sender).writeIntLE(msgId)));
+            account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? AppState.getString(PackedStringKeys.MRIM_SMS_ADDRESS) : sender).writeIntLE(msgId)));
         }
         if (isGroupMsg) {
             Enumeration elements = account.contactMap.elements();
@@ -483,7 +483,7 @@ public final class Conversation implements ListItem {
         MrimContact foundContact = account.findContactByIdentifier(sender);
         if ((flags & 8) != 0) {
             if (foundContact == null) {
-                ResourceManager.playNotificationSound(3);
+                NotificationHelper.playNotificationSound(3);
                 account.onMessage(sender, 0L, str);
                 return;
             } else if ((foundContact.statusFlags & 65536) == 0) {
@@ -491,7 +491,7 @@ public final class Conversation implements ListItem {
                 account.trySendData(ProtocolFactory.createPasswordAuthCmd(account, sender));
                 return;
             } else {
-                ResourceManager.playNotificationSound(3);
+                NotificationHelper.playNotificationSound(3);
                 account.onMessage(sender, 0L, str);
                 return;
             }
@@ -512,7 +512,7 @@ public final class Conversation implements ListItem {
     /* renamed from: p */
     private static final String decodeHtmlEntities(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String entityPrefix = AppState.getString(StringResKeys.STR_RES_LONG_LABEL_2);
+        String entityPrefix = AppState.getString(PackedStringKeys.EMOTICON_TAG_PREFIX);
         int i = 0;
         while (true) {
             int i2 = i;
@@ -646,7 +646,7 @@ public final class Conversation implements ListItem {
             account.progress = Account.PROGRESS_CONNECTED;
             account.msgCount = 100;
             account.setConfiguration(account.configFlags);
-            account.trySendData(ProtocolFactory.createMrimPacket(account, 4228, new ByteBuffer().writeVector((Vector) null).writeVector((Vector) null)));
+            account.trySendData(ProtocolFactory.createMrimPacket(account, 4228, new ByteBuffer().writeIntLE(4).writeIntLE(0).writeIntLE(4).writeIntLE(0)));
             if (account.syncSeq == 1) {
                 String searchQuery = StringUtils.intern(Utils.defaultStr(AppState.getString(SessionKeys.SLOT_SESSION_TOKEN)).toLowerCase());
                 if (!StringUtils.isEmpty(searchQuery)) {
@@ -693,10 +693,10 @@ public final class Conversation implements ListItem {
     public static final String urlEncode(Object obj) {
         String string = obj.toString().toString();
         StringBuffer sb = ObjectPool.newStringBuffer();
-        AppState.getString(StringResKeys.STR_RES_DASH_SEPARATOR);
-        AppState.getString(StringResKeys.STR_RES_SPACE_DASH_SPACE);
-        AppState.getString(StringResKeys.STR_RES_FIELD_NAME_1);
-        AppState.getString(StringResKeys.STR_RES_FIELD_NAME_2);
+        AppState.getString(PackedStringKeys.URL_ENCODE_D0);
+        AppState.getString(PackedStringKeys.URL_ENCODE_D1);
+        AppState.getString(PackedStringKeys.URL_ENCODE_YO_UPPER);
+        AppState.getString(PackedStringKeys.URL_ENCODE_YO_LOWER);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
@@ -715,10 +715,10 @@ public final class Conversation implements ListItem {
     public static final String urlEncodeCyrillic(Object obj) {
         String string = obj.toString();
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String hexPrefixLo = AppState.getString(StringResKeys.STR_RES_DASH_SEPARATOR);
-        String hexPrefixHi = AppState.getString(StringResKeys.STR_RES_SPACE_DASH_SPACE);
-        String yoUpper = AppState.getString(StringResKeys.STR_RES_FIELD_NAME_1);
-        String yoLower = AppState.getString(StringResKeys.STR_RES_FIELD_NAME_2);
+        String hexPrefixLo = AppState.getString(PackedStringKeys.URL_ENCODE_D0);
+        String hexPrefixHi = AppState.getString(PackedStringKeys.URL_ENCODE_D1);
+        String yoUpper = AppState.getString(PackedStringKeys.URL_ENCODE_YO_UPPER);
+        String yoLower = AppState.getString(PackedStringKeys.URL_ENCODE_YO_LOWER);
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);
@@ -758,8 +758,8 @@ public final class Conversation implements ListItem {
 
     /* renamed from: j */
     public static final String decodeHtmlSpecial(String str) {
-        Vector entityNames = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_API_URL_7));
-        Vector entityValues = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_COMMAND_1));
+        Vector entityNames = Utils.splitByNull(AppState.getString(PackedStringKeys.HTML_ENTITY_NAMES));
+        Vector entityValues = Utils.splitByNull(AppState.getString(PackedStringKeys.HTML_ENTITY_VALUES));
         StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
         int length2 = 0;
@@ -792,7 +792,7 @@ public final class Conversation implements ListItem {
     /* renamed from: k */
     public static final String transliterateRussian(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        Vector translitTable = Utils.splitByNull(AppState.getString(StringResKeys.STR_RES_MEGA_URL_3));
+        Vector translitTable = Utils.splitByNull(AppState.getString(PackedStringKeys.TRANSLIT_TABLE_BASIC));
         int length = str.length();
         for (int i = 0; i < length; i++) {
             char ch = str.charAt(i);

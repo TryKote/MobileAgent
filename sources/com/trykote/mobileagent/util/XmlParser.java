@@ -44,7 +44,7 @@ public final class XmlParser {
     private final int nextChar() {
         if (!(this.source instanceof String)) {
             if (!(this.source instanceof ByteBuffer)) {
-                return ResourceManager.readUtf8Char((Object[]) this.source);
+                return XmppProtocol.readUtf8Char((Object[]) this.source);
             }
             ByteBuffer buffer = (ByteBuffer) this.source;
             if (buffer.length == 0) {

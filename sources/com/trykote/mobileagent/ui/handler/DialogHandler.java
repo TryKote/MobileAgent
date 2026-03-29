@@ -136,7 +136,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 NotificationHelper.clearNotifications();
                 return;
             case ScreenId.PRIVACY_MODE:
-                ResourceManager.playNotificationSound(4);
+                NotificationHelper.playNotificationSound(4);
                 AppState.setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.PRIVACY_MODE);
                 AppState.setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, StringResKeys.STR_PRIVACY_MODE_BASE);
                 NotificationHelper.clearNotifications();
@@ -183,7 +183,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 NotificationHelper.showAlertById(173, 416);
                 return;
             case ScreenId.TRAFFIC_STATS:
-                ResourceManager.showTrafficStats();
+                TrafficAccounting.showTrafficStats();
                 return;
         }
         AppController.clearInitParamsAndReport();
@@ -202,7 +202,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.CONFIRM_EXIT:
                 return -1;
             case ScreenId.TRAFFIC_COST:
-                return ResourceManager.parseBalance();
+                return TrafficAccounting.parseBalance();
             case ScreenId.EMOTICON_DIALOG:
                 return handleAccountOption(action);
             case ScreenId.DELETE_CONFIRM:
@@ -225,7 +225,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.PRIVACY_MODE:
                 return handleHashKey();
             case ScreenId.STATUS_PREVIEW:
-                return ResourceManager.handleMessageInputAction(title, action);
+                return handleMessageInputAction(title, action);
             case ScreenId.PRESENCE_ACTION:
                 return AccountManager.handlePresenceAction();
             case ScreenId.BLOG_POST:
@@ -392,7 +392,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.PRIVACY_MODE:
                 return handleHashKey();
             case ScreenId.STATUS_PREVIEW:
-                return ResourceManager.handleMessageInputAction(title, selectedOption);
+                return handleMessageInputAction(title, selectedOption);
             case ScreenId.PRESENCE_ACTION:
                 return AccountManager.handlePresenceAction();
             case ScreenId.BLOG_POST:
@@ -421,7 +421,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 } else {
                     AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
                     Contact currentContact = AppState.getCurrentContact();
-                    nextState = !currentContact.account.isConnected() ? NotificationHelper.showError(299) : currentContact.isOffline() ? ResourceManager.clearSmsFields() : 63;
+                    nextState = !currentContact.account.isConnected() ? NotificationHelper.showError(299) : currentContact.isOffline() ? ContactListManager.clearSmsFields() : 63;
                 }
                 return nextState;
             case ScreenId.ASYNC_CONFIRM:
@@ -464,8 +464,8 @@ public final class DialogHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.DELETE_CONFIRM:
                 SocketWrapper.closeAll();
-                ResourceManager.clearImageCache();
-                ResourceManager.clearMathTables();
+                AppController.clearImageCache();
+                SoftFloat.clearMathTables();
                 System.gc();
                 try {
                     Thread.sleep(50);
@@ -478,7 +478,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.INPUT_DIALOG:
                 return 0;
             case ScreenId.STATUS_INPUT:
-                return ResourceManager.updateMessageInput();
+                return updateMessageInput();
             case ScreenId.SOFTKEY_MENU:
                 return 0;
             case ScreenId.EMOTICON_PICKER:
@@ -522,6 +522,61 @@ public final class DialogHandler extends BaseScreenHandler {
             ScreenManager.processScreenForm();
             AppState.setFromPool(UIKeys.SLOT_SCREEN_DESCRIPTION, UIKeys.SLOT_SCREEN_VALUE);
             AppController.clearInitParamsAndReport();
+        }
+    }
+
+    /* renamed from: a */
+    public static final int handleMessageInputAction(String str, int i) {
+        String messageText = Utils.defaultStr(AppState.getString(UIKeys.SLOT_STATUS_TEXT));
+        if (StringUtils.matchesKey(1060, str)) {
+            int sendResult = AppState.getCurrentContact().sendMessage(messageText);
+            if (0 != sendResult) {
+                ScreenBuilder.onScreenClosed();
+                return NotificationHelper.showError(sendResult);
+            }
+            AppState.setInt(UIKeys.FLAG_STATUS_TEXT_SET, 0);
+            AppState.clearIndex(UIKeys.SLOT_STATUS_TEXT);
+        } else if (StringUtils.matchesKey(473, str)) {
+            AppState.setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(AppState.getString(UIKeys.SLOT_NOTIFICATION_TEXT)));
+        } else if (StringUtils.matchesKey(474, str)) {
+            AppState.setObject(UIKeys.SLOT_NOTIFICATION_TEXT, (Object) messageText);
+            AppState.setBool(UIKeys.FLAG_RESOURCE_LOADING, true);
+        } else if (StringUtils.matchesKey(478, str)) {
+            AppState.setObject(UIKeys.SLOT_STATUS_TEXT, (Object) StringUtils.transliterate(messageText));
+        }
+        if (i == 93 || i == 123 || i == 95 || i == 94) {
+            return 0;
+        }
+        ScreenBuilder.onScreenClosed();
+        return 0;
+    }
+
+    /* renamed from: n */
+    public static final int updateMessageInput() {
+        try {
+            if (XmppContactGroup.getTextInputValue().length() != 0) {
+                XmppContactGroup.setTextInputScreen(1055, 1060);
+            } else {
+                XmppContactGroup.setTextInputScreen(1060, 1055);
+            }
+            if (AppState.getBool(SettingsKeys.SETTING_EXTENDED_PRESENCE)) {
+                int timestamp = AppState.getInt(RuntimeKeys.INT_CURRENT_TIMESTAMP);
+                if (Utils.abs(timestamp - AppState.getInt(RuntimeKeys.INT_LAST_CHECK_TIMESTAMP)) > 5000) {
+                    AppState.setInt(RuntimeKeys.INT_LAST_CHECK_TIMESTAMP, timestamp);
+                    int length = XmppContactGroup.getTextInputValue().length();
+                    if (length != AppState.getInt(RuntimeKeys.INT_LAST_LIST_SIZE) && Utils.abs(timestamp - AppState.getInt(RuntimeKeys.INT_LAST_POLL_TIMESTAMP)) > 10000) {
+                        Contact currentContact = AppState.getCurrentContact();
+                        if (!currentContact.isOnline() && !currentContact.hasUnread() && !currentContact.isOffline()) {
+                            currentContact.account.validateContactResend(currentContact);
+                        }
+                        AppState.setInt(RuntimeKeys.INT_LAST_POLL_TIMESTAMP, timestamp);
+                        AppState.setInt(RuntimeKeys.INT_LAST_LIST_SIZE, length);
+                    }
+                }
+            }
+            return 0;
+        } catch (Throwable unused) {
+            return 0;
         }
     }
 

@@ -1088,7 +1088,7 @@ public final class SoftFloat {
         long[] jArr3 = new long[20];
         int i14 = 0;
         while (i14 <= i13) {
-            jArr3[i14] = i12 < 0 ? 0L : longToFloat(ResourceManager.getPiMultiple(i12));
+            jArr3[i14] = i12 < 0 ? 0L : longToFloat(getPiMultiple(i12));
             i14++;
             i12++;
         }
@@ -1171,7 +1171,7 @@ public final class SoftFloat {
                         i28++;
                     }
                     for (int i29 = i17 + 1; i29 <= i17 + i28; i29++) {
-                        jArr3[i8 + i29] = longToFloat(ResourceManager.getPiMultiple(i10 + i29));
+                        jArr3[i8 + i29] = longToFloat(getPiMultiple(i10 + i29));
                         long s4 = 0;
                         for (int i30 = 0; i30 <= i8; i30++) {
                             s4 = add(s4, multiply(jArr2[i30], jArr3[(i8 + i29) - i30]));
@@ -1242,7 +1242,7 @@ public final class SoftFloat {
                 return 9221120237041090560L;
             }
             if (i3 != 2146435072 || ((int) j) == 0) {
-                return i2 > 0 ? ResourceManager.getTrigConstant(3) : negate(ResourceManager.getTrigConstant(3));
+                return i2 > 0 ? getTrigConstant(3) : negate(getTrigConstant(3));
             }
             return 9221120237041090560L;
         }
@@ -1276,7 +1276,7 @@ public final class SoftFloat {
         if (i < 0) {
             return subtract(j, multiply(j, add(t3, t4)));
         }
-        long lo = subtract(ResourceManager.getTrigConstant(i), subtract(subtract(multiply(j, add(t3, t4)), ResourceManager.getTrigConstant(i + 4)), j));
+        long lo = subtract(getTrigConstant(i), subtract(subtract(multiply(j, add(t3, t4)), getTrigConstant(i + 4)), j));
         return i2 < 0 ? negate(lo) : lo;
     }
 
@@ -1290,6 +1290,49 @@ public final class SoftFloat {
 
     public final boolean equals(Object obj) {
         return obj instanceof SoftFloat;
+    }
+
+    public static void initMathTables() {
+        AppState.pool[StringResKeys.RES_LOG_BASE_TABLE] = readLongArray(986);
+        AppState.pool[StringResKeys.RES_POW_BASE_TABLE] = readLongArray(987);
+        AppState.pool[StringResKeys.RES_MULTIPLY_COEFFICIENTS] = readLongArray(990);
+        AppState.pool[StringResKeys.RES_LOOKUP_TABLE] = readLongArray(991);
+        AppState.pool[StringResKeys.RES_SHORT_INDEX_TABLE_2] = Utils.readShortArray(989);
+        AppState.pool[StringResKeys.RES_SHORT_INDEX_TABLE_1] = Utils.readShortArray(988);
+        AppState.pool[StringResKeys.RES_PALETTE_MAP_1] = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_PALETTE_MAP_1));
+        AppState.pool[StringResKeys.RES_PALETTE_MAP_2] = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_PALETTE_MAP_2));
+        AppState.pool[StringResKeys.RES_ICON_MAP] = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_ICON_MAP));
+    }
+
+    public static void clearMathTables() {
+        AppState.clearRange(StringResKeys.STR_INFINITY, StringResKeys.RES_PALETTE_MAP_2);
+    }
+
+    private static long[] readLongArray(int resourceKey) {
+        byte[] bytes = AppState.getBytes(resourceKey);
+        int length = bytes.length >> 3;
+        long[] result = new long[length];
+        int byteIndex = 0;
+        int arrayIndex = 0;
+        while (arrayIndex < length) {
+            long value = 0;
+            do {
+                value = (value << 8) | (bytes[byteIndex] & 255);
+                byteIndex++;
+            } while ((byteIndex & 7) != 0);
+            result[arrayIndex] = value;
+            arrayIndex++;
+        }
+        ObjectPool.releaseBytes(bytes);
+        return result;
+    }
+
+    static long getTrigConstant(int index) {
+        return ((long[]) AppState.pool[StringResKeys.RES_LOOKUP_TABLE])[index];
+    }
+
+    static int getPiMultiple(int index) {
+        return ((int[]) AppState.pool[StringResKeys.RES_PALETTE_MAP_1])[index];
     }
 
     /* renamed from: k */

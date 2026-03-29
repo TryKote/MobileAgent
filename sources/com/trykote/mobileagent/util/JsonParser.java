@@ -167,7 +167,7 @@ public abstract class JsonParser {
         }
         stringBuffer.append(next);
         String text = ObjectPool.toStringAndRelease(sb);
-        return StringUtils.matchesKey(PackedStringKeys.VALUE_TRUE, text) ? ResourceManager.boolTrue : StringUtils.matchesKey(PackedStringKeys.VALUE_FALSE, text) ? ResourceManager.boolFalse : StringUtils.matchesKey(1369, text) ? ResourceManager.syncObject : ResourceManager.integerOf(Utils.parseInt((Object) text));
+        return StringUtils.matchesKey(PackedStringKeys.VALUE_TRUE, text) ? ObjectPool.boolTrue : StringUtils.matchesKey(PackedStringKeys.VALUE_FALSE, text) ? ObjectPool.boolFalse : StringUtils.matchesKey(1369, text) ? ObjectPool.JSON_NULL : ObjectPool.integerOf(Utils.parseInt((Object) text));
     }
 
     /* renamed from: c */
@@ -188,7 +188,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     public static final void putIntValue(Hashtable hashtable, String str, int i) {
-        hashtable.put(str, ResourceManager.integerOf(i));
+        hashtable.put(str, ObjectPool.integerOf(i));
     }
 
     /* renamed from: a */
@@ -223,7 +223,7 @@ public abstract class JsonParser {
 
     /* renamed from: d */
     public static final void addIntToVector(Object obj, int i) {
-        ((Vector) obj).addElement(ResourceManager.integerOf(i));
+        ((Vector) obj).addElement(ObjectPool.integerOf(i));
     }
 
     /* renamed from: e */
@@ -243,7 +243,7 @@ public abstract class JsonParser {
 
     /* renamed from: a */
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
-        if (obj == null || obj == ResourceManager.syncObject) {
+        if (obj == null || obj == ObjectPool.JSON_NULL) {
             stringBuffer.append(AppState.getString(StringResKeys.STR_SEPARATOR));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);

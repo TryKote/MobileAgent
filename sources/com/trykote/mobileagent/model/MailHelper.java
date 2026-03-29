@@ -218,21 +218,21 @@ public final class MailHelper {
             getFirstRecipient(toList);
             String subject = message.getSubject();
             String str = message.body;
-            String replyPrefix = AppState.getString(StringResKeys.STR_RES_HTTPS_PREFIX);
-            String fwdPrefix = AppState.getString(StringResKeys.STR_RES_HTTP_PREFIX);
+            String replyPrefix = AppState.getString(PackedStringKeys.PREFIX_REPLY);
+            String fwdPrefix = AppState.getString(PackedStringKeys.PREFIX_FORWARD);
             String string = new StringBuffer().append(AppState.getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(str)).toString();
             switch (AppState.getInt(RuntimeKeys.INT_XMPP_ACTION_TYPE)) {
                 case 0:
-                    ResourceManager.composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
+                    composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
                     break;
                 case 1:
-                    ResourceManager.composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
+                    composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
                     break;
                 case 2:
-                    ResourceManager.composeEmail(ObjectPool.newVector(), new StringBuffer().append(fwdPrefix).append(subject).toString(), string);
+                    composeEmail(ObjectPool.newVector(), new StringBuffer().append(fwdPrefix).append(subject).toString(), string);
                     break;
                 case 3:
-                    ResourceManager.composeEmail(copyAddressList(ccList), subject, str);
+                    composeEmail(copyAddressList(ccList), subject, str);
                     break;
             }
         }
@@ -251,8 +251,8 @@ public final class MailHelper {
         Vector ccList = message.getCcList();
         getFirstRecipient(toList);
         boolean needsAuth = AppState.getBool(SettingsKeys.SETTING_AUTH_REQUIRED);
-        String replyPrefix = AppState.getString(StringResKeys.STR_RES_HTTPS_PREFIX);
-        String forwardPrefix = AppState.getString(StringResKeys.STR_RES_HTTP_PREFIX);
+        String replyPrefix = AppState.getString(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = AppState.getString(PackedStringKeys.PREFIX_FORWARD);
         String body = AppState.emptyStr;
         if (i == 48) {
             ScreenBuilder.onScreenClosed();
@@ -260,21 +260,21 @@ public final class MailHelper {
         }
         if (StringUtils.matchesKey(839, str)) {
             if (!needsAuth) {
-                return ResourceManager.composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
+                return composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
             }
             setMailAction(54, 0);
             return 0;
         }
         if (StringUtils.matchesKey(840, str)) {
             if (!needsAuth) {
-                return ResourceManager.composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
+                return composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
             }
             setMailAction(54, 1);
             return 0;
         }
         if (StringUtils.matchesKey(841, str)) {
             if (!needsAuth) {
-                return ResourceManager.composeEmail(ObjectPool.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
+                return composeEmail(ObjectPool.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
             }
             setMailAction(54, 2);
             return 0;
@@ -303,19 +303,19 @@ public final class MailHelper {
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String strM584b2 = AppState.getString(StringResKeys.STR_RES_HTTPS_PREFIX);
-        String strM584b3 = AppState.getString(StringResKeys.STR_RES_HTTP_PREFIX);
+        String strM584b2 = AppState.getString(PackedStringKeys.PREFIX_REPLY);
+        String strM584b3 = AppState.getString(PackedStringKeys.PREFIX_FORWARD);
         String str2 = ((MrimAccount) AppState.getAccount()).login;
         wrapInVector(strM584b);
         if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
-            ResourceManager.composeEmail(getFirstAddress(toList), StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+            composeEmail(getFirstAddress(toList), StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
             return 0;
         }
         if (!StringUtils.matchesKey(840, str)) {
             if (StringUtils.matchesKey(841, str)) {
                 ScreenBuilder.onScreenClosed();
-                ResourceManager.composeEmail(ObjectPool.newVector(), StringUtils.concat(strM584b3, subject), Utils.quoteText(message.body));
+                composeEmail(ObjectPool.newVector(), StringUtils.concat(strM584b3, subject), Utils.quoteText(message.body));
                 return 0;
             }
             if (!StringUtils.matchesKey(845, str)) {
@@ -338,7 +338,7 @@ public final class MailHelper {
                 break;
             }
         }
-        ResourceManager.composeEmail(vectorM865a, StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+        composeEmail(vectorM865a, StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
         return 0;
     }
 
@@ -351,5 +351,21 @@ public final class MailHelper {
 
     public static String[] createAddressPair(String address1, String address2) {
         return new String[]{address1, address2};
+    }
+
+    public static int composeEmail(Vector recipients, String subject, String bodyText) {
+        StringBuffer recipientsSb = ObjectPool.newStringBuffer();
+        String empty = AppState.emptyStr;
+        String separator = ObjectPool.unpackChars(8236);
+        int i = 0;
+        while (i < Utils.vectorSize(recipients)) {
+            recipientsSb.append(i > 0 ? separator : empty).append(((String[]) recipients.elementAt(i))[0]);
+            i++;
+        }
+        AppState.setObject(RuntimeKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
+        AppState.setObject(RuntimeKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(subject));
+        String empty2 = AppState.emptyStr;
+        AppState.setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(AppState.getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : empty2).append(AppState.getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : empty2).append(Utils.defaultStr(bodyText)).append(AppState.getString(StringResKeys.STR_TRAFFIC_LABEL)));
+        return ScreenId.COMPOSE_MESSAGE;
     }
 }

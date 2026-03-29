@@ -47,16 +47,16 @@ abstract class StateCodec {
             return decoded;
         }
         if ((flag & FLAG_SMALL_INT) != 0) {
-            return ResourceManager.integerOf(flag & MASK_SMALL_VALUE);
+            return ObjectPool.integerOf(flag & MASK_SMALL_VALUE);
         }
         if ((flag & FLAG_MEDIUM_INT) != 0) {
-            return ResourceManager.integerOf(((flag & MASK_MEDIUM_HIGH) << 8) + buffer.readUByte());
+            return ObjectPool.integerOf(((flag & MASK_MEDIUM_HIGH) << 8) + buffer.readUByte());
         }
         int value = 0;
         for (int bytesRemaining = flag & MASK_BYTE_COUNT; bytesRemaining > 0; bytesRemaining--) {
             value = (value << 8) + buffer.readUByte();
         }
-        return ResourceManager.integerOf(value);
+        return ObjectPool.integerOf(value);
     }
 
     static int decodeInt(ByteBuffer buffer) {

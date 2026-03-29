@@ -28,7 +28,7 @@ public abstract class Utils {
     public static final long parseDateTime(String str) {
         Vector parts = splitImpl(str, ' ', false);
         int day = parseInt(parts.elementAt(1));
-        int idx = AppState.getString(StringResKeys.STR_RES_HUGE_URL_4).indexOf(getVectorString(parts, 2)) / 3;
+        int idx = AppState.getString(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
         int year = parseInt(parts.elementAt(3));
         String timeStr = getVectorString(parts, 4);
         ObjectPool.releaseVector(parts);

@@ -388,7 +388,7 @@ public abstract class ScreenManager {
             case ITEM_TEXT_INPUT:
                 if (screenId == 49) {
                     int dataKey = AppState.getInt(pos++);
-                    itemData = (dataKey < 268 || dataKey > 304) ? (dataKey < 161 || dataKey > 210) ? AppState.getString(dataKey) : ResourceManager.integerOf(dataKey) : ResourceManager.integerOf(dataKey);
+                    itemData = (dataKey < 268 || dataKey > 304) ? (dataKey < 161 || dataKey > 210) ? AppState.getString(dataKey) : ObjectPool.integerOf(dataKey) : ObjectPool.integerOf(dataKey);
                 } else {
                     itemData = Utils.defaultStr(AppState.getString(AppState.getInt(pos++)));
                 }
@@ -403,7 +403,7 @@ public abstract class ScreenManager {
                 } else {
                     title = Utils.defaultStr(Utils.defaultStr(AppState.getString(AppState.getInt(pos++))));
                 }
-                screen.addItem(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, title, ResourceManager.integerOf(inputType), ResourceManager.integerOf(validationType), hintText));
+                screen.addItem(new MenuItem(15, obj instanceof String ? (String) obj : AppState.emptyStr).setAction(obj, title, ObjectPool.integerOf(inputType), ObjectPool.integerOf(validationType), hintText));
                 return pos;
             case ITEM_LABEL_SEPARATOR:
                 screen.addItem(MenuItem.createSeparator().setLabel(Utils.defaultStr(AppState.getString(AppState.getInt(pos++)))));

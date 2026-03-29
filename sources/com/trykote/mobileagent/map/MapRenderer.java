@@ -171,11 +171,11 @@ public abstract class MapRenderer {
             int zoomLevel = AppState.getInt(MapKeys.MAP_ZOOM_LEVEL);
             for (int i15 = i9; i15 <= i11; i15++) {
                 for (int i16 = i10; i16 <= i12; i16++) {
-                    ResourceManager tile = new ResourceManager(1, zoomLevel, i15, i16);
-                    ResourceManager overlayTile = null;
+                    TileRequest tile = new TileRequest(TileRequest.TYPE_MAP, zoomLevel, i15, i16);
+                    TileRequest overlayTile = null;
                     visibleTiles.addElement(tile);
                     if (AppState.getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && zoomLevel > 8 && AppState.getBool(MapKeys.MAP_GPS_ENABLED) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
-                        ResourceManager newOverlayTile = new ResourceManager(3, zoomLevel, i15, i16);
+                        TileRequest newOverlayTile = new TileRequest(TileRequest.TYPE_OVERLAY, zoomLevel, i15, i16);
                         overlayTile = newOverlayTile;
                         visibleTiles.addElement(newOverlayTile);
                     }
@@ -225,12 +225,12 @@ public abstract class MapRenderer {
             Vector loadedTiles = AppState.getVector(MapKeys.SLOT_MAP_DATA);
             int size3 = visibleTiles.size();
             for (int i21 = 0; i21 < size3; i21++) {
-                ResourceManager visibleTile = (ResourceManager) visibleTiles.elementAt(i21);
+                TileRequest visibleTile = (TileRequest) visibleTiles.elementAt(i21);
                 if (!loadedTiles.contains(visibleTile)) {
                     int i22 = visibleTile.tileType;
-                    if (i22 == 1) {
+                    if (i22 == TileRequest.TYPE_MAP) {
                         AppState.addInt(MapKeys.COUNTER_MAP_CACHE_HIT, 1);
-                    } else if (i22 == 3) {
+                    } else if (i22 == TileRequest.TYPE_OVERLAY) {
                         AppState.addInt(MapKeys.COUNTER_MAP_CACHE_MISS, 1);
                     }
                     loadedTiles.addElement(visibleTile);

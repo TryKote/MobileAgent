@@ -367,7 +367,7 @@ public final class ListView {
         if (this.titleRight != null) {
             g.drawString(this.titleRight, screenWidth - 1, screenHeight, 24);
         }
-        if (ResourceManager.clockWidth + this.titleMaxWidth < screenWidth - 6) {
+        if (AppController.clockWidth + this.titleMaxWidth < screenWidth - 6) {
             g.drawString(Utils.defaultStr(AppState.getString(UIKeys.SLOT_CLOCK_STRING)), screenWidth >> 1, screenHeight, 17);
         }
     }

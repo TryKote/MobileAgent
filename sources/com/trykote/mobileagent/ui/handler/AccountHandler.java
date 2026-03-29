@@ -59,7 +59,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MULTI_ACCOUNT_SETTINGS));
                 return;
             case ScreenId.MAIL_ACCOUNT_LIST:
-                ResourceManager.showMailAccountList();
+                showMailAccountList();
                 return;
             case ScreenId.ACCOUNT_CHECKBOX_LIST: {
                 Vector accountList = AppState.getVector(SessionKeys.VEC_FILTERED_ACCOUNTS);
@@ -184,7 +184,7 @@ public final class AccountHandler extends BaseScreenHandler {
                         }
                     }
                 }
-                ResourceManager.showWiFiNetworks();
+                MiscHandler.showWiFiNetworks();
                 return;
         }
     }
@@ -257,7 +257,7 @@ public final class AccountHandler extends BaseScreenHandler {
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 return 0;
             case ScreenId.MAIL_ACCOUNT_LIST:
-                return ResourceManager.selectMailAccount(data);
+                return selectMailAccount(data);
             case ScreenId.ACCOUNT_CHECKBOX_LIST:
                 return 0;
             case ScreenId.SUBMIT_REGISTRATION:
@@ -316,7 +316,7 @@ public final class AccountHandler extends BaseScreenHandler {
             case ScreenId.MULTI_ACCOUNT_SETTINGS:
                 return 0;
             case ScreenId.MAIL_ACCOUNT_LIST:
-                return ResourceManager.selectMailAccount(data);
+                return selectMailAccount(data);
             case ScreenId.ACCOUNT_CHECKBOX_LIST:
                 return AccountManager.handleAction(data);
             case ScreenId.SUBMIT_REGISTRATION:
@@ -336,6 +336,37 @@ public final class AccountHandler extends BaseScreenHandler {
             case ScreenId.WIFI_ACCOUNT_LIST:
                 return handleItemAction(data);
         }
+        return 0;
+    }
+
+    /* renamed from: k */
+    public static final void showMailAccountList() {
+        AppState.clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
+        ListView screen = ScreenManager.createScreen(ScreenDef.GENERIC_LIST);
+        Vector accounts = AccountManager.getMrimAccountList();
+        int size = accounts.size();
+        if (size > 0) {
+            screen.addLabelById(832);
+            for (int i = 0; i < size; i++) {
+                screen.addItem(((MrimAccount) accounts.elementAt(i)).createMenuItem());
+            }
+        } else {
+            screen.selectable = false;
+            screen.addLabelById(551);
+        }
+        ObjectPool.releaseVector(accounts);
+        ScreenManager.pushScreen(screen);
+        TabBar.ensureSettingsTab();
+        TabBar.findTab(36, (Account) null);
+    }
+
+    /* renamed from: c */
+    public static final int selectMailAccount(Object obj) {
+        if (obj == null) {
+            return -1;
+        }
+        AppState.setInt(UIKeys.INT_SCREEN_ACTION, 38);
+        AppState.setAccount(obj);
         return 0;
     }
 
