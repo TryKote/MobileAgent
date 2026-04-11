@@ -15,7 +15,15 @@ TEST_CFG = config/test_account.cfg
 TEST_SRC = $(SRC)/com/trykote/mobileagent/util/TestConfig.java
 SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java' ! -name 'TestConfig.java')
 
-.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys
+# Editor
+EDITOR_SRC  = editor/src
+EDITOR_BUILD = $(BUILD)/editor
+JAVAFX_DIR  = /usr/lib/jvm/java-21-openjdk/lib
+JAVAFX_CP   = $(JAVAFX_DIR)/javafx.base.jar:$(JAVAFX_DIR)/javafx.controls.jar:$(JAVAFX_DIR)/javafx.fxml.jar:$(JAVAFX_DIR)/javafx.graphics.jar
+JAVAFX_MODS = javafx.controls,javafx.fxml
+EDITOR_SOURCES = $(shell find $(EDITOR_SRC) -name '*.java')
+
+.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys editor
 
 all: jar
 
@@ -96,6 +104,14 @@ palette-keys:
 
 gen-keys:
 	python3 tools/cfg_tool.py --gen-keys $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/
+
+editor: $(BUILD)/.editor
+	java -Dglass.gtk.uiScale=2.0 --module-path $(JAVAFX_CP) --add-modules $(JAVAFX_MODS) -cp $(EDITOR_BUILD) com.trykote.editor.EditorApp $(RESOURCES_SRC)
+
+$(BUILD)/.editor: $(EDITOR_SOURCES)
+	@mkdir -p $(EDITOR_BUILD)
+	javac --module-path $(JAVAFX_CP) --add-modules $(JAVAFX_MODS) -d $(EDITOR_BUILD) -encoding UTF-8 $(EDITOR_SOURCES)
+	@touch $@
 
 clean:
 	rm -rf $(BUILD)

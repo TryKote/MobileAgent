@@ -1,0 +1,509 @@
+{
+  "1": {
+    "name": "open_menu",
+    "description": "Open main menu"
+  },
+  "4": {
+    "name": "cancel",
+    "description": "Cancel / go back (alternative)"
+  },
+  "6": {
+    "name": "select",
+    "description": "Select / confirm (alternative)"
+  },
+  "12": {
+    "name": "back",
+    "description": "Navigate back"
+  },
+  "20": {
+    "name": "map_menu",
+    "description": "Open map menu"
+  },
+  "25": {
+    "name": "save",
+    "description": "Save settings"
+  },
+  "34": {
+    "name": "reset_stats",
+    "description": "Reset traffic statistics"
+  },
+  "37": {
+    "name": "select_generic",
+    "description": "Select from generic list"
+  },
+  "40": {
+    "name": "send",
+    "description": "Send message / add member"
+  },
+  "41": {
+    "name": "submit_form",
+    "description": "Submit input form"
+  },
+  "42": {
+    "name": "select_dialog",
+    "description": "Select dialog option"
+  },
+  "43": {
+    "name": "back_preview",
+    "description": "Back from message preview"
+  },
+  "44": {
+    "name": "search",
+    "description": "Initiate search"
+  },
+  "48": {
+    "name": "contact_details_extra",
+    "description": "Contact details extra action"
+  },
+  "51": {
+    "name": "actions",
+    "description": "Open actions menu"
+  },
+  "53": {
+    "name": "message_actions",
+    "description": "Message preview actions"
+  },
+  "57": {
+    "name": "check_update",
+    "description": "Check for updates"
+  },
+  "63": {
+    "name": "select_detail",
+    "description": "Select detail / server address"
+  },
+  "65": {
+    "name": "open_url",
+    "description": "Open URL"
+  },
+  "66": {
+    "name": "add_contact_from_search",
+    "description": "Add contact from search results"
+  },
+  "79": {
+    "name": "back_compose",
+    "description": "Back from compose message"
+  },
+  "80": {
+    "name": "form_actions",
+    "description": "Input form actions"
+  },
+  "81": {
+    "name": "search_results_search",
+    "description": "Search again from results"
+  },
+  "82": {
+    "name": "send_message",
+    "description": "Send composed message"
+  },
+  "87": {
+    "name": "phone_group_actions",
+    "description": "Phone groups actions"
+  },
+  "88": {
+    "name": "generic_menu",
+    "description": "Generic list menu"
+  },
+  "92": {
+    "name": "message_summary_actions",
+    "description": "Message summary actions"
+  },
+  "103": {
+    "name": "search_result_extra",
+    "description": "Search result list extra"
+  },
+  "111": {
+    "name": "send_tooltip",
+    "description": "Send from map tooltip"
+  },
+  "113": {
+    "name": "select_form",
+    "description": "Select form list item"
+  },
+  "118": {
+    "name": "select_route",
+    "description": "Select map route"
+  },
+  "141": {
+    "name": "send_file",
+    "description": "Send selected file"
+  },
+  "145": {
+    "name": "group_members_extra",
+    "description": "Group members extra action"
+  },
+  "151": {
+    "name": "save_contact_info",
+    "description": "Save contact info"
+  },
+  "154": {
+    "name": "select_location",
+    "description": "Select saved location"
+  },
+  "157": {
+    "name": "continue_setup",
+    "description": "Continue initial setup"
+  },
+  "171": {
+    "name": "confirm_profile",
+    "description": "Confirm profile edit"
+  },
+  "173": {
+    "name": "select_mrim_account",
+    "description": "Select MRIM account"
+  },
+  "199": {
+    "name": "confirm",
+    "description": "Confirm / select (primary)"
+  },
+  "3": {
+    "name": "выбрать",
+    "description": "Выбрать",
+    "screens": [
+      "VERSION_SELECT"
+    ]
+  },
+  "338": {
+    "name": "болею",
+    "description": "Болею",
+    "screens": [
+      "MAP_OPTIONS"
+    ]
+  },
+  "344": {
+    "name": "водные_процедуры",
+    "description": "Водные процедуры",
+    "screens": [
+      "VIEW_MODE"
+    ]
+  },
+  "345": {
+    "name": "сплю",
+    "description": "Сплю",
+    "screens": [
+      "GPS_SETTINGS"
+    ]
+  },
+  "346": {
+    "name": "в_магазине",
+    "description": "В магазине",
+    "screens": [
+      "GPS_SETTINGS"
+    ]
+  },
+  "369": {
+    "name": "телефон",
+    "description": "Телефон",
+    "screens": [
+      "MAP_OPTIONS"
+    ]
+  },
+  "376": {
+    "name": "морской_зверь",
+    "description": "Морской зверь",
+    "screens": [
+      "MAP_STATUS"
+    ]
+  },
+  "377": {
+    "name": "морской_зверь",
+    "description": "Морской зверь",
+    "screens": [
+      "MAP_STATUS"
+    ]
+  },
+  "399": {
+    "name": "музыка",
+    "description": "Музыка",
+    "screens": [
+      "PEOPLE_SEARCH"
+    ]
+  },
+  "413": {
+    "name": "в_поисках...",
+    "description": "В поисках...",
+    "screens": [
+      "WIFI_ACCOUNT_LIST"
+    ]
+  },
+  "471": {
+    "name": "здравствуйте,_",
+    "description": "Здравствуйте, ",
+    "screens": [
+      "STATUS_PREVIEW"
+    ]
+  },
+  "472": {
+    "name": "с_уважением",
+    "description": "С уважением",
+    "screens": [
+      "STATUS_PREVIEW"
+    ]
+  },
+  "500": {
+    "name": "action_500",
+    "description": "Музыка, Я в пробке. Буду через   мин., Кино",
+    "screens": [
+      "GPS_SETTINGS",
+      "MAP_VIEW_SETTINGS",
+      "THEME_OPTIONS"
+    ]
+  },
+  "502": {
+    "name": "сплю",
+    "description": "Сплю",
+    "screens": [
+      "KEY_MAPPING"
+    ]
+  },
+  "509": {
+    "name": "секс",
+    "description": "Секс",
+    "screens": [
+      "ACCOUNT_LIST"
+    ]
+  },
+  "528": {
+    "name": "в_туалете",
+    "description": "В туалете",
+    "screens": [
+      "GROUP_MANAGEMENT"
+    ]
+  },
+  "536": {
+    "name": "пиво",
+    "description": "Пиво",
+    "screens": [
+      "STATUS_PREVIEW"
+    ]
+  },
+  "544": {
+    "name": "как_твои_дела?",
+    "description": "Как твои дела?",
+    "screens": [
+      "MAP_MENU"
+    ]
+  },
+  "665": {
+    "name": "курю",
+    "description": "Курю",
+    "screens": [
+      "MAP_VIEW_SETTINGS"
+    ]
+  },
+  "668": {
+    "name": "я_пришелец",
+    "description": "Я пришелец",
+    "screens": [
+      "MAP_VIEW_SETTINGS"
+    ]
+  },
+  "697": {
+    "name": "учетная_запись_jabber",
+    "description": "Учетная запись Jabber",
+    "screens": [
+      "ACCOUNT_SETUP"
+    ]
+  },
+  "700": {
+    "name": "думаю",
+    "description": "Думаю",
+    "screens": [
+      "ACCOUNTS_MENU"
+    ]
+  },
+  "701": {
+    "name": "на_встрече",
+    "description": "На встрече",
+    "screens": [
+      "EMPTY_SCREEN"
+    ]
+  },
+  "718": {
+    "name": "веселюсь",
+    "description": "Веселюсь",
+    "screens": [
+      "ACCOUNT_LIST"
+    ]
+  },
+  "719": {
+    "name": "водные_процедуры",
+    "description": "Водные процедуры",
+    "screens": [
+      "CHAT_LIST_OPTIONS"
+    ]
+  },
+  "724": {
+    "name": "любовь",
+    "description": "Любовь",
+    "screens": [
+      "CONTACT_MENU"
+    ]
+  },
+  "725": {
+    "name": "водные_процедуры",
+    "description": "Водные процедуры",
+    "screens": [
+      "CONTACT_ACTIONS_MENU",
+      "CONTACT_MENU"
+    ]
+  },
+  "763": {
+    "name": "когда_я_ем...",
+    "description": "Когда я ем...",
+    "screens": [
+      "EMPTY_SCREEN"
+    ]
+  },
+  "764": {
+    "name": "телевизор",
+    "description": "Телевизор",
+    "screens": [
+      "EMPTY_SCREEN"
+    ]
+  },
+  "766": {
+    "name": "кофе",
+    "description": "Кофе",
+    "screens": [
+      "CONTACT_ACTIONS_MENU",
+      "ACCOUNT_SWITCH_OPTIONS",
+      "CONTACT_MENU"
+    ]
+  },
+  "774": {
+    "name": "psp",
+    "description": "PSP",
+    "screens": [
+      "CONTACT_MENU"
+    ]
+  },
+  "777": {
+    "name": "ok,_договорились.",
+    "description": "Ok, договорились.",
+    "screens": [
+      "CHAT_OPTIONS"
+    ]
+  },
+  "778": {
+    "name": "учусь",
+    "description": "Учусь",
+    "screens": [
+      "CHAT_OPTIONS"
+    ]
+  },
+  "807": {
+    "name": "сошел_с_ума",
+    "description": "Сошел с ума",
+    "screens": [
+      "ACCOUNT_SETUP"
+    ]
+  },
+  "816": {
+    "name": "сошел_с_ума",
+    "description": "Сошел с ума",
+    "screens": [
+      "REGISTRATION"
+    ]
+  },
+  "839": {
+    "name": "action_839",
+    "description": "Ok, договорились., Привет!",
+    "screens": [
+      "MAIL_MENU",
+      "COMPOSE_RECIPIENTS"
+    ]
+  },
+  "840": {
+    "name": "action_840",
+    "description": "Ok, договорились., Привет!",
+    "screens": [
+      "MAIL_MENU",
+      "COMPOSE_RECIPIENTS"
+    ]
+  },
+  "841": {
+    "name": "action_841",
+    "description": "Ok, договорились., Привет!",
+    "screens": [
+      "MAIL_MENU",
+      "COMPOSE_RECIPIENTS"
+    ]
+  },
+  "842": {
+    "name": "спасибо!",
+    "description": "Спасибо!",
+    "screens": [
+      "COMPOSE_RECIPIENTS"
+    ]
+  },
+  "844": {
+    "name": "буду_ждать_тебя_",
+    "description": "Буду ждать тебя ",
+    "screens": [
+      "MAIL_MENU",
+      "SOFTKEY_MENU",
+      "COMPOSE_RECIPIENTS"
+    ]
+  },
+  "845": {
+    "name": "до_свидания!",
+    "description": "До свидания!",
+    "screens": [
+      "MAIL_MENU",
+      "SOFTKEY_MENU",
+      "COMPOSE_RECIPIENTS"
+    ]
+  },
+  "846": {
+    "name": "ok,_договорились.",
+    "description": "Ok, договорились.",
+    "screens": [
+      "NOTIFICATION_OPTIONS",
+      "CHAT_ROOM_CONTEXT"
+    ]
+  },
+  "850": {
+    "name": "я_не_смогу_прийти.",
+    "description": "Я не смогу прийти.",
+    "screens": [
+      "CHAT_ROOM_CONTEXT"
+    ]
+  },
+  "1009": {
+    "name": "работаю",
+    "description": "Работаю",
+    "screens": [
+      "MAP_MENU"
+    ]
+  },
+  "1044": {
+    "name": "я_в_пробке._буду_через___мин.",
+    "description": "Я в пробке. Буду через   мин.",
+    "screens": [
+      "MAP_MENU"
+    ]
+  },
+  "1045": {
+    "name": "музыка",
+    "description": "Музыка",
+    "screens": [
+      "MAP_MENU"
+    ]
+  },
+  "1060": {
+    "name": "-нет-",
+    "description": "-нет-",
+    "screens": [
+      "CHAT_LIST_OPTIONS"
+    ]
+  },
+  "1251": {
+    "name": "водные_процедуры",
+    "description": "Водные процедуры",
+    "screens": [
+      "MAP_STATUS",
+      "MAP_SEARCH",
+      "CHAT_DETAIL"
+    ]
+  }
+}

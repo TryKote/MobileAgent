@@ -19,7 +19,8 @@
         "label_": "Навигация"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "MapHandler"
     },
     {
       "name": "MAP_VIEW_ALT",
@@ -44,7 +45,8 @@
           "label": 332,
           "label_": "В вашем телефоне недостаточно оперативной памяти для корр..."
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "VIEW_MODE",
@@ -99,7 +101,8 @@
           "icon": 310,
           "cmd": 337
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "GPS_SETTINGS",
@@ -198,7 +201,8 @@
           "icon": 10,
           "cmd": 1049
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "REGION_SELECTOR",
@@ -220,7 +224,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "MAP_POINTS",
@@ -250,7 +255,8 @@
           "validation": 0,
           "valueKey": 1248
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "MAP_OVERLAY",
@@ -270,7 +276,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "MapHandler"
     },
     {
       "name": "MAP_TOOLTIP",
@@ -300,7 +307,8 @@
           "validation": 0,
           "valueKey": 1249
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "PEOPLE_NEARBY",
@@ -321,7 +329,8 @@
         "label_": "Назад"
       },
       "extraCmd": 6,
-      "items": []
+      "items": [],
+      "handler": "SettingsHandler"
     },
     {
       "name": "XMPP_MAP_CONTEXT",
@@ -502,7 +511,8 @@
           "icon": 312,
           "cmd": 335
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "SAVE_LOCATION",
@@ -532,7 +542,8 @@
           "validation": 0,
           "valueKey": 1250
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "MAP_ROUTE",
@@ -552,7 +563,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "ChatHandler"
     },
     {
       "name": "MAP_STATUS",
@@ -603,7 +615,8 @@
           "cmd": 377,
           "label_": "Морской зверь"
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "SEND_TO_CONTACT",
@@ -624,7 +637,8 @@
         "label_": "Назад"
       },
       "extraCmd": 6,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "CHAT_ROOM_OPTIONS",
@@ -658,7 +672,8 @@
           "icon": 229,
           "cmd": 358
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "MAP_ROUTE_SELECT",
@@ -679,7 +694,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "CHAT_LIST_OPTIONS",
@@ -720,7 +736,8 @@
           "cmd": 719,
           "label_": "Водные процедуры"
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "MMP_ACCOUNT_SELECT",
@@ -831,7 +848,8 @@
           "stateKey": 285,
           "label_": "Автоматически обновлять мое местоположение (CellID, GPS):"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "PEOPLE_SEARCH",
@@ -887,7 +905,8 @@
           "cmd": 399,
           "label_": "Музыка"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "SAVED_LOCATIONS",
@@ -908,7 +927,8 @@
         "label_": "Назад"
       },
       "extraCmd": 154,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "SHARE_LOCATION",
@@ -938,7 +958,8 @@
           "validation": 0,
           "valueKey": 1254
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "GROUP_MANAGEMENT_ALT",
@@ -959,7 +980,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "ContactHandler"
     },
     {
       "name": "MAP_SEARCH",
@@ -1010,7 +1032,8 @@
           "cmd": 1251,
           "label_": "Водные процедуры"
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "WIFI_ACCOUNT_LIST",
@@ -1048,7 +1071,8 @@
           "label": 414,
           "label_": "От имени учетной записи:"
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "MAILBOX_OPTIONS",
@@ -1081,7 +1105,8 @@
           "icon": 303,
           "cmd": 659
         }
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "FORM_LIST",
@@ -1101,7 +1126,8 @@
         "label_": "Назад"
       },
       "extraCmd": 113,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "MRIM_ACCOUNT_SELECT",
@@ -1127,7 +1153,8 @@
           "label": 415,
           "label_": "Выберите учетную запись:"
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "MAP_OPTIONS",
@@ -1165,7 +1192,8 @@
           "cmd": 338,
           "label_": "Болею"
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "NEARBY_SETTINGS",
@@ -1205,7 +1233,8 @@
           "stateKey": 280,
           "label_": "Все"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "CONTACT_POPUP",
@@ -1226,7 +1255,8 @@
         "label_": "Отмена"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "ContactHandler"
     },
     {
       "name": "SEARCH_ENTRY",
@@ -1279,7 +1309,8 @@
           "icon": 6,
           "cmd": 421
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "EDIT_SCREEN",
@@ -1317,7 +1348,8 @@
           "icon": 365,
           "cmd": 348
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "STATUS_PREVIEW",
@@ -1402,7 +1434,8 @@
           "icon": 4294967295,
           "cmd": 477
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "CHOICE_DIALOG",
@@ -1422,7 +1455,8 @@
         "label_": "Назад"
       },
       "extraCmd": 12,
-      "items": []
+      "items": [],
+      "handler": "ContactHandler"
     },
     {
       "name": "ACCOUNT_LIST",
@@ -1526,7 +1560,8 @@
           "icon": 10,
           "cmd": 1049
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "KEY_MAPPING",
@@ -1575,7 +1610,8 @@
           "icon": 9,
           "cmd": 546
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "ABOUT",
@@ -1644,7 +1680,8 @@
           "sublabel": 1285,
           "label_": "Память (свободно):"
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "BLOG_POST",
@@ -1679,7 +1716,8 @@
           "label": 1284,
           "stateKey": 1468
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "MESSAGE_INPUT",
@@ -1720,7 +1758,8 @@
           "stateKey": 1507,
           "label_": "сделать моим статусом"
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "GROUP_MANAGEMENT",
@@ -1798,7 +1837,8 @@
         133,
         220,
         530
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "CONTACT_LIST_TEMPLATE",
@@ -1818,7 +1858,8 @@
         "label_": "Действия"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "MessageHandler"
     },
     {
       "name": "MULTI_ACCOUNT_LIST",
@@ -1839,7 +1880,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "ChatHandler"
     },
     {
       "name": "MESSAGE_SUMMARY",
@@ -1859,7 +1901,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "ContactHandler"
     },
     {
       "name": "SERVER_ADDRESS",
@@ -1880,7 +1923,8 @@
         "label_": "Назад"
       },
       "extraCmd": 63,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "PHONE_INPUT",
@@ -1901,7 +1945,8 @@
         "label_": "Назад"
       },
       "extraCmd": 12,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "EMOTICON_PICKER",
@@ -1922,7 +1967,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "MESSAGE_DETAIL",
@@ -1943,7 +1989,8 @@
         "label_": "Назад"
       },
       "extraCmd": 63,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "MAP_MENU",
@@ -2038,7 +2085,8 @@
           "cmd": 1009,
           "label_": "Работаю"
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "CONTACT_GROUPS",
@@ -2079,7 +2127,8 @@
           "icon": 34,
           "cmd": 719
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "ACCOUNT_SWITCHER",
@@ -2107,7 +2156,8 @@
           "icon": 11,
           "cmd": 548
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "ACCOUNTS_MENU",
@@ -2177,7 +2227,8 @@
         23,
         4,
         555
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "XMPP_CONTEXT_MENU",
@@ -2225,7 +2276,8 @@
           "valueKey": 1293,
           "hint_": "UCB_BASIC_LATIN"
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "XMPP_LOGIN",
@@ -2255,7 +2307,8 @@
           "type": "redirect",
           "targetOffset": 2797
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "PRIVACY_SETTINGS",
@@ -2397,7 +2450,8 @@
           "validation": 0,
           "valueKey": 62
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "THEME_SETTINGS",
@@ -2509,7 +2563,8 @@
         578,
         579,
         284
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "SOUND_SETTINGS",
@@ -2652,7 +2707,8 @@
           "stateKey": 89,
           "label_": "Тихий режим"
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "CONTACT_SETTINGS",
@@ -2741,7 +2797,8 @@
           "default": 10,
           "stateKey": 97
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "MULTI_ACCOUNT_SETTINGS",
@@ -2878,7 +2935,8 @@
           "stateKey": 105,
           "label_": "Скрывать платформу"
         }
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "CHAT_VIEW_MODE",
@@ -2906,7 +2964,8 @@
           "stateKey": 112,
           "label_": "Асинхронная передача"
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "TRAFFIC_COST",
@@ -2955,7 +3014,8 @@
           "validation": 0,
           "valueKey": 117
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "NOTIFICATION_SETTINGS",
@@ -3073,7 +3133,8 @@
           "label_": "9:",
           "choices_": "Нет действия, Контакты, Почта, Карты, ... (13 total)"
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "EXT_SETTINGS",
@@ -3125,7 +3186,8 @@
           "icon": 369,
           "cmd": 656
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "MAP_VIEW_SETTINGS",
@@ -3176,7 +3238,8 @@
           "cmd": 500,
           "label_": "Музыка"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "NOTIFICATION_DIALOG",
@@ -3200,7 +3263,8 @@
           "type": "label_separator",
           "label": 1294
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "CREATE_GROUP",
@@ -3230,7 +3294,8 @@
           "validation": 0,
           "valueKey": 1295
         }
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "REGION_CHOICE",
@@ -3376,7 +3441,8 @@
           "stateKey": 1490,
           "label_": "Искать только подключенных"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "XMPP_LOGIN_ALT",
@@ -3418,7 +3484,8 @@
           "type": "redirect",
           "targetOffset": 3414
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "XMPP_LOGIN_ALT2",
@@ -3452,7 +3519,8 @@
           "type": "redirect",
           "targetOffset": 3414
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "EMPTY_SCREEN",
@@ -3496,7 +3564,8 @@
           "cmd": 701,
           "label_": "На встрече"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "CONTACT_EDITOR",
@@ -3546,7 +3615,8 @@
         424,
         3,
         1305
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "ADD_MRIM_CONTACT",
@@ -3584,7 +3654,8 @@
           "type": "redirect",
           "targetOffset": 3529
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "RENAME_GROUP",
@@ -3614,7 +3685,8 @@
           "validation": 0,
           "valueKey": 1306
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "ADD_CONTACT",
@@ -3702,7 +3774,8 @@
           "stateKey": 1492,
           "label_": "Искать только подключенных"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "PHONE_GROUPS",
@@ -3739,7 +3812,8 @@
           "validation": 0,
           "valueKey": 1279
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "CHAT_STATUS",
@@ -3801,7 +3875,8 @@
           "icon": 4294967295,
           "cmd": 475
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "CONTACT_GROUP_MENU",
@@ -3834,7 +3909,8 @@
           "icon": 34,
           "cmd": 719
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "CONTACT_ACTIONS_MENU",
@@ -3957,7 +4033,8 @@
           "icon": 19,
           "cmd": 719
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "CONTACT_MENU",
@@ -4040,7 +4117,8 @@
           "icon": 19,
           "cmd": 723
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "CONTACT_INFO_VIEW_SCREEN",
@@ -4061,7 +4139,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "CAPTCHA",
@@ -4081,7 +4160,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "MapHandler"
     },
     {
       "name": "PROFILE_LIST",
@@ -4120,7 +4200,8 @@
           "label": 734,
           "label_": "Произвести попытку загрузки?"
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "SEARCH_RESULT_LIST",
@@ -4141,7 +4222,8 @@
         "label_": "Назад"
       },
       "extraCmd": 103,
-      "items": []
+      "items": [],
+      "handler": "MessageHandler"
     },
     {
       "name": "CONTACT_INFO_DETAIL_SCREEN",
@@ -4162,7 +4244,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "MapHandler"
     },
     {
       "name": "CONTACT_ADD_SCREEN",
@@ -4207,7 +4290,8 @@
         2,
         742,
         1509
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "CONTACT_LIST_SCREEN",
@@ -4246,7 +4330,8 @@
           "type": "redirect",
           "targetOffset": 3913
         }
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "ADD_CONTACT_FORM",
@@ -4285,7 +4370,8 @@
           "type": "redirect",
           "targetOffset": 3913
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "SETTINGS_MENU",
@@ -4331,7 +4417,8 @@
           "icon": 28,
           "cmd": 748
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "TRAFFIC_STATS",
@@ -4396,7 +4483,8 @@
         1,
         750,
         1335
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "SETTINGS_MAIN",
@@ -4421,7 +4509,8 @@
           "label": 1016,
           "label_": "Добро пожаловать в Мобильный Агент!\nСейчас будет произвед..."
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "DELETE_CONTACT_LIST",
@@ -4442,7 +4531,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "AccountHandler"
     },
     {
       "name": "UNBLOCK_CONTACT_LIST",
@@ -4463,7 +4553,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "BLOCK_CONTACT_LIST",
@@ -4484,7 +4575,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "PHONE_INPUT_ALT",
@@ -4505,7 +4597,8 @@
         "label_": "Назад"
       },
       "extraCmd": 12,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "URL_OPEN",
@@ -4526,7 +4619,8 @@
         "label_": "Назад"
       },
       "extraCmd": 65,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "ACCOUNT_SWITCH_OPTIONS",
@@ -4590,7 +4684,8 @@
           "icon": 19,
           "cmd": 719
         }
-      ]
+      ],
+      "handler": "AccountHandler"
     },
     {
       "name": "CREATE_CHAT_ROOM",
@@ -4631,7 +4726,8 @@
           "label": 770,
           "label_": "Пригласить:"
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "GROUP_MEMBERS",
@@ -4652,7 +4748,8 @@
         "label_": "Назад"
       },
       "extraCmd": 145,
-      "items": []
+      "items": [],
+      "handler": "ContactHandler"
     },
     {
       "name": "EDIT_MEMBERS",
@@ -4673,7 +4770,8 @@
         "label_": "Назад"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "CHAT_OPTIONS",
@@ -4718,7 +4816,8 @@
           "cmd": 778,
           "label_": "Учусь"
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "COLOR_PICKER",
@@ -4776,7 +4875,8 @@
           "icon": 155,
           "cmd": 647
         }
-      ]
+      ],
+      "handler": "MapHandler"
     },
     {
       "name": "GROUP_MOVE",
@@ -4797,7 +4897,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "CONTACT_INFO_EDITOR",
@@ -4818,7 +4919,8 @@
         "label_": "Назад"
       },
       "extraCmd": 151,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "PROFILE_EDIT",
@@ -4843,7 +4945,8 @@
           "type": "label_separator",
           "label": 1337
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "CHAT_DETAIL",
@@ -4884,7 +4987,8 @@
           "cmd": 1251,
           "label_": "Водные процедуры"
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "MAIL_ACCOUNT_LIST",
@@ -4904,7 +5008,8 @@
         "label_": "Назад"
       },
       "extraCmd": 199,
-      "items": []
+      "items": [],
+      "handler": "AccountHandler"
     },
     {
       "name": "CHAT_ROOM_CONFIG",
@@ -4934,7 +5039,8 @@
           "validation": 0,
           "valueKey": 0
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "FILE_SELECTOR",
@@ -4962,7 +5068,8 @@
           "value": 1284,
           "label_": "*"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "PHOTO_SELECTOR_ALT",
@@ -5015,7 +5122,8 @@
         12,
         12,
         0
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "MAIN_SCREEN",
@@ -5041,7 +5149,8 @@
           "label": 803,
           "label_": "Клавиатура заблокирована."
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "ACCOUNT_SETUP",
@@ -5083,7 +5192,8 @@
           "cmd": 697,
           "label_": "Учетная запись Jabber"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "REGISTRATION_FORM",
@@ -5198,7 +5308,8 @@
           "stateKey": 1480,
           "hint_": "UCB_BASIC_LATIN"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "REGISTRATION",
@@ -5233,7 +5344,8 @@
           "cmd": 816,
           "label_": "Сошел с ума"
         }
-      ]
+      ],
+      "handler": "ChatHandler"
     },
     {
       "name": "ERROR_ALERT",
@@ -5258,7 +5370,8 @@
           "type": "label_separator",
           "label": 1344
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "CONFIRM_DIALOG",
@@ -5277,7 +5390,8 @@
         "label_": "Отмена"
       },
       "extraCmd": 0,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "GENERIC_LIST",
@@ -5297,7 +5411,8 @@
         "label_": "Выбрать"
       },
       "extraCmd": 37,
-      "items": []
+      "items": [],
+      "handler": "ContactHandler"
     },
     {
       "name": "INPUT_FORM",
@@ -5318,7 +5433,8 @@
         "label_": "Назад"
       },
       "extraCmd": 41,
-      "items": []
+      "items": [],
+      "handler": "ChatHandler"
     },
     {
       "name": "CONTACT_DETAILS",
@@ -5338,7 +5454,8 @@
         "label_": "Назад"
       },
       "extraCmd": 48,
-      "items": []
+      "items": [],
+      "handler": "AccountHandler"
     },
     {
       "name": "MESSAGE_PREVIEW",
@@ -5367,7 +5484,8 @@
           "type": "label_separator",
           "label": 1286
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "COMPOSE_RECIPIENTS",
@@ -5438,7 +5556,8 @@
           "cmd": 845,
           "label_": "До свидания!"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "CHAT_ROOM_CONTEXT",
@@ -5511,7 +5630,8 @@
           "icon": 227,
           "cmd": 1061
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "SOFTKEY_MENU",
@@ -5573,7 +5693,8 @@
           "cmd": 845,
           "label_": "До свидания!"
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "MAIL_MENU",
@@ -5652,7 +5773,8 @@
           "cmd": 845,
           "label_": "До свидания!"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "INPUT_DIALOG",
@@ -5686,7 +5808,8 @@
           "icon": 218,
           "cmd": 860
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "GROUP_SELECTOR",
@@ -5720,7 +5843,8 @@
           "icon": 243,
           "cmd": 865
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "NOTIFICATION_OPTIONS",
@@ -5760,7 +5884,8 @@
           "icon": 227,
           "cmd": 1061
         }
-      ]
+      ],
+      "handler": "ProfileHandler"
     },
     {
       "name": "SEARCH_RESULTS",
@@ -5820,7 +5945,8 @@
           "stateKey": 1526,
           "label_": "Искать во всех папках"
         }
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "COMPOSE_MESSAGE",
@@ -5872,7 +5998,8 @@
           "validation": 0,
           "valueKey": 1354
         }
-      ]
+      ],
+      "handler": "MessageHandler"
     },
     {
       "name": "THEME_OPTIONS",
@@ -5904,7 +6031,8 @@
           "type": "redirect",
           "targetOffset": 2417
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "DIALOG_SCREEN",
@@ -5925,7 +6053,8 @@
         "label_": "Назад"
       },
       "extraCmd": 42,
-      "items": []
+      "items": [],
+      "handler": "DialogHandler"
     },
     {
       "name": "VERSION_SELECT",
@@ -5977,7 +6106,8 @@
           "icon": 371,
           "cmd": 881
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     },
     {
       "name": "VCARD_ACTIONS",
@@ -6016,7 +6146,8 @@
           "icon": 4294967295,
           "cmd": 887
         }
-      ]
+      ],
+      "handler": "DialogHandler"
     },
     {
       "name": "FORM_SETTINGS",
@@ -6070,7 +6201,8 @@
           "stateKey": 272,
           "label_": "Не выключать при навигации"
         }
-      ]
+      ],
+      "handler": "SettingsHandler"
     },
     {
       "name": "INVITE_TOS_SCREEN",
@@ -6103,7 +6235,8 @@
           "stateKey": 273,
           "label_": "Больше не показывать"
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "ASYNC_CONFIRM_SCREEN",
@@ -6123,7 +6256,8 @@
         "label_": "Назад"
       },
       "extraCmd": 12,
-      "items": []
+      "items": [],
+      "handler": "MiscHandler"
     },
     {
       "name": "WIFI_NETWORKS",
@@ -6153,7 +6287,8 @@
           "validation": 3,
           "valueKey": 1303
         }
-      ]
+      ],
+      "handler": "MiscHandler"
     },
     {
       "name": "CONNECTION_SETTINGS",
@@ -6193,7 +6328,8 @@
           "icon": 314,
           "cmd": 719
         }
-      ]
+      ],
+      "handler": "ContactHandler"
     }
   ],
   "intPoolKeys": [
