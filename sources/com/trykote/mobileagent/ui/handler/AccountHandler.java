@@ -17,6 +17,16 @@ import javax.microedition.lcdui.Image;
 
 public final class AccountHandler extends BaseScreenHandler {
 
+    // Icon IDs for toggle buttons (enabled/disabled)
+    private static final int ICON_TOGGLE_ENABLED = 25;
+    private static final int ICON_TOGGLE_DISABLED = 24;
+
+    // MRIM account icon resource ID
+    private static final int MRIM_ACCOUNT_ICON = 156;
+
+    // Registration data array size for XMPP accounts
+    private static final int REG_DATA_ARRAY_SIZE = 8;
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.ACCOUNT_LIST:
@@ -93,7 +103,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 if (Storage.state().getAccount().getType() == Account.TYPE_MRIM) {
                     regData = StringUtils.buildRegData();
                 } else {
-                    regData = new String[8];
+                    regData = new String[REG_DATA_ARRAY_SIZE];
                     int intVal3 = Storage.state().getInt(RegistrationKeys.INT_REG_DOMAIN_INDEX);
                     regData[0] = intVal3 > 0 ? StringUtils.intern(Integer.toString(intVal3)) : Storage.emptyStr;
                     regData[1] = Storage.state().getString(Storage.state().getBool(RegistrationKeys.FLAG_REG_SMS_MODE) ? 1046 : 1038);
@@ -109,8 +119,8 @@ public final class AccountHandler extends BaseScreenHandler {
             }
             case ScreenId.ACCOUNT_SWITCH_OPTIONS: {
                 Contact contact2 = Storage.state().getCurrentContact();
-                Storage.state().setInt(RuntimeKeys.INT_DELETE_BUTTON_ICON, contact2.canDelete() ? 25 : 24);
-                Storage.state().setInt(RuntimeKeys.INT_BLOCK_BUTTON_ICON, contact2.canBlock() ? 25 : 24);
+                Storage.state().setInt(RuntimeKeys.INT_DELETE_BUTTON_ICON, contact2.canDelete() ? ICON_TOGGLE_ENABLED : ICON_TOGGLE_DISABLED);
+                Storage.state().setInt(RuntimeKeys.INT_BLOCK_BUTTON_ICON, contact2.canBlock() ? ICON_TOGGLE_ENABLED : ICON_TOGGLE_DISABLED);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SWITCH_OPTIONS));
                 return;
             }
@@ -129,59 +139,45 @@ public final class AccountHandler extends BaseScreenHandler {
                 Vector mmpAccounts = AccountManager.getSyncedMrimAccounts();
                 int i20 = 0;
                 int size12 = mmpAccounts.size();
-                int i21 = size12;
-                while (true) {
-                    i21--;
-                    if (i21 < 0) {
-                        Storage.state().setInt(SessionKeys.INT_ACCOUNT_INDEX, i20);
-                        Storage.state().setObject(SessionKeys.SLOT_ACCOUNT_LIST_TEXT, (Object) ObjectPool.toStringAndRelease(sbAccounts));
-                        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MMP_ACCOUNT_SELECT));
-                        return;
-                    } else {
-                        String str3 = ((MrimAccount) mmpAccounts.elementAt(i21)).login;
-                        sbAccounts.append(str3);
-                        if (i21 != 0) {
-                            sbAccounts.append((char) 0);
-                        }
-                        if (str3.equals(Storage.state().getString(SessionKeys.LAST_ACCOUNT_NAME))) {
-                            i20 = size12 - i21;
-                        }
+                for (int i21 = size12 - 1; i21 >= 0; i21--) {
+                    String str3 = ((MrimAccount) mmpAccounts.elementAt(i21)).login;
+                    sbAccounts.append(str3);
+                    if (i21 != 0) {
+                        sbAccounts.append((char) 0);
+                    }
+                    if (str3.equals(Storage.state().getString(SessionKeys.LAST_ACCOUNT_NAME))) {
+                        i20 = size12 - i21;
                     }
                 }
+                Storage.state().setInt(SessionKeys.INT_ACCOUNT_INDEX, i20);
+                Storage.state().setObject(SessionKeys.SLOT_ACCOUNT_LIST_TEXT, (Object) ObjectPool.toStringAndRelease(sbAccounts));
+                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MMP_ACCOUNT_SELECT));
+                return;
             }
             case ScreenId.MRIM_ACCOUNT_SELECT: {
                 ListView screen19 = ScreenManager.createScreen(ScreenDef.MRIM_ACCOUNT_SELECT);
                 Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
-                int size15 = onlineAccounts.size();
-                while (true) {
-                    size15--;
-                    if (size15 < 0) {
-                        ScreenManager.showScreen(screen19);
-                        return;
-                    } else {
-                        MrimAccount mrimAccount7 = (MrimAccount) onlineAccounts.elementAt(size15);
-                        screen19.addIconItemWithData(156, mrimAccount7.login, 0, mrimAccount7);
-                    }
+                for (int idx = onlineAccounts.size() - 1; idx >= 0; idx--) {
+                    MrimAccount mrimAccount7 = (MrimAccount) onlineAccounts.elementAt(idx);
+                    screen19.addIconItemWithData(MRIM_ACCOUNT_ICON, mrimAccount7.login, 0, mrimAccount7);
                 }
+                ScreenManager.showScreen(screen19);
+                return;
             }
             case ScreenId.WIFI_ACCOUNT_LIST:
                 if (!Storage.state().getBool(RegistrationKeys.FLAG_REGISTRATION_DONE)) {
                     Vector mmpAccounts2 = AccountManager.getSyncedMrimAccounts();
                     int size13 = mmpAccounts2.size();
-                    int i24 = size13;
                     if (size13 > 0) {
                         ListView screen17 = ScreenManager.createScreen(ScreenDef.WIFI_ACCOUNT_LIST);
-                        while (true) {
-                            i24--;
-                            if (i24 < 0) {
-                                ScreenManager.showScreen(screen17);
-                                return;
-                            }
+                        for (int i24 = size13 - 1; i24 >= 0; i24--) {
                             MrimAccount mrimAccount6 = (MrimAccount) mmpAccounts2.elementAt(i24);
                             int iconId = mrimAccount6.getIconId();
                             String str4 = mrimAccount6.login;
                             screen17.addIconItemWithData(iconId, str4, 153, str4);
                         }
+                        ScreenManager.showScreen(screen17);
+                        return;
                     }
                 }
                 MiscHandler.showWiFiNetworks();
@@ -221,7 +217,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return AccountManager.handleInviteResult();
             case ScreenId.XMPP_LOGIN_ALT: {
                 int loginResult = XmppMailRuProtocol.performLogin();
-                return 0 == loginResult ? ScreenId.CONTACT_LIST : loginResult;
+                return loginResult == 0 ? ScreenId.CONTACT_LIST : loginResult;
             }
             case ScreenId.MMP_ACCOUNT_SELECT:
                 ScreenManager.processScreenForm();
@@ -339,7 +335,6 @@ public final class AccountHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: k */
     public static final void showMailAccountList() {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         ListView screen = ScreenManager.createScreen(ScreenDef.GENERIC_LIST);
@@ -357,15 +352,14 @@ public final class AccountHandler extends BaseScreenHandler {
         ObjectPool.releaseVector(accounts);
         ScreenManager.pushScreen(screen);
         TabBar.ensureSettingsTab();
-        TabBar.findTab(36, (Account) null);
+        TabBar.findTab(TabBar.TYPE_MAIL, (Account) null);
     }
 
-    /* renamed from: c */
     public static final int selectMailAccount(Object obj) {
         if (obj == null) {
             return -1;
         }
-        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, 38);
+        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, ScreenId.CHAT_ROOM_INIT);
         Storage.state().setAccount(obj);
         return 0;
     }
@@ -429,7 +423,7 @@ public final class AccountHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.SUBMIT_REGISTRATION: {
                 int stateInt5 = Storage.state().getInt(RuntimeKeys.INT_ERROR_MSG_INDEX);
-                return 0 != stateInt5 ? NotificationHelper.showError(stateInt5) : Storage.state().getObject(RegistrationKeys.SLOT_REG_PARAM_4) == null ? 0 : ScreenId.SEARCH_RESULT_LIST;
+                return stateInt5 != 0 ? NotificationHelper.showError(stateInt5) : Storage.state().getObject(RegistrationKeys.SLOT_REG_PARAM_4) == null ? 0 : ScreenId.SEARCH_RESULT_LIST;
             }
             case ScreenId.ACCOUNT_SWITCH_OPTIONS:
                 return 0;

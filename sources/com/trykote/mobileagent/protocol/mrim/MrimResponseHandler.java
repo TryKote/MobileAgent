@@ -7,6 +7,23 @@ import java.util.Vector;
 
 final class MrimResponseHandler {
 
+    // Group ID unit (1 << 24) - each group occupies one 24-bit slot
+    private static final int GROUP_ID_UNIT = 16777216;
+
+    // Contact status flags for created contacts
+    private static final int FLAG_PHONE_CONTACT = 1048576;
+    private static final int FLAG_AUTH_PENDING = 64;
+    private static final int FLAG_PHONE_NUMBER = 128;
+
+    // Initial status code for phone contacts
+    private static final int STATUS_PHONE = 103;
+
+    // Auth response: request acknowledged
+    private static final int AUTH_RESPONSE_ACK = 32769;
+
+    // Error code: duplicate contact
+    private static final int ERROR_DUPLICATE_CONTACT = 5;
+
     private final MrimAccount account;
 
     MrimResponseHandler(MrimAccount account) {
@@ -14,18 +31,20 @@ final class MrimResponseHandler {
     }
 
     void dispatch(ByteBuffer buf, int i) {
-        Object[] objArr;
+        Object[] objArr = null;
         int resultCode = buf.readInt();
         Vector vector = this.account.extras;
-        int size = vector.size();
-        do {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                objArr = (Object[]) vector.elementAt(size);
+        int size = -1;
+        for (int si = vector.size() - 1; si >= 0; si--) {
+            objArr = (Object[]) vector.elementAt(si);
+            if (((Integer) objArr[0]).intValue() == i) {
+                size = si;
+                break;
             }
-        } while (((Integer) objArr[0]).intValue() != i);
+        }
+        if (size < 0) {
+            return;
+        }
         switch (((Integer) objArr[1]).intValue()) {
             case MrimAccount.RESP_MODIFY_CONTACT:
                 if (resultCode != 0) {
@@ -117,18 +136,13 @@ final class MrimResponseHandler {
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[2];
         int groupIndex = mrimGroup.groupId >> 24;
-        int size2 = this.account.groups.size();
-        while (true) {
-            size2--;
-            if (size2 < 0) {
-                this.account.removeGroup((ContactGroup) mrimGroup);
-                return;
-            }
-            MrimContactGroup mrimGroup2 = (MrimContactGroup) this.account.getGroup(size2);
+        for (int gi = this.account.groups.size() - 1; gi >= 0; gi--) {
+            MrimContactGroup mrimGroup2 = (MrimContactGroup) this.account.getGroup(gi);
             if ((mrimGroup2.groupId >> 24) > groupIndex) {
-                mrimGroup2.groupId -= 16777216;
+                mrimGroup2.groupId -= GROUP_ID_UNIT;
             }
         }
+        this.account.removeGroup((ContactGroup) mrimGroup);
     }
 
     private void handleAddPhoneContactResponse(int resultCode, Object[] objArr, ByteBuffer buf) {
@@ -142,12 +156,12 @@ final class MrimResponseHandler {
         String str = (String) objArr[2];
         String str2 = (String) objArr[3];
         String str3 = Storage.emptyStr;
-        mrimGroup.addContact((Object) new MrimContact(this.account, contactId, 1048576, 103, statusStr, str, 0, 1, str2, str3, str3));
+        mrimGroup.addContact((Object) new MrimContact(this.account, contactId, FLAG_PHONE_CONTACT, STATUS_PHONE, statusStr, str, 0, 1, str2, str3, str3));
     }
 
     private void handleAddContactResponse(int resultCode, Object[] objArr, ByteBuffer buf) {
         if (resultCode != 0) {
-            if (resultCode != 5) {
+            if (resultCode != ERROR_DUPLICATE_CONTACT) {
                 EventDispatcher.postAddGroupError(objArr, resultCode);
             }
             return;
@@ -166,9 +180,9 @@ final class MrimResponseHandler {
         MrimContact mrimContact = (MrimContact) objArr[2];
         switch (resultCode) {
             case 0:
-                mrimContact.updateMessageFlag(((Long) objArr[3]).longValue(), 64);
+                mrimContact.updateMessageFlag(((Long) objArr[3]).longValue(), FLAG_AUTH_PENDING);
                 break;
-            case 32769:
+            case AUTH_RESPONSE_ACK:
                 if (mrimContact.isSystem()) {
                     EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_AUTH_GRANTED));
                     break;
@@ -187,15 +201,10 @@ final class MrimResponseHandler {
         MrimContact mrimContact = (MrimContact) objArr[2];
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[3];
         mrimContact.groupId = mrimGroup.serverId;
-        int size = this.account.groups.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                mrimGroup.addContact((Object) mrimContact);
-                return;
-            }
-            this.account.getGroup(size).removeElement(mrimContact);
+        for (int gi = this.account.groups.size() - 1; gi >= 0; gi--) {
+            this.account.getGroup(gi).removeElement(mrimContact);
         }
+        mrimGroup.addContact((Object) mrimContact);
     }
 
     private void handleAddPhoneResponse(int resultCode, Object[] objArr, ByteBuffer buf) {
@@ -209,6 +218,6 @@ final class MrimResponseHandler {
         String contactName = buf.readWideStr();
         String str = (String) objArr[2];
         String str2 = Storage.emptyStr;
-        defaultGroup.addContact(new MrimContact(this.account, contactId, 128, serverId, contactName, str, 0, 1, str2, str2, str2));
+        defaultGroup.addContact(new MrimContact(this.account, contactId, FLAG_PHONE_NUMBER, serverId, contactName, str, 0, 1, str2, str2, str2));
     }
 }

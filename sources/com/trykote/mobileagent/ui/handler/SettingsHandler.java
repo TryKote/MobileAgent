@@ -17,6 +17,15 @@ import javax.microedition.lcdui.Image;
 
 public final class SettingsHandler extends BaseScreenHandler {
 
+    // Notification option action IDs (label resource IDs from screen definition)
+    private static final int ACTION_COMPOSE_EMAIL = 54;
+    private static final int ACTION_TOGGLE_ONLINE = 68;
+    private static final int ACTION_MARK_LOADED = 37;
+
+    // Key mapping action IDs (label resource IDs from screen definition)
+    private static final int KEY_ACTION_CLOSE = 4;
+    private static final int KEY_ACTION_BACK_TWO = 137;
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.SETTINGS:
@@ -312,17 +321,17 @@ public final class SettingsHandler extends BaseScreenHandler {
     }
 
     public static int handleNotificationOption(int optionId) {
-        if (optionId == 54) {
+        if (optionId == ACTION_COMPOSE_EMAIL) {
             ScreenBuilder.onScreenClosed();
             MailHelper.composeEmail((Vector) null, (String) null, (String) null);
             return 0;
         }
-        if (optionId == 68) {
+        if (optionId == ACTION_TOGGLE_ONLINE) {
             ScreenBuilder.onScreenClosed();
             AppController.toggleOnlineMode(true);
             return 0;
         }
-        if (optionId != 37) {
+        if (optionId != ACTION_MARK_LOADED) {
             return 0;
         }
         ((MrimAccount) Storage.state().getAccount()).chatRoomManager.loaded = true;
@@ -330,11 +339,11 @@ public final class SettingsHandler extends BaseScreenHandler {
     }
 
     public static int mapKeyToAction(int keyCode) {
-        if (keyCode == 4) {
+        if (keyCode == KEY_ACTION_CLOSE) {
             ScreenManager.handleScreenClose();
             return 0;
         }
-        if (keyCode != 137) {
+        if (keyCode != KEY_ACTION_BACK_TWO) {
             return 0;
         }
         ScreenBuilder.onScreenClosed();

@@ -11,17 +11,27 @@ import java.util.Vector;
 
 public final class MrimProfileManager {
 
+    // Profile location visibility states (stored in profile.gender)
+    private static final int LOCATION_PUBLISHED = 1;
+    private static final int LOCATION_HIDDEN = 2;
+    private static final int LOCATION_WITH_GROUPS = 3;
+    private static final int LOCATION_CLEARED = 4;
+
+    // XML element and attribute IDs for geo-list
+    private static final int XML_GEO_LIST_ELEMENT = 114;
+    private static final int XML_ATTR_USER_ID = 328413;
+
+    // MRIM command: update geo visibility list
+    private static final int CS_GEO_VISIBILITY = 4181;
+
     private final MrimAccount account;
     public VCard profile;
     public SizeCache sizeCache;
 
-    /* renamed from: d */
     public static Vector contactIdList;
 
-    /* renamed from: e */
     public static String[] photoUrlList;
 
-    /* renamed from: f */
     private static ListView selectionScreen;
 
     MrimProfileManager(MrimAccount account) {
@@ -33,11 +43,11 @@ public final class MrimProfileManager {
     public void sync() {
         if (this.account.isConnected()) {
             int i = this.profile.gender;
-            if (i == 1) {
+            if (i == LOCATION_PUBLISHED) {
                 sendUpdate(1, new String[0], this.profile);
-            } else if (i == 2) {
+            } else if (i == LOCATION_HIDDEN) {
                 sendUpdate(0, new String[0], this.profile);
-            } else if (i == 3) {
+            } else if (i == LOCATION_WITH_GROUPS) {
                 sendUpdate(0, this.profile.photoUrls, this.profile);
             }
         }
@@ -45,9 +55,9 @@ public final class MrimProfileManager {
 
     public void publishLocation() {
         int i = this.profile.gender;
-        this.profile.gender = 1;
+        this.profile.gender = LOCATION_PUBLISHED;
         if (this.account.isConnected()) {
-            if (i == 3) {
+            if (i == LOCATION_WITH_GROUPS) {
                 sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(1, new String[0], this.profile);
@@ -56,9 +66,9 @@ public final class MrimProfileManager {
 
     public void hideLocation() {
         int i = this.profile.gender;
-        this.profile.gender = 2;
+        this.profile.gender = LOCATION_HIDDEN;
         if (this.account.isConnected()) {
-            if (i == 3) {
+            if (i == LOCATION_WITH_GROUPS) {
                 sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, new String[0], this.profile);
@@ -67,9 +77,9 @@ public final class MrimProfileManager {
 
     public void clearGroups() {
         int i = this.profile.gender;
-        this.profile.gender = 4;
+        this.profile.gender = LOCATION_CLEARED;
         if (this.account.isConnected()) {
-            if (i == 3) {
+            if (i == LOCATION_WITH_GROUPS) {
                 sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendRename(new String[0], Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
@@ -78,11 +88,11 @@ public final class MrimProfileManager {
 
     public void setGroups() {
         int i = this.profile.gender;
-        this.profile.gender = 3;
+        this.profile.gender = LOCATION_WITH_GROUPS;
         if (this.account.isConnected()) {
-            if (i == 3) {
+            if (i == LOCATION_WITH_GROUPS) {
                 sendRename(this.profile.prevPhotoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
-            } else if (i == 1 || i == 2) {
+            } else if (i == LOCATION_PUBLISHED || i == LOCATION_HIDDEN) {
                 sendRename(new String[0], Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, this.profile.photoUrls, this.profile);
@@ -155,7 +165,6 @@ public final class MrimProfileManager {
         return this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE_PHOTOS, new ByteBuffer().writeStringArr(strArr).writeStringLatin1(str)));
     }
 
-    /* renamed from: d */
     public static final void showPhotoSelector() {
         boolean z;
         MrimAccount account = (MrimAccount) Storage.state().getAccount();
@@ -176,16 +185,10 @@ public final class MrimProfileManager {
             String identifier = mrimContact.getIdentifier();
             String str = mrimContact.displayName;
             String[] strArr = photoUrlList;
-            int length = strArr.length;
-            while (true) {
-                length--;
-                if (length >= 0) {
-                    if (StringUtils.equals(identifier, strArr[length])) {
-                        z = true;
-                        break;
-                    }
-                } else {
-                    z = false;
+            z = false;
+            for (int pi = strArr.length - 1; pi >= 0; pi--) {
+                if (StringUtils.equals(identifier, strArr[pi])) {
+                    z = true;
                     break;
                 }
             }
@@ -196,7 +199,6 @@ public final class MrimProfileManager {
         ScreenManager.showScreen(screen);
     }
 
-    /* renamed from: e */
     public static final int applyPhotoSelection() {
         Vector vector = selectionScreen.menuItems;
         Vector selected = ObjectPool.newVector();
@@ -215,16 +217,16 @@ public final class MrimProfileManager {
             profile.photoUrls[i2] = (String) selected.elementAt(i2);
         }
         String[] strArr = account.profileManager.profile.photoUrls;
-        XmlElement root = new XmlElement(114);
+        XmlElement root = new XmlElement(XML_GEO_LIST_ELEMENT);
         XmlElement visibleEl = new XmlElement("visible", root, null);
         root.addChild(visibleEl);
         for (String str : strArr) {
             XmlElement userEl = new XmlElement("u", visibleEl, null);
-            userEl.setAttrValue(328413, str);
+            userEl.setAttrValue(XML_ATTR_USER_ID, str);
             visibleEl.addChild(userEl);
         }
-        account.trySendData(ProtocolFactory.createMrimPacket(account, 4181, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(root.toString())));
-        if (account.profileManager.profile.gender != 3) {
+        account.trySendData(ProtocolFactory.createMrimPacket(account, CS_GEO_VISIBILITY, new ByteBuffer().writeStringLatin1("geo-list").writeStringLatin1(root.toString())));
+        if (account.profileManager.profile.gender != LOCATION_WITH_GROUPS) {
             return 0;
         }
         account.profileManager.setGroups();

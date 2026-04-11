@@ -13,44 +13,47 @@ import com.trykote.mobileagent.util.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: w */
-/* loaded from: MobileAgent_3.9.jar:w.class */
 public final class ChatRoom {
 
-    /* renamed from: a */
+    // Maximum number of messages to serialize
+    public static final int MAX_SERIALIZED_MESSAGES = 20;
+
+    // Attachment field count per attachment
+    public static final int ATTACHMENT_FIELD_COUNT = 6;
+
+    // Number of localized mailbox names
+    public static final int MAILBOX_NAME_COUNT = 5;
+
+    // Mailbox type constants
+    public static final int TYPE_SENT = 1;
+    public static final int TYPE_DRAFT = 2;
+    public static final int TYPE_OTHER = 3;
+
+    // Maximum body length for serialization
+    private static final int MAX_BODY_LENGTH = 3072;
+
     public int id;
 
-    /* renamed from: b */
     public String name;
 
-    /* renamed from: c */
     public int memberCount;
 
-    /* renamed from: d */
     public int unreadCount;
 
-    /* renamed from: e */
     public String subject;
 
-    /* renamed from: f */
     public final Vector messageIds;
 
-    /* renamed from: g */
     public final Vector readMessages;
 
-    /* renamed from: h */
     public final Hashtable messages;
 
-    /* renamed from: i */
     public Hashtable metadata;
 
-    /* renamed from: j */
     public Vector participants;
 
-    /* renamed from: k */
     public boolean isInitialized;
 
-    /* renamed from: l */
     public boolean isActive;
 
     public ChatRoom() {
@@ -60,17 +63,16 @@ public final class ChatRoom {
         this.isActive = true;
     }
 
-    public ChatRoom(Object obj) {
+    public ChatRoom(Object jsonData) {
         this();
-        parseJson(obj);
+        parseJson(jsonData);
         this.isActive = true;
     }
 
-    /* renamed from: a */
     public final void serialize(ByteBuffer buffer) {
         buffer.writeStringUTF16(this.name).writeIntLE(this.memberCount).writeIntLE(this.id).writeIntLE(this.unreadCount).writeStringLatin1(this.subject);
-        if (this.messageIds.size() > 20) {
-            this.messageIds.setSize(20);
+        if (this.messageIds.size() > MAX_SERIALIZED_MESSAGES) {
+            this.messageIds.setSize(MAX_SERIALIZED_MESSAGES);
         }
         int size = this.messageIds.size();
         buffer.writeIntLE(size);
@@ -82,19 +84,19 @@ public final class ChatRoom {
             MailHelper.writeAddressPairs(msg.toList, buffer);
             MailHelper.writeAddressPairs(msg.ccList, buffer);
             buffer.writeIntLE(msg.priority).writeIntLE(msg.flags).writeStringUTF16(Utils.defaultStr(msg.subject));
-            if (msg.body == null || msg.body.length() > 3072) {
+            if (msg.body == null || msg.body.length() > MAX_BODY_LENGTH) {
                 buffer.writeIntLE(0).writeIntLE(0);
             } else {
                 buffer.writeIntLE(1).writeStringUTF16(msg.body).writeIntLE(1);
-                Object[] objArr = msg.attachments;
-                if (objArr == null) {
+                Object[] attachments = msg.attachments;
+                if (attachments == null) {
                     buffer.writeIntLE(0);
                 } else {
-                    buffer.writeIntLE(objArr.length);
-                    for (Object obj : objArr) {
-                        String[] strArr = (String[]) obj;
-                        for (int i2 = 0; i2 < 6; i2++) {
-                            buffer.writeStringUTF16(strArr[i2]);
+                    buffer.writeIntLE(attachments.length);
+                    for (int ai = 0; ai < attachments.length; ai++) {
+                        String[] attachFields = (String[]) attachments[ai];
+                        for (int fi = 0; fi < ATTACHMENT_FIELD_COUNT; fi++) {
+                            buffer.writeStringUTF16(attachFields[fi]);
                         }
                     }
                 }
@@ -107,7 +109,6 @@ public final class ChatRoom {
         }
     }
 
-    /* renamed from: b */
     public static final ChatRoom deserialize(ByteBuffer buffer) {
         ChatRoom room = new ChatRoom();
         room.name = buffer.readUTF8Str((String) null);
@@ -117,26 +118,24 @@ public final class ChatRoom {
         room.subject = buffer.readWideStr();
         int count = buffer.readInt();
         for (int i = 0; i < count; i++) {
-            Vector vector = room.messageIds;
             String msgKey = buffer.readWideStr();
-            vector.addElement(msgKey);
+            room.messageIds.addElement(msgKey);
             room.messages.put(msgKey, new Message(buffer, msgKey));
         }
         return room;
     }
 
-    /* renamed from: a */
-    public final void parseJson(Object obj) {
-        this.name = JsonParser.getStringByInt(obj, 263472);
-        this.memberCount = JsonParser.getIntByInt(obj, 526252);
-        this.id = JsonParser.getIntByInt(obj, 132297);
-        this.unreadCount = JsonParser.getIntByInt(obj, 395188);
+    public final void parseJson(Object jsonData) {
+        this.name = JsonParser.getStringByInt(jsonData, 263472);
+        this.memberCount = JsonParser.getIntByInt(jsonData, 526252);
+        this.id = JsonParser.getIntByInt(jsonData, 132297);
+        this.unreadCount = JsonParser.getIntByInt(jsonData, 395188);
         this.subject = Storage.emptyStr;
         this.isInitialized = true;
     }
 
-    public ChatRoom(int i) {
-        this.id = i;
+    public ChatRoom(int roomId) {
+        this.id = roomId;
         this.messageIds = ObjectPool.newVector();
         this.readMessages = ObjectPool.newVector();
         this.messages = new Hashtable();
@@ -144,66 +143,54 @@ public final class ChatRoom {
         this.participants = ObjectPool.newVector();
     }
 
-    /* renamed from: g */
     private String getFormattedName() {
-        int i = 5;
-        do {
-            i--;
-            if (i < 0) {
-                return this.name;
+        for (int i = MAILBOX_NAME_COUNT - 1; i >= 0; i--) {
+            if (this.name.equals(Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_EN_BASE, i))) {
+                return Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_RU_BASE, i);
             }
-        } while (!this.name.equals(Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_EN_BASE, i)));
-        return Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_RU_BASE, i);
+        }
+        return this.name;
     }
 
-    /* renamed from: a */
-    public final boolean isMessageRead(String str) {
-        return this.readMessages.contains(str);
+    public final boolean isMessageRead(String msgId) {
+        return this.readMessages.contains(msgId);
     }
 
-    /* renamed from: b */
-    public final Message getMessage(String str) {
-        if (str != null) {
-            return (Message) this.messages.get(str);
+    public final Message getMessage(String msgId) {
+        if (msgId != null) {
+            return (Message) this.messages.get(msgId);
         }
         return null;
     }
 
-    /* renamed from: c */
-    public final boolean hasMessage(String str) {
-        return this.messageIds.contains(str);
+    public final boolean hasMessage(String msgId) {
+        return this.messageIds.contains(msgId);
     }
 
-    /* renamed from: d */
-    public final void markMessageRead(String str) {
-        this.readMessages.removeElement(str);
+    public final void markMessageRead(String msgId) {
+        this.readMessages.removeElement(msgId);
     }
 
-    /* renamed from: a */
     public final int getType() {
         String formatted = getFormattedName();
-        if (StringUtils.matchesKey(896, formatted) || StringUtils.matchesKey(900, formatted)) {
-            return 1;
+        if (StringUtils.matchesKey(StringResKeys.MAILBOX_NAMES_RU_BASE, formatted) || StringUtils.matchesKey(StringResKeys.MAILBOX_NAMES_RU_BASE + 4, formatted)) {
+            return TYPE_SENT;
         }
-        return (StringUtils.matchesKey(898, formatted) || StringUtils.matchesKey(899, formatted)) ? 2 : 3;
+        return (StringUtils.matchesKey(StringResKeys.MAILBOX_NAMES_RU_BASE + 2, formatted) || StringUtils.matchesKey(StringResKeys.MAILBOX_NAMES_RU_BASE + 3, formatted)) ? TYPE_DRAFT : TYPE_OTHER;
     }
 
-    /* renamed from: b */
     public final void decrementUnread() {
         this.unreadCount--;
     }
 
-    /* renamed from: c */
     public final void incrementUnread() {
         this.unreadCount++;
     }
 
-    /* renamed from: d */
     public final void decrementMembers() {
         this.memberCount--;
     }
 
-    /* renamed from: e */
     public final void clear() {
         this.subject = null;
         this.messageIds.removeAllElements();
@@ -213,18 +200,15 @@ public final class ChatRoom {
         this.metadata.clear();
     }
 
-    /* renamed from: e */
-    public final int getPriority(String str) {
-        return Integer.parseInt((String) this.metadata.get(str));
+    public final int getPriority(String msgId) {
+        return Integer.parseInt((String) this.metadata.get(msgId));
     }
 
-    /* renamed from: a */
-    public final void setActive(boolean z) {
-        this.isActive = z;
+    public final void setActive(boolean active) {
+        this.isActive = active;
         this.isInitialized = true;
     }
 
-    /* renamed from: f */
     public final String getDisplayName() {
         if (this == ((MrimAccount) Storage.state().getAccount()).chatRoomManager.getLast()) {
             return this.name;

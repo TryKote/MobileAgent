@@ -16,10 +16,15 @@ import javax.microedition.io.DatagramConnection;
 
 public final class XmppMailRuProtocol extends XmppProtocol {
 
-    private static final int DEFAULT_PORT = 5222;
+    private static final int DEFAULT_PORT = 43289;
     private static final int ICON_MAILRU_START = 381;
     private static final int ICON_MAILRU_END = 384;
     private static final int ICON_MAILRU_OFFSET = 4;
+
+    private static final int HTTP_OK = 200;
+    private static final int HTTP_FORBIDDEN = 403;
+
+    private static final char CHAR_AT = '@';
 
     public XmppMailRuProtocol(int id, String login, String password) {
         super(id, login, password);
@@ -96,15 +101,12 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             if (xmppAccount != null) {
                 String loginStr = xmppAccount.login;
                 Vector parts = Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_SERVER_LIST), '\0');
-                int count = Utils.vectorSize(parts);
-                while (true) {
-                    count--;
-                    if (count < 1) {
-                        break;
-                    }
-                    int idx = loginStr.indexOf((String) parts.elementAt(count));
+                int count = 0;
+                for (int ci = Utils.vectorSize(parts) - 1; ci >= 1; ci--) {
+                    int idx = loginStr.indexOf((String) parts.elementAt(ci));
                     if (idx >= 0) {
                         loginStr = StringUtils.prefix(loginStr, idx);
+                        count = ci;
                         break;
                     }
                 }
@@ -112,6 +114,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, loginStr);
                 Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, xmppAccount.password);
                 Storage.state().setObject(ContactKeys.SLOT_DISPLAY_NAME, xmppAccount.displayName);
+            } else if (TestConfig.ENABLED && TestConfig.ACCOUNT_TYPE == TYPE_XMPP) {
+                Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, TestConfig.LOGIN);
+                Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, TestConfig.PASSWORD);
             }
             ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN_ALT));
             return;
@@ -133,17 +138,13 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
         clearLoginFields();
         Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, 0);
-        Account account2 = Storage.state().getAccount();
-        if (account2 != null) {
-            Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, account2.password);
-            String login = account2.login;
+        Account currentAccount = Storage.state().getAccount();
+        if (currentAccount != null) {
+            Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, currentAccount.password);
+            String login = currentAccount.login;
             Vector domains = Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_DOMAIN_LIST), '\0');
             int size = domains.size();
-            int i = 0;
-            while (true) {
-                if (i > size) {
-                    break;
-                }
+            for (int i = 0; i <= size; i++) {
                 if (i == size) {
                     Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, login);
                     break;
@@ -154,7 +155,6 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, StringUtils.prefix(login, idx));
                     break;
                 }
-                i++;
             }
         }
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_CONTEXT_MENU));
@@ -210,15 +210,13 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     private static final boolean containsDomainSuffix(String login, int domainListKey) {
         Vector parts = Utils.splitNonEmpty(Storage.state().getString(domainListKey), '\0');
-        int size = parts.size();
-        do {
-            size--;
-            if (size < 0) {
-                ObjectPool.releaseVector(parts);
-                return false;
+        for (int i = parts.size() - 1; i >= 0; i--) {
+            if (login.indexOf((String) parts.elementAt(i)) >= 0) {
+                return true;
             }
-        } while (login.indexOf((String) parts.elementAt(size)) < 0);
-        return true;
+        }
+        ObjectPool.releaseVector(parts);
+        return false;
     }
 
     public static final String getLoginLowerCase() {
@@ -226,13 +224,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final boolean isValidUsername(String username) {
-        int length = username.length();
-        while (true) {
-            length--;
-            if (length < 0) {
-                return true;
-            }
-            char ch = username.charAt(length);
+        for (int i = username.length() - 1; i >= 0; i--) {
+            char ch = username.charAt(i);
             if (ch < 'A' || ch > 'Z') {
                 if (ch < 'a' || ch > 'z') {
                     if (ch < '0' || ch > '9') {
@@ -243,17 +236,27 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
             }
         }
+        return true;
     }
 
     public static final void resolveXmppServer(Object[] taskArgs) {
         try {
-            String login = ((XmppProtocol) taskArgs[0]).login;
-            String srvQuery = StringUtils.concatKey(PackedStringKeys.SRV_XMPP_CLIENT_TCP, StringUtils.suffix(login, login.indexOf('@') + 1));
+            XmppProtocol xmppAccount = (XmppProtocol) taskArgs[0];
+            String login = xmppAccount.login;
+            String domain = StringUtils.suffix(login, login.indexOf('@') + 1);
+
+            // Skip DNS SRV for IP addresses — connect directly
+            if (isIpAddress(domain)) {
+                RemoteLogger.log("XMPP", "domain is IP address, skipping SRV: " + domain + ":" + DEFAULT_PORT);
+                xmppAccount.setAuthParameters(domain, DEFAULT_PORT);
+                return;
+            }
+
+            String srvQuery = StringUtils.concatKey(PackedStringKeys.SRV_XMPP_CLIENT_TCP, domain);
             RemoteLogger.log("XMPP", "DNS SRV lookup: " + srvQuery);
             String srvRecord = dnsLookupSrv(srvQuery);
             RemoteLogger.log("XMPP", "DNS SRV result: " + srvRecord);
             if (srvRecord == null || srvRecord.indexOf(':') <= 0) {
-                XmppProtocol xmppAccount = (XmppProtocol) taskArgs[0];
                 String fallback = xmppAccount.getStreamDomain();
                 RemoteLogger.log("XMPP", "SRV failed, using fallback: " + fallback + ":" + DEFAULT_PORT);
                 xmppAccount.setAuthParameters(fallback, DEFAULT_PORT);
@@ -262,13 +265,22 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 String host = Utils.getVectorString(parts, 0);
                 int port = Integer.parseInt(Utils.getVectorString(parts, 1));
                 RemoteLogger.log("XMPP", "SRV resolved: " + host + ":" + port);
-                ((XmppProtocol) taskArgs[0]).setAuthParameters(host, port);
+                xmppAccount.setAuthParameters(host, port);
                 ObjectPool.releaseVector(parts);
             }
         } catch (Throwable th) {
             RemoteLogger.log("XMPP", "resolveXmppServer FAILED", th);
             ((XmppProtocol) taskArgs[0]).setException(th);
         }
+    }
+
+    private static boolean isIpAddress(String str) {
+        if (str == null || str.length() == 0) return false;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c != '.' && (c < '0' || c > '9')) return false;
+        }
+        return true;
     }
 
     private static final String dnsLookupSrv(String srvName) {
@@ -303,11 +315,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     if (labelLen == 0) {
                         break;
                     }
-                    while (true) {
-                        remaining--;
-                        if (remaining < 0) {
-                            break;
-                        }
+                    for (int ri = remaining - 1; ri >= 0; ri--) {
                         recordBuf.readUByte();
                     }
                 }
@@ -345,53 +353,51 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
     }
 
-    /* renamed from: c */
-    public static final int loginXmpp(int i) {
-        String strM522f = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD));
-        String strM843u = getLoginLowerCase();
-        String strM1215a = strM843u;
-        if (StringUtils.isEmpty(strM843u)) {
+    public static final int loginXmpp(int accountType) {
+        String password = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD));
+        String login = getLoginLowerCase();
+        String fullLogin = login;
+        if (StringUtils.isEmpty(login)) {
             return NotificationHelper.showError(301);
         }
-        int iM586d = Storage.state().getInt(SessionKeys.INT_SERVER_INDEX);
-        if (iM586d != 0 && strM1215a.indexOf(64) < 0) {
-            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(strM1215a).append(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_SERVER_LIST)).elementAt(iM586d)));
+        int serverIndex = Storage.state().getInt(SessionKeys.INT_SERVER_INDEX);
+        if (serverIndex != 0 && fullLogin.indexOf(CHAR_AT) < 0) {
+            fullLogin = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(fullLogin).append(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_SERVER_LIST)).elementAt(serverIndex)));
         }
-        if (i == 2 && strM1215a.indexOf(64) < 0) {
+        if (accountType == 2 && fullLogin.indexOf(CHAR_AT) < 0) {
             return NotificationHelper.showError(699);
         }
-        int iM437a = AccountManager.validateCredentials(i, Storage.state().getAccount(), strM1215a, strM522f);
-        if (0 != iM437a) {
-            return NotificationHelper.showError(iM437a);
+        int errorCode = AccountManager.validateCredentials(accountType, Storage.state().getAccount(), fullLogin, password);
+        if (errorCode != 0) {
+            return NotificationHelper.showError(errorCode);
         }
-        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(i, strM1215a).setDisplayName(Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME))));
+        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(accountType, fullLogin).setDisplayName(Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME))));
         return 0;
     }
 
-    /* renamed from: d */
     public static final void performXmppAuth(Object[] objArr) {
         try {
             try {
                 NetworkLock.acquireNetworkLock();
-                HttpClient c0024axM629a = HttpClient.createHttpClient((String) objArr[1], (Account) objArr[0], 0);
-                int iM634a = c0024axM629a.getResponseCode();
-                if (iM634a == 200) {
-                    Vector vectorM516c = Utils.splitNonEmpty(new ByteBuffer(c0024axM629a).getStringAndClear(), '\n');
+                HttpClient httpClient = HttpClient.createHttpClient((String) objArr[1], (Account) objArr[0], 0);
+                int responseCode = httpClient.getResponseCode();
+                if (responseCode == HTTP_OK) {
+                    Vector responseLines = Utils.splitNonEmpty(new ByteBuffer(httpClient).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
                         objArr[2] = ObjectPool.integerOf(1);
-                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr((String) vectorM516c.elementAt(0)).writeByte(38).writeObjectStr((String) vectorM516c.elementAt(1)).readAllByteStr();
+                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr((String) responseLines.elementAt(0)).writeByte(38).writeObjectStr((String) responseLines.elementAt(1)).readAllByteStr();
                         new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, objArr);
                     } else {
-                        setAuthResult(objArr, vectorM516c.elementAt(0));
+                        setAuthResult(objArr, responseLines.elementAt(0));
                     }
-                    ObjectPool.releaseVector(vectorM516c);
+                    ObjectPool.releaseVector(responseLines);
                 } else {
-                    if (iM634a != 403) {
-                        throw new Throwable(StringUtils.intern(Integer.toString(iM634a)));
+                    if (responseCode != HTTP_FORBIDDEN) {
+                        throw new Throwable(StringUtils.intern(Integer.toString(responseCode)));
                     }
                     ((XmppProtocol) objArr[0]).handleComplete();
                 }
-                HttpClient.closeAndUpdateStats(c0024axM629a);
+                HttpClient.closeAndUpdateStats(httpClient);
                 NetworkLock.releaseNetworkLock();
             } catch (Throwable th) {
                 setAuthResult(objArr, th);
@@ -409,7 +415,6 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
     }
 
-    /* renamed from: a */
     private static final void setAuthResult(Object[] objArr, Object obj) {
         ((XmppProtocol) objArr[0]).authResult = obj;
     }

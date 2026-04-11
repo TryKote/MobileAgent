@@ -11,17 +11,34 @@ import javax.microedition.rms.RecordStore;
 
 public final class TileCache {
 
+    // Maximum tile cache size in bytes (200 KB)
+    private static final int MAX_CACHE_SIZE = 204800;
+
+    // HTTP header end-of-headers marker state value
+    // State machine: LF=+1, CR=+16; end at state 34 (CR LF CR LF)
+    private static final int HEADER_END_MARKER = 34;
+
+    // HTTP response status parsing offsets
+    private static final int HTTP_STATUS_OFFSET = 9;
+    private static final int HTTP_STATUS_LENGTH = 12;
+    private static final int HTTP_STATUS_OK = 200;
+
+    // Content-Length header value offset
+    private static final int CONTENT_LENGTH_VALUE_OFFSET = 16;
+
+    // HTTP header state machine increments
+    private static final int STATE_LF_INCREMENT = 1;
+    private static final int STATE_CR_INCREMENT = 16;
+
+    // Traffic overhead estimate for tile response
+    private static final int TILE_TRAFFIC_OVERHEAD = 255;
+
     public static final void calculateCacheSize() {
         int size = 0;
         String[] storeNames = StringUtils.listRecordStores();
         if (storeNames != null) {
-            int length = storeNames.length;
-            while (true) {
-                length--;
-                if (length < 0) {
-                    break;
-                }
-                String str = storeNames[length];
+            for (int idx = storeNames.length - 1; idx >= 0; idx--) {
+                String str = storeNames[idx];
                 if (str.startsWith(Storage.resources().getString(PackedStringKeys.MAP_TILES))) {
                     RecordStore recordStore = null;
                     try {
@@ -44,15 +61,10 @@ public final class TileCache {
         }
         String cacheKey = buildTileCacheKey(resource);
         ByteBuffer tileData = new ByteBuffer().writeStringLatin1(resource.tileUrl).writeLong(System.currentTimeMillis()).writeBytesAt(bArr, 0, i2);
-        int i3 = 4;
-        while (true) {
-            i3--;
-            if (i3 <= 0) {
-                return;
-            }
+        for (int i3 = 3; i3 > 0; i3--) {
             try {
                 try {
-                    if (tileData.length + Storage.state().getInt(MapKeys.INT_TILE_CACHE_SIZE) >= 204800) {
+                    if (tileData.length + Storage.state().getInt(MapKeys.INT_TILE_CACHE_SIZE) >= MAX_CACHE_SIZE) {
                         throw new Throwable();
                     }
                     RecordStore store = IOUtils.openRecordStore(cacheKey, true);
@@ -113,20 +125,14 @@ public final class TileCache {
         String[] storeNames = StringUtils.listRecordStores();
         if (storeNames != null) {
             String cachePrefix = Storage.resources().getString(PackedStringKeys.MAP_TILES);
-            int length = storeNames.length;
-            while (true) {
-                length--;
-                if (length < 0) {
-                    break;
-                }
-                String str2 = storeNames[length];
+            for (int idx = storeNames.length - 1; idx >= 0; idx--) {
+                String str2 = storeNames[idx];
                 if (str2.startsWith(cachePrefix)) {
                     RecordStore store = null;
                     try {
                         store = IOUtils.openRecordStore(str2, false);
-                        long j2 = j;
                         long lastModified = store.getLastModified();
-                        if (j2 > j2 || j == 0) {
+                        if (lastModified < j || j == 0) {
                             j = lastModified;
                             str = str2;
                         }
@@ -216,7 +222,7 @@ public final class TileCache {
             throw new IOException();
         }
         Storage.state().addInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES, headers.getBytes().length);
-        if (parseHttpStatus(headers) != 200) {
+        if (parseHttpStatus(headers) != HTTP_STATUS_OK) {
             int contentLen = parseContentLength(headers);
             try {
                 if (contentLen > 0) {
@@ -240,7 +246,7 @@ public final class TileCache {
         if (Storage.state().getBool(MapKeys.FLAG_TILE_CACHE_ENABLED)) {
             saveTileToCache(resource, bArr3, 0, i3);
         }
-        TrafficAccounting.addXmppInbound(bodyBuf.length + 255);
+        TrafficAccounting.addXmppInbound(bodyBuf.length + TILE_TRAFFIC_OVERHEAD);
         return bodyBuf.toImage();
     }
 
@@ -256,12 +262,12 @@ public final class TileCache {
                 }
                 buf.writeByte(i2);
                 if (i2 == 10) {
-                    i++;
-                    if (i == 34) {
+                    i += STATE_LF_INCREMENT;
+                    if (i == HEADER_END_MARKER) {
                         return buf.getStringAndClear();
                     }
                 } else {
-                    i = i2 == 13 ? i + 16 : 0;
+                    i = i2 == 13 ? i + STATE_CR_INCREMENT : 0;
                 }
             } catch (Throwable unused) {
                 return null;
@@ -294,7 +300,7 @@ public final class TileCache {
 
     private static final int parseHttpStatus(String str) {
         try {
-            return Integer.parseInt(StringUtils.substring(str, 9, 12));
+            return Integer.parseInt(StringUtils.substring(str, HTTP_STATUS_OFFSET, HTTP_STATUS_LENGTH));
         } catch (Throwable unused) {
             return 0;
         }
@@ -302,7 +308,7 @@ public final class TileCache {
 
     private static final int parseContentLength(String str) {
         try {
-            int headerOffset = StringUtils.indexOfPoolString(StringUtils.intern(str.toLowerCase()), 1052310) + 16;
+            int headerOffset = StringUtils.indexOfPoolString(StringUtils.intern(str.toLowerCase()), 1052310) + CONTENT_LENGTH_VALUE_OFFSET;
             return Integer.parseInt(StringUtils.substring(str, headerOffset, str.indexOf(13, headerOffset)));
         } catch (Throwable unused) {
             return -1;

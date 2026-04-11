@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.map;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -15,78 +14,140 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-/* renamed from: bc */
-/* loaded from: MobileAgent_3.9.jar:bc.class */
 public abstract class ChatRenderer {
 
-    /* renamed from: a */
+    // Colors
+    private static final int COLOR_WHITE = 16777215;
+    private static final int COLOR_BLUE = 255;
+    private static final int COLOR_MARKER_OUTLINE = 14474460;
+    private static final int COLOR_ROUTE = 13311;
+    private static final int COLOR_BLACK = 0;
+
+    // Scale bar rendering
+    private static final int SCALE_BAR_PIXEL_WIDTH = 50;
+    private static final int SCALE_BAR_HEIGHT = 3;
+    private static final int SCALE_BAR_TOTAL_HEIGHT = 6;
+    private static final int SCALE_BAR_MARGIN_RIGHT = 5;
+    private static final int SCALE_BAR_MARGIN_BOTTOM = 13;
+    private static final int SCALE_BAR_OFFSET_TOP = 5;
+    private static final int SCALE_BAR_OFFSET_INNER = 2;
+    private static final int SCALE_BAR_THICK = 4;
+
+    // Scale recalculation threshold (10 seconds)
+    private static final long SCALE_RECALC_THRESHOLD_MS = 10000;
+
+    // Scale thresholds (meters)
+    private static final int SCALE_THRESHOLD_100 = 100;
+    private static final int SCALE_THRESHOLD_1000 = 1000;
+    private static final int SCALE_THRESHOLD_10000 = 10000;
+    private static final int SCALE_THRESHOLD_100000 = 100000;
+    private static final int SCALE_STEP_25 = 25;
+    private static final int SCALE_STEP_100 = 100;
+    private static final int SCALE_STEP_1000 = 1000;
+    private static final int SCALE_STEP_10000 = 10000;
+
+    // Minimum soft key bar height
+    private static final int MIN_SOFTKEY_HEIGHT = 18;
+
+    // Marker rendering
+    private static final int MARKER_DOT_RADIUS = 6;
+    private static final int MARKER_DOT_DIAMETER = 12;
+    private static final int MARKER_OUTLINE_RADIUS = 7;
+    private static final int MARKER_OUTLINE_DIAMETER = 14;
+    private static final int FULL_CIRCLE = 360;
+
+    // Tooltip rendering
+    private static final int TOOLTIP_PADDING_H = 10;
+    private static final int TOOLTIP_PADDING_V = 6;
+    private static final int TOOLTIP_TEXT_INSET_X = 5;
+    private static final int TOOLTIP_TEXT_INSET_Y = 3;
+    private static final int TOOLTIP_MIN_TEXT_WIDTH = 20;
+    private static final int TOOLTIP_CORNER_RADIUS = 10;
+    private static final int TOOLTIP_MIN_ARROW_SIZE = 3;
+    private static final int TOOLTIP_ARROW_DIVISOR = 25;
+
+    // Bubble rendering
+    private static final int BUBBLE_TEXT_MARGIN = 40;
+    private static final int BUBBLE_DEFAULT_OFFSET_Y = 22;
+    private static final int BUBBLE_COMPACT_OFFSET_Y = 4;
+    private static final int BUBBLE_ICON_SIZE = 16;
+    private static final int BUBBLE_PADDING = 6;
+    private static final int BUBBLE_INNER_PADDING = 2;
+    private static final int BUBBLE_BUTTON_ICON_SIZE = 24;
+    private static final int BUBBLE_BUTTON_GAP = 2;
+    private static final int BUBBLE_MIN_TOP_MARGIN = 10;
+    private static final int BUBBLE_SCROLL_EXTRA = 20;
+
+    // Route point rendering
+    private static final int ROUTE_POINT_NORMAL_SIZE = 9;
+    private static final int ROUTE_POINT_SELECTED_SIZE = 11;
+    private static final int ROUTE_POINT_HOVER_DISTANCE = 20;
+
+    // Route tooltip hover distance (pixels in map coords)
+    private static final int ROUTE_LABEL_HOVER_DISTANCE = 7;
+
+    // Distance thresholds for isDistant()
+    private static final int DISTANT_THRESHOLD = 5;
+    private static final int DISTANT_DIAG_MAX = 4;
+    private static final int DISTANT_DIAG_MIN = 3;
+
+    // Route label bar
+    private static final int ROUTE_LABEL_DEFAULT_X = 22;
+    private static final int ROUTE_LABEL_COMPACT_SHIFT = 20;
+    private static final int ROUTE_LABEL_BOTTOM_MARGIN = 1;
+    private static final int ROUTE_LABEL_SOFTKEY_MARGIN = 2;
+
     public static int offsetX;
 
-    /* renamed from: b */
     public static int offsetY;
 
-    /* renamed from: l */
     private static long scaleTimestamp;
 
-    /* renamed from: m */
     private static long scaleZoom;
 
-    /* renamed from: n */
     private static int scaleBarWidth;
 
-    /* renamed from: o */
     private static String scaleLabel;
 
-    /* renamed from: p */
     private static boolean scaleValid;
 
-    /* renamed from: c */
     public static int[] buttonBounds;
 
-    /* renamed from: d */
     public static long coord1;
 
-    /* renamed from: e */
     public static long coord2;
 
-    /* renamed from: f */
     public static long coord3;
 
-    /* renamed from: g */
     public static long coord4;
 
-    /* renamed from: h */
     public static ListItem[] mapItems;
 
-    /* renamed from: i */
     public static long markerLon;
 
-    /* renamed from: j */
     public static long markerLat;
 
-    /* renamed from: k */
     public static int markerRadius;
 
-    /* renamed from: a */
     public static final void renderScaleBar(Graphics graphics, int i, long j) {
         int i2;
         if (i < 0 || i > 17) {
             i = 0;
         }
-        if (i != scaleZoom || Utils.absLong(j - scaleTimestamp) > 10000 || !scaleValid) {
+        if (i != scaleZoom || Utils.absLong(j - scaleTimestamp) > SCALE_RECALC_THRESHOLD_MS || !scaleValid) {
             scaleValid = true;
             scaleTimestamp = j;
             scaleZoom = i;
             int i3 = i;
-            int metersPerBar = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(MapUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((50 * MapUtils.getZoomNumerator(i3)) / MapUtils.getZoomDenominator(i3))));
-            int step = metersPerBar < 100 ? 25 : metersPerBar < 1000 ? 100 : metersPerBar < 10000 ? 1000 : metersPerBar < 100000 ? 10000 : 100000;
+            int metersPerBar = (int) SoftFloat.floatToLong(SoftFloat.multiply(SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(MapUtils.pixelToLatitude(j)))), SoftFloat.longToFloat((SCALE_BAR_PIXEL_WIDTH * MapUtils.getZoomNumerator(i3)) / MapUtils.getZoomDenominator(i3))));
+            int step = metersPerBar < SCALE_THRESHOLD_100 ? SCALE_STEP_25 : metersPerBar < SCALE_THRESHOLD_1000 ? SCALE_STEP_100 : metersPerBar < SCALE_THRESHOLD_10000 ? SCALE_STEP_1000 : metersPerBar < SCALE_THRESHOLD_100000 ? SCALE_STEP_10000 : SCALE_THRESHOLD_100000;
             int roundedMeters = (metersPerBar / step) * step;
             scaleBarWidth = scaleToPixels(roundedMeters, i, j);
             StringBuffer sb = ObjectPool.newStringBuffer();
             if (roundedMeters < 1000) {
                 sb.append(roundedMeters);
             } else {
-                sb.append(roundedMeters / 1000).append((char) 1082);
+                sb.append(roundedMeters / SCALE_THRESHOLD_1000).append((char) 1082);
             }
             scaleLabel = ObjectPool.toStringAndRelease(sb.append((char) 1084));
         }
@@ -98,26 +159,25 @@ public abstract class ChatRenderer {
         int barWidth = Utils.max(scaleBarWidth, scaleFont.stringWidth(scaleLabel));
         int height = scaleFont.getHeight();
         if (Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE)) {
-            i2 = -(softKeyHeight > 16 ? softKeyHeight : 18);
+            i2 = -(softKeyHeight > BUBBLE_ICON_SIZE ? softKeyHeight : MIN_SOFTKEY_HEIGHT);
         } else {
             i2 = 0;
         }
         int i6 = i2;
-        int clipWidth = (graphics.getClipWidth() - barWidth) - 5;
-        int clipHeight = (graphics.getClipHeight() - height) - 13;
+        int clipWidth = (graphics.getClipWidth() - barWidth) - SCALE_BAR_MARGIN_RIGHT;
+        int clipHeight = (graphics.getClipHeight() - height) - SCALE_BAR_MARGIN_BOTTOM;
         graphics.drawString(scaleLabel, clipWidth, i6 + clipHeight, 20);
-        graphics.setColor(16777215);
-        graphics.fillRect(clipWidth, i6 + clipHeight + height + 5, scaleBarWidth / 2, 3);
-        graphics.fillRect(clipWidth + (scaleBarWidth / 2), i6 + clipHeight + height + 2, scaleBarWidth / 2, 3);
-        graphics.setColor(0);
-        graphics.fillRect(clipWidth, i6 + clipHeight + height + 2, scaleBarWidth / 2, 4);
-        graphics.fillRect(clipWidth + (scaleBarWidth / 2), i6 + clipHeight + height + 5, scaleBarWidth / 2, 3);
-        graphics.drawRect(clipWidth, i6 + clipHeight + height + 2, scaleBarWidth, 6);
+        graphics.setColor(COLOR_WHITE);
+        graphics.fillRect(clipWidth, i6 + clipHeight + height + SCALE_BAR_OFFSET_TOP, scaleBarWidth / 2, SCALE_BAR_HEIGHT);
+        graphics.fillRect(clipWidth + (scaleBarWidth / 2), i6 + clipHeight + height + SCALE_BAR_OFFSET_INNER, scaleBarWidth / 2, SCALE_BAR_HEIGHT);
+        graphics.setColor(COLOR_BLACK);
+        graphics.fillRect(clipWidth, i6 + clipHeight + height + SCALE_BAR_OFFSET_INNER, scaleBarWidth / 2, SCALE_BAR_THICK);
+        graphics.fillRect(clipWidth + (scaleBarWidth / 2), i6 + clipHeight + height + SCALE_BAR_OFFSET_TOP, scaleBarWidth / 2, SCALE_BAR_HEIGHT);
+        graphics.drawRect(clipWidth, i6 + clipHeight + height + SCALE_BAR_OFFSET_INNER, scaleBarWidth, SCALE_BAR_TOTAL_HEIGHT);
         graphics.setColor(color);
         graphics.setFont(font);
     }
 
-    /* renamed from: a */
     public static final void renderMarker(Graphics graphics, long j, long j2, int i, int i2, int i3, long j3) {
         if (markerLon == 0 || markerLat == 0) {
             return;
@@ -128,67 +188,55 @@ public abstract class ChatRenderer {
             return;
         }
         int color = graphics.getColor();
-        graphics.setColor(255);
-        graphics.fillArc(markerX - 6, markerY - 6, 12, 12, 0, 360);
+        graphics.setColor(COLOR_BLUE);
+        graphics.fillArc(markerX - MARKER_DOT_RADIUS, markerY - MARKER_DOT_RADIUS, MARKER_DOT_DIAMETER, MARKER_DOT_DIAMETER, 0, FULL_CIRCLE);
         int radiusPx = scaleToPixels(markerRadius, i, j3);
         int diameter = radiusPx << 1;
-        graphics.drawArc(markerX - radiusPx, markerY - radiusPx, diameter, diameter, 0, 360);
-        graphics.setColor(14474460);
-        graphics.drawArc(markerX - 7, markerY - 7, 14, 14, 0, 360);
+        graphics.drawArc(markerX - radiusPx, markerY - radiusPx, diameter, diameter, 0, FULL_CIRCLE);
+        graphics.setColor(COLOR_MARKER_OUTLINE);
+        graphics.drawArc(markerX - MARKER_OUTLINE_RADIUS, markerY - MARKER_OUTLINE_RADIUS, MARKER_OUTLINE_DIAMETER, MARKER_OUTLINE_DIAMETER, 0, FULL_CIRCLE);
         graphics.setColor(color);
     }
 
-    /* renamed from: a */
     private static final int getMaxTextWidth(Vector vector, Font font) {
-        int maxWidth = 20;
-        int size = vector.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return maxWidth;
-            }
-            maxWidth = Utils.max(maxWidth, font.stringWidth((String) vector.elementAt(size)));
+        int maxWidth = TOOLTIP_MIN_TEXT_WIDTH;
+        for (int idx = vector.size() - 1; idx >= 0; idx--) {
+            maxWidth = Utils.max(maxWidth, font.stringWidth((String) vector.elementAt(idx)));
         }
+        return maxWidth;
     }
 
-    /* renamed from: a */
     public static final void renderTooltip(Graphics graphics, String str, Font font, int i, int i2, int i3) {
         Vector lines = Utils.wrapText(str, font, i);
         int size = lines.size();
-        int boxWidth = getMaxTextWidth(lines, font) + 10;
+        int boxWidth = getMaxTextWidth(lines, font) + TOOLTIP_PADDING_H;
         int height = font.getHeight();
-        int i4 = (height * size) + 6;
+        int i4 = (height * size) + TOOLTIP_PADDING_V;
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
         int themeIdx = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
         graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
-        int arrowSize = Utils.min(boxWidth / 25, 3);
+        int arrowSize = Utils.min(boxWidth / TOOLTIP_ARROW_DIVISOR, TOOLTIP_MIN_ARROW_SIZE);
         int arrowH = arrowSize << 1;
         int boxX = i2 - (boxWidth / 2);
         int boxY = (i3 - arrowH) - i4;
-        graphics.fillRoundRect(boxX, boxY, boxWidth, i4, 10, 10);
-        graphics.setColor(0);
-        graphics.drawRoundRect(boxX, boxY, boxWidth, i4, 10, 10);
+        graphics.fillRoundRect(boxX, boxY, boxWidth, i4, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
+        graphics.setColor(COLOR_BLACK);
+        graphics.drawRoundRect(boxX, boxY, boxWidth, i4, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
         graphics.setFont(font);
         graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + themeIdx));
-        int i8 = size;
-        while (true) {
-            i8--;
-            if (i8 < 0) {
-                graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
-                graphics.fillTriangle(i2 + arrowSize, i3 - (arrowSize << 1), i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
-                graphics.setColor(0);
-                graphics.drawLine(i2 + arrowSize, i3 - (arrowSize << 1), i2, i3);
-                graphics.drawLine(i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
-                graphics.setFont(font2);
-                graphics.setColor(color);
-                return;
-            }
-            graphics.drawString((String) lines.elementAt(i8), boxX + 5, boxY + 3 + (i8 * height), 20);
+        for (int i8 = size - 1; i8 >= 0; i8--) {
+            graphics.drawString((String) lines.elementAt(i8), boxX + TOOLTIP_TEXT_INSET_X, boxY + TOOLTIP_TEXT_INSET_Y + (i8 * height), 20);
         }
+        graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
+        graphics.fillTriangle(i2 + arrowSize, i3 - (arrowSize << 1), i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
+        graphics.setColor(COLOR_BLACK);
+        graphics.drawLine(i2 + arrowSize, i3 - (arrowSize << 1), i2, i3);
+        graphics.drawLine(i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
+        graphics.setFont(font2);
+        graphics.setColor(color);
     }
 
-    /* renamed from: a */
     public static final void renderBubble(Graphics graphics, int i, int i2, int i3, long j, long j2, ListItem item) {
         if (item == null || !item.isSelected()) {
             return;
@@ -198,7 +246,7 @@ public abstract class ChatRenderer {
         int bubbleX = (int) ((i / 2) + (item.getCommandId(i3) - j));
         int bubbleY = (int) ((i2 / 2) + (j2 - item.executeCommand(i3)));
         int i4 = 8;
-        int i5 = 22;
+        int i5 = BUBBLE_DEFAULT_OFFSET_Y;
         boolean hasAction = item.isHighlighted();
         int itemType = item.getHeight();
         int i6 = itemType == 1 ? 303 : 360;
@@ -209,47 +257,47 @@ public abstract class ChatRenderer {
         if (itemType == 3 || itemType == 9 || itemType == 6) {
             i6 = 0;
             i4 = 0;
-            i5 = 4;
+            i5 = BUBBLE_COMPACT_OFFSET_Y;
         }
         if (itemType == 8) {
             int i7 = ((UserSearchResult) item).gender;
             i6 = i7 == 1 ? 377 : i7 == 2 ? 378 : 379;
             i4 = 0;
-            i5 = 4;
+            i5 = BUBBLE_COMPACT_OFFSET_Y;
         }
         if (itemType == 7 || itemType == 5) {
             i4 = 0;
-            i5 = 4;
+            i5 = BUBBLE_COMPACT_OFFSET_Y;
             i6 = 380;
         }
         int i8 = i6;
         int i9 = bubbleX + i4;
         int i10 = bubbleY - i5;
-        Vector textLines = Utils.wrapText(Utils.defaultStr(item.getText()), font, i - 40);
+        Vector textLines = Utils.wrapText(Utils.defaultStr(item.getText()), font, i - BUBBLE_TEXT_MARGIN);
         int size = textLines.size();
         int textWidth = getMaxTextWidth(textLines, font);
-        int iStringWidth = font.stringWidth(Storage.resources().getString(StringResKeys.STR_SHOW_ROUTE)) + 6 + 24;
+        int iStringWidth = font.stringWidth(Storage.resources().getString(StringResKeys.STR_SHOW_ROUTE)) + BUBBLE_PADDING + BUBBLE_BUTTON_ICON_SIZE;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
-        int i11 = height > 16 ? height : 16;
-        int i12 = 6 + ((hasAction ? 2 : 1) * i11) + ((size - 1) * height);
-        int i13 = textWidth + (i8 != 0 ? 16 : 0) + 6;
+        int i11 = height > BUBBLE_ICON_SIZE ? height : BUBBLE_ICON_SIZE;
+        int i12 = BUBBLE_PADDING + ((hasAction ? 2 : 1) * i11) + ((size - 1) * height);
+        int i13 = textWidth + (i8 != 0 ? BUBBLE_ICON_SIZE : 0) + BUBBLE_PADDING;
         int i14 = i13;
         if (i13 < iStringWidth) {
             i14 = iStringWidth;
         }
         int themeIdx = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
         graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
-        int i15 = i14 / 25;
+        int i15 = i14 / TOOLTIP_ARROW_DIVISOR;
         int i16 = i15;
-        if (i15 < 3) {
-            i16 = 3;
+        if (i15 < TOOLTIP_MIN_ARROW_SIZE) {
+            i16 = TOOLTIP_MIN_ARROW_SIZE;
         }
         int i17 = (i10 - i12) - i16;
-        if (i17 < 10) {
+        if (i17 < BUBBLE_MIN_TOP_MARGIN) {
             if (!(MapRenderer.autoScrollCount > 0)) {
-                int scrollAmount = Utils.abs(i17) + 20;
+                int scrollAmount = Utils.abs(i17) + BUBBLE_SCROLL_EXTRA;
                 if (MapRenderer.autoScrollCount <= 0) {
                     MapRenderer.autoScrollCount = scrollAmount;
                     MapRenderer.autoScrollTimestamp = System.currentTimeMillis();
@@ -258,17 +306,17 @@ public abstract class ChatRenderer {
             }
         }
         int i18 = i16 << 1;
-        graphics.fillRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
-        graphics.setColor(0);
-        graphics.drawRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, 10, 10);
+        graphics.fillRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
+        graphics.setColor(COLOR_BLACK);
+        graphics.drawRoundRect(i9 - (i14 / 2), (i10 - i18) - i12, i14, i12, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
         GraphicsContext gfx = new GraphicsContext(graphics);
         if (i8 != 0) {
-            gfx.drawIcon(i8, (i9 - (i14 / 2)) + 2, ((i10 - i18) - i12) + 2);
+            gfx.drawIcon(i8, (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING, ((i10 - i18) - i12) + BUBBLE_INNER_PADDING);
         }
         graphics.setFont(font);
         graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + themeIdx));
         for (int i19 = 0; i19 < size; i19++) {
-            graphics.drawString((String) textLines.elementAt(i19), (i9 - (i14 / 2)) + 2 + (i8 != 0 ? 16 : 0), ((i10 - i18) - i12) + i11 + 2 + ((i19 - 1) * height), 20);
+            graphics.drawString((String) textLines.elementAt(i19), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + (i8 != 0 ? BUBBLE_ICON_SIZE : 0), ((i10 - i18) - i12) + i11 + BUBBLE_INNER_PADDING + ((i19 - 1) * height), 20);
         }
         Image buttonImage = XmppContactGroup.getOrLoadImage(19);
         if (buttonBounds == null) {
@@ -278,34 +326,32 @@ public abstract class ChatRenderer {
             buttonBounds[3] = buttonImage.getHeight();
         }
         if (hasAction) {
-            int i20 = (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2);
+            int i20 = (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + ((i14 - iStringWidth) / 2);
             buttonBounds[0] = i20;
-            int i21 = ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)) + (i11 / 2);
+            int i21 = ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)) + (i11 / 2);
             buttonBounds[1] = i21;
             graphics.drawImage(buttonImage, i20, i21, 6);
-            graphics.drawString(Storage.resources().getString(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + 2 + ((i14 - iStringWidth) / 2) + 24 + 2, ((i10 - i18) - i12) + 4 + i11 + (height * (size - 1)), 20);
+            graphics.drawString(Storage.resources().getString(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + ((i14 - iStringWidth) / 2) + BUBBLE_BUTTON_ICON_SIZE + BUBBLE_BUTTON_GAP, ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)), 20);
         }
         graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
-        graphics.setColor(0);
+        graphics.setColor(COLOR_BLACK);
         graphics.drawLine(i9 + i16, i10 - i18, i9, i10);
         graphics.drawLine(i9 + (i16 << 2), i10 - i18, i9, i10);
         graphics.setFont(font2);
         graphics.setColor(color);
     }
 
-    /* renamed from: a */
     public static final boolean isDistant(int i, int i2, int i3, int i4) {
         int dx = Utils.abs(i2 - i);
         int dy = Utils.abs(i4 - i3);
         int maxDist = Utils.max(dx, dy);
-        if (maxDist >= 5) {
+        if (maxDist >= DISTANT_THRESHOLD) {
             return true;
         }
-        return maxDist == 4 && Utils.min(dx, dy) >= 3;
+        return maxDist == DISTANT_DIAG_MAX && Utils.min(dx, dy) >= DISTANT_DIAG_MIN;
     }
 
-    /* renamed from: b */
     private static final int computeOutCode(int i, int i2, int i3, int i4) {
         int i5 = 0;
         if (i2 > i4) {
@@ -321,303 +367,9 @@ public abstract class ChatRenderer {
         return i5;
     }
 
-    /* renamed from: a */
     private static int scaleToPixels(int i, int i2, long j) {
         return (int) SoftFloat.floatToLong(SoftFloat.divide(SoftFloat.longToFloat(MapUtils.coordToPixel(i, i2)), SoftFloat.cosFull(SoftFloat.reciprocal(SoftFloat.parseFloat(MapUtils.pixelToLatitude(j))))));
     }
-
-    /* JADX WARN: Code restructure failed: missing block: B:132:0x0416, code lost:
-    
-        r45 = r0;
-        r44 = r0;
-        r43 = r0;
-        r31 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:133:0x042e, code lost:
-    
-        r35 = computeOutCode(r31, r43, r19, r20);
-        r0 = computeOutCode(r44, r45, r19, r20);
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:134:0x0454, code lost:
-    
-        if ((r35 & r0) == 0) goto L136;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:135:0x0457, code lost:
-    
-        r0 = true;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:136:0x045b, code lost:
-    
-        r0 = false;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:137:0x045c, code lost:
-    
-        if (r0 == false) goto L139;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:138:0x045f, code lost:
-    
-        r0 = false;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:140:0x0468, code lost:
-    
-        if ((r35 | r0) != 0) goto L142;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:141:0x046b, code lost:
-    
-        r0 = true;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:142:0x046f, code lost:
-    
-        r0 = false;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:143:0x0470, code lost:
-    
-        if (r0 == false) goto L145;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:144:0x0473, code lost:
-    
-        r0 = true;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:146:0x0479, code lost:
-    
-        if (r35 != 0) goto L148;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:147:0x047c, code lost:
-    
-        r0 = r31;
-        r31 = r44;
-        r44 = r0;
-        r0 = r43;
-        r43 = r45;
-        r45 = r0;
-        r35 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:149:0x049c, code lost:
-    
-        if ((r35 & 1) == 0) goto L351;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:150:0x049f, code lost:
-    
-        r31 = r31 + (((r44 - r31) * (r20 - r43)) / (r45 - r43));
-        r43 = r20;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:152:0x04c0, code lost:
-    
-        if ((r35 & 2) == 0) goto L353;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:153:0x04c3, code lost:
-    
-        r31 = r31 + (((r31 - r44) * r43) / (r45 - r43));
-        r43 = 0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:155:0x04e0, code lost:
-    
-        if ((r35 & 4) == 0) goto L355;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:156:0x04e3, code lost:
-    
-        r43 = r43 + (((r45 - r43) * (r19 - r31)) / (r44 - r31));
-        r31 = r19;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:158:0x0505, code lost:
-    
-        if ((r35 & 8) == 0) goto L359;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:159:0x0508, code lost:
-    
-        r43 = r43 + (((r43 - r45) * r31) / (r44 - r31));
-        r31 = 0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:160:0x0521, code lost:
-    
-        if (r0 == false) goto L344;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:161:0x0524, code lost:
-    
-        r0 = p000.Utils.abs(r0 - r0);
-        r0 = p000.Utils.abs(r0 - r0);
-        r0 = p000.Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:162:0x0555, code lost:
-    
-        if (r0 == 15) goto L165;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:164:0x055c, code lost:
-    
-        if (r0 != 16) goto L166;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:165:0x055f, code lost:
-    
-        r0 = 11;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:167:0x0568, code lost:
-    
-        if (r0 != 14) goto L169;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:168:0x056b, code lost:
-    
-        r0 = 9;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:169:0x0570, code lost:
-    
-        r0 = 6;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:170:0x0572, code lost:
-    
-        r38 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:171:0x0578, code lost:
-    
-        if (r0 <= r0) goto L173;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:172:0x057b, code lost:
-    
-        r0 = true;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:173:0x057f, code lost:
-    
-        r0 = false;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:174:0x0580, code lost:
-    
-        r1 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:175:0x0583, code lost:
-    
-        if (r0 == false) goto L177;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:176:0x0586, code lost:
-    
-        r0 = r0 - 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:177:0x058d, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:178:0x058f, code lost:
-    
-        r29 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:179:0x0593, code lost:
-    
-        if (r1 == false) goto L181;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:180:0x0596, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:181:0x059b, code lost:
-    
-        r0 = r0 - 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:182:0x059f, code lost:
-    
-        r30 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:183:0x05a3, code lost:
-    
-        if (r1 == false) goto L185;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:184:0x05a6, code lost:
-    
-        r0 = r0 + 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:185:0x05ad, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:186:0x05af, code lost:
-    
-        r33 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:187:0x05b3, code lost:
-    
-        if (r1 == false) goto L189;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:188:0x05b6, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:189:0x05bb, code lost:
-    
-        r0 = r0 + 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:190:0x05bf, code lost:
-    
-        r34 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:191:0x05c3, code lost:
-    
-        if (r1 == false) goto L193;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:192:0x05c6, code lost:
-    
-        r0 = r0 + 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:193:0x05cd, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:194:0x05cf, code lost:
-    
-        r40 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:195:0x05d3, code lost:
-    
-        if (r1 == false) goto L197;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:196:0x05d6, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:197:0x05db, code lost:
-    
-        r0 = r0 + 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:198:0x05df, code lost:
-    
-        r41 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:199:0x05e3, code lost:
-    
-        if (r1 == false) goto L201;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:200:0x05e6, code lost:
-    
-        r0 = r0 - 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:201:0x05ed, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:202:0x05ef, code lost:
-    
-        r42 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:203:0x05f3, code lost:
-    
-        if (r1 == false) goto L205;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:204:0x05f6, code lost:
-    
-        r0 = r0;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:205:0x05fb, code lost:
-    
-        r0 = r0 - 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:206:0x05ff, code lost:
-    
-        r9.fillTriangle(r29, r30, r33, r34, r40, r41);
-        r9.fillTriangle(r40, r41, r42, r0, r29, r30);
-        r9.fillArc(r0 - (r38 / 2), r0 - (r38 / 2), r38, r38, 0, 360);
-        r9.fillArc(r0 - (r38 / 2), r0 - (r38 / 2), r38, r38, 0, 360);
-     */
-    /* JADX WARN: Removed duplicated region for block: B:97:0x0233  */
-    /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static final void renderMapOverlay(Graphics graphics, long j, long j2, long j3, long j4, int i, int i2, int i3) {
         boolean z;
         int i4;
@@ -658,7 +410,7 @@ public abstract class ChatRenderer {
         int i18 = 0;
         int i19 = 0;
         if (totalPoints > 1) {
-            graphics.setColor(13311);
+            graphics.setColor(COLOR_ROUTE);
             for (int i20 = 0; i20 < size2; i20++) {
                 Object[] objArr = (Object[]) ((Object[]) visibleRegions.elementAt(i20))[1];
                 int length = objArr.length;
@@ -681,7 +433,7 @@ public abstract class ChatRenderer {
                                 int px4 = (int) MapUtils.coordToPixel(((int[]) objArr2[0])[1], i);
                                 int px5 = (int) (MapUtils.coordToPixel(((int[]) objArr2[0])[0], i) - (j - (i2 / 2)));
                                 int px6 = (int) ((j2 + (i3 / 2)) - MapUtils.coordToPixel(((int[]) objArr2[0])[1], i));
-                                if (Utils.absLong(j - px3) < 7 && Utils.absLong(j2 - px4) < 7 && str == null) {
+                                if (Utils.absLong(j - px3) < ROUTE_LABEL_HOVER_DISTANCE && Utils.absLong(j2 - px4) < ROUTE_LABEL_HOVER_DISTANCE && str == null) {
                                     str = strArr[0];
                                     i18 = px5;
                                     i19 = px6;
@@ -733,25 +485,25 @@ public abstract class ChatRenderer {
                 int i23 = px13 - (((int) j) - (i2 / 2));
                 int i24 = (((int) j2) + (i3 / 2)) - px14;
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
-                    if (Utils.absLong(j - px13) >= 20 || Utils.absLong(j2 - px14) >= 20 || z2) {
+                    if (Utils.absLong(j - px13) >= ROUTE_POINT_HOVER_DISTANCE || Utils.absLong(j2 - px14) >= ROUTE_POINT_HOVER_DISTANCE || z2) {
                         if (!z2) {
                             Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
                             Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE) && !Storage.state().getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
                             MmpContact.mapDataCache = null;
                         }
-                        i4 = 9;
+                        i4 = ROUTE_POINT_NORMAL_SIZE;
                         graphics.setColor(40, 221, 22);
                     } else {
                         Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE));
                         Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE) && !Storage.state().getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
-                        i4 = 11;
+                        i4 = ROUTE_POINT_SELECTED_SIZE;
                         graphics.setColor(45, 253, 24);
                         MmpContact.mapDataCache = objArr3;
                         z2 = true;
                     }
-                    graphics.fillArc(i23 - (i4 / 2), i24 - (i4 / 2), i4, i4, 0, 360);
-                    graphics.setColor(13311);
-                    graphics.drawArc(i23 - (i4 / 2), i24 - (i4 / 2), i4, i4, 0, 360);
+                    graphics.fillArc(i23 - (i4 / 2), i24 - (i4 / 2), i4, i4, 0, FULL_CIRCLE);
+                    graphics.setColor(COLOR_ROUTE);
+                    graphics.drawArc(i23 - (i4 / 2), i24 - (i4 / 2), i4, i4, 0, FULL_CIRCLE);
                 }
             }
         }
@@ -772,7 +524,7 @@ public abstract class ChatRenderer {
             int i29 = px15 - (i25 - (i2 / 2));
             int i30 = (i26 + (i3 / 2)) - px16;
             String[] labels = MmpContact.getRouteLabelsAt(0);
-            if (Utils.abs(i25 - px15) >= 7 || Utils.abs(i26 - px16) >= 7 || labels == null) {
+            if (Utils.abs(i25 - px15) >= ROUTE_LABEL_HOVER_DISTANCE || Utils.abs(i26 - px16) >= ROUTE_LABEL_HOVER_DISTANCE || labels == null) {
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(20), i29, i30, 36);
             } else if (labels[0] != null) {
                 str2 = labels[0];
@@ -786,7 +538,7 @@ public abstract class ChatRenderer {
             int i31 = px17 - (i25 - (i2 / 2));
             int i32 = (i26 + (i3 / 2)) - px18;
             String[] labels2 = MmpContact.getRouteLabelsAt(totalPoints2 - 1);
-            if (Utils.abs(i25 - px17) >= 7 || Utils.abs(i26 - px18) >= 7 || labels2 == null || z3) {
+            if (Utils.abs(i25 - px17) >= ROUTE_LABEL_HOVER_DISTANCE || Utils.abs(i26 - px18) >= ROUTE_LABEL_HOVER_DISTANCE || labels2 == null || z3) {
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(21), i31, i32, 36);
             } else if (labels2[0] != null) {
                 str2 = labels2[0];
@@ -795,13 +547,13 @@ public abstract class ChatRenderer {
                 z3 = true;
             }
             if (z3) {
-                renderTooltip(graphics, str2, font, i2 - 40, i27, i28);
+                renderTooltip(graphics, str2, font, i2 - BUBBLE_TEXT_MARGIN, i27, i28);
             }
             z = z3;
         }
         boolean z4 = z;
         if (str != null && !z4) {
-            renderTooltip(graphics, str, font, i2 - 40, i18, i19);
+            renderTooltip(graphics, str, font, i2 - BUBBLE_TEXT_MARGIN, i18, i19);
         }
         if (totalPoints > 1) {
             int i33 = (int) j2;
@@ -810,22 +562,22 @@ public abstract class ChatRenderer {
             int[] coords4 = MmpContact.getRoutePointAt(0);
             int px19 = (int) MapUtils.coordToPixel(coords4[0], i);
             int px20 = (int) MapUtils.coordToPixel(coords4[1], i);
-            if (Utils.abs(((int) j) - px19) < 7 && Utils.abs(i33 - px20) < 7) {
+            if (Utils.abs(((int) j) - px19) < ROUTE_LABEL_HOVER_DISTANCE && Utils.abs(i33 - px20) < ROUTE_LABEL_HOVER_DISTANCE) {
                 int height = font.getHeight();
-                int clipHeight = (graphics.getClipHeight() - height) - 1;
-                int i34 = 22;
+                int clipHeight = (graphics.getClipHeight() - height) - ROUTE_LABEL_BOTTOM_MARGIN;
+                int i34 = ROUTE_LABEL_DEFAULT_X;
                 if (Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE)) {
-                    clipHeight -= (height > 18 ? height : 18) + 2;
-                    i34 = 22 - 20;
+                    clipHeight -= (height > MIN_SOFTKEY_HEIGHT ? height : MIN_SOFTKEY_HEIGHT) + ROUTE_LABEL_SOFTKEY_MARGIN;
+                    i34 = ROUTE_LABEL_DEFAULT_X - ROUTE_LABEL_COMPACT_SHIFT;
                 }
                 String routeLabel = Storage.resources().getString(StringResKeys.STR_ROUTE_LABEL);
-                int labelWidth = font.stringWidth(routeLabel) + 6;
+                int labelWidth = font.stringWidth(routeLabel) + BUBBLE_PADDING;
                 int themeIdx2 = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
                 graphics.setColor(Storage.state().getInt(themeIdx2 + 5050));
-                graphics.fillRoundRect(i34, clipHeight, labelWidth, height, 10, 10);
+                graphics.fillRoundRect(i34, clipHeight, labelWidth, height, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
                 graphics.setColor(Storage.state().getInt(themeIdx2 + 4914));
-                graphics.drawRoundRect(i34, clipHeight, labelWidth, height, 10, 10);
-                graphics.drawString(routeLabel, i34 + 3, clipHeight, 20);
+                graphics.drawRoundRect(i34, clipHeight, labelWidth, height, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
+                graphics.drawString(routeLabel, i34 + TOOLTIP_TEXT_INSET_Y, clipHeight, 20);
                 graphics.setFont(font2);
             }
         }

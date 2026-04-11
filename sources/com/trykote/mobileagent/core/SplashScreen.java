@@ -19,14 +19,24 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
-/* renamed from: t */
-/* loaded from: MobileAgent_3.9.jar:t.class */
 public final class SplashScreen extends Canvas implements Runnable, CommandListener {
 
-    /* renamed from: a */
+    private static final int REPAINT_THRESHOLD = 3;
+    private static final long FRAME_DELAY_MS = 80L;
+    private static final long MIN_DISPLAY_MS = 200L;
+
+    private static final int COLOR_BACKGROUND = 18060;
+    private static final int COLOR_BLACK = 0;
+    private static final int COLOR_WHITE = 0xFFFFFF;
+
+    private static final int ANCHOR_HCENTER_TOP = 3;
+    private static final int ANCHOR_BOTTOM_HCENTER = 33;
+
+    private static final int TEXT_OFFSET_SHADOW = 2;
+    private static final int TEXT_OFFSET_MAIN = 3;
+
     private Midlet midlet;
 
-    /* renamed from: b */
     private Image splashImage;
 
     public SplashScreen(Midlet midlet) {
@@ -52,12 +62,12 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
                 if (i == 0) {
                     repaint();
                     serviceRepaints();
-                } else if (i >= 3 && System.currentTimeMillis() - jCurrentTimeMillis >= 200) {
+                } else if (i >= REPAINT_THRESHOLD && System.currentTimeMillis() - jCurrentTimeMillis >= MIN_DISPLAY_MS) {
                     new AsyncTask(this.midlet, getWidth(), getHeight());
                     return;
                 }
                 System.gc();
-                Thread.sleep(80L);
+                Thread.sleep(FRAME_DELAY_MS);
                 i++;
             }
         } catch (Throwable th) {
@@ -67,7 +77,7 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
 
     public final void paint(Graphics graphics) {
         try {
-            graphics.setColor(18060);
+            graphics.setColor(COLOR_BACKGROUND);
             int width = getWidth();
             int height = getHeight();
             graphics.fillRect(0, 0, width, height);
@@ -75,11 +85,11 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
                 this.splashImage = Image.createImage("/splash.png");
             }
             int i = width >> 1;
-            graphics.drawImage(this.splashImage, i, height >> 1, 3);
-            graphics.setColor(0);
-            graphics.drawString("Версия: 3.9", i, height - 2, 33);
-            graphics.setColor(16777215);
-            graphics.drawString("Версия: 3.9", i - 1, height - 3, 33);
+            graphics.drawImage(this.splashImage, i, height >> 1, ANCHOR_HCENTER_TOP);
+            graphics.setColor(COLOR_BLACK);
+            graphics.drawString("Версия: 3.9", i, height - TEXT_OFFSET_SHADOW, ANCHOR_BOTTOM_HCENTER);
+            graphics.setColor(COLOR_WHITE);
+            graphics.drawString("Версия: 3.9", i - 1, height - TEXT_OFFSET_MAIN, ANCHOR_BOTTOM_HCENTER);
         } catch (Throwable unused) {
         }
     }
@@ -115,20 +125,13 @@ public final class SplashScreen extends Canvas implements Runnable, CommandListe
         }
     }
 
-    /* renamed from: a */
     private static void clearRecordStores() {
         try {
             String[] strArrListRecordStores = RecordStore.listRecordStores();
-            int length = strArrListRecordStores.length;
-            while (true) {
-                length--;
-                if (length < 0) {
-                    return;
-                } else {
-                    try {
-                        RecordStore.deleteRecordStore(strArrListRecordStores[length]);
-                    } catch (Throwable unused) {
-                    }
+            for (int idx = strArrListRecordStores.length - 1; idx >= 0; idx--) {
+                try {
+                    RecordStore.deleteRecordStore(strArrListRecordStores[idx]);
+                } catch (Throwable unused) {
                 }
             }
         } catch (Throwable unused2) {

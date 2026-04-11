@@ -49,7 +49,7 @@ public final class TextInputHandler implements CommandListener {
             Object[] objArr = (Object[]) menuItem.data;
             if (!StringUtils.equalsObj(inputText, objArr[0])) {
                 objArr[0] = inputText;
-                String displayText = ((Integer) objArr[2]).intValue() != 327680 ? inputText : Utils.maskPassword(inputText);
+                String displayText = ((Integer) objArr[2]).intValue() != MenuItem.PASSWORD_INPUT_TYPE ? inputText : Utils.maskPassword(inputText);
                 String str = StringUtils.isEmpty(displayText) ? null : displayText;
                 menuItem.clear();
                 if (objArr[4] instanceof String) {

@@ -10,123 +10,101 @@ import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
-/* renamed from: at */
-/* loaded from: MobileAgent_3.9.jar:at.class */
 public final class PhoneContact implements ListItem, Identifiable {
 
-    /* renamed from: g */
+    // Item height type for map display
+    public static final int ITEM_HEIGHT = 7;
+
     private int width;
 
-    /* renamed from: h */
     private int baseHeight;
 
-    /* renamed from: a */
     public String firstName;
 
-    /* renamed from: b */
     public String surname;
 
-    /* renamed from: c */
     public String phone;
 
-    /* renamed from: d */
     public String address;
 
-    /* renamed from: e */
     public int userCount;
 
-    /* renamed from: i */
     private String id;
 
-    /* renamed from: j */
     private int commandCount;
 
-    /* renamed from: f */
     private boolean selected = true;
 
-    /* renamed from: k */
     private SizeCache sizeCache = new SizeCache();
 
-    public PhoneContact(String str, int i, int i2, String str2, String str3, String str4, String str5, int i3, int i4) {
-        this.id = str;
-        this.baseHeight = i2;
-        this.width = i;
-        this.firstName = str3;
-        this.surname = str2;
-        this.phone = str5;
-        this.address = str4;
-        this.userCount = i3;
-        this.commandCount = i4;
+    public PhoneContact(String id, int width, int baseHeight, String surname, String firstName, String address, String phone, int userCount, int commandCount) {
+        this.id = id;
+        this.baseHeight = baseHeight;
+        this.width = width;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.phone = phone;
+        this.address = address;
+        this.userCount = userCount;
+        this.commandCount = commandCount;
     }
 
     @Override // p000.ListItem
-    /* renamed from: r */
     public final int getHeight() {
-        return 7;
+        return ITEM_HEIGHT;
     }
 
     @Override // p000.ListItem
-    /* renamed from: s */
     public final boolean isSelected() {
         return this.selected;
     }
 
     @Override // p000.ListItem
-    /* renamed from: t */
     public final void select() {
         this.selected = false;
     }
 
     @Override // p000.ListItem
-    /* renamed from: u */
     public final void deselect() {
         this.selected = true;
     }
 
     @Override // p000.ListItem
-    /* renamed from: v */
     public final int getWidth() {
         return this.width;
     }
 
     @Override // p000.ListItem
-    /* renamed from: w */
     public final int getBaseHeight() {
         return this.baseHeight;
     }
 
     @Override // p000.ListItem
-    /* renamed from: x */
     public final String getText() {
         return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(Storage.resources().getString(StringResKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
     }
 
     @Override // p000.ListItem
-    /* renamed from: y */
     public final int getCommandCount() {
         return this.commandCount;
     }
 
     @Override // p000.ListItem
-    /* renamed from: z */
     public final boolean isHighlighted() {
         return true;
     }
 
     @Override // p000.ListItem
-    /* renamed from: a */
-    public final int getCommandId(int i) {
-        return this.sizeCache.getWidth(i, this);
+    public final int getCommandId(int index) {
+        return this.sizeCache.getWidth(index, this);
     }
 
     @Override // p000.ListItem
-    /* renamed from: b */
-    public final int executeCommand(int i) {
-        return this.sizeCache.getHeight(i, this);
+    public final int executeCommand(int index) {
+        return this.sizeCache.getHeight(index, this);
     }
 
     @Override // p000.Identifiable
-    /* renamed from: a */
     public final String getId() {
         return this.id;
     }

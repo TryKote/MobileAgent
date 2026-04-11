@@ -18,61 +18,48 @@ import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
-/* renamed from: ax */
-/* loaded from: MobileAgent_3.9.jar:ax.class */
 public final class HttpClient {
 
-    /* renamed from: a */
+    private static final int REQUEST_HEADER_OVERHEAD = 127;
+    private static final int RESPONSE_HEADER_OVERHEAD = 255;
+    private static final int DOUBLE_CRLF_MARKER = 34;
+
     public Connection connection;
 
-    /* renamed from: b */
     private InputStream inputStream;
 
-    /* renamed from: c */
     private OutputStream outputStream;
 
-    /* renamed from: d */
     private Account account;
 
-    /* renamed from: e */
     private int requestType;
 
-    /* renamed from: f */
     private int mockMode;
 
-    /* renamed from: g */
     private int bytesSent;
 
-    /* renamed from: h */
     private int bytesReceived;
 
-    /* renamed from: i */
     private String url;
 
-    /* renamed from: j */
     private ByteBuffer responseBuffer;
 
-    /* renamed from: a */
     public static final HttpClient createHttpClient(String str, Account account, int i) throws IOException {
         return new HttpClient(str, account, i);
     }
 
-    /* renamed from: a */
     public static final HttpClient createWithType3(Object obj) throws IOException {
         return createHttpClient((String) obj, (Account) null, 3);
     }
 
-    /* renamed from: b */
     public static final HttpClient createWithType2(Object obj) throws IOException {
         return createHttpClient((String) obj, (Account) null, 2);
     }
 
-    /* renamed from: a */
     public static final HttpClient createMockClient(String str) {
         return new HttpClient(str);
     }
 
-    /* renamed from: a */
     public static final void closeAndUpdateStats(HttpClient client) {
         try {
             if (client.account != null && client.requestType == 0) {
@@ -123,24 +110,21 @@ public final class HttpClient {
         this.url = str;
     }
 
-    /* renamed from: a */
     public final int getResponseCode() throws IOException {
         if (this.mockMode != 0) {
             getOutputStream().flush();
             return Integer.parseInt(new String(readHeaders().data, 9, 3));
         }
         int responseCode = ((HttpConnection) this.connection).getResponseCode();
-        this.bytesSent += this.url.length() + 127;
-        this.bytesReceived += 255;
+        this.bytesSent += this.url.length() + REQUEST_HEADER_OVERHEAD;
+        this.bytesReceived += RESPONSE_HEADER_OVERHEAD;
         return responseCode;
     }
 
-    /* renamed from: b */
     public final void setRequestMethod(String str) throws IOException {
         ((HttpConnection) this.connection).setRequestMethod(str);
     }
 
-    /* renamed from: a */
     public final HttpClient setRequestProperty(String str, String str2) throws IOException {
         if (this.mockMode == 0) {
             ((HttpConnection) this.connection).setRequestProperty(str, str2);
@@ -151,7 +135,6 @@ public final class HttpClient {
         return this;
     }
 
-    /* renamed from: a */
     public final HttpClient writeData(byte[] bArr, int i) throws IOException {
         if (i > 0) {
             getOutputStream().write(bArr, 0, i);
@@ -160,7 +143,6 @@ public final class HttpClient {
         return this;
     }
 
-    /* renamed from: a */
     public final int readData(byte[] bArr) throws IOException {
         int i = getInputStream().read(bArr);
         if (i > 0) {
@@ -169,7 +151,6 @@ public final class HttpClient {
         return i;
     }
 
-    /* renamed from: c */
     private final InputStream getInputStream() throws IOException {
         if (this.inputStream != null) {
             return this.inputStream;
@@ -179,7 +160,6 @@ public final class HttpClient {
         return is;
     }
 
-    /* renamed from: d */
     private final OutputStream getOutputStream() throws IOException {
         if (this.outputStream != null) {
             return this.outputStream;
@@ -189,13 +169,11 @@ public final class HttpClient {
         return os;
     }
 
-    /* renamed from: a */
     public final HttpClient writeBuffer(ByteBuffer buffer) throws IOException {
         writeData(buffer.data, buffer.length);
         return this;
     }
 
-    /* renamed from: a */
     public final HttpClient sendHttpRequest(int i, int i2, int i3) throws IOException {
         String str = this.url;
         this.connection = Connector.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeRawString(StringUtils.prefix(str, str.indexOf(47))).getStringAndClear(), 3);
@@ -207,12 +185,10 @@ public final class HttpClient {
         return setRequestProperty(Storage.resources().getString(PackedStringKeys.HEADER_CONTENT_LENGTH), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
     }
 
-    /* renamed from: a */
     private final HttpClient setRequestHeader(int i, int i2) throws IOException {
         return setRequestProperty(Storage.state().getString(i), Storage.state().getString(i2));
     }
 
-    /* renamed from: b */
     public final ByteBuffer readChunkedResponse() throws IOException, NumberFormatException {
         int i;
         ByteBuffer headerBuf = readHeaders();
@@ -237,7 +213,6 @@ public final class HttpClient {
         return buffer;
     }
 
-    /* renamed from: e */
     private final ByteBuffer readHeaders() throws IOException {
         if (this.responseBuffer != null) {
             return this.responseBuffer.compact();
@@ -254,7 +229,7 @@ public final class HttpClient {
                 this.bytesReceived++;
                 if (i2 == 10) {
                     i++;
-                    if (i == 34) {
+                    if (i == DOUBLE_CRLF_MARKER) {
                         return this.responseBuffer.compact();
                     }
                 } else if (i2 == 13) {

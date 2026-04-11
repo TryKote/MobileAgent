@@ -15,34 +15,42 @@ import javax.microedition.lcdui.Image;
 /* Extracted from AppController: map coordinate math utilities */
 public final class MapUtils {
 
-    /* renamed from: d */
-    public static final long getZoomNumerator(int i) {
-        return (1 << (17 - i)) * ((i < 8 || i > 17) ? 119432 : 1194329);
+    // Tile coordinate system
+    private static final int MAX_ZOOM_BITS = 17;
+    private static final int ZOOM_RANGE_MIN = 8;
+
+    // Projection scale factors
+    private static final long SCALE_FACTOR_LOW = 119432;
+    private static final long SCALE_FACTOR_HIGH = 1194329;
+    private static final long DENOMINATOR_LOW = 100000L;
+    private static final long DENOMINATOR_HIGH = 1000000L;
+
+    // Zoom levels for coordinate search
+    private static final int ZOOM_IN_REGION = 13;
+    private static final int ZOOM_OUT_OF_REGION = 10;
+
+    public static final long getZoomNumerator(int zoomLevel) {
+        return (1 << (MAX_ZOOM_BITS - zoomLevel)) * ((zoomLevel < ZOOM_RANGE_MIN || zoomLevel > MAX_ZOOM_BITS) ? SCALE_FACTOR_LOW : SCALE_FACTOR_HIGH);
     }
 
-    /* renamed from: e */
-    public static final long getZoomDenominator(int i) {
-        return (i < 8 || i > 17) ? 100000L : 1000000L;
+    public static final long getZoomDenominator(int zoomLevel) {
+        return (zoomLevel < ZOOM_RANGE_MIN || zoomLevel > MAX_ZOOM_BITS) ? DENOMINATOR_LOW : DENOMINATOR_HIGH;
     }
 
-    /* renamed from: a */
-    public static long coordToPixel(long j, int i) {
-        return (j * getZoomDenominator(i)) / getZoomNumerator(i);
+    public static long coordToPixel(long coord, int zoomLevel) {
+        return (coord * getZoomDenominator(zoomLevel)) / getZoomNumerator(zoomLevel);
     }
 
-    /* renamed from: a */
-    public static final long pixelToCoord(int i, int i2) {
-        return (i * getZoomNumerator(i2)) / getZoomDenominator(i2);
+    public static final long pixelToCoord(int pixel, int zoomLevel) {
+        return (pixel * getZoomNumerator(zoomLevel)) / getZoomDenominator(zoomLevel);
     }
 
-    /* renamed from: a */
-    public static final int computeColor(int i, int i2, int i3, int i4) {
-        return Utils.abs(i2 - i4) + Utils.abs(i - i3);
+    public static final int computeColor(int x1, int y1, int x2, int y2) {
+        return Utils.abs(y1 - y2) + Utils.abs(x1 - x2);
     }
 
-    /* renamed from: a */
-    public static final int handleMapSearch(int i, Object obj) {
-        if (i == 6) {
+    public static final int handleMapSearch(int action, Object obj) {
+        if (action == 6) {
             return handleMapPointAction(obj);
         }
         ScreenManager.processScreenForm();
@@ -52,13 +60,8 @@ public final class MapUtils {
         }
         boolean isCoordinate = true;
         int separatorScore = 0;
-        int length = query.length();
-        while (true) {
-            length--;
-            if (length < 0) {
-                break;
-            }
-            char ch = query.charAt(length);
+        for (int idx = query.length() - 1; idx >= 0; idx--) {
+            char ch = query.charAt(idx);
             if (ch == '.') {
                 separatorScore += 10;
             } else if (ch == ',') {
@@ -72,7 +75,7 @@ public final class MapUtils {
                 long lon = longitudeToPixel(extractLongitude(query));
                 long lat = latitudeToPixel(extractLatitude(query));
                 MapRenderer.setPosition(lon, lat);
-                MapRenderer.setZoom(StringUtils.isInSavedRegion(lon, lat) ? 13 : 10);
+                MapRenderer.setZoom(StringUtils.isInSavedRegion(lon, lat) ? ZOOM_IN_REGION : ZOOM_OUT_OF_REGION);
             } catch (Throwable unused) {
             }
         } else {
@@ -84,7 +87,6 @@ public final class MapUtils {
         return Storage.state().getBool(UIKeys.FLAG_LOADING) ? 161 : 6;
     }
 
-    /* renamed from: c */
     public static final int handleMapPointAction(Object obj) {
         if (Storage.state().getBool(UIKeys.FLAG_NEW_MESSAGE)) {
             MapRenderer.confirmMapPoint((MapPoint) obj);
@@ -101,82 +103,70 @@ public final class MapUtils {
         return ScreenId.PROFILE_EDIT;
     }
 
-    /* renamed from: f */
     public static final void requestNearbyPeople() {
-        ByteBuffer c0043nM1310c = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_QUANTITY_DENSITY);
-        long jM692d = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
-        int iM586d = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
-        long j = MapRenderer.currentPixelX;
-        int i = MapRenderer.viewportWidth / 2;
-        long jM318a = pixelToCoord((int) (j + i), iM586d) - pixelToCoord((int) (MapRenderer.currentPixelX - i), iM586d);
-        long j2 = MapRenderer.currentPixelY;
-        int i2 = MapRenderer.viewportHeight / 2;
-        ByteBuffer c0043nM1314d = c0043nM1310c.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(jM692d, SoftFloat.longToFloat(jM318a * (pixelToCoord((int) (j2 + i2), iM586d) - pixelToCoord((int) (MapRenderer.currentPixelY - i2), iM586d)))), 100));
+        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL)))).writeCompressed(PackedStringKeys.PARAM_QUANTITY_DENSITY);
+        long tileCount = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
+        int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        long centerX = MapRenderer.currentPixelX;
+        int halfWidth = MapRenderer.viewportWidth / 2;
+        long viewportCoordWidth = pixelToCoord((int) (centerX + halfWidth), zoomLevel) - pixelToCoord((int) (MapRenderer.currentPixelX - halfWidth), zoomLevel);
+        long centerY = MapRenderer.currentPixelY;
+        int halfHeight = MapRenderer.viewportHeight / 2;
+        urlBuf.writeRawString(SoftFloat.formatFloat(SoftFloat.divide(tileCount, SoftFloat.longToFloat(viewportCoordWidth * (pixelToCoord((int) (centerY + halfHeight), zoomLevel) - pixelToCoord((int) (MapRenderer.currentPixelY - halfHeight), zoomLevel)))), 100));
         VCard.staticTs1 = (int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs2 = (int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs3 = (int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs4 = (int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
         VCard.staticTs5 = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
-        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{c0043nM1314d.getStringAndClear(), ObjectPool.integerOf(Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL))});
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_SYNC, new Object[]{urlBuf.getStringAndClear(), ObjectPool.integerOf(Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL))});
     }
 
-    /* renamed from: b */
-    public static final long longitudeToPixel(String str) {
-        return SoftFloat.floatToLong(SoftFloat.multiply(4708606483430899712L, SoftFloat.multiply(SoftFloat.parseFloat(str), 4580687790476533044L)));
+    public static final long longitudeToPixel(String lonStr) {
+        return SoftFloat.floatToLong(SoftFloat.multiply(4708606483430899712L, SoftFloat.multiply(SoftFloat.parseFloat(lonStr), 4580687790476533044L)));
     }
 
-    /* renamed from: c */
-    public static final long latitudeToPixel(String str) {
-        long jM697a = SoftFloat.parseFloat(str);
-        long j = jM697a;
-        if (jM697a > 4635963235168681984L) {
-            j = 4635963235168681984L;
+    public static final long latitudeToPixel(String latStr) {
+        long latitude = SoftFloat.parseFloat(latStr);
+        long clampedLat = latitude;
+        if (latitude > 4635963235168681984L) {
+            clampedLat = 4635963235168681984L;
         }
-        if (j < -4587408801686093824L) {
-            j = -4587408801686093824L;
+        if (clampedLat < -4587408801686093824L) {
+            clampedLat = -4587408801686093824L;
         }
-        long jM692d = SoftFloat.multiply(j, 4580687790476533044L);
-        long jM692d2 = SoftFloat.multiply(4590560114707566468L, SoftFloat.sin(jM692d));
-        return SoftFloat.floatToLong(SoftFloat.subtract(0L, SoftFloat.multiply(4708606483430899712L, SoftFloat.log(SoftFloat.divide(SoftFloat.cos(SoftFloat.divide(SoftFloat.subtract(4609753056924675352L, jM692d), 4611686018427387904L)), SoftFloat.pow(SoftFloat.divide(SoftFloat.subtract(4607182418800017408L, jM692d2), SoftFloat.add(4607182418800017408L, jM692d2)), 4586056515080195972L))))));
+        long radians = SoftFloat.multiply(clampedLat, 4580687790476533044L);
+        long sinValue = SoftFloat.multiply(4590560114707566468L, SoftFloat.sin(radians));
+        return SoftFloat.floatToLong(SoftFloat.subtract(0L, SoftFloat.multiply(4708606483430899712L, SoftFloat.log(SoftFloat.divide(SoftFloat.cos(SoftFloat.divide(SoftFloat.subtract(4609753056924675352L, radians), 4611686018427387904L)), SoftFloat.pow(SoftFloat.divide(SoftFloat.subtract(4607182418800017408L, sinValue), SoftFloat.add(4607182418800017408L, sinValue)), 4586056515080195972L))))));
     }
 
-    /* renamed from: a */
-    public static final String pixelToLongitude(long j) {
-        return SoftFloat.formatFloat(SoftFloat.divide(SoftFloat.divide(SoftFloat.longToFloat(j), 4708606483430899712L), 4580687790476533044L), 9);
+    public static final String pixelToLongitude(long pixel) {
+        return SoftFloat.formatFloat(SoftFloat.divide(SoftFloat.divide(SoftFloat.longToFloat(pixel), 4708606483430899712L), 4580687790476533044L), 9);
     }
 
-    /* renamed from: b */
-    public static final String pixelToLatitude(long j) {
-        long jM703f = SoftFloat.exp(SoftFloat.divide(SoftFloat.negate(SoftFloat.longToFloat(j)), 4708606483430899712L));
-        long jM693e = SoftFloat.divide(4590560114707566468L, 4611686018427387904L);
-        long jM691c = SoftFloat.subtract(4609753056924675352L, SoftFloat.multiply(SoftFloat.atan(jM703f), 4611686018427387904L));
-        int i = 15;
-        long jM691c2 = 4591870180066957722L;
-        while (true) {
-            i--;
-            if (i <= 0 || SoftFloat.compare(jM691c2 & Long.MAX_VALUE, 4502148214488346440L) <= 0) {
-                break;
-            }
-            long jM692d = SoftFloat.multiply(4590560114707566468L, SoftFloat.sin(jM691c));
-            jM691c2 = SoftFloat.subtract(SoftFloat.subtract(4609753056924675352L, SoftFloat.multiply(SoftFloat.atan(SoftFloat.multiply(jM703f, SoftFloat.pow(SoftFloat.divide(SoftFloat.subtract(4607182418800017408L, jM692d), SoftFloat.add(4607182418800017408L, jM692d)), jM693e))), 4611686018427387904L)), jM691c);
-            jM691c = SoftFloat.add(jM691c, jM691c2);
+    public static final String pixelToLatitude(long pixel) {
+        long expValue = SoftFloat.exp(SoftFloat.divide(SoftFloat.negate(SoftFloat.longToFloat(pixel)), 4708606483430899712L));
+        long halfEcc = SoftFloat.divide(4590560114707566468L, 4611686018427387904L);
+        long latitude = SoftFloat.subtract(4609753056924675352L, SoftFloat.multiply(SoftFloat.atan(expValue), 4611686018427387904L));
+        long delta = 4591870180066957722L;
+        for (int iter = 14; iter > 0 && SoftFloat.compare(delta & Long.MAX_VALUE, 4502148214488346440L) > 0; iter--) {
+            long sinLat = SoftFloat.multiply(4590560114707566468L, SoftFloat.sin(latitude));
+            delta = SoftFloat.subtract(SoftFloat.subtract(4609753056924675352L, SoftFloat.multiply(SoftFloat.atan(SoftFloat.multiply(expValue, SoftFloat.pow(SoftFloat.divide(SoftFloat.subtract(4607182418800017408L, sinLat), SoftFloat.add(4607182418800017408L, sinLat)), halfEcc))), 4611686018427387904L)), latitude);
+            latitude = SoftFloat.add(latitude, delta);
         }
-        return SoftFloat.formatFloat(SoftFloat.divide(jM691c, 4580687790476533044L), 9);
+        return SoftFloat.formatFloat(SoftFloat.divide(latitude, 4580687790476533044L), 9);
     }
 
-    /* renamed from: e */
-    private static String extractLatitude(String str) {
+    private static String extractLatitude(String coordStr) {
         try {
-            return StringUtils.prefix(str, Utils.removeChar(str, ' ').indexOf(44));
+            return StringUtils.prefix(coordStr, Utils.removeChar(coordStr, ' ').indexOf(44));
         } catch (Throwable unused) {
             return null;
         }
     }
 
-    /* renamed from: f */
-    private static String extractLongitude(String str) {
+    private static String extractLongitude(String coordStr) {
         try {
-            return StringUtils.suffix(str, Utils.removeChar(str, ' ').indexOf(44) + 1);
+            return StringUtils.suffix(coordStr, Utils.removeChar(coordStr, ' ').indexOf(44) + 1);
         } catch (Throwable unused) {
             return null;
         }

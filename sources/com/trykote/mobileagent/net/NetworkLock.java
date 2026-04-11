@@ -13,12 +13,10 @@ import com.trykote.mobileagent.util.*;
 /* Extracted from AppController: network synchronization subsystem */
 public final class NetworkLock {
 
-    /* renamed from: ae */
     public static final Object[] createSyncState() {
         return (Object[]) Storage.state().getObject(SessionKeys.OBJ_CALLBACK_ARRAY);
     }
 
-    /* renamed from: s */
     public static final void acquireNetworkLock() {
         Object[] syncState = createSyncState();
         while (true) {
@@ -35,7 +33,6 @@ public final class NetworkLock {
         }
     }
 
-    /* renamed from: t */
     public static final void releaseNetworkLock() {
         Object[] syncState = createSyncState();
         synchronized (syncState) {
@@ -43,7 +40,6 @@ public final class NetworkLock {
         }
     }
 
-    /* renamed from: u */
     public static final boolean isNetworkBusy() {
         return createSyncState()[0] != null;
     }

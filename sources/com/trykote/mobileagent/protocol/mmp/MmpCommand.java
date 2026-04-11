@@ -30,8 +30,11 @@ public final class MmpCommand {
     public static final int MODIFY_CONTACT = 4873;
     public static final int DELETE_CONTACT = 4874;
     public static final int CONTACT_INFO_RESPONSE = 4878;
+    public static final int GET_CONTACTS_SYNC = 4881;
+    public static final int SYNC_CONTACTS = 4882;
     public static final int AUTH_GRANT = 4884;
     public static final int TYPING_NOTIFY = 4885;
+    public static final int SEND_AUTH_MESSAGE = 4888;
     public static final int MESSAGE_RECEIVED = 4889;
     public static final int AUTH_RECEIVED = 4891;
     public static final int SYSTEM_MESSAGE = 4892;

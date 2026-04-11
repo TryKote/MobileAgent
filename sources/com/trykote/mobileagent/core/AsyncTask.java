@@ -28,6 +28,33 @@ import java.util.Vector;
 
 public final class AsyncTask implements Runnable {
 
+    private static final int HTTP_OK = 200;
+
+    private static final int ERR_PHOTO_HTTP_FAILED = 465;
+    private static final int ERR_PHOTO_EXCEPTION = 466;
+    private static final int ERR_FETCH_FAILED = 731;
+
+    private static final int CONNECTION_POLL_MS = 100;
+    private static final int DELAYED_CLOSE_MS = 1000;
+    private static final int SMS_SEND_DELAY_MS = 100;
+
+    /** Packed chars "tr" — XML attribute for traffic/map type */
+    private static final int ATTR_TRAFFIC_TYPE = 29300;
+    /** Packed chars "b" — XML attribute for zoom bounds */
+    private static final int ATTR_ZOOM_BOUNDS = 98;
+
+    /** ASCII ':' used as separator in auth digest construction */
+    private static final int COLON = 58;
+
+    /** State index: URL for map points API */
+    private static final int RES_MAP_POINTS_URL = 872;
+    /** State index: URL for MMP route API */
+    private static final int RES_MMP_ROUTE_URL = 1000;
+    /** State index: URL for saved locations API */
+    private static final int RES_SAVED_LOCATIONS_URL = 370;
+    /** State index: URL for contacts sync API */
+    private static final int RES_CONTACTS_SYNC_URL = 505;
+
     private int taskId;
 
     private Object taskData;
@@ -124,9 +151,9 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType3(args[0]);
-            result = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient).toImage() : ObjectPool.integerOf(465);
+            result = httpClient.getResponseCode() == HTTP_OK ? new ByteBuffer(httpClient).toImage() : ObjectPool.integerOf(ERR_PHOTO_HTTP_FAILED);
         } catch (Throwable e) {
-            result = ObjectPool.integerOf(466);
+            result = ObjectPool.integerOf(ERR_PHOTO_EXCEPTION);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
@@ -140,9 +167,9 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createHttpClient(Storage.resources().getString(PackedStringKeys.URL_VERSION_CHECK), null, 3);
-            args[0] = httpClient.getResponseCode() == 200 ? new ByteBuffer(httpClient) : ObjectPool.integerOf(731);
+            args[0] = httpClient.getResponseCode() == HTTP_OK ? new ByteBuffer(httpClient) : ObjectPool.integerOf(ERR_FETCH_FAILED);
         } catch (Throwable e) {
-            args[0] = ObjectPool.integerOf(731);
+            args[0] = ObjectPool.integerOf(ERR_FETCH_FAILED);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
@@ -172,7 +199,7 @@ public final class AsyncTask implements Runnable {
                 }
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(CONNECTION_POLL_MS);
             } catch (Throwable e) {
             }
         }
@@ -191,7 +218,7 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_JAMS_STATE).getStringAndClear());
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 Vector children = new ByteBuffer(httpClient).parseXml().children;
                 int i = children.size();
                 while (--i >= 0) {
@@ -209,8 +236,8 @@ public final class AsyncTask implements Runnable {
                         }
                     }
                     if (region == null) continue;
-                    int mapType = child.getAttrAsInt(29300);
-                    int zoomLevel = child.getAttrAsInt(98);
+                    int mapType = child.getAttrAsInt(ATTR_TRAFFIC_TYPE);
+                    int zoomLevel = child.getAttrAsInt(ATTR_ZOOM_BOUNDS);
                     region.zoomLevel = zoomLevel;
                     region.mapType = mapType;
                 }
@@ -225,7 +252,7 @@ public final class AsyncTask implements Runnable {
     private void taskDelayedClose() {
         Object connObj = this.taskData;
         try {
-            Thread.sleep(1000);
+            Thread.sleep(DELAYED_CLOSE_MS);
         } catch (Throwable e) {
         }
         Vector closeQueue = Storage.state().getVector(UIKeys.SLOT_MEDIA_VOLUME);
@@ -245,9 +272,9 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(872);
+            contactInfo = XmppContactGroup.getContactInfoFromState(RES_MAP_POINTS_URL);
             httpClient = HttpClient.createWithType2(requestData);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 Storage.state().setObject(ChatKeys.VEC_MESSAGE_LIST, XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen()));
             } else {
                 Storage.state().setObject(ChatKeys.VEC_MESSAGE_LIST, ObjectPool.newVector());
@@ -265,8 +292,8 @@ public final class AsyncTask implements Runnable {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_ROAD_INFO).writeEncodedInt(254).getStringAndClear());
-            if (httpClient.getResponseCode() == 200) {
+            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_ROAD_INFO).writeEncodedInt(MapKeys.URL_GEO_CONFIG).getStringAndClear());
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 StringUtils.parseGeoConfig(new ByteBuffer(httpClient).parseXml());
             }
         } catch (Throwable ignored) {
@@ -282,9 +309,9 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(1000);
+            contactInfo = XmppContactGroup.getContactInfoFromState(RES_MMP_ROUTE_URL);
             httpClient = HttpClient.createWithType2(requestUrl);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 MmpContact.parseRouteFromJson(new ByteBuffer(httpClient));
                 if (!MmpContact.routeRegions.isEmpty()) {
                     MmpContact.setLocationEnabled(true);
@@ -315,7 +342,7 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType2(requestUrl);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 ByteBuffer responseBuffer = new ByteBuffer(httpClient);
                 synchronized (ServiceRegistry.photoCache) {
                     String photoKey = ServiceRegistry.pendingPhotoKey;
@@ -345,7 +372,7 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createWithType2(requestUrl);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 new ByteBuffer(httpClient);
             }
         } catch (Throwable ignored) {
@@ -369,9 +396,9 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(370);
+            contactInfo = XmppContactGroup.getContactInfoFromState(RES_SAVED_LOCATIONS_URL);
             httpClient = HttpClient.createWithType2(args[0]);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 long[] coords = (long[]) args[1];
                 MapController.savedLocations = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
                 EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.MAP_LOCATIONS_LOADED, null));
@@ -390,9 +417,9 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(505);
+            contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
             httpClient = HttpClient.createWithType2(args[0]);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 ContactListParser.parseContactsSync(new ByteBuffer(httpClient), (Integer) args[1]);
             }
         } catch (Throwable ignored) {
@@ -409,9 +436,9 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(505);
+            contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
             httpClient = HttpClient.createWithType2(args[0]);
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 ContactListParser.parseContactsAsync(new ByteBuffer(httpClient), args[1], args[2]);
             }
         } catch (Throwable ignored) {
@@ -428,10 +455,10 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(505);
+            contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
             String baseUrl = Storage.resources().getString(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
             httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(Storage.resources().getString(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(Storage.resources().getString(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
-            if (httpClient.getResponseCode() == 200) {
+            if (httpClient.getResponseCode() == HTTP_OK) {
                 long[] coords = (long[]) args[3];
                 MrimAccount account = (MrimAccount) args[0];
                 Vector mapPoints = VCard.parseMapPointsFromJson(new ByteBuffer(httpClient), coords[0], coords[1]);
@@ -465,7 +492,7 @@ public final class AsyncTask implements Runnable {
             String smsAddress = StringUtils.concatKeyObj(PackedStringKeys.SCHEME_SMS, args[0]);
             MessageConnection msgConn = null;
             try {
-                Thread.sleep(100L);
+                Thread.sleep(SMS_SEND_DELAY_MS);
                 msgConn = (MessageConnection) IOUtils.registerResource((Object) Connector.open(smsAddress));
                 TextMessage textMsg = (TextMessage) msgConn.newMessage(Storage.resources().getString(PackedStringKeys.CONTENT_TYPE_TEXT));
                 textMsg.setAddress(smsAddress);
@@ -515,7 +542,7 @@ public final class AsyncTask implements Runnable {
             NetworkLock.acquireNetworkLock();
             httpClient = HttpClient.createHttpClient((String) args[2], (Account) args[0], 0);
             int responseCode = httpClient.getResponseCode();
-            if (responseCode == 200) {
+            if (responseCode == HTTP_OK) {
                 XmlElement xmlResponse = new ByteBuffer(httpClient).parseXmlStr();
                 if (((Integer) args[3]).intValue() != 0) {
                     XmppMailRuProtocol xmppProto = (XmppMailRuProtocol) args[0];
@@ -535,11 +562,11 @@ public final class AsyncTask implements Runnable {
                         .writeRawString(
                             new ByteBuffer()
                                 .writeCompressed(PackedStringKeys.VK_API_SECRET)
-                                .writeByte(58)
+                                .writeByte(COLON)
                                 .writeObjectStr((String) args[1])
-                                .writeByte(58)
+                                .writeByte(COLON)
                                 .writeRawString(StringUtils.fromBuffer(xmlResponse.findChildByKey(PackedStringKeys.TAG_TOKEN).textContent))
-                                .writeByte(58)
+                                .writeByte(COLON)
                                 .writeRawString(
                                     new ByteBuffer()
                                         .writeObjectStr((String) args[4])

@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.ui;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -13,24 +12,22 @@ import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 import javax.microedition.lcdui.Image;
 
-/* renamed from: ad */
-/* loaded from: MobileAgent_3.9.jar:ad.class */
 public abstract class ScreenManager {
 
     // ListView types (lower 4 bits of typeAndFlags in createScreen header)
-    private static final int TYPE_FULLSCREEN = 0;
-    private static final int TYPE_FULLSCREEN_ALT = 1;
-    private static final int TYPE_DIALOG_CENTER = 2;
-    private static final int TYPE_DIALOG_BOTTOM = 3;
-    private static final int TYPE_DIALOG_CORNER = 4;
-    private static final int TYPE_FULLSCREEN_NOSCROLL = 5;
-    private static final int TYPE_MAP = 6;
-    private static final int TYPE_TOAST = 7;
-    private static final int TYPE_TOAST_CENTER = 8;
-    private static final int TYPE_FULLSCREEN_NOSCROLL_ALT = 9;
-    private static final int TYPE_POPUP = 10;
-    private static final int TYPE_DIALOG_LOW = 11;
-    private static final int TYPE_MAP_ALT = 12;
+    static final int TYPE_FULLSCREEN = 0;
+    static final int TYPE_FULLSCREEN_ALT = 1;
+    static final int TYPE_DIALOG_CENTER = 2;
+    static final int TYPE_DIALOG_BOTTOM = 3;
+    static final int TYPE_DIALOG_CORNER = 4;
+    static final int TYPE_FULLSCREEN_NOSCROLL = 5;
+    static final int TYPE_MAP = 6;
+    static final int TYPE_TOAST = 7;
+    static final int TYPE_TOAST_CENTER = 8;
+    static final int TYPE_FULLSCREEN_NOSCROLL_ALT = 9;
+    static final int TYPE_POPUP = 10;
+    static final int TYPE_DIALOG_LOW = 11;
+    static final int TYPE_MAP_ALT = 12;
 
     // Item types (lower 4 bits in parseScreenItem/processFormField)
     private static final int ITEM_ACTION = 0;
@@ -51,15 +48,45 @@ public abstract class ScreenManager {
     private static final int MASK_TYPE = 15;
     private static final int FLAG_CHECKBOXES = 16;
     private static final int FLAG_DYNAMIC = 32;
-    /* renamed from: a */
+
+    // Bitmask of screen types requiring pre-show layout
+    private static final int DIALOG_TYPE_MASK = 3484;
+
+    // Font size codes for GraphicsContext
+    private static final int FONT_SIZE_SMALL = 0;
+    private static final int FONT_SIZE_MEDIUM = 8;
+    private static final int FONT_SIZE_LARGE = 16;
+
+    // Default screen width fallback
+    private static final int DEFAULT_WIDTH = 200;
+
+    // Icon vertical centering reference height
+    private static final int ICON_HEIGHT = 16;
+
+    // Cache timeout durations (milliseconds)
+    private static final int CACHE_TIMEOUT_SHORT_MS = 60000;
+    private static final int CACHE_TIMEOUT_LONG_MS = 300000;
+
+    // Layout divisor for dialog-low vertical offset
+    private static final int DIALOG_LOW_OFFSET_DIVISOR = 10;
+
+    // Text format flag for secondary/sublabel text
+    private static final int TEXT_FORMAT_SECONDARY = 6;
+
+    // AppState key ranges for integer-valued form data (CHAT_ROOM_CONFIG screen)
+    private static final int INT_KEY_RANGE_START = 161;
+    private static final int INT_KEY_RANGE_END = 210;
+    private static final int INT_KEY_RANGE_START_2 = 268;
+    private static final int INT_KEY_RANGE_END_2 = 304;
+
     public static final void initializeFonts() {
-        int iM586d = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
-        int i = iM586d == 0 ? 8 : iM586d == 1 ? 0 : 16;
-        GraphicsContext normalGfx = new GraphicsContext(0, i);
+        int fontSizeSetting = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
+        int fontSizeCode = fontSizeSetting == 0 ? FONT_SIZE_MEDIUM : fontSizeSetting == 1 ? FONT_SIZE_SMALL : FONT_SIZE_LARGE;
+        GraphicsContext normalGfx = new GraphicsContext(0, fontSizeCode);
         Storage.state().setObject(UIKeys.GFX_CONTEXT_BASE, normalGfx);
-        GraphicsContext boldGfx = new GraphicsContext(1, i);
+        GraphicsContext boldGfx = new GraphicsContext(1, fontSizeCode);
         Storage.state().setObject(UIKeys.GFX_CONTEXT_BOLD, boldGfx);
-        GraphicsContext titleGfx = Storage.state().getBool(SettingsKeys.SETTING_BOLD_TITLE_FONT) ? new GraphicsContext(2, i) : normalGfx;
+        GraphicsContext titleGfx = Storage.state().getBool(SettingsKeys.SETTING_BOLD_TITLE_FONT) ? new GraphicsContext(2, fontSizeCode) : normalGfx;
         Storage.state().setObject(UIKeys.GFX_CONTEXT_TITLE, titleGfx);
         Storage.state().setObject(UIKeys.GFX_CONTEXT_NORMAL, normalGfx);
         Storage.state().setObject(UIKeys.GFX_CONTEXT_NORMAL_2, normalGfx);
@@ -71,18 +98,11 @@ public abstract class ScreenManager {
         Storage.state().setInt(UIKeys.INT_BOLD_FONT_HEIGHT, boldGfx.font.getHeight());
         Storage.state().setInt(UIKeys.INT_TITLE_FONT_HEIGHT, titleGfx.font.getHeight());
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
-        int size = screens.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                ((ListView) screens.elementAt(size)).rebuildItems();
-            }
+        for (int idx = screens.size() - 1; idx >= 0; idx--) {
+            ((ListView) screens.elementAt(idx)).rebuildItems();
         }
     }
 
-    /* renamed from: b */
     public static final ListView getCurrentScreen() {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         if (screens.isEmpty()) {
@@ -91,7 +111,6 @@ public abstract class ScreenManager {
         return (ListView) screens.lastElement();
     }
 
-    /* renamed from: c */
     public static final String getCurrentTitle() {
         if (Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedTitle();
@@ -99,15 +118,13 @@ public abstract class ScreenManager {
         return null;
     }
 
-    /* renamed from: d */
     public static final int getCurrentWidth() {
         if (Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedWidth();
         }
-        return 200;
+        return DEFAULT_WIDTH;
     }
 
-    /* renamed from: e */
     public static final MenuItem getCurrentMenuItem() {
         if (Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedItem();
@@ -115,7 +132,6 @@ public abstract class ScreenManager {
         return null;
     }
 
-    /* renamed from: a */
     public static final void pushScreen(ListView screen) {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         while (screens.size() > 0) {
@@ -123,82 +139,75 @@ public abstract class ScreenManager {
         }
         screens.addElement(screen);
     }
-
-    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-    /* JADX WARN: Removed duplicated region for block: B:38:0x0166  */
-    /* renamed from: b */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static final void showScreen(ListView screen) {
         RemoteLogger.log("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
         ListView prevScreen = null;
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
-        int size = screens.size() - 1;
-        int i = size >= 0 ? ((ListView) screens.elementAt(size)).screenId : -1;
-        if (i == 137 || i == 63) {
-            ListView savedScreen = (ListView) screens.elementAt(size);
+        int topIndex = screens.size() - 1;
+        int topScreenId = topIndex >= 0 ? ((ListView) screens.elementAt(topIndex)).screenId : -1;
+        if (topScreenId == ScreenId.MAIN_SCREEN || topScreenId == ScreenId.STATUS_INPUT) {
+            ListView savedScreen = (ListView) screens.elementAt(topIndex);
             prevScreen = savedScreen;
             screens.removeElement(savedScreen);
         }
-        int i2 = screen.screenId;
-        if (i2 != 112) {
-            int size2 = screens.size();
-            for (int i3 = 0; i3 < size2; i3++) {
-                if (((ListView) screens.elementAt(i3)).screenId == i2) {
-                    size2 = i3;
+        int newScreenId = screen.screenId;
+        if (newScreenId != ScreenId.CLEAR_NOTIFICATIONS) {
+            int duplicateIdx = screens.size();
+            for (int idx = 0; idx < duplicateIdx; idx++) {
+                if (((ListView) screens.elementAt(idx)).screenId == newScreenId) {
+                    duplicateIdx = idx;
                 }
             }
-            while (screens.size() > size2) {
+            while (screens.size() > duplicateIdx) {
                 ScreenBuilder.onScreenClosed();
             }
         }
-        int i4 = screen.screenType;
-        if (((1 << i4) & 3484) != 0) {
+        int screenType = screen.screenType;
+        if (((1 << screenType) & DIALOG_TYPE_MASK) != 0) {
             screen.buildLayout();
         }
-        int i5 = screen.containerWidth;
-        int i6 = screen.containerHeight;
-        int iM586d = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - i5;
-        int screenH = Storage.state().getHeight() - i6;
-        switch (i4) {
+        int contentWidth = screen.containerWidth;
+        int contentHeight = screen.containerHeight;
+        int marginX = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - contentWidth;
+        int marginY = Storage.state().getHeight() - contentHeight;
+        switch (screenType) {
             case TYPE_DIALOG_CENTER:
             case TYPE_TOAST:
             case TYPE_TOAST_CENTER:
-                screen.setOffset(iM586d >> 1, screenH >> 1);
+                screen.setOffset(marginX >> 1, marginY >> 1);
                 break;
             case TYPE_DIALOG_BOTTOM:
-                screen.setOffset(0, screenH);
+                screen.setOffset(0, marginY);
                 break;
             case TYPE_DIALOG_CORNER:
-                screen.setOffset(iM586d, screenH);
+                screen.setOffset(marginX, marginY);
                 break;
             case TYPE_POPUP:
                 ListView curScreen = getCurrentScreen();
                 if (curScreen != null) {
-                    int iM586d2 = curScreen.offsetX + curScreen.containerWidth;
-                    int selectedY = curScreen.getSelectedY();
-                    if (iM586d2 + screen.containerWidth > Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)) {
-                        iM586d2 = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
+                    int popupX = curScreen.offsetX + curScreen.containerWidth;
+                    int popupY = curScreen.getSelectedY();
+                    if (popupX + screen.containerWidth > Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)) {
+                        popupX = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
                     }
-                    if (selectedY + screen.containerHeight > Storage.state().getHeight()) {
-                        selectedY = Storage.state().getHeight() - screen.containerHeight;
+                    if (popupY + screen.containerHeight > Storage.state().getHeight()) {
+                        popupY = Storage.state().getHeight() - screen.containerHeight;
                     }
-                    screen.setOffset(iM586d2, selectedY);
+                    screen.setOffset(popupX, popupY);
                     break;
                 }
                 break;
             case TYPE_DIALOG_LOW:
-                screen.setOffset(iM586d >> 1, (Storage.state().getHeight() - i6) - (i6 / 10));
+                screen.setOffset(marginX >> 1, (Storage.state().getHeight() - contentHeight) - (contentHeight / DIALOG_LOW_OFFSET_DIVISOR));
                 break;
         }
-        int size3 = screens.size();
-        for (int i7 = 0; i7 < size3; i7++) {
-            if (((ListView) screens.elementAt(i7)).screenType == TYPE_TOAST) {
-                size3 = i7;
+        int toastIdx = screens.size();
+        for (int idx = 0; idx < toastIdx; idx++) {
+            if (((ListView) screens.elementAt(idx)).screenType == TYPE_TOAST) {
+                toastIdx = idx;
             }
         }
-        while (screens.size() > size3) {
+        while (screens.size() > toastIdx) {
             ScreenBuilder.onScreenClosed();
         }
         screen.invalidateLayout();
@@ -208,25 +217,22 @@ public abstract class ScreenManager {
         }
     }
 
-    /* renamed from: a */
-    public static final boolean hasScreen(int i) {
+    public static final boolean hasScreen(int screenId) {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
-        int size = screens.size();
+        int idx = screens.size();
         do {
-            size--;
-            if (size < 0) {
+            idx--;
+            if (idx < 0) {
                 return false;
             }
-        } while (((ListView) screens.elementAt(size)).screenId != i);
+        } while (((ListView) screens.elementAt(idx)).screenId != screenId);
         return true;
     }
 
-    /* renamed from: f */
     public static final int getCenterOffset() {
-        return Utils.max(0, (Storage.state().getInt(UIKeys.INT_FONT_HEIGHT) - 16) >> 1);
+        return Utils.max(0, (Storage.state().getInt(UIKeys.INT_FONT_HEIGHT) - ICON_HEIGHT) >> 1);
     }
 
-    /* renamed from: g */
     public static final int handleScreenClose() {
         if (!Storage.state().getBool(UIKeys.FLAG_KNOWN_DEVICE)) {
             return NotificationHelper.showError(470);
@@ -235,7 +241,6 @@ public abstract class ScreenManager {
         return 0;
     }
 
-    /* renamed from: b */
     public static final ListView createScreen(int offset) {
         ListView screen;
         int pos = offset;
@@ -257,26 +262,26 @@ public abstract class ScreenManager {
         switch (screenType) {
             case TYPE_FULLSCREEN:
             case TYPE_FULLSCREEN_ALT:
-                screen = new ListView(0, screenId, screenW, screenH, true);
+                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, screenW, screenH, true);
                 break;
             case TYPE_DIALOG_CENTER:
             case TYPE_DIALOG_BOTTOM:
             case TYPE_DIALOG_CORNER:
             case TYPE_POPUP:
             case TYPE_DIALOG_LOW:
-                screen = new ListView(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, true);
+                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (screenW * 9) / 10, (screenH * 9) / 10, true);
                 break;
             case TYPE_FULLSCREEN_NOSCROLL:
             case TYPE_FULLSCREEN_NOSCROLL_ALT:
-                screen = new ListView(0, screenId, screenW, screenH, false);
+                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, screenW, screenH, false);
                 break;
             case TYPE_MAP:
             case TYPE_MAP_ALT:
-                screen = new ListView(1, screenId, screenW, screenH, true);
+                screen = new ListView(ListView.LAYOUT_GRID, screenId, screenW, screenH, true);
                 break;
             case TYPE_TOAST:
             case TYPE_TOAST_CENTER:
-                screen = new ListView(0, screenId, (screenW * 9) / 10, (screenH * 9) / 10, false);
+                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (screenW * 9) / 10, (screenH * 9) / 10, false);
                 break;
             default:
                 screen = null;
@@ -304,28 +309,25 @@ public abstract class ScreenManager {
         return configuredScreen;
     }
 
-    /* renamed from: c */
-    public static final ListView createDialogScreen(int i) {
-        ListView screen = new ListView(0, i, (Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) * 9) / 10, (Storage.state().getHeight() * 9) / 10, true);
+    public static final ListView createDialogScreen(int screenId) {
+        ListView screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) * 9) / 10, (Storage.state().getHeight() * 9) / 10, true);
         screen.screenType = TYPE_DIALOG_CENTER;
         screen.showCheckboxes = true;
         return screen;
     }
 
-    /* renamed from: h */
     public static final boolean hasModal() {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
-        int size = screens.size();
+        int idx = screens.size();
         do {
-            size--;
-            if (size <= 0) {
+            idx--;
+            if (idx <= 0) {
                 return false;
             }
-        } while (((ListView) screens.elementAt(size)).offsetY != 0);
+        } while (((ListView) screens.elementAt(idx)).offsetY != 0);
         return true;
     }
 
-    /* renamed from: a */
     private static final int addItemToScreen(boolean isVisible, ListView screen, int pos, boolean isAction) {
         int labelKey = Storage.state().getInt(pos++);
         int iconKey = Storage.state().getInt(pos++);
@@ -340,11 +342,8 @@ public abstract class ScreenManager {
         return pos;
     }
 
-    /* renamed from: a */
     private static final int parseScreenItem(ListView screen, int pos, int screenId) {
-        int nextPos;
         Object itemData;
-        int afterPos;
         String title;
         int typeFlags = Storage.state().getInt(pos++);
         RemoteLogger.log("SCR", "parseItem pos=" + (pos - 1) + " type=" + (typeFlags & MASK_TYPE));
@@ -354,11 +353,15 @@ public abstract class ScreenManager {
             case ITEM_ACTION:
                 if (isDynamic) {
                     pos++;
-                    isEnabled = Storage.state().getBool(Storage.state().getInt(pos));
+                    int condKey = Storage.state().getInt(pos);
+                    RemoteLogger.log("SCR", "ACTION dyn condKey=" + condKey + " pos=" + pos);
+                    isEnabled = Storage.state().getBool(condKey);
+                    RemoteLogger.log("SCR", "ACTION dyn isEnabled=" + isEnabled);
                 }
                 int labelKey = Storage.state().getInt(pos++);
                 int iconKey = Storage.state().getInt(pos++);
                 int cmdKey = Storage.state().getInt(pos++);
+                RemoteLogger.log("SCR", "ACTION label=" + labelKey + " icon=" + iconKey + " cmd=" + cmdKey + " enabled=" + isEnabled);
                 if (isEnabled) {
                     screen.addActionById(iconKey, cmdKey, labelKey);
                 } else {
@@ -369,7 +372,7 @@ public abstract class ScreenManager {
                 MenuItem separator = MenuItem.createSeparator().addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)))).append(' ')), 0, 0);
                 String sublabel = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
                 if (!StringUtils.isEmpty(sublabel)) {
-                    separator.addText(sublabel, 0, 6);
+                    separator.addText(sublabel, 0, TEXT_FORMAT_SECONDARY);
                 }
                 screen.addItem(separator);
                 return pos;
@@ -380,19 +383,18 @@ public abstract class ScreenManager {
             case ITEM_DROPDOWN:
                 String choiceLabel = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
                 Vector choices = Utils.splitByNull(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++))));
-                screen.addItem(new MenuItem(9, choiceLabel).setChoices(choices, Storage.state().getInt(Storage.state().getInt(pos++)), choiceLabel));
+                screen.addItem(new MenuItem(MenuItem.TYPE_DROPDOWN, choiceLabel).setChoices(choices, Storage.state().getInt(Storage.state().getInt(pos++)), choiceLabel));
                 return pos;
             case ITEM_TEXT_SEPARATOR:
                 screen.addItem(MenuItem.createSeparator().addText(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++))), 1, 0));
                 return pos;
             case ITEM_TEXT_INPUT:
-                if (screenId == 49) {
+                if (screenId == ScreenId.CHAT_ROOM_CONFIG) {
                     int dataKey = Storage.state().getInt(pos++);
-                    itemData = (dataKey < 268 || dataKey > 304) ? (dataKey < 161 || dataKey > 210) ? Storage.state().getString(dataKey) : ObjectPool.integerOf(dataKey) : ObjectPool.integerOf(dataKey);
+                    itemData = (dataKey < INT_KEY_RANGE_START_2 || dataKey > INT_KEY_RANGE_END_2) ? (dataKey < INT_KEY_RANGE_START || dataKey > INT_KEY_RANGE_END) ? Storage.state().getString(dataKey) : ObjectPool.integerOf(dataKey) : ObjectPool.integerOf(dataKey);
                 } else {
                     itemData = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
                 }
-                Object obj = itemData;
                 int inputType = Storage.state().getInt(pos++);
                 String hintText = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
                 int validationType = Storage.state().getInt(pos++);
@@ -403,7 +405,7 @@ public abstract class ScreenManager {
                 } else {
                     title = Utils.defaultStr(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++))));
                 }
-                screen.addItem(new MenuItem(15, obj instanceof String ? (String) obj : Storage.emptyStr).setAction(obj, title, ObjectPool.integerOf(inputType), ObjectPool.integerOf(validationType), hintText));
+                screen.addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, itemData instanceof String ? (String) itemData : Storage.emptyStr).setAction(itemData, title, ObjectPool.integerOf(inputType), ObjectPool.integerOf(validationType), hintText));
                 return pos;
             case ITEM_LABEL_SEPARATOR:
                 screen.addItem(MenuItem.createSeparator().setLabel(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)))));
@@ -415,13 +417,13 @@ public abstract class ScreenManager {
             case ITEM_LOGIN:
                 String loginLabel = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos)));
                 String loginValue = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos + 1)));
-                MenuItem loginItem = new MenuItem(4, (String) null).clear().setIcon(221).addText(Utils.nonEmpty(loginValue) ? loginValue : loginLabel, 1, 7);
+                MenuItem loginItem = new MenuItem(MenuItem.TYPE_LOGIN, (String) null).clear().setIcon(221).addText(Utils.nonEmpty(loginValue) ? loginValue : loginLabel, 1, 7);
                 loginItem.data = new String[]{loginLabel, loginValue};
                 screen.addItem(loginItem);
                 return pos + 2;
             case ITEM_PASSWORD:
                 String passwordStr = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos)));
-                MenuItem menuItem = new MenuItem(5, (String) null);
+                MenuItem menuItem = new MenuItem(MenuItem.TYPE_PASSWORD, (String) null);
                 menuItem.clear();
                 menuItem.setIcon(219);
                 if (Utils.nonEmpty(passwordStr)) {
@@ -443,7 +445,6 @@ public abstract class ScreenManager {
         }
     }
 
-    /* renamed from: a */
     private static final int processFormField(int pos, Object data) {
         int nextIdx;
         int idx = pos + 1;
@@ -507,29 +508,28 @@ public abstract class ScreenManager {
         return idx;
     }
 
-    /* renamed from: d */
     public static final int processScreenForm() {
         ListView screen = getCurrentScreen();
-        int i = screen.definitionOffset + 9;
+        int countPos = screen.definitionOffset + 9;
         Vector items = screen.menuItems;
-        int fieldIdx = i + 1;
-        int fieldCount = Storage.state().getInt(i);
-        for (int i2 = 0; i2 < fieldCount; i2++) {
-            fieldIdx = processFormField(fieldIdx, ((MenuItem) items.elementAt(i2)).data);
+        int fieldIdx = countPos + 1;
+        int fieldCount = Storage.state().getInt(countPos);
+        for (int idx = 0; idx < fieldCount; idx++) {
+            fieldIdx = processFormField(fieldIdx, ((MenuItem) items.elementAt(idx)).data);
         }
         return 0;
     }
 
     public static final int processPhoneInput(String fieldId) {
         String newValue = Storage.state().getString(UIKeys.SLOT_STATUS_TEXT);
-        int i = 15;
+        int idx = 15;
         do {
-            i--;
-            if (i < 0) {
+            idx--;
+            if (idx < 0) {
                 return 0;
             }
-        } while (Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i) != fieldId);
-        Storage.state().setObject(StringResKeys.PHONE_STRINGS_BASE + i, (Object) newValue);
+        } while (Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, idx) != fieldId);
+        Storage.state().setObject(StringResKeys.PHONE_STRINGS_BASE + idx, (Object) newValue);
         return 0;
     }
 
@@ -542,18 +542,18 @@ public abstract class ScreenManager {
     public static final String[] getLanguageOptions() {
         if (!Storage.state().getBool(SessionKeys.FLAG_CAPTCHA_SHOWN)) {
             setFormFields(null, null, null, null, null);
-        } else if (TimerManager.checkTimer(13, computeInitialState())) {
+        } else if (TimerManager.checkTimer(TimerManager.SLOT_SCREEN_INIT, computeInitialState())) {
             Storage.state().clearIndex(UIKeys.SLOT_INIT_PARAMS);
         }
         String formData = Storage.state().getString(UIKeys.SLOT_INIT_PARAMS);
         if (formData == null) {
             return null;
         }
-        String[] strArr = new String[2];
-        strArr[0] = formData;
+        String[] result = new String[2];
+        result[0] = formData;
         String langOption = Storage.state().getString(UIKeys.SLOT_LANGUAGE_OPTION);
-        strArr[1] = langOption != null ? langOption : Storage.resources().getString(StringResKeys.STR_DEFAULT_LANGUAGE);
-        return strArr;
+        result[1] = langOption != null ? langOption : Storage.resources().getString(StringResKeys.STR_DEFAULT_LANGUAGE);
+        return result;
     }
 
     public static final void prepareFormData() {
@@ -582,18 +582,14 @@ public abstract class ScreenManager {
     }
 
     private static final int computeInitialState() {
-        return Storage.resources().getBytes(StringResKeys.RES_UPDATE_DATA) != null ? 60000 : 300000;
+        return Storage.resources().getBytes(StringResKeys.RES_UPDATE_DATA) != null ? CACHE_TIMEOUT_SHORT_MS : CACHE_TIMEOUT_LONG_MS;
     }
 
     public static final int getThemeColor(int errorId) {
-        int size = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS).size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return 0;
-            }
-            AccountManager.getAccountByIndex(size).onError(errorId);
+        for (int idx = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS).size() - 1; idx >= 0; idx--) {
+            AccountManager.getAccountByIndex(idx).onError(errorId);
         }
+        return 0;
     }
 
     public static final int getThemeBackground(int optionId) {
@@ -633,8 +629,8 @@ public abstract class ScreenManager {
         return Integer.parseInt(StringUtils.getSystemProp(1007));
     }
 
-    public static final int computeLayoutParam(int i) {
-        return Integer.parseInt(StringUtils.getSystemProp(i), 16);
+    public static final int computeLayoutParam(int propKey) {
+        return Integer.parseInt(StringUtils.getSystemProp(propKey), 16);
     }
 
     public static final int handleThemeOption(int optionId) {

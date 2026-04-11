@@ -11,7 +11,9 @@ RESOURCES_OUT = $(BUILD)/resources
 GEN_DIR  = $(BUILD)/generated/com/trykote/mobileagent/util
 GEN_CFG  = config/remote_logger.cfg
 GEN_SRC  = $(SRC)/com/trykote/mobileagent/util/RemoteLoggerConfig.java
-SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java')
+TEST_CFG = config/test_account.cfg
+TEST_SRC = $(SRC)/com/trykote/mobileagent/util/TestConfig.java
+SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java' ! -name 'TestConfig.java')
 
 .PHONY: all compile jar clean resources screen-defs palette-keys gen-keys
 
@@ -41,9 +43,21 @@ $(GEN_DIR)/RemoteLoggerConfig.java: $(GEN_SRC) $(GEN_CFG)
 	           /@@REMOTE_LOGGER_PORT@@/    { sub(/= [^;]+;/, "= "p";") } \
 	           { print }' $(GEN_CFG) $(GEN_SRC) > $@
 
-$(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
+$(GEN_DIR)/TestConfig.java: $(TEST_SRC) $(TEST_CFG)
+	@mkdir -p $(GEN_DIR)
+	@awk -F= 'FNR==NR { if ($$1=="enabled") e=($$2=="true"||$$2=="1")?"true":"false"; \
+	                      if ($$1=="login") l=$$2; \
+	                      if ($$1=="password") pw=$$2; \
+	                      if ($$1=="type") t=$$2; next } \
+	           /@@TEST_ACCOUNT_ENABLED@@/ { sub(/= [^;]+;/, "= "e";") } \
+	           /@@TEST_ACCOUNT_LOGIN@@/   { sub(/= "[^"]*";/, "= \""l"\";") } \
+	           /@@TEST_ACCOUNT_PASSWORD@@/{ sub(/= "[^"]*";/, "= \""pw"\";") } \
+	           /@@TEST_ACCOUNT_TYPE@@/    { sub(/= [^;]+;/, "= "t";") } \
+	           { print }' $(TEST_CFG) $(TEST_SRC) > $@
+
+$(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	@mkdir -p $(BUILD)/classes
-	$(JAVAC8) -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java
+	$(JAVAC8) -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	python3 tools/patch_stringbuilder.py $(BUILD)/classes
 	@rm -rf $(BUILD)/preverified
 	java -jar $(PROGUARD) \

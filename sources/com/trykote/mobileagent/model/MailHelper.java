@@ -11,25 +11,33 @@ import java.util.Vector;
 
 public final class MailHelper {
 
+    // Mail action codes
+    public static final int ACTION_CLOSE_AND_OPEN = 48;
+    public static final int ACTION_COMPOSE_REPLY = 54;
+
+    // Chat view mode values
+    public static final int VIEW_MODE_LIST = 1;
+    public static final int VIEW_MODE_DETAIL = 2;
+
+    // Character code for '@' used in email address validation
+    private static final char CHAR_AT = '@';
+
     public static final void writeAddressPairs(Vector vector, ByteBuffer buf) {
         int count = Utils.vectorSize(vector);
         buf.writeIntLE(count);
         for (int i = 0; i < count; i++) {
-            String[] strArr = (String[]) vector.elementAt(i);
-            buf.writeStringUTF16(strArr[0]).writeStringUTF16(strArr[1]);
+            String[] pair = (String[]) vector.elementAt(i);
+            buf.writeStringUTF16(pair[0]).writeStringUTF16(pair[1]);
         }
     }
 
     public static final Vector readAddressPairs(ByteBuffer buf) {
         Vector results = ObjectPool.newVector();
-        int resultCode = buf.readInt();
-        while (true) {
-            resultCode--;
-            if (resultCode < 0) {
-                return results;
-            }
+        int count = buf.readInt();
+        for (int i = count - 1; i >= 0; i--) {
             results.addElement(new String[]{buf.readUTF8Str((String) null), buf.readUTF8Str((String) null)});
         }
+        return results;
     }
 
     public static final Vector copyAddressList(Vector vector) {
@@ -40,14 +48,14 @@ public final class MailHelper {
         return results;
     }
 
-    public static final Vector mergeAddressLists(Vector vector, Vector vector2) {
-        if (vector2 != null) {
-            Enumeration elements = vector2.elements();
+    public static final Vector mergeAddressLists(Vector target, Vector source) {
+        if (source != null) {
+            Enumeration elements = source.elements();
             while (elements.hasMoreElements()) {
-                addUniqueAddress(vector, (String[]) elements.nextElement());
+                addUniqueAddress(target, (String[]) elements.nextElement());
             }
         }
-        return vector;
+        return target;
     }
 
     public static final Vector getFirstAddress(Vector vector) {
@@ -58,31 +66,26 @@ public final class MailHelper {
         return results;
     }
 
-    public static final Vector addUniqueAddress(Vector vector, String[] strArr) {
-        String str = strArr[0];
-        if (str.indexOf(64) != -1) {
-            boolean z = false;
-            int count = Utils.vectorSize(vector);
-            while (true) {
-                count--;
-                if (count < 0) {
-                    break;
-                }
-                if (StringUtils.equals(str, ((String[]) vector.elementAt(count))[0])) {
-                    z = true;
+    public static final Vector addUniqueAddress(Vector vector, String[] addressPair) {
+        String address = addressPair[0];
+        if (address.indexOf(CHAR_AT) != -1) {
+            boolean alreadyExists = false;
+            for (int j = Utils.vectorSize(vector) - 1; j >= 0; j--) {
+                if (StringUtils.equals(address, ((String[]) vector.elementAt(j))[0])) {
+                    alreadyExists = true;
                 }
             }
-            if (!z) {
-                vector.addElement(strArr);
+            if (!alreadyExists) {
+                vector.addElement(addressPair);
             }
         }
         return vector;
     }
 
-    public static final Vector parseAddressHeader(String str, String str2) {
+    public static final Vector parseAddressHeader(String addresses, String names) {
         Vector results = ObjectPool.newVector();
-        Vector decodedNames = splitCommaSeparated(Conversation.decodeHtmlSpecial(str2));
-        Vector rawAddresses = splitCommaSeparated(str);
+        Vector decodedNames = splitCommaSeparated(Conversation.decodeHtmlSpecial(names));
+        Vector rawAddresses = splitCommaSeparated(addresses);
         for (int i = 0; i < Utils.vectorSize(rawAddresses); i++) {
             addUniqueAddress(results, createAddressPair((String) rawAddresses.elementAt(i), (String) decodedNames.elementAt(i)));
         }
@@ -102,15 +105,15 @@ public final class MailHelper {
         Vector results = ObjectPool.newVector();
         StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
-        boolean z = true;
+        boolean collecting = true;
         int i = 0;
         while (i <= length) {
             char ch = i < length ? str.charAt(i) : ',';
-            if (!z) {
-                z = true;
+            if (!collecting) {
+                collecting = true;
             } else if (ch == ',') {
                 results.addElement(ObjectPool.toString(sb, false));
-                z = false;
+                collecting = false;
             } else {
                 sb.append(ch);
             }
@@ -127,9 +130,8 @@ public final class MailHelper {
         int i = 0;
         while (i <= length) {
             char ch = i == length ? ';' : str.charAt(i);
-            char c = ch;
-            if (ch != ';' && c != ',' && c != ' ') {
-                sb.append(c);
+            if (ch != ';' && ch != ',' && ch != ' ') {
+                sb.append(ch);
             } else if (sb.length() > 0) {
                 String address = ObjectPool.toString(sb, false);
                 results.addElement(new String[]{address, address});
@@ -140,9 +142,9 @@ public final class MailHelper {
         return results;
     }
 
-    public static final void setMailAction(int i, int i2) {
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION, i);
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION_TYPE, i2);
+    public static final void setMailAction(int action, int actionType) {
+        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION, action);
+        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION_TYPE, actionType);
     }
 
     public static final int processMailResponse() {
@@ -162,48 +164,43 @@ public final class MailHelper {
         String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
         ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
         Message message = chatRoom.getMessage(messageId);
-        boolean wasUnread = message.hasFlag(4);
+        boolean wasUnread = message.hasFlag(Message.FLAG_UNREAD);
         Object jsonPayload = ApiClient.getJsonPayload();
         Object attachmentsList = JsonParser.getValueByInt(jsonPayload, 722874);
         int size = ((Vector) attachmentsList).size();
-        int i = size;
-        Object[] objArr = new Object[size];
-        while (true) {
-            i--;
-            if (i < 0) {
-                break;
-            }
+        Object[] attachments = new Object[size];
+        for (int i = size - 1; i >= 0; i--) {
             Object attachmentObj = JsonParser.getVectorElement(attachmentsList, i);
-            objArr[i] = new String[]{JsonParser.getStringByInt(attachmentObj, 1227), JsonParser.getStringByInt(attachmentObj, 1228), JsonParser.getStringByInt(attachmentObj, 1229), JsonParser.getStringByInt(attachmentObj, 1230), JsonParser.getStringByInt(attachmentObj, 1231), JsonParser.getStringByInt(attachmentObj, 1232)};
+            attachments[i] = new String[]{JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 1), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 2), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 3), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 4), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_LAST)};
         }
-        message.attachments = objArr;
-        String str = (String) JsonParser.getValueByInt(jsonPayload, 919493);
-        if (str == null) {
+        message.attachments = attachments;
+        String rawBody = (String) JsonParser.getValueByInt(jsonPayload, 919493);
+        if (rawBody == null) {
             bodyText = Storage.emptyStr;
         } else {
             StringBuffer sb = ObjectPool.newStringBuffer();
-            int length = str.length();
-            int i2 = 0;
-            while (i2 < length) {
-                char ch = str.charAt(i2);
+            int length = rawBody.length();
+            int pos = 0;
+            while (pos < length) {
+                char ch = rawBody.charAt(pos);
                 sb.append(ch);
                 if (ch == ' ') {
-                    while (i2 + 1 < length && str.charAt(i2 + 1) == ' ') {
-                        i2++;
+                    while (pos + 1 < length && rawBody.charAt(pos + 1) == ' ') {
+                        pos++;
                     }
                 }
                 if (ch == '\n') {
-                    while (i2 + 1 < length && str.charAt(i2 + 1) == '\n') {
-                        i2++;
+                    while (pos + 1 < length && rawBody.charAt(pos + 1) == '\n') {
+                        pos++;
                     }
                 }
-                i2++;
+                pos++;
             }
             bodyText = ObjectPool.toStringAndRelease(sb);
         }
         message.body = bodyText;
         if (wasUnread) {
-            message.setFlag(4, false);
+            message.setFlag(Message.FLAG_UNREAD, false);
             chatRoom.decrementUnread();
         }
         return handleMailRedirect();
@@ -211,36 +208,35 @@ public final class MailHelper {
 
     private static final int handleMailRedirect() {
         int action = Storage.state().getInt(RuntimeKeys.INT_XMPP_ACTION);
-        if (action == 54) {
+        if (action == ACTION_COMPOSE_REPLY) {
             Message message = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID)).getMessage(Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID));
             Vector toList = message.getToList();
             Vector ccList = message.getCcList();
             getFirstRecipient(toList);
             String subject = message.getSubject();
-            String str = message.body;
+            String body = message.body;
             String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
             String fwdPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
-            String string = new StringBuffer().append(Storage.resources().getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(str)).toString();
+            String quotedBody = new StringBuffer().append(Storage.resources().getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(body)).toString();
             switch (Storage.state().getInt(RuntimeKeys.INT_XMPP_ACTION_TYPE)) {
                 case 0:
-                    composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
+                    composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), quotedBody);
                     break;
                 case 1:
-                    composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), string);
+                    composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), quotedBody);
                     break;
                 case 2:
-                    composeEmail(ObjectPool.newVector(), new StringBuffer().append(fwdPrefix).append(subject).toString(), string);
+                    composeEmail(ObjectPool.newVector(), new StringBuffer().append(fwdPrefix).append(subject).toString(), quotedBody);
                     break;
                 case 3:
-                    composeEmail(copyAddressList(ccList), subject, str);
+                    composeEmail(copyAddressList(ccList), subject, body);
                     break;
             }
         }
         return action;
     }
 
-    /* renamed from: a */
-    public static final int handleMailMenuAction(String str, int i) {
+    public static final int handleMailMenuAction(String str, int actionCode) {
         String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
         wrapInVector(messageId);
         int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
@@ -254,7 +250,7 @@ public final class MailHelper {
         String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
         String forwardPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
         String body = Storage.emptyStr;
-        if (i == 48) {
+        if (actionCode == ACTION_CLOSE_AND_OPEN) {
             ScreenBuilder.onScreenClosed();
             ScreenBuilder.onScreenClosed();
         }
@@ -262,29 +258,29 @@ public final class MailHelper {
             if (!needsAuth) {
                 return composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
             }
-            setMailAction(54, 0);
+            setMailAction(ACTION_COMPOSE_REPLY, 0);
             return 0;
         }
         if (StringUtils.matchesKey(840, str)) {
             if (!needsAuth) {
                 return composeEmail(mergeAddressLists(copyAddressList(toList), ccList), new StringBuffer().append(replyPrefix).append(subject).toString(), body);
             }
-            setMailAction(54, 1);
+            setMailAction(ACTION_COMPOSE_REPLY, 1);
             return 0;
         }
         if (StringUtils.matchesKey(841, str)) {
             if (!needsAuth) {
                 return composeEmail(ObjectPool.newVector(), new StringBuffer().append(forwardPrefix).append(subject).toString(), body);
             }
-            setMailAction(54, 2);
+            setMailAction(ACTION_COMPOSE_REPLY, 2);
             return 0;
         }
         if (StringUtils.matchesKey(855, str)) {
-            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, 2);
+            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, VIEW_MODE_DETAIL);
             return 0;
         }
         if (StringUtils.matchesKey(856, str)) {
-            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, 1);
+            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, VIEW_MODE_LIST);
             return 0;
         }
         if (!StringUtils.matchesKey(845, str)) {
@@ -294,28 +290,27 @@ public final class MailHelper {
         return 0;
     }
 
-    /* renamed from: a */
     public static final int handleMailForwardAction(String str) {
-        String strM584b = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
-        int iM586d = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
+        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
         MrimAccount account = (MrimAccount) Storage.state().getAccount();
-        Message message = account.chatRoomManager.findById(iM586d).getMessage(strM584b);
+        Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String strM584b2 = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
-        String strM584b3 = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
-        String str2 = ((MrimAccount) Storage.state().getAccount()).login;
-        wrapInVector(strM584b);
+        String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
+        String currentLogin = ((MrimAccount) Storage.state().getAccount()).login;
+        wrapInVector(messageId);
         if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
-            composeEmail(getFirstAddress(toList), StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+            composeEmail(getFirstAddress(toList), StringUtils.concat(replyPrefix, subject), Utils.quoteText(message.body));
             return 0;
         }
         if (!StringUtils.matchesKey(840, str)) {
             if (StringUtils.matchesKey(841, str)) {
                 ScreenBuilder.onScreenClosed();
-                composeEmail(ObjectPool.newVector(), StringUtils.concat(strM584b3, subject), Utils.quoteText(message.body));
+                composeEmail(ObjectPool.newVector(), StringUtils.concat(forwardPrefix, subject), Utils.quoteText(message.body));
                 return 0;
             }
             if (!StringUtils.matchesKey(845, str)) {
@@ -325,28 +320,22 @@ public final class MailHelper {
             return 0;
         }
         ScreenBuilder.onScreenClosed();
-        Vector vectorM865a = mergeAddressLists(copyAddressList(ccList), toList);
-        int iM541c = Utils.vectorSize(vectorM865a);
-        while (true) {
-            iM541c--;
-            if (iM541c < 0) {
-                break;
-            }
-            Object objElementAt = vectorM865a.elementAt(iM541c);
-            if (StringUtils.equals(str2, ((String[]) objElementAt)[0])) {
-                vectorM865a.removeElement(objElementAt);
+        Vector mergedRecipients = mergeAddressLists(copyAddressList(ccList), toList);
+        for (int j = Utils.vectorSize(mergedRecipients) - 1; j >= 0; j--) {
+            Object entry = mergedRecipients.elementAt(j);
+            if (StringUtils.equals(currentLogin, ((String[]) entry)[0])) {
+                mergedRecipients.removeElement(entry);
                 break;
             }
         }
-        composeEmail(vectorM865a, StringUtils.concat(strM584b2, subject), Utils.quoteText(message.body));
+        composeEmail(mergedRecipients, StringUtils.concat(replyPrefix, subject), Utils.quoteText(message.body));
         return 0;
     }
 
-    /* renamed from: g */
     private static void wrapInVector(String str) {
-        Vector vectorM1213g = ObjectPool.newVector();
-        vectorM1213g.addElement(str);
-        IOUtils.setSelectedItems(vectorM1213g);
+        Vector items = ObjectPool.newVector();
+        items.addElement(str);
+        IOUtils.setSelectedItems(items);
     }
 
     public static String[] createAddressPair(String address1, String address2) {
@@ -364,8 +353,8 @@ public final class MailHelper {
         }
         Storage.state().setObject(RuntimeKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
         Storage.state().setObject(RuntimeKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(subject));
-        String empty2 = Storage.emptyStr;
-        Storage.state().setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : empty2).append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : empty2).append(Utils.defaultStr(bodyText)).append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_LABEL)));
+        String emptyStr = Storage.emptyStr;
+        Storage.state().setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : emptyStr).append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : emptyStr).append(Utils.defaultStr(bodyText)).append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_LABEL)));
         return ScreenId.COMPOSE_MESSAGE;
     }
 }

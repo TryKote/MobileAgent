@@ -14,6 +14,30 @@ import java.util.Vector;
 
 public final class DialogHandler extends BaseScreenHandler {
 
+    // About screen encryption key for device ID
+    private static final long ABOUT_SCREEN_KEY = 7234309766870429269L;
+
+    // Emoticon counts per protocol
+    private static final int MMP_EMOTICON_COUNT = 37;          // 0..36 inclusive
+    private static final int XMPP_EMOTICON_COUNT = 50;         // 0..49 inclusive
+    private static final int XMPP_EXCLUDED_INDEX_1 = 21;
+    private static final int XMPP_EXCLUDED_INDEX_2 = 27;
+    private static final int XMPP_EMOTICON_ICON_BASE = 161;
+    private static final int XMPP_EMOTICON_LABEL_BASE = 155;
+    private static final int XMPP_EMOTICON_CMD_OFFSET = 4;
+    private static final int MMP_EMOTICON_ICON_BASE = 268;
+    private static final int MMP_EMOTICON_LABEL_BASE = 118;
+
+    // Emoticon picker counts
+    private static final int PICKER_MMP_COUNT = 43;
+    private static final int PICKER_XMPP_COUNT = 37;
+    private static final int PICKER_MRIM_START = 10;
+    private static final int PICKER_MRIM_END = 74;
+    private static final int PICKER_MRIM_ICON_BASE = 36;
+    private static final int PICKER_MRIM_EXTRA_START = 0;
+    private static final int PICKER_MRIM_EXTRA_END = 10;
+    private static final int PICKER_XMPP_ICON_BASE = 318;
+    private static final int PICKER_MMP_ICON_BASE = 110;
 
     public void buildScreen(int screenId) {
         switch (screenId) {
@@ -44,7 +68,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 Storage.state().setObject(UIKeys.SLOT_SCREEN_TITLE, (Object) StringUtils.intern(Long.toString(Runtime.getRuntime().totalMemory())));
                 Storage.state().setObject(UIKeys.SLOT_SCREEN_SUBTITLE, (Object) AppController.getFreeMemoryString());
                 Storage.state().setFromBuffer(UIKeys.SLOT_APP_VERSION_STRING, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_APP_NAME)).append(Storage.resources().getString(StringResKeys.STR_APP_BUILD_SUFFIX)));
-                Storage.state().setObject(RegistrationKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(7234309766870429269L).writeByte(44).writeRawString(Storage.state().getAppProperty(StringResKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
+                Storage.state().setObject(RegistrationKeys.SLOT_DEVICE_ID, (Object) new ByteBuffer().writeLongBytes(ABOUT_SCREEN_KEY).writeByte(',').writeRawString(Storage.state().getAppProperty(StringResKeys.STR_APP_PROPERTY_NAME)).getStringAndClear());
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ABOUT));
                 return;
             case ScreenId.BLOCK_CONFIRM:
@@ -65,13 +89,13 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.EMOTICON_DIALOG:
                 ListView dialogScreen2 = ScreenManager.createDialogScreen(17);
                 if (Storage.state().getAccount() instanceof MmpProtocol) {
-                    for (int i3 = 0; i3 <= 36; i3++) {
-                        dialogScreen2.addIconById(i3 + 268, i3 + 118, i3);
+                    for (int i3 = 0; i3 < MMP_EMOTICON_COUNT; i3++) {
+                        dialogScreen2.addIconById(i3 + MMP_EMOTICON_ICON_BASE, i3 + MMP_EMOTICON_LABEL_BASE, i3);
                     }
                 } else {
-                    for (int i4 = 0; i4 <= 49; i4++) {
-                        if (i4 != 21 && i4 != 27) {
-                            dialogScreen2.addIconById(i4 + 161, i4 + 155, i4 + 4);
+                    for (int i4 = 0; i4 < XMPP_EMOTICON_COUNT; i4++) {
+                        if (i4 != XMPP_EXCLUDED_INDEX_1 && i4 != XMPP_EXCLUDED_INDEX_2) {
+                            dialogScreen2.addIconById(i4 + XMPP_EMOTICON_ICON_BASE, i4 + XMPP_EMOTICON_LABEL_BASE, i4 + XMPP_EMOTICON_CMD_OFFSET);
                         }
                     }
                 }
@@ -96,23 +120,23 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.EMOTICON_PICKER:
                 ListView screen5 = ScreenManager.createScreen(ScreenDef.EMOTICON_PICKER);
                 if (Storage.state().getCurrentContact() instanceof MmpContact) {
-                    for (int i10 = 0; i10 < 43; i10++) {
+                    for (int i10 = 0; i10 < PICKER_MMP_COUNT; i10++) {
                         if (Storage.resources().getBlockString(StringResKeys.MMP_EMOTICONS_BASE, i10) != null) {
-                            screen5.addIconTextItem(i10 + 110, StringUtils.intern(Integer.toString(i10)), i10);
+                            screen5.addIconTextItem(i10 + PICKER_MMP_ICON_BASE, StringUtils.intern(Integer.toString(i10)), i10);
                         }
                     }
                 } else if (Storage.state().getCurrentContact() instanceof XmppContact) {
-                    for (int i11 = 0; i11 < 37; i11++) {
+                    for (int i11 = 0; i11 < PICKER_XMPP_COUNT; i11++) {
                         if (Storage.resources().getBlockString(StringResKeys.XMPP_EMOTICONS_BASE, i11) != null) {
-                            screen5.addIconTextItem(i11 + 318, StringUtils.intern(Integer.toString(i11)), i11);
+                            screen5.addIconTextItem(i11 + PICKER_XMPP_ICON_BASE, StringUtils.intern(Integer.toString(i11)), i11);
                         }
                     }
                 } else {
-                    for (int i12 = 10; i12 < 74; i12++) {
-                        screen5.addIconTextItem(i12 + 36, StringUtils.intern(Integer.toString(i12)), i12);
+                    for (int i12 = PICKER_MRIM_START; i12 < PICKER_MRIM_END; i12++) {
+                        screen5.addIconTextItem(i12 + PICKER_MRIM_ICON_BASE, StringUtils.intern(Integer.toString(i12)), i12);
                     }
-                    for (int i13 = 0; i13 < 10; i13++) {
-                        screen5.addIconTextItem(i13 + 36, StringUtils.intern(Integer.toString(i13)), i13);
+                    for (int i13 = PICKER_MRIM_EXTRA_START; i13 < PICKER_MRIM_EXTRA_END; i13++) {
+                        screen5.addIconTextItem(i13 + PICKER_MRIM_ICON_BASE, StringUtils.intern(Integer.toString(i13)), i13);
                     }
                     screen5.addIconTextItem(142, StringUtils.intern(Integer.toString(74)), 74);
                     screen5.addIconTextItem(137, StringUtils.intern(Integer.toString(75)), 75);
@@ -136,7 +160,7 @@ public final class DialogHandler extends BaseScreenHandler {
                 NotificationHelper.clearNotifications();
                 return;
             case ScreenId.PRIVACY_MODE:
-                NotificationHelper.playNotificationSound(4);
+                NotificationHelper.playNotificationSound(NotificationHelper.SOUND_MESSAGE_SENT);
                 Storage.state().setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.PRIVACY_MODE);
                 Storage.state().setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, StringResKeys.STR_PRIVACY_MODE_BASE);
                 NotificationHelper.clearNotifications();
@@ -289,7 +313,7 @@ public final class DialogHandler extends BaseScreenHandler {
             case ScreenId.STATUS_INPUT:
                 int sendMsgResult;
                 String inputText = XmppContactGroup.getTextInputValue();
-                if (!StringUtils.isEmpty(inputText) && 0 != (sendMsgResult = Storage.state().getCurrentContact().sendMessage(inputText))) {
+                if (!StringUtils.isEmpty(inputText) && (sendMsgResult = Storage.state().getCurrentContact().sendMessage(inputText)) != 0) {
                     ScreenBuilder.onScreenClosed();
                     EventDispatcher.postNotification(Storage.state().getString(sendMsgResult));
                 }
@@ -525,12 +549,11 @@ public final class DialogHandler extends BaseScreenHandler {
         }
     }
 
-    /* renamed from: a */
     public static final int handleMessageInputAction(String str, int i) {
         String messageText = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT));
         if (StringUtils.matchesKey(1060, str)) {
             int sendResult = Storage.state().getCurrentContact().sendMessage(messageText);
-            if (0 != sendResult) {
+            if (sendResult != 0) {
                 ScreenBuilder.onScreenClosed();
                 return NotificationHelper.showError(sendResult);
             }
@@ -551,7 +574,6 @@ public final class DialogHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: n */
     public static final int updateMessageInput() {
         try {
             if (XmppContactGroup.getTextInputValue().length() != 0) {
@@ -630,13 +652,13 @@ public final class DialogHandler extends BaseScreenHandler {
     public static int handleAccountOption(int optionId) {
         Account account = Storage.state().getAccount();
         if (!(account instanceof MmpProtocol)) {
-            return openSettingsScreen((optionId + 161) - 4, (optionId + 155) - 4, 4);
+            return openSettingsScreen((optionId + XMPP_EMOTICON_ICON_BASE) - XMPP_EMOTICON_CMD_OFFSET, (optionId + XMPP_EMOTICON_LABEL_BASE) - XMPP_EMOTICON_CMD_OFFSET, XMPP_EMOTICON_CMD_OFFSET);
         }
         ((MmpProtocol) account).reserved2 = optionId;
         if (optionId == 0) {
             return ScreenId.STATUS_DIALOG;
         }
-        return openSettingsScreen(optionId + 268, optionId + 118, 3);
+        return openSettingsScreen(optionId + MMP_EMOTICON_ICON_BASE, optionId + MMP_EMOTICON_LABEL_BASE, 3);
     }
 
     private static int openSettingsScreen(int themeId, int valueId, int actionId) {

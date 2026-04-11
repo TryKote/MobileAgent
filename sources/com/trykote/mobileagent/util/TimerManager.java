@@ -16,6 +16,8 @@ public abstract class TimerManager {
     public static final int SLOT_REPAINT = 5;
     public static final int SLOT_SOUND = 6;
     public static final int SLOT_MAP_IDLE = 7;
+    public static final int SLOT_NOTIFICATION_COOLDOWN = 8;
+    public static final int SLOT_PHONE_INPUT_CHECK = 9;
     public static final int SLOT_MAP_CROSSHAIR = 10;
     public static final int SLOT_SCREEN_INIT = 13;
     public static final int SLOT_COUNT = 14;

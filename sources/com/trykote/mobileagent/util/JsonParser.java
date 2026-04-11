@@ -14,10 +14,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: aq */
-/* loaded from: MobileAgent_3.9.jar:aq.class */
 public abstract class JsonParser {
-    /* renamed from: a */
     public static final Object parseUTF8(ByteBuffer buffer, int i) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         Object result = parseValue(buffer, sb, 2);
@@ -25,7 +22,6 @@ public abstract class JsonParser {
         return result;
     }
 
-    /* renamed from: a */
     public static final Object parseJson(ByteBuffer buffer) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         Object result = parseValue(buffer, sb, 1);
@@ -33,7 +29,6 @@ public abstract class JsonParser {
         return result;
     }
 
-    /* renamed from: a */
     private static final char skipWhitespace(ByteBuffer buffer, StringBuffer stringBuffer) {
         while (true) {
             char next = nextJsonChar(buffer, stringBuffer);
@@ -43,7 +38,6 @@ public abstract class JsonParser {
         }
     }
 
-    /* renamed from: a */
     private static final Object parseValue(ByteBuffer buffer, StringBuffer stringBuffer, int i) {
         char sep;
         char delim;
@@ -94,7 +88,6 @@ public abstract class JsonParser {
         throw new RuntimeException();
     }
 
-    /* renamed from: b */
     private static final String parseString(ByteBuffer buffer, StringBuffer stringBuffer, int i) {
         char ch;
         char decoded;
@@ -154,7 +147,6 @@ public abstract class JsonParser {
         }
     }
 
-    /* renamed from: b */
     private static final Object parseUnquoted(ByteBuffer buffer, StringBuffer stringBuffer) {
         char next;
         StringBuffer sb = ObjectPool.newStringBuffer();
@@ -170,7 +162,6 @@ public abstract class JsonParser {
         return StringUtils.matchesKey(PackedStringKeys.VALUE_TRUE, text) ? ObjectPool.boolTrue : StringUtils.matchesKey(PackedStringKeys.VALUE_FALSE, text) ? ObjectPool.boolFalse : StringUtils.matchesKey(1369, text) ? ObjectPool.JSON_NULL : ObjectPool.integerOf(Utils.parseInt((Object) text));
     }
 
-    /* renamed from: c */
     private static final char nextJsonChar(ByteBuffer buffer, StringBuffer stringBuffer) {
         int length = stringBuffer.length() - 1;
         if (length < 0) {
@@ -181,67 +172,54 @@ public abstract class JsonParser {
         return c;
     }
 
-    /* renamed from: a */
     public static final void putIntKey(Hashtable hashtable, int i, Object obj) {
         hashtable.put(Storage.state().getString(i), obj);
     }
 
-    /* renamed from: a */
     public static final void putIntValue(Hashtable hashtable, String str, int i) {
         hashtable.put(str, ObjectPool.integerOf(i));
     }
 
-    /* renamed from: a */
     public static final Object getValue(Object obj, String str) {
         return ((Hashtable) obj).get(str);
     }
 
-    /* renamed from: a */
     public static final Object getValueByInt(Object obj, int i) {
         return ((Hashtable) obj).get(Storage.state().getString(i));
     }
 
-    /* renamed from: b */
     public static final int getIntValue(Object obj, String str) {
         return ((Integer) getValue(obj, str)).intValue();
     }
 
-    /* renamed from: b */
     public static final int getIntByInt(Object obj, int i) {
         return ((Integer) getValue(obj, Storage.state().getString(i))).intValue();
     }
 
-    /* renamed from: c */
     public static final String getStringValue(Object obj, String str) {
         return (String) getValue(obj, str);
     }
 
-    /* renamed from: c */
     public static final String getStringByInt(Object obj, int i) {
         return (String) getValue(obj, Storage.state().getString(i));
     }
 
-    /* renamed from: d */
     public static final void addIntToVector(Object obj, int i) {
         ((Vector) obj).addElement(ObjectPool.integerOf(i));
     }
 
-    /* renamed from: e */
     public static final Object getVectorElement(Object obj, int i) {
         return ((Vector) obj).elementAt(i);
     }
 
-    /* renamed from: f */
     public static final String getVectorString(Object obj, int i) {
         return Utils.getVectorString((Vector) obj, i);
     }
 
-    /* renamed from: a */
     public static final String toJson(Object obj) {
         return ObjectPool.toStringAndRelease(serializeValue(obj, ObjectPool.newStringBuffer()));
     }
 
-    /* renamed from: a */
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ObjectPool.JSON_NULL) {
             stringBuffer.append(Storage.resources().getString(StringResKeys.STR_SEPARATOR));
@@ -311,7 +289,6 @@ public abstract class JsonParser {
         return stringBuffer;
     }
 
-    /* renamed from: b */
     public static final boolean isSuccess(Object obj) {
         return StringUtils.matchesKey(PackedStringKeys.STATUS_OK, getVectorString(obj, 1)) && StringUtils.matchesKey(PackedStringKeys.TAG_AJAX_RESPONSE, (String) getVectorElement(obj, 0));
     }

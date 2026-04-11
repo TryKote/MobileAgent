@@ -12,6 +12,12 @@ import java.util.Vector;
 
 public final class MrimChatRoomManager {
 
+    // Serialization end marker
+    private static final int SERIALIZATION_MARKER = 21554;
+
+    // Minimum room count required for serialization
+    private static final int MIN_ROOMS_FOR_SAVE = 3;
+
     public Vector list;
     public boolean loaded;
     public String nickname;
@@ -71,13 +77,8 @@ public final class MrimChatRoomManager {
     }
 
     public void removeUser(String str) {
-        int roomCount = getCount();
-        while (true) {
-            roomCount--;
-            if (roomCount < 0) {
-                return;
-            }
-            ChatRoom chatRoom = (ChatRoom) this.list.elementAt(roomCount);
+        for (int i = getCount() - 1; i >= 0; i--) {
+            ChatRoom chatRoom = (ChatRoom) this.list.elementAt(i);
             if (chatRoom.hasMessage(str)) {
                 chatRoom.messageIds.removeElement(str);
                 chatRoom.readMessages.removeElement(str);
@@ -126,8 +127,8 @@ public final class MrimChatRoomManager {
 
     public void serialize(ByteBuffer buffer) throws Throwable {
         int roomCount = getCount();
-        if (this.nickname == null || roomCount < 3) {
-            throw new Throwable();
+        if (this.nickname == null || roomCount < MIN_ROOMS_FOR_SAVE) {
+            return;
         }
         buffer.writeStringUTF16(this.nickname);
         buffer.writeIntLE(0);
@@ -138,7 +139,7 @@ public final class MrimChatRoomManager {
                 chatRoom.serialize(buffer);
             }
         }
-        buffer.writeShortBE(21554);
+        buffer.writeShortBE(SERIALIZATION_MARKER);
     }
 
     public void deserialize(ByteBuffer extraBuffer) {
@@ -149,13 +150,12 @@ public final class MrimChatRoomManager {
         for (int i = 0; i < chatRoomCount; i++) {
             this.list.addElement(ChatRoom.deserialize(extraBuffer));
         }
-        if (extraBuffer.readShortBE() != 21554) {
+        if (extraBuffer.readShortBE() != SERIALIZATION_MARKER) {
             throw new RuntimeException();
         }
         assignDefault(false);
     }
 
-    /* renamed from: c */
     public static final void showChatRoomMessages() {
         ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
         ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_DETAILS);
@@ -215,7 +215,6 @@ public final class MrimChatRoomManager {
         ScreenManager.showScreen(screen);
     }
 
-    /* renamed from: b */
     public static final void sendChatRoomRequest(Object[] objArr) {
         AccountManager.clearAccountHighlight((MrimAccount) Storage.state().getAccount());
         Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, ApiClient.submitAsync(objArr));

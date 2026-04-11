@@ -22,6 +22,10 @@ import java.io.OutputStream;
 
 public final class SocketWrapper {
 
+    private static final int TIMEOUT_MIN_MS = 50000;
+    private static final int TIMEOUT_MAX_MS = 70000;
+    private static final int READ_BUFFER_SIZE = 1024;
+
     public Connection connection;
     public InputStream inputStream;
     public OutputStream outputStream;
@@ -43,13 +47,7 @@ public final class SocketWrapper {
             wrapper.connection = socketConnection;
             try {
                 if (socketConnection instanceof SocketConnection) {
-                    byte b = 5;
-                    while (true) {
-                        byte b2 = (byte) (b - 1);
-                        b = b2;
-                        if (b2 < 2) {
-                            break;
-                        }
+                    for (byte b = 4; b >= 2; b--) {
                         try {
                             int optionValue = Storage.state().getBlockInt(SettingsKeys.SOCKET_OPTIONS_BASE, b);
                             if (optionValue >= 0) {
@@ -150,7 +148,7 @@ public final class SocketWrapper {
     public void asyncReaderLoop() {
         RemoteLogger.log("NET", "asyncReaderLoop started");
         int bytesRead;
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[READ_BUFFER_SIZE];
         do {
             try {
                 bytesRead = readWithTimeout(buf);
@@ -159,7 +157,7 @@ public final class SocketWrapper {
                         this.asyncBuffer.writeBytesAt(buf, 0, bytesRead);
                     }
                 }
-                if (bytesRead < 1024) {
+                if (bytesRead < READ_BUFFER_SIZE) {
                     Thread.sleep(100L);
                 }
             } catch (Throwable th) {
@@ -182,37 +180,30 @@ public final class SocketWrapper {
             return this.inputStream.read(buf);
         } catch (IOException th) {
             long elapsed = System.currentTimeMillis() - startTime;
-            if (elapsed >= 50000 && elapsed <= 70000) {
+            if (elapsed >= TIMEOUT_MIN_MS && elapsed <= TIMEOUT_MAX_MS) {
                 return 0;
             }
             throw th;
         } catch (RuntimeException th) {
             long elapsed = System.currentTimeMillis() - startTime;
-            if (elapsed >= 50000 && elapsed <= 70000) {
+            if (elapsed >= TIMEOUT_MIN_MS && elapsed <= TIMEOUT_MAX_MS) {
                 return 0;
             }
             throw th;
         } catch (Throwable th) {
             long elapsed = System.currentTimeMillis() - startTime;
-            if (elapsed >= 50000 && elapsed <= 70000) {
+            if (elapsed >= TIMEOUT_MIN_MS && elapsed <= TIMEOUT_MAX_MS) {
                 return 0;
             }
             throw new RuntimeException(th.toString());
         }
     }
 
-    /* renamed from: c */
     public static final void closeAll() {
         RemoteLogger.log("NET", "closeAllConnections");
         java.util.Vector connections = Storage.state().getVector(MapKeys.SLOT_MAP_TILE_REQUEST);
-        int size = connections.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                ((SocketWrapper) connections.elementAt(size)).closeImmediate();
-            }
+        for (int idx = connections.size() - 1; idx >= 0; idx--) {
+            ((SocketWrapper) connections.elementAt(idx)).closeImmediate();
         }
     }
 }

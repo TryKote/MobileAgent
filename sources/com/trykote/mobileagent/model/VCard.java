@@ -13,129 +13,104 @@ import com.trykote.mobileagent.util.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: ac */
-/* loaded from: MobileAgent_3.9.jar:ac.class */
 public final class VCard {
 
-    /* renamed from: a */
     public String latStr = Storage.emptyStr;
 
-    /* renamed from: b */
     public String lonStr = Storage.emptyStr;
 
-    /* renamed from: c */
     public String mapTypeStr = Storage.emptyStr;
 
-    /* renamed from: d */
     public String phone = Storage.emptyStr;
 
-    /* renamed from: e */
     public String email = Storage.emptyStr;
 
-    /* renamed from: f */
     public String nickname = Storage.emptyStr;
 
-    /* renamed from: g */
     public String zoomStr = Storage.emptyStr;
 
-    /* renamed from: h */
     public String address = Storage.emptyStr;
 
-    /* renamed from: i */
     public int gender = 2;
 
-    /* renamed from: j */
     public String[] photoUrls = new String[0];
 
-    /* renamed from: k */
     public String[] prevPhotoUrls = new String[0];
 
-    /* renamed from: l */
     public boolean dirty;
 
-    /* renamed from: m */
     public static long staticTs1;
 
-    /* renamed from: n */
     public static long staticTs2;
 
-    /* renamed from: o */
     public static long staticTs3;
 
-    /* renamed from: p */
     public static long staticTs4;
 
-    /* renamed from: q */
     public static long staticTs5;
 
-    /* renamed from: a */
-    public final void setCardData(String str, String str2, String str3, String str4, String str5, String str6, String str7, String str8) {
-        this.latStr = str;
-        this.lonStr = str2;
-        this.mapTypeStr = str3;
-        this.phone = str4;
-        this.email = str5;
-        this.nickname = str6;
-        this.zoomStr = str8;
-        this.address = str7;
+    public final void setCardData(String lat, String lon, String mapType, String phone, String email, String nickname, String address, String zoom) {
+        this.latStr = lat;
+        this.lonStr = lon;
+        this.mapTypeStr = mapType;
+        this.phone = phone;
+        this.email = email;
+        this.nickname = nickname;
+        this.zoomStr = zoom;
+        this.address = address;
         this.dirty = false;
     }
 
-    /* renamed from: a */
     public final void updatePhotos(XmlElement element) {
-        Vector vector;
-        String[] strArr;
+        Vector children;
+        String[] urls;
         if (element == null) {
             return;
         }
         this.prevPhotoUrls = this.photoUrls;
-        String[] strArr2 = new String[0];
-        if (element.children == null || (vector = ((XmlElement) element.children.elementAt(0)).children) == null) {
-            strArr = strArr2;
+        String[] emptyUrls = new String[0];
+        if (element.children == null || (children = ((XmlElement) element.children.elementAt(0)).children) == null) {
+            urls = emptyUrls;
         } else {
-            int size = vector.size();
-            String[] strArr3 = new String[size];
+            int size = children.size();
+            String[] parsedUrls = new String[size];
             for (int i = 0; i < size; i++) {
-                strArr3[i] = ((XmlElement) vector.elementAt(i)).getIntAttribute(PackedStringKeys.ATTR_EMAIL);
+                parsedUrls[i] = ((XmlElement) children.elementAt(i)).getIntAttribute(PackedStringKeys.ATTR_EMAIL);
             }
-            strArr = strArr3;
+            urls = parsedUrls;
         }
-        this.photoUrls = strArr;
+        this.photoUrls = urls;
     }
 
-    /* renamed from: a */
     public static final String[] parseCardFromBuffer(ByteBuffer buffer) {
         if (buffer.length == 0 || buffer.readInt() == 0) {
             return null;
         }
-        String[] strArr = new String[8];
-        strArr[0] = buffer.readWideStr();
-        strArr[1] = buffer.readWideStr();
-        strArr[2] = buffer.readWideStr();
-        strArr[3] = buffer.readUTF8Str((String) null);
-        strArr[4] = buffer.readWideStr();
-        strArr[5] = buffer.readWideStr();
-        if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, strArr[2])) {
-            strArr[6] = buffer.readWideStr();
-            strArr[7] = buffer.readWideStr();
+        String[] cardData = new String[8];
+        cardData[0] = buffer.readWideStr();
+        cardData[1] = buffer.readWideStr();
+        cardData[2] = buffer.readWideStr();
+        cardData[3] = buffer.readUTF8Str((String) null);
+        cardData[4] = buffer.readWideStr();
+        cardData[5] = buffer.readWideStr();
+        if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, cardData[2])) {
+            cardData[6] = buffer.readWideStr();
+            cardData[7] = buffer.readWideStr();
         } else {
-            strArr[6] = Storage.emptyStr;
-            strArr[7] = Storage.emptyStr;
+            cardData[6] = Storage.emptyStr;
+            cardData[7] = Storage.emptyStr;
         }
-        return strArr;
+        return cardData;
     }
 
-    /* renamed from: a */
     public final long getLongitude() {
         return MapUtils.longitudeToPixel(this.lonStr);
     }
 
-    /* renamed from: b */
     public final long getLatitude() {
         return MapUtils.latitudeToPixel(this.latStr);
     }
 
-    /* renamed from: b */
     public static final VCard deserializeFromBuffer(ByteBuffer buffer) {
         VCard vcard = new VCard();
         if (buffer.readBoolean()) {
@@ -152,12 +127,10 @@ public final class VCard {
         return vcard;
     }
 
-    /* renamed from: c */
     public final boolean hasCoordinates() {
         return (StringUtils.isEmpty(this.latStr) || StringUtils.isEmpty(this.lonStr)) ? false : true;
     }
 
-    /* renamed from: d */
     public final int getCommandCount() {
         try {
             if (StringUtils.matchesKey(PackedStringKeys.MRIM_MAPOBJECT, this.mapTypeStr)) {
@@ -169,49 +142,41 @@ public final class VCard {
         }
     }
 
-    /* renamed from: e */
     public final void clearCoordinates() {
-        String str = Storage.emptyStr;
-        this.lonStr = str;
-        this.latStr = str;
+        String empty = Storage.emptyStr;
+        this.lonStr = empty;
+        this.latStr = empty;
         this.dirty = false;
     }
 
-    /* renamed from: a */
-    public static final String formatLocationUrl(int i, String str, String str2) {
-        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_SEARCH_ZOOM).writeIntAsString(i).writeUInt(4028454).writeRawString(str).writeUInt(4028710).writeRawString(str2).writeCompressed(PackedStringKeys.PARAM_DIST_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+    public static final String formatLocationUrl(int zoom, String lat, String lon) {
+        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_SEARCH_ZOOM).writeIntAsString(zoom).writeUInt(4028454).writeRawString(lat).writeUInt(4028710).writeRawString(lon).writeCompressed(PackedStringKeys.PARAM_DIST_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
-    /* renamed from: a */
-    public static final String formatPhoneContactUrl(PhoneContact phoneContact, int i) {
-        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(phoneContact.surname).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(phoneContact.firstName).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(phoneContact.address).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(phoneContact.phone).writeCompressed(PackedStringKeys.PARAM_QUANTITY_IDFROM).writeIntAsString(i).writeCompressed(PackedStringKeys.PARAM_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+    public static final String formatPhoneContactUrl(PhoneContact phoneContact, int idFrom) {
+        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(phoneContact.surname).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(phoneContact.firstName).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(phoneContact.address).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(phoneContact.phone).writeCompressed(PackedStringKeys.PARAM_QUANTITY_IDFROM).writeIntAsString(idFrom).writeCompressed(PackedStringKeys.PARAM_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
-    /* renamed from: a */
-    public static final Vector parseMapPointsFromJson(ByteBuffer buffer, long j, long j2) throws NumberFormatException {
-        Vector vector = null;
+    public static final Vector parseMapPointsFromJson(ByteBuffer buffer, long centerX, long centerY) throws NumberFormatException {
+        Vector jsonArray = null;
         Vector points = null;
         try {
-            vector = (Vector) JsonParser.parseUTF8(buffer, 2);
+            jsonArray = (Vector) JsonParser.parseUTF8(buffer, 2);
         } catch (Throwable unused) {
         }
-        if (vector != null) {
-            if (!vector.isEmpty()) {
+        if (jsonArray != null) {
+            if (!jsonArray.isEmpty()) {
                 points = ObjectPool.newVector();
             }
-            int size = vector.size();
-            while (true) {
-                size--;
-                if (size < 0) {
-                    break;
-                }
-                Hashtable hashtable = (Hashtable) vector.elementAt(size);
-                String str = (String) hashtable.get("Path");
-                int i = Integer.parseInt((String) hashtable.get("TypeCode"));
-                MapPoint mapPoint = new MapPoint(str, j, j2, MapPoint.getMarkerType(i));
+            int size = jsonArray.size();
+            for (int i = size - 1; i >= 0; i--) {
+                Hashtable entry = (Hashtable) jsonArray.elementAt(i);
+                String path = (String) entry.get("Path");
+                int typeCode = Integer.parseInt((String) entry.get("TypeCode"));
+                MapPoint mapPoint = new MapPoint(path, centerX, centerY, MapPoint.getMarkerType(typeCode));
                 mapPoint.height = 1;
-                mapPoint.typeCode = i;
-                mapPoint.objectCode = Integer.parseInt((String) hashtable.get("ObjCode"));
+                mapPoint.typeCode = typeCode;
+                mapPoint.objectCode = Integer.parseInt((String) entry.get("ObjCode"));
                 points.addElement(mapPoint);
             }
         }

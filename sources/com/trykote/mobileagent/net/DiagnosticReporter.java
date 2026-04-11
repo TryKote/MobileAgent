@@ -7,16 +7,19 @@ import java.util.Vector;
 
 public abstract class DiagnosticReporter {
 
-    /* renamed from: a */
+    private static final long CLEANUP_INTERVAL_MS = 7776000000L;
+    private static final int SLEEP_DURATION_MS = 1000;
+    private static final int OUTPUT_BUFFER_SIZE = 3000;
+    private static final int BASE64_CHUNK_SIZE = 600;
+
     public static final void checkCrashReport() {
         long jCurrentTimeMillis = System.currentTimeMillis();
-        if (jCurrentTimeMillis > Storage.state().getLong(SessionKeys.TIMESTAMP_LAST_CLEANUP) + 7776000000L) {
+        if (jCurrentTimeMillis > Storage.state().getLong(SessionKeys.TIMESTAMP_LAST_CLEANUP) + CLEANUP_INTERVAL_MS) {
             Storage.state().setLong(SessionKeys.TIMESTAMP_LAST_CLEANUP, jCurrentTimeMillis);
             new AsyncTask(AsyncTaskId.SEND_DIAGNOSTIC);
         }
     }
 
-    /* renamed from: a */
     public static final void sendDiagnosticReport(String str) {
         HttpClient httpClient;
         byte[] outArr;
@@ -28,11 +31,11 @@ public abstract class DiagnosticReporter {
         int nextIdx2;
         byte encodedByte2;
         int writePos;
-        byte[] outputBuffer = ObjectPool.newBytes(3000);
+        byte[] outputBuffer = ObjectPool.newBytes(OUTPUT_BUFFER_SIZE);
         try {
-            Thread.sleep(1000L);
+            Thread.sleep(SLEEP_DURATION_MS);
             System.gc();
-            Thread.sleep(1000L);
+            Thread.sleep(SLEEP_DURATION_MS);
             NetworkLock.acquireNetworkLock();
             if (str == null) {
                 HttpClient diagClient = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_DATA_GET).writeCompressed(PackedStringKeys.API_PHONE_INFO).getStringAndClear());
@@ -57,9 +60,9 @@ public abstract class DiagnosticReporter {
             } else {
                 ByteBuffer urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_Q_EQ);
                 ByteBuffer dataBuffer = new ByteBuffer().writeUTFNoLen(str);
-                for (int i7 = 0; i7 < dataBuffer.length; i7 += 600) {
+                for (int i7 = 0; i7 < dataBuffer.length; i7 += BASE64_CHUNK_SIZE) {
                     int pos = i7;
-                    int limit = Utils.min(pos + 600, dataBuffer.length);
+                    int limit = Utils.min(pos + BASE64_CHUNK_SIZE, dataBuffer.length);
                     byte[] base64Table = Storage.resources().getBytes(StringResKeys.RES_BASE64_TABLE);
                     int outPos = 0;
                     boolean z = true;
@@ -199,17 +202,14 @@ public abstract class DiagnosticReporter {
         }
     }
 
-    /* renamed from: a */
     private static final XmlElement createDiagElement(char c, String str, Object obj) {
         return new XmlElement(c).setLongKeyAttr(110, str).appendText(obj);
     }
 
-    /* renamed from: a */
     private static final boolean startsWithChar(String str, char c) {
         return str.charAt(0) == c;
     }
 
-    /* renamed from: c */
     private static final Boolean classExists(String str) {
         try {
             Class.forName(str);
@@ -219,7 +219,6 @@ public abstract class DiagnosticReporter {
         }
     }
 
-    /* renamed from: d */
     private static final Object getSystemPropertySafe(String str) {
         String result = null;
         try {
@@ -230,7 +229,6 @@ public abstract class DiagnosticReporter {
         }
     }
 
-    /* renamed from: e */
     private static final Object getAppPropertySafe(String str) {
         String result = null;
         try {

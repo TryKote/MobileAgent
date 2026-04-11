@@ -17,7 +17,9 @@ import javax.microedition.lcdui.Image;
 
 public final class ProfileHandler extends BaseScreenHandler {
 
-    /* renamed from: g */
+    // Packed string base offset for profile photo URL suffixes
+    private static final int PACKED_STRING_PHOTO_URL_BASE = 467;
+
     public static long lastTileLoadTime;
 
     public void buildScreen(int screenId) {
@@ -28,13 +30,13 @@ public final class ProfileHandler extends BaseScreenHandler {
                 return;
             case ScreenId.SEARCH_RESULT_LIST:
                 int errorMsgId = Storage.state().getInt(RuntimeKeys.INT_ERROR_MSG_INDEX);
-                if (0 != errorMsgId) {
+                if (errorMsgId != 0) {
                     clearSearchResults2();
                     NotificationHelper.showMessageById(errorMsgId);
                     return;
                 }
                 Vector searchResults = Storage.state().getVector(RegistrationKeys.SLOT_REG_PARAM_4);
-                if (0 != searchResults.size()) {
+                if (searchResults.size() != 0) {
                     ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEARCH_RESULT_LIST), searchResults));
                     return;
                 } else {
@@ -66,7 +68,7 @@ public final class ProfileHandler extends BaseScreenHandler {
                 return;
             case ScreenId.PROFILE_EDIT:
                 StringBuffer stringBuffer = new StringBuffer(Storage.resources().getString(StringResKeys.STR_REGISTRATION_TEXT));
-                stringBuffer.append(Storage.state().getString(((MrimAccount) Storage.state().getAccount()).profileManager.profile.gender + 780));
+                stringBuffer.append(Storage.state().getString(((MrimAccount) Storage.state().getAccount()).profileManager.profile.gender + StringResKeys.STR_REGISTRATION_TEXT));
                 Storage.state().setFromBuffer(UIKeys.OBJ_PHOTO_CACHE_2, stringBuffer);
                 lastTileLoadTime = System.currentTimeMillis();
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PROFILE_EDIT));
@@ -184,7 +186,6 @@ public final class ProfileHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: h */
     public static final int syncAndReturn() {
         ((MrimAccount) Storage.state().getAccount()).profileManager.sync();
         if (Storage.state().getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
@@ -194,18 +195,17 @@ public final class ProfileHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: a */
     public static final int loadUserProfile(String str, Account targetAccount) {
         ByteBuffer urlBuffer;
-        int atIndex = str.indexOf(64);
+        int atIndex = str.indexOf('@');
         String domain = StringUtils.suffix(str, atIndex + 1);
         Object[] objArr = new Object[3];
         if (targetAccount instanceof MmpProtocol) {
             urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_BUDDY_ICON).writeRawString(str);
         } else {
             ByteBuffer profileBuf2 = new ByteBuffer().writeCompressed(PackedStringKeys.URL_OBRAZ_FOTO);
-            int dotIndex = domain.indexOf(46);
-            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte(47).writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(467 + Storage.state().getInt(RuntimeKeys.INT_ASYNC_TASK_ID));
+            int dotIndex = domain.indexOf('.');
+            urlBuffer = profileBuf2.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte('/').writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(PACKED_STRING_PHOTO_URL_BASE + Storage.state().getInt(RuntimeKeys.INT_ASYNC_TASK_ID));
         }
         objArr[0] = urlBuffer.getStringAndClear();
         objArr[1] = targetAccount;
@@ -215,7 +215,6 @@ public final class ProfileHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: d */
     public static final int handleSearchResultAction(int i) {
         Vector onlineAccounts = AccountManager.getOnlineMrimAccounts();
         switch (i) {

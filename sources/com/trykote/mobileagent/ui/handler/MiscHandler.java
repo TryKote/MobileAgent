@@ -17,6 +17,9 @@ import javax.microedition.lcdui.Image;
 
 public final class MiscHandler extends BaseScreenHandler {
 
+    // Number of phone number format strings in the resource block
+    private static final int PHONE_STRING_COUNT = 15;
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.FIRST_RUN:
@@ -38,7 +41,7 @@ public final class MiscHandler extends BaseScreenHandler {
                 return;
             case ScreenId.PHONE_INPUT: {
                 ListView screen6 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT);
-                for (int i14 = 0; i14 < 15; i14++) {
+                for (int i14 = 0; i14 < PHONE_STRING_COUNT; i14++) {
                     screen6.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i14));
                 }
                 ScreenManager.showScreen(screen6);
@@ -46,7 +49,7 @@ public final class MiscHandler extends BaseScreenHandler {
             }
             case ScreenId.SERVER_ADDRESS: {
                 ListView screen7 = ScreenManager.createScreen(ScreenDef.SERVER_ADDRESS);
-                for (int i15 = 0; i15 < 15; i15++) {
+                for (int i15 = 0; i15 < PHONE_STRING_COUNT; i15++) {
                     screen7.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i15));
                 }
                 ScreenManager.showScreen(screen7);
@@ -71,7 +74,7 @@ public final class MiscHandler extends BaseScreenHandler {
             }
             case ScreenId.PHONE_INPUT_ALT: {
                 ListView screen9 = ScreenManager.createScreen(ScreenDef.PHONE_INPUT_ALT);
-                for (int i17 = 0; i17 < 15; i17++) {
+                for (int i17 = 0; i17 < PHONE_STRING_COUNT; i17++) {
                     screen9.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i17));
                 }
                 ScreenManager.showScreen(screen9);
@@ -79,7 +82,7 @@ public final class MiscHandler extends BaseScreenHandler {
             }
             case ScreenId.URL_OPEN: {
                 ListView screen10 = ScreenManager.createScreen(ScreenDef.URL_OPEN);
-                for (int i18 = 0; i18 < 15; i18++) {
+                for (int i18 = 0; i18 < PHONE_STRING_COUNT; i18++) {
                     screen10.addTextItem(Storage.resources().getBlockString(StringResKeys.PHONE_STRINGS_BASE, i18));
                 }
                 ScreenManager.showScreen(screen10);
@@ -105,18 +108,13 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.FORM_LIST: {
                 ListView screen18 = ScreenManager.createScreen(ScreenDef.FORM_LIST);
                 Vector vector2 = ((Conversation) Storage.state().getObject(UIKeys.SLOT_TEMP_OBJECT_1)).items;
-                int size14 = vector2.size();
-                while (true) {
-                    size14--;
-                    if (size14 < 0) {
-                        ScreenManager.showScreen(screen18);
-                        Storage.state().clearIndex(UIKeys.SLOT_TEMP_OBJECT_1);
-                        return;
-                    } else {
-                        ListItem listItem = (ListItem) vector2.elementAt(size14);
-                        screen18.addIconItemWithData(-1, listItem.getText(), 0, listItem);
-                    }
+                for (int idx = vector2.size() - 1; idx >= 0; idx--) {
+                    ListItem listItem = (ListItem) vector2.elementAt(idx);
+                    screen18.addIconItemWithData(-1, listItem.getText(), 0, listItem);
                 }
+                ScreenManager.showScreen(screen18);
+                Storage.state().clearIndex(UIKeys.SLOT_TEMP_OBJECT_1);
+                return;
             }
             case ScreenId.PHONE_CONTACTS:
                 return;
@@ -185,14 +183,14 @@ public final class MiscHandler extends BaseScreenHandler {
                 String loginLower = XmppMailRuProtocol.getLoginLowerCase();
                 String fullLogin = loginLower;
                 if (!XmppMailRuProtocol.isMailRuDomain(loginLower)) {
-                    fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(694, Storage.state().getInt(SessionKeys.INT_SERVER_INDEX)));
+                    fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(StringResKeys.STR_DOMAIN_LIST, Storage.state().getInt(SessionKeys.INT_SERVER_INDEX)));
                 }
                 if (XmppMailRuProtocol.isValidUsername(fullLogin)) {
                     String str2 = fullLogin;
                     String password = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD));
                     String firstName = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_SCREEN_TITLE));
                     int intVal3 = Storage.state().getInt(SettingsKeys.INT_SETTINGS_THEME);
-                    Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, RegistrationService.createRegRequest(str2, 0, password, firstName, 0 == intVal3 ? Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_DEVICE_ID)) : (String) Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_MENU_REG_SMS), (char) 0).elementAt(intVal3), Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_APP_VERSION_STRING)), Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_FIRST_NAME)), Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_LAST_NAME)), Storage.state().getInt(RegistrationKeys.INT_SEARCH_GENDER), Storage.state().getInt(RegistrationKeys.INT_SEARCH_AGE), Storage.state().getInt(RegistrationKeys.INT_REG_DOMAIN_INDEX), Storage.state().getInt(RegistrationKeys.INT_COUNTRY_CODE), Storage.state().getInt(RegistrationKeys.INT_REGION_CODE), Storage.state().getString(MapKeys.STR_MAP_LOCATION_NAME), Storage.state().getString(MapKeys.STR_MAP_LOCATION_URL)));
+                    Storage.state().setObject(RegistrationKeys.OBJ_REGISTRATION_DATA, RegistrationService.createRegRequest(str2, 0, password, firstName, intVal3 == 0 ? Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_DEVICE_ID)) : (String) Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_MENU_REG_SMS), (char) 0).elementAt(intVal3), Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_APP_VERSION_STRING)), Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_FIRST_NAME)), Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_LAST_NAME)), Storage.state().getInt(RegistrationKeys.INT_SEARCH_GENDER), Storage.state().getInt(RegistrationKeys.INT_SEARCH_AGE), Storage.state().getInt(RegistrationKeys.INT_REG_DOMAIN_INDEX), Storage.state().getInt(RegistrationKeys.INT_COUNTRY_CODE), Storage.state().getInt(RegistrationKeys.INT_REGION_CODE), Storage.state().getString(MapKeys.STR_MAP_LOCATION_NAME), Storage.state().getString(MapKeys.STR_MAP_LOCATION_URL)));
                     return 13;
                 } else {
                     return NotificationHelper.showError(559);
@@ -435,24 +433,18 @@ public final class MiscHandler extends BaseScreenHandler {
                     Object payload4 = ApiClient.getJsonPayload();
                     Object jsonArray = JsonParser.getValueByInt(payload4, 329636);
                     if (JsonParser.getIntByInt(payload4, 198543) == 1) {
-                        int size6 = ((Vector) jsonArray).size();
-                        while (true) {
-                            size6--;
-                            if (size6 >= 0) {
-                                String jsonValue = JsonParser.getVectorString(jsonArray, size6);
-                                MrimAccount mrimAccount4 = (MrimAccount) Storage.state().getAccount();
-                                ChatRoom selectedChatRoom3 = mrimAccount4.chatRoomManager.findByName(jsonValue);
-                                Message message;
-                                if (selectedChatRoom3 != null && (message = selectedChatRoom3.getMessage(jsonValue)) != null) {
-                                    if (message.hasFlag(4)) {
-                                        selectedChatRoom3.decrementUnread();
-                                    }
-                                    selectedChatRoom3.decrementMembers();
+                        for (int idx = ((Vector) jsonArray).size() - 1; idx >= 0; idx--) {
+                            String jsonValue = JsonParser.getVectorString(jsonArray, idx);
+                            MrimAccount mrimAccount4 = (MrimAccount) Storage.state().getAccount();
+                            ChatRoom selectedChatRoom3 = mrimAccount4.chatRoomManager.findByName(jsonValue);
+                            Message message;
+                            if (selectedChatRoom3 != null && (message = selectedChatRoom3.getMessage(jsonValue)) != null) {
+                                if (message.hasFlag(4)) {
+                                    selectedChatRoom3.decrementUnread();
                                 }
-                                mrimAccount4.chatRoomManager.removeUser(jsonValue);
-                            } else {
-                                break;
+                                selectedChatRoom3.decrementMembers();
                             }
+                            mrimAccount4.chatRoomManager.removeUser(jsonValue);
                         }
                     }
                     return ScreenId.CHAT_ROOM_VIEW;
@@ -469,24 +461,17 @@ public final class MiscHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: t */
     public static final void showTosScreen() {
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.WIFI_NETWORKS));
         NotificationHelper.showMessageById(1027);
     }
 
-    /* renamed from: a */
     public static final int collectInvitees(ListView parentScreen) {
         ScreenManager.processScreenForm();
         String[] phoneNumbers = Utils.getPhoneNumbers(true);
         Vector invitees = ContactListManager.getCheckedItems(parentScreen, 1);
-        int length = phoneNumbers.length;
-        while (true) {
-            length--;
-            if (length < 0) {
-                break;
-            }
-            invitees.addElement(phoneNumbers[length]);
+        for (int idx = phoneNumbers.length - 1; idx >= 0; idx--) {
+            invitees.addElement(phoneNumbers[idx]);
         }
         if (invitees.size() == 0) {
             return NotificationHelper.showError(775);
@@ -496,29 +481,21 @@ public final class MiscHandler extends BaseScreenHandler {
         return ScreenId.SEND_DATA;
     }
 
-    /* renamed from: m */
     public static final void showWiFiNetworks() {
         Vector networks = ServiceRegistry.getActiveContactIds();
         int size = networks == null ? 0 : networks.size();
-        int i = size;
         if (size == 0) {
             NotificationHelper.showMessageById(404);
             return;
         }
         ListView screen = ScreenManager.createScreen(ScreenDef.SAVED_LOCATIONS);
-        while (true) {
-            i--;
-            if (i < 0) {
-                ScreenManager.showScreen(screen);
-                return;
-            } else {
-                Object networkObj = networks.elementAt(i);
-                screen.addIconItemWithData(-1, ServiceRegistry.getPhotoHost(networkObj), 6, networkObj);
-            }
+        for (int idx = size - 1; idx >= 0; idx--) {
+            Object networkObj = networks.elementAt(idx);
+            screen.addIconItemWithData(-1, ServiceRegistry.getPhotoHost(networkObj), 6, networkObj);
         }
+        ScreenManager.showScreen(screen);
     }
 
-    /* renamed from: d */
     public static final int setSelectedObject(Object obj) {
         Storage.state().setObject(RuntimeKeys.SLOT_MSG_ID_1, obj);
         return 0;
@@ -554,23 +531,17 @@ public final class MiscHandler extends BaseScreenHandler {
         String[] options = (String[]) itemData[1];
         MenuItem phoneItem = null;
         Vector items = screen.menuItems;
-        int itemIdx = items.size();
-        while (true) {
-            itemIdx--;
-            if (itemIdx < 0) {
-                if (item.title.equals(Storage.resources().getString(StringResKeys.STR_MENU_OPTIONS))) {
-                    String optionStr = selectedIndex == 0 ? Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_DEVICE_ID)) : options[selectedIndex];
-                    Object[] phoneData = (Object[]) phoneItem.data;
-                    phoneItem.clear().setAction(phoneData[4], optionStr, phoneData[1], phoneData[2], phoneData[3]);
-                }
-                screen.rebuildItems();
-                break;
-            } else {
-                MenuItem entry = (MenuItem) items.elementAt(itemIdx);
-                if (entry.id == 15 && entry.title.startsWith(Storage.resources().getString(StringResKeys.STR_MENU_PHONE_PREFIX))) {
-                    phoneItem = entry;
-                }
+        for (int itemIdx = items.size() - 1; itemIdx >= 0; itemIdx--) {
+            MenuItem entry = (MenuItem) items.elementAt(itemIdx);
+            if (entry.id == 15 && entry.title.startsWith(Storage.resources().getString(StringResKeys.STR_MENU_PHONE_PREFIX))) {
+                phoneItem = entry;
             }
         }
+        if (item.title.equals(Storage.resources().getString(StringResKeys.STR_MENU_OPTIONS))) {
+            String optionStr = selectedIndex == 0 ? Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_DEVICE_ID)) : options[selectedIndex];
+            Object[] phoneData = (Object[]) phoneItem.data;
+            phoneItem.clear().setAction(phoneData[4], optionStr, phoneData[1], phoneData[2], phoneData[3]);
+        }
+        screen.rebuildItems();
     }
 }

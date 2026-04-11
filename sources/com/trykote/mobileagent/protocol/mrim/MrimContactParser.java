@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.protocol.mrim;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -10,7 +9,18 @@ import java.util.Vector;
 
 public abstract class MrimContactParser {
 
-    /* renamed from: a */
+    // Error message string resource IDs
+    private static final int MSG_CONTACT_NOT_FOUND = 913;
+    private static final int MSG_CONTACT_PARSE_ERROR = 914;
+
+    // ContactInfo field indices for email construction
+    private static final int FIELD_EMAIL_USER = 50;
+    private static final int FIELD_EMAIL_DOMAIN = 51;
+
+    // Marital status values
+    private static final int MARITAL_MARRIED = 1;
+    private static final int MARITAL_SINGLE = 2;
+
     public static final void createSingleContact(MrimAccount account, int i, ByteBuffer buffer) {
         ContactInfo contactInfo = ContactInfo.createForAccount(account);
         switch (i) {
@@ -27,85 +37,58 @@ public abstract class MrimContactParser {
         Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_1, contactInfo);
     }
 
-    /* renamed from: b */
     public static final void parseContactInfoResponse(MrimAccount account, int i, ByteBuffer buffer) {
         int nameIndex = 0;
         Vector contacts = null;
         switch (i) {
             case 0:
-                nameIndex = 913;
+                nameIndex = MSG_CONTACT_NOT_FOUND;
                 break;
             case 1:
                 contacts = parseMrimContacts(account, buffer);
                 break;
             default:
-                nameIndex = 914;
+                nameIndex = MSG_CONTACT_PARSE_ERROR;
                 break;
         }
         Storage.state().setInt(RuntimeKeys.INT_ERROR_MSG_INDEX, nameIndex);
         Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_4, contacts);
     }
 
-    /* renamed from: c */
     public static final void updateContactName(MrimAccount account, int i, ByteBuffer buffer) {
         int nameIndex;
         switch (i) {
             case 0:
-                nameIndex = 913;
+                nameIndex = MSG_CONTACT_NOT_FOUND;
                 break;
             case 1:
                 ContactInfo contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
                 MrimContact contact = (MrimContact) account.contactMap.get(contactInfo.getEmailOrMmpId());
-                if (null != contact) {
+                if (contact != null) {
                     contact.setDisplayName(contactInfo.getFullName());
                     return;
                 }
                 return;
             default:
-                nameIndex = 914;
+                nameIndex = MSG_CONTACT_PARSE_ERROR;
                 break;
         }
         EventDispatcher.postNotification(Storage.state().getString(nameIndex));
     }
 
-    /* renamed from: d */
     public static final void addContactToGroup(MrimAccount account, int i, ByteBuffer buffer) {
         if (i == 1) {
             ContactInfo contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
             Hashtable contactMap = account.contactMap;
             String email = contactInfo.getEmailOrMmpId();
             MrimContact contact = (MrimContact) contactMap.get(email);
-            if (null != contact) {
+            if (contact != null) {
                 String fullName = contactInfo.getFullName();
                 contact.setDisplayName(fullName);
                 account.validateGroupAdd(email, fullName, Storage.resources().getString(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
             }
         }
     }
-
-    /* JADX WARN: Removed duplicated region for block: B:53:0x0106 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:54:0x0114 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:55:0x0123 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:56:0x0132 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:57:0x0141 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:58:0x0173 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:59:0x0181 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:60:0x018f A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:61:0x019e A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:62:0x01ac A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:63:0x01b5 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:64:0x01be A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:65:0x01cc A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:66:0x01da A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:67:0x01e8 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:68:0x01f5 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:69:0x0203 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:70:0x0212 A[SYNTHETIC] */
-    /* JADX WARN: Removed duplicated region for block: B:71:0x00f8 A[SYNTHETIC] */
-    /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     private static final Vector parseMrimContacts(MrimAccount account, ByteBuffer buffer) {
         Vector result = ObjectPool.newVector();
         Vector fieldNames = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_REG_FIELD_NAMES));
@@ -146,11 +129,11 @@ public abstract class MrimContactParser {
                             contactInfo.setLastName(buffer.readUTF8Str((String) null));
                             break;
                         case 5:
-                            int maritalStatus = Utils.parseIntBounded(buffer.readWideStr(), 1, 2, 0);
-                            if (1 == maritalStatus) {
+                            int maritalStatus = Utils.parseIntBounded(buffer.readWideStr(), MARITAL_MARRIED, MARITAL_SINGLE, 0);
+                            if (MARITAL_MARRIED == maritalStatus) {
                                 contactInfo.setMaritalMarried();
                                 break;
-                            } else if (2 == maritalStatus) {
+                            } else if (MARITAL_SINGLE == maritalStatus) {
                                 contactInfo.setMaritalSingle();
                                 break;
                             } else {
@@ -200,7 +183,7 @@ public abstract class MrimContactParser {
                 switch (fieldIdx) {
                 }
             }
-            contactInfo.setEmailAddress(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(contactInfo.getString(50)).append('@').append(contactInfo.getString(51))));
+            contactInfo.setEmailAddress(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(contactInfo.getString(FIELD_EMAIL_USER)).append('@').append(contactInfo.getString(FIELD_EMAIL_DOMAIN))));
         }
         ObjectPool.releaseVector(fieldNames);
         ObjectPool.releaseVector(fieldTypes);

@@ -13,105 +13,140 @@ import com.trykote.mobileagent.util.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
-/* renamed from: i */
-/* loaded from: MobileAgent_3.9.jar:i.class */
 public final class Conversation implements ListItem {
 
-    /* renamed from: c */
-    private int height = 5;
+    // Conversation height type (collapsed summary mode)
+    public static final int HEIGHT_COLLAPSED = 5;
 
-    /* renamed from: b */
+    // ICQ login progress states
+    public static final int PROGRESS_AUTH_STARTED = 30;
+    public static final int PROGRESS_AUTH_COMPLETE = 40;
+    public static final int PROGRESS_SESSION_STARTED = 50;
+    public static final int PROGRESS_SESSION_COMPLETE = 60;
+    public static final int PROGRESS_DONE = 100;
+
+    // HTTP status codes
+    private static final int HTTP_OK = 200;
+    private static final int HTTP_REDIRECT = 330;
+
+    // HMAC-SHA256 output length
+    private static final int HMAC_SHA256_LENGTH = 32;
+
+    // UTF-8 byte boundaries for manual decoding
+    private static final int UTF8_1BYTE_MAX = 128;
+    private static final int UTF8_2BYTE_MAX = 224;
+    private static final int UTF8_3BYTE_MAX = 240;
+    private static final int UTF8_2BYTE_OFFSET = 192;
+    private static final int UTF8_CONTINUATION_OFFSET = 128;
+
+    // MRIM message flags
+    public static final int FLAG_ENCODING_MASK = 2097160;
+    public static final int FLAG_MULTIPART = 8;
+    public static final int FLAG_ENCODING = 2097152;
+    public static final int FLAG_RTF = 128;
+    public static final int FLAG_EXTENDED = 4194304;
+    public static final int FLAG_SYSTEM_MASK = 17408;
+    public static final int FLAG_NOTIFY = 2048;
+    public static final int FLAG_GROUP = 8192;
+    public static final int FLAG_NO_ACK = 4;
+    public static final int FLAG_REMOVE = 1024;
+    public static final int FLAG_CONFERENCE = 16384;
+
+    // Contact flags
+    private static final int FLAG_AUTHORIZED = 65536;
+    private static final int FLAG_PHONE = 1048576;
+    private static final int FLAG_DELETED = 1;
+    private static final int FLAG_BOT = 128;
+
+    // Contact list parsing
+    private static final int INITIAL_CONTACT_ID = 20;
+    private static final int FORMAT_EXTRA_FIELDS_START = 12;
+    private static final int FORMAT_PROFILE_FIELD_INDEX = 18;
+
+    // Emoticon constants
+    private static final int MAX_EMOTICON_ID = 42;
+    private static final int ENTITY_PREFIX_LENGTH = 13;
+
+    // Emoticon tag parsing offsets
+    private static final int OPEN_TAG_LENGTH = 10;
+    private static final int ALT_ATTR_LENGTH = 6;
+    private static final int CLOSE_TAG_LENGTH = 9;
+
+    // Contact list command count
+    private static final int COMMAND_COUNT = 10;
+
+    private int height = HEIGHT_COLLAPSED;
+
     private boolean selected = true;
 
-    /* renamed from: a */
     public Vector items = ObjectPool.newVector();
 
-    /* renamed from: d */
     private SizeCache sizeCache = new SizeCache();
 
-    /* renamed from: a */
     public final void addItem(ListItem item) {
         this.items.addElement(item);
         this.sizeCache.lastScale = -1;
     }
 
     @Override // p000.ListItem
-    /* renamed from: r */
     public final int getHeight() {
         return this.height;
     }
 
     @Override // p000.ListItem
-    /* renamed from: s */
     public final boolean isSelected() {
         return this.selected && this.items.size() > 0;
     }
 
     @Override // p000.ListItem
-    /* renamed from: t */
     public final void select() {
         this.selected = false;
     }
 
     @Override // p000.ListItem
-    /* renamed from: u */
     public final void deselect() {
         this.selected = true;
     }
 
-    /* renamed from: d */
-    private final ListItem getItem(int i) {
-        return (ListItem) this.items.elementAt(i);
+    private final ListItem getItem(int index) {
+        return (ListItem) this.items.elementAt(index);
     }
 
     @Override // p000.ListItem
-    /* renamed from: v */
     public final int getWidth() {
         long sum = 0;
         int size = this.items.size();
-        int i = size;
-        while (true) {
-            i--;
-            if (i < 0) {
-                return (int) (sum / size);
-            }
+        for (int i = size - 1; i >= 0; i--) {
             sum += getItem(i).getWidth();
         }
+        return (int) (sum / size);
     }
 
     @Override // p000.ListItem
-    /* renamed from: w */
     public final int getBaseHeight() {
         long sum = 0;
         int size = this.items.size();
-        int i = size;
-        while (true) {
-            i--;
-            if (i < 0) {
-                return (int) (sum / size);
-            }
+        for (int i = size - 1; i >= 0; i--) {
             sum += getItem(i).getBaseHeight();
         }
+        return (int) (sum / size);
     }
 
     @Override // p000.ListItem
-    /* renamed from: a */
-    public final int getCommandId(int i) {
-        return this.sizeCache.getWidth(i, this);
+    public final int getCommandId(int index) {
+        return this.sizeCache.getWidth(index, this);
     }
 
     @Override // p000.ListItem
-    /* renamed from: b */
-    public final int executeCommand(int i) {
-        return this.sizeCache.getHeight(i, this);
+    public final int executeCommand(int index) {
+        return this.sizeCache.getHeight(index, this);
     }
 
     @Override // p000.ListItem
-    /* renamed from: x */
     public final String getText() {
         StringBuffer sb = ObjectPool.newStringBuffer();
         int size = this.items.size();
-        if (this.height == 5) {
+        if (this.height == HEIGHT_COLLAPSED) {
             sb.append(Storage.resources().getString(StringResKeys.STR_CONV_UNREAD_PREFIX)).append(size);
         } else {
             int i = size - 1;
@@ -121,73 +156,68 @@ public final class Conversation implements ListItem {
     }
 
     @Override // p000.ListItem
-    /* renamed from: y */
     public final int getCommandCount() {
-        return 10;
+        return COMMAND_COUNT;
     }
 
     @Override // p000.ListItem
-    /* renamed from: z */
     public final boolean isHighlighted() {
         return true;
     }
 
-    /* renamed from: a */
-    public static final void fetchHistory(Object[] objArr) {
-        int i;
-        MmpProtocol protocol = (MmpProtocol) objArr[0];
+    public static final void fetchHistory(Object[] params) {
+        int responseCode;
+        MmpProtocol protocol = (MmpProtocol) params[0];
         try {
             try {
                 NetworkLock.acquireNetworkLock();
-                if (((Integer) objArr[1]).intValue() == 0) {
-                    protocol.msgCount = 30;
+                if (((Integer) params[1]).intValue() == 0) {
+                    protocol.msgCount = PROGRESS_AUTH_STARTED;
                     AppController.needsRepaint = true;
                     HttpClient httpClient = HttpClient.createHttpClient(Storage.resources().getString(PackedStringKeys.URL_ICQ_CLIENT_LOGIN), protocol, 0);
                     httpClient.setRequestMethod(ObjectPool.unpackChars(1414745936));
-                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(PackedStringKeys.ICQ_AUTH_PARAMS).writeRawString(percentEncode((String) objArr[2])).writeCompressed(PackedStringKeys.PARAM_PWD).writeRawString(percentEncode((String) objArr[3]));
+                    ByteBuffer requestBody = new ByteBuffer().writeCompressed(PackedStringKeys.ICQ_AUTH_PARAMS).writeRawString(percentEncode((String) params[2])).writeCompressed(PackedStringKeys.PARAM_PWD).writeRawString(percentEncode((String) params[3]));
                     ApiClient.setHeaderFromState(httpClient, 788628, 2164851);
                     httpClient.writeData(requestBody.data, requestBody.length);
-                    int responseCode = httpClient.getResponseCode();
-                    i = responseCode;
-                    if (responseCode == 200) {
-                        protocol.msgCount = 40;
+                    responseCode = httpClient.getResponseCode();
+                    if (responseCode == HTTP_OK) {
+                        protocol.msgCount = PROGRESS_AUTH_COMPLETE;
                         AppController.needsRepaint = true;
                         XmlElement responseXml = new ByteBuffer(httpClient).parseXmlStr();
                         int statusCode = Integer.parseInt(StringUtils.fromBuffer(responseXml.findChildByKey(PackedStringKeys.TAG_STATUSCODE).textContent));
-                        if (statusCode != 200) {
-                            if (statusCode == 330) {
-                                ((MmpProtocol) objArr[0]).handleComplete();
-                                objArr[0] = null;
+                        if (statusCode != HTTP_OK) {
+                            if (statusCode == HTTP_REDIRECT) {
+                                ((MmpProtocol) params[0]).handleComplete();
+                                params[0] = null;
                             }
                             throw new RuntimeException(StringUtils.intern(Integer.toString(statusCode)));
                         }
                         XmlElement resultElement = responseXml.findChildByKey(PackedStringKeys.TAG_DATA);
-                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{objArr[0], ObjectPool.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_LOGINID).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_TOKEN).findChildByKey(PackedStringKeys.TAG_A).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_HOSTTIME).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_SESSIONSECRET).textContent), objArr[3]});
+                        new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{params[0], ObjectPool.integerOf(1), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_LOGINID).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_TOKEN).findChildByKey(PackedStringKeys.TAG_A).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_HOSTTIME).textContent), StringUtils.fromBuffer(resultElement.findChildByKey(PackedStringKeys.TAG_SESSIONSECRET).textContent), params[3]});
                         HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
                         return;
                     }
                 } else {
-                    protocol.msgCount = 50;
+                    protocol.msgCount = PROGRESS_SESSION_STARTED;
                     AppController.needsRepaint = true;
                     ByteBuffer headerBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_OSCAR_SESSION).writeByte(63);
-                    String queryStr = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_A_EQ).writeRawString(percentEncode((String) objArr[3])).writeCompressed(PackedStringKeys.ICQ_OSCAR_PARAMS).writeObjectStr((String) objArr[4]).readAllByteStr();
-                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(Storage.resources().getString(PackedStringKeys.URL_ICQ_OSCAR_SESSION), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) objArr[5], (String) objArr[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
-                    int responseCode2 = httpClient2.getResponseCode();
-                    i = responseCode2;
-                    if (responseCode2 == 200) {
-                        protocol.msgCount = 60;
+                    String queryStr = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_A_EQ).writeRawString(percentEncode((String) params[3])).writeCompressed(PackedStringKeys.ICQ_OSCAR_PARAMS).writeObjectStr((String) params[4]).readAllByteStr();
+                    HttpClient httpClient2 = HttpClient.createMockClient(headerBuffer.writeRawString(queryStr).writeCompressed(PackedStringKeys.PARAM_SIG_SHA256).writeRawString(encryptData(new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_AMP).writeRawString(percentEncodeInternal(Storage.resources().getString(PackedStringKeys.URL_ICQ_OSCAR_SESSION), false)).writeByte(38).writeRawString(percentEncodeInternal(queryStr, false)).readAllByteStr(), encryptData((String) params[5], (String) params[6]))).readAllByteStr()).sendHttpRequest(0, 5522759, 330359);
+                    responseCode = httpClient2.getResponseCode();
+                    if (responseCode == HTTP_OK) {
+                        protocol.msgCount = PROGRESS_SESSION_COMPLETE;
                         AppController.needsRepaint = true;
                         XmlElement resultElement2 = httpClient2.readChunkedResponse().parseXmlStr().findChildByKey(PackedStringKeys.TAG_DATA);
-                        ((MmpProtocol) objArr[0]).connectionData = new String[]{(String) objArr[2], ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_HOST).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_PORT).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_COOKIE).textContent)};
+                        ((MmpProtocol) params[0]).connectionData = new String[]{(String) params[2], ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_HOST).textContent)).append(':').append(StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_PORT).textContent))), StringUtils.fromBuffer(resultElement2.findChildByKey(PackedStringKeys.TAG_COOKIE).textContent)};
                         HttpClient.closeAndUpdateStats(httpClient2);
                         NetworkLock.releaseNetworkLock();
                         return;
                     }
                 }
-                throw new Throwable(StringUtils.intern(Integer.toString(i)));
+                throw new Throwable(StringUtils.intern(Integer.toString(responseCode)));
             } catch (Throwable th) {
-                MmpProtocol protocol2 = (MmpProtocol) objArr[0];
+                MmpProtocol protocol2 = (MmpProtocol) params[0];
                 protocol2.lastError = protocol2.getDefaultError();
                 EventDispatcher.postAccountMessage(protocol2, th.toString());
                 protocol2.progress = Account.PROGRESS_DISCONNECTED;
@@ -205,59 +235,56 @@ public final class Conversation implements ListItem {
         }
     }
 
-    /* renamed from: a */
-    private static final String encryptData(String str, String str2) {
-        return new ByteBuffer().setData(XmppContactGroup.hmacSHA256(str2.getBytes(), str2.length(), str.getBytes(), str.length(), 32)).toBase64();
+    private static final String encryptData(String data, String key) {
+        return new ByteBuffer().setData(XmppContactGroup.hmacSHA256(key.getBytes(), key.length(), data.getBytes(), data.length(), HMAC_SHA256_LENGTH)).toBase64();
     }
 
-    /* renamed from: a */
-    public static final Vector parseConversation(String str) {
+    public static final Vector parseConversation(String text) {
         Vector parts = ObjectPool.newVector();
-        if (isValidFormat(str)) {
-            int i = 0;
-            int i2 = 0;
+        if (isValidFormat(text)) {
+            int searchFrom = 0;
+            int lastUrlStart = 0;
             while (true) {
                 try {
-                    int idx = str.indexOf(Storage.resources().getString(PackedStringKeys.URL_MAPS_MAIL_RU), i);
+                    int idx = text.indexOf(Storage.resources().getString(PackedStringKeys.URL_MAPS_MAIL_RU), searchFrom);
                     if (idx < 0) {
                         break;
                     }
-                    i2 = idx;
-                    if (i != idx) {
-                        parts.addElement(StringUtils.substring(str, i, idx));
+                    lastUrlStart = idx;
+                    if (searchFrom != idx) {
+                        parts.addElement(StringUtils.substring(text, searchFrom, idx));
                     }
-                    int idx2 = str.indexOf(32, idx);
-                    i = idx2;
-                    if (idx2 < 0) {
-                        parts.addElement(StringUtils.suffix(str, idx));
+                    int spaceIdx = text.indexOf(32, idx);
+                    searchFrom = spaceIdx;
+                    if (spaceIdx < 0) {
+                        parts.addElement(StringUtils.suffix(text, idx));
                         break;
                     }
-                    parts.addElement(StringUtils.substring(str, idx, i));
+                    parts.addElement(StringUtils.substring(text, idx, searchFrom));
                 } catch (Throwable unused) {
                 }
             }
-            int idx3 = str.indexOf(32, i2);
-            if (idx3 >= 0) {
-                parts.addElement(StringUtils.suffix(str, idx3));
+            int trailingSpace = text.indexOf(32, lastUrlStart);
+            if (trailingSpace >= 0) {
+                parts.addElement(StringUtils.suffix(text, trailingSpace));
             }
         } else {
-            parts.addElement(str);
+            parts.addElement(text);
         }
         return parts;
     }
 
-    /* renamed from: b */
-    public static final String decodeMessage(String str) {
+    public static final String decodeMessage(String text) {
         try {
-            if (!isEncodedFormat(str)) {
-                if (isSimpleFormat(str)) {
+            if (!isEncodedFormat(text)) {
+                if (isSimpleFormat(text)) {
                     return Storage.resources().getString(StringResKeys.STR_CHAT_DEFAULT_TOPIC);
                 }
                 return null;
             }
-            int bodyStart = StringUtils.indexOfPacked(str, 1031040294);
-            int idx = str.indexOf(ObjectPool.unpackChars(1031302438), StringUtils.indexOfPacked(str, 1031302438) + 4);
-            String encoded = idx < 0 ? StringUtils.suffix(str, bodyStart + 4) : StringUtils.substring(str, bodyStart + 4, idx);
+            int bodyStart = StringUtils.indexOfPacked(text, 1031040294);
+            int idx = text.indexOf(ObjectPool.unpackChars(1031302438), StringUtils.indexOfPacked(text, 1031302438) + 4);
+            String encoded = idx < 0 ? StringUtils.suffix(text, bodyStart + 4) : StringUtils.substring(text, bodyStart + 4, idx);
             if (StringUtils.matchesEncoded(encoded, 1094795585)) {
                 return Storage.emptyStr;
             }
@@ -265,9 +292,9 @@ public final class Conversation implements ListItem {
             StringBuffer sb = ObjectPool.newStringBuffer();
             while (decodeBuffer.length > 0) {
                 int b1 = decodeBuffer.readUByte();
-                int b2 = b1 > 127 ? decodeBuffer.readUByte() : 0;
-                int b3 = b1 > 223 ? decodeBuffer.readUByte() : 0;
-                sb.append(b1 < 128 ? (char) b1 : b1 < 224 ? (char) (((b1 - 192) << 6) + (b2 - 128)) : b1 < 240 ? (char) (((b1 - 224) << 12) + ((b2 - 128) << 6) + (b3 - 128)) : (char) (((b1 - 240) << 18) + ((b2 - 128) << 12) + ((b3 - 128) << 6) + ((b1 > 239 ? decodeBuffer.readUByte() : 0) - 128)));
+                int b2 = b1 >= UTF8_1BYTE_MAX ? decodeBuffer.readUByte() : 0;
+                int b3 = b1 >= UTF8_2BYTE_MAX ? decodeBuffer.readUByte() : 0;
+                sb.append(b1 < UTF8_1BYTE_MAX ? (char) b1 : b1 < UTF8_2BYTE_MAX ? (char) (((b1 - UTF8_2BYTE_OFFSET) << 6) + (b2 - UTF8_CONTINUATION_OFFSET)) : b1 < UTF8_3BYTE_MAX ? (char) (((b1 - UTF8_2BYTE_MAX) << 12) + ((b2 - UTF8_CONTINUATION_OFFSET) << 6) + (b3 - UTF8_CONTINUATION_OFFSET)) : (char) (((b1 - UTF8_3BYTE_MAX) << 18) + ((b2 - UTF8_CONTINUATION_OFFSET) << 12) + ((b3 - UTF8_CONTINUATION_OFFSET) << 6) + ((b1 >= UTF8_3BYTE_MAX ? decodeBuffer.readUByte() : 0) - UTF8_CONTINUATION_OFFSET)));
             }
             return ObjectPool.toStringAndRelease(sb);
         } catch (Throwable unused) {
@@ -275,14 +302,13 @@ public final class Conversation implements ListItem {
         }
     }
 
-    /* renamed from: c */
-    public static final String extractFrom(String str) {
+    public static final String extractFrom(String text) {
         try {
-            if (isEncodedFormat(str)) {
-                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 1031302438) + 4, StringUtils.indexOfPacked(str, 1031367974));
+            if (isEncodedFormat(text)) {
+                return StringUtils.substring(text, StringUtils.indexOfPacked(text, 1031302438) + 4, StringUtils.indexOfPacked(text, 1031367974));
             }
-            if (isSimpleFormat(str)) {
-                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 4028451) + 3, StringUtils.indexOfPacked(str, 4028710));
+            if (isSimpleFormat(text)) {
+                return StringUtils.substring(text, StringUtils.indexOfPacked(text, 4028451) + 3, StringUtils.indexOfPacked(text, 4028710));
             }
             return null;
         } catch (Throwable unused) {
@@ -290,14 +316,13 @@ public final class Conversation implements ListItem {
         }
     }
 
-    /* renamed from: d */
-    public static final String extractTo(String str) {
+    public static final String extractTo(String text) {
         try {
-            if (isEncodedFormat(str)) {
-                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 1031367974) + 4, StringUtils.indexOfPacked(str, 1031040294));
+            if (isEncodedFormat(text)) {
+                return StringUtils.substring(text, StringUtils.indexOfPacked(text, 1031367974) + 4, StringUtils.indexOfPacked(text, 1031040294));
             }
-            if (isSimpleFormat(str)) {
-                return StringUtils.substring(str, StringUtils.indexOfPacked(str, 4028710) + 3, StringUtils.indexOfPacked(str, 4028966));
+            if (isSimpleFormat(text)) {
+                return StringUtils.substring(text, StringUtils.indexOfPacked(text, 4028710) + 3, StringUtils.indexOfPacked(text, 4028966));
             }
             return null;
         } catch (Throwable unused) {
@@ -305,159 +330,141 @@ public final class Conversation implements ListItem {
         }
     }
 
-    /* renamed from: e */
-    public static final String extractSubject(String str) {
+    public static final String extractSubject(String text) {
         try {
-            return StringUtils.substring(str, StringUtils.indexOfPacked(str, 4028966) + 3, StringUtils.indexOfPoolString(str, 397364));
+            return StringUtils.substring(text, StringUtils.indexOfPacked(text, 4028966) + 3, StringUtils.indexOfPoolString(text, 397364));
         } catch (Throwable unused) {
             return null;
         }
     }
 
-    /* renamed from: m */
-    private static final boolean isFormatted(String str) {
-        return StringUtils.indexOfPoolString(str, 1245774) >= 0;
+    private static final boolean isFormatted(String text) {
+        return StringUtils.indexOfPoolString(text, 1245774) >= 0;
     }
 
-    /* renamed from: a */
-    public static final boolean hasKey(String str, int i) {
-        return StringUtils.indexOfPoolString(str, i) >= 0;
+    public static final boolean hasKey(String text, int key) {
+        return StringUtils.indexOfPoolString(text, key) >= 0;
     }
 
-    /* renamed from: b */
-    private static final boolean hasFlag(String str, int i) {
-        return StringUtils.indexOfPacked(str, i) >= 0;
+    private static final boolean hasFlag(String text, int packedKey) {
+        return StringUtils.indexOfPacked(text, packedKey) >= 0;
     }
 
-    /* renamed from: f */
-    public static final boolean isValidFormat(String str) {
-        if (!isFormatted(str)) {
+    public static final boolean isValidFormat(String text) {
+        if (!isFormatted(text)) {
             return false;
         }
-        if (hasFlag(str, 4028451) && hasFlag(str, 4028710) && hasFlag(str, 4028966)) {
+        if (hasFlag(text, 4028451) && hasFlag(text, 4028710) && hasFlag(text, 4028966)) {
             return true;
         }
-        return hasFlag(str, 1031302438) && hasFlag(str, 1031367974) && hasFlag(str, 1031040294);
+        return hasFlag(text, 1031302438) && hasFlag(text, 1031367974) && hasFlag(text, 1031040294);
     }
 
-    /* renamed from: n */
-    private static boolean isEncodedFormat(String str) {
-        return isFormatted(str) && hasFlag(str, 4028451) && hasFlag(str, 4028710) && hasFlag(str, 4028966) && hasFlag(str, 1031302438) && hasFlag(str, 1031367974) && hasFlag(str, 1031040294);
+    private static boolean isEncodedFormat(String text) {
+        return isFormatted(text) && hasFlag(text, 4028451) && hasFlag(text, 4028710) && hasFlag(text, 4028966) && hasFlag(text, 1031302438) && hasFlag(text, 1031367974) && hasFlag(text, 1031040294);
     }
 
-    /* renamed from: o */
-    private static boolean isSimpleFormat(String str) {
-        return isFormatted(str) && hasFlag(str, 4028451) && hasFlag(str, 4028710) && hasFlag(str, 4028966) && !hasFlag(str, 1031302438) && !hasFlag(str, 1031367974) && !hasFlag(str, 1031040294);
+    private static boolean isSimpleFormat(String text) {
+        return isFormatted(text) && hasFlag(text, 4028451) && hasFlag(text, 4028710) && hasFlag(text, 4028966) && !hasFlag(text, 1031302438) && !hasFlag(text, 1031367974) && !hasFlag(text, 1031040294);
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:8:0x0038 */
-    /* renamed from: a */
-    public static final String replaceText(String str, int i, int i2) {
-        String searchStr = Storage.state().getString(i);
-        if (str.indexOf(searchStr) < 0) {
-            return str;
+    public static final String replaceText(String text, int searchKey, int replaceKey) {
+        String searchStr = Storage.state().getString(searchKey);
+        if (text.indexOf(searchStr) < 0) {
+            return text;
         }
-        String replaceStr = Storage.state().getString(i2);
+        String replaceStr = Storage.state().getString(replaceKey);
         StringBuffer sb = ObjectPool.newStringBuffer();
-        int length = 0;
+        int pos = 0;
         while (true) {
-            int i3 = length;
-            int idx = str.indexOf(searchStr, i3);
+            int idx = text.indexOf(searchStr, pos);
             if (idx < 0) {
-                return ObjectPool.toStringAndRelease(sb.append(StringUtils.suffix(str, i3)));
+                return ObjectPool.toStringAndRelease(sb.append(StringUtils.suffix(text, pos)));
             }
-            sb.append(StringUtils.substring(str, i3, idx)).append(replaceStr);
-            length = idx + searchStr.length();
+            sb.append(StringUtils.substring(text, pos, idx)).append(replaceStr);
+            pos = idx + searchStr.length();
         }
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:13:0x00be */
-    /* renamed from: a */
-    public static final void handleMessage(MrimAccount account, ByteBuffer buffer, long j) {
+    public static final void handleMessage(MrimAccount account, ByteBuffer buffer, long timestamp) {
         MrimContact contact;
-        int i;
-        int idx;
+        int altStart;
+        int closeIdx;
         int msgId = buffer.readInt();
         int flags = buffer.readInt();
         String sender = buffer.readHexStr();
-        String rawBody = buffer.readStringByMode(flags & 2097160);
+        String rawBody = buffer.readStringByMode(flags & FLAG_ENCODING_MASK);
         String messageText = null;
-        String str = null;
-        if ((flags & 8) == 0) {
+        String multipartBody = null;
+        if ((flags & FLAG_MULTIPART) == 0) {
             String decoded = decodeHtmlEntities(rawBody);
             StringBuffer sb = ObjectPool.newStringBuffer();
             String openTag = Storage.resources().getString(PackedStringKeys.EMOTICON_OPEN_TAG);
             String midTag = Storage.resources().getString(PackedStringKeys.EMOTICON_ALT_ATTR);
             String closeTag = Storage.resources().getString(PackedStringKeys.EMOTICON_CLOSE_TAG);
-            int i2 = 0;
+            int pos = 0;
             while (true) {
-                int i3 = i2;
-                if (i3 >= decoded.length()) {
+                if (pos >= decoded.length()) {
                     break;
                 }
-                int idx2 = decoded.indexOf(openTag, i3);
-                if (idx2 < 0) {
-                    sb.append(StringUtils.suffix(decoded, i3));
+                int tagIdx = decoded.indexOf(openTag, pos);
+                if (tagIdx < 0) {
+                    sb.append(StringUtils.suffix(decoded, pos));
                     break;
                 }
-                sb.append(StringUtils.substring(decoded, i3, idx2));
-                int idx3 = decoded.indexOf(midTag, idx2 + 10);
-                if (idx3 < 0 || (idx = decoded.indexOf(closeTag, (i = idx3 + 6))) < 0) {
+                sb.append(StringUtils.substring(decoded, pos, tagIdx));
+                int midIdx = decoded.indexOf(midTag, tagIdx + OPEN_TAG_LENGTH);
+                if (midIdx < 0 || (closeIdx = decoded.indexOf(closeTag, (altStart = midIdx + ALT_ATTR_LENGTH))) < 0) {
                     break;
                 }
-                sb.append(StringUtils.substring(decoded, i, idx));
-                i2 = idx + 9;
+                sb.append(StringUtils.substring(decoded, altStart, closeIdx));
+                pos = closeIdx + CLOSE_TAG_LENGTH;
             }
             messageText = ObjectPool.toStringAndRelease(sb);
         } else {
             ByteBuffer decodeBuffer = Base64.decode(rawBody);
-            int encodingFlag = flags & 2097152;
+            int encodingFlag = flags & FLAG_ENCODING;
             int partCount = decodeBuffer.readInt();
-            String[] strArr = new String[partCount];
-            for (int i5 = 0; i5 < partCount; i5++) {
-                strArr[i5] = decodeBuffer.readStringByMode(encodingFlag);
+            String[] parts = new String[partCount];
+            for (int p = 0; p < partCount; p++) {
+                parts[p] = decodeBuffer.readStringByMode(encodingFlag);
             }
             decodeBuffer.clear();
-            str = strArr[1];
+            multipartBody = parts[1];
         }
-        if ((flags & 128) != 0) {
+        if ((flags & FLAG_RTF) != 0) {
             buffer.readWideStr();
         }
-        if ((flags & 4194304) != 0) {
-            if ((flags & 17408) != 0) {
+        if ((flags & FLAG_EXTENDED) != 0) {
+            if ((flags & FLAG_SYSTEM_MASK) != 0) {
                 return;
             }
             buffer.readInt();
             switch (buffer.readInt()) {
                 case 0:
-                    account.receivePrivateMessage(sender, messageText, buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
+                    account.receivePrivateMessage(sender, messageText, buffer.readUTF8Str((String) null), buffer.readWideStr(), timestamp);
                     break;
                 case 2:
                     buffer.readUTF8Str((String) null);
                     buffer.readInt();
                     Vector members = ObjectPool.newVector();
                     int memberCount = buffer.readInt();
-                    while (true) {
-                        memberCount--;
-                        if (memberCount < 0) {
-                            Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_4, members);
-                            break;
-                        } else {
-                            members.addElement(buffer.readWideStr());
-                        }
+                    for (int k = memberCount - 1; k >= 0; k--) {
+                        members.addElement(buffer.readWideStr());
                     }
+                    Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_4, members);
                 case 3:
-                    account.receiveGroupMessage(sender, Storage.resources().getString(StringResKeys.STR_GROUP_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, j);
+                    account.receiveGroupMessage(sender, Storage.resources().getString(StringResKeys.STR_GROUP_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), buffer, timestamp);
                     break;
                 case 5:
-                    account.receivePrivateMessage(sender, Storage.resources().getString(StringResKeys.STR_PRIVATE_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), j);
+                    account.receivePrivateMessage(sender, Storage.resources().getString(StringResKeys.STR_PRIVATE_MESSAGE), buffer.readUTF8Str((String) null), buffer.readWideStr(), timestamp);
                     break;
             }
             return;
         }
-        boolean isNotify = (flags & 2048) != 0;
-        boolean isGroupMsg = (flags & 8192) != 0;
-        if ((flags & 4) == 0) {
+        boolean isNotify = (flags & FLAG_NOTIFY) != 0;
+        boolean isGroupMsg = (flags & FLAG_GROUP) != 0;
+        if ((flags & FLAG_NO_ACK) == 0) {
             account.trySendData(ProtocolFactory.createMrimPacket(account, 4113, new ByteBuffer().writeStringLatin1((isGroupMsg || isNotify) ? Storage.resources().getString(PackedStringKeys.MRIM_SMS_ADDRESS) : sender).writeIntLE(msgId)));
         }
         if (isGroupMsg) {
@@ -481,69 +488,65 @@ public final class Conversation implements ListItem {
             return;
         }
         MrimContact foundContact = account.findContactByIdentifier(sender);
-        if ((flags & 8) != 0) {
+        if ((flags & FLAG_MULTIPART) != 0) {
             if (foundContact == null) {
-                NotificationHelper.playNotificationSound(3);
-                account.onMessage(sender, 0L, str);
+                NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONVERSATION_MESSAGE);
+                account.onMessage(sender, 0L, multipartBody);
                 return;
-            } else if ((foundContact.statusFlags & 65536) == 0) {
+            } else if ((foundContact.statusFlags & FLAG_AUTHORIZED) == 0) {
                 foundContact.performAction();
                 account.trySendData(ProtocolFactory.createPasswordAuthCmd(account, sender));
                 return;
             } else {
-                NotificationHelper.playNotificationSound(3);
-                account.onMessage(sender, 0L, str);
+                NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONVERSATION_MESSAGE);
+                account.onMessage(sender, 0L, multipartBody);
                 return;
             }
         }
-        if ((foundContact == null || foundContact.hasUnread() || foundContact.isOnline()) && !((flags & 1024) == 0 && (flags & 16384) == 0)) {
+        if ((foundContact == null || foundContact.hasUnread() || foundContact.isOnline()) && !((flags & FLAG_REMOVE) == 0 && (flags & FLAG_CONFERENCE) == 0)) {
             return;
         }
-        if ((flags & 16384) != 0) {
-            account.onMessage(sender, j, Storage.resources().getString(StringResKeys.STR_CONFERENCE_INVITE));
-        } else if ((flags & 1024) != 0) {
+        if ((flags & FLAG_CONFERENCE) != 0) {
+            account.onMessage(sender, timestamp, Storage.resources().getString(StringResKeys.STR_CONFERENCE_INVITE));
+        } else if ((flags & FLAG_REMOVE) != 0) {
             account.deleteContact(sender);
         } else {
-            account.onMessage(sender, j, messageText);
+            account.onMessage(sender, timestamp, messageText);
         }
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:17:0x0074 */
-    /* renamed from: p */
-    private static final String decodeHtmlEntities(String str) {
+    private static final String decodeHtmlEntities(String html) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         String entityPrefix = Storage.resources().getString(PackedStringKeys.EMOTICON_TAG_PREFIX);
-        int i = 0;
+        int pos = 0;
         while (true) {
-            int i2 = i;
-            if (i2 >= str.length()) {
+            if (pos >= html.length()) {
                 break;
             }
-            int idx = str.indexOf(entityPrefix, i2);
+            int idx = html.indexOf(entityPrefix, pos);
             if (idx >= 0) {
-                sb.append(StringUtils.substring(str, i2, idx));
-                int i3 = idx + 13;
-                int idx2 = str.indexOf(62, i3);
-                if (idx2 < 0) {
+                sb.append(StringUtils.substring(html, pos, idx));
+                int numStart = idx + ENTITY_PREFIX_LENGTH;
+                int endIdx = html.indexOf(62, numStart);
+                if (endIdx < 0) {
                     break;
                 }
                 try {
-                    int entityId = Integer.parseInt(StringUtils.substring(str, i3, idx2));
-                    if (entityId < 42 && entityId >= 0) {
+                    int entityId = Integer.parseInt(StringUtils.substring(html, numStart, endIdx));
+                    if (entityId < MAX_EMOTICON_ID && entityId >= 0) {
                         sb.append(Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, entityId));
                     }
                 } catch (Throwable unused) {
                 }
-                i = idx2 + 1;
+                pos = endIdx + 1;
             } else {
-                sb.append(StringUtils.suffix(str, i2));
+                sb.append(StringUtils.suffix(html, pos));
                 break;
             }
         }
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
     public static final void parseContactList(MrimAccount account, ByteBuffer buffer) {
         MrimContactGroup group;
         account.lastError = account.configFlags;
@@ -558,18 +561,18 @@ public final class Conversation implements ListItem {
             for (int i = 0; i < groupCount; i++) {
                 int groupFlags = buffer.readInt();
                 String groupName = buffer.readUTF8Str((String) null);
-                if ((groupFlags & 1) == 0) {
+                if ((groupFlags & FLAG_DELETED) == 0) {
                     groups.addElement(new MrimContactGroup(account, i, groupFlags, groupName));
                 }
-                for (int i2 = 2; i2 < formatLen; i2++) {
-                    if (groupFormat.charAt(i2) == 'u') {
+                for (int fi = 2; fi < formatLen; fi++) {
+                    if (groupFormat.charAt(fi) == 'u') {
                         buffer.readInt();
                     } else {
                         buffer.readWideStr();
                     }
                 }
             }
-            int contactId = 20;
+            int contactId = INITIAL_CONTACT_ID;
             Vector groups2 = account.groups;
             int contactFormatLen = contactFormat.length();
             groups2.size();
@@ -586,8 +589,8 @@ public final class Conversation implements ListItem {
                 String phonesRaw = buffer.readWideStr();
                 ByteBuffer phoneBuf = new ByteBuffer();
                 if (phonesRaw != null) {
-                    for (int i4 = 0; i4 < phonesRaw.length(); i4++) {
-                        char ch = phonesRaw.charAt(i4);
+                    for (int ci = 0; ci < phonesRaw.length(); ci++) {
+                        char ch = phonesRaw.charAt(ci);
                         if ((ch == ',' && phoneBuf.length > 0) || (ch >= '0' && ch <= '9')) {
                             phoneBuf.writeByte(ch);
                         }
@@ -599,28 +602,23 @@ public final class Conversation implements ListItem {
                 buffer.readUTF8Str((String) null);
                 buffer.readInt();
                 String clientId = buffer.readWideStr();
-                if (StringUtils.equals(addr, phoneSuffix) || (contactFlags & 1048576) != 0) {
+                if (StringUtils.equals(addr, phoneSuffix) || (contactFlags & FLAG_PHONE) != 0) {
                     addr = phoneSuffix;
-                    contactFlags = (contactFlags | 1048576) & (-29);
+                    contactFlags = (contactFlags | FLAG_PHONE) & (-29);
                     if (StringUtils.isEmpty(phones)) {
-                        contactFlags |= 1;
+                        contactFlags |= FLAG_DELETED;
                     }
                 }
                 if (addr.endsWith(botSuffix)) {
-                    contactFlags |= 128;
+                    contactFlags |= FLAG_BOT;
                     phones = Storage.emptyStr;
                 }
-                int cleanFlags = contactFlags & (-65537);
-                if (0 == (cleanFlags & 1)) {
+                int cleanFlags = contactFlags & ~FLAG_AUTHORIZED;
+                if ((cleanFlags & FLAG_DELETED) == 0) {
                     Vector groupList = account.groups;
-                    int size = groupList.size();
-                    while (true) {
-                        size--;
-                        if (size < 0) {
-                            group = null;
-                            break;
-                        }
-                        MrimContactGroup candidate = (MrimContactGroup) groupList.elementAt(size);
+                    group = null;
+                    for (int gi = groupList.size() - 1; gi >= 0; gi--) {
+                        MrimContactGroup candidate = (MrimContactGroup) groupList.elementAt(gi);
                         if (candidate.serverId == groupId) {
                             group = candidate;
                             break;
@@ -633,10 +631,10 @@ public final class Conversation implements ListItem {
                     targetGroup.addContact((Object) new MrimContact(account, contactId, cleanFlags, groupId, addr, nickname, serverFlags, statusVal, phones, statusText, clientId));
                 }
                 contactId++;
-                for (int i6 = 12; i6 < contactFormatLen; i6++) {
-                    if (i6 == 18) {
+                for (int fi = FORMAT_EXTRA_FIELDS_START; fi < contactFormatLen; fi++) {
+                    if (fi == FORMAT_PROFILE_FIELD_INDEX) {
                         account.profileManager.receiveContactProfile(addr, buffer.readBufferArray());
-                    } else if (contactFormat.charAt(i6) == 'u') {
+                    } else if (contactFormat.charAt(fi) == 'u') {
                         buffer.readInt();
                     } else {
                         buffer.readWideStr();
@@ -644,7 +642,7 @@ public final class Conversation implements ListItem {
                 }
             }
             account.progress = Account.PROGRESS_CONNECTED;
-            account.msgCount = 100;
+            account.msgCount = PROGRESS_DONE;
             account.setConfiguration(account.configFlags);
             account.trySendData(ProtocolFactory.createMrimPacket(account, 4228, new ByteBuffer().writeIntLE(4).writeIntLE(0).writeIntLE(4).writeIntLE(0)));
             if (account.syncSeq == 1) {
@@ -665,33 +663,29 @@ public final class Conversation implements ListItem {
         DiagnosticReporter.checkCrashReport();
     }
 
-    /* renamed from: h */
-    public static final String encodeAlternate(String str) {
-        return encodeDecodeInternal(str, 959, 960);
+    public static final String encodeAlternate(String text) {
+        return encodeDecodeInternal(text, 959, 960);
     }
 
-    /* renamed from: i */
-    public static final String decodeAlternate(String str) {
-        return encodeDecodeInternal(str, 960, 959);
+    public static final String decodeAlternate(String text) {
+        return encodeDecodeInternal(text, 960, 959);
     }
 
-    /* renamed from: b */
-    private static final String encodeDecodeInternal(String str, int i, int i2) {
-        String sourceChars = Storage.state().getString(i);
-        String targetChars = Storage.state().getString(i2);
+    private static final String encodeDecodeInternal(String text, int sourceKey, int targetKey) {
+        String sourceChars = Storage.state().getString(sourceKey);
+        String targetChars = Storage.state().getString(targetKey);
         StringBuffer sb = ObjectPool.newStringBuffer();
-        int length = str.length();
-        for (int i3 = 0; i3 < length; i3++) {
-            char ch = str.charAt(i3);
+        int length = text.length();
+        for (int i = 0; i < length; i++) {
+            char ch = text.charAt(i);
             int idx = sourceChars.indexOf(ch);
             sb.append(idx < 0 ? ch : targetChars.charAt(idx));
         }
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
-    public static final String urlEncode(Object obj) {
-        String string = obj.toString().toString();
+    public static final String urlEncode(Object value) {
+        String string = value.toString().toString();
         StringBuffer sb = ObjectPool.newStringBuffer();
         Storage.resources().getString(PackedStringKeys.URL_ENCODE_D0);
         Storage.resources().getString(PackedStringKeys.URL_ENCODE_D1);
@@ -711,9 +705,8 @@ public final class Conversation implements ListItem {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: b */
-    public static final String urlEncodeCyrillic(Object obj) {
-        String string = obj.toString();
+    public static final String urlEncodeCyrillic(Object value) {
+        String string = value.toString();
         StringBuffer sb = ObjectPool.newStringBuffer();
         String hexPrefixLo = Storage.resources().getString(PackedStringKeys.URL_ENCODE_D0);
         String hexPrefixHi = Storage.resources().getString(PackedStringKeys.URL_ENCODE_D1);
@@ -741,37 +734,35 @@ public final class Conversation implements ListItem {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
-    public static String formatNumber(int i, int i2) {
-        String numStr = StringUtils.intern(Integer.toString(i));
+    public static String formatNumber(int number, int minWidth) {
+        String numStr = StringUtils.intern(Integer.toString(number));
         int length = numStr.length();
         if (length >= 2) {
             return numStr;
         }
         StringBuffer sb = ObjectPool.newStringBuffer();
-        for (int i3 = length; i3 < 2; i3++) {
+        for (int pad = length; pad < 2; pad++) {
             sb.append('0');
         }
         sb.append(numStr);
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: j */
-    public static final String decodeHtmlSpecial(String str) {
+    public static final String decodeHtmlSpecial(String html) {
         Vector entityNames = Utils.splitByNull(Storage.resources().getString(PackedStringKeys.HTML_ENTITY_NAMES));
         Vector entityValues = Utils.splitByNull(Storage.resources().getString(PackedStringKeys.HTML_ENTITY_VALUES));
         StringBuffer sb = ObjectPool.newStringBuffer();
-        int length = str.length();
-        int length2 = 0;
-        while (length2 < length) {
-            char ch = str.charAt(length2);
+        int totalLen = html.length();
+        int pos = 0;
+        while (pos < totalLen) {
+            char ch = html.charAt(pos);
             if (ch == '&') {
                 boolean found = false;
                 for (int i = 0; i < 4 && !found; i++) {
                     try {
                         String entityName = (String) entityNames.elementAt(i);
-                        if (str.startsWith(entityName, length2)) {
-                            length2 += entityName.length() - 1;
+                        if (html.startsWith(entityName, pos)) {
+                            pos += entityName.length() - 1;
                             sb.append(entityValues.elementAt(i));
                             found = true;
                         }
@@ -784,18 +775,17 @@ public final class Conversation implements ListItem {
             } else {
                 sb.append(ch);
             }
-            length2++;
+            pos++;
         }
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: k */
-    public static final String transliterateRussian(String str) {
+    public static final String transliterateRussian(String text) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         Vector translitTable = Utils.splitByNull(Storage.resources().getString(PackedStringKeys.TRANSLIT_TABLE_BASIC));
-        int length = str.length();
+        int length = text.length();
         for (int i = 0; i < length; i++) {
-            char ch = str.charAt(i);
+            char ch = text.charAt(i);
             int tableIdx = (ch < 1072 || ch > 1103) ? ch == 1105 ? 32 : (ch < 1040 || ch > 1071) ? ch == 1025 ? 72 : -1 : (ch - 1040) + 40 : ch - 1072;
             if (tableIdx >= 40) {
                 sb.append(Utils.getVectorString(translitTable, tableIdx - 40).toUpperCase());
@@ -809,20 +799,18 @@ public final class Conversation implements ListItem {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: l */
-    public static final String percentEncode(String str) {
-        return percentEncodeInternal(str, true);
+    public static final String percentEncode(String text) {
+        return percentEncodeInternal(text, true);
     }
 
-    /* renamed from: a */
-    private static final String percentEncodeInternal(String str, boolean z) {
+    private static final String percentEncodeInternal(String text, boolean lowercase) {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        int length = str.length();
+        int length = text.length();
         for (int i = 0; i < length; i++) {
-            char ch = str.charAt(i);
-            if ((ch >= 'A' && ch <= 'Z') || ((ch >= 'a' && ch <= 'z') || ((ch >= '0' && ch <= '9') || ch == '.' || (ch == '-' && !z)))) {
+            char ch = text.charAt(i);
+            if ((ch >= 'A' && ch <= 'Z') || ((ch >= 'a' && ch <= 'z') || ((ch >= '0' && ch <= '9') || ch == '.' || (ch == '-' && !lowercase)))) {
                 sb.append(ch);
-            } else if (z) {
+            } else if (lowercase) {
                 sb.append('%').append(Integer.toHexString(ch >> 4)).append(Integer.toHexString(ch & 15));
             } else {
                 sb.append('%').append(Integer.toHexString(ch >> 4).toUpperCase()).append(Integer.toHexString(ch & 15).toUpperCase());
@@ -831,29 +819,24 @@ public final class Conversation implements ListItem {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
-    public static final void setMapEnabled(boolean z) {
+    public static final void setMapEnabled(boolean enabled) {
         MapRenderer.needsRedraw = true;
-        Storage.state().setBool(MapKeys.MAP_GPS_ENABLED, z);
+        Storage.state().setBool(MapKeys.MAP_GPS_ENABLED, enabled);
     }
 
-    /* renamed from: a */
     public static final void incrementZoom() {
         MapRenderer.setZoom(Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL) + 1);
     }
 
-    /* renamed from: b */
     public static final void decrementZoom() {
         MapRenderer.setZoom(Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL) - 1);
     }
 
-    /* renamed from: c */
     public static final void loadContacts() {
         new AsyncTask(AsyncTaskId.FETCH_MMP_ROUTE, MmpContact.buildLocationString());
     }
 
-    /* renamed from: c */
-    public static final void updateStatusText(int i) {
-        Storage.state().setFromBuffer(SessionKeys.SLOT_ACTIVE_PROTOCOL_NAME, ObjectPool.newStringBuffer().append(Storage.state().getString(i)).append(' ').append('(').append(Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE).size()).append(')'));
+    public static final void updateStatusText(int nameKey) {
+        Storage.state().setFromBuffer(SessionKeys.SLOT_ACTIVE_PROTOCOL_NAME, ObjectPool.newStringBuffer().append(Storage.state().getString(nameKey)).append(' ').append('(').append(Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE).size()).append(')'));
     }
 }

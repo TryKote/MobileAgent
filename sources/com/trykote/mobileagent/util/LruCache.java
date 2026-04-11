@@ -14,32 +14,26 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: ab */
-/* loaded from: MobileAgent_3.9.jar:ab.class */
 public final class LruCache {
 
-    /* renamed from: a */
+    private static final int DEFAULT_MAX_SIZE = 27;
+
     private int size;
 
-    /* renamed from: b */
     private int maxSize;
 
-    /* renamed from: c */
     private Hashtable map;
 
-    /* renamed from: d */
     private Vector lruOrder;
 
-    /* renamed from: e */
     private long hits;
 
-    /* renamed from: f */
     private long misses;
 
     public LruCache() {
         this.map = new Hashtable();
         this.lruOrder = ObjectPool.newVector();
-        this.maxSize = 27;
+        this.maxSize = DEFAULT_MAX_SIZE;
     }
 
     public LruCache(int i) {
@@ -48,13 +42,11 @@ public final class LruCache {
         this.maxSize = i;
     }
 
-    /* renamed from: c */
     private final void moveToFront(Object obj) {
         this.lruOrder.removeElement(obj);
         this.lruOrder.insertElementAt(obj, 0);
     }
 
-    /* renamed from: a */
     public final synchronized void put(Object obj, Object obj2, int i) {
         if (this.size >= this.maxSize && !this.lruOrder.isEmpty()) {
             Object objLastElement = this.lruOrder.lastElement();
@@ -72,7 +64,6 @@ public final class LruCache {
         }
     }
 
-    /* renamed from: a */
     public final synchronized Object get(Object obj) {
         Object obj2 = this.map.get(obj);
         if (obj2 != null) {
@@ -84,7 +75,6 @@ public final class LruCache {
         return obj2;
     }
 
-    /* renamed from: b */
     public final synchronized void remove(Object obj) {
         if (this.lruOrder.contains(obj)) {
             this.lruOrder.removeElement(obj);
@@ -93,7 +83,6 @@ public final class LruCache {
         }
     }
 
-    /* renamed from: a */
     public final synchronized Enumeration keys() {
         return this.lruOrder.elements();
     }

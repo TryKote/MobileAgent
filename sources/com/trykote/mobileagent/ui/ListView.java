@@ -15,6 +15,46 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 
 public final class ListView {
+
+    // Layout modes
+    static final int LAYOUT_VERTICAL = 0;
+    static final int LAYOUT_GRID = 1;
+    private static final int LAYOUT_MAP_VIEW = 2;
+
+    // Scroll / expand directions
+    private static final int EXPAND_UP = 1;
+    private static final int EXPAND_DOWN = 2;
+
+    // Sentinel: no expanded item visible
+    private static final int NO_EXPANDED_ITEM = 1000000;
+
+    // Palette color indices (for setColorFromPalette)
+    private static final int PALETTE_TEXT = 0;
+    private static final int PALETTE_BACKGROUND = 1;
+    private static final int PALETTE_BACKGROUND_ALT = 2;
+    private static final int PALETTE_SELECTION = 13;
+    private static final int PALETTE_SOFT_KEY_TEXT = 15;
+    private static final int PALETTE_BORDER = 16;
+    private static final int PALETTE_TAB_FILL = 17;
+
+    // Dimension constants
+    private static final int SCROLL_STEP = 20;
+    private static final int DEFAULT_ITEM_WIDTH = 200;
+    private static final int SCROLLBAR_WIDTH = 7;
+    private static final int MAX_CLIP_HEIGHT = 2048;
+    private static final int MIN_TAB_HEIGHT = 16;
+    private static final int TAB_ICON_SPACING = 18;
+    private static final int LAYOUT_CACHE_INITIAL_SIZE = 16;
+
+    // Layout insets
+    private static final int OUTER_PADDING = 4;
+    private static final int INNER_MARGIN = 2;
+    private static final int BORDER_INSET = 3;
+
+    // Text formatting constants (for MenuItem.addText)
+    private static final int TEXT_FORMAT_EXPANDABLE = 5;
+    private static final int TEXT_FORMAT_SECONDARY = 6;
+
     public int screenId;
     public int containerWidth;
     public int containerHeight;
@@ -56,7 +96,7 @@ public final class ListView {
     public boolean touchConsumed;
 
     public ListView() {
-        this.layoutMode = 2;
+        this.layoutMode = LAYOUT_MAP_VIEW;
         this.screenId = ScreenId.STATUS_INPUT;
     }
     public final ListView initTabs() {
@@ -69,7 +109,7 @@ public final class ListView {
 
     private ListView(int layoutMode, int screenId, int width, int height) {
         this.menuItems = ObjectPool.newVector();
-        this.layoutCache = new int[16];
+        this.layoutCache = new int[LAYOUT_CACHE_INITIAL_SIZE];
         this.layoutMode = layoutMode;
         this.containerWidth = width;
         this.containerHeight = height;
@@ -83,23 +123,23 @@ public final class ListView {
         this.selectable = selectable;
     }
     private final ListView recalcLayout() {
-        int usableWidth = this.containerWidth - 4;
-        int usableHeight = this.containerHeight - 4;
-        this.innerWidth = this.containerWidth - 2;
+        int usableWidth = this.containerWidth - OUTER_PADDING;
+        int usableHeight = this.containerHeight - OUTER_PADDING;
+        this.innerWidth = this.containerWidth - INNER_MARGIN;
         if (this.headerItem != null) {
-            this.headerHeight = this.headerItem.getTotalHeight() + 2;
+            this.headerHeight = this.headerItem.getTotalHeight() + INNER_MARGIN;
         } else {
             this.headerHeight = 0;
         }
-        this.borderWidth = this.containerWidth - 3;
+        this.borderWidth = this.containerWidth - BORDER_INSET;
         this.contentStart = 1 + this.headerHeight;
-        this.contentBottom = (usableHeight - this.contentStart) + 3;
+        this.contentBottom = (usableHeight - this.contentStart) + BORDER_INSET;
         this.contentTop = this.contentStart + 1;
-        this.contentWidth = usableWidth - 2;
-        this.contentHeight = this.contentBottom - 2;
+        this.contentWidth = usableWidth - INNER_MARGIN;
+        this.contentHeight = this.contentBottom - INNER_MARGIN;
         if (this.tabItems != null) {
             int prevBottom = this.contentBottom;
-            int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), 16) + 3;
+            int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), MIN_TAB_HEIGHT) + BORDER_INSET;
             this.contentBottom = prevBottom - barHeight;
             this.contentHeight -= barHeight;
         }
@@ -113,7 +153,7 @@ public final class ListView {
     }
     public final int getSelectedWidth() {
         if (!this.selectable || this.menuItems.size() <= 0) {
-            return 200;
+            return DEFAULT_ITEM_WIDTH;
         }
         return getItemAt(this.selectedIndex).width;
     }
@@ -125,7 +165,7 @@ public final class ListView {
     }
     public final MenuItem getHeaderItem() {
         int expandedIdx;
-        if (this.screenType != 9 || (expandedIdx = findVisibleExpanded()) >= this.menuItems.size()) {
+        if (this.screenType != ScreenManager.TYPE_FULLSCREEN_NOSCROLL_ALT || (expandedIdx = findVisibleExpanded()) >= this.menuItems.size()) {
             return null;
         }
         return getItemAt(expandedIdx);
@@ -136,7 +176,7 @@ public final class ListView {
         return this;
     }
     public final ListView addItem(MenuItem menuItem) {
-        if (this.layoutMode == 0) {
+        if (this.layoutMode == LAYOUT_VERTICAL) {
             menuItem.layout(this.contentWidth);
             this.menuItems.addElement(menuItem);
             this.layoutCache = BitMath.resizeArray(this.layoutCache, 0, this.totalHeight);
@@ -160,7 +200,7 @@ public final class ListView {
         if (this.totalHeight <= 0 || this.totalHeight < this.contentHeight) {
             this.hasScrollbar = false;
         } else {
-            this.scrollRange = ((this.contentBottom - 4) * this.contentHeight) / this.totalHeight;
+            this.scrollRange = ((this.contentBottom - OUTER_PADDING) * this.contentHeight) / this.totalHeight;
             this.hasScrollbar = true;
         }
         if (this.selectable && this.selectedIndex < 0 && menuItem.isEnabled()) {
@@ -169,8 +209,8 @@ public final class ListView {
         return this;
     }
     public final ListView buildLayout() {
-        if (this.contentHeight - this.totalHeight > 5 && this.layoutMode == 0) {
-            this.containerHeight = this.headerHeight + this.totalHeight + 4;
+        if (this.contentHeight - this.totalHeight > 5 && this.layoutMode == LAYOUT_VERTICAL) {
+            this.containerHeight = this.headerHeight + this.totalHeight + OUTER_PADDING;
             recalcLayout();
         }
         int maxItemHeight = 0;
@@ -182,7 +222,7 @@ public final class ListView {
                 maxItemHeight = itemMax;
             }
         }
-        int neededWidth = maxItemHeight + 16;
+        int neededWidth = maxItemHeight + MIN_TAB_HEIGHT;
         if (neededWidth < this.containerWidth) {
             this.containerWidth = neededWidth;
         }
@@ -190,7 +230,7 @@ public final class ListView {
         return this;
     }
     public final void paint(GraphicsContext g, boolean isTop, boolean isModal) {
-        if (this.layoutMode != 2) {
+        if (this.layoutMode != LAYOUT_MAP_VIEW) {
             paintBackground(g, isTop);
             if (this.headerItem != null) {
                 paintHeaderGradient(g);
@@ -206,7 +246,7 @@ public final class ListView {
                 paintSoftKeys(g);
             }
         }
-        if (this.screenType == 1 || this.screenType == 12) {
+        if (this.screenType == ScreenManager.TYPE_FULLSCREEN_ALT || this.screenType == ScreenManager.TYPE_MAP_ALT) {
             paintTopTabBar(g);
         }
         if (this.screenId == ScreenId.MAP) {
@@ -224,9 +264,9 @@ public final class ListView {
         int w = this.containerWidth;
         int h = this.containerHeight;
         Graphics gfx = g.graphics;
-        g.setColorFromPalette(isTop ? 1 : 2);
+        g.setColorFromPalette(isTop ? PALETTE_BACKGROUND : PALETTE_BACKGROUND_ALT);
         gfx.fillRect(x, y, w, h);
-        g.setColorFromPalette(16);
+        g.setColorFromPalette(PALETTE_BORDER);
         gfx.drawRect(x, y, w - 1, h - 1);
     }
 
@@ -249,11 +289,11 @@ public final class ListView {
     }
 
     private void paintMenuItems(GraphicsContext g) {
-        int baseX = this.offsetX + 2;
+        int baseX = this.offsetX + INNER_MARGIN;
         int baseY = this.offsetY + this.contentTop;
-        int availWidth = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
+        int availWidth = this.hasScrollbar ? this.contentWidth : this.contentWidth + INNER_MARGIN;
         int size = this.menuItems.size();
-        boolean isGridLayout = this.layoutMode != 0;
+        boolean isGridLayout = this.layoutMode != LAYOUT_VERTICAL;
         int scrollOff = this.scrollOffset;
         for (int idx = 0; idx < size; idx++) {
             int itemY = getItemY(idx);
@@ -268,14 +308,14 @@ public final class ListView {
                 g.setClip(baseX, baseY, availWidth, this.contentHeight);
                 int drawX = baseX + itemX;
                 int drawY = (baseY + itemY) - scrollOff;
-                int drawWidth = this.layoutMode == 0 ? availWidth : itemWidth;
+                int drawWidth = this.layoutMode == LAYOUT_VERTICAL ? availWidth : itemWidth;
                 int itemType = menuItem.id;
-                if (this.selectable && idx == this.selectedIndex && itemType != 11) {
-                    g.setColorFromPalette(13);
+                if (this.selectable && idx == this.selectedIndex && itemType != MenuItem.TYPE_GRAPHICS) {
+                    g.setColorFromPalette(PALETTE_SELECTION);
                     g.fillRect(drawX, drawY, drawWidth, itemHeight);
                 }
-                if (itemType == 13 && menuItem.visible) {
-                    g.setColorFromPalette(13);
+                if (itemType == MenuItem.TYPE_EXPANDABLE && menuItem.visible) {
+                    g.setColorFromPalette(PALETTE_SELECTION);
                     g.fillRect(drawX, drawY, drawWidth, itemHeight);
                 }
                 boolean isVisible = !isGridLayout || intersectClip(g, drawX, drawY, drawWidth, itemHeight);
@@ -324,19 +364,19 @@ public final class ListView {
     private void paintScrollbar(GraphicsContext g) {
         int barX = this.offsetX + this.borderWidth;
         int barY = this.offsetY + this.contentStart;
-        g.setClip(barX, barY, 7, this.contentBottom + 4);
-        g.setColorFromPalette(16);
-        g.fillRect(barX + 1, barY + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - 4) * this.scrollOffset) / this.totalHeight, (this.contentBottom - 4) - this.scrollRange)), 1, this.scrollRange + 2);
-        g.drawRect(barX, barY - 1, 2, this.contentBottom + 1);
+        g.setClip(barX, barY, SCROLLBAR_WIDTH, this.contentBottom + OUTER_PADDING);
+        g.setColorFromPalette(PALETTE_BORDER);
+        g.fillRect(barX + 1, barY + (this.totalHeight == 0 ? 0 : Utils.min(((this.contentBottom - OUTER_PADDING) * this.scrollOffset) / this.totalHeight, (this.contentBottom - OUTER_PADDING) - this.scrollRange)), 1, this.scrollRange + INNER_MARGIN);
+        g.drawRect(barX, barY - 1, INNER_MARGIN, this.contentBottom + 1);
     }
 
     private void paintBottomTabBar(GraphicsContext g) {
-        int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), 16);
+        int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), MIN_TAB_HEIGHT);
         int screenHeight = Storage.state().getHeight() - 1;
         int screenWidth = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH);
-        g.setClip(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(16).fillRect(0, (screenHeight - barHeight) - 3, screenWidth, barHeight + 4).setColorFromPalette(17).fillRect(1, (screenHeight - barHeight) - 2, screenWidth - 2, barHeight + 2).setColorFromPalette(0).setFont(Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
+        g.setClip(0, (screenHeight - barHeight) - BORDER_INSET, screenWidth, barHeight + OUTER_PADDING).setColorFromPalette(PALETTE_BORDER).fillRect(0, (screenHeight - barHeight) - BORDER_INSET, screenWidth, barHeight + OUTER_PADDING).setColorFromPalette(PALETTE_TAB_FILL).fillRect(1, (screenHeight - barHeight) - INNER_MARGIN, screenWidth - INNER_MARGIN, barHeight + INNER_MARGIN).setColorFromPalette(PALETTE_TEXT).setFont(Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         Vector tabs = this.tabItems;
-        int tabX = 3;
+        int tabX = BORDER_INSET;
         boolean pastLabel = false;
         int centerY = ((screenHeight - barHeight) - 1) + ScreenManager.getCenterOffset();
         for (int idx = 0; idx < tabs.size(); idx++) {
@@ -346,11 +386,11 @@ public final class ListView {
                 g.drawString((String) element, tabX, (screenHeight - barHeight) - 1, 20);
                 tabX = screenWidth;
             } else if (pastLabel) {
-                tabX -= 18;
+                tabX -= TAB_ICON_SPACING;
                 g.drawIcon(((Integer) element).intValue(), tabX, centerY);
             } else {
-                g.drawIcon(((Integer) element).intValue(), 3, centerY);
-                tabX += 18;
+                g.drawIcon(((Integer) element).intValue(), BORDER_INSET, centerY);
+                tabX += TAB_ICON_SPACING;
             }
         }
     }
@@ -358,9 +398,9 @@ public final class ListView {
     private void paintSoftKeys(GraphicsContext g) {
         int screenWidth = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH);
         int screenHeight = Storage.state().getHeight();
-        g.setClip(0, 0, screenWidth, 2048 + screenHeight);
+        g.setClip(0, 0, screenWidth, MAX_CLIP_HEIGHT + screenHeight);
         g.setFont(Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
-        g.setColorFromPalette(15);
+        g.setColorFromPalette(PALETTE_SOFT_KEY_TEXT);
         if (this.titleLeft != null) {
             g.drawString(this.titleLeft, 1, screenHeight, 20);
         }
@@ -377,11 +417,11 @@ public final class ListView {
     }
 
     private void paintMapOverlay(GraphicsContext g) {
-        MapRenderer.paintOverlay(g, this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
+        MapRenderer.paintOverlay(g, this.offsetX + INNER_MARGIN, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
     }
 
     private void paintContactPopup(GraphicsContext g) {
-        ContactListManager.paintPopup(g, this.offsetX + 2, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
+        ContactListManager.paintPopup(g, this.offsetX + INNER_MARGIN, this.offsetY + this.contentTop, this.containerWidth, this.contentHeight);
     }
     public final boolean isAtEnd() {
         int size = this.menuItems.size();
@@ -404,7 +444,7 @@ public final class ListView {
     }
     public final void onActionKey() {
         MenuItem selectedItem = getSelectedItem();
-        if (null != selectedItem && selectedItem.enabled) {
+        if (selectedItem != null && selectedItem.enabled) {
             EventDispatcher.postSelectEvent();
             return;
         }
@@ -413,7 +453,7 @@ public final class ListView {
             return;
         }
         if (this.screenId != ScreenId.CONTACT_LIST) {
-            if (this.layoutMode == 1) {
+            if (this.layoutMode == LAYOUT_GRID) {
                 this.selectedIndex = (this.selectedIndex + 1) % this.menuItems.size();
                 invalidateLayout();
                 return;
@@ -437,7 +477,7 @@ public final class ListView {
             return 0;
         }
         if (this.selectable) {
-            this.scrollOffset -= this.contentHeight - 20;
+            this.scrollOffset -= this.contentHeight - SCROLL_STEP;
             if (this.scrollOffset < 0) {
                 this.scrollOffset = 0;
             }
@@ -448,7 +488,7 @@ public final class ListView {
                 this.scrollOffset = itemY;
             }
         } else {
-            this.scrollOffset -= this.contentHeight - 20;
+            this.scrollOffset -= this.contentHeight - SCROLL_STEP;
             if (this.scrollOffset < 0) {
                 this.scrollOffset = 0;
             }
@@ -462,7 +502,7 @@ public final class ListView {
             return 0;
         }
         findLastVisible();
-        this.scrollOffset += this.contentHeight - 20;
+        this.scrollOffset += this.contentHeight - SCROLL_STEP;
         if (this.selectable) {
             MenuItem menuItem = getItemAt(size - 1);
             int itemY = getItemY(size - 1);
@@ -507,14 +547,14 @@ public final class ListView {
             return;
         }
         if (!this.selectable) {
-            if (this.screenType != 9) {
-                scrollOffsetUp(20);
+            if (this.screenType != ScreenManager.TYPE_FULLSCREEN_NOSCROLL_ALT) {
+                scrollOffsetUp(SCROLL_STEP);
             } else {
-                scrollExpandable(1);
+                scrollExpandable(EXPAND_UP);
             }
             return;
         }
-        if (this.layoutMode == 0) {
+        if (this.layoutMode == LAYOUT_VERTICAL) {
             scrollUpVertical();
         } else {
             scrollUpGrid(getItemX(this.selectedIndex), getItemY(this.selectedIndex));
@@ -539,7 +579,7 @@ public final class ListView {
     private void scrollUpVertical() {
         int itemY = getItemY(this.selectedIndex);
         if (itemY < this.scrollOffset) {
-            this.scrollOffset -= 20;
+            this.scrollOffset -= SCROLL_STEP;
             return;
         }
         boolean atTop;
@@ -639,15 +679,15 @@ public final class ListView {
         if (size > 1) {
             this.scrollOffset = Utils.min(this.scrollOffset, getItemY(size - 2));
         }
-        if (this.screenType == 9) {
+        if (this.screenType == ScreenManager.TYPE_FULLSCREEN_NOSCROLL_ALT) {
             int anyExpanded = findAnyExpanded();
             if (anyExpanded < this.menuItems.size()) {
                 ((MenuItem) this.menuItems.elementAt(anyExpanded)).visible = true;
                 this.visibleExpandedIndex = anyExpanded;
             } else {
-                this.visibleExpandedIndex = 1000000;
+                this.visibleExpandedIndex = NO_EXPANDED_ITEM;
             }
-            this.expandDirection = 2;
+            this.expandDirection = EXPAND_DOWN;
         }
         return this;
     }
@@ -661,14 +701,14 @@ public final class ListView {
             return;
         }
         if (!this.selectable) {
-            if (this.screenType != 9) {
-                scrollOffsetDown(20);
+            if (this.screenType != ScreenManager.TYPE_FULLSCREEN_NOSCROLL_ALT) {
+                scrollOffsetDown(SCROLL_STEP);
             } else {
-                scrollExpandable(2);
+                scrollExpandable(EXPAND_DOWN);
             }
             return;
         }
-        if (this.layoutMode != 0) {
+        if (this.layoutMode != LAYOUT_VERTICAL) {
             scrollDownGrid(getItemX(this.selectedIndex), getItemY(this.selectedIndex), size);
         } else {
             scrollDownVertical(size);
@@ -678,7 +718,7 @@ public final class ListView {
     private void scrollDownVertical(int size) {
         if (this.selectedIndex >= size - 1) {
             int prevOffset = this.scrollOffset;
-            this.scrollOffset += 20;
+            this.scrollOffset += SCROLL_STEP;
             int itemHeight = getItemAt(this.selectedIndex).getTotalHeight();
             int itemY = getItemY(this.selectedIndex);
             if (this.scrollOffset > (itemY + itemHeight) - this.contentHeight) {
@@ -721,7 +761,7 @@ public final class ListView {
             if (itemHeight <= this.contentHeight) {
                 this.scrollOffset = (itemY + itemHeight) - this.contentHeight;
             } else {
-                this.scrollOffset += 20;
+                this.scrollOffset += SCROLL_STEP;
             }
         }
     }
@@ -839,7 +879,7 @@ public final class ListView {
     }
 
     public final ListView addLabelValue(String label, String value) {
-        return addTextPair(label, value, 200);
+        return addTextPair(label, value, DEFAULT_ITEM_WIDTH);
     }
 
     public final ListView addIconById(int iconId, int stringKey, int width) {
@@ -847,7 +887,7 @@ public final class ListView {
     }
 
     public final ListView addExpandableItem(int iconId, String text, int width, Object data) {
-        MenuItem expandItem = new MenuItem(13, Storage.emptyStr).setIcon(iconId).addText(text, 5, width);
+        MenuItem expandItem = new MenuItem(MenuItem.TYPE_EXPANDABLE, Storage.emptyStr).setIcon(iconId).addText(text, TEXT_FORMAT_EXPANDABLE, width);
         expandItem.data = data;
         return addItem(expandItem);
     }
@@ -864,7 +904,7 @@ public final class ListView {
     }
 
     public final ListView addTextItem(String text) {
-        return addIconItem(-1, text, 200);
+        return addIconItem(-1, text, DEFAULT_ITEM_WIDTH);
     }
 
     public final ListView addIconTextItem(int iconId, String text, int width) {
@@ -882,7 +922,7 @@ public final class ListView {
             newItem.setIcon(iconId);
         }
         if (label != null) {
-            newItem.addText(label, 0, 6);
+            newItem.addText(label, 0, TEXT_FORMAT_SECONDARY);
         }
         if (text != null) {
             int separatorIdx = text.indexOf(0);
@@ -910,27 +950,16 @@ public final class ListView {
     }
     public final void rebuildItems() {
         Vector newItems = ObjectPool.newVector();
-        int size = this.menuItems.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                break;
-            } else {
-                newItems.addElement(this.menuItems.elementAt(size));
-            }
+        for (int idx = this.menuItems.size() - 1; idx >= 0; idx--) {
+            newItems.addElement(this.menuItems.elementAt(idx));
         }
         this.menuItems.removeAllElements();
         this.layoutCache[0] = 0;
         this.totalHeight = 0;
-        int size2 = newItems.size();
-        while (true) {
-            size2--;
-            if (size2 < 0) {
-                ObjectPool.releaseVector(newItems);
-                return;
-            }
-            addItem((MenuItem) newItems.elementAt(size2));
+        for (int idx = newItems.size() - 1; idx >= 0; idx--) {
+            addItem((MenuItem) newItems.elementAt(idx));
         }
+        ObjectPool.releaseVector(newItems);
     }
     public final ListView setSoftKeys(String left, String right, int leftCmd, int centerCmd, int rightCmd) {
         GraphicsContext gfxCtx = Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT);
@@ -959,17 +988,17 @@ public final class ListView {
             return true;
         }
         if (this.selectable) {
-            int hitX = (wasDragged ? localStartX : localX) - 2;
+            int hitX = (wasDragged ? localStartX : localX) - INNER_MARGIN;
             int hitY = ((wasDragged ? localStartY : localY) + this.scrollOffset) - this.contentTop;
             int size = this.menuItems.size();
-            int availWidth = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
+            int availWidth = this.hasScrollbar ? this.contentWidth : this.contentWidth + INNER_MARGIN;
             boolean itemHit = false;
             for (int idx = 0; idx < size; idx++) {
                 MenuItem menuItem = getItemAt(idx);
                 int itemX = getItemX(idx);
                 int itemY = getItemY(idx);
                 if (menuItem.isEnabled() && hitX > itemX && hitY > itemY) {
-                    if (hitX < itemX + (this.layoutMode == 0 ? availWidth : menuItem.getTotalWidth()) && hitY < itemY + menuItem.getTotalHeight()) {
+                    if (hitX < itemX + (this.layoutMode == LAYOUT_VERTICAL ? availWidth : menuItem.getTotalWidth()) && hitY < itemY + menuItem.getTotalHeight()) {
                         if (this.selectedIndex != idx || wasDragged) {
                             this.selectedIndex = idx;
                         } else {
@@ -987,8 +1016,8 @@ public final class ListView {
         if (wasDragged) {
             return false;
         }
-        if (this.screenType != 9) {
-            if (this.screenType == 0 || this.screenType == 1) {
+        if (this.screenType != ScreenManager.TYPE_FULLSCREEN_NOSCROLL_ALT) {
+            if (this.screenType == ScreenManager.TYPE_FULLSCREEN || this.screenType == ScreenManager.TYPE_FULLSCREEN_ALT) {
                 return true;
             }
             AppController.onItemSelected();
@@ -1004,17 +1033,17 @@ public final class ListView {
         int expandedIdx = findVisibleExpanded();
         if (expandedIdx < this.menuItems.size()) {
             ((MenuItem) this.menuItems.elementAt(expandedIdx)).visible = false;
-            int neighbor = direction == 1 ? findPrevExpanded(expandedIdx) : findNextExpanded(expandedIdx);
+            int neighbor = direction == EXPAND_UP ? findPrevExpanded(expandedIdx) : findNextExpanded(expandedIdx);
             if (neighbor < this.menuItems.size()) {
                 ((MenuItem) this.menuItems.elementAt(neighbor)).visible = true;
                 this.visibleExpandedIndex = neighbor;
-            } else if (direction == 1) {
-                scrollOffsetUp(20);
+            } else if (direction == EXPAND_UP) {
+                scrollOffsetUp(SCROLL_STEP);
             } else {
-                scrollOffsetDown(20);
+                scrollOffsetDown(SCROLL_STEP);
             }
         } else if (this.visibleExpandedIndex < this.menuItems.size()) {
-            int neighbor = direction == 1 ? findPrevExpanded(this.visibleExpandedIndex) : findNextExpanded(this.visibleExpandedIndex);
+            int neighbor = direction == EXPAND_UP ? findPrevExpanded(this.visibleExpandedIndex) : findNextExpanded(this.visibleExpandedIndex);
             int itemY = getItemY(this.visibleExpandedIndex);
             int itemBottom = itemY + ((MenuItem) this.menuItems.elementAt(this.visibleExpandedIndex)).getTotalHeight();
             boolean isVisible = itemY > this.scrollOffset && itemBottom - this.scrollOffset <= this.contentHeight;
@@ -1022,9 +1051,9 @@ public final class ListView {
                 neighbor = this.visibleExpandedIndex;
             }
             if (isVisible && this.expandDirection == direction) {
-                boolean atEdge = direction == 1
-                        ? itemY - this.scrollOffset <= 20
-                        : this.contentHeight - (itemBottom - this.scrollOffset) <= 20;
+                boolean atEdge = direction == EXPAND_UP
+                        ? itemY - this.scrollOffset <= SCROLL_STEP
+                        : this.contentHeight - (itemBottom - this.scrollOffset) <= SCROLL_STEP;
                 if (atEdge) {
                     neighbor = this.visibleExpandedIndex;
                 }
@@ -1032,29 +1061,29 @@ public final class ListView {
             if (neighbor < this.menuItems.size()) {
                 ((MenuItem) this.menuItems.elementAt(neighbor)).visible = true;
                 this.visibleExpandedIndex = neighbor;
-            } else if (direction == 1) {
-                scrollOffsetUp(20);
+            } else if (direction == EXPAND_UP) {
+                scrollOffsetUp(SCROLL_STEP);
             } else {
-                scrollOffsetDown(20);
+                scrollOffsetDown(SCROLL_STEP);
             }
         } else {
             int anyExpanded = findAnyExpanded();
             if (anyExpanded < this.menuItems.size()) {
                 ((MenuItem) this.menuItems.elementAt(anyExpanded)).visible = true;
                 this.visibleExpandedIndex = anyExpanded;
-            } else if (direction == 1) {
-                scrollOffsetUp(20);
+            } else if (direction == EXPAND_UP) {
+                scrollOffsetUp(SCROLL_STEP);
             } else {
-                scrollOffsetDown(20);
+                scrollOffsetDown(SCROLL_STEP);
             }
         }
         this.expandDirection = direction;
     }
 
     private void handleExpandableTap(int tapLocalX, int tapLocalY) {
-        int tapX = tapLocalX - 2;
+        int tapX = tapLocalX - INNER_MARGIN;
         int tapScrollY = (tapLocalY + this.scrollOffset) - this.contentTop;
-        int availWidth = this.hasScrollbar ? this.contentWidth : this.contentWidth + 2;
+        int availWidth = this.hasScrollbar ? this.contentWidth : this.contentWidth + INNER_MARGIN;
         int expandedIdx = findVisibleExpanded();
         if (expandedIdx < this.menuItems.size()) {
             ((MenuItem) this.menuItems.elementAt(expandedIdx)).visible = false;
@@ -1063,7 +1092,7 @@ public final class ListView {
             MenuItem menuItem = getItemAt(idx);
             int itemX = getItemX(idx);
             int itemY = getItemY(idx);
-            if (menuItem.id == 13 && tapX > itemX && tapScrollY > itemY && tapX < itemX + availWidth && tapScrollY < itemY + menuItem.getTotalHeight()) {
+            if (menuItem.id == MenuItem.TYPE_EXPANDABLE && tapX > itemX && tapScrollY > itemY && tapX < itemX + availWidth && tapScrollY < itemY + menuItem.getTotalHeight()) {
                 menuItem.visible = true;
                 break;
             }
@@ -1074,7 +1103,7 @@ public final class ListView {
         int result = this.menuItems.size() + 1;
         for (int idx = 0; idx < this.menuItems.size(); idx++) {
             MenuItem menuItem = (MenuItem) this.menuItems.elementAt(idx);
-            if (menuItem.id == 13 && menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
+            if (menuItem.id == MenuItem.TYPE_EXPANDABLE && menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
                 result = idx;
             }
         }
@@ -1084,7 +1113,7 @@ public final class ListView {
         int result = this.menuItems.size() + 1;
         for (int idx = 0; idx < this.menuItems.size(); idx++) {
             MenuItem menuItem = (MenuItem) this.menuItems.elementAt(idx);
-            if (menuItem.id == 13 && !menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(idx) < getItemY(fromIndex)) {
+            if (menuItem.id == MenuItem.TYPE_EXPANDABLE && !menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(idx) < getItemY(fromIndex)) {
                 result = idx;
             }
         }
@@ -1095,7 +1124,7 @@ public final class ListView {
         int result = this.menuItems.size() + 1;
         for (int idx = 0; idx < this.menuItems.size(); idx++) {
             MenuItem menuItem = (MenuItem) this.menuItems.elementAt(idx);
-            if (menuItem.id == 13 && !menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(idx) > getItemY(fromIndex)) {
+            if (menuItem.id == MenuItem.TYPE_EXPANDABLE && !menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight && getItemY(idx) > getItemY(fromIndex)) {
                 result = idx;
                 break;
             }
@@ -1106,7 +1135,7 @@ public final class ListView {
         int result = this.menuItems.size() + 1;
         for (int idx = 0; idx < this.menuItems.size(); idx++) {
             MenuItem menuItem = (MenuItem) this.menuItems.elementAt(idx);
-            if (menuItem.id == 13 && !menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
+            if (menuItem.id == MenuItem.TYPE_EXPANDABLE && !menuItem.visible && getItemY(idx) > this.scrollOffset && (getItemY(idx) + menuItem.getTotalHeight()) - this.scrollOffset <= this.contentHeight) {
                 result = idx;
             }
         }

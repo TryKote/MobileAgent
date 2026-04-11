@@ -16,58 +16,68 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: az */
-/* loaded from: MobileAgent_3.9.jar:az.class */
 public final class Message {
 
-    /* renamed from: a */
+    // Message flag bits
+    public static final int FLAG_HAS_ATTACHMENT = 1;
+    public static final int FLAG_UNREAD = 4;
+
+    // Attachment field count per attachment entry
+    public static final int ATTACHMENT_FIELD_COUNT = 6;
+
+    // Attachment field key indices (state pool string keys)
+    public static final int ATTACHMENT_KEY_FIRST = 1227;
+    public static final int ATTACHMENT_KEY_LAST = 1232;
+
+    // Layout dimensions for message list items
+    private static final int LAYOUT_BASE_WIDTH = 240;
+    private static final int LAYOUT_DATE_WIDTH = 227;
+    private static final int LAYOUT_PADDING = 10;
+    private static final int ICON_WIDTH = 20;
+    private static final int SUBJECT_PADDING = 22;
+
+    // Text style for read messages
+    private static final int TEXT_STYLE_READ = 19;
+
     public String from;
 
-    /* renamed from: b */
     public long timestamp;
 
-    /* renamed from: c */
     public Vector toList;
 
-    /* renamed from: d */
     public Vector ccList;
 
-    /* renamed from: e */
     public int priority;
 
-    /* renamed from: f */
     public int flags;
 
-    /* renamed from: g */
     public String subject;
 
-    /* renamed from: h */
     public String body;
 
-    /* renamed from: i */
     public Object[] attachments;
 
-    public Message(Hashtable hashtable) {
-        this.from = JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
-        this.timestamp = JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
-        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
-        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO_NAME)));
-        this.priority = JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
-        setFlag(4, JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
-        setFlag(1, JsonParser.getIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
-        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT)));
+    public Message(Hashtable fields) {
+        this.from = JsonParser.getStringValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
+        this.timestamp = JsonParser.getIntValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
+        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
+        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO_NAME)));
+        this.priority = JsonParser.getIntValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
+        setFlag(FLAG_UNREAD, JsonParser.getIntValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
+        setFlag(FLAG_HAS_ATTACHMENT, JsonParser.getIntValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
+        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(fields, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT)));
     }
 
-    public Message(Vector vector, String str, String str2) {
+    public Message(Vector recipients, String subject, String body) {
         MrimAccount account = (MrimAccount) Storage.state().getAccount();
         this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), MailHelper.createAddressPair(account.login, Utils.defaultStr(account.chatRoomManager.nickname)));
-        this.ccList = vector;
-        this.subject = str;
-        this.body = str2;
+        this.ccList = recipients;
+        this.subject = subject;
+        this.body = body;
     }
 
-    public Message(ByteBuffer buffer, String str) {
-        this.from = str;
+    public Message(ByteBuffer buffer, String messageId) {
+        this.from = messageId;
         this.timestamp = buffer.readLong();
         this.toList = MailHelper.readAddressPairs(buffer);
         this.ccList = MailHelper.readAddressPairs(buffer);
@@ -82,202 +92,189 @@ public final class Message {
         }
     }
 
-    /* renamed from: a */
     public static final Object[] readAttachmentArray(ByteBuffer buffer) {
         try {
             int count = buffer.readInt();
             if (count == 0) {
                 return null;
             }
-            Object[] objArr = new Object[count];
+            Object[] attachments = new Object[count];
             for (int i = 0; i < count; i++) {
-                String[] strArr = new String[6];
-                for (int i2 = 0; i2 < 6; i2++) {
-                    strArr[i2] = buffer.readUTF8Str((String) null);
+                String[] fields = new String[ATTACHMENT_FIELD_COUNT];
+                for (int j = 0; j < ATTACHMENT_FIELD_COUNT; j++) {
+                    fields[j] = buffer.readUTF8Str((String) null);
                 }
-                objArr[i] = strArr;
+                attachments[i] = fields;
             }
-            return objArr;
+            return attachments;
         } catch (Throwable unused) {
             return null;
         }
     }
 
-    /* renamed from: a */
     public final boolean isRead() {
-        return !hasFlag(4);
+        return !hasFlag(FLAG_UNREAD);
     }
 
-    /* renamed from: a */
     public final MenuItem createMenuItem(ChatRoom chatRoom) {
-        boolean z;
+        boolean isMarkedRead;
         int roomType;
         String[] ccRecipient;
         String[] toRecipient;
-        boolean isUnread = hasFlag(4);
-        int i = isUnread ? 1 : 0;
-        int i2 = i;
-        int ellipsisWidth = Storage.state().getGfxContext(i).stringWidth(Storage.state().getEllipsis());
-        int availWidth = (((Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - ellipsisWidth) - 240) + 227) - 10;
-        int i3 = isUnread ? 0 : 19;
+        boolean isUnread = hasFlag(FLAG_UNREAD);
+        int fontStyle = isUnread ? 1 : 0;
+        int ellipsisWidth = Storage.state().getGfxContext(fontStyle).stringWidth(Storage.state().getEllipsis());
+        int availWidth = (((Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - ellipsisWidth) - LAYOUT_BASE_WIDTH) + LAYOUT_DATE_WIDTH) - LAYOUT_PADDING;
+        int textStyle = isUnread ? 0 : TEXT_STYLE_READ;
         MrimAccount account = (MrimAccount) Storage.state().getAccount();
         MenuItem item = MenuItem.create(this.from);
         item.data = this;
-        String str = this.from;
+        String msgId = this.from;
         Enumeration elements = account.chatRoomManager.list.elements();
         while (true) {
             if (!elements.hasMoreElements()) {
-                z = false;
+                isMarkedRead = false;
                 break;
             }
-            if (((ChatRoom) elements.nextElement()).isMessageRead(str)) {
-                z = true;
+            if (((ChatRoom) elements.nextElement()).isMessageRead(msgId)) {
+                isMarkedRead = true;
                 break;
             }
         }
-        boolean z2 = z;
-        MenuItem iconItem = item.setIcon(z ? 25 : -1);
+        boolean hasReadMark = isMarkedRead;
+        MenuItem iconItem = item.setIcon(isMarkedRead ? 25 : -1);
         Calendar cal = Storage.state().getCalendar();
-        int i4 = cal.get(1);
-        int i5 = cal.get(2);
-        int i6 = cal.get(5);
+        int todayYear = cal.get(1);
+        int todayMonth = cal.get(2);
+        int todayDay = cal.get(5);
         cal.setTime(new Date(this.timestamp));
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String dateStr = Utils.appendSpace(ObjectPool.toStringAndRelease((i4 == cal.get(1) && i5 == cal.get(2) && i6 == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
-        MenuItem textItem = iconItem.addText(dateStr, i2, 10);
+        String dateStr = Utils.appendSpace(ObjectPool.toStringAndRelease((todayYear == cal.get(1) && todayMonth == cal.get(2) && todayDay == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
+        MenuItem textItem = iconItem.addText(dateStr, fontStyle, 10);
         String priorityStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('[').append(this.priority).append(Storage.resources().getString(StringResKeys.STR_PRIORITY_SUFFIX)));
-        MenuItem mainItem = textItem.addText(priorityStr, i2, i3);
-        int textWidth = Storage.state().getGfxContext(i2).stringWidth(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(dateStr).append(priorityStr)));
-        if (hasFlag(1)) {
+        MenuItem mainItem = textItem.addText(priorityStr, fontStyle, textStyle);
+        int textWidth = Storage.state().getGfxContext(fontStyle).stringWidth(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(dateStr).append(priorityStr)));
+        if (hasFlag(FLAG_HAS_ATTACHMENT)) {
             mainItem.setIcon(221);
-            textWidth += 20;
+            textWidth += ICON_WIDTH;
         }
-        if (z2) {
-            textWidth += 20;
+        if (hasReadMark) {
+            textWidth += ICON_WIDTH;
         }
         if (chatRoom == account.chatRoomManager.getLast()) {
             roomType = account.chatRoomManager.findById(chatRoom.getPriority(this.from)).getType();
         } else {
-            roomType = (chatRoom == account.chatRoomManager.getLast() || !chatRoom.hasMessage(this.from)) ? 3 : chatRoom.getType();
+            roomType = (chatRoom == account.chatRoomManager.getLast() || !chatRoom.hasMessage(this.from)) ? ChatRoom.TYPE_OTHER : chatRoom.getType();
         }
-        int i7 = roomType;
-        boolean z3 = false;
-        if ((i7 & 1) != 0 && (toRecipient = MailHelper.getFirstRecipient(getToList())) != null) {
-            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), i2, availWidth - textWidth, ellipsisWidth, true), i2, i3);
-            z3 = true;
+        boolean hasForwardInfo = false;
+        if ((roomType & 1) != 0 && (toRecipient = MailHelper.getFirstRecipient(getToList())) != null) {
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), fontStyle, availWidth - textWidth, ellipsisWidth, true), fontStyle, textStyle);
+            hasForwardInfo = true;
         }
-        if ((i7 & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
-            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), i2, availWidth - (z3 ? 0 : textWidth), ellipsisWidth, true), i2, i3);
+        if ((roomType & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), fontStyle, availWidth - (hasForwardInfo ? 0 : textWidth), ellipsisWidth, true), fontStyle, textStyle);
         }
-        boolean z4 = chatRoom == account.chatRoomManager.getLast();
-        mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), i2, availWidth - 22, ellipsisWidth, z4), i2, i3);
-        if (z4) {
+        boolean isLastRoom = chatRoom == account.chatRoomManager.getLast();
+        mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), fontStyle, availWidth - SUBJECT_PADDING, ellipsisWidth, isLastRoom), fontStyle, textStyle);
+        if (isLastRoom) {
             mainItem.setIcon(234);
-            mainItem.addText(truncateText(account.chatRoomManager.findById(chatRoom.getPriority(this.from)).name, i2, availWidth - 22, ellipsisWidth, false), i2, i3);
+            mainItem.addText(truncateText(account.chatRoomManager.findById(chatRoom.getPriority(this.from)).name, fontStyle, availWidth - SUBJECT_PADDING, ellipsisWidth, false), fontStyle, textStyle);
         }
         return mainItem;
     }
 
-    /* renamed from: b */
     public final Vector getToList() {
         return this.toList == null ? ObjectPool.newVector() : this.toList;
     }
 
-    /* renamed from: c */
     public final Vector getCcList() {
         return this.ccList == null ? ObjectPool.newVector() : this.ccList;
     }
 
-    /* renamed from: a */
-    public final void setFlag(int i, boolean z) {
-        if (z) {
-            this.flags |= i;
+    public final void setFlag(int flagBit, boolean enabled) {
+        if (enabled) {
+            this.flags |= flagBit;
         } else {
-            this.flags &= i ^ (-1);
+            this.flags &= flagBit ^ (-1);
         }
     }
 
-    /* renamed from: a */
-    public final boolean hasFlag(int i) {
-        return (this.flags & i) != 0;
+    public final boolean hasFlag(int flagBit) {
+        return (this.flags & flagBit) != 0;
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 4 to block B:12:0x0049 */
-    /* renamed from: a */
-    private static String truncateText(String str, int i, int i2, int i3, boolean z) {
-        int i4;
+    private static String truncateText(String text, int fontStyle, int maxWidth, int ellipsisWidth, boolean appendNewline) {
+        int mid;
         int substringW;
-        GraphicsContext gfx = Storage.state().getGfxContext(i);
-        if (gfx.stringWidth(str) > i2 + i3) {
-            int i5 = 4;
-            int i6 = 4;
-            int length = str.length();
-            int i7 = length;
+        GraphicsContext gfx = Storage.state().getGfxContext(fontStyle);
+        if (gfx.stringWidth(text) > maxWidth + ellipsisWidth) {
+            int lo = 4;
+            int lastLo = 4;
+            int hi = text.length();
+            int lastHi = hi;
             while (true) {
-                i4 = (i5 + length) >> 1;
-                if (i4 == i6 || (substringW = gfx.substringWidth(str, 0, i4)) == i2) {
+                mid = (lo + hi) >> 1;
+                if (mid == lastLo || (substringW = gfx.substringWidth(text, 0, mid)) == maxWidth) {
                     break;
                 }
-                if (substringW > i2) {
-                    i7 = i4;
+                if (substringW > maxWidth) {
+                    lastHi = mid;
                 } else {
-                    i6 = i4;
+                    lastLo = mid;
                 }
-                i5 = i6;
-                length = i7;
+                lo = lastLo;
+                hi = lastHi;
             }
-            str = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(str, i4 + 1)).append((char) 8230));
+            text = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(text, mid + 1)).append((char) 8230));
         }
-        return z ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(str).append('\n')) : str;
+        return appendNewline ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(text).append('\n')) : text;
     }
 
-    /* renamed from: d */
     public final String getSubject() {
         return (this.subject == null || this.subject.length() == 0) ? Storage.resources().getString(StringResKeys.STR_NO_SUBJECT) : this.subject;
     }
 
-    /* renamed from: e */
     public final Object toHashtable() {
-        Hashtable hashtable = new Hashtable();
-        String[] ccRecipient = MailHelper.getFirstRecipient(this.toList);
-        if (ccRecipient != null) {
-            hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM), ccRecipient[1]);
+        Hashtable result = new Hashtable();
+        String[] fromRecipient = MailHelper.getFirstRecipient(this.toList);
+        if (fromRecipient != null) {
+            result.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_FROM), fromRecipient[1]);
         }
-        String ccKey = Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO);
-        Vector vector = this.ccList;
+        String toKey = Storage.resources().getString(PackedStringKeys.MAIL_FIELD_TO);
+        Vector ccAddresses = this.ccList;
         StringBuffer sb = ObjectPool.newStringBuffer();
-        if (vector != null) {
-            String str = Storage.emptyStr;
+        if (ccAddresses != null) {
+            String empty = Storage.emptyStr;
             ObjectPool.unpackChars(60);
             ObjectPool.unpackChars(62);
             String separator = ObjectPool.unpackChars(44);
-            Enumeration elements = vector.elements();
+            Enumeration elements = ccAddresses.elements();
             while (elements.hasMoreElements()) {
-                sb.append(sb.length() > 0 ? separator : str).append(str).append(((String[]) elements.nextElement())[0]).append(str);
+                sb.append(sb.length() > 0 ? separator : empty).append(empty).append(((String[]) elements.nextElement())[0]).append(empty);
             }
         }
-        hashtable.put(ccKey, ObjectPool.toStringAndRelease(sb));
-        hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
-        hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_BODY), this.body);
-        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_ACTION_COPY), 1);
-        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.ACTION_SEND), 1);
-        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
-        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
-        JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
+        result.put(toKey, ObjectPool.toStringAndRelease(sb));
+        result.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
+        result.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_BODY), this.body);
+        JsonParser.putIntValue(result, Storage.resources().getString(PackedStringKeys.MAIL_ACTION_COPY), 1);
+        JsonParser.putIntValue(result, Storage.resources().getString(PackedStringKeys.ACTION_SEND), 1);
+        JsonParser.putIntValue(result, Storage.resources().getString(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
+        JsonParser.putIntValue(result, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
+        JsonParser.putIntValue(result, Storage.resources().getString(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
         Vector attachList = ObjectPool.newVector();
-        int length = this.attachments == null ? 0 : this.attachments.length;
-        for (int i = 0; i < length; i++) {
-            String[] strArr = (String[]) this.attachments[i];
-            Hashtable hashtable2 = new Hashtable();
-            for (int i2 = 1227; i2 <= 1232; i2++) {
-                hashtable2.put(Storage.state().getString(i2), strArr[i2 - 1227]);
+        int count = this.attachments == null ? 0 : this.attachments.length;
+        for (int i = 0; i < count; i++) {
+            String[] attachFields = (String[]) this.attachments[i];
+            Hashtable attachEntry = new Hashtable();
+            for (int j = ATTACHMENT_KEY_FIRST; j <= ATTACHMENT_KEY_LAST; j++) {
+                attachEntry.put(Storage.state().getString(j), attachFields[j - ATTACHMENT_KEY_FIRST]);
             }
-            attachList.addElement(hashtable2);
+            attachList.addElement(attachEntry);
         }
-        hashtable.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
+        result.put(Storage.resources().getString(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
         if (attachList.size() > 0) {
-            JsonParser.putIntValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
+            JsonParser.putIntValue(result, Storage.resources().getString(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
         }
-        return hashtable;
+        return result;
     }
 }

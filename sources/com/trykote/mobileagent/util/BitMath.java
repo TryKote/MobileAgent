@@ -13,12 +13,10 @@ import com.trykote.mobileagent.net.*;
 /* Extracted from AppController: pure bit/math utility functions */
 public final class BitMath {
 
-    /* renamed from: a */
     public static final int[] resizeArray(int[] iArr, int i, int i2) {
         return growArray(growArray(iArr, i), i2);
     }
 
-    /* renamed from: a */
     private static int[] growArray(int[] iArr, int i) {
         int[] result = iArr;
         int newLength = 1 + iArr[0];
@@ -32,7 +30,6 @@ public final class BitMath {
         return result;
     }
 
-    /* renamed from: d */
     private static int computeTimerValue(int i) {
         if (i == 0) {
             return 32;
@@ -56,18 +53,15 @@ public final class BitMath {
         return count;
     }
 
-    /* renamed from: b */
     public static final int countLeadingZeros(long j) {
         int highBits = computeTimerValue((int) (j >> 32));
         return highBits == 32 ? computeTimerValue((int) j) + 32 : highBits;
     }
 
-    /* renamed from: b */
     public static final long shiftRightSticky(long j, int i) {
         return i >= 64 ? j == 0 ? 0L : 1L : (j << (64 - i)) == 0 ? j >>> i : (j >>> i) | 1;
     }
 
-    /* renamed from: c */
     public static final long roundedShiftRight(long j, int i) {
         long shifted;
         long result;

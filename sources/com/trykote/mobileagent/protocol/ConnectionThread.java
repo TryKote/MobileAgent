@@ -6,8 +6,6 @@ import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 
-/* renamed from: j */
-/* loaded from: MobileAgent_3.9.jar:j.class */
 public final class ConnectionThread {
 
     // Connection state constants
@@ -17,36 +15,29 @@ public final class ConnectionThread {
     public static final int STATE_CONNECTED = 2;
     public static final int STATE_CLOSING = 3;
 
-    /* renamed from: b */
     public Throwable exception;
 
-    /* renamed from: j */
     private SocketWrapper socket;
 
-    /* renamed from: k */
     private String connUrl;
 
-    /* renamed from: i */
     private ByteBuffer inBuffer = new ByteBuffer();
 
-    /* renamed from: a */
     public final ByteBuffer outBuffer = new ByteBuffer();
 
-    /* renamed from: c */
     public int state = STATE_CONNECTING;
 
-    public ConnectionThread(String str) {
-        this.connUrl = str;
-        RemoteLogger.log("CONN", "new ConnectionThread url=" + str);
-        Vector vectorM614m = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
-        if (vectorM614m != null) {
-            synchronized (vectorM614m) {
-                vectorM614m.addElement(IOUtils.registerResource(this));
+    public ConnectionThread(String url) {
+        this.connUrl = url;
+        RemoteLogger.log("CONN", "new ConnectionThread url=" + url);
+        Vector mediaControl = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
+        if (mediaControl != null) {
+            synchronized (mediaControl) {
+                mediaControl.addElement(IOUtils.registerResource(this));
             }
         }
     }
 
-    /* renamed from: a */
     public final int getState() throws Throwable {
         if (this.exception != null) {
             throw this.exception;
@@ -54,18 +45,17 @@ public final class ConnectionThread {
         return this.state;
     }
 
-    /* renamed from: a */
-    public final void drainInput(ByteBuffer c0043n) throws Throwable {
+    public final void drainInput(ByteBuffer dest) throws Throwable {
         synchronized (this.socket) {
             if (this.inBuffer.length > 0) {
-                ByteBuffer c0043n2 = this.inBuffer;
-                int i = c0043n2.length;
-                if (i > 0) {
-                    synchronized (c0043n2) {
-                        c0043n.writeBytesAt(c0043n2.data, c0043n2.offset, i);
-                        c0043n2.offset += i;
-                        c0043n2.length -= i;
-                        c0043n2.compact();
+                ByteBuffer src = this.inBuffer;
+                int len = src.length;
+                if (len > 0) {
+                    synchronized (src) {
+                        dest.writeBytesAt(src.data, src.offset, len);
+                        src.offset += len;
+                        src.length -= len;
+                        src.compact();
                     }
                 }
             } else if (this.exception != null) {
@@ -74,7 +64,6 @@ public final class ConnectionThread {
         }
     }
 
-    /* renamed from: b */
     public final void process() {
         switch (this.state) {
             case STATE_CONNECTING:
@@ -107,11 +96,11 @@ public final class ConnectionThread {
                 this.state = STATE_CLOSED;
                 return;
             default:
-                Vector vectorM614m = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
-                if (vectorM614m != null) {
-                    synchronized (vectorM614m) {
-                        vectorM614m.removeElement(this);
-                        Utils.trimIfEmpty(vectorM614m);
+                Vector mediaControl = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
+                if (mediaControl != null) {
+                    synchronized (mediaControl) {
+                        mediaControl.removeElement(this);
+                        Utils.trimIfEmpty(mediaControl);
                         IOUtils.unregisterResource(this);
                     }
                     return;
@@ -120,28 +109,26 @@ public final class ConnectionThread {
         }
     }
 
-    /* renamed from: o */
     private final void readFromSocket() {
-        int iM1190a;
         try {
             if (this.state == STATE_CONNECTED) {
-                ByteBuffer c0043n = this.inBuffer;
+                ByteBuffer buf = this.inBuffer;
                 SocketWrapper sock = this.socket;
-                int iM1188c = sock.available();
-                if (iM1188c > 0) {
-                    byte[] bArrM1211a = ObjectPool.newBytes(iM1188c);
-                    int i = 0;
+                int available = sock.available();
+                if (available > 0) {
+                    RemoteLogger.log("CONN", "readFromSocket: " + available + " bytes available");
+                    byte[] readBuf = ObjectPool.newBytes(available);
+                    int totalRead = 0;
                     do {
-                        iM1190a = i + sock.read(bArrM1211a, i, iM1188c - i);
-                        i = iM1190a;
-                    } while (iM1190a != iM1188c);
-                    synchronized (c0043n) {
-                        c0043n.ensureCapacity(iM1188c);
-                        Utils.arraycopy((Object) bArrM1211a, 0, (Object) c0043n.data, c0043n.length, iM1188c);
-                        c0043n.length += iM1188c;
-                        c0043n.compact();
+                        totalRead += sock.read(readBuf, totalRead, available - totalRead);
+                    } while (totalRead != available);
+                    synchronized (buf) {
+                        buf.ensureCapacity(available);
+                        Utils.arraycopy((Object) readBuf, 0, (Object) buf.data, buf.length, available);
+                        buf.length += available;
+                        buf.compact();
                     }
-                    ObjectPool.releaseBytes(bArrM1211a);
+                    ObjectPool.releaseBytes(readBuf);
                 }
             }
         } catch (Throwable th) {
@@ -152,22 +139,22 @@ public final class ConnectionThread {
         }
     }
 
-    /* renamed from: p */
     private final void writeToSocket() {
         try {
             if (this.state == STATE_CONNECTED) {
-                ByteBuffer c0043n = this.outBuffer;
+                ByteBuffer buf = this.outBuffer;
                 SocketWrapper sock = this.socket;
-                synchronized (c0043n) {
-                    int i = c0043n.length;
-                    if (i > 0) {
-                        byte[] bArrM1211a = ObjectPool.newBytes(i);
-                        Utils.arraycopy((Object) c0043n.data, c0043n.offset, (Object) bArrM1211a, 0, i);
-                        c0043n.offset += i;
-                        c0043n.length -= i;
-                        c0043n.compact();
-                        sock.write(bArrM1211a, i);
-                        ObjectPool.releaseBytes(bArrM1211a);
+                synchronized (buf) {
+                    int len = buf.length;
+                    if (len > 0) {
+                        RemoteLogger.log("CONN", "writeToSocket: sending " + len + " bytes");
+                        byte[] writeBuf = ObjectPool.newBytes(len);
+                        Utils.arraycopy((Object) buf.data, buf.offset, (Object) writeBuf, 0, len);
+                        buf.offset += len;
+                        buf.length -= len;
+                        buf.compact();
+                        sock.write(writeBuf, len);
+                        ObjectPool.releaseBytes(writeBuf);
                     }
                 }
             }

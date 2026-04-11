@@ -14,186 +14,190 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
-/* renamed from: l */
-/* loaded from: MobileAgent_3.9.jar:l.class */
 public abstract class Contact implements Sortable {
 
-    /* renamed from: o */
+    // Render state bit flags (used for contact list sort priority)
+    private static final int RENDER_HAS_NOTIFICATION = 0x40000000;
+    private static final int RENDER_IS_HIGHLIGHTED = 0x20000000;
+    private static final int RENDER_HAS_MESSAGES = 0x10000000;
+    private static final int RENDER_NOT_FULLY_ONLINE = 0x08000000;
+    private static final int RENDER_ALL_READ = 0x04000000;
+    private static final int RENDER_AVAILABLE = 0x02000000;
+
+    // Masks to clear incompatible render bits
+    private static final int RENDER_OFFLINE_CLEAR_MASK =
+            ~(RENDER_HAS_NOTIFICATION | RENDER_IS_HIGHLIGHTED | RENDER_HAS_MESSAGES | RENDER_AVAILABLE);
+    private static final int RENDER_ONLINE_CLEAR_MASK =
+            ~(RENDER_ALL_READ | RENDER_AVAILABLE);
+
+    // Icon IDs
+    static final int ICON_BLINK_UNREAD = 16384;
+    private static final int ICON_BLINK_NOTIFICATION = 16386;
+    static final int ICON_TYPING = 26;
+
+    // Message flag types (used in addFlag / receiveMessageFull)
+    private static final int MSG_FLAG_INCOMING = 4;
+    private static final int MSG_FLAG_SPECIAL = 64;
+
+    // Stored message types (written to message buffer)
+    private static final int MSG_TYPE_OUTGOING = 1;
+    private static final int MSG_TYPE_INCOMING = 8;
+    private static final int MSG_TYPE_FORWARDED = 16;
+
+    // Message display color styles
+    private static final int COLOR_OUTGOING = 11;
+    private static final int COLOR_INCOMING = 12;
+
+    // Message header size in bytes (type + timestamp + sentTime + length prefix)
+    private static final int MSG_HEADER_SIZE = 17;
+
+    // Maximum preview length for message summary truncation
+    private static final int SUMMARY_TRUNCATION_LENGTH = 50;
+
     public final Account account;
 
-    /* renamed from: a */
     private ByteBuffer messageBuffer;
 
-    /* renamed from: p */
     public boolean highlighted;
 
-    /* renamed from: q */
     public int statusCode;
 
-    /* renamed from: r */
     public int defaultIcon;
 
-    /* renamed from: s */
     public byte flags;
 
-    /* renamed from: t */
     public boolean dirty;
 
-    /* renamed from: u */
     public String displayName;
 
-    /* renamed from: v */
     public String sortKey;
 
-    /* renamed from: b */
     private int renderState;
 
-    /* renamed from: c */
     private long lastMessageTime;
 
-    /* renamed from: w */
     public String identifier;
 
-    /* renamed from: x */
     public String extra;
 
     public Contact(Account acct) {
         this.account = acct;
     }
 
-    /* renamed from: a */
     public abstract void deserialize(ByteBuffer buffer);
 
-    /* renamed from: e */
     public int getIcon() {
         if (this.flags != 0) {
-            return (this.flags & 1) != 0 ? 16384 : 16386;
+            return (this.flags & 1) != 0 ? ICON_BLINK_UNREAD : ICON_BLINK_NOTIFICATION;
         }
         if (this.statusCode != 0) {
-            return 26;
+            return ICON_TYPING;
         }
         return this.defaultIcon;
     }
 
-    /* renamed from: c */
-    public final void addFlag(int i) {
-        this.flags = (byte) (this.flags | i);
+    public final void addFlag(int flagBit) {
+        this.flags = (byte) (this.flags | flagBit);
         ContactListManager.markContactRead(this);
         this.dirty = true;
         this.lastMessageTime = Storage.state().getLong(SessionKeys.TIMESTAMP_CURRENT);
         updateRenderState();
     }
 
-    /* renamed from: g */
     public String getDefaultName() {
         return Storage.emptyStr;
     }
 
-    /* renamed from: A */
     public final void updateRenderState() {
-        int i = this.flags != 0 ? 1073741824 : 0;
+        int state = this.flags != 0 ? RENDER_HAS_NOTIFICATION : 0;
         if (this.lastMessageTime != 0) {
-            i |= 268435456;
+            state |= RENDER_HAS_MESSAGES;
         }
         if (this.highlighted) {
-            i |= 536870912;
+            state |= RENDER_IS_HIGHLIGHTED;
         }
         if (!hasUnread()) {
-            i |= 67108864;
+            state |= RENDER_ALL_READ;
         }
-        int i2 = !isOffline() ? i | 33554432 : i & (-1912602625);
-        int i3 = !isOnline() ? i2 | 134217728 : i2 & (-100663297);
-        if (i3 != this.renderState) {
-            this.renderState = i3;
+        state = !isOffline() ? state | RENDER_AVAILABLE : state & RENDER_OFFLINE_CLEAR_MASK;
+        state = !isOnline() ? state | RENDER_NOT_FULLY_ONLINE : state & RENDER_ONLINE_CLEAR_MASK;
+        if (state != this.renderState) {
+            this.renderState = state;
             AppController.needsLayoutUpdate = true;
         }
     }
 
-    /* renamed from: B */
     public final void initMessageBuffer() {
         this.messageBuffer = new ByteBuffer();
         saveMessageBuffer();
     }
 
-    /* renamed from: m */
     public abstract boolean isOnline();
 
-    /* renamed from: l */
     public abstract boolean hasUnread();
 
-    /* renamed from: n */
     public boolean isSystem() {
         return false;
     }
 
-    /* renamed from: C */
     public final void clearStatus() {
         this.statusCode = 0;
         this.dirty = true;
     }
 
-    /* renamed from: a */
-    public final void receiveMessage(long j, StringBuffer stringBuffer) {
-        receiveMessageFull(j, ObjectPool.toStringAndRelease(stringBuffer), 4);
+    public final void receiveMessage(long timestamp, StringBuffer textBuffer) {
+        receiveMessageFull(timestamp, ObjectPool.toStringAndRelease(textBuffer), MSG_FLAG_INCOMING);
     }
 
-    /* renamed from: a */
-    public final void receiveMessageFull(long j, String str, int i) {
-        TabBar tabBar;
+    public final void receiveMessageFull(long timestamp, String text, int flagType) {
         Storage.state().setObject(ContactKeys.SLOT_CURRENT_CONTACT_ID, (Object) this.identifier);
-        NotificationHelper.playNotificationSound(2);
-        addFlag(i);
+        NotificationHelper.playNotificationSound(NotificationHelper.SOUND_MESSAGE_RECEIVED);
+        addFlag(flagType);
         this.account.markRead(getIdentifier());
         clearStatus();
-        appendMessage(i != 4 ? 0 : 8, str, j, 0L);
+        appendMessage(flagType != MSG_FLAG_INCOMING ? 0 : MSG_TYPE_INCOMING, text, timestamp, 0L);
         ContactGroup group = this.account.findGroup(this);
         if (group != null && group.isSpecial) {
             group.toggleSpecial();
         }
         updateRenderState();
         Account acct = this.account;
-        String str2 = this.identifier;
-        if (acct == null || str2 == null) {
+        String contactId = this.identifier;
+        if (acct == null || contactId == null) {
             return;
         }
         Vector tabs = Storage.state().getVector(UIKeys.VEC_TAB_BARS);
-        int size = tabs.size();
-        do {
-            size--;
-            if (size < 0) {
+        for (int k = tabs.size() - 1; k >= 0; k--) {
+            TabBar tabBar = (TabBar) tabs.elementAt(k);
+            if (tabBar.account == acct) {
+                tabBar.selectedTitle = contactId;
+                tabBar.selectedIndex = 0;
                 return;
-            } else {
-                tabBar = (TabBar) tabs.elementAt(size);
             }
-        } while (tabBar.account != acct);
-        tabBar.selectedTitle = str2;
-        tabBar.selectedIndex = 0;
+        }
     }
 
-    /* renamed from: b */
-    public final int sendMessage(String str) {
-        NotificationHelper.playNotificationSound(4);
-        if (StringUtils.isEmpty(str)) {
+    public final int sendMessage(String text) {
+        NotificationHelper.playNotificationSound(NotificationHelper.SOUND_MESSAGE_SENT);
+        if (StringUtils.isEmpty(text)) {
             return 309;
         }
         Account acct = this.account;
         long now = Storage.state().getLong(SessionKeys.TIMESTAMP_CURRENT);
-        int sendResult = acct.validateSend(this, str, now);
-        if (0 != sendResult) {
+        int sendResult = acct.validateSend(this, text, now);
+        if (sendResult != 0) {
             return sendResult;
         }
-        appendMessage(1, str, now, now);
+        appendMessage(MSG_TYPE_OUTGOING, text, now, now);
         this.lastMessageTime = Storage.state().getLong(SessionKeys.TIMESTAMP_CURRENT);
         updateRenderState();
         return 0;
     }
 
-    /* renamed from: D */
     public final int validateDelete() {
         return this.account.validateContactDelete(this);
     }
 
-    /* renamed from: E */
     public final int validateBlock() {
         if (isOnline()) {
             return 310;
@@ -201,7 +205,6 @@ public abstract class Contact implements Sortable {
         return this.account.validateContactBlock(this);
     }
 
-    /* renamed from: F */
     public final int validateUnblock() {
         if (isOnline()) {
             return 310;
@@ -210,18 +213,16 @@ public abstract class Contact implements Sortable {
     }
 
     @Override // p000.Sortable
-    /* renamed from: a */
     public final int compareTo(Object obj) {
         Contact other = (Contact) obj;
-        int i = other.renderState - this.renderState;
-        if (i != 0) {
-            return i;
+        int stateDiff = other.renderState - this.renderState;
+        if (stateDiff != 0) {
+            return stateDiff;
         }
-        long j = other.lastMessageTime - this.lastMessageTime;
-        return j != 0 ? j < 0 ? -1 : 1 : this.sortKey.compareTo(other.sortKey);
+        long timeDiff = other.lastMessageTime - this.lastMessageTime;
+        return timeDiff != 0 ? timeDiff < 0 ? -1 : 1 : this.sortKey.compareTo(other.sortKey);
     }
 
-    /* renamed from: c */
     public void clearUnread() {
         if (isOnline()) {
             this.lastMessageTime = 0L;
@@ -230,83 +231,76 @@ public abstract class Contact implements Sortable {
         updateRenderState();
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:11:0x0097 */
-    /* renamed from: a */
-    public final void updateMessageFlag(long j, int i) {
+    public final void updateMessageFlag(long targetTime, int flagBit) {
         this.dirty = true;
         ByteBuffer msgBuf = this.messageBuffer == null ? ChunkedRecordStore.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = msgBuf;
-        int i2 = msgBuf.length;
-        int i3 = 0;
+        int bufferLength = msgBuf.length;
+        int pos = 0;
         while (true) {
-            int i4 = i3;
-            if (i4 >= i2) {
+            if (pos >= bufferLength) {
                 saveMessageBuffer();
                 return;
             }
-            int pktLen = msgBuf.peekShortBE(i4);
-            int i5 = i4 + 3 + 8;
-            if (j == ((msgBuf.peekIntAt(i5) & 4294967295L) | (msgBuf.peekIntAt(i5 + 4) << 32))) {
-                msgBuf.data[msgBuf.offset + i4 + 2] = (byte) (msgBuf.peekByteAt(i4 + 2) | i);
+            int pktLen = msgBuf.peekShortBE(pos);
+            int timeOffset = pos + 3 + 8;
+            if (targetTime == ((msgBuf.peekIntAt(timeOffset) & 4294967295L) | (msgBuf.peekIntAt(timeOffset + 4) << 32))) {
+                msgBuf.data[msgBuf.offset + pos + 2] = (byte) (msgBuf.peekByteAt(pos + 2) | flagBit);
             }
-            i3 = i4 + pktLen + 2;
+            pos = pos + pktLen + 2;
         }
     }
 
-    /* renamed from: a */
-    public final void appendMessage(int i, String str, long j, long j2) {
+    public final void appendMessage(int msgType, String text, long timestamp, long sentTime) {
         this.dirty = true;
         ByteBuffer msgBuf = this.messageBuffer == null ? ChunkedRecordStore.readChunkedRecord(this.identifier) : this.messageBuffer;
         this.messageBuffer = msgBuf;
         int maxCount = Storage.state().getInt(SettingsKeys.SETTING_MAX_CONTACTS) - 1;
         ByteBuffer buffer = this.messageBuffer;
-        int i2 = 0;
-        int i3 = 0;
-        int i4 = buffer.length;
-        while (i4 > 0) {
-            int pktLen = buffer.peekShortBE(i3);
-            i3 += pktLen + 2;
-            i4 -= pktLen + 2;
-            i2++;
+        int msgCount = 0;
+        int pos = 0;
+        int remaining = buffer.length;
+        while (remaining > 0) {
+            int pktLen = buffer.peekShortBE(pos);
+            pos += pktLen + 2;
+            remaining -= pktLen + 2;
+            msgCount++;
         }
-        while (i2 > maxCount) {
+        while (msgCount > maxCount) {
             buffer.skip(buffer.readShortBE());
-            i2--;
+            msgCount--;
         }
-        msgBuf.writeShortBE(17 + (str.length() << 1)).writeByte(i).writeLong((j != 0 ? j : System.currentTimeMillis()) + ((Storage.state().getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000)).writeLong(j2).writeAsShorts(str).compact();
+        msgBuf.writeShortBE(MSG_HEADER_SIZE + (text.length() << 1)).writeByte(msgType).writeLong((timestamp != 0 ? timestamp : System.currentTimeMillis()) + ((Storage.state().getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000)).writeLong(sentTime).writeAsShorts(text).compact();
         saveMessageBuffer();
         this.lastMessageTime = Storage.state().getLong(SessionKeys.TIMESTAMP_CURRENT);
         updateRenderState();
     }
 
-    /* renamed from: G */
     public final boolean hasMessages() {
         return this.lastMessageTime != 0;
     }
 
-    /* renamed from: H */
     public final long getLastSentTime() {
-        long j = 0;
+        long lastForwardedTime = 0;
         ByteBuffer dupe = getMessageBuffer().duplicate();
         while (dupe.length > 0) {
             int entryLen = dupe.readShortBE();
             byte msgType = dupe.readByte();
             dupe.readLong();
             long msgTime = dupe.readLong();
-            dupe.skip(entryLen - 17);
-            if (msgType == 16) {
-                j = msgTime;
+            dupe.skip(entryLen - MSG_HEADER_SIZE);
+            if (msgType == MSG_TYPE_FORWARDED) {
+                lastForwardedTime = msgTime;
             }
         }
         dupe.clear();
-        return j;
+        return lastForwardedTime;
     }
 
-    /* renamed from: I */
     public final ListView showMessages() {
         this.dirty = false;
-        String str = this.displayName;
-        Storage.state().setObject(RuntimeKeys.SLOT_CURRENT_MSG_TEXT, (Object) str);
+        String name = this.displayName;
+        Storage.state().setObject(RuntimeKeys.SLOT_CURRENT_MSG_TEXT, (Object) name);
         int icon = getIcon();
         if ((this instanceof XmppContact) && ((XmppProtocol) this.account).isMailRuVariant() && icon >= 381 && icon <= 384) {
             icon += 4;
@@ -320,45 +314,45 @@ public abstract class Contact implements Sortable {
             byte msgType = dupe.readByte();
             long msgTime = dupe.readLong() - Storage.state().getLong(SessionKeys.TIMESTAMP_OFFSET);
             long sentTime = dupe.readLong();
-            String msgText = Utils.normalizeSpaces(dupe.readUnicodeChars(entryLen - 17));
-            int i = (msgType == 0 || msgType == 16 || msgType == 8) ? 0 : msgType == 1 ? 11 : (msgType & 64) == 0 ? 12 : 0;
-            if (msgType == 16) {
+            String msgText = Utils.normalizeSpaces(dupe.readUnicodeChars(entryLen - MSG_HEADER_SIZE));
+            int colorStyle = (msgType == 0 || msgType == MSG_TYPE_FORWARDED || msgType == MSG_TYPE_INCOMING) ? 0
+                    : msgType == MSG_TYPE_OUTGOING ? COLOR_OUTGOING
+                    : (msgType & MSG_FLAG_SPECIAL) == 0 ? COLOR_INCOMING : 0;
+            if (msgType == MSG_TYPE_FORWARDED) {
                 msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.displayName).append(Storage.resources().getString(StringResKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
                 msgScreen.addIconItem(2, msgText, 0);
                 if (this.account.isConnected()) {
-                    msgScreen.addExpandableItem(-1, Storage.resources().getString(StringResKeys.STR_EXPAND_MESSAGE), i, new Object[]{ObjectPool.integerOf(1), msgText, str, new Long(sentTime)});
+                    msgScreen.addExpandableItem(-1, Storage.resources().getString(StringResKeys.STR_EXPAND_MESSAGE), colorStyle, new Object[]{ObjectPool.integerOf(1), msgText, name, new Long(sentTime)});
                 }
-            } else if (msgType == 8) {
+            } else if (msgType == MSG_TYPE_INCOMING) {
                 int nlIdx = msgText.indexOf(10);
                 String header = StringUtils.prefix(msgText, nlIdx);
                 String body = StringUtils.suffix(msgText, nlIdx + 1);
                 msgScreen.addSeparator(StringUtils.concat(header, formatTime(msgTime, dateCode)), 8);
-                addMessageLines(msgScreen, body, i);
+                addMessageLines(msgScreen, body, colorStyle);
             } else {
                 msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(msgType == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(msgTime, dateCode))), msgType == 0 ? 8 : 9);
-                addMessageLines(msgScreen, msgText, i);
+                addMessageLines(msgScreen, msgText, colorStyle);
             }
         }
         dupe.clear();
         return msgScreen;
     }
 
-    /* renamed from: a */
-    private final void addMessageLines(ListView screen, String str, int i) {
-        Vector lines = Conversation.parseConversation(str);
+    private final void addMessageLines(ListView screen, String text, int colorStyle) {
+        Vector lines = Conversation.parseConversation(text);
         int size = lines.size();
-        for (int i2 = 0; i2 < size; i2++) {
-            String str2 = (String) lines.elementAt(i2);
-            if (Conversation.isValidFormat(str2)) {
-                screen.addExpandableItem(264, Conversation.decodeMessage(str2), i, new Object[]{ObjectPool.integerOf(0), str2});
+        for (int k = 0; k < size; k++) {
+            String lineText = (String) lines.elementAt(k);
+            if (Conversation.isValidFormat(lineText)) {
+                screen.addExpandableItem(264, Conversation.decodeMessage(lineText), colorStyle, new Object[]{ObjectPool.integerOf(0), lineText});
             } else {
-                screen.addItem(MenuItem.createSeparator().addTextInternal(str2, 0, i, this.account.getType()));
+                screen.addItem(MenuItem.createSeparator().addTextInternal(lineText, 0, colorStyle, this.account.getType()));
             }
         }
         ObjectPool.releaseVector(lines);
     }
 
-    /* renamed from: f */
     private final ByteBuffer getMessageBuffer() {
         if (this.messageBuffer == null) {
             this.messageBuffer = ChunkedRecordStore.readChunkedRecord(this.identifier);
@@ -366,12 +360,10 @@ public abstract class Contact implements Sortable {
         return this.messageBuffer;
     }
 
-    /* renamed from: o */
     private final void saveMessageBuffer() {
         ChunkedRecordStore.writeChunkedRecord(this.identifier, getMessageBuffer().duplicate());
     }
 
-    /* renamed from: J */
     public final ListView showMessageSummary() {
         String truncated;
         ListView msgScreen = ScreenManager.createScreen(ScreenDef.MESSAGE_DETAIL);
@@ -381,9 +373,9 @@ public abstract class Contact implements Sortable {
             dupe.readByte();
             dupe.readLong();
             dupe.readLong();
-            String fullText = dupe.readUnicodeChars(entryLen - 17);
-            if (fullText.length() > 50) {
-                truncated = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(fullText, 50)).append((char) 8230));
+            String fullText = dupe.readUnicodeChars(entryLen - MSG_HEADER_SIZE);
+            if (fullText.length() > SUMMARY_TRUNCATION_LENGTH) {
+                truncated = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(fullText, SUMMARY_TRUNCATION_LENGTH)).append((char) 8230));
             } else {
                 truncated = fullText;
             }
@@ -393,7 +385,6 @@ public abstract class Contact implements Sortable {
         return msgScreen;
     }
 
-    /* renamed from: K */
     public final int getDefaultAction() {
         if (getMessageBuffer().length > 0 || !this.account.isConnected()) {
             return 40;
@@ -404,51 +395,42 @@ public abstract class Contact implements Sortable {
         return 63;
     }
 
-    /* renamed from: b */
     public abstract MenuItem createMenuItem();
 
-    /* renamed from: i */
     public abstract boolean canDelete();
 
-    /* renamed from: j */
     public abstract boolean canBlock();
 
-    /* renamed from: k */
     public abstract boolean canUnblock();
 
-    /* renamed from: b */
-    private static String formatTime(long j, int i) {
+    private static String formatTime(long millis, int todayDateCode) {
         Calendar cal = Storage.state().getCalendar();
-        cal.setTime(new Date(j));
+        cal.setTime(new Date(millis));
         StringBuffer sb = ObjectPool.newStringBuffer();
-        int i2 = cal.get(1) << 16;
-        int i3 = cal.get(2);
-        int i4 = i2 + (i3 << 8);
-        int i5 = cal.get(5);
-        if (i4 + i5 != i) {
-            sb.append(Utils.zeroPad(i5)).append('/').append(Utils.zeroPad(i3 + 1)).append(' ');
+        int yearPart = cal.get(Calendar.YEAR) << 16;
+        int month = cal.get(Calendar.MONTH);
+        int datePart = yearPart + (month << 8);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        if (datePart + day != todayDateCode) {
+            sb.append(Utils.zeroPad(day)).append('/').append(Utils.zeroPad(month + 1)).append(' ');
         }
-        return ObjectPool.toStringAndRelease(sb.append(Utils.zeroPad(cal.get(11))).append(':').append(Utils.zeroPad(cal.get(12))));
+        return ObjectPool.toStringAndRelease(sb.append(Utils.zeroPad(cal.get(Calendar.HOUR_OF_DAY))).append(':').append(Utils.zeroPad(cal.get(Calendar.MINUTE))));
     }
 
-    /* renamed from: a */
     public abstract String getIdentifier();
 
-    /* renamed from: d */
     public boolean isOffline() {
         return false;
     }
 
-    /* renamed from: h */
     public abstract void performAction();
 
-    /* renamed from: c */
-    public final void setDisplayName(String str) {
-        if (StringUtils.equals(str, this.displayName)) {
+    public final void setDisplayName(String name) {
+        if (StringUtils.equals(name, this.displayName)) {
             return;
         }
-        this.displayName = str;
-        this.sortKey = StringUtils.intern(str.toLowerCase());
+        this.displayName = name;
+        this.sortKey = StringUtils.intern(name.toLowerCase());
         AppController.needsLayoutUpdate = true;
     }
 
@@ -456,11 +438,9 @@ public abstract class Contact implements Sortable {
         return this.displayName;
     }
 
-    /* renamed from: L */
-    public void mo148L() {
+    public void clearRegistrationData() {
     }
 
-    /* renamed from: M */
     public final int getContextAction() {
         if (canDelete()) {
             return 267;

@@ -5,6 +5,10 @@ import javax.microedition.rms.RecordStore;
 
 public final class ChunkedRecordStore {
 
+    private static final int MAX_STORE_NAME_LENGTH = 32;
+    private static final int RMS_RECORD_OVERHEAD = 128;
+    private static final int MIN_CHUNK_SIZE = 2048;
+
     public static final ByteBuffer readChunkedRecord(String str) {
         RemoteLogger.log("PERSIST", "readChunkedRecord: name='" + str + "'");
         ByteBuffer buf = new ByteBuffer();
@@ -138,7 +142,7 @@ public final class ChunkedRecordStore {
             }
             RecordStore store = IOUtils.openRecordStore(str, true);
             recordStore = store;
-            int chunkSize = Utils.min(i2, Utils.max(recordStore.getSizeAvailable() - 128, 2048));
+            int chunkSize = Utils.min(i2, Utils.max(recordStore.getSizeAvailable() - RMS_RECORD_OVERHEAD, MIN_CHUNK_SIZE));
             store.addRecord(bArr, i, chunkSize);
             IOUtils.closeRecordStore(recordStore);
             return chunkSize;
@@ -155,23 +159,21 @@ public final class ChunkedRecordStore {
         if (strArr == null) {
             return false;
         }
-        int length = strArr.length;
-        do {
-            length--;
-            if (length < 0) {
-                return false;
+        for (int idx = strArr.length - 1; idx >= 0; idx--) {
+            if (str.equals(strArr[idx])) {
+                return true;
             }
-        } while (!str.equals(strArr[length]));
-        return true;
+        }
+        return false;
     }
 
     private static final String buildChunkName(String str, int i) {
         if (i == 0) {
-            return str.length() <= 32 ? str : StringUtils.prefix(str, 32);
+            return str.length() <= MAX_STORE_NAME_LENGTH ? str : StringUtils.prefix(str, MAX_STORE_NAME_LENGTH);
         }
         StringBuffer sb = ObjectPool.newStringBuffer().append(i);
         StringBuffer sb2 = ObjectPool.newStringBuffer().append('s').append(str).append('s');
-        while (sb2.length() + sb.length() > 32) {
+        while (sb2.length() + sb.length() > MAX_STORE_NAME_LENGTH) {
             sb2.setLength(sb2.length() - 1);
         }
         return ObjectPool.toStringAndRelease(sb2.append((Object) sb));

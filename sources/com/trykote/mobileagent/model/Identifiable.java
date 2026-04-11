@@ -10,9 +10,6 @@ import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
-/* renamed from: v */
-/* loaded from: MobileAgent_3.9.jar:v.class */
 public interface Identifiable {
-    /* renamed from: a */
     String getId();
 }

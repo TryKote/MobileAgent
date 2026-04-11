@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.map;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -16,98 +15,115 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-/* renamed from: ay */
-/* loaded from: MobileAgent_3.9.jar:ay.class */
 public abstract class MapRenderer {
 
-    /* renamed from: a */
+    private static final int TILE_SIZE = 128;
+    private static final int HALF_TILE = TILE_SIZE / 2;
+    private static final int CLUSTER_CELL_SIZE = 32;
+    private static final int TOOLTIP_PROXIMITY = 20;
+    private static final int LABEL_PADDING = 10;
+    private static final int LABEL_MARGIN = 5;
+    private static final int LABEL_CORNER_RADIUS = 10;
+
+    private static final int CHECKERBOARD_COLOR = 0xC8C8C8;
+    private static final int MISSING_TILE_BORDER_COLOR = 0x646464;
+    private static final int MISSING_TILE_OVERLAY_ARGB = 0x3C000000;
+    private static final int CROSSHAIR_ARM_LENGTH = 5;
+    private static final int CROSSHAIR_GAP = 2;
+
+    private static final int SPEED_ZONE_GREEN = 0x00FF00;
+    private static final int SPEED_ZONE_YELLOW = 0xF9C201;
+    private static final int SPEED_ZONE_RED = 0xFF0000;
+    private static final int SPEED_ZONE_MEDIUM_LIMIT = 45;
+    private static final int SPEED_ZONE_HIGH_LIMIT = 75;
+    private static final int SPEED_INDICATOR_SIZE = 10;
+    private static final int SPEED_INDICATOR_CORNER = 5;
+    private static final int MIN_STATUS_BAR_HEIGHT = 18;
+
+    private static final int MIN_ZOOM = 3;
+    private static final int MAX_ZOOM = 17;
+    private static final int SKIP_ZOOM_LEVEL = 8;
+    private static final int ANIMATION_FRAME_COUNT = 5;
+    private static final int MAX_ANIMATION_STEPS = 5;
+    private static final long ANIMATION_FRAME_INTERVAL_MS = 80L;
+    private static final long MAP_DATA_REFRESH_INTERVAL_MS = 600000L;
+    private static final long TILE_RETRY_INTERVAL_MS = 2000L;
+
+    private static final int RIPPLE_DELAY_MS = 200;
+    private static final int RIPPLE_STEP_1_MS = 300;
+    private static final int RIPPLE_STEP_2_MS = 400;
+    private static final int RIPPLE_STEP_3_MS = 500;
+    private static final int RIPPLE_SIZE_1 = 40;
+    private static final int RIPPLE_SIZE_2 = 80;
+    private static final int RIPPLE_SIZE_3 = 120;
+    private static final int RIPPLE_SIZE_4 = 140;
+
+    private static final int MAP_CLAMP_ZOOM = 10;
+    private static final int MIN_OVERLAY_ZOOM = 9;
+
     public static int viewportWidth;
 
-    /* renamed from: b */
     public static int viewportHeight;
 
-    /* renamed from: c */
     public static long currentLat;
 
-    /* renamed from: d */
     public static long currentLon;
 
-    /* renamed from: e */
     public static long currentPixelX;
 
-    /* renamed from: f */
     public static long currentPixelY;
 
-    /* renamed from: g */
     public static Object syncLock;
 
-    /* renamed from: h */
     public static boolean needsRedraw;
 
-    /* renamed from: i */
     public static boolean crosshairVisible;
 
-    /* renamed from: j */
     public static MapPoint selectedMapPoint;
 
-    /* renamed from: k */
     public static ListItem tooltipItem;
 
-    /* renamed from: l */
     public static boolean tooltipLocked;
 
-    /* renamed from: m */
     public static Vector animationSteps;
 
-    /* renamed from: u */
     private static int animationIndex;
 
-    /* renamed from: v */
     private static long animationTimestamp;
 
-    /* renamed from: n */
     public static int autoScrollCount;
 
-    /* renamed from: o */
     public static long autoScrollTimestamp;
 
-    /* renamed from: w */
     private static GeoRegion currentRegion;
 
-    /* renamed from: p */
     public static boolean dragActive;
 
-    /* renamed from: q */
     public static boolean tapConsumed;
 
-    /* renamed from: r */
     public static long rippleTimestamp;
 
-    /* renamed from: s */
     public static int rippleX;
 
-    /* renamed from: t */
     public static int rippleY;
 
-    /* renamed from: a */
     public static final void invalidate() {
         Storage.state().setBool(MapKeys.FLAG_TILE_CACHE_ENABLED, false);
         needsRedraw = true;
     }
 
-    /* renamed from: f */
     private static final Image createCheckerboard() {
         Image cachedImage = Storage.state().getImage(MapKeys.OBJ_FONT_1);
         if (cachedImage != null) {
             return cachedImage;
         }
-        Image image = Image.createImage(128, 128);
+        Image image = Image.createImage(TILE_SIZE, TILE_SIZE);
         Graphics graphics = image.getGraphics();
-        graphics.setColor(13158600);
+        graphics.setColor(CHECKERBOARD_COLOR);
         int i = 0;
         int i2 = 0;
-        while (i2 < 128) {
-            for (int i3 = i; i3 < 128; i3 += 4) {
+        while (i2 < TILE_SIZE) {
+            for (int i3 = i; i3 < TILE_SIZE; i3 += 4) {
                 graphics.fillRect(i2, i3, 2, 2);
             }
             i2 += 2;
@@ -116,14 +132,6 @@ public abstract class MapRenderer {
         Storage.state().setObject(MapKeys.OBJ_FONT_1, image);
         return image;
     }
-
-    /* JADX DEBUG: Multi-variable search result rejected for r0v435, resolved type: p */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Removed duplicated region for block: B:456:0x1094  */
-    /* renamed from: b */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static final void render() {
         long j = 0;
         int i;
@@ -160,12 +168,12 @@ public abstract class MapRenderer {
             int i6 = (int) (currentPixelY - (viewportHeight / 2));
             int i7 = (int) (currentPixelX + (viewportWidth / 2));
             int i8 = (int) (currentPixelY + (viewportHeight / 2));
-            int i9 = i5 < 0 ? (i5 / 128) - 1 : i5 / 128;
-            int i10 = i6 < 0 ? (i6 / 128) - 1 : i6 / 128;
-            int i11 = i7 < 0 ? (i7 / 128) - 1 : i7 / 128;
-            int i12 = i8 < 0 ? (i8 / 128) - 1 : i8 / 128;
-            int i13 = (int) ((((i9 << 7) + 64) - currentPixelX) + (viewportWidth / 2));
-            int i14 = (int) (viewportHeight - ((((i10 << 7) + 64) - currentPixelY) + (viewportHeight / 2)));
+            int i9 = i5 < 0 ? (i5 / TILE_SIZE) - 1 : i5 / TILE_SIZE;
+            int i10 = i6 < 0 ? (i6 / TILE_SIZE) - 1 : i6 / TILE_SIZE;
+            int i11 = i7 < 0 ? (i7 / TILE_SIZE) - 1 : i7 / TILE_SIZE;
+            int i12 = i8 < 0 ? (i8 / TILE_SIZE) - 1 : i8 / TILE_SIZE;
+            int i13 = (int) ((((i9 << 7) + HALF_TILE) - currentPixelX) + (viewportWidth / 2));
+            int i14 = (int) (viewportHeight - ((((i10 << 7) + HALF_TILE) - currentPixelY) + (viewportHeight / 2)));
             Vector visibleTiles = ObjectPool.newVector();
             Graphics graphics = Storage.state().getImage(MapKeys.OBJ_FONT_2).getGraphics();
             int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
@@ -174,7 +182,7 @@ public abstract class MapRenderer {
                     TileRequest tile = new TileRequest(TileRequest.TYPE_MAP, zoomLevel, i15, i16);
                     TileRequest overlayTile = null;
                     visibleTiles.addElement(tile);
-                    if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && zoomLevel > 8 && Storage.state().getBool(MapKeys.MAP_GPS_ENABLED) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
+                    if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && zoomLevel > SKIP_ZOOM_LEVEL && Storage.state().getBool(MapKeys.MAP_GPS_ENABLED) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
                         TileRequest newOverlayTile = new TileRequest(TileRequest.TYPE_OVERLAY, zoomLevel, i15, i16);
                         overlayTile = newOverlayTile;
                         visibleTiles.addElement(newOverlayTile);
@@ -184,38 +192,26 @@ public abstract class MapRenderer {
                     if (tileImage == null) {
                         tileImage = createCheckerboard();
                     }
-                    graphics.drawImage(tileImage, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
+                    graphics.drawImage(tileImage, i13 + (TILE_SIZE * (i15 - i9)), i14 - (TILE_SIZE * (i16 - i10)), 3);
                     if (overlayTile != null && tileImage != createCheckerboard()) {
                         if (overlayImage != null) {
-                            graphics.drawImage(overlayImage, i13 + (128 * (i15 - i9)), i14 - (128 * (i16 - i10)), 3);
+                            graphics.drawImage(overlayImage, i13 + (TILE_SIZE * (i15 - i9)), i14 - (TILE_SIZE * (i16 - i10)), 3);
                         } else if (overlayImage == null && !Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1).contains(overlayTile)) {
-                            int i17 = i13 + (128 * (i15 - i9));
-                            int i18 = i14 - (128 * (i16 - i10));
+                            int i17 = i13 + (TILE_SIZE * (i15 - i9));
+                            int i18 = i14 - (TILE_SIZE * (i16 - i10));
                             int color = graphics.getColor();
-                            graphics.setColor(6579300);
+                            graphics.setColor(MISSING_TILE_BORDER_COLOR);
                             graphics.setStrokeStyle(1);
-                            graphics.drawRect((i17 - 64) + 2, (i18 - 64) + 2, 124, 124);
+                            graphics.drawRect((i17 - HALF_TILE) + 2, (i18 - HALF_TILE) + 2, TILE_SIZE - 4, TILE_SIZE - 4);
                             graphics.setStrokeStyle(0);
                             graphics.setColor(color);
                             if (Storage.state().getBool(UIKeys.FLAG_SUPPORTS_ALPHA) && Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
-                                int[] iArr = new int[128];
-                                int i19 = 128;
-                                while (true) {
-                                    i19--;
-                                    if (i19 < 0) {
-                                        break;
-                                    } else {
-                                        iArr[i19] = 1006632960;
-                                    }
+                                int[] iArr = new int[TILE_SIZE];
+                                for (int i19 = TILE_SIZE - 1; i19 >= 0; i19--) {
+                                    iArr[i19] = MISSING_TILE_OVERLAY_ARGB;
                                 }
-                                int i20 = 128;
-                                while (true) {
-                                    i20--;
-                                    if (i20 < 0) {
-                                        break;
-                                    } else {
-                                        graphics.drawRGB(iArr, 0, 128, i17 - 64, (i18 - 64) + i20, 128, 1, true);
-                                    }
+                                for (int i20 = TILE_SIZE - 1; i20 >= 0; i20--) {
+                                    graphics.drawRGB(iArr, 0, TILE_SIZE, i17 - HALF_TILE, (i18 - HALF_TILE) + i20, TILE_SIZE, 1, true);
                                 }
                             }
                         }
@@ -236,13 +232,9 @@ public abstract class MapRenderer {
                     loadedTiles.addElement(visibleTile);
                 }
             }
-            int size4 = loadedTiles.size();
-            while (true) {
-                size4--;
-                if (size4 < 0) {
-                    break;
-                } else if (!visibleTiles.contains(loadedTiles.elementAt(size4))) {
-                    loadedTiles.removeElementAt(size4);
+            for (int idx = loadedTiles.size() - 1; idx >= 0; idx--) {
+                if (!visibleTiles.contains(loadedTiles.elementAt(idx))) {
+                    loadedTiles.removeElementAt(idx);
                 }
             }
             Vector currentTiles = Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_2);
@@ -260,12 +252,7 @@ public abstract class MapRenderer {
                 if (size6 > 0) {
                     String str = null;
                     int i24 = 0;
-                    int i25 = size6;
-                    while (true) {
-                        i25--;
-                        if (i25 < 0) {
-                            break;
-                        }
+                    for (int i25 = size6 - 1; i25 >= 0; i25--) {
                         Object[] objArr = (Object[]) infoLabels.elementAt(i25);
                         int priority = ((Integer) objArr[0]).intValue();
                         if (priority > i24) {
@@ -279,12 +266,12 @@ public abstract class MapRenderer {
                     graphics.setFont(labelFont);
                     int colorScheme = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
                     graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + colorScheme));
-                    int labelWidth = labelFont.stringWidth(str) + 10;
+                    int labelWidth = labelFont.stringWidth(str) + LABEL_PADDING;
                     int labelHeight = Storage.state().getInt(UIKeys.INT_FONT_HEIGHT);
-                    graphics.fillRoundRect(5, 5, labelWidth, labelHeight, 10, 10);
+                    graphics.fillRoundRect(LABEL_MARGIN, LABEL_MARGIN, labelWidth, labelHeight, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
                     graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + colorScheme));
-                    graphics.drawRoundRect(5, 5, labelWidth, labelHeight, 10, 10);
-                    graphics.drawString(str, 10, 5, 20);
+                    graphics.drawRoundRect(LABEL_MARGIN, LABEL_MARGIN, labelWidth, labelHeight, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
+                    graphics.drawString(str, LABEL_PADDING, LABEL_MARGIN, 20);
                     graphics.setFont(font);
                     graphics.setColor(color2);
                 }
@@ -293,11 +280,11 @@ public abstract class MapRenderer {
             long j3 = currentPixelY;
             int i26 = viewportWidth;
             int i27 = viewportHeight;
-            if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && !XmppContactGroup.isMapDataRecent() && zoomLevel >= 9 && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
-                long j4 = (j2 - (i26 / 2)) / 32;
-                long j5 = (j3 - (i26 / 2)) / 32;
-                long j6 = (j2 + (i26 / 2)) / 32;
-                long j7 = (j3 + (i26 / 2)) / 32;
+            if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && !XmppContactGroup.isMapDataRecent() && zoomLevel >= MIN_OVERLAY_ZOOM && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
+                long j4 = (j2 - (i26 / 2)) / CLUSTER_CELL_SIZE;
+                long j5 = (j3 - (i26 / 2)) / CLUSTER_CELL_SIZE;
+                long j6 = (j2 + (i26 / 2)) / CLUSTER_CELL_SIZE;
+                long j7 = (j3 + (i26 / 2)) / CLUSTER_CELL_SIZE;
                 int i28 = ((int) (j6 - j4)) + 1;
                 int[] iArr2 = new int[i28 * (((int) (j7 - j5)) + 1)];
                 String str2 = null;
@@ -310,8 +297,8 @@ public abstract class MapRenderer {
                         long j9 = ((long[]) objArr2[1])[1];
                         long pixelX = MapUtils.coordToPixel(j8, zoomLevel);
                         long pixelY = MapUtils.coordToPixel(j9, zoomLevel);
-                        int i31 = (int) (pixelX / 32);
-                        int i32 = (int) (pixelY / 32);
+                        int i31 = (int) (pixelX / CLUSTER_CELL_SIZE);
+                        int i32 = (int) (pixelY / CLUSTER_CELL_SIZE);
                         if (i31 >= j4 && i31 <= j6 && i32 >= j5 && i32 <= j7 && (profileImage = ServiceRegistry.getProfileImage((String) objArr2[0])) != null) {
                             int i33 = (int) (i31 - j4);
                             int i34 = (int) (i32 - j5);
@@ -320,7 +307,7 @@ public abstract class MapRenderer {
                                 int i36 = (int) ((i27 / 2) + (j3 - pixelY));
                                 graphics.drawImage(profileImage, i35, i36, 3);
                                 iArr2[(i34 * i28) + i33] = 1;
-                                if (str2 == null && Utils.absLong(j2 - pixelX) < 20 && Utils.absLong(j3 - pixelY) < 20) {
+                                if (str2 == null && Utils.absLong(j2 - pixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j3 - pixelY) < TOOLTIP_PROXIMITY) {
                                     String str3 = (String) objArr2[2];
                                     if (Utils.nonEmpty(str3)) {
                                         str2 = str3;
@@ -333,7 +320,7 @@ public abstract class MapRenderer {
                     }
                 }
                 if (str2 != null) {
-                    ChatRenderer.renderTooltip(graphics, str2, Storage.state().getFont(), i26 - 40, i29, height);
+                    ChatRenderer.renderTooltip(graphics, str2, Storage.state().getFont(), i26 - (TOOLTIP_PROXIMITY * 2), i29, height);
                 }
             }
             MapPoint selectedPoint = selectedMapPoint;
@@ -353,7 +340,7 @@ public abstract class MapRenderer {
                     i4 = 4;
                 }
                 graphics.drawImage(pinIcon, pinX, pinY, 32 | i4);
-                if (Utils.absLong(j10 - selectedPoint.getLonAtZoom(zoomLevel)) >= 20 || Utils.absLong(j11 - selectedPoint.getLatAtZoom(zoomLevel)) >= 20) {
+                if (Utils.absLong(j10 - selectedPoint.getLonAtZoom(zoomLevel)) >= TOOLTIP_PROXIMITY || Utils.absLong(j11 - selectedPoint.getLatAtZoom(zoomLevel)) >= TOOLTIP_PROXIMITY) {
                     hideTooltip();
                 } else {
                     showTooltip((ListItem) selectedPoint);
@@ -370,7 +357,7 @@ public abstract class MapRenderer {
                 MapPoint routePoint = (MapPoint) routeElements.nextElement();
                 if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < i39 / 2 && Utils.absLong(j13 - routePoint.getLatAtZoom(zoomLevel)) < i40 / 2 && routePoint.selected) {
                     graphics.drawImage(XmppContactGroup.getOrLoadImage(18), (int) ((i39 / 2) + (routePoint.getLonAtZoom(zoomLevel) - j12)), (int) ((i40 / 2) + (j13 - routePoint.getLatAtZoom(zoomLevel))), 36);
-                    if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < 20 && (deltaY = (int) (j13 - routePoint.getLatAtZoom(zoomLevel))) < 20 && deltaY > -10 && !z2) {
+                    if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < TOOLTIP_PROXIMITY && (deltaY = (int) (j13 - routePoint.getLatAtZoom(zoomLevel))) < TOOLTIP_PROXIMITY && deltaY > -10 && !z2) {
                         nearestRoute = routePoint;
                         z2 = true;
                     }
@@ -406,7 +393,7 @@ public abstract class MapRenderer {
                             }
                             graphics.drawImage(markerIcon, i44, i45, 3);
                         }
-                        if (Utils.absLong(j14 - poiPixelX) < 20 && Utils.absLong(j15 - poiPixelY) < 20 && nearestPoi == null) {
+                        if (Utils.absLong(j14 - poiPixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j15 - poiPixelY) < TOOLTIP_PROXIMITY && nearestPoi == null) {
                             nearestPoi = poiItem;
                         }
                     }
@@ -427,10 +414,10 @@ public abstract class MapRenderer {
                 Vector mapContacts = ContactListManager.getMapContacts();
                 int size7 = mapContacts.size();
                 if (size7 > 0) {
-                    long j18 = (j16 - (i47 / 2)) / 32;
-                    long j19 = (j17 - (i47 / 2)) / 32;
-                    long j20 = (j16 + (i47 / 2)) / 32;
-                    long j21 = (j17 + (i47 / 2)) / 32;
+                    long j18 = (j16 - (i47 / 2)) / CLUSTER_CELL_SIZE;
+                    long j19 = (j17 - (i47 / 2)) / CLUSTER_CELL_SIZE;
+                    long j20 = (j16 + (i47 / 2)) / CLUSTER_CELL_SIZE;
+                    long j21 = (j17 + (i47 / 2)) / CLUSTER_CELL_SIZE;
                     ListItem activeContact = MapController.activeMapItem;
                     if (ChatRenderer.mapItems == null || j18 < ChatRenderer.coord1 || j19 < ChatRenderer.coord2 || j20 > ChatRenderer.coord3 || j21 > ChatRenderer.coord4) {
                         ChatRenderer.coord1 = j18 - 10;
@@ -445,8 +432,8 @@ public abstract class MapRenderer {
                             if (contactItem.isSelected() && activeContact != contactItem) {
                                 long contactPixelX = contactItem.getCommandId(zoomLevel);
                                 long contactPixelY = contactItem.executeCommand(zoomLevel);
-                                int i51 = (int) (contactPixelX / 32);
-                                int i52 = (int) (contactPixelY / 32);
+                                int i51 = (int) (contactPixelX / CLUSTER_CELL_SIZE);
+                                int i52 = (int) (contactPixelY / CLUSTER_CELL_SIZE);
                                 if (i51 >= ChatRenderer.coord1 && i51 <= ChatRenderer.coord3 && i52 >= ChatRenderer.coord2 && i52 <= ChatRenderer.coord4) {
                                     int i53 = (int) (i51 - ChatRenderer.coord1);
                                     int i54 = (int) (i52 - ChatRenderer.coord2);
@@ -467,13 +454,8 @@ public abstract class MapRenderer {
                     }
                     ListItem[] mapItemGrid = ChatRenderer.mapItems;
                     ListItem nearestContact = null;
-                    int length = mapItemGrid.length;
-                    while (true) {
-                        length--;
-                        if (length < 0) {
-                            break;
-                        }
-                        ListItem gridItem = mapItemGrid[length];
+                    for (int idx = mapItemGrid.length - 1; idx >= 0; idx--) {
+                        ListItem gridItem = mapItemGrid[idx];
                         if (gridItem != null) {
                             long gridPixelX = gridItem.getCommandId(zoomLevel);
                             long gridPixelY = gridItem.executeCommand(zoomLevel);
@@ -485,7 +467,7 @@ public abstract class MapRenderer {
                             if (contactIcon != null) {
                                 graphics.drawImage(image, i55, i56, 3);
                             }
-                            if (Utils.absLong(j16 - gridPixelX) < 20 && Utils.absLong(j17 - gridPixelY) < 20 && nearestContact == null) {
+                            if (Utils.absLong(j16 - gridPixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j17 - gridPixelY) < TOOLTIP_PROXIMITY && nearestContact == null) {
                                 nearestContact = gridItem;
                             }
                         }
@@ -520,7 +502,7 @@ public abstract class MapRenderer {
                             if (i60 > 0 && i60 < i57 && i61 > 0 && i61 < i58) {
                                 graphics.drawImage(XmppContactGroup.getOrLoadImage(22), i60, i61, 3);
                             }
-                            if (Utils.absLong(j22 - profilePixelX) < 20 && Utils.absLong(j23 - profilePixelY) < 20 && nearestProfile == null) {
+                            if (Utils.absLong(j22 - profilePixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j23 - profilePixelY) < TOOLTIP_PROXIMITY && nearestProfile == null) {
                                 nearestProfile = profile;
                             }
                         }
@@ -547,7 +529,7 @@ public abstract class MapRenderer {
                 long activePixelX = item.getCommandId(zoomLevel);
                 long activePixelY = item.executeCommand(zoomLevel);
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (activePixelX - j24)), (int) ((i63 / 2) + (j25 - activePixelY)), 3);
-                if (Utils.absLong(j24 - activePixelX) < 20 && Utils.absLong(j25 - activePixelY) < 20) {
+                if (Utils.absLong(j24 - activePixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j25 - activePixelY) < TOOLTIP_PROXIMITY) {
                     showTooltip(item);
                 }
             }
@@ -559,23 +541,18 @@ public abstract class MapRenderer {
             if (crosshairVisible || Storage.state().getBool(MapKeys.FLAG_MAP_LOADING)) {
                 int color3 = graphics.getColor();
                 graphics.setColor(0);
-                graphics.fillRect(i64 - 1, i65 - 7, 2, 5);
-                graphics.fillRect(i64 - 1, i65 + 2, 2, 5);
-                graphics.fillRect(i64 - 7, i65 - 1, 5, 2);
-                graphics.fillRect(i64 + 2, i65 - 1, 5, 2);
+                graphics.fillRect(i64 - 1, i65 - (CROSSHAIR_ARM_LENGTH + CROSSHAIR_GAP), 2, CROSSHAIR_ARM_LENGTH);
+                graphics.fillRect(i64 - 1, i65 + CROSSHAIR_GAP, 2, CROSSHAIR_ARM_LENGTH);
+                graphics.fillRect(i64 - (CROSSHAIR_ARM_LENGTH + CROSSHAIR_GAP), i65 - 1, CROSSHAIR_ARM_LENGTH, 2);
+                graphics.fillRect(i64 + CROSSHAIR_GAP, i65 - 1, CROSSHAIR_ARM_LENGTH, 2);
                 graphics.setColor(color3);
             }
             long j26 = currentLon;
             long j27 = currentLat;
             GeoRegion bestRegion = null;
             Vector regions = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
-            int size9 = regions.size();
-            while (true) {
-                size9--;
-                if (size9 < 0) {
-                    break;
-                }
-                GeoRegion region = (GeoRegion) regions.elementAt(size9);
+            for (int idx = regions.size() - 1; idx >= 0; idx--) {
+                GeoRegion region = (GeoRegion) regions.elementAt(idx);
                 if (region.containsPoint(j26, j27) && region.zoomLevel != -1) {
                     if (bestRegion != null) {
                         GeoRegion currentBest = bestRegion;
@@ -588,7 +565,7 @@ public abstract class MapRenderer {
             GeoRegion activeRegion = bestRegion;
             if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE)) {
                 boolean showDetails = Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE);
-                int clipWidth = showDetails ? graphics.getClipWidth() - 4 : 18;
+                int clipWidth = showDetails ? graphics.getClipWidth() - 4 : MIN_STATUS_BAR_HEIGHT;
                 int i66 = -1;
                 int i67 = 0;
                 boolean z3 = false;
@@ -598,7 +575,7 @@ public abstract class MapRenderer {
                     i67 = activeRegion.mapType;
                     if (i66 >= 0) {
                         z3 = true;
-                        i68 = i66 <= 45 ? 65280 : (i66 <= 45 || i66 >= 75) ? 16711680 : 16361985;
+                        i68 = i66 <= SPEED_ZONE_MEDIUM_LIMIT ? SPEED_ZONE_GREEN : (i66 <= SPEED_ZONE_MEDIUM_LIMIT || i66 >= SPEED_ZONE_HIGH_LIMIT) ? SPEED_ZONE_RED : SPEED_ZONE_YELLOW;
                     }
                 }
                 if (activeRegion != null) {
@@ -631,30 +608,30 @@ public abstract class MapRenderer {
                 int fontHeight = Storage.state().getInt(UIKeys.INT_FONT_HEIGHT);
                 int schemeIndex = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
                 int borderColor = Storage.state().getInt(PaletteKeys.COLORS_BASE + schemeIndex);
-                int i70 = fontHeight > 18 ? fontHeight : 18;
+                int i70 = fontHeight > MIN_STATUS_BAR_HEIGHT ? fontHeight : MIN_STATUS_BAR_HEIGHT;
                 int clipHeight = (graphics.getClipHeight() - i70) - 1;
                 if (showDetails) {
                     graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + schemeIndex));
-                    graphics.fillRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
+                    graphics.fillRoundRect(2, clipHeight, clipWidth, i70, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
                 }
                 graphics.setColor(borderColor);
                 if (showDetails) {
-                    graphics.drawRoundRect(2, clipHeight, clipWidth, i70, 10, 10);
+                    graphics.drawRoundRect(2, clipHeight, clipWidth, i70, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
                 }
                 int i71 = 0;
                 if (z3) {
                     graphics.setColor(i68);
-                    graphics.fillRoundRect(6, clipHeight + ((i70 - 10) / 2), 10, 10, 5, 5);
-                    i71 = 10;
+                    graphics.fillRoundRect(6, clipHeight + ((i70 - SPEED_INDICATOR_SIZE) / 2), SPEED_INDICATOR_SIZE, SPEED_INDICATOR_SIZE, SPEED_INDICATOR_CORNER, SPEED_INDICATOR_CORNER);
+                    i71 = SPEED_INDICATOR_SIZE;
                     graphics.setColor(borderColor);
-                    graphics.drawRoundRect(6, clipHeight + ((i70 - 10) / 2), 10, 10, 5, 5);
+                    graphics.drawRoundRect(6, clipHeight + ((i70 - SPEED_INDICATOR_SIZE) / 2), SPEED_INDICATOR_SIZE, SPEED_INDICATOR_SIZE, SPEED_INDICATOR_CORNER, SPEED_INDICATOR_CORNER);
                     if (i67 > 0 && showDetails) {
                         new GraphicsContext(graphics).drawIcon(i67 == 1 ? 212 : 211, 20 + zoomFont.stringWidth(zoomText) + 4, clipHeight + ((i70 - 16) / 2));
                     }
                     graphics.setColor(borderColor);
                 }
                 if (showDetails) {
-                    graphics.drawString(zoomText, i71 + 10, clipHeight + ((i70 - fontHeight) / 2), 20);
+                    graphics.drawString(zoomText, i71 + LABEL_PADDING, clipHeight + ((i70 - fontHeight) / 2), 20);
                 }
                 graphics.setColor(color4);
                 graphics.setFont(font2);
@@ -667,8 +644,8 @@ public abstract class MapRenderer {
             if (j28 != 0) {
                 int elapsed = (int) (System.currentTimeMillis() - j28);
                 j = j28;
-                if (elapsed >= 200) {
-                    int i74 = elapsed < 300 ? 40 : elapsed < 400 ? 80 : elapsed < 500 ? 120 : 140;
+                if (elapsed >= RIPPLE_DELAY_MS) {
+                    int i74 = elapsed < RIPPLE_STEP_1_MS ? RIPPLE_SIZE_1 : elapsed < RIPPLE_STEP_2_MS ? RIPPLE_SIZE_2 : elapsed < RIPPLE_STEP_3_MS ? RIPPLE_SIZE_3 : RIPPLE_SIZE_4;
                     int color5 = graphics.getColor();
                     graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME)));
                     int i75 = i74;
@@ -682,14 +659,14 @@ public abstract class MapRenderer {
                 needsRedraw = false;
             }
         }
-        if (TimerManager.checkTimer(11, 2000L)) {
+        if (TimerManager.checkTimer(11, TILE_RETRY_INTERVAL_MS)) {
             Storage.state().setInt(MapKeys.FLAG_TILES_READY, 0);
         }
         Vector vector2 = animationSteps;
         synchronized (vector2) {
-            if (animationIndex <= 5 && vector2.size() > 0) {
+            if (animationIndex <= MAX_ANIMATION_STEPS && vector2.size() > 0) {
                 long now = System.currentTimeMillis();
-                if (j - animationTimestamp > 80) {
+                if (j - animationTimestamp > ANIMATION_FRAME_INTERVAL_MS) {
                     long[] jArr = (long[]) vector2.elementAt(animationIndex);
                     setPosition(jArr[0], jArr[1]);
                     animationIndex++;
@@ -699,19 +676,18 @@ public abstract class MapRenderer {
         }
         if (autoScrollCount > 0 && !crosshairVisible) {
             long scrollNow = System.currentTimeMillis();
-            if (scrollNow - autoScrollTimestamp > 80) {
+            if (scrollNow - autoScrollTimestamp > ANIMATION_FRAME_INTERVAL_MS) {
                 int scrollZoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
                 setPosition(currentLon, currentLat + ((MapUtils.getZoomNumerator(scrollZoom) / MapUtils.getZoomDenominator(scrollZoom)) * 9));
                 autoScrollCount -= 9;
                 autoScrollTimestamp = scrollNow;
             }
         }
-        if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > 600000 && Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) && Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE) && !NetworkLock.isNetworkBusy()) {
+        if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > MAP_DATA_REFRESH_INTERVAL_MS && Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) && Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE) && !NetworkLock.isNetworkBusy()) {
             XmppContactGroup.initializeMapData();
         }
     }
 
-    /* renamed from: a */
     public static final void setPosition(long j, long j2) {
         GeoRegion bestRegion;
         if (j2 == currentLat && j == currentLon) {
@@ -727,13 +703,8 @@ public abstract class MapRenderer {
             currentPixelY = MapUtils.coordToPixel(j2, zoomLevel);
             GeoRegion prevRegion = currentRegion;
             Vector regionList = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
-            int idx = Utils.vectorSize(regionList);
-            while (true) {
-                idx--;
-                if (idx < 0) {
-                    bestRegion = null;
-                    break;
-                }
+            bestRegion = null;
+            for (int idx = Utils.vectorSize(regionList) - 1; idx >= 0; idx--) {
                 GeoRegion candidate = (GeoRegion) regionList.elementAt(idx);
                 if (candidate.containsPoint(j, j2)) {
                     bestRegion = candidate;
@@ -752,23 +723,21 @@ public abstract class MapRenderer {
         needsRedraw = true;
     }
 
-    /* renamed from: b */
     private static final int clampZoom(int i) {
         int i2;
-        if (StringUtils.isInSavedRegion(currentLon, currentLat) || i <= 10) {
+        if (StringUtils.isInSavedRegion(currentLon, currentLat) || i <= MAP_CLAMP_ZOOM) {
             return (currentRegion == null || i <= (i2 = currentRegion.precision)) ? i : i2;
         }
-        return 10;
+        return MAP_CLAMP_ZOOM;
     }
 
-    /* renamed from: a */
     public static final void setZoom(int i) {
         int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
-        if (i == zoomLevel || i < 3 || i > 17) {
+        if (i == zoomLevel || i < MIN_ZOOM || i > MAX_ZOOM) {
             return;
         }
         int clampedZoom = clampZoom(i);
-        int i2 = clampedZoom != 8 ? clampedZoom : zoomLevel < clampedZoom ? 9 : 7;
+        int i2 = clampedZoom != SKIP_ZOOM_LEVEL ? clampedZoom : zoomLevel < clampedZoom ? SKIP_ZOOM_LEVEL + 1 : SKIP_ZOOM_LEVEL - 1;
         Storage.state().setInt(MapKeys.MAP_ZOOM_LEVEL, i2);
         currentPixelX = MapUtils.coordToPixel(currentLon, i2);
         currentPixelY = MapUtils.coordToPixel(currentLat, i2);
@@ -776,7 +745,6 @@ public abstract class MapRenderer {
         needsRedraw = true;
     }
 
-    /* renamed from: a */
     public static final void setCrosshairVisible(boolean z) {
         if (crosshairVisible != z) {
             crosshairVisible = z;
@@ -784,7 +752,6 @@ public abstract class MapRenderer {
         }
     }
 
-    /* renamed from: a */
     public static final void confirmMapPoint(MapPoint mapPoint) {
         if (Storage.state().getBool(MapKeys.FLAG_MAP_MODE_ACTIVE)) {
             MmpContact.setSecondToken(mapPoint.longitude, mapPoint.latitude);
@@ -799,7 +766,6 @@ public abstract class MapRenderer {
         Storage.state().setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
     }
 
-    /* renamed from: b */
     public static final void navigateToMapPoint(MapPoint mapPoint) {
         invalidate();
         setPosition(mapPoint.longitude, mapPoint.latitude);
@@ -808,7 +774,6 @@ public abstract class MapRenderer {
         resetInteraction();
     }
 
-    /* renamed from: c */
     public static final String getTooltipText() {
         if (tooltipItem != null) {
             return tooltipItem.getText();
@@ -816,21 +781,19 @@ public abstract class MapRenderer {
         return null;
     }
 
-    /* renamed from: d */
     public static final boolean hasRouteEndpoints() {
         return (MmpContact.lastTokenPair[0] > 0L ? 1 : (MmpContact.lastTokenPair[0] == 0L ? 0 : -1)) != 0 && (MmpContact.lastTokenPair[1] > 0L ? 1 : (MmpContact.lastTokenPair[1] == 0L ? 0 : -1)) != 0 && (MmpContact.currentTokenPair[0] > 0L ? 1 : (MmpContact.currentTokenPair[0] == 0L ? 0 : -1)) != 0 && (MmpContact.currentTokenPair[1] > 0L ? 1 : (MmpContact.currentTokenPair[1] == 0L ? 0 : -1)) != 0 && ((MmpContact.lastTokenPair[0] > MmpContact.currentTokenPair[0] ? 1 : (MmpContact.lastTokenPair[0] == MmpContact.currentTokenPair[0] ? 0 : -1)) != 0 || (MmpContact.lastTokenPair[1] > MmpContact.currentTokenPair[1] ? 1 : (MmpContact.lastTokenPair[1] == MmpContact.currentTokenPair[1] ? 0 : -1)) != 0);
     }
 
-    /* renamed from: b */
     public static final void animateTo(long j, long j2) {
         synchronized (animationSteps) {
             animationSteps.removeAllElements();
             animationIndex = 0;
             long j3 = currentLon;
             long j4 = currentLat;
-            long j5 = (j - j3) / 5;
-            long j6 = (j2 - j4) / 5;
-            for (int i = 0; i < 5; i++) {
+            long j5 = (j - j3) / ANIMATION_FRAME_COUNT;
+            long j6 = (j2 - j4) / ANIMATION_FRAME_COUNT;
+            for (int i = 0; i < ANIMATION_FRAME_COUNT; i++) {
                 animationSteps.addElement(new long[]{j3 + (j5 * i), j4 + (j6 * i)});
             }
             animationSteps.addElement(new long[]{j, j2});
@@ -838,12 +801,10 @@ public abstract class MapRenderer {
         }
     }
 
-    /* renamed from: g */
     private static boolean hasTooltip() {
         return tooltipItem != null;
     }
 
-    /* renamed from: a */
     private static void showTooltip(ListItem item) {
         if (tooltipLocked) {
             return;
@@ -851,7 +812,6 @@ public abstract class MapRenderer {
         tooltipItem = item;
     }
 
-    /* renamed from: h */
     private static void hideTooltip() {
         if (tooltipLocked) {
             return;
@@ -859,24 +819,20 @@ public abstract class MapRenderer {
         tooltipItem = null;
     }
 
-    /* renamed from: e */
     public static final void resetInteraction() {
         setCrosshairVisible(true);
         tooltipLocked = false;
         autoScrollCount = 0;
     }
 
-    /* renamed from: c */
     private static final int screenToTileX(int i) {
         return ((int) currentPixelX) + (i - (viewportWidth >> 1));
     }
 
-    /* renamed from: d */
     private static final int screenToTileY(int i) {
         return ((int) currentPixelY) - (i - (viewportHeight >> 1));
     }
 
-    /* renamed from: a */
     public static final void onTap(int i, int i2) {
         int[] iArr;
         rippleTimestamp = 0L;
@@ -892,7 +848,6 @@ public abstract class MapRenderer {
         needsRedraw = true;
     }
 
-    /* renamed from: b */
     public static final void onDrag(int i, int i2) {
         tapConsumed = true;
         rippleTimestamp = 0L;

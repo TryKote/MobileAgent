@@ -215,7 +215,13 @@ public abstract class AppState {
         if (result == null) {
             return null;
         }
-        return result instanceof byte[] ? ObjectPool.decodeWin1251((byte[]) result) : (String) result;
+        if (result instanceof byte[]) {
+            return ObjectPool.decodeWin1251((byte[]) result);
+        }
+        if (result instanceof String) {
+            return (String) result;
+        }
+        return null;
     }
 
     public static int getAndClearInt(int key) {
@@ -225,7 +231,11 @@ public abstract class AppState {
     }
 
     public static int getInt(int key) {
-        return key < OBJECT_POOL_SIZE ? ((Integer) getOrDefault(key)).intValue() : intPool[key - OBJECT_POOL_SIZE];
+        if (key >= OBJECT_POOL_SIZE) {
+            return intPool[key - OBJECT_POOL_SIZE];
+        }
+        Object val = getOrDefault(key);
+        return val instanceof Integer ? ((Integer) val).intValue() : 0;
     }
 
     public static boolean getBool(int key) {

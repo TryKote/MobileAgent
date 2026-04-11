@@ -13,18 +13,33 @@ import com.trykote.mobileagent.util.*;
 /* Extracted from AppController: traffic accounting subsystem */
 public final class TrafficAccounting {
 
-    /* renamed from: af */
+    private static final int CATEGORY_COUNT = 4;
+    private static final int SLOTS_PER_CATEGORY = 8;
+    private static final int DAILY_SENT_OFFSET = 4;
+    private static final int DAILY_RECV_OFFSET = 5;
+    private static final int MONTHLY_SENT_OFFSET = 6;
+    private static final int MONTHLY_RECV_OFFSET = 7;
+    private static final int MONTH_SHIFT = 8;
+
+    private static final int STAT_ROWS_PER_ACCOUNT = 8;
+    private static final int STAT_COLS_PER_ACCOUNT = 3;
+    private static final int STAT_ROWS_TOTAL = 5;
+    private static final int STAT_COLS_TOTAL = 16;
+
+    private static final int CENTS_PER_UNIT = 100;
+    private static final int BYTES_PER_MB = 1048576;
+
     public static final int initStartupState() {
         int currentDate = Storage.state().getDateCode();
         int savedDate = Storage.state().getInt(TrafficKeys.TRAFFIC_SAVED_DATE);
         if (currentDate != savedDate) {
-            for (int i = 0; i < 4; i++) {
-                int offset = i << 3;
-                Storage.state().setInt(offset + 4, 0);
-                Storage.state().setInt(offset + 5, 0);
-                if ((currentDate >>> 8) != (savedDate >>> 8)) {
-                    Storage.state().setInt(offset + 6, 0);
-                    Storage.state().setInt(offset + 7, 0);
+            for (int i = 0; i < CATEGORY_COUNT; i++) {
+                int offset = i * SLOTS_PER_CATEGORY;
+                Storage.state().setInt(offset + DAILY_SENT_OFFSET, 0);
+                Storage.state().setInt(offset + DAILY_RECV_OFFSET, 0);
+                if ((currentDate >>> MONTH_SHIFT) != (savedDate >>> MONTH_SHIFT)) {
+                    Storage.state().setInt(offset + MONTHLY_SENT_OFFSET, 0);
+                    Storage.state().setInt(offset + MONTHLY_RECV_OFFSET, 0);
                 }
             }
             Storage.state().setInt(TrafficKeys.TRAFFIC_SAVED_DATE, currentDate);
@@ -86,19 +101,16 @@ public final class TrafficAccounting {
         Storage.state().addInt(SessionKeys.COUNTER_RESERVED, i);
     }
 
-    /* renamed from: a */
-    public static final int getTrafficCount(int i, int i2, int i3) {
-        return Storage.state().getInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES + (i << 3) + (i2 << 1) + i3);
+    public static final int getTrafficCount(int category, int period, int direction) {
+        return Storage.state().getInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES + category * SLOTS_PER_CATEGORY + period * 2 + direction);
     }
 
-    /* renamed from: b */
-    public static final int getTotalTraffic(int i, int i2) {
-        return getTrafficCount(0, i, i2) + getTrafficCount(1, i, i2) + getTrafficCount(2, i, i2) + getTrafficCount(3, i, i2);
+    public static final int getTotalTraffic(int period, int direction) {
+        return getTrafficCount(0, period, direction) + getTrafficCount(1, period, direction) + getTrafficCount(2, period, direction) + getTrafficCount(3, period, direction);
     }
 
-    /* renamed from: b */
-    public static final void addTrafficCount(int i, int i2, int i3) {
-        Storage.state().setInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES + (i << 3) + (i2 << 1) + i3, 0);
+    public static final void addTrafficCount(int category, int period, int direction) {
+        Storage.state().setInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES + category * SLOTS_PER_CATEGORY + period * 2 + direction, 0);
     }
 
     public static void showTrafficStats() {
@@ -113,8 +125,8 @@ public final class TrafficAccounting {
             int recvBytes = account.getSyncValue(periodIndex, 1);
             i2 = recvBytes;
             formatTrafficItem(1325, recvBytes);
-            Storage.state().setInt(RuntimeKeys.INT_STAT_ROWS, 8);
-            Storage.state().setInt(RuntimeKeys.INT_STAT_COLS, 3);
+            Storage.state().setInt(RuntimeKeys.INT_STAT_ROWS, STAT_ROWS_PER_ACCOUNT);
+            Storage.state().setInt(RuntimeKeys.INT_STAT_COLS, STAT_COLS_PER_ACCOUNT);
         } else {
             formatTrafficItem(1329, TrafficAccounting.getTrafficCount(0, periodIndex, 0));
             formatTrafficItem(1328, TrafficAccounting.getTrafficCount(0, periodIndex, 1));
@@ -130,8 +142,8 @@ public final class TrafficAccounting {
             int totalRecv = TrafficAccounting.getTotalTraffic(periodIndex, 1);
             i2 = totalRecv;
             formatTrafficItem(1325, totalRecv);
-            Storage.state().setInt(RuntimeKeys.INT_STAT_ROWS, 5);
-            Storage.state().setInt(RuntimeKeys.INT_STAT_COLS, 16);
+            Storage.state().setInt(RuntimeKeys.INT_STAT_ROWS, STAT_ROWS_TOTAL);
+            Storage.state().setInt(RuntimeKeys.INT_STAT_COLS, STAT_COLS_TOTAL);
         }
         long j = i + i2;
         int blockSize = Storage.state().getInt(SettingsKeys.SETTING_BLOCK_SIZE_KB) << 10;
@@ -141,8 +153,8 @@ public final class TrafficAccounting {
                 j += blockSize - j2;
             }
         }
-        int costCents = (int) ((j * Storage.state().getInt(SettingsKeys.SETTING_TRAFFIC_COST)) / 1048576);
-        Storage.state().setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_COST_TEXT, ObjectPool.newStringBuffer().append(costCents / 100).append('.').append(Utils.zeroPad(costCents % 100)).append(' ').append(Storage.resources().getString(StringResKeys.STR_CURRENCY_SYMBOL)));
+        int costCents = (int) ((j * Storage.state().getInt(SettingsKeys.SETTING_TRAFFIC_COST)) / BYTES_PER_MB);
+        Storage.state().setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_COST_TEXT, ObjectPool.newStringBuffer().append(costCents / CENTS_PER_UNIT).append('.').append(Utils.zeroPad(costCents % CENTS_PER_UNIT)).append(' ').append(Storage.resources().getString(StringResKeys.STR_CURRENCY_SYMBOL)));
         Storage.state().setInt(RuntimeKeys.INT_TRAFFIC_PERIOD_LABEL, periodIndex + 745);
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.TRAFFIC_STATS));
         Storage.state().clearRange(ContactKeys.SLOT_GROUP_LIST_INDEX, UIKeys.RANGE_SEARCH_LABEL_END);
@@ -163,7 +175,7 @@ public final class TrafficAccounting {
         }
         if (dotIdx != -1) {
             try {
-                i = Integer.parseInt(StringUtils.prefix(balanceStr, dotIdx)) * 100;
+                i = Integer.parseInt(StringUtils.prefix(balanceStr, dotIdx)) * CENTS_PER_UNIT;
             } catch (Throwable unused) {
             }
             try {
@@ -174,7 +186,7 @@ public final class TrafficAccounting {
             }
         } else {
             try {
-                i = Integer.parseInt(balanceStr) * 100;
+                i = Integer.parseInt(balanceStr) * CENTS_PER_UNIT;
             } catch (Throwable unused3) {
             }
         }

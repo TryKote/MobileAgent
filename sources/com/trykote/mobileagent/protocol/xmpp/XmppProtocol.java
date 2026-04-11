@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -13,8 +12,6 @@ import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 import javax.microedition.lcdui.Image;
 
-/* renamed from: ae */
-/* loaded from: MobileAgent_3.9.jar:ae.class */
 public class XmppProtocol extends Account {
 
     // XMPP progress states
@@ -32,28 +29,48 @@ public class XmppProtocol extends Account {
     public static final int STATUS_DND = 5;
     public static final int STATUS_CUSTOM = 6;
 
-    /* renamed from: a */
+    // Character constants
+    private static final char CHAR_AT = '@';
+    private static final char CHAR_SLASH = '/';
+
+    // Hash prefix length for auth token
+    private static final int AUTH_HASH_PREFIX_LENGTH = 16;
+
+    // XMPP icon IDs
+    private static final int ICON_DISCONNECTED = 381;
+    private static final int ICON_CONNECTING = 382;
+    private static final int ICON_ONLINE = 383;
+    private static final int ICON_BUSY = 16318847;
+    private static final int ICON_XA = 16515455;
+    private static final int ICON_AWAY = 16384383;
+    private static final int ICON_DND = 16449919;
+    private static final int ICON_CUSTOM = 16580991;
+
+    // Presence status string resource IDs
+    private static final int STATUS_STR_ONLINE = 642;
+    private static final int STATUS_STR_AWAY = 643;
+    private static final int STATUS_STR_BUSY = 644;
+    private static final int STATUS_STR_DND = 645;
+    private static final int STATUS_STR_CUSTOM = 648;
+
+    // XMPP connection timeouts (millis)
+    private static final long TIMEOUT_WIFI = 25000L;
+    private static final long TIMEOUT_CELLULAR = 60000L;
+
     public final Vector elementQueue;
 
-    /* renamed from: f */
     private Object[] parserState;
 
-    /* renamed from: g */
     private Object[] authState;
 
-    /* renamed from: b */
     public String serverAddress;
 
-    /* renamed from: c */
     public int serverPort;
 
-    /* renamed from: d */
     public Object authResult;
 
-    /* renamed from: h */
     private Throwable lastException;
 
-    /* renamed from: e */
     public String serverResourceId;
 
     public XmppProtocol(int i, String str, String str2) {
@@ -68,12 +85,10 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public int getType() {
         return TYPE_XMPP;
     }
 
-    /* renamed from: r */
     private String generateMessageId() {
         StringBuffer sb = ObjectPool.newStringBuffer().append('m');
         int i = this.state + 1;
@@ -85,74 +100,56 @@ public class XmppProtocol extends Account {
         super(buffer);
         this.elementQueue = ObjectPool.newVector();
         int groupCount = buffer.readInt();
-        while (true) {
-            groupCount--;
-            if (groupCount < 0) {
-                break;
-            } else {
-                addGroup((ContactGroup) new XmppContactGroup(this, buffer));
-            }
+        for (int i = groupCount - 1; i >= 0; i--) {
+            addGroup((ContactGroup) new XmppContactGroup(this, buffer));
         }
         XmppContactGroup defaultGrp = new XmppContactGroup(this, buffer);
-        int contactIdx = Utils.vectorSize(defaultGrp.contacts);
-        while (true) {
-            contactIdx--;
-            if (contactIdx < 0) {
-                defaultGrp.isSpecial = true;
-                this.defaultGroup = defaultGrp;
-                this.serverAddress = buffer.readWideStr();
-                this.serverPort = buffer.readShortBE();
-                this.serverResourceId = buffer.readWideStr();
-                return;
-            }
-            ((XmppContact) defaultGrp.contacts.elementAt(contactIdx)).online = true;
+        for (int i = Utils.vectorSize(defaultGrp.contacts) - 1; i >= 0; i--) {
+            ((XmppContact) defaultGrp.contacts.elementAt(i)).online = true;
         }
+        defaultGrp.isSpecial = true;
+        this.defaultGroup = defaultGrp;
+        this.serverAddress = buffer.readWideStr();
+        this.serverPort = buffer.readShortBE();
+        this.serverResourceId = buffer.readWideStr();
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final Account serializeAccount(ByteBuffer buffer, boolean z, boolean z2) {
         super.serializeAccount(buffer, z, z2);
         buffer.writeStringLatin1(this.serverAddress).writeShortBE(this.serverPort).writeStringLatin1(this.serverResourceId);
         return this;
     }
 
-    /* renamed from: f */
     public boolean isMailRuVariant() {
         return false;
     }
 
-    /* renamed from: j */
     public String getStreamDomain() {
         return StringUtils.getDomain(this.login);
     }
 
     @Override // p000.Account
-    /* renamed from: b */
     public final ContactGroup createOnlineGroup() {
         return new XmppContactGroup(this, -1, Storage.resources().getString(StringResKeys.STR_GROUP_NOT_IN_LIST));
     }
 
     @Override // p000.Account
-    /* renamed from: c */
     public final ContactGroup createBlockedGroup() {
         return new XmppContactGroup(this, -1, Storage.resources().getString(StringResKeys.STR_GROUP_TEMPORARY));
     }
 
     @Override // p000.Account
-    /* renamed from: d */
     public final ContactGroup createOfflineGroup() {
         return new XmppContactGroup(this, -1, Storage.resources().getString(StringResKeys.STR_GROUP_IGNORE));
     }
 
     @Override // p000.Account
-    /* renamed from: e */
     public final ContactGroup createSpecialGroup() {
         return new XmppContactGroup(this, -1, Storage.resources().getString(StringResKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
     @Override // p000.Account
-    /* renamed from: g */
     public final int getDefaultError() {
         closeConnection();
         this.deadline = 0L;
@@ -161,25 +158,21 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
-    /* renamed from: a */
     private final int sendRawBytes(byte[] bArr) {
-        long j = Storage.state().getBool(UIKeys.FLAG_WIFI_CONNECTION) ? 25000L : 60000L;
+        long j = Storage.state().getBool(UIKeys.FLAG_WIFI_CONNECTION) ? TIMEOUT_WIFI : TIMEOUT_CELLULAR;
         this.timeout = j;
         this.deadline = System.currentTimeMillis() + j;
         return sendData(new ByteBuffer().writeBytes(bArr));
     }
 
-    /* renamed from: a */
     private int sendXmlElement(XmlElement element) {
         return sendData(new ByteBuffer().writeUTFNoLen(element.toString()));
     }
 
-    /* renamed from: b */
     private int sendElementWithId(XmlElement element) {
         return sendXmlElement(element.setAttrValue(131550, generateMessageId()));
     }
 
-    /* renamed from: s */
     private final void clearParserState() {
         this.dataBuffer.clear();
         Object[] state = this.parserState;
@@ -190,14 +183,12 @@ public class XmppProtocol extends Account {
         }
     }
 
-    /* renamed from: a */
     public final void setException(Throwable th) {
         if (this.progress == PROGRESS_RESOLVING) {
             this.lastException = th;
         }
     }
 
-    /* renamed from: a */
     public final void setAuthParameters(String str, int i) {
         if (this.progress == PROGRESS_RESOLVING) {
             this.serverPort = i;
@@ -205,17 +196,11 @@ public class XmppProtocol extends Account {
         }
     }
 
-    /* renamed from: t */
     private final boolean isMailRuXmpp() {
         return getType() == TYPE_XMPP && this.login.endsWith(Storage.resources().getString(PackedStringKeys.DOMAIN_GMAIL_COM));
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:49:0x0236  */
     @Override // p000.Account
-    /* renamed from: i */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public final void loadData() throws Throwable {
         boolean handledPing;
         boolean handledSession;
@@ -244,11 +229,11 @@ public class XmppProtocol extends Account {
                         this.progress = PROGRESS_CONNECTING;
                     } else {
                         this.progress = PROGRESS_RESOLVING;
-                        if (this.login.indexOf(64) <= 0) {
+                        if (this.login.indexOf(CHAR_AT) <= 0) {
                             ((XmppMailRuProtocol) this).serverResourceId = this.login;
                             taskArgs = null;
                         } else {
-                            String hashPrefix = StringUtils.prefix(Utils.generateRandomHash(), 16);
+                            String hashPrefix = StringUtils.prefix(Utils.generateRandomHash(), AUTH_HASH_PREFIX_LENGTH);
                             Object[] authArgs = {this, hashPrefix, new ByteBuffer().writeCompressed(PackedStringKeys.URL_VK_AUTH_TOKEN_SECURE).writeRawString(hashPrefix).readAllByteStr(), ObjectPool.integerOf(0), this.login, this.password};
                             new AsyncTask(AsyncTaskId.XMPP_HTTP_AUTH, authArgs);
                             taskArgs = authArgs;
@@ -274,9 +259,13 @@ public class XmppProtocol extends Account {
                         handleException(this.lastException);
                     }
                 } else if (Utils.nonEmpty(this.serverAddress)) {
+                    RemoteLogger.log("XMPP", "RESOLVING done -> CONNECTING, addr=" + this.serverAddress + ":" + this.serverPort);
                     this.progress = PROGRESS_CONNECTING;
                 } else if (this.lastException != null) {
+                    RemoteLogger.log("XMPP", "RESOLVING failed: " + this.lastException);
                     handleException(this.lastException);
+                } else {
+                    RemoteLogger.log("XMPP", "RESOLVING: still waiting, serverAddress=" + this.serverAddress + " exception=" + this.lastException);
                 }
                 AppController.needsRepaint = true;
                 break;
@@ -287,9 +276,6 @@ public class XmppProtocol extends Account {
                 RemoteLogger.log("XMPP", "progress CONNECTING to " + connAddr);
                 this.connection = new ConnectionThread(connAddr);
                 this.progress = PROGRESS_OPENING_STREAM;
-                if (isMailRuXmpp()) {
-                    new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, new Object[]{this, new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_CLIENT_AUTH).writeRawString(this.shortName).writeCompressed(PackedStringKeys.GMAIL_PASSWD).writeRawString(this.password).readAllByteStr(), ObjectPool.integerOf(0)});
-                }
                 AppController.needsRepaint = true;
                 break;
             case PROGRESS_OPENING_STREAM:
@@ -395,7 +381,7 @@ public class XmppProtocol extends Account {
                                         group.addContact((Object) newContact);
                                     }
                                     contact.updateFromPresence(presenceType, element);
-                                    NotificationHelper.playNotificationSound(3);
+                                    NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONVERSATION_MESSAGE);
                                     onMessage(jid, 0L, Storage.resources().getString(StringResKeys.STR_XMPP_AUTH_REQUEST));
                                 } else if (contact != null) {
                                     contact.updateFromPresence(presenceType, element);
@@ -494,7 +480,6 @@ public class XmppProtocol extends Account {
         sendRawBytes(new byte[]{32});
     }
 
-    /* renamed from: b */
     private void handleException(Throwable th) {
         RemoteLogger.log("XMPP", "handleException login=" + this.login, th);
         EventDispatcher.postAccountMessage(this, th.toString());
@@ -502,7 +487,6 @@ public class XmppProtocol extends Account {
         this.lastError = getDefaultError();
     }
 
-    /* renamed from: b */
     public final void updatePresenceStatus(String str, int i) {
         if (isConnected()) {
             sendXmlElement(XmlElement.createFromState(530016).setAttrValue(131590, str).addNameAttr(i == 0 ? 594926 : i == 1 ? 660462 : 791532).addChild(XmlElement.createFromState(267628).addIdAttr(2037073).appendText((Object) this.displayName)));
@@ -512,7 +496,6 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: c */
     public final void onError(int i) {
         int statusMode;
         switch (i) {
@@ -546,7 +529,6 @@ public class XmppProtocol extends Account {
         connect(0);
     }
 
-    /* renamed from: h */
     private final void sendPresence(int i) {
         if (isMailRuVariant()) {
             i = 1;
@@ -556,26 +538,26 @@ public class XmppProtocol extends Account {
         int statusStringId = 0;
         switch (i) {
             case STATUS_ONLINE:
-                statusStringId = 642;
+                statusStringId = STATUS_STR_ONLINE;
                 break;
             case STATUS_BUSY:
                 presence.setIntAttribute(267927, 267829);
-                statusStringId = 644;
+                statusStringId = STATUS_STR_BUSY;
                 break;
             case STATUS_XA:
                 presence.addNameAttr(594975);
                 break;
             case STATUS_AWAY:
                 presence.setIntAttribute(267927, 265215);
-                statusStringId = 643;
+                statusStringId = STATUS_STR_AWAY;
                 break;
             case STATUS_DND:
                 presence.setIntAttribute(267927, 202299);
-                statusStringId = 645;
+                statusStringId = STATUS_STR_DND;
                 break;
             case STATUS_CUSTOM:
                 presence.setIntAttribute(267927, 136761);
-                statusStringId = 648;
+                statusStringId = STATUS_STR_CUSTOM;
                 break;
         }
         if (statusStringId != 0) {
@@ -587,7 +569,6 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int setCredentials(String str, String str2) {
         int result = super.setCredentials(str, str2);
         if (result != 0) {
@@ -601,7 +582,6 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
-    /* renamed from: b */
     public final int setStatusMode(int i) {
         this.configFlags = i;
         if (isConnected()) {
@@ -615,70 +595,59 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: c */
     public final int validateContactDelete(Contact contact) {
         return 1032;
     }
 
     @Override // p000.Account
-    /* renamed from: d */
     public final int validateContactBlock(Contact contact) {
         return 1032;
     }
 
     @Override // p000.Account
-    /* renamed from: e */
     public final int validateContactUnblock(Contact contact) {
         return 1032;
     }
 
     @Override // p000.Account
-    /* renamed from: b */
     public final Contact newContact(String str) {
         return null;
     }
 
     @Override // p000.Account
-    /* renamed from: h */
     public int getIconId() {
         if (this.progress < PROGRESS_STARTING || this.progress >= PROGRESS_CONNECTED) {
             return getIconForError(this.lastError);
         }
-        return 382;
+        return ICON_CONNECTING;
     }
 
-    /* renamed from: u */
     private void sendStreamHeader() {
         sendRawBytes(new ByteBuffer().writeCompressed(PackedStringKeys.XML_XMPP_STREAM_HEADER).writeRawString(getStreamDomain()).writeCompressed(PackedStringKeys.XML_CLOSE_TAG_END).toByteArray());
     }
 
     @Override // p000.Account
-    /* renamed from: p */
     public int getSessionStringKey() {
         return 398518;
     }
 
-    /* renamed from: f */
     private XmppContact findContactByJid(String str) {
         return (XmppContact) getContact((Object) str);
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateModify(Contact contact, Object[] params) {
         int result = super.validateModify(contact, params);
-        return 0 != result ? result : createRosterUpdate(((XmppContact) contact).jabberId, (String) params[0], findGroup(contact).name);
+        return result != 0 ? result : createRosterUpdate(((XmppContact) contact).jabberId, (String) params[0], findGroup(contact).name);
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateMove(Contact contact, ContactGroup fromGroup, ContactGroup toGroup) {
         int result = super.validateMove(contact, fromGroup, toGroup);
-        return 0 != result ? result : createRosterUpdate(((XmppContact) contact).jabberId, contact.displayName, toGroup.name);
+        return result != 0 ? result : createRosterUpdate(((XmppContact) contact).jabberId, contact.displayName, toGroup.name);
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateDelete(Contact contact) {
         if (!isConnected()) {
             return 299;
@@ -689,12 +658,10 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: b */
     public final int validateObject(Object obj) {
         return 0;
     }
 
-    /* renamed from: k */
     public final int addNewContact() {
         if (!isConnected()) {
             EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_XMPP_EVENT));
@@ -707,7 +674,6 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
-    /* renamed from: a */
     private final int createRosterUpdate(String str, String str2, String str3) {
         XmlElement queryElement = XmlElement.createFromState(333360).addIdAttr(1054101);
         XmlElement itemElement = XmlElement.createFromState(267942).setAttrValue(202421, str).setAttrValue(262601, str2).setAttrValue(792248, str2 == null ? Storage.resources().getString(PackedStringKeys.TAG_REMOVE) : null);
@@ -718,7 +684,6 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: b */
     public final int validateResend(Contact contact) {
         if (isConnected()) {
             createRosterUpdate(contact.getIdentifier(), (String) null, (String) null);
@@ -728,7 +693,6 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
-    /* renamed from: a */
     public final int updateContactPresence(XmppContact contact, int i) {
         if (!isConnected()) {
             return 299;
@@ -741,10 +705,9 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: l */
     public final int disconnect() {
         int result = super.disconnect();
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         closeConnection();
@@ -756,26 +719,21 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
-    /* renamed from: g */
     private XmppContactGroup findGroupByName(String str) {
-        XmppContactGroup group;
         Vector groups = this.groups;
-        int i = Utils.vectorSize(groups);
-        do {
-            i--;
-            if (i < 0) {
-                return null;
+        for (int i = Utils.vectorSize(groups) - 1; i >= 0; i--) {
+            XmppContactGroup group = (XmppContactGroup) groups.elementAt(i);
+            if (StringUtils.equals(str, group.name)) {
+                return group;
             }
-            group = (XmppContactGroup) groups.elementAt(i);
-        } while (!StringUtils.equals(str, group.name));
-        return group;
+        }
+        return null;
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateGroupCreate(String str) {
         int result = super.validateGroupCreate(str);
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         if (findGroupByName(str) != null) {
@@ -786,10 +744,9 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateGroupDelete(ContactGroup group) {
         int result = super.validateGroupDelete(group);
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         this.groups.removeElement(group);
@@ -797,10 +754,9 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateGroupRename(ContactGroup group, String str) {
         int result = super.validateGroupRename(group, str);
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         if (Utils.vectorSize(group.contacts) != 0) {
@@ -811,17 +767,15 @@ public class XmppProtocol extends Account {
     }
 
     @Override // p000.Account
-    /* renamed from: a */
     public final int validateSend(Contact contact, String str, long j) {
         int result = super.validateSend(contact, str, j);
-        if (0 != result) {
+        if (result != 0) {
             return result;
         }
         this.sentCount++;
         return sendXmlElement(XmlElement.createFromState(464488).setAttrValue(131590, contact.getIdentifier()).addNameAttr(265215).addChild(XmlElement.createFromState(267946).appendText((Object) str)).addSimpleChild(398993, 2430320));
     }
 
-    /* renamed from: c */
     private final boolean processRosterUpdate(XmlElement element) {
         if (element.findByAttrs(333350, 661030) == null) {
             return false;
@@ -856,16 +810,10 @@ public class XmppProtocol extends Account {
         }
     }
 
-    /* renamed from: d */
     private final void parseRosterItems(XmlElement element) {
         Vector groups = this.groups;
         Vector children = element.children;
-        int i = Utils.vectorSize(children);
-        while (true) {
-            i--;
-            if (i < 0) {
-                return;
-            }
+        for (int i = Utils.vectorSize(children) - 1; i >= 0; i--) {
             XmlElement itemElement = (XmlElement) children.elementAt(i);
             if (StringUtils.matchesKey(PackedStringKeys.TAG_ITEM, itemElement.tagName)) {
                 String jid = itemElement.getIntAttribute(PackedStringKeys.ATTR_JID);
@@ -899,12 +847,10 @@ public class XmppProtocol extends Account {
         }
     }
 
-    /* renamed from: m */
     public String getAuthUsername() {
         return this.shortName;
     }
 
-    /* renamed from: a */
     private static String extractDisplayName(XmlElement element, String str) {
         try {
             return StringUtils.fromBuffer(element.findChildByKey(PackedStringKeys.TAG_NICK).textContent);
@@ -913,36 +859,33 @@ public class XmppProtocol extends Account {
         }
     }
 
-    /* renamed from: h */
     private static String extractBareJid(String str) {
         if (str == null) {
             return null;
         }
-        int idx = str.indexOf(47);
+        int idx = str.indexOf(CHAR_SLASH);
         return idx <= 0 ? str : StringUtils.prefix(str, idx);
     }
 
-    /* renamed from: d */
     public static final int getIconForError(int i) {
         switch (i) {
             case STATUS_DISCONNECTED:
-                return 381;
+                return ICON_DISCONNECTED;
             case STATUS_ONLINE:
-                return 383;
+                return ICON_ONLINE;
             case STATUS_BUSY:
-                return 16318847;
+                return ICON_BUSY;
             case STATUS_XA:
-                return 16515455;
+                return ICON_XA;
             case STATUS_AWAY:
-                return 16384383;
+                return ICON_AWAY;
             case STATUS_DND:
-                return 16449919;
+                return ICON_DND;
             default:
-                return 16580991;
+                return ICON_CUSTOM;
         }
     }
 
-    /* renamed from: e */
     private final Image extractImageFromElement(XmlElement element) {
         Image image;
         String text;
@@ -955,18 +898,15 @@ public class XmppProtocol extends Account {
                 }
             }
         }
-        int i = Utils.vectorSize(element.children);
-        do {
-            i--;
-            if (i < 0) {
-                return null;
-            }
+        for (int i = Utils.vectorSize(element.children) - 1; i >= 0; i--) {
             image = extractImageFromElement(element.getChildAt(i));
-        } while (image == null);
-        return image;
+            if (image != null) {
+                return image;
+            }
+        }
+        return null;
     }
 
-    /* renamed from: a */
     private final StringBuffer buildContactDescription(StringBuffer sb, XmlElement element) {
         if (!StringUtils.matchesKey(PackedStringKeys.TAG_PHOTO, element.tagName)) {
             String text = StringUtils.fromBuffer(element.textContent);
@@ -1016,6 +956,7 @@ public class XmppProtocol extends Account {
                     }
                 }
             }
+            try { Thread.sleep(10); } catch (InterruptedException e) { }
         }
     }
 }

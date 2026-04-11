@@ -17,6 +17,14 @@ import javax.microedition.lcdui.Image;
 
 public final class ChatHandler extends BaseScreenHandler {
 
+    // Chat room name counter wraps at this value
+    private static final int CHAT_NAME_COUNTER_MODULO = 1000;
+
+    // Base offset for emoticon config ID calculation
+    private static final int EMOTICON_CONFIG_BASE_OFFSET = 157;
+
+    // MRIM chat room creation flags
+    private static final int MRIM_CHATROOM_FLAGS = 128;
 
     public void buildScreen(int screenId) {
         Object[] request;
@@ -119,7 +127,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CREATE_CHAT_ROOM:
                 Storage.state().setInt(ChatKeys.FLAG_CHAT_ROOM_CREATED, 0);
-                Storage.state().setFromBuffer(ChatKeys.SLOT_CHAT_NAME, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_CHAT_NAME_PREFIX)).append(1 + (Storage.state().getInt(SettingsKeys.UI_COUNTER) % 1000)));
+                Storage.state().setFromBuffer(ChatKeys.SLOT_CHAT_NAME, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_CHAT_NAME_PREFIX)).append(1 + (Storage.state().getInt(SettingsKeys.UI_COUNTER) % CHAT_NAME_COUNTER_MODULO)));
                 ScreenManager.showScreen(ContactListManager.buildContactListScreen(ScreenManager.createScreen(ScreenDef.CREATE_CHAT_ROOM), (MrimAccount) Storage.state().getAccount(), (Contact) null));
                 return;
             case ScreenId.CHAT_STATUS:
@@ -157,7 +165,7 @@ public final class ChatHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.CHAT_ROOM_CONFIG:
                 ScreenManager.processScreenForm();
-                return (Storage.state().getInt(SettingsKeys.INT_EMOTICON_CONFIG_ACTION) != 4 || 0 == (configResult = ((MrimAccount) Storage.state().getAccount()).setConfiguration(((Storage.state().getInt(SettingsKeys.INT_EMOTICON_CONFIG_ID) - 157) << 8) + 4))) ? 0 : NotificationHelper.showError(configResult);
+                return (Storage.state().getInt(SettingsKeys.INT_EMOTICON_CONFIG_ACTION) != 4 || (configResult = ((MrimAccount) Storage.state().getAccount()).setConfiguration(((Storage.state().getInt(SettingsKeys.INT_EMOTICON_CONFIG_ID) - EMOTICON_CONFIG_BASE_OFFSET) << 8) + 4)) == 0) ? 0 : NotificationHelper.showError(configResult);
             case ScreenId.CHAT_VIEW_MODE:
                 ScreenManager.processScreenForm();
                 return 0;
@@ -183,26 +191,21 @@ public final class ChatHandler extends BaseScreenHandler {
                         boolean flag2 = Storage.state().getBool(ChatKeys.FLAG_CHAT_ROOM_CREATED);
                         ByteBuffer buffer = new ByteBuffer();
                         int size = checkedItems.size();
-                        int i5 = size;
                         ByteBuffer membersBuf = buffer.writeIntLE(size);
-                        while (true) {
-                            i5--;
-                            if (i5 < 0) {
-                                ByteBuffer wrappedBuf = new ByteBuffer().writeBufferIntLen(membersBuf);
-                                Object[] objArr2 = new Object[3];
-                                objArr2[0] = ProtocolFactory.createMrimPacket(mrimAccount3, 4121, new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(chatName).writeZeros(12).writeBufferIntLen(flag2 ? wrappedBuf.writeStringLatin1(mrimAccount3.login) : wrappedBuf));
-                                objArr2[1] = ObjectPool.integerOf(15);
-                                objArr2[2] = chatName;
-                                int sendResult3 = mrimAccount3.trySendData(mrimAccount3.createAndQueueCommand(objArr2));
-                                if (0 != sendResult3) {
-                                    errorCode4 = NotificationHelper.showError(sendResult3);
-                                } else {
-                                    Storage.state().addInt(SettingsKeys.UI_COUNTER, 1);
-                                    errorCode4 = 0;
-                                }
-                            } else {
-                                membersBuf.writeStringLatin1((String) checkedItems.elementAt(i5));
-                            }
+                        for (int i5 = size - 1; i5 >= 0; i5--) {
+                            membersBuf.writeStringLatin1((String) checkedItems.elementAt(i5));
+                        }
+                        ByteBuffer wrappedBuf = new ByteBuffer().writeBufferIntLen(membersBuf);
+                        Object[] objArr2 = new Object[3];
+                        objArr2[0] = ProtocolFactory.createMrimPacket(mrimAccount3, MrimCommand.CS_ADD_CONTACT, new ByteBuffer().writeIntLE(MRIM_CHATROOM_FLAGS).writeZeros(8).writeStringUTF16(chatName).writeZeros(12).writeBufferIntLen(flag2 ? wrappedBuf.writeStringLatin1(mrimAccount3.login) : wrappedBuf));
+                        objArr2[1] = ObjectPool.integerOf(15);
+                        objArr2[2] = chatName;
+                        int sendResult3 = mrimAccount3.trySendData(mrimAccount3.createAndQueueCommand(objArr2));
+                        if (sendResult3 != 0) {
+                            errorCode4 = NotificationHelper.showError(sendResult3);
+                        } else {
+                            Storage.state().addInt(SettingsKeys.UI_COUNTER, 1);
+                            errorCode4 = 0;
                         }
                     }
                 }
@@ -531,7 +534,6 @@ public final class ChatHandler extends BaseScreenHandler {
         return 0;
     }
 
-    /* renamed from: a */
     public static final int handleChatInputAction(String str) {
         int errorCode;
         String messageText = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT));
@@ -568,13 +570,12 @@ public final class ChatHandler extends BaseScreenHandler {
             errorCode = 299;
         }
         int i = errorCode;
-        if (0 != errorCode) {
+        if (errorCode != 0) {
             return NotificationHelper.showError(i);
         }
         return 0;
     }
 
-    /* renamed from: c */
     public static final int handleChatRoomAction(String str) {
         String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
         int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);

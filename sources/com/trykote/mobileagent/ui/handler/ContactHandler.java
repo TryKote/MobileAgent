@@ -18,6 +18,20 @@ import javax.microedition.lcdui.TextBox;
 
 public final class ContactHandler extends BaseScreenHandler {
 
+    // Cyrillic Unicode ranges
+    private static final char CYRILLIC_UPPER_START = '\u0410'; // А (1040)
+    private static final char CYRILLIC_UPPER_END = '\u042F';   // Я (1071)
+    private static final char CYRILLIC_LOWER_START = '\u0430'; // а (1072)
+    private static final char CYRILLIC_LOWER_END = '\u044F';   // я (1103)
+    private static final char CYRILLIC_IO_UPPER = '\u0401';    // Ё (1025)
+    private static final char CYRILLIC_IO_LOWER = '\u0451';    // ё (1105)
+
+    // SMS encoding: each Cyrillic char takes 2 extra bytes in UCS-2
+    private static final int CYRILLIC_EXTRA_BYTES = 2;
+    private static final int SMS_CHAR_LIMIT = 160;
+
+    // Timer for phone input validation
+    private static final long PHONE_INPUT_CHECK_INTERVAL_MS = 3000L;
 
     public void buildScreen(int screenId) {
         switch (screenId) {
@@ -133,21 +147,16 @@ public final class ContactHandler extends BaseScreenHandler {
                 NotificationHelper.showConfirmDialog(72, 866);
                 Vector selectedItems = Storage.state().getVector(UIKeys.SLOT_MEDIA_STREAM);
                 Vector itemsParams = ObjectPool.newVector();
-                int size7 = selectedItems.size();
-                while (true) {
-                    size7--;
-                    if (size7 < 0) {
-                        Vector outerParams = ObjectPool.newVector();
-                        outerParams.addElement(itemsParams);
-                        MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_AJAX_MARKMSG), ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_MARK_MSG)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
-                        return;
-                    } else {
-                        Hashtable hashtable = new Hashtable();
-                        JsonParser.putIntKey(hashtable, 329240, JsonParser.getVectorElement(selectedItems, size7));
-                        JsonParser.putIntKey(hashtable, 263673, ObjectPool.integerOf(Storage.state().getInt(ChatKeys.INT_CHAT_VIEW_MODE)));
-                        itemsParams.addElement(hashtable);
-                    }
+                for (int idx = selectedItems.size() - 1; idx >= 0; idx--) {
+                    Hashtable hashtable = new Hashtable();
+                    JsonParser.putIntKey(hashtable, 329240, JsonParser.getVectorElement(selectedItems, idx));
+                    JsonParser.putIntKey(hashtable, 263673, ObjectPool.integerOf(Storage.state().getInt(ChatKeys.INT_CHAT_VIEW_MODE)));
+                    itemsParams.addElement(hashtable);
                 }
+                Vector outerParams = ObjectPool.newVector();
+                outerParams.addElement(itemsParams);
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_AJAX_MARKMSG), ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_MARK_MSG)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
+                return;
             case ScreenId.CONTACT_DELETE:
                 Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_1);
                 if (Storage.state().getCurrentContact() == null) {
@@ -198,7 +207,7 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.CONTACT_INFO_VIEW:
                 ContactInfo contactInfo = (ContactInfo) Storage.state().getObject(RegistrationKeys.SLOT_REG_PARAM_1);
                 String str = (String) contactInfo.get(ObjectPool.integerOf(-1));
-                if (null != str) {
+                if (str != null) {
                     NotificationHelper.showNotification(str);
                 } else {
                     Storage.state().setInt(RuntimeKeys.INT_INFO_SCREEN_MODE, contactInfo.isXmppContact() ? 0 : 503);
@@ -344,7 +353,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 } else {
                     modifyResult = contact.account.validateModify(contact, objArr);
                 }
-                return 0 != modifyResult ? NotificationHelper.showError(modifyResult) : 0;
+                return modifyResult != 0 ? NotificationHelper.showError(modifyResult) : 0;
             case ScreenId.ADD_CONTACT:
                 ScreenManager.processScreenForm();
                 return Storage.state().getAccount() instanceof XmppProtocol ? ((XmppProtocol) Storage.state().getAccount()).addNewContact() : 0;
@@ -365,13 +374,11 @@ public final class ContactHandler extends BaseScreenHandler {
                         while (true) {
                             if (contactEnum.hasMoreElements()) {
                                 MrimContact mrimContact = (MrimContact) contactEnum.nextElement();
-                                int i2 = length;
-                                do {
-                                    i2--;
-                                    if (i2 < 0) {
+                                for (int i2 = length - 1; i2 >= 0; i2--) {
+                                    if (mrimContact.isInGroup(phoneNumbers2[i2])) {
                                         break;
                                     }
-                                } while (!mrimContact.isInGroup(phoneNumbers2[i2]));
+                                }
                                 sendResult = 486;
                             } else {
                                 MrimContactGroup contactGroup = mrimAccount.getFirstContactGroup();
@@ -384,7 +391,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 } else {
                     sendResult = 708;
                 }
-                return 0 != sendResult ? NotificationHelper.showError(sendResult) : 0;
+                return sendResult != 0 ? NotificationHelper.showError(sendResult) : 0;
             case ScreenId.CONTACT_GROUP_MENU:
                 return ContactListManager.handleContactGroupAction(title, action);
             case ScreenId.CONTACT_GROUPS:
@@ -404,15 +411,15 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.ADD_CONTACT_INFO:
                 ScreenManager.processScreenForm();
                 int addResult = ((ContactInfo) Storage.state().getObject(ContactKeys.SLOT_CONTACT_INFO)).getAccount().validateGroupAdd(Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_GROUP_ADD_NAME)), Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_GROUP_ADD_DISPLAY)), Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_GROUP_ADD_GROUP)), (ContactGroup) Storage.state().getVector(ContactKeys.VEC_GROUP_LIST).elementAt(Storage.state().getInt(ContactKeys.INT_GROUP_OPERATION_RESULT)), Storage.state().getBool(ContactKeys.FLAG_GROUP_ADD_RESULT));
-                return 0 != addResult ? NotificationHelper.showError(addResult) : 0;
+                return addResult != 0 ? NotificationHelper.showError(addResult) : 0;
             case ScreenId.CREATE_GROUP:
                 ScreenManager.processScreenForm();
                 int createResult = Storage.state().getAccount().validateGroupCreate(Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_NEW_GROUP_NAME)));
-                return 0 != createResult ? NotificationHelper.showError(createResult) : 0;
+                return createResult != 0 ? NotificationHelper.showError(createResult) : 0;
             case ScreenId.RENAME_GROUP:
                 ScreenManager.processScreenForm();
                 int renameResult = Storage.state().getCurrentGroup().rename(Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_SEARCH_RESULT)));
-                return 0 != renameResult ? NotificationHelper.showError(renameResult) : 0;
+                return renameResult != 0 ? NotificationHelper.showError(renameResult) : 0;
             case ScreenId.DELETE_ENTITY:
                 return deleteSelectedEntity();
             case ScreenId.BATCH_DELETE:
@@ -432,15 +439,15 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.BLOCK_CONTACT_LIST:
                 Contact selectedContact = (Contact) obj;
                 int blockResult;
-                return (null == selectedContact || 0 == (blockResult = selectedContact.validateBlock())) ? 0 : NotificationHelper.showError(blockResult);
+                return (selectedContact == null || (blockResult = selectedContact.validateBlock()) == 0) ? 0 : NotificationHelper.showError(blockResult);
             case ScreenId.UNBLOCK_CONTACT_LIST:
                 Contact contactToDelete = (Contact) obj;
                 int unblockResult;
-                return (null == contactToDelete || 0 == (unblockResult = contactToDelete.validateUnblock())) ? 0 : NotificationHelper.showError(unblockResult);
+                return (contactToDelete == null || (unblockResult = contactToDelete.validateUnblock()) == 0) ? 0 : NotificationHelper.showError(unblockResult);
             case ScreenId.DELETE_CONTACT_LIST:
                 Contact contactToBlock = (Contact) obj;
                 int deleteResult;
-                return (null == contactToBlock || 0 == (deleteResult = contactToBlock.validateDelete())) ? 0 : NotificationHelper.showError(deleteResult);
+                return (contactToBlock == null || (deleteResult = contactToBlock.validateDelete()) == 0) ? 0 : NotificationHelper.showError(deleteResult);
             case ScreenId.GROUP_MEMBERS:
                 int errorCode;
                 if (obj == null) {
@@ -462,17 +469,12 @@ public final class ContactHandler extends BaseScreenHandler {
                     MrimAccount mrimAccount4 = (MrimAccount) mrimContact2.account;
                     ByteBuffer buffer = new ByteBuffer();
                     int size = checkedItems.size();
-                    int i6 = size;
                     ByteBuffer membersBuf = buffer.writeIntLE(size);
-                    while (true) {
-                        i6--;
-                        if (i6 < 0) {
-                            int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ObjectPool.integerOf(MrimAccount.RESP_AUTH), mrimContact2, new Long(2L)}));
-                            errorCode3 = 0 != sendResult4 ? NotificationHelper.showError(sendResult4) : 0;
-                        } else {
-                            membersBuf.writeStringLatin1((String) checkedItems.elementAt(i6));
-                        }
+                    for (int i6 = size - 1; i6 >= 0; i6--) {
+                        membersBuf.writeStringLatin1((String) checkedItems.elementAt(i6));
                     }
+                    int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ObjectPool.integerOf(MrimAccount.RESP_AUTH), mrimContact2, new Long(2L)}));
+                    errorCode3 = sendResult4 != 0 ? NotificationHelper.showError(sendResult4) : 0;
                 }
                 return errorCode3;
             case ScreenId.CONTACT_DELETE_MRIM:
@@ -604,7 +606,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 break;
             case ScreenId.CONTACT_DELETE:
                 if (Storage.state().getCurrentContact() != null) {
-                    Storage.state().getCurrentContact().mo148L();
+                    Storage.state().getCurrentContact().clearRegistrationData();
                 }
                 break;
             case ScreenId.CONTACT_INFO_VIEW:
@@ -713,7 +715,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 return 0;
             case ScreenId.PHONE_GROUPS:
                 TextBox textBox;
-                if (TimerManager.checkTimer(9, 3000L) && (textBox = XmppContactGroup.getTextInputBox()) != null) {
+                if (TimerManager.checkTimer(TimerManager.SLOT_PHONE_INPUT_CHECK, PHONE_INPUT_CHECK_INTERVAL_MS) && (textBox = XmppContactGroup.getTextInputBox()) != null) {
                     String inputText = StringUtils.getTextBoxString(textBox);
                     if (Storage.state().getBool(SettingsKeys.SETTING_AUTO_RECONNECT)) {
                         String transliterated = Conversation.transliterateRussian(inputText);
@@ -722,22 +724,18 @@ public final class ContactHandler extends BaseScreenHandler {
                         }
                     } else {
                         int length = inputText.length();
-                        int i7 = length;
-                        int i8 = length;
-                        while (true) {
-                            i8--;
-                            if (i8 < 0) {
-                                int i9 = i7 - 160;
-                                if (i9 > 0) {
-                                    textBox.setString(StringUtils.prefix(inputText, inputText.length() - i9));
-                                }
-                                break;
-                            } else {
-                                char ch = inputText.charAt(i8);
-                                if ((ch >= 1040 && ch <= 1071) || ((ch >= 1072 && ch <= 1103) || ch == 1105 || ch == 1025)) {
-                                    i7 += 2;
-                                }
+                        int encodedLength = length;
+                        for (int i8 = length - 1; i8 >= 0; i8--) {
+                            char ch = inputText.charAt(i8);
+                            if ((ch >= CYRILLIC_UPPER_START && ch <= CYRILLIC_UPPER_END)
+                                    || ((ch >= CYRILLIC_LOWER_START && ch <= CYRILLIC_LOWER_END)
+                                        || ch == CYRILLIC_IO_LOWER || ch == CYRILLIC_IO_UPPER)) {
+                                encodedLength += CYRILLIC_EXTRA_BYTES;
                             }
+                        }
+                        int overflow = encodedLength - SMS_CHAR_LIMIT;
+                        if (overflow > 0) {
+                            textBox.setString(StringUtils.prefix(inputText, inputText.length() - overflow));
                         }
                     }
                 }
@@ -758,31 +756,26 @@ public final class ContactHandler extends BaseScreenHandler {
                         return responseCode;
                     } else {
                         Object payload = ApiClient.getJsonPayload();
-                        int size = ((Vector) payload).size();
-                        while (true) {
-                            size--;
-                            if (size < 0) {
-                                return ScreenId.CHAT_ROOM_VIEW;
-                            } else {
-                                Object jsonObj = JsonParser.getVectorElement(payload, size);
-                                int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
-                                String jsonStr = JsonParser.getStringByInt(jsonObj, 329240);
-                                ChatRoom selectedChatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findByName(jsonStr);
-                                Message message = selectedChatRoom.getMessage(jsonStr);
-                                if (selectedChatRoom != null) {
-                                    selectedChatRoom.markMessageRead(jsonStr);
+                        for (int idx = ((Vector) payload).size() - 1; idx >= 0; idx--) {
+                            Object jsonObj = JsonParser.getVectorElement(payload, idx);
+                            int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
+                            String jsonStr = JsonParser.getStringByInt(jsonObj, 329240);
+                            ChatRoom selectedChatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findByName(jsonStr);
+                            Message message = selectedChatRoom.getMessage(jsonStr);
+                            if (selectedChatRoom != null) {
+                                selectedChatRoom.markMessageRead(jsonStr);
+                            }
+                            if (parsedInt == 1) {
+                                if (message != null && !message.hasFlag(4)) {
+                                    message.setFlag(4, true);
+                                    selectedChatRoom.incrementUnread();
                                 }
-                                if (parsedInt == 1) {
-                                    if (message != null && !message.hasFlag(4)) {
-                                        message.setFlag(4, true);
-                                        selectedChatRoom.incrementUnread();
-                                    }
-                                } else if (message != null && message.hasFlag(4)) {
-                                    message.setFlag(4, false);
-                                    selectedChatRoom.decrementUnread();
-                                }
+                            } else if (message != null && message.hasFlag(4)) {
+                                message.setFlag(4, false);
+                                selectedChatRoom.decrementUnread();
                             }
                         }
+                        return ScreenId.CHAT_ROOM_VIEW;
                     }
                 }
                 return 0;
@@ -821,11 +814,10 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    /* renamed from: q */
     public static final int deleteSelectedEntity() {
         int groupError;
         Object obj = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
-        if ((obj instanceof ContactGroup) && 0 != (groupError = ((ContactGroup) obj).getSortIndex())) {
+        if ((obj instanceof ContactGroup) && (groupError = ((ContactGroup) obj).getSortIndex()) != 0) {
             return NotificationHelper.showError(groupError);
         }
         if (!(obj instanceof Contact)) {
@@ -833,7 +825,7 @@ public final class ContactHandler extends BaseScreenHandler {
         }
         Contact selectedContact = (Contact) obj;
         int contactError = selectedContact.account.validateResend(selectedContact);
-        if (0 != contactError) {
+        if (contactError != 0) {
             return NotificationHelper.showError(contactError);
         }
         return ScreenId.CONTACT_LIST;
@@ -856,7 +848,7 @@ public final class ContactHandler extends BaseScreenHandler {
         MrimAccount account = (MrimAccount) Storage.state().getObject(SessionKeys.SLOT_TEMP_ACCOUNT);
         AccountHandler.showMailAccountList();
         Storage.state().setAccount(account);
-        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, 38);
+        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, ScreenId.CHAT_ROOM_INIT);
         return ScreenId.CHAT_ROOMS;
     }
 

@@ -6,12 +6,14 @@ import com.trykote.mobileagent.ui.handler.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 
-/* renamed from: au */
-/* loaded from: MobileAgent_3.9.jar:au.class */
 public final class ScreenBuilder {
-    /* renamed from: a */
+
+    private static final int MAX_SCREEN_ID = ScreenId.ASYNC_TASK;
+    private static final int SOFT_KEY_DEFAULT_ACTION = 199;
+    private static final int SOFT_KEY_NO_ACTION = 200;
+
     public static final void openScreen(int i) {
-        Debug.assertState(i >= 0 && i <= 180, "screenId out of range: " + i);
+        Debug.assertState(i >= 0 && i <= MAX_SCREEN_ID, "screenId out of range: " + i);
         RemoteLogger.log("UI", "openScreen(" + i + ")");
         boolean z;
         int i2;
@@ -24,7 +26,7 @@ public final class ScreenBuilder {
                 z = false;
                 while (--size >= 0) {
                     i2 = ((ListView) screenStack.elementAt(size)).screenType;
-                    if (i2 == 7 || i2 == 8) {
+                    if (i2 == ScreenManager.TYPE_TOAST || i2 == ScreenManager.TYPE_TOAST_CENTER) {
                         z = true;
                         break;
                     }
@@ -86,7 +88,6 @@ public final class ScreenBuilder {
         }
     }
 
-    /* renamed from: a */
     public static final void onMenuItemSelected() {
         AppController.needsRepaint = true;
         AppController.needsLayoutUpdate = true;
@@ -154,7 +155,7 @@ public final class ScreenBuilder {
         }
         RemoteLogger.log("UI", "onMenuItemSelected screenId=" + ScreenManager.getCurrentScreen().screenId + " next=" + nextScreen + " skL=" + currentScreen.softKeyLeft);
         if (nextScreen != -1) {
-            if (nextScreen == 12) {
+            if (nextScreen == ScreenId.CLOSE) {
                 onScreenClosed();
                 return;
             }
@@ -163,11 +164,11 @@ public final class ScreenBuilder {
                 return;
             }
             int i8 = currentScreen.softKeyLeft;
-            if (i8 != 200) {
-                int i9 = i8 == 199 ? action : i8;
+            if (i8 != SOFT_KEY_NO_ACTION) {
+                int i9 = i8 == SOFT_KEY_DEFAULT_ACTION ? action : i8;
                 int i10 = i9;
                 RemoteLogger.log("UI", "softKeyLeft action=" + i10);
-                if (i9 == 12) {
+                if (i9 == ScreenId.CLOSE) {
                     onScreenClosed();
                 } else if (i10 != 0) {
                     openScreen(i10);
@@ -176,8 +177,6 @@ public final class ScreenBuilder {
         }
     }
 
-    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-    /* renamed from: b */
     public static final void onMenuItemAction() {
         AppController.needsRepaint = true;
         AppController.needsLayoutUpdate = true;
@@ -193,7 +192,7 @@ public final class ScreenBuilder {
         }
         RemoteLogger.log("UI", "onMenuItemAction screenId=" + ScreenManager.getCurrentScreen().screenId + " result=" + result + " skC=" + currentScreen.softKeyCenter);
         if (result != -1) {
-            if (result == 12) {
+            if (result == ScreenId.CLOSE) {
                 onScreenClosed();
                 return;
             }
@@ -202,8 +201,8 @@ public final class ScreenBuilder {
                 return;
             }
             int i2 = currentScreen.softKeyCenter;
-            if (i2 != 200) {
-                if (i2 == 12) {
+            if (i2 != SOFT_KEY_NO_ACTION) {
+                if (i2 == ScreenId.CLOSE) {
                     onScreenClosed();
                 } else if (i2 != 0) {
                     openScreen(i2);
@@ -212,7 +211,6 @@ public final class ScreenBuilder {
         }
     }
 
-    /* renamed from: a */
     public static final int handleDropdownSelect(String str, MenuItem menuItem) {
         Object[] objArr = (Object[]) menuItem.data;
         Object[] objArr2 = (Object[]) objArr[0];
@@ -220,23 +218,17 @@ public final class ScreenBuilder {
         ListView parentScreen = (ListView) objArr[2];
         String[] strArr = (String[]) objArr2[1];
         int i = 0;
-        int length = strArr.length;
-        while (true) {
-            length--;
-            if (length < 0) {
-                targetItem.clear().setLabel(Utils.appendSpace(targetItem.title)).addText(strArr[i], 1, 7).setIcon(247).data = new Object[]{ObjectPool.integerOf(i), strArr};
-                parentScreen.rebuildItems();
-                EventDispatcher.postEvent(new MenuItemEvent(targetItem));
-                return 0;
-            }
-            if (str == strArr[length]) {
-                i = length;
+        for (int idx = strArr.length - 1; idx >= 0; idx--) {
+            if (str == strArr[idx]) {
+                i = idx;
             }
         }
+        targetItem.clear().setLabel(Utils.appendSpace(targetItem.title)).addText(strArr[i], 1, 7).setIcon(MenuItem.ICON_DROPDOWN).data = new Object[]{ObjectPool.integerOf(i), strArr};
+        parentScreen.rebuildItems();
+        EventDispatcher.postEvent(new MenuItemEvent(targetItem));
+        return 0;
     }
 
-    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-    /* renamed from: c */
     public static final void onScreenClosed() {
         AppController.needsRepaint = true;
         ScreenHandler handler = ScreenHandlerRegistry.getHandler(ScreenManager.getCurrentScreen().screenId);

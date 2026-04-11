@@ -319,6 +319,7 @@ public final class AppController {
     public static void runEventLoop() {
         while (!isShuttingDown) {
             synchronized (appLock) {
+                try {
                 if (!isShuttingDown) {
                     Storage.state().updateTime();
                     updateClock();
@@ -374,6 +375,9 @@ public final class AppController {
                         }
                     }
                 }
+                } catch (ClassCastException e) {
+                    RemoteLogger.log("LOOP", "ClassCastException in event loop: " + e, e);
+                }
             }
             String savedStr = Storage.state().getString(UIKeys.SLOT_SAVED_STRING);
             if (savedStr != null) {
@@ -424,6 +428,9 @@ public final class AppController {
                     }
                 }
                 acct.loadData();
+                if (acct.progress == Account.PROGRESS_CONNECTED) {
+                    acct.retryCount = 0;
+                }
             } catch (Throwable unused) {
                 acct.handleConnError();
             }

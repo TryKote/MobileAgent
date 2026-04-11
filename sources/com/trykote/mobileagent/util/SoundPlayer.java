@@ -9,14 +9,17 @@ import javax.microedition.media.Player;
 
 public final class SoundPlayer {
 
-    /* renamed from: a */
+    private static final int MIDI_NOTE_BASE_KEY = 430;
+    private static final int MIDI_END_OF_TRACK = 0x300000;
+    private static final long SOUND_TIMEOUT_MS = 10000L;
+
     public static final void playSound(int i) {
         stopSound();
         try {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(PackedStringKeys.MIDI_HEADER).writeCompressed(i + 430).writeIntLE(3145472).toByteArray());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(PackedStringKeys.MIDI_HEADER).writeCompressed(i + MIDI_NOTE_BASE_KEY).writeIntLE(MIDI_END_OF_TRACK).toByteArray());
             Object resource = IOUtils.registerResource((Object) byteArrayInputStream);
             Storage.state().setObject(UIKeys.RANGE_MEDIA_RESOURCES_START, resource);
-            if (null != resource) {
+            if (resource != null) {
                 Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, Storage.resources().getString(PackedStringKeys.MIME_TYPE_MIDI));
                 Storage.state().setObject(UIKeys.OBJ_MEDIA_PLAYER, IOUtils.registerResource(playerCreatePlayer));
                 try {
@@ -37,13 +40,12 @@ public final class SoundPlayer {
                     playerCreatePlayer.start();
                 } catch (Throwable unused4) {
                 }
-                TimerManager.setTimer(TimerManager.SLOT_SOUND, 10000L);
+                TimerManager.setTimer(TimerManager.SLOT_SOUND, SOUND_TIMEOUT_MS);
             }
         } catch (Throwable unused5) {
         }
     }
 
-    /* renamed from: m */
     private static final void stopSound() {
         Player player = (Player) Storage.state().getObject(UIKeys.OBJ_MEDIA_PLAYER);
         if (player != null) {
@@ -61,7 +63,6 @@ public final class SoundPlayer {
         Storage.state().clearRange(UIKeys.RANGE_MEDIA_RESOURCES_START, UIKeys.OBJ_MEDIA_PLAYER);
     }
 
-    /* renamed from: a */
     public static final void checkSoundTimer() {
         boolean z;
         long[] jArr = TimerManager.timers;

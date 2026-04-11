@@ -14,22 +14,23 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* renamed from: ar */
-/* loaded from: MobileAgent_3.9.jar:ar.class */
 public abstract class ContactListParser implements ListItem {
 
-    /* renamed from: a */
+    // Gender codes from server
+    public static final int GENDER_MALE = 1;
+    public static final int GENDER_FEMALE = 2;
+
+    // Default page size for contact list parsing
+    public static final int DEFAULT_PAGE_SIZE = 10;
+
     private static int addedCount;
 
-    /* renamed from: b */
     private static int updateCounter;
 
-    /* renamed from: a */
     public static final void parseContactsAsync(ByteBuffer buffer, Object obj, Object obj2) {
-        EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.PHONE_SEARCH_RESULT, new Object[]{obj, parseContactsInternal(buffer, 10, true), obj2}));
+        EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.PHONE_SEARCH_RESULT, new Object[]{obj, parseContactsInternal(buffer, DEFAULT_PAGE_SIZE, true), obj2}));
     }
 
-    /* renamed from: a */
     public static final void parseContactsSync(ByteBuffer buffer, int i) {
         Vector contacts = parseContactsInternal(buffer, i, false);
         if (contacts != null && contacts.size() > 0) {
@@ -38,7 +39,6 @@ public abstract class ContactListParser implements ListItem {
         MapRenderer.needsRedraw = true;
     }
 
-    /* renamed from: a */
     private static final Vector parseContactsInternal(ByteBuffer buffer, int i, boolean z) {
         boolean z2;
         Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(buffer, 2);
@@ -56,14 +56,9 @@ public abstract class ContactListParser implements ListItem {
         Enumeration keys = hashtable.keys();
         while (keys.hasMoreElements()) {
             String str = (String) keys.nextElement();
-            int size = result.size();
-            while (true) {
-                size--;
-                if (size < 0) {
-                    z2 = false;
-                    break;
-                }
-                if (StringUtils.equals(str, ((Identifiable) result.elementAt(size)).getId()) && i == ((ListItem) result.elementAt(size)).getCommandCount()) {
+            z2 = false;
+            for (int j = result.size() - 1; j >= 0; j--) {
+                if (StringUtils.equals(str, ((Identifiable) result.elementAt(j)).getId()) && i == ((ListItem) result.elementAt(j)).getCommandCount()) {
                     z2 = true;
                     break;
                 }
@@ -84,7 +79,7 @@ public abstract class ContactListParser implements ListItem {
                     }
                     String str3 = (String) hashtable4.get("sex");
                     if (Utils.nonEmpty(str3)) {
-                        searchResult.gender = str3.equals("male") ? 1 : 2;
+                        searchResult.gender = str3.equals("male") ? GENDER_MALE : GENDER_FEMALE;
                     }
                     result.addElement(searchResult);
                 }
@@ -95,46 +90,35 @@ public abstract class ContactListParser implements ListItem {
     }
 
     @Override // p000.ListItem
-    /* renamed from: b */
     public abstract int executeCommand(int i);
 
     @Override // p000.ListItem
-    /* renamed from: a */
     public abstract int getCommandId(int i);
 
     @Override // p000.ListItem
-    /* renamed from: z */
     public abstract boolean isHighlighted();
 
     @Override // p000.ListItem
-    /* renamed from: y */
     public abstract int getCommandCount();
 
     @Override // p000.ListItem
-    /* renamed from: x */
     public abstract String getText();
 
     @Override // p000.ListItem
-    /* renamed from: w */
     public abstract int getBaseHeight();
 
     @Override // p000.ListItem
-    /* renamed from: v */
     public abstract int getWidth();
 
     @Override // p000.ListItem
-    /* renamed from: u */
     public abstract void deselect();
 
     @Override // p000.ListItem
-    /* renamed from: t */
     public abstract void select();
 
     @Override // p000.ListItem
-    /* renamed from: s */
     public abstract boolean isSelected();
 
     @Override // p000.ListItem
-    /* renamed from: r */
     public abstract int getHeight();
 }

@@ -14,17 +14,33 @@ import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
 
-/* renamed from: as */
-/* loaded from: MobileAgent_3.9.jar:as.class */
 public abstract class Utils {
-    /* renamed from: a */
+
+    // Windows-1251 ↔ Unicode Cyrillic conversion offsets
+    private static final int WIN1251_CYRILLIC_START = 192;
+    private static final int WIN1251_TO_UNICODE_OFFSET = 848;
+    private static final int WIN1251_YO_UPPER = 168;    // Ё
+    private static final int WIN1251_YO_LOWER = 184;    // ё
+    private static final int UNICODE_YO_UPPER = 1025;   // Ё
+    private static final int UNICODE_YO_LOWER = 1105;   // ё
+    private static final int UNICODE_CYRILLIC_A = 1040;  // А
+    private static final int UNICODE_CYRILLIC_YA = 1103; // я
+
+    // formatSize() unit key offsets
+    private static final int SIZE_UNIT_BYTES = 752;
+    private static final int SIZE_UNIT_MB = 754;
+
+    private static final long ONE_WEEK_MS = 604800000L;
+    private static final int SECONDS_PER_DAY = 86400;
+    private static final int SECONDS_PER_HOUR = 3600;
+    private static final int SECONDS_PER_MINUTE = 60;
+    private static final long MS_PER_SECOND = 1000L;
     public static final void arraycopy(Object obj, int i, Object obj2, int i2, int i3) {
         if (i3 > 0) {
             System.arraycopy(obj, i, obj2, i2, i3);
         }
     }
 
-    /* renamed from: a */
     public static final long parseDateTime(String str) {
         Vector parts = splitImpl(str, ' ', false);
         int day = parseInt(parts.elementAt(1));
@@ -42,37 +58,28 @@ public abstract class Utils {
         if (year >= 2000) {
             i--;
         }
-        int i2 = idx - 1;
-        while (true) {
-            i2--;
-            if (i2 < 0) {
-                return (1000 * (((86400 * i) + (hours * 3600)) + (minutes * 60))) - ((Storage.state().getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * 3600000);
-            }
+        for (int i2 = idx - 2; i2 >= 0; i2--) {
             i += i2 == 1 ? b : Storage.resources().getBytes(StringResKeys.RES_MONTH_DAYS)[i2];
         }
+        return (MS_PER_SECOND * (((SECONDS_PER_DAY * i) + (hours * SECONDS_PER_HOUR)) + (minutes * SECONDS_PER_MINUTE))) - ((Storage.state().getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * (SECONDS_PER_HOUR * MS_PER_SECOND));
     }
 
-    /* renamed from: a */
     private static StringBuffer appendKey(StringBuffer stringBuffer, int i) {
         return stringBuffer.append(Storage.state().getString(i));
     }
 
-    /* renamed from: a */
     public static final StringBuffer appendParam(StringBuffer stringBuffer, int i, String str) {
         return appendKey(stringBuffer, i).append('=').append(Conversation.urlEncodeCyrillic((Object) defaultStr(str)));
     }
 
-    /* renamed from: a */
     public static final StringBuffer appendIntParam(StringBuffer stringBuffer, int i, int i2) {
         return appendKey(stringBuffer, i).append('=').append(i2);
     }
 
-    /* renamed from: b */
     public static final String withComma(String str) {
         return ObjectPool.toStringAndRelease(appendCommaIf(ObjectPool.newStringBuffer().append(str), true));
     }
 
-    /* renamed from: a */
     public static final StringBuffer appendCommaIf(StringBuffer stringBuffer, boolean z) {
         if (z) {
             stringBuffer.append(',').append(' ');
@@ -80,46 +87,41 @@ public abstract class Utils {
         return stringBuffer;
     }
 
-    /* renamed from: a */
     public static final StringBuffer appendColon(StringBuffer stringBuffer) {
         return stringBuffer.append(':').append(' ');
     }
 
-    /* renamed from: a */
     public static final boolean isDigitOrSep(char c) {
         return (c >= '0' && c <= '9') || c == '.' || c == ':';
     }
 
-    /* renamed from: a */
     public static final char win1251ToChar(int i) {
         int i2 = i & 255;
-        if (i2 >= 192) {
-            return (char) (i2 + 848);
+        if (i2 >= WIN1251_CYRILLIC_START) {
+            return (char) (i2 + WIN1251_TO_UNICODE_OFFSET);
         }
-        if (i2 == 168) {
-            return (char) 1025;
+        if (i2 == WIN1251_YO_UPPER) {
+            return (char) UNICODE_YO_UPPER;
         }
-        if (i2 == 184) {
-            return (char) 1105;
+        if (i2 == WIN1251_YO_LOWER) {
+            return (char) UNICODE_YO_LOWER;
         }
         return (char) i2;
     }
 
-    /* renamed from: b */
     public static final byte charToWin1251(char c) {
-        if (c >= 1040 && c <= 1103) {
-            return (byte) (c - 848);
+        if (c >= UNICODE_CYRILLIC_A && c <= UNICODE_CYRILLIC_YA) {
+            return (byte) (c - WIN1251_TO_UNICODE_OFFSET);
         }
-        if (c == 1025) {
-            return (byte) -88;
+        if (c == UNICODE_YO_UPPER) {
+            return (byte) (WIN1251_YO_UPPER - 256);
         }
-        if (c == 1105) {
-            return (byte) -72;
+        if (c == UNICODE_YO_LOWER) {
+            return (byte) (WIN1251_YO_LOWER - 256);
         }
         return (byte) c;
     }
 
-    /* renamed from: b */
     public static final String zeroPad(int i) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (i < 10) {
@@ -128,40 +130,30 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb.append(i));
     }
 
-    /* renamed from: a */
     public static final int max(int i, int i2) {
         return i > i2 ? i : i2;
     }
 
-    /* renamed from: b */
     public static final int min(int i, int i2) {
         return i < i2 ? i : i2;
     }
 
-    /* renamed from: c */
     public static final int abs(int i) {
         return i >= 0 ? i : -i;
     }
 
-    /* renamed from: a */
     public static final long absLong(long j) {
         return j >= 0 ? j : -j;
     }
 
-    /* renamed from: c */
     public static final String maskPassword(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        int length = str.length();
-        while (true) {
-            length--;
-            if (length < 0) {
-                return ObjectPool.toStringAndRelease(sb);
-            }
+        for (int idx = str.length() - 1; idx >= 0; idx--) {
             sb.append('*');
         }
+        return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: d */
     public static final String quoteText(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer().append('>');
         int length = str == null ? 0 : str.length();
@@ -176,14 +168,12 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
     public static final void swapElements(Vector vector, int i, int i2) {
         Object elem = vector.elementAt(i);
         vector.setElementAt(vector.elementAt(i2), i);
         vector.setElementAt(elem, i2);
     }
 
-    /* renamed from: a */
     public static final boolean compareBytes(byte[] bArr, int i, byte[] bArr2, int i2, int i3) {
         do {
             i3--;
@@ -194,7 +184,6 @@ public abstract class Utils {
         return false;
     }
 
-    /* renamed from: a */
     public static final int parseInt(Object obj) {
         try {
             return Integer.parseInt((String) obj);
@@ -203,7 +192,6 @@ public abstract class Utils {
         }
     }
 
-    /* renamed from: a */
     public static final int parseIntBounded(String str, int i, int i2, int i3) {
         int i4 = i3;
         try {
@@ -213,12 +201,10 @@ public abstract class Utils {
         return (i4 < i || i4 > i2) ? i3 : i4;
     }
 
-    /* renamed from: e */
     public static final Vector splitByNull(String str) {
         return splitImpl(str, (char) 0, false);
     }
 
-    /* renamed from: a */
     public static final Vector splitReplace(String str, char c, char c2) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str == null ? 0 : str.length();
@@ -229,7 +215,6 @@ public abstract class Utils {
         return splitImpl(ObjectPool.toStringAndRelease(sb), c, false);
     }
 
-    /* renamed from: a */
     public static final Vector splitMerge(String str, char c) {
         Vector parts = splitImpl(str, '|', true);
         while (parts.size() > 5) {
@@ -239,17 +224,14 @@ public abstract class Utils {
         return parts;
     }
 
-    /* renamed from: b */
     public static final Vector split(String str, char c) {
         return splitImpl(str, c, true);
     }
 
-    /* renamed from: c */
     public static final Vector splitNonEmpty(String str, char c) {
         return splitImpl(str, c, false);
     }
 
-    /* renamed from: a */
     private static final Vector splitImpl(String str, char c, boolean z) {
         Vector result = ObjectPool.newVector();
         StringBuffer sb = ObjectPool.newStringBuffer();
@@ -269,7 +251,6 @@ public abstract class Utils {
         return result;
     }
 
-    /* renamed from: a */
     public static final String[] getPhoneNumbers(boolean z) {
         Vector result = ObjectPool.newVector();
         for (int i = 0; i < 3; i++) {
@@ -292,7 +273,6 @@ public abstract class Utils {
         return strArr;
     }
 
-    /* renamed from: a */
     public static final String joinComma(String[] strArr) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         for (int i = 0; i < strArr.length; i++) {
@@ -304,24 +284,20 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
     public static final int nextRandom() {
         return ((Random) Storage.state().getObject(SessionKeys.OBJ_RANDOM)).nextInt();
     }
 
-    /* renamed from: a */
     public static final String getVectorString(Vector vector, int i) {
         return (String) vector.elementAt(i);
     }
 
-    /* renamed from: f */
     public static final String defaultStr(String str) {
         return str != null ? str : Storage.emptyStr;
     }
 
-    /* renamed from: d */
     public static final String formatSize(int i) {
-        int i2 = 752;
+        int i2 = SIZE_UNIT_BYTES;
         int i3 = 0;
         for (int i4 = 0; i4 < 2 && i > 1024; i4++) {
             i3 = i % 1024;
@@ -330,7 +306,7 @@ public abstract class Utils {
         }
         StringBuffer sb = ObjectPool.newStringBuffer();
         sb.append(i);
-        if (i3 != 0 && i2 == 754) {
+        if (i3 != 0 && i2 == SIZE_UNIT_MB) {
             sb.append('.');
             String fracStr = StringUtils.intern(Integer.toString(i3));
             String frac = fracStr;
@@ -345,7 +321,6 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb.append(Storage.state().getString(i2)));
     }
 
-    /* renamed from: a */
     public static final Object dequeue(Vector vector) {
         synchronized (vector) {
             if (vector.size() == 0) {
@@ -358,25 +333,21 @@ public abstract class Utils {
         }
     }
 
-    /* renamed from: a */
     public static final void removeFrom(Vector vector, Object obj) {
         vector.removeElement(obj);
         trimIfEmpty(vector);
     }
 
-    /* renamed from: b */
     public static final void trimIfEmpty(Vector vector) {
         if (vector.size() == 0) {
             vector.trimToSize();
         }
     }
 
-    /* renamed from: g */
     public static final String appendSpace(String str) {
         return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(str).append(' '));
     }
 
-    /* renamed from: a */
     public static final String defaultIfBlank(String str, String str2) {
         for (int length = str.length() - 1; length >= 0; length--) {
             if (str.charAt(length) != ' ') {
@@ -386,7 +357,6 @@ public abstract class Utils {
         return str2;
     }
 
-    /* renamed from: d */
     public static final String removeChar(String str, char c) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         int length = str.length();
@@ -399,7 +369,6 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: h */
     public static final String formatPhone(String str) {
         if (str == null) {
             return Storage.emptyStr;
@@ -434,12 +403,10 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: a */
     private static boolean startsWithInt(String str, int i) {
         return str.startsWith(Integer.toString(i));
     }
 
-    /* renamed from: i */
     public static final String extractDigits(String str) {
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (str != null) {
@@ -453,44 +420,30 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: j */
     public static final String trim(String str) {
         while (str.length() > 0 && str.charAt(0) == ' ') {
             str = StringUtils.suffix(str, 1);
         }
-        int length = str.length();
-        while (true) {
-            length--;
-            if (length < 0 || str.charAt(length) != ' ') {
-                break;
-            }
-            str = StringUtils.prefix(str, length);
+        for (int idx = str.length() - 1; idx >= 0 && str.charAt(idx) == ' '; idx--) {
+            str = StringUtils.prefix(str, idx);
         }
         return str;
     }
 
-    /* renamed from: k */
     public static final String trimAll(String str) {
         while (str.length() > 0 && (str.charAt(0) & 65535) <= 32) {
             str = StringUtils.suffix(str, 1);
         }
-        int length = str.length();
-        while (true) {
-            length--;
-            if (length < 0 || (str.charAt(length) & 65535) > 32) {
-                break;
-            }
-            str = StringUtils.prefix(str, length);
+        for (int idx = str.length() - 1; idx >= 0 && (str.charAt(idx) & 65535) <= 32; idx--) {
+            str = StringUtils.prefix(str, idx);
         }
         return str;
     }
 
-    /* renamed from: l */
     public static final boolean nonEmpty(String str) {
         return str != null && str.length() > 0;
     }
 
-    /* renamed from: a */
     public static final int[] bytesToInts(byte[] bArr) {
         int length = bArr.length >> 2;
         int[] iArr = new int[length];
@@ -510,7 +463,6 @@ public abstract class Utils {
         return iArr;
     }
 
-    /* renamed from: e */
     public static final short[] readShortArray(int i) {
         byte[] bytes = Storage.state().getBytes(i);
         int length = bytes.length >> 1;
@@ -529,13 +481,11 @@ public abstract class Utils {
         return sArr;
     }
 
-    /* renamed from: m */
     public static final String beforeAt(String str) {
         int idx = str.indexOf(64);
         return idx >= 0 ? StringUtils.prefix(str, idx) : str;
     }
 
-    /* renamed from: n */
     public static final String normalizeSpaces(String str) {
         int length;
         if (str == null || (length = str.length()) == 0) {
@@ -564,7 +514,6 @@ public abstract class Utils {
         return ObjectPool.toStringAndRelease(sb);
     }
 
-    /* renamed from: f */
     public static final int pluralForm(int i) {
         int i2 = i % 10;
         if (i2 == 1 && i % 100 != 11) {
@@ -576,7 +525,6 @@ public abstract class Utils {
         return (i <= 10 || i >= 20) ? 2 : 1;
     }
 
-    /* renamed from: c */
     public static final int vectorSize(Vector vector) {
         if (vector == null) {
             return 0;
@@ -584,7 +532,6 @@ public abstract class Utils {
         return vector.size();
     }
 
-    /* renamed from: c */
     public static final String splitAndGet(int i, int i2) {
         Vector parts = splitImpl(Storage.state().getString(i), (char) 0, false);
         String str = (String) parts.elementAt(i2);
@@ -592,7 +539,6 @@ public abstract class Utils {
         return str;
     }
 
-    /* renamed from: a */
     public static Vector wrapText(String str, Font font, int i) {
         Vector result = ObjectPool.newVector();
         StringBuffer sb = ObjectPool.newStringBuffer();
@@ -637,12 +583,10 @@ public abstract class Utils {
         return result;
     }
 
-    /* renamed from: b */
     public static final String generateRandomHash() {
         return new ByteBuffer().writeIntLE(nextRandom()).writeLong(System.currentTimeMillis()).encryptMD5().toHexString();
     }
 
-    /* renamed from: e */
     public static final StringBuffer getMessageBuffer() {
         StringBuffer sb = ObjectPool.newStringBuffer();
         String prefix = defaultStr(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT));

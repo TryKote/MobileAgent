@@ -11,10 +11,8 @@ import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import javax.microedition.midlet.MIDlet;
-/* loaded from: MobileAgent_3.9.jar:main/Midlet.class */
 public final class Midlet extends MIDlet {
 
-    /* renamed from: a */
     private boolean started;
 
     public final void startApp() {

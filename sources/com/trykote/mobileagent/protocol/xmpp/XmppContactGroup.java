@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -17,41 +16,74 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.TextBox;
 
-/* renamed from: g */
-/* loaded from: MobileAgent_3.9.jar:g.class */
 public final class XmppContactGroup extends ContactGroup {
 
-    /* renamed from: h */
+    // Emoticon count and threshold
+    private static final int EMOTICON_COUNT = 78;
+    private static final int EMOTICON_INLINE_LIMIT = 42;
+    private static final int EMOTICON_ICON_74 = 410;
+    private static final int EMOTICON_ICON_75 = 412;
+    private static final int EMOTICON_ICON_76 = 417;
+    private static final int EMOTICON_ICON_77 = 432;
+    private static final int EMOTICON_ICON_BASE_OFFSET = 258;
+
+    // Periodic sync interval and sleep
+    private static final long SYNC_INTERVAL_MS = 7200000L;
+    private static final long SYNC_POLL_SLEEP_MS = 3072L;
+    private static final long CONNECT_POLL_SLEEP_MS = 100L;
+    private static final long AUTH_WAIT_SLEEP_MS = 5000L;
+
+    // DNS buffer size
+    private static final int DNS_BUFFER_SIZE = 512;
+
+    // Image cache layout
+    private static final int IMAGE_CACHE_DATA_OFFSET = 29;
+    private static final int IMAGE_CACHE_EXPIRE_THRESHOLD = 16;
+    private static final int IMAGE_CACHE_FULL_EXPIRE = 32;
+    private static final int IMAGE_CACHE_SMALL_PREFIX = 26;
+
+    // SHA-256 block size
+    private static final int SHA256_BLOCK_SIZE = 64;
+    private static final int SHA256_DIGEST_SIZE = 32;
+    private static final int SHA256_ROUNDS = 8;
+
+    // HMAC padding bytes
+    private static final byte HMAC_IPAD = 54;
+    private static final byte HMAC_OPAD = 92;
+
+    // Map data freshness
+    private static final long MAP_DATA_FRESHNESS_MS = 45000L;
+
+    // Blowfish constants
+    private static final int BLOWFISH_ROUNDS = 16;
+    private static final int BLOWFISH_SUBKEYS_OFFSET = 1024;
+    private static final int BLOWFISH_SBOX_SIZE = 256;
+    private static final int BLOWFISH_P_OFFSET = 1042;
+    private static final int BLOWFISH_P_LAST = 1059;
+
     private int groupTypeId;
 
-    /* renamed from: a */
     public static Vector sharedContactList;
 
-    /* renamed from: b */
     public static long lastUpdateTs;
 
-    /* renamed from: c */
     public static long lastCheckTs;
 
-    public XmppContactGroup(XmppProtocol c0005ae, int i, String str) {
-        super(c0005ae);
-        this.groupTypeId = i;
-        setNameIfChanged(str);
+    public XmppContactGroup(XmppProtocol protocol, int typeId, String name) {
+        super(protocol);
+        this.groupTypeId = typeId;
+        setNameIfChanged(name);
     }
 
-    public XmppContactGroup(XmppProtocol c0005ae, ByteBuffer c0043n) {
-        super(c0005ae);
-        setNameIfChanged(c0043n.readUTF8Str((String) null));
-        this.groupTypeId = c0043n.readInt();
-        int iM1328e = c0043n.readInt();
-        while (true) {
-            iM1328e--;
-            if (iM1328e < 0) {
-                this.isSpecial = c0043n.readBoolean();
-                return;
-            }
-            addContact((Object) new XmppContact(c0005ae, c0043n));
+    public XmppContactGroup(XmppProtocol protocol, ByteBuffer buffer) {
+        super(protocol);
+        setNameIfChanged(buffer.readUTF8Str((String) null));
+        this.groupTypeId = buffer.readInt();
+        int contactCount = buffer.readInt();
+        for (int ci = contactCount - 1; ci >= 0; ci--) {
+            addContact((Object) new XmppContact(protocol, buffer));
         }
+        this.isSpecial = buffer.readBoolean();
     }
 
     public XmppContactGroup() {
@@ -59,526 +91,434 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     @Override // p000.ContactGroup
-    /* renamed from: a */
-    public final void serialize(ByteBuffer c0043n, boolean z) {
-        c0043n.writeStringUTF16(this.name);
-        c0043n.writeIntLE(this.groupTypeId);
-        super.serialize(c0043n, z);
+    public final void serialize(ByteBuffer buffer, boolean includeContacts) {
+        buffer.writeStringUTF16(this.name);
+        buffer.writeIntLE(this.groupTypeId);
+        super.serialize(buffer, includeContacts);
     }
 
     @Override // p000.ContactGroup
-    /* renamed from: a */
     public final boolean isCustom() {
         return this.groupTypeId <= 0;
     }
 
     @Override // p000.ContactGroup
-    /* renamed from: b */
     public final int getGroupType() {
         return this.groupTypeId;
     }
 
-    /* renamed from: a */
-    public static final ByteBuffer createContactAddCommand(MrimAccount c0028ba, MrimContact c0035f, String str, long j) {
-        Object[] objArr = new Object[4];
-        ByteBuffer c0043nM1308a = new ByteBuffer().writeIntLE(0).writeStringLatin1(c0035f.simpleIdentifier);
-        Hashtable hashtable = new Hashtable();
-        int i = 78;
-        while (true) {
-            i--;
-            if (i < 0) {
-                break;
-            }
-            String strM584b = Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i);
-            hashtable.put(strM584b, StringUtils.intern(strM584b.toLowerCase()));
+    public static final ByteBuffer createContactAddCommand(MrimAccount account, MrimContact contact, String messageText, long timestamp) {
+        Object[] commandArgs = new Object[4];
+        ByteBuffer packet = new ByteBuffer().writeIntLE(0).writeStringLatin1(contact.simpleIdentifier);
+        Hashtable emoticonLookup = new Hashtable();
+        for (int ei = EMOTICON_COUNT - 1; ei >= 0; ei--) {
+            String emoticonName = Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, ei);
+            emoticonLookup.put(emoticonName, StringUtils.intern(emoticonName.toLowerCase()));
         }
-        String strM584b2 = Storage.resources().getString(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
-        StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
-        int length = str.length();
-        int length2 = 0;
-        while (length2 < length) {
-            char cCharAt = str.charAt(length2);
-            int iM1002a = findSpecialCharIndex(strM584b2, str, length2, hashtable);
-            if (iM1002a < 0) {
-                stringBufferM1217h.append(cCharAt);
+        String triggerChars = Storage.resources().getString(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
+        StringBuffer result = ObjectPool.newStringBuffer();
+        int textLen = messageText.length();
+        int pos = 0;
+        while (pos < textLen) {
+            char ch = messageText.charAt(pos);
+            int emoticonIndex = findSpecialCharIndex(triggerChars, messageText, pos, emoticonLookup);
+            if (emoticonIndex < 0) {
+                result.append(ch);
             } else {
-                if (iM1002a < 42) {
-                    stringBufferM1217h.append(Storage.resources().getString(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(iM1002a)).append('>');
+                if (emoticonIndex < EMOTICON_INLINE_LIMIT) {
+                    result.append(Storage.resources().getString(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(emoticonIndex)).append('>');
                 } else {
-                    stringBufferM1217h.append(Storage.resources().getString(PackedStringKeys.EMOTICON_OPEN_TAG)).append(iM1002a < 74 ? iM1002a + 258 : iM1002a == 74 ? 410 : iM1002a == 75 ? 412 : iM1002a == 76 ? 417 : 432).append(Storage.resources().getString(PackedStringKeys.EMOTICON_ALT_ATTR)).append(Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, iM1002a)).append(Storage.resources().getString(PackedStringKeys.EMOTICON_CLOSE_TAG));
+                    result.append(Storage.resources().getString(PackedStringKeys.EMOTICON_OPEN_TAG)).append(emoticonIndex < 74 ? emoticonIndex + EMOTICON_ICON_BASE_OFFSET : emoticonIndex == 74 ? EMOTICON_ICON_74 : emoticonIndex == 75 ? EMOTICON_ICON_75 : emoticonIndex == 76 ? EMOTICON_ICON_76 : EMOTICON_ICON_77).append(Storage.resources().getString(PackedStringKeys.EMOTICON_ALT_ATTR)).append(Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex)).append(Storage.resources().getString(PackedStringKeys.EMOTICON_CLOSE_TAG));
                 }
-                length2 += Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, iM1002a).length() - 1;
+                pos += Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex).length() - 1;
             }
-            length2++;
+            pos++;
         }
-        objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_MESSAGE, c0043nM1308a.writeStringUTF16(ObjectPool.toStringAndRelease(stringBufferM1217h)).writeIntLE(0));
-        objArr[1] = ObjectPool.integerOf(MrimAccount.RESP_AUTH);
-        objArr[2] = c0035f;
-        objArr[3] = new Long(j);
-        return c0028ba.createAndQueueCommand(objArr);
+        commandArgs[0] = ProtocolFactory.createMrimPacket(account, MrimCommand.CS_MESSAGE, packet.writeStringUTF16(ObjectPool.toStringAndRelease(result)).writeIntLE(0));
+        commandArgs[1] = ObjectPool.integerOf(MrimAccount.RESP_AUTH);
+        commandArgs[2] = contact;
+        commandArgs[3] = new Long(timestamp);
+        return account.createAndQueueCommand(commandArgs);
     }
 
-    /* renamed from: a */
-    private static final int findSpecialCharIndex(String str, String str2, int i, Hashtable hashtable) {
-        String strM584b;
-        if (str2.length() <= 0 || str.indexOf(str2.charAt(i)) < 0) {
+    private static final int findSpecialCharIndex(String triggerChars, String text, int offset, Hashtable emoticonLookup) {
+        String emoticonName;
+        if (text.length() <= 0 || triggerChars.indexOf(text.charAt(offset)) < 0) {
             return -1;
         }
-        int i2 = 78;
-        do {
-            i2--;
-            if (i2 >= 0) {
-                strM584b = Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i2);
-                if (str2.indexOf(strM584b, i) == i) {
-                    break;
-                }
-            } else {
-                return -1;
+        for (int ei = EMOTICON_COUNT - 1; ei >= 0; ei--) {
+            emoticonName = Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, ei);
+            if (text.indexOf(emoticonName, offset) == offset) {
+                return ei;
             }
-        } while (str2.indexOf((String) hashtable.get(strM584b), i) != i);
-        return i2;
+            if (text.indexOf((String) emoticonLookup.get(emoticonName), offset) == offset) {
+                return ei;
+            }
+        }
+        return -1;
     }
 
-    /* renamed from: p */
     private static void updateLastCheckTime() {
         Storage.state().setLong(SessionKeys.TIMESTAMP_LAST_XMPP_AUTH, System.currentTimeMillis());
     }
 
-    /* renamed from: c */
     public static final void periodicTimeSync() throws Throwable {
         while (true) {
-            Thread.sleep(3072L);
+            Thread.sleep(SYNC_POLL_SLEEP_MS);
             if (AppController.isShuttingDown) {
                 throw new Throwable();
             }
-            if (System.currentTimeMillis() - Storage.state().getLong(SessionKeys.TIMESTAMP_LAST_XMPP_AUTH) >= 7200000) {
-                boolean z = false;
-                Vector vectorM443V = AccountManager.copyAllAccounts();
-                int size = vectorM443V.size();
-                while (true) {
-                    size--;
-                    if (size < 0) {
-                        break;
-                    }
-                    Account abstractC0037h = (Account) vectorM443V.elementAt(size);
-                    if (abstractC0037h.isConnected()) {
-                        if (abstractC0037h instanceof MrimAccount) {
-                            z = false;
+            if (System.currentTimeMillis() - Storage.state().getLong(SessionKeys.TIMESTAMP_LAST_XMPP_AUTH) >= SYNC_INTERVAL_MS) {
+                boolean hasXmppOnly = false;
+                Vector accounts = AccountManager.copyAllAccounts();
+                for (int si = accounts.size() - 1; si >= 0; si--) {
+                    Account account = (Account) accounts.elementAt(si);
+                    if (account.isConnected()) {
+                        if (account instanceof MrimAccount) {
+                            hasXmppOnly = false;
                             updateLastCheckTime();
                             break;
                         }
-                        z = true;
+                        hasXmppOnly = true;
                     }
                 }
-                ObjectPool.releaseVector(vectorM443V);
-                if (z) {
+                ObjectPool.releaseVector(accounts);
+                if (hasXmppOnly) {
                     authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(Storage.resources().getString(PackedStringKeys.HOST_MRIM_REDIRECT)))));
                 }
             }
         }
     }
 
-    /* renamed from: e */
-    private static final ConnectionThread establishSecureConn(String str) throws Throwable {
-        int iM1131a;
-        ConnectionThread c0039j = new ConnectionThread(str);
+    private static final ConnectionThread establishSecureConn(String host) throws Throwable {
+        int connState;
+        ConnectionThread connection = new ConnectionThread(host);
         do {
-            Thread.sleep(100L);
-            iM1131a = c0039j.getState();
-        } while (iM1131a == ConnectionThread.STATE_CONNECTING);
-        if (iM1131a != ConnectionThread.STATE_CONNECTED) {
-            c0039j.state = ConnectionThread.STATE_CLOSING;
+            Thread.sleep(CONNECT_POLL_SLEEP_MS);
+            connState = connection.getState();
+        } while (connState == ConnectionThread.STATE_CONNECTING);
+        if (connState != ConnectionThread.STATE_CONNECTED) {
+            connection.state = ConnectionThread.STATE_CLOSING;
         }
-        return c0039j;
+        return connection;
     }
 
-    /* renamed from: a */
-    private static final String extractPlainText(ConnectionThread c0039j) {
-        int i;
-        int i2;
+    private static final String extractPlainText(ConnectionThread connection) {
+        int readLen;
+        int dataLen;
         try {
-            ByteBuffer c0043n = new ByteBuffer();
+            ByteBuffer buffer = new ByteBuffer();
             do {
-                Thread.sleep(100L);
-                c0039j.drainInput(c0043n);
-                i = c0043n.length;
-                i2 = i;
-            } while (i == 0);
-            StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
-            while (true) {
-                int i3 = i2;
-                i2 = i3 - 1;
-                if (i3 <= 0) {
-                    break;
-                }
-                char cM1344o = (char) c0043n.readByte();
-                if (Utils.isDigitOrSep(cM1344o)) {
-                    stringBufferM1217h.append(cM1344o);
+                Thread.sleep(CONNECT_POLL_SLEEP_MS);
+                connection.drainInput(buffer);
+                readLen = buffer.length;
+                dataLen = readLen;
+            } while (readLen == 0);
+            StringBuffer result = ObjectPool.newStringBuffer();
+            for (int idx = dataLen - 1; idx >= 0; idx--) {
+                char ch = (char) buffer.readByte();
+                if (Utils.isDigitOrSep(ch)) {
+                    result.append(ch);
                 }
             }
-            String strM1215a = ObjectPool.toStringAndRelease(stringBufferM1217h);
-            if (c0039j != null) {
-                c0039j.state = ConnectionThread.STATE_CLOSING;
+            String plainText = ObjectPool.toStringAndRelease(result);
+            if (connection != null) {
+                connection.state = ConnectionThread.STATE_CLOSING;
             }
-            return strM1215a;
+            return plainText;
         } catch (RuntimeException th) {
-            if (c0039j != null) {
-                c0039j.state = ConnectionThread.STATE_CLOSING;
+            if (connection != null) {
+                connection.state = ConnectionThread.STATE_CLOSING;
             }
             throw th;
         } catch (Throwable th) {
-            if (c0039j != null) {
-                c0039j.state = ConnectionThread.STATE_CLOSING;
+            if (connection != null) {
+                connection.state = ConnectionThread.STATE_CLOSING;
             }
             throw new RuntimeException(th.toString());
         }
     }
 
-    /* JADX DEBUG: Another duplicated slice has different insns count: {[]}, finally: {[CONST, IPUT, IF] complete} */
-    /* renamed from: b */
-    private static final void authenticateAndSync(ConnectionThread c0039j) {
-        ByteBuffer c0043nM1349s;
+    private static final void authenticateAndSync(ConnectionThread connection) {
+        ByteBuffer responsePacket;
         try {
-            String strM584b = Storage.resources().getString(PackedStringKeys.TAG_STATISTICS);
-            MrimAccount c0028ba = new MrimAccount(-1, strM584b, strM584b);
-            c0028ba.connection = c0039j;
-            c0028ba.sendData(ProtocolFactory.createMrimAuthPacket(c0028ba));
-            ByteBuffer c0043n = new ByteBuffer();
+            String tag = Storage.resources().getString(PackedStringKeys.TAG_STATISTICS);
+            MrimAccount account = new MrimAccount(-1, tag, tag);
+            account.connection = connection;
+            account.sendData(ProtocolFactory.createMrimAuthPacket(account));
+            ByteBuffer inputBuffer = new ByteBuffer();
             do {
-                Thread.sleep(100L);
-                c0039j.drainInput(c0043n);
-                c0043nM1349s = c0043n.extractPNG();
-            } while (c0043nM1349s == null);
-            if (c0043nM1349s.peekIntAt(12) == MrimCommand.CS_HELLO_ACK) {
+                Thread.sleep(CONNECT_POLL_SLEEP_MS);
+                connection.drainInput(inputBuffer);
+                responsePacket = inputBuffer.extractPNG();
+            } while (responsePacket == null);
+            if (responsePacket.peekIntAt(12) == MrimCommand.CS_HELLO_ACK) {
                 updateLastCheckTime();
-                c0028ba.sendData(ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(c0028ba.login).writeStringLatin1(c0028ba.password).writeCompressed(PackedStringKeys.MMP_AGENT_ID).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(c0028ba))));
-                Thread.sleep(5000L);
+                account.sendData(ProtocolFactory.createMrimPacket(account, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(account.login).writeStringLatin1(account.password).writeCompressed(PackedStringKeys.MMP_AGENT_ID).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(account))));
+                Thread.sleep(AUTH_WAIT_SLEEP_MS);
             }
         } catch (Throwable unused) {
         } finally {
-            if (c0039j != null) {
-                c0039j.state = ConnectionThread.STATE_CLOSING;
+            if (connection != null) {
+                connection.state = ConnectionThread.STATE_CLOSING;
             }
         }
     }
 
-    /* renamed from: q */
     private static final int[] getSHA256Constants() {
         return (int[]) Storage.state().getObject(StringResKeys.RES_EMOTICON_MAP);
     }
 
-    /* renamed from: b */
-    private static final int rotateLeft(int i, int i2) {
-        return (i >>> i2) | (i << (32 - i2));
+    private static final int rotateLeft(int value, int shift) {
+        return (value >>> shift) | (value << (32 - shift));
     }
 
-    /* JADX WARN: Type inference failed for: r2v1, types: [int] */
-    /* renamed from: a */
-    private static final void writeIntToBytes(int i, byte[] bArr, int i2) {
-        bArr[i2] = (byte) (i >> 24);
-        bArr[i2 + 1] = (byte) (i >>> 16);
-        bArr[i2 + 2] = (byte) (i >>> 8);
-        bArr[i2 + 3] = (byte) i;
+    private static final void writeIntToBytes(int value, byte[] dest, int offset) {
+        dest[offset] = (byte) (value >> 24);
+        dest[offset + 1] = (byte) (value >>> 16);
+        dest[offset + 2] = (byte) (value >>> 8);
+        dest[offset + 3] = (byte) value;
     }
 
-    /* renamed from: r */
     private static final Object[] initHashState() {
-        Object[] objArr = {new int[10], ObjectPool.newBytes(128)};
-        int[] iArr = (int[]) objArr[0];
-        int[] iArrM1008q = getSHA256Constants();
-        int i = 8;
-        while (true) {
-            i--;
-            if (i < 0) {
-                return objArr;
-            }
-            iArr[i] = iArrM1008q[i];
+        Object[] state = {new int[10], ObjectPool.newBytes(128)};
+        int[] hashValues = (int[]) state[0];
+        int[] constants = getSHA256Constants();
+        for (int hi = SHA256_ROUNDS - 1; hi >= 0; hi--) {
+            hashValues[hi] = constants[hi];
         }
+        return state;
     }
 
-    /* renamed from: a */
-    private static final Object[] updateHashBuffer(Object[] objArr, byte[] bArr, int i) {
-        int[] iArr = (int[]) objArr[0];
-        byte[] bArr2 = (byte[]) objArr[1];
-        int i2 = iArr[9];
-        int iM503b = Utils.min(i, 64 - i2);
-        System.arraycopy(bArr, 0, bArr2, i2, iM503b);
-        if (i2 + i < 64) {
-            iArr[9] = i2 + i;
+    private static final Object[] updateHashBuffer(Object[] state, byte[] data, int dataLen) {
+        int[] hashValues = (int[]) state[0];
+        byte[] blockBuffer = (byte[]) state[1];
+        int buffered = hashValues[9];
+        int copyLen = Utils.min(dataLen, SHA256_BLOCK_SIZE - buffered);
+        System.arraycopy(data, 0, blockBuffer, buffered, copyLen);
+        if (buffered + dataLen < SHA256_BLOCK_SIZE) {
+            hashValues[9] = buffered + dataLen;
         } else {
-            processSHA256Block(objArr, bArr2, 0, 1);
-            int i3 = i - iM503b;
-            int i4 = i3 >> 6;
-            processSHA256Block(objArr, bArr, iM503b, i4);
-            int i5 = iM503b + (i4 << 6);
-            int i6 = i3 & 63;
-            System.arraycopy(bArr, i5, bArr2, 0, i6);
-            iArr[9] = i6;
-            iArr[8] = iArr[8] + ((i4 + 1) << 6);
+            processSHA256Block(state, blockBuffer, 0, 1);
+            int remaining = dataLen - copyLen;
+            int fullBlocks = remaining >> 6;
+            processSHA256Block(state, data, copyLen, fullBlocks);
+            int processedOffset = copyLen + (fullBlocks << 6);
+            int tailLen = remaining & 63;
+            System.arraycopy(data, processedOffset, blockBuffer, 0, tailLen);
+            hashValues[9] = tailLen;
+            hashValues[SHA256_ROUNDS] = hashValues[SHA256_ROUNDS] + ((fullBlocks + 1) << 6);
         }
-        return objArr;
+        return state;
     }
 
-    /* renamed from: c */
-    private static final byte[] finalizeSHA256(Object[] objArr) {
-        int[] iArr = (int[]) objArr[0];
-        int i = iArr[9];
-        int i2 = 55 < (i & 63) ? 2 : 1;
-        int i3 = (iArr[8] + i) << 3;
-        byte[] bArr = (byte[]) objArr[1];
-        int i4 = i2 << 6;
-        int i5 = i4;
-        while (true) {
-            i5--;
-            if (i5 < i) {
-                break;
-            }
-            bArr[i5] = 0;
+    private static final byte[] finalizeSHA256(Object[] state) {
+        int[] hashValues = (int[]) state[0];
+        int buffered = hashValues[9];
+        int paddingBlocks = 55 < (buffered & 63) ? 2 : 1;
+        int totalBits = (hashValues[SHA256_ROUNDS] + buffered) << 3;
+        byte[] blockBuffer = (byte[]) state[1];
+        int paddingLen = paddingBlocks << 6;
+        for (int ci = paddingLen - 1; ci >= buffered; ci--) {
+            blockBuffer[ci] = 0;
         }
-        bArr[i] = -128;
-        writeIntToBytes(i3, bArr, i4 - 4);
-        processSHA256Block(objArr, bArr, 0, i2);
-        byte[] bArr2 = new byte[32];
-        int i6 = 8;
-        while (true) {
-            i6--;
-            if (i6 < 0) {
-                ObjectPool.releaseBytes(bArr);
-                return bArr2;
-            }
-            writeIntToBytes(iArr[i6], bArr2, i6 << 2);
+        blockBuffer[buffered] = -128;
+        writeIntToBytes(totalBits, blockBuffer, paddingLen - 4);
+        processSHA256Block(state, blockBuffer, 0, paddingBlocks);
+        byte[] digest = new byte[SHA256_DIGEST_SIZE];
+        for (int di = SHA256_ROUNDS - 1; di >= 0; di--) {
+            writeIntToBytes(hashValues[di], digest, di << 2);
         }
+        ObjectPool.releaseBytes(blockBuffer);
+        return digest;
     }
 
-    /* renamed from: a */
-    private static final void processSHA256Block(Object[] objArr, byte[] bArr, int i, int i2) {
-        int[] iArr = (int[]) objArr[0];
-        int[] iArr2 = new int[64];
-        int[] iArr3 = new int[8];
-        int[] iArrM1008q = getSHA256Constants();
-        for (int i3 = 0; i3 < i2; i3++) {
-            int i4 = 0;
+    private static final void processSHA256Block(Object[] state, byte[] data, int offset, int blockCount) {
+        int[] hashValues = (int[]) state[0];
+        int[] schedule = new int[SHA256_BLOCK_SIZE];
+        int[] working = new int[SHA256_ROUNDS];
+        int[] constants = getSHA256Constants();
+        for (int bi = 0; bi < blockCount; bi++) {
+            int wi = 0;
             do {
-                int i5 = i + (i3 << 6) + (i4 << 2);
-                iArr2[i4] = (bArr[i5] << 24) | ((bArr[i5 + 1] & 255) << 16) | ((bArr[i5 + 2] & 255) << 8) | (bArr[i5 + 3] & 255);
-                i4++;
-            } while (i4 < 16);
+                int bytePos = offset + (bi << 6) + (wi << 2);
+                schedule[wi] = (data[bytePos] << 24) | ((data[bytePos + 1] & 255) << 16) | ((data[bytePos + 2] & 255) << 8) | (data[bytePos + 3] & 255);
+                wi++;
+            } while (wi < BLOWFISH_ROUNDS);
             do {
-                int i6 = i4;
-                int i7 = iArr2[i6 - 2];
-                int iM1009b = ((rotateLeft(i7, 17) ^ rotateLeft(i7, 19)) ^ (i7 >>> 10)) + iArr2[i6 - 7];
-                int i8 = iArr2[i6 - 15];
-                iArr2[i6] = iM1009b + ((rotateLeft(i8, 7) ^ rotateLeft(i8, 18)) ^ (i8 >>> 3)) + iArr2[i6 - 16];
-                i4++;
-            } while (i4 < 64);
-            int i9 = 8;
-            while (true) {
-                i9--;
-                if (i9 < 0) {
-                    break;
-                } else {
-                    iArr3[i9] = iArr[i9];
-                }
+                int si = wi;
+                int w2 = schedule[si - 2];
+                int sigma1 = ((rotateLeft(w2, 17) ^ rotateLeft(w2, 19)) ^ (w2 >>> 10)) + schedule[si - 7];
+                int w15 = schedule[si - 15];
+                schedule[si] = sigma1 + ((rotateLeft(w15, 7) ^ rotateLeft(w15, 18)) ^ (w15 >>> 3)) + schedule[si - 16];
+                wi++;
+            } while (wi < SHA256_BLOCK_SIZE);
+            for (int ci = SHA256_ROUNDS - 1; ci >= 0; ci--) {
+                working[ci] = hashValues[ci];
             }
-            int i10 = 0;
+            int ri = 0;
             do {
-                int i11 = iArr3[7];
-                int i12 = iArr3[4];
-                int iM1009b2 = i11 + ((rotateLeft(i12, 6) ^ rotateLeft(i12, 11)) ^ rotateLeft(i12, 25));
-                int i13 = iArr3[4];
-                int i14 = iM1009b2 + ((i13 & iArr3[5]) ^ ((i13 ^ (-1)) & iArr3[6])) + iArrM1008q[i10 + 8] + iArr2[i10];
-                int i15 = iArr3[0];
-                int iM1009b3 = (rotateLeft(i15, 2) ^ rotateLeft(i15, 13)) ^ rotateLeft(i15, 22);
-                int i16 = iArr3[0];
-                int i17 = iArr3[1];
-                int i18 = iArr3[2];
-                iArr3[7] = iArr3[6];
-                iArr3[6] = iArr3[5];
-                iArr3[5] = iArr3[4];
-                iArr3[4] = iArr3[3] + i14;
-                iArr3[3] = iArr3[2];
-                iArr3[2] = iArr3[1];
-                iArr3[1] = iArr3[0];
-                iArr3[0] = i14 + iM1009b3 + (((i16 & i17) ^ (i16 & i18)) ^ (i17 & i18));
-                i10++;
-            } while (i10 < 64);
-            int i19 = 0;
+                int h = working[7];
+                int e = working[4];
+                int sum1 = h + ((rotateLeft(e, 6) ^ rotateLeft(e, 11)) ^ rotateLeft(e, 25));
+                int eCopy = working[4];
+                int t1 = sum1 + ((eCopy & working[5]) ^ ((eCopy ^ (-1)) & working[6])) + constants[ri + SHA256_ROUNDS] + schedule[ri];
+                int a = working[0];
+                int sum0 = (rotateLeft(a, 2) ^ rotateLeft(a, 13)) ^ rotateLeft(a, 22);
+                int aCopy = working[0];
+                int b = working[1];
+                int c = working[2];
+                working[7] = working[6];
+                working[6] = working[5];
+                working[5] = working[4];
+                working[4] = working[3] + t1;
+                working[3] = working[2];
+                working[2] = working[1];
+                working[1] = working[0];
+                working[0] = t1 + sum0 + (((aCopy & b) ^ (aCopy & c)) ^ (b & c));
+                ri++;
+            } while (ri < SHA256_BLOCK_SIZE);
+            int mi = 0;
             do {
-                int i20 = i19;
-                iArr[i20] = iArr[i20] + iArr3[i19];
-                i19++;
-            } while (i19 < 8);
+                int idx = mi;
+                hashValues[idx] = hashValues[idx] + working[mi];
+                mi++;
+            } while (mi < SHA256_ROUNDS);
         }
     }
 
-    /* renamed from: a */
-    public static final byte[] hmacSHA256(byte[] bArr, int i, byte[] bArr2, int i2, int i3) {
-        int i4;
-        byte[] bArrM1211a = ObjectPool.newBytes(64);
-        byte[] bArrM1211a2 = ObjectPool.newBytes(64);
-        if (i == 64) {
-            i4 = 64;
+    public static final byte[] hmacSHA256(byte[] key, int keyLen, byte[] data, int dataOffset, int dataLen) {
+        int effectiveKeyLen;
+        byte[] innerPad = ObjectPool.newBytes(SHA256_BLOCK_SIZE);
+        byte[] outerPad = ObjectPool.newBytes(SHA256_BLOCK_SIZE);
+        if (keyLen == SHA256_BLOCK_SIZE) {
+            effectiveKeyLen = SHA256_BLOCK_SIZE;
         } else {
-            if (i > 64) {
-                i4 = 32;
-                bArr = finalizeSHA256(updateHashBuffer(initHashState(), bArr, i));
+            if (keyLen > SHA256_BLOCK_SIZE) {
+                effectiveKeyLen = SHA256_DIGEST_SIZE;
+                key = finalizeSHA256(updateHashBuffer(initHashState(), key, keyLen));
             } else {
-                i4 = i;
+                effectiveKeyLen = keyLen;
             }
-            int i5 = 64;
-            while (true) {
-                i5--;
-                if (i5 < i4) {
-                    break;
-                }
-                bArrM1211a[i5] = 54;
-                bArrM1211a2[i5] = 92;
+            for (int pi = SHA256_BLOCK_SIZE - 1; pi >= effectiveKeyLen; pi--) {
+                innerPad[pi] = HMAC_IPAD;
+                outerPad[pi] = HMAC_OPAD;
             }
         }
-        int i6 = i4;
-        while (true) {
-            i6--;
-            if (i6 < 0) {
-                Object[] objArrM1012a = updateHashBuffer(initHashState(), bArrM1211a, 64);
-                ObjectPool.releaseBytes(bArrM1211a);
-                Object[] objArrM1012a2 = updateHashBuffer(initHashState(), bArrM1211a2, 64);
-                ObjectPool.releaseBytes(bArrM1211a2);
-                Object[] objArr = {objArrM1012a, objArrM1012a2};
-                updateHashBuffer((Object[]) objArr[0], bArr2, i2);
-                return finalizeSHA256(updateHashBuffer((Object[]) objArr[1], finalizeSHA256((Object[]) objArr[0]), 32));
-            }
-            bArrM1211a[i6] = (byte) (bArr[i6] ^ 54);
-            bArrM1211a2[i6] = (byte) (bArr[i6] ^ 92);
+        for (int ki = effectiveKeyLen - 1; ki >= 0; ki--) {
+            innerPad[ki] = (byte) (key[ki] ^ HMAC_IPAD);
+            outerPad[ki] = (byte) (key[ki] ^ HMAC_OPAD);
         }
+        Object[] innerState = updateHashBuffer(initHashState(), innerPad, SHA256_BLOCK_SIZE);
+        ObjectPool.releaseBytes(innerPad);
+        Object[] outerState = updateHashBuffer(initHashState(), outerPad, SHA256_BLOCK_SIZE);
+        ObjectPool.releaseBytes(outerPad);
+        Object[] states = {innerState, outerState};
+        updateHashBuffer((Object[]) states[0], data, dataOffset);
+        return finalizeSHA256(updateHashBuffer((Object[]) states[1], finalizeSHA256((Object[]) states[0]), SHA256_DIGEST_SIZE));
     }
 
-    /* renamed from: a */
-    public static final ByteBuffer buildSyncPayload(MrimAccount c0028ba) {
-        ByteBuffer c0043nM1360p = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_KEY))).writeIntMixed(513).writeIntLE(c0028ba.syncSeq).writeIntMixed(335).writeStringLatin1(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)).append('x').append(Storage.state().getInt(UIKeys.INT_SCREEN_HEIGHT)))).writeIntMixed(592).writeIntLE(Storage.state().getAndClearInt(MapKeys.COUNTER_MAP_CACHE_MISS)).writeIntMixed(573).writeIntLE(Storage.state().getAndClearInt(MapKeys.COUNTER_MAP_CACHE_HIT)).writeIntMixed(636).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_SCREEN_OPENS)).writeIntMixed(514).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_APP_STARTS)).writeIntMixed(638).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_ERRORS)).writeIntMixed(639).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_RESERVED)).writeIntMixed(640).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_TOTAL_TRAFFIC));
-        Vector vectorM443V = AccountManager.copyAllAccounts();
-        int size = vectorM443V.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                ObjectPool.releaseVector(vectorM443V);
-                Storage.state().saveDelta(true);
-                return c0043nM1360p;
-            }
-            Account abstractC0037h = (Account) vectorM443V.elementAt(size);
-            if (!(abstractC0037h instanceof MrimAccount)) {
-                ByteBuffer c0043nM1390v = c0043nM1360p.writeIntMixed(816);
-                ByteBuffer c0043nM1360p2 = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_KEY))).writeIntMixed(305).writeStringLatin1(abstractC0037h.login).writeIntMixed(306).writeStringLatin1(Storage.state().getString(abstractC0037h.getSessionStringKey())).writeIntMixed(563).writeIntLE(abstractC0037h.syncSeq).writeIntMixed(564).writeIntLE(abstractC0037h.sentCount).writeIntMixed(565).writeIntLE(abstractC0037h.recvCount);
-                abstractC0037h.resetCounters();
-                c0043nM1390v.writeBufferIntLen(c0043nM1360p2);
+    public static final ByteBuffer buildSyncPayload(MrimAccount mrimAccount) {
+        ByteBuffer payload = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_KEY))).writeIntMixed(513).writeIntLE(mrimAccount.syncSeq).writeIntMixed(335).writeStringLatin1(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)).append('x').append(Storage.state().getInt(UIKeys.INT_SCREEN_HEIGHT)))).writeIntMixed(592).writeIntLE(Storage.state().getAndClearInt(MapKeys.COUNTER_MAP_CACHE_MISS)).writeIntMixed(573).writeIntLE(Storage.state().getAndClearInt(MapKeys.COUNTER_MAP_CACHE_HIT)).writeIntMixed(636).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_SCREEN_OPENS)).writeIntMixed(514).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_APP_STARTS)).writeIntMixed(638).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_ERRORS)).writeIntMixed(639).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_RESERVED)).writeIntMixed(640).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_TOTAL_TRAFFIC));
+        Vector accounts = AccountManager.copyAllAccounts();
+        for (int si = accounts.size() - 1; si >= 0; si--) {
+            Account account = (Account) accounts.elementAt(si);
+            if (!(account instanceof MrimAccount)) {
+                ByteBuffer payloadRef = payload.writeIntMixed(816);
+                ByteBuffer accountPayload = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_KEY))).writeIntMixed(305).writeStringLatin1(account.login).writeIntMixed(306).writeStringLatin1(Storage.state().getString(account.getSessionStringKey())).writeIntMixed(563).writeIntLE(account.syncSeq).writeIntMixed(564).writeIntLE(account.sentCount).writeIntMixed(565).writeIntLE(account.recvCount);
+                account.resetCounters();
+                payloadRef.writeBufferIntLen(accountPayload);
             }
         }
+        ObjectPool.releaseVector(accounts);
+        Storage.state().saveDelta(true);
+        return payload;
     }
 
-    /* renamed from: d */
     public static final String buildAuthData() {
         return new ByteBuffer().writeCompressed(PackedStringKeys.USERAGENT_MOBILEJME).writeExtendedInt(2098527).writeExtendedInt(2097374).writeLongBytes(4423776686951391594L).writeExtendedInt(2098526).writeUInt(1030516845).writeExtendedInt(2098528).writeUInt(1030712676).writeExtendedInt(2098529).writeUInt(1953653104).writeLongBytes(465624460605L).getStringAndClear();
     }
 
-    /* renamed from: s */
     private static final Object[] getImageCachePool() {
         return (Object[]) Storage.state().getObject(UIKeys.OBJ_GFX_CONTEXTS_ARRAY);
     }
 
-    /* renamed from: t */
     private static final int[] getImageTimestamps() {
         return (int[]) Storage.state().getObject(UIKeys.ARR_GFX_HEIGHTS);
     }
 
-    /* renamed from: e */
     public static final void incrementCacheCounter() {
         synchronized (getImageCachePool()) {
             Storage.state().addInt(UIKeys.INT_IMAGE_COUNTER, 1);
         }
     }
 
-    /* renamed from: a */
-    public static final void invalidateCachedImage(int i) {
-        Object[] objArrM1018s = getImageCachePool();
-        synchronized (objArrM1018s) {
-            objArrM1018s[i] = null;
-            objArrM1018s[i + 29] = null;
+    public static final void invalidateCachedImage(int slot) {
+        Object[] cachePool = getImageCachePool();
+        synchronized (cachePool) {
+            cachePool[slot] = null;
+            cachePool[slot + IMAGE_CACHE_DATA_OFFSET] = null;
         }
     }
 
-    /* renamed from: f */
     public static final void cleanupExpiredImages() {
-        Object[] objArrM1018s = getImageCachePool();
-        synchronized (objArrM1018s) {
-            int iM586d = Storage.state().getInt(UIKeys.INT_IMAGE_COUNTER);
-            int[] iArrM1019t = getImageTimestamps();
-            int i = 29;
-            while (true) {
-                i--;
-                if (i >= 0) {
-                    int i2 = iM586d - iArrM1019t[i];
-                    if (i2 > 16) {
-                        objArrM1018s[i] = null;
-                        if (i2 > 32) {
-                            ObjectPool.releaseBytes((byte[]) objArrM1018s[i + 29]);
-                            objArrM1018s[i + 29] = null;
-                        }
+        Object[] cachePool = getImageCachePool();
+        synchronized (cachePool) {
+            int counter = Storage.state().getInt(UIKeys.INT_IMAGE_COUNTER);
+            int[] timestamps = getImageTimestamps();
+            for (int si = 28; si >= 0; si--) {
+                int age = counter - timestamps[si];
+                if (age > IMAGE_CACHE_EXPIRE_THRESHOLD) {
+                    cachePool[si] = null;
+                    if (age > IMAGE_CACHE_FULL_EXPIRE) {
+                        ObjectPool.releaseBytes((byte[]) cachePool[si + IMAGE_CACHE_DATA_OFFSET]);
+                        cachePool[si + IMAGE_CACHE_DATA_OFFSET] = null;
                     }
-                } else {
-                    break;
                 }
             }
         }
     }
 
-    /* renamed from: b */
-    public static final Image getOrLoadImage(int i) {
-        Object[] objArrM1018s = getImageCachePool();
-        synchronized (objArrM1018s) {
-            getImageTimestamps()[i] = Storage.state().getInt(UIKeys.INT_IMAGE_COUNTER);
-            if (objArrM1018s[i] != null) {
-                return (Image) objArrM1018s[i];
+    public static final Image getOrLoadImage(int slot) {
+        Object[] cachePool = getImageCachePool();
+        synchronized (cachePool) {
+            getImageTimestamps()[slot] = Storage.state().getInt(UIKeys.INT_IMAGE_COUNTER);
+            if (cachePool[slot] != null) {
+                return (Image) cachePool[slot];
             }
             try {
-                byte[] bArr = (byte[]) objArrM1018s[i + 29];
-                byte[] bArr2 = bArr;
-                if (bArr == null) {
-                    int i2 = i + 29;
-                    byte[] bArrM1339k = new ByteBuffer(ObjectPool.unpackChars(i < 26 ? 113724026151215L + (i << 8) : 29113350693019951L + (i << 16))).toByteArray();
-                    bArr2 = bArrM1339k;
-                    objArrM1018s[i2] = bArrM1339k;
+                byte[] cachedData = (byte[]) cachePool[slot + IMAGE_CACHE_DATA_OFFSET];
+                byte[] imageData = cachedData;
+                if (cachedData == null) {
+                    int dataSlot = slot + IMAGE_CACHE_DATA_OFFSET;
+                    byte[] loadedData = new ByteBuffer(ObjectPool.unpackChars(slot < IMAGE_CACHE_SMALL_PREFIX ? 113724026151215L + (slot << 8) : 29113350693019951L + (slot << 16))).toByteArray();
+                    imageData = loadedData;
+                    cachePool[dataSlot] = loadedData;
                 }
-                Image imageCreateImage = Image.createImage(bArr2, 0, bArr2.length);
-                objArrM1018s[i] = imageCreateImage;
-                return imageCreateImage;
+                Image image = Image.createImage(imageData, 0, imageData.length);
+                cachePool[slot] = image;
+                return image;
             } catch (Throwable unused) {
-                objArrM1018s[i + 29] = null;
-                objArrM1018s[i] = null;
+                cachePool[slot + IMAGE_CACHE_DATA_OFFSET] = null;
+                cachePool[slot] = null;
                 return Image.createImage(1, 1);
             }
         }
     }
 
-    /* renamed from: a */
-    public static final ByteBuffer createContactCommand(MrimAccount c0028ba, int i, String str, String str2, String str3, MrimContactGroup c0010aj, boolean z) {
-        Object[] objArr = new Object[6];
-        objArr[0] = ProtocolFactory.createMrimPacket(c0028ba, MrimCommand.CS_ADD_CONTACT, new ByteBuffer().writeIntLE(i).writeIntLE(c0010aj.serverId).writeStringLatin1(str).writeStringUTF16(str2).writeIntLE(0).writeStringArray(new String[]{c0028ba.displayName, str3}).writeIntLE(z ? 1 : 0));
-        objArr[1] = ObjectPool.integerOf(MrimAccount.RESP_ADD_CONTACT);
-        objArr[2] = str;
-        objArr[3] = str2;
-        objArr[4] = c0010aj;
-        objArr[5] = ObjectPool.integerOf(i);
-        return c0028ba.createAndQueueCommand(objArr);
+    public static final ByteBuffer createContactCommand(MrimAccount account, int contactFlags, String identifier, String displayName, String authMessage, MrimContactGroup group, boolean requestAuth) {
+        Object[] commandArgs = new Object[6];
+        commandArgs[0] = ProtocolFactory.createMrimPacket(account, MrimCommand.CS_ADD_CONTACT, new ByteBuffer().writeIntLE(contactFlags).writeIntLE(group.serverId).writeStringLatin1(identifier).writeStringUTF16(displayName).writeIntLE(0).writeStringArray(new String[]{account.displayName, authMessage}).writeIntLE(requestAuth ? 1 : 0));
+        commandArgs[1] = ObjectPool.integerOf(MrimAccount.RESP_ADD_CONTACT);
+        commandArgs[2] = identifier;
+        commandArgs[3] = displayName;
+        commandArgs[4] = group;
+        commandArgs[5] = ObjectPool.integerOf(contactFlags);
+        return account.createAndQueueCommand(commandArgs);
     }
-
-    /* JADX WARN: Removed duplicated region for block: B:30:0x00dc  */
-    /* JADX WARN: Removed duplicated region for block: B:31:0x00e0  */
-    /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public static final void showTextInputDialog(String str, String str2, int i, int i2, String str3, int i3, int i4, CommandListener commandListener) {
-        if (str2 != null && str2.length() > i) {
-            str2 = StringUtils.prefix(str2, i);
+    public static final void showTextInputDialog(String title, String initialText, int maxLength, int constraints, String inputMode, int okLabelKey, int cancelLabelKey, CommandListener commandListener) {
+        if (initialText != null && initialText.length() > maxLength) {
+            initialText = StringUtils.prefix(initialText, maxLength);
         }
         try {
             if (!StringUtils.isKnownDevice1) {
@@ -588,43 +528,42 @@ public final class XmppContactGroup extends ContactGroup {
             textBox.setTitle(Storage.emptyStr);
             textBox.setString(Storage.emptyStr);
             textBox.setCommandListener((CommandListener) null);
-            textBox.setConstraints(i2);
-            textBox.setTitle(str);
-            if (str2 != null) {
-                textBox.setString(str2);
+            textBox.setConstraints(constraints);
+            textBox.setTitle(title);
+            if (initialText != null) {
+                textBox.setString(initialText);
             }
-            textBox.setMaxSize(i);
+            textBox.setMaxSize(maxLength);
             textBox.setInitialInputMode((String) null);
         } catch (Throwable unused) {
-            Storage.state().setObject(UIKeys.OBJ_TEXT_BOX, new TextBox(str, str2, i, i2));
+            Storage.state().setObject(UIKeys.OBJ_TEXT_BOX, new TextBox(title, initialText, maxLength, constraints));
         }
         removePrimaryCommand();
         removeSecondaryCommand();
         try {
             TextBox textBox2 = getTextInputBox();
-            if (StringUtils.matchesKey(424, str3)) {
-                int iM586d = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_LIST);
-                if (iM586d == 1) {
+            if (StringUtils.matchesKey(424, inputMode)) {
+                int fontSizeSetting = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_LIST);
+                if (fontSizeSetting == 1) {
                     textBox2.setInitialInputMode(Storage.resources().getString(StringResKeys.STR_INPUT_MODE_NUMERIC));
-                } else if (iM586d == 2) {
+                } else if (fontSizeSetting == 2) {
                     textBox2.setInitialInputMode(Storage.resources().getString(StringResKeys.STR_INPUT_MODE_LATIN));
                 }
             } else {
-                textBox2.setInitialInputMode(str3);
+                textBox2.setInitialInputMode(inputMode);
             }
         } catch (Throwable unused2) {
         }
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_COMMAND_INDEX, i3);
-        Command command = new Command(Storage.state().getString(i3), Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN) ? 2 : 4, 0);
+        Storage.state().setInt(RuntimeKeys.INT_XMPP_COMMAND_INDEX, okLabelKey);
+        Command command = new Command(Storage.state().getString(okLabelKey), Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN) ? 2 : 4, 0);
         removePrimaryCommand();
         getTextInputBox().addCommand(command);
         Storage.state().setObject(RuntimeKeys.SLOT_XMPP_COMMAND_1, command);
-        setCommandLabel(i4);
+        setCommandLabel(cancelLabelKey);
         getTextInputBox().setCommandListener(commandListener);
         Storage.state().setScreen(getTextInputBox());
     }
 
-    /* renamed from: g */
     public static final String getTextInputValue() {
         try {
             return Utils.defaultStr(StringUtils.intern(getTextInputBox().getString()));
@@ -633,218 +572,177 @@ public final class XmppContactGroup extends ContactGroup {
         }
     }
 
-    /* renamed from: a */
-    public static final void setTextInputScreen(int i, int i2) {
-        if (Storage.state().getInt(RuntimeKeys.INT_XMPP_SELECTION_INDEX) == i) {
-            setCommandLabel(i2);
+    public static final void setTextInputScreen(int selectionIndex, int labelKey) {
+        if (Storage.state().getInt(RuntimeKeys.INT_XMPP_SELECTION_INDEX) == selectionIndex) {
+            setCommandLabel(labelKey);
             Storage.state().setScreen(getTextInputBox());
         }
     }
 
-    /* renamed from: h */
     public static final TextBox getTextInputBox() {
         return (TextBox) Storage.state().getObject(UIKeys.OBJ_TEXT_BOX);
     }
 
-    /* renamed from: u */
     private static final void removePrimaryCommand() {
         Command command = (Command) Storage.state().getObject(RuntimeKeys.SLOT_XMPP_COMMAND_1);
-        if (null != command) {
+        if (command != null) {
             getTextInputBox().removeCommand(command);
         }
         Storage.state().clearIndex(RuntimeKeys.SLOT_XMPP_COMMAND_1);
     }
 
-    /* renamed from: v */
     private static final void removeSecondaryCommand() {
         Command command = (Command) Storage.state().getObject(RuntimeKeys.SLOT_XMPP_COMMAND_2);
-        if (null != command) {
+        if (command != null) {
             getTextInputBox().removeCommand(command);
         }
         Storage.state().clearIndex(RuntimeKeys.SLOT_XMPP_COMMAND_2);
     }
 
-    /* renamed from: g */
-    private static final void setCommandLabel(int i) {
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_SELECTION_INDEX, i);
-        Command command = new Command(Storage.state().getString(i), Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN) ? 4 : 2, 1);
+    private static final void setCommandLabel(int labelKey) {
+        Storage.state().setInt(RuntimeKeys.INT_XMPP_SELECTION_INDEX, labelKey);
+        Command command = new Command(Storage.state().getString(labelKey), Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN) ? 4 : 2, 1);
         removeSecondaryCommand();
         getTextInputBox().addCommand(command);
         Storage.state().setObject(RuntimeKeys.SLOT_XMPP_COMMAND_2, command);
     }
 
-    /* renamed from: i */
     public static final void initializeMapData() {
         lastUpdateTs = System.currentTimeMillis();
-        Vector vectorM1140a = ServiceRegistry.getServiceContactIds(1);
-        long j = MapRenderer.currentLon;
-        long j2 = MapRenderer.currentLat;
-        StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
-        int size = vectorM1140a.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                ByteBuffer c0043nM1385u = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_VIEW).writeUInt(15713);
-                String strM1215a = ObjectPool.toStringAndRelease(stringBufferM1217h);
-                new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, c0043nM1385u.writeRawString(strM1215a).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(strM1215a).writeCompressed(PackedStringKeys.SECRET_KEY_389).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(j).writeUInt(4023334).writeLongAsString(j2).getStringAndClear());
-                return;
-            } else {
-                stringBufferM1217h.append(vectorM1140a.elementAt(size));
-                if (size > 0) {
-                    stringBufferM1217h.append(',');
-                }
+        Vector contactIds = ServiceRegistry.getServiceContactIds(1);
+        long lon = MapRenderer.currentLon;
+        long lat = MapRenderer.currentLat;
+        StringBuffer idList = ObjectPool.newStringBuffer();
+        for (int si = contactIds.size() - 1; si >= 0; si--) {
+            idList.append(contactIds.elementAt(si));
+            if (si > 0) {
+                idList.append(',');
             }
         }
+        ByteBuffer requestUrl = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_VIEW).writeUInt(15713);
+        String contactIdStr = ObjectPool.toStringAndRelease(idList);
+        new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, requestUrl.writeRawString(contactIdStr).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(contactIdStr).writeCompressed(PackedStringKeys.SECRET_KEY_389).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(lon).writeUInt(4023334).writeLongAsString(lat).getStringAndClear());
     }
 
-    /* renamed from: j */
     public static final boolean isMapDataRecent() {
-        return System.currentTimeMillis() - lastCheckTs < 45000;
+        return System.currentTimeMillis() - lastCheckTs < MAP_DATA_FRESHNESS_MS;
     }
 
-    /* renamed from: a */
-    private static final int[] expandBlowfishKey(byte[] bArr, int i) {
-        ByteBuffer c0043n = new ByteBuffer(ObjectPool.unpackChars(24879), 4200);
-        int[] iArr = new int[1060];
-        System.arraycopy(Utils.bytesToInts(c0043n.data), 0, iArr, 0, 1042);
-        c0043n.clear();
-        int i2 = 0;
-        for (int i3 = 0; i3 < 18; i3++) {
-            int i4 = 0;
-            for (int i5 = 0; i5 < 4; i5++) {
-                int i6 = i2;
-                i2++;
-                i4 = (i4 << 8) | (bArr[i6 % i] & 255);
+    private static final int[] expandBlowfishKey(byte[] key, int keyLen) {
+        ByteBuffer sboxData = new ByteBuffer(ObjectPool.unpackChars(24879), 4200);
+        int[] subkeys = new int[BLOWFISH_P_LAST + 1];
+        System.arraycopy(Utils.bytesToInts(sboxData.data), 0, subkeys, 0, BLOWFISH_P_OFFSET);
+        sboxData.clear();
+        int keyIdx = 0;
+        for (int pi = 0; pi < 18; pi++) {
+            int mixed = 0;
+            for (int bi = 0; bi < 4; bi++) {
+                int ki = keyIdx;
+                keyIdx++;
+                mixed = (mixed << 8) | (key[ki % keyLen] & 255);
             }
-            iArr[i3 + 1024 + 18] = iArr[i3 + 1024] ^ i4;
+            subkeys[pi + BLOWFISH_SUBKEYS_OFFSET + 18] = subkeys[pi + BLOWFISH_SUBKEYS_OFFSET] ^ mixed;
         }
-        long jM1035a = performBlowfishRound(iArr, 0, 0);
-        iArr[1042] = (int) (jM1035a >>> 32);
-        iArr[1043] = (int) jM1035a;
-        int i7 = 2;
+        long roundResult = performBlowfishRound(subkeys, 0, 0);
+        subkeys[BLOWFISH_P_OFFSET] = (int) (roundResult >>> 32);
+        subkeys[BLOWFISH_P_OFFSET + 1] = (int) roundResult;
+        int pIdx = 2;
         do {
-            long jM1035a2 = performBlowfishRound(iArr, iArr[((i7 + 1024) + 18) - 2], iArr[((i7 + 1024) + 18) - 1]);
-            int i8 = i7;
-            int i9 = i7 + 1;
-            iArr[1042 + i8] = (int) (jM1035a2 >>> 32);
-            i7 = i9 + 1;
-            iArr[1042 + i9] = (int) jM1035a2;
-        } while (i7 != 18);
-        long jM1035a3 = performBlowfishRound(iArr, iArr[1058], iArr[1059]);
-        iArr[0] = (int) (jM1035a3 >>> 32);
-        iArr[1] = (int) jM1035a3;
-        int i10 = 2;
+            long pairResult = performBlowfishRound(subkeys, subkeys[((pIdx + BLOWFISH_SUBKEYS_OFFSET) + 18) - 2], subkeys[((pIdx + BLOWFISH_SUBKEYS_OFFSET) + 18) - 1]);
+            int lo = pIdx;
+            int hi = pIdx + 1;
+            subkeys[BLOWFISH_P_OFFSET + lo] = (int) (pairResult >>> 32);
+            pIdx = hi + 1;
+            subkeys[BLOWFISH_P_OFFSET + hi] = (int) pairResult;
+        } while (pIdx != 18);
+        long lastResult = performBlowfishRound(subkeys, subkeys[BLOWFISH_P_LAST - 1], subkeys[BLOWFISH_P_LAST]);
+        subkeys[0] = (int) (lastResult >>> 32);
+        subkeys[1] = (int) lastResult;
+        int sIdx = 2;
         do {
-            long jM1035a4 = performBlowfishRound(iArr, iArr[i10 - 2], iArr[i10 - 1]);
-            int i11 = i10;
-            int i12 = i10 + 1;
-            iArr[i11] = (int) (jM1035a4 >>> 32);
-            i10 = i12 + 1;
-            iArr[i12] = (int) jM1035a4;
-        } while (i10 != 1024);
-        return iArr;
+            long sboxResult = performBlowfishRound(subkeys, subkeys[sIdx - 2], subkeys[sIdx - 1]);
+            int lo = sIdx;
+            int hi = sIdx + 1;
+            subkeys[lo] = (int) (sboxResult >>> 32);
+            sIdx = hi + 1;
+            subkeys[hi] = (int) sboxResult;
+        } while (sIdx != BLOWFISH_SUBKEYS_OFFSET);
+        return subkeys;
     }
 
-    /* renamed from: a */
-    private static final long performBlowfishRound(int[] iArr, int i, int i2) {
-        int i3 = i ^ iArr[1042];
-        int i4 = 0;
-        while (i4 < 16) {
-            int i5 = i4 + 1;
-            i2 ^= (((iArr[i3 >>> 24] + iArr[256 | ((i3 >>> 16) & 255)]) ^ iArr[512 | ((i3 >>> 8) & 255)]) + iArr[768 | (i3 & 255)]) ^ iArr[(i5 + 1024) + 18];
-            i4 = i5 + 1;
-            i3 ^= (((iArr[i2 >>> 24] + iArr[256 | ((i2 >>> 16) & 255)]) ^ iArr[512 | ((i2 >>> 8) & 255)]) + iArr[768 | (i2 & 255)]) ^ iArr[(i4 + 1024) + 18];
+    private static final long performBlowfishRound(int[] subkeys, int left, int right) {
+        int xl = left ^ subkeys[BLOWFISH_P_OFFSET];
+        int round = 0;
+        while (round < BLOWFISH_ROUNDS) {
+            int nextRound = round + 1;
+            right ^= (((subkeys[xl >>> 24] + subkeys[BLOWFISH_SBOX_SIZE | ((xl >>> 16) & 255)]) ^ subkeys[(BLOWFISH_SBOX_SIZE * 2) | ((xl >>> 8) & 255)]) + subkeys[(BLOWFISH_SBOX_SIZE * 3) | (xl & 255)]) ^ subkeys[(nextRound + BLOWFISH_SUBKEYS_OFFSET) + 18];
+            round = nextRound + 1;
+            xl ^= (((subkeys[right >>> 24] + subkeys[BLOWFISH_SBOX_SIZE | ((right >>> 16) & 255)]) ^ subkeys[(BLOWFISH_SBOX_SIZE * 2) | ((right >>> 8) & 255)]) + subkeys[(BLOWFISH_SBOX_SIZE * 3) | (right & 255)]) ^ subkeys[(round + BLOWFISH_SUBKEYS_OFFSET) + 18];
         }
-        return ((i2 ^ iArr[1059]) << 32) | ((i3 << 32) >>> 32);
+        return ((right ^ subkeys[BLOWFISH_P_LAST]) << 32) | ((xl << 32) >>> 32);
     }
 
-    /* JADX DEBUG: Multi-variable search result rejected for r0v14, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r0v8, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v11, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v15, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v21, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v25, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v29, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v7, resolved type: boolean */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Type inference failed for: r2v28, types: [int] */
-    /* JADX WARN: Type inference failed for: r2v42, types: [int] */
-    /* renamed from: a */
-    public static final void encryptBlowfish(byte[] bArr, int i, byte[] bArr2, int i2) {
-        int[] iArrM1034a = expandBlowfishKey(bArr, i);
-        int i3 = i2 >> 3;
-        for (int i4 = 0; i4 < i3; i4++) {
-            int i5 = i4 << 3;
-            int i6 = ((bArr2[i5] & 0xFF) << 24) | ((bArr2[i5 + 1] & 0xFF) << 16) | ((bArr2[i5 + 2] & 0xFF) << 8) | (bArr2[i5 + 3] & 0xFF);
-            int i7 = ((bArr2[i5 + 4] & 0xFF) << 24) | ((bArr2[i5 + 5] & 0xFF) << 16) | ((bArr2[i5 + 6] & 0xFF) << 8) | (bArr2[i5 + 7] & 0xFF);
-            int i8 = i6 ^ iArrM1034a[1042];
-            int i9 = 0;
-            while (i9 < 16) {
-                int i10 = i9 + 1;
-                i7 ^= (((iArrM1034a[i8 >>> 24] + iArrM1034a[256 | ((i8 >>> 16) & 255)]) ^ iArrM1034a[512 | ((i8 >>> 8) & 255)]) + iArrM1034a[768 | (i8 & 255)]) ^ iArrM1034a[(i10 + 1024) + 18];
-                i9 = i10 + 1;
-                i8 ^= (((iArrM1034a[i7 >>> 24] + iArrM1034a[256 | ((i7 >>> 16) & 255)]) ^ iArrM1034a[512 | ((i7 >>> 8) & 255)]) + iArrM1034a[768 | (i7 & 255)]) ^ iArrM1034a[(i9 + 1024) + 18];
+    public static final void encryptBlowfish(byte[] key, int keyLen, byte[] data, int dataLen) {
+        int[] subkeys = expandBlowfishKey(key, keyLen);
+        int blockCount = dataLen >> 3;
+        for (int bi = 0; bi < blockCount; bi++) {
+            int pos = bi << 3;
+            int left = ((data[pos] & 0xFF) << 24) | ((data[pos + 1] & 0xFF) << 16) | ((data[pos + 2] & 0xFF) << 8) | (data[pos + 3] & 0xFF);
+            int right = ((data[pos + 4] & 0xFF) << 24) | ((data[pos + 5] & 0xFF) << 16) | ((data[pos + 6] & 0xFF) << 8) | (data[pos + 7] & 0xFF);
+            int xl = left ^ subkeys[BLOWFISH_P_OFFSET];
+            int round = 0;
+            while (round < BLOWFISH_ROUNDS) {
+                int nextRound = round + 1;
+                right ^= (((subkeys[xl >>> 24] + subkeys[BLOWFISH_SBOX_SIZE | ((xl >>> 16) & 255)]) ^ subkeys[(BLOWFISH_SBOX_SIZE * 2) | ((xl >>> 8) & 255)]) + subkeys[(BLOWFISH_SBOX_SIZE * 3) | (xl & 255)]) ^ subkeys[(nextRound + BLOWFISH_SUBKEYS_OFFSET) + 18];
+                round = nextRound + 1;
+                xl ^= (((subkeys[right >>> 24] + subkeys[BLOWFISH_SBOX_SIZE | ((right >>> 16) & 255)]) ^ subkeys[(BLOWFISH_SBOX_SIZE * 2) | ((right >>> 8) & 255)]) + subkeys[(BLOWFISH_SBOX_SIZE * 3) | (right & 255)]) ^ subkeys[(round + BLOWFISH_SUBKEYS_OFFSET) + 18];
             }
-            int i11 = i7 ^ iArrM1034a[1059];
-            bArr2[i5] = (byte) (i11 >> 24);
-            bArr2[i5 + 1] = (byte) (i11 >>> 16);
-            bArr2[i5 + 2] = (byte) (i11 >>> 8);
-            bArr2[i5 + 3] = (byte) i11;
-            bArr2[i5 + 4] = (byte) (i8 >> 24);
-            bArr2[i5 + 5] = (byte) (i8 >>> 16);
-            bArr2[i5 + 6] = (byte) (i8 >>> 8);
-            bArr2[i5 + 7] = (byte) i8;
+            int encrypted = right ^ subkeys[BLOWFISH_P_LAST];
+            data[pos] = (byte) (encrypted >> 24);
+            data[pos + 1] = (byte) (encrypted >>> 16);
+            data[pos + 2] = (byte) (encrypted >>> 8);
+            data[pos + 3] = (byte) encrypted;
+            data[pos + 4] = (byte) (xl >> 24);
+            data[pos + 5] = (byte) (xl >>> 16);
+            data[pos + 6] = (byte) (xl >>> 8);
+            data[pos + 7] = (byte) xl;
         }
     }
 
-    /* JADX DEBUG: Multi-variable search result rejected for r0v14, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r0v8, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v11, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v15, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v21, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v25, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v29, resolved type: boolean */
-    /* JADX DEBUG: Multi-variable search result rejected for r1v7, resolved type: boolean */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Type inference failed for: r2v28, types: [int] */
-    /* JADX WARN: Type inference failed for: r2v42, types: [int] */
-    /* renamed from: b */
-    public static final void decryptBlowfish(byte[] bArr, int i, byte[] bArr2, int i2) {
-        int[] iArrM1034a = expandBlowfishKey(bArr, i);
-        int i3 = i2 >> 3;
-        for (int i4 = 0; i4 < i3; i4++) {
-            int i5 = i4 << 3;
-            int i6 = ((bArr2[i5] & 0xFF) << 24) | ((bArr2[i5 + 1] & 0xFF) << 16) | ((bArr2[i5 + 2] & 0xFF) << 8) | (bArr2[i5 + 3] & 0xFF);
-            int i7 = ((bArr2[i5 + 4] & 0xFF) << 24) | ((bArr2[i5 + 5] & 0xFF) << 16) | ((bArr2[i5 + 6] & 0xFF) << 8) | (bArr2[i5 + 7] & 0xFF);
-            int i8 = i6 ^ iArrM1034a[1059];
-            int i9 = 16;
-            while (i9 > 0) {
-                int i10 = i9;
-                int i11 = i10 - 1;
-                i7 ^= (((iArrM1034a[i8 >>> 24] + iArrM1034a[256 | ((i8 >>> 16) & 255)]) ^ iArrM1034a[512 | ((i8 >>> 8) & 255)]) + iArrM1034a[768 | (i8 & 255)]) ^ iArrM1034a[1042 + i10];
-                i9 = i11 - 1;
-                i8 ^= (((iArrM1034a[i7 >>> 24] + iArrM1034a[256 | ((i7 >>> 16) & 255)]) ^ iArrM1034a[512 | ((i7 >>> 8) & 255)]) + iArrM1034a[768 | (i7 & 255)]) ^ iArrM1034a[1042 + i11];
+    public static final void decryptBlowfish(byte[] key, int keyLen, byte[] data, int dataLen) {
+        int[] subkeys = expandBlowfishKey(key, keyLen);
+        int blockCount = dataLen >> 3;
+        for (int bi = 0; bi < blockCount; bi++) {
+            int pos = bi << 3;
+            int left = ((data[pos] & 0xFF) << 24) | ((data[pos + 1] & 0xFF) << 16) | ((data[pos + 2] & 0xFF) << 8) | (data[pos + 3] & 0xFF);
+            int right = ((data[pos + 4] & 0xFF) << 24) | ((data[pos + 5] & 0xFF) << 16) | ((data[pos + 6] & 0xFF) << 8) | (data[pos + 7] & 0xFF);
+            int xl = left ^ subkeys[BLOWFISH_P_LAST];
+            int round = BLOWFISH_ROUNDS;
+            while (round > 0) {
+                int curRound = round;
+                int prevRound = curRound - 1;
+                right ^= (((subkeys[xl >>> 24] + subkeys[BLOWFISH_SBOX_SIZE | ((xl >>> 16) & 255)]) ^ subkeys[(BLOWFISH_SBOX_SIZE * 2) | ((xl >>> 8) & 255)]) + subkeys[(BLOWFISH_SBOX_SIZE * 3) | (xl & 255)]) ^ subkeys[BLOWFISH_P_OFFSET + curRound];
+                round = prevRound - 1;
+                xl ^= (((subkeys[right >>> 24] + subkeys[BLOWFISH_SBOX_SIZE | ((right >>> 16) & 255)]) ^ subkeys[(BLOWFISH_SBOX_SIZE * 2) | ((right >>> 8) & 255)]) + subkeys[(BLOWFISH_SBOX_SIZE * 3) | (right & 255)]) ^ subkeys[BLOWFISH_P_OFFSET + prevRound];
             }
-            int i12 = i7 ^ iArrM1034a[1042];
-            bArr2[i5] = (byte) (i12 >> 24);
-            bArr2[i5 + 1] = (byte) (i12 >>> 16);
-            bArr2[i5 + 2] = (byte) (i12 >>> 8);
-            bArr2[i5 + 3] = (byte) i12;
-            bArr2[i5 + 4] = (byte) (i8 >> 24);
-            bArr2[i5 + 5] = (byte) (i8 >>> 16);
-            bArr2[i5 + 6] = (byte) (i8 >>> 8);
-            bArr2[i5 + 7] = (byte) i8;
+            int decrypted = right ^ subkeys[BLOWFISH_P_OFFSET];
+            data[pos] = (byte) (decrypted >> 24);
+            data[pos + 1] = (byte) (decrypted >>> 16);
+            data[pos + 2] = (byte) (decrypted >>> 8);
+            data[pos + 3] = (byte) decrypted;
+            data[pos + 4] = (byte) (xl >> 24);
+            data[pos + 5] = (byte) (xl >>> 16);
+            data[pos + 6] = (byte) (xl >>> 8);
+            data[pos + 7] = (byte) xl;
         }
     }
 
-    /* renamed from: k */
     public static final void flagSyncRequired() {
         synchronized (Storage.state().getVector(MapKeys.VEC_TILE_QUEUE)) {
             Storage.state().setInt(UIKeys.FLAG_XMPP_ROSTER_LOADED, 1);
         }
     }
 
-    /* renamed from: l */
     public static final boolean checkAndClearSync() {
         synchronized (Storage.state().getVector(MapKeys.VEC_TILE_QUEUE)) {
             if (!Storage.state().getBool(UIKeys.FLAG_XMPP_ROSTER_LOADED)) {
@@ -857,148 +755,123 @@ public final class XmppContactGroup extends ContactGroup {
         }
     }
 
-    /* renamed from: c */
-    public static final Object[] getContactInfoFromState(int i) {
-        return addContactInfoToQueue(ApiClient.getUrlComponents(Storage.state().getString(i)));
+    public static final Object[] getContactInfoFromState(int stateKey) {
+        return addContactInfoToQueue(ApiClient.getUrlComponents(Storage.state().getString(stateKey)));
     }
 
-    /* renamed from: a */
-    public static final Object[] addContactInfoToQueue(Object[] objArr) {
+    public static final Object[] addContactInfoToQueue(Object[] contactInfo) {
         RemoteLogger.log("XGRP", "addContactInfoToQueue");
-        if (objArr != null) {
-            Vector vectorM614m = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
-            synchronized (vectorM614m) {
-                if (!vectorM614m.contains(objArr)) {
-                    vectorM614m.addElement(objArr);
+        if (contactInfo != null) {
+            Vector queue = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
+            synchronized (queue) {
+                if (!queue.contains(contactInfo)) {
+                    queue.addElement(contactInfo);
                 }
                 flagSyncRequired();
             }
         }
-        return objArr;
+        return contactInfo;
     }
 
-    /* renamed from: b */
-    public static final void removeContactInfoFromQueue(Object[] objArr) {
-        if (objArr != null) {
-            Vector vectorM614m = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
-            synchronized (vectorM614m) {
-                if (vectorM614m.contains(objArr)) {
-                    vectorM614m.removeElement(objArr);
+    public static final void removeContactInfoFromQueue(Object[] contactInfo) {
+        if (contactInfo != null) {
+            Vector queue = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
+            synchronized (queue) {
+                if (queue.contains(contactInfo)) {
+                    queue.removeElement(contactInfo);
                     flagSyncRequired();
                 }
             }
         }
     }
 
-    /* renamed from: a */
-    public static final void addMapPointIfNew(Vector vector, MapPoint c0014an, int i, int i2) {
-        if (c0014an == null || vector.contains(c0014an)) {
+    public static final void addMapPointIfNew(Vector points, MapPoint point, int unused, int maxSize) {
+        if (point == null || points.contains(point)) {
             return;
         }
-        if (null != findMapPointByName(vector, c0014an.name)) {
+        if (findMapPointByName(points, point.name) != null) {
             return;
         }
-        if (i2 > 0 && vector.size() >= i2) {
-            vector.removeElementAt(0);
+        if (maxSize > 0 && points.size() >= maxSize) {
+            points.removeElementAt(0);
         }
-        vector.insertElementAt(c0014an, 0);
+        points.insertElementAt(point, 0);
     }
 
-    /* renamed from: a */
-    private static MapPoint findMapPointByName(Vector vector, String str) {
-        MapPoint c0014an;
+    private static MapPoint findMapPointByName(Vector points, String name) {
         try {
-            int size = vector.size();
-            do {
-                size--;
-                if (size < 0) {
-                    return null;
+            for (int pi = points.size() - 1; pi >= 0; pi--) {
+                MapPoint point = (MapPoint) points.elementAt(pi);
+                if (name.equals(point.name)) {
+                    return point;
                 }
-                c0014an = (MapPoint) vector.elementAt(size);
-            } while (!str.equals(c0014an.name));
-            return c0014an;
+            }
+            return null;
         } catch (Exception unused) {
             return null;
         }
     }
 
-    /* renamed from: a */
-    public static final Vector parseMapPointsFromStr(String str) {
-        Vector vectorM1213g = ObjectPool.newVector();
+    public static final Vector parseMapPointsFromStr(String data) {
+        Vector points = ObjectPool.newVector();
         try {
-            Vector vectorM513a = Utils.splitReplace(str, '\r', '\n');
-            int size = vectorM513a.size();
-            for (int i = 0; i < size; i++) {
-                Vector vectorM516c = Utils.splitNonEmpty((String) vectorM513a.elementAt(i), '|');
-                MapPoint c0014an = new MapPoint((String) vectorM516c.elementAt(0), Long.parseLong((String) vectorM516c.elementAt(2)), Long.parseLong((String) vectorM516c.elementAt(1)), Utils.parseInt(vectorM516c.elementAt(3)));
-                c0014an.height = 1;
-                c0014an.typeCode = Utils.parseInt(vectorM516c.elementAt(4));
-                c0014an.objectCode = Utils.parseInt(vectorM516c.elementAt(5));
-                vectorM1213g.addElement(c0014an);
-                ObjectPool.releaseVector(vectorM516c);
+            Vector lines = Utils.splitReplace(data, '\r', '\n');
+            int lineCount = lines.size();
+            for (int li = 0; li < lineCount; li++) {
+                Vector fields = Utils.splitNonEmpty((String) lines.elementAt(li), '|');
+                MapPoint point = new MapPoint((String) fields.elementAt(0), Long.parseLong((String) fields.elementAt(2)), Long.parseLong((String) fields.elementAt(1)), Utils.parseInt(fields.elementAt(3)));
+                point.height = 1;
+                point.typeCode = Utils.parseInt(fields.elementAt(4));
+                point.objectCode = Utils.parseInt(fields.elementAt(5));
+                points.addElement(point);
+                ObjectPool.releaseVector(fields);
             }
-            ObjectPool.releaseVector(vectorM513a);
-            Utils.trimIfEmpty(vectorM1213g);
+            ObjectPool.releaseVector(lines);
+            Utils.trimIfEmpty(points);
         } catch (Throwable unused) {
         }
-        return vectorM1213g;
+        return points;
     }
 
-    /* renamed from: a */
-    public static final void saveMapPoints(Vector vector, int i) {
+    public static final void saveMapPoints(Vector points, int stateKey) {
         try {
-            ByteBuffer c0043n = new ByteBuffer();
-            int size = vector.size();
-            c0043n.writeIntLE(size);
-            for (int i2 = 0; i2 < size; i2++) {
-                MapPoint c0014an = (MapPoint) vector.elementAt(i2);
-                c0043n.writeStringUTF16(c0014an.name).writeLong(c0014an.boundsMinLon).writeLong(c0014an.boundsMinLat).writeLong(c0014an.boundsMaxLon).writeLong(c0014an.boundsMaxLat).writeLong(c0014an.longitude).writeLong(c0014an.latitude).writeIntLE(c0014an.zoomLevel).writeIntLE(c0014an.height).writeIntLE(c0014an.objectCode).writeIntLE(c0014an.typeCode);
+            ByteBuffer buffer = new ByteBuffer();
+            int size = points.size();
+            buffer.writeIntLE(size);
+            for (int pi = 0; pi < size; pi++) {
+                MapPoint point = (MapPoint) points.elementAt(pi);
+                buffer.writeStringUTF16(point.name).writeLong(point.boundsMinLon).writeLong(point.boundsMinLat).writeLong(point.boundsMaxLon).writeLong(point.boundsMaxLat).writeLong(point.longitude).writeLong(point.latitude).writeIntLE(point.zoomLevel).writeIntLE(point.height).writeIntLE(point.objectCode).writeIntLE(point.typeCode);
             }
-            Storage.state().setObject(i, (Object) c0043n.toBase64());
+            Storage.state().setObject(stateKey, (Object) buffer.toBase64());
         } catch (Throwable unused) {
         }
     }
 
-    /* renamed from: d */
-    public static final Vector loadMapPoints(int i) {
-        Vector vectorM1213g = ObjectPool.newVector();
+    public static final Vector loadMapPoints(int stateKey) {
+        Vector points = ObjectPool.newVector();
         try {
-            ByteBuffer c0043nM986d = Base64.decode(Storage.state().getString(i));
-            if (c0043nM986d.length > 4) {
-                int iM1328e = c0043nM986d.readInt();
-                for (int i2 = 0; i2 < iM1328e; i2++) {
-                    vectorM1213g.addElement(new MapPoint(c0043nM986d));
+            ByteBuffer buffer = Base64.decode(Storage.state().getString(stateKey));
+            if (buffer.length > 4) {
+                int count = buffer.readInt();
+                for (int pi = 0; pi < count; pi++) {
+                    points.addElement(new MapPoint(buffer));
                 }
             }
-            Utils.trimIfEmpty(vectorM1213g);
+            Utils.trimIfEmpty(points);
         } catch (Throwable unused) {
         }
-        return vectorM1213g;
+        return points;
     }
 
-    /* renamed from: a */
-    public static final void startMapAnimation(Vector vector) {
-        int size = vector.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                ((MapPoint) vector.elementAt(size)).markInactive();
-            }
+    public static final void startMapAnimation(Vector points) {
+        for (int pi = points.size() - 1; pi >= 0; pi--) {
+            ((MapPoint) points.elementAt(pi)).markInactive();
         }
     }
 
-    /* renamed from: b */
-    public static final void stopMapAnimation(Vector vector) {
-        int size = vector.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                ((MapPoint) vector.elementAt(size)).markActive();
-            }
+    public static final void stopMapAnimation(Vector points) {
+        for (int pi = points.size() - 1; pi >= 0; pi--) {
+            ((MapPoint) points.elementAt(pi)).markActive();
         }
     }
 }

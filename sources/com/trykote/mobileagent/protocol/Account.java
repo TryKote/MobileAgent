@@ -30,6 +30,23 @@ public abstract class Account {
     public static final int PROGRESS_STARTING = 1;
     public static final int PROGRESS_CONNECTED = 100;
 
+    // Sync array configuration
+    private static final int SYNC_ARRAY_SIZE = 9;
+
+    // Property serialization version
+    private static final int PROPERTY_VERSION = 12;
+
+    // Serialization flags
+    private static final int FLAG_HAS_PROPERTIES = 8;
+
+    // Validation error codes (string resource IDs)
+    public static final int ERROR_DISCONNECTED = 299;
+
+    // Connection retry settings
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_DELAY_MS = 2000;
+    public int retryCount;
+
     public final Vector groups;
 
     public int accountId;
@@ -94,7 +111,7 @@ public abstract class Account {
         this.login = login;
         this.displayName = login;
         this.password = password;
-        this.syncArray = new int[9];
+        this.syncArray = new int[SYNC_ARRAY_SIZE];
         this.dataBuffer = new ByteBuffer();
         this.contactMap = new Hashtable();
         this.extras = ObjectPool.newVector();
@@ -116,7 +133,7 @@ public abstract class Account {
     public Account(ByteBuffer buffer) {
         this(buffer.readInt(), buffer.readHexStr(), buffer.readWideStr());
         buffer.readInt();
-        for (int i = 2; i < 9; i++) {
+        for (int i = 2; i < SYNC_ARRAY_SIZE; i++) {
             this.syncArray[i] = buffer.readInt();
         }
         this.configFlags = buffer.readInt();
@@ -142,7 +159,7 @@ public abstract class Account {
     public abstract int getIconId();
 
     public void loadProperties(ByteBuffer buffer) {
-        if (buffer.readInt() == 12) {
+        if (buffer.readInt() == PROPERTY_VERSION) {
             this.syncSeq = buffer.readInt();
             this.sentCount = buffer.readInt();
             this.recvCount = buffer.readInt();
@@ -151,12 +168,12 @@ public abstract class Account {
     }
 
     public void saveProperties(ByteBuffer buffer) {
-        buffer.writeIntLE(12).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount).writeIntLE(0);
+        buffer.writeIntLE(PROPERTY_VERSION).writeIntLE(this.syncSeq).writeIntLE(this.sentCount).writeIntLE(this.recvCount).writeIntLE(0);
     }
 
     public Account serializeAccount(ByteBuffer buffer, boolean includeGroups, boolean includePrivate) {
-        buffer.writeByte(getType() | 8).writeIntLE(this.accountId).writeStringLatin1(this.login).writeStringLatin1(this.password).writeIntLE(0);
-        for (int i = 2; i < 9; i++) {
+        buffer.writeByte(getType() | FLAG_HAS_PROPERTIES).writeIntLE(this.accountId).writeStringLatin1(this.login).writeStringLatin1(this.password).writeIntLE(0);
+        for (int i = 2; i < SYNC_ARRAY_SIZE; i++) {
             buffer.writeIntLE(this.syncArray[i]);
         }
         buffer.writeIntLE(this.configFlags);
@@ -170,13 +187,8 @@ public abstract class Account {
                 this.groups.removeAllElements();
             }
             int size = this.groups.size();
-            int remaining = size;
             buffer.writeIntLE(size);
-            while (true) {
-                remaining--;
-                if (remaining < 0) {
-                    break;
-                }
+            for (int remaining = size - 1; remaining >= 0; remaining--) {
                 getGroup(remaining).serialize(buffer, true);
             }
             this.defaultGroup.serialize(buffer, true);
@@ -191,13 +203,15 @@ public abstract class Account {
         if (isConnected()) {
             return sendData(buffer);
         }
-        return 299;
+        return ERROR_DISCONNECTED;
     }
 
     public final int sendData(ByteBuffer buffer) {
+        RemoteLogger.log("ACCT", "sendData: " + buffer.length + " bytes, connState=" + this.connection.state);
         AccountManager.recordOutboundTraffic(this, buffer.length);
         ConnectionThread conn = this.connection;
         if (conn.exception != null) {
+            RemoteLogger.log("ACCT", "sendData: connection has exception: " + conn.exception);
             throw new RuntimeException();
         }
         ByteBuffer outBuf = conn.outBuffer;
@@ -303,14 +317,26 @@ public abstract class Account {
     public final void handleConnError() {
         String errorMsg;
         Throwable th = this.connection.exception;
-        if (null == th) {
+        if (th == null) {
             errorMsg = Storage.resources().getString(StringResKeys.STR_TIMEOUT_ERROR);
         } else {
             errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(Storage.resources().getString(StringResKeys.STR_ERROR_SEPARATOR)).append(Storage.state().getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
+
+        // Retry on IOException (network errors), not on SecurityException or auth errors
+        if (th instanceof IOException && this.retryCount < MAX_RETRIES) {
+            this.retryCount++;
+            RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " retry " + this.retryCount + "/" + MAX_RETRIES + " err=" + errorMsg);
+            closeConnection();
+            try { Thread.sleep(RETRY_DELAY_MS); } catch (Throwable unused) {}
+            this.progress = PROGRESS_STARTING;
+            return;
+        }
+
         RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
         EventDispatcher.postAccountMessage(this, errorMsg);
         closeConnection();
+        this.retryCount = 0;
         this.lastError = getDefaultError();
     }
 
@@ -342,20 +368,10 @@ public abstract class Account {
     }
 
     public final void removeAllContacts() {
-        int size = this.groups.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            }
-            ContactGroup group = getGroup(size);
-            int size2 = group.contacts.size();
-            while (true) {
-                size2--;
-                if (size2 < 0) {
-                    break;
-                }
-                Contact contact = group.getContact(size2);
+        for (int i = this.groups.size() - 1; i >= 0; i--) {
+            ContactGroup group = getGroup(i);
+            for (int j = group.contacts.size() - 1; j >= 0; j--) {
+                Contact contact = group.getContact(j);
                 removeContact(contact, false);
                 ContactListManager.markContactUnread(contact);
             }
@@ -413,7 +429,7 @@ public abstract class Account {
     }
 
     public int validateSend(Contact contact, String message, long timestamp) {
-        return isConnected() ? 0 : 299;
+        return isConnected() ? 0 : ERROR_DISCONNECTED;
     }
 
     public final int removeContact(Contact contact, boolean removeFromGroups) {
@@ -432,21 +448,17 @@ public abstract class Account {
                 break;
             }
         }
-        int size = this.groups.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                this.defaultGroup.removeElement(contact);
-                ContactListManager.markContactUnread(contact);
-                return 0;
-            }
-            getGroup(size).removeElement(contact);
+        for (int i = this.groups.size() - 1; i >= 0; i--) {
+            getGroup(i).removeElement(contact);
         }
+        this.defaultGroup.removeElement(contact);
+        ContactListManager.markContactUnread(contact);
+        return 0;
     }
 
     public int validateGroupAdd(String contactAddress, String displayName, String authMessage, ContactGroup group, boolean requestAuth) {
         if (!isConnected()) {
-            return 299;
+            return ERROR_DISCONNECTED;
         }
         if (StringUtils.isEmpty(displayName)) {
             return 301;
@@ -458,7 +470,7 @@ public abstract class Account {
         if (isConnected()) {
             return StringUtils.isEmpty((String) fieldValues[0]) ? 301 : 0;
         }
-        return 299;
+        return ERROR_DISCONNECTED;
     }
 
     public abstract int validateObject(Object searchFields);
@@ -469,7 +481,7 @@ public abstract class Account {
         if (isConnected()) {
             return StringUtils.isEmpty(groupName) ? 301 : 0;
         }
-        return 299;
+        return ERROR_DISCONNECTED;
     }
 
     public int validateGroupRename(ContactGroup group, String newName) {
@@ -479,7 +491,7 @@ public abstract class Account {
         if (isConnected()) {
             return StringUtils.isEmpty(newName) ? 301 : 0;
         }
-        return 299;
+        return ERROR_DISCONNECTED;
     }
 
     public int setCredentials(String newLogin, String newPassword) {
@@ -506,7 +518,7 @@ public abstract class Account {
     }
 
     public int validateResend(Contact contact) {
-        return (contact.isOnline() || isConnected()) ? 0 : 299;
+        return (contact.isOnline() || isConnected()) ? 0 : ERROR_DISCONNECTED;
     }
 
     public final int getResourceId(Object key) {
@@ -520,7 +532,7 @@ public abstract class Account {
     public abstract int validateContactUnblock(Contact contact);
 
     public int validateContactResend(Contact contact) {
-        return !isConnected() ? 299 : 0;
+        return !isConnected() ? ERROR_DISCONNECTED : 0;
     }
 
     public final Vector getUnreadContacts() {
@@ -564,7 +576,7 @@ public abstract class Account {
         if (group == toGroup) {
             return 305;
         }
-        return !isConnected() ? 299 : 0;
+        return !isConnected() ? ERROR_DISCONNECTED : 0;
     }
 
     public final Vector getOnlineContacts() {
@@ -593,15 +605,13 @@ public abstract class Account {
         if (contact.isOffline()) {
             return this.offlineGroup;
         }
-        int size = this.groups.size();
-        do {
-            size--;
-            if (size < 0) {
-                return null;
+        for (int i = this.groups.size() - 1; i >= 0; i--) {
+            group = getGroup(i);
+            if (group.containsContact(contact)) {
+                return group;
             }
-            group = getGroup(size);
-        } while (!group.containsContact(contact));
-        return group;
+        }
+        return null;
     }
 
     public final void registerContact(Contact contact) {

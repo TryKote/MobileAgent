@@ -12,49 +12,66 @@ import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 
-/* renamed from: c */
-/* loaded from: MobileAgent_3.9.jar:c.class */
 public final class MenuItem {
 
-    /* renamed from: a */
+    // Item type IDs
+    private static final int TYPE_CHECKBOX = 2;
+    static final int TYPE_LOGIN = 4;
+    static final int TYPE_PASSWORD = 5;
+    static final int TYPE_DROPDOWN = 9;
+    static final int TYPE_GRAPHICS = 11;
+    static final int TYPE_EXPANDABLE = 13;
+    static final int TYPE_TEXT_INPUT = 15;
+
+    // Icon codes
+    private static final int ICON_UNCHECKED = 24;
+    private static final int ICON_CHECKED = 25;
+    static final int ICON_ALIGN_RIGHT = 244;
+    static final int ICON_DROPDOWN = 247;
+
+    // Input type for password masking
+    static final int PASSWORD_INPUT_TYPE = 327680;
+
+    // Object pool string resource indices (validation messages)
+    private static final int MSG_LOGIN_HAS_NAME = 427;
+    private static final int MSG_LOGIN_NO_NAME = 428;
+    private static final int MSG_PASSWORD_HINT = 429;
+
+    // Layout constants
+    static final int SPACER_SIZE = 16;
+    private static final int DEFAULT_WIDTH = 200;
+    private static final int PADDING = 4;
+    private static final int MARGIN = 2;
+    private static final int INITIAL_POSITIONS_CAPACITY = 16;
+
     public final int id;
 
-    /* renamed from: b */
     public String title;
 
-    /* renamed from: c */
     public int width;
 
-    /* renamed from: g */
     private int totalWidth;
 
-    /* renamed from: h */
     private int maxHeight;
 
-    /* renamed from: i */
     private Vector elements;
 
-    /* renamed from: j */
     private int[] positions;
 
-    /* renamed from: d */
     public Object data;
 
-    /* renamed from: e */
     public boolean enabled;
 
-    /* renamed from: f */
     public boolean visible;
 
-    /* renamed from: k */
     private int wrapWidth;
 
     public MenuItem(int i, String str) {
         this.id = i;
         this.elements = ObjectPool.newVector();
-        this.positions = new int[16];
+        this.positions = new int[INITIAL_POSITIONS_CAPACITY];
         this.title = str;
-        this.width = 200;
+        this.width = DEFAULT_WIDTH;
     }
 
     private MenuItem(String str, int i) {
@@ -62,7 +79,6 @@ public final class MenuItem {
         this.width = i;
     }
 
-    /* renamed from: a */
     public final MenuItem clear() {
         this.elements.removeAllElements();
         this.positions[0] = 0;
@@ -71,39 +87,32 @@ public final class MenuItem {
         return this;
     }
 
-    /* renamed from: b */
     public final boolean isEnabled() {
         return this.id != 0;
     }
 
-    /* renamed from: c */
     public static final MenuItem createDefault() {
         return new MenuItem(1, Storage.resources().getString(StringResKeys.STR_EMPTY));
     }
 
-    /* renamed from: a */
     public static final MenuItem create(String str) {
         return new MenuItem(1, str);
     }
 
-    /* renamed from: a */
     public static final MenuItem createWithWidth(String str, int i) {
         return new MenuItem(str, i);
     }
 
-    /* renamed from: d */
     public static final MenuItem createSeparator() {
         return new MenuItem(0, Storage.emptyStr);
     }
 
-    /* renamed from: a */
     public static final MenuItem createCheckbox(String str, boolean z) {
-        MenuItem item = new MenuItem(2, str).setIconAndLabel(z ? 25 : 24, str);
+        MenuItem item = new MenuItem(TYPE_CHECKBOX, str).setIconAndLabel(z ? ICON_CHECKED : ICON_UNCHECKED, str);
         item.data = ObjectPool.booleanOf(z);
         return item;
     }
 
-    /* renamed from: a */
     public final MenuItem setAction(Object obj, String str, Object obj2, Object obj3, Object obj4) {
         String str2 = Utils.nonEmpty(str) ? str : null;
         if (obj instanceof String) {
@@ -112,7 +121,7 @@ public final class MenuItem {
             setIcon(((Integer) obj).intValue());
         }
         if (str2 != null) {
-            addText(((Integer) obj3).intValue() != 327680 ? str2 : Utils.maskPassword(str2), 1, 7);
+            addText(((Integer) obj3).intValue() != PASSWORD_INPUT_TYPE ? str2 : Utils.maskPassword(str2), 1, 7);
         } else {
             setDefaultFont();
         }
@@ -120,54 +129,47 @@ public final class MenuItem {
         return this;
     }
 
-    /* renamed from: a */
     public final MenuItem setChoices(Vector vector, int i, String str) {
         int size = vector.size();
-        int i2 = size;
         String[] strArr = new String[size];
-        while (true) {
-            i2--;
-            if (i2 < 0) {
-                ObjectPool.releaseVector(vector);
-                MenuItem menuItem = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(247);
-                menuItem.data = new Object[]{ObjectPool.integerOf(i), strArr};
-                return menuItem;
-            }
-            strArr[i2] = (String) vector.elementAt(i2);
+        for (int idx = size - 1; idx >= 0; idx--) {
+            strArr[idx] = (String) vector.elementAt(idx);
         }
+        ObjectPool.releaseVector(vector);
+        MenuItem menuItem = clear().setLabel(Utils.appendSpace(str)).addText(strArr[i], 1, 7).setIcon(ICON_DROPDOWN);
+        menuItem.data = new Object[]{ObjectPool.integerOf(i), strArr};
+        return menuItem;
     }
 
-    /* renamed from: a */
     public static final MenuItem createGraphics(GraphicsContext gfx) {
-        MenuItem graphicsItem = new MenuItem(11, Storage.emptyStr);
+        MenuItem graphicsItem = new MenuItem(TYPE_GRAPHICS, Storage.emptyStr);
         graphicsItem.addElement(new ImageElement(gfx.image));
         return graphicsItem;
     }
 
-    /* renamed from: a */
     public final int execute(ListView screen) {
-        if (this.id == 2) {
+        if (this.id == TYPE_CHECKBOX) {
             if (this.data != null) {
                 Boolean checked = ObjectPool.booleanOf(!((Boolean) this.data).booleanValue());
                 this.data = checked;
-                this.elements.setElementAt(createIconData(checked.booleanValue() ? 25 : 24), 0);
+                this.elements.setElementAt(createIconData(checked.booleanValue() ? ICON_CHECKED : ICON_UNCHECKED), 0);
             }
             EventDispatcher.postEvent(new MenuItemEvent(this));
             return 0;
         }
-        if (this.id == 15) {
+        if (this.id == TYPE_TEXT_INPUT) {
             new TextInputHandler(screen, this);
             return 0;
         }
-        if (this.id != 9) {
-            if (this.id == 4) {
-                NotificationHelper.showMessageById(Utils.defaultStr(Storage.state().getString(SessionKeys.SLOT_ACCOUNT_DISPLAY_NAME)).length() > 0 ? 427 : 428);
+        if (this.id != TYPE_DROPDOWN) {
+            if (this.id == TYPE_LOGIN) {
+                NotificationHelper.showMessageById(Utils.defaultStr(Storage.state().getString(SessionKeys.SLOT_ACCOUNT_DISPLAY_NAME)).length() > 0 ? MSG_LOGIN_HAS_NAME : MSG_LOGIN_NO_NAME);
                 return 0;
             }
-            if (this.id != 5) {
+            if (this.id != TYPE_PASSWORD) {
                 return -1;
             }
-            NotificationHelper.showMessageById(429);
+            NotificationHelper.showMessageById(MSG_PASSWORD_HINT);
             return 0;
         }
         ListView choiceScreen = ScreenManager.createScreen(ScreenDef.CHOICE_DIALOG);
@@ -176,7 +178,7 @@ public final class MenuItem {
         int iIntValue = ((Integer) objArr[0]).intValue();
         Object[] objArr2 = {objArr, this, screen};
         for (String str : strArr) {
-            MenuItem choiceItem = new MenuItem(13, str).setLabel(str);
+            MenuItem choiceItem = new MenuItem(TYPE_EXPANDABLE, str).setLabel(str);
             choiceItem.data = objArr2;
             choiceScreen.addItem(choiceItem);
         }
@@ -185,32 +187,26 @@ public final class MenuItem {
         return 0;
     }
 
-    /* renamed from: e */
     public final MenuItem setDefaultFont() {
-        return addElement(new SpacerElement(16, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)));
+        return addElement(new SpacerElement(SPACER_SIZE, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)));
     }
 
-    /* renamed from: a */
     public final MenuItem setIcon(int i) {
         return i >= 0 ? addElement(createIconData(i)) : this;
     }
 
-    /* renamed from: c */
     private static IconElement createIconData(int i) {
         return new IconElement(GraphicsContext.getIconSize(i), i);
     }
 
-    /* renamed from: b */
     public final MenuItem setLabel(String str) {
         return setLabelInternal(-1, str, 0, 0);
     }
 
-    /* renamed from: a */
     public final MenuItem setIconAndLabel(int i, String str) {
         return setLabelInternal(i, str, 0, 0);
     }
 
-    /* renamed from: a */
     public final MenuItem setLabelInternal(int i, String str, int i2, int i3) {
         if (i >= 0) {
             setIcon(i);
@@ -218,12 +214,10 @@ public final class MenuItem {
         return addText(str, i2, i3);
     }
 
-    /* renamed from: a */
     public final MenuItem addText(String str, int i, int i2) {
         return addTextInternal(str, i, i2, -1);
     }
 
-    /* renamed from: a */
     public final MenuItem addTextInternal(String str, int i, int i2, int i3) {
         if (str != null) {
             Vector parts = EmoticonReplacer.wrapText(ObjectPool.newVector(), str, 0, str.length(), i, i2, i3);
@@ -236,7 +230,6 @@ public final class MenuItem {
         return this;
     }
 
-    /* renamed from: a */
     private MenuItem addElement(RenderElement elem) {
         this.elements.addElement(elem);
         this.positions = BitMath.resizeArray(this.positions, this.totalWidth, 0);
@@ -249,7 +242,6 @@ public final class MenuItem {
         return this;
     }
 
-    /* renamed from: a */
     public final MenuItem setLayout(int i, int i2) {
         if (i > 1) {
             this.wrapWidth = i2;
@@ -257,7 +249,6 @@ public final class MenuItem {
         return this;
     }
 
-    /* renamed from: b */
     public final MenuItem layout(int i) {
         this.positions[0] = 0;
         Vector vector = this.elements;
@@ -274,8 +265,8 @@ public final class MenuItem {
                 int i5 = 0;
                 if (i4 == size - 2) {
                     Object next = vector.elementAt(i4 + 1);
-                    if (next instanceof IconElement && ((IconElement) next).iconCode == 244) {
-                        i5 = 16;
+                    if (next instanceof IconElement && ((IconElement) next).iconCode == ICON_ALIGN_RIGHT) {
+                        i5 = SPACER_SIZE;
                     }
                 }
                 if (this.wrapWidth == 0 && i2 + elemW + i5 > i) {
@@ -299,44 +290,31 @@ public final class MenuItem {
         return this;
     }
 
-    /* renamed from: f */
     public final int getMaxHeight() {
         int lineH = 0;
         Vector vector = this.elements;
-        int size = vector.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return lineH + 4;
-            }
-            lineH = Utils.max(lineH, this.positions[(size << 1) + 1] + ((RenderElement) vector.elementAt(size)).getWidth());
+        for (int idx = vector.size() - 1; idx >= 0; idx--) {
+            lineH = Utils.max(lineH, this.positions[(idx << 1) + 1] + ((RenderElement) vector.elementAt(idx)).getWidth());
         }
+        return lineH + PADDING;
     }
 
-    /* renamed from: g */
     public final int getTotalWidth() {
-        return this.wrapWidth != 0 ? this.wrapWidth : this.totalWidth + 4;
+        return this.wrapWidth != 0 ? this.wrapWidth : this.totalWidth + PADDING;
     }
 
-    /* renamed from: h */
     public final int getTotalHeight() {
-        return Utils.max(this.maxHeight, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)) + 4;
+        return Utils.max(this.maxHeight, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)) + PADDING;
     }
 
-    /* renamed from: a */
     public final void render(GraphicsContext gfx, int i, int i2, int i3) {
         Vector vector = this.elements;
-        int size = vector.size();
-        int baseX = i + 2;
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            }
-            RenderElement elem = (RenderElement) vector.elementAt(size);
+        int baseX = i + MARGIN;
+        for (int idx = vector.size() - 1; idx >= 0; idx--) {
+            RenderElement elem = (RenderElement) vector.elementAt(idx);
             if (!(elem instanceof LineBreak)) {
-                int elemX = baseX + this.positions[(size << 1) + 1];
-                int elemY = i2 + 2 + this.positions[(size << 1) + 1 + 1];
+                int elemX = baseX + this.positions[(idx << 1) + 1];
+                int elemY = i2 + MARGIN + this.positions[(idx << 1) + 1 + 1];
                 elem.render(gfx, elemX, elemY, baseX, i3);
             }
         }

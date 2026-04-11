@@ -21,151 +21,130 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.rms.RecordStore;
 
-/* renamed from: a */
-/* loaded from: MobileAgent_3.9.jar:a.class */
 public final class StringUtils {
 
-    /* renamed from: a */
     public static Vector internCache;
 
-    /* renamed from: b */
     public static boolean isKnownDevice1;
 
-    /* renamed from: c */
     public static boolean isKnownDevice2;
 
     private static final int INTERN_CACHE_INITIAL_CAPACITY = 128;
+    private static final int MAX_INTERNED_LENGTH = 256;
+    private static final int INTERN_HOT_ZONE_SIZE = 64;
+    private static final int INTERN_CACHE_LAST_INDEX = INTERN_CACHE_INITIAL_CAPACITY - 1;
 
     public static void initInternCache() {
         internCache = new Vector(INTERN_CACHE_INITIAL_CAPACITY);
     }
 
-    /* renamed from: a */
-    public static final String decodeFromBytes(byte[] bArr, int i) {
-        ByteArrayInputStream byteArrayInputStream = null;
-        DataInputStream dataInputStream = null;
+    public static final String decodeFromBytes(byte[] data, int offset) {
+        ByteArrayInputStream byteStream = null;
+        DataInputStream dataStream = null;
         try {
             try {
-                ByteArrayInputStream byteArrayInputStream2 = (ByteArrayInputStream) IOUtils.registerResource((Object) new ByteArrayInputStream(bArr, i, bArr.length - i));
-                byteArrayInputStream = byteArrayInputStream2;
-                DataInputStream dataInputStream2 = (DataInputStream) IOUtils.registerResource((Object) new DataInputStream(byteArrayInputStream2));
-                dataInputStream = dataInputStream2;
-                String result = intern(dataInputStream2.readUTF());
-                IOUtils.closeInput((InputStream) dataInputStream);
-                IOUtils.closeInput((InputStream) byteArrayInputStream);
+                byteStream = (ByteArrayInputStream) IOUtils.registerResource((Object) new ByteArrayInputStream(data, offset, data.length - offset));
+                dataStream = (DataInputStream) IOUtils.registerResource((Object) new DataInputStream(byteStream));
+                String result = intern(dataStream.readUTF());
+                IOUtils.closeInput((InputStream) dataStream);
+                IOUtils.closeInput((InputStream) byteStream);
                 return result;
             } catch (Throwable unused) {
-                String str = Storage.emptyStr;
-                IOUtils.closeInput((InputStream) dataInputStream);
-                IOUtils.closeInput((InputStream) byteArrayInputStream);
-                return str;
+                String empty = Storage.emptyStr;
+                IOUtils.closeInput((InputStream) dataStream);
+                IOUtils.closeInput((InputStream) byteStream);
+                return empty;
             }
         } catch (RuntimeException e) {
-            IOUtils.closeInput((InputStream) dataInputStream);
-            IOUtils.closeInput((InputStream) byteArrayInputStream);
+            IOUtils.closeInput((InputStream) dataStream);
+            IOUtils.closeInput((InputStream) byteStream);
             throw e;
         } catch (Error e) {
-            IOUtils.closeInput((InputStream) dataInputStream);
-            IOUtils.closeInput((InputStream) byteArrayInputStream);
+            IOUtils.closeInput((InputStream) dataStream);
+            IOUtils.closeInput((InputStream) byteStream);
             throw e;
         }
     }
 
-    /* renamed from: a */
     public static final boolean isEmpty(String str) {
         return str != null && str.length() == 0;
     }
 
-    /* renamed from: a */
-    public static final boolean matchesEncoded(String str, int i) {
-        long j = i;
+    public static final boolean matchesEncoded(String str, int packedChars) {
+        long packed = packedChars;
         int length = str.length();
-        for (int i2 = 0; i2 < length; i2++) {
-            if (str.charAt(i2) != (j & 255)) {
+        for (int idx = 0; idx < length; idx++) {
+            if (str.charAt(idx) != (packed & 255)) {
                 return false;
             }
-            j >>>= 8;
+            packed >>>= 8;
         }
-        return j == 0;
+        return packed == 0;
     }
 
-    /* renamed from: a */
-    public static final boolean matchesKey(int i, String str) {
+    public static final boolean matchesKey(int key, String str) {
         if (str == null) {
             return false;
         }
-        if (i <= Storage.PACKED_STRING_THRESHOLD) {
-            return equals(Storage.state().getString(i), str);
+        if (key <= Storage.PACKED_STRING_THRESHOLD) {
+            return equals(Storage.state().getString(key), str);
         }
         byte[] bytes = Storage.resources().getBytes(StringResKeys.RES_STRING_DATA);
-        int i2 = i >> 16;
-        int i3 = i2;
-        if (i2 != str.length()) {
+        int expectedLen = key >> 16;
+        int idx = expectedLen;
+        if (expectedLen != str.length()) {
             return false;
         }
-        int i4 = i & 65535;
+        int baseOffset = key & 65535;
         do {
-            i3--;
-            if (i3 < 0) {
+            idx--;
+            if (idx < 0) {
                 return true;
             }
-        } while (str.charAt(i3) == bytes[i4 + i3]);
+        } while (str.charAt(idx) == bytes[baseOffset + idx]);
         return false;
     }
 
-    /* renamed from: a */
     public static final boolean equalsObj(String str, Object obj) {
         return equals(str, (String) obj);
     }
 
-    /* renamed from: b */
     public static final String getDomain(String str) {
         return suffix(str, str.indexOf(64) + 1);
     }
 
-    /* renamed from: a */
-    public static final boolean equals(String str, String str2) {
-        if (str == str2) {
+    public static final boolean equals(String a, String b) {
+        if (a == b) {
             return true;
         }
-        if (str2 == null) {
+        if (b == null) {
             return false;
         }
-        return str.equals(str2);
+        return a.equals(b);
     }
 
-    /* renamed from: b */
-    public static final String concatKey(int i, String str) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getString(i)).append(str));
+    public static final String concatKey(int key, String str) {
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getString(key)).append(str));
     }
 
-    /* renamed from: a */
-    public static final String concatKeyObj(int i, Object obj) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getString(i)).append(obj));
+    public static final String concatKeyObj(int key, Object obj) {
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getString(key)).append(obj));
     }
 
-    /* renamed from: b */
-    public static final String concat(String str, String str2) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(str).append(str2));
+    public static final String concat(String a, String b) {
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(a).append(b));
     }
 
-    /* renamed from: a */
     public static final String[] listRecordStores() {
         String[] stores = RecordStore.listRecordStores();
         if (stores != null) {
-            int length = stores.length;
-            while (true) {
-                length--;
-                if (length < 0) {
-                    break;
-                }
-                stores[length] = intern(stores[length]);
+            for (int idx = stores.length - 1; idx >= 0; idx--) {
+                stores[idx] = intern(stores[idx]);
             }
         }
         return stores;
     }
 
-    /* renamed from: a */
     public static final String fromBuffer(StringBuffer stringBuffer) {
         if (stringBuffer != null) {
             return intern(stringBuffer.toString());
@@ -173,39 +152,33 @@ public final class StringUtils {
         return null;
     }
 
-    /* renamed from: a */
-    public static final String substring(String str, int i, int i2) {
-        return intern(str.substring(i, i2));
+    public static final String substring(String str, int start, int end) {
+        return intern(str.substring(start, end));
     }
 
-    /* renamed from: b */
-    public static final String prefix(String str, int i) {
-        return intern(str.substring(0, i));
+    public static final String prefix(String str, int endIndex) {
+        return intern(str.substring(0, endIndex));
     }
 
-    /* renamed from: b */
     public static final String extractBuffer(StringBuffer stringBuffer) {
         String extracted = fromBuffer(stringBuffer);
         stringBuffer.setLength(0);
         return extracted;
     }
 
-    /* renamed from: c */
-    public static final String suffix(String str, int i) {
-        return intern(str.substring(i));
+    public static final String suffix(String str, int startIndex) {
+        return intern(str.substring(startIndex));
     }
 
-    /* renamed from: a */
     public static final String getTextBoxString(TextBox textBox) {
         return Utils.defaultStr(intern(textBox.getString()));
     }
 
-    /* renamed from: c */
     public static final String intern(String str) {
         if (str == null) {
             return null;
         }
-        if (str.length() > 256) {
+        if (str.length() > MAX_INTERNED_LENGTH) {
             return str;
         }
         Vector vector = internCache;
@@ -219,11 +192,11 @@ public final class StringUtils {
                 }
                 return cached;
             }
-            if (vector.size() > 64) {
-                if (vector.size() == 128) {
-                    vector.removeElementAt(127);
+            if (vector.size() > INTERN_HOT_ZONE_SIZE) {
+                if (vector.size() == INTERN_CACHE_INITIAL_CAPACITY) {
+                    vector.removeElementAt(INTERN_CACHE_LAST_INDEX);
                 }
-                vector.insertElementAt(str, 64);
+                vector.insertElementAt(str, INTERN_HOT_ZONE_SIZE);
             } else {
                 vector.addElement(str);
             }
@@ -231,19 +204,16 @@ public final class StringUtils {
         }
     }
 
-    /* renamed from: a */
-    public static final ByteBuffer createContactInfoCmd(MmpProtocol protocol, int i) {
-        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(protocol.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(i)), ObjectPool.integerOf(7), ObjectPool.integerOf(i)});
+    public static final ByteBuffer createContactInfoCmd(MmpProtocol protocol, int contactId) {
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, 5378, new ByteBuffer().writeShortBE(1).writeShortBE(16).writeShortLE(14).writeIntLE(protocol.serverId).writeShortLE(2000).writeShortBE(0).writeShortLE(1202).writeIntLE(contactId)), ObjectPool.integerOf(7), ObjectPool.integerOf(contactId)});
     }
 
-    /* renamed from: b */
     public static final void initTileCache() {
-        int iM586d = Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) ? (((Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2)) << 1 : ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2);
-        Storage.state().setObject(MapKeys.OBJ_TILE_CACHE, new LruCache(iM586d));
-        Storage.state().setInt(RuntimeKeys.INT_MAX_PENDING_REQUESTS, iM586d);
+        int cacheCapacity = Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) ? (((Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2)) << 1 : ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2);
+        Storage.state().setObject(MapKeys.OBJ_TILE_CACHE, new LruCache(cacheCapacity));
+        Storage.state().setInt(RuntimeKeys.INT_MAX_PENDING_REQUESTS, cacheCapacity);
     }
 
-    /* renamed from: a */
     public static final Image getTileImage(TileRequest tile) {
         Image image = (Image) getTileCache().get(tile);
         if (image == null && !Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1).contains(tile)) {
@@ -252,48 +222,40 @@ public final class StringUtils {
         return image;
     }
 
-    /* renamed from: k */
     private static final void pruneStaleRequests() {
         Vector items = Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_2);
         synchronized (items) {
             Vector pendingReqs = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
             synchronized (pendingReqs) {
-                int size = pendingReqs.size();
-                while (true) {
-                    size--;
-                    if (size >= 0) {
-                        Object req = pendingReqs.elementAt(size);
-                        if (!items.contains(req)) {
-                            pendingReqs.removeElement(req);
-                        }
-                    } else {
-                        break;
+                for (int idx = pendingReqs.size() - 1; idx >= 0; idx--) {
+                    Object req = pendingReqs.elementAt(idx);
+                    if (!items.contains(req)) {
+                        pendingReqs.removeElement(req);
                     }
                 }
             }
         }
     }
 
-    /* renamed from: c */
     public static final void tileLoaderLoop() {
         Image tileImage = null;
-        int i = 4;
-        while (0 == Storage.state().getInt(MapKeys.FLAG_TILES_READY)) {
-            Object[] objArr = (Object[]) Storage.state().getObject(MapKeys.OBJ_TILE_REQUEST_ARRAY);
+        int retryCount = 4;
+        while (Storage.state().getInt(MapKeys.FLAG_TILES_READY) == 0) {
+            Object[] statusArr = (Object[]) Storage.state().getObject(MapKeys.OBJ_TILE_REQUEST_ARRAY);
             while (true) {
                 if (!(Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE).size() == 0)) {
                     break;
                 }
-                XmppContactGroup.removeContactInfoFromQueue(objArr);
+                XmppContactGroup.removeContactInfoFromQueue(statusArr);
                 try {
                     Thread.sleep(100);
                 } catch (Throwable unused) {
                 }
             }
             TileRequest tileReq = TileCache.peekTileRequest();
-            int i2 = tileReq.tileType;
-            objArr[1] = new StringBuffer().append(Storage.state().getString(i2 == 3 ? 997 : i2 == 1 ? 998 : 999)).append(Utils.formatSize(Storage.state().getInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES))).toString();
-            XmppContactGroup.addContactInfoToQueue(objArr);
+            int tileType = tileReq.tileType;
+            statusArr[1] = new StringBuffer().append(Storage.state().getString(tileType == 3 ? 997 : tileType == 1 ? 998 : 999)).append(Utils.formatSize(Storage.state().getInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES))).toString();
+            XmppContactGroup.addContactInfoToQueue(statusArr);
             try {
                 Image cachedImage = (tileReq.tileType == 1 && Storage.state().getBool(MapKeys.FLAG_TILE_CACHE_ENABLED)) ? TileCache.loadTileFromCache(tileReq) : null;
                 tileImage = cachedImage;
@@ -301,9 +263,9 @@ public final class StringUtils {
                     tileImage = TileCache.fetchTileImage(tileReq);
                 }
             } catch (IOException unused2) {
-                int i3 = i;
-                i = i3 - 1;
-                if (i3 > 0) {
+                int remaining = retryCount;
+                retryCount = remaining - 1;
+                if (remaining > 0) {
                     pruneStaleRequests();
                     Vector items = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
                     synchronized (items) {
@@ -318,7 +280,7 @@ public final class StringUtils {
                 TileCache.removeTileRequest(tileReq);
             }
             if (tileImage == null) {
-                if (i2 == 3) {
+                if (tileType == 3) {
                     Vector pendingReqs = Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1);
                     while (pendingReqs.size() >= Storage.state().getInt(RuntimeKeys.INT_MAX_PENDING_REQUESTS)) {
                         pendingReqs.removeElementAt(0);
@@ -330,14 +292,13 @@ public final class StringUtils {
                 }
                 throw new RuntimeException();
             }
-            i = 4;
+            retryCount = 4;
             cacheTileImage(tileReq, tileImage);
             TileCache.removeTileRequest(tileReq);
             pruneStaleRequests();
         }
     }
 
-    /* renamed from: a */
     private static final void cacheTileImage(TileRequest tile, Image image) {
         try {
             getTileCache().put(tile, image, 1);
@@ -346,7 +307,6 @@ public final class StringUtils {
         }
     }
 
-    /* renamed from: d */
     public static final void clearSatelliteTiles() {
         Enumeration keys = getTileCache().keys();
         while (keys.hasMoreElements()) {
@@ -357,33 +317,28 @@ public final class StringUtils {
         }
     }
 
-    /* renamed from: l */
     private static final LruCache getTileCache() {
         return (LruCache) Storage.state().getObject(MapKeys.OBJ_TILE_CACHE);
     }
 
-    /* renamed from: m */
     private static final Vector createRegionVector() {
         Vector result = ObjectPool.newVector();
         result.addElement(Storage.resources().getString(StringResKeys.STR_CITY_LIST));
         return result;
     }
 
-    /* renamed from: a */
-    private static final void addXmlChildTexts(Vector vector, Object obj) {
-        Vector vector2 = ((XmlElement) obj).children;
-        for (int i = 0; i < Utils.vectorSize(vector2); i++) {
-            vector.addElement(getXmlText((XmlElement) vector2.elementAt(i)));
+    private static final void addXmlChildTexts(Vector result, Object parentElement) {
+        Vector children = ((XmlElement) parentElement).children;
+        for (int i = 0; i < Utils.vectorSize(children); i++) {
+            result.addElement(getXmlText((XmlElement) children.elementAt(i)));
         }
     }
 
-    /* renamed from: b */
     private static final String getXmlText(XmlElement element) {
         String attrText = element.getLongKeyAttr(110);
         return attrText != null ? attrText : fromBuffer(element.textContent);
     }
 
-    /* renamed from: e */
     public static final void showRegionSelector() {
         resetRegForm();
         Storage.state().setObject(RegistrationKeys.SLOT_REG_FIELD_2, new XmlParser(new ByteBuffer(ObjectPool.unpackChars(25135), 41000)).parse().children);
@@ -396,7 +351,6 @@ public final class StringUtils {
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGION_CHOICE));
     }
 
-    /* renamed from: f */
     public static final void resetRegForm() {
         Storage.state().clearRange(ContactKeys.SLOT_CONTACT_JID, RegistrationKeys.SLOT_REG_FIELD_2);
         Storage.state().setInt(RegistrationKeys.INT_REGION_CODE, 0);
@@ -412,11 +366,10 @@ public final class StringUtils {
         Storage.state().setInt(RegistrationKeys.FLAG_SEARCH_ONLINE_ONLY, 0);
     }
 
-    /* renamed from: a */
-    public static final void updateRegDropdowns(ListView screen, Object obj) {
-        MenuItem menuItem = (MenuItem) obj;
+    public static final void updateRegDropdowns(ListView screen, Object selectedItem) {
+        MenuItem menuItem = (MenuItem) selectedItem;
         int selectedIdx = ((Integer) ((Object[]) menuItem.data)[0]).intValue();
-        String str = menuItem.title;
+        String dropdownTitle = menuItem.title;
         String countryLabel = Storage.resources().getString(StringResKeys.STR_LABEL_COUNTRY);
         String regionLabel = Storage.resources().getString(StringResKeys.STR_LABEL_REGION);
         String cityLabel = Storage.resources().getString(StringResKeys.STR_LABEL_CITY);
@@ -429,32 +382,27 @@ public final class StringUtils {
         MenuItem ageDropdown = null;
         MenuItem genderDropdown = null;
         int countryIdx = 0;
-        Vector vector = screen.menuItems;
-        int size = Utils.vectorSize(vector);
-        while (true) {
-            size--;
-            if (size < 0) {
-                break;
-            }
-            MenuItem dropdownItem = (MenuItem) vector.elementAt(size);
+        Vector items = screen.menuItems;
+        for (int idx = Utils.vectorSize(items) - 1; idx >= 0; idx--) {
+            MenuItem dropdownItem = (MenuItem) items.elementAt(idx);
             if (dropdownItem.id == 9) {
-                String str2 = dropdownItem.title;
-                if (str2.startsWith(monthLabel)) {
+                String itemTitle = dropdownItem.title;
+                if (itemTitle.startsWith(monthLabel)) {
                     monthDropdown = dropdownItem;
-                } else if (str2.startsWith(countryLabel)) {
+                } else if (itemTitle.startsWith(countryLabel)) {
                     countryIdx = ((Integer) ((Object[]) dropdownItem.data)[0]).intValue();
-                } else if (str2.startsWith(regionLabel)) {
+                } else if (itemTitle.startsWith(regionLabel)) {
                     regionItem = dropdownItem;
-                } else if (str2.startsWith(cityLabel)) {
+                } else if (itemTitle.startsWith(cityLabel)) {
                     cityItem = dropdownItem;
-                } else if (str2.startsWith(ageLabel)) {
+                } else if (itemTitle.startsWith(ageLabel)) {
                     ageDropdown = dropdownItem;
-                } else if (str2.startsWith(genderLabel)) {
+                } else if (itemTitle.startsWith(genderLabel)) {
                     genderDropdown = dropdownItem;
                 }
             }
         }
-        if (equals(str, countryLabel)) {
+        if (equals(dropdownTitle, countryLabel)) {
             MenuItem regionDropdown = regionItem;
             Vector regions = createRegionVector();
             if (selectedIdx > 0) {
@@ -462,79 +410,76 @@ public final class StringUtils {
             }
             regionDropdown.setChoices(regions, 0, regionLabel);
             cityItem.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_CITY_LIST)), 0, cityLabel);
-        } else if (equals(str, regionLabel)) {
+        } else if (equals(dropdownTitle, regionLabel)) {
             MenuItem cityDropdown = cityItem;
-            int i = countryIdx;
-            Vector regions2 = createRegionVector();
+            int selectedCountryIdx = countryIdx;
+            Vector cities = createRegionVector();
             if (selectedIdx > 0) {
-                addXmlChildTexts(regions2, ((XmlElement) Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(i - 1)).children.elementAt(selectedIdx - 1));
+                addXmlChildTexts(cities, ((XmlElement) Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(selectedCountryIdx - 1)).children.elementAt(selectedIdx - 1));
             }
-            cityDropdown.setChoices(regions2, 0, cityLabel);
-        } else if (equals(str, monthLabel)) {
+            cityDropdown.setChoices(cities, 0, cityLabel);
+        } else if (equals(dropdownTitle, monthLabel)) {
             ageDropdown.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_AGE_RANGES)), 0, ageLabel);
             genderDropdown.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_GENDER_LIST)), 0, genderLabel);
-        } else if (equals(str, ageLabel) || equals(str, genderLabel)) {
+        } else if (equals(dropdownTitle, ageLabel) || equals(dropdownTitle, genderLabel)) {
             monthDropdown.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_MONTH_NAMES)), 0, monthLabel);
         }
         screen.rebuildItems();
     }
 
-    /* renamed from: g */
     public static final String[] buildRegData() {
-        String[] strArr = new String[16];
+        String[] fields = new String[16];
         String inputStr = Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_CONTACT_JID));
         if (!isEmpty(inputStr)) {
-            String result = intern(inputStr.toLowerCase());
-            int idx = result.indexOf(64);
-            if (idx >= 0) {
-                strArr[0] = prefix(result, idx);
-                strArr[1] = suffix(result, idx + 1);
+            String lowered = intern(inputStr.toLowerCase());
+            int atIdx = lowered.indexOf(64);
+            if (atIdx >= 0) {
+                fields[0] = prefix(lowered, atIdx);
+                fields[1] = suffix(lowered, atIdx + 1);
             } else {
-                strArr[0] = result;
-                strArr[1] = suffix(Utils.splitAndGet(694, Storage.state().getInt(RegistrationKeys.INT_REGION_CODE)), 1);
+                fields[0] = lowered;
+                fields[1] = suffix(Utils.splitAndGet(694, Storage.state().getInt(RegistrationKeys.INT_REGION_CODE)), 1);
             }
-            return strArr;
+            return fields;
         }
-        strArr[2] = Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME));
-        strArr[3] = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_FIRST_NAME));
-        strArr[4] = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_LAST_NAME));
-        strArr[5] = intToStringPositive(1481);
-        strArr[7] = intToStringPositive(1482);
-        strArr[8] = intToStringPositive(1483);
-        int iM586d = Storage.state().getInt(RegistrationKeys.INT_SEARCH_COUNTRY);
-        if (iM586d > 0) {
-            XmlElement element = (XmlElement) Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(iM586d - 1);
-            strArr[15] = element.getLongKeyAttr(105);
-            int iM586d2 = Storage.state().getInt(RegistrationKeys.INT_SEARCH_REGION);
-            if (iM586d2 > 0) {
-                XmlElement childElem = (XmlElement) element.children.elementAt(iM586d2 - 1);
-                strArr[11] = childElem.getLongKeyAttr(105);
-                strArr[15] = null;
-                int iM586d3 = Storage.state().getInt(RegistrationKeys.INT_SEARCH_CITY);
-                if (iM586d3 > 0) {
-                    strArr[11] = ((XmlElement) childElem.children.elementAt(iM586d3 - 1)).getLongKeyAttr(105);
+        fields[2] = Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME));
+        fields[3] = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_FIRST_NAME));
+        fields[4] = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_LAST_NAME));
+        fields[5] = intToStringPositive(1481);
+        fields[7] = intToStringPositive(1482);
+        fields[8] = intToStringPositive(1483);
+        int countryIdx = Storage.state().getInt(RegistrationKeys.INT_SEARCH_COUNTRY);
+        if (countryIdx > 0) {
+            XmlElement countryElem = (XmlElement) Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(countryIdx - 1);
+            fields[15] = countryElem.getLongKeyAttr(105);
+            int regionIdx = Storage.state().getInt(RegistrationKeys.INT_SEARCH_REGION);
+            if (regionIdx > 0) {
+                XmlElement regionElem = (XmlElement) countryElem.children.elementAt(regionIdx - 1);
+                fields[11] = regionElem.getLongKeyAttr(105);
+                fields[15] = null;
+                int cityIdx = Storage.state().getInt(RegistrationKeys.INT_SEARCH_CITY);
+                if (cityIdx > 0) {
+                    fields[11] = ((XmlElement) regionElem.children.elementAt(cityIdx - 1)).getLongKeyAttr(105);
                 }
             }
         }
-        strArr[12] = intToStringPositive(1484);
-        strArr[13] = intToStringPositive(1488);
-        strArr[14] = intToStringPositive(1489);
+        fields[12] = intToStringPositive(1484);
+        fields[13] = intToStringPositive(1488);
+        fields[14] = intToStringPositive(1489);
         if (Storage.state().getBool(RegistrationKeys.FLAG_SEARCH_ONLINE_ONLY)) {
-            strArr[9] = intern(Integer.toString(1));
+            fields[9] = intern(Integer.toString(1));
         }
-        return strArr;
+        return fields;
     }
 
-    /* renamed from: b */
-    private static final String intToStringPositive(int i) {
-        int iM586d = Storage.state().getInt(i);
-        if (iM586d > 0) {
-            return intern(Integer.toString(iM586d));
+    private static final String intToStringPositive(int key) {
+        int value = Storage.state().getInt(key);
+        if (value > 0) {
+            return intern(Integer.toString(value));
         }
         return null;
     }
 
-    /* renamed from: h */
     public static final void initPlatform() {
         Storage.state().setObject(StringResKeys.STR_APP_NAME, (Object) Storage.state().getAppProperty(StringResKeys.STR_APP_NAME));
         while (Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID))) <= 106) {
@@ -552,12 +497,7 @@ public final class StringUtils {
         Storage.state().setString(SessionKeys.SLOT_ACCOUNT_SERVER, getSystemProp(1378));
         Storage.state().setString(SessionKeys.SLOT_ACCOUNT_TYPE_STR, getSystemProp(1380));
         Storage.state().setString(SessionKeys.SLOT_ACCOUNT_DISPLAY_NAME, getSystemProp(1379));
-        int i = 967;
-        while (true) {
-            i--;
-            if (i < 965) {
-                break;
-            }
+        for (int i = 966; i >= 965; i--) {
             try {
                 String inputStr = Utils.defaultStr(Storage.state().getString(i));
                 Storage.state().clearIndex(i);
@@ -572,12 +512,12 @@ public final class StringUtils {
                 Storage.state().setFromPool(SessionKeys.SESSION_DEVICE_INFO, StringResKeys.STR_DEVICE_FEATURES);
             }
             Storage.state().clearIndex(SessionKeys.SESSION_PLATFORM_INFO);
-            String result = intern(concat(Storage.state().getString(SessionKeys.SLOT_ACCOUNT_LOGIN), Storage.state().getString(SessionKeys.SLOT_ACCOUNT_PASSWORD)).toLowerCase());
-            isKnownDevice2 = indexOfPackedLong(result, 7163382462464028531L) >= 0 || indexOfPacked(result, 842019699) == 0 || indexOfPacked(result, 842019703) == 0;
-            isKnownDevice1 = indexOfPackedLong(result, 418380476270L) >= 0;
-            Storage.state().setBool(UIKeys.FLAG_WIFI_CONNECTION, indexOfPacked(result, 761620851) == 0 || indexOfPacked(result, 1903060322) == 0);
+            String credentials = intern(concat(Storage.state().getString(SessionKeys.SLOT_ACCOUNT_LOGIN), Storage.state().getString(SessionKeys.SLOT_ACCOUNT_PASSWORD)).toLowerCase());
+            isKnownDevice2 = indexOfPackedLong(credentials, 7163382462464028531L) >= 0 || indexOfPacked(credentials, 842019699) == 0 || indexOfPacked(credentials, 842019703) == 0;
+            isKnownDevice1 = indexOfPackedLong(credentials, 418380476270L) >= 0;
+            Storage.state().setBool(UIKeys.FLAG_WIFI_CONNECTION, indexOfPacked(credentials, 761620851) == 0 || indexOfPacked(credentials, 1903060322) == 0);
             Storage.state().setBool(UIKeys.FLAG_KNOWN_DEVICE, isKnownDevice1 || isKnownDevice2);
-            Storage.state().setBool(UIKeys.FLAG_ADVANCED_FEATURES, Storage.state().getBool(UIKeys.FLAG_KNOWN_PLATFORM) || indexOfPackedLong(result, 29113373327974771L) >= 0 || indexOfPacked(result, 6514035) == 0 || indexOfPacked(result, 6841203) == 0 || indexOfPacked(result, 6842227) == 0 || indexOfPacked(result, 29799) == 0);
+            Storage.state().setBool(UIKeys.FLAG_ADVANCED_FEATURES, Storage.state().getBool(UIKeys.FLAG_KNOWN_PLATFORM) || indexOfPackedLong(credentials, 29113373327974771L) >= 0 || indexOfPacked(credentials, 6514035) == 0 || indexOfPacked(credentials, 6841203) == 0 || indexOfPacked(credentials, 6842227) == 0 || indexOfPacked(credentials, 29799) == 0);
             byte major = parseVersionByte(0);
             byte minor = parseVersionByte(1);
             byte patch = parseVersionByte(2);
@@ -592,115 +532,94 @@ public final class StringUtils {
             return;
         }
         while (true) {
-            Object obj = Storage.state().getObject(StringResKeys.STR_APP_NAME);
-            Storage.state().setObject(StringResKeys.STR_APP_NAME, new Object[]{obj, obj, obj});
+            Object appName = Storage.state().getObject(StringResKeys.STR_APP_NAME);
+            Storage.state().setObject(StringResKeys.STR_APP_NAME, new Object[]{appName, appName, appName});
         }
     }
 
-    /* renamed from: c */
-    private static final byte parseVersionByte(int i) {
+    private static final byte parseVersionByte(int partIndex) {
         try {
-            return (byte) Utils.parseInt(Utils.split(Storage.resources().getString(StringResKeys.STR_APP_NAME), '.').elementAt(i));
+            return (byte) Utils.parseInt(Utils.split(Storage.resources().getString(StringResKeys.STR_APP_NAME), '.').elementAt(partIndex));
         } catch (Throwable unused) {
             return (byte) 0;
         }
     }
 
-    /* renamed from: n */
     private static final String formatVersion() {
-        String countryLabel = Storage.resources().getString(StringResKeys.STR_APP_NAME);
-        String[] strArr = new String[3];
-        String str = Storage.emptyStr;
-        strArr[0] = str;
-        strArr[1] = str;
-        strArr[2] = str;
-        int i = 0;
-        for (int i2 = 0; i2 < countryLabel.length(); i2++) {
-            char ch = countryLabel.charAt(i2);
+        String versionStr = Storage.resources().getString(StringResKeys.STR_APP_NAME);
+        String[] parts = new String[3];
+        String empty = Storage.emptyStr;
+        parts[0] = empty;
+        parts[1] = empty;
+        parts[2] = empty;
+        int partIdx = 0;
+        for (int pos = 0; pos < versionStr.length(); pos++) {
+            char ch = versionStr.charAt(pos);
             if (ch == '.') {
-                i++;
+                partIdx++;
             } else {
-                int i3 = i;
-                strArr[i3] = new StringBuffer().append(strArr[i3]).append(ch).toString();
+                parts[partIdx] = new StringBuffer().append(parts[partIdx]).append(ch).toString();
             }
         }
-        while (strArr[0].length() < 2) {
-            strArr[0] = new StringBuffer().append('0').append(strArr[0]).toString();
+        while (parts[0].length() < 2) {
+            parts[0] = new StringBuffer().append('0').append(parts[0]).toString();
         }
-        while (strArr[1].length() < 2) {
-            strArr[1] = new StringBuffer().append('0').append(strArr[1]).toString();
+        while (parts[1].length() < 2) {
+            parts[1] = new StringBuffer().append('0').append(parts[1]).toString();
         }
-        while (strArr[2].length() < 4) {
-            strArr[2] = new StringBuffer().append('0').append(strArr[2]).toString();
+        while (parts[2].length() < 4) {
+            parts[2] = new StringBuffer().append('0').append(parts[2]).toString();
         }
-        return new ByteBuffer().writeRawString(strArr[0]).writeRawString(strArr[1]).writeRawString(strArr[2]).getStringAndClear();
+        return new ByteBuffer().writeRawString(parts[0]).writeRawString(parts[1]).writeRawString(parts[2]).getStringAndClear();
     }
 
-    /* renamed from: a */
-    public static final String getSystemProp(int i) {
-        return intern(System.getProperty(Storage.state().getString(i)));
+    public static final String getSystemProp(int key) {
+        return intern(System.getProperty(Storage.state().getString(key)));
     }
 
-    /* JADX DEBUG: Move duplicate insns, count: 2 to block B:19:0x0071 */
-    /* renamed from: d */
-    private static final void setOrGenerateGuid(String str) {
-        int i;
-        int i2;
-        if (str != null) {
-            Storage.state().setObject(MapKeys.SLOT_MAP_TILE_DATA, (Object) str);
+    private static final void setOrGenerateGuid(String guid) {
+        if (guid != null) {
+            Storage.state().setObject(MapKeys.SLOT_MAP_TILE_DATA, (Object) guid);
         }
-        if (null == Storage.state().getString(SessionKeys.SESSION_KEY)) {
-            if (null != str) {
-                Storage.state().setObject(SessionKeys.SESSION_KEY, (Object) str);
+        if (Storage.state().getString(SessionKeys.SESSION_KEY) == null) {
+            if (guid != null) {
+                Storage.state().setObject(SessionKeys.SESSION_KEY, (Object) guid);
                 return;
             }
             StringBuffer sb = ObjectPool.newStringBuffer();
-            int i3 = 0;
-            while (i3 < 2) {
-                long seed = i3 == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)));
-                for (int i4 = 0; i4 < 64; i4 += 4) {
-                    int i5 = ((int) (seed >>> (60 - i4))) & 15;
-                    if (i5 < 10) {
-                        i = i5;
-                        i2 = 48;
-                    } else {
-                        i = i5;
-                        i2 = 87;
-                    }
-                    sb.append((char) (i + i2));
+            int part = 0;
+            while (part < 2) {
+                long seed = part == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)));
+                for (int bitPos = 0; bitPos < 64; bitPos += 4) {
+                    int nibble = ((int) (seed >>> (60 - bitPos))) & 15;
+                    int baseChar = nibble < 10 ? 48 : 87;
+                    sb.append((char) (nibble + baseChar));
                 }
-                i3++;
+                part++;
             }
             Storage.state().setFromBuffer(SessionKeys.SESSION_KEY, sb);
         }
     }
 
-    /* renamed from: e */
-    private static final String validateGuid(String str) {
-        if (str == null || str.length() != 32) {
+    private static final String validateGuid(String guid) {
+        if (guid == null || guid.length() != 32) {
             return null;
         }
-        int i = 32;
-        while (true) {
-            i--;
-            if (i < 0) {
-                return str;
-            }
-            char ch = str.charAt(i);
+        for (int idx = 31; idx >= 0; idx--) {
+            char ch = guid.charAt(idx);
             if (ch < '0' || ch > '9') {
                 if (ch < 'a' || ch > 'f') {
                     return null;
                 }
             }
         }
+        return guid;
     }
 
-    /* renamed from: i */
     public static GeoRegion getGeoRegion() {
         return (GeoRegion) Storage.state().getObject(MapKeys.OBJ_GEO_REGION_2);
     }
 
-    /* renamed from: j */
     public static final void initGeoRegions() {
         Storage.state().setObject(MapKeys.VEC_MAP_POINTS, ObjectPool.newVector());
         Storage.state().setObject(MapKeys.OBJ_GEO_REGION, new GeoRegion(Storage.resources().getString(StringResKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L));
@@ -708,14 +627,8 @@ public final class StringUtils {
             ByteBuffer geoBuffer = Base64.decode(Storage.state().getString(MapKeys.GEO_SAVED_DATA));
             Storage.state().getVector(MapKeys.VEC_MAP_POINTS).removeAllElements();
             if (geoBuffer.length > 0) {
-                int count = geoBuffer.readIntBE();
-                while (true) {
-                    count--;
-                    if (count < 0) {
-                        break;
-                    } else {
-                        addGeoRegion(new GeoRegion(geoBuffer));
-                    }
+                for (int count = geoBuffer.readIntBE() - 1; count >= 0; count--) {
+                    addGeoRegion(new GeoRegion(geoBuffer));
                 }
             }
         } catch (Throwable unused) {
@@ -726,7 +639,6 @@ public final class StringUtils {
         Storage.state().setObject(MapKeys.OBJ_GEO_REGION_2, region);
     }
 
-    /* renamed from: a */
     private static void addGeoRegion(GeoRegion region) {
         Vector items = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
         if (items.contains(region)) {
@@ -735,26 +647,20 @@ public final class StringUtils {
         items.addElement(region);
     }
 
-    /* renamed from: a */
     public static final boolean isInSavedRegion(long j, long j2) {
         Vector items = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
-        int size = Utils.vectorSize(items);
-        while (true) {
-            size--;
-            if (size < 0) {
-                return false;
-            }
-            GeoRegion region = (GeoRegion) items.elementAt(size);
+        for (int idx = Utils.vectorSize(items) - 1; idx >= 0; idx--) {
+            GeoRegion region = (GeoRegion) items.elementAt(idx);
             if (region.containsPoint(j, j2) && indexOfPoolString(region.name, 995) < 0) {
                 return true;
             }
         }
+        return false;
     }
 
-    /* renamed from: a */
     public static final void parseGeoConfig(XmlElement element) {
-        Vector vector;
-        if (element == null || (vector = element.children) == null) {
+        Vector children;
+        if (element == null || (children = element.children) == null) {
             return;
         }
         Storage.state().getVector(MapKeys.VEC_MAP_POINTS).removeAllElements();
@@ -762,13 +668,13 @@ public final class StringUtils {
         if (configUrl != null) {
             Storage.state().setObject(MapKeys.URL_GEO_CONFIG, (Object) configUrl);
         }
-        for (int i = 0; i < Utils.vectorSize(vector); i++) {
-            XmlElement childElem = (XmlElement) vector.elementAt(i);
-            String str = childElem.tagName;
-            if (matchesEncoded(str, 1936156018)) {
-                Vector vector2 = childElem.children;
-                for (int i2 = 0; i2 < Utils.vectorSize(vector2); i2++) {
-                    XmlElement regionElem = (XmlElement) vector2.elementAt(i2);
+        for (int i = 0; i < Utils.vectorSize(children); i++) {
+            XmlElement childElem = (XmlElement) children.elementAt(i);
+            String tagName = childElem.tagName;
+            if (matchesEncoded(tagName, 1936156018)) {
+                Vector regionElements = childElem.children;
+                for (int j = 0; j < Utils.vectorSize(regionElements); j++) {
+                    XmlElement regionElem = (XmlElement) regionElements.elementAt(j);
                     GeoRegion region = new GeoRegion(regionElem.getLongKeyAttr(1701667182), regionElem.getAttrAsLong(28780), regionElem.getAttrAsLong(28788), regionElem.getAttrAsLong(28786), regionElem.getAttrAsLong(28770));
                     region.description = regionElem.getLongKeyAttr(25705);
                     region.centerLat = regionElem.getAttrAsLong(1852796003);
@@ -776,7 +682,7 @@ public final class StringUtils {
                     region.precision = regionElem.getAttrAsInt(2054709613);
                     addGeoRegion(region);
                 }
-            } else if (matchesKey(PackedStringKeys.TAG_POINTS, str)) {
+            } else if (matchesKey(PackedStringKeys.TAG_POINTS, tagName)) {
                 ServiceRegistry.parseServiceConfig(1, childElem, true);
             }
         }
@@ -786,9 +692,9 @@ public final class StringUtils {
             Vector items = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
             int size = items.size();
             buffer.writeIntBE(size);
-            for (int i3 = 0; i3 < size; i3++) {
-                GeoRegion region2 = (GeoRegion) items.elementAt(i3);
-                buffer.writeStringUTF16(region2.name).writeLong(region2.minLat).writeLong(region2.maxLon).writeLong(region2.maxLat).writeLong(region2.minLon).writeStringUTF16(region2.description).writeLong(region2.centerLat).writeLong(region2.centerLon).writeIntLE(region2.precision);
+            for (int idx = 0; idx < size; idx++) {
+                GeoRegion region = (GeoRegion) items.elementAt(idx);
+                buffer.writeStringUTF16(region.name).writeLong(region.minLat).writeLong(region.maxLon).writeLong(region.maxLat).writeLong(region.minLon).writeStringUTF16(region.description).writeLong(region.centerLat).writeLong(region.centerLon).writeIntLE(region.precision);
             }
             Storage.state().setObject(MapKeys.GEO_SAVED_DATA, (Object) buffer.toBase64());
         } catch (Throwable unused) {
@@ -808,67 +714,56 @@ public final class StringUtils {
         return text.indexOf(Storage.state().getString(poolKey));
     }
 
-    /* renamed from: d */
     public static final String transliterate(String str) {
-        boolean zIsUpperCase = false;
-        String str2 = null;
-        String str3;
-        Vector vectorM512e = Utils.splitByNull(Storage.resources().getString(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
-        Vector vectorM512e2 = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_SOUND_LIST));
-        Hashtable hashtable = new Hashtable();
-        int size = vectorM512e.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                break;
-            }
-            hashtable.put(vectorM512e.elementAt(size), vectorM512e2.elementAt(size));
+        boolean isUpperCase = false;
+        String translitResult = null;
+        String upperVariant;
+        Vector sourceChars = Utils.splitByNull(Storage.resources().getString(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
+        Vector targetChars = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_SOUND_LIST));
+        Hashtable translitMap = new Hashtable();
+        for (int idx = sourceChars.size() - 1; idx >= 0; idx--) {
+            translitMap.put(sourceChars.elementAt(idx), targetChars.elementAt(idx));
         }
-        String strM584b = Storage.resources().getString(StringResKeys.STR_SOUND_TYPE_1);
-        String strM584b2 = Storage.resources().getString(StringResKeys.STR_SOUND_TYPE_2);
-        Hashtable hashtable2 = new Hashtable();
-        StringBuffer stringBufferM1217h = ObjectPool.newStringBuffer();
-        int length = strM584b.length();
-        while (true) {
-            length--;
-            if (length < 0) {
-                break;
-            }
-            hashtable2.put(extractBuffer(stringBufferM1217h.append(strM584b.charAt(length))), extractBuffer(stringBufferM1217h.append(strM584b2.charAt(length))));
+        String lowerAlphabet = Storage.resources().getString(StringResKeys.STR_SOUND_TYPE_1);
+        String upperAlphabet = Storage.resources().getString(StringResKeys.STR_SOUND_TYPE_2);
+        Hashtable caseMap = new Hashtable();
+        StringBuffer sb = ObjectPool.newStringBuffer();
+        for (int idx = lowerAlphabet.length() - 1; idx >= 0; idx--) {
+            caseMap.put(extractBuffer(sb.append(lowerAlphabet.charAt(idx))), extractBuffer(sb.append(upperAlphabet.charAt(idx))));
         }
-        int length2 = str.length();
-        int i = 0;
-        while (i < length2) {
-            String strM9b = null;
-            int i2 = 3;
+        int length = str.length();
+        int pos = 0;
+        while (pos < length) {
+            String mapped = null;
+            int matchLen = 3;
             while (true) {
-                if (i2 < 1) {
+                if (matchLen < 1) {
                     break;
                 }
                 try {
-                    String strM12a = substring(str, i, i + i2);
-                    zIsUpperCase = Character.isUpperCase(strM12a.charAt(0));
-                    str2 = (String) hashtable.get(intern(strM12a.toLowerCase()));
-                    strM9b = str2;
+                    String chunk = substring(str, pos, pos + matchLen);
+                    isUpperCase = Character.isUpperCase(chunk.charAt(0));
+                    translitResult = (String) translitMap.get(intern(chunk.toLowerCase()));
+                    mapped = translitResult;
                 } catch (Throwable unused) {
                 }
-                if (str2 != null) {
-                    if (zIsUpperCase && (str3 = (String) hashtable2.get(prefix(strM9b, 1))) != null) {
-                        strM9b = strM9b.length() == 1 ? str3 : concat(str3, suffix(strM9b, 1));
+                if (translitResult != null) {
+                    if (isUpperCase && (upperVariant = (String) caseMap.get(prefix(mapped, 1))) != null) {
+                        mapped = mapped.length() == 1 ? upperVariant : concat(upperVariant, suffix(mapped, 1));
                     }
-                    i += i2 - 1;
-                    stringBufferM1217h.append(strM9b);
+                    pos += matchLen - 1;
+                    sb.append(mapped);
                 } else {
-                    i2--;
+                    matchLen--;
                 }
             }
-            if (strM9b == null) {
-                stringBufferM1217h.append(str.charAt(i));
+            if (mapped == null) {
+                sb.append(str.charAt(pos));
             }
-            i++;
+            pos++;
         }
-        ObjectPool.releaseVector(vectorM512e);
-        ObjectPool.releaseVector(vectorM512e2);
-        return ObjectPool.toStringAndRelease(stringBufferM1217h);
+        ObjectPool.releaseVector(sourceChars);
+        ObjectPool.releaseVector(targetChars);
+        return ObjectPool.toStringAndRelease(sb);
     }
 }

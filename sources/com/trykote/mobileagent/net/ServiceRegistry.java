@@ -31,18 +31,13 @@ public final class ServiceRegistry {
         XmppContactGroup.sharedContactList = ObjectPool.newVector();
         hiddenContacts = Utils.split(Storage.state().getString(ContactKeys.HIDDEN_CONTACTS_LIST), (char) 0);
         try {
-            ByteBuffer c0043nM986d = Base64.decode(Storage.state().getString(ContactKeys.CONTACT_REGISTRY_DATA));
+            ByteBuffer registryBuf = Base64.decode(Storage.state().getString(ContactKeys.CONTACT_REGISTRY_DATA));
             photoRegistry = new Hashtable();
             try {
-                if (c0043nM986d.length > 0) {
-                    int iM1355w = c0043nM986d.readIntBE();
-                    while (true) {
-                        iM1355w--;
-                        if (iM1355w < 0) {
-                            break;
-                        }
-                        NetworkUtils c0040k = new NetworkUtils(c0043nM986d);
-                        photoRegistry.put(StringUtils.intern(Integer.toString(c0040k.port)), c0040k);
+                if (registryBuf.length > 0) {
+                    for (int count = registryBuf.readIntBE() - 1; count >= 0; count--) {
+                        NetworkUtils entry = new NetworkUtils(registryBuf);
+                        photoRegistry.put(StringUtils.intern(Integer.toString(entry.port)), entry);
                     }
                 }
             } catch (Throwable unused) {
@@ -53,27 +48,24 @@ public final class ServiceRegistry {
         }
     }
 
-    public static final void parseServiceConfig(int i, XmlElement c0022av, boolean z) {
+    public static final void parseServiceConfig(int configType, XmlElement rootElement, boolean persist) {
         photoRegistry = new Hashtable();
-        Vector vector = c0022av.children;
-        if (vector == null) {
+        Vector serviceNodes = rootElement.children;
+        if (serviceNodes == null) {
             return;
         }
-        for (int i2 = 0; i2 < Utils.vectorSize(vector); i2++) {
-            XmlElement c0022av2 = (XmlElement) vector.elementAt(i2);
-            String strM555c = c0022av2.getLongKeyAttr(25705);
-            NetworkUtils c0040k = new NetworkUtils(Integer.parseInt(strM555c), c0022av2.getIntAttribute(PackedStringKeys.ATTR_NAME), Integer.parseInt(c0022av2.getIntAttribute(PackedStringKeys.ATTR_DIR)), c0022av2.getIntAttribute(PackedStringKeys.TAG_LISTLINK));
-            Vector vector2 = c0022av2.children;
-            int i3 = 0;
-            while (i3 < Utils.vectorSize(vector2)) {
-                int i4 = i3;
-                i3++;
-                XmlElement c0022av3 = (XmlElement) vector2.elementAt(i4);
-                if (StringUtils.matchesKey(PackedStringKeys.TAG_LINK, c0022av3.tagName)) {
-                    c0040k.url = StringUtils.fromBuffer(c0022av3.textContent);
+        for (int idx = 0; idx < Utils.vectorSize(serviceNodes); idx++) {
+            XmlElement serviceNode = (XmlElement) serviceNodes.elementAt(idx);
+            String serviceId = serviceNode.getLongKeyAttr(25705);
+            NetworkUtils entry = new NetworkUtils(Integer.parseInt(serviceId), serviceNode.getIntAttribute(PackedStringKeys.ATTR_NAME), Integer.parseInt(serviceNode.getIntAttribute(PackedStringKeys.ATTR_DIR)), serviceNode.getIntAttribute(PackedStringKeys.TAG_LISTLINK));
+            Vector childNodes = serviceNode.children;
+            for (int childIdx = 0; childIdx < Utils.vectorSize(childNodes); childIdx++) {
+                XmlElement childNode = (XmlElement) childNodes.elementAt(childIdx);
+                if (StringUtils.matchesKey(PackedStringKeys.TAG_LINK, childNode.tagName)) {
+                    entry.url = StringUtils.fromBuffer(childNode.textContent);
                 }
             }
-            photoRegistry.put(strM555c, c0040k);
+            photoRegistry.put(serviceId, entry);
         }
         photoCache = new Hashtable();
         Storage.state().setInt(UIKeys.FLAG_PHOTO_REGISTRY_READY, 1);
@@ -85,115 +77,111 @@ public final class ServiceRegistry {
         }
     }
 
-    public static final String getPhotoHost(Object obj) {
-        NetworkUtils c0040k;
-        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(obj)) == null) {
+    public static final String getPhotoHost(Object key) {
+        NetworkUtils entry;
+        if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (entry = (NetworkUtils) photoRegistry.get(key)) == null) {
             return null;
         }
-        return c0040k.host;
+        return entry.host;
     }
 
-    public static final Image getProfileImage(String str) {
-        NetworkUtils c0040k;
-        Image image;
+    public static final Image getProfileImage(String key) {
+        NetworkUtils entry;
+        Image result;
         if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
         synchronized (photoCache) {
-            Image image2 = (Image) photoCache.get(str);
-            Image image3 = image2;
-            if (image2 == null) {
+            Image cached = (Image) photoCache.get(key);
+            if (cached == null) {
                 try {
-                    Hashtable hashtable = photoCache;
-                    Image imageM1348r = ChunkedRecordStore.readChunkedRecord(StringUtils.concat("upi", str)).toImage();
-                    image3 = imageM1348r;
-                    hashtable.put(str, imageM1348r);
+                    Image loaded = ChunkedRecordStore.readChunkedRecord(StringUtils.concat("upi", key)).toImage();
+                    cached = loaded;
+                    photoCache.put(key, loaded);
                 } catch (Throwable unused) {
                     if (pendingPhotoKey == null) {
-                        pendingPhotoKey = str;
-                        new AsyncTask(AsyncTaskId.DOWNLOAD_CACHED_PHOTO, (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (c0040k = (NetworkUtils) photoRegistry.get(str)) == null) ? null : c0040k.url);
+                        pendingPhotoKey = key;
+                        new AsyncTask(AsyncTaskId.DOWNLOAD_CACHED_PHOTO, (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) || (entry = (NetworkUtils) photoRegistry.get(key)) == null) ? null : entry.url);
                     }
                 }
-                image = image3;
-            } else {
-                image = image3;
             }
+            result = cached;
         }
-        return image;
+        return result;
     }
 
-    public static final Vector getServiceContactIds(int i) {
+    public static final Vector getServiceContactIds(int filterType) {
         if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
-        Vector vectorM1213g = ObjectPool.newVector();
-        Enumeration enumerationKeys = photoRegistry.keys();
-        while (enumerationKeys.hasMoreElements()) {
-            Object objNextElement = enumerationKeys.nextElement();
-            if (!isContactOffline(objNextElement)) {
-                NetworkUtils c0040k = (NetworkUtils) photoRegistry.get(objNextElement);
-                if (c0040k != null && c0040k.type == 1) {
-                    vectorM1213g.addElement(objNextElement);
+        Vector contactIds = ObjectPool.newVector();
+        Enumeration keys = photoRegistry.keys();
+        while (keys.hasMoreElements()) {
+            Object contactId = keys.nextElement();
+            if (!isContactOffline(contactId)) {
+                NetworkUtils entry = (NetworkUtils) photoRegistry.get(contactId);
+                if (entry != null && entry.type == 1) {
+                    contactIds.addElement(contactId);
                 }
             }
         }
-        return vectorM1213g;
+        return contactIds;
     }
 
     public static final Vector getAllContactIds() {
         if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
-        Vector vectorM1213g = ObjectPool.newVector();
-        Enumeration enumerationKeys = photoRegistry.keys();
-        while (enumerationKeys.hasMoreElements()) {
-            Object objNextElement = enumerationKeys.nextElement();
-            if (!isContactOffline(objNextElement)) {
-                vectorM1213g.addElement(objNextElement);
+        Vector contactIds = ObjectPool.newVector();
+        Enumeration keys = photoRegistry.keys();
+        while (keys.hasMoreElements()) {
+            Object contactId = keys.nextElement();
+            if (!isContactOffline(contactId)) {
+                contactIds.addElement(contactId);
             }
         }
-        return vectorM1213g;
+        return contactIds;
     }
 
     public static final Vector getActiveContactIds() {
         if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return null;
         }
-        Vector vectorM1213g = ObjectPool.newVector();
-        Enumeration enumerationKeys = photoRegistry.keys();
-        while (enumerationKeys.hasMoreElements()) {
-            Object objNextElement = enumerationKeys.nextElement();
-            if (!(getContactStatus(objNextElement) == 2)) {
-                vectorM1213g.addElement(objNextElement);
+        Vector contactIds = ObjectPool.newVector();
+        Enumeration keys = photoRegistry.keys();
+        while (keys.hasMoreElements()) {
+            Object contactId = keys.nextElement();
+            if (!(getContactStatus(contactId) == 2)) {
+                contactIds.addElement(contactId);
             }
         }
-        return vectorM1213g;
+        return contactIds;
     }
 
-    private static final int getContactStatus(Object obj) {
+    private static final int getContactStatus(Object key) {
         if (!Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY)) {
             return 2;
         }
         try {
-            return ((NetworkUtils) photoRegistry.get(obj)).status;
+            return ((NetworkUtils) photoRegistry.get(key)).status;
         } catch (Throwable unused) {
             return 2;
         }
     }
 
-    private static final boolean isContactOffline(Object obj) {
-        return getContactStatus(obj) == 0;
+    private static final boolean isContactOffline(Object key) {
+        return getContactStatus(key) == 0;
     }
 
     private static ByteBuffer serializeRegistry() {
-        ByteBuffer c0043n = new ByteBuffer();
-        c0043n.writeIntBE(photoRegistry.size());
-        Enumeration enumerationKeys = photoRegistry.keys();
-        while (enumerationKeys.hasMoreElements()) {
-            NetworkUtils c0040k = (NetworkUtils) photoRegistry.get(enumerationKeys.nextElement());
-            c0043n.writeIntBE(c0040k.type).writeIntBE(c0040k.port).writeStringUTF16(c0040k.host).writeStringLatin1(c0040k.url).writeIntBE(c0040k.status).writeStringLatin1(c0040k.protocol);
+        ByteBuffer buf = new ByteBuffer();
+        buf.writeIntBE(photoRegistry.size());
+        Enumeration keys = photoRegistry.keys();
+        while (keys.hasMoreElements()) {
+            NetworkUtils entry = (NetworkUtils) photoRegistry.get(keys.nextElement());
+            buf.writeIntBE(entry.type).writeIntBE(entry.port).writeStringUTF16(entry.host).writeStringLatin1(entry.url).writeIntBE(entry.status).writeStringLatin1(entry.protocol);
         }
-        return c0043n;
+        return buf;
     }
 
     public static final void clearPhotoCache() {

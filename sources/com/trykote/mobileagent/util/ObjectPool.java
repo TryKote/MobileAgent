@@ -18,6 +18,11 @@ public abstract class ObjectPool {
     private static final int BUFFER_POOL_SIZE = 5;
     private static final int VECTOR_POOL_SIZE = 5;
     private static final int INTEGER_CACHE_SIZE = 32;
+    private static final int MAX_POOLED_BYTE_SIZE = 2048;
+    private static final int MIN_POOLED_BYTE_SIZE = 8;
+    private static final int BYTE_POOL_LAST_INDEX = BYTE_POOL_SIZE - 1;
+    private static final int VECTOR_POOL_LAST_INDEX = VECTOR_POOL_SIZE - 1;
+    private static final int BUFFER_POOL_LAST_INDEX = BUFFER_POOL_SIZE - 1;
 
     /** Pool of reusable byte arrays (max 20 entries, each up to 2048 bytes). */
     public static byte[][] bytePool;
@@ -74,24 +79,20 @@ public abstract class ObjectPool {
      * otherwise allocates a new one. Arrays larger than 2048 are never pooled.
      */
     public static final byte[] newBytes(int size) {
-        if (size > 2048) {
+        if (size > MAX_POOLED_BYTE_SIZE) {
             return new byte[size];
         }
         byte[][] pool = bytePool;
         synchronized (pool) {
-            for (int idx = 0; idx < 20; idx++) {
+            for (int idx = 0; idx < BYTE_POOL_SIZE; idx++) {
                 byte[] entry = pool[idx];
                 if (entry != null && entry.length >= size) {
-                    int remaining = entry.length;
-                    while (true) {
-                        remaining--;
-                        if (remaining < 0) {
-                            Utils.arraycopy(pool, idx + 1, pool, idx, 19 - idx);
-                            pool[19] = null;
-                            return entry;
-                        }
+                    for (int remaining = entry.length - 1; remaining >= 0; remaining--) {
                         entry[remaining] = 0;
                     }
+                    Utils.arraycopy(pool, idx + 1, pool, idx, BYTE_POOL_LAST_INDEX - idx);
+                    pool[BYTE_POOL_LAST_INDEX] = null;
+                    return entry;
                 }
             }
             return new byte[size];
@@ -106,7 +107,7 @@ public abstract class ObjectPool {
      */
     public static final byte[] reallocBytes(byte[] source, int requiredSize) {
         int entryLength;
-        if (requiredSize > 2048) {
+        if (requiredSize > MAX_POOLED_BYTE_SIZE) {
             return null;
         }
         byte[][] pool = bytePool;
@@ -114,7 +115,7 @@ public abstract class ObjectPool {
             byte[] bestMatch = null;
             int bestSize = Integer.MAX_VALUE;
             int bestIndex = 0;
-            for (int idx = 0; idx < 20; idx++) {
+            for (int idx = 0; idx < BYTE_POOL_SIZE; idx++) {
                 byte[] entry = pool[idx];
                 if (entry != null && (entryLength = entry.length) >= requiredSize && entryLength < bestSize) {
                     bestMatch = entry;
@@ -126,10 +127,10 @@ public abstract class ObjectPool {
                 return null;
             }
             Utils.arraycopy((Object) source, 0, (Object) bestMatch, 0, requiredSize);
-            if (bestIndex != 19) {
-                Utils.arraycopy(pool, bestIndex + 1, pool, bestIndex, 19 - bestIndex);
+            if (bestIndex != BYTE_POOL_LAST_INDEX) {
+                Utils.arraycopy(pool, bestIndex + 1, pool, bestIndex, BYTE_POOL_LAST_INDEX - bestIndex);
             }
-            pool[19] = null;
+            pool[BYTE_POOL_LAST_INDEX] = null;
             releaseBytes(source);
             return bestMatch;
         }
@@ -140,21 +141,21 @@ public abstract class ObjectPool {
      * larger than 2048, or 8 bytes or smaller are silently ignored.
      */
     public static final void releaseBytes(byte[] buffer) {
-        if (buffer == null || buffer.length > 2048 || buffer.length <= 8) {
+        if (buffer == null || buffer.length > MAX_POOLED_BYTE_SIZE || buffer.length <= MIN_POOLED_BYTE_SIZE) {
             return;
         }
         byte[][] pool = bytePool;
         synchronized (pool) {
             int slot = 0;
-            while (slot < 20) {
+            while (slot < BYTE_POOL_SIZE) {
                 if (pool[slot] == null) {
                     break;
                 } else {
                     slot++;
                 }
             }
-            if (slot == 20) {
-                Utils.arraycopy(pool, 1, pool, 0, 19);
+            if (slot == BYTE_POOL_SIZE) {
+                Utils.arraycopy(pool, 1, pool, 0, BYTE_POOL_LAST_INDEX);
                 slot--;
             }
             pool[slot] = buffer;
@@ -168,11 +169,11 @@ public abstract class ObjectPool {
     public static final Vector newVector() {
         Vector[] pool = vectorPool;
         synchronized (pool) {
-            for (int idx = 0; idx < 5; idx++) {
+            for (int idx = 0; idx < VECTOR_POOL_SIZE; idx++) {
                 Vector entry = pool[idx];
                 if (entry != null) {
-                    Utils.arraycopy(pool, idx + 1, pool, idx, 4 - idx);
-                    pool[4] = null;
+                    Utils.arraycopy(pool, idx + 1, pool, idx, VECTOR_POOL_LAST_INDEX - idx);
+                    pool[VECTOR_POOL_LAST_INDEX] = null;
                     return entry;
                 }
             }
@@ -190,7 +191,7 @@ public abstract class ObjectPool {
             Utils.trimIfEmpty(vector);
             Vector[] pool = vectorPool;
             synchronized (pool) {
-                for (int idx = 0; idx < 5; idx++) {
+                for (int idx = 0; idx < VECTOR_POOL_SIZE; idx++) {
                     if (pool[idx] == null) {
                         pool[idx] = vector;
                         return;
@@ -211,12 +212,12 @@ public abstract class ObjectPool {
             do {
                 StringBuffer entry = pool[idx];
                 if (entry != null) {
-                    Utils.arraycopy(pool, idx + 1, pool, idx, 4 - idx);
-                    pool[4] = null;
+                    Utils.arraycopy(pool, idx + 1, pool, idx, BUFFER_POOL_LAST_INDEX - idx);
+                    pool[BUFFER_POOL_LAST_INDEX] = null;
                     return entry;
                 }
                 idx++;
-            } while (idx != 5);
+            } while (idx != BUFFER_POOL_SIZE);
             return new StringBuffer();
         }
     }
@@ -234,7 +235,7 @@ public abstract class ObjectPool {
         synchronized (pool) {
             int idx = 0;
             while (true) {
-                if (idx >= 5) {
+                if (idx >= BUFFER_POOL_SIZE) {
                     break;
                 }
                 if (pool[idx] == null) {
@@ -302,7 +303,7 @@ public abstract class ObjectPool {
                     return decodeWin1251Impl(win1251Bytes, sb, false);
                 }
                 idx++;
-            } while (idx != 5);
+            } while (idx != BUFFER_POOL_SIZE);
             return decodeWin1251Impl(win1251Bytes, new StringBuffer(), true);
         }
     }
@@ -333,7 +334,7 @@ public abstract class ObjectPool {
                     return unpackCharsImpl(packed, sb, false);
                 }
                 idx++;
-            } while (idx != 5);
+            } while (idx != BUFFER_POOL_SIZE);
             return unpackCharsImpl(packed, new StringBuffer(), true);
         }
     }

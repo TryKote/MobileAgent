@@ -17,6 +17,22 @@ import javax.microedition.lcdui.Image;
 
 public final class MapHandler extends BaseScreenHandler {
 
+    // Map scroll and timing
+    private static final long SCROLL_FRAME_INTERVAL_MS = 45L;
+    private static final long CROSSHAIR_DELAY_MS = 500L;
+    private static final long MAP_IDLE_TIMEOUT_MS = 300000L;
+    private static final int SCROLL_MULTIPLIER = 9;
+
+    // Map point heights
+    private static final int MAP_POINT_HEIGHT_SAVED = 4;
+
+    // Saved locations
+    private static final int MAX_SAVED_LOCATIONS = 50;
+
+    // Map search action codes stored in INT_SCREEN_BUILDER_ACTION
+    private static final int MAP_SEARCH_ACTION_ROUTE = 407;
+    private static final int MAP_SEARCH_ACTION_PLACE = 408;
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.MAP:
@@ -44,23 +60,19 @@ public final class MapHandler extends BaseScreenHandler {
                 break;
             case ScreenId.PEOPLE_NEARBY:
                 Vector allContacts = AccountManager.getAllContacts();
-                int size10 = allContacts.size();
-                while (true) {
-                    size10--;
-                    if (size10 < 0) {
-                        if (allContacts.size() == 0) {
-                            NotificationHelper.showMessageById(762);
-                        } else {
-                            ContactListManager.sortContacts(allContacts);
-                            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.PEOPLE_NEARBY), allContacts));
-                        }
-                        ObjectPool.releaseVector(allContacts);
-                        return;
-                    }
-                    if (((Contact) allContacts.elementAt(size10)).isOffline()) {
-                        allContacts.removeElementAt(size10);
+                for (int idx = allContacts.size() - 1; idx >= 0; idx--) {
+                    if (((Contact) allContacts.elementAt(idx)).isOffline()) {
+                        allContacts.removeElementAt(idx);
                     }
                 }
+                if (allContacts.size() == 0) {
+                    NotificationHelper.showMessageById(762);
+                } else {
+                    ContactListManager.sortContacts(allContacts);
+                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.PEOPLE_NEARBY), allContacts));
+                }
+                ObjectPool.releaseVector(allContacts);
+                return;
             case ScreenId.MAP_CONTEXT_MENU:
                 MapController.showMapContextMenu();
                 break;
@@ -98,7 +110,7 @@ public final class MapHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SHARE_LOCATION));
                 break;
             case ScreenId.MAP_SEARCH:
-                Storage.state().setInt(MapKeys.INT_SCREEN_BUILDER_ACTION, Storage.state().getBool(MapKeys.FLAG_MAP_MODE_ACTIVE) ? 407 : 408);
+                Storage.state().setInt(MapKeys.INT_SCREEN_BUILDER_ACTION, Storage.state().getBool(MapKeys.FLAG_MAP_MODE_ACTIVE) ? MAP_SEARCH_ACTION_ROUTE : MAP_SEARCH_ACTION_PLACE);
                 Conversation.updateStatusText(411);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_SEARCH));
                 break;
@@ -153,9 +165,9 @@ public final class MapHandler extends BaseScreenHandler {
                         listItem.select();
                     }
                     MapPoint mapPoint = new MapPoint(locationName, 0L, 0L, 0L, 0L, lon, lat, Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL));
-                    mapPoint.height = 4;
+                    mapPoint.height = MAP_POINT_HEIGHT_SAVED;
                     Vector screenStack = Storage.state().getVector(UIKeys.VEC_PHOTO_QUEUE);
-                    XmppContactGroup.addMapPointIfNew(screenStack, mapPoint, 0, 50);
+                    XmppContactGroup.addMapPointIfNew(screenStack, mapPoint, 0, MAX_SAVED_LOCATIONS);
                     XmppContactGroup.saveMapPoints(screenStack, 226);
                     MapRenderer.navigateToMapPoint(mapPoint);
                     errorCode7 = 0;
@@ -382,7 +394,7 @@ public final class MapHandler extends BaseScreenHandler {
             lat = item.getBaseHeight();
         }
         int errorCode = contact.sendMessage(MapUtils.buildTileRequestUrl(lon, lat, Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL), query));
-        if (0 != errorCode) {
+        if (errorCode != 0) {
             return NotificationHelper.showError(errorCode);
         }
         return 0;
@@ -441,7 +453,7 @@ public final class MapHandler extends BaseScreenHandler {
         long currentTime = System.currentTimeMillis();
         switch (currentScreen.screenId) {
             case ScreenId.MAP:
-                if (currentTime - Storage.state().getLong(MapKeys.TIMESTAMP_MAP_SCROLL) > 45) {
+                if (currentTime - Storage.state().getLong(MapKeys.TIMESTAMP_MAP_SCROLL) > SCROLL_FRAME_INTERVAL_MS) {
                     Storage.state().setLong(MapKeys.TIMESTAMP_MAP_SCROLL, currentTime);
                 }
                 if (TimerManager.isTimerType(TimerManager.SLOT_MAP_CROSSHAIR) && MapRenderer.crosshairVisible) {
@@ -457,7 +469,7 @@ public final class MapHandler extends BaseScreenHandler {
                     Storage.state().setLong(MapKeys.MAP_SCROLL_LON, MapRenderer.currentLon);
                     Storage.state().setLong(MapKeys.MAP_SCROLL_LAT, MapRenderer.currentLat);
                     int stateInt3 = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
-                    long scrollDelta = (MapUtils.getZoomNumerator(stateInt3) / MapUtils.getZoomDenominator(stateInt3)) * 9;
+                    long scrollDelta = (MapUtils.getZoomNumerator(stateInt3) / MapUtils.getZoomDenominator(stateInt3)) * SCROLL_MULTIPLIER;
                     switch (stateInt2) {
                         case 0:
                             Storage.state().setLong(MapKeys.MAP_SCROLL_LON, Storage.state().getLong(MapKeys.MAP_SCROLL_LON) + scrollDelta);
@@ -473,27 +485,23 @@ public final class MapHandler extends BaseScreenHandler {
                             break;
                     }
                     MapRenderer.setPosition(Storage.state().getLong(MapKeys.MAP_SCROLL_LON), Storage.state().getLong(MapKeys.MAP_SCROLL_LAT));
-                    TimerManager.setTimer(TimerManager.SLOT_MAP_CROSSHAIR, 500L);
+                    TimerManager.setTimer(TimerManager.SLOT_MAP_CROSSHAIR, CROSSHAIR_DELAY_MS);
                     MapRenderer.resetInteraction();
                 }
                 if (Storage.state().getLong(MapKeys.TIMESTAMP_MAP_SCROLL) == currentTime) {
                     MapRenderer.render();
                 }
-                if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && TimerManager.checkTimer(TimerManager.SLOT_MAP_IDLE, 300000L)) {
-                    TimerManager.setTimer(TimerManager.SLOT_MAP_IDLE, 300000L);
+                if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && TimerManager.checkTimer(TimerManager.SLOT_MAP_IDLE, MAP_IDLE_TIMEOUT_MS)) {
+                    TimerManager.setTimer(TimerManager.SLOT_MAP_IDLE, MAP_IDLE_TIMEOUT_MS);
                     StringUtils.clearSatelliteTiles();
                     Vector vec4 = Storage.state().getVector(MapKeys.SLOT_MAP_DATA);
-                    int size3 = vec4.size();
-                    while (true) {
-                        size3--;
-                        if (size3 < 0) {
-                            MapRenderer.needsRedraw = true;
-                            new AsyncTask(AsyncTaskId.FETCH_CITY_ZOOM);
-                            break;
-                        } else if (TileRequest.TYPE_OVERLAY == ((TileRequest) vec4.elementAt(size3)).tileType) {
-                            vec4.removeElementAt(size3);
+                    for (int idx = vec4.size() - 1; idx >= 0; idx--) {
+                        if (TileRequest.TYPE_OVERLAY == ((TileRequest) vec4.elementAt(idx)).tileType) {
+                            vec4.removeElementAt(idx);
                         }
                     }
+                    MapRenderer.needsRedraw = true;
+                    new AsyncTask(AsyncTaskId.FETCH_CITY_ZOOM);
                 }
                 if (Storage.state().getBool(MapKeys.FLAG_MAP_SCROLLING)) {
                     AppController.needsRepaint = true;

@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.ui;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -12,560 +11,478 @@ import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 
-/* renamed from: ag */
-/* loaded from: MobileAgent_3.9.jar:ag.class */
 public abstract class ContactListManager {
-    /* renamed from: a */
+
+    private static final int ICON_SIZE_SMALL = 1;
+    private static final int ICON_SIZE_LARGE = 12;
+    private static final long ONE_WEEK_MS = 604800000L;
+    private static final int PRESENCE_SUBSCRIBE = 40;
+    private static final int PRESENCE_UNSUBSCRIBE = 4;
     public static final void showContactList() {
         RemoteLogger.log("CL", "showContactList called");
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Storage.state().clearIndex(ContactKeys.SLOT_CURRENT_ENTITY);
         Storage.state().setInt(SessionKeys.INT_CONNECTION_STATE, 4);
-        TabBar.findTab(4, TabBar.currentAccount);
-        ListView c0013amM161g = buildContactList();
-        TabBar c0008ahM175i = TabBar.getCurrentTab();
-        ListView c0013amM257b = c0013amM161g.selectByTitle(c0008ahM175i.selectedTitle);
-        ScreenManager.pushScreen(c0013amM257b);
-        c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
-        c0013amM257b.invalidateLayout();
+        TabBar.findTab(TabBar.TYPE_CONTACTS, TabBar.currentAccount);
+        ListView contactList = buildContactList();
+        TabBar currentTab = TabBar.getCurrentTab();
+        ListView selectedScreen = contactList.selectByTitle(currentTab.selectedTitle);
+        ScreenManager.pushScreen(selectedScreen);
+        selectedScreen.scrollOffset = currentTab.selectedIndex;
+        selectedScreen.invalidateLayout();
     }
 
-    /* renamed from: b */
     public static final int selectContact() {
         updateState();
-        MenuItem c0032cM69e = ScreenManager.getCurrentMenuItem();
-        Storage.state().setCurrentEntity(c0032cM69e == null ? null : c0032cM69e.data);
+        MenuItem menuItem = ScreenManager.getCurrentMenuItem();
+        Storage.state().setCurrentEntity(menuItem == null ? null : menuItem.data);
         return validateContactAction();
     }
 
-    /* renamed from: f */
     private static final void updateState() {
-        TabBar c0008ahM175i = TabBar.getCurrentTab();
-        ListView c0013amM66b = ScreenManager.getCurrentScreen();
-        c0008ahM175i.selectedIndex = c0013amM66b.scrollOffset;
-        c0008ahM175i.selectedTitle = c0013amM66b.getSelectedTitle();
+        TabBar currentTab = TabBar.getCurrentTab();
+        ListView currentScreen = ScreenManager.getCurrentScreen();
+        currentTab.selectedIndex = currentScreen.scrollOffset;
+        currentTab.selectedTitle = currentScreen.getSelectedTitle();
     }
 
-    /* renamed from: c */
     public static final void clearState() {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Storage.state().clearIndex(ContactKeys.SLOT_CURRENT_ENTITY);
         updateState();
     }
 
-    /* renamed from: d */
     public static final void refreshList() {
         RemoteLogger.log("CL", "refreshList called");
         clearState();
-        TabBar c0008ahM175i = TabBar.getCurrentTab();
-        ListView c0013amM257b = buildContactList().selectByTitle(c0008ahM175i.selectedTitle);
-        ScreenManager.pushScreen(c0013amM257b);
-        c0013amM257b.scrollOffset = c0008ahM175i.selectedIndex;
-        c0013amM257b.invalidateLayout();
-        TabBar.findTab(4, TabBar.currentAccount);
+        TabBar currentTab = TabBar.getCurrentTab();
+        ListView selectedScreen = buildContactList().selectByTitle(currentTab.selectedTitle);
+        ScreenManager.pushScreen(selectedScreen);
+        selectedScreen.scrollOffset = currentTab.selectedIndex;
+        selectedScreen.invalidateLayout();
+        TabBar.findTab(TabBar.TYPE_CONTACTS, TabBar.currentAccount);
         AppController.needsRepaint = true;
     }
 
-    /* renamed from: e */
     public static final int getSelectedContact() {
         updateState();
         return 0;
     }
 
-    /* renamed from: a */
-    public static final int onContactSelected(String str, Object obj) {
-        if (str == null) {
+    public static final int onContactSelected(String title, Object entity) {
+        if (title == null) {
             return -1;
         }
         updateState();
-        Storage.state().setCurrentEntity(obj);
-        if (obj == null) {
+        Storage.state().setCurrentEntity(entity);
+        if (entity == null) {
             return 0;
         }
-        if (obj instanceof ContactGroup) {
+        if (entity instanceof ContactGroup) {
             AppController.needsLayoutUpdate = true;
-            return ((ContactGroup) obj).toggleSpecial();
+            return ((ContactGroup) entity).toggleSpecial();
         }
-        if (!(obj instanceof Contact)) {
+        if (!(entity instanceof Contact)) {
             return 0;
         }
         Storage.state().clearIndex(UIKeys.SLOT_STATUS_TEXT);
         openContactMessages();
-        return ((Contact) obj).getDefaultAction();
+        return ((Contact) entity).getDefaultAction();
     }
 
-    /* renamed from: a */
-    public static final int onContactAction(Object obj) {
+    public static final int onContactAction(Object entity) {
         updateState();
-        Storage.state().setCurrentEntity(obj);
-        return obj != null ? 30 : -1;
+        Storage.state().setCurrentEntity(entity);
+        return entity != null ? 30 : -1;
     }
-
-    /* JADX WARN: Removed duplicated region for block: B:31:0x00bb A[Catch: Throwable -> 0x0124, PHI: r12
-      0x00bb: PHI (r12v1 int) = (r12v0 int), (r12v3 int) binds: [B:27:0x009f, B:29:0x00b2] A[DONT_GENERATE, DONT_INLINE], TryCatch #0 {Throwable -> 0x0124, blocks: (B:26:0x0098, B:28:0x00a2, B:31:0x00bb, B:36:0x00d8, B:39:0x00ee, B:41:0x00f8, B:44:0x0112), top: B:75:0x0098 }] */
-    /* JADX WARN: Removed duplicated region for block: B:34:0x00d4 A[PHI: r12
-      0x00d4: PHI (r12v4 int) = (r12v0 int), (r12v2 int) binds: [B:25:0x0095, B:32:0x00cb] A[DONT_GENERATE, DONT_INLINE]] */
-    /* JADX WARN: Removed duplicated region for block: B:39:0x00ee A[Catch: Throwable -> 0x0124, PHI: r12
-      0x00ee: PHI (r12v5 int) = (r12v4 int), (r12v8 int) binds: [B:35:0x00d5, B:37:0x00e5] A[DONT_GENERATE, DONT_INLINE], TryCatch #0 {Throwable -> 0x0124, blocks: (B:26:0x0098, B:28:0x00a2, B:31:0x00bb, B:36:0x00d8, B:39:0x00ee, B:41:0x00f8, B:44:0x0112), top: B:75:0x0098 }] */
-    /* JADX WARN: Removed duplicated region for block: B:44:0x0112 A[Catch: Throwable -> 0x0124, PHI: r12
-      0x0112: PHI (r12v6 int) = (r12v5 int), (r12v7 int) binds: [B:40:0x00f5, B:42:0x0109] A[DONT_GENERATE, DONT_INLINE], TryCatch #0 {Throwable -> 0x0124, blocks: (B:26:0x0098, B:28:0x00a2, B:31:0x00bb, B:36:0x00d8, B:39:0x00ee, B:41:0x00f8, B:44:0x0112), top: B:75:0x0098 }] */
-    /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public static final int updateContextMenu(ListView c0013am, Object obj) {
-        Account abstractC0037h;
-        int iM1250M = -1;
+    public static final int updateContextMenu(ListView screen, Object entity) {
+        Account account;
+        int contextAction = -1;
         if (Storage.state().getObject(SessionKeys.VEC_ACCOUNT_SELECTION) != null) {
             return ScreenId.PRESENCE_ACTION;
         }
         if (!Storage.state().getBool(SessionKeys.FLAG_CLEANUP_DONE)) {
             Storage.state().setInt(SessionKeys.FLAG_CLEANUP_DONE, 1);
-            if (System.currentTimeMillis() - Storage.state().getLong(SessionKeys.TIMESTAMP_FIRST_RUN) > 604800000) {
+            if (System.currentTimeMillis() - Storage.state().getLong(SessionKeys.TIMESTAMP_FIRST_RUN) > ONE_WEEK_MS) {
                 Storage.state().setInt(UIKeys.FLAG_SHOW_NOTIFICATION, 0);
                 return ScreenId.FIRST_RUN;
             }
         }
         updateState();
-        Vector vector = c0013am.tabItems;
-        if (obj != null) {
-            Contact abstractC0041l = null;
-            ContactGroup abstractC0046q = null;
-            if (obj instanceof ContactGroup) {
-                ContactGroup abstractC0046q2 = (ContactGroup) obj;
-                abstractC0046q = abstractC0046q2;
-                abstractC0037h = abstractC0046q2.account;
+        Vector tabItems = screen.tabItems;
+        if (entity != null) {
+            Contact contact = null;
+            ContactGroup group = null;
+            if (entity instanceof ContactGroup) {
+                ContactGroup selectedGroup = (ContactGroup) entity;
+                group = selectedGroup;
+                account = selectedGroup.account;
             } else {
-                Contact abstractC0041l2 = (Contact) obj;
-                abstractC0041l = abstractC0041l2;
-                abstractC0037h = abstractC0041l2.account;
+                Contact selectedContact = (Contact) entity;
+                contact = selectedContact;
+                account = selectedContact.account;
             }
-            Account abstractC0037h2 = abstractC0037h;
-            int iMo108h = abstractC0037h.getIconId();
-            String str = abstractC0037h2.shortName;
+            int iconId = account.getIconId();
+            String shortName = account.shortName;
             if (!Storage.state().getBool(SettingsKeys.SETTING_MULTI_ACCOUNT)) {
-                TabBar.updateTitle(iMo108h, str);
+                TabBar.updateTitle(iconId, shortName);
             }
-            if (vector != null) {
-                boolean z = false;
-                String str2 = Storage.emptyStr;
-                int i = 0;
-                if (abstractC0041l != null) {
+            if (tabItems != null) {
+                boolean needsRebuild = false;
+                String separator = Storage.emptyStr;
+                int expectedSize = 0;
+                if (contact != null) {
                     try {
-                        iM1250M = abstractC0041l.getContextAction();
+                        contextAction = contact.getContextAction();
                     } catch (Throwable unused) {
-                        z = true;
+                        needsRebuild = true;
                     }
-                    if (iM1250M >= 0) {
-                        i = 0 + 1;
-                        if (vector.size() < i || ((Integer) vector.elementAt(0)).intValue() != iM1250M) {
-                            z = true;
+                    if (contextAction >= 0) {
+                        expectedSize = 0 + 1;
+                        if (tabItems.size() < expectedSize || ((Integer) tabItems.elementAt(0)).intValue() != contextAction) {
+                            needsRebuild = true;
                         } else {
-                            int i2 = i;
-                            i++;
-                            if (vector.size() <= i2 || !vector.elementAt(i2).equals(abstractC0041l.extra)) {
-                                z = true;
-                            } else if (abstractC0046q != null) {
-                                i++;
-                                if (vector.elementAt(0).equals(str2)) {
-                                    int iMo922n = abstractC0037h2.getExtType();
-                                    if (iMo922n >= 0) {
-                                        int i3 = i;
-                                        i++;
-                                        if (vector.size() <= i3 || ((Integer) vector.elementAt(i3)).intValue() != iMo922n) {
-                                            z = true;
-                                        } else if (i != vector.size()) {
-                                            z = true;
+                            int extraIdx = expectedSize;
+                            expectedSize++;
+                            if (tabItems.size() <= extraIdx || !tabItems.elementAt(extraIdx).equals(contact.extra)) {
+                                needsRebuild = true;
+                            } else if (group != null) {
+                                expectedSize++;
+                                if (tabItems.elementAt(0).equals(separator)) {
+                                    int extType = account.getExtType();
+                                    if (extType >= 0) {
+                                        int extIdx = expectedSize;
+                                        expectedSize++;
+                                        if (tabItems.size() <= extIdx || ((Integer) tabItems.elementAt(extIdx)).intValue() != extType) {
+                                            needsRebuild = true;
+                                        } else if (expectedSize != tabItems.size()) {
+                                            needsRebuild = true;
                                         }
                                     }
                                 } else {
-                                    z = true;
+                                    needsRebuild = true;
                                 }
                             }
                         }
-                        if (z) {
-                            vector.removeAllElements();
-                            if (abstractC0041l != null) {
-                                int iM1250M2 = abstractC0041l.getContextAction();
-                                if (iM1250M2 >= 0) {
-                                    vector.addElement(ObjectPool.integerOf(iM1250M2));
+                        if (needsRebuild) {
+                            tabItems.removeAllElements();
+                            if (contact != null) {
+                                int newContextAction = contact.getContextAction();
+                                if (newContextAction >= 0) {
+                                    tabItems.addElement(ObjectPool.integerOf(newContextAction));
                                 }
-                                vector.addElement(abstractC0041l.extra);
+                                tabItems.addElement(contact.extra);
                             }
-                            if (abstractC0046q != null) {
-                                vector.addElement(str2);
+                            if (group != null) {
+                                tabItems.addElement(separator);
                             }
-                            int iMo922n2 = abstractC0037h2.getExtType();
-                            if (iMo922n2 >= 0) {
-                                vector.addElement(ObjectPool.integerOf(iMo922n2));
+                            int extType = account.getExtType();
+                            if (extType >= 0) {
+                                tabItems.addElement(ObjectPool.integerOf(extType));
                             }
                             AppController.needsRepaint = true;
                         }
                     }
                 }
             }
-        } else if (vector != null && vector.size() > 0) {
-            vector.removeAllElements();
+        } else if (tabItems != null && tabItems.size() > 0) {
+            tabItems.removeAllElements();
             AppController.needsRepaint = true;
         }
         return Storage.state().getBool(UIKeys.FLAG_CONVERSATION_ACTIVE) ? 163 : 0;
     }
 
-    /* renamed from: g */
     private static final ListView buildContactList() {
         RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
-        boolean zM1056C;
-        MergedContactGroup c0054y;
-        int iM586d = 1 + Storage.state().getInt(SettingsKeys.SETTING_CONTACT_SORT_MODE);
-        Storage.state().setInt(ContactKeys.INT_CONTACT_ICON_SIZE, iM586d == 1 ? 1 : 12);
-        ListView c0013amM75b = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
-        int i = c0013amM75b.contentWidth - 1;
+        boolean isConnected;
+        MergedContactGroup foundGroup;
+        int layoutColumns = 1 + Storage.state().getInt(SettingsKeys.SETTING_CONTACT_SORT_MODE);
+        Storage.state().setInt(ContactKeys.INT_CONTACT_ICON_SIZE, layoutColumns == 1 ? ICON_SIZE_SMALL : ICON_SIZE_LARGE);
+        ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
+        int availableWidth = screen.contentWidth - 1;
         if (!Storage.state().getBool(SettingsKeys.SETTING_SHOW_OFFLINE)) {
-            boolean z = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
-            Account abstractC0037h = TabBar.currentAccount;
-            Vector vectorM445W = abstractC0037h == null ? AccountManager.getAllContacts() : abstractC0037h.getAllContacts();
-            Vector vector = vectorM445W;
-            int iM353a = sortContacts(vectorM445W);
-            for (int i2 = 0; i2 < iM353a; i2++) {
-                Contact abstractC0041l = (Contact) vector.elementAt(i2);
-                if (!abstractC0041l.canUnblock() && (abstractC0041l.hasMessages() || abstractC0041l.isOnline() || (!abstractC0041l.canUnblock() && (z || (((zM1056C = abstractC0041l.account.isConnected()) && abstractC0041l.highlighted) || (!zM1056C && abstractC0041l.isOffline())))))) {
-                    c0013amM75b.addItem(abstractC0041l.createMenuItem().setLayout(iM586d, i / iM586d));
+            boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
+            Account currentAccount = TabBar.currentAccount;
+            Vector allContacts = currentAccount == null ? AccountManager.getAllContacts() : currentAccount.getAllContacts();
+            int contactCount = sortContacts(allContacts);
+            for (int i = 0; i < contactCount; i++) {
+                Contact contact = (Contact) allContacts.elementAt(i);
+                if (!contact.canUnblock() && (contact.hasMessages() || contact.isOnline() || (!contact.canUnblock() && (reverseSort || (((isConnected = contact.account.isConnected()) && contact.highlighted) || (!isConnected && contact.isOffline())))))) {
+                    screen.addItem(contact.createMenuItem().setLayout(layoutColumns, availableWidth / layoutColumns));
                 }
             }
-            ObjectPool.releaseVector(vector);
+            ObjectPool.releaseVector(allContacts);
         } else if (Storage.state().getBool(SettingsKeys.SETTING_GROUP_BY_STATUS)) {
-            int i3 = i / iM586d;
-            boolean zM587e = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
-            boolean z2 = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
-            Vector vectorM1213g = ObjectPool.newVector();
-            Vector vectorM446d = AccountManager.getContactGroups(TabBar.currentAccount);
-            int size = vectorM446d.size();
-            while (true) {
-                size--;
-                if (size < 0) {
-                    break;
-                }
-                ContactGroup abstractC0046q = (ContactGroup) vectorM446d.elementAt(size);
-                String str = abstractC0046q.name;
-                int size2 = vectorM1213g.size();
-                while (true) {
-                    size2--;
-                    if (size2 < 0) {
-                        c0054y = null;
-                        break;
-                    }
-                    MergedContactGroup c0054y2 = (MergedContactGroup) vectorM1213g.elementAt(size2);
-                    if (c0054y2.name.equals(str)) {
-                        c0054y = c0054y2;
+            int itemWidth = availableWidth / layoutColumns;
+            boolean showGroups = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
+            boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
+            Vector mergedGroups = ObjectPool.newVector();
+            Vector contactGroups = AccountManager.getContactGroups(TabBar.currentAccount);
+            for (int idx = contactGroups.size() - 1; idx >= 0; idx--) {
+                ContactGroup group = (ContactGroup) contactGroups.elementAt(idx);
+                String groupName = group.name;
+                foundGroup = null;
+                for (int idx2 = mergedGroups.size() - 1; idx2 >= 0; idx2--) {
+                    MergedContactGroup candidate = (MergedContactGroup) mergedGroups.elementAt(idx2);
+                    if (candidate.name.equals(groupName)) {
+                        foundGroup = candidate;
                         break;
                     }
                 }
-                MergedContactGroup c0054y3 = c0054y;
-                if (c0054y == null) {
-                    MergedContactGroup c0054y4 = new MergedContactGroup(abstractC0046q, vectorM1213g.size());
-                    c0054y3 = c0054y4;
-                    vectorM1213g.addElement(c0054y4);
+                MergedContactGroup mergedGroup = foundGroup;
+                if (foundGroup == null) {
+                    MergedContactGroup newMergedGroup = new MergedContactGroup(group, mergedGroups.size());
+                    mergedGroup = newMergedGroup;
+                    mergedGroups.addElement(newMergedGroup);
                 }
-                Vector vector2 = abstractC0046q.contacts;
-                int size3 = vector2.size();
-                while (true) {
-                    size3--;
-                    if (size3 < 0) {
-                        break;
-                    }
-                    c0054y3.addContact(vector2.elementAt(size3));
+                Vector groupContacts = group.contacts;
+                for (int idx3 = groupContacts.size() - 1; idx3 >= 0; idx3--) {
+                    mergedGroup.addContact(groupContacts.elementAt(idx3));
                 }
             }
-            ObjectPool.releaseVector(vectorM446d);
-            int iM353a2 = sortContacts(vectorM1213g);
-            for (int i4 = 0; i4 < iM353a2; i4++) {
-                ContactGroup abstractC0046q2 = (ContactGroup) vectorM1213g.elementAt(i4);
-                boolean z3 = false;
-                if (zM587e || !abstractC0046q2.isNotSpecial()) {
-                    c0013amM75b.addItem(abstractC0046q2.createMenuItem(-1).setLayout(iM586d, i));
-                    z3 = true;
+            ObjectPool.releaseVector(contactGroups);
+            int groupCount = sortContacts(mergedGroups);
+            for (int i = 0; i < groupCount; i++) {
+                ContactGroup group = (ContactGroup) mergedGroups.elementAt(i);
+                boolean headerAdded = false;
+                if (showGroups || !group.isNotSpecial()) {
+                    screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
+                    headerAdded = true;
                 }
-                if (abstractC0046q2.isNotSpecial()) {
-                    Vector vector3 = abstractC0046q2.contacts;
-                    int iM353a3 = sortContacts(vector3);
-                    for (int i5 = 0; i5 < iM353a3; i5++) {
-                        Contact abstractC0041l2 = (Contact) vector3.elementAt(i5);
-                        if (shouldDisplayContact(z2, abstractC0041l2)) {
-                            if (!z3) {
-                                c0013amM75b.addItem(abstractC0046q2.createMenuItem(-1).setLayout(iM586d, i));
-                                z3 = true;
+                if (group.isNotSpecial()) {
+                    Vector groupContacts = group.contacts;
+                    int contactCount = sortContacts(groupContacts);
+                    for (int j = 0; j < contactCount; j++) {
+                        Contact contact = (Contact) groupContacts.elementAt(j);
+                        if (shouldDisplayContact(reverseSort, contact)) {
+                            if (!headerAdded) {
+                                screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
+                                headerAdded = true;
                             }
-                            c0013amM75b.addItem(abstractC0041l2.createMenuItem().setLayout(iM586d, i3));
+                            screen.addItem(contact.createMenuItem().setLayout(layoutColumns, itemWidth));
                         }
                     }
                 }
             }
-            ObjectPool.releaseVector(vectorM1213g);
-            MergedContactGroup c0054y5 = null;
-            MergedContactGroup c0054y6 = null;
-            MergedContactGroup c0054y7 = null;
-            MergedContactGroup c0054y8 = null;
-            int iM433Q = AccountManager.getActiveAccountCount();
-            while (true) {
-                iM433Q--;
-                if (iM433Q < 0) {
-                    break;
-                }
-                Account abstractC0037hM434I = AccountManager.getAccountByIndex(iM433Q);
-                Account abstractC0037h2 = TabBar.currentAccount;
-                if (abstractC0037h2 == null || abstractC0037h2 == abstractC0037hM434I) {
-                    Vector vectorMo720O = abstractC0037hM434I.getPendingContacts();
-                    int size4 = vectorMo720O.size();
-                    int i6 = size4;
-                    if (size4 > 0) {
-                        if (c0054y8 == null) {
-                            c0054y8 = new MergedContactGroup(abstractC0037hM434I.specialGroup, -4);
+            ObjectPool.releaseVector(mergedGroups);
+            MergedContactGroup offlineMerged = null;
+            MergedContactGroup onlineMerged = null;
+            MergedContactGroup unreadMerged = null;
+            MergedContactGroup pendingMerged = null;
+            for (int acctIdx = AccountManager.getActiveAccountCount() - 1; acctIdx >= 0; acctIdx--) {
+                Account account = AccountManager.getAccountByIndex(acctIdx);
+                Account currentAccount = TabBar.currentAccount;
+                if (currentAccount == null || currentAccount == account) {
+                    Vector pendingContacts = account.getPendingContacts();
+                    int pendingSize = pendingContacts.size();
+                    if (pendingSize > 0) {
+                        if (pendingMerged == null) {
+                            pendingMerged = new MergedContactGroup(account.specialGroup, -4);
                         }
-                        while (true) {
-                            i6--;
-                            if (i6 < 0) {
-                                break;
-                            }
-                            c0054y8.addContact(vectorMo720O.elementAt(i6));
+                        for (int j = pendingSize - 1; j >= 0; j--) {
+                            pendingMerged.addContact(pendingContacts.elementAt(j));
                         }
                     }
-                    ObjectPool.releaseVector(vectorMo720O);
-                    Vector vectorM1077N = abstractC0037hM434I.getOfflineContacts();
-                    int size5 = vectorM1077N.size();
-                    int i7 = size5;
-                    if (size5 > 0) {
-                        if (c0054y5 == null) {
-                            c0054y5 = new MergedContactGroup(abstractC0037hM434I.offlineGroup, -1);
+                    ObjectPool.releaseVector(pendingContacts);
+                    Vector offlineContacts = account.getOfflineContacts();
+                    int offlineSize = offlineContacts.size();
+                    if (offlineSize > 0) {
+                        if (offlineMerged == null) {
+                            offlineMerged = new MergedContactGroup(account.offlineGroup, -1);
                         }
-                        while (true) {
-                            i7--;
-                            if (i7 < 0) {
-                                break;
-                            }
-                            c0054y5.addContact(vectorM1077N.elementAt(i7));
+                        for (int j = offlineSize - 1; j >= 0; j--) {
+                            offlineMerged.addContact(offlineContacts.elementAt(j));
                         }
                     }
-                    ObjectPool.releaseVector(vectorM1077N);
-                    Vector vectorM1079Q = abstractC0037hM434I.getOnlineContacts();
-                    int size6 = vectorM1079Q.size();
-                    int i8 = size6;
-                    if (size6 > 0) {
-                        if (c0054y6 == null) {
-                            c0054y6 = new MergedContactGroup(abstractC0037hM434I.defaultGroup, -2);
+                    ObjectPool.releaseVector(offlineContacts);
+                    Vector onlineContacts = account.getOnlineContacts();
+                    int onlineSize = onlineContacts.size();
+                    if (onlineSize > 0) {
+                        if (onlineMerged == null) {
+                            onlineMerged = new MergedContactGroup(account.defaultGroup, -2);
                         }
-                        while (true) {
-                            i8--;
-                            if (i8 < 0) {
-                                break;
-                            }
-                            c0054y6.addContact(vectorM1079Q.elementAt(i8));
+                        for (int j = onlineSize - 1; j >= 0; j--) {
+                            onlineMerged.addContact(onlineContacts.elementAt(j));
                         }
                     }
-                    ObjectPool.releaseVector(vectorM1079Q);
-                    Vector vectorM1076M = abstractC0037hM434I.getUnreadContacts();
-                    int size7 = vectorM1076M.size();
-                    int i9 = size7;
-                    if (size7 > 0) {
-                        if (c0054y7 == null) {
-                            c0054y7 = new MergedContactGroup(abstractC0037hM434I.onlineGroup, -3);
+                    ObjectPool.releaseVector(onlineContacts);
+                    Vector unreadContacts = account.getUnreadContacts();
+                    int unreadSize = unreadContacts.size();
+                    if (unreadSize > 0) {
+                        if (unreadMerged == null) {
+                            unreadMerged = new MergedContactGroup(account.onlineGroup, -3);
                         }
-                        while (true) {
-                            i9--;
-                            if (i9 < 0) {
-                                break;
-                            }
-                            c0054y7.addContact(vectorM1076M.elementAt(i9));
+                        for (int j = unreadSize - 1; j >= 0; j--) {
+                            unreadMerged.addContact(unreadContacts.elementAt(j));
                         }
                     }
-                    ObjectPool.releaseVector(vectorM1076M);
+                    ObjectPool.releaseVector(unreadContacts);
                 }
             }
-            if (c0054y8 != null) {
-                Vector vector4 = c0054y8.contacts;
-                int iM353a4 = sortContacts(vector4);
-                c0013amM75b.addItem(c0054y8.createMenuItem(iM353a4).setLayout(iM586d, i));
-                if (c0054y8.isNotSpecial()) {
-                    for (int i10 = 0; i10 < iM353a4; i10++) {
-                        c0013amM75b.addItem(((Contact) vector4.elementAt(i10)).createMenuItem().setLayout(iM586d, i3));
+            if (pendingMerged != null) {
+                Vector contacts = pendingMerged.contacts;
+                int sortedCount = sortContacts(contacts);
+                screen.addItem(pendingMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
+                if (pendingMerged.isNotSpecial()) {
+                    for (int j = 0; j < sortedCount; j++) {
+                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                     }
-                    ObjectPool.releaseVector(vector4);
+                    ObjectPool.releaseVector(contacts);
                 }
             }
-            if (c0054y5 != null) {
-                Vector vector5 = c0054y5.contacts;
-                int iM353a5 = sortContacts(vector5);
-                c0013amM75b.addItem(c0054y5.createMenuItem(iM353a5).setLayout(iM586d, i));
-                if (c0054y5.isNotSpecial()) {
-                    for (int i11 = 0; i11 < iM353a5; i11++) {
-                        c0013amM75b.addItem(((Contact) vector5.elementAt(i11)).createMenuItem().setLayout(iM586d, i3));
+            if (offlineMerged != null) {
+                Vector contacts = offlineMerged.contacts;
+                int sortedCount = sortContacts(contacts);
+                screen.addItem(offlineMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
+                if (offlineMerged.isNotSpecial()) {
+                    for (int j = 0; j < sortedCount; j++) {
+                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                     }
-                    ObjectPool.releaseVector(vector5);
+                    ObjectPool.releaseVector(contacts);
                 }
             }
-            if (c0054y7 != null) {
-                Vector vector6 = c0054y7.contacts;
-                int iM353a6 = sortContacts(vector6);
-                c0013amM75b.addItem(c0054y7.createMenuItem(iM353a6).setLayout(iM586d, i));
-                if (c0054y7.isNotSpecial()) {
-                    for (int i12 = 0; i12 < iM353a6; i12++) {
-                        c0013amM75b.addItem(((Contact) vector6.elementAt(i12)).createMenuItem().setLayout(iM586d, i3));
+            if (unreadMerged != null) {
+                Vector contacts = unreadMerged.contacts;
+                int sortedCount = sortContacts(contacts);
+                screen.addItem(unreadMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
+                if (unreadMerged.isNotSpecial()) {
+                    for (int j = 0; j < sortedCount; j++) {
+                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                     }
-                    ObjectPool.releaseVector(vector6);
+                    ObjectPool.releaseVector(contacts);
                 }
             }
-            if (c0054y6 != null) {
-                Vector vector7 = c0054y6.contacts;
-                int iM353a7 = sortContacts(vector7);
-                c0013amM75b.addItem(c0054y6.createMenuItem(iM353a7).setLayout(iM586d, i));
-                if (c0054y6.isNotSpecial()) {
-                    for (int i13 = 0; i13 < iM353a7; i13++) {
-                        c0013amM75b.addItem(((Contact) vector7.elementAt(i13)).createMenuItem().setLayout(iM586d, i3));
+            if (onlineMerged != null) {
+                Vector contacts = onlineMerged.contacts;
+                int sortedCount = sortContacts(contacts);
+                screen.addItem(onlineMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
+                if (onlineMerged.isNotSpecial()) {
+                    for (int j = 0; j < sortedCount; j++) {
+                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                     }
-                    ObjectPool.releaseVector(vector7);
+                    ObjectPool.releaseVector(contacts);
                 }
             }
         } else {
-            int i14 = i / iM586d;
-            Vector vectorM446d2 = AccountManager.getContactGroups(TabBar.currentAccount);
-            int iM353a8 = sortContacts(vectorM446d2);
-            boolean zM587e2 = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
-            boolean z4 = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
-            for (int i15 = 0; i15 < iM353a8; i15++) {
-                ContactGroup abstractC0046q3 = (ContactGroup) vectorM446d2.elementAt(i15);
-                boolean z5 = false;
-                if (zM587e2 || !abstractC0046q3.isNotSpecial()) {
-                    c0013amM75b.addItem(abstractC0046q3.createMenuItem(-1).setLayout(iM586d, i));
-                    z5 = true;
+            int itemWidth = availableWidth / layoutColumns;
+            Vector contactGroups = AccountManager.getContactGroups(TabBar.currentAccount);
+            int groupCount = sortContacts(contactGroups);
+            boolean showGroups = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
+            boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
+            for (int i = 0; i < groupCount; i++) {
+                ContactGroup group = (ContactGroup) contactGroups.elementAt(i);
+                boolean headerAdded = false;
+                if (showGroups || !group.isNotSpecial()) {
+                    screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
+                    headerAdded = true;
                 }
-                if (abstractC0046q3.isNotSpecial()) {
-                    Vector vector8 = abstractC0046q3.contacts;
-                    int iM353a9 = sortContacts(vector8);
-                    for (int i16 = 0; i16 < iM353a9; i16++) {
-                        Contact abstractC0041l3 = (Contact) vector8.elementAt(i16);
-                        if (shouldDisplayContact(z4, abstractC0041l3)) {
-                            if (!z5) {
-                                c0013amM75b.addItem(abstractC0046q3.createMenuItem(-1).setLayout(iM586d, i));
-                                z5 = true;
+                if (group.isNotSpecial()) {
+                    Vector groupContacts = group.contacts;
+                    int contactCount = sortContacts(groupContacts);
+                    for (int j = 0; j < contactCount; j++) {
+                        Contact contact = (Contact) groupContacts.elementAt(j);
+                        if (shouldDisplayContact(reverseSort, contact)) {
+                            if (!headerAdded) {
+                                screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
+                                headerAdded = true;
                             }
-                            c0013amM75b.addItem(abstractC0041l3.createMenuItem().setLayout(iM586d, i14));
+                            screen.addItem(contact.createMenuItem().setLayout(layoutColumns, itemWidth));
                         }
                     }
                 }
             }
-            ObjectPool.releaseVector(vectorM446d2);
-            int iM433Q2 = AccountManager.getActiveAccountCount();
-            int i17 = iM433Q2;
-            while (true) {
-                i17--;
-                if (i17 < 0) {
-                    break;
-                }
-                Account abstractC0037hM434I2 = AccountManager.getAccountByIndex(i17);
-                Account abstractC0037h3 = TabBar.currentAccount;
-                if (abstractC0037h3 == null || abstractC0037h3 == abstractC0037hM434I2) {
-                    ContactGroup abstractC0046q4 = abstractC0037hM434I2.specialGroup;
-                    Vector vectorMo720O2 = abstractC0037hM434I2.getPendingContacts();
-                    int size8 = vectorMo720O2.size();
-                    if (size8 > 0) {
-                        c0013amM75b.addItem(abstractC0046q4.createMenuItem(size8).setLayout(iM586d, i));
-                        if (abstractC0046q4.isNotSpecial()) {
-                            sortContacts(vectorMo720O2);
-                            for (int i18 = 0; i18 < size8; i18++) {
-                                c0013amM75b.addItem(((Contact) vectorMo720O2.elementAt(i18)).createMenuItem().setLayout(iM586d, i14));
+            ObjectPool.releaseVector(contactGroups);
+            int accountCount = AccountManager.getActiveAccountCount();
+            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+                Account account = AccountManager.getAccountByIndex(acctIdx);
+                Account currentAccount = TabBar.currentAccount;
+                if (currentAccount == null || currentAccount == account) {
+                    ContactGroup specialGroup = account.specialGroup;
+                    Vector pendingContacts = account.getPendingContacts();
+                    int pendingSize = pendingContacts.size();
+                    if (pendingSize > 0) {
+                        screen.addItem(specialGroup.createMenuItem(pendingSize).setLayout(layoutColumns, availableWidth));
+                        if (specialGroup.isNotSpecial()) {
+                            sortContacts(pendingContacts);
+                            for (int j = 0; j < pendingSize; j++) {
+                                screen.addItem(((Contact) pendingContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                             }
                         }
                     }
-                    ObjectPool.releaseVector(vectorMo720O2);
+                    ObjectPool.releaseVector(pendingContacts);
                 }
             }
-            int i19 = iM433Q2;
-            while (true) {
-                i19--;
-                if (i19 < 0) {
-                    break;
-                }
-                Account abstractC0037hM434I3 = AccountManager.getAccountByIndex(i19);
-                Account abstractC0037h4 = TabBar.currentAccount;
-                if (abstractC0037h4 == null || abstractC0037h4 == abstractC0037hM434I3) {
-                    ContactGroup abstractC0046q5 = abstractC0037hM434I3.offlineGroup;
-                    Vector vectorM1077N2 = abstractC0037hM434I3.getOfflineContacts();
-                    int size9 = vectorM1077N2.size();
-                    if (size9 > 0) {
-                        c0013amM75b.addItem(abstractC0046q5.createMenuItem(size9).setLayout(iM586d, i));
-                        if (abstractC0046q5.isNotSpecial()) {
-                            sortContacts(vectorM1077N2);
-                            for (int i20 = 0; i20 < size9; i20++) {
-                                c0013amM75b.addItem(((Contact) vectorM1077N2.elementAt(i20)).createMenuItem().setLayout(iM586d, i14));
+            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+                Account account = AccountManager.getAccountByIndex(acctIdx);
+                Account currentAccount = TabBar.currentAccount;
+                if (currentAccount == null || currentAccount == account) {
+                    ContactGroup offlineGroup = account.offlineGroup;
+                    Vector offlineContacts = account.getOfflineContacts();
+                    int offlineSize = offlineContacts.size();
+                    if (offlineSize > 0) {
+                        screen.addItem(offlineGroup.createMenuItem(offlineSize).setLayout(layoutColumns, availableWidth));
+                        if (offlineGroup.isNotSpecial()) {
+                            sortContacts(offlineContacts);
+                            for (int j = 0; j < offlineSize; j++) {
+                                screen.addItem(((Contact) offlineContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                             }
                         }
                     }
-                    ObjectPool.releaseVector(vectorM1077N2);
+                    ObjectPool.releaseVector(offlineContacts);
                 }
             }
-            int i21 = iM433Q2;
-            while (true) {
-                i21--;
-                if (i21 < 0) {
-                    break;
-                }
-                Account abstractC0037hM434I4 = AccountManager.getAccountByIndex(i21);
-                Account abstractC0037h5 = TabBar.currentAccount;
-                if (abstractC0037h5 == null || abstractC0037h5 == abstractC0037hM434I4) {
-                    ContactGroup abstractC0046q6 = abstractC0037hM434I4.defaultGroup;
-                    Vector vectorM1079Q2 = abstractC0037hM434I4.getOnlineContacts();
-                    int size10 = vectorM1079Q2.size();
-                    if (size10 > 0) {
-                        c0013amM75b.addItem(abstractC0046q6.createMenuItem(size10).setLayout(iM586d, i));
-                        if (abstractC0046q6.isNotSpecial()) {
-                            sortContacts(vectorM1079Q2);
-                            for (int i22 = 0; i22 < size10; i22++) {
-                                c0013amM75b.addItem(((Contact) vectorM1079Q2.elementAt(i22)).createMenuItem().setLayout(iM586d, i14));
+            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+                Account account = AccountManager.getAccountByIndex(acctIdx);
+                Account currentAccount = TabBar.currentAccount;
+                if (currentAccount == null || currentAccount == account) {
+                    ContactGroup defaultGroup = account.defaultGroup;
+                    Vector onlineContacts = account.getOnlineContacts();
+                    int onlineSize = onlineContacts.size();
+                    if (onlineSize > 0) {
+                        screen.addItem(defaultGroup.createMenuItem(onlineSize).setLayout(layoutColumns, availableWidth));
+                        if (defaultGroup.isNotSpecial()) {
+                            sortContacts(onlineContacts);
+                            for (int j = 0; j < onlineSize; j++) {
+                                screen.addItem(((Contact) onlineContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                             }
                         }
                     }
-                    ObjectPool.releaseVector(vectorM1079Q2);
+                    ObjectPool.releaseVector(onlineContacts);
                 }
             }
-            int i23 = iM433Q2;
-            while (true) {
-                i23--;
-                if (i23 < 0) {
-                    break;
-                }
-                Account abstractC0037hM434I5 = AccountManager.getAccountByIndex(i23);
-                Account abstractC0037h6 = TabBar.currentAccount;
-                if (abstractC0037h6 == null || abstractC0037h6 == abstractC0037hM434I5) {
-                    ContactGroup abstractC0046q7 = abstractC0037hM434I5.onlineGroup;
-                    Vector vectorM1076M2 = abstractC0037hM434I5.getUnreadContacts();
-                    int size11 = vectorM1076M2.size();
-                    if (size11 > 0) {
-                        c0013amM75b.addItem(abstractC0046q7.createMenuItem(size11).setLayout(iM586d, i));
-                        if (abstractC0046q7.isNotSpecial()) {
-                            sortContacts(vectorM1076M2);
-                            for (int i24 = 0; i24 < size11; i24++) {
-                                c0013amM75b.addItem(((Contact) vectorM1076M2.elementAt(i24)).createMenuItem().setLayout(iM586d, i14));
+            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+                Account account = AccountManager.getAccountByIndex(acctIdx);
+                Account currentAccount = TabBar.currentAccount;
+                if (currentAccount == null || currentAccount == account) {
+                    ContactGroup unreadGroup = account.onlineGroup;
+                    Vector unreadContacts = account.getUnreadContacts();
+                    int unreadSize = unreadContacts.size();
+                    if (unreadSize > 0) {
+                        screen.addItem(unreadGroup.createMenuItem(unreadSize).setLayout(layoutColumns, availableWidth));
+                        if (unreadGroup.isNotSpecial()) {
+                            sortContacts(unreadContacts);
+                            for (int j = 0; j < unreadSize; j++) {
+                                screen.addItem(((Contact) unreadContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
                             }
                         }
                     }
-                    ObjectPool.releaseVector(vectorM1076M2);
+                    ObjectPool.releaseVector(unreadContacts);
                 }
             }
         }
         TabBar.layout();
-        return c0013amM75b.initTabs();
+        return screen.initTabs();
     }
 
-    /* renamed from: a */
-    private static final boolean shouldDisplayContact(boolean z, Contact abstractC0041l) {
-        return ((!abstractC0041l.hasMessages() && !z && !abstractC0041l.highlighted) || abstractC0041l.canUnblock() || abstractC0041l.hasUnread() || abstractC0041l.isOnline() || abstractC0041l.isOffline() || abstractC0041l.isSystem()) ? false : true;
+    private static final boolean shouldDisplayContact(boolean reverseSort, Contact contact) {
+        return ((!contact.hasMessages() && !reverseSort && !contact.highlighted) || contact.canUnblock() || contact.hasUnread() || contact.isOnline() || contact.isOffline() || contact.isSystem()) ? false : true;
     }
 
-    /* renamed from: a */
-    public static final ListView addContactItems(ListView screen, Vector vector) {
+    public static final ListView addContactItems(ListView screen, Vector items) {
         MenuItem menuItem;
-        int count = Utils.vectorSize(vector);
+        int count = Utils.vectorSize(items);
         for (int i = 0; i < count; i++) {
-            Object item = vector.elementAt(i);
+            Object item = items.elementAt(i);
             if (item instanceof Contact) {
                 menuItem = ((Contact) item).createMenuItem();
             } else if (item instanceof ContactGroup) {
@@ -591,28 +508,25 @@ public abstract class ContactListManager {
         return screen;
     }
 
-    /* renamed from: a */
     public static final void updateContactFlags(Contact contact) {
         Storage.state().setBool(UIKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
     }
 
-    /* renamed from: a */
     public static final int getGroupCount(Account acct) {
-        Vector vector = acct.groups;
-        int count = Utils.vectorSize(vector);
+        Vector groups = acct.groups;
+        int count = Utils.vectorSize(groups);
         if (count > 0) {
             StringBuffer sb = ObjectPool.newStringBuffer();
             for (int i = 0; i < count; i++) {
-                sb.append(((ContactGroup) vector.elementAt(i)).name).append((char) 0);
+                sb.append(((ContactGroup) groups.elementAt(i)).name).append((char) 0);
             }
             Storage.state().setFromBuffer(UIKeys.SLOT_MENU_ITEM_1, sb);
-            Storage.state().setObject(ContactKeys.VEC_GROUP_LIST, vector);
+            Storage.state().setObject(ContactKeys.VEC_GROUP_LIST, groups);
             Storage.state().setInt(ContactKeys.INT_GROUP_OPERATION_RESULT, 0);
         }
         return count;
     }
 
-    /* renamed from: b */
     public static final void showAddContactScreen() {
         ContactInfo contactInfo = (ContactInfo) Storage.state().getObject(ContactKeys.SLOT_CONTACT_INFO);
         Account acctRef = contactInfo.getAccount();
@@ -643,140 +557,120 @@ public abstract class ContactListManager {
         Storage.state().setObject(ContactKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ADD_SCREEN));
     }
-
-    /* JADX WARN: Removed duplicated region for block: B:28:0x00a9  */
-    /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static final ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
         MenuItem menuItem = null;
         if (contact != null) {
             acct = contact.account;
         }
         Vector contacts = acct.getAllContacts();
-        int size = contacts.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                break;
-            }
-            MrimContact mrimContact = (MrimContact) contacts.elementAt(size);
+        for (int idx = contacts.size() - 1; idx >= 0; idx--) {
+            MrimContact mrimContact = (MrimContact) contacts.elementAt(idx);
             if (mrimContact.isSystem() || mrimContact.isOnline() || mrimContact.isOffline() || mrimContact.hasUnread()) {
-                contacts.removeElementAt(size);
+                contacts.removeElementAt(idx);
             }
         }
         sortContacts(contacts);
         for (int i = 0; i < contacts.size(); i++) {
-            MrimContact mrimContact2 = (MrimContact) contacts.elementAt(i);
-            String str = mrimContact2.simpleIdentifier;
-            String str2 = mrimContact2.displayName;
+            MrimContact candidate = (MrimContact) contacts.elementAt(i);
+            String identifier = candidate.simpleIdentifier;
+            String displayName = candidate.displayName;
             if (contact != null) {
-                MrimContact mrimContact3 = (MrimContact) contact;
-                menuItem = mrimContact3.groupsList != null && mrimContact3.groupsList.contains(str) ? new MenuItem(2, str2).setIconAndLabel(375, str2) : MenuItem.createCheckbox(str2, false);
+                MrimContact targetContact = (MrimContact) contact;
+                menuItem = targetContact.groupsList != null && targetContact.groupsList.contains(identifier) ? new MenuItem(2, displayName).setIconAndLabel(375, displayName) : MenuItem.createCheckbox(displayName, false);
             }
-            menuItem.title = str;
+            menuItem.title = identifier;
             screen.addItem(menuItem);
         }
         ObjectPool.releaseVector(contacts);
         return screen;
     }
 
-    /* renamed from: a */
-    public static final Vector getCheckedItems(ListView screen, int i) {
-        Vector vectorM1213g = ObjectPool.newVector();
-        Vector vector = screen.menuItems;
-        int size = vector.size();
-        while (true) {
-            size--;
-            if (size < i) {
-                return vectorM1213g;
-            }
-            MenuItem menuItem = (MenuItem) vector.elementAt(size);
-            Object obj = menuItem.data;
-            if (obj != null && ((Boolean) obj).booleanValue()) {
-                vectorM1213g.addElement(menuItem.title);
+    public static final Vector getCheckedItems(ListView screen, int startIndex) {
+        Vector checkedItems = ObjectPool.newVector();
+        Vector items = screen.menuItems;
+        for (int idx = items.size() - 1; idx >= startIndex; idx--) {
+            MenuItem menuItem = (MenuItem) items.elementAt(idx);
+            Object data = menuItem.data;
+            if (data != null && ((Boolean) data).booleanValue()) {
+                checkedItems.addElement(menuItem.title);
             }
         }
+        return checkedItems;
     }
 
-    /* JADX DEBUG: Multi-variable search result rejected for r0v1, resolved type: l */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* renamed from: b */
-    public static final int handleContactMenuAction(String str, int i) {
+    public static final int handleContactMenuAction(String label, int actionId) {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Contact contact = Storage.state().getCurrentContact();
-        if (i == 63 && !contact.account.isConnected()) {
+        if (actionId == 63 && !contact.account.isConnected()) {
             return NotificationHelper.showError(299);
         }
-        if (i == 54 || i == 63 || i == 85) {
+        if (actionId == 54 || actionId == 63 || actionId == 85) {
             ScreenBuilder.onScreenClosed();
         }
-        if (StringUtils.matchesKey(717, str)) {
-            int iM993f = ((MrimContact) contact).requestUserDetails();
-            return 0 != iM993f ? NotificationHelper.showError(iM993f) : i;
+        if (StringUtils.matchesKey(717, label)) {
+            int errorCode = ((MrimContact) contact).requestUserDetails();
+            return errorCode != 0 ? NotificationHelper.showError(errorCode) : actionId;
         }
-        if (i == 65) {
+        if (actionId == 65) {
             ScreenBuilder.onScreenClosed();
             return clearSmsFields();
         }
-        if (i == 66) {
+        if (actionId == 66) {
             if (contact instanceof XmppContact) {
-                return ((XmppContact) contact).sendPresence(40);
+                return ((XmppContact) contact).sendPresence(PRESENCE_SUBSCRIBE);
             }
             Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, new ContactInfo(contact));
-        } else if (i == 54) {
+        } else if (actionId == 54) {
             Storage.state().setAccount(contact.account);
             MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
-        } else if (i == 6) {
+        } else if (actionId == 6) {
             ListItem item = (ListItem) contact;
             item.deselect();
             MapController.selectMapItem(item);
         }
-        return i;
+        return actionId;
     }
 
-    /* renamed from: c */
-    public static final int handleContactGroupAction(String str, int i) {
+    public static final int handleContactGroupAction(String label, int actionId) {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
-        Object obj = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
-        if (i == 63 && !((Contact) obj).account.isConnected()) {
+        Object entity = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
+        if (actionId == 63 && !((Contact) entity).account.isConnected()) {
             return NotificationHelper.showError(299);
         }
-        if (i == 40 || i == 63 || i == 85) {
+        if (actionId == 40 || actionId == 63 || actionId == 85) {
             ScreenBuilder.onScreenClosed();
-            if (i != 85) {
+            if (actionId != 85) {
                 openContactMessages();
             }
         }
-        if (StringUtils.matchesKey(717, str)) {
-            int iM993f = ((MrimContact) obj).requestUserDetails();
-            if (0 != iM993f) {
-                return NotificationHelper.showError(iM993f);
+        if (StringUtils.matchesKey(717, label)) {
+            int errorCode = ((MrimContact) entity).requestUserDetails();
+            if (errorCode != 0) {
+                return NotificationHelper.showError(errorCode);
             }
             return ScreenId.CLEAR_SEARCH;
         }
-        if (i == 65) {
+        if (actionId == 65) {
             ScreenBuilder.onScreenClosed();
             openContactMessages();
             return clearSmsFields();
         }
-        if (i == 66) {
-            if (obj instanceof XmppContact) {
-                return ((XmppContact) obj).sendPresence(4);
+        if (actionId == 66) {
+            if (entity instanceof XmppContact) {
+                return ((XmppContact) entity).sendPresence(PRESENCE_UNSUBSCRIBE);
             }
-            Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, new ContactInfo((Contact) obj));
-        } else if (i == 54) {
-            Storage.state().setAccount(((MrimContact) obj).account);
-            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) obj).simpleIdentifier), (String) null, (String) null);
-        } else if (i == 6) {
-            ListItem item = (ListItem) obj;
+            Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, new ContactInfo((Contact) entity));
+        } else if (actionId == 54) {
+            Storage.state().setAccount(((MrimContact) entity).account);
+            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) entity).simpleIdentifier), (String) null, (String) null);
+        } else if (actionId == 6) {
+            ListItem item = (ListItem) entity;
             item.deselect();
             MapController.selectMapItem(item);
             MapController.applyViewMode(true, false, !Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE));
             Storage.state().setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
         }
-        return i;
+        return actionId;
     }
 
     public static final int sortContacts(Vector vector) {
@@ -816,42 +710,29 @@ public abstract class ContactListManager {
     public static final Vector getMapContacts() {
         Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
-        int size = mrimAccounts.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return result;
-            }
-            Vector contacts = AccountManager.getMrimAccount(mrimAccounts, size).getAllContacts();
-            int size2 = contacts.size();
-            while (true) {
-                size2--;
-                if (size2 < 0) {
-                    break;
-                }
-                MrimContact contact = (MrimContact) contacts.elementAt(size2);
+        for (int idx = mrimAccounts.size() - 1; idx >= 0; idx--) {
+            Vector contacts = AccountManager.getMrimAccount(mrimAccounts, idx).getAllContacts();
+            for (int idx2 = contacts.size() - 1; idx2 >= 0; idx2--) {
+                MrimContact contact = (MrimContact) contacts.elementAt(idx2);
                 if (contact.hasVCard()) {
                     result.addElement(contact);
                 }
             }
             ObjectPool.releaseVector(contacts);
         }
+        return result;
     }
 
     public static final Vector getMapProfiles() {
         Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
-        int size = mrimAccounts.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return result;
-            }
-            MrimAccount account = AccountManager.getMrimAccount(mrimAccounts, size);
+        for (int idx = mrimAccounts.size() - 1; idx >= 0; idx--) {
+            MrimAccount account = AccountManager.getMrimAccount(mrimAccounts, idx);
             if (account.profileManager.profile.hasCoordinates()) {
                 result.addElement(account);
             }
         }
+        return result;
     }
 
     public static final void openContactMessages() {
@@ -909,13 +790,8 @@ public abstract class ContactListManager {
         g.fillRect(0, 0, 2048, 2048);
         int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), 16);
         Vector tabs = Storage.state().getVector(UIKeys.VEC_POPUP_ITEMS);
-        int size = tabs.size();
-        while (true) {
-            size--;
-            if (size < 0) {
-                return;
-            }
-            Account account = (Account) tabs.elementAt(size);
+        for (int idx = tabs.size() - 1; idx >= 0; idx--) {
+            Account account = (Account) tabs.elementAt(idx);
             int barTop = screenHeight;
             int fontHeight = Storage.state().getInt(UIKeys.INT_FONT_HEIGHT);
             int barHeight3 = Utils.max(fontHeight, 16);
@@ -929,17 +805,14 @@ public abstract class ContactListManager {
         }
     }
 
-    /* renamed from: a */
-    public static final void dialPhoneContact(PhoneContact contact, int i) {
-        dialPhoneUrl(VCard.formatPhoneContactUrl(contact, i), contact, i);
+    public static final void dialPhoneContact(PhoneContact contact, int phoneIndex) {
+        dialPhoneUrl(VCard.formatPhoneContactUrl(contact, phoneIndex), contact, phoneIndex);
     }
 
-    /* renamed from: a */
-    public static final void dialPhoneUrl(String str, PhoneContact contact, int i) {
-        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_ASYNC, new Object[]{str, contact, ObjectPool.integerOf(i)});
+    public static final void dialPhoneUrl(String url, PhoneContact contact, int phoneIndex) {
+        new AsyncTask(AsyncTaskId.PARSE_CONTACTS_ASYNC, new Object[]{url, contact, ObjectPool.integerOf(phoneIndex)});
     }
 
-    /* renamed from: g */
     public static final int clearSmsFields() {
         Storage.state().clearIndex(RegistrationKeys.SLOT_SEARCH_LABEL_1);
         Storage.state().clearIndex(UIKeys.SLOT_STATUS_TEXT);
@@ -948,11 +821,11 @@ public abstract class ContactListManager {
     }
 
     public static int validateContactAction() {
-        Object obj = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
-        if (obj == null || !(obj instanceof Contact)) {
+        Object entity = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
+        if (entity == null || !(entity instanceof Contact)) {
             return 0;
         }
-        Contact contact = (Contact) obj;
+        Contact contact = (Contact) entity;
         if (!contact.account.isConnected()) {
             return NotificationHelper.showError(299);
         }

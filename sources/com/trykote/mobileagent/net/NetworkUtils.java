@@ -3,26 +3,18 @@ package com.trykote.mobileagent.net;
 
 import com.trykote.mobileagent.util.*;
 
-/* renamed from: k */
-/* loaded from: MobileAgent_3.9.jar:k.class */
 public final class NetworkUtils {
 
-    /* renamed from: a */
     public final int type;
 
-    /* renamed from: b */
     public final int port;
 
-    /* renamed from: c */
     public final String host;
 
-    /* renamed from: d */
     public String url;
 
-    /* renamed from: e */
     public final int status;
 
-    /* renamed from: f */
     public final String protocol;
 
     public NetworkUtils(ByteBuffer buffer) {

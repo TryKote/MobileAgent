@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.util;
 
-
 import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
@@ -10,25 +9,19 @@ import com.trykote.mobileagent.protocol.mmp.*;
 import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
-/* renamed from: b */
-/* loaded from: MobileAgent_3.9.jar:b.class */
 public final class SoftFloat {
-    /* renamed from: l */
     private static boolean isNegative(long j) {
         return j < 0;
     }
 
-    /* renamed from: m */
     private static int getExponent(long j) {
         return (((int) (j >> 52)) & 2047) - 1075;
     }
 
-    /* renamed from: n */
     private static long getMantissa(long j) {
         return (j & 9218868437227405312L) == 0 ? (j & 4503599627370495L) << 1 : (j & 4503599627370495L) | 4503599627370496L;
     }
 
-    /* renamed from: a */
     private static long packFloat(boolean z, int i, long j) {
         if (j != 0) {
             int leadingZeros = BitMath.countLeadingZeros(j);
@@ -53,22 +46,18 @@ public final class SoftFloat {
         return j;
     }
 
-    /* renamed from: o */
     private static boolean isNaN(long j) {
         return (j & Long.MAX_VALUE) > 9218868437227405312L;
     }
 
-    /* renamed from: p */
     private static boolean isInfinite(long j) {
         return (j & Long.MAX_VALUE) == 9218868437227405312L;
     }
 
-    /* renamed from: q */
     private static boolean isZero(long j) {
         return (j & Long.MAX_VALUE) == 0;
     }
 
-    /* renamed from: a */
     public static long negate(long j) {
         if (isNaN(j)) {
             return 9221120237041090560L;
@@ -76,7 +65,6 @@ public final class SoftFloat {
         return j ^ Long.MIN_VALUE;
     }
 
-    /* renamed from: g */
     private static boolean lessOrEqual(long j, long j2) {
         if (isNaN(j) || isNaN(j2)) {
             return false;
@@ -84,7 +72,6 @@ public final class SoftFloat {
         return compareRaw(j, (j2 > Long.MIN_VALUE ? 1 : (j2 == Long.MIN_VALUE ? 0 : -1)) == 0 ? 0L : j2) <= 0;
     }
 
-    /* renamed from: h */
     private static boolean greaterOrEqual(long j, long j2) {
         if (isNaN(j) || isNaN(j2)) {
             return false;
@@ -92,7 +79,6 @@ public final class SoftFloat {
         return compareRaw((j > Long.MIN_VALUE ? 1 : (j == Long.MIN_VALUE ? 0 : -1)) == 0 ? 0L : j, j2) >= 0;
     }
 
-    /* renamed from: a */
     public static final int compare(long j, long j2) {
         boolean aNaN = isNaN(j);
         boolean aNaN2 = isNaN(j2);
@@ -105,7 +91,6 @@ public final class SoftFloat {
         return aNaN ? 1 : -1;
     }
 
-    /* renamed from: i */
     private static final int compareRaw(long j, long j2) {
         if (j == j2) {
             return 0;
@@ -113,12 +98,10 @@ public final class SoftFloat {
         return j < 0 ? (j2 >= 0 || j >= j2) ? -1 : 1 : (j2 >= 0 && j < j2) ? -1 : 1;
     }
 
-    /* renamed from: b */
     public static final long longToFloat(long j) {
         return j < 0 ? packFloat(true, 0, -j) : packFloat(false, 0, j);
     }
 
-    /* renamed from: c */
     public static final int floatToInt(long j) {
         long longValue = floatToLong(j);
         if (longValue >= 2147483647L) {
@@ -130,7 +113,6 @@ public final class SoftFloat {
         return (int) longValue;
     }
 
-    /* renamed from: d */
     public static final long floatToLong(long j) {
         long j2;
         if (isNaN(j)) {
@@ -153,7 +135,6 @@ public final class SoftFloat {
         return negative ? -j2 : j2;
     }
 
-    /* renamed from: b */
     public static final long add(long j, long j2) {
         if (isNaN(j) || isNaN(j2)) {
             return 9221120237041090560L;
@@ -208,12 +189,10 @@ public final class SoftFloat {
         return result;
     }
 
-    /* renamed from: c */
     public static final long subtract(long j, long j2) {
         return add(j, negate(j2));
     }
 
-    /* renamed from: d */
     public static final long multiply(long j, long j2) {
         if (isNaN(j) || isNaN(j2)) {
             return 9221120237041090560L;
@@ -251,7 +230,6 @@ public final class SoftFloat {
         return packFloat(negative, i, j13);
     }
 
-    /* renamed from: e */
     public static final long divide(long j, long j2) {
         if (isNaN(j) || isNaN(j2)) {
             return 9221120237041090560L;
@@ -294,7 +272,6 @@ public final class SoftFloat {
         return packFloat(negative, exponent2, j3);
     }
 
-    /* renamed from: a */
     private static long roundToInt(long j, boolean z, boolean z2) {
         long j2;
         long rounded;
@@ -327,7 +304,6 @@ public final class SoftFloat {
         return packFloat(negative, 0, rounded);
     }
 
-    /* renamed from: b */
     private static final long decimalToFloat(boolean z, int i, long j) {
         if (j == 0) {
             return z ? Long.MIN_VALUE : 0L;
@@ -359,7 +335,6 @@ public final class SoftFloat {
         return packFloat(z, i4, product);
     }
 
-    /* renamed from: j */
     private static final long multiplyHigh(long j, long j2) {
         long j3 = (j & 4294967295L) * (j2 >>> 32);
         long j4 = (j >>> 32) * (j2 & 4294967295L);
@@ -367,7 +342,6 @@ public final class SoftFloat {
         return ((j3 + j4) << 32) < 0 ? j5 + 1 : j5;
     }
 
-    /* renamed from: a */
     public static final long parseFloat(String str) {
         char ch;
         String normalized = StringUtils.intern(str.trim().toUpperCase());
@@ -426,7 +400,6 @@ public final class SoftFloat {
         return decimalToFloat(z2, i2, j);
     }
 
-    /* renamed from: a */
     public static final String formatFloat(long j, int i) {
         boolean z;
         int i2;
@@ -533,22 +506,18 @@ public final class SoftFloat {
         }
     }
 
-    /* renamed from: e */
     public static final long reciprocal(long j) {
         return multiply(divide(j, 4641240890982006784L), 4614256656552045848L);
     }
 
-    /* renamed from: b */
     private static final long packLowInt(long j, int i) {
         return (j & 4294967295L) | (i << 32);
     }
 
-    /* renamed from: k */
     private static long copySign(long j, long j2) {
         return (j & Long.MAX_VALUE) | (j2 & Long.MIN_VALUE);
     }
 
-    /* renamed from: c */
     private static long scalb(long j, int i) {
         if (isNaN(j)) {
             return 9221120237041090560L;
@@ -567,7 +536,6 @@ public final class SoftFloat {
         return (i2 == 0 || i3 <= 0) ? packFloat(isNegative(j), i3 - 1075, getMantissa(j)) : i3 >= 2047 ? copySign(9218868437227405312L, j) : (j & (-9218868437227405313L)) | (i3 << 52);
     }
 
-    /* renamed from: f */
     public static final long exp(long j) {
         int intPart;
         long lo = j;
@@ -611,16 +579,6 @@ public final class SoftFloat {
         long lo3 = subtract(lo, multiply(t2, add(4595172819793696062L, multiply(t2, add(-4654820494858601069L, multiply(t2, add(4544508515198557740L, multiply(t2, add(-4702957295668925455L, multiply(t2, 4496342204012209360L))))))))));
         return intPart == 0 ? subtract(4607182418800017408L, subtract(divide(multiply(lo, lo3), subtract(lo3, 4611686018427387904L)), lo)) : scalb(subtract(4607182418800017408L, subtract(subtract(t, divide(multiply(lo, lo3), subtract(4611686018427387904L, lo3))), lo2)), intPart);
     }
-
-    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:93:0x01f1 */
-    /* JADX WARN: Code restructure failed: missing block: B:207:0x060b, code lost:
-    
-        if (r1 == false) goto L226;
-     */
-    /* renamed from: f */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static long pow(long j, long j2) {
         int i;
         long t;
@@ -841,7 +799,6 @@ public final class SoftFloat {
         return ax2;
     }
 
-    /* renamed from: g */
     public static long log(long j) {
         if (isZero(j)) {
             return -4503599627370496L;
@@ -890,7 +847,6 @@ public final class SoftFloat {
         return subtract(multiply(floatK3, 4604418534311723008L), subtract(subtract(t2, multiply(floatK3, 4461442080421002358L)), lo));
     }
 
-    /* renamed from: h */
     public static long sin(long j) {
         int i = ((int) (j >> 32)) & Integer.MAX_VALUE;
         if (i <= 1072243195) {
@@ -912,7 +868,6 @@ public final class SoftFloat {
         }
     }
 
-    /* renamed from: i */
     public static long cos(long j) {
         int i = ((int) (j >> 32)) & Integer.MAX_VALUE;
         if (i <= 1072243195) {
@@ -925,7 +880,6 @@ public final class SoftFloat {
         return tanKernel(jArr[0], jArr[1], 1 - ((reduceArg(j, jArr) & 1) << 1));
     }
 
-    /* renamed from: a */
     private static long tanKernel(long j, long j2, int i) {
         int i2 = (int) (j >> 32);
         int i3 = i2 & Integer.MAX_VALUE;
@@ -971,7 +925,6 @@ public final class SoftFloat {
         return add(inv2, multiply(t, add(add(4607182418800017408L, multiply(inv2, j5)), multiply(inv2, lo2))));
     }
 
-    /* renamed from: b */
     private static long sinKernel(long j, long j2, int i) {
         if ((((int) (j >> 32)) & Integer.MAX_VALUE) < 1044381696) {
             return j;
@@ -982,7 +935,6 @@ public final class SoftFloat {
         return i == 0 ? add(j, multiply(t2, add(-4628199217061079735L, multiply(t, s)))) : subtract(j, subtract(subtract(multiply(t, subtract(multiply(4602678819172646912L, j2), multiply(t2, s))), j2), multiply(t2, -4628199217061079735L)));
     }
 
-    /* renamed from: l */
     private static long cosKernel(long j, long j2) {
         int i = ((int) (j >> 32)) & Integer.MAX_VALUE;
         if (i < 1044381696) {
@@ -996,12 +948,6 @@ public final class SoftFloat {
         long j3 = i > 1072234496 ? 4598738169498697728L : (i - 2097152) << 32;
         return subtract(subtract(4607182418800017408L, j3), subtract(subtract(multiply(4602678819172646912L, t), j3), subtract(multiply(t, t2), multiply(j, j2))));
     }
-
-    /* JADX WARN: Removed duplicated region for block: B:28:0x00de  */
-    /* renamed from: a */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     private static int reduceArg(long j, long[] jArr) {
         boolean z;
         int intPart;
@@ -1232,7 +1178,6 @@ public final class SoftFloat {
         return -i36;
     }
 
-    /* renamed from: j */
     public static long atan(long j) {
         int i;
         int i2 = (int) (j >> 32);
@@ -1335,7 +1280,6 @@ public final class SoftFloat {
         return ((int[]) Storage.state().getObject(StringResKeys.RES_PALETTE_MAP_1))[index];
     }
 
-    /* renamed from: k */
     public static final long cosFull(long j) {
         int i = ((int) (j >> 32)) & Integer.MAX_VALUE;
         if (i <= 1072243195) {

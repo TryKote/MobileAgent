@@ -13,19 +13,19 @@ import javax.microedition.io.ConnectionNotFoundException;
 
 public final class ApiClient {
 
-    public static final Object[] createAuthRequest(StringBuffer stringBuffer) {
-        Object[] objArr = new Object[9];
-        objArr[0] = ObjectPool.unpackChars(5522759);
-        objArr[2] = ObjectPool.toStringAndRelease(stringBuffer);
-        return objArr;
+    public static final Object[] createAuthRequest(StringBuffer urlBuffer) {
+        Object[] request = new Object[9];
+        request[0] = ObjectPool.unpackChars(5522759);
+        request[2] = ObjectPool.toStringAndRelease(urlBuffer);
+        return request;
     }
 
-    public static final Object[] createUploadRequest(String str, StringBuffer stringBuffer) {
-        Object[] objArr = new Object[9];
-        objArr[0] = ObjectPool.unpackChars(1414745936);
-        objArr[2] = str;
-        objArr[3] = ObjectPool.toStringAndRelease(stringBuffer).getBytes();
-        return objArr;
+    public static final Object[] createUploadRequest(String path, StringBuffer bodyBuffer) {
+        Object[] request = new Object[9];
+        request[0] = ObjectPool.unpackChars(1414745936);
+        request[2] = path;
+        request[3] = ObjectPool.toStringAndRelease(bodyBuffer).getBytes();
+        return request;
     }
 
     public static final Object[] submitAsync(Object[] objArr) {
@@ -34,193 +34,178 @@ public final class ApiClient {
     }
 
     public static final void executeWithReauth(Object[] objArr) throws InterruptedException {
-        MrimAccount c0028ba = (MrimAccount) Storage.state().getAccount();
-        Object[] objArrM1151a = executeHttpRequest(objArr, c0028ba);
+        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        Object[] response = executeHttpRequest(objArr, account);
         if (objArr[8] != null) {
-            objArr[4] = objArrM1151a;
+            objArr[4] = response;
             return;
         }
-        if (isHttpSuccess(objArrM1151a) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) objArrM1151a[3]).duplicate()))) {
-            objArr[4] = objArrM1151a;
+        if (isHttpSuccess(response) && JsonParser.isSuccess(JsonParser.parseJson(((ByteBuffer) response[3]).duplicate()))) {
+            objArr[4] = response;
             return;
         }
         objArr[8] = objArr;
-        MrimAccount c0028ba2 = (MrimAccount) Storage.state().getAccount();
-        Object[] objArrM1147a = createAuthRequest(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(c0028ba2.login).append(Storage.resources().getString(PackedStringKeys.PARAM_PASSWORD_EQ)).append(c0028ba2.password).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)));
-        objArrM1147a[8] = objArrM1147a;
-        ((AsyncTask) submitAsync(objArrM1147a)[7]).thread.join();
-        c0028ba.jabberId = (String) objArrM1147a[6];
-        objArr[4] = executeHttpRequest(objArr, c0028ba);
+        MrimAccount currentAccount = (MrimAccount) Storage.state().getAccount();
+        Object[] authRequest = createAuthRequest(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(currentAccount.login).append(Storage.resources().getString(PackedStringKeys.PARAM_PASSWORD_EQ)).append(currentAccount.password).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)));
+        authRequest[8] = authRequest;
+        ((AsyncTask) submitAsync(authRequest)[7]).thread.join();
+        account.jabberId = (String) authRequest[6];
+        objArr[4] = executeHttpRequest(objArr, account);
     }
 
-    private static final Object[] executeHttpRequest(Object[] objArr, MrimAccount c0028ba) {
-        String strM1215a;
-        HttpClient c0024ax = null;
+    private static final Object[] executeHttpRequest(Object[] objArr, MrimAccount account) {
+        String requestUrl;
+        HttpClient httpClient = null;
         try {
             try {
                 try {
                     try {
                         NetworkLock.acquireNetworkLock();
-                        String str = (String) objArr[5];
-                        if (str == null) {
-                            strM1215a = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
+                        String overrideUrl = (String) objArr[5];
+                        if (overrideUrl == null) {
+                            requestUrl = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
                         } else {
-                            strM1215a = str;
+                            requestUrl = overrideUrl;
                         }
-                        HttpClient c0024axM629a = HttpClient.createHttpClient(strM1215a, c0028ba, 1);
-                        c0024ax = c0024axM629a;
-                        Object[] objArrM1152a = sendHttpRequest(objArr, c0024axM629a);
-                        HttpClient.closeAndUpdateStats(c0024ax);
+                        HttpClient connection = HttpClient.createHttpClient(requestUrl, account, 1);
+                        httpClient = connection;
+                        Object[] result = sendHttpRequest(objArr, connection);
+                        HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
-                        return objArrM1152a;
+                        return result;
                     } catch (ConnectionNotFoundException e) {
-                        Object[] objArrM798a = createConnectError((Throwable) null);
-                        HttpClient.closeAndUpdateStats(c0024ax);
+                        Object[] connectError = createConnectError((Throwable) null);
+                        HttpClient.closeAndUpdateStats(httpClient);
                         NetworkLock.releaseNetworkLock();
-                        return objArrM798a;
+                        return connectError;
                     }
                 } catch (Throwable th) {
-                    Object[] objArrM801d = createReceiveError((Throwable) null);
-                    HttpClient.closeAndUpdateStats(c0024ax);
+                    Object[] receiveError = createReceiveError((Throwable) null);
+                    HttpClient.closeAndUpdateStats(httpClient);
                     NetworkLock.releaseNetworkLock();
-                    return objArrM801d;
+                    return receiveError;
                 }
             } catch (IllegalArgumentException e2) {
-                Object[] objArrM799b = createAuthError((Throwable) null);
-                HttpClient.closeAndUpdateStats(c0024ax);
+                Object[] authError = createAuthError((Throwable) null);
+                HttpClient.closeAndUpdateStats(httpClient);
                 NetworkLock.releaseNetworkLock();
-                return objArrM799b;
+                return authError;
             } catch (SecurityException e3) {
-                Object[] objArrM800c = createSendError((Throwable) null);
-                HttpClient.closeAndUpdateStats(c0024ax);
+                Object[] sendError = createSendError((Throwable) null);
+                HttpClient.closeAndUpdateStats(httpClient);
                 NetworkLock.releaseNetworkLock();
-                return objArrM800c;
+                return sendError;
             }
         } catch (RuntimeException e) {
-            HttpClient.closeAndUpdateStats(c0024ax);
+            HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
             throw e;
         } catch (Error e) {
-            HttpClient.closeAndUpdateStats(c0024ax);
+            HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
             throw e;
         }
     }
 
-    private static final Object[] sendHttpRequest(Object[] objArr, HttpClient c0024ax) {
-        Object[] M1155b;
+    private static final Object[] sendHttpRequest(Object[] objArr, HttpClient httpClient) {
         try {
-            c0024ax.setRequestMethod((String) objArr[0]);
-            setHeaderFromState(c0024ax, 919726, 788668);
-            setHeaderFromState(c0024ax, 657608, 329938);
-            setOptionalHeader(c0024ax, 395489, ((MrimAccount) Storage.state().getAccount()).jabberId);
-            byte[] bArr = (byte[]) objArr[3];
-            if (bArr != null) {
-                setHeaderFromState(c0024ax, 788628, 2164851);
-                c0024ax.writeData(bArr, bArr.length);
+            httpClient.setRequestMethod((String) objArr[0]);
+            setHeaderFromState(httpClient, 919726, 788668);
+            setHeaderFromState(httpClient, 657608, 329938);
+            setOptionalHeader(httpClient, 395489, ((MrimAccount) Storage.state().getAccount()).jabberId);
+            byte[] bodyData = (byte[]) objArr[3];
+            if (bodyData != null) {
+                setHeaderFromState(httpClient, 788628, 2164851);
+                httpClient.writeData(bodyData, bodyData.length);
             }
-            M1155b = readHttpResponse(objArr, c0024ax);
-            return M1155b;
+            return readHttpResponse(objArr, httpClient);
         } catch (Throwable th) {
             return createProtocolError(th);
         }
     }
 
-    public static final void setHeaderFromState(HttpClient c0024ax, int i, int i2) throws IOException {
-        setOptionalHeader(c0024ax, i, Storage.state().getString(i2));
+    public static final void setHeaderFromState(HttpClient httpClient, int headerKey, int valueKey) throws IOException {
+        setOptionalHeader(httpClient, headerKey, Storage.state().getString(valueKey));
     }
 
-    private static void setOptionalHeader(HttpClient c0024ax, int i, String str) throws IOException {
-        if (str != null) {
-            c0024ax.setRequestProperty(Storage.state().getString(i), str);
+    private static void setOptionalHeader(HttpClient httpClient, int headerKey, String value) throws IOException {
+        if (value != null) {
+            httpClient.setRequestProperty(Storage.state().getString(headerKey), value);
         }
     }
 
-    private static final Object[] readHttpResponse(Object[] objArr, HttpClient c0024ax) {
-        Object[] M804a;
+    private static final Object[] readHttpResponse(Object[] objArr, HttpClient httpClient) {
         try {
-            int iM634a = c0024ax.getResponseCode();
-            int i = 0;
+            int responseCode = httpClient.getResponseCode();
+            int headerIndex = 0;
             while (true) {
                 try {
-                    String headerFieldKey = ((javax.microedition.io.HttpConnection) c0024ax.connection).getHeaderFieldKey(i);
-                    String headerField = ((javax.microedition.io.HttpConnection) c0024ax.connection).getHeaderField(i);
-                    if (headerFieldKey == null && headerField == null) {
+                    String headerName = ((javax.microedition.io.HttpConnection) httpClient.connection).getHeaderFieldKey(headerIndex);
+                    String headerValue = ((javax.microedition.io.HttpConnection) httpClient.connection).getHeaderField(headerIndex);
+                    if (headerName == null && headerValue == null) {
                         break;
                     }
-                    if (headerFieldKey != null && headerField != null && headerField.startsWith(Storage.resources().getString(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerFieldKey.toLowerCase()))) {
-                        objArr[6] = StringUtils.prefix(headerField, headerField.indexOf(59));
+                    if (headerName != null && headerValue != null && headerValue.startsWith(Storage.resources().getString(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerName.toLowerCase()))) {
+                        objArr[6] = StringUtils.prefix(headerValue, headerValue.indexOf(59));
                     }
-                    i++;
+                    headerIndex++;
                 } catch (Throwable unused) {
                 }
             }
-            M804a = createHttpRequest(iM634a, StringUtils.intern(Integer.toString(iM634a)), new ByteBuffer(c0024ax));
-            return M804a;
+            return createHttpRequest(responseCode, StringUtils.intern(Integer.toString(responseCode)), new ByteBuffer(httpClient));
         } catch (Throwable th) {
             return createGenericError(th);
         }
     }
 
-    public static final Object[] getAsyncResult(Object[] objArr) {
-        Object[] objArr2 = (Object[]) objArr[4];
-        if (objArr2 != null) {
-            return objArr2;
+    public static final Object[] getAsyncResult(Object[] request) {
+        Object[] result = (Object[]) request[4];
+        if (result != null) {
+            return result;
         }
         return null;
     }
 
-    /* renamed from: a */
-    public static final Object[] createHttpRequest(int i, String str, ByteBuffer c0043n) {
-        return createHttpResult(0, str, i, c0043n);
+    public static final Object[] createHttpRequest(int statusCode, String statusText, ByteBuffer body) {
+        return createHttpResult(0, statusText, statusCode, body);
     }
 
-    /* renamed from: a */
-    private static final Object[] createHttpResult(int i, Object obj, int i2, ByteBuffer c0043n) {
-        return new Object[]{ObjectPool.integerOf(i), ObjectPool.integerOf(i2), obj.toString(), c0043n};
+    private static final Object[] createHttpResult(int errorType, Object description, int statusCode, ByteBuffer body) {
+        return new Object[]{ObjectPool.integerOf(errorType), ObjectPool.integerOf(statusCode), description.toString(), body};
     }
 
-    /* renamed from: a */
-    private static final Object[] createErrorResult(int i, int i2, Object obj) {
-        return createHttpResult(i, ObjectPool.newStringBuffer().append(Storage.state().getString(i2)).append(Storage.resources().getString(StringResKeys.STR_ERROR_SEPARATOR)).append(obj), 0, (ByteBuffer) null);
+    private static final Object[] createErrorResult(int errorType, int messageKey, Object detail) {
+        return createHttpResult(errorType, ObjectPool.newStringBuffer().append(Storage.state().getString(messageKey)).append(Storage.resources().getString(StringResKeys.STR_ERROR_SEPARATOR)).append(detail), 0, (ByteBuffer) null);
     }
 
-    /* renamed from: a */
     public static final Object[] createConnectError(Throwable th) {
         return createErrorResult(1, 948, th);
     }
 
-    /* renamed from: b */
     public static final Object[] createAuthError(Throwable th) {
         return createErrorResult(2, 947, th);
     }
 
-    /* renamed from: c */
     public static final Object[] createSendError(Throwable th) {
         return createErrorResult(4, 950, th);
     }
 
-    /* renamed from: d */
     public static final Object[] createReceiveError(Throwable th) {
         return createErrorResult(3, 949, th);
     }
 
-    /* renamed from: e */
     public static final Object[] createProtocolError(Throwable th) {
         return createErrorResult(5, 951, th);
     }
 
-    /* renamed from: f */
     public static final Object[] createGenericError(Throwable th) {
         return createErrorResult(6, 951, th);
     }
 
-    /* renamed from: a */
     public static final boolean isHttpSuccess(Object[] objArr) {
         return ((Integer) objArr[0]).intValue() == 0 && ((Integer) objArr[1]).intValue() == 200;
     }
 
-    /* renamed from: e */
     private static Object parseJsonResponse(Object[] objArr) {
         try {
             return JsonParser.parseJson((ByteBuffer) objArr[3]);
@@ -229,38 +214,34 @@ public final class ApiClient {
         }
     }
 
-    /* renamed from: k */
     public static final Object[] pollAsyncResult() {
-        Object[] objArrM609l = Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA);
-        if (objArrM609l != null && getAsyncResult(objArrM609l) != null) {
+        Object[] pendingRequest = Storage.state().getObjectArray(RegistrationKeys.OBJ_REGISTRATION_DATA);
+        if (pendingRequest != null && getAsyncResult(pendingRequest) != null) {
             Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
         }
-        return objArrM609l;
+        return pendingRequest;
     }
 
-    /* renamed from: a */
-    public static final StringBuffer appendAuthParams(StringBuffer stringBuffer, String str) {
-        return stringBuffer.append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(str);
+    public static final StringBuffer appendAuthParams(StringBuffer buffer, String data) {
+        return buffer.append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(data);
     }
 
-    /* renamed from: c */
     public static final int validateJsonResponse(Object[] objArr) {
         Storage.state().clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
         if (!isHttpSuccess(objArr)) {
             return NotificationHelper.showError(888);
         }
-        Object objM806e = parseJsonResponse(objArr);
-        if (objM806e == null) {
+        Object jsonResult = parseJsonResponse(objArr);
+        if (jsonResult == null) {
             return NotificationHelper.showError(889);
         }
-        if (!JsonParser.isSuccess(objM806e)) {
+        if (!JsonParser.isSuccess(jsonResult)) {
             return NotificationHelper.showError(890);
         }
-        Storage.state().setObject(UIKeys.SLOT_MEDIA_PLAYER, objM806e);
+        Storage.state().setObject(UIKeys.SLOT_MEDIA_PLAYER, jsonResult);
         return 0;
     }
 
-    /* renamed from: l */
     public static final Object getJsonPayload() {
         Object obj = Storage.state().getObject(UIKeys.SLOT_MEDIA_PLAYER);
         Storage.state().clearIndex(UIKeys.SLOT_MEDIA_PLAYER);
@@ -339,7 +320,7 @@ public final class ApiClient {
         }
     }
 
-    public static Object[] getUrlComponents(String str) {
-        return new Object[]{ObjectPool.integerOf(20), str};
+    public static Object[] getUrlComponents(String baseUrl) {
+        return new Object[]{ObjectPool.integerOf(20), baseUrl};
     }
 }

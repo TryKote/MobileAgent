@@ -7,48 +7,69 @@ import java.util.Vector;
 
 public final class EmoticonReplacer {
 
+    private static final int MMP_EMOTICON_COUNT = 43;
+    private static final int XMPP_EMOTICON_COUNT = 37;
+    private static final int MRIM_EMOTICON_COUNT = 78;
+
+    private static final int MMP_ICON_OFFSET = 110;
+    private static final int XMPP_ICON_OFFSET = 318;
+    private static final int MRIM_ICON_OFFSET = 36;
+    private static final int MRIM_STANDARD_LIMIT = 74;
+    private static final int MRIM_ICON_SPECIAL_74 = 142;
+    private static final int MRIM_ICON_SPECIAL_75 = 137;
+    private static final int MRIM_ICON_SPECIAL_76 = 210;
+    private static final int MRIM_ICON_SPECIAL_77 = 205;
+
+    private static final int EMOTICON_TYPE_MRIM = 0;
+    private static final int EMOTICON_TYPE_MMP = 1;
+    private static final int EMOTICON_TYPE_XMPP = 2;
+    private static final int EMOTICON_TYPE_XMPP_ALT = 3;
+    private static final int EMOTICON_TYPE_NONE = -1;
+
+    private static final int ICON_SIZE = 16;
+
     public static Vector wrapText(Vector vector, String str, int i, int i2, int i3, int i4, int i5) {
         int iIndexOf;
         int iIndexOf2;
         if (i < i2) {
-            if (i5 == 1) {
+            if (i5 == EMOTICON_TYPE_MMP) {
                 int i6 = -1;
                 int i7 = -1;
-                for (int i8 = 0; i8 < 43; i8++) {
+                for (int i8 = 0; i8 < MMP_EMOTICON_COUNT; i8++) {
                     String pattern = Storage.resources().getBlockString(StringResKeys.MMP_EMOTICONS_BASE, i8);
-                    if (null != pattern && (iIndexOf2 = str.indexOf(pattern, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
+                    if (pattern != null && (iIndexOf2 = str.indexOf(pattern, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
                         i6 = iIndexOf2;
                         i7 = i8;
                     }
                 }
                 if (i6 < 0 || i6 >= i2) {
-                    wrapText(vector, str, i, i2, i3, i4, -1);
+                    wrapText(vector, str, i, i2, i3, i4, EMOTICON_TYPE_NONE);
                 } else {
-                    wrapText(vector, str, i, i6, i3, i4, -1);
-                    vector.addElement(new IconElement(16, i7 + 110));
-                    wrapText(vector, str, i6 + Storage.resources().getBlockString(StringResKeys.MMP_EMOTICONS_BASE, i7).length(), i2, i3, i4, 1);
+                    wrapText(vector, str, i, i6, i3, i4, EMOTICON_TYPE_NONE);
+                    vector.addElement(new IconElement(ICON_SIZE, i7 + MMP_ICON_OFFSET));
+                    wrapText(vector, str, i6 + Storage.resources().getBlockString(StringResKeys.MMP_EMOTICONS_BASE, i7).length(), i2, i3, i4, EMOTICON_TYPE_MMP);
                 }
-            } else if (i5 == 2 || i5 == 3) {
+            } else if (i5 == EMOTICON_TYPE_XMPP || i5 == EMOTICON_TYPE_XMPP_ALT) {
                 int i9 = -1;
                 int i10 = -1;
-                for (int i11 = 0; i11 < 37; i11++) {
+                for (int i11 = 0; i11 < XMPP_EMOTICON_COUNT; i11++) {
                     String pattern2 = Storage.resources().getBlockString(StringResKeys.XMPP_EMOTICONS_BASE, i11);
-                    if (null != pattern2 && (iIndexOf = str.indexOf(pattern2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
+                    if (pattern2 != null && (iIndexOf = str.indexOf(pattern2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
                         i9 = iIndexOf;
                         i10 = i11;
                     }
                 }
                 if (i9 < 0 || i9 >= i2) {
-                    wrapText(vector, str, i, i2, i3, i4, -1);
+                    wrapText(vector, str, i, i2, i3, i4, EMOTICON_TYPE_NONE);
                 } else {
-                    wrapText(vector, str, i, i9, i3, i4, -1);
-                    vector.addElement(new IconElement(16, i10 + 318));
-                    wrapText(vector, str, i9 + Storage.resources().getBlockString(StringResKeys.XMPP_EMOTICONS_BASE, i10).length(), i2, i3, i4, 2);
+                    wrapText(vector, str, i, i9, i3, i4, EMOTICON_TYPE_NONE);
+                    vector.addElement(new IconElement(ICON_SIZE, i10 + XMPP_ICON_OFFSET));
+                    wrapText(vector, str, i9 + Storage.resources().getBlockString(StringResKeys.XMPP_EMOTICONS_BASE, i10).length(), i2, i3, i4, EMOTICON_TYPE_XMPP);
                 }
-            } else if (i5 == 0) {
+            } else if (i5 == EMOTICON_TYPE_MRIM) {
                 int i12 = -1;
                 int i13 = -1;
-                for (int i14 = 0; i14 < 78; i14++) {
+                for (int i14 = 0; i14 < MRIM_EMOTICON_COUNT; i14++) {
                     int iIndexOf3 = str.indexOf(Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i14), i);
                     if (iIndexOf3 >= 0 && (iIndexOf3 < i12 || i12 == -1)) {
                         i12 = iIndexOf3;
@@ -56,12 +77,16 @@ public final class EmoticonReplacer {
                     }
                 }
                 if (i12 < 0 || i12 >= i2) {
-                    wrapText(vector, str, i, i2, i3, i4, -1);
+                    wrapText(vector, str, i, i2, i3, i4, EMOTICON_TYPE_NONE);
                 } else {
-                    wrapText(vector, str, i, i12, i3, i4, -1);
-                    int iconCode = i13 < 74 ? i13 + 36 : i13 == 74 ? 142 : i13 == 75 ? 137 : i13 == 76 ? 210 : 205;
-                    vector.addElement(new IconElement(16, iconCode));
-                    wrapText(vector, str, i12 + Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i13).length(), i2, i3, i4, 0);
+                    wrapText(vector, str, i, i12, i3, i4, EMOTICON_TYPE_NONE);
+                    int iconCode = i13 < MRIM_STANDARD_LIMIT ? i13 + MRIM_ICON_OFFSET
+                            : i13 == MRIM_STANDARD_LIMIT ? MRIM_ICON_SPECIAL_74
+                            : i13 == MRIM_STANDARD_LIMIT + 1 ? MRIM_ICON_SPECIAL_75
+                            : i13 == MRIM_STANDARD_LIMIT + 2 ? MRIM_ICON_SPECIAL_76
+                            : MRIM_ICON_SPECIAL_77;
+                    vector.addElement(new IconElement(ICON_SIZE, iconCode));
+                    wrapText(vector, str, i12 + Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i13).length(), i2, i3, i4, EMOTICON_TYPE_MRIM);
                 }
             } else if (str != Storage.resources().getString(StringResKeys.STR_PLACEHOLDER_TEXT)) {
                 GraphicsContext fontGfx = Storage.state().getGfxContext(i3);

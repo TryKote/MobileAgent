@@ -17,6 +17,9 @@ import javax.microedition.lcdui.Image;
 
 public final class MessageHandler extends BaseScreenHandler {
 
+    // MRIM message flags for blog post
+    private static final int MSG_FLAG_REPLY = 5;
+    private static final int MSG_FLAG_FORWARD = 20;
 
     public void buildScreen(int screenId) {
         switch (screenId) {
@@ -93,23 +96,19 @@ public final class MessageHandler extends BaseScreenHandler {
                 return;
             case ScreenId.SEND_TO_CONTACT:
                 Vector allContacts = AccountManager.getAllContacts();
-                int size = allContacts.size();
-                while (true) {
-                    size--;
-                    if (size < 0) {
-                        if (allContacts.size() == 0) {
-                            NotificationHelper.showMessageById(762);
-                        } else {
-                            ContactListManager.sortContacts(allContacts);
-                            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEND_TO_CONTACT), allContacts));
-                        }
-                        ObjectPool.releaseVector(allContacts);
-                        return;
-                    }
-                    if (((Contact) allContacts.elementAt(size)).isOffline()) {
-                        allContacts.removeElementAt(size);
+                for (int idx = allContacts.size() - 1; idx >= 0; idx--) {
+                    if (((Contact) allContacts.elementAt(idx)).isOffline()) {
+                        allContacts.removeElementAt(idx);
                     }
                 }
+                if (allContacts.size() == 0) {
+                    NotificationHelper.showMessageById(762);
+                } else {
+                    ContactListManager.sortContacts(allContacts);
+                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEND_TO_CONTACT), allContacts));
+                }
+                ObjectPool.releaseVector(allContacts);
+                return;
             case ScreenId.MESSAGE_SUMMARY:
                 ScreenManager.showScreen(Storage.state().getCurrentContact().showMessageSummary());
                 return;
@@ -165,20 +164,14 @@ public final class MessageHandler extends BaseScreenHandler {
                     errorCode = NotificationHelper.showError(873);
                 } else {
                     boolean z = false;
-                    int count = Utils.vectorSize(params);
-                    while (true) {
-                        count--;
-                        if (count < 0) {
-                            errorCode = z ? NotificationHelper.showError(876) : 0;
-                            break;
-                        } else {
-                            String str = (String) params.elementAt(count);
-                            int atIdx = str.indexOf(64);
-                            if (atIdx <= 0 || str.indexOf(46) <= 0 || str.indexOf(32) >= 0 || atIdx != str.lastIndexOf(64) || str.indexOf(44) >= 0) {
-                                z = true;
-                            }
+                    for (int count = Utils.vectorSize(params) - 1; count >= 0; count--) {
+                        String str = (String) params.elementAt(count);
+                        int atIdx = str.indexOf('@');
+                        if (atIdx <= 0 || str.indexOf('.') <= 0 || str.indexOf(' ') >= 0 || atIdx != str.lastIndexOf('@') || str.indexOf(',') >= 0) {
+                            z = true;
                         }
                     }
+                    errorCode = z ? NotificationHelper.showError(876) : 0;
                 }
                 return errorCode;
             case ScreenId.MAIL_MENU:
@@ -200,11 +193,11 @@ public final class MessageHandler extends BaseScreenHandler {
                     int sendResult;
                     if (mrimAccount.isConnected()) {
                         EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_OPERATION_COMPLETE));
-                        sendResult = mrimAccount.trySendData(ProtocolFactory.createMrimPacket(mrimAccount, 4196, new ByteBuffer().writeIntLE(flag ? 5 : 20).writeStringUTF16(messageText).writeLong(timestamp)));
+                        sendResult = mrimAccount.trySendData(ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_BLOG_POST, new ByteBuffer().writeIntLE(flag ? MSG_FLAG_REPLY : MSG_FLAG_FORWARD).writeStringUTF16(messageText).writeLong(timestamp)));
                     } else {
                         sendResult = 299;
                     }
-                    errorCode6 = 0 != sendResult ? NotificationHelper.showError(sendResult) : 0;
+                    errorCode6 = sendResult != 0 ? NotificationHelper.showError(sendResult) : 0;
                 }
                 return errorCode6;
             case ScreenId.SEND_TO_CONTACT:

@@ -10,50 +10,34 @@ import com.trykote.mobileagent.protocol.mmp.*;
 import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
-/* renamed from: an */
-/* loaded from: MobileAgent_3.9.jar:an.class */
 public final class MapPoint implements ListItem {
 
-    /* renamed from: a */
     public String name;
 
-    /* renamed from: b */
     public long boundsMinLon;
 
-    /* renamed from: c */
     public long boundsMinLat;
 
-    /* renamed from: d */
     public long boundsMaxLon;
 
-    /* renamed from: e */
     public long boundsMaxLat;
 
-    /* renamed from: f */
     public long longitude;
 
-    /* renamed from: g */
     public long latitude;
 
-    /* renamed from: h */
     public int zoomLevel;
 
-    /* renamed from: i */
     public boolean selected;
 
-    /* renamed from: j */
     public boolean dirty;
 
-    /* renamed from: k */
     public int height;
 
-    /* renamed from: l */
     public int typeCode;
 
-    /* renamed from: m */
     public int objectCode;
 
-    /* renamed from: n */
     private SizeCache sizeCache;
 
     public MapPoint() {
@@ -106,7 +90,6 @@ public final class MapPoint implements ListItem {
         this.sizeCache = new SizeCache();
     }
 
-    /* renamed from: a */
     public final String getDisplayName() {
         int endIdx;
         try {
@@ -117,77 +100,64 @@ public final class MapPoint implements ListItem {
         }
     }
 
-    /* renamed from: b */
     public final void markActive() {
         this.selected = true;
         this.dirty = true;
     }
 
-    /* renamed from: c */
     public final void markInactive() {
         this.selected = false;
         this.dirty = true;
     }
 
-    /* renamed from: c */
     public final long getLonAtZoom(int i) {
         return MapUtils.coordToPixel(this.longitude, i);
     }
 
-    /* renamed from: d */
     public final long getLatAtZoom(int i) {
         return MapUtils.coordToPixel(this.latitude, i);
     }
 
-    /* renamed from: d */
     public final String getResourceUrl() {
         return MapUtils.buildTileRequestUrl(this.longitude, this.latitude, this.zoomLevel, this.name);
     }
 
     @Override // p000.ListItem
-    /* renamed from: x */
     public final String getText() {
         return getDisplayName();
     }
 
     @Override // p000.ListItem
-    /* renamed from: v */
     public final int getWidth() {
         return (int) this.longitude;
     }
 
     @Override // p000.ListItem
-    /* renamed from: w */
     public final int getBaseHeight() {
         return (int) this.latitude;
     }
 
     @Override // p000.ListItem
-    /* renamed from: r */
     public final int getHeight() {
         return this.height;
     }
 
     @Override // p000.ListItem
-    /* renamed from: s */
     public final boolean isSelected() {
         return this.selected;
     }
 
     @Override // p000.ListItem
-    /* renamed from: t */
     public final void select() {
         this.selected = false;
     }
 
     @Override // p000.ListItem
-    /* renamed from: u */
     public final void deselect() {
         this.selected = true;
     }
 
     @Override // p000.ListItem
-    /* renamed from: y */
     public final int getCommandCount() {
         if (this.typeCode != 0) {
             return getMarkerType(this.typeCode);
@@ -196,24 +166,20 @@ public final class MapPoint implements ListItem {
     }
 
     @Override // p000.ListItem
-    /* renamed from: z */
     public final boolean isHighlighted() {
         return true;
     }
 
     @Override // p000.ListItem
-    /* renamed from: a */
     public final int getCommandId(int i) {
         return this.sizeCache.getWidth(i, this);
     }
 
     @Override // p000.ListItem
-    /* renamed from: b */
     public final int executeCommand(int i) {
         return this.sizeCache.getHeight(i, this);
     }
 
-    /* renamed from: e */
     public static final int getMarkerType(int i) {
         switch (i) {
             case 1:
