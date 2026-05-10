@@ -314,6 +314,12 @@ public final class MapHandler extends BaseScreenHandler {
         }
     }
 
+    public void onScreenResumed(ListView screen, int closedScreenId) {
+        if (screen.screenId == ScreenId.MAP) {
+            AppController.needsRepaint = true;
+        }
+    }
+
     public int onItemSelected(ListView screen, MenuItem menuItem, String title, int selectedOption,
                               Object data, Object headerData) {
         int actionResult;

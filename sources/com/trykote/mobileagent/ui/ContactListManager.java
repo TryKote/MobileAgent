@@ -18,7 +18,7 @@ public abstract class ContactListManager {
     private static final long ONE_WEEK_MS = 604800000L;
     private static final int PRESENCE_SUBSCRIBE = 40;
     private static final int PRESENCE_UNSUBSCRIBE = 4;
-    public static final void showContactList() {
+    public static void showContactList() {
         RemoteLogger.log("CL", "showContactList called");
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Storage.state().clearIndex(ContactKeys.SLOT_CURRENT_ENTITY);
@@ -32,27 +32,27 @@ public abstract class ContactListManager {
         selectedScreen.invalidateLayout();
     }
 
-    public static final int selectContact() {
+    public static int selectContact() {
         updateState();
         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
         Storage.state().setCurrentEntity(menuItem == null ? null : menuItem.data);
         return validateContactAction();
     }
 
-    private static final void updateState() {
+    private static void updateState() {
         TabBar currentTab = TabBar.getCurrentTab();
         ListView currentScreen = ScreenManager.getCurrentScreen();
         currentTab.selectedIndex = currentScreen.scrollOffset;
         currentTab.selectedTitle = currentScreen.getSelectedTitle();
     }
 
-    public static final void clearState() {
+    public static void clearState() {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Storage.state().clearIndex(ContactKeys.SLOT_CURRENT_ENTITY);
         updateState();
     }
 
-    public static final void refreshList() {
+    public static void refreshList() {
         RemoteLogger.log("CL", "refreshList called");
         clearState();
         TabBar currentTab = TabBar.getCurrentTab();
@@ -64,12 +64,12 @@ public abstract class ContactListManager {
         AppController.needsRepaint = true;
     }
 
-    public static final int getSelectedContact() {
+    public static int getSelectedContact() {
         updateState();
         return 0;
     }
 
-    public static final int onContactSelected(String title, Object entity) {
+    public static int onContactSelected(String title, Object entity) {
         if (title == null) {
             return -1;
         }
@@ -90,12 +90,12 @@ public abstract class ContactListManager {
         return ((Contact) entity).getDefaultAction();
     }
 
-    public static final int onContactAction(Object entity) {
+    public static int onContactAction(Object entity) {
         updateState();
         Storage.state().setCurrentEntity(entity);
         return entity != null ? 30 : -1;
     }
-    public static final int updateContextMenu(ListView screen, Object entity) {
+    public static int updateContextMenu(ListView screen, Object entity) {
         Account account;
         int contextAction = -1;
         if (Storage.state().getObject(SessionKeys.VEC_ACCOUNT_SELECTION) != null) {
@@ -189,296 +189,216 @@ public abstract class ContactListManager {
             tabItems.removeAllElements();
             AppController.needsRepaint = true;
         }
-        return Storage.state().getBool(UIKeys.FLAG_CONVERSATION_ACTIVE) ? 163 : 0;
+        return Storage.state().getBool(UIKeys.FLAG_CONVERSATION_ACTIVE) ? ScreenId.NOTIFY_MESSAGE : 0;
     }
 
-    private static final ListView buildContactList() {
+    private static ListView buildContactList() {
         RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
-        boolean isConnected;
-        MergedContactGroup foundGroup;
         int layoutColumns = 1 + Storage.state().getInt(SettingsKeys.SETTING_CONTACT_SORT_MODE);
         Storage.state().setInt(ContactKeys.INT_CONTACT_ICON_SIZE, layoutColumns == 1 ? ICON_SIZE_SMALL : ICON_SIZE_LARGE);
         ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_LIST_TEMPLATE);
         int availableWidth = screen.contentWidth - 1;
         if (!Storage.state().getBool(SettingsKeys.SETTING_SHOW_OFFLINE)) {
-            boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
-            Account currentAccount = TabBar.currentAccount;
-            Vector allContacts = currentAccount == null ? AccountManager.getAllContacts() : currentAccount.getAllContacts();
-            int contactCount = sortContacts(allContacts);
-            for (int i = 0; i < contactCount; i++) {
-                Contact contact = (Contact) allContacts.elementAt(i);
-                if (!contact.canUnblock() && (contact.hasMessages() || contact.isOnline() || (!contact.canUnblock() && (reverseSort || (((isConnected = contact.account.isConnected()) && contact.highlighted) || (!isConnected && contact.isOffline())))))) {
-                    screen.addItem(contact.createMenuItem().setLayout(layoutColumns, availableWidth / layoutColumns));
-                }
-            }
-            ObjectPool.releaseVector(allContacts);
+            buildFlatList(screen, layoutColumns, availableWidth);
         } else if (Storage.state().getBool(SettingsKeys.SETTING_GROUP_BY_STATUS)) {
-            int itemWidth = availableWidth / layoutColumns;
-            boolean showGroups = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
-            boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
-            Vector mergedGroups = ObjectPool.newVector();
-            Vector contactGroups = AccountManager.getContactGroups(TabBar.currentAccount);
-            for (int idx = contactGroups.size() - 1; idx >= 0; idx--) {
-                ContactGroup group = (ContactGroup) contactGroups.elementAt(idx);
-                String groupName = group.name;
-                foundGroup = null;
-                for (int idx2 = mergedGroups.size() - 1; idx2 >= 0; idx2--) {
-                    MergedContactGroup candidate = (MergedContactGroup) mergedGroups.elementAt(idx2);
-                    if (candidate.name.equals(groupName)) {
-                        foundGroup = candidate;
-                        break;
-                    }
-                }
-                MergedContactGroup mergedGroup = foundGroup;
-                if (foundGroup == null) {
-                    MergedContactGroup newMergedGroup = new MergedContactGroup(group, mergedGroups.size());
-                    mergedGroup = newMergedGroup;
-                    mergedGroups.addElement(newMergedGroup);
-                }
-                Vector groupContacts = group.contacts;
-                for (int idx3 = groupContacts.size() - 1; idx3 >= 0; idx3--) {
-                    mergedGroup.addContact(groupContacts.elementAt(idx3));
-                }
-            }
-            ObjectPool.releaseVector(contactGroups);
-            int groupCount = sortContacts(mergedGroups);
-            for (int i = 0; i < groupCount; i++) {
-                ContactGroup group = (ContactGroup) mergedGroups.elementAt(i);
-                boolean headerAdded = false;
-                if (showGroups || !group.isNotSpecial()) {
-                    screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
-                    headerAdded = true;
-                }
-                if (group.isNotSpecial()) {
-                    Vector groupContacts = group.contacts;
-                    int contactCount = sortContacts(groupContacts);
-                    for (int j = 0; j < contactCount; j++) {
-                        Contact contact = (Contact) groupContacts.elementAt(j);
-                        if (shouldDisplayContact(reverseSort, contact)) {
-                            if (!headerAdded) {
-                                screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
-                                headerAdded = true;
-                            }
-                            screen.addItem(contact.createMenuItem().setLayout(layoutColumns, itemWidth));
-                        }
-                    }
-                }
-            }
-            ObjectPool.releaseVector(mergedGroups);
-            MergedContactGroup offlineMerged = null;
-            MergedContactGroup onlineMerged = null;
-            MergedContactGroup unreadMerged = null;
-            MergedContactGroup pendingMerged = null;
-            for (int acctIdx = AccountManager.getActiveAccountCount() - 1; acctIdx >= 0; acctIdx--) {
-                Account account = AccountManager.getAccountByIndex(acctIdx);
-                Account currentAccount = TabBar.currentAccount;
-                if (currentAccount == null || currentAccount == account) {
-                    Vector pendingContacts = account.getPendingContacts();
-                    int pendingSize = pendingContacts.size();
-                    if (pendingSize > 0) {
-                        if (pendingMerged == null) {
-                            pendingMerged = new MergedContactGroup(account.specialGroup, -4);
-                        }
-                        for (int j = pendingSize - 1; j >= 0; j--) {
-                            pendingMerged.addContact(pendingContacts.elementAt(j));
-                        }
-                    }
-                    ObjectPool.releaseVector(pendingContacts);
-                    Vector offlineContacts = account.getOfflineContacts();
-                    int offlineSize = offlineContacts.size();
-                    if (offlineSize > 0) {
-                        if (offlineMerged == null) {
-                            offlineMerged = new MergedContactGroup(account.offlineGroup, -1);
-                        }
-                        for (int j = offlineSize - 1; j >= 0; j--) {
-                            offlineMerged.addContact(offlineContacts.elementAt(j));
-                        }
-                    }
-                    ObjectPool.releaseVector(offlineContacts);
-                    Vector onlineContacts = account.getOnlineContacts();
-                    int onlineSize = onlineContacts.size();
-                    if (onlineSize > 0) {
-                        if (onlineMerged == null) {
-                            onlineMerged = new MergedContactGroup(account.defaultGroup, -2);
-                        }
-                        for (int j = onlineSize - 1; j >= 0; j--) {
-                            onlineMerged.addContact(onlineContacts.elementAt(j));
-                        }
-                    }
-                    ObjectPool.releaseVector(onlineContacts);
-                    Vector unreadContacts = account.getUnreadContacts();
-                    int unreadSize = unreadContacts.size();
-                    if (unreadSize > 0) {
-                        if (unreadMerged == null) {
-                            unreadMerged = new MergedContactGroup(account.onlineGroup, -3);
-                        }
-                        for (int j = unreadSize - 1; j >= 0; j--) {
-                            unreadMerged.addContact(unreadContacts.elementAt(j));
-                        }
-                    }
-                    ObjectPool.releaseVector(unreadContacts);
-                }
-            }
-            if (pendingMerged != null) {
-                Vector contacts = pendingMerged.contacts;
-                int sortedCount = sortContacts(contacts);
-                screen.addItem(pendingMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
-                if (pendingMerged.isNotSpecial()) {
-                    for (int j = 0; j < sortedCount; j++) {
-                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                    }
-                    ObjectPool.releaseVector(contacts);
-                }
-            }
-            if (offlineMerged != null) {
-                Vector contacts = offlineMerged.contacts;
-                int sortedCount = sortContacts(contacts);
-                screen.addItem(offlineMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
-                if (offlineMerged.isNotSpecial()) {
-                    for (int j = 0; j < sortedCount; j++) {
-                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                    }
-                    ObjectPool.releaseVector(contacts);
-                }
-            }
-            if (unreadMerged != null) {
-                Vector contacts = unreadMerged.contacts;
-                int sortedCount = sortContacts(contacts);
-                screen.addItem(unreadMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
-                if (unreadMerged.isNotSpecial()) {
-                    for (int j = 0; j < sortedCount; j++) {
-                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                    }
-                    ObjectPool.releaseVector(contacts);
-                }
-            }
-            if (onlineMerged != null) {
-                Vector contacts = onlineMerged.contacts;
-                int sortedCount = sortContacts(contacts);
-                screen.addItem(onlineMerged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
-                if (onlineMerged.isNotSpecial()) {
-                    for (int j = 0; j < sortedCount; j++) {
-                        screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                    }
-                    ObjectPool.releaseVector(contacts);
-                }
-            }
+            buildGroupedByStatus(screen, layoutColumns, availableWidth);
         } else {
-            int itemWidth = availableWidth / layoutColumns;
-            Vector contactGroups = AccountManager.getContactGroups(TabBar.currentAccount);
-            int groupCount = sortContacts(contactGroups);
-            boolean showGroups = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
-            boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
-            for (int i = 0; i < groupCount; i++) {
-                ContactGroup group = (ContactGroup) contactGroups.elementAt(i);
-                boolean headerAdded = false;
-                if (showGroups || !group.isNotSpecial()) {
-                    screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
-                    headerAdded = true;
-                }
-                if (group.isNotSpecial()) {
-                    Vector groupContacts = group.contacts;
-                    int contactCount = sortContacts(groupContacts);
-                    for (int j = 0; j < contactCount; j++) {
-                        Contact contact = (Contact) groupContacts.elementAt(j);
-                        if (shouldDisplayContact(reverseSort, contact)) {
-                            if (!headerAdded) {
-                                screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
-                                headerAdded = true;
-                            }
-                            screen.addItem(contact.createMenuItem().setLayout(layoutColumns, itemWidth));
-                        }
-                    }
-                }
-            }
-            ObjectPool.releaseVector(contactGroups);
-            int accountCount = AccountManager.getActiveAccountCount();
-            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
-                Account account = AccountManager.getAccountByIndex(acctIdx);
-                Account currentAccount = TabBar.currentAccount;
-                if (currentAccount == null || currentAccount == account) {
-                    ContactGroup specialGroup = account.specialGroup;
-                    Vector pendingContacts = account.getPendingContacts();
-                    int pendingSize = pendingContacts.size();
-                    if (pendingSize > 0) {
-                        screen.addItem(specialGroup.createMenuItem(pendingSize).setLayout(layoutColumns, availableWidth));
-                        if (specialGroup.isNotSpecial()) {
-                            sortContacts(pendingContacts);
-                            for (int j = 0; j < pendingSize; j++) {
-                                screen.addItem(((Contact) pendingContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                            }
-                        }
-                    }
-                    ObjectPool.releaseVector(pendingContacts);
-                }
-            }
-            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
-                Account account = AccountManager.getAccountByIndex(acctIdx);
-                Account currentAccount = TabBar.currentAccount;
-                if (currentAccount == null || currentAccount == account) {
-                    ContactGroup offlineGroup = account.offlineGroup;
-                    Vector offlineContacts = account.getOfflineContacts();
-                    int offlineSize = offlineContacts.size();
-                    if (offlineSize > 0) {
-                        screen.addItem(offlineGroup.createMenuItem(offlineSize).setLayout(layoutColumns, availableWidth));
-                        if (offlineGroup.isNotSpecial()) {
-                            sortContacts(offlineContacts);
-                            for (int j = 0; j < offlineSize; j++) {
-                                screen.addItem(((Contact) offlineContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                            }
-                        }
-                    }
-                    ObjectPool.releaseVector(offlineContacts);
-                }
-            }
-            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
-                Account account = AccountManager.getAccountByIndex(acctIdx);
-                Account currentAccount = TabBar.currentAccount;
-                if (currentAccount == null || currentAccount == account) {
-                    ContactGroup defaultGroup = account.defaultGroup;
-                    Vector onlineContacts = account.getOnlineContacts();
-                    int onlineSize = onlineContacts.size();
-                    if (onlineSize > 0) {
-                        screen.addItem(defaultGroup.createMenuItem(onlineSize).setLayout(layoutColumns, availableWidth));
-                        if (defaultGroup.isNotSpecial()) {
-                            sortContacts(onlineContacts);
-                            for (int j = 0; j < onlineSize; j++) {
-                                screen.addItem(((Contact) onlineContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                            }
-                        }
-                    }
-                    ObjectPool.releaseVector(onlineContacts);
-                }
-            }
-            for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
-                Account account = AccountManager.getAccountByIndex(acctIdx);
-                Account currentAccount = TabBar.currentAccount;
-                if (currentAccount == null || currentAccount == account) {
-                    ContactGroup unreadGroup = account.onlineGroup;
-                    Vector unreadContacts = account.getUnreadContacts();
-                    int unreadSize = unreadContacts.size();
-                    if (unreadSize > 0) {
-                        screen.addItem(unreadGroup.createMenuItem(unreadSize).setLayout(layoutColumns, availableWidth));
-                        if (unreadGroup.isNotSpecial()) {
-                            sortContacts(unreadContacts);
-                            for (int j = 0; j < unreadSize; j++) {
-                                screen.addItem(((Contact) unreadContacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
-                            }
-                        }
-                    }
-                    ObjectPool.releaseVector(unreadContacts);
-                }
-            }
+            buildGroupedDefault(screen, layoutColumns, availableWidth);
         }
         TabBar.layout();
         return screen.initTabs();
     }
 
-    private static final boolean shouldDisplayContact(boolean reverseSort, Contact contact) {
+    private static void buildFlatList(ListView screen, int layoutColumns, int availableWidth) {
+        boolean isConnected;
+        boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
+        Account currentAccount = TabBar.currentAccount;
+        Vector allContacts = currentAccount == null ? AccountManager.getAllContacts() : currentAccount.getAllContacts();
+        int contactCount = sortContacts(allContacts);
+        for (int i = 0; i < contactCount; i++) {
+            Contact contact = (Contact) allContacts.elementAt(i);
+            if (!contact.canUnblock() && (contact.hasMessages() || contact.isOnline() || (!contact.canUnblock() && (reverseSort || (((isConnected = contact.account.isConnected()) && contact.highlighted) || (!isConnected && contact.isOffline())))))) {
+                screen.addItem(contact.createMenuItem().setLayout(layoutColumns, availableWidth / layoutColumns));
+            }
+        }
+        ObjectPool.releaseVector(allContacts);
+    }
+
+    private static void buildGroupedByStatus(ListView screen, int layoutColumns, int availableWidth) {
+        int itemWidth = availableWidth / layoutColumns;
+        boolean showGroups = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
+        boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
+        Vector mergedGroups = ObjectPool.newVector();
+        Vector contactGroups = AccountManager.getContactGroups(TabBar.currentAccount);
+        for (int idx = contactGroups.size() - 1; idx >= 0; idx--) {
+            ContactGroup group = (ContactGroup) contactGroups.elementAt(idx);
+            String groupName = group.name;
+            MergedContactGroup foundGroup = null;
+            for (int idx2 = mergedGroups.size() - 1; idx2 >= 0; idx2--) {
+                MergedContactGroup candidate = (MergedContactGroup) mergedGroups.elementAt(idx2);
+                if (candidate.name.equals(groupName)) {
+                    foundGroup = candidate;
+                    break;
+                }
+            }
+            MergedContactGroup mergedGroup = foundGroup;
+            if (foundGroup == null) {
+                MergedContactGroup newMergedGroup = new MergedContactGroup(group, mergedGroups.size());
+                mergedGroup = newMergedGroup;
+                mergedGroups.addElement(newMergedGroup);
+            }
+            Vector groupContacts = group.contacts;
+            for (int idx3 = groupContacts.size() - 1; idx3 >= 0; idx3--) {
+                mergedGroup.addContact(groupContacts.elementAt(idx3));
+            }
+        }
+        ObjectPool.releaseVector(contactGroups);
+        int groupCount = sortContacts(mergedGroups);
+        for (int i = 0; i < groupCount; i++) {
+            addGroupWithContacts(screen, (ContactGroup) mergedGroups.elementAt(i),
+                    reverseSort, showGroups, layoutColumns, itemWidth, availableWidth);
+        }
+        ObjectPool.releaseVector(mergedGroups);
+        MergedContactGroup pendingMerged = null;
+        MergedContactGroup offlineMerged = null;
+        MergedContactGroup onlineMerged = null;
+        MergedContactGroup unreadMerged = null;
+        for (int acctIdx = AccountManager.getActiveAccountCount() - 1; acctIdx >= 0; acctIdx--) {
+            Account account = AccountManager.getAccountByIndex(acctIdx);
+            Account currentAccount = TabBar.currentAccount;
+            if (currentAccount == null || currentAccount == account) {
+                pendingMerged = mergeContacts(pendingMerged, account.specialGroup, -4, account.getPendingContacts());
+                offlineMerged = mergeContacts(offlineMerged, account.offlineGroup, -1, account.getOfflineContacts());
+                onlineMerged = mergeContacts(onlineMerged, account.defaultGroup, -2, account.getOnlineContacts());
+                unreadMerged = mergeContacts(unreadMerged, account.onlineGroup, -3, account.getUnreadContacts());
+            }
+        }
+        addMergedGroupSection(screen, pendingMerged, layoutColumns, itemWidth, availableWidth);
+        addMergedGroupSection(screen, offlineMerged, layoutColumns, itemWidth, availableWidth);
+        addMergedGroupSection(screen, unreadMerged, layoutColumns, itemWidth, availableWidth);
+        addMergedGroupSection(screen, onlineMerged, layoutColumns, itemWidth, availableWidth);
+    }
+
+    private static void buildGroupedDefault(ListView screen, int layoutColumns, int availableWidth) {
+        int itemWidth = availableWidth / layoutColumns;
+        Vector contactGroups = AccountManager.getContactGroups(TabBar.currentAccount);
+        int groupCount = sortContacts(contactGroups);
+        boolean showGroups = Storage.state().getBool(SettingsKeys.SETTING_SHOW_GROUPS);
+        boolean reverseSort = !Storage.state().getBool(SettingsKeys.SETTING_SORT_ORDER);
+        for (int i = 0; i < groupCount; i++) {
+            addGroupWithContacts(screen, (ContactGroup) contactGroups.elementAt(i),
+                    reverseSort, showGroups, layoutColumns, itemWidth, availableWidth);
+        }
+        ObjectPool.releaseVector(contactGroups);
+        int accountCount = AccountManager.getActiveAccountCount();
+        for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+            Account account = AccountManager.getAccountByIndex(acctIdx);
+            Account currentAccount = TabBar.currentAccount;
+            if (currentAccount == null || currentAccount == account) {
+                addSpecialSection(screen, account.specialGroup, account.getPendingContacts(),
+                        layoutColumns, itemWidth, availableWidth);
+            }
+        }
+        for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+            Account account = AccountManager.getAccountByIndex(acctIdx);
+            Account currentAccount = TabBar.currentAccount;
+            if (currentAccount == null || currentAccount == account) {
+                addSpecialSection(screen, account.offlineGroup, account.getOfflineContacts(),
+                        layoutColumns, itemWidth, availableWidth);
+            }
+        }
+        for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+            Account account = AccountManager.getAccountByIndex(acctIdx);
+            Account currentAccount = TabBar.currentAccount;
+            if (currentAccount == null || currentAccount == account) {
+                addSpecialSection(screen, account.defaultGroup, account.getOnlineContacts(),
+                        layoutColumns, itemWidth, availableWidth);
+            }
+        }
+        for (int acctIdx = accountCount - 1; acctIdx >= 0; acctIdx--) {
+            Account account = AccountManager.getAccountByIndex(acctIdx);
+            Account currentAccount = TabBar.currentAccount;
+            if (currentAccount == null || currentAccount == account) {
+                addSpecialSection(screen, account.onlineGroup, account.getUnreadContacts(),
+                        layoutColumns, itemWidth, availableWidth);
+            }
+        }
+    }
+
+    private static void addGroupWithContacts(ListView screen, ContactGroup group, boolean reverseSort,
+            boolean showGroups, int layoutColumns, int itemWidth, int availableWidth) {
+        boolean headerAdded = false;
+        if (showGroups || !group.isNotSpecial()) {
+            screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
+            headerAdded = true;
+        }
+        if (group.isNotSpecial()) {
+            Vector contacts = group.contacts;
+            int contactCount = sortContacts(contacts);
+            for (int j = 0; j < contactCount; j++) {
+                Contact contact = (Contact) contacts.elementAt(j);
+                if (shouldDisplayContact(reverseSort, contact)) {
+                    if (!headerAdded) {
+                        screen.addItem(group.createMenuItem(-1).setLayout(layoutColumns, availableWidth));
+                        headerAdded = true;
+                    }
+                    screen.addItem(contact.createMenuItem().setLayout(layoutColumns, itemWidth));
+                }
+            }
+        }
+    }
+
+    private static MergedContactGroup mergeContacts(MergedContactGroup existing, ContactGroup template,
+            int groupId, Vector contacts) {
+        int size = contacts.size();
+        if (size > 0) {
+            if (existing == null) {
+                existing = new MergedContactGroup(template, groupId);
+            }
+            for (int j = size - 1; j >= 0; j--) {
+                existing.addContact(contacts.elementAt(j));
+            }
+        }
+        ObjectPool.releaseVector(contacts);
+        return existing;
+    }
+
+    private static void addMergedGroupSection(ListView screen, MergedContactGroup merged,
+            int layoutColumns, int itemWidth, int availableWidth) {
+        if (merged == null) {
+            return;
+        }
+        Vector contacts = merged.contacts;
+        int sortedCount = sortContacts(contacts);
+        screen.addItem(merged.createMenuItem(sortedCount).setLayout(layoutColumns, availableWidth));
+        if (merged.isNotSpecial()) {
+            for (int j = 0; j < sortedCount; j++) {
+                screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
+            }
+            ObjectPool.releaseVector(contacts);
+        }
+    }
+
+    private static void addSpecialSection(ListView screen, ContactGroup group, Vector contacts,
+            int layoutColumns, int itemWidth, int availableWidth) {
+        int size = contacts.size();
+        if (size > 0) {
+            screen.addItem(group.createMenuItem(size).setLayout(layoutColumns, availableWidth));
+            if (group.isNotSpecial()) {
+                sortContacts(contacts);
+                for (int j = 0; j < size; j++) {
+                    screen.addItem(((Contact) contacts.elementAt(j)).createMenuItem().setLayout(layoutColumns, itemWidth));
+                }
+            }
+        }
+        ObjectPool.releaseVector(contacts);
+    }
+
+    private static boolean shouldDisplayContact(boolean reverseSort, Contact contact) {
         return ((!contact.hasMessages() && !reverseSort && !contact.highlighted) || contact.canUnblock() || contact.hasUnread() || contact.isOnline() || contact.isOffline() || contact.isSystem()) ? false : true;
     }
 
-    public static final ListView addContactItems(ListView screen, Vector items) {
+    public static ListView addContactItems(ListView screen, Vector items) {
         MenuItem menuItem;
         int count = Utils.vectorSize(items);
         for (int i = 0; i < count; i++) {
@@ -508,11 +428,11 @@ public abstract class ContactListManager {
         return screen;
     }
 
-    public static final void updateContactFlags(Contact contact) {
+    public static void updateContactFlags(Contact contact) {
         Storage.state().setBool(UIKeys.FLAG_XMPP_CAN_EDIT, (contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
     }
 
-    public static final int getGroupCount(Account acct) {
+    public static int getGroupCount(Account acct) {
         Vector groups = acct.groups;
         int count = Utils.vectorSize(groups);
         if (count > 0) {
@@ -527,7 +447,7 @@ public abstract class ContactListManager {
         return count;
     }
 
-    public static final void showAddContactScreen() {
+    public static void showAddContactScreen() {
         ContactInfo contactInfo = (ContactInfo) Storage.state().getObject(ContactKeys.SLOT_CONTACT_INFO);
         Account acctRef = contactInfo.getAccount();
         if (getGroupCount(acctRef) == 0) {
@@ -557,7 +477,7 @@ public abstract class ContactListManager {
         Storage.state().setObject(ContactKeys.SLOT_GROUP_ADD_DISPLAY, (Object) contactInfo.getFullName());
         ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ADD_SCREEN));
     }
-    public static final ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
+    public static ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
         MenuItem menuItem = null;
         if (contact != null) {
             acct = contact.account;
@@ -585,7 +505,7 @@ public abstract class ContactListManager {
         return screen;
     }
 
-    public static final Vector getCheckedItems(ListView screen, int startIndex) {
+    public static Vector getCheckedItems(ListView screen, int startIndex) {
         Vector checkedItems = ObjectPool.newVector();
         Vector items = screen.menuItems;
         for (int idx = items.size() - 1; idx >= startIndex; idx--) {
@@ -598,7 +518,7 @@ public abstract class ContactListManager {
         return checkedItems;
     }
 
-    public static final int handleContactMenuAction(String label, int actionId) {
+    public static int handleContactMenuAction(String label, int actionId) {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Contact contact = Storage.state().getCurrentContact();
         if (actionId == 63 && !contact.account.isConnected()) {
@@ -631,7 +551,7 @@ public abstract class ContactListManager {
         return actionId;
     }
 
-    public static final int handleContactGroupAction(String label, int actionId) {
+    public static int handleContactGroupAction(String label, int actionId) {
         Storage.state().clearIndex(SessionKeys.SLOT_CURRENT_ACCOUNT);
         Object entity = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
         if (actionId == 63 && !((Contact) entity).account.isConnected()) {
@@ -673,13 +593,13 @@ public abstract class ContactListManager {
         return actionId;
     }
 
-    public static final int sortContacts(Vector vector) {
+    public static int sortContacts(Vector vector) {
         int size = vector.size();
         sortRange(vector, 0, size - 1);
         return size;
     }
 
-    private static final void sortRange(Vector vector, int left, int right) {
+    private static void sortRange(Vector vector, int left, int right) {
         if (left < right) {
             if (left + 1 == right) {
                 if (((Sortable) vector.elementAt(left)).compareTo(vector.elementAt(right)) > 0) {
@@ -707,7 +627,7 @@ public abstract class ContactListManager {
         }
     }
 
-    public static final Vector getMapContacts() {
+    public static Vector getMapContacts() {
         Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
         for (int idx = mrimAccounts.size() - 1; idx >= 0; idx--) {
@@ -723,7 +643,7 @@ public abstract class ContactListManager {
         return result;
     }
 
-    public static final Vector getMapProfiles() {
+    public static Vector getMapProfiles() {
         Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
         for (int idx = mrimAccounts.size() - 1; idx >= 0; idx--) {
@@ -735,7 +655,7 @@ public abstract class ContactListManager {
         return result;
     }
 
-    public static final void openContactMessages() {
+    public static void openContactMessages() {
         Contact contact = Storage.state().getCurrentContact();
         markContactUnread(contact);
         contact.flags = (byte) 0;
@@ -744,7 +664,7 @@ public abstract class ContactListManager {
         ScreenManager.showScreen(contact.showMessages().measureContent());
     }
 
-    public static final void markContactRead(Contact contact) {
+    public static void markContactRead(Contact contact) {
         TimerManager.resetBacklightTimer();
         Vector contacts = Storage.state().getVector(UIKeys.VEC_ONLINE_CONTACTS);
         if (contacts.contains(contact)) {
@@ -754,7 +674,7 @@ public abstract class ContactListManager {
         TabBar.layout();
     }
 
-    public static final void markContactUnread(Contact contact) {
+    public static void markContactUnread(Contact contact) {
         Vector contacts = Storage.state().getVector(UIKeys.VEC_ONLINE_CONTACTS);
         if (contacts.contains(contact)) {
             Utils.removeFrom(contacts, contact);
@@ -762,13 +682,13 @@ public abstract class ContactListManager {
         }
     }
 
-    public static final void deleteContact(Contact contact) {
+    public static void deleteContact(Contact contact) {
         contact.clearStatus();
         Storage.state().getVector(UIKeys.VEC_PENDING_CONNECTIONS).removeElement(contact);
         AppController.needsLayoutUpdate = true;
     }
 
-    public static final void refreshContactList() {
+    public static void refreshContactList() {
         RemoteLogger.log("CL", "refreshContactList called");
         Storage.state().clearRange(UIKeys.RANGE_ACCOUNT_CACHE_START, UIKeys.RANGE_ACCOUNT_CACHE_END);
     }
@@ -805,15 +725,15 @@ public abstract class ContactListManager {
         }
     }
 
-    public static final void dialPhoneContact(PhoneContact contact, int phoneIndex) {
+    public static void dialPhoneContact(PhoneContact contact, int phoneIndex) {
         dialPhoneUrl(VCard.formatPhoneContactUrl(contact, phoneIndex), contact, phoneIndex);
     }
 
-    public static final void dialPhoneUrl(String url, PhoneContact contact, int phoneIndex) {
+    public static void dialPhoneUrl(String url, PhoneContact contact, int phoneIndex) {
         new AsyncTask(AsyncTaskId.PARSE_CONTACTS_ASYNC, new Object[]{url, contact, ObjectPool.integerOf(phoneIndex)});
     }
 
-    public static final int clearSmsFields() {
+    public static int clearSmsFields() {
         Storage.state().clearIndex(RegistrationKeys.SLOT_SEARCH_LABEL_1);
         Storage.state().clearIndex(UIKeys.SLOT_STATUS_TEXT);
         Storage.state().clearIndex(ContactKeys.SLOT_SELECTED_GROUP);

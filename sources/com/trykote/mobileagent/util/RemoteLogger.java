@@ -27,6 +27,7 @@ public final class RemoteLogger implements Runnable {
             return;
         }
         Thread t = new Thread(new RemoteLogger());
+        t.setName("RemoteLogger");
         t.start();
         log("LOG", "RemoteLogger started, target=" + RemoteLoggerConfig.HOST + ":" + RemoteLoggerConfig.PORT);
     }

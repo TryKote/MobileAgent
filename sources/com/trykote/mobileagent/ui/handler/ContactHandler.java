@@ -33,6 +33,39 @@ public final class ContactHandler extends BaseScreenHandler {
     // Timer for phone input validation
     private static final long PHONE_INPUT_CHECK_INTERVAL_MS = 3000L;
 
+    // Contact name parts (first, middle, last)
+    private static final int NAME_PARTS_COUNT = 3;
+
+    // INT_CONTACT_TYPE_CODE values (used by cfg conditional items)
+    private static final int CONTACT_TYPE_BASIC = 1;
+    private static final int CONTACT_TYPE_MRIM = 4;
+
+    // Menu type values for INT_OK/CANCEL_MENU_TYPE
+    private static final int MENU_TYPE_CONTACT_MENU = 3;
+    private static final int MENU_TYPE_CONTACT_GROUP = 4;
+
+    // Packed string suffix for confirmation dialogs ("?")
+    private static final int PACKED_CONFIRM_SUFFIX = 16167;
+
+    // ContactInfo error notification key
+    private static final int CONTACT_INFO_ERROR_KEY = -1;
+
+    // INT_INFO_SCREEN_MODE value for MRIM contacts
+    private static final int INFO_MODE_MRIM = 503;
+
+    // JSON keys for batch message operations
+    private static final int JSON_KEY_MSG_ID = 329240;
+    private static final int JSON_KEY_MARK_ACTION = 263673;
+
+    // Message flag for starred/flagged state
+    private static final int MSG_FLAG_STARRED = 4;
+
+    // Batch mark action: mark as read
+    private static final int MARK_ACTION_READ = 1;
+
+    // MRIM contact flags for phone contact creation
+    private static final int MRIM_FLAG_PHONE_CONTACT = 1048576;
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.CONTACT_LIST:
@@ -40,25 +73,25 @@ public final class ContactHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CONTACT_EDITOR:
                 ScreenManager.clearFormFields();
-                Contact contact = Storage.state().getCurrentContact();
-                Storage.state().setObject(UIKeys.SLOT_INPUT_TEXT, (Object) contact.displayName);
-                Vector nameParts = Utils.splitNonEmpty(contact.getDefaultName(), ',');
-                for (int i = 0; i < 3; i++) {
+                Contact editorContact = Storage.state().getCurrentContact();
+                Storage.state().setObject(UIKeys.SLOT_INPUT_TEXT, editorContact.displayName);
+                Vector nameParts = Utils.splitNonEmpty(editorContact.getDefaultName(), ',');
+                for (int i = 0; i < NAME_PARTS_COUNT; i++) {
                     if (i < nameParts.size()) {
                         Storage.state().setObject(UIKeys.CONTACT_NAME_PARTS_BASE + i, nameParts.elementAt(i));
                     }
                 }
                 ObjectPool.releaseVector(nameParts);
-                Storage.state().setInt(ContactKeys.INT_CONTACT_TYPE_CODE, (!(contact instanceof MrimContact) || contact.isSystem()) ? 1 : 4);
+                Storage.state().setInt(ContactKeys.INT_CONTACT_TYPE_CODE, (!(editorContact instanceof MrimContact) || editorContact.isSystem()) ? CONTACT_TYPE_BASIC : CONTACT_TYPE_MRIM);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_EDITOR));
                 return;
             case ScreenId.ADD_CONTACT:
                 int accountType = Storage.state().getAccount().getType();
-                if (accountType == 0) {
+                if (accountType == Account.TYPE_MRIM) {
                     StringUtils.showRegionSelector();
                     return;
                 }
-                if (accountType == 1) {
+                if (accountType == Account.TYPE_MMP) {
                     Storage.state().setInt(RegistrationKeys.INT_REG_DOMAIN_INDEX, -1);
                     ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ADD_CONTACT));
                     return;
@@ -76,32 +109,23 @@ public final class ContactHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CONTACT_GROUP_MENU:
                 Storage.state().setInt(ContactKeys.FLAG_CONTACT_MENU_MODE, 1);
-                Object obj = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
-                if (obj instanceof ContactGroup) {
+                Object entity = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
+                if (entity instanceof ContactGroup) {
                     Storage.state().setInt(ContactKeys.FLAG_IS_MRIM_CONTACT, 1);
                     ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_GROUP_MENU));
                     return;
                 }
-                Contact selectedContact = (Contact) obj;
-                if (selectedContact.isSystem()) {
-                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_ACTION, 30);
-                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_TYPE, 4);
+                Contact contact = (Contact) entity;
+                if (contact.isSystem()) {
+                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_ACTION, ScreenId.CONTACT_GROUP_MENU);
+                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_TYPE, MENU_TYPE_CONTACT_GROUP);
                     ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_MENU));
                     return;
                 }
-                ContactListManager.updateContactFlags(selectedContact);
+                setupContactMenuFlags(contact);
                 Storage.state().setInt(ContactKeys.FLAG_IS_MRIM_CONTACT, 0);
-                boolean z2 = selectedContact instanceof MrimContact;
-                boolean z3 = z2;
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_MRIM, z2);
-                boolean z4 = z3 && selectedContact.isOffline();
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_GROUP, z4);
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_USER, z3 && !z4);
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_ONLINE, selectedContact.isOnline());
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_HAS_UNREAD, selectedContact.hasUnread() && !selectedContact.isOnline());
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_HAS_VCARD, z3 && !z4 && ((MrimContact) selectedContact).hasVCard());
-                Storage.state().setInt(UIKeys.INT_OK_MENU_TYPE, 4);
-                Storage.state().setInt(UIKeys.INT_OK_MENU_ACTION, 30);
+                Storage.state().setInt(UIKeys.INT_OK_MENU_TYPE, MENU_TYPE_CONTACT_GROUP);
+                Storage.state().setInt(UIKeys.INT_OK_MENU_ACTION, ScreenId.CONTACT_GROUP_MENU);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ACTIONS_MENU));
                 return;
             case ScreenId.CONTACT_GROUPS:
@@ -135,13 +159,13 @@ public final class ContactHandler extends BaseScreenHandler {
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CREATE_GROUP));
                 return;
             case ScreenId.RENAME_GROUP:
-                Storage.state().setObject(RegistrationKeys.SLOT_SEARCH_RESULT, (Object) Storage.state().getCurrentGroup().name);
+                Storage.state().setObject(RegistrationKeys.SLOT_SEARCH_RESULT, Storage.state().getCurrentGroup().name);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.RENAME_GROUP));
                 return;
             case ScreenId.DELETE_ENTITY:
-                StringBuffer sbAlert = ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_ALERT_PREFIX));
-                Object obj3 = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
-                NotificationHelper.showAlertBuffer(71, sbAlert.append(obj3 instanceof ContactGroup ? ((ContactGroup) obj3).name : ((Contact) obj3).displayName).append(ObjectPool.unpackChars(16167)));
+                StringBuffer alertBuffer = ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_ALERT_PREFIX));
+                Object deleteTarget = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
+                NotificationHelper.showAlertBuffer(71, alertBuffer.append(deleteTarget instanceof ContactGroup ? ((ContactGroup) deleteTarget).name : ((Contact) deleteTarget).displayName).append(ObjectPool.unpackChars(PACKED_CONFIRM_SUFFIX)));
                 return;
             case ScreenId.BATCH_DELETE:
                 NotificationHelper.showConfirmDialog(72, 866);
@@ -149,8 +173,8 @@ public final class ContactHandler extends BaseScreenHandler {
                 Vector itemsParams = ObjectPool.newVector();
                 for (int idx = selectedItems.size() - 1; idx >= 0; idx--) {
                     Hashtable hashtable = new Hashtable();
-                    JsonParser.putIntKey(hashtable, 329240, JsonParser.getVectorElement(selectedItems, idx));
-                    JsonParser.putIntKey(hashtable, 263673, ObjectPool.integerOf(Storage.state().getInt(ChatKeys.INT_CHAT_VIEW_MODE)));
+                    JsonParser.putIntKey(hashtable, JSON_KEY_MSG_ID, JsonParser.getVectorElement(selectedItems, idx));
+                    JsonParser.putIntKey(hashtable, JSON_KEY_MARK_ACTION, ObjectPool.integerOf(Storage.state().getInt(ChatKeys.INT_CHAT_VIEW_MODE)));
                     itemsParams.addElement(hashtable);
                 }
                 Vector outerParams = ObjectPool.newVector();
@@ -159,58 +183,44 @@ public final class ContactHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CONTACT_DELETE:
                 Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_1);
-                if (Storage.state().getCurrentContact() == null) {
-                    NotificationHelper.showErrorOrConfirm(85, 727, 0);
-                    return;
-                } else {
-                    Contact contact3 = Storage.state().getCurrentContact();
-                    NotificationHelper.showErrorOrConfirm(85, 727, contact3.account.validateDelete(contact3));
-                    return;
-                }
+                Contact deleteContact = Storage.state().getCurrentContact();
+                NotificationHelper.showErrorOrConfirm(85, 727, deleteContact == null ? 0 : deleteContact.account.validateDelete(deleteContact));
+                return;
             case ScreenId.GROUP_MOVE:
-                ListView screen4 = ScreenManager.createScreen(ScreenDef.GROUP_MOVE);
-                Contact contact4 = Storage.state().getCurrentContact();
-                Vector vector = contact4.account.groups;
-                int size8 = vector.size();
-                for (int i9 = 0; i9 < size8; i9++) {
-                    ContactGroup group = (ContactGroup) vector.elementAt(i9);
-                    screen4.addItem(group.createMenuItem(-1));
-                    if (group.containsContact(contact4)) {
-                        screen4.selectedIndex = i9;
+                ListView groupScreen = ScreenManager.createScreen(ScreenDef.GROUP_MOVE);
+                Contact moveContact = Storage.state().getCurrentContact();
+                Vector groups = moveContact.account.groups;
+                int groupCount = groups.size();
+                for (int gi = 0; gi < groupCount; gi++) {
+                    ContactGroup group = (ContactGroup) groups.elementAt(gi);
+                    groupScreen.addItem(group.createMenuItem(-1));
+                    if (group.containsContact(moveContact)) {
+                        groupScreen.selectedIndex = gi;
                     }
                 }
-                ScreenManager.showScreen(screen4);
+                ScreenManager.showScreen(groupScreen);
                 return;
             case ScreenId.CONTACT_MENU:
                 Storage.state().setInt(ContactKeys.FLAG_CONTACT_MENU_MODE, 0);
-                Contact contact5 = Storage.state().getCurrentContact();
-                if (contact5.isSystem()) {
-                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_ACTION, 92);
-                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_TYPE, 3);
+                Contact menuContact = Storage.state().getCurrentContact();
+                if (menuContact.isSystem()) {
+                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_ACTION, ScreenId.CONTACT_MENU);
+                    Storage.state().setInt(UIKeys.INT_CANCEL_MENU_TYPE, MENU_TYPE_CONTACT_MENU);
                     ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_MENU));
                     return;
                 }
-                ContactListManager.updateContactFlags(contact5);
-                boolean z7 = contact5 instanceof MrimContact;
-                boolean z8 = z7;
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_MRIM, z7);
-                boolean z9 = z8 && contact5.isOffline();
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_GROUP, z9);
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_USER, z8 && !z9);
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_ONLINE, contact5.isOnline());
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_HAS_UNREAD, contact5.hasUnread() && !contact5.isOnline());
-                Storage.state().setBool(ContactKeys.FLAG_CONTACT_HAS_VCARD, z8 && !z9 && ((MrimContact) contact5).hasVCard());
-                Storage.state().setInt(UIKeys.INT_OK_MENU_TYPE, 3);
-                Storage.state().setInt(UIKeys.INT_OK_MENU_ACTION, 92);
+                setupContactMenuFlags(menuContact);
+                Storage.state().setInt(UIKeys.INT_OK_MENU_TYPE, MENU_TYPE_CONTACT_MENU);
+                Storage.state().setInt(UIKeys.INT_OK_MENU_ACTION, ScreenId.CONTACT_MENU);
                 ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONTACT_ACTIONS_MENU));
                 return;
             case ScreenId.CONTACT_INFO_VIEW:
                 ContactInfo contactInfo = (ContactInfo) Storage.state().getObject(RegistrationKeys.SLOT_REG_PARAM_1);
-                String str = (String) contactInfo.get(ObjectPool.integerOf(-1));
-                if (str != null) {
-                    NotificationHelper.showNotification(str);
+                String errorMessage = (String) contactInfo.get(ObjectPool.integerOf(CONTACT_INFO_ERROR_KEY));
+                if (errorMessage != null) {
+                    NotificationHelper.showNotification(errorMessage);
                 } else {
-                    Storage.state().setInt(RuntimeKeys.INT_INFO_SCREEN_MODE, contactInfo.isXmppContact() ? 0 : 503);
+                    Storage.state().setInt(RuntimeKeys.INT_INFO_SCREEN_MODE, contactInfo.isXmppContact() ? 0 : INFO_MODE_MRIM);
                     ScreenManager.showScreen(contactInfo.buildContactScreen(ScreenDef.CONTACT_INFO_VIEW_SCREEN));
                 }
                 Storage.state().setInt(UIKeys.INT_CURRENT_SCREEN_ID, ScreenId.USER_PROFILE);
@@ -223,79 +233,37 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.CONTACT_LIST_KEY:
                 return;
             case ScreenId.BLOCK_CONTACT_LIST:
-                Account account3 = Storage.state().getAccount();
-                Vector contacts11 = ObjectPool.newVector();
-                Enumeration contactEnum2 = account3.contactMap.elements();
-                while (contactEnum2.hasMoreElements()) {
-                    Contact contactToDelete = (Contact) contactEnum2.nextElement();
-                    if (contactToDelete.canDelete()) {
-                        contacts11.addElement(contactToDelete);
-                    }
-                }
-                if (contacts11.size() > 0) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.BLOCK_CONTACT_LIST), contacts11));
-                } else {
-                    NotificationHelper.showMessageById(762);
-                }
-                ObjectPool.releaseVector(contacts11);
+                showFilteredContactList(ScreenDef.BLOCK_CONTACT_LIST, 0);
                 return;
             case ScreenId.UNBLOCK_CONTACT_LIST:
-                Account account4 = Storage.state().getAccount();
-                Vector contacts12 = ObjectPool.newVector();
-                Enumeration contactEnum3 = account4.contactMap.elements();
-                while (contactEnum3.hasMoreElements()) {
-                    Contact contactToBlock = (Contact) contactEnum3.nextElement();
-                    if (contactToBlock.canBlock()) {
-                        contacts12.addElement(contactToBlock);
-                    }
-                }
-                if (contacts12.size() > 0) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.UNBLOCK_CONTACT_LIST), contacts12));
-                } else {
-                    NotificationHelper.showMessageById(762);
-                }
-                ObjectPool.releaseVector(contacts12);
+                showFilteredContactList(ScreenDef.UNBLOCK_CONTACT_LIST, 1);
                 return;
             case ScreenId.DELETE_CONTACT_LIST:
-                Account account5 = Storage.state().getAccount();
-                Vector contacts13 = ObjectPool.newVector();
-                Enumeration contactEnum4 = account5.contactMap.elements();
-                while (contactEnum4.hasMoreElements()) {
-                    Contact contactToUnblock = (Contact) contactEnum4.nextElement();
-                    if (contactToUnblock.canUnblock()) {
-                        contacts13.addElement(contactToUnblock);
-                    }
-                }
-                if (contacts13.size() > 0) {
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.DELETE_CONTACT_LIST), contacts13));
-                } else {
-                    NotificationHelper.showMessageById(762);
-                }
-                ObjectPool.releaseVector(contacts13);
+                showFilteredContactList(ScreenDef.DELETE_CONTACT_LIST, 2);
                 return;
             case ScreenId.GROUP_MEMBERS:
-                ListView screen15 = ScreenManager.createScreen(ScreenDef.GROUP_MEMBERS);
+                ListView membersScreen = ScreenManager.createScreen(ScreenDef.GROUP_MEMBERS);
                 MrimContact mrimContact = (MrimContact) Storage.state().getCurrentContact();
-                MrimAccount mrimAccount4 = (MrimAccount) mrimContact.account;
+                MrimAccount mrimAccount = (MrimAccount) mrimContact.account;
                 Vector groupMembers = Storage.state().getVector(RegistrationKeys.SLOT_REG_PARAM_4);
                 mrimContact.setGroupsList(groupMembers);
-                for (int i22 = 0; i22 < groupMembers.size(); i22++) {
-                    String memberLogin = Utils.getVectorString(groupMembers, i22);
-                    if (!StringUtils.equals(memberLogin, mrimAccount4.login)) {
-                        MrimContact mrimContact2 = (MrimContact) mrimAccount4.getContact((Object) memberLogin);
-                        if (mrimContact2 != null) {
-                            screen15.addItem(mrimContact2.createMenuItem());
+                for (int mi = 0; mi < groupMembers.size(); mi++) {
+                    String memberLogin = Utils.getVectorString(groupMembers, mi);
+                    if (!StringUtils.equals(memberLogin, mrimAccount.login)) {
+                        MrimContact member = (MrimContact) mrimAccount.getContact(memberLogin);
+                        if (member != null) {
+                            membersScreen.addItem(member.createMenuItem());
                         } else {
-                            screen15.addIconItemWithData(154, memberLogin, 0, memberLogin);
+                            membersScreen.addIconItemWithData(154, memberLogin, 0, memberLogin);
                         }
                     }
                 }
-                if (screen15.menuItems.size() == 0) {
-                    screen15.selectable = false;
-                    ListView labelScreen = screen15.addLabelById(772);
+                if (membersScreen.menuItems.size() == 0) {
+                    membersScreen.selectable = false;
+                    ListView labelScreen = membersScreen.addLabelById(772);
                     labelScreen.setSoftKeys(Storage.resources().getString(StringResKeys.STR_EMPTY), Storage.resources().getString(StringResKeys.STR_SOFTKEY_NO), labelScreen.softKeyLeft, labelScreen.softKeyCenter, labelScreen.softKeyRight);
                 }
-                ScreenManager.showScreen(screen15);
+                ScreenManager.showScreen(membersScreen);
                 Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_4);
                 return;
             case ScreenId.EDIT_MEMBERS:
@@ -311,23 +279,23 @@ public final class ContactHandler extends BaseScreenHandler {
                 return;
             case ScreenId.CONTACT_MODIFY:
                 ScreenManager.prepareFormData();
-                MrimContact mrimContact3 = (MrimContact) Storage.state().getCurrentContact();
-                MrimAccount mrimAccount5 = (MrimAccount) mrimContact3.account;
-                NotificationHelper.showErrorOrConfirm(150, 504, mrimAccount5.trySendData(mrimAccount5.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount5, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact3.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ObjectPool.integerOf(MrimAccount.RESP_AUTH), mrimContact3, new Long(1L)})));
+                MrimContact modifyContact = (MrimContact) Storage.state().getCurrentContact();
+                MrimAccount modifyAccount = (MrimAccount) modifyContact.account;
+                NotificationHelper.showErrorOrConfirm(150, 504, modifyAccount.trySendData(modifyAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(modifyAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(Conversation.FLAG_EXTENDED).writeStringLatin1(modifyContact.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeIntLE(4).writeIntLE(1)), ObjectPool.integerOf(MrimAccount.RESP_AUTH), modifyContact, new Long(1L)})));
                 return;
             case ScreenId.VISIBLE_CONTACTS:
                 Vector contactIds = ServiceRegistry.getAllContactIds();
-                int count = Utils.vectorSize(contactIds);
-                if (count == 0) {
+                int contactCount = Utils.vectorSize(contactIds);
+                if (contactCount == 0) {
                     NotificationHelper.showMessageById(404);
                     return;
                 }
-                ListView screen16 = ScreenManager.createScreen(ScreenDef.GROUP_MANAGEMENT_ALT);
-                for (int i23 = 0; i23 < count; i23++) {
-                    Object contactId = contactIds.elementAt(i23);
-                    screen16.addItem(MenuItem.createCheckbox(ServiceRegistry.getPhotoHost(contactId), !ServiceRegistry.hiddenContacts.contains(contactId)));
+                ListView visibleScreen = ScreenManager.createScreen(ScreenDef.GROUP_MANAGEMENT_ALT);
+                for (int ci = 0; ci < contactCount; ci++) {
+                    Object contactId = contactIds.elementAt(ci);
+                    visibleScreen.addItem(MenuItem.createCheckbox(ServiceRegistry.getPhotoHost(contactId), !ServiceRegistry.hiddenContacts.contains(contactId)));
                 }
-                ScreenManager.showScreen(screen16);
+                ScreenManager.showScreen(visibleScreen);
                 return;
         }
     }
@@ -339,19 +307,19 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.CONTACT_EDITOR:
                 ScreenManager.processScreenForm();
                 String[] phoneNumbers = Utils.getPhoneNumbers(false);
-                Object[] objArr = new Object[phoneNumbers.length + 1];
-                objArr[0] = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_INPUT_TEXT));
-                for (int i = 0; i < phoneNumbers.length; i++) {
-                    objArr[i + 1] = phoneNumbers[i];
+                Object[] contactData = new Object[phoneNumbers.length + 1];
+                contactData[0] = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_INPUT_TEXT));
+                for (int pi = 0; pi < phoneNumbers.length; pi++) {
+                    contactData[pi + 1] = phoneNumbers[pi];
                 }
-                Contact contact = Storage.state().getCurrentContact();
+                Contact editContact = Storage.state().getCurrentContact();
                 int modifyResult;
-                if (contact.isOnline()) {
-                    contact.setDisplayName((String) objArr[0]);
+                if (editContact.isOnline()) {
+                    editContact.setDisplayName((String) contactData[0]);
                     AppController.needsLayoutUpdate = true;
                     modifyResult = 0;
                 } else {
-                    modifyResult = contact.account.validateModify(contact, objArr);
+                    modifyResult = editContact.account.validateModify(editContact, contactData);
                 }
                 return modifyResult != 0 ? NotificationHelper.showError(modifyResult) : 0;
             case ScreenId.ADD_CONTACT:
@@ -359,33 +327,35 @@ public final class ContactHandler extends BaseScreenHandler {
                 return Storage.state().getAccount() instanceof XmppProtocol ? ((XmppProtocol) Storage.state().getAccount()).addNewContact() : 0;
             case ScreenId.ADD_MRIM_CONTACT:
                 ScreenManager.processScreenForm();
-                MrimAccount mrimAccount = (MrimAccount) Storage.state().getAccount();
+                MrimAccount addAccount = (MrimAccount) Storage.state().getAccount();
                 String displayName = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_INPUT_TEXT));
-                String[] phoneNumbers2 = Utils.getPhoneNumbers(false);
+                String[] addPhones = Utils.getPhoneNumbers(false);
                 int sendResult;
-                if (!mrimAccount.isConnected()) {
+                if (!addAccount.isConnected()) {
                     sendResult = 299;
                 } else if (Utils.nonEmpty(displayName)) {
-                    int length = phoneNumbers2.length;
-                    if (length == 0) {
+                    int phoneCount = addPhones.length;
+                    if (phoneCount == 0) {
                         sendResult = 709;
                     } else {
-                        Enumeration contactEnum = mrimAccount.contactMap.elements();
-                        while (true) {
-                            if (contactEnum.hasMoreElements()) {
-                                MrimContact mrimContact = (MrimContact) contactEnum.nextElement();
-                                for (int i2 = length - 1; i2 >= 0; i2--) {
-                                    if (mrimContact.isInGroup(phoneNumbers2[i2])) {
-                                        break;
-                                    }
+                        boolean duplicateFound = false;
+                        Enumeration contactEnum = addAccount.contactMap.elements();
+                        while (!duplicateFound && contactEnum.hasMoreElements()) {
+                            MrimContact existing = (MrimContact) contactEnum.nextElement();
+                            for (int pi = phoneCount - 1; pi >= 0; pi--) {
+                                if (existing.isInGroup(addPhones[pi])) {
+                                    duplicateFound = true;
+                                    break;
                                 }
-                                sendResult = 486;
-                            } else {
-                                MrimContactGroup contactGroup = mrimAccount.getFirstContactGroup();
-                                ByteBuffer packetBuf = new ByteBuffer().writeIntLE(1048576).writeIntLE(103).writeStringLatin1(Storage.resources().getString(StringResKeys.STR_PHONE_SUFFIX)).writeStringUTF16(displayName);
-                                String emailsJoined = Utils.joinComma(phoneNumbers2);
-                                sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_ADD_CONTACT, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ObjectPool.integerOf(MrimAccount.RESP_ADD_PHONE_CONTACT), displayName, emailsJoined, contactGroup}));
                             }
+                        }
+                        if (duplicateFound) {
+                            sendResult = 486;
+                        } else {
+                            MrimContactGroup contactGroup = addAccount.getFirstContactGroup();
+                            ByteBuffer packetBuf = new ByteBuffer().writeIntLE(MRIM_FLAG_PHONE_CONTACT).writeIntLE(103).writeStringLatin1(Storage.resources().getString(StringResKeys.STR_PHONE_SUFFIX)).writeStringUTF16(displayName);
+                            String emailsJoined = Utils.joinComma(addPhones);
+                            sendResult = addAccount.trySendData(addAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(addAccount, MrimCommand.CS_ADD_CONTACT, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ObjectPool.integerOf(MrimAccount.RESP_ADD_PHONE_CONTACT), displayName, emailsJoined, contactGroup}));
                         }
                     }
                 } else {
@@ -437,46 +407,44 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.CONTACT_LIST_KEY:
                 return handleContactListKey();
             case ScreenId.BLOCK_CONTACT_LIST:
-                Contact selectedContact = (Contact) obj;
+                Contact blockContact = (Contact) obj;
                 int blockResult;
-                return (selectedContact == null || (blockResult = selectedContact.validateBlock()) == 0) ? 0 : NotificationHelper.showError(blockResult);
+                return (blockContact == null || (blockResult = blockContact.validateBlock()) == 0) ? 0 : NotificationHelper.showError(blockResult);
             case ScreenId.UNBLOCK_CONTACT_LIST:
-                Contact contactToDelete = (Contact) obj;
+                Contact unblockContact = (Contact) obj;
                 int unblockResult;
-                return (contactToDelete == null || (unblockResult = contactToDelete.validateUnblock()) == 0) ? 0 : NotificationHelper.showError(unblockResult);
+                return (unblockContact == null || (unblockResult = unblockContact.validateUnblock()) == 0) ? 0 : NotificationHelper.showError(unblockResult);
             case ScreenId.DELETE_CONTACT_LIST:
-                Contact contactToBlock = (Contact) obj;
+                Contact deleteListContact = (Contact) obj;
                 int deleteResult;
-                return (contactToBlock == null || (deleteResult = contactToBlock.validateDelete()) == 0) ? 0 : NotificationHelper.showError(deleteResult);
+                return (deleteListContact == null || (deleteResult = deleteListContact.validateDelete()) == 0) ? 0 : NotificationHelper.showError(deleteResult);
             case ScreenId.GROUP_MEMBERS:
-                int errorCode;
                 if (obj == null) {
-                    errorCode = -1;
-                } else if (obj instanceof String) {
-                    Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, ContactInfo.createForAccount(Storage.state().getCurrentContact().account).setEmailAddress((String) obj).setDisplayName((String) obj));
-                    errorCode = 66;
-                } else {
-                    errorCode = NotificationHelper.showError(773);
+                    return -1;
                 }
-                return errorCode;
+                if (obj instanceof String) {
+                    Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, ContactInfo.createForAccount(Storage.state().getCurrentContact().account).setEmailAddress((String) obj).setDisplayName((String) obj));
+                    return ScreenId.ADD_CONTACT_INFO;
+                }
+                return NotificationHelper.showError(773);
             case ScreenId.EDIT_MEMBERS:
                 Vector checkedItems = ContactListManager.getCheckedItems(currentScreen, 0);
-                int errorCode3;
+                int editResult;
                 if (checkedItems.size() == 0) {
-                    errorCode3 = NotificationHelper.showError(775);
+                    editResult = NotificationHelper.showError(775);
                 } else {
-                    MrimContact mrimContact2 = (MrimContact) Storage.state().getCurrentContact();
-                    MrimAccount mrimAccount4 = (MrimAccount) mrimContact2.account;
+                    MrimContact editMember = (MrimContact) Storage.state().getCurrentContact();
+                    MrimAccount editAccount = (MrimAccount) editMember.account;
                     ByteBuffer buffer = new ByteBuffer();
-                    int size = checkedItems.size();
-                    ByteBuffer membersBuf = buffer.writeIntLE(size);
-                    for (int i6 = size - 1; i6 >= 0; i6--) {
-                        membersBuf.writeStringLatin1((String) checkedItems.elementAt(i6));
+                    int memberCount = checkedItems.size();
+                    ByteBuffer membersBuf = buffer.writeIntLE(memberCount);
+                    for (int mi = memberCount - 1; mi >= 0; mi--) {
+                        membersBuf.writeStringLatin1((String) checkedItems.elementAt(mi));
                     }
-                    int sendResult4 = mrimAccount4.trySendData(mrimAccount4.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount4, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(4194304).writeStringLatin1(mrimContact2.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ObjectPool.integerOf(MrimAccount.RESP_AUTH), mrimContact2, new Long(2L)}));
-                    errorCode3 = sendResult4 != 0 ? NotificationHelper.showError(sendResult4) : 0;
+                    int editSendResult = editAccount.trySendData(editAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(editAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(Conversation.FLAG_EXTENDED).writeStringLatin1(editMember.simpleIdentifier).writeIntLE(0).writeIntLE(0).writeBufferIntLen(new ByteBuffer().writeIntLE(3).writeBufferIntLen(membersBuf))), ObjectPool.integerOf(MrimAccount.RESP_AUTH), editMember, new Long(2L)}));
+                    editResult = editSendResult != 0 ? NotificationHelper.showError(editSendResult) : 0;
                 }
-                return errorCode3;
+                return editResult;
             case ScreenId.CONTACT_DELETE_MRIM:
                 return -1;
             case ScreenId.GROUP_MANAGEMENT:
@@ -486,16 +454,16 @@ public final class ContactHandler extends BaseScreenHandler {
             case ScreenId.VISIBLE_CONTACTS:
                 Vector contactIds = ServiceRegistry.getAllContactIds();
                 StringBuffer sb = ObjectPool.newStringBuffer();
-                Vector vector = currentScreen.menuItems;
-                int size3 = vector.size();
-                for (int i7 = 0; i7 < size3; i7++) {
-                    if (!((Boolean) ((MenuItem) vector.elementAt(i7)).data).booleanValue()) {
-                        sb.append(contactIds.elementAt(i7)).append((char) 0);
+                Vector items = currentScreen.menuItems;
+                int itemCount = items.size();
+                for (int vi = 0; vi < itemCount; vi++) {
+                    if (!((Boolean) ((MenuItem) items.elementAt(vi)).data).booleanValue()) {
+                        sb.append(contactIds.elementAt(vi)).append((char) 0);
                     }
                 }
                 String hiddenStr = ObjectPool.toStringAndRelease(sb);
                 ServiceRegistry.hiddenContacts = Utils.split(hiddenStr, (char) 0);
-                Storage.state().setObject(ContactKeys.HIDDEN_CONTACTS_LIST, (Object) hiddenStr);
+                Storage.state().setObject(ContactKeys.HIDDEN_CONTACTS_LIST, hiddenStr);
                 return 0;
             default:
                 return 0;
@@ -575,8 +543,7 @@ public final class ContactHandler extends BaseScreenHandler {
                 ScreenManager.clearFormFields();
                 break;
             case ScreenId.ADD_CONTACT:
-                int accountType = Storage.state().getAccount().getType();
-                if (accountType != 0 && accountType == 1) {
+                if (Storage.state().getAccount().getType() == Account.TYPE_MMP) {
                     Storage.state().clearIndex(RegistrationKeys.SLOT_SEARCH_FIELD_1);
                     Storage.state().clearIndex(RegistrationKeys.SLOT_SEARCH_FIELD_2);
                     Storage.state().clearIndex(RegistrationKeys.SLOT_SEARCH_FIELD_3);
@@ -621,6 +588,12 @@ public final class ContactHandler extends BaseScreenHandler {
                 break;
         }
         clearScreenFlags();
+    }
+
+    public void onScreenResumed(ListView screen, int closedScreenId) {
+        if (screen.screenId == ScreenId.CONTACT_LIST) {
+            AppController.needsLayoutUpdate = true;
+        }
     }
 
     private static void clearScreenFlags() {
@@ -725,8 +698,8 @@ public final class ContactHandler extends BaseScreenHandler {
                     } else {
                         int length = inputText.length();
                         int encodedLength = length;
-                        for (int i8 = length - 1; i8 >= 0; i8--) {
-                            char ch = inputText.charAt(i8);
+                        for (int ci = length - 1; ci >= 0; ci--) {
+                            char ch = inputText.charAt(ci);
                             if ((ch >= CYRILLIC_UPPER_START && ch <= CYRILLIC_UPPER_END)
                                     || ((ch >= CYRILLIC_LOWER_START && ch <= CYRILLIC_LOWER_END)
                                         || ch == CYRILLIC_IO_LOWER || ch == CYRILLIC_IO_UPPER)) {
@@ -757,22 +730,22 @@ public final class ContactHandler extends BaseScreenHandler {
                     } else {
                         Object payload = ApiClient.getJsonPayload();
                         for (int idx = ((Vector) payload).size() - 1; idx >= 0; idx--) {
-                            Object jsonObj = JsonParser.getVectorElement(payload, idx);
-                            int parsedInt = Utils.parseInt((Object) JsonParser.getStringByInt(jsonObj, 263673));
-                            String jsonStr = JsonParser.getStringByInt(jsonObj, 329240);
-                            ChatRoom selectedChatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findByName(jsonStr);
-                            Message message = selectedChatRoom.getMessage(jsonStr);
-                            if (selectedChatRoom != null) {
-                                selectedChatRoom.markMessageRead(jsonStr);
+                            Object entry = JsonParser.getVectorElement(payload, idx);
+                            int markAction = Utils.parseInt(JsonParser.getStringByInt(entry, JSON_KEY_MARK_ACTION));
+                            String msgId = JsonParser.getStringByInt(entry, JSON_KEY_MSG_ID);
+                            ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findByName(msgId);
+                            Message message = chatRoom.getMessage(msgId);
+                            if (chatRoom != null) {
+                                chatRoom.markMessageRead(msgId);
                             }
-                            if (parsedInt == 1) {
-                                if (message != null && !message.hasFlag(4)) {
-                                    message.setFlag(4, true);
-                                    selectedChatRoom.incrementUnread();
+                            if (markAction == MARK_ACTION_READ) {
+                                if (message != null && !message.hasFlag(MSG_FLAG_STARRED)) {
+                                    message.setFlag(MSG_FLAG_STARRED, true);
+                                    chatRoom.incrementUnread();
                                 }
-                            } else if (message != null && message.hasFlag(4)) {
-                                message.setFlag(4, false);
-                                selectedChatRoom.decrementUnread();
+                            } else if (message != null && message.hasFlag(MSG_FLAG_STARRED)) {
+                                message.setFlag(MSG_FLAG_STARRED, false);
+                                chatRoom.decrementUnread();
                             }
                         }
                         return ScreenId.CHAT_ROOM_VIEW;
@@ -814,17 +787,50 @@ public final class ContactHandler extends BaseScreenHandler {
         }
     }
 
-    public static final int deleteSelectedEntity() {
+    private static void setupContactMenuFlags(Contact contact) {
+        ContactListManager.updateContactFlags(contact);
+        boolean isMrim = contact instanceof MrimContact;
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_MRIM, isMrim);
+        boolean isMrimGroup = isMrim && contact.isOffline();
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_GROUP, isMrimGroup);
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_USER, isMrim && !isMrimGroup);
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_IS_ONLINE, contact.isOnline());
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_HAS_UNREAD, contact.hasUnread() && !contact.isOnline());
+        Storage.state().setBool(ContactKeys.FLAG_CONTACT_HAS_VCARD, isMrim && !isMrimGroup && ((MrimContact) contact).hasVCard());
+    }
+
+    // filterType: 0=canDelete, 1=canBlock, 2=canUnblock
+    private static void showFilteredContactList(int screenDef, int filterType) {
+        Account account = Storage.state().getAccount();
+        Vector filtered = ObjectPool.newVector();
+        Enumeration contactEnum = account.contactMap.elements();
+        while (contactEnum.hasMoreElements()) {
+            Contact candidate = (Contact) contactEnum.nextElement();
+            boolean matches = filterType == 0 ? candidate.canDelete()
+                    : filterType == 1 ? candidate.canBlock() : candidate.canUnblock();
+            if (matches) {
+                filtered.addElement(candidate);
+            }
+        }
+        if (filtered.size() > 0) {
+            ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(screenDef), filtered));
+        } else {
+            NotificationHelper.showMessageById(762);
+        }
+        ObjectPool.releaseVector(filtered);
+    }
+
+    public static int deleteSelectedEntity() {
         int groupError;
-        Object obj = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
-        if ((obj instanceof ContactGroup) && (groupError = ((ContactGroup) obj).getSortIndex()) != 0) {
+        Object entity = Storage.state().getObject(ContactKeys.SLOT_CURRENT_ENTITY);
+        if ((entity instanceof ContactGroup) && (groupError = ((ContactGroup) entity).getSortIndex()) != 0) {
             return NotificationHelper.showError(groupError);
         }
-        if (!(obj instanceof Contact)) {
+        if (!(entity instanceof Contact)) {
             return ScreenId.CONTACT_LIST;
         }
-        Contact selectedContact = (Contact) obj;
-        int contactError = selectedContact.account.validateResend(selectedContact);
+        Contact contact = (Contact) entity;
+        int contactError = contact.account.validateResend(contact);
         if (contactError != 0) {
             return NotificationHelper.showError(contactError);
         }

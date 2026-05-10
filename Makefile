@@ -5,6 +5,7 @@ BUILD   = build
 JAR     = TK_MobileAgent_3.9.jar
 JAVAC8  = /usr/lib/jvm/java-8-openjdk/bin/javac
 PROGUARD = tools/proguard.jar
+EDITOR  = cd editor && mvn -q exec:java -Dexec.mainClass="com.trykote.editor.Main"
 
 RESOURCES_SRC = resources-src
 RESOURCES_OUT = $(BUILD)/resources
@@ -15,15 +16,9 @@ TEST_CFG = config/test_account.cfg
 TEST_SRC = $(SRC)/com/trykote/mobileagent/util/TestConfig.java
 SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java' ! -name 'TestConfig.java')
 
-# Editor
-EDITOR_SRC  = editor/src
-EDITOR_BUILD = $(BUILD)/editor
-JAVAFX_DIR  = /usr/lib/jvm/java-21-openjdk/lib
-JAVAFX_CP   = $(JAVAFX_DIR)/javafx.base.jar:$(JAVAFX_DIR)/javafx.controls.jar:$(JAVAFX_DIR)/javafx.fxml.jar:$(JAVAFX_DIR)/javafx.graphics.jar
-JAVAFX_MODS = javafx.controls,javafx.fxml
-EDITOR_SOURCES = $(shell find $(EDITOR_SRC) -name '*.java')
+# Editor (Maven project in editor/)
 
-.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys editor
+.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys editor editor-build
 
 all: jar
 
@@ -36,9 +31,12 @@ $(BUILD)/.resources: $(RESOURCES_SRC)/config.json \
                      $(RESOURCES_SRC)/cities.xml $(RESOURCES_SRC)/images/mapping.json \
                      $(RESOURCES_SRC)/blowfish_constants.bin
 	@mkdir -p $(RESOURCES_OUT)
-	python3 tools/cfg_tool.py --serialize $(RESOURCES_SRC) $(RESOURCES_OUT)/cfg
+	cd editor && mvn -q compile
+	$(EDITOR) -Dexec.args="--gen-screens ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/ScreenDef.java"
+	$(EDITOR) -Dexec.args="--gen-palette ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/PaletteKeys.java"
+	$(EDITOR) -Dexec.args="--serialize ../$(RESOURCES_SRC) ../$(RESOURCES_OUT)/cfg"
 	tools/pack_cities.sh $(RESOURCES_OUT)
-	tools/pack_resources.sh $(RESOURCES_OUT)
+	$(EDITOR) -Dexec.args="--pack-resources ../$(RESOURCES_SRC) ../$(RESOURCES_OUT)"
 	@touch $@
 
 $(GEN_DIR)/RemoteLoggerConfig.java: $(GEN_SRC) $(GEN_CFG)
@@ -66,7 +64,8 @@ $(GEN_DIR)/TestConfig.java: $(TEST_SRC) $(TEST_CFG)
 $(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	@mkdir -p $(BUILD)/classes
 	$(JAVAC8) -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
-	python3 tools/patch_stringbuilder.py $(BUILD)/classes
+	cd editor && mvn -q compile
+	$(EDITOR) -Dexec.args="--patch-stringbuilder ../$(BUILD)/classes"
 	@rm -rf $(BUILD)/preverified
 	java -jar $(PROGUARD) \
 		-injars $(BUILD)/classes \
@@ -81,7 +80,7 @@ $(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/Tes
 		-dontobfuscate \
 		-dontoptimize \
 		-dontwarn
-	python3 tools/patch_class_version.py $(BUILD)/preverified 45.3
+	$(EDITOR) -Dexec.args="--patch-version ../$(BUILD)/preverified 45.3"
 	@touch $@
 
 jar: $(BUILD)/$(JAR)
@@ -96,22 +95,36 @@ $(BUILD)/$(JAR): $(BUILD)/.compiled $(BUILD)/.resources
 	cd $(BUILD)/jar && jar cfm ../$(JAR) META-INF/MANIFEST.MF .
 	@echo "Built: $(BUILD)/$(JAR)"
 
-screen-defs:
-	python3 tools/cfg_tool.py --gen-screens $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/ScreenDef.java
+# Debug JAR: skips ProGuard/preverify/patch, keeps line numbers and debug info
+debug-jar: $(BUILD)/.debug-compiled $(BUILD)/.resources
+	@mkdir -p $(BUILD)/debug-jar
+	cp -r $(RESOURCES_OUT)/* $(BUILD)/debug-jar/
+	cp -r $(BUILD)/classes/* $(BUILD)/debug-jar/
+	rm -rf $(BUILD)/debug-jar/META-INF
+	mkdir -p $(BUILD)/debug-jar/META-INF
+	cp $(RESOURCES_SRC)/META-INF/MANIFEST.MF $(BUILD)/debug-jar/META-INF/
+	cd $(BUILD)/debug-jar && jar cfm ../debug-$(JAR) META-INF/MANIFEST.MF .
+	@echo "Built: $(BUILD)/debug-$(JAR)"
 
-palette-keys:
-	python3 tools/cfg_tool.py --gen-palette $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/PaletteKeys.java
-
-gen-keys:
-	python3 tools/cfg_tool.py --gen-keys $(RESOURCES_SRC) $(SRC)/com/trykote/mobileagent/core/
-
-editor: $(BUILD)/.editor
-	java -Dglass.gtk.uiScale=2.0 --module-path $(JAVAFX_CP) --add-modules $(JAVAFX_MODS) -cp $(EDITOR_BUILD) com.trykote.editor.EditorApp $(RESOURCES_SRC)
-
-$(BUILD)/.editor: $(EDITOR_SOURCES)
-	@mkdir -p $(EDITOR_BUILD)
-	javac --module-path $(JAVAFX_CP) --add-modules $(JAVAFX_MODS) -d $(EDITOR_BUILD) -encoding UTF-8 $(EDITOR_SOURCES)
+$(BUILD)/.debug-compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
+	@mkdir -p $(BUILD)/classes
+	$(JAVAC8) -g -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	@touch $@
+
+screen-defs: editor-build
+	$(EDITOR) -Dexec.args="--gen-screens ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/ScreenDef.java"
+
+palette-keys: editor-build
+	$(EDITOR) -Dexec.args="--gen-palette ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/PaletteKeys.java"
+
+gen-keys: editor-build
+	$(EDITOR) -Dexec.args="--gen-keys ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core"
+
+editor-build:
+	cd editor && mvn -q compile
+
+editor: editor-build
+	cd editor && mvn -q javafx:run
 
 clean:
 	rm -rf $(BUILD)

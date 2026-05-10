@@ -7,3 +7,6 @@ rms
 out
 *.iml
 __pycache__
+editor/target
+screenshots
+*.json

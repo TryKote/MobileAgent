@@ -6,9 +6,24 @@ import java.util.List;
 public class ScreenDef {
 
     public enum ScreenType {
-        FULLSCREEN, FULLSCREEN_ALT, FULLSCREEN_NOSCROLL, FULLSCREEN_NOSCROLL_ALT,
-        POPUP, DIALOG_CENTER, DIALOG_BOTTOM, DIALOG_CORNER, DIALOG_LOW,
-        TOAST, TOAST_CENTER, MAP;
+        FULLSCREEN(ScreenCategory.FULLSCREEN),
+        FULLSCREEN_ALT(ScreenCategory.FULLSCREEN),
+        FULLSCREEN_NOSCROLL(ScreenCategory.FULLSCREEN),
+        FULLSCREEN_NOSCROLL_ALT(ScreenCategory.FULLSCREEN),
+        POPUP(ScreenCategory.POPUP),
+        DIALOG_CENTER(ScreenCategory.DIALOG),
+        DIALOG_BOTTOM(ScreenCategory.DIALOG),
+        DIALOG_CORNER(ScreenCategory.DIALOG),
+        DIALOG_LOW(ScreenCategory.DIALOG),
+        TOAST(ScreenCategory.TOAST),
+        TOAST_CENTER(ScreenCategory.TOAST),
+        MAP(ScreenCategory.GRID);
+
+        public final ScreenCategory category;
+
+        ScreenType(ScreenCategory category) {
+            this.category = category;
+        }
 
         static ScreenType fromString(String s) {
             return switch (s) {
@@ -28,19 +43,8 @@ public class ScreenDef {
             };
         }
 
-        String toConfigString() {
+        public String toConfigString() {
             return name().toLowerCase();
-        }
-
-        boolean isDialog() {
-            return this == DIALOG_CENTER || this == DIALOG_BOTTOM ||
-                   this == DIALOG_CORNER || this == DIALOG_LOW ||
-                   this == POPUP;
-        }
-
-        boolean isFullscreen() {
-            return this == FULLSCREEN || this == FULLSCREEN_ALT ||
-                   this == FULLSCREEN_NOSCROLL || this == FULLSCREEN_NOSCROLL_ALT;
         }
     }
 
@@ -68,7 +72,7 @@ public class ScreenDef {
             };
         }
 
-        String toConfigString() {
+        public String toConfigString() {
             return name().toLowerCase();
         }
     }
@@ -95,9 +99,12 @@ public class ScreenDef {
         public int dataKey;
         public int hint;
         public String style;
+        // Preserve all original JSON fields for lossless save
+        public java.util.Map<String, Object> rawJson;
 
         public Item(ItemType type, int label, String labelHint, int icon, int cmd,
-                    int condKey, int dataKey, int hint, String style) {
+                    int condKey, int dataKey, int hint, String style,
+                    java.util.Map<String, Object> rawJson) {
             this.type = type;
             this.label = label;
             this.labelHint = labelHint;
@@ -107,10 +114,12 @@ public class ScreenDef {
             this.dataKey = dataKey;
             this.hint = hint;
             this.style = style;
+            this.rawJson = rawJson;
         }
 
         public Item copy() {
-            return new Item(type, label, labelHint, icon, cmd, condKey, dataKey, hint, style);
+            var rawCopy = rawJson != null ? new java.util.LinkedHashMap<>(rawJson) : null;
+            return new Item(type, label, labelHint, icon, cmd, condKey, dataKey, hint, style, rawCopy);
         }
     }
 
@@ -124,6 +133,7 @@ public class ScreenDef {
     public SoftKey rightKey;
     public int extraCmd;
     public final List<Item> items;
+    public com.fasterxml.jackson.databind.node.ObjectNode rawJson;
 
     public ScreenDef(String name, int screenId, ScreenType type, int title,
                      boolean checkboxes, String handler, SoftKey leftKey, SoftKey rightKey,

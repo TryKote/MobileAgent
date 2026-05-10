@@ -95,11 +95,12 @@ public final class AsyncTask implements Runnable {
         this.taskId = taskId;
         this.taskData = taskData;
         Thread thread = new Thread(this);
+        thread.setName("Task-" + taskId);
         this.thread = thread;
         thread.start();
     }
 
-    public final void run() {
+    public void run() {
         RemoteLogger.log("TASK", "run taskId=" + this.taskId);
         try {
             switch (this.taskId) {

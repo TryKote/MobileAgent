@@ -21,6 +21,51 @@ public final class MmpContact extends Contact {
     private static final int ICON_BLINK_FLAG = 16384;
     private static final int ICON_CUSTOM_STATUS = 26;
 
+    // Icon composition: masks and bases (parseStatus)
+    private static final int ICON_ONLINE = 256;
+    private static final int ICON_HIGH_MASK = -65536;
+    private static final int ICON_CUSTOM_GUID_BASE = 269;
+
+    // TLV attribute types in parseStatus
+    private static final int ATTR_STATUS = 6;
+    private static final int ATTR_GUID_LIST = 13;
+    private static final int ATTR_CAPABILITIES = 29;
+    private static final int GUID_SIZE = 16;
+    private static final int GUID_TABLE_SIZE = 576;
+    private static final int TLV_TYPE_CAPABILITY_STRING = 14;
+    private static final int TLV_LENGTH_MASK = 255;
+    private static final int TLV_CONTINUATION_BIT = 128;
+    private static final int CAPABILITY_ICON_OFFSET = 7;
+    private static final int CAPABILITY_ICON_MAX = 23;
+
+    // Contact status exact match values (parseStatus)
+    private static final int CONTACT_STATUS_ONLINE = 0;
+
+    // Contact status bitmask values (tested in descending priority)
+    private static final int CONTACT_FLAG_ON_THE_PHONE = 24576;
+    private static final int CONTACT_FLAG_IN_SHOWER = 20480;
+    private static final int CONTACT_FLAG_EATING = 16384;
+    private static final int CONTACT_FLAG_AT_HOME = 12288;
+    private static final int CONTACT_FLAG_DEPRESSION = 8192;
+    private static final int CONTACT_FLAG_AT_WORK = 256;
+    private static final int CONTACT_FLAG_FREE_CHAT = 32;
+    private static final int CONTACT_FLAG_INVISIBLE = 16;
+    private static final int CONTACT_FLAG_AWAY = 4;
+    private static final int CONTACT_FLAG_DND = 2;
+
+    // Contact icon overlays (parseStatus)
+    private static final int CONTACT_ICON_ONLINE = 16318720;
+    private static final int CONTACT_ICON_DND = 16449792;
+    private static final int CONTACT_ICON_AWAY = 16580864;
+    private static final int CONTACT_ICON_INVISIBLE = 16646400;
+    private static final int CONTACT_ICON_FREE_CHAT = 16384256;
+    private static final int CONTACT_ICON_AT_WORK = 16515328;
+    private static final int CONTACT_ICON_DEPRESSION = 17104896;
+    private static final int CONTACT_ICON_AT_HOME = 16842752;
+    private static final int CONTACT_ICON_EATING = 16908288;
+    private static final int CONTACT_ICON_IN_SHOWER = 16973824;
+    private static final int CONTACT_ICON_ON_THE_PHONE = 17039360;
+
     // MMP protocol tags (for encodeContactUpdate)
     private static final int TAG_DISPLAY_NAME = 305;
     private static final int TAG_AUTHORIZATION_FLAG = 102;
@@ -225,6 +270,28 @@ public final class MmpContact extends Contact {
         } else {
             this.canUnblock = value;
         }
+    }
+
+    private static ByteBuffer createPermissionCommand(MmpProtocol protocol, MmpContact contact, int permissionType) {
+        ByteBuffer contactBuffer = new ByteBuffer().writeShortString(contact.identifier).writeShortBE(0);
+        int uniqueId = protocol.generateUniqueGroupId();
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.ADD_CONTACT, contactBuffer.writeShortBE(uniqueId).writeShortBE(permissionType).writeShortBE(0)), ObjectPool.integerOf(MmpResponseHandler.RESP_UPDATE_PERMISSIONS), contact, ObjectPool.integerOf(permissionType), ObjectPool.integerOf(uniqueId)});
+    }
+
+    private static ByteBuffer updatePermissionCommand(MmpProtocol protocol, MmpContact contact, int existingId, int permissionType) {
+        return protocol.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(protocol, MmpCommand.DELETE_CONTACT, new ByteBuffer().writeShortString(contact.identifier).writeShortBE(0).writeShortBE(existingId).writeShortBE(permissionType).writeShortBE(0)), ObjectPool.integerOf(MmpResponseHandler.RESP_REMOVE_PERMISSIONS), contact, ObjectPool.integerOf(permissionType)});
+    }
+
+    public static ByteBuffer deletePermission(MmpProtocol protocol, MmpContact contact) {
+        return contact.canDelete() ? updatePermissionCommand(protocol, contact, contact.canDelete, 2) : createPermissionCommand(protocol, contact, 2);
+    }
+
+    public static ByteBuffer blockPermission(MmpProtocol protocol, MmpContact contact) {
+        return contact.canBlock() ? updatePermissionCommand(protocol, contact, contact.canBlock, 3) : createPermissionCommand(protocol, contact, 3);
+    }
+
+    public static ByteBuffer unblockPermission(MmpProtocol protocol, MmpContact contact) {
+        return contact.canUnblock() ? updatePermissionCommand(protocol, contact, contact.canUnblock, 14) : createPermissionCommand(protocol, contact, 14);
     }
 
     public static final void setFirstToken(long x, long y) {
@@ -460,6 +527,105 @@ public final class MmpContact extends Contact {
             return new String[]{(String) pointData[1], (String) pointData[2]};
         }
         return null;
+    }
+
+    static void parseStatus(MmpContact contact, ByteBuffer buffer) {
+        int iconIndex;
+        int icon = ICON_DEFAULT;
+        try {
+            buffer.skip(2);
+            int attrCount = buffer.readShortBE();
+            for (int attrIndex = 0; attrIndex < attrCount; attrIndex++) {
+                int attrType = buffer.readShortBE();
+                int attrLen = buffer.readShortBE();
+                if (attrType == ATTR_STATUS) {
+                    int statusFlags = buffer.readIntBE() & MmpProtocol.MASK_LOW_16;
+                    if (statusFlags == CONTACT_STATUS_ONLINE) {
+                        icon = ICON_ONLINE;
+                        contact.defaultIcon = icon;
+                        attrLen -= 4;
+                        contact.highlighted = true;
+                    } else {
+                        if (statusFlags == MmpProtocol.CONTACT_STATUS_DND) {
+                            icon = CONTACT_ICON_DND;
+                        } else if (statusFlags == MmpProtocol.CONTACT_STATUS_INVISIBLE) {
+                            icon = CONTACT_ICON_INVISIBLE;
+                        } else if ((statusFlags & CONTACT_FLAG_ON_THE_PHONE) == CONTACT_FLAG_ON_THE_PHONE) {
+                            icon = CONTACT_ICON_ON_THE_PHONE;
+                        } else if ((statusFlags & CONTACT_FLAG_IN_SHOWER) == CONTACT_FLAG_IN_SHOWER) {
+                            icon = CONTACT_ICON_IN_SHOWER;
+                        } else if ((statusFlags & CONTACT_FLAG_EATING) == CONTACT_FLAG_EATING) {
+                            icon = CONTACT_ICON_EATING;
+                        } else if ((statusFlags & CONTACT_FLAG_AT_HOME) == CONTACT_FLAG_AT_HOME) {
+                            icon = CONTACT_ICON_AT_HOME;
+                        } else if ((statusFlags & CONTACT_FLAG_DEPRESSION) == CONTACT_FLAG_DEPRESSION) {
+                            icon = CONTACT_ICON_DEPRESSION;
+                        } else if ((statusFlags & CONTACT_FLAG_AT_WORK) == CONTACT_FLAG_AT_WORK) {
+                            icon = CONTACT_ICON_AT_WORK;
+                        } else if ((statusFlags & CONTACT_FLAG_FREE_CHAT) == CONTACT_FLAG_FREE_CHAT) {
+                            icon = CONTACT_ICON_FREE_CHAT;
+                        } else if ((statusFlags & CONTACT_FLAG_INVISIBLE) == CONTACT_FLAG_INVISIBLE) {
+                            icon = CONTACT_ICON_INVISIBLE;
+                        } else if ((statusFlags & CONTACT_FLAG_AWAY) == CONTACT_FLAG_AWAY) {
+                            icon = CONTACT_ICON_AWAY;
+                        } else if ((statusFlags & CONTACT_FLAG_DND) == CONTACT_FLAG_DND) {
+                            icon = CONTACT_ICON_DND;
+                        } else if ((statusFlags & 1) == 1) {
+                            icon = CONTACT_ICON_ONLINE;
+                        }
+                        contact.defaultIcon = icon;
+                        attrLen -= 4;
+                        contact.highlighted = true;
+                    }
+                } else if (attrType == ATTR_GUID_LIST) {
+                    byte[] blockedGuid = Storage.resources().getBytes(StringResKeys.RES_BLOCKED_GUID);
+                    byte[] unblockedGuid = Storage.resources().getBytes(StringResKeys.RES_UNBLOCKED_GUID);
+                    byte[] iconGuids = Storage.resources().getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS);
+                    byte[] rawData = buffer.data;
+                    int baseOffset = buffer.offset;
+                    for (int guidOffset = 0; guidOffset < attrLen; guidOffset += GUID_SIZE) {
+                        int pos = baseOffset + guidOffset;
+                        for (int tableOffset = 0; tableOffset < GUID_TABLE_SIZE; tableOffset += GUID_SIZE) {
+                            if (Utils.compareBytes(iconGuids, tableOffset, rawData, pos, GUID_SIZE)) {
+                                contact.defaultIcon &= ICON_HIGH_MASK;
+                                contact.defaultIcon |= (tableOffset >> 4) + ICON_CUSTOM_GUID_BASE;
+                            }
+                        }
+                        if (Utils.compareBytes(blockedGuid, 0, rawData, pos, GUID_SIZE)) {
+                            contact.isBlocked = true;
+                        } else if (Utils.compareBytes(unblockedGuid, 0, rawData, pos, GUID_SIZE)) {
+                            contact.isUnblocked = true;
+                        }
+                    }
+                } else if (attrType == ATTR_CAPABILITIES) {
+                    while (0 < attrLen - 4) {
+                        int tlvType = buffer.readShortBE();
+                        int tlvLen = buffer.readShortBE() & TLV_LENGTH_MASK;
+                        int remaining = (attrLen - 2) - 2;
+                        if ((tlvLen & TLV_CONTINUATION_BIT) != 0 || remaining < (tlvLen & TLV_CONTINUATION_BIT)) {
+                            buffer.skip(tlvLen);
+                            attrLen = remaining - tlvLen;
+                        } else if (tlvType == TLV_TYPE_CAPABILITY_STRING) {
+                            byte[] tlvData = new byte[tlvLen];
+                            buffer.readIntoBytes(tlvData);
+                            String capStr = StringUtils.intern(new String(tlvData));
+                            if (capStr.startsWith(ObjectPool.unpackChars(28270022039266153L)) && (iconIndex = Utils.parseIntBounded(StringUtils.suffix(capStr, CAPABILITY_ICON_OFFSET), 0, CAPABILITY_ICON_MAX, -1)) >= 0) {
+                                contact.defaultIcon &= ICON_HIGH_MASK;
+                                contact.defaultIcon |= iconIndex + ICON_CUSTOM_GUID_BASE;
+                            }
+                            ObjectPool.releaseBytes(tlvData);
+                            attrLen = remaining - tlvLen;
+                        } else {
+                            buffer.skip(tlvLen);
+                            attrLen = remaining - tlvLen;
+                        }
+                    }
+                }
+                buffer.skip(attrLen);
+            }
+        } catch (Throwable ignored) {
+        }
+        contact.updateRenderState();
     }
 
     public static final void clearRouteProgress() {

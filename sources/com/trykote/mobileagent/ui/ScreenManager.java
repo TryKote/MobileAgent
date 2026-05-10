@@ -70,8 +70,29 @@ public abstract class ScreenManager {
     // Layout divisor for dialog-low vertical offset
     private static final int DIALOG_LOW_OFFSET_DIVISOR = 10;
 
-    // Text format flag for secondary/sublabel text
+    // Dialog size as fraction of screen: numerator / denominator = 90%
+    private static final int DIALOG_SIZE_NUMER = 9;
+    private static final int DIALOG_SIZE_DENOM = 10;
+
+    // Text format flags for addText(text, fontStyle, format)
     private static final int TEXT_FORMAT_SECONDARY = 6;
+    private static final int TEXT_FORMAT_INPUT = 7;
+
+    // Font style constants for addText(text, fontStyle, format)
+    private static final int FONT_STYLE_BOLD = 1;
+
+    // Icon codes for login/password items
+    private static final int ICON_LOGIN = 221;
+    private static final int ICON_PASSWORD = 219;
+
+    // Phone input field count
+    private static final int PHONE_FIELD_COUNT = 15;
+
+    // Numeric validation type in text input items
+    private static final int VALIDATION_NUMERIC = 2;
+
+    // Number of bytes to skip for numeric validation extra fields
+    private static final int NUMERIC_VALIDATION_EXTRA_FIELDS = 3;
 
     // AppState key ranges for integer-valued form data (CHAT_ROOM_CONFIG screen)
     private static final int INT_KEY_RANGE_START = 161;
@@ -79,7 +100,7 @@ public abstract class ScreenManager {
     private static final int INT_KEY_RANGE_START_2 = 268;
     private static final int INT_KEY_RANGE_END_2 = 304;
 
-    public static final void initializeFonts() {
+    public static void initializeFonts() {
         int fontSizeSetting = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
         int fontSizeCode = fontSizeSetting == 0 ? FONT_SIZE_MEDIUM : fontSizeSetting == 1 ? FONT_SIZE_SMALL : FONT_SIZE_LARGE;
         GraphicsContext normalGfx = new GraphicsContext(0, fontSizeCode);
@@ -103,7 +124,7 @@ public abstract class ScreenManager {
         }
     }
 
-    public static final ListView getCurrentScreen() {
+    public static ListView getCurrentScreen() {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         if (screens.isEmpty()) {
             return null;
@@ -111,35 +132,35 @@ public abstract class ScreenManager {
         return (ListView) screens.lastElement();
     }
 
-    public static final String getCurrentTitle() {
+    public static String getCurrentTitle() {
         if (Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedTitle();
         }
         return null;
     }
 
-    public static final int getCurrentWidth() {
+    public static int getCurrentWidth() {
         if (Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedWidth();
         }
         return DEFAULT_WIDTH;
     }
 
-    public static final MenuItem getCurrentMenuItem() {
+    public static MenuItem getCurrentMenuItem() {
         if (Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0) {
             return getCurrentScreen().getSelectedItem();
         }
         return null;
     }
 
-    public static final void pushScreen(ListView screen) {
+    public static void pushScreen(ListView screen) {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         while (screens.size() > 0) {
             ScreenBuilder.onScreenClosed();
         }
         screens.addElement(screen);
     }
-    public static final void showScreen(ListView screen) {
+    public static void showScreen(ListView screen) {
         RemoteLogger.log("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
         ListView prevScreen = null;
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
@@ -183,19 +204,7 @@ public abstract class ScreenManager {
                 screen.setOffset(marginX, marginY);
                 break;
             case TYPE_POPUP:
-                ListView curScreen = getCurrentScreen();
-                if (curScreen != null) {
-                    int popupX = curScreen.offsetX + curScreen.containerWidth;
-                    int popupY = curScreen.getSelectedY();
-                    if (popupX + screen.containerWidth > Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)) {
-                        popupX = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
-                    }
-                    if (popupY + screen.containerHeight > Storage.state().getHeight()) {
-                        popupY = Storage.state().getHeight() - screen.containerHeight;
-                    }
-                    screen.setOffset(popupX, popupY);
-                    break;
-                }
+                positionPopup(screen);
                 break;
             case TYPE_DIALOG_LOW:
                 screen.setOffset(marginX >> 1, (Storage.state().getHeight() - contentHeight) - (contentHeight / DIALOG_LOW_OFFSET_DIVISOR));
@@ -217,7 +226,23 @@ public abstract class ScreenManager {
         }
     }
 
-    public static final boolean hasScreen(int screenId) {
+    private static void positionPopup(ListView screen) {
+        ListView curScreen = getCurrentScreen();
+        if (curScreen == null) {
+            return;
+        }
+        int popupX = curScreen.offsetX + curScreen.containerWidth;
+        int popupY = curScreen.getSelectedY();
+        if (popupX + screen.containerWidth > Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)) {
+            popupX = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - screen.containerWidth;
+        }
+        if (popupY + screen.containerHeight > Storage.state().getHeight()) {
+            popupY = Storage.state().getHeight() - screen.containerHeight;
+        }
+        screen.setOffset(popupX, popupY);
+    }
+
+    public static boolean hasScreen(int screenId) {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         int idx = screens.size();
         do {
@@ -229,11 +254,11 @@ public abstract class ScreenManager {
         return true;
     }
 
-    public static final int getCenterOffset() {
+    public static int getCenterOffset() {
         return Utils.max(0, (Storage.state().getInt(UIKeys.INT_FONT_HEIGHT) - ICON_HEIGHT) >> 1);
     }
 
-    public static final int handleScreenClose() {
+    public static int handleScreenClose() {
         if (!Storage.state().getBool(UIKeys.FLAG_KNOWN_DEVICE)) {
             return NotificationHelper.showError(470);
         }
@@ -241,7 +266,7 @@ public abstract class ScreenManager {
         return 0;
     }
 
-    public static final ListView createScreen(int offset) {
+    public static ListView createScreen(int offset) {
         ListView screen;
         int pos = offset;
         String title = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
@@ -269,7 +294,7 @@ public abstract class ScreenManager {
             case TYPE_DIALOG_CORNER:
             case TYPE_POPUP:
             case TYPE_DIALOG_LOW:
-                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (screenW * 9) / 10, (screenH * 9) / 10, true);
+                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (screenW * DIALOG_SIZE_NUMER) / DIALOG_SIZE_DENOM, (screenH * DIALOG_SIZE_NUMER) / DIALOG_SIZE_DENOM, true);
                 break;
             case TYPE_FULLSCREEN_NOSCROLL:
             case TYPE_FULLSCREEN_NOSCROLL_ALT:
@@ -281,7 +306,7 @@ public abstract class ScreenManager {
                 break;
             case TYPE_TOAST:
             case TYPE_TOAST_CENTER:
-                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (screenW * 9) / 10, (screenH * 9) / 10, false);
+                screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (screenW * DIALOG_SIZE_NUMER) / DIALOG_SIZE_DENOM, (screenH * DIALOG_SIZE_NUMER) / DIALOG_SIZE_DENOM, false);
                 break;
             default:
                 screen = null;
@@ -309,14 +334,14 @@ public abstract class ScreenManager {
         return configuredScreen;
     }
 
-    public static final ListView createDialogScreen(int screenId) {
-        ListView screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) * 9) / 10, (Storage.state().getHeight() * 9) / 10, true);
+    public static ListView createDialogScreen(int screenId) {
+        ListView screen = new ListView(ListView.LAYOUT_VERTICAL, screenId, (Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) * DIALOG_SIZE_NUMER) / DIALOG_SIZE_DENOM, (Storage.state().getHeight() * DIALOG_SIZE_NUMER) / DIALOG_SIZE_DENOM, true);
         screen.screenType = TYPE_DIALOG_CENTER;
         screen.showCheckboxes = true;
         return screen;
     }
 
-    public static final boolean hasModal() {
+    public static boolean hasModal() {
         Vector screens = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
         int idx = screens.size();
         do {
@@ -328,7 +353,7 @@ public abstract class ScreenManager {
         return true;
     }
 
-    private static final int addItemToScreen(boolean isVisible, ListView screen, int pos, boolean isAction) {
+    private static int addItemToScreen(boolean isVisible, ListView screen, int pos, boolean isAction) {
         int labelKey = Storage.state().getInt(pos++);
         int iconKey = Storage.state().getInt(pos++);
         int cmdKey = Storage.state().getInt(pos++);
@@ -342,32 +367,14 @@ public abstract class ScreenManager {
         return pos;
     }
 
-    private static final int parseScreenItem(ListView screen, int pos, int screenId) {
-        Object itemData;
-        String title;
+    private static int parseScreenItem(ListView screen, int pos, int screenId) {
         int typeFlags = Storage.state().getInt(pos++);
         RemoteLogger.log("SCR", "parseItem pos=" + (pos - 1) + " type=" + (typeFlags & MASK_TYPE));
         boolean isEnabled = (typeFlags & FLAG_CHECKBOXES) != 0;
         boolean isDynamic = (typeFlags & FLAG_DYNAMIC) != 0;
         switch (typeFlags & MASK_TYPE) {
             case ITEM_ACTION:
-                if (isDynamic) {
-                    pos++;
-                    int condKey = Storage.state().getInt(pos);
-                    RemoteLogger.log("SCR", "ACTION dyn condKey=" + condKey + " pos=" + pos);
-                    isEnabled = Storage.state().getBool(condKey);
-                    RemoteLogger.log("SCR", "ACTION dyn isEnabled=" + isEnabled);
-                }
-                int labelKey = Storage.state().getInt(pos++);
-                int iconKey = Storage.state().getInt(pos++);
-                int cmdKey = Storage.state().getInt(pos++);
-                RemoteLogger.log("SCR", "ACTION label=" + labelKey + " icon=" + iconKey + " cmd=" + cmdKey + " enabled=" + isEnabled);
-                if (isEnabled) {
-                    screen.addActionById(iconKey, cmdKey, labelKey);
-                } else {
-                    screen.addIconById(iconKey, cmdKey, labelKey);
-                }
-                return pos;
+                return parseActionItem(screen, pos, isEnabled, isDynamic);
             case ITEM_SEPARATOR:
                 MenuItem separator = MenuItem.createSeparator().addText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)))).append(' ')), 0, 0);
                 String sublabel = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
@@ -389,24 +396,7 @@ public abstract class ScreenManager {
                 screen.addItem(MenuItem.createSeparator().addText(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++))), 1, 0));
                 return pos;
             case ITEM_TEXT_INPUT:
-                if (screenId == ScreenId.CHAT_ROOM_CONFIG) {
-                    int dataKey = Storage.state().getInt(pos++);
-                    itemData = (dataKey < INT_KEY_RANGE_START_2 || dataKey > INT_KEY_RANGE_END_2) ? (dataKey < INT_KEY_RANGE_START || dataKey > INT_KEY_RANGE_END) ? Storage.state().getString(dataKey) : ObjectPool.integerOf(dataKey) : ObjectPool.integerOf(dataKey);
-                } else {
-                    itemData = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
-                }
-                int inputType = Storage.state().getInt(pos++);
-                String hintText = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
-                int validationType = Storage.state().getInt(pos++);
-                if (validationType == 2) {
-                    pos += 3;
-                    int numValue = Storage.state().getInt(Storage.state().getInt(pos++));
-                    title = numValue >= 0 ? StringUtils.intern(Integer.toString(numValue)) : Storage.emptyStr;
-                } else {
-                    title = Utils.defaultStr(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++))));
-                }
-                screen.addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, itemData instanceof String ? (String) itemData : Storage.emptyStr).setAction(itemData, title, ObjectPool.integerOf(inputType), ObjectPool.integerOf(validationType), hintText));
-                return pos;
+                return parseTextInputItem(screen, pos, screenId);
             case ITEM_LABEL_SEPARATOR:
                 screen.addItem(MenuItem.createSeparator().setLabel(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)))));
                 return pos;
@@ -417,24 +407,12 @@ public abstract class ScreenManager {
             case ITEM_LOGIN:
                 String loginLabel = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos)));
                 String loginValue = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos + 1)));
-                MenuItem loginItem = new MenuItem(MenuItem.TYPE_LOGIN, (String) null).clear().setIcon(221).addText(Utils.nonEmpty(loginValue) ? loginValue : loginLabel, 1, 7);
+                MenuItem loginItem = new MenuItem(MenuItem.TYPE_LOGIN, (String) null).clear().setIcon(ICON_LOGIN).addText(Utils.nonEmpty(loginValue) ? loginValue : loginLabel, FONT_STYLE_BOLD, TEXT_FORMAT_INPUT);
                 loginItem.data = new String[]{loginLabel, loginValue};
                 screen.addItem(loginItem);
                 return pos + 2;
             case ITEM_PASSWORD:
-                String passwordStr = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos)));
-                MenuItem menuItem = new MenuItem(MenuItem.TYPE_PASSWORD, (String) null);
-                menuItem.clear();
-                menuItem.setIcon(219);
-                if (Utils.nonEmpty(passwordStr)) {
-                    int idx = passwordStr.indexOf(0);
-                    menuItem.addText(idx < 0 ? passwordStr : StringUtils.prefix(passwordStr, idx), 1, 7);
-                } else {
-                    menuItem.setDefaultFont();
-                }
-                menuItem.data = passwordStr;
-                screen.addItem(menuItem);
-                return pos + 1;
+                return parsePasswordItem(screen, pos);
             case ITEM_IMAGE:
                 screen.addItem(MenuItem.createGraphics(new GraphicsContext((Image) Storage.state().getObject(Storage.state().getInt(pos)))));
                 return pos + 1;
@@ -445,7 +423,66 @@ public abstract class ScreenManager {
         }
     }
 
-    private static final int processFormField(int pos, Object data) {
+    private static int parseActionItem(ListView screen, int pos, boolean isEnabled, boolean isDynamic) {
+        if (isDynamic) {
+            pos++;
+            int condKey = Storage.state().getInt(pos);
+            RemoteLogger.log("SCR", "ACTION dyn condKey=" + condKey + " pos=" + pos);
+            isEnabled = Storage.state().getBool(condKey);
+            RemoteLogger.log("SCR", "ACTION dyn isEnabled=" + isEnabled);
+        }
+        int labelKey = Storage.state().getInt(pos++);
+        int iconKey = Storage.state().getInt(pos++);
+        int cmdKey = Storage.state().getInt(pos++);
+        RemoteLogger.log("SCR", "ACTION label=" + labelKey + " icon=" + iconKey + " cmd=" + cmdKey + " enabled=" + isEnabled);
+        if (isEnabled) {
+            screen.addActionById(iconKey, cmdKey, labelKey);
+        } else {
+            screen.addIconById(iconKey, cmdKey, labelKey);
+        }
+        return pos;
+    }
+
+    private static int parseTextInputItem(ListView screen, int pos, int screenId) {
+        Object itemData;
+        if (screenId == ScreenId.CHAT_ROOM_CONFIG) {
+            int dataKey = Storage.state().getInt(pos++);
+            itemData = (dataKey < INT_KEY_RANGE_START_2 || dataKey > INT_KEY_RANGE_END_2) ? (dataKey < INT_KEY_RANGE_START || dataKey > INT_KEY_RANGE_END) ? Storage.state().getString(dataKey) : ObjectPool.integerOf(dataKey) : ObjectPool.integerOf(dataKey);
+        } else {
+            itemData = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
+        }
+        int inputType = Storage.state().getInt(pos++);
+        String hintText = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++)));
+        int validationType = Storage.state().getInt(pos++);
+        String title;
+        if (validationType == VALIDATION_NUMERIC) {
+            pos += NUMERIC_VALIDATION_EXTRA_FIELDS;
+            int numValue = Storage.state().getInt(Storage.state().getInt(pos++));
+            title = numValue >= 0 ? StringUtils.intern(Integer.toString(numValue)) : Storage.emptyStr;
+        } else {
+            title = Utils.defaultStr(Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos++))));
+        }
+        screen.addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, itemData instanceof String ? (String) itemData : Storage.emptyStr).setAction(itemData, title, ObjectPool.integerOf(inputType), ObjectPool.integerOf(validationType), hintText));
+        return pos;
+    }
+
+    private static int parsePasswordItem(ListView screen, int pos) {
+        String passwordStr = Utils.defaultStr(Storage.state().getString(Storage.state().getInt(pos)));
+        MenuItem menuItem = new MenuItem(MenuItem.TYPE_PASSWORD, (String) null);
+        menuItem.clear();
+        menuItem.setIcon(ICON_PASSWORD);
+        if (Utils.nonEmpty(passwordStr)) {
+            int idx = passwordStr.indexOf(0);
+            menuItem.addText(idx < 0 ? passwordStr : StringUtils.prefix(passwordStr, idx), FONT_STYLE_BOLD, TEXT_FORMAT_INPUT);
+        } else {
+            menuItem.setDefaultFont();
+        }
+        menuItem.data = passwordStr;
+        screen.addItem(menuItem);
+        return pos + 1;
+    }
+
+    private static int processFormField(int pos, Object data) {
         int nextIdx;
         int idx = pos + 1;
         switch (Storage.state().getInt(pos)) {
@@ -467,7 +504,7 @@ public abstract class ScreenManager {
                 int baseIdx = idx + 3;
                 String value = (String) ((Object[]) data)[0];
                 int curIdx = baseIdx + 1;
-                if (Storage.state().getInt(baseIdx) == 2) {
+                if (Storage.state().getInt(baseIdx) == VALIDATION_NUMERIC) {
                     int minIdx = curIdx + 1;
                     int minValue = Storage.state().getInt(curIdx);
                     int maxIdx = minIdx + 1;
@@ -508,7 +545,7 @@ public abstract class ScreenManager {
         return idx;
     }
 
-    public static final int processScreenForm() {
+    public static int processScreenForm() {
         ListView screen = getCurrentScreen();
         int countPos = screen.definitionOffset + 9;
         Vector items = screen.menuItems;
@@ -520,9 +557,9 @@ public abstract class ScreenManager {
         return 0;
     }
 
-    public static final int processPhoneInput(String fieldId) {
+    public static int processPhoneInput(String fieldId) {
         String newValue = Storage.state().getString(UIKeys.SLOT_STATUS_TEXT);
-        int idx = 15;
+        int idx = PHONE_FIELD_COUNT;
         do {
             idx--;
             if (idx < 0) {
@@ -533,13 +570,13 @@ public abstract class ScreenManager {
         return 0;
     }
 
-    public static final void setFormFields(String param1, String param2, String param3, String param4, String param5) {
+    public static void setFormFields(String param1, String param2, String param3, String param4, String param5) {
         Storage.state().setObject(UIKeys.SLOT_LANGUAGE_OPTION, (Object) param5);
         Storage.state().setFromBuffer(UIKeys.SLOT_INIT_PARAMS, Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer(), 262572, param1), 262576, param2), 524724, param3), 590268, param4), 524741, param5));
         TimerManager.setTimer(TimerManager.SLOT_SCREEN_INIT, computeInitialState());
     }
 
-    public static final String[] getLanguageOptions() {
+    public static String[] getLanguageOptions() {
         if (!Storage.state().getBool(SessionKeys.FLAG_CAPTCHA_SHOWN)) {
             setFormFields(null, null, null, null, null);
         } else if (TimerManager.checkTimer(TimerManager.SLOT_SCREEN_INIT, computeInitialState())) {
@@ -556,43 +593,43 @@ public abstract class ScreenManager {
         return result;
     }
 
-    public static final void prepareFormData() {
+    public static void prepareFormData() {
         Storage.state().setInt(RuntimeKeys.INT_ERROR_MSG_INDEX, 0);
         Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_4);
         Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_3, ObjectPool.newVector());
     }
 
-    public static final void clearFormFields() {
+    public static void clearFormFields() {
         Storage.state().clearRange(UIKeys.SLOT_INPUT_TEXT, UIKeys.RANGE_INPUT_TEXT_END);
     }
 
-    public static final int validateServerAddress(String address) {
+    public static int validateServerAddress(String address) {
         Storage.state().setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(address));
         return 0;
     }
 
-    public static final int processInputText(String label) {
+    public static int processInputText(String label) {
         Storage.state().setBool(UIKeys.FLAG_SPECIAL_KEY_MODE, StringUtils.matchesKey(859, label));
         return 0;
     }
 
-    public static final int handleFormSubmit(Object listItem) {
+    public static int handleFormSubmit(Object listItem) {
         MapController.mapContextItem = (ListItem) listItem;
         return 0;
     }
 
-    private static final int computeInitialState() {
+    private static int computeInitialState() {
         return Storage.resources().getBytes(StringResKeys.RES_UPDATE_DATA) != null ? CACHE_TIMEOUT_SHORT_MS : CACHE_TIMEOUT_LONG_MS;
     }
 
-    public static final int getThemeColor(int errorId) {
+    public static int getThemeColor(int errorId) {
         for (int idx = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS).size() - 1; idx >= 0; idx--) {
             AccountManager.getAccountByIndex(idx).onError(errorId);
         }
         return 0;
     }
 
-    public static final int getThemeBackground(int optionId) {
+    public static int getThemeBackground(int optionId) {
         switch (optionId) {
             case 0:
                 Conversation.incrementZoom();
@@ -613,39 +650,39 @@ public abstract class ScreenManager {
         return ScreenId.MAP;
     }
 
-    public static final int getScreenMode1() {
+    public static int getScreenMode1() {
         return computeLayoutParam(1004);
     }
 
-    public static final int getScreenMode2() {
+    public static int getScreenMode2() {
         return computeLayoutParam(1005);
     }
 
-    public static final int getScreenMode3() {
+    public static int getScreenMode3() {
         return Integer.parseInt(StringUtils.getSystemProp(1006));
     }
 
-    public static final int getScreenMode4() {
+    public static int getScreenMode4() {
         return Integer.parseInt(StringUtils.getSystemProp(1007));
     }
 
-    public static final int computeLayoutParam(int propKey) {
+    public static int computeLayoutParam(int propKey) {
         return Integer.parseInt(StringUtils.getSystemProp(propKey), 16);
     }
 
-    public static final int handleThemeOption(int optionId) {
+    public static int handleThemeOption(int optionId) {
         if (optionId == 10) {
             return ScreenManager.getIconOffset();
         }
         return 0;
     }
 
-    public static final int handleSoundOption(int statusIndex) {
-        Storage.state().setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(Storage.state().getString(statusIndex + (Storage.state().getCurrentContact() instanceof MmpContact ? 1141 : Storage.state().getCurrentContact() instanceof XmppContact ? 1184 : 1063))));
+    public static int handleSoundOption(int statusIndex) {
+        Storage.state().setFromBuffer(UIKeys.SLOT_STATUS_TEXT, Utils.getMessageBuffer().append(Storage.state().getString(statusIndex + (Storage.state().getCurrentContact() instanceof MmpContact ? StringResKeys.MMP_EMOTICONS_BASE : Storage.state().getCurrentContact() instanceof XmppContact ? StringResKeys.XMPP_EMOTICONS_BASE : StringResKeys.EMOTICON_NAMES_BASE))));
         return ScreenId.STATUS_INPUT;
     }
 
-    public static final int getIconOffset() {
+    public static int getIconOffset() {
         return Storage.state().getBool(SettingsKeys.SETTING_FAST_CONNECTION) ? 10 : 55;
     }
 }

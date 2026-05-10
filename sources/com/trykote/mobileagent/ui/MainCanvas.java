@@ -281,6 +281,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void pointerPressed(int i, int i2) {
+        if (Debug.ENABLED) { return; }
         pointerDownX = i;
         pointerDownY = i2;
         TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
@@ -295,6 +296,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void pointerDragged(int i, int i2) {
+        if (Debug.ENABLED) { return; }
         if (Utils.abs(i - pointerDownX) > DRAG_THRESHOLD || Utils.abs(i2 - pointerDownY) > DRAG_THRESHOLD) {
             int i3 = pointerDownX;
             int i4 = pointerDownY;
@@ -318,6 +320,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void pointerReleased(int i, int i2) {
+        if (Debug.ENABLED) { return; }
         int i3 = pointerDownX;
         int i4 = pointerDownY;
         boolean z = pointerDragged;
