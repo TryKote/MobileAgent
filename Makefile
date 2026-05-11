@@ -18,7 +18,7 @@ SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java' 
 
 # Editor (Maven project in editor/)
 
-.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys gen-screens gen-string-pool gen-palette gen-all editor editor-build
+.PHONY: all compile jar clean clean-rms resources screen-defs palette-keys gen-keys gen-screens gen-string-pool gen-palette gen-all editor editor-build
 
 all: jar
 
@@ -91,8 +91,9 @@ $(BUILD)/$(JAR): $(BUILD)/.compiled $(BUILD)/.resources
 	cd $(BUILD)/jar && jar cfm ../$(JAR) META-INF/MANIFEST.MF .
 	@echo "Built: $(BUILD)/$(JAR)"
 
-# Debug JAR: skips ProGuard/preverify/patch, keeps line numbers and debug info
+# Debug JAR: skips ProGuard/preverify, keeps line numbers and debug info
 debug-jar: $(BUILD)/.debug-compiled $(BUILD)/.resources
+	$(EDITOR) -Dexec.args="--patch-version ../$(BUILD)/classes 45.3"
 	@mkdir -p $(BUILD)/debug-jar
 	cp -r $(RESOURCES_OUT)/* $(BUILD)/debug-jar/
 	cp -r $(BUILD)/classes/* $(BUILD)/debug-jar/
@@ -138,3 +139,7 @@ editor: editor-build
 
 clean:
 	rm -rf $(BUILD)
+
+clean-rms:
+	rm -rf rms/*
+	rm -rf ~/.local/share/KEmulator/rms/*

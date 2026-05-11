@@ -18,6 +18,7 @@ import javax.microedition.io.DatagramConnection;
 public final class XmppMailRuProtocol extends XmppProtocol {
 
     private static final int DEFAULT_PORT = 43289;
+    private static final int XMPP_STANDARD_PORT = 5222;
     private static final int ICON_MAILRU_START = 381;
     private static final int ICON_MAILRU_END = 384;
     private static final int ICON_MAILRU_OFFSET = 4;
@@ -77,6 +78,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final void showLoginScreen() {
+        RemoteLogger.log("LOGIN", "showLoginScreen: accountType=" + getAccountType() + " account=" + AppState.getAccount());
         if (getAccountType() == TYPE_MMP) {
             Account account = AppState.getAccount();
             if (account != null && account.isConnecting()) {
@@ -119,6 +121,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 ChatState.setChatName(TestConfig.LOGIN);
                 RegistrationState.setPassword(TestConfig.PASSWORD);
             }
+            SessionState.setAccountDisplayName(null);
+            RemoteLogger.log("LOGIN", "TYPE_XMPP: chatName=" + ChatState.getChatName() + " displayName=" + SessionState.getAccountDisplayName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
             Screens.xmppLoginAlt(null).show();
             return;
         }
@@ -162,7 +166,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final int performLogin() {
+        RemoteLogger.log("LOGIN", "performLogin: accountType=" + getAccountType());
         ScreenManager.processScreenForm();
+        RemoteLogger.log("LOGIN", "after processForm: chatName=" + ChatState.getChatName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
         if (getAccountType() == TYPE_MMP) {
             Account account = AppState.getAccount();
             String login = getLoginLowerCase();
@@ -248,8 +254,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
             // Skip DNS SRV for IP addresses — connect directly
             if (isIpAddress(domain)) {
-                RemoteLogger.log("XMPP", "domain is IP address, skipping SRV: " + domain + ":" + DEFAULT_PORT);
-                xmppAccount.setAuthParameters(domain, DEFAULT_PORT);
+                RemoteLogger.log("XMPP", "domain is IP address, skipping SRV: " + domain + ":" + XMPP_STANDARD_PORT);
+                xmppAccount.setAuthParameters(domain, XMPP_STANDARD_PORT);
                 return;
             }
 
@@ -259,8 +265,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             RemoteLogger.log("XMPP", "DNS SRV result: " + srvRecord);
             if (srvRecord == null || srvRecord.indexOf(':') <= 0) {
                 String fallback = xmppAccount.getStreamDomain();
-                RemoteLogger.log("XMPP", "SRV failed, using fallback: " + fallback + ":" + DEFAULT_PORT);
-                xmppAccount.setAuthParameters(fallback, DEFAULT_PORT);
+                RemoteLogger.log("XMPP", "SRV failed, using fallback: " + fallback + ":" + XMPP_STANDARD_PORT);
+                xmppAccount.setAuthParameters(fallback, XMPP_STANDARD_PORT);
             } else {
                 Vector parts = Utils.splitNonEmpty(srvRecord, ':');
                 String host = Utils.getVectorString(parts, 0);
@@ -358,6 +364,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         String password = Utils.defaultStr(RegistrationState.getPassword());
         String login = getLoginLowerCase();
         String fullLogin = login;
+        RemoteLogger.log("LOGIN", "loginXmpp: type=" + accountType + " login='" + login + "' password=" + (password.length() > 0 ? "***(" + password.length() + ")" : "EMPTY") + " serverIndex=" + SessionState.getServerIndex());
         if (StringUtils.isEmpty(login)) {
             return NotificationHelper.showError(301);
         }

@@ -69,6 +69,8 @@ public class XmppProtocol extends Account {
 
     private Throwable lastException;
 
+    private String serverDomain;
+
     public String serverResourceId;
 
     public XmppProtocol(int i, String str, String str2) {
@@ -164,7 +166,9 @@ public class XmppProtocol extends Account {
     }
 
     private int sendXmlElement(XmlElement element) {
-        return sendData(new ByteBuffer().writeUTFNoLen(element.toString()));
+        String xml = element.toString();
+        RemoteLogger.log("XMPP", ">>> send: " + xml.substring(0, Math.min(xml.length(), 300)));
+        return sendData(new ByteBuffer().writeUTFNoLen(xml));
     }
 
     private int sendElementWithId(XmlElement element) {
@@ -318,6 +322,14 @@ public class XmppProtocol extends Account {
                 XmlElement element = (XmlElement) Utils.dequeue(this.elementQueue);
                 if (element != null) {
                     String tagName = element.tagName;
+                    RemoteLogger.log("XMPP", "<<< element: " + element.toString().substring(0, Math.min(element.toString().length(), 300)));
+                    if (StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName)) {
+                        String fromDomain = element.getIntAttribute(PackedStringKeys.ATTR_FROM);
+                        if (fromDomain != null) {
+                            this.serverDomain = fromDomain;
+                            RemoteLogger.log("XMPP", "server domain: " + fromDomain);
+                        }
+                    }
                     if (!StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName)) {
                         if (StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_FEATURES, tagName)) {
                             XmlElement mechanisms = element.findByName(ResourceAccessor.str(PackedStringKeys.XMPP_MECHANISMS));
@@ -350,12 +362,20 @@ public class XmppProtocol extends Account {
                         } else if (StringUtils.matchesKey(PackedStringKeys.TAG_CHALLENGE, tagName)) {
                             XmlElement challengeResponse = XmlElement.createFromState(529537).addIdAttr(2102710);
                             String decoded = Base64.decode(StringUtils.fromBuffer(element.textContent)).getStringAndClear();
+                            RemoteLogger.log("XMPP", "DIGEST-MD5 challenge: " + decoded);
                             int idx = decoded.indexOf(ResourceAccessor.str(PackedStringKeys.DIGEST_NONCE_EQ));
                             if (idx >= 0) {
                                 int nonceStart = idx + 7;
                                 String username = getAuthUsername();
                                 String password = this.password;
+                                // Parse realm from challenge instead of using serverAddress
                                 String realm = this.serverAddress;
+                                int realmIdx = decoded.indexOf("realm=\"");
+                                if (realmIdx >= 0) {
+                                    int realmStart = realmIdx + 7;
+                                    realm = StringUtils.substring(decoded, realmStart, decoded.indexOf(34, realmStart));
+                                }
+                                RemoteLogger.log("XMPP", "DIGEST-MD5 auth: user=" + username + " realm=" + realm);
                                 String nonce = StringUtils.substring(decoded, nonceStart, decoded.indexOf(34, nonceStart));
                                 ByteBuffer digestBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.DIGEST_USERNAME).writeRawString(username).writeCompressed(PackedStringKeys.DIGEST_REALM).writeRawString(realm).writeCompressed(PackedStringKeys.DIGEST_NONCE).writeRawString(nonce).writeCompressed(PackedStringKeys.DIGEST_NC_CNONCE);
                                 String cnonce = Utils.generateRandomHash();
@@ -815,6 +835,10 @@ public class XmppProtocol extends Account {
             XmlElement itemElement = (XmlElement) children.elementAt(i);
             if (StringUtils.matchesKey(PackedStringKeys.TAG_ITEM, itemElement.tagName)) {
                 String jid = itemElement.getIntAttribute(PackedStringKeys.ATTR_JID);
+                if (jid != null && jid.indexOf(CHAR_AT) < 0 && this.serverDomain != null) {
+                    jid = jid + CHAR_AT + this.serverDomain;
+                    RemoteLogger.log("XMPP", "roster: bare JID fixed -> " + jid);
+                }
                 String subscription = itemElement.getIntAttribute(PackedStringKeys.ATTR_SUBSCRIPTION);
                 itemElement.getIntAttribute(PackedStringKeys.ATTR_ASK);
                 String displayName = itemElement.getIntAttribute(PackedStringKeys.ATTR_NAME);

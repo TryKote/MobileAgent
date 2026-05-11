@@ -202,6 +202,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
     }
 
     public final void keyPressed(int i) {
+        RemoteLogger.log("INPUT", "keyPressed: " + i);
         handleKeyInput(i, 0);
     }
 

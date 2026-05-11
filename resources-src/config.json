@@ -4207,35 +4207,28 @@
       "extraCmd": 0,
       "items": [
         {
-          "type": "login",
-          "label": 12,
-          "value": 0,
-          "_expanded_from": "XMPP_CONTEXT_MENU.trailingData"
-        },
-        {
-          "type": "dropdown",
-          "label": 674,
-          "choices": 696,
-          "indexKey": 1474,
-          "label_": "Домен:",
-          "choices_": "-другой-, @gmail.com, @ya.ru, @jabber.org, ... (8 total)",
+          "type": "text_input",
+          "dataKey": 673,
+          "inputType": 63,
+          "hint": 425,
+          "validation": 0,
+          "valueKey": 1292,
+          "valueKey_": "ChatKeys.SLOT_CHAT_NAME (login/JID)",
+          "label": 0,
           "icon": 0,
-          "cmd": 0,
-          "indexKey_": "SessionKeys.INT_SERVER_INDEX"
+          "cmd": 0
         },
         {
-          "type": "dropdown",
-          "label": 674,
-          "choices": 694,
-          "indexKey": 1474,
-          "_expanded_from": "XMPP_CONTEXT_MENU.trailingData"
-        },
-        {
-          "type": "dropdown",
-          "label": 691,
-          "choices": 684,
-          "indexKey": 1487,
-          "_expanded_from": "REGION_CHOICE.trailingData"
+          "type": "text_input",
+          "dataKey": 556,
+          "inputType": 63,
+          "hint": 425,
+          "validation": 327680,
+          "valueKey": 1293,
+          "valueKey_": "RegistrationKeys.SLOT_PASSWORD",
+          "label": 0,
+          "icon": 0,
+          "cmd": 0
         }
       ],
       "handler": "ProfileHandler"
@@ -6079,7 +6072,8 @@
       "screenId": 157,
       "screenId_": "ACCOUNT_SETUP",
       "type": "fullscreen",
-      "headerMode": 156,
+      "headerMode": 383,
+      "headerMode_": "XMPP icon",
       "leftSoftKey": {
         "label": 1048,
         "cmd": 199,
@@ -6096,18 +6090,11 @@
       "items": [
         {
           "type": "action",
-          "label": 105,
+          "label": 76,
+          "label_": "XMPP_LOGIN",
           "icon": -1,
-          "cmd": 806,
-          "label_": "У меня есть учетная запись mail.ru"
-        },
-        {
-          "type": "action",
-          "label": 165,
-          "icon": -1,
-          "cmd": 807,
-          "label_": "Регистрация новой учетной записи",
-          "cmd_": "сошел_с_ума"
+          "cmd": 697,
+          "cmd_": "Учетная запись Jabber"
         }
       ],
       "handler": "MiscHandler",

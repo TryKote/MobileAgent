@@ -228,8 +228,17 @@ public final class AppController {
         ContactListManager.refreshContactList();
     }
 
+    private static int loopCounter;
+    private static long lastHeartbeat;
+
     public static void runEventLoop() {
         while (!isShuttingDown) {
+            loopCounter++;
+            long now = System.currentTimeMillis();
+            if (now - lastHeartbeat > 5000) {
+                RemoteLogger.log("LOOP", "heartbeat #" + loopCounter + " screenId=" + ScreenManager.getCurrentScreen().screenId + " queueSize=" + SessionState.getEventQueue().size() + " pre-lock");
+                lastHeartbeat = now;
+            }
             synchronized (appLock) {
                 try {
                 if (!isShuttingDown) {
@@ -287,8 +296,8 @@ public final class AppController {
                         }
                     }
                 }
-                } catch (ClassCastException e) {
-                    RemoteLogger.log("LOOP", "ClassCastException in event loop: " + e, e);
+                } catch (Throwable e) {
+                    RemoteLogger.log("LOOP", "EXCEPTION in event loop: " + e.getClass().getName() + ": " + e.getMessage(), e);
                 }
             }
             String savedStr = UIState.getSavedString();

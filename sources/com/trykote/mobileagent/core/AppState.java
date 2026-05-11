@@ -112,13 +112,20 @@ public abstract class AppState {
     // ========================== Initialization ==========================
 
     public static void init(Object midlet) {
+        RemoteLogger.log("INIT", "initPools");
         initPools();
+        RemoteLogger.log("INIT", "initObjectPool");
         initObjectPool();
         pool[UIKeys.OBJ_TRANSITION_DATA] = new TransitionData();
+        RemoteLogger.log("INIT", "loadAllDeltas");
         loadAllDeltas();
+        RemoteLogger.log("INIT", "initSessionState");
         initSessionState(midlet);
+        RemoteLogger.log("INIT", "initGraphics");
         initGraphics();
+        RemoteLogger.log("INIT", "initCaches");
         initCaches();
+        RemoteLogger.log("INIT", "init done");
     }
 
     private static void initPools() {
@@ -151,11 +158,18 @@ public abstract class AppState {
     }
 
     private static void loadAllDeltas() {
+        RemoteLogger.log("DELTA", "loading trf");
         TrafficAccounting.INSTANCE.loadDelta();
+        RemoteLogger.log("DELTA", "after trf: delta[0]=" + delta[0] + " type=" + (delta[0] == null ? "null" : delta[0].getClass().getName()));
+        RemoteLogger.log("DELTA", "loading geo");
         MapState.INSTANCE.loadDelta();
+        RemoteLogger.log("DELTA", "loading set");
         SettingsState.INSTANCE.loadDelta();
+        RemoteLogger.log("DELTA", "loading ses");
         loadDomainDelta(STORE_SESSION);
+        RemoteLogger.log("DELTA", "after ses: delta[0]=" + delta[0] + " type=" + (delta[0] == null ? "null" : delta[0].getClass().getName()));
         if (delta[0] == null) {
+            RemoteLogger.log("DELTA", "delta[0] is null, fresh install — clearing all stores");
             delta = new Object[DELTA_SIZE];
             try {
                 String[] stores = StringUtils.listRecordStores();
@@ -171,6 +185,7 @@ public abstract class AppState {
             }
             setInt(TrafficKeys.DELTA_VERSION, DELTA_FORMAT_VERSION);
         }
+        RemoteLogger.log("DELTA", "version check: delta[0]=" + delta[0] + " type=" + (delta[0] == null ? "null" : delta[0].getClass().getName()));
         if (((Integer) delta[0]).intValue() != DELTA_FORMAT_VERSION) {
             throw new RuntimeException();
         }
@@ -486,19 +501,26 @@ public abstract class AppState {
 
     public static void loadDomainDelta(String storeName) {
         ByteBuffer buf = ChunkedRecordStore.readChunkedRecord(storeName);
+        RemoteLogger.log("DELTA", "loadDomainDelta(" + storeName + "): " + buf.length + " bytes");
         if (buf.length >= 2) {
             int version = buf.readShortBE();
+            RemoteLogger.log("DELTA", "  version=" + version + " expected=" + DELTA_FORMAT_VERSION);
             if (version == DELTA_FORMAT_VERSION) {
                 while (buf.length > 0) {
                     try {
                         int type = buf.readUByte();
                         int key = buf.readShortBE();
                         if (type == DELTA_TYPE_INT) {
-                            delta[key] = ObjectPool.integerOf(buf.readIntBE());
+                            int val = buf.readIntBE();
+                            RemoteLogger.log("DELTA", "  [" + storeName + "] key=" + key + " INT=" + val);
+                            delta[key] = ObjectPool.integerOf(val);
                         } else {
-                            delta[key] = buf.readVarLenStr();
+                            String val = buf.readVarLenStr();
+                            RemoteLogger.log("DELTA", "  [" + storeName + "] key=" + key + " STR=" + (val == null ? "null" : val.substring(0, Math.min(val.length(), 40))));
+                            delta[key] = val;
                         }
                     } catch (Throwable unused) {
+                        RemoteLogger.log("DELTA", "  [" + storeName + "] parse error, breaking");
                         break;
                     }
                 }

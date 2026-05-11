@@ -8,6 +8,7 @@ import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
 import com.trykote.mobileagent.protocol.mmp.*;
 import com.trykote.mobileagent.protocol.xmpp.*;
+import java.util.Vector;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.ui.*;
@@ -170,9 +171,20 @@ public final class DialogHandler extends BaseScreenHandler {
                 UIState.setStatusTextSet(!StringUtils.isEmpty(inputText));
                 Screens.statusPreview(this).show();
                 return;
-            case ScreenId.PRESENCE_ACTION:
-                NotificationHelper.showAlertById(122, 535);
+            case ScreenId.PRESENCE_ACTION: {
+                RemoteLogger.log("UI", "PRESENCE_ACTION: connecting accounts directly");
+                Vector pendingAccounts = SessionState.getAccountSelection();
+                if (pendingAccounts != null) {
+                    for (int i = pendingAccounts.size() - 1; i >= 0; i--) {
+                        Account acc = (Account) pendingAccounts.elementAt(i);
+                        RemoteLogger.log("UI", "  connecting: " + acc.login);
+                        acc.connect(0);
+                    }
+                    ObjectPool.releaseVector(pendingAccounts);
+                    SessionState.clearAccountSelection();
+                }
                 return;
+            }
             case ScreenId.BLOG_POST:
                 String[] langOptions = ScreenManager.getLanguageOptions();
                 if (langOptions != null) {

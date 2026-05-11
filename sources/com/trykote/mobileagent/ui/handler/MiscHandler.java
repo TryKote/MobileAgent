@@ -220,8 +220,11 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.PHOTO_SELECTOR:
                 return MrimProfileManager.applyPhotoSelection();
             case ScreenId.ACCOUNT_SETUP:
+                RemoteLogger.log("UI", "ACCOUNT_SETUP: action=" + action + " (XMPP_LOGIN=" + ScreenId.XMPP_LOGIN + ")");
                 if (action == ScreenId.XMPP_LOGIN) {
                     SessionState.setProtocolType(Account.TYPE_XMPP);
+                    RemoteLogger.log("UI", "  -> set TYPE_XMPP, navigating to XMPP_LOGIN_ALT");
+                    return ScreenId.XMPP_LOGIN_ALT;
                 }
                 return 0;
         }
@@ -378,6 +381,7 @@ public final class MiscHandler extends BaseScreenHandler {
             case ScreenId.ACCOUNT_SETUP:
                 if (selectedOption == ScreenId.XMPP_LOGIN) {
                     SessionState.setProtocolType(Account.TYPE_XMPP);
+                    return ScreenId.XMPP_LOGIN_ALT;
                 }
                 return 0;
         }

@@ -4,6 +4,7 @@ import com.trykote.mobileagent.core.*;
 import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.handler.ScreenHandler;
 import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
 
@@ -176,6 +177,7 @@ public class Screen extends ListView {
         String displayName = Utils.defaultStr(
             SessionState.getAccountDisplayName());
         String username = Utils.defaultStr(AppState.getString(valueKey));
+        RemoteLogger.log("SCREEN", "addLogin: labelKey=" + labelKey + " label='" + label + "' valueKey=" + valueKey + " username='" + username + "' displayName='" + displayName + "'");
         MenuItem item = new MenuItem(MenuItem.TYPE_LOGIN, label)
             .setIcon(MenuItem.ICON_LOGIN);
         if (displayName.length() > 0) {
@@ -212,6 +214,7 @@ public class Screen extends ListView {
     // --- Form processing ---
 
     public void processForm() {
+        RemoteLogger.log("FORM", "processForm: bindings=" + formBindingsSize + " screenId=" + screenId);
         if (formBindings == null || formBindingsSize == 0) {
             return;
         }
@@ -222,23 +225,27 @@ public class Screen extends ListView {
             MenuItem item = (MenuItem) menuItems.elementAt(itemIdx);
             switch (type) {
                 case BIND_BOOL:
+                    RemoteLogger.log("FORM", "  BOOL key=" + formBindings[pos] + " val=" + item.data);
                     AppState.setBool(formBindings[pos++],
                         ((Boolean) item.data).booleanValue());
                     break;
                 case BIND_INT:
+                    RemoteLogger.log("FORM", "  INT key=" + formBindings[pos] + " val=" + ((Object[]) item.data)[0]);
                     AppState.setInt(formBindings[pos++],
                         ((Integer) ((Object[]) item.data)[0]).intValue());
                     break;
                 case BIND_STRING: {
                     int key = formBindings[pos++];
+                    String val = null;
                     if (item.data instanceof String[]) {
-                        AppState.setString(key, ((String[]) item.data)[1]);
+                        val = ((String[]) item.data)[1];
                     } else if (item.data instanceof String) {
-                        AppState.setString(key, (String) item.data);
+                        val = (String) item.data;
                     } else {
-                        AppState.setString(key,
-                            (String) ((Object[]) item.data)[0]);
+                        val = (String) ((Object[]) item.data)[0];
                     }
+                    RemoteLogger.log("FORM", "  STRING key=" + key + " val='" + val + "'");
+                    AppState.setString(key, val);
                     break;
                 }
                 case BIND_NUMERIC: {

@@ -838,10 +838,8 @@ public final class Screens {
     public static Screen xmppLoginAlt(ScreenHandler handler) {
         Screen s = new Screen(0, 76, handler);
         s.configureHeader(383, 697);
-        s.addLogin(12, 0);
-        s.addDropdown(674, 696, 1474); // Домен:
-        s.addDropdown(674, 694, 1474);
-        s.addDropdown(691, 684, 1487);
+        s.addTextInput(673, 63, 425, 0, 1292);
+        s.addTextInput(556, 63, 425, 327680, 1293);
         s.configureSoftKeys(1053, 25, 1055, 12, 0);
         return s;
     }
@@ -1284,9 +1282,8 @@ public final class Screens {
     /** ACCOUNT_SETUP — Настройка учетной записи */
     public static Screen accountSetup(ScreenHandler handler) {
         Screen s = new Screen(0, 157, handler);
-        s.configureHeader(156, 805);
-        s.addActionById(-1, 806, 105); // У меня есть учетная запись mail.ru
-        s.addActionById(-1, 807, 165); // Регистрация новой учетной записи
+        s.configureHeader(383, 805);
+        s.addActionById(-1, 697, 76); // XMPP_LOGIN
         s.configureSoftKeys(1048, 199, 1055, 4, 199);
         return s;
     }

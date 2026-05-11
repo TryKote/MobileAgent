@@ -469,8 +469,11 @@ public final class AccountManager {
 
     public static int handlePresenceAction() {
         Vector accounts = SessionState.getAccountSelection();
+        RemoteLogger.log("ACCT", "handlePresenceAction: " + accounts.size() + " accounts to connect");
         for (int i = accounts.size() - 1; i >= 0; i--) {
-            ((Account) accounts.elementAt(i)).connect(0);
+            Account account = (Account) accounts.elementAt(i);
+            RemoteLogger.log("ACCT", "  connecting: type=" + account.getType() + " login=" + account.login);
+            account.connect(0);
         }
         return ScreenId.CONTACT_LIST;
     }
