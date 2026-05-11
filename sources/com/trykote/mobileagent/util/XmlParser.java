@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.util;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -164,7 +165,7 @@ public final class XmlParser {
                     if (StringUtils.matchesKey(1046, text2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        endTag = text2.endsWith(Storage.resources().getString(StringResKeys.STR_SPACE));
+                        endTag = text2.endsWith(ResourceAccessor.str(StringResKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                             length2--;
@@ -182,7 +183,7 @@ public final class XmlParser {
                                 String attrName = StringUtils.prefix(token, eqIdx);
                                 int i3 = eqIdx + 1;
                                 if (i3 >= token.length()) {
-                                    hashtable.put(attrName, Storage.emptyStr);
+                                    hashtable.put(attrName, AppState.emptyStr);
                                 } else {
                                     int i4 = i3;
                                     char c6 = token.charAt(i4);
@@ -213,7 +214,7 @@ public final class XmlParser {
                             z3 = true;
                             length2--;
                         }
-                        endTag = text2.endsWith(Storage.resources().getString(StringResKeys.STR_SPACE));
+                        endTag = text2.endsWith(ResourceAccessor.str(StringResKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                             length2--;
@@ -231,7 +232,7 @@ public final class XmlParser {
                                 String attrName = StringUtils.prefix(token2, eqIdx);
                                 int i3 = eqIdx + 1;
                                 if (i3 >= token2.length()) {
-                                    hashtable.put(attrName, Storage.emptyStr);
+                                    hashtable.put(attrName, AppState.emptyStr);
                                 } else {
                                     int i4 = i3;
                                     char c6 = token2.charAt(i4);

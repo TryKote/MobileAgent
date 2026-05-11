@@ -26,8 +26,7 @@ public final class RemoteLogger implements Runnable {
             System.out.println("[RemoteLogger] disabled by config");
             return;
         }
-        Thread t = new Thread(new RemoteLogger());
-        t.setName("RemoteLogger");
+        Thread t = new Thread(new RemoteLogger(), "RemoteLogger");
         t.start();
         log("LOG", "RemoteLogger started, target=" + RemoteLoggerConfig.HOST + ":" + RemoteLoggerConfig.PORT);
     }

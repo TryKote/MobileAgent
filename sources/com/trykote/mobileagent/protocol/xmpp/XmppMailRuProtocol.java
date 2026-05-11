@@ -2,6 +2,7 @@ package com.trykote.mobileagent.protocol.xmpp;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -28,7 +29,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     public XmppMailRuProtocol(int id, String login, String password) {
         super(id, login, password);
-        this.serverAddress = Storage.resources().getString(PackedStringKeys.HOST_VKMESSENGER);
+        this.serverAddress = ResourceAccessor.str(PackedStringKeys.HOST_VKMESSENGER);
         this.serverPort = DEFAULT_PORT;
     }
 
@@ -39,7 +40,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     public XmppMailRuProtocol(ByteBuffer buf) {
         super(buf);
-        this.serverAddress = Storage.resources().getString(PackedStringKeys.HOST_VKMESSENGER);
+        this.serverAddress = ResourceAccessor.str(PackedStringKeys.HOST_VKMESSENGER);
         this.serverPort = DEFAULT_PORT;
     }
 
@@ -71,36 +72,36 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     private static final int getAccountType() {
-        Account account = Storage.state().getAccount();
-        return account != null ? account.getType() : Storage.state().getInt(SessionKeys.INT_PROTOCOL_TYPE);
+        Account account = AppState.getAccount();
+        return account != null ? account.getType() : SessionState.getProtocolType();
     }
 
     public static final void showLoginScreen() {
         if (getAccountType() == TYPE_MMP) {
-            Account account = Storage.state().getAccount();
+            Account account = AppState.getAccount();
             if (account != null && account.isConnecting()) {
                 NotificationHelper.showMessageById(300);
                 return;
             }
             clearLoginFields();
             if (account != null) {
-                Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, account.login);
-                Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, account.password);
+                ChatState.setChatName(account.login);
+                RegistrationState.setPassword(account.password);
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN));
+            Screens.xmppLogin(null).show();
             return;
         }
         if (getAccountType() == TYPE_XMPP) {
-            XmppProtocol xmppAccount = (XmppProtocol) Storage.state().getAccount();
+            XmppProtocol xmppAccount = (XmppProtocol) AppState.getAccount();
             if (xmppAccount != null && xmppAccount.isConnecting()) {
                 NotificationHelper.showMessageById(300);
                 return;
             }
             clearLoginFields();
-            Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, 0);
+            SessionState.setServerIndex(0);
             if (xmppAccount != null) {
                 String loginStr = xmppAccount.login;
-                Vector parts = Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_SERVER_LIST), '\0');
+                Vector parts = Utils.splitNonEmpty(ResourceAccessor.str(StringResKeys.STR_SERVER_LIST), '\0');
                 int count = 0;
                 for (int ci = Utils.vectorSize(parts) - 1; ci >= 1; ci--) {
                     int idx = loginStr.indexOf((String) parts.elementAt(ci));
@@ -110,62 +111,62 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                         break;
                     }
                 }
-                Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, count);
-                Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, loginStr);
-                Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, xmppAccount.password);
-                Storage.state().setObject(ContactKeys.SLOT_DISPLAY_NAME, xmppAccount.displayName);
+                SessionState.setServerIndex(count);
+                ChatState.setChatName(loginStr);
+                RegistrationState.setPassword(xmppAccount.password);
+                ContactState.setDisplayName(xmppAccount.displayName);
             } else if (TestConfig.ENABLED && TestConfig.ACCOUNT_TYPE == TYPE_XMPP) {
-                Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, TestConfig.LOGIN);
-                Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, TestConfig.PASSWORD);
+                ChatState.setChatName(TestConfig.LOGIN);
+                RegistrationState.setPassword(TestConfig.PASSWORD);
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN_ALT));
+            Screens.xmppLoginAlt(null).show();
             return;
         }
         if (getAccountType() == TYPE_XMPP_MAILRU) {
-            XmppMailRuProtocol mailRuAccount = (XmppMailRuProtocol) Storage.state().getAccount();
+            XmppMailRuProtocol mailRuAccount = (XmppMailRuProtocol) AppState.getAccount();
             if (mailRuAccount != null && mailRuAccount.isConnecting()) {
                 NotificationHelper.showMessageById(300);
                 return;
             }
             clearLoginFields();
             if (mailRuAccount != null) {
-                Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, mailRuAccount.login);
-                Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, mailRuAccount.password);
-                Storage.state().setObject(ContactKeys.SLOT_DISPLAY_NAME, mailRuAccount.displayName);
+                ChatState.setChatName(mailRuAccount.login);
+                RegistrationState.setPassword(mailRuAccount.password);
+                ContactState.setDisplayName(mailRuAccount.displayName);
             }
-            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_LOGIN_ALT2));
+            Screens.xmppLoginAlt2(null).show();
             return;
         }
         clearLoginFields();
-        Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, 0);
-        Account currentAccount = Storage.state().getAccount();
+        SessionState.setServerIndex(0);
+        Account currentAccount = AppState.getAccount();
         if (currentAccount != null) {
-            Storage.state().setObject(RegistrationKeys.SLOT_PASSWORD, currentAccount.password);
+            RegistrationState.setPassword(currentAccount.password);
             String login = currentAccount.login;
-            Vector domains = Utils.splitNonEmpty(Storage.resources().getString(StringResKeys.STR_DOMAIN_LIST), '\0');
+            Vector domains = Utils.splitNonEmpty(ResourceAccessor.str(StringResKeys.STR_DOMAIN_LIST), '\0');
             int size = domains.size();
             for (int i = 0; i <= size; i++) {
                 if (i == size) {
-                    Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, login);
+                    ChatState.setChatName(login);
                     break;
                 }
                 int idx = login.indexOf((String) domains.elementAt(i));
                 if (idx >= 0) {
-                    Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, i);
-                    Storage.state().setObject(ChatKeys.SLOT_CHAT_NAME, StringUtils.prefix(login, idx));
+                    SessionState.setServerIndex(i);
+                    ChatState.setChatName(StringUtils.prefix(login, idx));
                     break;
                 }
             }
         }
-        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.XMPP_CONTEXT_MENU));
+        Screens.xmppContextMenu(null).show();
     }
 
     public static final int performLogin() {
         ScreenManager.processScreenForm();
         if (getAccountType() == TYPE_MMP) {
-            Account account = Storage.state().getAccount();
+            Account account = AppState.getAccount();
             String login = getLoginLowerCase();
-            int errorCode = AccountManager.validateCredentials(TYPE_MMP, account, login, Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD)));
+            int errorCode = AccountManager.validateCredentials(TYPE_MMP, account, login, Utils.defaultStr(RegistrationState.getPassword()));
             if (errorCode != 0) {
                 return NotificationHelper.showError(errorCode);
             }
@@ -176,22 +177,22 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             return loginXmpp(TYPE_XMPP);
         }
         if (getAccountType() == TYPE_XMPP_MAILRU) {
-            Storage.state().setInt(SessionKeys.INT_SERVER_INDEX, 0);
+            SessionState.setServerIndex(0);
             return loginXmpp(TYPE_XMPP_MAILRU);
         }
-        String password = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD));
+        String password = Utils.defaultStr(RegistrationState.getPassword());
         String login = getLoginLowerCase();
         String fullLogin = login;
         if (StringUtils.isEmpty(login)) {
             return NotificationHelper.showError(301);
         }
         if (!containsDomainSuffix(fullLogin, StringResKeys.STR_DOMAIN_LIST) && !containsDomainSuffix(fullLogin, StringResKeys.STR_SERVER_SUFFIX_LIST)) {
-            fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(StringResKeys.STR_DOMAIN_LIST, Storage.state().getInt(SessionKeys.INT_SERVER_INDEX)));
+            fullLogin = StringUtils.concat(fullLogin, Utils.splitAndGet(StringResKeys.STR_DOMAIN_LIST, SessionState.getServerIndex()));
         }
         if (!isValidUsername(fullLogin)) {
             return NotificationHelper.showError(559);
         }
-        int errorCode = AccountManager.validateCredentials(TYPE_MRIM, Storage.state().getAccount(), fullLogin, password);
+        int errorCode = AccountManager.validateCredentials(TYPE_MRIM, AppState.getAccount(), fullLogin, password);
         if (errorCode != 0) {
             return NotificationHelper.showError(errorCode);
         }
@@ -200,8 +201,8 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final void clearLoginFields() {
-        Storage.state().clearRange(ChatKeys.SLOT_CHAT_NAME, RegistrationKeys.SLOT_PASSWORD);
-        Storage.state().clearIndex(ContactKeys.SLOT_DISPLAY_NAME);
+        AppState.clearRange(ChatKeys.SLOT_CHAT_NAME, RegistrationKeys.SLOT_PASSWORD);
+        ContactState.setDisplayName(null);
     }
 
     public static final boolean isMailRuDomain(String login) {
@@ -209,7 +210,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     private static final boolean containsDomainSuffix(String login, int domainListKey) {
-        Vector parts = Utils.splitNonEmpty(Storage.state().getString(domainListKey), '\0');
+        Vector parts = Utils.splitNonEmpty(AppState.getString(domainListKey), '\0');
         for (int i = parts.size() - 1; i >= 0; i--) {
             if (login.indexOf((String) parts.elementAt(i)) >= 0) {
                 return true;
@@ -220,7 +221,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final String getLoginLowerCase() {
-        return StringUtils.intern(Utils.defaultStr(Storage.state().getString(ChatKeys.SLOT_CHAT_NAME)).toLowerCase());
+        return StringUtils.intern(Utils.defaultStr(ChatState.getChatName()).toLowerCase());
     }
 
     public static final boolean isValidUsername(String username) {
@@ -290,7 +291,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         try {
             RemoteLogger.log("XMPP", "dnsLookupSrv acquiring network lock");
             NetworkLock.acquireNetworkLock();
-            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + Storage.resources().getString(PackedStringKeys.HOST_NSRPUB_DNS));
+            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + ResourceAccessor.str(PackedStringKeys.HOST_NSRPUB_DNS));
             Vector parts = Utils.splitNonEmpty(srvName, '.');
             ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.MMP_PADDING_12);
             for (int i = 0; i < Utils.vectorSize(parts); i++) {
@@ -298,7 +299,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             }
             ObjectPool.releaseVector(parts);
             requestBuf.writeCompressed(PackedStringKeys.MMP_SPACER);
-            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(Storage.resources().getString(PackedStringKeys.HOST_NSRPUB_DNS)));
+            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(ResourceAccessor.str(PackedStringKeys.HOST_NSRPUB_DNS)));
             datagramConnection.send(datagramConnection.newDatagram(requestBuf.data, requestBuf.length));
             requestBuf.clear();
             Datagram datagram = datagramConnection.newDatagram(DNS_BUFFER_SIZE);
@@ -354,24 +355,24 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final int loginXmpp(int accountType) {
-        String password = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_PASSWORD));
+        String password = Utils.defaultStr(RegistrationState.getPassword());
         String login = getLoginLowerCase();
         String fullLogin = login;
         if (StringUtils.isEmpty(login)) {
             return NotificationHelper.showError(301);
         }
-        int serverIndex = Storage.state().getInt(SessionKeys.INT_SERVER_INDEX);
+        int serverIndex = SessionState.getServerIndex();
         if (serverIndex != 0 && fullLogin.indexOf(CHAR_AT) < 0) {
-            fullLogin = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(fullLogin).append(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_SERVER_LIST)).elementAt(serverIndex)));
+            fullLogin = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(fullLogin).append(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_SERVER_LIST)).elementAt(serverIndex)));
         }
         if (accountType == 2 && fullLogin.indexOf(CHAR_AT) < 0) {
             return NotificationHelper.showError(699);
         }
-        int errorCode = AccountManager.validateCredentials(accountType, Storage.state().getAccount(), fullLogin, password);
+        int errorCode = AccountManager.validateCredentials(accountType, AppState.getAccount(), fullLogin, password);
         if (errorCode != 0) {
             return NotificationHelper.showError(errorCode);
         }
-        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(accountType, fullLogin).setDisplayName(Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME))));
+        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(accountType, fullLogin).setDisplayName(Utils.defaultStr(ContactState.getDisplayName())));
         return 0;
     }
 

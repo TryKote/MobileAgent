@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.model;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -148,11 +149,11 @@ public final class ContactInfo extends Hashtable {
     }
 
     public final ContactInfo setMaritalMarried() {
-        return setContactField(FIELD_MARITAL_STATUS, Storage.resources().getString(StringResKeys.STR_GENDER_MALE));
+        return setContactField(FIELD_MARITAL_STATUS, ResourceAccessor.str(StringResKeys.STR_GENDER_MALE));
     }
 
     public final ContactInfo setMaritalSingle() {
-        return setContactField(FIELD_MARITAL_STATUS, Storage.resources().getString(StringResKeys.STR_GENDER_FEMALE));
+        return setContactField(FIELD_MARITAL_STATUS, ResourceAccessor.str(StringResKeys.STR_GENDER_FEMALE));
     }
 
     public final ContactInfo setCompany(String str) {
@@ -198,7 +199,7 @@ public final class ContactInfo extends Hashtable {
         String ageStr;
         int i2 = i % 10;
         if (i <= 0 || i >= AGE_MAX_VALID) {
-            ageStr = Storage.resources().getString(StringResKeys.STR_AGE_UNKNOWN);
+            ageStr = ResourceAccessor.str(StringResKeys.STR_AGE_UNKNOWN);
         } else if (i < AGE_MIN_SPECIAL || i > AGE_MAX_SPECIAL) {
             ageStr = i2 == 1 ? formatAge(i, AGE_SUFFIX_SINGULAR) : (i2 < 2 || i2 > 4) ? formatAge(i, AGE_SUFFIX_GENERAL) : formatAge(i, AGE_SUFFIX_FEW);
         } else {
@@ -208,17 +209,17 @@ public final class ContactInfo extends Hashtable {
     }
 
     private static final String formatAge(int i, int i2) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(i).append(Storage.state().getString(i2)));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(i).append(AppState.getString(i2)));
     }
 
     public final ContactInfo setMaritalStatus(int i) {
-        return i == MARITAL_SINGLE ? setMaritalSingle() : i == MARITAL_MARRIED ? setMaritalMarried() : setContactField(FIELD_MARITAL_STATUS, Storage.resources().getString(PackedStringKeys.PLACEHOLDER_UNKNOWN));
+        return i == MARITAL_SINGLE ? setMaritalSingle() : i == MARITAL_MARRIED ? setMaritalMarried() : setContactField(FIELD_MARITAL_STATUS, ResourceAccessor.str(PackedStringKeys.PLACEHOLDER_UNKNOWN));
     }
 
     public final ContactInfo setBirthdayMonth(String str) {
         int month = Utils.parseIntBounded(str, MONTH_MIN, MONTH_MAX, 0);
         if (month != 0) {
-            Vector labels = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_MONTH_NAMES));
+            Vector labels = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_MONTH_NAMES));
             setContactField(FIELD_BIRTHDAY_MONTH, (String) labels.elementAt(month));
             ObjectPool.releaseVector(labels);
         }
@@ -291,14 +292,13 @@ public final class ContactInfo extends Hashtable {
         }
         return str;
     }
-    public final ListView buildContactScreen(int i) {
+    public final ListView buildContactScreen(ListView screen) {
         int i2 = 0;
         int endIdx;
         int endIdx2;
         int endIdx3;
         Account acct = getAccount();
-        ListView screen = ScreenManager.createScreen(i);
-        Vector labels = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_CONTACT_FIELD_LABELS));
+        Vector labels = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_CONTACT_FIELD_LABELS));
         int size = labels.size();
         if (acct instanceof MrimAccount) {
             MrimContact mrimContact = (MrimContact) acct.getContact((Object) getString(FIELD_EMAIL));
@@ -332,11 +332,11 @@ public final class ContactInfo extends Hashtable {
                         sb.append(StringUtils.substring(statusMsg, startIdx + 8, endIdx3));
                     }
                 } else {
-                    sb.append(Storage.state().getString(i4));
+                    sb.append(AppState.getString(i4));
                 }
                 int titleIdx = StringUtils.indexOfPoolString(statusMsg, 943);
                 if (titleIdx >= 0 && (endIdx = statusMsg.indexOf(34, titleIdx + 11)) >= 0) {
-                    sb.append(Storage.resources().getString(StringResKeys.STR_STATUS_TITLE_PREFIX)).append(StringUtils.substring(statusMsg, titleIdx + 10, endIdx));
+                    sb.append(ResourceAccessor.str(StringResKeys.STR_STATUS_TITLE_PREFIX)).append(StringUtils.substring(statusMsg, titleIdx + 10, endIdx));
                     int trackIdx = StringUtils.indexOfPoolString(statusMsg, 527990);
                     if (trackIdx >= 0 && (endIdx2 = statusMsg.indexOf(34, trackIdx + 9)) >= 0) {
                         sb.append('.').append(StringUtils.substring(statusMsg, trackIdx + 8, endIdx2));
@@ -344,7 +344,7 @@ public final class ContactInfo extends Hashtable {
                 }
                 String statusDesc = ObjectPool.toStringAndRelease(sb);
                 if (Utils.nonEmpty(statusDesc)) {
-                    MenuItem statusItem = MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_LABEL_STATUS), 0, 6);
+                    MenuItem statusItem = MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_LABEL_STATUS), 0, 6);
                     String str = mrimContact.statusMessage;
                     if (str == null) {
                         i2 = -1;
@@ -370,21 +370,21 @@ public final class ContactInfo extends Hashtable {
                 }
                 String str2 = mrimContact.customLink;
                 if (Utils.nonEmpty(str2)) {
-                    screen.addItem(MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_SECTION_PHONE), 0, 6).setIcon(242).setLabel(str2));
+                    screen.addItem(MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_SECTION_PHONE), 0, 6).setIcon(242).setLabel(str2));
                 }
                 String str3 = mrimContact.customNote;
                 if (Utils.nonEmpty(str3)) {
-                    screen.addItem(MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_SECTION_EMAIL), 0, 6).setIcon(2).setLabel(str3));
+                    screen.addItem(MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_SECTION_EMAIL), 0, 6).setIcon(2).setLabel(str3));
                 }
                 String vCardDesc = mrimContact.getVCardDescription();
                 if (Utils.nonEmpty(vCardDesc)) {
-                    screen.addItem(MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_SECTION_ABOUT), 0, 6).setIcon(365).setLabel(vCardDesc));
+                    screen.addItem(MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_SECTION_ABOUT), 0, 6).setIcon(365).setLabel(vCardDesc));
                 }
             }
         } else if (acct instanceof MmpProtocol) {
             String mmpId = getString(FIELD_MMP_CONTACT_ID);
             if (mmpId != null) {
-                screen.addLabelValue(Utils.appendSpace(Storage.resources().getString(PackedStringKeys.PREFIX_UIN)), mmpId);
+                screen.addLabelValue(Utils.appendSpace(ResourceAccessor.str(PackedStringKeys.PREFIX_UIN)), mmpId);
             }
             for (int i5 = 0; i5 < MMP_FIELD_COUNT; i5++) {
                 try {
@@ -397,19 +397,19 @@ public final class ContactInfo extends Hashtable {
             }
             String age = getString(FIELD_AGE);
             if (age != null) {
-                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_AGE), age);
+                screen.addLabelValue(ResourceAccessor.str(StringResKeys.STR_LABEL_AGE), age);
             }
             String company = getString(FIELD_CUSTOM_1);
             if (company != null) {
-                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_COMPANY), company);
+                screen.addLabelValue(ResourceAccessor.str(StringResKeys.STR_LABEL_COMPANY), company);
             }
             String loc = getString(FIELD_CUSTOM_6);
             if (loc != null) {
-                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_LOCATION), loc);
+                screen.addLabelValue(ResourceAccessor.str(StringResKeys.STR_LABEL_LOCATION), loc);
             }
             String website = getString(FIELD_CUSTOM_5);
             if (website != null) {
-                screen.addLabelValue(Storage.resources().getString(StringResKeys.STR_LABEL_WEBSITE), website);
+                screen.addLabelValue(ResourceAccessor.str(StringResKeys.STR_LABEL_WEBSITE), website);
             }
         } else if (acct instanceof XmppProtocol) {
             Image image = (Image) get(ObjectPool.integerOf(FIELD_XMPP_IMAGE));
@@ -417,7 +417,7 @@ public final class ContactInfo extends Hashtable {
                 screen.addItem(MenuItem.createGraphics(new GraphicsContext(image)));
             }
             screen.addIconItem(Utils.parseInt((Object) getString(FIELD_IMAGE_WIDTH)), getFieldDefault(FIELD_DISPLAY_NAME), 0);
-            screen.addTextPair(Storage.resources().getString(StringResKeys.STR_LABEL_NOTES), getString(FIELD_XMPP_ID), 0);
+            screen.addTextPair(ResourceAccessor.str(StringResKeys.STR_LABEL_NOTES), getString(FIELD_XMPP_ID), 0);
             String xmppDesc = getString(FIELD_DESCRIPTION);
             if (xmppDesc != null) {
                 screen.addTextItem(xmppDesc);

@@ -1,5 +1,8 @@
 package com.trykote.mobileagent.core;
 
+import com.trykote.mobileagent.core.event.*;
+import com.trykote.mobileagent.key.*;
+
 
 import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapRenderer;
@@ -7,14 +10,16 @@ import com.trykote.mobileagent.map.MapUtils;
 import com.trykote.mobileagent.map.TileCache;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.net.Telemetry;
+import com.trykote.mobileagent.net.TrafficAccounting;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.ProtocolEvent;
 import com.trykote.mobileagent.protocol.mmp.MmpContact;
 import com.trykote.mobileagent.protocol.mrim.MrimAccount;
-import com.trykote.mobileagent.protocol.mrim.MrimContact;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.ui.handler.ScreenHandler;
 import com.trykote.mobileagent.ui.handler.ScreenHandlerRegistry;
+import com.trykote.mobileagent.ui.handler.SettingsHandler;
 import com.trykote.mobileagent.util.*;
 
 import javax.microedition.lcdui.Canvas;
@@ -37,8 +42,6 @@ public final class AppController {
     private static final long REPAINT_INTERVAL_MS = 1000L;
     private static final long CONTACT_REFRESH_MS = 1000L;
     private static final int PENDING_CONN_TIMEOUT_MS = 10000;
-    private static final int COMPLETION_TIMEOUT_MS = 15000;
-    private static final int COMPLETION_POLL_MS = 500;
 
     // Header layout
     private static final int HEADER_HEIGHT = 17;
@@ -60,10 +63,6 @@ public final class AppController {
 
     // Minimum popup icon height
     private static final int MIN_POPUP_ICON_HEIGHT = 16;
-
-    // Chat list modes
-    private static final int CHAT_MODE_NORMAL = 5;
-    private static final int CHAT_MODE_EXTENDED = 4;
 
     // Map scroll directions
     private static final int SCROLL_LEFT = 1;
@@ -90,8 +89,6 @@ public final class AppController {
     private static int lastMinute;
     public static int clockWidth;
 
-    public static String pendingUrl;
-    public static MrimAccount pendingAccount;
     public static Object appLock;
     public static boolean isShuttingDown;
     public static boolean needsLayoutUpdate;
@@ -99,49 +96,14 @@ public final class AppController {
     public static boolean isBackgrounded;
     public static boolean saveOnExit;
 
-    public static void toggleOnlineMode(boolean extended) {
-        if (!extended) {
-            Storage.state().setInt(ChatKeys.INT_CHAT_LIST_MODE, CHAT_MODE_NORMAL);
-        } else {
-            Storage.state().setInt(ChatKeys.INT_CHAT_LIST_MODE, CHAT_MODE_EXTENDED);
-            Storage.state().setBool(ChatKeys.FLAG_EXTENDED_CHAT_VIEW, true);
-        }
-    }
-
-    public static String getFreeMemoryString() {
-        return StringUtils.intern(Long.toString(Runtime.getRuntime().freeMemory()));
-    }
-
-    public static void clearPreviewState() {
-        Storage.state().clearRange(UIKeys.SLOT_SCREEN_TITLE, UIKeys.SLOT_APP_VERSION_STRING);
-    }
-
-    public static int dialPhoneContactNext() {
-        ContactListManager.dialPhoneContact((PhoneContact) Storage.state().getObject(UIKeys.RANGE_PHONE_CONTACT_START), Storage.state().getInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET) + PHONE_PAGE_SIZE);
-        return ScreenId.MAP;
-    }
-
-    public static int dialPhoneContactPrev() {
-        ContactListManager.dialPhoneContact((PhoneContact) Storage.state().getObject(UIKeys.RANGE_PHONE_CONTACT_START), Storage.state().getInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET) - PHONE_PAGE_SIZE);
-        return ScreenId.MAP;
-    }
-
-    public static String getPendingDisplayText() {
-        Object obj = Storage.state().getObject(UIKeys.OBJ_PHOTO_CACHE_1);
-        if (obj == null) {
-            return null;
-        }
-        return obj instanceof String ? (String) obj : ((MrimContact) obj).simpleIdentifier;
-    }
-
     public static void clearInitParamsAndReport() {
-        Storage.state().clearRange(UIKeys.SLOT_INIT_PARAMS, UIKeys.SLOT_LANGUAGE_OPTION);
-        Storage.state().setInt(UIKeys.INT_OK_MENU_ACTION, 0);
-        Storage.state().setInt(UIKeys.INT_OK_MENU_TYPE, 0);
-        Storage.state().setInt(UIKeys.INT_CANCEL_MENU_ACTION, 0);
-        Storage.state().setInt(UIKeys.INT_CANCEL_MENU_TYPE, 0);
+        UIState.clearInitParamsRange();
+        UIState.setOkMenuAction(0);
+        UIState.setOkMenuType(0);
+        UIState.setCancelMenuAction(0);
+        UIState.setCancelMenuType(0);
         TransitionData.get().clear();
-        Telemetry.sendReport(true, (MrimAccount) Storage.state().getAccount());
+        Telemetry.sendReport(true, (MrimAccount) AppState.getAccount());
     }
 
     public static int resolveServerIcon(int index, String command) {
@@ -155,10 +117,10 @@ public final class AppController {
             case 3:
                 return ScreenId.SHARE_LOCATION;
             default:
-                if (Storage.resources().getString(StringResKeys.STR_CMD_SHOW_LIST).equals(command)) {
+                if (ResourceAccessor.str(StringResKeys.STR_CMD_SHOW_LIST).equals(command)) {
                     return ScreenId.PROFILE_EDIT;
                 }
-                if (Storage.resources().getString(StringResKeys.STR_CMD_SHOW_MAP).equals(command)) {
+                if (ResourceAccessor.str(StringResKeys.STR_CMD_SHOW_MAP).equals(command)) {
                     return ScreenId.WIFI_ACCOUNT_LIST;
                 }
                 int optionId = Integer.parseInt(StringUtils.suffix(command, SERVER_CMD_PREFIX_LEN));
@@ -171,72 +133,29 @@ public final class AppController {
         }
     }
 
-    public static void waitForCompletion(Object[] data) throws InterruptedException {
-        int remaining = COMPLETION_TIMEOUT_MS;
-        do {
-            remaining -= COMPLETION_POLL_MS;
-            if (remaining < 0) {
-                EventDispatcher.postEvent(new AccountDataEvent(data));
-                return;
-            }
-            Thread.sleep(COMPLETION_POLL_MS);
-        } while (!isShuttingDown);
-    }
-
-    public static int handleChatOption(int optionId) {
-        if (optionId != ScreenId.COMPOSE_MESSAGE) {
-            ScreenBuilder.onScreenClosed();
-            ScreenBuilder.onScreenClosed();
-            ContactListManager.openContactMessages();
-            return 0;
-        }
-        MrimContact contact = Storage.state().getCurrentMrimContact();
-        Storage.state().setAccount(contact.account);
-        MailHelper.composeEmail(MailHelper.parseRecipientList(contact.simpleIdentifier), (String) null, (String) null);
-        ScreenBuilder.onScreenClosed();
-        ScreenBuilder.onScreenClosed();
-        return 0;
-    }
-
-    public static void showSettingsScreen() {
-        Storage.state().setInt(SessionKeys.FLAG_INIT_COMPLETE, 0);
-        Storage.state().setInt(UIKeys.FLAG_FULLSCREEN_ACTIVE, 1);
-        ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.SETTINGS_MAIN));
-    }
-
-    public static void openUserProfile(MrimAccount account, String url) {
-        pendingAccount = account;
-        pendingUrl = url;
-    }
-
-    public static void clearPendingProfile() {
-        pendingAccount = null;
-        pendingUrl = null;
-    }
-
     public static void resetClock() {
         TimerManager.timers[4] = 0;
         lastMinute = -1;
         clockWidth = 0;
-        Storage.state().clearIndex(UIKeys.SLOT_CLOCK_STRING);
+        UIState.clearClockString();
         updateClock();
     }
 
     public static void updateClock() {
         Calendar calendar;
         int i;
-        if (!TimerManager.checkTimer(4, 1000L) || (i = (calendar = Storage.state().getCalendar()).get(12)) == lastMinute) {
+        if (!TimerManager.checkTimer(4, 1000L) || (i = (calendar = AppState.getCalendar()).get(12)) == lastMinute) {
             return;
         }
         String timeStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Utils.zeroPad(calendar.get(11))).append(':').append(Utils.zeroPad(i)));
-        Storage.state().setObject(UIKeys.SLOT_CLOCK_STRING, (Object) timeStr);
-        clockWidth = Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT).stringWidth(timeStr);
+        UIState.setClockString((Object) timeStr);
+        clockWidth = UIState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT).stringWidth(timeStr);
         lastMinute = i;
         needsRepaint = true;
     }
 
     public static void clearImageCache() {
-        Storage.state().clearRange(UIKeys.SLOT_MEDIA_CALLBACK, MapKeys.OBJ_FONT_2);
+        AppState.clearRange(UIKeys.SLOT_MEDIA_CALLBACK, MapKeys.OBJ_FONT_2);
     }
 
     public static void dispatchCommand(Object midlet, int width, int height) {
@@ -253,36 +172,29 @@ public final class AppController {
     }
 
     private static void initializeVectors(int width, int height) {
-        Storage.state().clearRange(UIKeys.RANGE_SESSION_TEMP_START, UIKeys.RANGE_SESSION_TEMP_END);
-        Storage.state().setObject(MapKeys.SLOT_MAP_TILE_REQUEST, ObjectPool.newVector());
-        Storage.state().setObject(UIKeys.VEC_SCREEN_STACK, ObjectPool.newVector());
+        UIState.clearSessionTempRange();
+        MapState.setTileRequest(ObjectPool.newVector());
+        UIState.setScreenStack(ObjectPool.newVector());
         ScreenManager.initializeFonts();
-        Storage.state().setObject(UIKeys.VEC_ONLINE_CONTACTS, ObjectPool.newVector());
-        Storage.state().setObject(UIKeys.VEC_ACTIVE_CONNECTIONS, ObjectPool.newVector());
-        Storage.state().setObject(UIKeys.SLOT_MEDIA_CONTROL, ObjectPool.newVector());
-        Storage.state().setObject(UIKeys.SLOT_MEDIA_VOLUME, ObjectPool.newVector());
+        UIState.setOnlineContacts(ObjectPool.newVector());
+        UIState.setActiveConnections(ObjectPool.newVector());
+        UIState.setMediaControl(ObjectPool.newVector());
+        UIState.setMediaVolume(ObjectPool.newVector());
         new AsyncTask(AsyncTaskId.CONNECTION_LOOP);
         AccountManager.loadSavedAccounts();
-        Storage.state().setObject(UIKeys.VEC_POPUP_ITEMS, ObjectPool.newVector());
+        UIState.setPopupItems(ObjectPool.newVector());
         updatePopupHeight();
-        Storage.state().setObject(UIKeys.VEC_PENDING_CONNECTIONS, ObjectPool.newVector());
+        UIState.setPendingConnections(ObjectPool.newVector());
         resetClock();
         SoftFloat.initMathTables();
-        Storage.state().setInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_MRIM_RECV_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_MMP_SENT_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_MMP_RECV_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_XMPP_SENT_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_XMPP_RECV_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_HTTP_SENT_BYTES, 0);
-        Storage.state().setInt(TrafficKeys.TRAFFIC_HTTP_RECV_BYTES, 0);
-        Storage.state().setObject(MapKeys.VEC_TILE_QUEUE, ObjectPool.newVector());
+        TrafficAccounting.resetByteCounters();
+        MapState.setTileQueue(ObjectPool.newVector());
         TileCache.calculateCacheSize();
-        Storage.state().setObject(SessionKeys.OBJ_CANVAS, new MainCanvas(width, height));
-        Storage.state().clearRange(UIKeys.RANGE_TEMP_DATA_START, UIKeys.RANGE_TEMP_DATA_END);
+        SessionState.setCanvas(new MainCanvas(width, height));
+        UIState.clearTempDataRange();
         TabBar.initialize();
-        Storage.state().setObject(StringResKeys.RES_EMOTICON_MAP, Utils.bytesToInts(Storage.resources().getBytes(StringResKeys.RES_EMOTICON_MAP)));
-        Storage.state().setObject(UIKeys.SLOT_MEDIA_RESOURCE, new byte[1]);
+        AppState.setObject(StringResKeys.RES_EMOTICON_MAP, Utils.bytesToInts(ResourceAccessor.bytes(StringResKeys.RES_EMOTICON_MAP)));
+        UIState.setMediaResource(new byte[1]);
     }
 
     private static void initializeTimers() {
@@ -292,21 +204,21 @@ public final class AppController {
             ScreenManager.getScreenMode3();
             ScreenManager.getScreenMode4();
         } catch (Throwable unused) {
-            Storage.state().clearRange(StringResKeys.RES_UPDATE_DATA, UIKeys.RANGE_UPDATE_DATA_END);
+            AppState.clearRange(StringResKeys.RES_UPDATE_DATA, UIKeys.RANGE_UPDATE_DATA_END);
         }
         TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
-        Storage.state().addInt(SessionKeys.COUNTER_APP_STARTS, 1);
-        Storage.state().saveDelta(true);
+        SessionState.addAppStarts(1);
+        AppState.saveAllDeltas(true);
     }
 
     private static void showInitialScreen() {
-        if (Storage.state().getBool(SessionKeys.FLAG_INIT_COMPLETE)) {
-            showSettingsScreen();
+        if (SessionState.isInitComplete()) {
+            SettingsHandler.showSettingsScreen();
             return;
         }
         int accountCount = AccountManager.getActiveAccountCount();
         if (accountCount == 0) {
-            ScreenManager.pushScreen(ScreenManager.createScreen(ScreenDef.ACCOUNT_SETUP));
+            ScreenManager.pushScreen(Screens.accountSetup(null));
         } else {
             for (int i = accountCount - 1; i >= 0; i--) {
                 AccountManager.addToAccountSelection(AccountManager.getAccountByIndex(i));
@@ -321,13 +233,13 @@ public final class AppController {
             synchronized (appLock) {
                 try {
                 if (!isShuttingDown) {
-                    Storage.state().updateTime();
+                    AppState.updateTime();
                     updateClock();
                     detectLongPress();
                     pollAccountStates();
                     expirePendingConnections();
                     refreshContactListIfNeeded();
-                    Object event = Utils.dequeue(Storage.state().getVector(SessionKeys.VEC_EVENT_QUEUE));
+                    Object event = Utils.dequeue(SessionState.getEventQueue());
                     if (event == null) {
                         ListView currentScreen = ScreenManager.getCurrentScreen();
                         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
@@ -360,15 +272,15 @@ public final class AppController {
                     } else if (event instanceof MenuItemEvent) {
                         handleMenuItemEvent((MenuItemEvent) event);
                     }
-                    if (!Storage.state().getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE)) {
+                    if (!SettingsState.isStatusBarVisible()) {
                         ListView activeScreen = ScreenManager.getCurrentScreen();
                         if (activeScreen != null) {
-                            Storage.state().getCanvas().setCommands(activeScreen.titleLeft, activeScreen.titleRight);
+                            AppState.getCanvas().setCommands(activeScreen.titleLeft, activeScreen.titleRight);
                         }
                     }
                     SoundPlayer.checkSoundTimer();
-                    if (TimerManager.isTimerExpired(TimerManager.timers[TimerManager.SLOT_BACKLIGHT]) && (!Storage.state().getBool(SessionKeys.FLAG_KEEP_SCREEN_ON) || ScreenManager.getCurrentScreen().screenId != ScreenId.MAP)) {
-                        if (Storage.state().getCanvas().isShown()) {
+                    if (TimerManager.isTimerExpired(TimerManager.timers[TimerManager.SLOT_BACKLIGHT]) && (!SessionState.isKeepScreenOn() || ScreenManager.getCurrentScreen().screenId != ScreenId.MAP)) {
+                        if (AppState.getCanvas().isShown()) {
                             TimerManager.disableBacklight();
                         } else {
                             TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
@@ -379,17 +291,17 @@ public final class AppController {
                     RemoteLogger.log("LOOP", "ClassCastException in event loop: " + e, e);
                 }
             }
-            String savedStr = Storage.state().getString(UIKeys.SLOT_SAVED_STRING);
+            String savedStr = UIState.getSavedString();
             if (savedStr != null) {
                 isBackgrounded = true;
                 try {
-                    Storage.state().getMidlet().platformRequest(savedStr);
+                    AppState.getMidlet().platformRequest(savedStr);
                 } catch (Throwable unused) {
                 }
-                Storage.state().clearIndex(UIKeys.SLOT_SAVED_STRING);
+                UIState.clearSavedString();
             }
             if (isBackgrounded) {
-                Storage.state().getMidlet().destroyApp(true);
+                AppState.getMidlet().destroyApp(true);
                 isShuttingDown = true;
                 return;
             }
@@ -401,7 +313,7 @@ public final class AppController {
         if (!MainCanvas.pointerDragged && MainCanvas.pointerDownTime != 0 && System.currentTimeMillis() - MainCanvas.pointerDownTime > LONG_PRESS_MS) {
             int longPressX = MainCanvas.pointerDownX;
             int longPressY = MainCanvas.pointerDownY;
-            Vector eventQueue = Storage.state().getVector(SessionKeys.VEC_EVENT_QUEUE);
+            Vector eventQueue = SessionState.getEventQueue();
             synchronized (eventQueue) {
                 eventQueue.addElement(PointerEvent.longPress(longPressX, longPressY));
             }
@@ -410,18 +322,18 @@ public final class AppController {
     }
 
     private static void pollAccountStates() {
-        Vector accounts = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS);
+        Vector accounts = SessionState.getAccounts();
         for (int acctIdx = accounts.size() - 1; acctIdx >= 0; acctIdx--) {
             Account acct = (Account) accounts.elementAt(acctIdx);
             try {
                 if (acct.progress <= Account.PROGRESS_DISCONNECTED || acct.progress == Account.PROGRESS_CONNECTED) {
-                    Vector popupItems = Storage.state().getVector(UIKeys.VEC_POPUP_ITEMS);
+                    Vector popupItems = UIState.getPopupItems();
                     if (popupItems.contains(acct)) {
                         Utils.removeFrom(popupItems, acct);
                         updatePopupHeight();
                     }
                 } else {
-                    Vector popupItems = Storage.state().getVector(UIKeys.VEC_POPUP_ITEMS);
+                    Vector popupItems = UIState.getPopupItems();
                     if (!popupItems.contains(acct)) {
                         popupItems.addElement(acct);
                         updatePopupHeight();
@@ -438,8 +350,8 @@ public final class AppController {
     }
 
     private static void expirePendingConnections() {
-        int currentTimestamp = Storage.state().getInt(RuntimeKeys.INT_CURRENT_TIMESTAMP);
-        Vector pendingConns = Storage.state().getVector(UIKeys.VEC_PENDING_CONNECTIONS);
+        int currentTimestamp = RuntimeState.getCurrentTimestamp();
+        Vector pendingConns = UIState.getPendingConnections();
         for (int connIdx = pendingConns.size() - 1; connIdx >= 0; connIdx--) {
             Contact contact = (Contact) pendingConns.elementAt(connIdx);
             if (Utils.abs(currentTimestamp - contact.statusCode) > PENDING_CONN_TIMEOUT_MS) {
@@ -451,9 +363,9 @@ public final class AppController {
     private static void refreshContactListIfNeeded() {
         if (needsLayoutUpdate && ScreenManager.getCurrentScreen().screenId == ScreenId.CONTACT_LIST && TimerManager.isTimerType(TimerManager.SLOT_CONTACT_REFRESH)) {
             needsLayoutUpdate = false;
-            Storage.state().getString(ContactKeys.SLOT_CURRENT_CONTACT_ID);
+            ContactState.getContactId();
             ContactListManager.refreshList();
-            Storage.state().clearIndex(ContactKeys.SLOT_CURRENT_CONTACT_ID);
+            ContactState.clearContactId();
             TimerManager.setTimer(TimerManager.SLOT_CONTACT_REFRESH, CONTACT_REFRESH_MS);
         }
     }
@@ -462,17 +374,17 @@ public final class AppController {
         if ((AccountManager.getCombinedContactFlags() != 0 || AccountManager.hasActiveConnection()) && TimerManager.isTimerType(TimerManager.SLOT_REPAINT)) {
             needsRepaint = true;
         }
-        MainCanvas canvas = Storage.state().getCanvas();
+        MainCanvas canvas = AppState.getCanvas();
         if (!isShuttingDown && needsRepaint) {
-            Object pendingScreen = Storage.currentScreen;
+            Object pendingScreen = AppState.currentScreen;
             boolean screenSwitched;
             if (pendingScreen != null) {
-                if (pendingScreen == Storage.state().getCanvas()) {
-                    Storage.state().getCanvas().updateFullScreenMode();
+                if (pendingScreen == AppState.getCanvas()) {
+                    AppState.getCanvas().updateFullScreenMode();
                 }
-                Display.getDisplay(Storage.state().getMidlet()).setCurrent(pendingScreen instanceof Displayable ? (Displayable) pendingScreen : null);
+                Display.getDisplay(AppState.getMidlet()).setCurrent(pendingScreen instanceof Displayable ? (Displayable) pendingScreen : null);
                 TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
-                Storage.currentScreen = null;
+                AppState.currentScreen = null;
                 screenSwitched = true;
             } else {
                 screenSwitched = false;
@@ -506,7 +418,7 @@ public final class AppController {
         int keyCode = keyEvt.keyCode;
         int gameAction = keyEvt.gameAction;
         int screenId = currentScreen.screenId;
-        boolean isLastTab = TabBar.currentIndex == Storage.state().getVector(UIKeys.VEC_TAB_BARS).size() - 1;
+        boolean isLastTab = TabBar.currentIndex == UIState.getTabBars().size() - 1;
         boolean keyConsumed = false;
         if (screenId == ScreenId.CONTACT_LIST) {
             keyConsumed = handleContactListKeys(currentScreen, gameAction);
@@ -521,12 +433,12 @@ public final class AppController {
     }
 
     private static boolean handleContactListKeys(ListView screen, int gameAction) {
-        int tabCount = Storage.state().getVector(UIKeys.VEC_TAB_BARS).size();
+        int tabCount = UIState.getTabBars().size();
         ContactListManager.clearState();
         if (tabCount <= 1) {
             return false;
         }
-        Storage.state().setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 0);
+        MapState.setMapOverlayActive(false);
         if (gameAction == Canvas.LEFT) {
             if (screen.isAtStart()) {
                 TabBar prevTab = TabBar.getPreviousTab();
@@ -548,7 +460,7 @@ public final class AppController {
     }
 
     private static boolean handleMailListKeys(int gameAction, boolean isLastTab) {
-        Storage.state().setInt(MapKeys.FLAG_MAP_OVERLAY_ACTIVE, 0);
+        MapState.setMapOverlayActive(false);
         if (gameAction == Canvas.LEFT) {
             ScreenBuilder.openScreen(TabBar.getPreviousTab().selectTab());
             return true;
@@ -563,7 +475,7 @@ public final class AppController {
     }
 
     private static boolean handleMapKeys(int keyCode, int gameAction, ListView screen, boolean isLastTab) {
-        if (Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
+        if (MapState.isMapOverlayActive()) {
             if (keyCode == Canvas.KEY_STAR) {
                 Conversation.incrementZoom();
             } else if (keyCode == Canvas.KEY_POUND) {
@@ -574,14 +486,14 @@ public final class AppController {
             } else if (keyCode == Canvas.KEY_NUM1) {
                 ScreenBuilder.openScreen(ScreenId.MAP_POINTS);
             } else if (keyCode == Canvas.KEY_NUM2) {
-                boolean isEnabled = Storage.state().getBool(MapKeys.MAP_GPS_ENABLED);
+                boolean isEnabled = MapState.isGpsEnabled();
                 Conversation.setMapEnabled(!isEnabled);
-                Storage.state().setBool(MapKeys.MAP_GPS_ENABLED, !isEnabled);
+                MapState.setGpsEnabled(!isEnabled);
                 ScreenBuilder.openScreen(ScreenId.MAP);
             } else if (keyCode == Canvas.KEY_NUM3) {
                 EventDispatcher.postEvent(new ProtocolEvent(ProtocolEvent.MAP_CONTROL, null));
             } else if (keyCode == Canvas.KEY_NUM5) {
-                Storage.state().setBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE, !Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE));
+                SettingsState.setCustomViewMode(SettingsState.getCustomViewMode() != 0 ? 0 : 1);
                 MapRenderer.needsRedraw = true;
             } else if (keyCode == Canvas.KEY_NUM7) {
                 int[] prevPoint;
@@ -619,7 +531,7 @@ public final class AppController {
     }
 
     private static void handleDefaultKeys(int keyCode, int gameAction, ListView screen) {
-        int keyAction = keyCode == Canvas.KEY_STAR ? getKeyAction(Storage.state().getInt(SettingsKeys.SETTING_KEY_STAR_ACTION)) : keyCode == Canvas.KEY_POUND ? getKeyAction(Storage.state().getInt(SettingsKeys.SETTING_KEY_HASH_ACTION)) : (keyCode < Canvas.KEY_NUM0 || keyCode > Canvas.KEY_NUM9) ? 0 : getKeyAction(Storage.state().getInt(keyCode + KEY_BINDING_OFFSET));
+        int keyAction = keyCode == Canvas.KEY_STAR ? getKeyAction(SettingsState.getKeyStarAction()) : keyCode == Canvas.KEY_POUND ? getKeyAction(SettingsState.getKeyHashAction()) : (keyCode < Canvas.KEY_NUM0 || keyCode > Canvas.KEY_NUM9) ? 0 : getKeyAction(AppState.getInt(keyCode + KEY_BINDING_OFFSET));
         if (keyAction != 0) {
             ScreenBuilder.openScreen(keyAction);
         } else if (gameAction == Canvas.FIRE) {
@@ -632,7 +544,7 @@ public final class AppController {
             if (screen.showCheckboxes) {
                 ScreenBuilder.onScreenClosed();
             } else if (screen.screenId == ScreenId.MAP) {
-                Storage.state().setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, SCROLL_LEFT);
+                MapState.setScrollDirection(SCROLL_LEFT);
             } else if (screen.layoutMode == LAYOUT_GRID) {
                 int selectedIdx = screen.selectedIndex;
                 int itemCount = screen.menuItems.size();
@@ -656,7 +568,7 @@ public final class AppController {
         } else if (cmdType == CommandEvent.BACK) {
             if (ScreenManager.getCurrentScreen().screenId == ScreenId.MAP) {
                 needsRepaint = true;
-                Storage.state().setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, SCROLL_RIGHT);
+                MapState.setScrollDirection(SCROLL_RIGHT);
             }
         }
     }
@@ -680,8 +592,8 @@ public final class AppController {
     }
 
     private static boolean handlePointerPress(int ptrX, int ptrY) {
-        if (Storage.state().getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE) && ptrY > Storage.state().getHeight()) {
-            if (ptrX < (Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) >> 1)) {
+        if (SettingsState.isStatusBarVisible() && ptrY > UIState.getHeight()) {
+            if (ptrX < (UIState.getScreenWidth() >> 1)) {
                 ScreenBuilder.onMenuItemSelected();
             } else {
                 ScreenBuilder.onMenuItemAction();
@@ -701,14 +613,14 @@ public final class AppController {
             }
             return true;
         }
-        int headerWidth = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) - HEADER_HEIGHT;
+        int headerWidth = UIState.getScreenWidth() - HEADER_HEIGHT;
         int targetScreen = ScreenId.NONE;
         if (AccountManager.getCombinedContactFlags() == 0) {
             if (!AccountManager.hasActiveConnection() && ptrX > headerWidth) {
                 targetScreen = ScreenId.MAIL_ACCOUNT_LIST;
             }
         } else if (ptrX > headerWidth) {
-            targetScreen = !Storage.state().getBool(SettingsKeys.SETTING_MULTI_ACCOUNT) ? ScreenId.CONTACT_LIST : ScreenId.NONE;
+            targetScreen = !SettingsState.isMultiAccount() ? ScreenId.CONTACT_LIST : ScreenId.NONE;
         }
         if (targetScreen <= 0) {
             if (screenId != targetScreen) {
@@ -741,7 +653,7 @@ public final class AppController {
             MapController.toggleMapControls(currentScreen);
             MapRenderer.dragActive = true;
             MapRenderer.rippleTimestamp = 0L;
-            int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+            int zoomLevel = MapState.getZoomLevel();
             MapRenderer.setPosition(MapRenderer.currentLon - ((int) MapUtils.pixelToCoord(deltaX, zoomLevel)), MapRenderer.currentLat + ((int) MapUtils.pixelToCoord(deltaY, zoomLevel)));
             MapRenderer.needsRedraw = true;
         } else {
@@ -793,13 +705,13 @@ public final class AppController {
     private static void handleAccountDataEvent(AccountDataEvent acctEvt) {
         Object[] evtData = acctEvt.data;
         if (evtData[0] instanceof MrimAccount) {
-            Storage.state().setInt(UIKeys.INT_HTTP_RESULT_SCREEN, ScreenId.CONTACT_LIST_KEY);
-            Storage.state().setObject(MapKeys.SLOT_MAP_POINT_1, evtData[1]);
+            UIState.setHttpResultScreen(ScreenId.CONTACT_LIST_KEY);
+            MapState.setMapPoint1(evtData[1]);
             MrimAccount mrimAccount = (MrimAccount) evtData[0];
             mrimAccount.chatRoomManager.loaded = true;
-            Storage.state().setObject(SessionKeys.SLOT_TEMP_ACCOUNT, mrimAccount);
-            ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-            Storage.state().clearIndex(MapKeys.SLOT_MAP_POINT_1);
+            SessionState.setTempAccount(mrimAccount);
+            Screens.errorAlert(null).show();
+            MapState.setMapPoint1(null);
             needsRepaint = true;
         } else {
             ((MrimAccount) evtData[1]).addOfflineContact((String) evtData[0]);
@@ -816,14 +728,14 @@ public final class AppController {
             case ProtocolEvent.PHONE_SEARCH_RESULT:
                 Object[] resultArr = (Object[]) eventData;
                 PhoneContact phoneContact = (PhoneContact) resultArr[0];
-                Storage.state().setObject(UIKeys.RANGE_PHONE_CONTACT_START, phoneContact);
+                UIState.setPhoneContact(phoneContact);
                 Vector resultVector = (Vector) resultArr[1];
-                Storage.state().setObject(UIKeys.VEC_PHONE_RESULTS, resultVector);
+                UIState.setPhoneResults(resultVector);
                 int scrollOffset = ((Integer) resultArr[2]).intValue();
-                Storage.state().setInt(RuntimeKeys.INT_PHONE_SCROLL_OFFSET, scrollOffset);
-                ListView popupScreen = ScreenManager.createScreen(ScreenDef.CONTACT_POPUP);
+                RuntimeState.setPhoneScrollOffset(scrollOffset);
+                Screen popupScreen = Screens.contactPopup(null);
                 if (scrollOffset >= PHONE_PAGE_SIZE) {
-                    popupScreen.addIconItemWithData(ICON_NAVIGATION, Storage.resources().getString(StringResKeys.STR_MENU_SMS), PAGE_ACTION_PREV, null);
+                    popupScreen.addIconItemWithData(ICON_NAVIGATION, ResourceAccessor.str(StringResKeys.STR_MENU_SMS), PAGE_ACTION_PREV, null);
                 }
                 for (int resultIdx = resultVector.size() - 1; resultIdx >= 0; resultIdx--) {
                     UserSearchResult searchResult = (UserSearchResult) resultVector.elementAt(resultIdx);
@@ -831,14 +743,14 @@ public final class AppController {
                     popupScreen.addIconItemWithData(genderIcon, searchResult.getText(), 0, searchResult);
                 }
                 if (scrollOffset < phoneContact.userCount - PHONE_PAGE_SIZE) {
-                    popupScreen.addIconItemWithData(ICON_NAVIGATION, Storage.resources().getString(StringResKeys.STR_MENU_CALL), PAGE_ACTION_NEXT, null);
+                    popupScreen.addIconItemWithData(ICON_NAVIGATION, ResourceAccessor.str(StringResKeys.STR_MENU_CALL), PAGE_ACTION_NEXT, null);
                 }
-                Storage.state().setBool(UIKeys.FLAG_PHONE_HAS_NEXT, scrollOffset < phoneContact.userCount - PHONE_PAGE_SIZE);
-                Storage.state().setBool(UIKeys.FLAG_PHONE_HAS_PREV, scrollOffset >= PHONE_PAGE_SIZE);
+                UIState.setPhoneHasNext(scrollOffset < phoneContact.userCount - PHONE_PAGE_SIZE);
+                UIState.setPhoneHasPrev(scrollOffset >= PHONE_PAGE_SIZE);
                 ScreenManager.showScreen(popupScreen);
                 // fall through
             case ProtocolEvent.ADD_CONTACT_CONFIRM:
-                Storage.state().setInt(UIKeys.FLAG_SHOW_PHOTO, 1);
+                UIState.setShowPhoto(1);
                 ContactListManager.showAddContactScreen();
                 break;
             case ProtocolEvent.ACCOUNT_SYNC:
@@ -869,7 +781,7 @@ public final class AppController {
         ListView screen = ScreenManager.getCurrentScreen();
         int selectedOption = ScreenManager.getCurrentWidth();
         MenuItem currentItem = ScreenManager.getCurrentMenuItem();
-        MenuItem headerItem = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK).size() > 0 ? screen.getHeaderItem() : null;
+        MenuItem headerItem = UIState.getScreenStack().size() > 0 ? screen.getHeaderItem() : null;
         int actionResult = 0;
         ScreenHandler handler = ScreenHandlerRegistry.getHandler(screen.screenId);
         if (handler != null) {
@@ -912,12 +824,12 @@ public final class AppController {
                 scrollToEnd(screen);
                 break;
             case KEY_ACTION_TOGGLE_SORT:
-                Storage.state().toggleBool(SettingsKeys.SETTING_SORT_ORDER);
+                SettingsState.toggleSortOrder();
                 needsLayoutUpdate = true;
                 break;
             case KEY_ACTION_SELECT_ITEM:
                 if (screen.screenId == ScreenId.SEARCH_RESULT_LIST) {
-                    Storage.state().setObject(ContactKeys.SLOT_CONTACT_INFO, screen.getSelectedItem().data);
+                    ContactState.setInfo(screen.getSelectedItem().data);
                 }
                 break;
         }
@@ -943,7 +855,7 @@ public final class AppController {
     }
 
     private static void updatePopupHeight() {
-        Storage.state().setInt(UIKeys.INT_POPUP_HEIGHT, Storage.state().getVector(UIKeys.VEC_POPUP_ITEMS).size() * Utils.max(MIN_POPUP_ICON_HEIGHT, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)));
+        UIState.setPopupHeight(UIState.getPopupItems().size() * Utils.max(MIN_POPUP_ICON_HEIGHT, UIState.getFontHeight()));
         needsRepaint = true;
     }
 

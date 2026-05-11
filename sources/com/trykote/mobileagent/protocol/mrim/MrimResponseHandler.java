@@ -1,6 +1,8 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
@@ -86,7 +88,7 @@ final class MrimResponseHandler {
                 break;
             case MrimAccount.RESP_XMPP_SERVICE:
                 if (resultCode != 1) {
-                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(Storage.resources().getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                     break;
                 }
                 break;
@@ -152,10 +154,10 @@ final class MrimResponseHandler {
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[4];
         int contactId = buf.readInt();
-        String statusStr = Storage.resources().getString(StringResKeys.STR_PHONE_SUFFIX);
+        String statusStr = ResourceAccessor.str(StringResKeys.STR_PHONE_SUFFIX);
         String str = (String) objArr[2];
         String str2 = (String) objArr[3];
-        String str3 = Storage.emptyStr;
+        String str3 = AppState.emptyStr;
         mrimGroup.addContact((Object) new MrimContact(this.account, contactId, FLAG_PHONE_CONTACT, STATUS_PHONE, statusStr, str, 0, 1, str2, str3, str3));
     }
 
@@ -172,7 +174,7 @@ final class MrimResponseHandler {
         int serverId = mrimGroup.serverId;
         String str = (String) objArr[2];
         String str2 = (String) objArr[3];
-        String str3 = Storage.emptyStr;
+        String str3 = AppState.emptyStr;
         mrimGroup.addContact((Object) new MrimContact(this.account, contactId, flags, serverId, str, str2, 1, 0, str3, str3, str3));
     }
 
@@ -184,11 +186,11 @@ final class MrimResponseHandler {
                 break;
             case AUTH_RESPONSE_ACK:
                 if (mrimContact.isSystem()) {
-                    EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_AUTH_GRANTED));
+                    EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_AUTH_GRANTED));
                     break;
                 }
             default:
-                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(Storage.resources().getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                 break;
         }
     }
@@ -217,7 +219,7 @@ final class MrimResponseHandler {
         int serverId = defaultGroup.serverId;
         String contactName = buf.readWideStr();
         String str = (String) objArr[2];
-        String str2 = Storage.emptyStr;
+        String str2 = AppState.emptyStr;
         defaultGroup.addContact(new MrimContact(this.account, contactId, FLAG_PHONE_NUMBER, serverId, contactName, str, 0, 1, str2, str2, str2));
     }
 }

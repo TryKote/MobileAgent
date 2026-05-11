@@ -1,19 +1,18 @@
 package com.trykote.mobileagent.ui.handler;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
-import java.util.Enumeration;
+
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.microedition.lcdui.Image;
 
 public final class MessageHandler extends BaseScreenHandler {
 
@@ -24,36 +23,36 @@ public final class MessageHandler extends BaseScreenHandler {
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.MESSAGE_DETAIL:
-                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
-                String msgId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
-                Message message = (Message) ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID)).messages.get(msgId);
+                RegistrationState.clearRegistrationData();
+                String msgId = RuntimeState.getMessageId();
+                Message message = (Message) ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId()).messages.get(msgId);
                 Message messageWithBody = message.body != null ? message : null;
                 NotificationHelper.showConfirmDialog(48, 837);
                 if (messageWithBody == null) {
                     Vector params = ObjectPool.newVector();
                     params.addElement(msgId);
-                    params.addElement(Storage.emptyStr);
+                    params.addElement(AppState.emptyStr);
                     params.addElement(ObjectPool.unpackChars(6775156));
-                    MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.URL_PATH_AJAX_READMSG)).append('?').append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_GET_MSG_DATA)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+                    MrimChatRoomManager.sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.URL_PATH_AJAX_READMSG)).append('?').append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_GET_MSG_DATA)).append(SessionState.getSessionHash()).append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
                 }
                 return;
             case ScreenId.MESSAGE_PREVIEW:
-                String msgId3 = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
-                ChatRoom chatRoom3 = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
+                String msgId3 = RuntimeState.getMessageId();
+                ChatRoom chatRoom3 = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId());
                 int roomType = chatRoom3.getType();
                 Message message4 = chatRoom3.getMessage(msgId3);
                 String str;
                 if (roomType == 2) {
                     String[] ccRecipient = MailHelper.getFirstRecipient(message4.ccList);
-                    str = ccRecipient != null ? ccRecipient[1] : Storage.emptyStr;
+                    str = ccRecipient != null ? ccRecipient[1] : AppState.emptyStr;
                 } else {
                     String[] toRecipient = MailHelper.getFirstRecipient(message4.toList);
-                    str = toRecipient != null ? toRecipient[1] : Storage.emptyStr;
+                    str = toRecipient != null ? toRecipient[1] : AppState.emptyStr;
                 }
-                Storage.state().setObject(UIKeys.SLOT_SCREEN_TITLE, (Object) str);
-                Storage.state().setObject(UIKeys.SLOT_SCREEN_SUBTITLE, (Object) Utils.normalizeSpaces(message4.getSubject()));
-                Storage.state().setObject(UIKeys.SLOT_SCREEN_VALUE, (Object) Utils.normalizeSpaces(message4.body));
-                ListView screen3 = ScreenManager.createScreen(ScreenDef.MESSAGE_PREVIEW);
+                UIState.setScreenTitle((Object) str);
+                UIState.setScreenSubtitle((Object) Utils.normalizeSpaces(message4.getSubject()));
+                UIState.setScreenValue((Object) Utils.normalizeSpaces(message4.body));
+                Screen screen3 = Screens.messagePreview(this);
                 Object[] objArr = message4.attachments;
                 if (objArr != null) {
                     for (Object obj2 : objArr) {
@@ -61,38 +60,38 @@ public final class MessageHandler extends BaseScreenHandler {
                     }
                 }
                 ScreenManager.showScreen(screen3);
-                AppController.clearPreviewState();
+                UIState.clearScreenProperties();
                 return;
             case ScreenId.COMPOSE_RECIPIENTS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.COMPOSE_RECIPIENTS));
+                Screens.composeRecipients(this).show();
                 return;
             case ScreenId.COMPOSE_MESSAGE:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.COMPOSE_MESSAGE));
+                Screens.composeMessage(this).show();
                 return;
             case ScreenId.MAIL_MENU:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAIL_MENU));
+                Screens.mailMenu(this).show();
                 return;
             case ScreenId.SEND_MAIL:
                 NotificationHelper.showConfirmDialog(81, 872);
                 Vector params9 = ObjectPool.newVector();
-                params9.addElement(Storage.state().getString(Storage.state().getBool(ChatKeys.FLAG_EXTENDED_CHAT_VIEW) ? 264068 : 1038));
-                JsonParser.addIntToVector(params9, Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
-                params9.addElement(Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_SUBJECT)));
-                params9.addElement(Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_SENDER)));
-                params9.addElement(Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_BODY)));
-                params9.addElement(Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_EXTRA_1)));
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_MAJAX_SEARCH)).append(Storage.state().getString(SessionKeys.SLOT_SESSION_HASH)).append(Storage.resources().getString(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params9)))));
+                params9.addElement(AppState.getString(ChatState.isExtendedView() ? 264068 : 1038));
+                JsonParser.addIntToVector(params9, ChatState.getChatRoomId());
+                params9.addElement(Utils.defaultStr(RuntimeState.getMsgSubject()));
+                params9.addElement(Utils.defaultStr(RuntimeState.getMsgSender()));
+                params9.addElement(Utils.defaultStr(RuntimeState.getMsgBody()));
+                params9.addElement(Utils.defaultStr(RuntimeState.getMsgExtra1()));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(ResourceAccessor.str(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_MAJAX_SEARCH)).append(SessionState.getSessionHash()).append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params9)))));
                 return;
             case ScreenId.REPLY_MAIL:
                 NotificationHelper.showConfirmDialog(82, 877);
-                Message newMessage = new Message(MailHelper.parseRecipientList(Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_EXTRA_2))), Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_EXTRA_3)), Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT)));
+                Message newMessage = new Message(MailHelper.parseRecipientList(Utils.defaultStr(RuntimeState.getMsgExtra2())), Utils.defaultStr(RuntimeState.getMsgExtra3()), Utils.defaultStr(RuntimeState.getTrafficStatusText()));
                 Vector params10 = ObjectPool.newVector();
                 params10.addElement(newMessage.toHashtable());
-                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(Storage.resources().getString(PackedStringKeys.URL_PATH_AJAX_SENDMSG), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.PARAM_AJAX_CALL)).append(Storage.resources().getString(PackedStringKeys.FUNC_AJAX_SEND_MSG)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
+                MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(ResourceAccessor.str(PackedStringKeys.URL_PATH_AJAX_SENDMSG), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_SEND_MSG)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params10)))));
                 return;
             case ScreenId.MESSAGE_INPUT:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MESSAGE_INPUT));
-                AppController.clearPreviewState();
+                Screens.messageInput(this).show();
+                UIState.clearScreenProperties();
                 return;
             case ScreenId.SEND_TO_CONTACT:
                 Vector allContacts = AccountManager.getAllContacts();
@@ -105,25 +104,25 @@ public final class MessageHandler extends BaseScreenHandler {
                     NotificationHelper.showMessageById(762);
                 } else {
                     ContactListManager.sortContacts(allContacts);
-                    ScreenManager.showScreen(ContactListManager.addContactItems(ScreenManager.createScreen(ScreenDef.SEND_TO_CONTACT), allContacts));
+                    ScreenManager.showScreen(ContactListManager.addContactItems(Screens.sendToContact(this), allContacts));
                 }
                 ObjectPool.releaseVector(allContacts);
                 return;
             case ScreenId.MESSAGE_SUMMARY:
-                ScreenManager.showScreen(Storage.state().getCurrentContact().showMessageSummary());
+                ScreenManager.showScreen(AppState.getCurrentContact().showMessageSummary());
                 return;
             case ScreenId.DELETE_MESSAGES:
-                NotificationHelper.showAlertBuffer(128, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_DELETE_CONFIRM)).append(Storage.state().getCurrentContact().displayName).append(ObjectPool.unpackChars(16167)));
+                NotificationHelper.showAlertBuffer(128, ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_DELETE_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167)));
                 return;
             case ScreenId.SEND_CONFIRM:
                 NotificationHelper.showConfirmDialog(161, 872);
                 return;
             case ScreenId.NOTIFY_MESSAGE:
-                Storage.state().setInt(UIKeys.FLAG_CONVERSATION_ACTIVE, 0);
-                NotificationHelper.showAlertBuffer(163, ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_NOTIFY_MESSAGE)));
+                UIState.setConversationActive(false);
+                NotificationHelper.showAlertBuffer(163, ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_NOTIFY_MESSAGE)));
                 return;
             case ScreenId.MAILBOX_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAILBOX_OPTIONS));
+                Screens.mailboxOptions(this).show();
                 return;
             case ScreenId.SEND_DATA:
                 NotificationHelper.showConfirmDialog(179, 504);
@@ -143,7 +142,7 @@ public final class MessageHandler extends BaseScreenHandler {
                 ScreenManager.processScreenForm();
                 Vector params = ObjectPool.newVector();
                 StringBuffer sb = ObjectPool.newStringBuffer();
-                String recipientStr = Utils.defaultStr(Storage.state().getString(RuntimeKeys.SLOT_MSG_EXTRA_2));
+                String recipientStr = Utils.defaultStr(RuntimeState.getMsgExtra2());
                 int length = recipientStr.length();
                 int i = 0;
                 while (i <= length) {
@@ -182,17 +181,17 @@ public final class MessageHandler extends BaseScreenHandler {
                 return -1;
             case ScreenId.MESSAGE_INPUT:
                 ScreenManager.processScreenForm();
-                String messageText = Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_SCREEN_VALUE));
+                String messageText = Utils.defaultStr(UIState.getScreenValue());
                 int errorCode6;
                 if (StringUtils.isEmpty(messageText)) {
                     errorCode6 = NotificationHelper.showError(523);
                 } else {
-                    MrimAccount mrimAccount = (MrimAccount) Storage.state().getCurrentContact().account;
-                    boolean flag = Storage.state().getBool(ContactKeys.INT_GROUP_OPERATION_RESULT);
-                    long timestamp = Storage.state().getLong(RuntimeKeys.TIMESTAMP_SELECTED_MSG);
+                    MrimAccount mrimAccount = (MrimAccount) AppState.getCurrentContact().account;
+                    boolean flag = ContactState.getGroupOperationResult() != 0;
+                    long timestamp = RuntimeState.getSelectedMsgTimestamp();
                     int sendResult;
                     if (mrimAccount.isConnected()) {
-                        EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_OPERATION_COMPLETE));
+                        EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_OPERATION_COMPLETE));
                         sendResult = mrimAccount.trySendData(ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_BLOG_POST, new ByteBuffer().writeIntLE(flag ? MSG_FLAG_REPLY : MSG_FLAG_FORWARD).writeStringUTF16(messageText).writeLong(timestamp)));
                     } else {
                         sendResult = 299;
@@ -205,7 +204,7 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MESSAGE_SUMMARY:
                 return MapController.handleLocationAction(data);
             case ScreenId.DELETE_MESSAGES:
-                Storage.state().getCurrentContact().initMessageBuffer();
+                AppState.getCurrentContact().initMessageBuffer();
                 return ScreenId.CONTACT_LIST;
             case ScreenId.SEND_CONFIRM:
                 return -1;
@@ -223,7 +222,7 @@ public final class MessageHandler extends BaseScreenHandler {
     public int onMenuItemAction(ListView screen, MenuItem item, Object data) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
-                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                RegistrationState.clearRegistrationData();
                 return 0;
             case ScreenId.MESSAGE_PREVIEW:
                 return 0;
@@ -261,19 +260,19 @@ public final class MessageHandler extends BaseScreenHandler {
     public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.MESSAGE_DETAIL:
-                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                RegistrationState.clearRegistrationData();
                 break;
             case ScreenId.COMPOSE_MESSAGE:
-                Storage.state().clearRange(RuntimeKeys.SLOT_MSG_EXTRA_2, RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT);
+                RuntimeState.clearMsgExtras();
                 break;
             case ScreenId.SEND_MAIL:
-                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                RegistrationState.clearRegistrationData();
                 break;
             case ScreenId.REPLY_MAIL:
-                Storage.state().clearIndex(RegistrationKeys.OBJ_REGISTRATION_DATA);
+                RegistrationState.clearRegistrationData();
                 break;
             case ScreenId.SEND_DATA:
-                Storage.state().clearIndex(UIKeys.SLOT_SCREEN_TITLE);
+                UIState.clearScreenTitle();
                 break;
         }
     }
@@ -302,7 +301,7 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MESSAGE_SUMMARY:
                 return MapController.handleLocationAction(data);
             case ScreenId.DELETE_MESSAGES:
-                Storage.state().getCurrentContact().initMessageBuffer();
+                AppState.getCurrentContact().initMessageBuffer();
                 return ScreenId.CONTACT_LIST;
             case ScreenId.SEND_CONFIRM:
                 return -1;
@@ -318,7 +317,7 @@ public final class MessageHandler extends BaseScreenHandler {
     }
 
     public static int handleFileAction(Object contactObj) {
-        int errorCode = ((Contact) contactObj).sendMessage(Storage.state().getString(MapKeys.MAP_RESOURCE_URL));
+        int errorCode = ((Contact) contactObj).sendMessage(MapState.getResourceUrl());
         if (errorCode != 0) {
             return NotificationHelper.showError(errorCode);
         }
@@ -344,13 +343,13 @@ public final class MessageHandler extends BaseScreenHandler {
                     if (responseCode != 0) {
                         return responseCode;
                     }
-                    ChatRoom lastChatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.getLast();
+                    ChatRoom lastChatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast();
                     Vector vector = (Vector) ApiClient.getJsonPayload();
                     lastChatRoom.clear();
                     int size = vector.size();
                     for (int i = 0; i < size; i++) {
                         Hashtable hashtable = (Hashtable) vector.elementAt(i);
-                        Vector vector2 = (Vector) JsonParser.getValue(hashtable, Storage.resources().getString(PackedStringKeys.MAIL_PARAM_MLIST));
+                        Vector vector2 = (Vector) JsonParser.getValue(hashtable, ResourceAccessor.str(PackedStringKeys.MAIL_PARAM_MLIST));
                         String jsonStr = JsonParser.getStringByInt(hashtable, 198561);
                         int size2 = vector2.size();
                         for (int j = 0; j < size2; j++) {
@@ -364,7 +363,7 @@ public final class MessageHandler extends BaseScreenHandler {
                     int vecSize = Utils.vectorSize(lastChatRoom.messageIds);
                     if (vecSize > 0) {
                         lastChatRoom.subject = (String) lastChatRoom.messageIds.lastElement();
-                        MrimAccount mrimAccount = (MrimAccount) Storage.state().getAccount();
+                        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
                         for (int i2 = 0; i2 < vecSize; i2++) {
                             String messageId = Utils.getVectorString(lastChatRoom.messageIds, i2);
                             Message message = mrimAccount.chatRoomManager.findById(Utils.parseInt(lastChatRoom.metadata.get(messageId))).getMessage(messageId);
@@ -375,12 +374,12 @@ public final class MessageHandler extends BaseScreenHandler {
                                 lastChatRoom.isInitialized = true;
                             }
                         }
-                        lastChatRoom.name = new StringBuffer().append(Storage.resources().getString(StringResKeys.STR_CHATROOM_PREFIX)).append(lastChatRoom.messageIds.size()).toString();
+                        lastChatRoom.name = new StringBuffer().append(ResourceAccessor.str(StringResKeys.STR_CHATROOM_PREFIX)).append(lastChatRoom.messageIds.size()).toString();
                     }
                     if (lastChatRoom.messageIds.size() == 0) {
                         return NotificationHelper.showError(736);
                     }
-                    Storage.state().setInt(ChatKeys.INT_CHATROOM_ID, lastChatRoom.id);
+                    ChatState.setChatRoomId(lastChatRoom.id);
                     return ScreenId.CHAT_ROOM_MESSAGES;
                 }
                 return 0;
@@ -408,10 +407,10 @@ public final class MessageHandler extends BaseScreenHandler {
             case ScreenId.MAILBOX_OPTIONS:
                 return 0;
             case ScreenId.SEND_DATA: {
-                Vector vec = Storage.state().getVector(UIKeys.SLOT_SCREEN_TITLE);
+                Vector vec = UIState.getScreenTitleAsVector();
                 if (Utils.vectorSize(vec) <= 1) {
                     ObjectPool.releaseVector(vec);
-                    EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_EXIT_CONFIRM));
+                    EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_EXIT_CONFIRM));
                     return ScreenId.CONTACT_LIST;
                 }
                 Object objElement = vec.elementAt(0);

@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.ui.handler;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -26,68 +27,74 @@ public final class SettingsHandler extends BaseScreenHandler {
     private static final int KEY_ACTION_CLOSE = 4;
     private static final int KEY_ACTION_BACK_TWO = 137;
 
+    public static void showSettingsScreen() {
+        SessionState.setInitComplete(0);
+        UIState.setFullscreenActive(1);
+        ScreenManager.pushScreen(Screens.settingsMain(null));
+    }
+
     public void buildScreen(int screenId) {
         switch (screenId) {
             case ScreenId.SETTINGS:
-                AppController.showSettingsScreen();
+                showSettingsScreen();
                 return;
             case ScreenId.SETTINGS_MENU:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SETTINGS_MENU));
+                Screens.settingsMenu(this).show();
                 return;
             case ScreenId.GPS_SETTINGS:
-                boolean flag = Storage.state().getBool(MapKeys.MAP_GPS_ENABLED);
-                boolean flag2 = Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE);
-                Storage.state().setBool(MapKeys.FLAG_GPS_NO_MAP, !flag && flag2);
-                Storage.state().setBool(MapKeys.FLAG_GPS_WITH_MAP, flag && flag2);
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.GPS_SETTINGS));
+                boolean flag = MapState.isGpsEnabled();
+                boolean flag2 = ContactState.isListActive();
+                MapState.setGpsNoMap(!flag && flag2);
+                MapState.setGpsWithMap(flag && flag2);
+                Screens.gpsSettings(this).show();
                 return;
             case ScreenId.THEME_SETTINGS:
-                Storage.state().setInt(SettingsKeys.INT_THEME_CACHE, Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME));
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_SETTINGS));
+                SettingsState.setThemeCache(SettingsState.getColorTheme());
+                Screens.themeSettings(this).show();
                 return;
             case ScreenId.NOTIFICATION_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_SETTINGS));
+                Screens.notificationSettings(this).show();
                 return;
             case ScreenId.SOUND_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.SOUND_SETTINGS));
+                Screens.soundSettings(this).show();
                 return;
             case ScreenId.PRIVACY_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.PRIVACY_SETTINGS));
+                Screens.privacySettings(this).show();
                 return;
             case ScreenId.CONNECTION_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONNECTION_SETTINGS));
+                Screens.connectionSettings(this).show();
                 return;
             case ScreenId.NOTIFICATION_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_OPTIONS));
+                Screens.notificationOptions(this).show();
                 return;
             case ScreenId.THEME_OPTIONS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.THEME_OPTIONS));
+                Screens.themeOptions(this).show();
                 return;
             case ScreenId.VIEW_MODE:
-                boolean isOnline4 = Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE);
-                boolean isCustom = Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE);
-                Storage.state().setBool(UIKeys.FLAG_ONLINE_CUSTOM_OFF, isOnline4 && !isCustom);
-                Storage.state().setBool(UIKeys.FLAG_ONLINE_CUSTOM_ON, isOnline4 && isCustom);
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.VIEW_MODE));
+                boolean isOnline4 = ContactState.isListActive();
+                boolean isCustom = SettingsState.getCustomViewMode() != 0;
+                UIState.setOnlineCustomOff(isOnline4 && !isCustom);
+                UIState.setOnlineCustomOn(isOnline4 && isCustom);
+                Screens.viewMode(this).show();
                 return;
             case ScreenId.COLOR_PICKER:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.COLOR_PICKER));
+                Screens.colorPicker(this).show();
                 return;
             case ScreenId.KEY_MAPPING:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.KEY_MAPPING));
+                Screens.keyMapping(this).show();
                 return;
             case ScreenId.FORM_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.FORM_SETTINGS));
+                Screens.formSettings(this).show();
                 return;
             case ScreenId.EXT_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.EXT_SETTINGS));
+                Screens.extSettings(this).show();
                 return;
             case ScreenId.MAP_VIEW_SETTINGS:
                 MapController.showMapView();
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.MAP_VIEW_SETTINGS));
+                Screens.mapViewSettings(this).show();
                 return;
             case ScreenId.NEARBY_SETTINGS:
-                ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NEARBY_SETTINGS));
+                Screens.nearbySettings(this).show();
                 return;
         }
     }
@@ -102,9 +109,9 @@ public final class SettingsHandler extends BaseScreenHandler {
                 return handleProfileAction(action);
             case ScreenId.THEME_SETTINGS:
                 ScreenManager.processScreenForm();
-                Storage.state().setInt(SettingsKeys.INT_THEME_CACHE, Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME));
+                SettingsState.setThemeCache(SettingsState.getColorTheme());
                 ScreenManager.initializeFonts();
-                Storage.state().getCanvas().updateFullScreenMode();
+                AppState.getCanvas().updateFullScreenMode();
                 TabBar.initialize();
                 AppController.resetClock();
                 return 0;
@@ -134,7 +141,7 @@ public final class SettingsHandler extends BaseScreenHandler {
                 return handleContactOption(action);
             case ScreenId.NEARBY_SETTINGS:
                 ScreenManager.processScreenForm();
-                if (Storage.state().getBool(MapKeys.FLAG_MAP_DATA_LOADED)) {
+                if (MapState.isMapDataLoaded()) {
                     MapUtils.requestNearbyPeople();
                 }
                 return 0;
@@ -186,12 +193,12 @@ public final class SettingsHandler extends BaseScreenHandler {
     public void onScreenClosed(ListView screen) {
         switch (screen.screenId) {
             case ScreenId.SETTINGS:
-                Storage.state().setBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE, Storage.state().getBool(UIKeys.FLAG_FULLSCREEN_REQUESTED));
-                Storage.state().getCanvas().updateFullScreenMode();
-                Storage.state().setInt(UIKeys.FLAG_FULLSCREEN_ACTIVE, 0);
+                SettingsState.setStatusBarVisible(UIState.isFullscreenRequested());
+                AppState.getCanvas().updateFullScreenMode();
+                UIState.setFullscreenActive(0);
                 break;
             case ScreenId.THEME_SETTINGS:
-                Storage.state().setInt(SettingsKeys.SETTING_COLOR_THEME, Storage.state().getInt(SettingsKeys.INT_THEME_CACHE));
+                SettingsState.setColorTheme(SettingsState.getThemeCache());
                 break;
         }
     }
@@ -244,8 +251,8 @@ public final class SettingsHandler extends BaseScreenHandler {
     public void onMenuItemEvent(ListView screen, MenuItem item) {
         if (screen.screenId == ScreenId.THEME_SETTINGS) {
             Object[] themeData = (Object[]) item.data;
-            if (Storage.resources().getString(StringResKeys.STR_MENU_SETTINGS).equals(item.title)) {
-                Storage.state().setInt(SettingsKeys.SETTING_COLOR_THEME, ((Integer) themeData[0]).intValue());
+            if (ResourceAccessor.str(StringResKeys.STR_MENU_SETTINGS).equals(item.title)) {
+                SettingsState.setColorTheme(((Integer) themeData[0]).intValue());
             }
         } else if (screen.screenId == ScreenId.SOUND_SETTINGS) {
             NotificationHelper.playAlertIfEnabled(((Integer) ((Object[]) item.data)[0]).intValue(), false);
@@ -256,13 +263,13 @@ public final class SettingsHandler extends BaseScreenHandler {
         if (optionId != 6) {
             return 0;
         }
-        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         account.isHighlighted = true;
         if (!account.isSelected()) {
             return NotificationHelper.showError(667);
         }
-        MapController.applyViewMode(true, false, !Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE));
-        Storage.state().setInt(ContactKeys.FLAG_REFRESH_CONTACTS, 1);
+        MapController.applyViewMode(true, false, !MapState.isMapViewActive());
+        ContactState.setRefreshNeeded(true);
         MapController.selectMapItem((ListItem) account);
         return 0;
     }
@@ -280,12 +287,12 @@ public final class SettingsHandler extends BaseScreenHandler {
     }
 
     public static int handleSettingsOption(int optionId) {
-        Storage.state().setInt(RuntimeKeys.INT_PERIOD_INDEX, optionId);
+        RuntimeState.setPeriodIndex(optionId);
         return ScreenId.TRAFFIC_STATS;
     }
 
     public static int handleExtSettingsOption(int actionId) {
-        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         switch (actionId) {
             case 0: case 1: case 2: case 3:
                 if (account != null) {
@@ -296,8 +303,8 @@ public final class SettingsHandler extends BaseScreenHandler {
                 break;
             case 4: return ScreenId.PHOTO_SELECTOR;
         }
-        if (Storage.state().getBool(SessionKeys.FLAG_UPDATE_AVAILABLE)) {
-            return Storage.state().getInt(SessionKeys.INT_CONNECTION_STATE);
+        if (SessionState.isUpdateAvailable()) {
+            return SessionState.getConnectionState();
         }
         ScreenBuilder.onScreenClosed();
         return ScreenId.UPDATE_ALERT;
@@ -328,13 +335,13 @@ public final class SettingsHandler extends BaseScreenHandler {
         }
         if (optionId == ACTION_TOGGLE_ONLINE) {
             ScreenBuilder.onScreenClosed();
-            AppController.toggleOnlineMode(true);
+            ChatHandler.toggleOnlineMode(true);
             return 0;
         }
         if (optionId != ACTION_MARK_LOADED) {
             return 0;
         }
-        ((MrimAccount) Storage.state().getAccount()).chatRoomManager.loaded = true;
+        ((MrimAccount) AppState.getAccount()).chatRoomManager.loaded = true;
         return 0;
     }
 

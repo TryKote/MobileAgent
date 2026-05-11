@@ -1,7 +1,8 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.ui.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Hashtable;
@@ -25,16 +26,16 @@ public abstract class MrimContactParser {
         ContactInfo contactInfo = ContactInfo.createForAccount(account);
         switch (i) {
             case 0:
-                contactInfo.setContactName(Storage.resources().getString(StringResKeys.STR_DEFAULT_CONTACT_NAME));
+                contactInfo.setContactName(ResourceAccessor.str(StringResKeys.STR_DEFAULT_CONTACT_NAME));
                 break;
             case 1:
                 contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
                 break;
             default:
-                contactInfo.setContactName(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
+                contactInfo.setContactName(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
                 break;
         }
-        Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_1, contactInfo);
+        RegistrationState.setParam1(contactInfo);
     }
 
     public static final void parseContactInfoResponse(MrimAccount account, int i, ByteBuffer buffer) {
@@ -51,8 +52,8 @@ public abstract class MrimContactParser {
                 nameIndex = MSG_CONTACT_PARSE_ERROR;
                 break;
         }
-        Storage.state().setInt(RuntimeKeys.INT_ERROR_MSG_INDEX, nameIndex);
-        Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_4, contacts);
+        RuntimeState.setErrorMsgIndex(nameIndex);
+        RegistrationState.setParam4(contacts);
     }
 
     public static final void updateContactName(MrimAccount account, int i, ByteBuffer buffer) {
@@ -73,7 +74,7 @@ public abstract class MrimContactParser {
                 nameIndex = MSG_CONTACT_PARSE_ERROR;
                 break;
         }
-        EventDispatcher.postNotification(Storage.state().getString(nameIndex));
+        EventDispatcher.postNotification(AppState.getString(nameIndex));
     }
 
     public static final void addContactToGroup(MrimAccount account, int i, ByteBuffer buffer) {
@@ -85,13 +86,13 @@ public abstract class MrimContactParser {
             if (contact != null) {
                 String fullName = contactInfo.getFullName();
                 contact.setDisplayName(fullName);
-                account.validateGroupAdd(email, fullName, Storage.resources().getString(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
+                account.validateGroupAdd(email, fullName, ResourceAccessor.str(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
             }
         }
     }
     private static final Vector parseMrimContacts(MrimAccount account, ByteBuffer buffer) {
         Vector result = ObjectPool.newVector();
-        Vector fieldNames = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_REG_FIELD_NAMES));
+        Vector fieldNames = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_REG_FIELD_NAMES));
         int fieldCount = buffer.readInt();
         int contactCount = buffer.readInt();
         buffer.readInt();

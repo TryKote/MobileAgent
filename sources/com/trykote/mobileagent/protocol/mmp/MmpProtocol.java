@@ -1,15 +1,14 @@
 package com.trykote.mobileagent.protocol.mmp;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
-import java.util.Enumeration;
+
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -194,7 +193,7 @@ public final class MmpProtocol extends Account {
         this.lastError = STATUS_OFFLINE;
         this.configFlags = STATUS_ONLINE;
         this.protocolVersion = PROTOCOL_VERSION_DEFAULT;
-        MmpContactGroup group = new MmpContactGroup(this, 0, Storage.resources().getString(StringResKeys.STR_GROUP_DEFAULT));
+        MmpContactGroup group = new MmpContactGroup(this, 0, ResourceAccessor.str(StringResKeys.STR_GROUP_DEFAULT));
         group.isSpecial = true;
         this.defaultGroup = group;
         this.contactsByIdMap = new Hashtable();
@@ -234,22 +233,22 @@ public final class MmpProtocol extends Account {
 
     @Override // p000.Account
     public ContactGroup createOnlineGroup() {
-        return new MmpContactGroup(this, -1, Storage.resources().getString(StringResKeys.STR_GROUP_NOT_IN_LIST));
+        return new MmpContactGroup(this, -1, ResourceAccessor.str(StringResKeys.STR_GROUP_NOT_IN_LIST));
     }
 
     @Override // p000.Account
     public ContactGroup createBlockedGroup() {
-        return new MmpContactGroup(this, -2, Storage.resources().getString(StringResKeys.STR_GROUP_TEMPORARY));
+        return new MmpContactGroup(this, -2, ResourceAccessor.str(StringResKeys.STR_GROUP_TEMPORARY));
     }
 
     @Override // p000.Account
     public ContactGroup createOfflineGroup() {
-        return new MmpContactGroup(this, -3, Storage.resources().getString(StringResKeys.STR_GROUP_IGNORE));
+        return new MmpContactGroup(this, -3, ResourceAccessor.str(StringResKeys.STR_GROUP_IGNORE));
     }
 
     @Override // p000.Account
     public ContactGroup createSpecialGroup() {
-        return new MmpContactGroup(this, -4, Storage.resources().getString(StringResKeys.STR_GROUP_PHONE_CONTACTS));
+        return new MmpContactGroup(this, -4, ResourceAccessor.str(StringResKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
     public int getIconResourceId() {
@@ -400,7 +399,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.vectorSize(accounts) == 0) {
-                        EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_MMP_AUTH_ERROR));
+                        EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_MMP_AUTH_ERROR));
                         this.progress = PROGRESS_DISCONNECTED;
                     }
                     ObjectPool.releaseVector(accounts);
@@ -442,7 +441,7 @@ public final class MmpProtocol extends Account {
                     this.msgCount = PROGRESS_PCT_HANDSHAKE;
                     AccountManager.recordInboundPacket((Account) this, handshakePacket);
                     if (handshakePacket.peekByteAt(1) == MmpCommand.PACKET_HANDSHAKE) {
-                        long timeoutMs = Storage.state().getBool(UIKeys.FLAG_WIFI_CONNECTION) ? TIMEOUT_WIFI : TIMEOUT_MOBILE;
+                        long timeoutMs = UIState.isWifiConnection() ? TIMEOUT_WIFI : TIMEOUT_MOBILE;
                         this.timeout = timeoutMs;
                         this.deadline = System.currentTimeMillis() + timeoutMs;
                         incrementSync();
@@ -528,7 +527,7 @@ public final class MmpProtocol extends Account {
             case MmpCommand.AUTH_RECEIVED:
                 String senderId = packet.readLenPrefixStr();
                 byte authFlag = packet.readByte();
-                onMessage(senderId, 0L, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MMP_FILE_TRANSFER)).append(Storage.state().getString(authFlag == AUTH_FLAG_ACCEPTED ? STR_AUTH_ACCEPTED : STR_AUTH_REJECTED)).append(packet.readVarLenStr())));
+                onMessage(senderId, 0L, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MMP_FILE_TRANSFER)).append(AppState.getString(authFlag == AUTH_FLAG_ACCEPTED ? STR_AUTH_ACCEPTED : STR_AUTH_REJECTED)).append(packet.readVarLenStr())));
                 if (authFlag == AUTH_FLAG_ACCEPTED) {
                     Contact authContact = getContact((Object) senderId);
                     if (authContact != null) {
@@ -537,10 +536,10 @@ public final class MmpProtocol extends Account {
                 }
                 break;
             case MmpCommand.SYSTEM_MESSAGE:
-                onMessage(packet.readLenPrefixStr(), 0L, Storage.resources().getString(StringResKeys.STR_MMP_SYSTEM_MESSAGE));
+                onMessage(packet.readLenPrefixStr(), 0L, ResourceAccessor.str(StringResKeys.STR_MMP_SYSTEM_MESSAGE));
                 break;
             case MmpCommand.SPAM_REPORT_ACK:
-                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MMP_SPAM_REPORT)).append(SPAM_REPORT_CODE).append('/').append(packet.readShortBE()).append(Storage.resources().getString(StringResKeys.STR_MMP_SPAM_SUFFIX))));
+                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MMP_SPAM_REPORT)).append(SPAM_REPORT_CODE).append('/').append(packet.readShortBE()).append(ResourceAccessor.str(StringResKeys.STR_MMP_SPAM_SUFFIX))));
                 removeQueuedCommand(seqNum);
                 break;
             case MmpCommand.SEARCH_RESPONSE:
@@ -553,9 +552,9 @@ public final class MmpProtocol extends Account {
         try {
             int authParam1 = packet.readIntBE();
             int authParam2 = packet.readIntBE();
-            String authName = Storage.emptyStr;
+            String authName = AppState.emptyStr;
             boolean authGranted = false;
-            byte[] authData = Storage.emptyBytes;
+            byte[] authData = AppState.emptyBytes;
             while (packet.length > 0) {
                 int tlvType = packet.readShortBE();
                 int tlvLen = packet.readShortBE();
@@ -671,7 +670,7 @@ public final class MmpProtocol extends Account {
             return ERROR_NOT_CONNECTED;
         }
         MmpContact contact = (MmpContact) contactParam;
-        Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_2, ContactInfo.createAccountInfo(this).setMmpContactIdStr(contact.identifier));
+        RegistrationState.setParam2(ContactInfo.createAccountInfo(this).setMmpContactIdStr(contact.identifier));
         return trySendData(StringUtils.createContactInfoCmd(this, Utils.parseInt((Object) contact.identifier)));
     }
 

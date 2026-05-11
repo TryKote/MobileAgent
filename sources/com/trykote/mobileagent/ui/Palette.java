@@ -1,0 +1,59 @@
+package com.trykote.mobileagent.ui;
+
+/**
+ * Color palette: 8 themes x 22 colors.
+ * Generated from palette.json — do not edit manually.
+ */
+public final class Palette {
+    private Palette() {}
+
+    public static final int TEXT = 0;
+    public static final int BACKGROUND = 1;
+    public static final int BACKGROUND_ALT = 2;
+    public static final int LINK = 3;
+    public static final int ONLINE = 4;
+    public static final int AWAY = 5;
+    public static final int OFFLINE = 6;
+    public static final int ACCENT = 7;
+    public static final int SELECTION_BG = 8;
+    public static final int SELECTION_TEXT = 9;
+    public static final int SEPARATOR = 10;
+    public static final int DISABLED = 11;
+    public static final int BORDER = 12;
+    public static final int SCROLLBAR = 13;
+    public static final int POPUP_BG = 14;
+    public static final int POPUP_TEXT = 15;
+    public static final int GRADIENT_START = 16;
+    public static final int MAP_FILL = 17;
+    public static final int MAP_BORDER = 18;
+    public static final int MAP_BG = 19;
+    public static final int MAP_PULSE = 20;
+    public static final int GRADIENT_END = 21;
+
+    private static final int[][] COLORS = {
+        /* Theme 0 — Copper */
+        {0x000000, 0xFFFFFF, 0xFFFFFF, 0x0000FF, 0x007F00, 0x3F3F00, 0x0000FF, 0x0000FF, 0xCC0000, 0x005EA6, 0x772F00, 0x00007F, 0x0000FF, 0xCCCCCC, 0xFFFFFF, 0x000000, 0xDF9F6F, 0xFFE8C9, 0x7F7F7F, 0x14144F, 0x0F770F, 0xFFFFFF},
+        /* Theme 1 — Violet */
+        {0x000000, 0xFFFFFF, 0xFFFFFF, 0x0000FF, 0x007F00, 0x3F3F00, 0x0000FF, 0x0000FF, 0xCC0000, 0x005EA6, 0x772F00, 0x00007F, 0x0000FF, 0xCCCCCC, 0xFFFFFF, 0x000000, 0x9F6FDF, 0xDDCCFF, 0x7F7F7F, 0x14144F, 0x0F770F, 0xFFFFFF},
+        /* Theme 2 — Mint */
+        {0x000000, 0xFFFFFF, 0xFFFFFF, 0x0000FF, 0x007F00, 0x3F3F00, 0x0000FF, 0x0000FF, 0xCC0000, 0x005EA6, 0x772F00, 0x00007F, 0x0000FF, 0xCCCCCC, 0xFFFFFF, 0x000000, 0x6FDF9F, 0xCCFFDD, 0x7F7F7F, 0x14144F, 0x0F770F, 0xFFFFFF},
+        /* Theme 3 — Rose */
+        {0x000000, 0xFFFFFF, 0xFFFFFF, 0x0000FF, 0x007F00, 0x3F3F00, 0x0000FF, 0x0000FF, 0xCC0000, 0x005EA6, 0x772F00, 0x00007F, 0x0000FF, 0xCCCCCC, 0xFFFFFF, 0x000000, 0xFF87C3, 0xFFDDEE, 0x7F7F7F, 0x14144F, 0x0F770F, 0xFFFFFF},
+        /* Theme 4 — Silver */
+        {0x000000, 0xFFFFFF, 0xFFFFFF, 0x0000FF, 0x007F00, 0x3F3F00, 0x0000FF, 0x0000FF, 0xCC0000, 0x005EA6, 0x772F00, 0x00007F, 0x0000FF, 0xCCCCCC, 0xFFFFFF, 0x000000, 0xAAAAAA, 0xDDDDDD, 0x7F7F7F, 0x14144F, 0x0F770F, 0xFFFFFF},
+        /* Theme 5 — Dark Purple */
+        {0xECDFFF, 0x3A1467, 0x1F0842, 0xF7D207, 0xF7FF07, 0xA0D207, 0xDAC4F8, 0xDAC4F8, 0x8B97CA, 0xF7D207, 0xD4F10E, 0x6B4B98, 0x6B4B98, 0x8B97CA, 0x0F0224, 0x939ECD, 0x4B5BA0, 0x000000, 0x8463B1, 0xCCBFDF, 0xECDFFF, 0x4B5BA0},
+        /* Theme 6 — Dark Blue */
+        {0xFFFFFF, 0x0072BC, 0x025C9C, 0xFFF200, 0xFFFF20, 0x448CCB, 0xFFF200, 0xFFF200, 0x00215A, 0xFFF200, 0xFFF200, 0x7DA7D9, 0x7DA7D9, 0x448CCB, 0x00468C, 0xFFFFFF, 0x00468C, 0x00468C, 0x6DCFF6, 0x6DCFF6, 0xFFF200, 0x00468C},
+        /* Theme 7 — Sky */
+        {0x000000, 0xFFFFFF, 0x82B7ED, 0x00001F, 0x001F00, 0x1F0000, 0x6A6A6A, 0x4242FF, 0x00215A, 0x6A6A6A, 0x6A6A6A, 0x000000, 0x7DA7D9, 0x79ADE2, 0xB9D1E7, 0x000000, 0xB9D1E7, 0xDEEEFF, 0x82B7ED, 0x000000, 0x0296D1, 0xB9D1E7}
+    };
+
+    public static int getColor(int theme, int role) {
+        return COLORS[theme][role];
+    }
+
+    public static int themeCount() {
+        return 8;
+    }
+}

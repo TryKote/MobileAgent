@@ -2,9 +2,9 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.Storage;
-import com.trykote.mobileagent.core.SessionKeys;
-import com.trykote.mobileagent.core.SettingsKeys;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.key.SettingsKeys;
 import javax.microedition.lcdui.Display;
 
 public abstract class TimerManager {
@@ -52,7 +52,7 @@ public abstract class TimerManager {
     }
 
     public static final void resetBacklightTimer() {
-        if (Storage.state().getBool(SessionKeys.FLAG_HAS_MRIM_ACCOUNT)) {
+        if (SessionState.hasMrimAccount()) {
             flashBacklight(Integer.MAX_VALUE);
             setTimer(SLOT_BACKLIGHT, getSessionTimestamp());
         }
@@ -63,16 +63,16 @@ public abstract class TimerManager {
     }
 
     private static final void flashBacklight(int duration) {
-        if (Storage.state().getBool(SessionKeys.FLAG_HAS_SAVED_ACCOUNTS)) {
+        if (SessionState.hasSavedAccounts()) {
             try {
-                Display.getDisplay(Storage.state().getMidlet()).flashBacklight(duration);
+                Display.getDisplay(AppState.getMidlet()).flashBacklight(duration);
             } catch (Throwable unused) {
             }
         }
     }
 
     public static final long getSessionTimestamp() {
-        switch (Storage.state().getInt(SettingsKeys.SETTING_NETWORK_MODE)) {
+        switch (SettingsState.getNetworkMode()) {
             case 1:
                 return 15000L;
             case 2:

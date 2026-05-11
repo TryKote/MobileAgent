@@ -2,6 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -130,7 +131,7 @@ public final class ChatRoom {
         this.memberCount = JsonParser.getIntByInt(jsonData, 526252);
         this.id = JsonParser.getIntByInt(jsonData, 132297);
         this.unreadCount = JsonParser.getIntByInt(jsonData, 395188);
-        this.subject = Storage.emptyStr;
+        this.subject = AppState.emptyStr;
         this.isInitialized = true;
     }
 
@@ -145,8 +146,8 @@ public final class ChatRoom {
 
     private String getFormattedName() {
         for (int i = MAILBOX_NAME_COUNT - 1; i >= 0; i--) {
-            if (this.name.equals(Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_EN_BASE, i))) {
-                return Storage.resources().getBlockString(StringResKeys.MAILBOX_NAMES_RU_BASE, i);
+            if (this.name.equals(ResourceAccessor.blockStr(StringResKeys.MAILBOX_NAMES_EN_BASE, i))) {
+                return ResourceAccessor.blockStr(StringResKeys.MAILBOX_NAMES_RU_BASE, i);
             }
         }
         return this.name;
@@ -210,7 +211,7 @@ public final class ChatRoom {
     }
 
     public final String getDisplayName() {
-        if (this == ((MrimAccount) Storage.state().getAccount()).chatRoomManager.getLast()) {
+        if (this == ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast()) {
             return this.name;
         }
         return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));

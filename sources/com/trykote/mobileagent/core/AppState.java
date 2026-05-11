@@ -1,13 +1,10 @@
 package com.trykote.mobileagent.core;
 
-
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Calendar;
@@ -19,64 +16,106 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
 
+/**
+ * Central state management for the application.
+ *
+ * Owns the shared backing arrays (pool, delta, intPool), provides generic
+ * typed accessors, initialization, persistence, and compound accessors.
+ * Domain facades extend this class and add domain-specific typed methods.
+ */
 public abstract class AppState {
 
-    public static byte[] emptyBytes;
-    public static Object[] pool;
-    private static Object[] delta;
-    private static int[] intPool;
-    public static Object currentScreen;
-    public static String emptyStr;
-    private static String separator;
+    // --- Shared backing arrays ---
 
-    // Pool structure sizes
-    private static final int DELTA_SIZE = 295;
-    private static final int OBJECT_POOL_SIZE = 1406;
-    private static final int INT_POOL_SIZE = 3777;
-    private static final int SCREEN_DATA_COUNT = 3605;
-    private static final int RUNTIME_DEFAULTS_COUNT = 172;
+    public static Object[] pool;
+    protected static Object[] delta;
+    protected static int[] intPool;
+    public static byte[] emptyBytes;
+    public static String emptyStr;
+
+    /** Pending screen to display on next repaint. */
+    public static Object currentScreen;
+
+    // --- Pool structure sizes ---
+
+    static final int DELTA_SIZE = 295;
+    static final int OBJECT_POOL_SIZE = 1406;
+    static final int INT_POOL_SIZE = 3494; // covers keys 1406..4899
 
     // Packed string encoding
     public static final int PACKED_STRING_THRESHOLD = 5179;
-    private static final int RAW_BYTES_END = 1036;
 
-    // Persistence
-    private static final int DELTA_FORMAT_VERSION = 3096;
-    private static final int CFG_BUFFER_CAPACITY = 45000;
+    // --- Persistence ---
 
-    // Memory threshold (1.5 MB)
-    private static final int MEMORY_THRESHOLD = 1572864;
+    static final int DELTA_FORMAT_VERSION = 3098;
+    private static final int DELTA_TYPE_INT = 1;
+    private static final int DELTA_TYPE_STRING = 2;
 
-    // Packed resource identifiers
-    private static final int PACKED_SEPARATOR = 1819047278;       // "null" separator marker
-    private static final int PACKED_CFG_RESOURCE = 1734763311;    // "/cfg" config binary
-    private static final int PACKED_DELTA_STORE = 1164404323;     // "cfgE" delta record store
+    // --- Per-domain delta store names ---
 
-    // Ellipsis character
+    public static final String STORE_TRAFFIC = "trf";
+    public static final String STORE_MAP = "geo";
+    public static final String STORE_SETTINGS = "set";
+    static final String STORE_SESSION = "ses";
+
+    // --- Per-domain delta ranges (inclusive) ---
+
+    public static final int RANGE_TRAFFIC_START = 0;
+    public static final int RANGE_TRAFFIC_END = 33;
+    public static final int RANGE_MAP_START = 34;
+    public static final int RANGE_MAP_END = 44;
+    public static final int RANGE_SETTINGS_START = 45;
+    public static final int RANGE_SETTINGS_END = 114;
+    static final int RANGE_SESSION_START = 115;
+
+    // --- Init constants ---
+
+    private static final int PACKED_SEPARATOR = 1819047278;
     private static final char CHAR_ELLIPSIS = '\u2026';
-
-    // Timezone constants
+    private static final int MEMORY_THRESHOLD = 1572864;
     private static final int TIMEZONE_UTC_INDEX = 13;
     private static final int MILLIS_PER_HOUR = 3600000;
-
-    // Write-only legacy defaults (from original binary, never read by name)
     private static final int LEGACY_FLAG_1417 = 1417;
     private static final int LEGACY_FLAG_1420 = 1420;
     private static final int LEGACY_FLAG_1461 = 1461;
     private static final int LEGACY_DEFAULT_1571 = 1571;
     private static final int LEGACY_VALUE_1571 = 400;
-
-    // Blink timing
     private static final int BLINK_CYCLE_MS = 2000;
     private static final int BLINK_ON_MS = 1000;
 
+    private static String separator;
+
+    // --- Per-domain persistence config (override in subclasses with own store) ---
+
+    protected String storeName() { return null; }
+
+    protected int deltaStart() { return -1; }
+
+    protected int deltaEnd() { return -1; }
+
+    // --- Inherited persistence methods (no-op if storeName is null) ---
+
+    public void saveDelta() {
+        String store = storeName();
+        if (store != null) {
+            saveDeltaRange(store, deltaStart(), deltaEnd());
+        }
+    }
+
+    public void loadDelta() {
+        String store = storeName();
+        if (store != null) {
+            loadDomainDelta(store);
+        }
+    }
+
+    // ========================== Initialization ==========================
+
     public static void init(Object midlet) {
         initPools();
-        Storage.init();
         initObjectPool();
-        Storage.initConstants();
         pool[UIKeys.OBJ_TRANSITION_DATA] = new TransitionData();
-        loadDelta();
+        loadAllDeltas();
         initSessionState(midlet);
         initGraphics();
         initCaches();
@@ -92,7 +131,6 @@ public abstract class AppState {
         delta = new Object[DELTA_SIZE];
         pool = new Object[OBJECT_POOL_SIZE];
         intPool = new int[INT_POOL_SIZE];
-        // Non-zero defaults for runtime variables (intPool[0..171])
         initRuntimeDefaults();
     }
 
@@ -108,24 +146,15 @@ public abstract class AppState {
     }
 
     private static void initObjectPool() {
-        ByteBuffer buffer = new ByteBuffer(ObjectPool.unpackChars(PACKED_CFG_RESOURCE), CFG_BUFFER_CAPACITY);
-        for (int poolIndex = 0; poolIndex < OBJECT_POOL_SIZE; poolIndex++) {
-            pool[poolIndex] = StateCodec.decodeObject(buffer, poolIndex, DELTA_SIZE, RAW_BYTES_END, separator);
-        }
-        for (int screenIndex = 0; screenIndex < SCREEN_DATA_COUNT; screenIndex++) {
-            intPool[screenIndex + RUNTIME_DEFAULTS_COUNT] = StateCodec.decodeInt(buffer);
-        }
+        PoolInit.init(pool);
         emptyStr = (String) pool[StringResKeys.STR_EMPTY];
     }
 
-    private static void loadDelta() {
-        ByteBuffer recordBuf = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(PACKED_DELTA_STORE));
-        while (recordBuf.length > 0) {
-            try {
-                delta[((Integer) StateCodec.decodeObject(recordBuf, 0, DELTA_SIZE, RAW_BYTES_END, separator)).intValue()] = StateCodec.decodeObject(recordBuf, 0, DELTA_SIZE, RAW_BYTES_END, separator);
-            } catch (Throwable unused) {
-            }
-        }
+    private static void loadAllDeltas() {
+        TrafficAccounting.INSTANCE.loadDelta();
+        MapState.INSTANCE.loadDelta();
+        SettingsState.INSTANCE.loadDelta();
+        loadDomainDelta(STORE_SESSION);
         if (delta[0] == null) {
             delta = new Object[DELTA_SIZE];
             try {
@@ -134,11 +163,11 @@ public abstract class AppState {
                     for (int idx = stores.length - 1; idx >= 0; idx--) {
                         try {
                             RecordStore.deleteRecordStore(stores[idx]);
-                        } catch (Throwable unused2) {
+                        } catch (Throwable unused) {
                         }
                     }
                 }
-            } catch (Throwable unused3) {
+            } catch (Throwable unused) {
             }
             setInt(TrafficKeys.DELTA_VERSION, DELTA_FORMAT_VERSION);
         }
@@ -184,23 +213,7 @@ public abstract class AppState {
         pool[SettingsKeys.SETTING_COMPRESSION_ENABLED] = ObjectPool.integerOf(!StringUtils.isKnownDevice1 && !StringUtils.isKnownDevice2 ? 1 : 0);
     }
 
-    public static boolean hasMemory() {
-        return Runtime.getRuntime().totalMemory() > MEMORY_THRESHOLD;
-    }
-
-    public static void updateTime() {
-        long now = System.currentTimeMillis();
-        setLong(SessionKeys.TIMESTAMP_CURRENT, now);
-        setBool(UIKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % BLINK_CYCLE_MS < BLINK_ON_MS);
-    }
-
-    public static byte[] getBytes(int key) {
-        return (byte[]) pool[key];
-    }
-
-    public static MainCanvas getCanvas() {
-        return (MainCanvas) pool[SessionKeys.OBJ_CANVAS];
-    }
+    // ========================== Generic accessors ==========================
 
     private static Object getOrDefault(int key) {
         Object override;
@@ -224,12 +237,6 @@ public abstract class AppState {
         return null;
     }
 
-    public static int getAndClearInt(int key) {
-        int val = getInt(key);
-        setInt(key, 0);
-        return val;
-    }
-
     public static int getInt(int key) {
         if (key >= OBJECT_POOL_SIZE) {
             return intPool[key - OBJECT_POOL_SIZE];
@@ -242,37 +249,46 @@ public abstract class AppState {
         return getInt(key) != 0;
     }
 
-    public static void setFromBuffer(int key, StringBuffer stringBuffer) {
-        setObject(key, ObjectPool.toStringAndRelease(stringBuffer));
+    public static long getLong(int key) {
+        return (getInt(key) << 32) | (getInt(key + 1) & 0xFFFFFFFFL);
     }
 
-    public static void setFromPool(int key, int sourceKey) {
-        setObject(key, getString(sourceKey));
-    }
-
-    public static void clearRange(int from, int to) {
-        for (int key = from; key <= to; key++) {
-            clearIndex(key);
+    public static byte[] getBytes(int key) {
+        Object value = pool[key];
+        if (value instanceof String) {
+            String s = (String) value;
+            byte[] result = new byte[s.length()];
+            for (int i = 0; i < s.length(); i++) {
+                result[i] = Utils.charToWin1251(s.charAt(i));
+            }
+            return result;
         }
+        return (byte[]) value;
     }
 
-    public static void clearIndex(int key) {
-        if (key >= OBJECT_POOL_SIZE) {
-            intPool[key - OBJECT_POOL_SIZE] = 0;
-        } else if (key >= DELTA_SIZE) {
-            pool[key] = null;
-        } else {
-            delta[key] = null;
-        }
+    public static int getAndClearInt(int key) {
+        int val = getInt(key);
+        setInt(key, 0);
+        return val;
     }
 
-    public static void setString(int key, String value) {
-        setObject(key, Utils.defaultStr(value));
+    public static Object getObject(int key) {
+        return pool[key];
     }
 
-    public static void setStringIndirect(int key, String value) {
-        setObject(getInt(key), value);
+    public static Vector getVector(int key) {
+        return (Vector) pool[key];
     }
+
+    public static Image getImage(int key) {
+        return (Image) pool[key];
+    }
+
+    public static Object[] getObjectArray(int key) {
+        return (Object[]) pool[key];
+    }
+
+    // --- Writes ---
 
     public static void setInt(int key, int value) {
         if (key < OBJECT_POOL_SIZE) {
@@ -280,23 +296,6 @@ public abstract class AppState {
         } else {
             intPool[key - OBJECT_POOL_SIZE] = value;
         }
-    }
-
-    public static void addInt(int key, int value) {
-        setInt(key, getInt(key) + value);
-    }
-
-    public static void setIntIndirect(int key, int value) {
-        setInt(getInt(key), value);
-    }
-
-    public static void setLong(int key, long value) {
-        setInt(key, (int) (value >>> 32));
-        setInt(key + 1, (int) value);
-    }
-
-    public static long getLong(int key) {
-        return (getInt(key) << 32) | (getInt(key + 1) & 0xFFFFFFFFL);
     }
 
     public static boolean setBool(int key, boolean value) {
@@ -308,6 +307,10 @@ public abstract class AppState {
         boolean newVal = !getBool(key);
         setBool(key, newVal);
         return newVal;
+    }
+
+    public static void setString(int key, String value) {
+        setObject(key, Utils.defaultStr(value));
     }
 
     public static Object setObject(int key, Object value) {
@@ -326,6 +329,77 @@ public abstract class AppState {
         return value;
     }
 
+    public static void setLong(int key, long value) {
+        setInt(key, (int) (value >>> 32));
+        setInt(key + 1, (int) value);
+    }
+
+    public static void addInt(int key, int value) {
+        setInt(key, getInt(key) + value);
+    }
+
+    public static void setFromBuffer(int key, StringBuffer stringBuffer) {
+        setObject(key, ObjectPool.toStringAndRelease(stringBuffer));
+    }
+
+    public static void setFromPool(int key, int sourceKey) {
+        setObject(key, getString(sourceKey));
+    }
+
+    public static void setStringIndirect(int key, String value) {
+        setObject(getInt(key), value);
+    }
+
+    public static void setIntIndirect(int key, int value) {
+        setInt(getInt(key), value);
+    }
+
+    public static void clearIndex(int key) {
+        if (key >= OBJECT_POOL_SIZE) {
+            intPool[key - OBJECT_POOL_SIZE] = 0;
+        } else if (key >= DELTA_SIZE) {
+            pool[key] = null;
+        } else {
+            delta[key] = null;
+        }
+    }
+
+    public static void clearRange(int from, int to) {
+        for (int key = from; key <= to; key++) {
+            clearIndex(key);
+        }
+    }
+
+    public static void resetToEmpty(int key) {
+        setObject(key, emptyStr);
+    }
+
+    // --- Protected pool-direct access for typed casts ---
+
+    protected static Object getPoolObject(int key) {
+        return pool[key];
+    }
+
+    protected static void setPoolDirect(int key, Object value) {
+        pool[key] = value;
+    }
+
+    // ========================== Compound accessors ==========================
+
+    public static boolean hasMemory() {
+        return Runtime.getRuntime().totalMemory() > MEMORY_THRESHOLD;
+    }
+
+    public static void updateTime() {
+        long now = System.currentTimeMillis();
+        setLong(SessionKeys.TIMESTAMP_CURRENT, now);
+        setBool(UIKeys.FLAG_BLINK_STATE, (((int) now) & Integer.MAX_VALUE) % BLINK_CYCLE_MS < BLINK_ON_MS);
+    }
+
+    public static MainCanvas getCanvas() {
+        return (MainCanvas) pool[SessionKeys.OBJ_CANVAS];
+    }
+
     public static Midlet getMidlet() {
         return (Midlet) pool[SessionKeys.OBJ_MIDLET];
     }
@@ -335,12 +409,12 @@ public abstract class AppState {
     }
 
     public static void setScreen(Object screen) {
-        Storage.currentScreen = screen;
+        currentScreen = screen;
         TimerManager.setTimer(TimerManager.SLOT_BACKLIGHT, TimerManager.getSessionTimestamp());
     }
 
     public static int getHeight() {
-        return getInt(UIKeys.INT_SCREEN_HEIGHT) - (getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE) ? getInt(UIKeys.INT_FONT_HEIGHT) + 2 : 0);
+        return getInt(UIKeys.INT_SCREEN_HEIGHT) - (SettingsState.isStatusBarVisible() ? getInt(UIKeys.INT_FONT_HEIGHT) + 2 : 0);
     }
 
     public static void setDimensions(int width, int height) {
@@ -348,16 +422,24 @@ public abstract class AppState {
         setInt(UIKeys.INT_SCREEN_HEIGHT, height);
     }
 
-    public static void resetToEmpty(int key) {
-        setObject(key, emptyStr);
-    }
-
     public static GraphicsContext getGfxContext(int index) {
         return (GraphicsContext) pool[index + UIKeys.GFX_CONTEXT_BASE];
     }
 
-    public static Object[] getObjectArray(int key) {
-        return (Object[]) pool[key];
+    public static int getIntOffset(int index) {
+        return getInt(index + UIKeys.INT_FONT_HEIGHT);
+    }
+
+    public static Font getFont() {
+        return ((GraphicsContext) pool[UIKeys.GFX_CONTEXT_BASE]).font;
+    }
+
+    public static Account getAccount() {
+        return (Account) pool[SessionKeys.SLOT_CURRENT_ACCOUNT];
+    }
+
+    public static void setAccount(Object account) {
+        pool[SessionKeys.SLOT_CURRENT_ACCOUNT] = account;
     }
 
     public static ContactGroup getCurrentGroup() {
@@ -376,55 +458,12 @@ public abstract class AppState {
         pool[ContactKeys.SLOT_CURRENT_ENTITY] = entity;
     }
 
-    public static Vector getVector(int key) {
-        return (Vector) pool[key];
-    }
-
-    public static Image getImage(int key) {
-        return (Image) pool[key];
-    }
-
-    public static Account getAccount() {
-        return (Account) pool[SessionKeys.SLOT_CURRENT_ACCOUNT];
-    }
-
-    public static void setAccount(Object account) {
-        pool[SessionKeys.SLOT_CURRENT_ACCOUNT] = account;
-    }
-
-    public static void saveDelta(boolean chunked) {
-        try {
-            ByteBuffer buffer = new ByteBuffer();
-            for (int key = 0; key < DELTA_SIZE; key++) {
-                Object value = delta[key];
-                if (value != null) {
-                    StateCodec.encodeIndex(buffer, key);
-                    if (value instanceof String) {
-                        StateCodec.encodeString(buffer, (String) value);
-                    } else {
-                        StateCodec.encodeIndex(buffer, ((Integer) value).intValue());
-                    }
-                }
-            }
-            ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(PACKED_DELTA_STORE), buffer, chunked);
-        } catch (Throwable unused) {
-        }
-    }
-
-    public static String getEllipsis() {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(CHAR_ELLIPSIS));
-    }
-
     public static Calendar getCalendar() {
         Calendar calendar = (Calendar) pool[SessionKeys.OBJ_CALENDAR];
         Date date = (Date) pool[SessionKeys.OBJ_DATE];
-        date.setTime((getLong(SessionKeys.TIMESTAMP_CURRENT) - getLong(SessionKeys.TIMESTAMP_OFFSET)) + ((getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - TIMEZONE_UTC_INDEX) * MILLIS_PER_HOUR));
+        date.setTime((getLong(SessionKeys.TIMESTAMP_CURRENT) - getLong(SessionKeys.TIMESTAMP_OFFSET)) + ((SettingsState.getTimezoneOffset() - TIMEZONE_UTC_INDEX) * MILLIS_PER_HOUR));
         calendar.setTime(date);
         return calendar;
-    }
-
-    public static int getIntOffset(int index) {
-        return getInt(index + UIKeys.INT_FONT_HEIGHT);
     }
 
     public static int getDateCode() {
@@ -432,7 +471,61 @@ public abstract class AppState {
         return (cal.get(Calendar.YEAR) << 16) + (cal.get(Calendar.MONTH) << 8) + cal.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static Font getFont() {
-        return ((GraphicsContext) pool[UIKeys.GFX_CONTEXT_BASE]).font;
+    public static String getEllipsis() {
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(CHAR_ELLIPSIS));
+    }
+
+    // ========================== Persistence orchestration ==========================
+
+    public static void saveAllDeltas(boolean chunked) {
+        TrafficAccounting.INSTANCE.saveDelta();
+        MapState.INSTANCE.saveDelta();
+        SettingsState.INSTANCE.saveDelta();
+        saveDeltaRange(STORE_SESSION, RANGE_SESSION_START, DELTA_SIZE - 1);
+    }
+
+    public static void loadDomainDelta(String storeName) {
+        ByteBuffer buf = ChunkedRecordStore.readChunkedRecord(storeName);
+        if (buf.length >= 2) {
+            int version = buf.readShortBE();
+            if (version == DELTA_FORMAT_VERSION) {
+                while (buf.length > 0) {
+                    try {
+                        int type = buf.readUByte();
+                        int key = buf.readShortBE();
+                        if (type == DELTA_TYPE_INT) {
+                            delta[key] = ObjectPool.integerOf(buf.readIntBE());
+                        } else {
+                            delta[key] = buf.readVarLenStr();
+                        }
+                    } catch (Throwable unused) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void saveDeltaRange(String storeName, int from, int to) {
+        try {
+            ByteBuffer buffer = new ByteBuffer();
+            buffer.writeShortBE(DELTA_FORMAT_VERSION);
+            for (int key = from; key <= to; key++) {
+                Object value = delta[key];
+                if (value != null) {
+                    if (value instanceof String) {
+                        buffer.writeByte(DELTA_TYPE_STRING);
+                        buffer.writeShortBE(key);
+                        buffer.writeUTF((String) value);
+                    } else {
+                        buffer.writeByte(DELTA_TYPE_INT);
+                        buffer.writeShortBE(key);
+                        buffer.writeIntBE(((Integer) value).intValue());
+                    }
+                }
+            }
+            ChunkedRecordStore.writeRecord(storeName, buffer, false);
+        } catch (Throwable unused) {
+        }
     }
 }

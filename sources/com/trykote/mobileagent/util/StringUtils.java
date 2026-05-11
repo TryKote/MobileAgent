@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -50,7 +51,7 @@ public final class StringUtils {
                 IOUtils.closeInput((InputStream) byteStream);
                 return result;
             } catch (Throwable unused) {
-                String empty = Storage.emptyStr;
+                String empty = AppState.emptyStr;
                 IOUtils.closeInput((InputStream) dataStream);
                 IOUtils.closeInput((InputStream) byteStream);
                 return empty;
@@ -86,10 +87,10 @@ public final class StringUtils {
         if (str == null) {
             return false;
         }
-        if (key <= Storage.PACKED_STRING_THRESHOLD) {
-            return equals(Storage.state().getString(key), str);
+        if (key <= AppState.PACKED_STRING_THRESHOLD) {
+            return equals(AppState.getString(key), str);
         }
-        byte[] bytes = Storage.resources().getBytes(StringResKeys.RES_STRING_DATA);
+        byte[] bytes = ResourceAccessor.bytes(StringResKeys.RES_STRING_DATA);
         int expectedLen = key >> 16;
         int idx = expectedLen;
         if (expectedLen != str.length()) {
@@ -124,11 +125,11 @@ public final class StringUtils {
     }
 
     public static final String concatKey(int key, String str) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getString(key)).append(str));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(key)).append(str));
     }
 
     public static final String concatKeyObj(int key, Object obj) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getString(key)).append(obj));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(AppState.getString(key)).append(obj));
     }
 
     public static final String concat(String a, String b) {
@@ -209,23 +210,23 @@ public final class StringUtils {
     }
 
     public static final void initTileCache() {
-        int cacheCapacity = Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) ? (((Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2)) << 1 : ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH) >> 7) + 2) * ((Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT) >> 7) + 2);
-        Storage.state().setObject(MapKeys.OBJ_TILE_CACHE, new LruCache(cacheCapacity));
-        Storage.state().setInt(RuntimeKeys.INT_MAX_PENDING_REQUESTS, cacheCapacity);
+        int cacheCapacity = ContactState.isListActive() ? (((MapState.getViewportWidth() >> 7) + 2) * ((MapState.getViewportHeight() >> 7) + 2)) << 1 : ((MapState.getViewportWidth() >> 7) + 2) * ((MapState.getViewportHeight() >> 7) + 2);
+        MapState.setTileCache(new LruCache(cacheCapacity));
+        RuntimeState.setMaxPendingRequests(cacheCapacity);
     }
 
     public static final Image getTileImage(TileRequest tile) {
         Image image = (Image) getTileCache().get(tile);
-        if (image == null && !Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1).contains(tile)) {
+        if (image == null && !RuntimeState.getSearchParams1().contains(tile)) {
             TileCache.enqueueTileRequest(tile);
         }
         return image;
     }
 
     private static final void pruneStaleRequests() {
-        Vector items = Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_2);
+        Vector items = RuntimeState.getSearchParams2();
         synchronized (items) {
-            Vector pendingReqs = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+            Vector pendingReqs = ChatState.getTileRequestQueue();
             synchronized (pendingReqs) {
                 for (int idx = pendingReqs.size() - 1; idx >= 0; idx--) {
                     Object req = pendingReqs.elementAt(idx);
@@ -240,10 +241,10 @@ public final class StringUtils {
     public static final void tileLoaderLoop() {
         Image tileImage = null;
         int retryCount = 4;
-        while (Storage.state().getInt(MapKeys.FLAG_TILES_READY) == 0) {
-            Object[] statusArr = (Object[]) Storage.state().getObject(MapKeys.OBJ_TILE_REQUEST_ARRAY);
+        while (!MapState.isTilesReady()) {
+            Object[] statusArr = (Object[]) MapState.getTileRequestArray();
             while (true) {
-                if (!(Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE).size() == 0)) {
+                if (!(ChatState.getTileRequestQueue().size() == 0)) {
                     break;
                 }
                 XmppContactGroup.removeContactInfoFromQueue(statusArr);
@@ -254,10 +255,10 @@ public final class StringUtils {
             }
             TileRequest tileReq = TileCache.peekTileRequest();
             int tileType = tileReq.tileType;
-            statusArr[1] = new StringBuffer().append(Storage.state().getString(tileType == 3 ? 997 : tileType == 1 ? 998 : 999)).append(Utils.formatSize(Storage.state().getInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES))).toString();
+            statusArr[1] = new StringBuffer().append(AppState.getString(tileType == 3 ? 997 : tileType == 1 ? 998 : 999)).append(Utils.formatSize(RuntimeState.getXmppTrafficBytes())).toString();
             XmppContactGroup.addContactInfoToQueue(statusArr);
             try {
-                Image cachedImage = (tileReq.tileType == 1 && Storage.state().getBool(MapKeys.FLAG_TILE_CACHE_ENABLED)) ? TileCache.loadTileFromCache(tileReq) : null;
+                Image cachedImage = (tileReq.tileType == 1 && MapState.isTileCacheEnabled()) ? TileCache.loadTileFromCache(tileReq) : null;
                 tileImage = cachedImage;
                 if (cachedImage == null) {
                     tileImage = TileCache.fetchTileImage(tileReq);
@@ -267,28 +268,28 @@ public final class StringUtils {
                 retryCount = remaining - 1;
                 if (remaining > 0) {
                     pruneStaleRequests();
-                    Vector items = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+                    Vector items = ChatState.getTileRequestQueue();
                     synchronized (items) {
                         if (items.removeElement(tileReq)) {
                             TileCache.enqueueTileRequest(tileReq);
                         }
                     }
                 } else {
-                    Storage.state().setInt(MapKeys.FLAG_TILES_READY, 1);
+                    MapState.setTilesReady(true);
                 }
             } catch (Throwable unused3) {
                 TileCache.removeTileRequest(tileReq);
             }
             if (tileImage == null) {
                 if (tileType == 3) {
-                    Vector pendingReqs = Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1);
-                    while (pendingReqs.size() >= Storage.state().getInt(RuntimeKeys.INT_MAX_PENDING_REQUESTS)) {
+                    Vector pendingReqs = RuntimeState.getSearchParams1();
+                    while (pendingReqs.size() >= RuntimeState.getMaxPendingRequests()) {
                         pendingReqs.removeElementAt(0);
                     }
                     pendingReqs.addElement(tileReq);
                     XmppContactGroup.flagSyncRequired();
                 } else {
-                    cacheTileImage(tileReq, Storage.state().getImage(MapKeys.OBJ_MENU_LABELS));
+                    cacheTileImage(tileReq, MapState.getMenuLabelsImage());
                 }
                 throw new RuntimeException();
             }
@@ -318,12 +319,12 @@ public final class StringUtils {
     }
 
     private static final LruCache getTileCache() {
-        return (LruCache) Storage.state().getObject(MapKeys.OBJ_TILE_CACHE);
+        return (LruCache) MapState.getTileCache();
     }
 
     private static final Vector createRegionVector() {
         Vector result = ObjectPool.newVector();
-        result.addElement(Storage.resources().getString(StringResKeys.STR_CITY_LIST));
+        result.addElement(ResourceAccessor.str(StringResKeys.STR_CITY_LIST));
         return result;
     }
 
@@ -341,41 +342,31 @@ public final class StringUtils {
 
     public static final void showRegionSelector() {
         resetRegForm();
-        Storage.state().setObject(RegistrationKeys.SLOT_REG_FIELD_2, new XmlParser(new ByteBuffer(ObjectPool.unpackChars(25135), 41000)).parse().children);
-        StringBuffer sb = ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_SEARCH_TITLE));
-        Vector items = Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2);
+        RegistrationState.setRegionData(new XmlParser(new ByteBuffer(ObjectPool.unpackChars(25135), 41000)).parse().children);
+        StringBuffer sb = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_SEARCH_TITLE));
+        Vector items = RegistrationState.getRegionData();
         for (int i = 0; i < Utils.vectorSize(items); i++) {
             sb.append((char) 0).append(getXmlText((XmlElement) items.elementAt(i)));
         }
-        Storage.state().setFromBuffer(RegistrationKeys.SLOT_REG_FIELD_1, sb);
-        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.REGION_CHOICE));
+        RegistrationState.setRegionNames(sb);
+        Screens.regionChoice(null).show();
     }
 
     public static final void resetRegForm() {
-        Storage.state().clearRange(ContactKeys.SLOT_CONTACT_JID, RegistrationKeys.SLOT_REG_FIELD_2);
-        Storage.state().setInt(RegistrationKeys.INT_REGION_CODE, 0);
-        Storage.state().setInt(RegistrationKeys.INT_COUNTRY_CODE, 0);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_PARAM_1, -1);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_PARAM_2, -1);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_PARAM_3, 0);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_COUNTRY, 0);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_REGION, 0);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_CITY, 0);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_AGE, 0);
-        Storage.state().setInt(RegistrationKeys.INT_SEARCH_GENDER, 0);
-        Storage.state().setInt(RegistrationKeys.FLAG_SEARCH_ONLINE_ONLY, 0);
+        AppState.clearRange(ContactKeys.SLOT_CONTACT_JID, RegistrationKeys.SLOT_REG_FIELD_2);
+        RegistrationState.resetSearchParams();
     }
 
     public static final void updateRegDropdowns(ListView screen, Object selectedItem) {
         MenuItem menuItem = (MenuItem) selectedItem;
         int selectedIdx = ((Integer) ((Object[]) menuItem.data)[0]).intValue();
         String dropdownTitle = menuItem.title;
-        String countryLabel = Storage.resources().getString(StringResKeys.STR_LABEL_COUNTRY);
-        String regionLabel = Storage.resources().getString(StringResKeys.STR_LABEL_REGION);
-        String cityLabel = Storage.resources().getString(StringResKeys.STR_LABEL_CITY);
-        String monthLabel = Storage.resources().getString(StringResKeys.STR_LABEL_MONTH);
-        String ageLabel = Storage.resources().getString(StringResKeys.STR_LABEL_AGE_RANGE);
-        String genderLabel = Storage.resources().getString(StringResKeys.STR_LABEL_GENDER);
+        String countryLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_COUNTRY);
+        String regionLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_REGION);
+        String cityLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_CITY);
+        String monthLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_MONTH);
+        String ageLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_AGE_RANGE);
+        String genderLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_GENDER);
         MenuItem regionItem = null;
         MenuItem cityItem = null;
         MenuItem monthDropdown = null;
@@ -406,30 +397,30 @@ public final class StringUtils {
             MenuItem regionDropdown = regionItem;
             Vector regions = createRegionVector();
             if (selectedIdx > 0) {
-                addXmlChildTexts(regions, Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(selectedIdx - 1));
+                addXmlChildTexts(regions, RegistrationState.getRegionData().elementAt(selectedIdx - 1));
             }
             regionDropdown.setChoices(regions, 0, regionLabel);
-            cityItem.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_CITY_LIST)), 0, cityLabel);
+            cityItem.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_CITY_LIST)), 0, cityLabel);
         } else if (equals(dropdownTitle, regionLabel)) {
             MenuItem cityDropdown = cityItem;
             int selectedCountryIdx = countryIdx;
             Vector cities = createRegionVector();
             if (selectedIdx > 0) {
-                addXmlChildTexts(cities, ((XmlElement) Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(selectedCountryIdx - 1)).children.elementAt(selectedIdx - 1));
+                addXmlChildTexts(cities, ((XmlElement) RegistrationState.getRegionData().elementAt(selectedCountryIdx - 1)).children.elementAt(selectedIdx - 1));
             }
             cityDropdown.setChoices(cities, 0, cityLabel);
         } else if (equals(dropdownTitle, monthLabel)) {
-            ageDropdown.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_AGE_RANGES)), 0, ageLabel);
-            genderDropdown.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_GENDER_LIST)), 0, genderLabel);
+            ageDropdown.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_AGE_RANGES)), 0, ageLabel);
+            genderDropdown.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_GENDER_LIST)), 0, genderLabel);
         } else if (equals(dropdownTitle, ageLabel) || equals(dropdownTitle, genderLabel)) {
-            monthDropdown.setChoices(Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_MONTH_NAMES)), 0, monthLabel);
+            monthDropdown.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_MONTH_NAMES)), 0, monthLabel);
         }
         screen.rebuildItems();
     }
 
     public static final String[] buildRegData() {
         String[] fields = new String[16];
-        String inputStr = Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_CONTACT_JID));
+        String inputStr = Utils.defaultStr(ContactState.getJid());
         if (!isEmpty(inputStr)) {
             String lowered = intern(inputStr.toLowerCase());
             int atIdx = lowered.indexOf(64);
@@ -438,26 +429,26 @@ public final class StringUtils {
                 fields[1] = suffix(lowered, atIdx + 1);
             } else {
                 fields[0] = lowered;
-                fields[1] = suffix(Utils.splitAndGet(694, Storage.state().getInt(RegistrationKeys.INT_REGION_CODE)), 1);
+                fields[1] = suffix(Utils.splitAndGet(694, RegistrationState.getRegionCode()), 1);
             }
             return fields;
         }
-        fields[2] = Utils.defaultStr(Storage.state().getString(ContactKeys.SLOT_DISPLAY_NAME));
-        fields[3] = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_FIRST_NAME));
-        fields[4] = Utils.defaultStr(Storage.state().getString(RegistrationKeys.SLOT_LAST_NAME));
+        fields[2] = Utils.defaultStr(ContactState.getDisplayName());
+        fields[3] = Utils.defaultStr(RegistrationState.getFirstName());
+        fields[4] = Utils.defaultStr(RegistrationState.getLastName());
         fields[5] = intToStringPositive(1481);
         fields[7] = intToStringPositive(1482);
         fields[8] = intToStringPositive(1483);
-        int countryIdx = Storage.state().getInt(RegistrationKeys.INT_SEARCH_COUNTRY);
+        int countryIdx = RegistrationState.getSearchCountry();
         if (countryIdx > 0) {
-            XmlElement countryElem = (XmlElement) Storage.state().getVector(RegistrationKeys.SLOT_REG_FIELD_2).elementAt(countryIdx - 1);
+            XmlElement countryElem = (XmlElement) RegistrationState.getRegionData().elementAt(countryIdx - 1);
             fields[15] = countryElem.getLongKeyAttr(105);
-            int regionIdx = Storage.state().getInt(RegistrationKeys.INT_SEARCH_REGION);
+            int regionIdx = RegistrationState.getSearchRegion();
             if (regionIdx > 0) {
                 XmlElement regionElem = (XmlElement) countryElem.children.elementAt(regionIdx - 1);
                 fields[11] = regionElem.getLongKeyAttr(105);
                 fields[15] = null;
-                int cityIdx = Storage.state().getInt(RegistrationKeys.INT_SEARCH_CITY);
+                int cityIdx = RegistrationState.getSearchCity();
                 if (cityIdx > 0) {
                     fields[11] = ((XmlElement) regionElem.children.elementAt(cityIdx - 1)).getLongKeyAttr(105);
                 }
@@ -466,14 +457,14 @@ public final class StringUtils {
         fields[12] = intToStringPositive(1484);
         fields[13] = intToStringPositive(1488);
         fields[14] = intToStringPositive(1489);
-        if (Storage.state().getBool(RegistrationKeys.FLAG_SEARCH_ONLINE_ONLY)) {
+        if (RegistrationState.isSearchOnlineOnly()) {
             fields[9] = intern(Integer.toString(1));
         }
         return fields;
     }
 
     private static final String intToStringPositive(int key) {
-        int value = Storage.state().getInt(key);
+        int value = AppState.getInt(key);
         if (value > 0) {
             return intern(Integer.toString(value));
         }
@@ -481,74 +472,74 @@ public final class StringUtils {
     }
 
     public static final void initPlatform() {
-        Storage.state().setObject(StringResKeys.STR_APP_NAME, (Object) Storage.state().getAppProperty(StringResKeys.STR_APP_NAME));
-        while (Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID))) <= 106) {
+        AppState.setObject(StringResKeys.STR_APP_NAME, (Object) AppState.getAppProperty(StringResKeys.STR_APP_NAME));
+        while (Utils.parseInt((Object) Utils.defaultStr(SessionState.getRandomId())) <= 106) {
             try {
                 throw new Throwable();
             } catch (Throwable unused) {
-                Storage.state().setObject(SessionKeys.SESSION_RANDOM_ID, (Object) intern(Integer.toString(Utils.nextRandom())));
+                SessionState.setRandomId(intern(Integer.toString(Utils.nextRandom())));
             }
         }
-        setOrGenerateGuid(validateGuid(Storage.state().getAppProperty(SessionKeys.SLOT_SESSION_HASH)));
-        Storage.state().setObject(SessionKeys.SLOT_SESSION_TOKEN, (Object) Storage.state().getAppProperty(SessionKeys.SLOT_SESSION_TOKEN));
-        Storage.state().setObject(SessionKeys.SLOT_SESSION_HASH, (Object) new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID))).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
-        Storage.state().setString(SessionKeys.SLOT_ACCOUNT_LOGIN, getSystemProp(963));
-        Storage.state().setString(SessionKeys.SLOT_ACCOUNT_PASSWORD, getSystemProp(964));
-        Storage.state().setString(SessionKeys.SLOT_ACCOUNT_SERVER, getSystemProp(1378));
-        Storage.state().setString(SessionKeys.SLOT_ACCOUNT_TYPE_STR, getSystemProp(1380));
-        Storage.state().setString(SessionKeys.SLOT_ACCOUNT_DISPLAY_NAME, getSystemProp(1379));
+        setOrGenerateGuid(validateGuid(SessionState.getAppProperty(SessionKeys.SLOT_SESSION_HASH)));
+        SessionState.setSessionToken(SessionState.getAppProperty(SessionKeys.SLOT_SESSION_TOKEN));
+        SessionState.setSessionHash(new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(SessionState.getRandomId())).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
+        SessionState.setAccountLogin(getSystemProp(963));
+        SessionState.setAccountPassword(getSystemProp(964));
+        SessionState.setAccountServer(getSystemProp(1378));
+        SessionState.setAccountTypeStr(getSystemProp(1380));
+        SessionState.setAccountDisplayName(getSystemProp(1379));
         for (int i = 966; i >= 965; i--) {
             try {
-                String inputStr = Utils.defaultStr(Storage.state().getString(i));
-                Storage.state().clearIndex(i);
+                String inputStr = Utils.defaultStr(AppState.getString(i));
+                AppState.clearIndex(i);
                 Class.forName(inputStr);
-                Storage.state().setInt(UIKeys.FLAG_KNOWN_PLATFORM, 1);
+                UIState.setKnownPlatform(true);
                 break;
             } catch (Throwable unused2) {
             }
         }
-        if (Storage.resources().getString(StringResKeys.STR_APP_NAME).charAt(0) == '3' && Storage.resources().getString(StringResKeys.STR_APP_NAME).charAt(2) == '9') {
-            if (Storage.state().getString(SessionKeys.SESSION_DEVICE_INFO) == null) {
-                Storage.state().setFromPool(SessionKeys.SESSION_DEVICE_INFO, StringResKeys.STR_DEVICE_FEATURES);
+        if (ResourceAccessor.str(StringResKeys.STR_APP_NAME).charAt(0) == '3' && ResourceAccessor.str(StringResKeys.STR_APP_NAME).charAt(2) == '9') {
+            if (SessionState.getDeviceInfo() == null) {
+                SessionState.setDeviceInfoFromPool(StringResKeys.STR_DEVICE_FEATURES);
             }
-            Storage.state().clearIndex(SessionKeys.SESSION_PLATFORM_INFO);
-            String credentials = intern(concat(Storage.state().getString(SessionKeys.SLOT_ACCOUNT_LOGIN), Storage.state().getString(SessionKeys.SLOT_ACCOUNT_PASSWORD)).toLowerCase());
+            SessionState.clearPlatformInfo();
+            String credentials = intern(concat(SessionState.getAccountLogin(), SessionState.getAccountPassword()).toLowerCase());
             isKnownDevice2 = indexOfPackedLong(credentials, 7163382462464028531L) >= 0 || indexOfPacked(credentials, 842019699) == 0 || indexOfPacked(credentials, 842019703) == 0;
             isKnownDevice1 = indexOfPackedLong(credentials, 418380476270L) >= 0;
-            Storage.state().setBool(UIKeys.FLAG_WIFI_CONNECTION, indexOfPacked(credentials, 761620851) == 0 || indexOfPacked(credentials, 1903060322) == 0);
-            Storage.state().setBool(UIKeys.FLAG_KNOWN_DEVICE, isKnownDevice1 || isKnownDevice2);
-            Storage.state().setBool(UIKeys.FLAG_ADVANCED_FEATURES, Storage.state().getBool(UIKeys.FLAG_KNOWN_PLATFORM) || indexOfPackedLong(credentials, 29113373327974771L) >= 0 || indexOfPacked(credentials, 6514035) == 0 || indexOfPacked(credentials, 6841203) == 0 || indexOfPacked(credentials, 6842227) == 0 || indexOfPacked(credentials, 29799) == 0);
+            UIState.setWifiConnection(indexOfPacked(credentials, 761620851) == 0 || indexOfPacked(credentials, 1903060322) == 0);
+            UIState.setKnownDevice(isKnownDevice1 || isKnownDevice2);
+            UIState.setAdvancedFeatures(UIState.isKnownPlatform() || indexOfPackedLong(credentials, 29113373327974771L) >= 0 || indexOfPacked(credentials, 6514035) == 0 || indexOfPacked(credentials, 6841203) == 0 || indexOfPacked(credentials, 6842227) == 0 || indexOfPacked(credentials, 29799) == 0);
             byte major = parseVersionByte(0);
             byte minor = parseVersionByte(1);
             byte patch = parseVersionByte(2);
-            byte[] bytes = Storage.resources().getBytes(StringResKeys.RES_SESSION_BYTES);
+            byte[] bytes = ResourceAccessor.bytes(StringResKeys.RES_SESSION_BYTES);
             bytes[13] = major;
             bytes[14] = minor;
             bytes[15] = patch;
-            if (Storage.state().getLong(SessionKeys.TIMESTAMP_FIRST_RUN) == 0) {
-                Storage.state().setLong(SessionKeys.TIMESTAMP_FIRST_RUN, System.currentTimeMillis());
+            if (SessionState.getTimestampFirstRun() == 0) {
+                SessionState.setTimestampFirstRun(System.currentTimeMillis());
                 return;
             }
             return;
         }
         while (true) {
-            Object appName = Storage.state().getObject(StringResKeys.STR_APP_NAME);
-            Storage.state().setObject(StringResKeys.STR_APP_NAME, new Object[]{appName, appName, appName});
+            Object appName = AppState.getObject(StringResKeys.STR_APP_NAME);
+            AppState.setObject(StringResKeys.STR_APP_NAME, new Object[]{appName, appName, appName});
         }
     }
 
     private static final byte parseVersionByte(int partIndex) {
         try {
-            return (byte) Utils.parseInt(Utils.split(Storage.resources().getString(StringResKeys.STR_APP_NAME), '.').elementAt(partIndex));
+            return (byte) Utils.parseInt(Utils.split(ResourceAccessor.str(StringResKeys.STR_APP_NAME), '.').elementAt(partIndex));
         } catch (Throwable unused) {
             return (byte) 0;
         }
     }
 
     private static final String formatVersion() {
-        String versionStr = Storage.resources().getString(StringResKeys.STR_APP_NAME);
+        String versionStr = ResourceAccessor.str(StringResKeys.STR_APP_NAME);
         String[] parts = new String[3];
-        String empty = Storage.emptyStr;
+        String empty = AppState.emptyStr;
         parts[0] = empty;
         parts[1] = empty;
         parts[2] = empty;
@@ -574,22 +565,22 @@ public final class StringUtils {
     }
 
     public static final String getSystemProp(int key) {
-        return intern(System.getProperty(Storage.state().getString(key)));
+        return intern(System.getProperty(AppState.getString(key)));
     }
 
     private static final void setOrGenerateGuid(String guid) {
         if (guid != null) {
-            Storage.state().setObject(MapKeys.SLOT_MAP_TILE_DATA, (Object) guid);
+            MapState.setTileData(guid);
         }
-        if (Storage.state().getString(SessionKeys.SESSION_KEY) == null) {
+        if (SessionState.getSessionKey() == null) {
             if (guid != null) {
-                Storage.state().setObject(SessionKeys.SESSION_KEY, (Object) guid);
+                SessionState.setSessionKey(guid);
                 return;
             }
             StringBuffer sb = ObjectPool.newStringBuffer();
             int part = 0;
             while (part < 2) {
-                long seed = part == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)));
+                long seed = part == 0 ? System.currentTimeMillis() : (Utils.nextRandom() << 32) | Utils.parseInt((Object) Utils.defaultStr(SessionState.getRandomId()));
                 for (int bitPos = 0; bitPos < 64; bitPos += 4) {
                     int nibble = ((int) (seed >>> (60 - bitPos))) & 15;
                     int baseChar = nibble < 10 ? 48 : 87;
@@ -597,7 +588,7 @@ public final class StringUtils {
                 }
                 part++;
             }
-            Storage.state().setFromBuffer(SessionKeys.SESSION_KEY, sb);
+            SessionState.setSessionKeyFromBuffer(sb);
         }
     }
 
@@ -617,15 +608,15 @@ public final class StringUtils {
     }
 
     public static GeoRegion getGeoRegion() {
-        return (GeoRegion) Storage.state().getObject(MapKeys.OBJ_GEO_REGION_2);
+        return (GeoRegion) MapState.getGeoRegion2();
     }
 
     public static final void initGeoRegions() {
-        Storage.state().setObject(MapKeys.VEC_MAP_POINTS, ObjectPool.newVector());
-        Storage.state().setObject(MapKeys.OBJ_GEO_REGION, new GeoRegion(Storage.resources().getString(StringResKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L));
+        MapState.setMapPoints(ObjectPool.newVector());
+        MapState.setGeoRegion(new GeoRegion(ResourceAccessor.str(StringResKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L));
         try {
-            ByteBuffer geoBuffer = Base64.decode(Storage.state().getString(MapKeys.GEO_SAVED_DATA));
-            Storage.state().getVector(MapKeys.VEC_MAP_POINTS).removeAllElements();
+            ByteBuffer geoBuffer = Base64.decode(MapState.getGeoSavedData());
+            MapState.getMapPoints().removeAllElements();
             if (geoBuffer.length > 0) {
                 for (int count = geoBuffer.readIntBE() - 1; count >= 0; count--) {
                     addGeoRegion(new GeoRegion(geoBuffer));
@@ -633,14 +624,14 @@ public final class StringUtils {
             }
         } catch (Throwable unused) {
         }
-        GeoRegion region = new GeoRegion(Storage.resources().getString(StringResKeys.STR_REGION_NAME_1), 1866877L, 15815124L, 21989606L, 4133096L);
+        GeoRegion region = new GeoRegion(ResourceAccessor.str(StringResKeys.STR_REGION_NAME_1), 1866877L, 15815124L, 21989606L, 4133096L);
         region.centerLat = 10848141L;
         region.centerLon = 8758455L;
-        Storage.state().setObject(MapKeys.OBJ_GEO_REGION_2, region);
+        MapState.setGeoRegion2(region);
     }
 
     private static void addGeoRegion(GeoRegion region) {
-        Vector items = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
+        Vector items = MapState.getMapPoints();
         if (items.contains(region)) {
             return;
         }
@@ -648,7 +639,7 @@ public final class StringUtils {
     }
 
     public static final boolean isInSavedRegion(long j, long j2) {
-        Vector items = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
+        Vector items = MapState.getMapPoints();
         for (int idx = Utils.vectorSize(items) - 1; idx >= 0; idx--) {
             GeoRegion region = (GeoRegion) items.elementAt(idx);
             if (region.containsPoint(j, j2) && indexOfPoolString(region.name, 995) < 0) {
@@ -663,10 +654,10 @@ public final class StringUtils {
         if (element == null || (children = element.children) == null) {
             return;
         }
-        Storage.state().getVector(MapKeys.VEC_MAP_POINTS).removeAllElements();
+        MapState.getMapPoints().removeAllElements();
         String configUrl = element.getIntAttribute(PackedStringKeys.ATTR_TIMESTAMP);
         if (configUrl != null) {
-            Storage.state().setObject(MapKeys.URL_GEO_CONFIG, (Object) configUrl);
+            MapState.setGeoConfigUrl(configUrl);
         }
         for (int i = 0; i < Utils.vectorSize(children); i++) {
             XmlElement childElem = (XmlElement) children.elementAt(i);
@@ -687,18 +678,18 @@ public final class StringUtils {
             }
         }
         try {
-            Storage.state().resetToEmpty(MapKeys.GEO_SAVED_DATA);
+            MapState.resetGeoSavedData();
             ByteBuffer buffer = new ByteBuffer();
-            Vector items = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
+            Vector items = MapState.getMapPoints();
             int size = items.size();
             buffer.writeIntBE(size);
             for (int idx = 0; idx < size; idx++) {
                 GeoRegion region = (GeoRegion) items.elementAt(idx);
                 buffer.writeStringUTF16(region.name).writeLong(region.minLat).writeLong(region.maxLon).writeLong(region.maxLat).writeLong(region.minLon).writeStringUTF16(region.description).writeLong(region.centerLat).writeLong(region.centerLon).writeIntLE(region.precision);
             }
-            Storage.state().setObject(MapKeys.GEO_SAVED_DATA, (Object) buffer.toBase64());
+            MapState.setGeoSavedData(buffer.toBase64());
         } catch (Throwable unused) {
-            Storage.state().resetToEmpty(MapKeys.URL_GEO_CONFIG);
+            MapState.resetGeoConfigUrl();
         }
     }
 
@@ -711,21 +702,21 @@ public final class StringUtils {
     }
 
     public static int indexOfPoolString(String text, int poolKey) {
-        return text.indexOf(Storage.state().getString(poolKey));
+        return text.indexOf(AppState.getString(poolKey));
     }
 
     public static final String transliterate(String str) {
         boolean isUpperCase = false;
         String translitResult = null;
         String upperVariant;
-        Vector sourceChars = Utils.splitByNull(Storage.resources().getString(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
-        Vector targetChars = Utils.splitByNull(Storage.resources().getString(StringResKeys.STR_SOUND_LIST));
+        Vector sourceChars = Utils.splitByNull(ResourceAccessor.str(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
+        Vector targetChars = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_SOUND_LIST));
         Hashtable translitMap = new Hashtable();
         for (int idx = sourceChars.size() - 1; idx >= 0; idx--) {
             translitMap.put(sourceChars.elementAt(idx), targetChars.elementAt(idx));
         }
-        String lowerAlphabet = Storage.resources().getString(StringResKeys.STR_SOUND_TYPE_1);
-        String upperAlphabet = Storage.resources().getString(StringResKeys.STR_SOUND_TYPE_2);
+        String lowerAlphabet = ResourceAccessor.str(StringResKeys.STR_SOUND_TYPE_1);
+        String upperAlphabet = ResourceAccessor.str(StringResKeys.STR_SOUND_TYPE_2);
         Hashtable caseMap = new Hashtable();
         StringBuffer sb = ObjectPool.newStringBuffer();
         for (int idx = lowerAlphabet.length() - 1; idx >= 0; idx--) {

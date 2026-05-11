@@ -2,13 +2,11 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -34,7 +32,7 @@ public abstract class ContactListParser implements ListItem {
     public static final void parseContactsSync(ByteBuffer buffer, int i) {
         Vector contacts = parseContactsInternal(buffer, i, false);
         if (contacts != null && contacts.size() > 0) {
-            Storage.state().setObject(UIKeys.OBJ_HTTP_CALLBACK, contacts);
+            UIState.setHttpCallback(contacts);
         }
         MapRenderer.needsRedraw = true;
     }
@@ -43,7 +41,7 @@ public abstract class ContactListParser implements ListItem {
         boolean z2;
         Hashtable hashtable = (Hashtable) JsonParser.parseUTF8(buffer, 2);
         Vector result = ObjectPool.newVector();
-        Vector existing = Storage.state().getVector(UIKeys.OBJ_HTTP_CALLBACK);
+        Vector existing = (Vector) UIState.getHttpCallback();
         if (existing != null && !z) {
             int i2 = updateCounter;
             updateCounter = i2 + 1;
@@ -51,7 +49,7 @@ public abstract class ContactListParser implements ListItem {
                 result.addElement(existing.elementAt(i3));
             }
         }
-        int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoomLevel = MapState.getZoomLevel();
         addedCount = 0;
         Enumeration keys = hashtable.keys();
         while (keys.hasMoreElements()) {

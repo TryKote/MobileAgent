@@ -1,5 +1,9 @@
 package com.trykote.mobileagent.core;
 
+import com.trykote.mobileagent.core.event.AccountDataEvent;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
+
 
 import com.trykote.mobileagent.map.GeoRegion;
 import com.trykote.mobileagent.map.MapController;
@@ -12,8 +16,10 @@ import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
 import com.trykote.mobileagent.protocol.ConnectionThread;
+import com.trykote.mobileagent.protocol.ProtocolEvent;
 import com.trykote.mobileagent.protocol.mmp.MmpContact;
 import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.mrim.RegistrationService;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
@@ -37,6 +43,8 @@ public final class AsyncTask implements Runnable {
     private static final int CONNECTION_POLL_MS = 100;
     private static final int DELAYED_CLOSE_MS = 1000;
     private static final int SMS_SEND_DELAY_MS = 100;
+    private static final int COMPLETION_TIMEOUT_MS = 15000;
+    private static final int COMPLETION_POLL_MS = 500;
 
     /** Packed chars "tr" — XML attribute for traffic/map type */
     private static final int ATTR_TRAFFIC_TYPE = 29300;
@@ -72,16 +80,16 @@ public final class AsyncTask implements Runnable {
                 AppController.isShuttingDown = true;
                 SoftFloat.clearMathTables();
                 AppController.clearImageCache();
-                Vector tasks = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
+                Vector tasks = UIState.getMediaControl();
                 if (tasks != null) {
                     synchronized (tasks) {
-                        Storage.state().clearIndex(UIKeys.SLOT_MEDIA_CONTROL);
+                        UIState.clearMediaControl();
                     }
                 }
                 SocketWrapper.closeAll();
                 RemoteLogger.log("PERSIST", "SHUTDOWN: saveOnExit=" + AppController.saveOnExit);
                 AccountManager.saveState(AppController.saveOnExit, true);
-                Storage.state().saveDelta(AppController.saveOnExit);
+                AppState.saveAllDeltas(AppController.saveOnExit);
                 RemoteLogger.log("PERSIST", "SHUTDOWN: save complete");
             }
         }
@@ -94,8 +102,7 @@ public final class AsyncTask implements Runnable {
     public AsyncTask(int taskId, Object taskData) {
         this.taskId = taskId;
         this.taskData = taskData;
-        Thread thread = new Thread(this);
-        thread.setName("Task-" + taskId);
+        Thread thread = new Thread(this, "Task-" + taskId);
         this.thread = thread;
         thread.start();
     }
@@ -167,7 +174,7 @@ public final class AsyncTask implements Runnable {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createHttpClient(Storage.resources().getString(PackedStringKeys.URL_VERSION_CHECK), null, 3);
+            httpClient = HttpClient.createHttpClient(ResourceAccessor.str(PackedStringKeys.URL_VERSION_CHECK), null, 3);
             args[0] = httpClient.getResponseCode() == HTTP_OK ? new ByteBuffer(httpClient) : ObjectPool.integerOf(ERR_FETCH_FAILED);
         } catch (Throwable e) {
             args[0] = ObjectPool.integerOf(ERR_FETCH_FAILED);
@@ -179,7 +186,7 @@ public final class AsyncTask implements Runnable {
 
     private void taskConnectionLoop() {
         while (true) {
-            Vector tasks = Storage.state().getVector(UIKeys.SLOT_MEDIA_CONTROL);
+            Vector tasks = UIState.getMediaControl();
             if (tasks == null) {
                 return;
             }
@@ -193,7 +200,7 @@ public final class AsyncTask implements Runnable {
                 conn.process();
                 ++idx;
             }
-            Vector closeQueue = Storage.state().getVector(UIKeys.SLOT_MEDIA_VOLUME);
+            Vector closeQueue = UIState.getMediaVolume();
             if (closeQueue != null) {
                 synchronized (closeQueue) {
                     IOUtils.closeConn((Connection) Utils.dequeue(closeQueue));
@@ -226,7 +233,7 @@ public final class AsyncTask implements Runnable {
                     XmlElement child = (XmlElement) children.elementAt(i);
                     if (!child.tagName.equals("city")) continue;
                     String cityId = child.getIntAttribute(PackedStringKeys.ATTR_ID);
-                    Vector regions = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
+                    Vector regions = MapState.getMapPoints();
                     int j = regions.size();
                     GeoRegion region = null;
                     while (--j >= 0) {
@@ -256,7 +263,7 @@ public final class AsyncTask implements Runnable {
             Thread.sleep(DELAYED_CLOSE_MS);
         } catch (Throwable e) {
         }
-        Vector closeQueue = Storage.state().getVector(UIKeys.SLOT_MEDIA_VOLUME);
+        Vector closeQueue = UIState.getMediaVolume();
         if (closeQueue == null) return;
         synchronized (closeQueue) {
             closeQueue.addElement(connObj);
@@ -276,12 +283,12 @@ public final class AsyncTask implements Runnable {
             contactInfo = XmppContactGroup.getContactInfoFromState(RES_MAP_POINTS_URL);
             httpClient = HttpClient.createWithType2(requestData);
             if (httpClient.getResponseCode() == HTTP_OK) {
-                Storage.state().setObject(ChatKeys.VEC_MESSAGE_LIST, XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen()));
+                ChatState.setMessageList(XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen()));
             } else {
-                Storage.state().setObject(ChatKeys.VEC_MESSAGE_LIST, ObjectPool.newVector());
+                ChatState.setMessageList(ObjectPool.newVector());
             }
         } catch (Throwable e) {
-            Storage.state().setObject(ChatKeys.VEC_MESSAGE_LIST, ObjectPool.newVector());
+            ChatState.setMessageList(ObjectPool.newVector());
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             XmppContactGroup.removeContactInfoFromQueue(contactInfo);
@@ -322,10 +329,10 @@ public final class AsyncTask implements Runnable {
                             !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
                 }
             } else {
-                EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_DOWNLOAD_COMPLETE));
+                EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_DOWNLOAD_COMPLETE));
             }
         } catch (Throwable e) {
-            EventDispatcher.postNotification(Storage.resources().getString(StringResKeys.STR_DOWNLOAD_COMPLETE));
+            EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_DOWNLOAD_COMPLETE));
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             XmppContactGroup.removeContactInfoFromQueue(contactInfo);
@@ -457,8 +464,8 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
-            String baseUrl = Storage.resources().getString(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
-            httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(Storage.resources().getString(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(Storage.resources().getString(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
+            String baseUrl = ResourceAccessor.str(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
+            httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(ResourceAccessor.str(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(ResourceAccessor.str(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
             if (httpClient.getResponseCode() == HTTP_OK) {
                 long[] coords = (long[]) args[3];
                 MrimAccount account = (MrimAccount) args[0];
@@ -495,7 +502,7 @@ public final class AsyncTask implements Runnable {
             try {
                 Thread.sleep(SMS_SEND_DELAY_MS);
                 msgConn = (MessageConnection) IOUtils.registerResource((Object) Connector.open(smsAddress));
-                TextMessage textMsg = (TextMessage) msgConn.newMessage(Storage.resources().getString(PackedStringKeys.CONTENT_TYPE_TEXT));
+                TextMessage textMsg = (TextMessage) msgConn.newMessage(ResourceAccessor.str(PackedStringKeys.CONTENT_TYPE_TEXT));
                 textMsg.setAddress(smsAddress);
                 textMsg.setPayloadText(smsText);
                 msgConn.send((Message) textMsg);
@@ -513,7 +520,16 @@ public final class AsyncTask implements Runnable {
     }
 
     private void taskWaitForCompletion() throws InterruptedException {
-        AppController.waitForCompletion((Object[]) this.taskData);
+        Object[] data = (Object[]) this.taskData;
+        int remaining = COMPLETION_TIMEOUT_MS;
+        do {
+            remaining -= COMPLETION_POLL_MS;
+            if (remaining < 0) {
+                EventDispatcher.postEvent(new AccountDataEvent(data));
+                return;
+            }
+            Thread.sleep(COMPLETION_POLL_MS);
+        } while (!AppController.isShuttingDown);
     }
 
     private void taskProcessXmppStream() {

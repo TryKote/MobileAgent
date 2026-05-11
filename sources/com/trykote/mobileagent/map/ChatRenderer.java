@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.map;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -153,12 +154,12 @@ public abstract class ChatRenderer {
         }
         Font font = graphics.getFont();
         int color = graphics.getColor();
-        Font scaleFont = Storage.state().getFont();
+        Font scaleFont = UIState.getFont();
         graphics.setFont(scaleFont);
-        int softKeyHeight = Storage.state().getInt(UIKeys.INT_FONT_HEIGHT);
+        int softKeyHeight = UIState.getFontHeight();
         int barWidth = Utils.max(scaleBarWidth, scaleFont.stringWidth(scaleLabel));
         int height = scaleFont.getHeight();
-        if (Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE)) {
+        if (SettingsState.getCustomViewMode() != 0) {
             i2 = -(softKeyHeight > BUBBLE_ICON_SIZE ? softKeyHeight : MIN_SOFTKEY_HEIGHT);
         } else {
             i2 = 0;
@@ -214,8 +215,8 @@ public abstract class ChatRenderer {
         int i4 = (height * size) + TOOLTIP_PADDING_V;
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
-        int themeIdx = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
-        graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
+        int themeIdx = SettingsState.getColorTheme();
+        graphics.setColor(Palette.getColor(themeIdx, Palette.MAP_FILL));
         int arrowSize = Utils.min(boxWidth / TOOLTIP_ARROW_DIVISOR, TOOLTIP_MIN_ARROW_SIZE);
         int arrowH = arrowSize << 1;
         int boxX = i2 - (boxWidth / 2);
@@ -224,11 +225,11 @@ public abstract class ChatRenderer {
         graphics.setColor(COLOR_BLACK);
         graphics.drawRoundRect(boxX, boxY, boxWidth, i4, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
         graphics.setFont(font);
-        graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + themeIdx));
+        graphics.setColor(Palette.getColor(themeIdx, Palette.TEXT));
         for (int i8 = size - 1; i8 >= 0; i8--) {
             graphics.drawString((String) lines.elementAt(i8), boxX + TOOLTIP_TEXT_INSET_X, boxY + TOOLTIP_TEXT_INSET_Y + (i8 * height), 20);
         }
-        graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
+        graphics.setColor(Palette.getColor(themeIdx, Palette.MAP_FILL));
         graphics.fillTriangle(i2 + arrowSize, i3 - (arrowSize << 1), i2 + (arrowSize << 2), i3 - (arrowSize << 1), i2, i3);
         graphics.setColor(COLOR_BLACK);
         graphics.drawLine(i2 + arrowSize, i3 - (arrowSize << 1), i2, i3);
@@ -241,7 +242,7 @@ public abstract class ChatRenderer {
         if (item == null || !item.isSelected()) {
             return;
         }
-        int fontSize = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
+        int fontSize = SettingsState.getFontSizeChat();
         Font font = Font.getFont(64, 0, fontSize == 0 ? 8 : fontSize == 1 ? 0 : 16);
         int bubbleX = (int) ((i / 2) + (item.getCommandId(i3) - j));
         int bubbleY = (int) ((i2 / 2) + (j2 - item.executeCommand(i3)));
@@ -276,7 +277,7 @@ public abstract class ChatRenderer {
         Vector textLines = Utils.wrapText(Utils.defaultStr(item.getText()), font, i - BUBBLE_TEXT_MARGIN);
         int size = textLines.size();
         int textWidth = getMaxTextWidth(textLines, font);
-        int iStringWidth = font.stringWidth(Storage.resources().getString(StringResKeys.STR_SHOW_ROUTE)) + BUBBLE_PADDING + BUBBLE_BUTTON_ICON_SIZE;
+        int iStringWidth = font.stringWidth(ResourceAccessor.str(StringResKeys.STR_SHOW_ROUTE)) + BUBBLE_PADDING + BUBBLE_BUTTON_ICON_SIZE;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
@@ -287,8 +288,8 @@ public abstract class ChatRenderer {
         if (i13 < iStringWidth) {
             i14 = iStringWidth;
         }
-        int themeIdx = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
-        graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
+        int themeIdx = SettingsState.getColorTheme();
+        graphics.setColor(Palette.getColor(themeIdx, Palette.MAP_FILL));
         int i15 = i14 / TOOLTIP_ARROW_DIVISOR;
         int i16 = i15;
         if (i15 < TOOLTIP_MIN_ARROW_SIZE) {
@@ -314,7 +315,7 @@ public abstract class ChatRenderer {
             gfx.drawIcon(i8, (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING, ((i10 - i18) - i12) + BUBBLE_INNER_PADDING);
         }
         graphics.setFont(font);
-        graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + themeIdx));
+        graphics.setColor(Palette.getColor(themeIdx, Palette.TEXT));
         for (int i19 = 0; i19 < size; i19++) {
             graphics.drawString((String) textLines.elementAt(i19), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + (i8 != 0 ? BUBBLE_ICON_SIZE : 0), ((i10 - i18) - i12) + i11 + BUBBLE_INNER_PADDING + ((i19 - 1) * height), 20);
         }
@@ -331,9 +332,9 @@ public abstract class ChatRenderer {
             int i21 = ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)) + (i11 / 2);
             buttonBounds[1] = i21;
             graphics.drawImage(buttonImage, i20, i21, 6);
-            graphics.drawString(Storage.resources().getString(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + ((i14 - iStringWidth) / 2) + BUBBLE_BUTTON_ICON_SIZE + BUBBLE_BUTTON_GAP, ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)), 20);
+            graphics.drawString(ResourceAccessor.str(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + ((i14 - iStringWidth) / 2) + BUBBLE_BUTTON_ICON_SIZE + BUBBLE_BUTTON_GAP, ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)), 20);
         }
-        graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + themeIdx));
+        graphics.setColor(Palette.getColor(themeIdx, Palette.MAP_FILL));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
         graphics.setColor(COLOR_BLACK);
         graphics.drawLine(i9 + i16, i10 - i18, i9, i10);
@@ -374,11 +375,11 @@ public abstract class ChatRenderer {
         boolean z;
         int i4;
         if (!MmpContact.locationEnabled && !MmpContact.hasFirstToken() && !MmpContact.hasSecondToken()) {
-            Storage.state().setInt(MapKeys.FLAG_CHAT_HAS_ITEMS, 0);
+            MapState.setChatHasItems(false);
             return;
         }
         int color = graphics.getColor();
-        int fontSize = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_CHAT);
+        int fontSize = SettingsState.getFontSizeChat();
         Font font = Font.getFont(64, 0, fontSize == 0 ? 8 : fontSize == 1 ? 0 : 16);
         int halfSpan = (i2 / 2) * SoftFloat.floatToInt(SoftFloat.multiply(SoftFloat.longToFloat(1 << (17 - i)), 4608057598812004689L));
         int i5 = (int) (j3 - halfSpan);
@@ -405,7 +406,7 @@ public abstract class ChatRenderer {
         }
         int size2 = visibleRegions.size();
         int totalPoints = MmpContact.getTotalRoutePoints();
-        Storage.state().setBool(MapKeys.FLAG_CHAT_HAS_ITEMS, size2 > 0);
+        MapState.setChatHasItems(size2 > 0);
         String str = null;
         int i18 = 0;
         int i19 = 0;
@@ -487,15 +488,15 @@ public abstract class ChatRenderer {
                 if (i23 > 0 && i23 < i2 && i24 > 0 && i24 < i3) {
                     if (Utils.absLong(j - px13) >= ROUTE_POINT_HOVER_DISTANCE || Utils.absLong(j2 - px14) >= ROUTE_POINT_HOVER_DISTANCE || z2) {
                         if (!z2) {
-                            Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
-                            Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE) && !Storage.state().getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
+                            UIState.setRoutePointHidden(0);
+                            UIState.setRoutePointVisible(UIState.isRouteLocationActive() && !UIState.isRoutePointHidden());
                             MmpContact.mapDataCache = null;
                         }
                         i4 = ROUTE_POINT_NORMAL_SIZE;
                         graphics.setColor(40, 221, 22);
                     } else {
-                        Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE));
-                        Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, Storage.state().getBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE) && !Storage.state().getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
+                        UIState.setRoutePointHidden(UIState.isRouteLocationActive() ? 1 : 0);
+                        UIState.setRoutePointVisible(UIState.isRouteLocationActive() && !UIState.isRoutePointHidden());
                         i4 = ROUTE_POINT_SELECTED_SIZE;
                         graphics.setColor(45, 253, 24);
                         MmpContact.mapDataCache = objArr3;
@@ -566,16 +567,16 @@ public abstract class ChatRenderer {
                 int height = font.getHeight();
                 int clipHeight = (graphics.getClipHeight() - height) - ROUTE_LABEL_BOTTOM_MARGIN;
                 int i34 = ROUTE_LABEL_DEFAULT_X;
-                if (Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE)) {
+                if (SettingsState.getCustomViewMode() != 0) {
                     clipHeight -= (height > MIN_SOFTKEY_HEIGHT ? height : MIN_SOFTKEY_HEIGHT) + ROUTE_LABEL_SOFTKEY_MARGIN;
                     i34 = ROUTE_LABEL_DEFAULT_X - ROUTE_LABEL_COMPACT_SHIFT;
                 }
-                String routeLabel = Storage.resources().getString(StringResKeys.STR_ROUTE_LABEL);
+                String routeLabel = ResourceAccessor.str(StringResKeys.STR_ROUTE_LABEL);
                 int labelWidth = font.stringWidth(routeLabel) + BUBBLE_PADDING;
-                int themeIdx2 = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
-                graphics.setColor(Storage.state().getInt(themeIdx2 + 5050));
+                int themeIdx2 = SettingsState.getColorTheme();
+                graphics.setColor(AppState.getInt(themeIdx2 + 5050));
                 graphics.fillRoundRect(i34, clipHeight, labelWidth, height, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
-                graphics.setColor(Storage.state().getInt(themeIdx2 + 4914));
+                graphics.setColor(AppState.getInt(themeIdx2 + 4914));
                 graphics.drawRoundRect(i34, clipHeight, labelWidth, height, TOOLTIP_CORNER_RADIUS, TOOLTIP_CORNER_RADIUS);
                 graphics.drawString(routeLabel, i34 + TOOLTIP_TEXT_INSET_Y, clipHeight, 20);
                 graphics.setFont(font2);

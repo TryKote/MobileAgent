@@ -2,13 +2,9 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.core.event.MenuItemEvent;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
 
@@ -26,6 +22,8 @@ public final class MenuItem {
     // Icon codes
     private static final int ICON_UNCHECKED = 24;
     private static final int ICON_CHECKED = 25;
+    static final int ICON_LOGIN = 221;
+    static final int ICON_PASSWORD = 219;
     static final int ICON_ALIGN_RIGHT = 244;
     static final int ICON_DROPDOWN = 247;
 
@@ -92,7 +90,7 @@ public final class MenuItem {
     }
 
     public static final MenuItem createDefault() {
-        return new MenuItem(1, Storage.resources().getString(StringResKeys.STR_EMPTY));
+        return new MenuItem(1, ResourceAccessor.str(StringResKeys.STR_EMPTY));
     }
 
     public static final MenuItem create(String str) {
@@ -104,7 +102,7 @@ public final class MenuItem {
     }
 
     public static final MenuItem createSeparator() {
-        return new MenuItem(0, Storage.emptyStr);
+        return new MenuItem(0, AppState.emptyStr);
     }
 
     public static final MenuItem createCheckbox(String str, boolean z) {
@@ -142,7 +140,7 @@ public final class MenuItem {
     }
 
     public static final MenuItem createGraphics(GraphicsContext gfx) {
-        MenuItem graphicsItem = new MenuItem(TYPE_GRAPHICS, Storage.emptyStr);
+        MenuItem graphicsItem = new MenuItem(TYPE_GRAPHICS, AppState.emptyStr);
         graphicsItem.addElement(new ImageElement(gfx.image));
         return graphicsItem;
     }
@@ -163,7 +161,7 @@ public final class MenuItem {
         }
         if (this.id != TYPE_DROPDOWN) {
             if (this.id == TYPE_LOGIN) {
-                NotificationHelper.showMessageById(Utils.defaultStr(Storage.state().getString(SessionKeys.SLOT_ACCOUNT_DISPLAY_NAME)).length() > 0 ? MSG_LOGIN_HAS_NAME : MSG_LOGIN_NO_NAME);
+                NotificationHelper.showMessageById(Utils.defaultStr(SessionState.getAccountDisplayName()).length() > 0 ? MSG_LOGIN_HAS_NAME : MSG_LOGIN_NO_NAME);
                 return 0;
             }
             if (this.id != TYPE_PASSWORD) {
@@ -172,7 +170,7 @@ public final class MenuItem {
             NotificationHelper.showMessageById(MSG_PASSWORD_HINT);
             return 0;
         }
-        ListView choiceScreen = ScreenManager.createScreen(ScreenDef.CHOICE_DIALOG);
+        Screen choiceScreen = Screens.choiceDialog(null);
         Object[] objArr = (Object[]) this.data;
         String[] strArr = (String[]) objArr[1];
         int iIntValue = ((Integer) objArr[0]).intValue();
@@ -188,7 +186,7 @@ public final class MenuItem {
     }
 
     public final MenuItem setDefaultFont() {
-        return addElement(new SpacerElement(SPACER_SIZE, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)));
+        return addElement(new SpacerElement(SPACER_SIZE, UIState.getFontHeight()));
     }
 
     public final MenuItem setIcon(int i) {
@@ -304,7 +302,7 @@ public final class MenuItem {
     }
 
     public final int getTotalHeight() {
-        return Utils.max(this.maxHeight, Storage.state().getInt(UIKeys.INT_FONT_HEIGHT)) + PADDING;
+        return Utils.max(this.maxHeight, UIState.getFontHeight()) + PADDING;
     }
 
     public final void render(GraphicsContext gfx, int i, int i2, int i3) {

@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -15,6 +16,10 @@ import java.util.Vector;
 import javax.microedition.lcdui.Font;
 
 public abstract class Utils {
+
+    public static String getFreeMemoryString() {
+        return StringUtils.intern(Long.toString(Runtime.getRuntime().freeMemory()));
+    }
 
     // Windows-1251 ↔ Unicode Cyrillic conversion offsets
     private static final int WIN1251_CYRILLIC_START = 192;
@@ -44,7 +49,7 @@ public abstract class Utils {
     public static final long parseDateTime(String str) {
         Vector parts = splitImpl(str, ' ', false);
         int day = parseInt(parts.elementAt(1));
-        int idx = Storage.resources().getString(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
+        int idx = ResourceAccessor.str(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
         int year = parseInt(parts.elementAt(3));
         String timeStr = getVectorString(parts, 4);
         ObjectPool.releaseVector(parts);
@@ -59,13 +64,13 @@ public abstract class Utils {
             i--;
         }
         for (int i2 = idx - 2; i2 >= 0; i2--) {
-            i += i2 == 1 ? b : Storage.resources().getBytes(StringResKeys.RES_MONTH_DAYS)[i2];
+            i += i2 == 1 ? b : ResourceAccessor.bytes(StringResKeys.RES_MONTH_DAYS)[i2];
         }
-        return (MS_PER_SECOND * (((SECONDS_PER_DAY * i) + (hours * SECONDS_PER_HOUR)) + (minutes * SECONDS_PER_MINUTE))) - ((Storage.state().getInt(SettingsKeys.SETTING_TIMEZONE_OFFSET) - 13) * (SECONDS_PER_HOUR * MS_PER_SECOND));
+        return (MS_PER_SECOND * (((SECONDS_PER_DAY * i) + (hours * SECONDS_PER_HOUR)) + (minutes * SECONDS_PER_MINUTE))) - ((SettingsState.getTimezoneOffset() - 13) * (SECONDS_PER_HOUR * MS_PER_SECOND));
     }
 
     private static StringBuffer appendKey(StringBuffer stringBuffer, int i) {
-        return stringBuffer.append(Storage.state().getString(i));
+        return stringBuffer.append(AppState.getString(i));
     }
 
     public static final StringBuffer appendParam(StringBuffer stringBuffer, int i, String str) {
@@ -255,7 +260,7 @@ public abstract class Utils {
         Vector result = ObjectPool.newVector();
         for (int i = 0; i < 3; i++) {
             StringBuffer sb = ObjectPool.newStringBuffer();
-            String rawPhone = defaultStr(Storage.state().getBlockString(UIKeys.CONTACT_NAME_PARTS_BASE, i));
+            String rawPhone = defaultStr(UIState.getContactNamePart(i));
             int length = rawPhone.length();
             for (int i2 = 0; i2 < length; i2++) {
                 char ch = rawPhone.charAt(i2);
@@ -285,7 +290,7 @@ public abstract class Utils {
     }
 
     public static final int nextRandom() {
-        return ((Random) Storage.state().getObject(SessionKeys.OBJ_RANDOM)).nextInt();
+        return SessionState.getRandom().nextInt();
     }
 
     public static final String getVectorString(Vector vector, int i) {
@@ -293,7 +298,7 @@ public abstract class Utils {
     }
 
     public static final String defaultStr(String str) {
-        return str != null ? str : Storage.emptyStr;
+        return str != null ? str : AppState.emptyStr;
     }
 
     public static final String formatSize(int i) {
@@ -318,7 +323,7 @@ public abstract class Utils {
             }
             sb.append(frac);
         }
-        return ObjectPool.toStringAndRelease(sb.append(Storage.state().getString(i2)));
+        return ObjectPool.toStringAndRelease(sb.append(AppState.getString(i2)));
     }
 
     public static final Object dequeue(Vector vector) {
@@ -371,7 +376,7 @@ public abstract class Utils {
 
     public static final String formatPhone(String str) {
         if (str == null) {
-            return Storage.emptyStr;
+            return AppState.emptyStr;
         }
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (startsWithInt(str, 99897)) {
@@ -464,7 +469,7 @@ public abstract class Utils {
     }
 
     public static final short[] readShortArray(int i) {
-        byte[] bytes = Storage.state().getBytes(i);
+        byte[] bytes = AppState.getBytes(i);
         int length = bytes.length >> 1;
         short[] sArr = new short[length];
         int i2 = 0;
@@ -533,7 +538,7 @@ public abstract class Utils {
     }
 
     public static final String splitAndGet(int i, int i2) {
-        Vector parts = splitImpl(Storage.state().getString(i), (char) 0, false);
+        Vector parts = splitImpl(AppState.getString(i), (char) 0, false);
         String str = (String) parts.elementAt(i2);
         ObjectPool.releaseVector(parts);
         return str;
@@ -549,7 +554,7 @@ public abstract class Utils {
             length = str.length();
         }
         int i3 = 0;
-        int spaceWidth = font.stringWidth(Storage.resources().getString(StringResKeys.STR_SPACE));
+        int spaceWidth = font.stringWidth(ResourceAccessor.str(StringResKeys.STR_SPACE));
         while (length != -1) {
             String word = StringUtils.substring(str, i2, length);
             int wordWidth = font.stringWidth(word);
@@ -589,7 +594,7 @@ public abstract class Utils {
 
     public static final StringBuffer getMessageBuffer() {
         StringBuffer sb = ObjectPool.newStringBuffer();
-        String prefix = defaultStr(Storage.state().getString(UIKeys.SLOT_STATUS_TEXT));
+        String prefix = defaultStr(UIState.getStatusText());
         StringBuffer result = sb.append(prefix);
         int length = prefix.length();
         if (length != 0 && prefix.charAt(length - 1) != ' ') {

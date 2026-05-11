@@ -2,9 +2,8 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.Storage;
-import com.trykote.mobileagent.core.EventDispatcher;
-import com.trykote.mobileagent.core.UIKeys;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
@@ -26,14 +25,14 @@ public final class TextInputHandler implements CommandListener {
         this.context = new Object[]{screen, menuItem};
         String str = (String) objArr[0];
         int maxLen = ((Integer) objArr[1]).intValue();
-        XmppContactGroup.showTextInputDialog(Storage.emptyStr, str.length() > maxLen ? StringUtils.prefix(str, maxLen) : str, maxLen, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
+        XmppContactGroup.showTextInputDialog(AppState.emptyStr, str.length() > maxLen ? StringUtils.prefix(str, maxLen) : str, maxLen, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
     }
 
     public final void commandAction(Command command, Displayable displayable) {
         if (this.context == null) {
             String text = StringUtils.getTextBoxString((TextBox) displayable);
-            Storage.state().setObject(UIKeys.SLOT_STATUS_TEXT, (Object) text);
-            Storage.state().setBool(UIKeys.FLAG_STATUS_TEXT_SET, !StringUtils.isEmpty(text));
+            UIState.setStatusText((Object) text);
+            UIState.setStatusTextSet(!StringUtils.isEmpty(text));
             if (command.getPriority() == 0) {
                 EventDispatcher.postOkEvent();
                 return;
@@ -65,6 +64,6 @@ public final class TextInputHandler implements CommandListener {
                 screen.rebuildItems();
             }
         }
-        Storage.state().setScreen(Storage.state().getCanvas().updateCommands());
+        AppState.setScreen(AppState.getCanvas().updateCommands());
     }
 }

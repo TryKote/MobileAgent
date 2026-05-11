@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.mmp;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.util.*;

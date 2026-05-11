@@ -2,13 +2,10 @@ package com.trykote.mobileagent.protocol;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.ui.handler.ProfileHandler;
 import com.trykote.mobileagent.util.*;
 import java.io.IOException;
@@ -318,9 +315,9 @@ public abstract class Account {
         String errorMsg;
         Throwable th = this.connection.exception;
         if (th == null) {
-            errorMsg = Storage.resources().getString(StringResKeys.STR_TIMEOUT_ERROR);
+            errorMsg = ResourceAccessor.str(StringResKeys.STR_TIMEOUT_ERROR);
         } else {
-            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(Storage.resources().getString(StringResKeys.STR_ERROR_SEPARATOR)).append(Storage.state().getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(ResourceAccessor.str(StringResKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
 
         // Retry on IOException (network errors), not on SecurityException or auth errors
@@ -362,7 +359,7 @@ public abstract class Account {
     }
 
     public final void handleError(int errorCode) {
-        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_ACCOUNT_CONNECTED)).append(this).append(Storage.resources().getString(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(Storage.resources().getString(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_CONNECTED)).append(this).append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
         closeConnection();
         this.lastError = getDefaultError();
     }
@@ -397,8 +394,8 @@ public abstract class Account {
             return;
         }
         ContactListManager.deleteContact(contact);
-        Storage.state().getVector(UIKeys.VEC_PENDING_CONNECTIONS).addElement(contact);
-        contact.statusCode = Storage.state().getInt(RuntimeKeys.INT_CURRENT_TIMESTAMP);
+        UIState.getPendingConnections().addElement(contact);
+        contact.statusCode = RuntimeState.getCurrentTimestamp();
         contact.dirty = true;
     }
 

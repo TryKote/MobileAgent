@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -12,8 +13,7 @@ import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 /* Extracted from AppController: pure bit/math utility functions */
 public final class BitMath {
-
-    public static final int[] resizeArray(int[] iArr, int i, int i2) {
+    public static int[] resizeArray(int[] iArr, int i, int i2) {
         return growArray(growArray(iArr, i), i2);
     }
 
@@ -53,16 +53,16 @@ public final class BitMath {
         return count;
     }
 
-    public static final int countLeadingZeros(long j) {
+    public static int countLeadingZeros(long j) {
         int highBits = computeTimerValue((int) (j >> 32));
         return highBits == 32 ? computeTimerValue((int) j) + 32 : highBits;
     }
 
-    public static final long shiftRightSticky(long j, int i) {
+    public static long shiftRightSticky(long j, int i) {
         return i >= 64 ? j == 0 ? 0L : 1L : (j << (64 - i)) == 0 ? j >>> i : (j >>> i) | 1;
     }
 
-    public static final long roundedShiftRight(long j, int i) {
+    public static long roundedShiftRight(long j, int i) {
         long shifted;
         long result;
         if (i > 64) {

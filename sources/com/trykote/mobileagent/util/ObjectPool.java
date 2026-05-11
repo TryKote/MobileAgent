@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -269,7 +270,7 @@ public abstract class ObjectPool {
      * stored at the given {@code stateKey} in AppState.
      */
     public static final StringBuffer newBufferFromState(int stateKey) {
-        return newStringBuffer().append(Storage.state().getString(stateKey));
+        return newStringBuffer().append(AppState.getString(stateKey));
     }
 
     /**

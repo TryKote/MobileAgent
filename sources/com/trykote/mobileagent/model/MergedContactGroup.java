@@ -2,6 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -48,7 +49,7 @@ public final class MergedContactGroup extends ContactGroup {
     public final int toggleSpecial() {
         boolean newSpecial = !this.isSpecial;
         String groupName = this.name;
-        Vector accounts = Storage.state().getVector(SessionKeys.VEC_ACCOUNTS);
+        Vector accounts = SessionState.getAccounts();
         for (int i = accounts.size() - 1; i >= 0; i--) {
             Account acct = (Account) accounts.elementAt(i);
             for (int j = acct.groups.size() - 1; j >= 0; j--) {

@@ -2,6 +2,7 @@ package com.trykote.mobileagent.protocol.mmp;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -306,8 +307,8 @@ public final class MmpContact extends Contact {
 
     public static final void setLocationEnabled(boolean enabled) {
         locationEnabled = enabled;
-        Storage.state().setBool(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, enabled);
-        Storage.state().setBool(UIKeys.FLAG_ROUTE_POINT_VISIBLE, enabled && !Storage.state().getBool(UIKeys.FLAG_ROUTE_POINT_HIDDEN));
+        UIState.setRouteLocationActive(enabled);
+        UIState.setRoutePointVisible(enabled && !UIState.isRoutePointHidden());
     }
 
     public static final void clearLocationData() {
@@ -320,9 +321,9 @@ public final class MmpContact extends Contact {
         nearestPoints.removeAllElements();
         setLocationEnabled(false);
         currentRouteIndex = 0;
-        Storage.state().setInt(UIKeys.FLAG_ROUTE_LOCATION_ACTIVE, 0);
-        Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_VISIBLE, 0);
-        Storage.state().setInt(UIKeys.FLAG_ROUTE_POINT_HIDDEN, 0);
+        UIState.setRouteLocationActive(false);
+        UIState.setRoutePointVisible(false);
+        UIState.setRoutePointHidden(0);
     }
 
     public static final String buildLocationString() {
@@ -373,7 +374,7 @@ public final class MmpContact extends Contact {
                 pointData[0] = new int[]{((Integer) pointJson.elementAt(0)).intValue(), ((Integer) pointJson.elementAt(1)).intValue()};
                 if (fieldCount == 4) {
                     if (regionIdx == 0 && pointIdx == 1) {
-                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_ROUTE_PREFIX));
+                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ROUTE_PREFIX));
                         int distUnitKey = STR_DISTANCE_UNIT_BASE;
                         int distance = totalRouteLength;
                         int fraction = 0;
@@ -393,20 +394,20 @@ public final class MmpContact extends Contact {
                             }
                             distBuf.append(trimmed);
                         }
-                        StringBuffer fullRouteInfo = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(Storage.state().getString(distUnitKey)))).append(Storage.resources().getString(StringResKeys.STR_DISTANCE_UNIT));
+                        StringBuffer fullRouteInfo = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(AppState.getString(distUnitKey)))).append(ResourceAccessor.str(StringResKeys.STR_DISTANCE_UNIT));
                         int durationSec = totalRouteDuration;
                         StringBuffer timeBuf = ObjectPool.newStringBuffer();
                         int minutes = durationSec / 60;
                         if (minutes < MINUTES_THRESHOLD_FOR_HOURS) {
                             timeBuf.append(minutes);
                         } else {
-                            timeBuf.append(minutes / 60).append(Storage.resources().getString(StringResKeys.STR_HOUR_SEPARATOR)).append(minutes % 60);
+                            timeBuf.append(minutes / 60).append(ResourceAccessor.str(StringResKeys.STR_HOUR_SEPARATOR)).append(minutes % 60);
                         }
-                        pointData[1] = fullRouteInfo.append(ObjectPool.toStringAndRelease(timeBuf.append(Storage.resources().getString(StringResKeys.STR_DISTANCE_SUFFIX)))).toString();
-                        pointData[2] = Storage.emptyStr;
+                        pointData[1] = fullRouteInfo.append(ObjectPool.toStringAndRelease(timeBuf.append(ResourceAccessor.str(StringResKeys.STR_DISTANCE_SUFFIX)))).toString();
+                        pointData[2] = AppState.emptyStr;
                     } else if (regionIdx == regionCount - 1 && pointIdx == pointArraySize - 2) {
-                        pointData[1] = Storage.resources().getString(StringResKeys.STR_NO_ROUTE);
-                        pointData[2] = Storage.emptyStr;
+                        pointData[1] = ResourceAccessor.str(StringResKeys.STR_NO_ROUTE);
+                        pointData[2] = AppState.emptyStr;
                     } else {
                         pointData[1] = pointJson.elementAt(2);
                         pointData[2] = pointJson.elementAt(3);
@@ -461,7 +462,7 @@ public final class MmpContact extends Contact {
 
     public static final int[] getNextRoutePoint() {
         int totalPoints = getTotalRoutePoints();
-        int zoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoom = MapState.getZoomLevel();
         int[] currentCoords = getRoutePointAt(currentRouteIndex);
         int pixelX = (int) MapUtils.coordToPixel(currentCoords[0], zoom);
         int pixelY = (int) MapUtils.coordToPixel(currentCoords[1], zoom);
@@ -482,7 +483,7 @@ public final class MmpContact extends Contact {
         if (currentRouteIndex == 0 && getRouteLabelsAt(currentRouteIndex) != null) {
             return getRoutePointAt(currentRouteIndex);
         }
-        int zoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoom = MapState.getZoomLevel();
         int[] currentCoords = getRoutePointAt(currentRouteIndex);
         int pixelX = (int) MapUtils.coordToPixel(currentCoords[0], zoom);
         int pixelY = (int) MapUtils.coordToPixel(currentCoords[1], zoom);
@@ -578,9 +579,9 @@ public final class MmpContact extends Contact {
                         contact.highlighted = true;
                     }
                 } else if (attrType == ATTR_GUID_LIST) {
-                    byte[] blockedGuid = Storage.resources().getBytes(StringResKeys.RES_BLOCKED_GUID);
-                    byte[] unblockedGuid = Storage.resources().getBytes(StringResKeys.RES_UNBLOCKED_GUID);
-                    byte[] iconGuids = Storage.resources().getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS);
+                    byte[] blockedGuid = ResourceAccessor.bytes(StringResKeys.RES_BLOCKED_GUID);
+                    byte[] unblockedGuid = ResourceAccessor.bytes(StringResKeys.RES_UNBLOCKED_GUID);
+                    byte[] iconGuids = ResourceAccessor.bytes(StringResKeys.RES_AUTH_SLOT_GUIDS);
                     byte[] rawData = buffer.data;
                     int baseOffset = buffer.offset;
                     for (int guidOffset = 0; guidOffset < attrLen; guidOffset += GUID_SIZE) {

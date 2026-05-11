@@ -2,6 +2,7 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -40,40 +41,40 @@ public final class NotificationHelper {
         if (ScreenManager.getCurrentScreen().screenType == SCREEN_TYPE_TOAST_CENTER) {
             ScreenBuilder.onScreenClosed();
         }
-        Storage.state().setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
+        UIState.setNotificationTitleFromPool(i);
         return ScreenId.CLEAR_NOTIFICATIONS;
     }
 
     public static final void showNotification(String str) {
-        Storage.state().setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
-        Storage.state().setObject(UIKeys.SLOT_NOTIFICATION_TITLE, (Object) str);
+        UIState.setNotificationScreenId(ScreenId.CLEAR_NOTIFICATIONS);
+        UIState.setNotificationTitle((Object) str);
         clearNotifications();
     }
 
     public static final void showMessageById(int i) {
-        Storage.state().setInt(UIKeys.INT_NOTIFICATION_SCREEN_ID, ScreenId.CLEAR_NOTIFICATIONS);
-        Storage.state().setFromPool(UIKeys.SLOT_NOTIFICATION_TITLE, i);
+        UIState.setNotificationScreenId(ScreenId.CLEAR_NOTIFICATIONS);
+        UIState.setNotificationTitleFromPool(i);
         clearNotifications();
     }
 
     public static final void clearNotifications() {
         playNotificationSound(SOUND_SYSTEM_NOTIFICATION);
-        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.NOTIFICATION_DIALOG));
-        Storage.state().clearIndex(UIKeys.SLOT_NOTIFICATION_TITLE);
+        Screens.notificationDialog(null).show();
+        UIState.clearNotificationTitle();
     }
 
     public static final void showAlertBuffer(int i, StringBuffer stringBuffer) {
-        Storage.state().setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
-        Storage.state().setFromBuffer(MapKeys.SLOT_MAP_POINT_1, stringBuffer);
-        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-        Storage.state().clearIndex(MapKeys.SLOT_MAP_POINT_1);
+        UIState.setHttpResultScreen(i);
+        AppState.setFromBuffer(MapKeys.SLOT_MAP_POINT_1, stringBuffer);
+        Screens.errorAlert(null).show();
+        MapState.setMapPoint1(null);
     }
 
     public static final void showAlertById(int i, int i2) {
-        Storage.state().setInt(UIKeys.INT_HTTP_RESULT_SCREEN, i);
-        Storage.state().setFromPool(MapKeys.SLOT_MAP_POINT_1, i2);
-        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.ERROR_ALERT));
-        Storage.state().clearIndex(MapKeys.SLOT_MAP_POINT_1);
+        UIState.setHttpResultScreen(i);
+        AppState.setFromPool(MapKeys.SLOT_MAP_POINT_1, i2);
+        Screens.errorAlert(null).show();
+        MapState.setMapPoint1(null);
     }
 
     public static final void showErrorOrConfirm(int i, int i2, int i3) {
@@ -85,9 +86,9 @@ public final class NotificationHelper {
     }
 
     public static final void showConfirmDialog(int i, int i2) {
-        Storage.state().setInt(UIKeys.INT_HTTP_PARAM_1, i);
-        Storage.state().setInt(UIKeys.INT_HTTP_PARAM_2, i2);
-        ScreenManager.showScreen(ScreenManager.createScreen(ScreenDef.CONFIRM_DIALOG));
+        UIState.setHttpParam1(i);
+        UIState.setHttpParam2(i2);
+        Screens.confirmDialog(null).show();
     }
 
     public static void playNotificationSound(int soundType) {
@@ -105,15 +106,15 @@ public final class NotificationHelper {
         } else if (soundType == SOUND_CUSTOM_NOTE) {
             soundIndex = SOUND_INDEX_CUSTOM_NOTE;
         }
-        playAlertIfEnabled(Storage.state().getBlockInt(SettingsKeys.SOUND_CONFIG_BASE, soundIndex), Storage.state().getBool(SettingsKeys.SOUND_CONFIG_BASE + soundIndex + 1));
+        playAlertIfEnabled(AppState.getInt(SettingsKeys.SOUND_CONFIG_BASE + soundIndex), AppState.getBool(SettingsKeys.SOUND_CONFIG_BASE + soundIndex + 1));
     }
 
     public static void playAlertIfEnabled(int alertTone, boolean vibrateEnabled) {
-        if (Storage.state().getBool(SessionKeys.FLAG_MRIM_DATA_LOADED)) {
+        if (SessionState.isMrimDataLoaded()) {
             if (vibrateEnabled) {
-                Display.getDisplay(Storage.state().getMidlet()).vibrate(VIBRATION_DURATION_MS);
+                Display.getDisplay(AppState.getMidlet()).vibrate(VIBRATION_DURATION_MS);
             }
-            if (alertTone == 0 || Storage.state().getBool(SettingsKeys.SETTING_NOTIFICATION_ENABLED) || !TimerManager.checkTimer(TimerManager.SLOT_NOTIFICATION_COOLDOWN, NOTIFICATION_COOLDOWN_MS)) {
+            if (alertTone == 0 || SettingsState.isNotificationEnabled() || !TimerManager.checkTimer(TimerManager.SLOT_NOTIFICATION_COOLDOWN, NOTIFICATION_COOLDOWN_MS)) {
                 return;
             }
             SoundPlayer.playSound(alertTone);

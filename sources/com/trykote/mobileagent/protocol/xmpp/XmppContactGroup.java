@@ -1,6 +1,8 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -112,10 +114,10 @@ public final class XmppContactGroup extends ContactGroup {
         ByteBuffer packet = new ByteBuffer().writeIntLE(0).writeStringLatin1(contact.simpleIdentifier);
         Hashtable emoticonLookup = new Hashtable();
         for (int ei = EMOTICON_COUNT - 1; ei >= 0; ei--) {
-            String emoticonName = Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, ei);
+            String emoticonName = ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, ei);
             emoticonLookup.put(emoticonName, StringUtils.intern(emoticonName.toLowerCase()));
         }
-        String triggerChars = Storage.resources().getString(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
+        String triggerChars = ResourceAccessor.str(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
         StringBuffer result = ObjectPool.newStringBuffer();
         int textLen = messageText.length();
         int pos = 0;
@@ -126,11 +128,11 @@ public final class XmppContactGroup extends ContactGroup {
                 result.append(ch);
             } else {
                 if (emoticonIndex < EMOTICON_INLINE_LIMIT) {
-                    result.append(Storage.resources().getString(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(emoticonIndex)).append('>');
+                    result.append(ResourceAccessor.str(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(emoticonIndex)).append('>');
                 } else {
-                    result.append(Storage.resources().getString(PackedStringKeys.EMOTICON_OPEN_TAG)).append(emoticonIndex < 74 ? emoticonIndex + EMOTICON_ICON_BASE_OFFSET : emoticonIndex == 74 ? EMOTICON_ICON_74 : emoticonIndex == 75 ? EMOTICON_ICON_75 : emoticonIndex == 76 ? EMOTICON_ICON_76 : EMOTICON_ICON_77).append(Storage.resources().getString(PackedStringKeys.EMOTICON_ALT_ATTR)).append(Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex)).append(Storage.resources().getString(PackedStringKeys.EMOTICON_CLOSE_TAG));
+                    result.append(ResourceAccessor.str(PackedStringKeys.EMOTICON_OPEN_TAG)).append(emoticonIndex < 74 ? emoticonIndex + EMOTICON_ICON_BASE_OFFSET : emoticonIndex == 74 ? EMOTICON_ICON_74 : emoticonIndex == 75 ? EMOTICON_ICON_75 : emoticonIndex == 76 ? EMOTICON_ICON_76 : EMOTICON_ICON_77).append(ResourceAccessor.str(PackedStringKeys.EMOTICON_ALT_ATTR)).append(ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex)).append(ResourceAccessor.str(PackedStringKeys.EMOTICON_CLOSE_TAG));
                 }
-                pos += Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex).length() - 1;
+                pos += ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex).length() - 1;
             }
             pos++;
         }
@@ -147,7 +149,7 @@ public final class XmppContactGroup extends ContactGroup {
             return -1;
         }
         for (int ei = EMOTICON_COUNT - 1; ei >= 0; ei--) {
-            emoticonName = Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, ei);
+            emoticonName = ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, ei);
             if (text.indexOf(emoticonName, offset) == offset) {
                 return ei;
             }
@@ -159,7 +161,7 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     private static void updateLastCheckTime() {
-        Storage.state().setLong(SessionKeys.TIMESTAMP_LAST_XMPP_AUTH, System.currentTimeMillis());
+        SessionState.setTimestampLastXmppAuth(System.currentTimeMillis());
     }
 
     public static final void periodicTimeSync() throws Throwable {
@@ -168,7 +170,7 @@ public final class XmppContactGroup extends ContactGroup {
             if (AppController.isShuttingDown) {
                 throw new Throwable();
             }
-            if (System.currentTimeMillis() - Storage.state().getLong(SessionKeys.TIMESTAMP_LAST_XMPP_AUTH) >= SYNC_INTERVAL_MS) {
+            if (System.currentTimeMillis() - SessionState.getTimestampLastXmppAuth() >= SYNC_INTERVAL_MS) {
                 boolean hasXmppOnly = false;
                 Vector accounts = AccountManager.copyAllAccounts();
                 for (int si = accounts.size() - 1; si >= 0; si--) {
@@ -184,7 +186,7 @@ public final class XmppContactGroup extends ContactGroup {
                 }
                 ObjectPool.releaseVector(accounts);
                 if (hasXmppOnly) {
-                    authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(Storage.resources().getString(PackedStringKeys.HOST_MRIM_REDIRECT)))));
+                    authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(ResourceAccessor.str(PackedStringKeys.HOST_MRIM_REDIRECT)))));
                 }
             }
         }
@@ -242,7 +244,7 @@ public final class XmppContactGroup extends ContactGroup {
     private static final void authenticateAndSync(ConnectionThread connection) {
         ByteBuffer responsePacket;
         try {
-            String tag = Storage.resources().getString(PackedStringKeys.TAG_STATISTICS);
+            String tag = ResourceAccessor.str(PackedStringKeys.TAG_STATISTICS);
             MrimAccount account = new MrimAccount(-1, tag, tag);
             account.connection = connection;
             account.sendData(ProtocolFactory.createMrimAuthPacket(account));
@@ -266,7 +268,7 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     private static final int[] getSHA256Constants() {
-        return (int[]) Storage.state().getObject(StringResKeys.RES_EMOTICON_MAP);
+        return (int[]) AppState.getObject(StringResKeys.RES_EMOTICON_MAP);
     }
 
     private static final int rotateLeft(int value, int shift) {
@@ -419,19 +421,19 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     public static final ByteBuffer buildSyncPayload(MrimAccount mrimAccount) {
-        ByteBuffer payload = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_KEY))).writeIntMixed(513).writeIntLE(mrimAccount.syncSeq).writeIntMixed(335).writeStringLatin1(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH)).append('x').append(Storage.state().getInt(UIKeys.INT_SCREEN_HEIGHT)))).writeIntMixed(592).writeIntLE(Storage.state().getAndClearInt(MapKeys.COUNTER_MAP_CACHE_MISS)).writeIntMixed(573).writeIntLE(Storage.state().getAndClearInt(MapKeys.COUNTER_MAP_CACHE_HIT)).writeIntMixed(636).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_SCREEN_OPENS)).writeIntMixed(514).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_APP_STARTS)).writeIntMixed(638).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_ERRORS)).writeIntMixed(639).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_RESERVED)).writeIntMixed(640).writeIntLE(Storage.state().getAndClearInt(SessionKeys.COUNTER_TOTAL_TRAFFIC));
+        ByteBuffer payload = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(SessionState.getRandomId()))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(SessionState.getSessionKey())).writeIntMixed(513).writeIntLE(mrimAccount.syncSeq).writeIntMixed(335).writeStringLatin1(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(UIState.getScreenWidth()).append('x').append(UIState.getScreenHeight()))).writeIntMixed(592).writeIntLE(MapState.getAndClearCacheMissCount()).writeIntMixed(573).writeIntLE(MapState.getAndClearCacheHitCount()).writeIntMixed(636).writeIntLE(SessionState.getAndClearScreenOpens()).writeIntMixed(514).writeIntLE(SessionState.getAndClearAppStarts()).writeIntMixed(638).writeIntLE(SessionState.getAndClearErrors()).writeIntMixed(639).writeIntLE(SessionState.getAndClearReserved()).writeIntMixed(640).writeIntLE(SessionState.getAndClearTotalTraffic());
         Vector accounts = AccountManager.copyAllAccounts();
         for (int si = accounts.size() - 1; si >= 0; si--) {
             Account account = (Account) accounts.elementAt(si);
             if (!(account instanceof MrimAccount)) {
                 ByteBuffer payloadRef = payload.writeIntMixed(816);
-                ByteBuffer accountPayload = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_RANDOM_ID)))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(Storage.state().getString(SessionKeys.SESSION_KEY))).writeIntMixed(305).writeStringLatin1(account.login).writeIntMixed(306).writeStringLatin1(Storage.state().getString(account.getSessionStringKey())).writeIntMixed(563).writeIntLE(account.syncSeq).writeIntMixed(564).writeIntLE(account.sentCount).writeIntMixed(565).writeIntLE(account.recvCount);
+                ByteBuffer accountPayload = new ByteBuffer().writeIntMixed(515).writeIntLE(Utils.parseInt((Object) Utils.defaultStr(SessionState.getRandomId()))).writeIntMixed(300).writeStringLatin1(Utils.defaultStr(SessionState.getSessionKey())).writeIntMixed(305).writeStringLatin1(account.login).writeIntMixed(306).writeStringLatin1(AppState.getString(account.getSessionStringKey())).writeIntMixed(563).writeIntLE(account.syncSeq).writeIntMixed(564).writeIntLE(account.sentCount).writeIntMixed(565).writeIntLE(account.recvCount);
                 account.resetCounters();
                 payloadRef.writeBufferIntLen(accountPayload);
             }
         }
         ObjectPool.releaseVector(accounts);
-        Storage.state().saveDelta(true);
+        AppState.saveAllDeltas(true);
         return payload;
     }
 
@@ -440,16 +442,16 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     private static final Object[] getImageCachePool() {
-        return (Object[]) Storage.state().getObject(UIKeys.OBJ_GFX_CONTEXTS_ARRAY);
+        return UIState.getGfxContextsArray();
     }
 
     private static final int[] getImageTimestamps() {
-        return (int[]) Storage.state().getObject(UIKeys.ARR_GFX_HEIGHTS);
+        return UIState.getGfxHeightsArray();
     }
 
     public static final void incrementCacheCounter() {
         synchronized (getImageCachePool()) {
-            Storage.state().addInt(UIKeys.INT_IMAGE_COUNTER, 1);
+            UIState.incrementImageCounter();
         }
     }
 
@@ -464,7 +466,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final void cleanupExpiredImages() {
         Object[] cachePool = getImageCachePool();
         synchronized (cachePool) {
-            int counter = Storage.state().getInt(UIKeys.INT_IMAGE_COUNTER);
+            int counter = UIState.getImageCounter();
             int[] timestamps = getImageTimestamps();
             for (int si = 28; si >= 0; si--) {
                 int age = counter - timestamps[si];
@@ -482,7 +484,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final Image getOrLoadImage(int slot) {
         Object[] cachePool = getImageCachePool();
         synchronized (cachePool) {
-            getImageTimestamps()[slot] = Storage.state().getInt(UIKeys.INT_IMAGE_COUNTER);
+            getImageTimestamps()[slot] = UIState.getImageCounter();
             if (cachePool[slot] != null) {
                 return (Image) cachePool[slot];
             }
@@ -525,8 +527,8 @@ public final class XmppContactGroup extends ContactGroup {
                 throw new RuntimeException();
             }
             TextBox textBox = getTextInputBox();
-            textBox.setTitle(Storage.emptyStr);
-            textBox.setString(Storage.emptyStr);
+            textBox.setTitle(AppState.emptyStr);
+            textBox.setString(AppState.emptyStr);
             textBox.setCommandListener((CommandListener) null);
             textBox.setConstraints(constraints);
             textBox.setTitle(title);
@@ -536,75 +538,75 @@ public final class XmppContactGroup extends ContactGroup {
             textBox.setMaxSize(maxLength);
             textBox.setInitialInputMode((String) null);
         } catch (Throwable unused) {
-            Storage.state().setObject(UIKeys.OBJ_TEXT_BOX, new TextBox(title, initialText, maxLength, constraints));
+            UIState.setTextBox(new TextBox(title, initialText, maxLength, constraints));
         }
         removePrimaryCommand();
         removeSecondaryCommand();
         try {
             TextBox textBox2 = getTextInputBox();
             if (StringUtils.matchesKey(424, inputMode)) {
-                int fontSizeSetting = Storage.state().getInt(SettingsKeys.SETTING_FONT_SIZE_LIST);
+                int fontSizeSetting = SettingsState.getFontSizeList();
                 if (fontSizeSetting == 1) {
-                    textBox2.setInitialInputMode(Storage.resources().getString(StringResKeys.STR_INPUT_MODE_NUMERIC));
+                    textBox2.setInitialInputMode(ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_NUMERIC));
                 } else if (fontSizeSetting == 2) {
-                    textBox2.setInitialInputMode(Storage.resources().getString(StringResKeys.STR_INPUT_MODE_LATIN));
+                    textBox2.setInitialInputMode(ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_LATIN));
                 }
             } else {
                 textBox2.setInitialInputMode(inputMode);
             }
         } catch (Throwable unused2) {
         }
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_COMMAND_INDEX, okLabelKey);
-        Command command = new Command(Storage.state().getString(okLabelKey), Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN) ? 2 : 4, 0);
+        RuntimeState.setXmppCommandIndex(okLabelKey);
+        Command command = new Command(AppState.getString(okLabelKey), SettingsState.isFullscreen() ? 2 : 4, 0);
         removePrimaryCommand();
         getTextInputBox().addCommand(command);
-        Storage.state().setObject(RuntimeKeys.SLOT_XMPP_COMMAND_1, command);
+        RuntimeState.setXmppCommand1(command);
         setCommandLabel(cancelLabelKey);
         getTextInputBox().setCommandListener(commandListener);
-        Storage.state().setScreen(getTextInputBox());
+        AppState.setScreen(getTextInputBox());
     }
 
     public static final String getTextInputValue() {
         try {
             return Utils.defaultStr(StringUtils.intern(getTextInputBox().getString()));
         } catch (Throwable unused) {
-            return Storage.emptyStr;
+            return AppState.emptyStr;
         }
     }
 
     public static final void setTextInputScreen(int selectionIndex, int labelKey) {
-        if (Storage.state().getInt(RuntimeKeys.INT_XMPP_SELECTION_INDEX) == selectionIndex) {
+        if (RuntimeState.getXmppSelectionIndex() == selectionIndex) {
             setCommandLabel(labelKey);
-            Storage.state().setScreen(getTextInputBox());
+            AppState.setScreen(getTextInputBox());
         }
     }
 
     public static final TextBox getTextInputBox() {
-        return (TextBox) Storage.state().getObject(UIKeys.OBJ_TEXT_BOX);
+        return (TextBox) UIState.getTextBox();
     }
 
     private static final void removePrimaryCommand() {
-        Command command = (Command) Storage.state().getObject(RuntimeKeys.SLOT_XMPP_COMMAND_1);
+        Command command = (Command) RuntimeState.getXmppCommand1();
         if (command != null) {
             getTextInputBox().removeCommand(command);
         }
-        Storage.state().clearIndex(RuntimeKeys.SLOT_XMPP_COMMAND_1);
+        RuntimeState.clearXmppCommand1();
     }
 
     private static final void removeSecondaryCommand() {
-        Command command = (Command) Storage.state().getObject(RuntimeKeys.SLOT_XMPP_COMMAND_2);
+        Command command = (Command) RuntimeState.getXmppCommand2();
         if (command != null) {
             getTextInputBox().removeCommand(command);
         }
-        Storage.state().clearIndex(RuntimeKeys.SLOT_XMPP_COMMAND_2);
+        RuntimeState.clearXmppCommand2();
     }
 
     private static final void setCommandLabel(int labelKey) {
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_SELECTION_INDEX, labelKey);
-        Command command = new Command(Storage.state().getString(labelKey), Storage.state().getBool(SettingsKeys.SETTING_FULLSCREEN) ? 4 : 2, 1);
+        RuntimeState.setXmppSelectionIndex(labelKey);
+        Command command = new Command(AppState.getString(labelKey), SettingsState.isFullscreen() ? 4 : 2, 1);
         removeSecondaryCommand();
         getTextInputBox().addCommand(command);
-        Storage.state().setObject(RuntimeKeys.SLOT_XMPP_COMMAND_2, command);
+        RuntimeState.setXmppCommand2(command);
     }
 
     public static final void initializeMapData() {
@@ -738,31 +740,31 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     public static final void flagSyncRequired() {
-        synchronized (Storage.state().getVector(MapKeys.VEC_TILE_QUEUE)) {
-            Storage.state().setInt(UIKeys.FLAG_XMPP_ROSTER_LOADED, 1);
+        synchronized (MapState.getTileQueue()) {
+            UIState.setXmppRosterLoaded(true);
         }
     }
 
     public static final boolean checkAndClearSync() {
-        synchronized (Storage.state().getVector(MapKeys.VEC_TILE_QUEUE)) {
-            if (!Storage.state().getBool(UIKeys.FLAG_XMPP_ROSTER_LOADED)) {
+        synchronized (MapState.getTileQueue()) {
+            if (!UIState.isXmppRosterLoaded()) {
                 return false;
             }
-            synchronized (Storage.state().getVector(MapKeys.VEC_TILE_QUEUE)) {
-                Storage.state().setInt(UIKeys.FLAG_XMPP_ROSTER_LOADED, 0);
+            synchronized (MapState.getTileQueue()) {
+                UIState.setXmppRosterLoaded(false);
             }
             return true;
         }
     }
 
     public static final Object[] getContactInfoFromState(int stateKey) {
-        return addContactInfoToQueue(ApiClient.getUrlComponents(Storage.state().getString(stateKey)));
+        return addContactInfoToQueue(ApiClient.getUrlComponents(AppState.getString(stateKey)));
     }
 
     public static final Object[] addContactInfoToQueue(Object[] contactInfo) {
         RemoteLogger.log("XGRP", "addContactInfoToQueue");
         if (contactInfo != null) {
-            Vector queue = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
+            Vector queue = MapState.getTileQueue();
             synchronized (queue) {
                 if (!queue.contains(contactInfo)) {
                     queue.addElement(contactInfo);
@@ -775,7 +777,7 @@ public final class XmppContactGroup extends ContactGroup {
 
     public static final void removeContactInfoFromQueue(Object[] contactInfo) {
         if (contactInfo != null) {
-            Vector queue = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
+            Vector queue = MapState.getTileQueue();
             synchronized (queue) {
                 if (queue.contains(contactInfo)) {
                     queue.removeElement(contactInfo);
@@ -842,7 +844,7 @@ public final class XmppContactGroup extends ContactGroup {
                 MapPoint point = (MapPoint) points.elementAt(pi);
                 buffer.writeStringUTF16(point.name).writeLong(point.boundsMinLon).writeLong(point.boundsMinLat).writeLong(point.boundsMaxLon).writeLong(point.boundsMaxLat).writeLong(point.longitude).writeLong(point.latitude).writeIntLE(point.zoomLevel).writeIntLE(point.height).writeIntLE(point.objectCode).writeIntLE(point.typeCode);
             }
-            Storage.state().setObject(stateKey, (Object) buffer.toBase64());
+            AppState.setObject(stateKey, (Object) buffer.toBase64());
         } catch (Throwable unused) {
         }
     }
@@ -850,7 +852,7 @@ public final class XmppContactGroup extends ContactGroup {
     public static final Vector loadMapPoints(int stateKey) {
         Vector points = ObjectPool.newVector();
         try {
-            ByteBuffer buffer = Base64.decode(Storage.state().getString(stateKey));
+            ByteBuffer buffer = Base64.decode(AppState.getString(stateKey));
             if (buffer.length > 4) {
                 int count = buffer.readInt();
                 for (int pi = 0; pi < count; pi++) {

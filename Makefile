@@ -18,7 +18,7 @@ SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java' 
 
 # Editor (Maven project in editor/)
 
-.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys editor editor-build
+.PHONY: all compile jar clean resources screen-defs palette-keys gen-keys gen-screens gen-string-pool gen-palette gen-all editor editor-build
 
 all: jar
 
@@ -27,14 +27,10 @@ compile: $(BUILD)/.compiled
 # Resource generation from human-readable sources
 resources: $(BUILD)/.resources
 
-$(BUILD)/.resources: $(RESOURCES_SRC)/config.json \
-                     $(RESOURCES_SRC)/cities.xml $(RESOURCES_SRC)/images/mapping.json \
+$(BUILD)/.resources: $(RESOURCES_SRC)/cities.xml $(RESOURCES_SRC)/images/mapping.json \
                      $(RESOURCES_SRC)/blowfish_constants.bin
 	@mkdir -p $(RESOURCES_OUT)
 	cd editor && mvn -q compile
-	$(EDITOR) -Dexec.args="--gen-screens ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/ScreenDef.java"
-	$(EDITOR) -Dexec.args="--gen-palette ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/PaletteKeys.java"
-	$(EDITOR) -Dexec.args="--serialize ../$(RESOURCES_SRC) ../$(RESOURCES_OUT)/cfg"
 	tools/pack_cities.sh $(RESOURCES_OUT)
 	$(EDITOR) -Dexec.args="--pack-resources ../$(RESOURCES_SRC) ../$(RESOURCES_OUT)"
 	@touch $@
@@ -115,10 +111,24 @@ screen-defs: editor-build
 	$(EDITOR) -Dexec.args="--gen-screens ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/ScreenDef.java"
 
 palette-keys: editor-build
-	$(EDITOR) -Dexec.args="--gen-palette ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/PaletteKeys.java"
+	$(EDITOR) -Dexec.args="--gen-palette ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/key/PaletteKeys.java"
 
 gen-keys: editor-build
-	$(EDITOR) -Dexec.args="--gen-keys ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core"
+	$(EDITOR) -Dexec.args="--gen-keys ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/key"
+
+gen-screens: editor-build
+	$(EDITOR) -Dexec.args="--gen-screen-factory ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/ui"
+
+gen-string-pool: editor-build
+	$(EDITOR) -Dexec.args="--gen-string-pool ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/StringPool.java"
+
+gen-palette: editor-build
+	$(EDITOR) -Dexec.args="--gen-palette-class ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/ui/Palette.java"
+
+gen-pool-init: editor-build
+	$(EDITOR) -Dexec.args="--gen-pool-init ../$(RESOURCES_SRC) ../$(SRC)/com/trykote/mobileagent/core/PoolInit.java"
+
+gen-all: gen-screens gen-string-pool gen-palette palette-keys gen-keys gen-pool-init ## Regenerate all generated Java files
 
 editor-build:
 	cd editor && mvn -q compile

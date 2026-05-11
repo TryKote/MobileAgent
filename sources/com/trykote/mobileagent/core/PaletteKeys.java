@@ -6,11 +6,11 @@ package com.trykote.mobileagent.core;
 public final class PaletteKeys {
     private PaletteKeys() {}
 
-    public static final int COLORS_BASE = 4918;
-    public static final int GRADIENT_START = 5046;
-    public static final int MAP_FILL = 5054;
-    public static final int MAP_BORDER = 5062;
-    public static final int MAP_BG = 5070;
-    public static final int MAP_PULSE = 5078;
-    public static final int GRADIENT_END = 5086;
+    public static final int COLORS_BASE = 4799;
+    public static final int GRADIENT_START = 4927;
+    public static final int MAP_FILL = 4935;
+    public static final int MAP_BORDER = 4943;
+    public static final int MAP_BG = 4951;
+    public static final int MAP_PULSE = 4959;
+    public static final int GRADIENT_END = 4967;
 }

@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.net.*;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -39,7 +40,7 @@ public final class ByteBuffer {
     // --- Constructors ---
 
     public ByteBuffer() {
-        this.data = Storage.emptyBytes;
+        this.data = AppState.emptyBytes;
     }
 
     public ByteBuffer(HttpClient client) {
@@ -116,7 +117,7 @@ public final class ByteBuffer {
 
     public ByteBuffer clear() {
         ObjectPool.releaseBytes(this.data);
-        this.data = Storage.emptyBytes;
+        this.data = AppState.emptyBytes;
         this.length = 0;
         this.offset = 0;
         return this;
@@ -532,7 +533,7 @@ public final class ByteBuffer {
         int strLen = peekShortLE() - 1;
         if (strLen <= 0) {
             skip(3);
-            return Storage.emptyStr;
+            return AppState.emptyStr;
         }
         this.data[this.offset] = (byte) (strLen >> 8);
         this.data[this.offset + 1] = (byte) strLen;
@@ -559,7 +560,7 @@ public final class ByteBuffer {
 
     public String getStringAndClear() {
         String result = this.length == 0
-                ? Storage.emptyStr
+                ? AppState.emptyStr
                 : StringUtils.intern(new String(this.data, this.offset, this.length));
         clear();
         return result;
@@ -718,17 +719,25 @@ public final class ByteBuffer {
     // --- Packed string encoding (AppState integration) ---
 
     public ByteBuffer writeCompressed(int key) {
-        return key > Storage.PACKED_STRING_THRESHOLD
-                ? writeBytesAt(Storage.resources().getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16)
-                : writeBytes(Storage.state().getBytes(key));
+        if (key > AppState.PACKED_STRING_THRESHOLD) {
+            return writeBytesAt(ResourceAccessor.bytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16);
+        }
+        Object value = AppState.pool[key];
+        if (value instanceof byte[]) {
+            return writeBytes((byte[]) value);
+        }
+        if (value instanceof String) {
+            return writeCharBytes((String) value);
+        }
+        return this;
     }
 
     public ByteBuffer writeEncodedInt(int key) {
-        return writeRawString(Storage.state().getString(key));
+        return writeRawString(AppState.getString(key));
     }
 
     public ByteBuffer writeExtendedInt(int key) {
-        writeRawString(Storage.state().getString(key & 0xFFFF));
+        writeRawString(AppState.getString(key & 0xFFFF));
         int highByte = key >>> 16;
         if (highByte != 0) {
             writeByte(highByte);

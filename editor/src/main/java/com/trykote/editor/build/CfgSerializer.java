@@ -34,12 +34,6 @@ public class CfgSerializer {
         injectPalette(config, inputDir);
 
         List<JsonNode> pool = flattenZones(config);
-        long[] intPool = compileScreens(config);
-
-        if (intPool.length != SCREEN_DATA_SIZE) {
-            System.err.println("Warning: screen data size " + intPool.length
-                + ", expected " + SCREEN_DATA_SIZE);
-        }
 
         try (var out = new ByteArrayOutputStream()) {
             // Write object pool
@@ -72,10 +66,7 @@ public class CfgSerializer {
                 }
             }
 
-            // Write screen data (no header)
-            for (long v : intPool) {
-                writeIntLong(out, v);
-            }
+            // Screen data no longer written — loaded via generated Screens.java
 
             Files.write(outputCfg, out.toByteArray());
             System.out.println("Wrote " + outputCfg + " (" + Files.size(outputCfg) + " bytes)");
@@ -483,7 +474,7 @@ public class CfgSerializer {
         return result;
     }
 
-    private static byte[] rebuildPackedBlob(JsonNode obj) {
+    static byte[] rebuildPackedBlob(JsonNode obj) {
         JsonNode entries = obj.get("entries");
         if (entries == null) return new byte[0];
         var buf = new ByteArrayOutputStream();

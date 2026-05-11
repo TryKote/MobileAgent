@@ -2,6 +2,7 @@ package com.trykote.mobileagent.net;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -14,7 +15,7 @@ import com.trykote.mobileagent.util.*;
 public final class NetworkLock {
 
     public static final Object[] createSyncState() {
-        return (Object[]) Storage.state().getObject(SessionKeys.OBJ_CALLBACK_ARRAY);
+        return SessionState.getCallbackArray();
     }
 
     public static final void acquireNetworkLock() {

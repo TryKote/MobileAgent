@@ -2,6 +2,7 @@ package com.trykote.mobileagent.protocol;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -53,7 +54,7 @@ public final class ProtocolFactory {
             buffer.writeCompressed(fieldIndex + AUTH_FIELDS_BASE_KEY);
         }
         if (authSlot != 0) {
-            buffer.writeBytesAt(Storage.resources().getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, AUTH_SLOT_SIZE);
+            buffer.writeBytesAt(ResourceAccessor.bytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, AUTH_SLOT_SIZE);
         }
         return createMmpCommand(protocol, MmpCommand.EXTENDED_AUTH, buffer);
     }

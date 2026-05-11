@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.protocol.*;
@@ -23,6 +24,9 @@ public final class MrimProfileManager {
 
     // MRIM command: update geo visibility list
     private static final int CS_GEO_VISIBILITY = 4181;
+
+    public static MrimAccount pendingAccount;
+    public static String pendingUrl;
 
     private final MrimAccount account;
     public VCard profile;
@@ -58,7 +62,7 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_PUBLISHED;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(1, new String[0], this.profile);
         }
@@ -69,7 +73,7 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_HIDDEN;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, new String[0], this.profile);
         }
@@ -80,9 +84,9 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_CLEARED;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.photoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
             }
-            sendRename(new String[0], Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
+            sendRename(new String[0], ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
         }
     }
 
@@ -91,9 +95,9 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_WITH_GROUPS;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.prevPhotoUrls, Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.prevPhotoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
             } else if (i == LOCATION_PUBLISHED || i == LOCATION_HIDDEN) {
-                sendRename(new String[0], Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(new String[0], ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, this.profile.photoUrls, this.profile);
         }
@@ -128,8 +132,8 @@ public final class MrimProfileManager {
     public void setSimpleLocation(String str, String str2) {
         try {
             VCard vcard = this.profile;
-            String typeStr = Storage.resources().getString(PackedStringKeys.MRIM_MAPPOINT);
-            String str3 = Storage.emptyStr;
+            String typeStr = ResourceAccessor.str(PackedStringKeys.MRIM_MAPPOINT);
+            String str3 = AppState.emptyStr;
             vcard.setCardData(str2, str, typeStr, str3, str3, str3, str3, str3);
         } catch (Throwable unused) {
             this.profile.clearCoordinates();
@@ -142,9 +146,9 @@ public final class MrimProfileManager {
             VCard vcard = this.profile;
             String latStr = MapUtils.pixelToLatitude(mapPoint.latitude);
             String lonStr = MapUtils.pixelToLongitude(mapPoint.longitude);
-            String typeStr = Storage.resources().getString(PackedStringKeys.MRIM_MAPOBJECT);
+            String typeStr = ResourceAccessor.str(PackedStringKeys.MRIM_MAPOBJECT);
             String pointName = mapPoint.getDisplayName();
-            String str = Storage.emptyStr;
+            String str = AppState.emptyStr;
             vcard.setCardData(latStr, lonStr, typeStr, pointName, str, str, StringUtils.intern(Integer.toString(mapPoint.objectCode)), StringUtils.intern(Integer.toString(mapPoint.typeCode)));
         } catch (Throwable unused) {
             this.profile.clearCoordinates();
@@ -157,7 +161,7 @@ public final class MrimProfileManager {
             return 0;
         }
         String[] strArr2 = {vcard.latStr, vcard.lonStr, vcard.mapTypeStr, vcard.phone, vcard.email, vcard.nickname, vcard.address, vcard.zoomStr};
-        this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(Storage.resources().getString(PackedStringKeys.MRIM_GEO_POINT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
+        this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
         return 0;
     }
 
@@ -167,7 +171,7 @@ public final class MrimProfileManager {
 
     public static final void showPhotoSelector() {
         boolean z;
-        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         photoUrlList = account.profileManager.profile.photoUrls;
         Vector candidates = ObjectPool.newVector();
         Enumeration elements = account.contactMap.elements();
@@ -178,7 +182,7 @@ public final class MrimProfileManager {
             }
         }
         int size = candidates.size();
-        ListView screen = ScreenManager.createScreen(ScreenDef.CONTACT_INFO_EDITOR);
+        Screen screen = Screens.contactInfoEditor(null);
         contactIdList = ObjectPool.newVector();
         for (int i = 0; i < size; i++) {
             MrimContact mrimContact = (MrimContact) candidates.elementAt(i);
@@ -208,7 +212,7 @@ public final class MrimProfileManager {
                 selected.addElement(contactIdList.elementAt(i));
             }
         }
-        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         VCard profile = account.profileManager.profile;
         profile.prevPhotoUrls = profile.photoUrls;
         int size2 = selected.size();
@@ -231,5 +235,23 @@ public final class MrimProfileManager {
         }
         account.profileManager.setGroups();
         return 0;
+    }
+
+    public static void openUserProfile(MrimAccount account, String url) {
+        pendingAccount = account;
+        pendingUrl = url;
+    }
+
+    public static void clearPendingProfile() {
+        pendingAccount = null;
+        pendingUrl = null;
+    }
+
+    public static String getPendingDisplayText() {
+        Object obj = UIState.getPhotoCache1();
+        if (obj == null) {
+            return null;
+        }
+        return obj instanceof String ? (String) obj : ((MrimContact) obj).simpleIdentifier;
     }
 }

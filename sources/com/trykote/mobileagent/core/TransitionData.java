@@ -14,6 +14,6 @@ public final class TransitionData {
     }
 
     public static TransitionData get() {
-        return (TransitionData) Storage.state().getObject(UIKeys.OBJ_TRANSITION_DATA);
+        return UIState.getTransitionData();
     }
 }

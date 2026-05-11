@@ -2,6 +2,9 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.core.event.MenuItemEvent;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.handler.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
@@ -12,7 +15,7 @@ public final class ScreenBuilder {
     private static final int SOFT_KEY_DEFAULT_ACTION = 199;
     private static final int SOFT_KEY_NO_ACTION = 200;
 
-    public static final void openScreen(int i) {
+    public static void openScreen(int i) {
         Debug.assertState(i >= 0 && i <= MAX_SCREEN_ID, "screenId out of range: " + i);
         RemoteLogger.log("UI", "openScreen(" + i + ")");
         boolean z;
@@ -21,7 +24,7 @@ public final class ScreenBuilder {
         AppController.needsRepaint = true;
         while (true) {
             if (!ScreenManager.hasScreen(i)) {
-                Vector screenStack = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
+                Vector screenStack = UIState.getScreenStack();
                 int size = screenStack.size();
                 z = false;
                 while (--size >= 0) {
@@ -239,8 +242,8 @@ public final class ScreenBuilder {
                 ContactListManager.refreshContactList();
                 break;
         }
-        Storage.state().setInt(UIKeys.INT_SCREEN_ACTION, 0);
-        Vector screenStack = Storage.state().getVector(UIKeys.VEC_SCREEN_STACK);
+        UIState.setScreenAction(0);
+        Vector screenStack = UIState.getScreenStack();
         int size = screenStack.size() - 1;
         ListView closedScreen = (ListView) screenStack.elementAt(size);
         int closedScreenId = closedScreen.screenId;

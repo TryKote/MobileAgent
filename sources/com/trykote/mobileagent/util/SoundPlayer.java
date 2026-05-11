@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import javax.microedition.media.Manager;
@@ -18,17 +19,17 @@ public final class SoundPlayer {
         try {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCompressed(PackedStringKeys.MIDI_HEADER).writeCompressed(i + MIDI_NOTE_BASE_KEY).writeIntLE(MIDI_END_OF_TRACK).toByteArray());
             Object resource = IOUtils.registerResource((Object) byteArrayInputStream);
-            Storage.state().setObject(UIKeys.RANGE_MEDIA_RESOURCES_START, resource);
+            UIState.setMediaResource(resource);
             if (resource != null) {
-                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, Storage.resources().getString(PackedStringKeys.MIME_TYPE_MIDI));
-                Storage.state().setObject(UIKeys.OBJ_MEDIA_PLAYER, IOUtils.registerResource(playerCreatePlayer));
+                Player playerCreatePlayer = Manager.createPlayer(byteArrayInputStream, ResourceAccessor.str(PackedStringKeys.MIME_TYPE_MIDI));
+                UIState.setMediaPlayer(IOUtils.registerResource(playerCreatePlayer));
                 try {
                     playerCreatePlayer.realize();
                 } catch (Throwable unused) {
                 }
-                if (Storage.state().getBool(SettingsKeys.SETTING_SOUND_ENABLED)) {
+                if (SettingsState.isSoundEnabled()) {
                     try {
-                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(Storage.resources().getString(PackedStringKeys.MIDP_VOLUME_CONTROL))).setLevel(Storage.state().getInt(SettingsKeys.SETTING_VOLUME_LEVEL));
+                        ((javax.microedition.media.control.VolumeControl) playerCreatePlayer.getControl(ResourceAccessor.str(PackedStringKeys.MIDP_VOLUME_CONTROL))).setLevel(SettingsState.getVolumeLevel());
                     } catch (Throwable unused2) {
                     }
                 }
@@ -47,7 +48,7 @@ public final class SoundPlayer {
     }
 
     private static final void stopSound() {
-        Player player = (Player) Storage.state().getObject(UIKeys.OBJ_MEDIA_PLAYER);
+        Player player = (Player) UIState.getMediaPlayer();
         if (player != null) {
             IOUtils.unregisterResource(player);
             try {
@@ -59,8 +60,8 @@ public final class SoundPlayer {
             } catch (Throwable unused2) {
             }
         }
-        IOUtils.closeInput((InputStream) Storage.state().getObject(UIKeys.RANGE_MEDIA_RESOURCES_START));
-        Storage.state().clearRange(UIKeys.RANGE_MEDIA_RESOURCES_START, UIKeys.OBJ_MEDIA_PLAYER);
+        IOUtils.closeInput((InputStream) UIState.getMediaResource());
+        UIState.clearMediaRange();
     }
 
     public static final void checkSoundTimer() {

@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.map;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -108,12 +109,12 @@ public abstract class MapRenderer {
     public static int rippleY;
 
     public static final void invalidate() {
-        Storage.state().setBool(MapKeys.FLAG_TILE_CACHE_ENABLED, false);
+        MapState.setTileCacheEnabled(false);
         needsRedraw = true;
     }
 
     private static final Image createCheckerboard() {
-        Image cachedImage = Storage.state().getImage(MapKeys.OBJ_FONT_1);
+        Image cachedImage = (Image) MapState.getFont1();
         if (cachedImage != null) {
             return cachedImage;
         }
@@ -129,7 +130,7 @@ public abstract class MapRenderer {
             i2 += 2;
             i ^= 2;
         }
-        Storage.state().setObject(MapKeys.OBJ_FONT_1, image);
+        MapState.setFont1(image);
         return image;
     }
     public static final void render() {
@@ -175,14 +176,14 @@ public abstract class MapRenderer {
             int i13 = (int) ((((i9 << 7) + HALF_TILE) - currentPixelX) + (viewportWidth / 2));
             int i14 = (int) (viewportHeight - ((((i10 << 7) + HALF_TILE) - currentPixelY) + (viewportHeight / 2)));
             Vector visibleTiles = ObjectPool.newVector();
-            Graphics graphics = Storage.state().getImage(MapKeys.OBJ_FONT_2).getGraphics();
-            int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+            Graphics graphics = ((Image) MapState.getFont2()).getGraphics();
+            int zoomLevel = MapState.getZoomLevel();
             for (int i15 = i9; i15 <= i11; i15++) {
                 for (int i16 = i10; i16 <= i12; i16++) {
                     TileRequest tile = new TileRequest(TileRequest.TYPE_MAP, zoomLevel, i15, i16);
                     TileRequest overlayTile = null;
                     visibleTiles.addElement(tile);
-                    if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && zoomLevel > SKIP_ZOOM_LEVEL && Storage.state().getBool(MapKeys.MAP_GPS_ENABLED) && StringUtils.isInSavedRegion(currentLon, currentLat)) {
+                    if (ContactState.isListActive() && zoomLevel > SKIP_ZOOM_LEVEL && MapState.isGpsEnabled() && StringUtils.isInSavedRegion(currentLon, currentLat)) {
                         TileRequest newOverlayTile = new TileRequest(TileRequest.TYPE_OVERLAY, zoomLevel, i15, i16);
                         overlayTile = newOverlayTile;
                         visibleTiles.addElement(newOverlayTile);
@@ -196,7 +197,7 @@ public abstract class MapRenderer {
                     if (overlayTile != null && tileImage != createCheckerboard()) {
                         if (overlayImage != null) {
                             graphics.drawImage(overlayImage, i13 + (TILE_SIZE * (i15 - i9)), i14 - (TILE_SIZE * (i16 - i10)), 3);
-                        } else if (overlayImage == null && !Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_1).contains(overlayTile)) {
+                        } else if (overlayImage == null && !RuntimeState.getSearchParams1().contains(overlayTile)) {
                             int i17 = i13 + (TILE_SIZE * (i15 - i9));
                             int i18 = i14 - (TILE_SIZE * (i16 - i10));
                             int color = graphics.getColor();
@@ -205,7 +206,7 @@ public abstract class MapRenderer {
                             graphics.drawRect((i17 - HALF_TILE) + 2, (i18 - HALF_TILE) + 2, TILE_SIZE - 4, TILE_SIZE - 4);
                             graphics.setStrokeStyle(0);
                             graphics.setColor(color);
-                            if (Storage.state().getBool(UIKeys.FLAG_SUPPORTS_ALPHA) && Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE)) {
+                            if (UIState.isSupportsAlpha() && MapState.isMapOverlayActive()) {
                                 int[] iArr = new int[TILE_SIZE];
                                 for (int i19 = TILE_SIZE - 1; i19 >= 0; i19--) {
                                     iArr[i19] = MISSING_TILE_OVERLAY_ARGB;
@@ -218,16 +219,16 @@ public abstract class MapRenderer {
                     }
                 }
             }
-            Vector loadedTiles = Storage.state().getVector(MapKeys.SLOT_MAP_DATA);
+            Vector loadedTiles = MapState.getMapData();
             int size3 = visibleTiles.size();
             for (int i21 = 0; i21 < size3; i21++) {
                 TileRequest visibleTile = (TileRequest) visibleTiles.elementAt(i21);
                 if (!loadedTiles.contains(visibleTile)) {
                     int i22 = visibleTile.tileType;
                     if (i22 == TileRequest.TYPE_MAP) {
-                        Storage.state().addInt(MapKeys.COUNTER_MAP_CACHE_HIT, 1);
+                        MapState.addCacheHit();
                     } else if (i22 == TileRequest.TYPE_OVERLAY) {
-                        Storage.state().addInt(MapKeys.COUNTER_MAP_CACHE_MISS, 1);
+                        MapState.addCacheMiss();
                     }
                     loadedTiles.addElement(visibleTile);
                 }
@@ -237,7 +238,7 @@ public abstract class MapRenderer {
                     loadedTiles.removeElementAt(idx);
                 }
             }
-            Vector currentTiles = Storage.state().getVector(RuntimeKeys.OBJ_SEARCH_PARAMS_2);
+            Vector currentTiles = RuntimeState.getSearchParams2();
             synchronized (currentTiles) {
                 currentTiles.removeAllElements();
                 int size5 = visibleTiles.size();
@@ -246,7 +247,7 @@ public abstract class MapRenderer {
                 }
                 ObjectPool.releaseVector(visibleTiles);
             }
-            Vector infoLabels = Storage.state().getVector(MapKeys.VEC_TILE_QUEUE);
+            Vector infoLabels = MapState.getTileQueue();
             synchronized (infoLabels) {
                 int size6 = infoLabels.size();
                 if (size6 > 0) {
@@ -262,14 +263,14 @@ public abstract class MapRenderer {
                     }
                     Font font = graphics.getFont();
                     int color2 = graphics.getColor();
-                    Font labelFont = Storage.state().getFont();
+                    Font labelFont = UIState.getFont();
                     graphics.setFont(labelFont);
-                    int colorScheme = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
-                    graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + colorScheme));
+                    int colorScheme = SettingsState.getColorTheme();
+                    graphics.setColor(Palette.getColor(colorScheme, Palette.MAP_FILL));
                     int labelWidth = labelFont.stringWidth(str) + LABEL_PADDING;
-                    int labelHeight = Storage.state().getInt(UIKeys.INT_FONT_HEIGHT);
+                    int labelHeight = UIState.getFontHeight();
                     graphics.fillRoundRect(LABEL_MARGIN, LABEL_MARGIN, labelWidth, labelHeight, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
-                    graphics.setColor(Storage.state().getInt(PaletteKeys.COLORS_BASE + colorScheme));
+                    graphics.setColor(Palette.getColor(colorScheme, Palette.TEXT));
                     graphics.drawRoundRect(LABEL_MARGIN, LABEL_MARGIN, labelWidth, labelHeight, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
                     graphics.drawString(str, LABEL_PADDING, LABEL_MARGIN, 20);
                     graphics.setFont(font);
@@ -280,7 +281,7 @@ public abstract class MapRenderer {
             long j3 = currentPixelY;
             int i26 = viewportWidth;
             int i27 = viewportHeight;
-            if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && !XmppContactGroup.isMapDataRecent() && zoomLevel >= MIN_OVERLAY_ZOOM && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
+            if (ContactState.isListActive() && !XmppContactGroup.isMapDataRecent() && zoomLevel >= MIN_OVERLAY_ZOOM && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
                 long j4 = (j2 - (i26 / 2)) / CLUSTER_CELL_SIZE;
                 long j5 = (j3 - (i26 / 2)) / CLUSTER_CELL_SIZE;
                 long j6 = (j2 + (i26 / 2)) / CLUSTER_CELL_SIZE;
@@ -320,7 +321,7 @@ public abstract class MapRenderer {
                     }
                 }
                 if (str2 != null) {
-                    ChatRenderer.renderTooltip(graphics, str2, Storage.state().getFont(), i26 - (TOOLTIP_PROXIMITY * 2), i29, height);
+                    ChatRenderer.renderTooltip(graphics, str2, UIState.getFont(), i26 - (TOOLTIP_PROXIMITY * 2), i29, height);
                 }
             }
             MapPoint selectedPoint = selectedMapPoint;
@@ -374,9 +375,9 @@ public abstract class MapRenderer {
             long j15 = currentPixelY;
             int i41 = viewportWidth;
             int i42 = viewportHeight;
-            if (Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE) && Storage.state().getBool(MapKeys.FLAG_MAP_DATA_LOADED) && !XmppContactGroup.isMapDataRecent() && (poiVector = Storage.state().getVector(UIKeys.OBJ_HTTP_CALLBACK)) != null && (size = poiVector.size()) != 0) {
+            if (MapState.isMapViewActive() && MapState.isMapDataLoaded() && !XmppContactGroup.isMapDataRecent() && (poiVector = (Vector) UIState.getHttpCallback()) != null && (size = poiVector.size()) != 0) {
                 ListItem nearestPoi = null;
-                int currentZoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+                int currentZoom = MapState.getZoomLevel();
                 for (int i43 = 0; i43 < size; i43++) {
                     ListItem poiItem = (ListItem) poiVector.elementAt(i43);
                     if (poiItem.isSelected() && currentZoom == poiItem.getCommandCount()) {
@@ -410,7 +411,7 @@ public abstract class MapRenderer {
             long j17 = currentPixelY;
             int i47 = viewportWidth;
             int i48 = viewportHeight;
-            if (Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE) && Storage.state().getBool(MapKeys.FLAG_MAP_ROUTE_SEARCH) && !XmppContactGroup.isMapDataRecent()) {
+            if (MapState.isMapViewActive() && MapState.isRouteSearch() && !XmppContactGroup.isMapDataRecent()) {
                 Vector mapContacts = ContactListManager.getMapContacts();
                 int size7 = mapContacts.size();
                 if (size7 > 0) {
@@ -486,8 +487,8 @@ public abstract class MapRenderer {
             long j23 = currentPixelY;
             int i57 = viewportWidth;
             int i58 = viewportHeight;
-            if (Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE) && Storage.state().getBool(MapKeys.FLAG_MAP_POI_SEARCH) && !XmppContactGroup.isMapDataRecent()) {
-                Storage.state().setInt(MapKeys.FLAG_MAP_TILES_PENDING, 0);
+            if (MapState.isMapViewActive() && MapState.isPoiSearch() && !XmppContactGroup.isMapDataRecent()) {
+                MapState.setTilesPending(false);
                 Vector mapProfiles = ContactListManager.getMapProfiles();
                 int size8 = mapProfiles.size();
                 if (size8 != 0) {
@@ -511,9 +512,9 @@ public abstract class MapRenderer {
                         if (nearestProfile != null) {
                             showTooltip(nearestProfile);
                             if (nearestProfile.profileManager.profile.dirty) {
-                                Storage.state().setInt(MapKeys.FLAG_MAP_TILES_PENDING, 1);
+                                MapState.setTilesPending(true);
                             }
-                            Storage.state().setAccount(nearestProfile);
+                            AppState.setAccount(nearestProfile);
                         } else {
                             hideTooltip();
                         }
@@ -525,7 +526,7 @@ public abstract class MapRenderer {
             long j25 = currentPixelY;
             int i62 = viewportWidth;
             int i63 = viewportHeight;
-            if (Storage.state().getBool(MapKeys.FLAG_MAP_VIEW_ACTIVE) && !XmppContactGroup.isMapDataRecent() && (item = MapController.activeMapItem) != null) {
+            if (MapState.isMapViewActive() && !XmppContactGroup.isMapDataRecent() && (item = MapController.activeMapItem) != null) {
                 long activePixelX = item.getCommandId(zoomLevel);
                 long activePixelY = item.executeCommand(zoomLevel);
                 graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (activePixelX - j24)), (int) ((i63 / 2) + (j25 - activePixelY)), 3);
@@ -538,7 +539,7 @@ public abstract class MapRenderer {
             ChatRenderer.renderMarker(graphics, currentPixelX, currentPixelY, zoomLevel, viewportWidth, viewportHeight, currentLat);
             int i64 = viewportWidth / 2;
             int i65 = viewportHeight / 2;
-            if (crosshairVisible || Storage.state().getBool(MapKeys.FLAG_MAP_LOADING)) {
+            if (crosshairVisible || MapState.isMapLoading()) {
                 int color3 = graphics.getColor();
                 graphics.setColor(0);
                 graphics.fillRect(i64 - 1, i65 - (CROSSHAIR_ARM_LENGTH + CROSSHAIR_GAP), 2, CROSSHAIR_ARM_LENGTH);
@@ -550,7 +551,7 @@ public abstract class MapRenderer {
             long j26 = currentLon;
             long j27 = currentLat;
             GeoRegion bestRegion = null;
-            Vector regions = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
+            Vector regions = MapState.getMapPoints();
             for (int idx = regions.size() - 1; idx >= 0; idx--) {
                 GeoRegion region = (GeoRegion) regions.elementAt(idx);
                 if (region.containsPoint(j26, j27) && region.zoomLevel != -1) {
@@ -563,8 +564,8 @@ public abstract class MapRenderer {
                 }
             }
             GeoRegion activeRegion = bestRegion;
-            if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE)) {
-                boolean showDetails = Storage.state().getBool(SettingsKeys.SETTING_CUSTOM_VIEW_MODE);
+            if (ContactState.isListActive()) {
+                boolean showDetails = SettingsState.getCustomViewMode() != 0;
                 int clipWidth = showDetails ? graphics.getClipWidth() - 4 : MIN_STATUS_BAR_HEIGHT;
                 int i66 = -1;
                 int i67 = 0;
@@ -587,7 +588,7 @@ public abstract class MapRenderer {
                 }
                 if (ChatRenderer.offsetX != i || ChatRenderer.offsetY != i2) {
                     int i69 = i66;
-                    StringBuffer sb = ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_MAP_INFO_PREFIX));
+                    StringBuffer sb = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MAP_INFO_PREFIX));
                     if (i69 < 0 || activeRegion == null) {
                         i3 = 975;
                     } else {
@@ -596,22 +597,22 @@ public abstract class MapRenderer {
                             i3 = i69 % 10 == 1 ? 977 : (i69 % 10 <= 1 || i69 % 10 >= 5) ? 976 : 978;
                         }
                     }
-                    Storage.state().setObject(MapKeys.SLOT_XMPP_SESSION_ID, (Object) ObjectPool.toStringAndRelease(sb.append(Storage.state().getString(i3))));
+                    MapState.setXmppSessionId(ObjectPool.toStringAndRelease(sb.append(AppState.getString(i3))));
                     ChatRenderer.offsetX = i;
                     ChatRenderer.offsetY = i2;
                 }
-                String zoomText = Storage.state().getString(MapKeys.SLOT_XMPP_SESSION_ID);
+                String zoomText = MapState.getXmppSessionId();
                 Font font2 = graphics.getFont();
                 int color4 = graphics.getColor();
-                Font zoomFont = Storage.state().getFont();
+                Font zoomFont = UIState.getFont();
                 graphics.setFont(zoomFont);
-                int fontHeight = Storage.state().getInt(UIKeys.INT_FONT_HEIGHT);
-                int schemeIndex = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
-                int borderColor = Storage.state().getInt(PaletteKeys.COLORS_BASE + schemeIndex);
+                int fontHeight = UIState.getFontHeight();
+                int schemeIndex = SettingsState.getColorTheme();
+                int borderColor = Palette.getColor(schemeIndex, Palette.TEXT);
                 int i70 = fontHeight > MIN_STATUS_BAR_HEIGHT ? fontHeight : MIN_STATUS_BAR_HEIGHT;
                 int clipHeight = (graphics.getClipHeight() - i70) - 1;
                 if (showDetails) {
-                    graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + schemeIndex));
+                    graphics.setColor(Palette.getColor(schemeIndex, Palette.MAP_FILL));
                     graphics.fillRoundRect(2, clipHeight, clipWidth, i70, LABEL_CORNER_RADIUS, LABEL_CORNER_RADIUS);
                 }
                 graphics.setColor(borderColor);
@@ -647,20 +648,20 @@ public abstract class MapRenderer {
                 if (elapsed >= RIPPLE_DELAY_MS) {
                     int i74 = elapsed < RIPPLE_STEP_1_MS ? RIPPLE_SIZE_1 : elapsed < RIPPLE_STEP_2_MS ? RIPPLE_SIZE_2 : elapsed < RIPPLE_STEP_3_MS ? RIPPLE_SIZE_3 : RIPPLE_SIZE_4;
                     int color5 = graphics.getColor();
-                    graphics.setColor(Storage.state().getInt(PaletteKeys.MAP_FILL + Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME)));
+                    graphics.setColor(Palette.getColor(SettingsState.getColorTheme(), Palette.MAP_FILL));
                     int i75 = i74;
                     graphics.fillArc(i72 - (i74 / 2), i73 - (i74 / 2), i75, i74, 0, 360);
                     graphics.setColor(color5);
                     j = i75;
                 }
             }
-            Storage.state().setInt(MapKeys.FLAG_MAP_SCROLLING, 1);
+            MapState.setScrolling(true);
             if (rippleTimestamp == 0) {
                 needsRedraw = false;
             }
         }
         if (TimerManager.checkTimer(11, TILE_RETRY_INTERVAL_MS)) {
-            Storage.state().setInt(MapKeys.FLAG_TILES_READY, 0);
+            MapState.setTilesReady(false);
         }
         Vector vector2 = animationSteps;
         synchronized (vector2) {
@@ -677,13 +678,13 @@ public abstract class MapRenderer {
         if (autoScrollCount > 0 && !crosshairVisible) {
             long scrollNow = System.currentTimeMillis();
             if (scrollNow - autoScrollTimestamp > ANIMATION_FRAME_INTERVAL_MS) {
-                int scrollZoom = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+                int scrollZoom = MapState.getZoomLevel();
                 setPosition(currentLon, currentLat + ((MapUtils.getZoomNumerator(scrollZoom) / MapUtils.getZoomDenominator(scrollZoom)) * 9));
                 autoScrollCount -= 9;
                 autoScrollTimestamp = scrollNow;
             }
         }
-        if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE) && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > MAP_DATA_REFRESH_INTERVAL_MS && Storage.state().getBool(UIKeys.FLAG_PHOTO_REGISTRY_READY) && Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE) && !NetworkLock.isNetworkBusy()) {
+        if (ContactState.isListActive() && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > MAP_DATA_REFRESH_INTERVAL_MS && UIState.isPhotoRegistryReady() && MapState.isMapOverlayActive() && !NetworkLock.isNetworkBusy()) {
             XmppContactGroup.initializeMapData();
         }
     }
@@ -693,16 +694,16 @@ public abstract class MapRenderer {
         if (j2 == currentLat && j == currentLon) {
             return;
         }
-        int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoomLevel = MapState.getZoomLevel();
         synchronized (syncLock) {
             currentLat = j2;
-            Storage.state().setLong(MapKeys.MAP_LATITUDE, 37L);
+            MapState.setLatitude(37L);
             currentLon = j;
-            Storage.state().setLong(MapKeys.MAP_LONGITUDE, j);
+            MapState.setLongitude(j);
             currentPixelX = MapUtils.coordToPixel(j, zoomLevel);
             currentPixelY = MapUtils.coordToPixel(j2, zoomLevel);
             GeoRegion prevRegion = currentRegion;
-            Vector regionList = Storage.state().getVector(MapKeys.VEC_MAP_POINTS);
+            Vector regionList = MapState.getMapPoints();
             bestRegion = null;
             for (int idx = Utils.vectorSize(regionList) - 1; idx >= 0; idx--) {
                 GeoRegion candidate = (GeoRegion) regionList.elementAt(idx);
@@ -713,7 +714,7 @@ public abstract class MapRenderer {
             }
             GeoRegion activeRegion = bestRegion;
             if (prevRegion != bestRegion) {
-                if (Storage.state().getBool(ContactKeys.FLAG_CONTACT_LIST_ACTIVE)) {
+                if (ContactState.isListActive()) {
                     XmppContactGroup.initializeMapData();
                 }
                 currentRegion = activeRegion;
@@ -732,13 +733,13 @@ public abstract class MapRenderer {
     }
 
     public static final void setZoom(int i) {
-        int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoomLevel = MapState.getZoomLevel();
         if (i == zoomLevel || i < MIN_ZOOM || i > MAX_ZOOM) {
             return;
         }
         int clampedZoom = clampZoom(i);
         int i2 = clampedZoom != SKIP_ZOOM_LEVEL ? clampedZoom : zoomLevel < clampedZoom ? SKIP_ZOOM_LEVEL + 1 : SKIP_ZOOM_LEVEL - 1;
-        Storage.state().setInt(MapKeys.MAP_ZOOM_LEVEL, i2);
+        MapState.setZoomLevel(i2);
         currentPixelX = MapUtils.coordToPixel(currentLon, i2);
         currentPixelY = MapUtils.coordToPixel(currentLat, i2);
         resetInteraction();
@@ -753,7 +754,7 @@ public abstract class MapRenderer {
     }
 
     public static final void confirmMapPoint(MapPoint mapPoint) {
-        if (Storage.state().getBool(MapKeys.FLAG_MAP_MODE_ACTIVE)) {
+        if (MapState.isMapModeActive()) {
             MmpContact.setSecondToken(mapPoint.longitude, mapPoint.latitude);
         } else {
             MmpContact.setFirstToken(mapPoint.longitude, mapPoint.latitude);
@@ -763,7 +764,7 @@ public abstract class MapRenderer {
             Conversation.loadContacts();
         }
         mapPoint.markInactive();
-        Storage.state().setInt(UIKeys.FLAG_NEW_MESSAGE, 0);
+        UIState.setNewMessage(0);
     }
 
     public static final void navigateToMapPoint(MapPoint mapPoint) {
@@ -841,7 +842,7 @@ public abstract class MapRenderer {
                 tapConsumed = true;
                 return;
             } else {
-                int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+                int zoomLevel = MapState.getZoomLevel();
                 animateTo((int) MapUtils.pixelToCoord(screenToTileX(i), zoomLevel), (int) MapUtils.pixelToCoord(screenToTileY(i2), zoomLevel));
             }
         }
@@ -851,7 +852,7 @@ public abstract class MapRenderer {
     public static final void onDrag(int i, int i2) {
         tapConsumed = true;
         rippleTimestamp = 0L;
-        int zoomLevel = Storage.state().getInt(MapKeys.MAP_ZOOM_LEVEL);
+        int zoomLevel = MapState.getZoomLevel();
         setPosition((int) MapUtils.pixelToCoord(screenToTileX(i), zoomLevel), (int) MapUtils.pixelToCoord(screenToTileY(i2), zoomLevel));
         needsRedraw = true;
     }
@@ -859,11 +860,11 @@ public abstract class MapRenderer {
     public static void paintOverlay(GraphicsContext g, int mapX, int mapY, int width, int height) {
         g.setClip(mapX, mapY, width, height);
         try {
-            int viewportW = Storage.state().getInt(MapKeys.MAP_VIEWPORT_WIDTH);
-            int viewportH = Storage.state().getInt(MapKeys.MAP_VIEWPORT_HEIGHT);
+            int viewportW = MapState.getViewportWidth();
+            int viewportH = MapState.getViewportHeight();
             Graphics gfx = g.graphics;
-            gfx.drawImage(Storage.state().getImage(MapKeys.OBJ_FONT_2), viewportW >> 1, mapY + (viewportH >> 1), 3);
-            if (!Storage.state().getBool(MapKeys.FLAG_MAP_OVERLAY_ACTIVE) && Storage.state().getBool(UIKeys.FLAG_SUPPORTS_ALPHA)) {
+            gfx.drawImage((Image) MapState.getFont2(), viewportW >> 1, mapY + (viewportH >> 1), 3);
+            if (!MapState.isMapOverlayActive() && UIState.isSupportsAlpha()) {
                 int[] overlay = new int[viewportW];
                 for (int col = viewportW - 1; col >= 0; col--) {
                     overlay[col] = 1006632960;
@@ -874,6 +875,6 @@ public abstract class MapRenderer {
             }
         } catch (Throwable unused) {
         }
-        Storage.state().setInt(MapKeys.FLAG_MAP_SCROLLING, 0);
+        MapState.setScrolling(false);
     }
 }

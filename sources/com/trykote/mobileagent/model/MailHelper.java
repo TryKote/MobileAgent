@@ -2,6 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -143,8 +144,8 @@ public final class MailHelper {
     }
 
     public static final void setMailAction(int action, int actionType) {
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION, action);
-        Storage.state().setInt(RuntimeKeys.INT_XMPP_ACTION_TYPE, actionType);
+        RuntimeState.setXmppAction(action);
+        RuntimeState.setXmppActionType(actionType);
     }
 
     public static final int processMailResponse() {
@@ -161,8 +162,8 @@ public final class MailHelper {
         if (validationResult != 0) {
             return validationResult;
         }
-        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
-        ChatRoom chatRoom = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID));
+        String messageId = RuntimeState.getMessageId();
+        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId());
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(Message.FLAG_UNREAD);
         Object jsonPayload = ApiClient.getJsonPayload();
@@ -176,7 +177,7 @@ public final class MailHelper {
         message.attachments = attachments;
         String rawBody = (String) JsonParser.getValueByInt(jsonPayload, 919493);
         if (rawBody == null) {
-            bodyText = Storage.emptyStr;
+            bodyText = AppState.emptyStr;
         } else {
             StringBuffer sb = ObjectPool.newStringBuffer();
             int length = rawBody.length();
@@ -207,18 +208,18 @@ public final class MailHelper {
     }
 
     private static final int handleMailRedirect() {
-        int action = Storage.state().getInt(RuntimeKeys.INT_XMPP_ACTION);
+        int action = RuntimeState.getXmppAction();
         if (action == ACTION_COMPOSE_REPLY) {
-            Message message = ((MrimAccount) Storage.state().getAccount()).chatRoomManager.findById(Storage.state().getInt(ChatKeys.INT_CHATROOM_ID)).getMessage(Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID));
+            Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId()).getMessage(RuntimeState.getMessageId());
             Vector toList = message.getToList();
             Vector ccList = message.getCcList();
             getFirstRecipient(toList);
             String subject = message.getSubject();
             String body = message.body;
-            String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
-            String fwdPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
-            String quotedBody = new StringBuffer().append(Storage.resources().getString(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(body)).toString();
-            switch (Storage.state().getInt(RuntimeKeys.INT_XMPP_ACTION_TYPE)) {
+            String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
+            String fwdPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
+            String quotedBody = new StringBuffer().append(ResourceAccessor.str(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(body)).toString();
+            switch (RuntimeState.getXmppActionType()) {
                 case 0:
                     composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), quotedBody);
                     break;
@@ -237,19 +238,19 @@ public final class MailHelper {
     }
 
     public static final int handleMailMenuAction(String str, int actionCode) {
-        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
+        String messageId = RuntimeState.getMessageId();
         wrapInVector(messageId);
-        int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
-        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        int chatRoomId = ChatState.getChatRoomId();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         getFirstRecipient(toList);
-        boolean needsAuth = Storage.state().getBool(SettingsKeys.SETTING_AUTH_REQUIRED);
-        String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
-        String forwardPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
-        String body = Storage.emptyStr;
+        boolean needsAuth = SettingsState.isAuthRequired();
+        String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
+        String body = AppState.emptyStr;
         if (actionCode == ACTION_CLOSE_AND_OPEN) {
             ScreenBuilder.onScreenClosed();
             ScreenBuilder.onScreenClosed();
@@ -276,31 +277,31 @@ public final class MailHelper {
             return 0;
         }
         if (StringUtils.matchesKey(855, str)) {
-            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, VIEW_MODE_DETAIL);
+            ChatState.setChatViewMode(VIEW_MODE_DETAIL);
             return 0;
         }
         if (StringUtils.matchesKey(856, str)) {
-            Storage.state().setInt(ChatKeys.INT_CHAT_VIEW_MODE, VIEW_MODE_LIST);
+            ChatState.setChatViewMode(VIEW_MODE_LIST);
             return 0;
         }
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        Storage.state().setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+        ChatState.setActiveChatRoomId(account.chatRoomManager.findDefault().id);
         return 0;
     }
 
     public static final int handleMailForwardAction(String str) {
-        String messageId = Storage.state().getString(RuntimeKeys.SLOT_MESSAGE_ID);
-        int chatRoomId = Storage.state().getInt(ChatKeys.INT_CHATROOM_ID);
-        MrimAccount account = (MrimAccount) Storage.state().getAccount();
+        String messageId = RuntimeState.getMessageId();
+        int chatRoomId = ChatState.getChatRoomId();
+        MrimAccount account = (MrimAccount) AppState.getAccount();
         Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String replyPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_REPLY);
-        String forwardPrefix = Storage.resources().getString(PackedStringKeys.PREFIX_FORWARD);
-        String currentLogin = ((MrimAccount) Storage.state().getAccount()).login;
+        String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
+        String currentLogin = ((MrimAccount) AppState.getAccount()).login;
         wrapInVector(messageId);
         if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
@@ -316,7 +317,7 @@ public final class MailHelper {
             if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
-            Storage.state().setInt(ChatKeys.INT_ACTIVE_CHATROOM_ID, account.chatRoomManager.findDefault().id);
+            ChatState.setActiveChatRoomId(account.chatRoomManager.findDefault().id);
             return 0;
         }
         ScreenBuilder.onScreenClosed();
@@ -344,17 +345,17 @@ public final class MailHelper {
 
     public static int composeEmail(Vector recipients, String subject, String bodyText) {
         StringBuffer recipientsSb = ObjectPool.newStringBuffer();
-        String empty = Storage.emptyStr;
+        String empty = AppState.emptyStr;
         String separator = ObjectPool.unpackChars(8236);
         int i = 0;
         while (i < Utils.vectorSize(recipients)) {
             recipientsSb.append(i > 0 ? separator : empty).append(((String[]) recipients.elementAt(i))[0]);
             i++;
         }
-        Storage.state().setObject(RuntimeKeys.SLOT_MSG_EXTRA_2, (Object) ObjectPool.toStringAndRelease(recipientsSb));
-        Storage.state().setObject(RuntimeKeys.SLOT_MSG_EXTRA_3, (Object) Utils.defaultStr(subject));
-        String emptyStr = Storage.emptyStr;
-        Storage.state().setFromBuffer(RuntimeKeys.SLOT_TRAFFIC_STATUS_TEXT, ObjectPool.newStringBuffer().append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_ENABLED) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : emptyStr).append(Storage.state().getBool(SettingsKeys.SETTING_TRAFFIC_INFO_TYPE) ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : emptyStr).append(Utils.defaultStr(bodyText)).append(Storage.resources().getString(StringResKeys.STR_TRAFFIC_LABEL)));
+        RuntimeState.setMsgExtra2(ObjectPool.toStringAndRelease(recipientsSb));
+        RuntimeState.setMsgExtra3(Utils.defaultStr(subject));
+        String emptyStr = AppState.emptyStr;
+        RuntimeState.setTrafficStatusText(ObjectPool.newStringBuffer().append(SettingsState.isTrafficInfoEnabled() ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : emptyStr).append(SettingsState.getTrafficInfoType() != 0 ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : emptyStr).append(Utils.defaultStr(bodyText)).append(ResourceAccessor.str(StringResKeys.STR_TRAFFIC_LABEL)));
         return ScreenId.COMPOSE_MESSAGE;
     }
 }

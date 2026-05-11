@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -31,7 +32,7 @@ public final class XmlElement {
     }
 
     public static final XmlElement createFromState(int i) {
-        return new XmlElement(Storage.state().getString(i));
+        return new XmlElement(AppState.getString(i));
     }
 
     public XmlElement(int i) {
@@ -49,7 +50,7 @@ public final class XmlElement {
     }
 
     public final XmlElement setIntAttribute(int i, int i2) {
-        addTextChild(Storage.state().getString(i), Storage.state().getString(i2));
+        addTextChild(AppState.getString(i), AppState.getString(i2));
         return this;
     }
 
@@ -70,7 +71,7 @@ public final class XmlElement {
     }
 
     public final String getIntAttribute(int i) {
-        return getAttribute(Storage.state().getString(i));
+        return getAttribute(AppState.getString(i));
     }
 
     public final String getLongKeyAttr(int i) {
@@ -90,7 +91,7 @@ public final class XmlElement {
     }
 
     public final XmlElement setAttrValue(int i, String str) {
-        return setAttrImpl(Storage.state().getString(i), str);
+        return setAttrImpl(AppState.getString(i), str);
     }
 
     public final XmlElement setLongKeyAttr(int i, String str) {
@@ -112,7 +113,7 @@ public final class XmlElement {
     }
 
     public final XmlElement findChildByKey(int i) {
-        return findChildByName(Storage.state().getString(i));
+        return findChildByName(AppState.getString(i));
     }
 
     private final XmlElement findChildByName(String str) {
@@ -201,11 +202,11 @@ public final class XmlElement {
     }
 
     public final XmlElement addIdAttr(int i) {
-        return setAttrValue(333027, Storage.state().getString(i));
+        return setAttrValue(333027, AppState.getString(i));
     }
 
     public final XmlElement addNameAttr(int i) {
-        return setAttrValue(262589, Storage.state().getString(i));
+        return setAttrValue(262589, AppState.getString(i));
     }
 
     public final XmlElement addTextChild(String str, String str2) {
@@ -218,29 +219,29 @@ public final class XmlElement {
     }
 
     public final XmlElement addChildWithId(int i, int i2) {
-        return addTextChild(Storage.state().getString(i), (String) null).addIdAttr(i2);
+        return addTextChild(AppState.getString(i), (String) null).addIdAttr(i2);
     }
 
     public final XmlElement addSimpleChild(int i, int i2) {
-        return addChild(new XmlElement(Storage.state().getString(i)).addIdAttr(i2));
+        return addChild(new XmlElement(AppState.getString(i)).addIdAttr(i2));
     }
 
     public final String getNameAttr() {
-        return getAttribute(Storage.resources().getString(PackedStringKeys.ATTR_TYPE));
+        return getAttribute(ResourceAccessor.str(PackedStringKeys.ATTR_TYPE));
     }
 
     public final String getChildText(String str) {
         try {
             return StringUtils.fromBuffer(findChildByName(str).textContent);
         } catch (Throwable unused) {
-            return Storage.emptyStr;
+            return AppState.emptyStr;
         }
     }
 
     public final XmlElement findByAttrs(int i, int i2) {
         for (int idx = Utils.vectorSize(this.children) - 1; idx >= 0; idx--) {
             XmlElement child = getChildAt(idx);
-            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(Storage.resources().getString(PackedStringKeys.XML_ATTR_XMLNS)))) {
+            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(ResourceAccessor.str(PackedStringKeys.XML_ATTR_XMLNS)))) {
                 return child;
             }
         }
@@ -248,6 +249,6 @@ public final class XmlElement {
     }
 
     public final XmlElement cloneElement() {
-        return addNameAttr(398982).setAttrValue(131590, getAttribute(Storage.resources().getString(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
+        return addNameAttr(398982).setAttrValue(131590, getAttribute(ResourceAccessor.str(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
     }
 }

@@ -2,6 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -81,7 +82,7 @@ public final class PhoneContact implements ListItem, Identifiable {
 
     @Override // p000.ListItem
     public final String getText() {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(StringResKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(Storage.resources().getString(StringResKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_PHONE_CONTACTS_PREFIX)).append(this.userCount).append(ResourceAccessor.str(StringResKeys.STR_PHONE_CONTACT_SUFFIX + Utils.pluralForm(this.userCount))).append(')'));
     }
 
     @Override // p000.ListItem

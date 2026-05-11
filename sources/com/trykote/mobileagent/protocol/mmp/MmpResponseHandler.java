@@ -1,12 +1,12 @@
 package com.trykote.mobileagent.protocol.mmp;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
 final class MmpResponseHandler {
@@ -349,7 +349,7 @@ final class MmpResponseHandler {
         this.account.contactGroupsMap.clear();
         this.account.additionalDataMap.clear();
         if (this.account.groups.size() == 0) {
-            this.account.sendData(this.account.sendAddGroupCommand(Storage.resources().getString(PackedStringKeys.XMPP_GROUP_GENERAL)));
+            this.account.sendData(this.account.sendAddGroupCommand(ResourceAccessor.str(PackedStringKeys.XMPP_GROUP_GENERAL)));
         }
         this.account.progress = MmpProtocol.PROGRESS_CONNECTED;
         this.account.msgCount = MmpProtocol.PROGRESS_CONNECTED;
@@ -380,7 +380,7 @@ final class MmpResponseHandler {
             buf.readShortLE();
             int subType = buf.readShortLE();
             buf.readByte();
-            ContactInfo info = (ContactInfo) Storage.state().getObject(RegistrationKeys.SLOT_REG_PARAM_2);
+            ContactInfo info = (ContactInfo) AppState.getObject(RegistrationKeys.SLOT_REG_PARAM_2);
             if (info == null) {
                 info = ContactInfo.createAccountInfo(this.account);
             }
@@ -409,8 +409,8 @@ final class MmpResponseHandler {
             }
             boolean isInfoComplete = (responseFlags & 1) == 0;
             if (isInfoComplete) {
-                Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_1, Storage.state().getObject(RegistrationKeys.SLOT_REG_PARAM_2));
-                Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_2);
+                RegistrationState.setParam1(AppState.getObject(RegistrationKeys.SLOT_REG_PARAM_2));
+                RegistrationState.clearParam2();
             }
             return isInfoComplete;
         }
@@ -421,7 +421,7 @@ final class MmpResponseHandler {
         int prevReserved = this.account.reserved1;
         this.account.reserved1 = prevReserved + 1;
         if (prevReserved != 0) {
-            Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 0);
+            SessionState.setMrimDataLoaded(0);
         }
         buf.skip(10);
         int historySubType = buf.readShortLE();
@@ -439,7 +439,7 @@ final class MmpResponseHandler {
                 if (year >= CENTURY_YEAR) {
                     totalDays--;
                 }
-                byte[] monthDays = Storage.resources().getBytes(StringResKeys.RES_MONTH_DAYS);
+                byte[] monthDays = ResourceAccessor.bytes(StringResKeys.RES_MONTH_DAYS);
                 int monthIndex = 0;
                 while (monthIndex < month - 1) {
                     totalDays += monthIndex == 1 ? febDays : monthDays[monthIndex];
@@ -452,7 +452,7 @@ final class MmpResponseHandler {
                 }
                 return false;
             case SUBTYPE_HISTORY_END:
-                Storage.state().setInt(SessionKeys.FLAG_MRIM_DATA_LOADED, 1);
+                SessionState.setMrimDataLoaded(1);
                 this.account.trySendData(ProtocolFactory.createMmpCommand(this.account, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(this.account.serverId).writeShortLE(SEARCH_HISTORY_FULL_MARKER).writeShortBE(0)));
                 return false;
             default:
@@ -461,7 +461,7 @@ final class MmpResponseHandler {
     }
 
     private boolean handleSearchResponse(ByteBuffer buf) {
-        Vector searchResults = Storage.state().getVector(RegistrationKeys.SLOT_REG_PARAM_3);
+        Vector searchResults = RegistrationState.getParam3();
         buf.skip(10);
         if (buf.readShortLE() != SERVER_RESPONSE_MARKER) {
             return true;
@@ -475,8 +475,8 @@ final class MmpResponseHandler {
             searchResults.addElement(searchResult.setMmpTypeId(buf.readShortLE()).setMaritalStatus(buf.readByte()).setAge(buf.readShortLE()));
         }
         if (searchSubType == SUBTYPE_SEARCH_LAST) {
-            Storage.state().setObject(RegistrationKeys.SLOT_REG_PARAM_4, Storage.state().getVector(RegistrationKeys.SLOT_REG_PARAM_3));
-            Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_3);
+            RegistrationState.setParam4(RegistrationState.getParam3());
+            RegistrationState.clearParam3();
             return true;
         }
         return false;

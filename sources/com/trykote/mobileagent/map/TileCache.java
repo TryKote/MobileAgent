@@ -2,6 +2,7 @@ package com.trykote.mobileagent.map;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public final class TileCache {
         if (storeNames != null) {
             for (int idx = storeNames.length - 1; idx >= 0; idx--) {
                 String str = storeNames[idx];
-                if (str.startsWith(Storage.resources().getString(PackedStringKeys.MAP_TILES))) {
+                if (str.startsWith(ResourceAccessor.str(PackedStringKeys.MAP_TILES))) {
                     RecordStore recordStore = null;
                     try {
                         RecordStore store = IOUtils.openRecordStore(str, false);
@@ -52,7 +53,7 @@ public final class TileCache {
                 }
             }
         }
-        Storage.state().setInt(MapKeys.INT_TILE_CACHE_SIZE, size);
+        MapState.setTileCacheSize( size);
     }
 
     private static void saveTileToCache(TileRequest resource, byte[] bArr, int i, int i2) {
@@ -64,7 +65,7 @@ public final class TileCache {
         for (int i3 = 3; i3 > 0; i3--) {
             try {
                 try {
-                    if (tileData.length + Storage.state().getInt(MapKeys.INT_TILE_CACHE_SIZE) >= MAX_CACHE_SIZE) {
+                    if (tileData.length + MapState.getTileCacheSize() >= MAX_CACHE_SIZE) {
                         throw new Throwable();
                     }
                     RecordStore store = IOUtils.openRecordStore(cacheKey, true);
@@ -72,7 +73,7 @@ public final class TileCache {
                     int i4 = tileData.offset;
                     int i5 = tileData.length;
                     store.addRecord(bArr2, i4, i5);
-                    Storage.state().setInt(MapKeys.INT_TILE_CACHE_SIZE, Storage.state().getInt(MapKeys.INT_TILE_CACHE_SIZE) + i5);
+                    MapState.setTileCacheSize( MapState.getTileCacheSize() + i5);
                     tileData.clear();
                     IOUtils.closeRecordStore(store);
                     return;
@@ -124,7 +125,7 @@ public final class TileCache {
         long j = 0;
         String[] storeNames = StringUtils.listRecordStores();
         if (storeNames != null) {
-            String cachePrefix = Storage.resources().getString(PackedStringKeys.MAP_TILES);
+            String cachePrefix = ResourceAccessor.str(PackedStringKeys.MAP_TILES);
             for (int idx = storeNames.length - 1; idx >= 0; idx--) {
                 String str2 = storeNames[idx];
                 if (str2.startsWith(cachePrefix)) {
@@ -159,7 +160,7 @@ public final class TileCache {
                 recordStore = store;
                 int numRecords = store.getNumRecords();
                 for (int i = 1; i <= numRecords; i++) {
-                    Storage.state().setInt(MapKeys.INT_TILE_CACHE_SIZE, Storage.state().getInt(MapKeys.INT_TILE_CACHE_SIZE) - recordStore.getRecordSize(i));
+                    MapState.setTileCacheSize( MapState.getTileCacheSize() - recordStore.getRecordSize(i));
                 }
                 IOUtils.closeRecordStore(recordStore);
                 try {
@@ -177,17 +178,17 @@ public final class TileCache {
     }
 
     private static final String buildTileCacheKey(TileRequest resource) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(Storage.resources().getString(PackedStringKeys.MAP_TILES)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.MAP_TILES)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
     }
 
     private static final boolean reconnectHttp() {
         try {
             NetworkLock.acquireNetworkLock();
-            SocketWrapper oldSocket = (SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper oldSocket = (SocketWrapper) MapState.getMenuActions();
             if (oldSocket != null) {
                 oldSocket.close();
             }
-            Storage.state().setObject(MapKeys.OBJ_MENU_ACTIONS, SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeCompressed(PackedStringKeys.HOST_MOBILEMAPS_2043).getStringAndClear(), false));
+            MapState.setMenuActions(SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeCompressed(PackedStringKeys.HOST_MOBILEMAPS_2043).getStringAndClear(), false));
             return true;
         } catch (Throwable unused) {
             return false;
@@ -199,7 +200,7 @@ public final class TileCache {
     public static final Image fetchTileImage(TileRequest resource) throws IOException {
         ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_TILESENDER).writeRawString(resource.tileUrl).writeCompressed(PackedStringKeys.HTTP_MAP_TILE_HEADER).writeExtendedInt(2950495).writeEncodedInt(222).writeCompressed(PackedStringKeys.HTTP_TILE_HEADERS);
         try {
-            SocketWrapper socket = (SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper socket = (SocketWrapper) MapState.getMenuActions();
             byte[] bArr = requestBuf.data;
             int i = requestBuf.length;
             socket.write(bArr, i);
@@ -208,7 +209,7 @@ public final class TileCache {
             if (!reconnectHttp()) {
                 throw new IOException();
             }
-            SocketWrapper socket2 = (SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper socket2 = (SocketWrapper) MapState.getMenuActions();
             byte[] bArr2 = requestBuf.data;
             int i2 = requestBuf.length;
             socket2.write(bArr2, i2);
@@ -218,17 +219,17 @@ public final class TileCache {
         }
         String headers = readHttpHeaders();
         if (headers == null) {
-            ((SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS)).close();
+            ((SocketWrapper) MapState.getMenuActions()).close();
             throw new IOException();
         }
-        Storage.state().addInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES, headers.getBytes().length);
+        RuntimeState.addXmppTrafficBytes(headers.getBytes().length);
         if (parseHttpStatus(headers) != HTTP_STATUS_OK) {
             int contentLen = parseContentLength(headers);
             try {
                 if (contentLen > 0) {
-                    ((SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS)).inputStream.skip(contentLen);
+                    ((SocketWrapper) MapState.getMenuActions()).inputStream.skip(contentLen);
                 } else {
-                    ((SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS)).close();
+                    ((SocketWrapper) MapState.getMenuActions()).close();
                 }
                 return null;
             } catch (Throwable unused2) {
@@ -237,13 +238,13 @@ public final class TileCache {
         }
         ByteBuffer bodyBuf = readHttpBody(parseContentLength(headers));
         if (bodyBuf == null) {
-            ((SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS)).close();
+            ((SocketWrapper) MapState.getMenuActions()).close();
             throw new IOException();
         }
-        Storage.state().addInt(RuntimeKeys.INT_XMPP_TRAFFIC_BYTES, bodyBuf.length);
+        RuntimeState.addXmppTrafficBytes(bodyBuf.length);
         byte[] bArr3 = bodyBuf.data;
         int i3 = bodyBuf.length;
-        if (Storage.state().getBool(MapKeys.FLAG_TILE_CACHE_ENABLED)) {
+        if (MapState.isTileCacheEnabled()) {
             saveTileToCache(resource, bArr3, 0, i3);
         }
         TrafficAccounting.addXmppInbound(bodyBuf.length + TILE_TRAFFIC_OVERHEAD);
@@ -251,7 +252,7 @@ public final class TileCache {
     }
 
     private static final String readHttpHeaders() {
-        SocketWrapper socket = (SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS);
+        SocketWrapper socket = (SocketWrapper) MapState.getMenuActions();
         ByteBuffer buf = new ByteBuffer();
         int i = 0;
         while (true) {
@@ -285,7 +286,7 @@ public final class TileCache {
             int i2 = 0;
             byte[] readBuf = ObjectPool.newBytes(8192);
             int length = readBuf.length;
-            SocketWrapper socket = (SocketWrapper) Storage.state().getObject(MapKeys.OBJ_MENU_ACTIONS);
+            SocketWrapper socket = (SocketWrapper) MapState.getMenuActions();
             while (i2 != i && bytesRead != -1) {
                 bytesRead = socket.read(readBuf, 0, Utils.min(length, i - i2));
                 buf.writeBytesAt(readBuf, 0, bytesRead);
@@ -316,7 +317,7 @@ public final class TileCache {
     }
 
     public static void removeTileRequest(TileRequest tile) {
-        Vector requestQueue = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+        Vector requestQueue = ChatState.getTileRequestQueue();
         synchronized (requestQueue) {
             requestQueue.removeElement(tile);
         }
@@ -324,7 +325,7 @@ public final class TileCache {
 
     public static TileRequest peekTileRequest() {
         TileRequest tile;
-        Vector requestQueue = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+        Vector requestQueue = ChatState.getTileRequestQueue();
         synchronized (requestQueue) {
             tile = (TileRequest) (requestQueue.size() != 0 ? requestQueue.firstElement() : null);
         }
@@ -332,7 +333,7 @@ public final class TileCache {
     }
 
     public static void enqueueTileRequest(TileRequest tile) {
-        Vector requestQueue = Storage.state().getVector(ChatKeys.VEC_TILE_REQUEST_QUEUE);
+        Vector requestQueue = ChatState.getTileRequestQueue();
         synchronized (requestQueue) {
             if (!requestQueue.contains(tile)) {
                 if (tile.tileType == TileRequest.TYPE_OVERLAY) {

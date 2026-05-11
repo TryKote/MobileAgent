@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import java.util.Vector;
 
@@ -36,7 +37,7 @@ public final class EmoticonReplacer {
                 int i6 = -1;
                 int i7 = -1;
                 for (int i8 = 0; i8 < MMP_EMOTICON_COUNT; i8++) {
-                    String pattern = Storage.resources().getBlockString(StringResKeys.MMP_EMOTICONS_BASE, i8);
+                    String pattern = ResourceAccessor.blockStr(StringResKeys.MMP_EMOTICONS_BASE, i8);
                     if (pattern != null && (iIndexOf2 = str.indexOf(pattern, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
                         i6 = iIndexOf2;
                         i7 = i8;
@@ -47,13 +48,13 @@ public final class EmoticonReplacer {
                 } else {
                     wrapText(vector, str, i, i6, i3, i4, EMOTICON_TYPE_NONE);
                     vector.addElement(new IconElement(ICON_SIZE, i7 + MMP_ICON_OFFSET));
-                    wrapText(vector, str, i6 + Storage.resources().getBlockString(StringResKeys.MMP_EMOTICONS_BASE, i7).length(), i2, i3, i4, EMOTICON_TYPE_MMP);
+                    wrapText(vector, str, i6 + ResourceAccessor.blockStr(StringResKeys.MMP_EMOTICONS_BASE, i7).length(), i2, i3, i4, EMOTICON_TYPE_MMP);
                 }
             } else if (i5 == EMOTICON_TYPE_XMPP || i5 == EMOTICON_TYPE_XMPP_ALT) {
                 int i9 = -1;
                 int i10 = -1;
                 for (int i11 = 0; i11 < XMPP_EMOTICON_COUNT; i11++) {
-                    String pattern2 = Storage.resources().getBlockString(StringResKeys.XMPP_EMOTICONS_BASE, i11);
+                    String pattern2 = ResourceAccessor.blockStr(StringResKeys.XMPP_EMOTICONS_BASE, i11);
                     if (pattern2 != null && (iIndexOf = str.indexOf(pattern2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
                         i9 = iIndexOf;
                         i10 = i11;
@@ -64,13 +65,13 @@ public final class EmoticonReplacer {
                 } else {
                     wrapText(vector, str, i, i9, i3, i4, EMOTICON_TYPE_NONE);
                     vector.addElement(new IconElement(ICON_SIZE, i10 + XMPP_ICON_OFFSET));
-                    wrapText(vector, str, i9 + Storage.resources().getBlockString(StringResKeys.XMPP_EMOTICONS_BASE, i10).length(), i2, i3, i4, EMOTICON_TYPE_XMPP);
+                    wrapText(vector, str, i9 + ResourceAccessor.blockStr(StringResKeys.XMPP_EMOTICONS_BASE, i10).length(), i2, i3, i4, EMOTICON_TYPE_XMPP);
                 }
             } else if (i5 == EMOTICON_TYPE_MRIM) {
                 int i12 = -1;
                 int i13 = -1;
                 for (int i14 = 0; i14 < MRIM_EMOTICON_COUNT; i14++) {
-                    int iIndexOf3 = str.indexOf(Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i14), i);
+                    int iIndexOf3 = str.indexOf(ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, i14), i);
                     if (iIndexOf3 >= 0 && (iIndexOf3 < i12 || i12 == -1)) {
                         i12 = iIndexOf3;
                         i13 = i14;
@@ -86,11 +87,11 @@ public final class EmoticonReplacer {
                             : i13 == MRIM_STANDARD_LIMIT + 2 ? MRIM_ICON_SPECIAL_76
                             : MRIM_ICON_SPECIAL_77;
                     vector.addElement(new IconElement(ICON_SIZE, iconCode));
-                    wrapText(vector, str, i12 + Storage.resources().getBlockString(StringResKeys.EMOTICON_NAMES_BASE, i13).length(), i2, i3, i4, EMOTICON_TYPE_MRIM);
+                    wrapText(vector, str, i12 + ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, i13).length(), i2, i3, i4, EMOTICON_TYPE_MRIM);
                 }
-            } else if (str != Storage.resources().getString(StringResKeys.STR_PLACEHOLDER_TEXT)) {
-                GraphicsContext fontGfx = Storage.state().getGfxContext(i3);
-                int offsetH = Storage.state().getIntOffset(i3);
+            } else if (str != ResourceAccessor.str(StringResKeys.STR_PLACEHOLDER_TEXT)) {
+                GraphicsContext fontGfx = UIState.getGfxContext(i3);
+                int offsetH = UIState.getIntOffset(i3);
                 int i15 = i;
                 int i16 = i;
                 while (true) {
@@ -124,7 +125,7 @@ public final class EmoticonReplacer {
                 }
             } else {
                 int length = str.length();
-                vector.addElement(new TextElement(str, Storage.state().getGfxContext(i3).substringWidth(str, 0, length), Storage.state().getIntOffset(i3), 0, length, i3, i4));
+                vector.addElement(new TextElement(str, UIState.getGfxContext(i3).substringWidth(str, 0, length), UIState.getIntOffset(i3), 0, length, i3, i4));
             }
         }
         return vector;
@@ -132,7 +133,7 @@ public final class EmoticonReplacer {
 
     private static void wrapTextLine(Vector vector, String str, GraphicsContext gfx, int i, int i2, int i3, int i4, int i5) {
         int textW = gfx.substringWidth(str, i2, i3);
-        if (textW < (Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH) << 2) / 5) {
+        if (textW < (UIState.getScreenWidth() << 2) / 5) {
             vector.addElement(new TextElement(str, textW, i, i2, i3, i4, i5));
             return;
         }

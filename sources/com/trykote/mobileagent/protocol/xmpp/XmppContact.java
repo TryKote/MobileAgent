@@ -1,6 +1,7 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -193,7 +194,7 @@ public final class XmppContact extends Contact {
 
     @Override // p000.Contact
     public final void clearRegistrationData() {
-        Storage.state().clearIndex(RegistrationKeys.SLOT_REG_PARAM_2);
+        RegistrationState.clearParam2();
     }
 
     public final int sendPresence(int i) {

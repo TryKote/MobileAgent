@@ -69,6 +69,30 @@ public class Main {
                 requireArgs(args, 3, "--pack-resources <src-dir> <dst-dir>");
                 ResourcePacker.pack(Path.of(args[1]), Path.of(args[2]));
             }
+            case "--gen-string-pool" -> {
+                requireArgs(args, 3, "--gen-string-pool <input-dir> <output.java>");
+                StringPoolGenerator.generate(
+                    Path.of(args[1]).resolve("config.json"), Path.of(args[2]));
+            }
+            case "--expand-redirects" -> {
+                requireArgs(args, 2, "--expand-redirects <resources-dir>");
+                RedirectExpander.expand(Path.of(args[1]));
+            }
+            case "--gen-screen-factory" -> {
+                requireArgs(args, 3, "--gen-screen-factory <input-dir> <output-dir> [handler]");
+                String handler = args.length > 3 ? args[3] : null;
+                ScreenFactoryGenerator.generate(
+                    Path.of(args[1]).resolve("config.json"), Path.of(args[2]), handler);
+            }
+            case "--gen-palette-class" -> {
+                requireArgs(args, 3, "--gen-palette-class <input-dir> <output.java>");
+                PaletteGenerator.generate(
+                    Path.of(args[1]).resolve("palette.json"), Path.of(args[2]));
+            }
+            case "--gen-pool-init" -> {
+                requireArgs(args, 3, "--gen-pool-init <input-dir> <output.java>");
+                PoolInitGenerator.generate(Path.of(args[1]), Path.of(args[2]));
+            }
             case "--help" -> printHelp();
             default -> {
                 System.err.println("Unknown command: " + command);

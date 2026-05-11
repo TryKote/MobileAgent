@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.model.*;
 import com.trykote.mobileagent.protocol.*;
@@ -173,7 +174,7 @@ public abstract class JsonParser {
     }
 
     public static final void putIntKey(Hashtable hashtable, int i, Object obj) {
-        hashtable.put(Storage.state().getString(i), obj);
+        hashtable.put(AppState.getString(i), obj);
     }
 
     public static final void putIntValue(Hashtable hashtable, String str, int i) {
@@ -185,7 +186,7 @@ public abstract class JsonParser {
     }
 
     public static final Object getValueByInt(Object obj, int i) {
-        return ((Hashtable) obj).get(Storage.state().getString(i));
+        return ((Hashtable) obj).get(AppState.getString(i));
     }
 
     public static final int getIntValue(Object obj, String str) {
@@ -193,7 +194,7 @@ public abstract class JsonParser {
     }
 
     public static final int getIntByInt(Object obj, int i) {
-        return ((Integer) getValue(obj, Storage.state().getString(i))).intValue();
+        return ((Integer) getValue(obj, AppState.getString(i))).intValue();
     }
 
     public static final String getStringValue(Object obj, String str) {
@@ -201,7 +202,7 @@ public abstract class JsonParser {
     }
 
     public static final String getStringByInt(Object obj, int i) {
-        return (String) getValue(obj, Storage.state().getString(i));
+        return (String) getValue(obj, AppState.getString(i));
     }
 
     public static final void addIntToVector(Object obj, int i) {
@@ -222,7 +223,7 @@ public abstract class JsonParser {
 
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ObjectPool.JSON_NULL) {
-            stringBuffer.append(Storage.resources().getString(StringResKeys.STR_SEPARATOR));
+            stringBuffer.append(ResourceAccessor.str(StringResKeys.STR_SEPARATOR));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);
         } else if (obj instanceof String) {

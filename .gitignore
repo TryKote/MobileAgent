@@ -8,5 +8,6 @@ out
 *.iml
 __pycache__
 editor/target
+freej2me_system
 screenshots
 *.json

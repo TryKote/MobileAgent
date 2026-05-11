@@ -2,19 +2,15 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 
-public final class ListView {
+public class ListView {
 
     // Layout modes
     static final int LAYOUT_VERTICAL = 0;
@@ -61,7 +57,6 @@ public final class ListView {
     public int screenType;
     public int offsetX;
     public int offsetY;
-    public int definitionOffset;
     private MenuItem headerItem;
     public final int layoutMode;
     public boolean selectable;
@@ -100,7 +95,7 @@ public final class ListView {
         this.screenId = ScreenId.STATUS_INPUT;
     }
     public final ListView initTabs() {
-        if (Storage.state().getBool(SettingsKeys.SETTING_HEADER_VISIBLE)) {
+        if (SettingsState.isHeaderVisible()) {
             this.tabItems = ObjectPool.newVector();
             recalcLayout();
         }
@@ -139,7 +134,7 @@ public final class ListView {
         this.contentHeight = this.contentBottom - INNER_MARGIN;
         if (this.tabItems != null) {
             int prevBottom = this.contentBottom;
-            int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), MIN_TAB_HEIGHT) + BORDER_INSET;
+            int barHeight = Utils.max(UIState.getFontHeight(), MIN_TAB_HEIGHT) + BORDER_INSET;
             this.contentBottom = prevBottom - barHeight;
             this.contentHeight -= barHeight;
         }
@@ -171,7 +166,7 @@ public final class ListView {
         return getItemAt(expandedIdx);
     }
     public final ListView setHeader(int iconId, String title) {
-        this.headerItem = MenuItem.createSeparator().addText(Storage.resources().getString(StringResKeys.STR_PLACEHOLDER_TEXT), 1, 0).setLabelInternal(iconId, title, 1, 0);
+        this.headerItem = MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_PLACEHOLDER_TEXT), 1, 0).setLabelInternal(iconId, title, 1, 0);
         recalcLayout();
         return this;
     }
@@ -242,7 +237,7 @@ public final class ListView {
             if (this.tabItems != null) {
                 paintBottomTabBar(g);
             }
-            if (isTop && Storage.state().getBool(SettingsKeys.SETTING_STATUS_BAR_VISIBLE)) {
+            if (isTop && SettingsState.isStatusBarVisible()) {
                 paintSoftKeys(g);
             }
         }
@@ -274,9 +269,9 @@ public final class ListView {
         int x = this.offsetX + 1;
         int y = this.offsetY + 1;
         g.setClip(x, y, this.innerWidth, this.headerHeight);
-        int themeIdx = Storage.state().getInt(SettingsKeys.SETTING_COLOR_THEME);
-        int startColor = Storage.state().getInt(PaletteKeys.GRADIENT_START + themeIdx);
-        if (startColor != Storage.state().getInt(PaletteKeys.GRADIENT_END + themeIdx)) {
+        int themeIdx = SettingsState.getColorTheme();
+        int startColor = Palette.getColor(themeIdx, Palette.GRADIENT_START);
+        if (startColor != Palette.getColor(themeIdx, Palette.GRADIENT_END)) {
             for (int row = 1; row < this.headerHeight; row++) {
                 g.setColor(((255 - ((row * (255 - (startColor >> 16))) / this.headerHeight)) << 16) | ((255 - ((row * (255 - ((startColor >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((row * (255 - (startColor & 255))) / this.headerHeight)));
                 g.drawRect(x, y + row, this.innerWidth, 0);
@@ -371,10 +366,10 @@ public final class ListView {
     }
 
     private void paintBottomTabBar(GraphicsContext g) {
-        int barHeight = Utils.max(Storage.state().getInt(UIKeys.INT_FONT_HEIGHT), MIN_TAB_HEIGHT);
-        int screenHeight = Storage.state().getHeight() - 1;
-        int screenWidth = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH);
-        g.setClip(0, (screenHeight - barHeight) - BORDER_INSET, screenWidth, barHeight + OUTER_PADDING).setColorFromPalette(PALETTE_BORDER).fillRect(0, (screenHeight - barHeight) - BORDER_INSET, screenWidth, barHeight + OUTER_PADDING).setColorFromPalette(PALETTE_TAB_FILL).fillRect(1, (screenHeight - barHeight) - INNER_MARGIN, screenWidth - INNER_MARGIN, barHeight + INNER_MARGIN).setColorFromPalette(PALETTE_TEXT).setFont(Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
+        int barHeight = Utils.max(UIState.getFontHeight(), MIN_TAB_HEIGHT);
+        int screenHeight = UIState.getHeight() - 1;
+        int screenWidth = UIState.getScreenWidth();
+        g.setClip(0, (screenHeight - barHeight) - BORDER_INSET, screenWidth, barHeight + OUTER_PADDING).setColorFromPalette(PALETTE_BORDER).fillRect(0, (screenHeight - barHeight) - BORDER_INSET, screenWidth, barHeight + OUTER_PADDING).setColorFromPalette(PALETTE_TAB_FILL).fillRect(1, (screenHeight - barHeight) - INNER_MARGIN, screenWidth - INNER_MARGIN, barHeight + INNER_MARGIN).setColorFromPalette(PALETTE_TEXT).setFont(UIState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         Vector tabs = this.tabItems;
         int tabX = BORDER_INSET;
         boolean pastLabel = false;
@@ -396,10 +391,10 @@ public final class ListView {
     }
 
     private void paintSoftKeys(GraphicsContext g) {
-        int screenWidth = Storage.state().getInt(UIKeys.INT_SCREEN_WIDTH);
-        int screenHeight = Storage.state().getHeight();
+        int screenWidth = UIState.getScreenWidth();
+        int screenHeight = UIState.getHeight();
         g.setClip(0, 0, screenWidth, MAX_CLIP_HEIGHT + screenHeight);
-        g.setFont(Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
+        g.setFont(UIState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         g.setColorFromPalette(PALETTE_SOFT_KEY_TEXT);
         if (this.titleLeft != null) {
             g.drawString(this.titleLeft, 1, screenHeight, 20);
@@ -408,7 +403,7 @@ public final class ListView {
             g.drawString(this.titleRight, screenWidth - 1, screenHeight, 24);
         }
         if (AppController.clockWidth + this.titleMaxWidth < screenWidth - 6) {
-            g.drawString(Utils.defaultStr(Storage.state().getString(UIKeys.SLOT_CLOCK_STRING)), screenWidth >> 1, screenHeight, 17);
+            g.drawString(Utils.defaultStr(UIState.getClockString()), screenWidth >> 1, screenHeight, 17);
         }
     }
 
@@ -449,7 +444,7 @@ public final class ListView {
             return;
         }
         if (this.screenId == ScreenId.MAP) {
-            Storage.state().setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, 0);
+            MapState.setScrollDirection(0);
             return;
         }
         if (this.screenId != ScreenId.CONTACT_LIST) {
@@ -473,7 +468,7 @@ public final class ListView {
         invalidateLayout();
     }
     public final int pageUp() {
-        if (this.menuItems.size() == 0) {
+        if (this.menuItems.isEmpty()) {
             return 0;
         }
         if (this.selectable) {
@@ -540,7 +535,7 @@ public final class ListView {
         return 0;
     }    public final void scrollUp() {
         if (this.screenId == ScreenId.MAP) {
-            Storage.state().setInt(MapKeys.INT_MAP_SCROLL_DIRECTION, 2);
+            MapState.setScrollDirection(2);
             return;
         }
         if (this.menuItems.size() == 0) {
@@ -883,11 +878,11 @@ public final class ListView {
     }
 
     public final ListView addIconById(int iconId, int stringKey, int width) {
-        return addIconItem(iconId, Storage.state().getString(stringKey), width);
+        return addIconItem(iconId, AppState.getString(stringKey), width);
     }
 
     public final ListView addExpandableItem(int iconId, String text, int width, Object data) {
-        MenuItem expandItem = new MenuItem(MenuItem.TYPE_EXPANDABLE, Storage.emptyStr).setIcon(iconId).addText(text, TEXT_FORMAT_EXPANDABLE, width);
+        MenuItem expandItem = new MenuItem(MenuItem.TYPE_EXPANDABLE, AppState.emptyStr).setIcon(iconId).addText(text, TEXT_FORMAT_EXPANDABLE, width);
         expandItem.data = data;
         return addItem(expandItem);
     }
@@ -897,7 +892,7 @@ public final class ListView {
     }
 
     public final ListView addActionById(int iconId, int stringKey, int width) {
-        String labelStr = Storage.state().getString(stringKey);
+        String labelStr = AppState.getString(stringKey);
         MenuItem actionItem = MenuItem.createWithWidth(labelStr, width).setIcon(iconId).setLabel(labelStr).setIcon(244);
         actionItem.enabled = true;
         return addItem(actionItem);
@@ -912,7 +907,7 @@ public final class ListView {
     }
 
     public final ListView addLabelById(int stringKey) {
-        return addItem(MenuItem.createSeparator().setLabel(Storage.state().getString(stringKey)));
+        return addItem(MenuItem.createSeparator().setLabel(AppState.getString(stringKey)));
     }
 
     public final ListView addFullItem(int iconId, String label, String text, int width, Object data) {
@@ -962,7 +957,7 @@ public final class ListView {
         ObjectPool.releaseVector(newItems);
     }
     public final ListView setSoftKeys(String left, String right, int leftCmd, int centerCmd, int rightCmd) {
-        GraphicsContext gfxCtx = Storage.state().getGfxContext(UIKeys.GFX_INDEX_DEFAULT);
+        GraphicsContext gfxCtx = UIState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT);
         this.titleLeft = left;
         int textWidth = gfxCtx.stringWidth(left);
         this.titleRight = right;

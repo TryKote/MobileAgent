@@ -2,6 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.key.*;
 import com.trykote.mobileagent.ui.*;
 import com.trykote.mobileagent.protocol.*;
 import com.trykote.mobileagent.protocol.mrim.*;
@@ -15,21 +16,21 @@ import java.util.Vector;
 
 public final class VCard {
 
-    public String latStr = Storage.emptyStr;
+    public String latStr = AppState.emptyStr;
 
-    public String lonStr = Storage.emptyStr;
+    public String lonStr = AppState.emptyStr;
 
-    public String mapTypeStr = Storage.emptyStr;
+    public String mapTypeStr = AppState.emptyStr;
 
-    public String phone = Storage.emptyStr;
+    public String phone = AppState.emptyStr;
 
-    public String email = Storage.emptyStr;
+    public String email = AppState.emptyStr;
 
-    public String nickname = Storage.emptyStr;
+    public String nickname = AppState.emptyStr;
 
-    public String zoomStr = Storage.emptyStr;
+    public String zoomStr = AppState.emptyStr;
 
-    public String address = Storage.emptyStr;
+    public String address = AppState.emptyStr;
 
     public int gender = 2;
 
@@ -97,8 +98,8 @@ public final class VCard {
             cardData[6] = buffer.readWideStr();
             cardData[7] = buffer.readWideStr();
         } else {
-            cardData[6] = Storage.emptyStr;
-            cardData[7] = Storage.emptyStr;
+            cardData[6] = AppState.emptyStr;
+            cardData[7] = AppState.emptyStr;
         }
         return cardData;
     }
@@ -143,7 +144,7 @@ public final class VCard {
     }
 
     public final void clearCoordinates() {
-        String empty = Storage.emptyStr;
+        String empty = AppState.emptyStr;
         this.lonStr = empty;
         this.latStr = empty;
         this.dirty = false;
