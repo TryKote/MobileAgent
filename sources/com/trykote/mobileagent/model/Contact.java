@@ -36,6 +36,9 @@ public abstract class Contact implements Sortable {
     private static final int ICON_BLINK_NOTIFICATION = 16386;
     static final int ICON_TYPING = 26;
 
+    // Flag bits for contact notification state
+    private static final int FLAG_HAS_UNREAD = 1;
+
     // Message flag types (used in addFlag / receiveMessageFull)
     private static final int MSG_FLAG_INCOMING = 4;
     private static final int MSG_FLAG_SPECIAL = 64;
@@ -54,6 +57,32 @@ public abstract class Contact implements Sortable {
 
     // Maximum preview length for message summary truncation
     private static final int SUMMARY_TRUNCATION_LENGTH = 50;
+
+    // Error codes (string resource pool indices)
+    private static final int ERROR_EMPTY_MESSAGE = 309;
+    private static final int ERROR_CONTACT_ONLINE = 310;
+
+    // Separator header text styles
+    private static final int HEADER_STYLE_RECEIVED = 8;
+    private static final int HEADER_STYLE_SENT = 9;
+
+    // Icon IDs for message rendering
+    private static final int ICON_FORWARDED = 2;
+    private static final int ICON_EXPANDABLE = 264;
+
+    // Message summary layout width
+    private static final int MESSAGE_SUMMARY_WIDTH = 200;
+
+    // Context menu action IDs (tab bar system)
+    private static final int ACTION_DELETE_CONTACT = 267;
+    private static final int ACTION_BLOCK_CONTACT = 266;
+    private static final int NO_ACTION = -1;
+
+    // Timezone calculation constants
+    private static final int TIMEZONE_BASE_OFFSET = 13;
+    private static final int MILLIS_PER_HOUR = 3600000;
+
+    private static final char CHAR_ELLIPSIS = '…';
 
     public final Account account;
 
@@ -85,16 +114,20 @@ public abstract class Contact implements Sortable {
         this.account = acct;
     }
 
-    public abstract void deserialize(ByteBuffer buffer);
+    public abstract void serialize(ByteBuffer buffer);
 
     public int getIcon() {
         if (this.flags != 0) {
-            return (this.flags & 1) != 0 ? ICON_BLINK_UNREAD : ICON_BLINK_NOTIFICATION;
+            return (this.flags & FLAG_HAS_UNREAD) != 0 ? ICON_BLINK_UNREAD : ICON_BLINK_NOTIFICATION;
         }
         if (this.statusCode != 0) {
             return ICON_TYPING;
         }
         return this.defaultIcon;
+    }
+
+    public int getDisplayIcon() {
+        return getIcon();
     }
 
     public final void addFlag(int flagBit) {
@@ -181,7 +214,7 @@ public abstract class Contact implements Sortable {
     public final int sendMessage(String text) {
         NotificationHelper.playNotificationSound(NotificationHelper.SOUND_MESSAGE_SENT);
         if (StringUtils.isEmpty(text)) {
-            return 309;
+            return ERROR_EMPTY_MESSAGE;
         }
         Account acct = this.account;
         long now = SessionState.getTimestampCurrent();
@@ -201,19 +234,19 @@ public abstract class Contact implements Sortable {
 
     public final int validateBlock() {
         if (isOnline()) {
-            return 310;
+            return ERROR_CONTACT_ONLINE;
         }
         return this.account.validateContactBlock(this);
     }
 
     public final int validateUnblock() {
         if (isOnline()) {
-            return 310;
+            return ERROR_CONTACT_ONLINE;
         }
         return this.account.validateContactUnblock(this);
     }
 
-    @Override // p000.Sortable
+    @Override
     public final int compareTo(Object obj) {
         Contact other = (Contact) obj;
         int stateDiff = other.renderState - this.renderState;
@@ -221,7 +254,10 @@ public abstract class Contact implements Sortable {
             return stateDiff;
         }
         long timeDiff = other.lastMessageTime - this.lastMessageTime;
-        return timeDiff != 0 ? timeDiff < 0 ? -1 : 1 : this.sortKey.compareTo(other.sortKey);
+        if (timeDiff != 0) {
+            return timeDiff < 0 ? -1 : 1;
+        }
+        return this.sortKey.compareTo(other.sortKey);
     }
 
     public void clearUnread() {
@@ -238,18 +274,16 @@ public abstract class Contact implements Sortable {
         this.messageBuffer = msgBuf;
         int bufferLength = msgBuf.length;
         int pos = 0;
-        while (true) {
-            if (pos >= bufferLength) {
-                saveMessageBuffer();
-                return;
-            }
+        while (pos < bufferLength) {
             int pktLen = msgBuf.peekShortBE(pos);
-            int timeOffset = pos + 3 + 8;
-            if (targetTime == ((msgBuf.peekIntAt(timeOffset) & 4294967295L) | (msgBuf.peekIntAt(timeOffset + 4) << 32))) {
+            int sentTimeOffset = pos + 3 + 8;
+            long sentTime = (msgBuf.peekIntAt(sentTimeOffset) & 0xFFFFFFFFL) | ((long) msgBuf.peekIntAt(sentTimeOffset + 4) << 32);
+            if (targetTime == sentTime) {
                 msgBuf.data[msgBuf.offset + pos + 2] = (byte) (msgBuf.peekByteAt(pos + 2) | flagBit);
             }
             pos = pos + pktLen + 2;
         }
+        saveMessageBuffer();
     }
 
     public final void appendMessage(int msgType, String text, long timestamp, long sentTime) {
@@ -271,7 +305,15 @@ public abstract class Contact implements Sortable {
             buffer.skip(buffer.readShortBE());
             msgCount--;
         }
-        msgBuf.writeShortBE(MSG_HEADER_SIZE + (text.length() << 1)).writeByte(msgType).writeLong((timestamp != 0 ? timestamp : System.currentTimeMillis()) + ((SettingsState.getTimezoneOffset() - 13) * 3600000)).writeLong(sentTime).writeAsShorts(text).compact();
+        long effectiveTime = timestamp != 0 ? timestamp : System.currentTimeMillis();
+        long adjustedTime = effectiveTime + ((SettingsState.getTimezoneOffset() - TIMEZONE_BASE_OFFSET) * MILLIS_PER_HOUR);
+        int textByteLength = text.length() << 1;
+        msgBuf.writeShortBE(MSG_HEADER_SIZE + textByteLength)
+              .writeByte(msgType)
+              .writeLong(adjustedTime)
+              .writeLong(sentTime)
+              .writeAsShorts(text)
+              .compact();
         saveMessageBuffer();
         this.lastMessageTime = SessionState.getTimestampCurrent();
         updateRenderState();
@@ -302,11 +344,7 @@ public abstract class Contact implements Sortable {
         this.dirty = false;
         String name = this.displayName;
         RuntimeState.setCurrentMsgText(name);
-        int icon = getIcon();
-        if ((this instanceof XmppContact) && ((XmppProtocol) this.account).isMailRuVariant() && icon >= 381 && icon <= 384) {
-            icon += 4;
-        }
-        RuntimeState.setMessageIcon(icon);
+        RuntimeState.setMessageIcon(getDisplayIcon());
         Screen msgScreen = Screens.messageSummary(null);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         int dateCode = AppState.getDateCode();
@@ -320,53 +358,80 @@ public abstract class Contact implements Sortable {
                     : msgType == MSG_TYPE_OUTGOING ? COLOR_OUTGOING
                     : (msgType & MSG_FLAG_SPECIAL) == 0 ? COLOR_INCOMING : 0;
             if (msgType == MSG_TYPE_FORWARDED) {
-                msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.displayName).append(ResourceAccessor.str(StringResKeys.STR_NAME_SEPARATOR)).append(formatTime(msgTime, dateCode))), 8);
-                msgScreen.addIconItem(2, msgText, 0);
-                if (this.account.isConnected()) {
-                    msgScreen.addExpandableItem(-1, ResourceAccessor.str(StringResKeys.STR_EXPAND_MESSAGE), colorStyle, new Object[]{ObjectPool.integerOf(1), msgText, name, new Long(sentTime)});
-                }
+                renderForwardedMessage(msgScreen, name, msgText, msgTime, sentTime, colorStyle, dateCode);
             } else if (msgType == MSG_TYPE_INCOMING) {
-                int nlIdx = msgText.indexOf(10);
-                String header = StringUtils.prefix(msgText, nlIdx);
-                String body = StringUtils.suffix(msgText, nlIdx + 1);
-                msgScreen.addSeparator(StringUtils.concat(header, formatTime(msgTime, dateCode)), 8);
-                addMessageLines(msgScreen, body, colorStyle);
+                renderIncomingMessage(msgScreen, msgText, colorStyle, msgTime, dateCode);
             } else {
-                msgScreen.addSeparator(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(msgType == 0 ? this.displayName : this.account.displayName).append(',').append(' ').append(formatTime(msgTime, dateCode))), msgType == 0 ? 8 : 9);
-                addMessageLines(msgScreen, msgText, colorStyle);
+                renderOutgoingMessage(msgScreen, msgType, msgText, colorStyle, msgTime, dateCode);
             }
         }
         dupe.clear();
         return msgScreen;
     }
 
-    private final void addMessageLines(ListView screen, String text, int colorStyle) {
+    private void renderForwardedMessage(ListView screen, String name, String msgText,
+            long msgTime, long sentTime, int colorStyle, int dateCode) {
+        screen.addSeparator(ObjectPool.toStringAndRelease(
+                ObjectPool.newStringBuffer().append(name)
+                        .append(ResourceAccessor.str(StringResKeys.STR_NAME_SEPARATOR))
+                        .append(formatTime(msgTime, dateCode))), HEADER_STYLE_RECEIVED);
+        screen.addIconItem(ICON_FORWARDED, msgText, 0);
+        if (this.account.isConnected()) {
+            screen.addExpandableItem(NO_ACTION,
+                    ResourceAccessor.str(StringResKeys.STR_EXPAND_MESSAGE), colorStyle,
+                    new Object[]{ObjectPool.integerOf(1), msgText, name, new Long(sentTime)});
+        }
+    }
+
+    private void renderIncomingMessage(ListView screen, String msgText, int colorStyle,
+            long msgTime, int dateCode) {
+        int nlIdx = msgText.indexOf('\n');
+        String header = StringUtils.prefix(msgText, nlIdx);
+        String body = StringUtils.suffix(msgText, nlIdx + 1);
+        screen.addSeparator(StringUtils.concat(header, formatTime(msgTime, dateCode)),
+                HEADER_STYLE_RECEIVED);
+        addMessageLines(screen, body, colorStyle);
+    }
+
+    private void renderOutgoingMessage(ListView screen, int msgType, String msgText,
+            int colorStyle, long msgTime, int dateCode) {
+        String senderName = msgType == 0 ? this.displayName : this.account.displayName;
+        screen.addSeparator(ObjectPool.toStringAndRelease(
+                ObjectPool.newStringBuffer().append(senderName)
+                        .append(',').append(' ')
+                        .append(formatTime(msgTime, dateCode))),
+                msgType == 0 ? HEADER_STYLE_RECEIVED : HEADER_STYLE_SENT);
+        addMessageLines(screen, msgText, colorStyle);
+    }
+
+    private void addMessageLines(ListView screen, String text, int colorStyle) {
         Vector lines = Conversation.parseConversation(text);
         int size = lines.size();
         for (int k = 0; k < size; k++) {
             String lineText = (String) lines.elementAt(k);
             if (Conversation.isValidFormat(lineText)) {
-                screen.addExpandableItem(264, Conversation.decodeMessage(lineText), colorStyle, new Object[]{ObjectPool.integerOf(0), lineText});
+                screen.addExpandableItem(ICON_EXPANDABLE, Conversation.decodeMessage(lineText),
+                        colorStyle, new Object[]{ObjectPool.integerOf(0), lineText});
             } else {
-                screen.addItem(MenuItem.createSeparator().addTextInternal(lineText, 0, colorStyle, this.account.getType()));
+                screen.addItem(MenuItem.createSeparator().addTextInternal(lineText, 0, colorStyle,
+                        this.account.getType()));
             }
         }
         ObjectPool.releaseVector(lines);
     }
 
-    private final ByteBuffer getMessageBuffer() {
+    private ByteBuffer getMessageBuffer() {
         if (this.messageBuffer == null) {
             this.messageBuffer = ChunkedRecordStore.readChunkedRecord(this.identifier);
         }
         return this.messageBuffer;
     }
 
-    private final void saveMessageBuffer() {
+    private void saveMessageBuffer() {
         ChunkedRecordStore.writeChunkedRecord(this.identifier, getMessageBuffer().duplicate());
     }
 
     public final ListView showMessageSummary() {
-        String truncated;
         Screen msgScreen = Screens.messageDetail(null);
         ByteBuffer dupe = getMessageBuffer().duplicate();
         while (dupe.length > 0) {
@@ -375,12 +440,16 @@ public abstract class Contact implements Sortable {
             dupe.readLong();
             dupe.readLong();
             String fullText = dupe.readUnicodeChars(entryLen - MSG_HEADER_SIZE);
+            String truncated;
             if (fullText.length() > SUMMARY_TRUNCATION_LENGTH) {
-                truncated = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringUtils.prefix(fullText, SUMMARY_TRUNCATION_LENGTH)).append((char) 8230));
+                truncated = ObjectPool.toStringAndRelease(
+                        ObjectPool.newStringBuffer()
+                                .append(StringUtils.prefix(fullText, SUMMARY_TRUNCATION_LENGTH))
+                                .append(CHAR_ELLIPSIS));
             } else {
                 truncated = fullText;
             }
-            msgScreen.addFullItem(-1, (String) null, truncated, 200, fullText);
+            msgScreen.addFullItem(NO_ACTION, null, truncated, MESSAGE_SUMMARY_WIDTH, fullText);
         }
         dupe.clear();
         return msgScreen;
@@ -388,12 +457,12 @@ public abstract class Contact implements Sortable {
 
     public final int getDefaultAction() {
         if (getMessageBuffer().length > 0 || !this.account.isConnected()) {
-            return 40;
+            return ScreenId.CLEAR_SEARCH;
         }
         if (isOffline()) {
             return ContactListManager.clearSmsFields();
         }
-        return 63;
+        return ScreenId.STATUS_INPUT;
     }
 
     public abstract MenuItem createMenuItem();
@@ -444,8 +513,8 @@ public abstract class Contact implements Sortable {
 
     public final int getContextAction() {
         if (canDelete()) {
-            return 267;
+            return ACTION_DELETE_CONTACT;
         }
-        return canBlock() ? 266 : -1;
+        return canBlock() ? ACTION_BLOCK_CONTACT : NO_ACTION;
     }
 }

@@ -50,38 +50,23 @@ public final class XmppContact extends Contact {
 
     public boolean online;
 
-    public XmppContact(XmppProtocol protocol, String str, String str2, String str3) {
+    public XmppContact(XmppProtocol protocol, String jid, String displayName, String statusMessage) {
         super(protocol);
-        this.extra = str;
-        this.jabberId = str;
-        this.statusMessage = str3;
+        this.extra = jid;
+        this.jabberId = jid;
+        this.statusMessage = statusMessage;
         this.unreadCount = 0;
-        setDisplayName(Utils.defaultIfBlank(str2, str));
+        setDisplayName(Utils.defaultIfBlank(displayName, jid));
         this.defaultIcon = XmppProtocol.getIconForError(this.status);
-        this.identifier = protocol.encodeId().writeRawString(str).getStringAndClear();
+        this.identifier = protocol.encodeId().writeRawString(jid).getStringAndClear();
         protocol.registerContact(this);
         updateRenderState();
-    }
-
-    @Override // p000.Contact
-    public final void clearUnread() {
-        this.status = PRESENCE_OFFLINE;
-        this.defaultIcon = ICON_DEFAULT;
-        this.statusMessage = null;
-        this.vCardHash = null;
-        this.unreadCount = 0;
-        super.clearUnread();
-    }
-
-    @Override // p000.Contact
-    public final String getIdentifier() {
-        return this.jabberId;
     }
 
     public XmppContact(Account account, ByteBuffer buffer) {
         super(account);
         this.jabberId = buffer.readWideStr();
-        setDisplayName(buffer.readUTF8Str((String) null));
+        setDisplayName(buffer.readUTF8Str(null));
         this.identifier = account.encodeId().writeRawString(this.jabberId).getStringAndClear();
         this.status = PRESENCE_OFFLINE;
         this.defaultIcon = XmppProtocol.getIconForError(PRESENCE_OFFLINE);
@@ -90,26 +75,48 @@ public final class XmppContact extends Contact {
         this.extra = this.jabberId;
     }
 
-    @Override // p000.Contact
-    public final void deserialize(ByteBuffer buffer) {
+    @Override
+    public void clearUnread() {
+        this.status = PRESENCE_OFFLINE;
+        this.defaultIcon = ICON_DEFAULT;
+        this.statusMessage = null;
+        this.vCardHash = null;
+        this.unreadCount = 0;
+        super.clearUnread();
+    }
+
+    @Override
+    public String getIdentifier() {
+        return this.jabberId;
+    }
+
+    @Override
+    public void serialize(ByteBuffer buffer) {
         buffer.writeStringLatin1(this.jabberId).writeStringUTF16(this.displayName);
     }
 
-    private final int getDisplayIcon() {
+    @Override
+    public int getDisplayIcon() {
         int icon = getIcon();
-        int i = icon & MASK_LOWER_16;
-        return (!(this.account instanceof XmppMailRuProtocol) || i < ICON_DEFAULT || i > ICON_SUBSCRIPTION_PENDING) ? icon : icon + ICON_MAILRU_OFFSET;
+        int baseIcon = icon & MASK_LOWER_16;
+        if (this.account instanceof XmppMailRuProtocol
+                && baseIcon >= ICON_DEFAULT && baseIcon <= ICON_SUBSCRIPTION_PENDING) {
+            return icon + ICON_MAILRU_OFFSET;
+        }
+        return icon;
     }
 
-    @Override // p000.Contact
-    public final MenuItem createMenuItem() {
-        MenuItem menuItem = MenuItem.create(this.identifier).setIcon(getDisplayIcon()).addText(this.displayName, 0, this.unreadCount);
+    @Override
+    public MenuItem createMenuItem() {
+        MenuItem menuItem = MenuItem.create(this.identifier)
+                .setIcon(getDisplayIcon())
+                .addText(this.displayName, 0, this.unreadCount);
         menuItem.data = this;
         return menuItem;
     }
 
     @Override
-    public final int getIcon() {
+    public int getIcon() {
         int icon = super.getIcon();
         if (icon == ICON_BLINK_FLAG) {
             return icon;
@@ -117,80 +124,92 @@ public final class XmppContact extends Contact {
         if (this.online) {
             return this.defaultIcon;
         }
-        int i = icon;
-        if (StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.ATTR_ASK, this.statusMessage)) {
-            i = ICON_SUBSCRIPTION_PENDING;
+        int subscriptionIcon = icon;
+        if (StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage)
+                || StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage)
+                || StringUtils.matchesKey(PackedStringKeys.ATTR_ASK, this.statusMessage)) {
+            subscriptionIcon = ICON_SUBSCRIPTION_PENDING;
         }
         if (StringUtils.matchesKey(PackedStringKeys.ATTR_TO, this.statusMessage)) {
-            i = (i & MASK_LOWER_16) | FLAG_SUBSCRIPTION_TO;
+            subscriptionIcon = (subscriptionIcon & MASK_LOWER_16) | FLAG_SUBSCRIPTION_TO;
         }
-        return i;
+        return subscriptionIcon;
     }
 
-    @Override // p000.Contact
-    public final boolean canDelete() {
+    @Override
+    public boolean canDelete() {
         return false;
     }
 
-    @Override // p000.Contact
-    public final boolean canBlock() {
+    @Override
+    public boolean canBlock() {
         return false;
     }
 
-    @Override // p000.Contact
-    public final boolean canUnblock() {
+    @Override
+    public boolean canUnblock() {
         return false;
     }
 
-    @Override // p000.Contact
-    public final boolean isOnline() {
+    @Override
+    public boolean isOnline() {
         return this.online;
     }
 
-    @Override // p000.Contact
-    public final boolean hasUnread() {
-        return StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage);
+    @Override
+    public boolean hasUnread() {
+        return StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage)
+                || StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage);
     }
 
-    @Override // p000.Contact
-    public final void performAction() {
+    @Override
+    public void performAction() {
     }
-    public final void updateFromPresence(String str, XmlElement element) {
-        int i = PRESENCE_OFFLINE;
-        this.vCardHash = str;
+
+    public void updateFromPresence(String presenceType, XmlElement element) {
+        this.vCardHash = presenceType;
         this.status = PRESENCE_OFFLINE;
-        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AVAILABLE, str)) {
-            i = PRESENCE_ONLINE;
-            XmlElement showChild = element.findChildByKey(PackedStringKeys.TAG_SHOW);
-            if (showChild != null) {
-                String statusText = StringUtils.fromBuffer(showChild.textContent);
-                if (!StringUtils.isEmpty(statusText)) {
-                    if (StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_CHAT, statusText)) {
-                        i = PRESENCE_CHAT;
-                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AWAY, statusText)) {
-                        i = PRESENCE_AWAY;
-                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_XA, statusText)) {
-                        i = PRESENCE_XA;
-                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_DND, statusText)) {
-                        i = PRESENCE_DND;
-                    } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_INV, statusText)) {
-                        i = PRESENCE_INVISIBLE;
-                    }
-                }
-            }
-            this.status = i;
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AVAILABLE, presenceType)) {
+            this.status = parseShowStatus(element);
         }
         updateFromContact(this);
     }
 
-    public final void markOnlineIfOffline() {
+    private int parseShowStatus(XmlElement presenceElement) {
+        XmlElement showChild = presenceElement.findChildByKey(PackedStringKeys.TAG_SHOW);
+        if (showChild == null) {
+            return PRESENCE_ONLINE;
+        }
+        String showText = StringUtils.fromBuffer(showChild.textContent);
+        if (StringUtils.isEmpty(showText)) {
+            return PRESENCE_ONLINE;
+        }
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_CHAT, showText)) {
+            return PRESENCE_CHAT;
+        }
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AWAY, showText)) {
+            return PRESENCE_AWAY;
+        }
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_XA, showText)) {
+            return PRESENCE_XA;
+        }
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_DND, showText)) {
+            return PRESENCE_DND;
+        }
+        if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_INV, showText)) {
+            return PRESENCE_INVISIBLE;
+        }
+        return PRESENCE_ONLINE;
+    }
+
+    public void markOnlineIfOffline() {
         if (this.status == PRESENCE_OFFLINE) {
             this.status = PRESENCE_ONLINE;
             updateFromContact(this);
         }
     }
 
-    public final void updateFromContact(XmppContact other) {
+    public void updateFromContact(XmppContact other) {
         this.status = other != null ? other.status : PRESENCE_OFFLINE;
         this.vCardHash = other != null ? other.vCardHash : null;
         this.online = this.status != PRESENCE_OFFLINE;
@@ -201,26 +220,26 @@ public final class XmppContact extends Contact {
         updateRenderState();
     }
 
-    @Override // p000.Contact
-    public final void clearRegistrationData() {
+    @Override
+    public void clearRegistrationData() {
         RegistrationState.clearParam2();
     }
 
-    public final int sendPresence(int i) {
-        int result = ((XmppProtocol) this.account).updateContactPresence(this, i);
-        if (result != i) {
+    public int sendPresence(int subscriptionType) {
+        int result = ((XmppProtocol) this.account).updateContactPresence(this, subscriptionType);
+        if (result != subscriptionType) {
             return result;
         }
         setPresenceFeature(FEATURE_SUBSCRIBE);
         setPresenceFeature(FEATURE_UNSUBSCRIBE);
-        return i;
+        return subscriptionType;
     }
 
-    public final void setPresenceFeature(int i) {
-        ((XmppProtocol) this.account).updatePresenceStatus(this.jabberId, i);
+    public void setPresenceFeature(int featureId) {
+        ((XmppProtocol) this.account).updatePresenceStatus(this.jabberId, featureId);
     }
 
-    public final ContactInfo getContactInfo() {
+    public ContactInfo getContactInfo() {
         return new ContactInfo(this).setImageWidth(getDisplayIcon());
     }
 }

@@ -194,8 +194,8 @@ public final class MmpContact extends Contact {
         this.extra = this.identifier;
     }
 
-    @Override // p000.Contact
-    public final void deserialize(ByteBuffer buffer) {
+    @Override
+    public final void serialize(ByteBuffer buffer) {
         buffer.writeIntLE(this.userId).writeIntLE(this.onlineSemaphore).writeStringLatin1(this.identifier).writeStringUTF16(this.displayName).writeBoolean(this.hasUnread).writeBoolean(false).writeShortBE(this.canDelete).writeShortBE(this.canBlock).writeShortBE(this.canUnblock).writeByte(this.flags);
     }
 

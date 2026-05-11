@@ -149,8 +149,8 @@ public final class MrimContact extends Contact implements ListItem {
         super.clearUnread();
     }
 
-    @Override // p000.Contact
-    public final void deserialize(ByteBuffer buffer) {
+    @Override
+    public final void serialize(ByteBuffer buffer) {
         buffer.writeIntLE(this.contactId).writeIntLE(this.statusFlags).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(this.displayName).writeIntLE(this.hasUnreadFlag).writeStringLatin1(this.contactGroupsStr).writeByte(this.flags);
     }
 

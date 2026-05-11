@@ -41,7 +41,7 @@ public abstract class ContactGroup implements Sortable {
         int size = this.contacts.size();
         buffer.writeIntLE(size);
         for (int i = 0; i < size; i++) {
-            getContact(i).deserialize(buffer);
+            getContact(i).serialize(buffer);
         }
         buffer.writeBoolean(this.isSpecial);
         if (clearAfter) {
