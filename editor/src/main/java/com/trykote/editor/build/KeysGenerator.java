@@ -156,8 +156,9 @@ public class KeysGenerator {
                     int length = nameEntry.path("length").asInt();
                     if (name.isEmpty()) continue;
 
-                    // PackedStringKeys value = (offset << 8) | length — packed reference
-                    int packedValue = (offset << 8) | (length & 0xFF);
+                    // PackedStringKeys value = (length << 16) | offset
+                    // AppState.getString: offset = key & 0xFFFF, length = key >> 16
+                    int packedValue = (length << 16) | offset;
                     String comment = nameEntry.has("value")
                         ? nameEntry.get("value").asText() : null;
                     if (comment != null && comment.length() > 50)

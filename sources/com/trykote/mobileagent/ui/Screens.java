@@ -483,7 +483,6 @@ public final class Screens {
     public static Screen contactListTemplate(ScreenHandler handler) {
         Screen s = new Screen(1, 4, handler);
         s.configureHeader(-1, 1038);
-        s.addActionById(1, 0, 0); // Тестовый параметр
         s.configureSoftKeys(1062, 1, 1059, 199, 199);
         return s;
     }

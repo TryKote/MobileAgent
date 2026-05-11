@@ -8,8 +8,6 @@ public final class StringResKeys {
 
     public static final int MAILBOX_NAMES_EN_COUNT = 5;
     public static final int MAILBOX_NAMES_RU_COUNT = 5;
-    /** statistics */
-    public static final int TAG_STATISTICS = 10;
     public static final int PHONE_STRINGS_COUNT = 15;
     public static final int MMP_EMOTICONS_COUNT = 43;
     public static final int XMPP_EMOTICONS_COUNT = 47;
@@ -125,8 +123,6 @@ public final class StringResKeys {
     public static final int STR_OPERATION_COMPLETE = 494;
     /**  для Java */
     public static final int STR_APP_BUILD_SUFFIX = 511;
-    /** a */
-    public static final int TAG_A = 513;
     /** Agent-Modules */
     public static final int STR_APP_PROPERTY_NAME = 519;
     /** Показывать мое местоположение:  */
@@ -357,524 +353,576 @@ public final class StringResKeys {
     public static final int STR_SEPARATOR = 1369;
     /** MIDlet-Version */
     public static final int STR_APP_NAME = 1375;
-    /** q= */
-    public static final int PARAM_Q_EQ = 2562;
-    /** data */
-    public static final int TAG_DATA = 3076;
-    /** data/add */
-    public static final int API_DATA_ADD = 3080;
-    /** data/get */
-    public static final int API_DATA_GET = 5128;
-    /** get */
-    public static final int XMPP_TYPE_GET = 6403;
-    /** _phone_info */
-    public static final int API_PHONE_INFO = 7179;
+    /** a */
+    public static final int TAG_A = 65538;
     /** 5 */
-    public static final int XMPP_PRIORITY_DEFAULT = 54017;
-    /** type */
-    public static final int ATTR_TYPE = 113924;
-    /** name */
-    public static final int ATTR_NAME = 116996;
-    /** (?) */
-    public static final int PLACEHOLDER_UNKNOWN = 118019;
-    /** audio/midi */
-    public static final int MIME_TYPE_MIDI = 120586;
+    public static final int XMPP_PRIORITY_DEFAULT = 65747;
+    /** q= */
+    public static final int PARAM_Q_EQ = 131082;
     /** id */
-    public static final int ATTR_ID = 122370;
-    /** VolumeControl */
-    public static final int MIDP_VOLUME_CONTROL = 123149;
-    /** MThd     */
-    public static final int MIDI_HEADER = 126473;
-    /** http:// */
-    public static final int SCHEME_HTTP = 128775;
-    /** http://obraz.foto.mail.ru/ */
-    public static final int URL_OBRAZ_FOTO = 128794;
+    public static final int ATTR_ID = 131550;
     /** to */
-    public static final int ATTR_TO = 132610;
-    /** http://api.icq.net/expressions/get?f=native&typ... */
-    public static final int URL_ICQ_BUDDY_ICON = 135485;
-    /** http://maps.mail.ru */
-    public static final int URL_MAPS_MAIL_RU = 151059;
-    /** http://maps.mail.ru/GeoObjectSearchInArea2.aspx... */
-    public static final int URL_GEO_SEARCH_ZOOM = 151093;
-    /** http://geo194.32.248.3/?lat1= */
-    public static final int URL_GEO_LAT1 = 164637;
-    /** &quantity=50&density= */
-    public static final int PARAM_QUANTITY_DENSITY = 172053;
-    /** &quantity=10&idfrom= */
-    public static final int PARAM_QUANTITY_IDFROM = 177428;
-    /** from */
-    public static final int ATTR_FROM = 181252;
-    /** &dist=100&sn=1&rand= */
-    public static final int PARAM_DIST_RAND = 182548;
-    /** &rand= */
-    public static final int PARAM_RAND = 186118;
-    /** email */
-    public static final int ATTR_EMAIL = 187653;
-    /** &lon1= */
-    public static final int PARAM_LON1 = 188934;
-    /** &lat2= */
-    public static final int PARAM_LAT2 = 190470;
-    /** &lon2= */
-    public static final int PARAM_LON2 = 192006;
-    /** MAPPOINT */
-    public static final int MRIM_MAPPOINT = 193544;
-    /** MAPOBJECT */
-    public static final int MRIM_MAPOBJECT = 195593;
-    /** General */
-    public static final int XMPP_GROUP_GENERAL = 198663;
-    /** 194.32.248.3:2042 */
-    public static final int HOST_MRIM_REDIRECT = 200465;
-    /** MRIM.NICKNAME */
-    public static final int MRIM_NICKNAME = 204813;
-    /** MESSAGES.UNREAD */
-    public static final int MRIM_MESSAGES_UNREAD = 208143;
-    /** client.endpoint */
-    public static final int MRIM_CLIENT_ENDPOINT = 211983;
-    /** HAS_MYMAIL */
-    public static final int MRIM_HAS_MYMAIL = 215818;
-    /** geo.point.suggest */
-    public static final int MRIM_GEO_SUGGEST = 218385;
-    /** geo-point */
-    public static final int MRIM_GEO_POINT = 222729;
-    /** geo-list */
-    public static final int MRIM_GEO_LIST = 225032;
-    /**    ru         geo-list */
-    public static final int MRIM_GEO_LIST_PACKET = 227098;
-    /** http://mobile.mail.ru/ */
-    public static final int URL_MOBILE_MAIL_RU = 233750;
-    /** mobile.mail.ru:2041/ */
-    public static final int HOST_MOBILE_MAIL_RU_2041 = 239380;
-    /** data/agentupload */
-    public static final int API_AGENTUPLOAD = 244496;
+    public static final int ATTR_TO = 131590;
     /** a= */
-    public static final int PARAM_A_EQ = 252418;
-    /** 200 */
-    public static final int HTTP_STATUS_200 = 252931;
-    /** &c=2&e= */
-    public static final int PARAM_CE = 255495;
-    /** &z=java */
-    public static final int PARAM_Z_JAVA = 257287;
-    /** link */
-    public static final int TAG_LINK = 259076;
-    /**            ru        */
-    public static final int MMP_AGENT_ID = 260118;
-    /** UIN: */
-    public static final int PREFIX_UIN = 283140;
-    /** http://win.mail.ru/cgi-bin/signup?mobileagent */
-    public static final int URL_SIGNUP = 289069;
-    /** http://xhtml.wap.mail.ru/cgi-bin/ */
-    public static final int URL_XHTML_WAP_MAIL_RU = 300577;
+    public static final int PARAM_A_EQ = 132058;
     /** ID */
-    public static final int ATTR_ID_UPPER = 313602;
-    /** security_image_id */
-    public static final int TAG_SECURITY_IMAGE_ID = 352273;
-    /** security_image_link */
-    public static final int TAG_SECURITY_IMAGE_LINK = 363027;
-    /** value */
-    public static final int ATTR_VALUE = 367877;
-    /** status */
-    public static final int TAG_STATUS = 369158;
-    /** http://mrb.mail.ru/java/version.txt */
-    public static final int URL_VERSION_CHECK = 370723;
-    /** &func_name=ajax_get_mailbox_data */
-    public static final int FUNC_AJAX_GET_MAILBOX = 379680;
-    /** /cgi-bin/ajax_markmsg */
-    public static final int URL_PATH_AJAX_MARKMSG = 387861;
-    /** &func_name=ajax_mark_msg */
-    public static final int FUNC_AJAX_MARK_MSG = 393240;
-    /** &Password= */
-    public static final int PARAM_PASSWORD_EQ = 400650;
-    /** http://aj.mail.ru */
-    public static final int URL_AJ_MAIL_RU = 403217;
-    /** AjaxResponse */
-    public static final int TAG_AJAX_RESPONSE = 407564;
-    /** /cgi-bin/auth?lite=1&Login= */
-    public static final int URL_PATH_AUTH_LOGIN = 410651;
-    /** auth */
-    public static final int TAG_AUTH = 412932;
-    /** /cgi-bin/mailbox */
-    public static final int URL_PATH_MAILBOX = 417552;
-    /** /cgi-bin/ajax_spamabuse */
-    public static final int URL_PATH_AJAX_SPAMABUSE = 421655;
-    /** /cgi-bin/ajax_readmsg */
-    public static final int URL_PATH_AJAX_READMSG = 427541;
-    /** /cgi-bin/ajax_sendmsg */
-    public static final int URL_PATH_AJAX_SENDMSG = 432917;
-    /** send */
-    public static final int ACTION_SEND = 436484;
-    /** ajax_call=1 */
-    public static final int PARAM_AJAX_CALL = 438283;
-    /** &func_name=ajax_spamabuse */
-    public static final int FUNC_AJAX_SPAMABUSE = 441113;
-    /** &func_name=ajax_get_folder_msg_list_info_part */
-    public static final int FUNC_AJAX_GET_FOLDER_LIST = 447533;
-    /** &func_name=ajax_move_msgs */
-    public static final int FUNC_AJAX_MOVE_MSGS = 459033;
-    /** &func_name=majax_get_msgs */
-    public static final int FUNC_MAJAX_GET_MSGS = 465433;
-    /** &func_name=ajax_get_msg_data */
-    public static final int FUNC_AJAX_GET_MSG_DATA = 471836;
-    /** &func_name=ajax_send_msg */
-    public static final int FUNC_AJAX_SEND_MSG = 479000;
-    /** &func_name=majax_search */
-    public static final int FUNC_MAJAX_SEARCH = 485143;
-    /** &data= */
-    public static final int PARAM_DATA_EQ = 491014;
-    /** true */
-    public static final int VALUE_TRUE = 492548;
-    /** false */
-    public static final int VALUE_FALSE = 493573;
+    public static final int ATTR_ID_UPPER = 132297;
     /** OK */
-    public static final int STATUS_OK = 494850;
-    /** fw: */
-    public static final int PREFIX_FORWARD = 496131;
-    /** re: */
-    public static final int PREFIX_REPLY = 496899;
-    /** lastMsgId */
-    public static final int MAIL_FIELD_LAST_MSG_ID = 497673;
-    /** mList */
-    public static final int MAIL_PARAM_MLIST = 500741;
-    /** mListAll */
-    public static final int MAIL_PARAM_MLIST_ALL = 500744;
-    /** Attachments */
-    public static final int MAIL_FIELD_ATTACHMENTS = 506379;
-    /** Body */
-    public static final int MAIL_FIELD_BODY = 509188;
-    /** FlagAttach */
-    public static final int MAIL_FLAG_ATTACH = 512778;
-    /** FlagUnread */
-    public static final int MAIL_FLAG_UNREAD = 515338;
-    /** ClearSize */
-    public static final int MAIL_FIELD_CLEAR_SIZE = 517897;
-    /** Receipt */
-    public static final int MAIL_FIELD_RECEIPT = 520199;
-    /** ReceiptArrived */
-    public static final int MAIL_FIELD_RECEIPT_ARRIVED = 520206;
+    public static final int STATUS_OK = 133005;
     /** To */
-    public static final int MAIL_FIELD_TO = 523778;
-    /** ToName */
-    public static final int MAIL_FIELD_TO_NAME = 523782;
-    /** ToEmail */
-    public static final int MAIL_FIELD_TO_EMAIL = 525319;
+    public static final int MAIL_FIELD_TO = 133118;
+    /** os */
+    public static final int TAG_OS = 133230;
+    /** -- */
+    public static final int MRIM_MESSAGE_DELIMITER = 134123;
+    /** iq */
+    public static final int XMPP_IQ = 136604;
+    /** xa */
+    public static final int XMPP_STATUS_XA = 136761;
+    /** "> */
+    public static final int XML_CLOSE_TAG_END = 136911;
+    /** get */
+    public static final int XMPP_TYPE_GET = 196633;
+    /** (?) */
+    public static final int PLACEHOLDER_UNKNOWN = 197069;
+    /** 200 */
+    public static final int HTTP_STATUS_200 = 197596;
+    /** fw: */
+    public static final int PREFIX_FORWARD = 198546;
+    /** re: */
+    public static final int PREFIX_REPLY = 198549;
+    /** set */
+    public static final int XMPP_TYPE_SET = 198841;
+    /** &y= */
+    public static final int PARAM_Y_EQ = 201188;
+    /** dir */
+    public static final int ATTR_DIR = 201594;
+    /** dnd */
+    public static final int XMPP_STATUS_DND = 202299;
+    /** inv */
+    public static final int XMPP_STATUS_INV = 202302;
+    /** ask */
+    public static final int ATTR_ASK = 202403;
+    /** jid */
+    public static final int ATTR_JID = 202421;
+    /** data */
+    public static final int TAG_DATA = 262156;
+    /** type */
+    public static final int ATTR_TYPE = 262589;
+    /** name */
+    public static final int ATTR_NAME = 262601;
+    /** from */
+    public static final int ATTR_FROM = 262852;
+    /** link */
+    public static final int TAG_LINK = 263156;
+    /** UIN: */
+    public static final int PREFIX_UIN = 263250;
+    /** auth */
+    public static final int TAG_AUTH = 263757;
+    /** send */
+    public static final int ACTION_SEND = 263849;
+    /** true */
+    public static final int VALUE_TRUE = 264068;
+    /** Body */
+    public static final int MAIL_FIELD_BODY = 264133;
     /** From */
-    public static final int MAIL_FIELD_FROM = 527108;
-    /** FromEmail */
-    public static final int MAIL_FIELD_FROM_EMAIL = 527113;
-    /** MessageId */
-    public static final int MAIL_FIELD_MESSAGE_ID = 529417;
-    /** FromName */
-    public static final int MAIL_FIELD_FROM_DISPLAY = 531720;
-    /** Subject */
-    public static final int MAIL_FIELD_SUBJECT = 533767;
-    /** draft */
-    public static final int MAIL_FOLDER_DRAFT = 535557;
-    /** realName */
-    public static final int MAIL_FIELD_REAL_NAME = 536840;
-    /** fList */
-    public static final int MAIL_PARAM_FLIST = 538885;
+    public static final int MAIL_FIELD_FROM = 264203;
     /** Date */
-    public static final int MAIL_FIELD_DATE = 540164;
+    public static final int MAIL_FIELD_DATE = 264254;
     /** copy */
-    public static final int MAIL_ACTION_COPY = 541188;
+    public static final int MAIL_ACTION_COPY = 264258;
+    /** j2me */
+    public static final int PLATFORM_J2ME = 264455;
+    /** port */
+    public static final int TAG_PORT = 265005;
+    /** host */
+    public static final int TAG_HOST = 265052;
+    /** GET& */
+    public static final int HTTP_GET_AMP = 265078;
+    /** chat */
+    public static final int XMPP_TYPE_CHAT = 265215;
+    /** %D0% */
+    public static final int URL_ENCODE_D0 = 266215;
+    /** %D1% */
+    public static final int URL_ENCODE_D1 = 266221;
+    /** text */
+    public static final int CONTENT_TYPE_TEXT = 267133;
+    /** nick */
+    public static final int TAG_NICK = 267628;
+    /** bind */
+    public static final int XMPP_BIND = 267762;
+    /** ping */
+    public static final int TAG_PING = 267810;
+    /** away */
+    public static final int XMPP_STATUS_AWAY = 267829;
+    /** show */
+    public static final int TAG_SHOW = 267927;
+    /** none */
+    public static final int VALUE_NONE = 267931;
+    /** item */
+    public static final int TAG_ITEM = 267942;
+    /** body */
+    public static final int TAG_BODY = 267946;
+    /** email */
+    public static final int ATTR_EMAIL = 328413;
+    /** value */
+    public static final int ATTR_VALUE = 329117;
+    /** false */
+    public static final int VALUE_FALSE = 329608;
+    /** mList */
+    public static final int MAIL_PARAM_MLIST = 329636;
+    /** draft */
+    public static final int MAIL_FOLDER_DRAFT = 329772;
+    /** fList */
+    public static final int MAIL_PARAM_FLIST = 329785;
+    /** Mpop= */
+    public static final int COOKIE_MPOP = 329959;
+    /** token */
+    public static final int TAG_TOKEN = 330583;
+    /** &pwd= */
+    public static final int PARAM_PWD = 330609;
+    /** tiles */
+    public static final int MAP_TILES = 332005;
+    /** PLAIN */
+    public static final int AUTH_MECHANISM_PLAIN = 332816;
+    /** xmlns */
+    public static final int XML_ATTR_XMLNS = 333027;
+    /** vcard */
+    public static final int TAG_VCARD = 333350;
+    /** query */
+    public static final int TAG_QUERY = 333360;
+    /** photo */
+    public static final int TAG_PHOTO = 333436;
+    /** error */
+    public static final int TAG_ERROR = 333441;
+    /** vCard */
+    public static final int TAG_VCARD_UPPER = 333452;
+    /** group */
+    public static final int XMPP_GROUP_TAG = 333508;
+    /**   !  */
+    public static final int MMP_SPACER = 333750;
+    /** &rand= */
+    public static final int PARAM_RAND = 393943;
+    /** &lon1= */
+    public static final int PARAM_LON1 = 393954;
+    /** &lat2= */
+    public static final int PARAM_LAT2 = 393960;
+    /** &lon2= */
+    public static final int PARAM_LON2 = 393966;
+    /** status */
+    public static final int TAG_STATUS = 394658;
+    /** &data= */
+    public static final int PARAM_DATA_EQ = 395134;
+    /** ToName */
+    public static final int MAIL_FIELD_TO_NAME = 395262;
+    /** cookie */
+    public static final int TAG_COOKIE = 395483;
+    /** secret */
+    public static final int TAG_SECRET = 396139;
+    /**  alt=' */
+    public static final int EMOTICON_ALT_ATTR = 396261;
+    /** Sender */
+    public static final int MAIL_FIELD_SENDER = 396269;
+    /** %D0%81 */
+    public static final int URL_ENCODE_YO_UPPER = 397287;
+    /** %D1%91 */
+    public static final int URL_ENCODE_YO_LOWER = 397293;
+    /** points */
+    public static final int TAG_POINTS = 397424;
+    /** sms:// */
+    public static final int SCHEME_SMS = 398209;
+    /** nonce= */
+    public static final int DIGEST_NONCE_EQ = 398406;
+    /** Jabber */
+    public static final int XMPP_RESOURCE_JABBER = 398518;
+    /** binval */
+    public static final int TAG_BINVAL = 398966;
+    /** result */
+    public static final int TAG_RESULT = 398982;
+    /** active */
+    public static final int XMPP_CHATSTATES_ACTIVE = 398993;
+    /** remove */
+    public static final int TAG_REMOVE = 399049;
+    /** http:// */
+    public static final int SCHEME_HTTP = 459255;
+    /** General */
+    public static final int XMPP_GROUP_GENERAL = 459528;
+    /** version */
+    public static final int TAG_VERSION = 459728;
+    /** &c=2&e= */
+    public static final int PARAM_CE = 459750;
+    /** &z=java */
+    public static final int PARAM_Z_JAVA = 459757;
+    /** Receipt */
+    public static final int MAIL_FIELD_RECEIPT = 460784;
+    /** ToEmail */
+    public static final int MAIL_FIELD_TO_EMAIL = 460804;
+    /** Subject */
+    public static final int MAIL_FIELD_SUBJECT = 460837;
+    /** loginid */
+    public static final int TAG_LOGINID = 461648;
+    /** session */
+    public static final int TAG_SESSION = 461668;
+    /** "   > < */
+    public static final int HTML_ENTITY_VALUES = 462816;
+    /** &login= */
+    public static final int PARAM_LOGIN = 463517;
+    /** success */
+    public static final int TAG_SUCCESS = 464473;
+    /** message */
+    public static final int TAG_MESSAGE = 464488;
+    /** failure */
+    public static final int TAG_FAILURE = 464495;
+    /** subject */
+    public static final int TAG_SUBJECT = 464558;
+    /** data/add */
+    public static final int API_DATA_ADD = 524300;
+    /** data/get */
+    public static final int API_DATA_GET = 524308;
+    /** MAPPOINT */
+    public static final int MRIM_MAPPOINT = 525044;
+    /** geo-list */
+    public static final int MRIM_GEO_LIST = 525167;
+    /** mListAll */
+    public static final int MAIL_PARAM_MLIST_ALL = 526244;
+    /** FromName */
+    public static final int MAIL_FIELD_FROM_DISPLAY = 526365;
+    /** realName */
+    public static final int MAIL_FIELD_REAL_NAME = 526385;
+    /** hosttime */
+    public static final int TAG_HOSTTIME = 527196;
+    /** listlink */
+    public static final int TAG_LISTLINK = 529266;
+    /** response */
+    public static final int TAG_RESPONSE = 529537;
+    /** presence */
+    public static final int TAG_PRESENCE = 530016;
+    /** resource */
+    public static final int XMPP_RESOURCE = 530129;
+    /** priority */
+    public static final int XMPP_PRIORITY = 530137;
+    /** &digest= */
+    public static final int PARAM_DIGEST = 530513;
+    /** :vk.com: */
+    public static final int DOMAIN_VK_COM = 530521;
+    /** MThd     */
+    public static final int MIDI_HEADER = 590318;
+    /** MAPOBJECT */
+    public static final int MRIM_MAPOBJECT = 590588;
+    /** geo-point */
+    public static final int MRIM_GEO_POINT = 590694;
+    /** lastMsgId */
+    public static final int MAIL_FIELD_LAST_MSG_ID = 591768;
+    /** ClearSize */
+    public static final int MAIL_FIELD_CLEAR_SIZE = 591847;
+    /** FromEmail */
+    public static final int MAIL_FIELD_FROM_EMAIL = 591883;
+    /** MessageId */
+    public static final int MAIL_FIELD_MESSAGE_ID = 591892;
+    /** '</SMILE> */
+    public static final int EMOTICON_CLOSE_TAG = 592851;
+    /** :;8}$SB() */
+    public static final int EMOTICON_TRIGGER_CHARS = 592860;
+    /** socket:// */
+    public static final int SCHEME_SOCKET = 593549;
+    /** timestamp */
+    public static final int ATTR_TIMESTAMP = 594023;
+    /** subscribe */
+    public static final int XMPP_SUBSCRIBE = 594926;
+    /** mechanism */
+    public static final int ATTR_MECHANISM = 594936;
+    /** insisible */
+    public static final int XMPP_STATUS_INVISIBLE = 594975;
+    /** available */
+    public static final int XMPP_STATUS_AVAILABLE = 594984;
+    /** ",realm=" */
+    public static final int DIGEST_REALM = 595003;
+    /** ",nonce=" */
+    public static final int DIGEST_NONCE = 595012;
+    /** challenge */
+    public static final int TAG_CHALLENGE = 595536;
+    /** statistics */
+    public static final int TAG_STATISTICS = 655360;
+    /** audio/midi */
+    public static final int MIME_TYPE_MIDI = 655831;
+    /** HAS_MYMAIL */
+    public static final int MRIM_HAS_MYMAIL = 656203;
+    /** &Password= */
+    public static final int PARAM_PASSWORD_EQ = 656925;
+    /** FlagAttach */
+    public static final int MAIL_FLAG_ATTACH = 657363;
+    /** FlagUnread */
+    public static final int MAIL_FLAG_UNREAD = 657373;
+    /** set-cookie */
+    public static final int HEADER_SET_COOKIE = 657623;
+    /** statuscode */
+    public static final int TAG_STATUSCODE = 658246;
+    /** <SMILE>id= */
+    public static final int EMOTICON_OPEN_TAG = 658377;
+    /** &user_lat= */
+    public static final int PARAM_USER_LAT = 659815;
+    /** &user_lon= */
+    public static final int PARAM_USER_LON = 659825;
+    /** &x_screen= */
+    public static final int PARAM_X_SCREEN = 659835;
+    /** &y_screen= */
+    public static final int PARAM_Y_SCREEN = 659845;
+    /** Secret_389 */
+    public static final int SECRET_KEY_389 = 660328;
+    /** subscribed */
+    public static final int XMPP_SUBSCRIBED = 660462;
+    /** mechanisms */
+    public static final int XMPP_MECHANISMS = 660472;
+    /** DIGEST-MD5 */
+    public static final int AUTH_DIGEST_MD5 = 660501;
+    /** username=" */
+    public static final int DIGEST_USERNAME = 660529;
+    /** :00000001: */
+    public static final int DIGEST_NC = 660619;
+    /** @gmail.com */
+    public static final int DOMAIN_GMAIL_COM = 660807;
+    /** vcard-temp */
+    public static final int XMPP_NS_VCARD_TEMP = 661030;
+    /** _phone_info */
+    public static final int API_PHONE_INFO = 720924;
+    /** ajax_call=1 */
+    public static final int PARAM_AJAX_CALL = 722608;
+    /** Attachments */
+    public static final int MAIL_FIELD_ATTACHMENTS = 722874;
+    /** snap_logins */
+    public static final int TAG_SNAP_LOGINS = 723889;
+    /** AjaxResponse */
+    public static final int TAG_AJAX_RESPONSE = 788024;
+    /** &sig_sha256= */
+    public static final int PARAM_SIG_SHA256 = 789306;
+    /** X-MRIM-Flags */
+    public static final int HEADER_X_MRIM_FLAGS = 789512;
+    /** unsubscribed */
+    public static final int XMPP_UNSUBSCRIBED = 791532;
+    /** ",response=" */
+    public static final int DIGEST_RESPONSE = 791679;
+    /** subscription */
+    public static final int ATTR_SUBSCRIPTION = 792248;
+    /**          */
+    public static final int MMP_PADDING_12 = 792490;
+    /** VolumeControl */
+    public static final int MIDP_VOLUME_CONTROL = 852449;
+    /** MRIM.NICKNAME */
+    public static final int MRIM_NICKNAME = 852768;
+    /** sessionsecret */
+    public static final int TAG_SESSIONSECRET = 854884;
+    /** <###20###img0 */
+    public static final int EMOTICON_TAG_PREFIX = 854972;
+    /** stream:stream */
+    public static final int XMPP_STREAM_STREAM = 857301;
+    /** urn:xmpp:ping */
+    public static final int XMPP_NS_PING = 857625;
+    /** ReceiptArrived */
+    public static final int MAIL_FIELD_RECEIPT_ARRIVED = 919536;
+    /** Content-Length */
+    public static final int HEADER_CONTENT_LENGTH = 919712;
+    /** X-GOOGLE-TOKEN */
+    public static final int HEADER_X_GOOGLE_TOKEN = 922626;
+    /** MESSAGES.UNREAD */
+    public static final int MRIM_MESSAGES_UNREAD = 983853;
+    /** client.endpoint */
+    public static final int MRIM_CLIENT_ENDPOINT = 983868;
+    /** MobileJMEAgent  */
+    public static final int USERAGENT_MOBILEJME = 986750;
+    /** data/jams_state */
+    public static final int API_JAMS_STATE = 987652;
+    /** ",charset=utf-8 */
+    public static final int DIGEST_CHARSET = 988327;
+    /** stream:features */
+    public static final int XMPP_STREAM_FEATURES = 988737;
+    /** vkmessenger.com */
+    public static final int HOST_VKMESSENGER = 989287;
+    /** data/agentupload */
+    public static final int API_AGENTUPLOAD = 1049531;
+    /** /cgi-bin/mailbox */
+    public static final int URL_PATH_MAILBOX = 1050207;
+    /**      @зз     */
+    public static final int MMP_LOGIN_HEADER = 1051079;
+    /** mrim_sms@mail.ru */
+    public static final int MRIM_SMS_ADDRESS = 1052223;
+    /** content-length:  */
+    public static final int HEADER_CONTENT_LENGTH_LC = 1052310;
+    /** jabber:iq:roster */
+    public static final int XMPP_NS_ROSTER = 1054101;
+    /** 194.32.248.3:2042 */
+    public static final int HOST_MRIM_REDIRECT = 1114895;
+    /** geo.point.suggest */
+    public static final int MRIM_GEO_SUGGEST = 1114965;
+    /** security_image_id */
+    public static final int TAG_SECURITY_IMAGE_ID = 1115488;
+    /** http://aj.mail.ru */
+    public static final int URL_AJ_MAIL_RU = 1115687;
+    /** Mobile Mail Agent */
+    public static final int XMPP_CLIENT_NAME = 1119195;
+    /** jabber:iq:version */
+    public static final int XMPP_NS_VERSION = 1119653;
+    /** AUTHENTICATE:xmpp/ */
+    public static final int DIGEST_AUTH_XMPP = 1184917;
+    /** _xmpp-client._tcp. */
+    public static final int SRV_XMPP_CLIENT_TCP = 1185660;
+    /** http://maps.mail.ru */
+    public static final int URL_MAPS_MAIL_RU = 1245774;
+    /** security_image_link */
+    public static final int TAG_SECURITY_IMAGE_LINK = 1246602;
+    /** &quantity=10&idfrom= */
+    public static final int PARAM_QUANTITY_IDFROM = 1311413;
+    /** &dist=100&sn=1&rand= */
+    public static final int PARAM_DIST_RAND = 1311433;
+    /** mobile.mail.ru:2041/ */
+    public static final int HOST_MOBILE_MAIL_RU_2041 = 1311655;
+    /** %40gmail.com&Passwd= */
+    public static final int GMAIL_PASSWD = 1316577;
+    /** SessionSecure&nonce= */
+    public static final int AUTH_SESSION_NONCE = 1316925;
+    /** &quantity=50&density= */
+    public static final int PARAM_QUANTITY_DENSITY = 1376928;
+    /** /cgi-bin/ajax_markmsg */
+    public static final int URL_PATH_AJAX_MARKMSG = 1377771;
+    /** /cgi-bin/ajax_readmsg */
+    public static final int URL_PATH_AJAX_READMSG = 1377926;
+    /** /cgi-bin/ajax_sendmsg */
+    public static final int URL_PATH_AJAX_SENDMSG = 1377947;
+    /** X-MRIM-Multichat-Type */
+    public static final int HEADER_X_MRIM_MULTICHAT = 1379315;
+    /** http://mobile.mail.ru/ */
+    public static final int URL_MOBILE_MAIL_RU = 1442705;
+    /**            ru        */
+    public static final int MMP_AGENT_ID = 1442808;
+    /** ",nc=00000001,cnonce=" */
+    public static final int DIGEST_NC_CNONCE = 1446989;
+    /** /cgi-bin/ajax_spamabuse */
+    public static final int URL_PATH_AJAX_SPAMABUSE = 1508975;
+    /** &func_name=majax_search */
+    public static final int FUNC_MAJAX_SEARCH = 1509223;
+    /** &quot; &nbsp; &gt; &lt; */
+    public static final int HTML_ENTITY_NAMES = 1511369;
+    /** mobilemaps.mail.ru:2043 */
+    public static final int HOST_MOBILEMAPS_2043 = 1511542;
+    /** data/mapssearch_ver1?q= */
+    public static final int API_MAPSSEARCH = 1511760;
+    /** &func_name=ajax_mark_msg */
+    public static final int FUNC_AJAX_MARK_MSG = 1574400;
+    /** &func_name=ajax_send_msg */
+    public static final int FUNC_AJAX_SEND_MSG = 1574735;
+    /** &func_name=ajax_spamabuse */
+    public static final int FUNC_AJAX_SPAMABUSE = 1640123;
+    /** &func_name=ajax_move_msgs */
+    public static final int FUNC_AJAX_MOVE_MSGS = 1640193;
+    /** &func_name=majax_get_msgs */
+    public static final int FUNC_MAJAX_GET_MSGS = 1640218;
+    /** client="jagent" version=" */
+    public static final int MRIM_CLIENT_VERSION = 1642077;
+    /** http://obraz.foto.mail.ru/ */
+    public static final int URL_OBRAZ_FOTO = 1704439;
+    /**    ru         geo-list */
+    public static final int MRIM_GEO_LIST_PACKET = 1704823;
+    /** /cgi-bin/auth?lite=1&Login= */
+    public static final int URL_PATH_AUTH_LOGIN = 1771076;
+    /** &dist=100&sn=1&bestobject=1 */
+    public static final int PARAM_MAP_BESTOBJECT = 1774025;
+    /** &func_name=ajax_get_msg_data */
+    public static final int FUNC_AJAX_GET_MSG_DATA = 1836851;
+    /** ",qop=auth,digest-uri="xmpp/ */
+    public static final int DIGEST_QOP_AUTH = 1840227;
+    /** datagram://nsrpub.mail.ru:53 */
+    public static final int HOST_NSRPUB_DNS = 1841038;
+    /** http://geo194.32.248.3/?lat1= */
+    public static final int URL_GEO_LAT1 = 1901187;
+    /** data/road_info_xml?timestamp= */
+    public static final int API_ROAD_INFO = 1905127;
+    /** http://jabber.org/protocol/nick */
+    public static final int XMPP_NS_NICK = 2037073;
+    /** &func_name=ajax_get_mailbox_data */
+    public static final int FUNC_AJAX_GET_MAILBOX = 2098635;
+    /** urn:ietf:params:xml:ns:xmpp-sasl */
+    public static final int XMPP_NS_SASL = 2102710;
+    /** urn:ietf:params:xml:ns:xmpp-bind */
+    public static final int XMPP_NS_BIND = 2102742;
+    /** http://xhtml.wap.mail.ru/cgi-bin/ */
+    public static final int URL_XHTML_WAP_MAIL_RU = 2163862;
+    /** GET /TileSender.aspx?ModeKey=tiles */
+    public static final int HTTP_GET_TILESENDER = 2232520;
+    /** http://mrb.mail.ru/java/version.txt */
+    public static final int URL_VERSION_CHECK = 2295208;
+    /** urn:ietf:params:xml:ns:xmpp-session */
+    public static final int XMPP_NS_SESSION = 2299382;
+    /** &mode=map&fullscreen=true&jams=false */
+    public static final int PARAM_MAP_FULLSCREEN = 2363459;
+    /** https://www.google.com:443/accounts/ */
+    public static final int URL_GOOGLE_ACCOUNTS = 2365173;
+    /** http://jabber.org/protocol/chatstates */
+    public static final int XMPP_NS_CHATSTATES = 2430320;
+    /** +++JanFebMarAprMayJunJulAugSepOctNovDec */
+    public static final int MONTH_ABBREV_TABLE = 2558996;
+    /**   %АЁ   «Н         P   j2me Mail.Ru   */
+    public static final int MMP_AUTH_PACKET = 2689260;
+    /** IssueAuthToken?service=mail&Session=true& */
+    public static final int GOOGLE_ISSUE_AUTH_TOKEN = 2692947;
+    /** https://api.login.icq.net/auth/clientLogin */
+    public static final int URL_ICQ_CLIENT_LOGIN = 2755089;
+    /** devId=ic122ravsLx0z-5F&f=xml&idType=ICQ&s= */
+    public static final int ICQ_AUTH_PARAMS = 2755131;
+    /** http://win.mail.ru/cgi-bin/signup?mobileagent */
+    public static final int URL_SIGNUP = 2950249;
+    /** &func_name=ajax_get_folder_msg_list_info_part */
+    public static final int FUNC_AJAX_GET_FOLDER_LIST = 2950868;
     /**  HTTP/1.1
 User-Agent: J2ME MailAgent
 Host:  */
-    public static final int HTTP_REQUEST_HEADER = 542253;
-    /** Content-Length */
-    public static final int HEADER_CONTENT_LENGTH = 565262;
-    /** set */
-    public static final int XMPP_TYPE_SET = 571651;
-    /** set-cookie */
-    public static final int HEADER_SET_COOKIE = 579338;
-    /** cookie */
-    public static final int TAG_COOKIE = 580358;
-    /** Mpop= */
-    public static final int COOKIE_MPOP = 583429;
-    /**   %АЁ   «Н         P   j2me Mail.Ru   */
-    public static final int MMP_AUTH_PACKET = 584745;
-    /** j2me */
-    public static final int PLATFORM_J2ME = 591620;
-    /**   д  д  д  д  д  ... */
-    public static final int MMP_TRANSFER_HEADER = 595280;
-    /**                                              */
-    public static final int MMP_CAPS_HEADER = 615729;
-    /**     '                 яя    яя                    */
-    public static final int MMP_CAPS_HEADER_2 = 628273;
-    /**      @зз     */
-    public static final int MMP_LOGIN_HEADER = 640784;
-    /** https://api.login.icq.net/auth/clientLogin */
-    public static final int URL_ICQ_CLIENT_LOGIN = 659754;
-    /** devId=ic122ravsLx0z-5F&f=xml&idType=ICQ&s= */
-    public static final int ICQ_AUTH_PARAMS = 670506;
+    public static final int HTTP_REQUEST_HEADER = 2951238;
     /** http://api.icq.net:5190/aim/startOSCARSession */
-    public static final int URL_ICQ_OSCAR_SESSION = 681261;
-    /** &buildNumber=1000&clientName=Mail.ru%20J2ME%20A... */
-    public static final int ICQ_OSCAR_PARAMS = 692904;
-    /** port */
-    public static final int TAG_PORT = 732420;
-    /** &sig_sha256= */
-    public static final int PARAM_SIG_SHA256 = 735756;
-    /** statuscode */
-    public static final int TAG_STATUSCODE = 738826;
-    /** loginid */
-    public static final int TAG_LOGINID = 741383;
-    /** token */
-    public static final int TAG_TOKEN = 743173;
-    /** host */
-    public static final int TAG_HOST = 744452;
-    /** hosttime */
-    public static final int TAG_HOSTTIME = 744456;
-    /** sessionsecret */
-    public static final int TAG_SESSIONSECRET = 746509;
-    /** secret */
-    public static final int TAG_SECRET = 748294;
-    /** &pwd= */
-    public static final int PARAM_PWD = 749829;
-    /** GET& */
-    public static final int HTTP_GET_AMP = 751108;
+    public static final int URL_ICQ_OSCAR_SESSION = 2951781;
+    /** data/trackpoints?getPath.aspx?mode=distance&x0= */
+    public static final int API_TRACKPOINTS = 3085016;
+    /** http://mobile.mail.ru/data/map_point/add_object? */
+    public static final int URL_MAP_POINT_ADD = 3150648;
+    /**                                              */
+    public static final int MMP_CAPS_HEADER = 3213669;
+    /**     '                 яя    яя                    */
+    public static final int MMP_CAPS_HEADER_2 = 3213718;
+    /** http://mobile.mail.ru/data/map_point/view_object? */
+    public static final int URL_MAP_POINT_VIEW = 3216135;
+    /** 2DBvQWJBam3xuyYyQ0BeYuWKKfpk5fV4Z6sPc9wTBfeTx442f6 */
+    public static final int VK_API_SECRET = 3282875;
+    /** http://maps.mail.ru/GeoObjectSearchInArea2.aspx... */
+    public static final int URL_GEO_SEARCH_ZOOM = 3473998;
     /** http://mra.mail.ru/settings/MobileJMEAgent/sett... */
-    public static final int URL_SETTINGS_XML = 752183;
-    /** snap_logins */
-    public static final int TAG_SNAP_LOGINS = 766219;
-    /** <###20###img0 */
-    public static final int EMOTICON_TAG_PREFIX = 769037;
-    /** <SMILE>id= */
-    public static final int EMOTICON_OPEN_TAG = 772362;
-    /** '</SMILE> */
-    public static final int EMOTICON_CLOSE_TAG = 774921;
-    /** :;8}$SB() */
-    public static final int EMOTICON_TRIGGER_CHARS = 777225;
-    /**  alt=' */
-    public static final int EMOTICON_ALT_ATTR = 779526;
-    /** -- */
-    public static final int MRIM_MESSAGE_DELIMITER = 781058;
-    /** Sender */
-    public static final int MAIL_FIELD_SENDER = 781574;
-    /** X-MRIM-Multichat-Type */
-    public static final int HEADER_X_MRIM_MULTICHAT = 783125;
-    /** chat */
-    public static final int XMPP_TYPE_CHAT = 786180;
-    /** X-MRIM-Flags */
-    public static final int HEADER_X_MRIM_FLAGS = 788492;
-    /** +++JanFebMarAprMayJunJulAugSepOctNovDec */
-    public static final int MONTH_ABBREV_TABLE = 791591;
-    /** eNptUsFugkAQJaYnE/9h0nOji6Kx+g29ND3uBXFBUgSDa3s... */
-    public static final int MRIM_MESSAGE_RTF_BLOB = 801540;
-    /** mrim_sms@mail.ru */
-    public static final int MRIM_SMS_ADDRESS = 933648;
-    /** client="jagent" version=" */
-    public static final int MRIM_CLIENT_VERSION = 941337;
-    /** MobileJMEAgent  */
-    public static final int USERAGENT_MOBILEJME = 949775;
-    /** socket:// */
-    public static final int SCHEME_SOCKET = 953609;
-    /** content-length:  */
-    public static final int HEADER_CONTENT_LENGTH_LC = 955920;
-    /** a b v g d e z i y k l m n o p r s t u f h c " '... */
-    public static final int TRANSLIT_TABLE_EXTENDED = 960218;
-    /** a b v g d e zh z i y k l m n o p r s t u f h c ... */
-    public static final int TRANSLIT_TABLE_BASIC = 1015881;
-    /** &quot; &nbsp; &gt; &lt; */
-    public static final int HTML_ENTITY_NAMES = 1034519;
-    /** "   > < */
-    public static final int HTML_ENTITY_VALUES = 1040391;
-    /** %D0% */
-    public static final int URL_ENCODE_D0 = 1042180;
-    /** %D0%81 */
-    public static final int URL_ENCODE_YO_UPPER = 1042182;
-    /** %D1% */
-    public static final int URL_ENCODE_D1 = 1043716;
-    /** %D1%91 */
-    public static final int URL_ENCODE_YO_LOWER = 1043718;
-    /** &mode=map&fullscreen=true&jams=false */
-    public static final int PARAM_MAP_FULLSCREEN = 1065764;
-    /** timestamp */
-    public static final int ATTR_TIMESTAMP = 1074953;
-    /** points */
-    public static final int TAG_POINTS = 1077254;
-    /** mobilemaps.mail.ru:2043 */
-    public static final int HOST_MOBILEMAPS_2043 = 1078807;
+    public static final int URL_SETTINGS_XML = 3607418;
+    /** http://maps.mail.ru/GeoObjectSearchInArea2.aspx... */
+    public static final int URL_GEO_OBJECT_SEARCH_2 = 3805583;
+    /** ClientAuth?PersistentCookie=false&source=google... */
+    public static final int GOOGLE_CLIENT_AUTH = 3807001;
     /**  HTTP/1.1
 Accept: image/png
 User-Agent: J2ME ... */
-    public static final int HTTP_MAP_TILE_HEADER = 1084731;
-    /** GET /TileSender.aspx?ModeKey=tiles */
-    public static final int HTTP_GET_TILESENDER = 1099810;
-    /** tiles */
-    public static final int MAP_TILES = 1107205;
+    public static final int HTTP_MAP_TILE_HEADER = 3870861;
+    /** http://api.icq.net/expressions/get?f=native&typ... */
+    public static final int URL_ICQ_BUDDY_ICON = 3998225;
+    /** http://api.vkontakte.ru/api.php?api_id=2023699&... */
+    public static final int URL_VK_AUTH_GET = 4069357;
+    /** a b v g d e zh z i y k l m n o p r s t u f h c ... */
+    public static final int TRANSLIT_TABLE_BASIC = 4788096;
+    /**   д  д  д  д  д  ... */
+    public static final int MMP_TRANSFER_HEADER = 5245205;
+    /** http://api.vkontakte.ru/api.php?api_id=2023699&... */
+    public static final int URL_VK_AUTH_TOKEN_SECURE = 5249005;
+    /** Privet, ia postavil Mobile Mail.ru Agent, dobav... */
+    public static final int INVITE_MESSAGE_RU = 5510023;
     /** 
 Connection: keep-alive
 Cache-Control: no-tra... */
-    public static final int HTTP_TILE_HEADERS = 1108582;
-    /** data/mapssearch_ver1?q= */
-    public static final int API_MAPSSEARCH = 1134615;
-    /** &user_lat= */
-    public static final int PARAM_USER_LAT = 1140490;
-    /** &user_lon= */
-    public static final int PARAM_USER_LON = 1143050;
-    /** &x_screen= */
-    public static final int PARAM_X_SCREEN = 1145610;
-    /** &y_screen= */
-    public static final int PARAM_Y_SCREEN = 1148170;
-    /** http://maps.mail.ru/GeoObjectSearchInArea2.aspx... */
-    public static final int URL_GEO_OBJECT_SEARCH_2 = 1150778;
-    /** &dist=100&sn=1&bestobject=1 */
-    public static final int PARAM_MAP_BESTOBJECT = 1165595;
-    /** &y= */
-    public static final int PARAM_Y_EQ = 1172483;
-    /** data/road_info_xml?timestamp= */
-    public static final int API_ROAD_INFO = 1173277;
-    /** data/jams_state */
-    public static final int API_JAMS_STATE = 1180687;
-    /** &login= */
-    public static final int PARAM_LOGIN = 1219847;
-    /** data/trackpoints?getPath.aspx?mode=distance&x0= */
-    public static final int API_TRACKPOINTS = 1234991;
-    /** http://mobile.mail.ru/data/map_point/view_object? */
-    public static final int URL_MAP_POINT_VIEW = 1247025;
-    /** http://mobile.mail.ru/data/map_point/add_object? */
-    public static final int URL_MAP_POINT_ADD = 1259568;
-    /** Secret_389 */
-    public static final int SECRET_KEY_389 = 1271818;
-    /** listlink */
-    public static final int TAG_LISTLINK = 1274376;
-    /** dir */
-    public static final int ATTR_DIR = 1276419;
-    /** text */
-    public static final int CONTENT_TYPE_TEXT = 1277188;
-    /** sms:// */
-    public static final int SCHEME_SMS = 1278214;
-    /** Privet, ia postavil Mobile Mail.ru Agent, dobav... */
-    public static final int INVITE_MESSAGE_RU = 1279828;
-    /** subscribe */
-    public static final int XMPP_SUBSCRIBE = 1306121;
-    /** mechanisms */
-    public static final int XMPP_MECHANISMS = 1308682;
-    /** X-GOOGLE-TOKEN */
-    public static final int HEADER_X_GOOGLE_TOKEN = 1311246;
-    /** PLAIN */
-    public static final int AUTH_MECHANISM_PLAIN = 1314821;
-    /** DIGEST-MD5 */
-    public static final int AUTH_DIGEST_MD5 = 1316106;
-    /** available */
-    public static final int XMPP_STATUS_AVAILABLE = 1320969;
-    /** username=" */
-    public static final int DIGEST_USERNAME = 1323274;
-    /** ",realm=" */
-    public static final int DIGEST_REALM = 1325833;
-    /** ",nonce=" */
-    public static final int DIGEST_NONCE = 1328137;
-    /** nonce= */
-    public static final int DIGEST_NONCE_EQ = 1328646;
-    /** ",nc=00000001,cnonce=" */
-    public static final int DIGEST_NC_CNONCE = 1330454;
-    /** ",qop=auth,digest-uri="xmpp/ */
-    public static final int DIGEST_QOP_AUTH = 1336092;
-    /** ",response=" */
-    public static final int DIGEST_RESPONSE = 1343244;
-    /** :00000001: */
-    public static final int DIGEST_NC = 1346314;
-    /** AUTHENTICATE:xmpp/ */
-    public static final int DIGEST_AUTH_XMPP = 1348882;
-    /** ",charset=utf-8 */
-    public static final int DIGEST_CHARSET = 1353487;
+    public static final int HTTP_TILE_HEADERS = 6689002;
     /** <?xml version="1.0"?><stream:stream xmlns:strea... */
-    public static final int XML_XMPP_STREAM_HEADER = 1359740;
-    /** stream:stream */
-    public static final int XMPP_STREAM_STREAM = 1365261;
-    /** xmlns */
-    public static final int XML_ATTR_XMLNS = 1368837;
-    /** @gmail.com */
-    public static final int DOMAIN_GMAIL_COM = 1394442;
-    /** nick */
-    public static final int TAG_NICK = 1403908;
-    /** iq */
-    public static final int XMPP_IQ = 1416194;
-    /** bind */
-    public static final int XMPP_BIND = 1438212;
-    /** away */
-    public static final int XMPP_STATUS_AWAY = 1455364;
-    /** xa */
-    public static final int XMPP_STATUS_XA = 1456386;
-    /** dnd */
-    public static final int XMPP_STATUS_DND = 1456899;
-    /** inv */
-    public static final int XMPP_STATUS_INV = 1457667;
-    /** stream:features */
-    public static final int XMPP_STREAM_FEATURES = 1458447;
-    /** challenge */
-    public static final int TAG_CHALLENGE = 1462281;
-    /** success */
-    public static final int TAG_SUCCESS = 1464583;
-    /** presence */
-    public static final int TAG_PRESENCE = 1466376;
-    /** message */
-    public static final int TAG_MESSAGE = 1468423;
-    /** failure */
-    public static final int TAG_FAILURE = 1470215;
-    /** binval */
-    public static final int TAG_BINVAL = 1472006;
-    /** photo */
-    public static final int TAG_PHOTO = 1473541;
-    /** error */
-    public static final int TAG_ERROR = 1474821;
-    /** result */
-    public static final int TAG_RESULT = 1476102;
-    /** show */
-    public static final int TAG_SHOW = 1480452;
-    /** none */
-    public static final int VALUE_NONE = 1481476;
-    /** ask */
-    public static final int ATTR_ASK = 1483523;
-    /** item */
-    public static final int TAG_ITEM = 1484292;
-    /** body */
-    public static final int TAG_BODY = 1485316;
-    /** subject */
-    public static final int TAG_SUBJECT = 1486343;
-    /** jid */
-    public static final int ATTR_JID = 1488131;
-    /** subscription */
-    public static final int ATTR_SUBSCRIPTION = 1488908;
-    /** group */
-    public static final int XMPP_GROUP_TAG = 1491973;
-    /** remove */
-    public static final int TAG_REMOVE = 1493254;
-    /** "> */
-    public static final int XML_CLOSE_TAG_END = 1494786;
-    /** resource */
-    public static final int XMPP_RESOURCE = 1495304;
-    /** priority */
-    public static final int XMPP_PRIORITY = 1497352;
-    /** %40gmail.com&Passwd= */
-    public static final int GMAIL_PASSWD = 1499412;
-    /** https://www.google.com:443/accounts/ */
-    public static final int URL_GOOGLE_ACCOUNTS = 1504548;
-    /** ClientAuth?PersistentCookie=false&source=google... */
-    public static final int GOOGLE_CLIENT_AUTH = 1513786;
-    /** IssueAuthToken?service=mail&Session=true& */
-    public static final int GOOGLE_ISSUE_AUTH_TOKEN = 1528617;
-    /** _xmpp-client._tcp. */
-    public static final int SRV_XMPP_CLIENT_TCP = 1539090;
-    /** datagram://nsrpub.mail.ru:53 */
-    public static final int HOST_NSRPUB_DNS = 1543708;
-    /**          */
-    public static final int MMP_PADDING_12 = 1550860;
-    /**   !  */
-    public static final int MMP_SPACER = 1553925;
-    /** 2DBvQWJBam3xuyYyQ0BeYuWKKfpk5fV4Z6sPc9wTBfeTx442f6 */
-    public static final int VK_API_SECRET = 1555250;
-    /** http://api.vkontakte.ru/api.php?api_id=2023699&... */
-    public static final int URL_VK_AUTH_GET = 1568062;
-    /** http://api.vkontakte.ru/api.php?api_id=2023699&... */
-    public static final int URL_VK_AUTH_TOKEN_SECURE = 1568080;
-    /** SessionSecure&nonce= */
-    public static final int AUTH_SESSION_NONCE = 1588500;
-    /** &digest= */
-    public static final int PARAM_DIGEST = 1593608;
-    /** :vk.com: */
-    public static final int DOMAIN_VK_COM = 1595656;
-    /** vkmessenger.com */
-    public static final int HOST_VKMESSENGER = 1599247;
+    public static final int XML_XMPP_STREAM_HEADER = 8131775;
+    /** &buildNumber=1000&clientName=Mail.ru%20J2ME%20A... */
+    public static final int ICQ_OSCAR_PARAMS = 11012754;
+    /** a b v g d e z i y k l m n o p r s t u f h c " '... */
+    public static final int TRANSLIT_TABLE_EXTENDED = 14290598;
+    /** eNptUsFugkAQJaYnE/9h0nOji6Kx+g29ND3uBXFBUgSDa3s... */
+    public static final int MRIM_MESSAGE_RTF_BLOB = 33819707;
 }

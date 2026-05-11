@@ -2188,15 +2188,7 @@
         "cmd_": "confirm"
       },
       "extraCmd": 199,
-      "items": [
-        {
-          "type": "action",
-          "label": 0,
-          "label_": "Тестовый параметр",
-          "icon": 1,
-          "cmd": 0
-        }
-      ],
+      "items": [],
       "handler": "MessageHandler",
       "extraCmd_": "confirm"
     },
@@ -11998,6 +11990,12 @@
               "value": "data/agentupload"
             },
             {
+              "name": "TAG_VERSION",
+              "offset": 976,
+              "length": 7,
+              "value": "version"
+            },
+            {
               "name": "PARAM_A_EQ",
               "offset": 986,
               "length": 2,
@@ -12394,6 +12392,12 @@
               "value": " HTTP/1.1\r\nUser-Agent: J2ME MailAgent\r\nHost: "
             },
             {
+              "name": "TAG_OS",
+              "offset": 2158,
+              "length": 2,
+              "value": "os"
+            },
+            {
               "name": "HEADER_CONTENT_LENGTH",
               "offset": 2208,
               "length": 14,
@@ -12530,6 +12534,12 @@
               "offset": 2916,
               "length": 13,
               "value": "sessionsecret"
+            },
+            {
+              "name": "TAG_SESSION",
+              "offset": 2916,
+              "length": 7,
+              "value": "session"
             },
             {
               "name": "TAG_SECRET",
@@ -12880,16 +12890,40 @@
               "value": "Privet, ia postavil Mobile Mail.ru Agent, dobavliaiysia - http://m.mail.ru/magent?u="
             },
             {
+              "name": "XMPP_CLIENT_NAME",
+              "offset": 5083,
+              "length": 17,
+              "value": "Mobile Mail Agent"
+            },
+            {
+              "name": "XMPP_UNSUBSCRIBED",
+              "offset": 5100,
+              "length": 12,
+              "value": "unsubscribed"
+            },
+            {
               "name": "XMPP_SUBSCRIBE",
               "offset": 5102,
               "length": 9,
               "value": "subscribe"
             },
             {
+              "name": "XMPP_SUBSCRIBED",
+              "offset": 5102,
+              "length": 10,
+              "value": "subscribed"
+            },
+            {
               "name": "XMPP_MECHANISMS",
               "offset": 5112,
               "length": 10,
               "value": "mechanisms"
+            },
+            {
+              "name": "ATTR_MECHANISM",
+              "offset": 5112,
+              "length": 9,
+              "value": "mechanism"
             },
             {
               "name": "HEADER_X_GOOGLE_TOKEN",
@@ -12908,6 +12942,12 @@
               "offset": 5141,
               "length": 10,
               "value": "DIGEST-MD5"
+            },
+            {
+              "name": "XMPP_STATUS_INVISIBLE",
+              "offset": 5151,
+              "length": 9,
+              "value": "insisible"
             },
             {
               "name": "XMPP_STATUS_AVAILABLE",
@@ -12958,6 +12998,12 @@
               "value": "\",response=\""
             },
             {
+              "name": "TAG_RESPONSE",
+              "offset": 5249,
+              "length": 8,
+              "value": "response"
+            },
+            {
               "name": "DIGEST_NC",
               "offset": 5259,
               "length": 10,
@@ -12974,6 +13020,12 @@
               "offset": 5287,
               "length": 15,
               "value": "\",charset=utf-8"
+            },
+            {
+              "name": "XMPP_RESOURCE_JABBER",
+              "offset": 5302,
+              "length": 6,
+              "value": "Jabber"
             },
             {
               "name": "XML_XMPP_STREAM_HEADER",
@@ -13000,10 +13052,28 @@
               "value": "@gmail.com"
             },
             {
+              "name": "XMPP_NS_NICK",
+              "offset": 5457,
+              "length": 31,
+              "value": "http://jabber.org/protocol/nick"
+            },
+            {
               "name": "TAG_NICK",
               "offset": 5484,
               "length": 4,
               "value": "nick"
+            },
+            {
+              "name": "XMPP_NS_CHATSTATES",
+              "offset": 5488,
+              "length": 37,
+              "value": "http://jabber.org/protocol/chatstates"
+            },
+            {
+              "name": "XMPP_NS_ROSTER",
+              "offset": 5525,
+              "length": 16,
+              "value": "jabber:iq:roster"
             },
             {
               "name": "XMPP_IQ",
@@ -13012,10 +13082,64 @@
               "value": "iq"
             },
             {
+              "name": "XMPP_NS_VERSION",
+              "offset": 5541,
+              "length": 17,
+              "value": "jabber:iq:version"
+            },
+            {
+              "name": "XMPP_NS_SASL",
+              "offset": 5558,
+              "length": 32,
+              "value": "urn:ietf:params:xml:ns:xmpp-sasl"
+            },
+            {
+              "name": "XMPP_NS_BIND",
+              "offset": 5590,
+              "length": 32,
+              "value": "urn:ietf:params:xml:ns:xmpp-bind"
+            },
+            {
               "name": "XMPP_BIND",
               "offset": 5618,
               "length": 4,
               "value": "bind"
+            },
+            {
+              "name": "XMPP_NS_SESSION",
+              "offset": 5622,
+              "length": 35,
+              "value": "urn:ietf:params:xml:ns:xmpp-session"
+            },
+            {
+              "name": "XMPP_NS_PING",
+              "offset": 5657,
+              "length": 13,
+              "value": "urn:xmpp:ping"
+            },
+            {
+              "name": "TAG_PING",
+              "offset": 5666,
+              "length": 4,
+              "value": "ping"
+            },
+            {
+              "name": "TAG_VCARD",
+              "offset": 5670,
+              "length": 5,
+              "value": "vcard"
+            },
+            {
+              "name": "XMPP_NS_VCARD_TEMP",
+              "offset": 5670,
+              "length": 10,
+              "value": "vcard-temp"
+            },
+            {
+              "name": "TAG_QUERY",
+              "offset": 5680,
+              "length": 5,
+              "value": "query"
             },
             {
               "name": "XMPP_STATUS_AWAY",
@@ -13100,6 +13224,18 @@
               "offset": 5766,
               "length": 6,
               "value": "result"
+            },
+            {
+              "name": "TAG_VCARD_UPPER",
+              "offset": 5772,
+              "length": 5,
+              "value": "vCard"
+            },
+            {
+              "name": "XMPP_CHATSTATES_ACTIVE",
+              "offset": 5777,
+              "length": 6,
+              "value": "active"
             },
             {
               "name": "TAG_SHOW",

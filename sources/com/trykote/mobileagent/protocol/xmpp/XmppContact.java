@@ -108,13 +108,16 @@ public final class XmppContact extends Contact {
         return menuItem;
     }
 
-    @Override // p000.Contact
+    @Override
     public final int getIcon() {
         int icon = super.getIcon();
-        int i = icon;
         if (icon == ICON_BLINK_FLAG) {
-            return i;
+            return icon;
         }
+        if (this.online) {
+            return this.defaultIcon;
+        }
+        int i = icon;
         if (StringUtils.matchesKey(PackedStringKeys.ATTR_FROM, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.VALUE_NONE, this.statusMessage) || StringUtils.matchesKey(PackedStringKeys.ATTR_ASK, this.statusMessage)) {
             i = ICON_SUBSCRIPTION_PENDING;
         }
@@ -157,13 +160,11 @@ public final class XmppContact extends Contact {
         this.vCardHash = str;
         this.status = PRESENCE_OFFLINE;
         if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AVAILABLE, str)) {
+            i = PRESENCE_ONLINE;
             XmlElement showChild = element.findChildByKey(PackedStringKeys.TAG_SHOW);
             if (showChild != null) {
                 String statusText = StringUtils.fromBuffer(showChild.textContent);
-                if (StringUtils.isEmpty(statusText)) {
-                    i = PRESENCE_ONLINE;
-                    this.status = i;
-                } else {
+                if (!StringUtils.isEmpty(statusText)) {
                     if (StringUtils.matchesKey(PackedStringKeys.XMPP_TYPE_CHAT, statusText)) {
                         i = PRESENCE_CHAT;
                     } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_AWAY, statusText)) {
@@ -175,19 +176,27 @@ public final class XmppContact extends Contact {
                     } else if (StringUtils.matchesKey(PackedStringKeys.XMPP_STATUS_INV, statusText)) {
                         i = PRESENCE_INVISIBLE;
                     }
-                    this.status = i;
                 }
             }
+            this.status = i;
         }
         updateFromContact(this);
+    }
+
+    public final void markOnlineIfOffline() {
+        if (this.status == PRESENCE_OFFLINE) {
+            this.status = PRESENCE_ONLINE;
+            updateFromContact(this);
+        }
     }
 
     public final void updateFromContact(XmppContact other) {
         this.status = other != null ? other.status : PRESENCE_OFFLINE;
         this.vCardHash = other != null ? other.vCardHash : null;
-        this.highlighted = this.status != PRESENCE_OFFLINE;
+        this.online = this.status != PRESENCE_OFFLINE;
+        this.highlighted = this.online;
         this.defaultIcon = XmppProtocol.getIconForError(this.status);
-        this.unreadCount = this.status == PRESENCE_OFFLINE ? 0 : UNREAD_COUNT_ONLINE;
+        this.unreadCount = this.online ? UNREAD_COUNT_ONLINE : 0;
         this.dirty = true;
         updateRenderState();
     }
