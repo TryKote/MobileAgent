@@ -11,6 +11,7 @@ import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.net.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
+import javax.microedition.lcdui.Graphics;
 
 public final class TabBar {
 
@@ -40,16 +41,28 @@ public final class TabBar {
     private static final int TAB_MARGIN = 20;
     private static final int TAB_WIDTH_PADDING = 26;
     private static final int OVERFLOW_BUFFER = 32;
-
-    // Tab bar height for hit testing
     private static final int TAB_BAR_HEIGHT = 22;
-
-    // Font height offset for vertical positioning
     private static final int FONT_HEIGHT_OFFSET = 7;
+
+    // Tab shape rendering constants
+    private static final int TAB_BORDER_MARGIN = 2;
+    private static final int TAB_CORNER_Y = 6;
+    private static final int TAB_CONTENT_INSET = 4;
+    private static final int TAB_FILL_START_Y = 3;
+    private static final int TAB_FILL_RIGHT_INSET = 3;
+    private static final int TEXT_LEFT_PADDING = 6;
+
+    // Palette indices
+    private static final int PALETTE_TEXT = 0;
+    private static final int PALETTE_BACKGROUND = 1;
+    private static final int PALETTE_BORDER = 16;
+    private static final int PALETTE_INACTIVE_BG = 17;
 
     public static boolean scrollEnabled;
 
     public static int currentIndex;
+
+    public static Account currentAccount;
 
     public String title;
 
@@ -67,405 +80,483 @@ public final class TabBar {
 
     public int selectedIndex;
 
-    public static Account currentAccount;
-
-    private TabBar(int i, String str, int i2, Account acct) {
-        this.iconId = i;
-        this.title = str;
-        this.type = i2;
-        this.width = GraphicsContext.getIconSize(i) + UIState.getGfxContext(UIKeys.GFX_INDEX_BOLD).stringWidth(str);
-        this.account = acct;
+    private TabBar(int iconId, String title, int type, Account account) {
+        this.iconId = iconId;
+        this.title = title;
+        this.type = type;
+        this.width = GraphicsContext.getIconSize(iconId)
+            + UIState.getGfxContext(UIKeys.GFX_INDEX_BOLD).stringWidth(title);
+        this.account = account;
     }
 
-    public static final void initialize() {
-        RemoteLogger.log("TAB", "initialize: accounts=" + SessionState.getAccounts().size() + " multiAcct=" + SettingsState.isMultiAccount());
+    public static void initialize() {
+        RemoteLogger.log("TAB", "initialize: accounts=" + SessionState.getAccounts().size()
+            + " multiAcct=" + SettingsState.isMultiAccount());
         currentIndex = 0;
         currentAccount = null;
         UIState.setTabBars(ObjectPool.newVector());
-        Vector tabs = SessionState.getAccounts();
-        int size = tabs.size();
-        if (size == 0 || !SettingsState.isMultiAccount()) {
-            RemoteLogger.log("TAB", "addTab DEFAULT: icon=156 title=" + ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS));
-            addTab(ICON_CONTACTS, ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS), TYPE_CONTACTS, null);
+        Vector accounts = SessionState.getAccounts();
+        int accountCount = accounts.size();
+        if (accountCount == 0 || !SettingsState.isMultiAccount()) {
+            RemoteLogger.log("TAB", "addTab DEFAULT: icon=" + ICON_CONTACTS
+                + " title=" + ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS));
+            addTab(ICON_CONTACTS, ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS),
+                TYPE_CONTACTS, null);
         } else {
-            for (int i = 0; i < size; i++) {
-                Account acct = (Account) tabs.elementAt(i);
-                RemoteLogger.log("TAB", "addTab ACCOUNT: icon=" + acct.getIconId() + " name=" + acct.shortName + " login=" + acct.login);
+            for (int idx = 0; idx < accountCount; idx++) {
+                Account acct = (Account) accounts.elementAt(idx);
+                RemoteLogger.log("TAB", "addTab ACCOUNT: icon=" + acct.getIconId()
+                    + " name=" + acct.shortName + " login=" + acct.login);
                 addTab(acct.getIconId(), acct.shortName, TYPE_CONTACTS, acct);
-                if (i == 0) {
+                if (idx == 0) {
                     currentAccount = acct;
                 }
             }
         }
         if (SettingsState.isMailTabEnabled()) {
-            RemoteLogger.log("TAB", "addTab MAIL: getBool(67)=" + SettingsState.isMailTabEnabled());
-            addTab(ICON_MAIL, ResourceAccessor.str(StringResKeys.STR_TAB_MAIL), TYPE_MAIL, null);
+            RemoteLogger.log("TAB", "addTab MAIL: getBool(67)="
+                + SettingsState.isMailTabEnabled());
+            addTab(ICON_MAIL, ResourceAccessor.str(StringResKeys.STR_TAB_MAIL),
+                TYPE_MAIL, null);
         }
         if (SettingsState.isSearchTabEnabled()) {
-            RemoteLogger.log("TAB", "addTab SEARCH: getBool(68)=" + SettingsState.isSearchTabEnabled());
-            addTab(ICON_SEARCH, ResourceAccessor.str(StringResKeys.STR_TAB_SEARCH), TYPE_SEARCH, null);
+            RemoteLogger.log("TAB", "addTab SEARCH: getBool(68)="
+                + SettingsState.isSearchTabEnabled());
+            addTab(ICON_SEARCH, ResourceAccessor.str(StringResKeys.STR_TAB_SEARCH),
+                TYPE_SEARCH, null);
         }
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs=" + UIState.getTabBars().size());
+        RemoteLogger.log("TAB", "initialize done: totalTabs="
+            + UIState.getTabBars().size());
         AppController.needsRepaint = true;
     }
 
-    public static final void updateTitle(int i, String str) {
+    public static void updateTitle(int iconId, String title) {
         Vector tabs = UIState.getTabBars();
-        TabBar tab = (TabBar) tabs.elementAt(0);
-        if (tab.iconId == i && tab.title == str) {
+        TabBar firstTab = (TabBar) tabs.elementAt(0);
+        if (firstTab.iconId == iconId && firstTab.title == title) {
             return;
         }
-        String str2 = tab.selectedTitle;
-        int i2 = tab.selectedIndex;
-        TabBar iterTab = new TabBar(i, str, TYPE_CONTACTS, null);
-        tabs.setElementAt(iterTab, 0);
-        iterTab.selectedTitle = str2;
-        iterTab.selectedIndex = i2;
+        String savedTitle = firstTab.selectedTitle;
+        int savedIndex = firstTab.selectedIndex;
+        TabBar newTab = new TabBar(iconId, title, TYPE_CONTACTS, null);
+        tabs.setElementAt(newTab, 0);
+        newTab.selectedTitle = savedTitle;
+        newTab.selectedIndex = savedIndex;
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs=" + UIState.getTabBars().size());
+        RemoteLogger.log("TAB", "initialize done: totalTabs="
+            + UIState.getTabBars().size());
         AppController.needsRepaint = true;
     }
 
-    private static void addTab(int i, String str, int i2, Account acct) {
-        UIState.getTabBars().addElement(new TabBar(i, str, i2, acct));
+    private static void addTab(int iconId, String title, int tabType, Account account) {
+        UIState.getTabBars().addElement(new TabBar(iconId, title, tabType, account));
     }
 
-    public final int selectTab() {
+    public int selectTab() {
         Vector tabs = UIState.getTabBars();
-        int size = tabs.size();
-        do {
-            size--;
-            if (size < 0) {
-                return 0;
+        for (int idx = tabs.size() - 1; idx >= 0; idx--) {
+            if (tabs.elementAt(idx) == this) {
+                selectTabByIndex(idx);
+                return this.type;
             }
-        } while (tabs.elementAt(size) != this);
-        selectTabByIndex(size);
-        return this.type;
+        }
+        return 0;
     }
 
-    public static final TabBar getNextTab() {
-        int i = currentIndex + 1;
+    public static TabBar getNextTab() {
+        int nextIndex = currentIndex + 1;
         Vector tabs = UIState.getTabBars();
-        if (i < tabs.size()) {
-            return (TabBar) tabs.elementAt(i);
+        if (nextIndex < tabs.size()) {
+            return (TabBar) tabs.elementAt(nextIndex);
         }
         return null;
     }
 
-    public static final TabBar getPreviousTab() {
-        int i = currentIndex - 1;
-        if (i >= 0) {
-            return (TabBar) UIState.getTabBars().elementAt(i);
+    public static TabBar getPreviousTab() {
+        int prevIndex = currentIndex - 1;
+        if (prevIndex >= 0) {
+            return (TabBar) UIState.getTabBars().elementAt(prevIndex);
         }
         return null;
     }
 
-    public static final void ensureSettingsTab() {
+    public static void ensureSettingsTab() {
         ensureDefaultTab();
-        if (findTab(TYPE_MAIL, (Account) null) == null) {
-            addTab(ICON_MAIL, ResourceAccessor.str(StringResKeys.STR_TAB_MAIL), TYPE_MAIL, null);
+        if (findTab(TYPE_MAIL, null) == null) {
+            addTab(ICON_MAIL, ResourceAccessor.str(StringResKeys.STR_TAB_MAIL),
+                TYPE_MAIL, null);
         }
     }
 
-    public static final void removeSettingsTab() {
+    public static void removeSettingsTab() {
         removeTabByType(SettingsState.isMailTabEnabled(), TYPE_MAIL);
     }
 
-    public static final void ensureSearchTab() {
+    public static void ensureSearchTab() {
         ensureDefaultTab();
-        if (findTab(TYPE_SEARCH, (Account) null) == null) {
-            addTab(ICON_SEARCH, ResourceAccessor.str(StringResKeys.STR_TAB_SEARCH), TYPE_SEARCH, null);
+        if (findTab(TYPE_SEARCH, null) == null) {
+            addTab(ICON_SEARCH, ResourceAccessor.str(StringResKeys.STR_TAB_SEARCH),
+                TYPE_SEARCH, null);
         }
     }
 
-    public static final void removeSearchTab() {
+    public static void removeSearchTab() {
         removeTabByType(SettingsState.isSearchTabEnabled(), TYPE_SEARCH);
     }
 
-    private static final void removeTabByType(boolean enabled, int i2) {
-        TabBar tab;
-        if (enabled) {
-            return;
-        }
-        Vector tabs = UIState.getTabBars();
-        int size = tabs.size();
-        do {
-            size--;
-            if (size < 0) {
-                return;
-            } else {
-                tab = (TabBar) tabs.elementAt(size);
-            }
-        } while (tab.type != i2);
-        tabs.removeElement(tab);
-        layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs=" + UIState.getTabBars().size());
-        AppController.needsRepaint = true;
-    }
-
-    private static final void ensureDefaultTab() {
-        if (SettingsState.isMultiAccount()) {
-            return;
-        }
-        updateTitle(ICON_CONTACTS, ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS));
-    }
-
-    public static final TabBar getCurrentTab() {
-        return (TabBar) UIState.getTabBars().elementAt(currentIndex);
-    }
-    public static final TabBar findTab(int i, Account acct) {
+    private static void removeTabByType(boolean enabled, int tabType) {
+        if (enabled) return;
         Vector tabs = UIState.getTabBars();
         for (int idx = tabs.size() - 1; idx >= 0; idx--) {
             TabBar tab = (TabBar) tabs.elementAt(idx);
-            if (tab.type == i && (acct == null || tab.account == acct)) {
+            if (tab.type == tabType) {
+                tabs.removeElement(tab);
+                layout();
+                RemoteLogger.log("TAB", "initialize done: totalTabs="
+                    + UIState.getTabBars().size());
+                AppController.needsRepaint = true;
+                return;
+            }
+        }
+    }
+
+    private static void ensureDefaultTab() {
+        if (SettingsState.isMultiAccount()) return;
+        updateTitle(ICON_CONTACTS, ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS));
+    }
+
+    public static TabBar getCurrentTab() {
+        return (TabBar) UIState.getTabBars().elementAt(currentIndex);
+    }
+
+    public static TabBar findTab(int tabType, Account account) {
+        Vector tabs = UIState.getTabBars();
+        for (int idx = tabs.size() - 1; idx >= 0; idx--) {
+            TabBar tab = (TabBar) tabs.elementAt(idx);
+            if (tab.type == tabType && (account == null || tab.account == account)) {
                 return tab;
             }
         }
         return null;
     }
 
-    private static final TabBar selectTabByIndex(int i) {
-        if (currentIndex != i) {
-            currentIndex = i;
+    private static TabBar selectTabByIndex(int index) {
+        if (currentIndex != index) {
+            currentIndex = index;
             layout();
         }
-        TabBar tab = (TabBar) UIState.getTabBars().elementAt(i);
+        TabBar tab = (TabBar) UIState.getTabBars().elementAt(index);
         currentAccount = tab.account;
         return tab;
     }
 
-    public static final void layout() {
-        int i;
-        Object elem;
-        int[] iArr;
-        Object leftElem;
-        int[] iArr2;
+    // --- Layout computation ---
+
+    public static void layout() {
         Vector tabs = UIState.getTabBars();
-        RemoteLogger.log("TAB", "layout: tabs=" + (tabs != null ? String.valueOf(tabs.size()) : "null") + " currentIdx=" + currentIndex);
-        if (tabs == null) {
-            return;
-        }
+        RemoteLogger.log("TAB", "layout: tabs="
+            + (tabs != null ? String.valueOf(tabs.size()) : "null")
+            + " currentIdx=" + currentIndex);
+        if (tabs == null) return;
+
         ObjectPool.releaseVector(UIState.getTabItems());
         Vector layoutItems = ObjectPool.newVector();
         UIState.setTabItems(layoutItems);
-        int size = tabs.size();
-        int i2 = currentIndex;
-        TabBar tab = (TabBar) tabs.elementAt(i2);
-        int i3 = 0;
-        int i4 = 0;
-        int i5 = TAB_MARGIN;
-        for (int i6 = 0; i6 < size; i6++) {
-            TabBar iterTab = (TabBar) tabs.elementAt(i6);
-            iterTab.width = TAB_WIDTH_PADDING + UIState.getGfxContext(UIKeys.GFX_INDEX_BOLD).stringWidth(iterTab.title);
-            iterTab.xOffset = i5;
-            layoutItems.addElement(iterTab);
-            i5 += iterTab.width;
-            i3 += iterTab.width;
-            if (i6 == i2) {
-                i4 = i3;
+
+        int tabCount = tabs.size();
+        int selectedIdx = currentIndex;
+        TabBar selectedTab = (TabBar) tabs.elementAt(selectedIdx);
+
+        int totalWidth = 0;
+        int selectedTabRight = 0;
+        int xPos = TAB_MARGIN;
+        for (int idx = 0; idx < tabCount; idx++) {
+            TabBar tab = (TabBar) tabs.elementAt(idx);
+            tab.width = TAB_WIDTH_PADDING
+                + UIState.getGfxContext(UIKeys.GFX_INDEX_BOLD).stringWidth(tab.title);
+            tab.xOffset = xPos;
+            layoutItems.addElement(tab);
+            xPos += tab.width;
+            totalWidth += tab.width;
+            if (idx == selectedIdx) {
+                selectedTabRight = totalWidth;
             }
         }
-        int i7 = i3;
+
         int availWidth = UIState.getScreenWidth() - TAB_MARGIN;
-        while (i4 >= availWidth - OVERFLOW_BUFFER) {
-            int i8 = 0;
-            while (true) {
-                leftElem = tabs.elementAt(i8);
-                if (layoutItems.contains(leftElem)) {
-                    break;
-                } else {
-                    i8++;
-                }
-            }
-            TabBar leftTab = (TabBar) leftElem;
-            if (leftTab == tab) {
-                break;
-            }
-            int i9 = leftTab.width;
+        totalWidth = trimLeftOverflow(layoutItems, tabs, selectedTab,
+            selectedTabRight, totalWidth, availWidth);
+        trimRightOverflow(layoutItems, tabs, selectedTab, totalWidth, availWidth);
+        adjustFinalOverflow(layoutItems, selectedTab, availWidth);
+    }
+
+    private static int trimLeftOverflow(Vector layoutItems, Vector tabs,
+            TabBar selectedTab, int selectedTabRight, int totalWidth,
+            int availWidth) {
+        while (selectedTabRight >= availWidth - OVERFLOW_BUFFER) {
+            int leftIdx = findFirstVisibleIndex(tabs, layoutItems);
+            TabBar leftTab = (TabBar) tabs.elementAt(leftIdx);
+            if (leftTab == selectedTab) break;
+
+            int removedWidth = leftTab.width;
             layoutItems.removeElement(leftTab);
-            Object firstElem = layoutItems.firstElement();
-            if (firstElem instanceof int[]) {
-                iArr2 = (int[]) firstElem;
+
+            // Add or update left overflow arrow
+            Object first = layoutItems.firstElement();
+            int[] leftArrow;
+            if (first instanceof int[]) {
+                leftArrow = (int[]) first;
             } else {
-                int[] iArr3 = {TAB_MARGIN, ICON_OVERFLOW_LEFT};
-                iArr2 = iArr3;
-                layoutItems.insertElementAt(iArr3, 0);
-                i9 -= ICON_SIZE;
+                leftArrow = new int[]{TAB_MARGIN, ICON_OVERFLOW_LEFT};
+                layoutItems.insertElementAt(leftArrow, 0);
+                removedWidth -= ICON_SIZE;
             }
+
+            // Connection blink for hidden mail tab
             if (leftTab.type == TYPE_MAIL && AccountManager.hasActiveConnection()) {
-                if (iArr2[1] == ICON_OVERFLOW_LEFT) {
-                    layoutItems.insertElementAt(new int[]{TAB_MARGIN, ICON_CONNECTION_BLINK}, 0);
-                    int[] iArr4 = iArr2;
-                    iArr4[0] = iArr4[0] + ICON_SIZE;
+                if (leftArrow[1] == ICON_OVERFLOW_LEFT) {
+                    layoutItems.insertElementAt(
+                        new int[]{TAB_MARGIN, ICON_CONNECTION_BLINK}, 0);
+                    leftArrow[0] += ICON_SIZE;
                 } else {
-                    layoutItems.insertElementAt(new int[]{TAB_MARGIN + ICON_SIZE, ICON_CONNECTION_BLINK}, 1);
-                    int[] iArr5 = (int[]) layoutItems.elementAt(2);
-                    iArr5[0] = iArr5[0] + ICON_SIZE;
+                    layoutItems.insertElementAt(
+                        new int[]{TAB_MARGIN + ICON_SIZE, ICON_CONNECTION_BLINK}, 1);
+                    ((int[]) layoutItems.elementAt(2))[0] += ICON_SIZE;
                 }
-                i9 -= ICON_SIZE;
+                removedWidth -= ICON_SIZE;
             }
+
+            // Account status for hidden contacts tab
             if (leftTab.type == TYPE_CONTACTS) {
-                Account acct = leftTab.account;
-                if (AccountManager.isAccountOnline(acct) && SettingsState.isMailTabEnabled() && iArr2[1] == ICON_OVERFLOW_LEFT) {
-                    layoutItems.insertElementAt(new int[]{TAB_MARGIN, AccountManager.getAccountStatus(acct)}, 0);
-                    int[] iArr6 = iArr2;
-                    iArr6[0] = iArr6[0] + ICON_SIZE;
-                    i9 -= ICON_SIZE;
+                Account account = leftTab.account;
+                if (AccountManager.isAccountOnline(account)
+                        && SettingsState.isMailTabEnabled()
+                        && leftArrow[1] == ICON_OVERFLOW_LEFT) {
+                    layoutItems.insertElementAt(new int[]{TAB_MARGIN,
+                        AccountManager.getAccountStatus(account)}, 0);
+                    leftArrow[0] += ICON_SIZE;
+                    removedWidth -= ICON_SIZE;
                 }
             }
-            for (int i10 = 0; i10 < size; i10++) {
-                ((TabBar) tabs.elementAt(i10)).xOffset -= i9;
+
+            // Shift all tab offsets left
+            for (int idx = 0; idx < tabs.size(); idx++) {
+                ((TabBar) tabs.elementAt(idx)).xOffset -= removedWidth;
             }
-            i4 -= i9;
-            i7 -= i9;
+            selectedTabRight -= removedWidth;
+            totalWidth -= removedWidth;
         }
-        while (true) {
-            if (i7 < availWidth) {
-                break;
-            }
-            int i11 = size - 1;
-            while (true) {
-                elem = tabs.elementAt(i11);
-                if (layoutItems.contains(elem)) {
-                    break;
-                } else {
-                    i11--;
-                }
-            }
-            TabBar rightTab = (TabBar) elem;
-            if (rightTab == tab) {
-                break;
-            }
-            int i12 = rightTab == tabs.lastElement() ? ICON_SIZE : 0;
-            if (rightTab.width > (i7 - availWidth) + i12) {
-                int i13 = (i7 - availWidth) + i12;
-                rightTab.width -= i13;
-                for (int idx = layoutItems.size() - 1; idx >= 0; idx--) {
-                    Object shrinkElem = layoutItems.elementAt(idx);
-                    if (!(shrinkElem instanceof int[])) {
-                        break;
-                    }
-                    int[] iArr7 = (int[]) shrinkElem;
-                    iArr7[0] = iArr7[0] - i13;
-                }
+        return totalWidth;
+    }
+
+    private static void trimRightOverflow(Vector layoutItems, Vector tabs,
+            TabBar selectedTab, int totalWidth, int availWidth) {
+        while (totalWidth >= availWidth) {
+            int rightIdx = findLastVisibleIndex(tabs, layoutItems);
+            TabBar rightTab = (TabBar) tabs.elementAt(rightIdx);
+            if (rightTab == selectedTab) break;
+
+            int lastTabBonus = (rightTab == tabs.lastElement()) ? ICON_SIZE : 0;
+            int overflow = (totalWidth - availWidth) + lastTabBonus;
+
+            if (rightTab.width > overflow) {
+                rightTab.width -= overflow;
+                shiftTrailingIcons(layoutItems, -overflow);
             } else {
-                int i14 = rightTab.width;
-                int i15 = rightTab.xOffset;
-                layoutItems.removeElement(rightTab);
-                Object endElem = layoutItems.lastElement();
-                if (endElem instanceof int[]) {
-                    iArr = (int[]) endElem;
-                    for (int idx = layoutItems.size() - 1; idx >= 0; idx--) {
-                        Object innerElem = layoutItems.elementAt(idx);
-                        if (!(innerElem instanceof int[])) {
-                            break;
-                        }
-                        int[] iArr8 = (int[]) innerElem;
-                        iArr8[0] = iArr8[0] - i14;
-                    }
-                } else {
-                    int[] iArr9 = {i15, ICON_OVERFLOW_RIGHT};
-                    iArr = iArr9;
-                    layoutItems.addElement(iArr9);
-                    i14 -= ICON_SIZE;
-                }
-                if (rightTab.type == TYPE_MAIL && AccountManager.hasActiveConnection() && SettingsState.isMailTabEnabled()) {
-                    layoutItems.addElement(new int[]{i15 + ICON_SIZE, ICON_CONNECTION_BLINK});
-                    i14 -= ICON_SIZE;
-                }
-                if (rightTab.type == TYPE_CONTACTS) {
-                    Account acct2 = rightTab.account;
-                    if (AccountManager.isAccountOnline(acct2)) {
-                        if (iArr[1] == ICON_OVERFLOW_RIGHT) {
-                            layoutItems.addElement(new int[]{i15 + ICON_SIZE, AccountManager.getAccountStatus(acct2)});
-                            i14 -= ICON_SIZE;
-                        } else {
-                            int size4 = layoutItems.size() - 2;
-                            int i16 = ((int[]) layoutItems.elementAt(size4))[1];
-                            if (i16 != ICON_UNREAD_BLINK && i16 != ICON_ONLINE_BLINK) {
-                                layoutItems.insertElementAt(new int[]{i15 + ICON_SIZE, AccountManager.getAccountStatus(acct2)}, size4 + 1);
-                                int[] iArr10 = iArr;
-                                iArr10[0] = iArr10[0] + ICON_SIZE;
-                                i14 -= ICON_SIZE;
-                            }
-                        }
-                    }
-                }
-                i7 -= i14;
+                totalWidth -= removeRightTab(layoutItems, rightTab);
             }
         }
+    }
+
+    private static int removeRightTab(Vector layoutItems, TabBar rightTab) {
+        int removedWidth = rightTab.width;
+        int tabX = rightTab.xOffset;
+        layoutItems.removeElement(rightTab);
+
+        // Add or update right overflow arrow
+        Object last = layoutItems.lastElement();
+        int[] rightArrow;
+        if (last instanceof int[]) {
+            rightArrow = (int[]) last;
+            shiftTrailingIcons(layoutItems, -removedWidth);
+        } else {
+            rightArrow = new int[]{tabX, ICON_OVERFLOW_RIGHT};
+            layoutItems.addElement(rightArrow);
+            removedWidth -= ICON_SIZE;
+        }
+
+        // Connection blink for hidden mail tab
+        if (rightTab.type == TYPE_MAIL && AccountManager.hasActiveConnection()
+                && SettingsState.isMailTabEnabled()) {
+            layoutItems.addElement(
+                new int[]{tabX + ICON_SIZE, ICON_CONNECTION_BLINK});
+            removedWidth -= ICON_SIZE;
+        }
+
+        // Account status for hidden contacts tab
+        if (rightTab.type == TYPE_CONTACTS
+                && AccountManager.isAccountOnline(rightTab.account)) {
+            removedWidth = addRightAccountStatus(
+                layoutItems, rightArrow, tabX, rightTab.account, removedWidth);
+        }
+
+        return removedWidth;
+    }
+
+    private static int addRightAccountStatus(Vector layoutItems, int[] rightArrow,
+            int tabX, Account account, int removedWidth) {
+        int statusIcon = AccountManager.getAccountStatus(account);
+        if (rightArrow[1] == ICON_OVERFLOW_RIGHT) {
+            layoutItems.addElement(new int[]{tabX + ICON_SIZE, statusIcon});
+            return removedWidth - ICON_SIZE;
+        }
+        int beforeLastIdx = layoutItems.size() - 2;
+        int existingIcon = ((int[]) layoutItems.elementAt(beforeLastIdx))[1];
+        if (existingIcon != ICON_UNREAD_BLINK && existingIcon != ICON_ONLINE_BLINK) {
+            layoutItems.insertElementAt(
+                new int[]{tabX + ICON_SIZE, statusIcon}, beforeLastIdx + 1);
+            rightArrow[0] += ICON_SIZE;
+            return removedWidth - ICON_SIZE;
+        }
+        return removedWidth;
+    }
+
+    private static void adjustFinalOverflow(Vector layoutItems, TabBar selectedTab,
+            int availWidth) {
         Object lastElem = layoutItems.lastElement();
+        int lastRight;
         if (lastElem instanceof TabBar) {
             TabBar lastTab = (TabBar) lastElem;
-            i = (lastTab.xOffset + lastTab.width) - TAB_MARGIN;
+            lastRight = (lastTab.xOffset + lastTab.width) - TAB_MARGIN;
         } else {
-            i = ((int[]) lastElem)[0] - 4;
+            lastRight = ((int[]) lastElem)[0] - TAB_CONTENT_INSET;
         }
-        if (i <= availWidth) {
-            return;
+        if (lastRight <= availWidth) return;
+
+        int excess = lastRight - availWidth;
+        selectedTab.width -= excess;
+        shiftTrailingIcons(layoutItems, -excess);
+    }
+
+    private static int findFirstVisibleIndex(Vector tabs, Vector layoutItems) {
+        for (int idx = 0; idx < tabs.size(); idx++) {
+            if (layoutItems.contains(tabs.elementAt(idx))) return idx;
         }
-        int i17 = i - availWidth;
-        tab.width -= i17;
+        return 0;
+    }
+
+    private static int findLastVisibleIndex(Vector tabs, Vector layoutItems) {
+        for (int idx = tabs.size() - 1; idx >= 0; idx--) {
+            if (layoutItems.contains(tabs.elementAt(idx))) return idx;
+        }
+        return 0;
+    }
+
+    private static void shiftTrailingIcons(Vector layoutItems, int delta) {
         for (int idx = layoutItems.size() - 1; idx >= 0; idx--) {
-            Object tailElem = layoutItems.elementAt(idx);
-            if (!(tailElem instanceof int[])) {
-                return;
-            }
-            int[] iArr11 = (int[]) tailElem;
-            iArr11[0] = iArr11[0] - i17;
+            Object elem = layoutItems.elementAt(idx);
+            if (!(elem instanceof int[])) break;
+            ((int[]) elem)[0] += delta;
         }
     }
+
+    // --- Rendering ---
 
     public static void paintTopBar(GraphicsContext g) {
-        int paintMode;
         g.setFont(UIState.getGfxContext(UIKeys.GFX_INDEX_BOLD));
-        TabBar tab = (TabBar) UIState.getTabBars().elementAt(TabBar.currentIndex);
-        Vector tabs = UIState.getTabItems();
-        for (int idx = tabs.size() - 1; idx >= 0; idx--) {
-            Object objElementAt2 = tabs.elementAt(idx);
-            if (objElementAt2 instanceof TabBar) {
-                TabBar tab2 = (TabBar) objElementAt2;
-                boolean isSelected = objElementAt2 == tab && !TabBar.scrollEnabled;
-                GraphicsContext gfx = g.setColorFromPalette(16);
-                int tabX = tab2.xOffset;
-                int tabWidth = tab2.width;
-                int textOffset = UIState.getIntOffset(UIKeys.OFFSET_BOLD_FONT_HEIGHT) + FONT_HEIGHT_OFFSET;
-                gfx.setClip(tabX, 2, tabWidth, textOffset - 2).drawLine(tab2.xOffset, textOffset, tab2.xOffset, 6).drawLine(tab2.xOffset, 6, tab2.xOffset + 4, 2).drawLine(tab2.xOffset + 4, 2, (tab2.xOffset + tab2.width) - 2, 2).drawLine((tab2.xOffset + tab2.width) - 2, 2, (tab2.xOffset + tab2.width) - 2, textOffset).setColorFromPalette(isSelected ? 1 : 17);
-                int fillBottom = isSelected ? textOffset : textOffset - 1;
-                for (int row = 3; row < fillBottom; row++) {
-                    g.drawLine(tab2.xOffset + 1 + (row < 6 ? 6 - row : 0), row, (tab2.xOffset + tab2.width) - 3, row);
-                }
-                if (tab2.account == null) {
-                    int iconId = tab2.iconId;
-                    paintMode = (iconId == ICON_MAIL && AccountManager.hasActiveConnection()) ? ICON_CONNECTION_BLINK : (iconId == ICON_MAIL || iconId == ICON_SEARCH || UIState.getOnlineContacts().size() <= 0) ? iconId : ICON_UNREAD_BLINK;
-                } else {
-                    paintMode = AccountManager.getAccountStatus(tab2.account);
-                }
-                g.drawIcon(paintMode, tab2.xOffset + 4, 4 + ScreenManager.getCenterOffset()).setColorFromPalette(0).setClip(tab2.xOffset, 2, tab2.width - 3, textOffset - 2).drawString(tab2.title, tab2.xOffset + 6 + ICON_SIZE, 4, 20);
+        TabBar selectedTab = (TabBar) UIState.getTabBars().elementAt(currentIndex);
+        Vector items = UIState.getTabItems();
+        for (int idx = items.size() - 1; idx >= 0; idx--) {
+            Object element = items.elementAt(idx);
+            if (element instanceof TabBar) {
+                paintTab(g, (TabBar) element,
+                    element == selectedTab && !scrollEnabled);
             } else {
-                int[] iconData = (int[]) objElementAt2;
+                int[] iconData = (int[]) element;
                 int iconX = iconData[0];
-                int centerY2 = 4 + ScreenManager.getCenterOffset();
-                g.setClip(iconX, centerY2, ICON_SIZE, ICON_SIZE);
-                g.drawIcon(iconData[1], iconX, centerY2);
+                int centerY = TAB_CONTENT_INSET + ScreenManager.getCenterOffset();
+                g.setClip(iconX, centerY, ICON_SIZE, ICON_SIZE);
+                g.drawIcon(iconData[1], iconX, centerY);
             }
         }
     }
 
-    public static final Object hitTest(int i, int i2) {
-        Vector tabs = UIState.getTabItems();
-        for (int idx = tabs.size() - 1; idx >= 0; idx--) {
-            Object elem = tabs.elementAt(idx);
+    private static void paintTab(GraphicsContext g, TabBar tab, boolean isSelected) {
+        int tabX = tab.xOffset;
+        int tabWidth = tab.width;
+        int textBottom = UIState.getIntOffset(UIKeys.OFFSET_BOLD_FONT_HEIGHT)
+            + FONT_HEIGHT_OFFSET;
+
+        // Draw tab border
+        g.setColorFromPalette(PALETTE_BORDER)
+            .setClip(tabX, TAB_BORDER_MARGIN, tabWidth,
+                textBottom - TAB_BORDER_MARGIN)
+            .drawLine(tabX, textBottom, tabX, TAB_CORNER_Y)
+            .drawLine(tabX, TAB_CORNER_Y,
+                tabX + TAB_CONTENT_INSET, TAB_BORDER_MARGIN)
+            .drawLine(tabX + TAB_CONTENT_INSET, TAB_BORDER_MARGIN,
+                tabX + tabWidth - TAB_BORDER_MARGIN, TAB_BORDER_MARGIN)
+            .drawLine(tabX + tabWidth - TAB_BORDER_MARGIN, TAB_BORDER_MARGIN,
+                tabX + tabWidth - TAB_BORDER_MARGIN, textBottom)
+            .setColorFromPalette(
+                isSelected ? PALETTE_BACKGROUND : PALETTE_INACTIVE_BG);
+
+        // Fill tab interior
+        int fillBottom = isSelected ? textBottom : textBottom - 1;
+        for (int row = TAB_FILL_START_Y; row < fillBottom; row++) {
+            int leftInset = (row < TAB_CORNER_Y) ? TAB_CORNER_Y - row : 0;
+            g.drawLine(tabX + 1 + leftInset, row,
+                tabX + tabWidth - TAB_FILL_RIGHT_INSET, row);
+        }
+
+        // Resolve tab icon
+        int iconCode;
+        if (tab.account == null) {
+            iconCode = resolveTabIcon(tab.iconId);
+        } else {
+            iconCode = AccountManager.getAccountStatus(tab.account);
+        }
+
+        // Draw icon and title
+        int centerY = TAB_CONTENT_INSET + ScreenManager.getCenterOffset();
+        g.drawIcon(iconCode, tabX + TAB_CONTENT_INSET, centerY)
+            .setColorFromPalette(PALETTE_TEXT)
+            .setClip(tabX, TAB_BORDER_MARGIN,
+                tabWidth - TAB_FILL_RIGHT_INSET,
+                textBottom - TAB_BORDER_MARGIN)
+            .drawString(tab.title, tabX + TEXT_LEFT_PADDING + ICON_SIZE,
+                TAB_CONTENT_INSET, Graphics.TOP | Graphics.LEFT);
+    }
+
+    private static int resolveTabIcon(int iconId) {
+        if (iconId == ICON_MAIL && AccountManager.hasActiveConnection()) {
+            return ICON_CONNECTION_BLINK;
+        }
+        if (iconId == ICON_MAIL || iconId == ICON_SEARCH
+                || UIState.getOnlineContacts().size() <= 0) {
+            return iconId;
+        }
+        return ICON_UNREAD_BLINK;
+    }
+
+    // --- Hit testing ---
+
+    public static Object hitTest(int x, int y) {
+        Vector items = UIState.getTabItems();
+        for (int idx = items.size() - 1; idx >= 0; idx--) {
+            Object elem = items.elementAt(idx);
             if (elem instanceof int[]) {
-                int[] iArr = (int[]) elem;
-                if (i >= iArr[0] && i < iArr[0] + ICON_SIZE && i2 >= 0 && i2 <= TAB_BAR_HEIGHT) {
-                    return iArr;
+                int[] iconData = (int[]) elem;
+                if (x >= iconData[0] && x < iconData[0] + ICON_SIZE
+                        && y >= 0 && y <= TAB_BAR_HEIGHT) {
+                    return iconData;
                 }
             } else {
                 TabBar tab = (TabBar) elem;
-                int i3 = tab.xOffset;
-                if (i >= i3 && i2 >= 0 && i <= i3 + tab.width && i2 <= TAB_BAR_HEIGHT) {
+                if (x >= tab.xOffset && y >= 0
+                        && x <= tab.xOffset + tab.width
+                        && y <= TAB_BAR_HEIGHT) {
                     return tab;
                 }
             }

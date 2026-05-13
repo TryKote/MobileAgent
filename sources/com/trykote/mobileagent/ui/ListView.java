@@ -47,6 +47,12 @@ public class ListView {
     private static final int INNER_MARGIN = 2;
     private static final int BORDER_INSET = 3;
 
+    // Threshold for triggering layout rebuild (pixels of excess content height)
+    private static final int LAYOUT_REBUILD_THRESHOLD = 5;
+
+    // Margin reserved for clock display in soft key bar
+    private static final int CLOCK_MARGIN = 6;
+
     // Text formatting constants (for MenuItem.addText)
     private static final int TEXT_FORMAT_EXPANDABLE = 5;
     private static final int TEXT_FORMAT_SECONDARY = 6;
@@ -117,7 +123,7 @@ public class ListView {
         this(layoutMode, screenId, width, height);
         this.selectable = selectable;
     }
-    private final ListView recalcLayout() {
+    private ListView recalcLayout() {
         int usableWidth = this.containerWidth - OUTER_PADDING;
         int usableHeight = this.containerHeight - OUTER_PADDING;
         this.innerWidth = this.containerWidth - INNER_MARGIN;
@@ -166,7 +172,7 @@ public class ListView {
         return getItemAt(expandedIdx);
     }
     public final ListView setHeader(int iconId, String title) {
-        this.headerItem = MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_PLACEHOLDER_TEXT), 1, 0).setLabelInternal(iconId, title, 1, 0);
+        this.headerItem = MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_PLACEHOLDER_TEXT), UIKeys.GFX_INDEX_BOLD, 0).setLabelInternal(iconId, title, UIKeys.GFX_INDEX_BOLD, 0);
         recalcLayout();
         return this;
     }
@@ -204,20 +210,20 @@ public class ListView {
         return this;
     }
     public final ListView buildLayout() {
-        if (this.contentHeight - this.totalHeight > 5 && this.layoutMode == LAYOUT_VERTICAL) {
+        if (this.contentHeight - this.totalHeight > LAYOUT_REBUILD_THRESHOLD && this.layoutMode == LAYOUT_VERTICAL) {
             this.containerHeight = this.headerHeight + this.totalHeight + OUTER_PADDING;
             recalcLayout();
         }
-        int maxItemHeight = 0;
+        int maxItemWidth = 0;
         Enumeration elements = this.menuItems.elements();
         while (elements.hasMoreElements()) {
-            int prevMax = maxItemHeight;
-            int itemMax = ((MenuItem) elements.nextElement()).getMaxHeight();
-            if (prevMax < itemMax) {
-                maxItemHeight = itemMax;
+            int prevMax = maxItemWidth;
+            int itemWidth = ((MenuItem) elements.nextElement()).getContentWidth();
+            if (prevMax < itemWidth) {
+                maxItemWidth = itemWidth;
             }
         }
-        int neededWidth = maxItemHeight + MIN_TAB_HEIGHT;
+        int neededWidth = maxItemWidth + MIN_TAB_HEIGHT;
         if (neededWidth < this.containerWidth) {
             this.containerWidth = neededWidth;
         }
@@ -272,8 +278,14 @@ public class ListView {
         int themeIdx = SettingsState.getColorTheme();
         int startColor = Palette.getColor(themeIdx, Palette.GRADIENT_START);
         if (startColor != Palette.getColor(themeIdx, Palette.GRADIENT_END)) {
+            int startR = (startColor >> 16) & 0xFF;
+            int startG = (startColor >> 8) & 0xFF;
+            int startB = startColor & 0xFF;
             for (int row = 1; row < this.headerHeight; row++) {
-                g.setColor(((255 - ((row * (255 - (startColor >> 16))) / this.headerHeight)) << 16) | ((255 - ((row * (255 - ((startColor >> 8) & 255))) / this.headerHeight)) << 8) | (255 - ((row * (255 - (startColor & 255))) / this.headerHeight)));
+                int r = interpolateChannel(startR, row, this.headerHeight);
+                int gr = interpolateChannel(startG, row, this.headerHeight);
+                int b = interpolateChannel(startB, row, this.headerHeight);
+                g.setColor((r << 16) | (gr << 8) | b);
                 g.drawRect(x, y + row, this.innerWidth, 0);
             }
         } else {
@@ -281,6 +293,10 @@ public class ListView {
             g.fillRect(x, y, this.innerWidth, this.headerHeight);
         }
         this.headerItem.render(g, x, y, 0);
+    }
+
+    private static int interpolateChannel(int channelValue, int row, int height) {
+        return 0xFF - ((row * (0xFF - channelValue)) / height);
     }
 
     private void paintMenuItems(GraphicsContext g) {
@@ -378,7 +394,7 @@ public class ListView {
             Object element = tabs.elementAt(idx);
             if (!(element instanceof Integer)) {
                 pastLabel = true;
-                g.drawString((String) element, tabX, (screenHeight - barHeight) - 1, 20);
+                g.drawString((String) element, tabX, (screenHeight - barHeight) - 1, Graphics.TOP | Graphics.LEFT);
                 tabX = screenWidth;
             } else if (pastLabel) {
                 tabX -= TAB_ICON_SPACING;
@@ -397,13 +413,13 @@ public class ListView {
         g.setFont(UIState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
         g.setColorFromPalette(PALETTE_SOFT_KEY_TEXT);
         if (this.titleLeft != null) {
-            g.drawString(this.titleLeft, 1, screenHeight, 20);
+            g.drawString(this.titleLeft, 1, screenHeight, Graphics.TOP | Graphics.LEFT);
         }
         if (this.titleRight != null) {
-            g.drawString(this.titleRight, screenWidth - 1, screenHeight, 24);
+            g.drawString(this.titleRight, screenWidth - 1, screenHeight, Graphics.TOP | Graphics.RIGHT);
         }
-        if (AppController.clockWidth + this.titleMaxWidth < screenWidth - 6) {
-            g.drawString(Utils.defaultStr(UIState.getClockString()), screenWidth >> 1, screenHeight, 17);
+        if (AppController.clockWidth + this.titleMaxWidth < screenWidth - CLOCK_MARGIN) {
+            g.drawString(Utils.defaultStr(UIState.getClockString()), screenWidth >> 1, screenHeight, Graphics.TOP | Graphics.HCENTER);
         }
     }
 
@@ -606,35 +622,17 @@ public class ListView {
         if (this.reverseScroll) {
             return;
         }
-        if (this.selectable) {
-            this.selectedIndex = this.menuItems.size() - 1;
-            this.scrollOffset = this.totalHeight - this.contentHeight;
-            if (this.scrollOffset < 0) {
-                this.scrollOffset = 0;
-            }
-            return;
-        }
-        if (this.totalHeight < this.contentHeight) {
+        this.selectedIndex = this.menuItems.size() - 1;
+        this.scrollOffset = this.totalHeight - this.contentHeight;
+        if (this.scrollOffset < 0) {
             this.scrollOffset = 0;
-        } else if (((MenuItem) this.menuItems.lastElement()).getTotalHeight() < this.contentHeight) {
-            this.scrollOffset = this.totalHeight - this.contentHeight;
-        } else {
-            int[] cache = this.layoutCache;
-            this.scrollOffset = cache[cache[0]];
         }
     }
 
     private void scrollUpGrid(int currentX, int currentY) {
         int bestIdx = -1;
         int bestY = 0;
-        int idx = this.selectedIndex;
-        while (true) {
-            idx--;
-            if (idx < 0) {
-                this.selectedIndex = this.menuItems.size() - 1;
-                invalidateLayout();
-                return;
-            }
+        for (int idx = this.selectedIndex - 1; idx >= 0; idx--) {
             int rowY = getItemY(idx);
             if (rowY != currentY) {
                 if (bestIdx == -1) {
@@ -648,9 +646,13 @@ public class ListView {
             }
             int colX = getItemX(idx);
             if (colX == currentX || (colX == 0 && rowY != currentY)) {
-                break;
+                this.selectedIndex = idx;
+                invalidateLayout();
+                return;
             }
         }
+        this.selectedIndex = this.menuItems.size() - 1;
+        invalidateLayout();
     }
     public final void invalidateLayout() {
         if (!this.selectable || this.menuItems.size() <= 0) {
@@ -734,23 +736,19 @@ public class ListView {
             }
             return;
         }
-        MenuItem currentItem = null;
-        int idx = this.selectedIndex;
-        while (true) {
-            idx++;
-            if (idx > size) {
-                break;
-            }
-            if (idx == size) {
-                return;
-            }
-            currentItem = getItemAt(idx);
-            if (currentItem.isEnabled()) {
+        MenuItem nextItem = null;
+        for (int idx = this.selectedIndex + 1; idx < size; idx++) {
+            MenuItem item = getItemAt(idx);
+            if (item.isEnabled()) {
                 this.selectedIndex = idx;
+                nextItem = item;
                 break;
             }
         }
-        int itemHeight = currentItem.getTotalHeight();
+        if (nextItem == null) {
+            return;
+        }
+        int itemHeight = nextItem.getTotalHeight();
         int itemY = getItemY(this.selectedIndex);
         if (itemY + itemHeight >= this.scrollOffset + this.contentHeight) {
             if (itemHeight <= this.contentHeight) {
@@ -787,23 +785,20 @@ public class ListView {
         this.selectedIndex = idx;
         invalidateLayout();
     }
-    private final int findLastVisible() {
-        int mid;
+    private int findLastVisible() {
         int lo = this.selectable ? this.selectedIndex : 0;
         int hi = this.menuItems.size() - 1;
-        int prev = -1;
-        while (true) {
-            mid = (lo + hi) >> 1;
-            if (mid == prev) {
-                break;
-            }
+        int mid = -1;
+        int prev;
+        do {
             prev = mid;
+            mid = (lo + hi) >> 1;
             if (getItemY(mid) > this.scrollOffset + this.contentHeight) {
                 hi = mid - 1;
             } else {
                 lo = mid;
             }
-        }
+        } while (mid != prev);
         if (mid < this.menuItems.size() - 1 && isItemVisible(mid + 1)) {
             mid++;
         }
@@ -813,47 +808,44 @@ public class ListView {
         }
         return result;
     }
-    private final MenuItem getItemAt(int index) {
+    private MenuItem getItemAt(int index) {
         if (index >= 0) {
             return (MenuItem) this.menuItems.elementAt(index);
         }
         return null;
     }
 
-    private final int getItemX(int index) {
+    private int getItemX(int index) {
         return this.layoutCache[(index << 1) + 1];
     }
 
-    private final int getItemY(int index) {
-        return this.layoutCache[(index << 1) + 1 + 1];
+    private int getItemY(int index) {
+        return this.layoutCache[(index << 1) + 2];
     }
 
-    private final boolean isItemVisible(int index) {
+    private boolean isItemVisible(int index) {
         int itemY = getItemY(index);
         return itemY < this.scrollOffset + this.contentHeight && itemY + getItemAt(index).getTotalHeight() > this.scrollOffset;
     }
 
-    private final boolean isItemFullyVisible(int index) {
+    private boolean isItemFullyVisible(int index) {
         int itemY = getItemY(index);
         return itemY >= this.scrollOffset && (itemY + getItemAt(index).getTotalHeight()) - 1 <= this.scrollOffset + this.contentHeight;
     }
-    private final int findFirstVisible() {
-        int mid;
+    private int findFirstVisible() {
         int hi = this.selectable ? this.selectedIndex : this.menuItems.size() - 1;
         int lo = 0;
-        int prev = -1;
-        while (true) {
-            mid = (lo + hi) >> 1;
-            if (mid == prev) {
-                break;
-            }
+        int mid = -1;
+        int prev;
+        do {
             prev = mid;
+            mid = (lo + hi) >> 1;
             if (getItemY(mid) + getItemAt(mid).getTotalHeight() < this.scrollOffset) {
                 lo = mid + 1;
             } else {
                 hi = mid;
             }
-        }
+        } while (mid != prev);
         if (!isItemVisible(mid)) {
             mid++;
         } else if (mid > 0 && isItemVisible(mid - 1)) {
@@ -862,15 +854,15 @@ public class ListView {
         return mid;
     }
     public final ListView addTextPair(String label, String value, int width) {
-        return addFullItem(-1, label, value, width, (Object) null);
+        return addFullItem(MenuItem.NO_ICON, label, value, width, null);
     }
 
     public final ListView addIconItem(int iconId, String text, int width) {
-        return addFullItem(iconId, (String) null, text, width, (Object) null);
+        return addFullItem(iconId, null, text, width, null);
     }
 
     public final ListView addIconItemWithData(int iconId, String text, int width, Object data) {
-        return addFullItem(iconId, (String) null, text, width, data);
+        return addFullItem(iconId, null, text, width, data);
     }
 
     public final ListView addLabelValue(String label, String value) {
@@ -888,18 +880,18 @@ public class ListView {
     }
 
     public final ListView addSeparator(String text, int textStyle) {
-        return addItem(MenuItem.createSeparator().addText(text, 1, textStyle));
+        return addItem(MenuItem.createSeparator().addText(text, UIKeys.GFX_INDEX_BOLD, textStyle));
     }
 
     public final ListView addActionById(int iconId, int stringKey, int width) {
         String labelStr = AppState.getString(stringKey);
-        MenuItem actionItem = MenuItem.createWithWidth(labelStr, width).setIcon(iconId).setLabel(labelStr).setIcon(244);
+        MenuItem actionItem = MenuItem.createWithWidth(labelStr, width).setIcon(iconId).setLabel(labelStr).setIcon(MenuItem.ICON_ALIGN_RIGHT);
         actionItem.enabled = true;
         return addItem(actionItem);
     }
 
     public final ListView addTextItem(String text) {
-        return addIconItem(-1, text, DEFAULT_ITEM_WIDTH);
+        return addIconItem(MenuItem.NO_ICON, text, DEFAULT_ITEM_WIDTH);
     }
 
     public final ListView addIconTextItem(int iconId, String text, int width) {
@@ -930,10 +922,7 @@ public class ListView {
         if (title != null) {
             int idx = 0;
             Enumeration elements = this.menuItems.elements();
-            while (true) {
-                if (!elements.hasMoreElements()) {
-                    break;
-                }
+            while (elements.hasMoreElements()) {
                 if (title.equals(((MenuItem) elements.nextElement()).title)) {
                     this.selectedIndex = idx;
                     break;

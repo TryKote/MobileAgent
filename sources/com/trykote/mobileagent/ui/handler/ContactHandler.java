@@ -302,7 +302,7 @@ public final class ContactHandler extends BaseScreenHandler {
     public int onMenuItemSelected(ListView currentScreen, MenuItem menuItem, String title, int action, Object obj) {
         switch (currentScreen.screenId) {
             case ScreenId.CONTACT_LIST:
-                return ContactListManager.getSelectedContact();
+                return ContactListManager.saveSelectionState();
             case ScreenId.CONTACT_EDITOR:
                 ScreenManager.processScreenForm();
                 String[] phoneNumbers = Utils.getPhoneNumbers(false);

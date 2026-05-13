@@ -71,11 +71,7 @@ $(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/Tes
 		-libraryjars $(LIBS)/jsr75.jar \
 		-libraryjars $(LIBS)/nokiaui.jar \
 		-libraryjars $(LIBS)/wma.jar \
-		-microedition \
-		-dontshrink \
-		-dontobfuscate \
-		-dontoptimize \
-		-dontwarn
+		-include proguard.cfg
 	$(EDITOR) -Dexec.args="--patch-version ../$(BUILD)/preverified 45.3"
 	@touch $@
 

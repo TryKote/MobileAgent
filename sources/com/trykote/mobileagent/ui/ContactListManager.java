@@ -10,12 +10,52 @@ import com.trykote.mobileagent.protocol.xmpp.*;
 import com.trykote.mobileagent.map.*;
 import com.trykote.mobileagent.util.*;
 import java.util.Vector;
+import javax.microedition.lcdui.Graphics;
 
 public abstract class ContactListManager {
 
     private static final int ICON_SIZE_SMALL = 1;
     private static final int ICON_SIZE_LARGE = 12;
     private static final int PHONE_PAGE_SIZE = 10;
+
+    private static final long ONE_WEEK_MS = 604800000L;
+    private static final int PRESENCE_SUBSCRIBE = 40;
+    private static final int PRESENCE_UNSUBSCRIBE = 4;
+
+    // Connection state for contact list view
+    private static final int CONNECTION_STATE_CONTACT_LIST = 4;
+
+    // Merged group IDs (negative to avoid collision with real group IDs)
+    private static final int GROUP_ID_PENDING = -4;
+    private static final int GROUP_ID_UNREAD = -3;
+    private static final int GROUP_ID_ONLINE = -2;
+    private static final int GROUP_ID_OFFLINE = -1;
+
+    // MMP gender icon codes
+    private static final int ICON_MMP_GENDER_UNKNOWN = 255;
+    private static final int ICON_MMP_GENDER_MALE = 256;
+    private static final int ICON_MMP_GENDER_FEMALE = 263;
+
+    // Icon for contact already in group list
+    private static final int ICON_IN_GROUP = 375;
+
+    // Object pool key for "wake up" action label
+    private static final int STR_WAKE_UP_ACTION = 717;
+
+    // Add contact screen modes (MRIM)
+    private static final int ADD_MODE_STANDARD = 4;
+    private static final int ADD_MODE_CUSTOM_DOMAIN = 5;
+
+    // Palette color indices (for paintPopup)
+    private static final int PALETTE_TEXT = 0;
+    private static final int PALETTE_BACKGROUND = 1;
+    private static final int PALETTE_SELECTION = 13;
+    private static final int PALETTE_BORDER = 16;
+
+    // Popup rendering constants
+    private static final int POPUP_FILL_SIZE = 2048;
+    private static final int POPUP_TEXT_OFFSET = 21;
+    private static final int POPUP_MIN_BAR_HEIGHT = 16;
 
     public static int dialPhoneContactNext() {
         dialPhoneContact((PhoneContact) UIState.getPhoneContact(), RuntimeState.getPhoneScrollOffset() + PHONE_PAGE_SIZE);
@@ -26,14 +66,11 @@ public abstract class ContactListManager {
         dialPhoneContact((PhoneContact) UIState.getPhoneContact(), RuntimeState.getPhoneScrollOffset() - PHONE_PAGE_SIZE);
         return ScreenId.MAP;
     }
-    private static final long ONE_WEEK_MS = 604800000L;
-    private static final int PRESENCE_SUBSCRIBE = 40;
-    private static final int PRESENCE_UNSUBSCRIBE = 4;
     public static void showContactList() {
         RemoteLogger.log("CL", "showContactList called");
         SessionState.clearCurrentAccount();
         ContactState.clearEntity();
-        SessionState.setConnectionState(4);
+        SessionState.setConnectionState(CONNECTION_STATE_CONTACT_LIST);
         TabBar.findTab(TabBar.TYPE_CONTACTS, TabBar.currentAccount);
         ListView contactList = buildContactList();
         TabBar currentTab = TabBar.getCurrentTab();
@@ -75,7 +112,7 @@ public abstract class ContactListManager {
         AppController.needsRepaint = true;
     }
 
-    public static int getSelectedContact() {
+    public static int saveSelectionState() {
         updateState();
         return 0;
     }
@@ -104,14 +141,28 @@ public abstract class ContactListManager {
     public static int onContactAction(Object entity) {
         updateState();
         AppState.setCurrentEntity(entity);
-        return entity != null ? 30 : -1;
+        return entity != null ? ScreenId.CONTACT_GROUP_MENU : -1;
     }
     public static int updateContextMenu(ListView screen, Object entity) {
-        Account account;
-        int contextAction = -1;
         if (SessionState.getAccountSelectionObj() != null) {
             return ScreenId.PRESENCE_ACTION;
         }
+        int promoResult = checkFirstRunPromo();
+        if (promoResult >= 0) {
+            return promoResult;
+        }
+        updateState();
+        Vector tabItems = screen.tabItems;
+        if (entity != null) {
+            updateContextForEntity(entity, tabItems);
+        } else if (tabItems != null && tabItems.size() > 0) {
+            tabItems.removeAllElements();
+            AppController.needsRepaint = true;
+        }
+        return UIState.isConversationActive() ? ScreenId.NOTIFY_MESSAGE : 0;
+    }
+
+    private static int checkFirstRunPromo() {
         if (!SessionState.isCleanupDone()) {
             SessionState.setCleanupDone(1);
             if (System.currentTimeMillis() - SessionState.getTimestampFirstRun() > ONE_WEEK_MS) {
@@ -119,88 +170,88 @@ public abstract class ContactListManager {
                 return ScreenId.FIRST_RUN;
             }
         }
-        updateState();
-        Vector tabItems = screen.tabItems;
-        if (entity != null) {
-            Contact contact = null;
-            ContactGroup group = null;
-            if (entity instanceof ContactGroup) {
-                ContactGroup selectedGroup = (ContactGroup) entity;
-                group = selectedGroup;
-                account = selectedGroup.account;
-            } else {
-                Contact selectedContact = (Contact) entity;
-                contact = selectedContact;
-                account = selectedContact.account;
-            }
-            int iconId = account.getIconId();
-            String shortName = account.shortName;
-            if (!SettingsState.isMultiAccount()) {
-                TabBar.updateTitle(iconId, shortName);
-            }
-            if (tabItems != null) {
-                boolean needsRebuild = false;
-                String separator = AppState.emptyStr;
-                int expectedSize = 0;
-                if (contact != null) {
-                    try {
-                        contextAction = contact.getContextAction();
-                    } catch (Throwable unused) {
-                        needsRebuild = true;
-                    }
-                    if (contextAction >= 0) {
-                        expectedSize = 0 + 1;
-                        if (tabItems.size() < expectedSize || ((Integer) tabItems.elementAt(0)).intValue() != contextAction) {
-                            needsRebuild = true;
-                        } else {
-                            int extraIdx = expectedSize;
-                            expectedSize++;
-                            if (tabItems.size() <= extraIdx || !tabItems.elementAt(extraIdx).equals(contact.extra)) {
-                                needsRebuild = true;
-                            } else if (group != null) {
-                                expectedSize++;
-                                if (tabItems.elementAt(0).equals(separator)) {
-                                    int extType = account.getExtType();
-                                    if (extType >= 0) {
-                                        int extIdx = expectedSize;
-                                        expectedSize++;
-                                        if (tabItems.size() <= extIdx || ((Integer) tabItems.elementAt(extIdx)).intValue() != extType) {
-                                            needsRebuild = true;
-                                        } else if (expectedSize != tabItems.size()) {
-                                            needsRebuild = true;
-                                        }
-                                    }
-                                } else {
-                                    needsRebuild = true;
-                                }
-                            }
-                        }
-                        if (needsRebuild) {
-                            tabItems.removeAllElements();
-                            if (contact != null) {
-                                int newContextAction = contact.getContextAction();
-                                if (newContextAction >= 0) {
-                                    tabItems.addElement(ObjectPool.integerOf(newContextAction));
-                                }
-                                tabItems.addElement(contact.extra);
-                            }
-                            if (group != null) {
-                                tabItems.addElement(separator);
-                            }
-                            int extType = account.getExtType();
-                            if (extType >= 0) {
-                                tabItems.addElement(ObjectPool.integerOf(extType));
-                            }
-                            AppController.needsRepaint = true;
-                        }
-                    }
-                }
-            }
-        } else if (tabItems != null && tabItems.size() > 0) {
-            tabItems.removeAllElements();
-            AppController.needsRepaint = true;
+        return -1;
+    }
+
+    private static void updateContextForEntity(Object entity, Vector tabItems) {
+        Contact contact = null;
+        ContactGroup group = null;
+        Account account;
+        if (entity instanceof ContactGroup) {
+            group = (ContactGroup) entity;
+            account = group.account;
+        } else {
+            contact = (Contact) entity;
+            account = contact.account;
         }
-        return UIState.isConversationActive() ? ScreenId.NOTIFY_MESSAGE : 0;
+        if (!SettingsState.isMultiAccount()) {
+            TabBar.updateTitle(account.getIconId(), account.shortName);
+        }
+        if (tabItems != null && contact != null) {
+            updateTabItems(tabItems, contact, group, account);
+        }
+    }
+
+    private static void updateTabItems(Vector tabItems, Contact contact,
+                                        ContactGroup group, Account account) {
+        boolean needsRebuild = false;
+        int contextAction = -1;
+        try {
+            contextAction = contact.getContextAction();
+        } catch (Exception unused) {
+            needsRebuild = true;
+        }
+        if (contextAction < 0) {
+            return;
+        }
+        int expectedSize = 1;
+        if (tabItems.size() < expectedSize
+                || ((Integer) tabItems.elementAt(0)).intValue() != contextAction) {
+            needsRebuild = true;
+        } else if (tabItems.size() <= expectedSize
+                || !tabItems.elementAt(expectedSize).equals(contact.extra)) {
+            needsRebuild = true;
+            expectedSize++;
+        } else {
+            expectedSize += 2;
+            if (group != null) {
+                needsRebuild = !isExtTypeMatch(tabItems, expectedSize, account);
+            }
+        }
+        if (needsRebuild) {
+            rebuildTabItems(tabItems, contact, group, account);
+        }
+    }
+
+    private static boolean isExtTypeMatch(Vector tabItems, int expectedSize, Account account) {
+        if (!tabItems.elementAt(0).equals(AppState.emptyStr)) {
+            return false;
+        }
+        int extType = account.getExtType();
+        if (extType < 0) {
+            return false;
+        }
+        return tabItems.size() > expectedSize
+                && ((Integer) tabItems.elementAt(expectedSize)).intValue() == extType
+                && expectedSize + 1 == tabItems.size();
+    }
+
+    private static void rebuildTabItems(Vector tabItems, Contact contact,
+                                         ContactGroup group, Account account) {
+        tabItems.removeAllElements();
+        int contextAction = contact.getContextAction();
+        if (contextAction >= 0) {
+            tabItems.addElement(ObjectPool.integerOf(contextAction));
+        }
+        tabItems.addElement(contact.extra);
+        if (group != null) {
+            tabItems.addElement(AppState.emptyStr);
+        }
+        int extType = account.getExtType();
+        if (extType >= 0) {
+            tabItems.addElement(ObjectPool.integerOf(extType));
+        }
+        AppController.needsRepaint = true;
     }
 
     private static ListView buildContactList() {
@@ -278,10 +329,10 @@ public abstract class ContactListManager {
             Account account = AccountManager.getAccountByIndex(acctIdx);
             Account currentAccount = TabBar.currentAccount;
             if (currentAccount == null || currentAccount == account) {
-                pendingMerged = mergeContacts(pendingMerged, account.specialGroup, -4, account.getPendingContacts());
-                offlineMerged = mergeContacts(offlineMerged, account.offlineGroup, -1, account.getOfflineContacts());
-                onlineMerged = mergeContacts(onlineMerged, account.defaultGroup, -2, account.getOnlineContacts());
-                unreadMerged = mergeContacts(unreadMerged, account.onlineGroup, -3, account.getUnreadContacts());
+                pendingMerged = mergeContacts(pendingMerged, account.specialGroup, GROUP_ID_PENDING, account.getPendingContacts());
+                offlineMerged = mergeContacts(offlineMerged, account.offlineGroup, GROUP_ID_OFFLINE, account.getOfflineContacts());
+                onlineMerged = mergeContacts(onlineMerged, account.defaultGroup, GROUP_ID_ONLINE, account.getOnlineContacts());
+                unreadMerged = mergeContacts(unreadMerged, account.onlineGroup, GROUP_ID_UNREAD, account.getUnreadContacts());
             }
         }
         addMergedGroupSection(screen, pendingMerged, layoutColumns, itemWidth, availableWidth);
@@ -406,7 +457,7 @@ public abstract class ContactListManager {
     }
 
     private static boolean shouldDisplayContact(boolean reverseSort, Contact contact) {
-        return ((!contact.hasMessages() && !reverseSort && !contact.highlighted) || contact.canUnblock() || contact.hasUnread() || contact.isOnline() || contact.isOffline() || contact.isSystem()) ? false : true;
+        return (contact.hasMessages() || reverseSort || contact.highlighted) && !contact.canUnblock() && !contact.hasUnread() && !contact.isOnline() && !contact.isOffline() && !contact.isSystem();
     }
 
     public static ListView addContactItems(ListView screen, Vector items) {
@@ -421,15 +472,25 @@ public abstract class ContactListManager {
             } else if (item instanceof ContactInfo) {
                 ContactInfo contactInfo = (ContactInfo) item;
                 if (contactInfo.getAccount() instanceof MrimAccount) {
-                    MenuItem entry = MenuItem.createDefault().setIcon(AppController.resolveServerIcon(Utils.parseIntBounded(contactInfo.getString(10), 0, 4, 0), contactInfo.getString(12))).addText(Utils.withComma(contactInfo.getDisplayName()), 1, 0).setLabel(contactInfo.getString(3));
+                    MenuItem entry = MenuItem.createDefault()
+                        .setIcon(AppController.resolveServerIcon(
+                            Utils.parseIntBounded(contactInfo.getString(ContactInfo.FIELD_LOCATION), 0, 4, 0),
+                            contactInfo.getString(ContactInfo.FIELD_ICON_ID)))
+                        .addText(Utils.withComma(contactInfo.getDisplayName()), UIKeys.GFX_INDEX_BOLD, 0)
+                        .setLabel(contactInfo.getString(ContactInfo.FIELD_EMAIL));
                     entry.data = contactInfo;
                     menuItem = entry;
                 } else {
-                    MenuItem entry = MenuItem.createDefault();
-                    int gender = Utils.parseInt((Object) contactInfo.getString(61));
-                    MenuItem entry2 = entry.setIcon(gender == 0 ? 255 : gender == 1 ? 256 : 263).setLabel(Utils.appendSpace(contactInfo.getString(60))).addText(Utils.withComma(contactInfo.getDisplayName()), 1, 0).setLabel(StringUtils.concat(Utils.appendSpace(contactInfo.getFirstName()), contactInfo.getLastName()));
-                    entry2.data = contactInfo;
-                    menuItem = entry2;
+                    int gender = Utils.parseInt(contactInfo.getString(ContactInfo.FIELD_MMP_TYPE_ID));
+                    int genderIcon = gender == 0 ? ICON_MMP_GENDER_UNKNOWN
+                            : gender == 1 ? ICON_MMP_GENDER_MALE : ICON_MMP_GENDER_FEMALE;
+                    MenuItem entry = MenuItem.createDefault()
+                        .setIcon(genderIcon)
+                        .setLabel(Utils.appendSpace(contactInfo.getString(ContactInfo.FIELD_MMP_CONTACT_ID)))
+                        .addText(Utils.withComma(contactInfo.getDisplayName()), UIKeys.GFX_INDEX_BOLD, 0)
+                        .setLabel(StringUtils.concat(Utils.appendSpace(contactInfo.getFirstName()), contactInfo.getLastName()));
+                    entry.data = contactInfo;
+                    menuItem = entry;
                 }
             } else {
                 menuItem = ((Account) item).createMenuItem();
@@ -479,17 +540,16 @@ public abstract class ContactListManager {
         }
         if (((MrimAccount) acctRef).hasCustomDomain) {
             ContactState.setGroupAddResult(true);
-            ContactState.setAddMode(5);
+            ContactState.setAddMode(ADD_MODE_CUSTOM_DOMAIN);
         } else {
             ContactState.setGroupAddResult(false);
-            ContactState.setAddMode(4);
+            ContactState.setAddMode(ADD_MODE_STANDARD);
         }
         ContactState.setGroupAddName(contactInfo.getEmailOrMmpId());
         ContactState.setGroupAddDisplay(contactInfo.getFullName());
         Screens.contactAddScreen(null).show();
     }
     public static ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
-        MenuItem menuItem = null;
         if (contact != null) {
             acct = contact.account;
         }
@@ -501,13 +561,18 @@ public abstract class ContactListManager {
             }
         }
         sortContacts(contacts);
+        MrimContact targetContact = contact != null ? (MrimContact) contact : null;
         for (int i = 0; i < contacts.size(); i++) {
             MrimContact candidate = (MrimContact) contacts.elementAt(i);
             String identifier = candidate.simpleIdentifier;
             String displayName = candidate.displayName;
-            if (contact != null) {
-                MrimContact targetContact = (MrimContact) contact;
-                menuItem = targetContact.groupsList != null && targetContact.groupsList.contains(identifier) ? new MenuItem(2, displayName).setIconAndLabel(375, displayName) : MenuItem.createCheckbox(displayName, false);
+            MenuItem menuItem;
+            if (targetContact != null && targetContact.groupsList != null
+                    && targetContact.groupsList.contains(identifier)) {
+                menuItem = new MenuItem(MenuItem.TYPE_CHECKBOX, displayName)
+                    .setIconAndLabel(ICON_IN_GROUP, displayName);
+            } else {
+                menuItem = MenuItem.createCheckbox(displayName, false);
             }
             menuItem.title = identifier;
             screen.addItem(menuItem);
@@ -532,29 +597,30 @@ public abstract class ContactListManager {
     public static int handleContactMenuAction(String label, int actionId) {
         SessionState.clearCurrentAccount();
         Contact contact = AppState.getCurrentContact();
-        if (actionId == 63 && !contact.account.isConnected()) {
-            return NotificationHelper.showError(299);
+        if (actionId == ScreenId.STATUS_INPUT && !contact.account.isConnected()) {
+            return NotificationHelper.showError(Account.ERROR_DISCONNECTED);
         }
-        if (actionId == 54 || actionId == 63 || actionId == 85) {
+        if (actionId == ScreenId.COMPOSE_MESSAGE || actionId == ScreenId.STATUS_INPUT
+                || actionId == ScreenId.CONTACT_DELETE) {
             ScreenBuilder.onScreenClosed();
         }
-        if (StringUtils.matchesKey(717, label)) {
+        if (StringUtils.matchesKey(STR_WAKE_UP_ACTION, label)) {
             int errorCode = ((MrimContact) contact).requestUserDetails();
             return errorCode != 0 ? NotificationHelper.showError(errorCode) : actionId;
         }
-        if (actionId == 65) {
+        if (actionId == ScreenId.PHONE_GROUPS) {
             ScreenBuilder.onScreenClosed();
             return clearSmsFields();
         }
-        if (actionId == 66) {
+        if (actionId == ScreenId.ADD_CONTACT_INFO) {
             if (contact instanceof XmppContact) {
                 return ((XmppContact) contact).sendPresence(PRESENCE_SUBSCRIBE);
             }
             ContactState.setInfo(new ContactInfo(contact));
-        } else if (actionId == 54) {
+        } else if (actionId == ScreenId.COMPOSE_MESSAGE) {
             AppState.setAccount(contact.account);
-            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), (String) null, (String) null);
-        } else if (actionId == 6) {
+            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), null, null);
+        } else if (actionId == ScreenId.MAP) {
             ListItem item = (ListItem) contact;
             item.deselect();
             MapController.selectMapItem(item);
@@ -565,36 +631,37 @@ public abstract class ContactListManager {
     public static int handleContactGroupAction(String label, int actionId) {
         SessionState.clearCurrentAccount();
         Object entity = ContactState.getEntity();
-        if (actionId == 63 && !((Contact) entity).account.isConnected()) {
-            return NotificationHelper.showError(299);
+        if (actionId == ScreenId.STATUS_INPUT && !((Contact) entity).account.isConnected()) {
+            return NotificationHelper.showError(Account.ERROR_DISCONNECTED);
         }
-        if (actionId == 40 || actionId == 63 || actionId == 85) {
+        if (actionId == ScreenId.CLEAR_SEARCH || actionId == ScreenId.STATUS_INPUT
+                || actionId == ScreenId.CONTACT_DELETE) {
             ScreenBuilder.onScreenClosed();
-            if (actionId != 85) {
+            if (actionId != ScreenId.CONTACT_DELETE) {
                 openContactMessages();
             }
         }
-        if (StringUtils.matchesKey(717, label)) {
+        if (StringUtils.matchesKey(STR_WAKE_UP_ACTION, label)) {
             int errorCode = ((MrimContact) entity).requestUserDetails();
             if (errorCode != 0) {
                 return NotificationHelper.showError(errorCode);
             }
             return ScreenId.CLEAR_SEARCH;
         }
-        if (actionId == 65) {
+        if (actionId == ScreenId.PHONE_GROUPS) {
             ScreenBuilder.onScreenClosed();
             openContactMessages();
             return clearSmsFields();
         }
-        if (actionId == 66) {
+        if (actionId == ScreenId.ADD_CONTACT_INFO) {
             if (entity instanceof XmppContact) {
                 return ((XmppContact) entity).sendPresence(PRESENCE_UNSUBSCRIBE);
             }
             ContactState.setInfo(new ContactInfo((Contact) entity));
-        } else if (actionId == 54) {
+        } else if (actionId == ScreenId.COMPOSE_MESSAGE) {
             AppState.setAccount(((MrimContact) entity).account);
-            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) entity).simpleIdentifier), (String) null, (String) null);
-        } else if (actionId == 6) {
+            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) entity).simpleIdentifier), null, null);
+        } else if (actionId == ScreenId.MAP) {
             ListItem item = (ListItem) entity;
             item.deselect();
             MapController.selectMapItem(item);
@@ -714,24 +781,24 @@ public abstract class ContactListManager {
         int screenHeight = UIState.getHeight() - 1;
         int screenWidth = UIState.getScreenWidth();
         g.setClip(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
-        g.setColorFromPalette(16);
+        g.setColorFromPalette(PALETTE_BORDER);
         g.fillRect(0, (screenHeight - popupHeight) - 1, screenWidth, popupHeight + 1);
         g.setClip(1, screenHeight - popupHeight, screenWidth - 2, popupHeight);
-        g.setColorFromPalette(1);
-        g.fillRect(0, 0, 2048, 2048);
-        int barHeight = Utils.max(UIState.getFontHeight(), 16);
+        g.setColorFromPalette(PALETTE_BACKGROUND);
+        g.fillRect(0, 0, POPUP_FILL_SIZE, POPUP_FILL_SIZE);
+        int barHeight = Utils.max(UIState.getFontHeight(), POPUP_MIN_BAR_HEIGHT);
         Vector tabs = UIState.getPopupItems();
         for (int idx = tabs.size() - 1; idx >= 0; idx--) {
             Account account = (Account) tabs.elementAt(idx);
             int barTop = screenHeight;
             int fontHeight = UIState.getFontHeight();
-            int barHeight3 = Utils.max(fontHeight, 16);
-            g.setColorFromPalette(13);
+            int entryHeight = Utils.max(fontHeight, POPUP_MIN_BAR_HEIGHT);
+            g.setColorFromPalette(PALETTE_SELECTION);
             int textY = barTop - fontHeight;
-            g.fillRect(1, textY, ((UIState.getScreenWidth() - 2) * account.msgCount) / 100, barHeight3);
+            g.fillRect(1, textY, ((UIState.getScreenWidth() - 2) * account.msgCount) / 100, entryHeight);
             g.drawIcon(account.getIconId(), 3, textY + ScreenManager.getCenterOffset());
-            g.setColorFromPalette(0);
-            g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), 21, barTop, 36);
+            g.setColorFromPalette(PALETTE_TEXT);
+            g.drawString(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(account.login).append(' ').append(account.msgCount).append('%')), POPUP_TEXT_OFFSET, barTop, Graphics.BOTTOM | Graphics.LEFT);
             screenHeight -= barHeight;
         }
     }
