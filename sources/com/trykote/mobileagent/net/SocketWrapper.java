@@ -7,14 +7,13 @@ import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.key.SettingsKeys;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.IOUtils;
-import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.Utils;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.SocketConnection;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -1,12 +1,25 @@
 package com.trykote.mobileagent.protocol.mrim;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.ChatRoom;
+import com.trykote.mobileagent.model.Message;
+import com.trykote.mobileagent.net.ApiClient;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.ui.Screen;
+import com.trykote.mobileagent.ui.ScreenManager;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.JsonParser;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -39,7 +52,7 @@ public final class MrimChatRoomManager {
         }
         Object roomsArray = JsonParser.getValue(obj, ResourceAccessor.str(PackedStringKeys.MAIL_PARAM_FLIST));
         for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
-            Object roomObj = JsonParser.getVectorElement(roomsArray, i);
+            Object roomObj = ((Vector) roomsArray).elementAt(i);
             ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, ResourceAccessor.str(PackedStringKeys.ATTR_ID_UPPER)));
             if (existingRoom == null) {
                 this.list.addElement(new ChatRoom(roomObj));
@@ -157,58 +170,14 @@ public final class MrimChatRoomManager {
         assignDefault(false);
     }
 
-    public static final void showChatRoomMessages() {
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId());
-        Screen screen = Screens.contactDetails(null);
-        screen.setHeader(234, chatRoom.getDisplayName());
-        Vector messages = ObjectPool.newVector();
-        Enumeration elements = chatRoom.messageIds.elements();
-        while (elements.hasMoreElements()) {
-            Hashtable hashtable = chatRoom.messages;
-            Object key = elements.nextElement();
-            if (hashtable.containsKey(key)) {
-                messages.addElement(chatRoom.messages.get(key));
-            }
-        }
-        Enumeration elements2 = messages.elements();
-        while (elements2.hasMoreElements()) {
-            screen.addItem(((Message) elements2.nextElement()).createMenuItem(chatRoom));
-        }
-        if (screen.menuItems.size() == 0) {
-            screen.selectable = false;
-            screen.addLabelById(835);
-        } else {
-            screen.scrollOffset = ChatState.getScrollOffset();
-            screen.selectByTitle((String) MapState.getMapPoint2());
-            screen.invalidateLayout();
-        }
-        screen.reverseScroll = true;
-        ScreenManager.showScreen(screen);
-    }
-
     public static final void showChatRoomSelector() {
-        Screen screen = Screens.dialogScreen(null);
+        Screen screen = Screens.dialogScreen();
         MrimAccount account = (MrimAccount) AppState.getAccount();
         Enumeration chatRooms = account.chatRoomManager.list.elements();
         while (chatRooms.hasMoreElements()) {
             ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
             if (chatRoom != account.chatRoomManager.getLast()) {
                 MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(chatRoom.name);
-                menuItem.data = chatRoom;
-                screen.addItem(menuItem);
-            }
-        }
-        ScreenManager.showScreen(screen);
-    }
-
-    public static final void showChatRoomListWithCounts() {
-        Screen screen = Screens.inputForm(null);
-        MrimAccount account = (MrimAccount) AppState.getAccount();
-        Enumeration chatRooms = account.chatRoomManager.list.elements();
-        while (chatRooms.hasMoreElements()) {
-            ChatRoom chatRoom = (ChatRoom) chatRooms.nextElement();
-            if (chatRoom != account.chatRoomManager.getLast()) {
-                MenuItem menuItem = MenuItem.createDefault().setIcon(234).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(chatRoom.name).append(' ').append('['))).addText(StringUtils.intern(Integer.toString(chatRoom.unreadCount)), 1, 0).setLabel(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('/').append(chatRoom.memberCount).append(']')));
                 menuItem.data = chatRoom;
                 screen.addItem(menuItem);
             }

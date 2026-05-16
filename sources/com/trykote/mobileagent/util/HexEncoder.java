@@ -1,8 +1,6 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.net.*;
-
 public final class HexEncoder {
 
     private static final int ASCII_ZERO = '0';            // 48

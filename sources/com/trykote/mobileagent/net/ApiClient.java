@@ -1,16 +1,28 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.JsonParser;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
+
+import javax.microedition.io.ConnectionNotFoundException;
 import java.io.IOException;
 import java.util.Vector;
-import javax.microedition.io.ConnectionNotFoundException;
 
 public final class ApiClient {
 
@@ -35,7 +47,7 @@ public final class ApiClient {
     }
 
     public static final void executeWithReauth(Object[] objArr) throws InterruptedException {
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Account account = AppState.getAccount();
         Object[] response = executeHttpRequest(objArr, account);
         if (objArr[8] != null) {
             objArr[4] = response;
@@ -46,15 +58,15 @@ public final class ApiClient {
             return;
         }
         objArr[8] = objArr;
-        MrimAccount currentAccount = (MrimAccount) AppState.getAccount();
+        Account currentAccount = AppState.getAccount();
         Object[] authRequest = createAuthRequest(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(currentAccount.login).append(ResourceAccessor.str(PackedStringKeys.PARAM_PASSWORD_EQ)).append(currentAccount.password).append(SessionState.getSessionHash()));
         authRequest[8] = authRequest;
         ((AsyncTask) submitAsync(authRequest)[7]).thread.join();
-        account.jabberId = (String) authRequest[6];
+        account.setAuthCookie((String) authRequest[6]);
         objArr[4] = executeHttpRequest(objArr, account);
     }
 
-    private static final Object[] executeHttpRequest(Object[] objArr, MrimAccount account) {
+    private static final Object[] executeHttpRequest(Object[] objArr, Account account) {
         String requestUrl;
         HttpClient httpClient = null;
         try {
@@ -113,7 +125,7 @@ public final class ApiClient {
             httpClient.setRequestMethod((String) objArr[0]);
             setHeaderFromState(httpClient, 919726, 788668);
             setHeaderFromState(httpClient, 657608, 329938);
-            setOptionalHeader(httpClient, 395489, ((MrimAccount) AppState.getAccount()).jabberId);
+            setOptionalHeader(httpClient, 395489, AppState.getAccount().getAuthCookie());
             byte[] bodyData = (byte[]) objArr[3];
             if (bodyData != null) {
                 setHeaderFromState(httpClient, 788628, 2164851);
@@ -246,7 +258,7 @@ public final class ApiClient {
     public static final Object getJsonPayload() {
         Object obj = UIState.getJsonResult();
         UIState.clearJsonResult();
-        return JsonParser.getVectorElement(obj, 2);
+        return ((Vector) obj).elementAt(2);
     }
 
     public static void sendSmsRequest(Object obj) {
@@ -302,11 +314,11 @@ public final class ApiClient {
                 throw new Throwable();
             }
             Vector lines = Utils.splitReplace(new ByteBuffer(http).readUTFWithLen(), '\n', '\r');
-            XmppContactGroup.sharedContactList.removeAllElements();
+            RequestQueue.sharedContactList.removeAllElements();
             for (int i = lines.size() - 1; i >= 0; i--) {
                 Vector fields = Utils.splitMerge((String) lines.elementAt(i), '|');
                 if (fields.size() == 5) {
-                    XmppContactGroup.sharedContactList.addElement(new Object[]{fields.elementAt(0), new long[]{Long.parseLong((String) fields.elementAt(1)), Long.parseLong((String) fields.elementAt(2))}, fields.elementAt(4)});
+                    RequestQueue.sharedContactList.addElement(new Object[]{fields.elementAt(0), new long[]{Long.parseLong((String) fields.elementAt(1)), Long.parseLong((String) fields.elementAt(2))}, fields.elementAt(4)});
                 }
                 ObjectPool.releaseVector(fields);
             }

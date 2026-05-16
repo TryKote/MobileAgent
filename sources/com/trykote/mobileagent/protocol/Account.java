@@ -1,18 +1,33 @@
 package com.trykote.mobileagent.protocol;
 
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AccountListener;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ContactListListener;
+import com.trykote.mobileagent.core.MessageListener;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.ui.handler.ProfileHandler;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.ChatRoom;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.SearchEntry;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.ui.screen.ProfileScreen;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
+import javax.microedition.io.ConnectionNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.microedition.io.ConnectionNotFoundException;
 
 public abstract class Account {
 
@@ -102,6 +117,11 @@ public abstract class Account {
 
     private int authMode;
 
+    // Listener callbacks for protocol → UI decoupling
+    private ContactListListener contactListListener;
+    private AccountListener accountListener;
+    private MessageListener messageListener;
+
     public Account(int accountId, String login, String password) {
         this.groups = ObjectPool.newVector();
         this.accountId = accountId;
@@ -135,6 +155,70 @@ public abstract class Account {
         }
         this.configFlags = buffer.readInt();
         this.displayName = buffer.readUTF8Str((String) null);
+    }
+
+    // Listener registration
+
+    public final void setContactListListener(ContactListListener listener) {
+        this.contactListListener = listener;
+    }
+
+    public final void setAccountListener(AccountListener listener) {
+        this.accountListener = listener;
+    }
+
+    public final void setMessageListener(MessageListener listener) {
+        this.messageListener = listener;
+    }
+
+    // Notify helpers (null-safe)
+
+    public final void notifyContactActivated(Contact contact) {
+        if (this.contactListListener != null) {
+            this.contactListListener.onContactActivated(contact);
+        }
+    }
+
+    public final void notifyContactDeactivated(Contact contact) {
+        if (this.contactListListener != null) {
+            this.contactListListener.onContactDeactivated(contact);
+        }
+    }
+
+    public final void notifyContactOnline(Contact contact) {
+        if (this.contactListListener != null) {
+            this.contactListListener.onContactOnline(contact);
+        }
+    }
+
+    public final void notifyContactDeleted(Contact contact) {
+        if (this.contactListListener != null) {
+            this.contactListListener.onContactDeleted(contact);
+        }
+    }
+
+    public final void notifyContactListUpdated() {
+        if (this.contactListListener != null) {
+            this.contactListListener.onContactListUpdated(this);
+        }
+    }
+
+    public final void notifyConnectionProgressChanged() {
+        if (this.accountListener != null) {
+            this.accountListener.onConnectionProgressChanged(this);
+        }
+    }
+
+    public final void notifyMessageReceived(Contact contact, int soundType) {
+        if (this.messageListener != null) {
+            this.messageListener.onMessageReceived(contact, soundType);
+        }
+    }
+
+    public final void notifyMessageSent(Contact contact) {
+        if (this.messageListener != null) {
+            this.messageListener.onMessageSent(contact);
+        }
     }
 
     public final ByteBuffer encodeId() {
@@ -370,7 +454,7 @@ public abstract class Account {
             for (int j = group.contacts.size() - 1; j >= 0; j--) {
                 Contact contact = group.getContact(j);
                 removeContact(contact, false);
-                ContactListManager.markContactUnread(contact);
+                notifyContactDeactivated(contact);
             }
             removeGroup(group);
         }
@@ -381,7 +465,7 @@ public abstract class Account {
         while (elements.hasMoreElements()) {
             ((Contact) elements.nextElement()).clearUnread();
         }
-        AppController.needsLayoutUpdate = true;
+        notifyContactListUpdated();
     }
 
     public final Contact getContact(Object obj) {
@@ -393,7 +477,7 @@ public abstract class Account {
         if (contact == null || contact.isOnline() || contact.hasUnread() || contact.isSystem()) {
             return;
         }
-        ContactListManager.deleteContact(contact);
+        notifyContactDeleted(contact);
         UIState.getPendingConnections().addElement(contact);
         contact.statusCode = RuntimeState.getCurrentTimestamp();
         contact.dirty = true;
@@ -402,7 +486,7 @@ public abstract class Account {
     public final void markRead(String contactId) {
         Contact contact = getContact((Object) contactId);
         if (contact != null) {
-            ContactListManager.deleteContact(contact);
+            notifyContactDeleted(contact);
         }
     }
 
@@ -449,7 +533,7 @@ public abstract class Account {
             getGroup(i).removeElement(contact);
         }
         this.defaultGroup.removeElement(contact);
-        ContactListManager.markContactUnread(contact);
+        notifyContactDeactivated(contact);
         return 0;
     }
 
@@ -519,7 +603,7 @@ public abstract class Account {
     }
 
     public final int getResourceId(Object key) {
-        return ProfileHandler.loadUserProfile((String) key, this);
+        return ProfileScreen.loadUserProfile((String) key, this);
     }
 
     public abstract int validateContactDelete(Contact contact);
@@ -658,4 +742,166 @@ public abstract class Account {
     public int getSessionStringKey() {
         return 0;
     }
+
+    // --- Protocol capability methods (virtual, override in subclasses) ---
+
+    // Whether this account is any XMPP type (TYPE_XMPP or TYPE_XMPP_MAILRU)
+    public boolean isXmppType() {
+        int t = getType();
+        return t == TYPE_XMPP || t == TYPE_XMPP_MAILRU;
+    }
+
+    // Whether this account is an XMPP Mail.ru variant
+    public boolean isMailRuVariant() { return false; }
+
+    // Whether this account has a custom domain (MRIM)
+    public boolean hasCustomDomain() { return false; }
+
+    // Handle status change for the given option index. Returns screen ID.
+    public int handleStatusOption(int optionIndex) { return 0; }
+
+    // Whether this account supports chat rooms (MRIM)
+    public boolean supportsChatRooms() { return false; }
+
+    // Whether this protocol supports vCard/profile info
+    public boolean supportsVCard() { return false; }
+
+    // Whether this protocol supports file transfer
+    public boolean supportsFileTransfer() { return false; }
+
+    // Nickname for outgoing messages (MRIM -> chatRoomManager.nickname)
+    public String getNickname() { return this.login; }
+
+    // Auth cookie/ID for HTTP requests (MRIM -> jabberId)
+    public String getAuthCookie() { return null; }
+    public void setAuthCookie(String cookie) {}
+
+    // Icon resource ID for status display (MMP uses custom emoticon icons)
+    public int getIconResourceId() { return getIconId(); }
+
+    // Set emoticon selection (MMP reserved2 field)
+    public void setEmoticonSelection(int optionId) {}
+
+    // MMP pending version for privacy settings
+    public int getPendingVersion() { return 0; }
+
+    // Schedule MMP version update. Returns result code.
+    public int scheduleVersionUpdate(int version) { return 0; }
+
+    // Add new contact for this protocol (XMPP). Returns error code.
+    public int addNewContact() { return 0; }
+
+    // Map highlight state (MRIM profiles on map)
+    public boolean isMapHighlighted() { return false; }
+    public void setMapHighlighted(boolean value) {}
+
+    // Send telemetry report
+    public void sendTelemetryReport() {}
+
+    // Perform profile sync
+    public void syncProfile() {}
+
+    // Set presence feature on a contact (XMPP)
+    public void setContactPresenceFeature(Contact contact, int feature) {}
+
+    // Check if a message has been read in any chat room (MRIM)
+    public boolean isMessageReadInAnyRoom(String messageId) { return false; }
+
+    // Whether this is the last/active chat room (MRIM)
+    public boolean isLastChatRoom(Object chatRoom) { return false; }
+
+    // Find a chat room by name
+    public ChatRoom findChatRoomByName(String name) { return null; }
+
+    // Find a chat room by ID
+    public ChatRoom findChatRoomById(int id) { return null; }
+
+    // Number of chat rooms
+    public int getChatRoomCount() { return 0; }
+
+    // Whether chat rooms have been loaded from server
+    public boolean areChatRoomsLoaded() { return false; }
+
+    // All chat rooms (excluding the default/last one)
+    public Vector getChatRooms() { return null; }
+
+    // Get the last (default/aggregate) chat room
+    public ChatRoom getLastChatRoom() { return null; }
+
+    // Find the default named chat room
+    public ChatRoom findDefaultChatRoom() { return null; }
+
+    // Parse chat rooms from server response
+    public void parseChatRoomsFromJson(Object payload) {}
+
+
+    // Show chat room selector UI
+    public void showChatRoomSelector() {}
+
+    // Submit async chat room HTTP request
+    public void sendChatRoomRequest(Object[] request) {}
+
+    // Create a new chat room with given members. Returns error code or 0.
+    public int createChatRoom(String name, Vector members, boolean includeOwner) { return 0; }
+
+    // Apply protocol configuration (status/emoticon). Returns error code or 0.
+    public int applyConfiguration(int config) { return 0; }
+
+    // Send SMS via protocol. Returns error code or 0.
+    public int sendSmsMessage(Contact contact, String phone, String message) { return 0; }
+
+    // Send blog post. Returns error code or 0.
+    public int sendBlogPost(String message, boolean isReply, long timestamp) { return 0; }
+
+    // Whether this account's profile has map coordinates
+    public boolean hasProfileCoordinates() { return false; }
+
+    // Set map location on profile (MRIM)
+    public void setProfileMapLocation(Object mapPoint) {}
+
+    // Set simple lat/lon location on profile (MRIM)
+    public void setProfileSimpleLocation(String longitude, String latitude) {}
+
+    // Mark chat rooms as loaded
+    public void setChatRoomsLoaded() {}
+
+    // Add offline contact by identifier (MRIM)
+    public void addOfflineContact(String contactId) {}
+
+    // Get default chat room ID
+    public int getDefaultChatRoomId() { return 0; }
+
+    // Remove a user from chat rooms
+    public void removeChatRoomUser(String userId) {}
+
+    // Profile gender/location visibility state (MRIM)
+    public int getProfileGender() { return 0; }
+
+    // Clear the last (default) chat room's data (MRIM)
+    public void clearLastChatRoom() {}
+
+    // Location visibility: publish to all (MRIM)
+    public void publishLocation() {}
+
+    // Location visibility: hide from all (MRIM)
+    public void hideLocation() {}
+
+    // Location visibility: show to selected groups (MRIM)
+    public void setLocationGroups() {}
+
+    // Location visibility: clear group restrictions (MRIM)
+    public void clearLocationGroups() {}
+
+    // Whether this account's profile is selected for map display (MRIM)
+    public boolean isProfileSelected() { return false; }
+
+    // Return this account as a ListItem for map display, or null (MRIM)
+    public ListItem asListItem() { return null; }
+
+    // Whether this account's profile needs refresh on map (MRIM)
+    public boolean isProfileDirty() { return false; }
+
+    // Search for a user by search entry (MRIM)
+    public void performUserSearch(SearchEntry searchEntry) {}
+
 }

@@ -1,8 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
+import com.trykote.mobileagent.core.UIState;
 
 public final class TextElement implements RenderElement {
 

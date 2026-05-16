@@ -1,16 +1,28 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.map.ChatRenderer;
+import com.trykote.mobileagent.map.MapRenderer;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.model.VCard;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.ui.ContactListManager;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.ui.SizeCache;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Vector;
 
 public final class MrimContact extends Contact implements ListItem {
@@ -280,6 +292,41 @@ public final class MrimContact extends Contact implements ListItem {
         return (this.statusFlags & STATUS_FLAG_SYSTEM) != 0;
     }
 
+    @Override
+    public final String getContactEmail() {
+        return this.simpleIdentifier;
+    }
+
+    @Override
+    public final boolean isMrimType() {
+        return true;
+    }
+
+    @Override
+    public final boolean canRequestDetails() {
+        return true;
+    }
+
+    @Override
+    public final int requestDetails() {
+        return requestUserDetails();
+    }
+
+    @Override
+    public final boolean hasLocationData() {
+        return hasVCard();
+    }
+
+    @Override
+    public final Vector getGroupMembership() {
+        return this.groupsList;
+    }
+
+    @Override
+    public void populateContactInfo(Object contactInfo) {
+        ((ContactInfo) contactInfo).setEmailAddress(this.simpleIdentifier);
+    }
+
     public final void updateDisplayNameAndGroups(String str, String str2) {
         setDisplayName(str);
         this.contactGroupsStr = str2;
@@ -300,7 +347,8 @@ public final class MrimContact extends Contact implements ListItem {
         MapRenderer.needsRedraw = true;
     }
 
-    public final boolean hasVCard() {
+    @Override
+    public boolean hasVCard() {
         return this.vCardInfo != null;
     }
 

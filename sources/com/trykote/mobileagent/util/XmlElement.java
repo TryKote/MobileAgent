@@ -1,16 +1,10 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.PackedStringKeys;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;

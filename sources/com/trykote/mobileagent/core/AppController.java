@@ -1,26 +1,47 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.core.event.*;
-import com.trykote.mobileagent.key.*;
-
-
+import com.trykote.mobileagent.core.event.AccountDataEvent;
+import com.trykote.mobileagent.core.event.CommandEvent;
+import com.trykote.mobileagent.core.event.EventDispatcher;
+import com.trykote.mobileagent.core.event.KeyEvent;
+import com.trykote.mobileagent.core.event.MenuItemEvent;
+import com.trykote.mobileagent.core.event.NotificationEvent;
+import com.trykote.mobileagent.core.event.PointerEvent;
+import com.trykote.mobileagent.key.MapKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.key.UIKeys;
 import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapRenderer;
 import com.trykote.mobileagent.map.MapUtils;
 import com.trykote.mobileagent.map.TileCache;
-import com.trykote.mobileagent.model.*;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.model.PhoneContact;
+import com.trykote.mobileagent.model.UserSearchResult;
 import com.trykote.mobileagent.net.Telemetry;
 import com.trykote.mobileagent.net.TrafficAccounting;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
 import com.trykote.mobileagent.protocol.ProtocolEvent;
-import com.trykote.mobileagent.protocol.mmp.MmpContact;
-import com.trykote.mobileagent.protocol.mrim.MrimAccount;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.ui.handler.ScreenHandler;
-import com.trykote.mobileagent.ui.handler.ScreenHandlerRegistry;
-import com.trykote.mobileagent.ui.handler.SettingsHandler;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.map.RouteData;
+import com.trykote.mobileagent.ui.ContactListManager;
+import com.trykote.mobileagent.ui.ListView;
+import com.trykote.mobileagent.ui.MainCanvas;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.Screen;
+import com.trykote.mobileagent.ui.ScreenBuilder;
+import com.trykote.mobileagent.ui.ScreenManager;
+import com.trykote.mobileagent.ui.ScreenView;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.ui.TabBar;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.SoftFloat;
+import com.trykote.mobileagent.util.SoundPlayer;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
@@ -103,7 +124,7 @@ public final class AppController {
         UIState.setCancelMenuAction(0);
         UIState.setCancelMenuType(0);
         TransitionData.get().clear();
-        Telemetry.sendReport(true, (MrimAccount) AppState.getAccount());
+        Telemetry.sendReport(true, AppState.getAccount());
     }
 
     public static int resolveServerIcon(int index, String command) {
@@ -213,17 +234,17 @@ public final class AppController {
 
     private static void showInitialScreen() {
         if (SessionState.isInitComplete()) {
-            SettingsHandler.showSettingsScreen();
+            ScreenBuilder.openScreen(ScreenId.SETTINGS);
             return;
         }
         int accountCount = AccountManager.getActiveAccountCount();
         if (accountCount == 0) {
-            ScreenManager.pushScreen(Screens.accountSetup(null));
+            ScreenManager.pushScreen(Screens.accountSetup());
         } else {
             for (int i = accountCount - 1; i >= 0; i--) {
                 AccountManager.addToAccountSelection(AccountManager.getAccountByIndex(i));
             }
-            ContactListManager.showContactList();
+            ScreenBuilder.openScreen(ScreenId.CONTACT_LIST);
         }
         ContactListManager.refreshContactList();
     }
@@ -255,9 +276,9 @@ public final class AppController {
                         Object menuData = menuItem == null ? null : menuItem.data;
                         String menuTitle = menuItem == null ? null : menuItem.title;
                         int nextState = 0;
-                        ScreenHandler handler = ScreenHandlerRegistry.getHandler(ScreenManager.getCurrentScreen().screenId);
-                        if (handler != null) {
-                            nextState = handler.onIdleProcess(currentScreen, menuItem, menuData, menuTitle);
+                        ScreenView idleView = ScreenBuilder.resolveView(currentScreen);
+                        if (idleView != null) {
+                            nextState = idleView.onIdle(menuItem, menuData, menuTitle);
                         }
                         if (nextState == ScreenId.CLOSE) {
                             ScreenBuilder.onScreenClosed();
@@ -506,12 +527,12 @@ public final class AppController {
                 MapRenderer.needsRedraw = true;
             } else if (keyCode == Canvas.KEY_NUM7) {
                 int[] prevPoint;
-                if (MmpContact.locationEnabled && (prevPoint = MmpContact.getPrevRoutePoint()) != null) {
+                if (RouteData.locationEnabled && (prevPoint = RouteData.getPrevRoutePoint()) != null) {
                     MapRenderer.animateTo(prevPoint[0], prevPoint[1]);
                 }
             } else if (keyCode == Canvas.KEY_NUM9) {
                 int[] nextPoint;
-                if (MmpContact.locationEnabled && (nextPoint = MmpContact.getNextRoutePoint()) != null) {
+                if (RouteData.locationEnabled && (nextPoint = RouteData.getNextRoutePoint()) != null) {
                     MapRenderer.animateTo(nextPoint[0], nextPoint[1]);
                 }
             } else {
@@ -713,17 +734,17 @@ public final class AppController {
 
     private static void handleAccountDataEvent(AccountDataEvent acctEvt) {
         Object[] evtData = acctEvt.data;
-        if (evtData[0] instanceof MrimAccount) {
+        if (evtData[0] instanceof Account) {
             UIState.setHttpResultScreen(ScreenId.CONTACT_LIST_KEY);
             MapState.setMapPoint1(evtData[1]);
-            MrimAccount mrimAccount = (MrimAccount) evtData[0];
-            mrimAccount.chatRoomManager.loaded = true;
-            SessionState.setTempAccount(mrimAccount);
-            Screens.errorAlert(null).show();
+            Account acct = (Account) evtData[0];
+            acct.setChatRoomsLoaded();
+            SessionState.setTempAccount(acct);
+            Screens.errorAlert().show();
             MapState.setMapPoint1(null);
             needsRepaint = true;
         } else {
-            ((MrimAccount) evtData[1]).addOfflineContact((String) evtData[0]);
+            ((Account) evtData[1]).addOfflineContact((String) evtData[0]);
         }
     }
 
@@ -742,7 +763,7 @@ public final class AppController {
                 UIState.setPhoneResults(resultVector);
                 int scrollOffset = ((Integer) resultArr[2]).intValue();
                 RuntimeState.setPhoneScrollOffset(scrollOffset);
-                Screen popupScreen = Screens.contactPopup(null);
+                Screen popupScreen = Screens.contactPopup();
                 if (scrollOffset >= PHONE_PAGE_SIZE) {
                     popupScreen.addIconItemWithData(ICON_NAVIGATION, ResourceAccessor.str(StringResKeys.STR_MENU_SMS), PAGE_ACTION_PREV, null);
                 }
@@ -763,7 +784,7 @@ public final class AppController {
                 ContactListManager.showAddContactScreen();
                 break;
             case ProtocolEvent.ACCOUNT_SYNC:
-                ((MrimAccount) eventData).profileManager.sync();
+                ((Account) eventData).syncProfile();
                 break;
             case ProtocolEvent.MAP_CONTROL:
                 break;
@@ -776,9 +797,9 @@ public final class AppController {
         needsLayoutUpdate = true;
         ListView currentScreen = ScreenManager.getCurrentScreen();
         MenuItem eventItem = menuEvt.item;
-        ScreenHandler handler = ScreenHandlerRegistry.getHandler(currentScreen.screenId);
-        if (handler != null) {
-            handler.onMenuItemEvent(currentScreen, eventItem);
+        ScreenView menuView = ScreenBuilder.resolveView(currentScreen);
+        if (menuView != null) {
+            menuView.onMenuItemChanged(eventItem);
         }
     }
 
@@ -792,9 +813,9 @@ public final class AppController {
         MenuItem currentItem = ScreenManager.getCurrentMenuItem();
         MenuItem headerItem = UIState.getScreenStack().size() > 0 ? screen.getHeaderItem() : null;
         int actionResult = 0;
-        ScreenHandler handler = ScreenHandlerRegistry.getHandler(screen.screenId);
-        if (handler != null) {
-            actionResult = handler.onItemSelected(screen, currentItem, ScreenManager.getCurrentTitle(),
+        ScreenView selectView = ScreenBuilder.resolveView(screen);
+        if (selectView != null) {
+            actionResult = selectView.onSelect(currentItem, ScreenManager.getCurrentTitle(),
                     selectedOption, currentItem == null ? null : currentItem.data,
                     headerItem == null ? null : headerItem.data);
         }

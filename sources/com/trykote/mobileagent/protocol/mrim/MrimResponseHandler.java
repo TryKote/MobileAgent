@@ -1,10 +1,14 @@
 package com.trykote.mobileagent.protocol.mrim;
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+
 import java.util.Vector;
 
 final class MrimResponseHandler {

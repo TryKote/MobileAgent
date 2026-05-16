@@ -1,16 +1,17 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.MapKeys;
+import com.trykote.mobileagent.key.SettingsKeys;
+import com.trykote.mobileagent.util.SoundPlayer;
+import com.trykote.mobileagent.util.TimerManager;
+
 import javax.microedition.lcdui.Display;
 /* Extracted from AppController: notification and error display */
 public final class NotificationHelper {
@@ -59,21 +60,21 @@ public final class NotificationHelper {
 
     public static final void clearNotifications() {
         playNotificationSound(SOUND_SYSTEM_NOTIFICATION);
-        Screens.notificationDialog(null).show();
+        Screens.notificationDialog().show();
         UIState.clearNotificationTitle();
     }
 
     public static final void showAlertBuffer(int i, StringBuffer stringBuffer) {
         UIState.setHttpResultScreen(i);
         AppState.setFromBuffer(MapKeys.SLOT_MAP_POINT_1, stringBuffer);
-        Screens.errorAlert(null).show();
+        Screens.errorAlert().show();
         MapState.setMapPoint1(null);
     }
 
     public static final void showAlertById(int i, int i2) {
         UIState.setHttpResultScreen(i);
         AppState.setFromPool(MapKeys.SLOT_MAP_POINT_1, i2);
-        Screens.errorAlert(null).show();
+        Screens.errorAlert().show();
         MapState.setMapPoint1(null);
     }
 
@@ -88,7 +89,7 @@ public final class NotificationHelper {
     public static final void showConfirmDialog(int i, int i2) {
         UIState.setHttpParam1(i);
         UIState.setHttpParam2(i2);
-        Screens.confirmDialog(null).show();
+        Screens.confirmDialog().show();
     }
 
     public static void playNotificationSound(int soundType) {

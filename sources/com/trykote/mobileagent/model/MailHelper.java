@@ -1,12 +1,24 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.net.ApiClient;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.ScreenBuilder;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.IOUtils;
+import com.trykote.mobileagent.util.JsonParser;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -163,7 +175,7 @@ public final class MailHelper {
             return validationResult;
         }
         String messageId = RuntimeState.getMessageId();
-        ChatRoom chatRoom = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId());
+        ChatRoom chatRoom = AppState.getAccount().findChatRoomById(ChatState.getChatRoomId());
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(Message.FLAG_UNREAD);
         Object jsonPayload = ApiClient.getJsonPayload();
@@ -171,7 +183,7 @@ public final class MailHelper {
         int size = ((Vector) attachmentsList).size();
         Object[] attachments = new Object[size];
         for (int i = size - 1; i >= 0; i--) {
-            Object attachmentObj = JsonParser.getVectorElement(attachmentsList, i);
+            Object attachmentObj = ((Vector) attachmentsList).elementAt(i);
             attachments[i] = new String[]{JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 1), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 2), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 3), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_FIRST + 4), JsonParser.getStringByInt(attachmentObj, Message.ATTACHMENT_KEY_LAST)};
         }
         message.attachments = attachments;
@@ -210,7 +222,7 @@ public final class MailHelper {
     private static final int handleMailRedirect() {
         int action = RuntimeState.getXmppAction();
         if (action == ACTION_COMPOSE_REPLY) {
-            Message message = ((MrimAccount) AppState.getAccount()).chatRoomManager.findById(ChatState.getChatRoomId()).getMessage(RuntimeState.getMessageId());
+            Message message = AppState.getAccount().findChatRoomById(ChatState.getChatRoomId()).getMessage(RuntimeState.getMessageId());
             Vector toList = message.getToList();
             Vector ccList = message.getCcList();
             getFirstRecipient(toList);
@@ -241,8 +253,8 @@ public final class MailHelper {
         String messageId = RuntimeState.getMessageId();
         wrapInVector(messageId);
         int chatRoomId = ChatState.getChatRoomId();
-        MrimAccount account = (MrimAccount) AppState.getAccount();
-        Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
+        Account account = AppState.getAccount();
+        Message message = account.findChatRoomById(chatRoomId).getMessage(messageId);
         String subject = message.getSubject();
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
@@ -287,21 +299,21 @@ public final class MailHelper {
         if (!StringUtils.matchesKey(845, str)) {
             return 0;
         }
-        ChatState.setActiveChatRoomId(account.chatRoomManager.findDefault().id);
+        ChatState.setActiveChatRoomId(account.getDefaultChatRoomId());
         return 0;
     }
 
     public static final int handleMailForwardAction(String str) {
         String messageId = RuntimeState.getMessageId();
         int chatRoomId = ChatState.getChatRoomId();
-        MrimAccount account = (MrimAccount) AppState.getAccount();
-        Message message = account.chatRoomManager.findById(chatRoomId).getMessage(messageId);
+        Account account = AppState.getAccount();
+        Message message = account.findChatRoomById(chatRoomId).getMessage(messageId);
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
         String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
         String forwardPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
-        String currentLogin = ((MrimAccount) AppState.getAccount()).login;
+        String currentLogin = AppState.getAccount().login;
         wrapInVector(messageId);
         if (StringUtils.matchesKey(839, str)) {
             ScreenBuilder.onScreenClosed();
@@ -317,7 +329,7 @@ public final class MailHelper {
             if (!StringUtils.matchesKey(845, str)) {
                 return 0;
             }
-            ChatState.setActiveChatRoomId(account.chatRoomManager.findDefault().id);
+            ChatState.setActiveChatRoomId(account.getDefaultChatRoomId());
             return 0;
         }
         ScreenBuilder.onScreenClosed();

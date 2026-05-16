@@ -1,19 +1,26 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.Debug;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.core.event.PointerEvent;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Vector;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.util.ImageCache;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
+import java.util.Vector;
 
 public final class MainCanvas extends Canvas implements CommandListener {
 
@@ -147,7 +154,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
         try {
             synchronized (AppController.appLock) {
                 if (!AppController.isShuttingDown) {
-                    XmppContactGroup.incrementCacheCounter();
+                    ImageCache.incrementCacheCounter();
                     Vector events = UIState.getScreenStack();
                     int size = events.size();
                     if (size > 0) {
@@ -193,7 +200,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                             gfx.drawIcon(ICON_CONNECTION_BLINK, iconX, 1);
                         }
                     }
-                    XmppContactGroup.cleanupExpiredImages();
+                    ImageCache.cleanupExpiredImages();
                 }
             }
         } catch (Throwable unused) {

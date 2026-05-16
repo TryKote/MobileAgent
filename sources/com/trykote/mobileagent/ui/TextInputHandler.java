@@ -4,7 +4,6 @@ package com.trykote.mobileagent.ui;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
 
@@ -25,7 +24,7 @@ public final class TextInputHandler implements CommandListener {
         this.context = new Object[]{screen, menuItem};
         String str = (String) objArr[0];
         int maxLen = ((Integer) objArr[1]).intValue();
-        XmppContactGroup.showTextInputDialog(AppState.emptyStr, str.length() > maxLen ? StringUtils.prefix(str, maxLen) : str, maxLen, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
+        TextInputHelper.showTextInputDialog(AppState.emptyStr, str.length() > maxLen ? StringUtils.prefix(str, maxLen) : str, maxLen, ((Integer) objArr[2]).intValue(), (String) objArr[3], 1053, 1055, this);
     }
 
     public final void commandAction(Command command, Displayable displayable) {

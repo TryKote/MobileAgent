@@ -1,8 +1,8 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
+import com.trykote.mobileagent.core.AppState;
+
 import java.util.Hashtable;
 import java.util.Vector;
 

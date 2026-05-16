@@ -1,19 +1,38 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Vector;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.key.ChatKeys;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.RegistrationKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.net.HttpClient;
+import com.trykote.mobileagent.net.NetworkLock;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.ScreenManager;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.IOUtils;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TestConfig;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
 import javax.microedition.io.DatagramConnection;
+import java.util.Vector;
 
 public final class XmppMailRuProtocol extends XmppProtocol {
 
@@ -90,7 +109,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 ChatState.setChatName(account.login);
                 RegistrationState.setPassword(account.password);
             }
-            Screens.xmppLogin(null).show();
+            Screens.xmppLogin().show();
             return;
         }
         if (getAccountType() == TYPE_XMPP) {
@@ -123,7 +142,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             }
             SessionState.setAccountDisplayName(null);
             RemoteLogger.log("LOGIN", "TYPE_XMPP: chatName=" + ChatState.getChatName() + " displayName=" + SessionState.getAccountDisplayName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
-            Screens.xmppLoginAlt(null).show();
+            Screens.xmppLoginAlt().show();
             return;
         }
         if (getAccountType() == TYPE_XMPP_MAILRU) {
@@ -138,7 +157,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 RegistrationState.setPassword(mailRuAccount.password);
                 ContactState.setDisplayName(mailRuAccount.displayName);
             }
-            Screens.xmppLoginAlt2(null).show();
+            Screens.xmppLoginAlt2().show();
             return;
         }
         clearLoginFields();
@@ -162,7 +181,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 }
             }
         }
-        Screens.xmppContextMenu(null).show();
+        Screens.xmppContextMenu().show();
     }
 
     public static final int performLogin() {

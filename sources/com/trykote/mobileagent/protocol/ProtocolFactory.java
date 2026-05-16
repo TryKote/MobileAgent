@@ -1,16 +1,15 @@
 package com.trykote.mobileagent.protocol;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.protocol.mmp.MmpCommand;
+import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
+import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.mrim.MrimCommand;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
 /* Extracted from AppController: protocol packet construction */
 public final class ProtocolFactory {
 

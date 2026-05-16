@@ -1,16 +1,14 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Vector;
 
 public abstract class ContactGroup implements Sortable {

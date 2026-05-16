@@ -1,15 +1,15 @@
 package com.trykote.mobileagent.ui;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.handler.ScreenHandler;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.util.ObjectPool;
 import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
 
-import java.util.Vector;
 import javax.microedition.lcdui.Image;
+import java.util.Vector;
 
 /**
  * A screen definition that IS a ListView.
@@ -26,14 +26,11 @@ public class Screen extends ListView {
 
     private static final int BINDINGS_INITIAL_CAPACITY = 24;
 
-    public ScreenHandler handler;
-
     private int[] formBindings;
     private int formBindingsSize;
 
-    public Screen(int type, int screenId, ScreenHandler handler) {
+    public Screen(int type, int screenId) {
         super(layoutFor(type), screenId, widthFor(type), heightFor(type), scrollableFor(type));
-        this.handler = handler;
         this.screenType = type;
     }
 

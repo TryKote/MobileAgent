@@ -1,7 +1,6 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.key.RegistrationKeys;
 
 import java.util.Vector;
 

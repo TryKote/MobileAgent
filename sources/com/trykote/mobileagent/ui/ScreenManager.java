@@ -1,34 +1,42 @@
 package com.trykote.mobileagent.ui;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.map.MapController;
+import com.trykote.mobileagent.map.MapRenderer;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Vector;
-import javax.microedition.lcdui.Image;
 
 public abstract class ScreenManager {
 
     // ListView types (lower 4 bits of typeAndFlags in createScreen header)
-    static final int TYPE_FULLSCREEN = 0;
-    static final int TYPE_FULLSCREEN_ALT = 1;
-    static final int TYPE_DIALOG_CENTER = 2;
-    static final int TYPE_DIALOG_BOTTOM = 3;
-    static final int TYPE_DIALOG_CORNER = 4;
-    static final int TYPE_FULLSCREEN_NOSCROLL = 5;
-    static final int TYPE_MAP = 6;
-    static final int TYPE_TOAST = 7;
-    static final int TYPE_TOAST_CENTER = 8;
-    static final int TYPE_FULLSCREEN_NOSCROLL_ALT = 9;
-    static final int TYPE_POPUP = 10;
-    static final int TYPE_DIALOG_LOW = 11;
-    static final int TYPE_MAP_ALT = 12;
+    public static final int TYPE_FULLSCREEN = 0;
+    public static final int TYPE_FULLSCREEN_ALT = 1;
+    public static final int TYPE_DIALOG_CENTER = 2;
+    public static final int TYPE_DIALOG_BOTTOM = 3;
+    public static final int TYPE_DIALOG_CORNER = 4;
+    public static final int TYPE_FULLSCREEN_NOSCROLL = 5;
+    public static final int TYPE_MAP = 6;
+    public static final int TYPE_TOAST = 7;
+    public static final int TYPE_TOAST_CENTER = 8;
+    public static final int TYPE_FULLSCREEN_NOSCROLL_ALT = 9;
+    public static final int TYPE_POPUP = 10;
+    public static final int TYPE_DIALOG_LOW = 11;
+    public static final int TYPE_MAP_ALT = 12;
 
     // Bitmask of screen types requiring pre-show layout
     private static final int DIALOG_TYPE_MASK = 3484;
@@ -370,7 +378,7 @@ public abstract class ScreenManager {
     }
 
     public static int handleSoundOption(int statusIndex) {
-        UIState.setStatusTextFromBuffer(Utils.getMessageBuffer().append(AppState.getString(statusIndex + (AppState.getCurrentContact() instanceof MmpContact ? StringResKeys.MMP_EMOTICONS_BASE : AppState.getCurrentContact() instanceof XmppContact ? StringResKeys.XMPP_EMOTICONS_BASE : StringResKeys.EMOTICON_NAMES_BASE))));
+        UIState.setStatusTextFromBuffer(Utils.getMessageBuffer().append(AppState.getString(statusIndex + AppState.getCurrentContact().getEmoticonBase())));
         return ScreenId.STATUS_INPUT;
     }
 

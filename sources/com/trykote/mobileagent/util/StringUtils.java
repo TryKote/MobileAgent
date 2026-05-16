@@ -1,16 +1,35 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.ContactKeys;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.RegistrationKeys;
+import com.trykote.mobileagent.key.SessionKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.map.GeoRegion;
+import com.trykote.mobileagent.map.MapRenderer;
+import com.trykote.mobileagent.map.TileCache;
+import com.trykote.mobileagent.map.TileRequest;
+import com.trykote.mobileagent.net.ServiceRegistry;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
+import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
+import com.trykote.mobileagent.ui.ListView;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.ui.Screens;
+
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.TextBox;
+import javax.microedition.rms.RecordStore;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -18,9 +37,6 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.TextBox;
-import javax.microedition.rms.RecordStore;
 
 public final class StringUtils {
 
@@ -349,7 +365,7 @@ public final class StringUtils {
             sb.append((char) 0).append(getXmlText((XmlElement) items.elementAt(i)));
         }
         RegistrationState.setRegionNames(sb);
-        Screens.regionChoice(null).show();
+        Screens.regionChoice().show();
     }
 
     public static final void resetRegForm() {

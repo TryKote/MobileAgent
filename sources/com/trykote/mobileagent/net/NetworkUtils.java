@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.util.ByteBuffer;
 
 public final class NetworkUtils {
 

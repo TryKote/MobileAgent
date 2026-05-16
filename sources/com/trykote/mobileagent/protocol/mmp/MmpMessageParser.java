@@ -1,10 +1,10 @@
 package com.trykote.mobileagent.protocol.mmp;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
 
 public abstract class MmpMessageParser {
 

@@ -1,16 +1,34 @@
 package com.trykote.mobileagent.protocol;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.model.Message;
+import com.trykote.mobileagent.net.TrafficAccounting;
+import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
+import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.xmpp.XmppContact;
+import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
+import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
+import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.ProtocolListeners;
+import com.trykote.mobileagent.ui.ScreenBuilder;
+import com.trykote.mobileagent.ui.TabBar;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ChunkedRecordStore;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Vector;
 
 public final class AccountManager {
@@ -177,6 +195,7 @@ public final class AccountManager {
                 if ((typeByte & HAS_PROPERTIES_FLAG) != 0) {
                     account.loadProperties(buffer);
                 }
+                registerListeners(account);
             } catch (Throwable unused) {
             }
         }
@@ -238,15 +257,18 @@ public final class AccountManager {
             return MSG_DUPLICATE_ACCOUNT;
         }
         int newId = allocateNewAccountId();
+        Account newAccount = null;
         if (protocolType == Account.TYPE_MRIM) {
-            SessionState.getAccounts().addElement(new MrimAccount(newId, login, password));
+            newAccount = new MrimAccount(newId, login, password);
         } else if (protocolType == Account.TYPE_MMP) {
-            SessionState.getAccounts().addElement(new MmpProtocol(newId, login, password));
+            newAccount = new MmpProtocol(newId, login, password);
         } else if (protocolType == Account.TYPE_XMPP) {
-            SessionState.getAccounts().addElement(new XmppProtocol(newId, login, password));
+            newAccount = new XmppProtocol(newId, login, password);
         } else if (protocolType == Account.TYPE_XMPP_MAILRU) {
-            SessionState.getAccounts().addElement(new XmppMailRuProtocol(newId, login, password));
+            newAccount = new XmppMailRuProtocol(newId, login, password);
         }
+        SessionState.getAccounts().addElement(newAccount);
+        registerListeners(newAccount);
         RemoteLogger.log("ACCT", "validateCredentials OK, new account type=" + protocolType + " login=" + login);
         TabBar.initialize();
         saveAccountList();
@@ -262,6 +284,12 @@ public final class AccountManager {
             }
         }
         return null;
+    }
+
+    private static void registerListeners(Account account) {
+        account.setContactListListener(ProtocolListeners.INSTANCE);
+        account.setAccountListener(ProtocolListeners.INSTANCE);
+        account.setMessageListener(ProtocolListeners.INSTANCE);
     }
 
     private static int allocateNewAccountId() {
@@ -570,5 +598,9 @@ public final class AccountManager {
             return NotificationHelper.showError(errorCode);
         }
         return ScreenId.CONTACT_LIST;
+    }
+
+    public static void periodicTimeSync() throws Throwable {
+        XmppContactGroup.periodicTimeSync();
     }
 }

@@ -1,19 +1,17 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import java.util.Random;
-import java.util.Vector;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Conversation;
+
 import javax.microedition.lcdui.Font;
+import java.util.Vector;
 
 public abstract class Utils {
 

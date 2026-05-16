@@ -1,20 +1,34 @@
 package com.trykote.mobileagent.map;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Enumeration;
-import java.util.Vector;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.model.UserSearchResult;
+import com.trykote.mobileagent.net.NetworkLock;
+import com.trykote.mobileagent.net.ServiceRegistry;
+import com.trykote.mobileagent.net.RequestQueue;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.util.ImageCache;
+import com.trykote.mobileagent.ui.ContactListManager;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.Palette;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public abstract class MapRenderer {
 
@@ -161,7 +175,7 @@ public abstract class MapRenderer {
                 needsRedraw = true;
             }
         }
-        if (XmppContactGroup.checkAndClearSync()) {
+        if (RequestQueue.checkAndClearSync()) {
             needsRedraw = true;
         }
         if (needsRedraw) {
@@ -281,7 +295,7 @@ public abstract class MapRenderer {
             long j3 = currentPixelY;
             int i26 = viewportWidth;
             int i27 = viewportHeight;
-            if (ContactState.isListActive() && !XmppContactGroup.isMapDataRecent() && zoomLevel >= MIN_OVERLAY_ZOOM && (vector = XmppContactGroup.sharedContactList) != null && (size2 = vector.size()) != 0) {
+            if (ContactState.isListActive() && !MapPointStore.isMapDataRecent() && zoomLevel >= MIN_OVERLAY_ZOOM && (vector = RequestQueue.sharedContactList) != null && (size2 = vector.size()) != 0) {
                 long j4 = (j2 - (i26 / 2)) / CLUSTER_CELL_SIZE;
                 long j5 = (j3 - (i26 / 2)) / CLUSTER_CELL_SIZE;
                 long j6 = (j2 + (i26 / 2)) / CLUSTER_CELL_SIZE;
@@ -334,10 +348,10 @@ public abstract class MapRenderer {
                 int pinX = (int) ((i37 / 2) + (selectedPoint.getLonAtZoom(zoomLevel) - j10));
                 int pinY = (int) ((i38 / 2) + (j11 - selectedPoint.getLatAtZoom(zoomLevel)));
                 if (selectedPoint.height == 2) {
-                    pinIcon = XmppContactGroup.getOrLoadImage(25);
+                    pinIcon = ImageCache.getOrLoadImage(25);
                     i4 = 1;
                 } else {
-                    pinIcon = XmppContactGroup.getOrLoadImage(24);
+                    pinIcon = ImageCache.getOrLoadImage(24);
                     i4 = 4;
                 }
                 graphics.drawImage(pinIcon, pinX, pinY, 32 | i4);
@@ -357,7 +371,7 @@ public abstract class MapRenderer {
             while (routeElements.hasMoreElements()) {
                 MapPoint routePoint = (MapPoint) routeElements.nextElement();
                 if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < i39 / 2 && Utils.absLong(j13 - routePoint.getLatAtZoom(zoomLevel)) < i40 / 2 && routePoint.selected) {
-                    graphics.drawImage(XmppContactGroup.getOrLoadImage(18), (int) ((i39 / 2) + (routePoint.getLonAtZoom(zoomLevel) - j12)), (int) ((i40 / 2) + (j13 - routePoint.getLatAtZoom(zoomLevel))), 36);
+                    graphics.drawImage(ImageCache.getOrLoadImage(18), (int) ((i39 / 2) + (routePoint.getLonAtZoom(zoomLevel) - j12)), (int) ((i40 / 2) + (j13 - routePoint.getLatAtZoom(zoomLevel))), 36);
                     if (Utils.absLong(j12 - routePoint.getLonAtZoom(zoomLevel)) < TOOLTIP_PROXIMITY && (deltaY = (int) (j13 - routePoint.getLatAtZoom(zoomLevel))) < TOOLTIP_PROXIMITY && deltaY > -10 && !z2) {
                         nearestRoute = routePoint;
                         z2 = true;
@@ -375,7 +389,7 @@ public abstract class MapRenderer {
             long j15 = currentPixelY;
             int i41 = viewportWidth;
             int i42 = viewportHeight;
-            if (MapState.isMapViewActive() && MapState.isMapDataLoaded() && !XmppContactGroup.isMapDataRecent() && (poiVector = (Vector) UIState.getHttpCallback()) != null && (size = poiVector.size()) != 0) {
+            if (MapState.isMapViewActive() && MapState.isMapDataLoaded() && !MapPointStore.isMapDataRecent() && (poiVector = (Vector) UIState.getHttpCallback()) != null && (size = poiVector.size()) != 0) {
                 ListItem nearestPoi = null;
                 int currentZoom = MapState.getZoomLevel();
                 for (int i43 = 0; i43 < size; i43++) {
@@ -388,9 +402,9 @@ public abstract class MapRenderer {
                         if (i44 > 0 && i44 < i41 && i45 > 0 && i45 < i42) {
                             if (poiItem.getHeight() == 8) {
                                 int i46 = ((UserSearchResult) poiItem).gender;
-                                markerIcon = (i46 == 1 || i46 == 0) ? XmppContactGroup.getOrLoadImage(27) : XmppContactGroup.getOrLoadImage(28);
+                                markerIcon = (i46 == 1 || i46 == 0) ? ImageCache.getOrLoadImage(27) : ImageCache.getOrLoadImage(28);
                             } else {
-                                markerIcon = XmppContactGroup.getOrLoadImage(23);
+                                markerIcon = ImageCache.getOrLoadImage(23);
                             }
                             graphics.drawImage(markerIcon, i44, i45, 3);
                         }
@@ -411,7 +425,7 @@ public abstract class MapRenderer {
             long j17 = currentPixelY;
             int i47 = viewportWidth;
             int i48 = viewportHeight;
-            if (MapState.isMapViewActive() && MapState.isRouteSearch() && !XmppContactGroup.isMapDataRecent()) {
+            if (MapState.isMapViewActive() && MapState.isRouteSearch() && !MapPointStore.isMapDataRecent()) {
                 Vector mapContacts = ContactListManager.getMapContacts();
                 int size7 = mapContacts.size();
                 if (size7 > 0) {
@@ -463,7 +477,7 @@ public abstract class MapRenderer {
                             int i55 = (int) ((i47 / 2) + (gridPixelX - j16));
                             int i56 = (int) ((i48 / 2) + (j17 - gridPixelY));
                             int itemType = gridItem.getHeight();
-                            Image contactIcon = itemType == 3 ? XmppContactGroup.getOrLoadImage(26) : itemType == 5 ? XmppContactGroup.getOrLoadImage(23) : null;
+                            Image contactIcon = itemType == 3 ? ImageCache.getOrLoadImage(26) : itemType == 5 ? ImageCache.getOrLoadImage(23) : null;
                             Image image = contactIcon;
                             if (contactIcon != null) {
                                 graphics.drawImage(image, i55, i56, 3);
@@ -487,21 +501,22 @@ public abstract class MapRenderer {
             long j23 = currentPixelY;
             int i57 = viewportWidth;
             int i58 = viewportHeight;
-            if (MapState.isMapViewActive() && MapState.isPoiSearch() && !XmppContactGroup.isMapDataRecent()) {
+            if (MapState.isMapViewActive() && MapState.isPoiSearch() && !MapPointStore.isMapDataRecent()) {
                 MapState.setTilesPending(false);
                 Vector mapProfiles = ContactListManager.getMapProfiles();
                 int size8 = mapProfiles.size();
                 if (size8 != 0) {
-                    MrimAccount nearestProfile = null;
+                    Account nearestProfile = null;
                     for (int i59 = 0; i59 < size8; i59++) {
-                        MrimAccount profile = (MrimAccount) mapProfiles.elementAt(i59);
-                        if (profile.isSelected()) {
-                            long profilePixelX = profile.getCommandId(zoomLevel);
-                            long profilePixelY = profile.executeCommand(zoomLevel);
+                        Account profile = (Account) mapProfiles.elementAt(i59);
+                        ListItem profileItem = profile.asListItem();
+                        if (profileItem != null && profileItem.isSelected()) {
+                            long profilePixelX = profileItem.getCommandId(zoomLevel);
+                            long profilePixelY = profileItem.executeCommand(zoomLevel);
                             int i60 = (int) ((i57 / 2) + (profilePixelX - j22));
                             int i61 = (int) ((i58 / 2) + (j23 - profilePixelY));
                             if (i60 > 0 && i60 < i57 && i61 > 0 && i61 < i58) {
-                                graphics.drawImage(XmppContactGroup.getOrLoadImage(22), i60, i61, 3);
+                                graphics.drawImage(ImageCache.getOrLoadImage(22), i60, i61, 3);
                             }
                             if (Utils.absLong(j22 - profilePixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j23 - profilePixelY) < TOOLTIP_PROXIMITY && nearestProfile == null) {
                                 nearestProfile = profile;
@@ -510,8 +525,8 @@ public abstract class MapRenderer {
                     }
                     if (!hasTooltip()) {
                         if (nearestProfile != null) {
-                            showTooltip(nearestProfile);
-                            if (nearestProfile.profileManager.profile.dirty) {
+                            showTooltip(nearestProfile.asListItem());
+                            if (nearestProfile.isProfileDirty()) {
                                 MapState.setTilesPending(true);
                             }
                             AppState.setAccount(nearestProfile);
@@ -526,10 +541,10 @@ public abstract class MapRenderer {
             long j25 = currentPixelY;
             int i62 = viewportWidth;
             int i63 = viewportHeight;
-            if (MapState.isMapViewActive() && !XmppContactGroup.isMapDataRecent() && (item = MapController.activeMapItem) != null) {
+            if (MapState.isMapViewActive() && !MapPointStore.isMapDataRecent() && (item = MapController.activeMapItem) != null) {
                 long activePixelX = item.getCommandId(zoomLevel);
                 long activePixelY = item.executeCommand(zoomLevel);
-                graphics.drawImage(XmppContactGroup.getOrLoadImage(26), (int) ((i62 / 2) + (activePixelX - j24)), (int) ((i63 / 2) + (j25 - activePixelY)), 3);
+                graphics.drawImage(ImageCache.getOrLoadImage(26), (int) ((i62 / 2) + (activePixelX - j24)), (int) ((i63 / 2) + (j25 - activePixelY)), 3);
                 if (Utils.absLong(j24 - activePixelX) < TOOLTIP_PROXIMITY && Utils.absLong(j25 - activePixelY) < TOOLTIP_PROXIMITY) {
                     showTooltip(item);
                 }
@@ -684,8 +699,8 @@ public abstract class MapRenderer {
                 autoScrollTimestamp = scrollNow;
             }
         }
-        if (ContactState.isListActive() && System.currentTimeMillis() - XmppContactGroup.lastUpdateTs > MAP_DATA_REFRESH_INTERVAL_MS && UIState.isPhotoRegistryReady() && MapState.isMapOverlayActive() && !NetworkLock.isNetworkBusy()) {
-            XmppContactGroup.initializeMapData();
+        if (ContactState.isListActive() && System.currentTimeMillis() - RequestQueue.lastUpdateTs > MAP_DATA_REFRESH_INTERVAL_MS && UIState.isPhotoRegistryReady() && MapState.isMapOverlayActive() && !NetworkLock.isNetworkBusy()) {
+            MapPointStore.initializeMapData();
         }
     }
 
@@ -715,7 +730,7 @@ public abstract class MapRenderer {
             GeoRegion activeRegion = bestRegion;
             if (prevRegion != bestRegion) {
                 if (ContactState.isListActive()) {
-                    XmppContactGroup.initializeMapData();
+                    MapPointStore.initializeMapData();
                 }
                 currentRegion = activeRegion;
             }
@@ -755,9 +770,9 @@ public abstract class MapRenderer {
 
     public static final void confirmMapPoint(MapPoint mapPoint) {
         if (MapState.isMapModeActive()) {
-            MmpContact.setSecondToken(mapPoint.longitude, mapPoint.latitude);
+            RouteData.setSecondToken(mapPoint.longitude, mapPoint.latitude);
         } else {
-            MmpContact.setFirstToken(mapPoint.longitude, mapPoint.latitude);
+            RouteData.setFirstToken(mapPoint.longitude, mapPoint.latitude);
         }
         needsRedraw = true;
         if (hasRouteEndpoints()) {
@@ -783,7 +798,7 @@ public abstract class MapRenderer {
     }
 
     public static final boolean hasRouteEndpoints() {
-        return (MmpContact.lastTokenPair[0] > 0L ? 1 : (MmpContact.lastTokenPair[0] == 0L ? 0 : -1)) != 0 && (MmpContact.lastTokenPair[1] > 0L ? 1 : (MmpContact.lastTokenPair[1] == 0L ? 0 : -1)) != 0 && (MmpContact.currentTokenPair[0] > 0L ? 1 : (MmpContact.currentTokenPair[0] == 0L ? 0 : -1)) != 0 && (MmpContact.currentTokenPair[1] > 0L ? 1 : (MmpContact.currentTokenPair[1] == 0L ? 0 : -1)) != 0 && ((MmpContact.lastTokenPair[0] > MmpContact.currentTokenPair[0] ? 1 : (MmpContact.lastTokenPair[0] == MmpContact.currentTokenPair[0] ? 0 : -1)) != 0 || (MmpContact.lastTokenPair[1] > MmpContact.currentTokenPair[1] ? 1 : (MmpContact.lastTokenPair[1] == MmpContact.currentTokenPair[1] ? 0 : -1)) != 0);
+        return (RouteData.lastTokenPair[0] > 0L ? 1 : (RouteData.lastTokenPair[0] == 0L ? 0 : -1)) != 0 && (RouteData.lastTokenPair[1] > 0L ? 1 : (RouteData.lastTokenPair[1] == 0L ? 0 : -1)) != 0 && (RouteData.currentTokenPair[0] > 0L ? 1 : (RouteData.currentTokenPair[0] == 0L ? 0 : -1)) != 0 && (RouteData.currentTokenPair[1] > 0L ? 1 : (RouteData.currentTokenPair[1] == 0L ? 0 : -1)) != 0 && ((RouteData.lastTokenPair[0] > RouteData.currentTokenPair[0] ? 1 : (RouteData.lastTokenPair[0] == RouteData.currentTokenPair[0] ? 0 : -1)) != 0 || (RouteData.lastTokenPair[1] > RouteData.currentTokenPair[1] ? 1 : (RouteData.lastTokenPair[1] == RouteData.currentTokenPair[1] ? 0 : -1)) != 0);
     }
 
     public static final void animateTo(long j, long j2) {

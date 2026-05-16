@@ -1,11 +1,9 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.map.GeoRegion;
-import com.trykote.mobileagent.map.MapPoint;
+import com.trykote.mobileagent.key.MapKeys;
 
-import java.util.Vector;
 import javax.microedition.lcdui.Image;
+import java.util.Vector;
 
 /**
  * Typed facade for map-related state in AppState.

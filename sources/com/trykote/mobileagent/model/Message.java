@@ -1,16 +1,20 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.JsonParser;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -70,8 +74,8 @@ public final class Message {
     }
 
     public Message(Vector recipients, String subject, String body) {
-        MrimAccount account = (MrimAccount) AppState.getAccount();
-        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), MailHelper.createAddressPair(account.login, Utils.defaultStr(account.chatRoomManager.nickname)));
+        Account account = AppState.getAccount();
+        this.toList = MailHelper.addUniqueAddress(ObjectPool.newVector(), MailHelper.createAddressPair(account.login, Utils.defaultStr(account.getNickname())));
         this.ccList = recipients;
         this.subject = subject;
         this.body = body;
@@ -127,21 +131,11 @@ public final class Message {
         int ellipsisWidth = UIState.getGfxContext(fontStyle).stringWidth(AppState.getEllipsis());
         int availWidth = (((UIState.getScreenWidth() - ellipsisWidth) - LAYOUT_BASE_WIDTH) + LAYOUT_DATE_WIDTH) - LAYOUT_PADDING;
         int textStyle = isUnread ? 0 : TEXT_STYLE_READ;
-        MrimAccount account = (MrimAccount) AppState.getAccount();
+        Account account = AppState.getAccount();
         MenuItem item = MenuItem.create(this.from);
         item.data = this;
         String msgId = this.from;
-        Enumeration elements = account.chatRoomManager.list.elements();
-        while (true) {
-            if (!elements.hasMoreElements()) {
-                isMarkedRead = false;
-                break;
-            }
-            if (((ChatRoom) elements.nextElement()).isMessageRead(msgId)) {
-                isMarkedRead = true;
-                break;
-            }
-        }
+        isMarkedRead = account.isMessageReadInAnyRoom(msgId);
         boolean hasReadMark = isMarkedRead;
         MenuItem iconItem = item.setIcon(isMarkedRead ? 25 : -1);
         Calendar cal = AppState.getCalendar();
@@ -162,10 +156,10 @@ public final class Message {
         if (hasReadMark) {
             textWidth += ICON_WIDTH;
         }
-        if (chatRoom == account.chatRoomManager.getLast()) {
-            roomType = account.chatRoomManager.findById(chatRoom.getPriority(this.from)).getType();
+        if (account.isLastChatRoom(chatRoom)) {
+            roomType = account.findChatRoomById(chatRoom.getPriority(this.from)).getType();
         } else {
-            roomType = (chatRoom == account.chatRoomManager.getLast() || !chatRoom.hasMessage(this.from)) ? ChatRoom.TYPE_OTHER : chatRoom.getType();
+            roomType = (account.isLastChatRoom(chatRoom) || !chatRoom.hasMessage(this.from)) ? ChatRoom.TYPE_OTHER : chatRoom.getType();
         }
         boolean hasForwardInfo = false;
         if ((roomType & 1) != 0 && (toRecipient = MailHelper.getFirstRecipient(getToList())) != null) {
@@ -175,11 +169,11 @@ public final class Message {
         if ((roomType & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
             mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), fontStyle, availWidth - (hasForwardInfo ? 0 : textWidth), ellipsisWidth, true), fontStyle, textStyle);
         }
-        boolean isLastRoom = chatRoom == account.chatRoomManager.getLast();
+        boolean isLastRoom = account.isLastChatRoom(chatRoom);
         mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), fontStyle, availWidth - SUBJECT_PADDING, ellipsisWidth, isLastRoom), fontStyle, textStyle);
         if (isLastRoom) {
             mainItem.setIcon(234);
-            mainItem.addText(truncateText(account.chatRoomManager.findById(chatRoom.getPriority(this.from)).name, fontStyle, availWidth - SUBJECT_PADDING, ellipsisWidth, false), fontStyle, textStyle);
+            mainItem.addText(truncateText(account.findChatRoomById(chatRoom.getPriority(this.from)).name, fontStyle, availWidth - SUBJECT_PADDING, ellipsisWidth, false), fontStyle, textStyle);
         }
         return mainItem;
     }

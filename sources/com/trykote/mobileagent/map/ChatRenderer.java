@@ -1,19 +1,24 @@
 package com.trykote.mobileagent.map;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Vector;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.UserSearchResult;
+import com.trykote.mobileagent.util.ImageCache;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.Palette;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.SoftFloat;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import java.util.Vector;
 
 public abstract class ChatRenderer {
 
@@ -319,7 +324,7 @@ public abstract class ChatRenderer {
         for (int i19 = 0; i19 < size; i19++) {
             graphics.drawString((String) textLines.elementAt(i19), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + (i8 != 0 ? BUBBLE_ICON_SIZE : 0), ((i10 - i18) - i12) + i11 + BUBBLE_INNER_PADDING + ((i19 - 1) * height), 20);
         }
-        Image buttonImage = XmppContactGroup.getOrLoadImage(19);
+        Image buttonImage = ImageCache.getOrLoadImage(19);
         if (buttonBounds == null) {
             int[] iArr = new int[4];
             buttonBounds = iArr;
@@ -374,7 +379,7 @@ public abstract class ChatRenderer {
     public static final void renderMapOverlay(Graphics graphics, long j, long j2, long j3, long j4, int i, int i2, int i3) {
         boolean z;
         int i4;
-        if (!MmpContact.locationEnabled && !MmpContact.hasFirstToken() && !MmpContact.hasSecondToken()) {
+        if (!RouteData.locationEnabled && !RouteData.hasFirstToken() && !RouteData.hasSecondToken()) {
             MapState.setChatHasItems(false);
             return;
         }
@@ -387,9 +392,9 @@ public abstract class ChatRenderer {
         int i7 = (int) (j4 + halfSpan);
         int i8 = (int) (j4 - halfSpan);
         Vector visibleRegions = ObjectPool.newVector();
-        int size = MmpContact.routeRegions.size();
+        int size = RouteData.routeRegions.size();
         for (int i9 = 0; i9 < size; i9++) {
-            int[] iArr = (int[]) ((Object[]) MmpContact.routeRegions.elementAt(i9))[0];
+            int[] iArr = (int[]) ((Object[]) RouteData.routeRegions.elementAt(i9))[0];
             int i10 = iArr[0];
             int i11 = iArr[1];
             int i12 = iArr[2];
@@ -400,12 +405,12 @@ public abstract class ChatRenderer {
                 int i16 = iArr[2];
                 int i17 = iArr[3];
                 if ((i15 <= i7 && i15 >= i8 && ((i5 >= i14 && i5 <= i16) || (i6 >= i14 && i6 <= i16))) || (i17 <= i7 && i17 >= i8 && ((i5 >= i14 && i5 <= i16) || (i6 >= i14 && i6 <= i16))) || ((i16 >= i5 && i16 <= i6 && ((i15 >= i7 && i17 <= i7) || (i15 >= i8 && i17 <= i8))) || (i14 >= i5 && i14 <= i6 && ((i15 >= i7 && i17 <= i7) || (i15 >= i8 && i17 <= i8))))) {
-                    visibleRegions.addElement(MmpContact.routeRegions.elementAt(i9));
+                    visibleRegions.addElement(RouteData.routeRegions.elementAt(i9));
                 }
             }
         }
         int size2 = visibleRegions.size();
-        int totalPoints = MmpContact.getTotalRoutePoints();
+        int totalPoints = RouteData.getTotalRoutePoints();
         MapState.setChatHasItems(size2 > 0);
         String str = null;
         int i18 = 0;
@@ -455,28 +460,28 @@ public abstract class ChatRenderer {
                 }
             }
         } else {
-            if (MmpContact.hasFirstToken()) {
-                int px9 = (int) (MapUtils.coordToPixel(MmpContact.lastTokenPair[0], i) - (j - (i2 / 2)));
-                int px10 = (int) ((j2 + (i3 / 2)) - MapUtils.coordToPixel(MmpContact.lastTokenPair[1], i));
+            if (RouteData.hasFirstToken()) {
+                int px9 = (int) (MapUtils.coordToPixel(RouteData.lastTokenPair[0], i) - (j - (i2 / 2)));
+                int px10 = (int) ((j2 + (i3 / 2)) - MapUtils.coordToPixel(RouteData.lastTokenPair[1], i));
                 if (px9 > 0 && px9 < i2 && px10 > 0 && px10 < i3) {
-                    graphics.drawImage(XmppContactGroup.getOrLoadImage(20), px9, px10, 36);
+                    graphics.drawImage(ImageCache.getOrLoadImage(20), px9, px10, 36);
                 }
             }
-            if (MmpContact.hasSecondToken()) {
-                int px11 = (int) (MapUtils.coordToPixel(MmpContact.currentTokenPair[0], i) - (j - (i2 / 2)));
-                int px12 = (int) ((j2 + (i3 / 2)) - MapUtils.coordToPixel(MmpContact.currentTokenPair[1], i));
+            if (RouteData.hasSecondToken()) {
+                int px11 = (int) (MapUtils.coordToPixel(RouteData.currentTokenPair[0], i) - (j - (i2 / 2)));
+                int px12 = (int) ((j2 + (i3 / 2)) - MapUtils.coordToPixel(RouteData.currentTokenPair[1], i));
                 if (px11 > 0 && px11 < i2 && px12 > 0 && px12 < i3) {
-                    graphics.drawImage(XmppContactGroup.getOrLoadImage(21), px11, px12, 36);
+                    graphics.drawImage(ImageCache.getOrLoadImage(21), px11, px12, 36);
                 }
             }
         }
-        Vector vector = MmpContact.nearestPoints;
+        Vector vector = RouteData.nearestPoints;
         int size3 = vector.size();
         int color2 = graphics.getColor();
         boolean z2 = false;
         for (int i22 = 0; i22 < size3; i22++) {
             Object[] objArr3 = (Object[]) vector.elementAt(i22);
-            int[] coords = objArr3[0] != null ? MmpContact.getRoutePointAt(((Integer) objArr3[0]).intValue()) : null;
+            int[] coords = objArr3[0] != null ? RouteData.getRoutePointAt(((Integer) objArr3[0]).intValue()) : null;
             if (coords == null) {
                 coords = (int[]) objArr3[1];
             }
@@ -490,7 +495,7 @@ public abstract class ChatRenderer {
                         if (!z2) {
                             UIState.setRoutePointHidden(0);
                             UIState.setRoutePointVisible(UIState.isRouteLocationActive() && !UIState.isRoutePointHidden());
-                            MmpContact.mapDataCache = null;
+                            RouteData.mapDataCache = null;
                         }
                         i4 = ROUTE_POINT_NORMAL_SIZE;
                         graphics.setColor(40, 221, 22);
@@ -499,7 +504,7 @@ public abstract class ChatRenderer {
                         UIState.setRoutePointVisible(UIState.isRouteLocationActive() && !UIState.isRoutePointHidden());
                         i4 = ROUTE_POINT_SELECTED_SIZE;
                         graphics.setColor(45, 253, 24);
-                        MmpContact.mapDataCache = objArr3;
+                        RouteData.mapDataCache = objArr3;
                         z2 = true;
                     }
                     graphics.fillArc(i23 - (i4 / 2), i24 - (i4 / 2), i4, i4, 0, FULL_CIRCLE);
@@ -511,7 +516,7 @@ public abstract class ChatRenderer {
         graphics.setColor(color2);
         int i25 = (int) j;
         int i26 = (int) j2;
-        int totalPoints2 = MmpContact.getTotalRoutePoints();
+        int totalPoints2 = RouteData.getTotalRoutePoints();
         if (totalPoints2 < 2) {
             z = false;
         } else {
@@ -519,28 +524,28 @@ public abstract class ChatRenderer {
             String str2 = null;
             int i27 = 0;
             int i28 = 0;
-            int[] coords2 = MmpContact.getRoutePointAt(0);
+            int[] coords2 = RouteData.getRoutePointAt(0);
             int px15 = (int) MapUtils.coordToPixel(coords2[0], i);
             int px16 = (int) MapUtils.coordToPixel(coords2[1], i);
             int i29 = px15 - (i25 - (i2 / 2));
             int i30 = (i26 + (i3 / 2)) - px16;
-            String[] labels = MmpContact.getRouteLabelsAt(0);
+            String[] labels = RouteData.getRouteLabelsAt(0);
             if (Utils.abs(i25 - px15) >= ROUTE_LABEL_HOVER_DISTANCE || Utils.abs(i26 - px16) >= ROUTE_LABEL_HOVER_DISTANCE || labels == null) {
-                graphics.drawImage(XmppContactGroup.getOrLoadImage(20), i29, i30, 36);
+                graphics.drawImage(ImageCache.getOrLoadImage(20), i29, i30, 36);
             } else if (labels[0] != null) {
                 str2 = labels[0];
                 i27 = i29;
                 i28 = i30;
                 z3 = true;
             }
-            int[] coords3 = MmpContact.getRoutePointAt(totalPoints2 - 1);
+            int[] coords3 = RouteData.getRoutePointAt(totalPoints2 - 1);
             int px17 = (int) MapUtils.coordToPixel(coords3[0], i);
             int px18 = (int) MapUtils.coordToPixel(coords3[1], i);
             int i31 = px17 - (i25 - (i2 / 2));
             int i32 = (i26 + (i3 / 2)) - px18;
-            String[] labels2 = MmpContact.getRouteLabelsAt(totalPoints2 - 1);
+            String[] labels2 = RouteData.getRouteLabelsAt(totalPoints2 - 1);
             if (Utils.abs(i25 - px17) >= ROUTE_LABEL_HOVER_DISTANCE || Utils.abs(i26 - px18) >= ROUTE_LABEL_HOVER_DISTANCE || labels2 == null || z3) {
-                graphics.drawImage(XmppContactGroup.getOrLoadImage(21), i31, i32, 36);
+                graphics.drawImage(ImageCache.getOrLoadImage(21), i31, i32, 36);
             } else if (labels2[0] != null) {
                 str2 = labels2[0];
                 i27 = i31;
@@ -560,7 +565,7 @@ public abstract class ChatRenderer {
             int i33 = (int) j2;
             Font font2 = graphics.getFont();
             graphics.setFont(font);
-            int[] coords4 = MmpContact.getRoutePointAt(0);
+            int[] coords4 = RouteData.getRoutePointAt(0);
             int px19 = (int) MapUtils.coordToPixel(coords4[0], i);
             int px20 = (int) MapUtils.coordToPixel(coords4[1], i);
             if (Utils.abs(((int) j) - px19) < ROUTE_LABEL_HOVER_DISTANCE && Utils.abs(i33 - px20) < ROUTE_LABEL_HOVER_DISTANCE) {

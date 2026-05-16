@@ -1,20 +1,50 @@
 package com.trykote.mobileagent.map;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Enumeration;
-import java.util.Vector;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.model.PhoneContact;
+import com.trykote.mobileagent.model.SearchEntry;
+import com.trykote.mobileagent.model.UserSearchResult;
+import com.trykote.mobileagent.model.VCard;
+import com.trykote.mobileagent.net.ApiClient;
+import com.trykote.mobileagent.net.ServiceRegistry;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.mrim.MrimProfileManager;
+import com.trykote.mobileagent.net.RequestQueue;
+import com.trykote.mobileagent.util.ImageCache;
+import com.trykote.mobileagent.ui.ContactListManager;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.ListView;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.Screen;
+import com.trykote.mobileagent.ui.ScreenBuilder;
+import com.trykote.mobileagent.ui.ScreenManager;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.ui.TabBar;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public final class MapController {
 
@@ -72,7 +102,7 @@ public final class MapController {
     public static final void showMapScreen() {
         initMapState();
         SessionState.setConnectionState(6);
-        Screen screen = Screens.mapView(null);
+        Screen screen = Screens.mapView();
         mapScreen = screen;
         setMapSoftKeys(screen);
         ScreenManager.pushScreen(screen);
@@ -106,11 +136,11 @@ public final class MapController {
             return;
         }
         mapInitialized = true;
-        int contentHeight = Screens.mapView(null).contentHeight;
+        int contentHeight = Screens.mapView().contentHeight;
         MapState.setScrollLon(DEFAULT_LONGITUDE);
         MapState.setScrollLat(DEFAULT_LATITUDE);
-        ContactState.setContactGroups(XmppContactGroup.loadMapPoints(225));
-        UIState.setPhotoQueue(XmppContactGroup.loadMapPoints(226));
+        ContactState.setContactGroups(MapPointStore.loadMapPoints(225));
+        UIState.setPhotoQueue(MapPointStore.loadMapPoints(226));
         MapState.setViewportWidth(UIState.getScreenWidth());
         MapState.setViewportHeight(contentHeight);
         MapState.setSavedLongitude(MapState.getLongitude());
@@ -128,7 +158,7 @@ public final class MapController {
         RuntimeState.setSearchParams1(ObjectPool.newVector());
         Object[] urlComponents = ApiClient.getUrlComponents(AppState.emptyStr);
         MapState.setTileRequestArray(urlComponents);
-        XmppContactGroup.addContactInfoToQueue(urlComponents);
+        RequestQueue.addContactInfoToQueue(urlComponents);
         Image checkerImage = Image.createImage(TILE_SIZE, TILE_SIZE);
         Graphics graphics = checkerImage.getGraphics();
         int rowOffset = 0;
@@ -146,14 +176,14 @@ public final class MapController {
         MapRenderer.syncLock = new Object();
         StringUtils.initGeoRegions();
         MapRenderer.invalidate();
-        MmpContact.routeRegions = ObjectPool.newVector();
-        MmpContact.routePoints = ObjectPool.newVector();
-        MmpContact.nearestPoints = ObjectPool.newVector();
-        MmpContact.lastTokenPair = new long[2];
-        MmpContact.currentTokenPair = new long[2];
+        RouteData.routeRegions = ObjectPool.newVector();
+        RouteData.routePoints = ObjectPool.newVector();
+        RouteData.nearestPoints = ObjectPool.newVector();
+        RouteData.lastTokenPair = new long[2];
+        RouteData.currentTokenPair = new long[2];
         MapRenderer.animationSteps = ObjectPool.newVector();
         if (MapState.isGpsActive()) {
-            XmppContactGroup.stopMapAnimation(UIState.getPhotoQueue());
+            MapPointStore.stopMapAnimation(UIState.getPhotoQueue());
         }
         MapState.setMapData(ObjectPool.newVector());
         MapRenderer.needsRedraw = true;
@@ -175,15 +205,15 @@ public final class MapController {
     }
 
     public static final int handleMapBack(ListView screen) {
-        MrimAccount mrimAccount;
         if (MapState.isTilesPending()) {
-            ((MrimAccount) AppState.getAccount()).isHighlighted = false;
+            AppState.getAccount().setMapHighlighted(false);
             MapRenderer.needsRedraw = true;
             toggleScrollMode();
             return 0;
         }
-        if (MapState.isMapLoading() && (mrimAccount = (MrimAccount) AppState.getAccount()) != null) {
-            mrimAccount.deselect();
+        Account account = AppState.getAccount();
+        if (MapState.isMapLoading() && account != null) {
+            account.setMapHighlighted(false);
         }
         toggleScrollMode();
         setMapSoftKeys(screen);
@@ -210,8 +240,8 @@ public final class MapController {
     public static final void navigateToPoint(MapPoint mapPoint, boolean addToHistory) {
         initMapState();
         if (addToHistory) {
-            XmppContactGroup.addMapPointIfNew(ContactState.getContactGroups(), mapPoint, 0, 5);
-            XmppContactGroup.saveMapPoints(ContactState.getContactGroups(), 225);
+            MapPointStore.addMapPointIfNew(ContactState.getContactGroups(), mapPoint, 0, 5);
+            MapPointStore.saveMapPoints(ContactState.getContactGroups(), 225);
         }
         MapRenderer.selectedMapPoint = mapPoint;
         MapRenderer.invalidate();
@@ -234,7 +264,7 @@ public final class MapController {
         if (size == 0) {
             return NotificationHelper.showError(327);
         }
-        Screen resultScreen = Screens.mapOverlay(null);
+        Screen resultScreen = Screens.mapOverlay();
         for (int i = 0; i < size; i++) {
             MapPoint mapPoint = (MapPoint) searchResults.elementAt(i);
             resultScreen.addIconItemWithData(-1, mapPoint.name, 6, mapPoint);
@@ -254,14 +284,14 @@ public final class MapController {
     public static final void removeRoutePoint(MapPoint mapPoint) {
         Vector routePoints = UIState.getPhotoQueue();
         routePoints.removeElement(mapPoint);
-        XmppContactGroup.saveMapPoints(routePoints, 226);
+        MapPointStore.saveMapPoints(routePoints, 226);
     }
 
     public static final void setRouteStart() {
         long lon;
         long lat;
         if (MapRenderer.hasRouteEndpoints()) {
-            MmpContact.clearRouteProgress();
+            RouteData.clearRouteProgress();
         }
         ListItem tooltip = MapRenderer.tooltipItem;
         if (tooltip == null || !tooltip.isSelected()) {
@@ -272,7 +302,7 @@ public final class MapController {
             lat = tooltip.getBaseHeight();
             tooltip.select();
         }
-        MmpContact.setFirstToken(lon, lat);
+        RouteData.setFirstToken(lon, lat);
         MapRenderer.needsRedraw = true;
         if (MapRenderer.hasRouteEndpoints()) {
             Conversation.loadContacts();
@@ -283,7 +313,7 @@ public final class MapController {
         long lon;
         long lat;
         if (MapRenderer.hasRouteEndpoints()) {
-            MmpContact.clearRouteProgress();
+            RouteData.clearRouteProgress();
         }
         ListItem tooltip = MapRenderer.tooltipItem;
         if (tooltip == null || !tooltip.isSelected()) {
@@ -294,7 +324,7 @@ public final class MapController {
             lat = tooltip.getBaseHeight();
             tooltip.select();
         }
-        MmpContact.setSecondToken(lon, lat);
+        RouteData.setSecondToken(lon, lat);
         MapRenderer.needsRedraw = true;
         if (MapRenderer.hasRouteEndpoints()) {
             Conversation.loadContacts();
@@ -361,7 +391,7 @@ public final class MapController {
             AppState.setInt(slotIndex, actionFlags & flagBit);
             slotIndex++;
         }
-        Screens.xmppMapContext(null).show();
+        Screens.xmppMapContext().show();
     }
 
     public static final int handleMapAction(int actionId) {
@@ -394,7 +424,7 @@ public final class MapController {
                 if (onlineAccounts == null || onlineAccounts.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 1));
+                ((Account) onlineAccounts.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 1));
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.CONTACT_DELETE;
             case 3:
@@ -402,7 +432,7 @@ public final class MapController {
                 if (onlineAccounts2 == null || onlineAccounts2.size() <= 0) {
                     return NotificationHelper.showError(422);
                 }
-                ((MrimAccount) onlineAccounts2.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 2));
+                ((Account) onlineAccounts2.firstElement()).performUserSearch(new SearchEntry(((UserSearchResult) item).userId, 2));
                 ScreenBuilder.onScreenClosed();
                 return ScreenId.MAP;
             case 4:
@@ -426,7 +456,7 @@ public final class MapController {
                 return ScreenId.MAP;
             case 10:
                 if (MapRenderer.hasRouteEndpoints()) {
-                    MmpContact.clearRouteProgress();
+                    RouteData.clearRouteProgress();
                 }
                 ListItem tooltip = MapRenderer.tooltipItem;
                 if (tooltip == null || !tooltip.isSelected()) {
@@ -438,8 +468,8 @@ public final class MapController {
                     tooltip.select();
                 }
                 int[] coords = {(int) lon, (int) lat};
-                MmpContact.routePoints.addElement(coords);
-                MmpContact.nearestPoints.addElement(new Object[]{null, coords});
+                RouteData.routePoints.addElement(coords);
+                RouteData.nearestPoints.addElement(new Object[]{null, coords});
                 MapRenderer.needsRedraw = true;
                 if (!MapRenderer.hasRouteEndpoints()) {
                     return ScreenId.MAP;
@@ -448,11 +478,11 @@ public final class MapController {
                 return ScreenId.MAP;
             case 11:
                 if (MapRenderer.hasRouteEndpoints()) {
-                    MmpContact.clearRouteProgress();
+                    RouteData.clearRouteProgress();
                 }
-                if (MmpContact.mapDataCache != null) {
-                    MmpContact.routePoints.removeElement((int[]) MmpContact.mapDataCache[1]);
-                    MmpContact.nearestPoints.removeElement(MmpContact.mapDataCache);
+                if (RouteData.mapDataCache != null) {
+                    RouteData.routePoints.removeElement((int[]) RouteData.mapDataCache[1]);
+                    RouteData.nearestPoints.removeElement(RouteData.mapDataCache);
                 }
                 UIState.setRoutePointHidden(0);
                 UIState.setRoutePointVisible(UIState.isRouteLocationActive());
@@ -463,7 +493,7 @@ public final class MapController {
                 Conversation.loadContacts();
                 return ScreenId.MAP;
             case 12:
-                MmpContact.clearLocationData();
+                RouteData.clearLocationData();
                 MapRenderer.needsRedraw = true;
                 return ScreenId.MAP;
             case 13:
@@ -475,14 +505,14 @@ public final class MapController {
                 return ScreenId.MAP;
             case 14:
                 setRouteStart();
-                if (MmpContact.hasSecondToken()) {
+                if (RouteData.hasSecondToken()) {
                     return ScreenId.MAP;
                 }
                 MapState.setMapModeActive(true);
                 return ScreenId.MAP_SEARCH;
             case 15:
                 setRouteEnd();
-                if (MmpContact.hasFirstToken()) {
+                if (RouteData.hasFirstToken()) {
                     return ScreenId.MAP;
                 }
                 MapState.setMapModeActive(false);
@@ -520,9 +550,9 @@ public final class MapController {
             return;
         }
         for (int cacheIdx = TILE_CACHE_COUNT; cacheIdx >= 0; cacheIdx--) {
-            XmppContactGroup.invalidateCachedImage(cacheIdx + TILE_CACHE_START_OFFSET);
+            ImageCache.invalidateCachedImage(cacheIdx + TILE_CACHE_START_OFFSET);
         }
-        MmpContact.clearLocationData();
+        RouteData.clearLocationData();
         StringUtils.initTileCache();
         ServiceRegistry.clearPhotoCache();
         MapRenderer.needsRedraw = true;
@@ -572,9 +602,9 @@ public final class MapController {
             return 0;
         }
         MapPoint mapPoint = (MapPoint) obj;
-        ((MrimAccount) AppState.getAccount()).profileManager.setMapLocation(mapPoint);
-        XmppContactGroup.addMapPointIfNew(ContactState.getContactGroups(), mapPoint, 0, 5);
-        XmppContactGroup.saveMapPoints(ContactState.getContactGroups(), 225);
+        AppState.getAccount().setProfileMapLocation(mapPoint);
+        MapPointStore.addMapPointIfNew(ContactState.getContactGroups(), mapPoint, 0, 5);
+        MapPointStore.saveMapPoints(ContactState.getContactGroups(), 225);
         UIState.setLoading(0);
         return ScreenId.PROFILE_EDIT;
     }
@@ -609,11 +639,11 @@ public final class MapController {
         if (MapRenderer.selectedMapPoint != null) {
             MapRenderer.selectedMapPoint.markInactive();
         }
-        XmppContactGroup.startMapAnimation(UIState.getPhotoQueue());
+        MapPointStore.startMapAnimation(UIState.getPhotoQueue());
         MapState.setGpsActive(false);
-        MmpContact.clearLocationData();
+        RouteData.clearLocationData();
         MapRenderer.needsRedraw = true;
-        XmppContactGroup.lastCheckTs = System.currentTimeMillis();
+        MapPointStore.lastCheckTs = System.currentTimeMillis();
         MapRenderer.needsRedraw = true;
         return 0;
     }
@@ -633,7 +663,7 @@ public final class MapController {
         if (locations == null) {
             return;
         }
-        Screen screen = Screens.mailAccountList(null);
+        Screen screen = Screens.mailAccountList();
         for (int i = locations.size() - 1; i >= 0; i--) {
             MapPoint mapPoint = (MapPoint) locations.elementAt(i);
             screen.addIconItemWithData(-1, mapPoint.name, 6, mapPoint);
@@ -643,13 +673,13 @@ public final class MapController {
     }
 
     public static int applyLocationProfile(Object obj) {
-        MrimAccount mrimAccount = (MrimAccount) AppState.getAccount();
+        Account account = AppState.getAccount();
         MapPoint mapPoint = (MapPoint) obj;
-        mrimAccount.profileManager.setMapLocation(mapPoint);
-        XmppContactGroup.addMapPointIfNew(ContactState.getContactGroups(), mapPoint, 0, 5);
-        XmppContactGroup.saveMapPoints(ContactState.getContactGroups(), 225);
+        account.setProfileMapLocation(mapPoint);
+        MapPointStore.addMapPointIfNew(ContactState.getContactGroups(), mapPoint, 0, 5);
+        MapPointStore.saveMapPoints(ContactState.getContactGroups(), 225);
         UIState.setLoading(0);
-        mrimAccount.isHighlighted = true;
+        account.setMapHighlighted(true);
         return ScreenId.PROFILE_EDIT;
     }
 

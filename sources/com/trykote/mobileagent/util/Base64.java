@@ -1,9 +1,8 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.StringResKeys;
 
 public final class Base64 {
 

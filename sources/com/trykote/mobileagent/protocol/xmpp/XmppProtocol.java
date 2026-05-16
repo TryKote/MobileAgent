@@ -1,14 +1,33 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Vector;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.ConnectionThread;
+import com.trykote.mobileagent.util.Base64;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
+import com.trykote.mobileagent.util.XmlParser;
+
 import javax.microedition.lcdui.Image;
+import java.util.Vector;
 
 public class XmppProtocol extends Account {
 
@@ -140,6 +159,7 @@ public class XmppProtocol extends Account {
         return this;
     }
 
+    @Override
     public boolean isMailRuVariant() {
         return false;
     }
@@ -294,7 +314,7 @@ public class XmppProtocol extends Account {
             new AsyncTask(AsyncTaskId.RESOLVE_XMPP_SERVER, resolveArgs);
             this.authState = resolveArgs;
         }
-        AppController.needsRepaint = true;
+        notifyConnectionProgressChanged();
     }
 
     private void handleResolving() {
@@ -314,7 +334,7 @@ public class XmppProtocol extends Account {
         } else {
             RemoteLogger.log("XMPP", "RESOLVING: still waiting, serverAddress=" + this.serverAddress + " exception=" + this.lastException);
         }
-        AppController.needsRepaint = true;
+        notifyConnectionProgressChanged();
     }
 
     private void handleConnecting() {
@@ -324,7 +344,7 @@ public class XmppProtocol extends Account {
         RemoteLogger.log("XMPP", "progress CONNECTING to " + connAddr);
         this.connection = new ConnectionThread(connAddr);
         this.progress = PROGRESS_OPENING_STREAM;
-        AppController.needsRepaint = true;
+        notifyConnectionProgressChanged();
     }
 
     private void handleOpeningStream() throws Throwable {
@@ -351,7 +371,7 @@ public class XmppProtocol extends Account {
         } else if (this.connection.getState() <= ConnectionThread.STATE_CLOSED) {
             closeConnection();
         }
-        AppController.needsRepaint = true;
+        notifyConnectionProgressChanged();
     }
 
     // --- Processing: stanza dispatch ---
@@ -369,8 +389,8 @@ public class XmppProtocol extends Account {
         extractServerDomain(element, tagName);
         if (!StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName)) {
             dispatchStanza(element, tagName);
-            AppController.needsRepaint = true;
-            AppController.needsLayoutUpdate = true;
+            notifyConnectionProgressChanged();
+            notifyContactListUpdated();
         }
     }
 
@@ -508,7 +528,6 @@ public class XmppProtocol extends Account {
                 this.defaultGroup.addContact((Object) newContact);
             }
             contact.updateFromPresence(presenceType, element);
-            NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONVERSATION_MESSAGE);
             onMessage(jid, 0L, ResourceAccessor.str(StringResKeys.STR_XMPP_AUTH_REQUEST));
         } else if (contact != null) {
             contact.updateFromPresence(presenceType, element);
@@ -715,6 +734,18 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
+    @Override
+    public int handleStatusOption(int optionIndex) {
+        return setStatusMode(optionIndex);
+    }
+
+    @Override
+    public void setContactPresenceFeature(Contact contact, int feature) {
+        if (contact instanceof XmppContact) {
+            ((XmppContact) contact).setPresenceFeature(feature);
+        }
+    }
+
     public final int setStatusMode(int statusMode) {
         this.configFlags = statusMode;
         if (isConnected()) {
@@ -795,6 +826,7 @@ public class XmppProtocol extends Account {
         return 0;
     }
 
+    @Override
     public final int addNewContact() {
         if (!isConnected()) {
             EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_XMPP_EVENT));

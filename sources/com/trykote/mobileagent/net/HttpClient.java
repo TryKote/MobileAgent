@@ -1,23 +1,22 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+
+import javax.microedition.io.Connection;
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.microedition.io.Connection;
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
 
 public final class HttpClient {
 

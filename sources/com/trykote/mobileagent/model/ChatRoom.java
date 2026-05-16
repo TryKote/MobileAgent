@@ -1,16 +1,15 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.JsonParser;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -211,7 +210,7 @@ public final class ChatRoom {
     }
 
     public final String getDisplayName() {
-        if (this == ((MrimAccount) AppState.getAccount()).chatRoomManager.getLast()) {
+        if (AppState.getAccount().isLastChatRoom(this)) {
             return this.name;
         }
         return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(getFormattedName()).append(' ').append('[').append(this.unreadCount).append('/').append(this.memberCount).append(']'));

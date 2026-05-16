@@ -4,7 +4,7 @@ package com.trykote.mobileagent.util;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
-import com.trykote.mobileagent.key.SettingsKeys;
+
 import javax.microedition.lcdui.Display;
 
 public abstract class TimerManager {

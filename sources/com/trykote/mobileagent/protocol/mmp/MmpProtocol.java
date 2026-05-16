@@ -1,13 +1,30 @@
 package com.trykote.mobileagent.protocol.mmp;
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.ConnectionThread;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.mrim.RegistrationService;
+import com.trykote.mobileagent.util.Base64;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -251,6 +268,7 @@ public final class MmpProtocol extends Account {
         return new MmpContactGroup(this, -4, ResourceAccessor.str(StringResKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
+    @Override
     public int getIconResourceId() {
         if (this.reserved2 == 0) {
             return ICON_ONLINE;
@@ -360,10 +378,10 @@ public final class MmpProtocol extends Account {
                 }
                 packet = packet.compact();
                 dispatchCommand(packet, commandId, seqNum, flags);
-                AppController.needsLayoutUpdate = true;
+                notifyContactListUpdated();
             } else if (packet.peekByteAt(1) == MmpCommand.PACKET_NOTIFICATION) {
                 handleStatusPacket(packet);
-                AppController.needsLayoutUpdate = true;
+                notifyContactListUpdated();
             }
             packet.clear();
         }
@@ -380,7 +398,7 @@ public final class MmpProtocol extends Account {
                 this.msgCount = 0;
                 break;
             case PROGRESS_STARTING:
-                AppController.needsRepaint = true;
+                notifyConnectionProgressChanged();
                 this.msgCount = PROGRESS_PCT_STARTING;
                 this.networkResourceMode = RegistrationService.checkForUpdates();
                 if (this.networkResourceMode != -1 || this.networkResourceMode == 1) {
@@ -411,12 +429,12 @@ public final class MmpProtocol extends Account {
                 new AsyncTask(AsyncTaskId.FETCH_HISTORY, new Object[]{this, ObjectPool.integerOf(0), this.login, getFormattedName()});
                 this.msgCount = PROGRESS_PCT_AUTH_PENDING;
                 this.progress = PROGRESS_WAIT_AUTH;
-                AppController.needsRepaint = true;
+                notifyConnectionProgressChanged();
                 break;
             case PROGRESS_WAIT_AUTH:
                 if (this.connectionData != null) {
                     this.msgCount = PROGRESS_PCT_CONNECTING;
-                    AppController.needsRepaint = true;
+                    notifyConnectionProgressChanged();
                     this.state = HANDSHAKE_STATE;
                     this.encryptionKey = Base64.decode(this.connectionData[2]).toByteArray();
                     this.serverId = Integer.parseInt(this.connectionData[0]);
@@ -437,7 +455,7 @@ public final class MmpProtocol extends Account {
                 this.connection.drainInput(this.dataBuffer);
                 ByteBuffer handshakePacket = this.dataBuffer.extractJPEG();
                 if (handshakePacket != null) {
-                    AppController.needsRepaint = true;
+                    notifyConnectionProgressChanged();
                     this.msgCount = PROGRESS_PCT_HANDSHAKE;
                     AccountManager.recordInboundPacket((Account) this, handshakePacket);
                     if (handshakePacket.peekByteAt(1) == MmpCommand.PACKET_HANDSHAKE) {
@@ -521,7 +539,6 @@ public final class MmpProtocol extends Account {
                 }
                 break;
             case MmpCommand.MESSAGE_RECEIVED:
-                NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONVERSATION_MESSAGE);
                 onMessage(packet.readLenPrefixStr(), 0L, packet.readVarLenStr());
                 break;
             case MmpCommand.AUTH_RECEIVED:
@@ -591,7 +608,7 @@ public final class MmpProtocol extends Account {
         contact.dirty = true;
         MmpContact.parseStatus(contact, buffer);
         if (!wasHighlighted && contact.highlighted) {
-            NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONTACT_ONLINE);
+            notifyContactOnline(contact);
         }
     }
 
@@ -897,6 +914,7 @@ public final class MmpProtocol extends Account {
         }
     }
 
+    @Override
     public int getPendingVersion() {
         if (this.pendingVersionUpdate > 0 && this.pendingVersionUpdate <= PROTOCOL_VERSION_MAX) {
             this.protocolVersion = this.pendingVersionUpdate;
@@ -910,6 +928,7 @@ public final class MmpProtocol extends Account {
         return EXT_TYPE_BASE + this.protocolVersion;
     }
 
+    @Override
     public int scheduleVersionUpdate(int version) {
         this.pendingVersionUpdate = version;
         if (!isConnected()) {
@@ -978,6 +997,16 @@ public final class MmpProtocol extends Account {
 
     ByteBuffer createSyncContactsCmd() {
         return ProtocolFactory.createMmpCommand(this, MmpCommand.SYNC_CONTACTS, (ByteBuffer) null);
+    }
+
+    @Override
+    public int handleStatusOption(int optionIndex) {
+        return updateConnectionMode(optionIndex);
+    }
+
+    @Override
+    public void setEmoticonSelection(int optionId) {
+        this.reserved2 = optionId;
     }
 
     ByteBuffer createSyncGroupsCmd() {

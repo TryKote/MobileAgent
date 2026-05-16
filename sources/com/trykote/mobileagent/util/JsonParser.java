@@ -1,16 +1,11 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -205,17 +200,6 @@ public abstract class JsonParser {
         return (String) getValue(obj, AppState.getString(i));
     }
 
-    public static final void addIntToVector(Object obj, int i) {
-        ((Vector) obj).addElement(ObjectPool.integerOf(i));
-    }
-
-    public static final Object getVectorElement(Object obj, int i) {
-        return ((Vector) obj).elementAt(i);
-    }
-
-    public static final String getVectorString(Object obj, int i) {
-        return Utils.getVectorString((Vector) obj, i);
-    }
 
     public static final String toJson(Object obj) {
         return ObjectPool.toStringAndRelease(serializeValue(obj, ObjectPool.newStringBuffer()));
@@ -291,6 +275,6 @@ public abstract class JsonParser {
     }
 
     public static final boolean isSuccess(Object obj) {
-        return StringUtils.matchesKey(PackedStringKeys.STATUS_OK, getVectorString(obj, 1)) && StringUtils.matchesKey(PackedStringKeys.TAG_AJAX_RESPONSE, (String) getVectorElement(obj, 0));
+        return StringUtils.matchesKey(PackedStringKeys.STATUS_OK, Utils.getVectorString((Vector) obj, 1)) && StringUtils.matchesKey(PackedStringKeys.TAG_AJAX_RESPONSE, (String) ((Vector) obj).elementAt(0));
     }
 }

@@ -1,16 +1,40 @@
 package com.trykote.mobileagent.ui;
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Vector;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.key.UIKeys;
+import com.trykote.mobileagent.map.MapController;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.model.MailHelper;
+import com.trykote.mobileagent.model.MergedContactGroup;
+import com.trykote.mobileagent.model.PhoneContact;
+import com.trykote.mobileagent.model.Sortable;
+import com.trykote.mobileagent.model.VCard;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Graphics;
+import java.util.Vector;
 
 public abstract class ContactListManager {
 
@@ -258,7 +282,7 @@ public abstract class ContactListManager {
         RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
         int layoutColumns = 1 + SettingsState.getContactSortMode();
         ContactState.setIconSize(layoutColumns == 1 ? ICON_SIZE_SMALL : ICON_SIZE_LARGE);
-        Screen screen = Screens.contactListTemplate(null);
+        Screen screen = Screens.contactListTemplate();
         int availableWidth = screen.contentWidth - 1;
         if (!SettingsState.isShowOffline()) {
             buildFlatList(screen, layoutColumns, availableWidth);
@@ -471,7 +495,7 @@ public abstract class ContactListManager {
                 menuItem = ((ContactGroup) item).createMenuItem(-1);
             } else if (item instanceof ContactInfo) {
                 ContactInfo contactInfo = (ContactInfo) item;
-                if (contactInfo.getAccount() instanceof MrimAccount) {
+                if (contactInfo.getAccount().getType() == Account.TYPE_MRIM) {
                     MenuItem entry = MenuItem.createDefault()
                         .setIcon(AppController.resolveServerIcon(
                             Utils.parseIntBounded(contactInfo.getString(ContactInfo.FIELD_LOCATION), 0, 4, 0),
@@ -501,7 +525,7 @@ public abstract class ContactListManager {
     }
 
     public static void updateContactFlags(Contact contact) {
-        UIState.setXmppCanEdit((contact instanceof XmppContact) && !((XmppProtocol) contact.account).isMailRuVariant());
+        UIState.setXmppCanEdit(contact.isEditable());
     }
 
     public static int getGroupCount(Account acct) {
@@ -535,10 +559,10 @@ public abstract class ContactListManager {
         if (acctRef.getType() == Account.TYPE_MMP) {
             ContactState.setGroupAddName(contactInfo.getString(60));
             ContactState.setGroupAddDisplay(contactInfo.getDisplayNameOrId());
-            Screens.contactListScreen(null).show();
+            Screens.contactListScreen().show();
             return;
         }
-        if (((MrimAccount) acctRef).hasCustomDomain) {
+        if (acctRef.hasCustomDomain()) {
             ContactState.setGroupAddResult(true);
             ContactState.setAddMode(ADD_MODE_CUSTOM_DOMAIN);
         } else {
@@ -547,7 +571,7 @@ public abstract class ContactListManager {
         }
         ContactState.setGroupAddName(contactInfo.getEmailOrMmpId());
         ContactState.setGroupAddDisplay(contactInfo.getFullName());
-        Screens.contactAddScreen(null).show();
+        Screens.contactAddScreen().show();
     }
     public static ListView buildContactListScreen(ListView screen, Account acct, Contact contact) {
         if (contact != null) {
@@ -555,20 +579,19 @@ public abstract class ContactListManager {
         }
         Vector contacts = acct.getAllContacts();
         for (int idx = contacts.size() - 1; idx >= 0; idx--) {
-            MrimContact mrimContact = (MrimContact) contacts.elementAt(idx);
-            if (mrimContact.isSystem() || mrimContact.isOnline() || mrimContact.isOffline() || mrimContact.hasUnread()) {
+            Contact c = (Contact) contacts.elementAt(idx);
+            if (c.isSystem() || c.isOnline() || c.isOffline() || c.hasUnread()) {
                 contacts.removeElementAt(idx);
             }
         }
         sortContacts(contacts);
-        MrimContact targetContact = contact != null ? (MrimContact) contact : null;
+        Vector targetGroups = contact != null ? contact.getGroupMembership() : null;
         for (int i = 0; i < contacts.size(); i++) {
-            MrimContact candidate = (MrimContact) contacts.elementAt(i);
-            String identifier = candidate.simpleIdentifier;
+            Contact candidate = (Contact) contacts.elementAt(i);
+            String identifier = candidate.getContactEmail();
             String displayName = candidate.displayName;
             MenuItem menuItem;
-            if (targetContact != null && targetContact.groupsList != null
-                    && targetContact.groupsList.contains(identifier)) {
+            if (targetGroups != null && targetGroups.contains(identifier)) {
                 menuItem = new MenuItem(MenuItem.TYPE_CHECKBOX, displayName)
                     .setIconAndLabel(ICON_IN_GROUP, displayName);
             } else {
@@ -605,7 +628,7 @@ public abstract class ContactListManager {
             ScreenBuilder.onScreenClosed();
         }
         if (StringUtils.matchesKey(STR_WAKE_UP_ACTION, label)) {
-            int errorCode = ((MrimContact) contact).requestUserDetails();
+            int errorCode = contact.requestDetails();
             return errorCode != 0 ? NotificationHelper.showError(errorCode) : actionId;
         }
         if (actionId == ScreenId.PHONE_GROUPS) {
@@ -613,13 +636,13 @@ public abstract class ContactListManager {
             return clearSmsFields();
         }
         if (actionId == ScreenId.ADD_CONTACT_INFO) {
-            if (contact instanceof XmppContact) {
-                return ((XmppContact) contact).sendPresence(PRESENCE_SUBSCRIBE);
+            if (contact.canSubscribe()) {
+                return contact.subscribe(PRESENCE_SUBSCRIBE);
             }
             ContactState.setInfo(new ContactInfo(contact));
         } else if (actionId == ScreenId.COMPOSE_MESSAGE) {
             AppState.setAccount(contact.account);
-            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) contact).simpleIdentifier), null, null);
+            MailHelper.composeEmail(MailHelper.parseRecipientList(contact.getContactEmail()), null, null);
         } else if (actionId == ScreenId.MAP) {
             ListItem item = (ListItem) contact;
             item.deselect();
@@ -642,7 +665,7 @@ public abstract class ContactListManager {
             }
         }
         if (StringUtils.matchesKey(STR_WAKE_UP_ACTION, label)) {
-            int errorCode = ((MrimContact) entity).requestUserDetails();
+            int errorCode = ((Contact) entity).requestDetails();
             if (errorCode != 0) {
                 return NotificationHelper.showError(errorCode);
             }
@@ -654,13 +677,13 @@ public abstract class ContactListManager {
             return clearSmsFields();
         }
         if (actionId == ScreenId.ADD_CONTACT_INFO) {
-            if (entity instanceof XmppContact) {
-                return ((XmppContact) entity).sendPresence(PRESENCE_UNSUBSCRIBE);
+            if (((Contact) entity).canSubscribe()) {
+                return ((Contact) entity).subscribe(PRESENCE_UNSUBSCRIBE);
             }
             ContactState.setInfo(new ContactInfo((Contact) entity));
         } else if (actionId == ScreenId.COMPOSE_MESSAGE) {
-            AppState.setAccount(((MrimContact) entity).account);
-            MailHelper.composeEmail(MailHelper.parseRecipientList(((MrimContact) entity).simpleIdentifier), null, null);
+            AppState.setAccount(((Contact) entity).account);
+            MailHelper.composeEmail(MailHelper.parseRecipientList(((Contact) entity).getContactEmail()), null, null);
         } else if (actionId == ScreenId.MAP) {
             ListItem item = (ListItem) entity;
             item.deselect();
@@ -709,10 +732,10 @@ public abstract class ContactListManager {
         Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
         for (int idx = mrimAccounts.size() - 1; idx >= 0; idx--) {
-            Vector contacts = AccountManager.getMrimAccount(mrimAccounts, idx).getAllContacts();
+            Vector contacts = ((Account) mrimAccounts.elementAt(idx)).getAllContacts();
             for (int idx2 = contacts.size() - 1; idx2 >= 0; idx2--) {
-                MrimContact contact = (MrimContact) contacts.elementAt(idx2);
-                if (contact.hasVCard()) {
+                Contact contact = (Contact) contacts.elementAt(idx2);
+                if (contact.hasLocationData()) {
                     result.addElement(contact);
                 }
             }
@@ -725,8 +748,8 @@ public abstract class ContactListManager {
         Vector result = ObjectPool.newVector();
         Vector mrimAccounts = AccountManager.getMrimAccountList();
         for (int idx = mrimAccounts.size() - 1; idx >= 0; idx--) {
-            MrimAccount account = AccountManager.getMrimAccount(mrimAccounts, idx);
-            if (account.profileManager.profile.hasCoordinates()) {
+            Account account = (Account) mrimAccounts.elementAt(idx);
+            if (account.hasProfileCoordinates()) {
                 result.addElement(account);
             }
         }

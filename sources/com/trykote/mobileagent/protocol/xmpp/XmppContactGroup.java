@@ -1,22 +1,43 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Hashtable;
-import java.util.Vector;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.map.MapPoint;
+import com.trykote.mobileagent.map.MapRenderer;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.net.ApiClient;
+import com.trykote.mobileagent.net.ServiceRegistry;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.ConnectionThread;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.mrim.MrimCommand;
+import com.trykote.mobileagent.protocol.mrim.MrimContact;
+import com.trykote.mobileagent.protocol.mrim.MrimContactGroup;
+import com.trykote.mobileagent.util.Base64;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.TextBox;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public final class XmppContactGroup extends ContactGroup {
 

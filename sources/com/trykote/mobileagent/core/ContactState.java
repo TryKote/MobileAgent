@@ -1,11 +1,10 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.key.*;
-
+import com.trykote.mobileagent.key.ContactKeys;
 import com.trykote.mobileagent.model.Contact;
 import com.trykote.mobileagent.model.ContactGroup;
 import com.trykote.mobileagent.model.ContactInfo;
-import com.trykote.mobileagent.protocol.mrim.MrimContact;
+
 import java.util.Vector;
 
 /**
@@ -24,10 +23,6 @@ public final class ContactState extends AppState {
 
     public static Contact getContact() {
         return (Contact) getPoolObject(ContactKeys.SLOT_CURRENT_ENTITY);
-    }
-
-    public static MrimContact getMrimContact() {
-        return (MrimContact) getPoolObject(ContactKeys.SLOT_CURRENT_ENTITY);
     }
 
     public static ContactGroup getGroup() {

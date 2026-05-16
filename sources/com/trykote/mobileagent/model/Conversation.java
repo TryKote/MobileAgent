@@ -1,17 +1,42 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.map.MapRenderer;
+import com.trykote.mobileagent.net.ApiClient;
+import com.trykote.mobileagent.net.HttpClient;
+import com.trykote.mobileagent.net.NetworkLock;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.map.RouteData;
+import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
+import com.trykote.mobileagent.protocol.mrim.MrimAccount;
+import com.trykote.mobileagent.protocol.mrim.MrimContact;
+import com.trykote.mobileagent.protocol.mrim.MrimContactGroup;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.util.CryptoUtils;
+import com.trykote.mobileagent.ui.SizeCache;
+import com.trykote.mobileagent.util.Base64;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.DiagnosticReporter;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
+
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -238,7 +263,7 @@ public final class Conversation implements ListItem {
     }
 
     private static final String encryptData(String data, String key) {
-        return new ByteBuffer().setData(XmppContactGroup.hmacSHA256(key.getBytes(), key.length(), data.getBytes(), data.length(), HMAC_SHA256_LENGTH)).toBase64();
+        return new ByteBuffer().setData(CryptoUtils.hmacSHA256(key.getBytes(), key.length(), data.getBytes(), data.length(), HMAC_SHA256_LENGTH)).toBase64();
     }
 
     public static final Vector parseConversation(String text) {
@@ -835,7 +860,7 @@ public final class Conversation implements ListItem {
     }
 
     public static final void loadContacts() {
-        new AsyncTask(AsyncTaskId.FETCH_MMP_ROUTE, MmpContact.buildLocationString());
+        new AsyncTask(AsyncTaskId.FETCH_MMP_ROUTE, RouteData.buildLocationString());
     }
 
     public static final void updateStatusText(int nameKey) {

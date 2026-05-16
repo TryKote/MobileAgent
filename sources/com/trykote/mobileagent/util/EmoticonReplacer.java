@@ -1,9 +1,14 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.IconElement;
+import com.trykote.mobileagent.ui.LineBreak;
+import com.trykote.mobileagent.ui.TextElement;
+
 import java.util.Vector;
 
 public final class EmoticonReplacer {

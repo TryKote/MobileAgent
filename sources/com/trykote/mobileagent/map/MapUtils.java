@@ -1,16 +1,25 @@
 package com.trykote.mobileagent.map;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.model.VCard;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.ScreenManager;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.SoftFloat;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Image;
 
 /* Extracted from AppController: map coordinate math utilities */
@@ -97,9 +106,9 @@ public final class MapUtils {
             MapController.navigateToPoint((MapPoint) obj, true);
             return ScreenId.MAP;
         }
-        MrimAccount account = (MrimAccount) AppState.getAccount();
-        account.profileManager.setMapLocation((MapPoint) obj);
-        account.profileManager.sync();
+        Account account = AppState.getAccount();
+        account.setProfileMapLocation(obj);
+        account.syncProfile();
         UIState.setLoading(0);
         return ScreenId.PROFILE_EDIT;
     }

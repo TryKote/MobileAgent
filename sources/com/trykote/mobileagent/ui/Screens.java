@@ -1,7 +1,5 @@
 package com.trykote.mobileagent.ui;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.ui.handler.ScreenHandler;
 
 /**
  * Screen factory methods.
@@ -11,16 +9,16 @@ public final class Screens {
     private Screens() {}
 
     /** MAP_VIEW */
-    public static Screen mapView(ScreenHandler handler) {
-        Screen s = new Screen(1, 6, handler);
+    public static Screen mapView() {
+        Screen s = new Screen(1, 6);
         s.configureHeader(-1, 1038);
         s.configureSoftKeys(1062, 20, 328, 0, 0);
         return s;
     }
 
     /** MAP_VIEW_ALT */
-    public static Screen mapViewAlt(ScreenHandler handler) {
-        Screen s = new Screen(1, 6, handler);
+    public static Screen mapViewAlt() {
+        Screen s = new Screen(1, 6);
         s.configureHeader(-1, 1038);
         s.addLabelSeparator(332); // В вашем телефоне недостаточно оперативной памят...
         s.configureSoftKeys(0, 0, 1050, 4, 0);
@@ -28,8 +26,8 @@ public final class Screens {
     }
 
     /** VIEW_MODE */
-    public static Screen viewMode(ScreenHandler handler) {
-        Screen s = new Screen(10, 91, handler);
+    public static Screen viewMode() {
+        Screen s = new Screen(10, 91);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(311, 334, 0);
@@ -42,8 +40,8 @@ public final class Screens {
     }
 
     /** GPS_SETTINGS */
-    public static Screen gpsSettings(ScreenHandler handler) {
-        Screen s = new Screen(3, 20, handler);
+    public static Screen gpsSettings() {
+        Screen s = new Screen(3, 20);
         s.configureHeader(0, 1038);
         s.addActionById(361, 340, 0);
         s.addActionById(303, 339, 100); // Сообщать о дорожной обстановке от имени:
@@ -61,8 +59,8 @@ public final class Screens {
     }
 
     /** REGION_SELECTOR — Выбор карты */
-    public static Screen regionSelector(ScreenHandler handler) {
-        Screen s = new Screen(2, 97, handler);
+    public static Screen regionSelector() {
+        Screen s = new Screen(2, 97);
         s.configureHeader(315, 383);
         s.showCheckboxes = true;
         s.configureSoftKeys(1048, 199, 1050, 12, 199);
@@ -70,8 +68,8 @@ public final class Screens {
     }
 
     /** MAP_POINTS — Поиск */
-    public static Screen mapPoints(ScreenHandler handler) {
-        Screen s = new Screen(0, 100, handler);
+    public static Screen mapPoints() {
+        Screen s = new Screen(0, 100);
         s.configureHeader(303, 1061);
         s.addTextInput(350, 255, 424, 0, 1248);
         s.configureSoftKeys(1061, 199, 1050, 12, 199);
@@ -79,16 +77,16 @@ public final class Screens {
     }
 
     /** MAP_OVERLAY */
-    public static Screen mapOverlay(ScreenHandler handler) {
-        Screen s = new Screen(2, 101, handler);
+    public static Screen mapOverlay() {
+        Screen s = new Screen(2, 101);
         s.configureHeader(303, 1038);
         s.configureSoftKeys(1048, 6, 1050, 12, 199);
         return s;
     }
 
     /** MAP_TOOLTIP — Ссылка на карту */
-    public static Screen mapTooltip(ScreenHandler handler) {
-        Screen s = new Screen(0, 110, handler);
+    public static Screen mapTooltip() {
+        Screen s = new Screen(0, 110);
         s.configureHeader(308, 353);
         s.addTextInput(371, 63, 424, 0, 1249);
         s.configureSoftKeys(1060, 111, 1050, 12, 0);
@@ -96,16 +94,16 @@ public final class Screens {
     }
 
     /** PEOPLE_NEARBY — Кому отправить */
-    public static Screen peopleNearby(ScreenHandler handler) {
-        Screen s = new Screen(0, 111, handler);
+    public static Screen peopleNearby() {
+        Screen s = new Screen(0, 111);
         s.configureHeader(308, 378);
         s.configureSoftKeys(1060, 6, 1050, 12, 6);
         return s;
     }
 
     /** XMPP_MAP_CONTEXT */
-    public static Screen xmppMapContext(ScreenHandler handler) {
-        Screen s = new Screen(11, 113, handler);
+    public static Screen xmppMapContext() {
+        Screen s = new Screen(11, 113);
         s.configureHeader(303, 1038);
         s.addConditionalIf(1432, 0, 0, 367);
         s.addConditionalIf(1436, 1, 220, 503);
@@ -135,8 +133,8 @@ public final class Screens {
     }
 
     /** SAVE_LOCATION — Сохранить закладку */
-    public static Screen saveLocation(ScreenHandler handler) {
-        Screen s = new Screen(0, 114, handler);
+    public static Screen saveLocation() {
+        Screen s = new Screen(0, 114);
         s.configureHeader(360, 373);
         s.addTextInput(371, 63, 424, 0, 1250);
         s.configureSoftKeys(1053, 6, 1050, 12, 6);
@@ -144,16 +142,16 @@ public final class Screens {
     }
 
     /** MAP_ROUTE */
-    public static Screen mapRoute(ScreenHandler handler) {
-        Screen s = new Screen(2, 116, handler);
+    public static Screen mapRoute() {
+        Screen s = new Screen(2, 116);
         s.configureHeader(303, 1038);
         s.configureSoftKeys(1048, 118, 1050, 12, 199);
         return s;
     }
 
     /** MAP_STATUS */
-    public static Screen mapStatus(ScreenHandler handler) {
-        Screen s = new Screen(10, 117, handler);
+    public static Screen mapStatus() {
+        Screen s = new Screen(10, 117);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(362, 374, 114); // Выбрать на карте
@@ -165,16 +163,16 @@ public final class Screens {
     }
 
     /** SEND_TO_CONTACT — Кому отправить */
-    public static Screen sendToContact(ScreenHandler handler) {
-        Screen s = new Screen(0, 118, handler);
+    public static Screen sendToContact() {
+        Screen s = new Screen(0, 118);
         s.configureHeader(16, 378);
         s.configureSoftKeys(1060, 6, 1050, 12, 6);
         return s;
     }
 
     /** CHAT_ROOM_OPTIONS */
-    public static Screen chatRoomOptions(ScreenHandler handler) {
-        Screen s = new Screen(10, 119, handler);
+    public static Screen chatRoomOptions() {
+        Screen s = new Screen(10, 119);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(228, 357, 0);
@@ -184,16 +182,16 @@ public final class Screens {
     }
 
     /** MAP_ROUTE_SELECT — Мои закладки */
-    public static Screen mapRouteSelect(ScreenHandler handler) {
-        Screen s = new Screen(0, 120, handler);
+    public static Screen mapRouteSelect() {
+        Screen s = new Screen(0, 120);
         s.configureHeader(360, 344);
         s.configureSoftKeys(1059, 199, 1050, 12, 199);
         return s;
     }
 
     /** CHAT_LIST_OPTIONS */
-    public static Screen chatListOptions(ScreenHandler handler) {
-        Screen s = new Screen(3, 121, handler);
+    public static Screen chatListOptions() {
+        Screen s = new Screen(3, 121);
         s.configureHeader(0, 1038);
         s.addActionById(308, 379, 6); // Имя не может быть пустым.
         s.addActionById(16, 1060, 118); // -нет-
@@ -203,8 +201,8 @@ public final class Screens {
     }
 
     /** MMP_ACCOUNT_SELECT — Настройки */
-    public static Screen mmpAccountSelect(ScreenHandler handler) {
-        Screen s = new Screen(0, 129, handler);
+    public static Screen mmpAccountSelect() {
+        Screen s = new Screen(0, 129);
         s.configureHeader(12, 500);
         s.addTextSeparator(393); // Устройство GPS:
         s.addPassword(239);
@@ -226,8 +224,8 @@ public final class Screens {
     }
 
     /** PEOPLE_SEARCH */
-    public static Screen peopleSearch(ScreenHandler handler) {
-        Screen s = new Screen(10, 131, handler);
+    public static Screen peopleSearch() {
+        Screen s = new Screen(10, 131);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(315, 398, 97); // Предупреждать о маневрах
@@ -240,8 +238,8 @@ public final class Screens {
     }
 
     /** SAVED_LOCATIONS */
-    public static Screen savedLocations(ScreenHandler handler) {
-        Screen s = new Screen(2, 153, handler);
+    public static Screen savedLocations() {
+        Screen s = new Screen(2, 153);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.configureSoftKeys(1048, 154, 1050, 12, 154);
@@ -249,8 +247,8 @@ public final class Screens {
     }
 
     /** SHARE_LOCATION — Комментарий */
-    public static Screen shareLocation(ScreenHandler handler) {
-        Screen s = new Screen(0, 154, handler);
+    public static Screen shareLocation() {
+        Screen s = new Screen(0, 154);
         s.configureHeader(303, 405);
         s.addTextInput(405, 255, 424, 0, 1254);
         s.configureSoftKeys(1060, 6, 1050, 6, 6);
@@ -258,16 +256,16 @@ public final class Screens {
     }
 
     /** GROUP_MANAGEMENT_ALT — Выбор */
-    public static Screen groupManagementAlt(ScreenHandler handler) {
-        Screen s = new Screen(0, 155, handler);
+    public static Screen groupManagementAlt() {
+        Screen s = new Screen(0, 155);
         s.configureHeader(230, 406);
         s.configureSoftKeys(1053, 6, 1050, 6, 0);
         return s;
     }
 
     /** MAP_SEARCH */
-    public static Screen mapSearch(ScreenHandler handler) {
-        Screen s = new Screen(11, 158, handler);
+    public static Screen mapSearch() {
+        Screen s = new Screen(11, 158);
         s.configureHeader(0, 1038);
         s.addLabelSeparator(0);
         s.addConditionalIf(1441, 0, 361, 409);
@@ -279,8 +277,8 @@ public final class Screens {
     }
 
     /** WIFI_ACCOUNT_LIST */
-    public static Screen wifiAccountList(ScreenHandler handler) {
-        Screen s = new Screen(2, 159, handler);
+    public static Screen wifiAccountList() {
+        Screen s = new Screen(2, 159);
         s.configureHeader(0, 1038);
         s.addLabelSeparator(412); // Сообщать о точках:
         s.addActionById(23, 413, 153); // В поисках...
@@ -290,8 +288,8 @@ public final class Screens {
     }
 
     /** MAILBOX_OPTIONS */
-    public static Screen mailboxOptions(ScreenHandler handler) {
-        Screen s = new Screen(2, 167, handler);
+    public static Screen mailboxOptions() {
+        Screen s = new Screen(2, 167);
         s.configureHeader(0, 1038);
         s.addActionById(308, 657, 0);
         s.addActionById(303, 659, 1);
@@ -300,16 +298,16 @@ public final class Screens {
     }
 
     /** FORM_LIST */
-    public static Screen formList(ScreenHandler handler) {
-        Screen s = new Screen(2, 170, handler);
+    public static Screen formList() {
+        Screen s = new Screen(2, 170);
         s.configureHeader(0, 1038);
         s.configureSoftKeys(1048, 113, 1050, 12, 113);
         return s;
     }
 
     /** MRIM_ACCOUNT_SELECT */
-    public static Screen mrimAccountSelect(ScreenHandler handler) {
-        Screen s = new Screen(2, 172, handler);
+    public static Screen mrimAccountSelect() {
+        Screen s = new Screen(2, 172);
         s.configureHeader(0, 1038);
         s.addLabelSeparator(415); // Выберите учетную запись:
         s.configureSoftKeys(1048, 173, 1050, 6, 173);
@@ -317,8 +315,8 @@ public final class Screens {
     }
 
     /** MAP_OPTIONS */
-    public static Screen mapOptions(ScreenHandler handler) {
-        Screen s = new Screen(10, 174, handler);
+    public static Screen mapOptions() {
+        Screen s = new Screen(10, 174);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addConditionalIf(276, 175, 6, 369); // MapKeys.FLAG_MAP_VIEW_ACTIVE
@@ -328,8 +326,8 @@ public final class Screens {
     }
 
     /** NEARBY_SETTINGS — Люди на карте */
-    public static Screen nearbySettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 175, handler);
+    public static Screen nearbySettings() {
+        Screen s = new Screen(0, 175);
         s.configureHeader(12, 369);
         s.addCheckbox(417, 278); // Я
         s.addCheckbox(418, 279); // Мои контакты
@@ -339,16 +337,16 @@ public final class Screens {
     }
 
     /** CONTACT_POPUP — Контакты */
-    public static Screen contactPopup(ScreenHandler handler) {
-        Screen s = new Screen(0, 176, handler);
+    public static Screen contactPopup() {
+        Screen s = new Screen(0, 176);
         s.configureHeader(6, 1047);
         s.configureSoftKeys(1059, 199, 1055, 12, 199);
         return s;
     }
 
     /** SEARCH_ENTRY */
-    public static Screen searchEntry(ScreenHandler handler) {
-        Screen s = new Screen(3, 177, handler);
+    public static Screen searchEntry() {
+        Screen s = new Screen(3, 177);
         s.configureHeader(0, 1038);
         s.addActionById(220, 503, 102); // Список карт еще не был загружен
         s.addActionById(17, 716, 0);
@@ -360,8 +358,8 @@ public final class Screens {
     }
 
     /** EDIT_SCREEN */
-    public static Screen editScreen(ScreenHandler handler) {
-        Screen s = new Screen(2, 178, handler);
+    public static Screen editScreen() {
+        Screen s = new Screen(2, 178);
         s.configureHeader(-1, 1038);
         s.addLabelSeparator(423); // Выберите режим использования:
         s.addActionById(6, 347, 0);
@@ -371,8 +369,8 @@ public final class Screens {
     }
 
     /** STATUS_PREVIEW — Действия */
-    public static Screen statusPreview(ScreenHandler handler) {
-        Screen s = new Screen(0, 84, handler);
+    public static Screen statusPreview() {
+        Screen s = new Screen(0, 84);
         s.configureHeader(9, 1059);
         s.addConditionalIf(1456, 40, -1, 1060); // UIKeys.FLAG_STATUS_TEXT_SET
         s.addConditionalIf(1461, 93, -1, 471); // Здравствуйте, 
@@ -388,16 +386,16 @@ public final class Screens {
     }
 
     /** CHOICE_DIALOG */
-    public static Screen choiceDialog(ScreenHandler handler) {
-        Screen s = new Screen(2, 32, handler);
+    public static Screen choiceDialog() {
+        Screen s = new Screen(2, 32);
         s.configureHeader(0, 1038);
         s.configureSoftKeys(1048, 12, 1050, 12, 12);
         return s;
     }
 
     /** ACCOUNT_LIST */
-    public static Screen accountList(ScreenHandler handler) {
-        Screen s = new Screen(3, 1, handler);
+    public static Screen accountList() {
+        Screen s = new Screen(3, 1);
         s.configureHeader(0, 1038);
         s.addConditionalIf(1462, 15, 305, 495); // SessionKeys.FLAG_HAS_MULTIPLE_MRIM
         s.addConditionalUnless(1462, 15, 305, 495); // SessionKeys.FLAG_HAS_MULTIPLE_MRIM
@@ -415,8 +413,8 @@ public final class Screens {
     }
 
     /** KEY_MAPPING */
-    public static Screen keyMapping(ScreenHandler handler) {
-        Screen s = new Screen(10, 132, handler);
+    public static Screen keyMapping() {
+        Screen s = new Screen(10, 132);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(28, 497, 8); // Группа не пуста. Удаление невозможно.
@@ -428,8 +426,8 @@ public final class Screens {
     }
 
     /** ABOUT — Мобильный агент */
-    public static Screen about(ScreenHandler handler) {
-        Screen s = new Screen(5, 9, handler);
+    public static Screen about() {
+        Screen s = new Screen(5, 9);
         s.configureHeader(9, 510);
         s.addSeparator(512, 1288); // Версия:
         s.addSeparator(853022, 1180715);
@@ -444,8 +442,8 @@ public final class Screens {
     }
 
     /** BLOG_POST — Микроблог */
-    public static Screen blogPost(ScreenHandler handler) {
-        Screen s = new Screen(0, 147, handler);
+    public static Screen blogPost() {
+        Screen s = new Screen(0, 147);
         s.configureHeader(2, 520);
         s.addTextInput(521, 500, 424, 0, 1286);
         s.addCheckbox(1284, 1468);
@@ -454,8 +452,8 @@ public final class Screens {
     }
 
     /** MESSAGE_INPUT — Микроблог */
-    public static Screen messageInput(ScreenHandler handler) {
-        Screen s = new Screen(0, 115, handler);
+    public static Screen messageInput() {
+        Screen s = new Screen(0, 115);
         s.configureHeader(2, 520);
         s.addSeparator(1284, 1287);
         s.addTextInput(526, 500, 424, 0, 1286);
@@ -465,8 +463,8 @@ public final class Screens {
     }
 
     /** GROUP_MANAGEMENT */
-    public static Screen groupManagement(ScreenHandler handler) {
-        Screen s = new Screen(10, 146, handler);
+    public static Screen groupManagement() {
+        Screen s = new Screen(10, 146);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addConditionalIf(1462, 89, 376, 529); // SessionKeys.FLAG_HAS_MULTIPLE_MRIM
@@ -480,16 +478,16 @@ public final class Screens {
     }
 
     /** CONTACT_LIST_TEMPLATE */
-    public static Screen contactListTemplate(ScreenHandler handler) {
-        Screen s = new Screen(1, 4, handler);
+    public static Screen contactListTemplate() {
+        Screen s = new Screen(1, 4);
         s.configureHeader(-1, 1038);
         s.configureSoftKeys(1062, 1, 1059, 199, 199);
         return s;
     }
 
     /** MULTI_ACCOUNT_LIST */
-    public static Screen multiAccountList(ScreenHandler handler) {
-        Screen s = new Screen(10, 25, handler);
+    public static Screen multiAccountList() {
+        Screen s = new Screen(10, 25);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.configureSoftKeys(1048, 199, 1050, 12, 199);
@@ -497,48 +495,48 @@ public final class Screens {
     }
 
     /** MESSAGE_SUMMARY */
-    public static Screen messageSummary(ScreenHandler handler) {
-        Screen s = new Screen(9, 40, handler);
+    public static Screen messageSummary() {
+        Screen s = new Screen(9, 40);
         s.configureHeader(0, 1290);
         s.configureSoftKeys(1059, 92, 1050, 12, 0);
         return s;
     }
 
     /** SERVER_ADDRESS — Шаблоны сообщений */
-    public static Screen serverAddress(ScreenHandler handler) {
-        Screen s = new Screen(0, 95, handler);
+    public static Screen serverAddress() {
+        Screen s = new Screen(0, 95);
         s.configureHeader(32, 543);
         s.configureSoftKeys(1048, 63, 1050, 12, 63);
         return s;
     }
 
     /** PHONE_INPUT — Шаблоны сообщений */
-    public static Screen phoneInput(ScreenHandler handler) {
-        Screen s = new Screen(0, 94, handler);
+    public static Screen phoneInput() {
+        Screen s = new Screen(0, 94);
         s.configureHeader(32, 543);
         s.configureSoftKeys(1052, 12, 1050, 12, 12);
         return s;
     }
 
     /** EMOTICON_PICKER — Смайлики */
-    public static Screen emoticonPicker(ScreenHandler handler) {
-        Screen s = new Screen(6, 93, handler);
+    public static Screen emoticonPicker() {
+        Screen s = new Screen(6, 93);
         s.configureHeader(46, 471);
         s.configureSoftKeys(1048, 199, 1050, 12, 199);
         return s;
     }
 
     /** MESSAGE_DETAIL — Вставить текст из архива */
-    public static Screen messageDetail(ScreenHandler handler) {
-        Screen s = new Screen(0, 123, handler);
+    public static Screen messageDetail() {
+        Screen s = new Screen(0, 123);
         s.configureHeader(32, 536);
         s.configureSoftKeys(1048, 63, 1050, 12, 63);
         return s;
     }
 
     /** MAP_MENU */
-    public static Screen mapMenu(ScreenHandler handler) {
-        Screen s = new Screen(10, 7, handler);
+    public static Screen mapMenu() {
+        Screen s = new Screen(10, 7);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(11, 537, 25); //  лет
@@ -557,8 +555,8 @@ public final class Screens {
     }
 
     /** CONTACT_GROUPS */
-    public static Screen contactGroups(ScreenHandler handler) {
-        Screen s = new Screen(10, 47, handler);
+    public static Screen contactGroups() {
+        Screen s = new Screen(10, 47);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(8, 547, 76); // Название:
@@ -569,8 +567,8 @@ public final class Screens {
     }
 
     /** ACCOUNT_SWITCHER */
-    public static Screen accountSwitcher(ScreenHandler handler) {
-        Screen s = new Screen(10, 15, handler);
+    public static Screen accountSwitcher() {
+        Screen s = new Screen(10, 15);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(11, 548, 4); // Эта операция доступна только при соединении с с...
@@ -579,8 +577,8 @@ public final class Screens {
     }
 
     /** ACCOUNTS_MENU */
-    public static Screen accountsMenu(ScreenHandler handler) {
-        Screen s = new Screen(10, 5, handler);
+    public static Screen accountsMenu() {
+        Screen s = new Screen(10, 5);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(7, 552, 0);
@@ -593,8 +591,8 @@ public final class Screens {
     }
 
     /** XMPP_CONTEXT_MENU — Учетная запись Mail.Ru */
-    public static Screen xmppContextMenu(ScreenHandler handler) {
-        Screen s = new Screen(0, 76, handler);
+    public static Screen xmppContextMenu() {
+        Screen s = new Screen(0, 76);
         s.configureHeader(156, 557);
         s.addTextInput(673, 63, 425, 0, 1292);
         s.addDropdown(674, 694, 1474); // Домен:
@@ -604,8 +602,8 @@ public final class Screens {
     }
 
     /** XMPP_LOGIN — Учетная запись ICQ */
-    public static Screen xmppLogin(ScreenHandler handler) {
-        Screen s = new Screen(0, 76, handler);
+    public static Screen xmppLogin() {
+        Screen s = new Screen(0, 76);
         s.configureHeader(256, 558);
         s.addLogin(12, 0);
         s.addDropdown(674, 694, 1474);
@@ -614,8 +612,8 @@ public final class Screens {
     }
 
     /** PRIVACY_SETTINGS — Шаблоны сообщений */
-    public static Screen privacySettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 33, handler);
+    public static Screen privacySettings() {
+        Screen s = new Screen(0, 33);
         s.configureHeader(32, 543);
         s.addTextInput(1038, 255, 424, 0, 48);
         s.addTextInput(1038, 255, 424, 0, 49);
@@ -637,8 +635,8 @@ public final class Screens {
     }
 
     /** THEME_SETTINGS — Интерфейс */
-    public static Screen themeSettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 26, handler);
+    public static Screen themeSettings() {
+        Screen s = new Screen(0, 26);
         s.configureHeader(12, 538);
         s.addCheckbox(561, 71); // Полный экран
         s.addCheckbox(562, 65); // Софт-кнопки наоборот
@@ -656,8 +654,8 @@ public final class Screens {
     }
 
     /** SOUND_SETTINGS — Уведомления */
-    public static Screen soundSettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 28, handler);
+    public static Screen soundSettings() {
+        Screen s = new Screen(0, 28);
         s.configureHeader(13, 539);
         s.addDropdown(581, 591, 75); // Новое сообщение:
         s.addCheckbox(589, 76); // Вибрация
@@ -681,8 +679,8 @@ public final class Screens {
     }
 
     /** CONTACT_SETTINGS — Почта */
-    public static Screen contactSettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 56, handler);
+    public static Screen contactSettings() {
+        Screen s = new Screen(0, 56);
         s.configureHeader(16, 1044);
         s.addTextSeparator(595); // Уведомления о новой почте:
         s.addCheckbox(596, 90); // Иконка
@@ -699,8 +697,8 @@ public final class Screens {
     }
 
     /** MULTI_ACCOUNT_SETTINGS — Список контактов */
-    public static Screen multiAccountSettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 29, handler);
+    public static Screen multiAccountSettings() {
+        Screen s = new Screen(0, 29);
         s.configureHeader(6, 542);
         s.addTextSeparator(620); // Учетные записи:
         s.addCheckbox(621, 243); // В отдельных закладках
@@ -726,8 +724,8 @@ public final class Screens {
     }
 
     /** CHAT_VIEW_MODE — Настройка сети */
-    public static Screen chatViewMode(ScreenHandler handler) {
-        Screen s = new Screen(0, 50, handler);
+    public static Screen chatViewMode() {
+        Screen s = new Screen(0, 50);
         s.configureHeader(309, 544);
         s.addCheckbox(625, 112); // Асинхронная передача
         s.configureSoftKeys(1053, 12, 1050, 12, 0);
@@ -735,8 +733,8 @@ public final class Screens {
     }
 
     /** TRAFFIC_COST — Тарификация */
-    public static Screen trafficCost(ScreenHandler handler) {
-        Screen s = new Screen(0, 14, handler);
+    public static Screen trafficCost() {
+        Screen s = new Screen(0, 14);
         s.configureHeader(29, 541);
         s.addTextInput(626, 10, 1262, 0, 1286);
         s.addNumericInput(627, 10, 1262, 114, 1, 1024, 1024);
@@ -746,8 +744,8 @@ public final class Screens {
     }
 
     /** NOTIFICATION_SETTINGS — Горячие клавиши */
-    public static Screen notificationSettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 27, handler);
+    public static Screen notificationSettings() {
+        Screen s = new Screen(0, 27);
         s.configureHeader(14, 540);
         s.addDropdown(629, 641, 205); // *:
         s.addDropdown(630, 641, 206); // #:
@@ -766,8 +764,8 @@ public final class Screens {
     }
 
     /** EXT_SETTINGS */
-    public static Screen extSettings(ScreenHandler handler) {
-        Screen s = new Screen(2, 151, handler);
+    public static Screen extSettings() {
+        Screen s = new Screen(2, 151);
         s.configureHeader(303, 1038);
         s.showCheckboxes = true;
         s.addActionById(364, 880, 0);
@@ -780,8 +778,8 @@ public final class Screens {
     }
 
     /** MAP_VIEW_SETTINGS */
-    public static Screen mapViewSettings(ScreenHandler handler) {
-        Screen s = new Screen(10, 152, handler);
+    public static Screen mapViewSettings() {
+        Screen s = new Screen(10, 152);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(361, 666, 6); // Имя не может быть пустым.
@@ -793,8 +791,8 @@ public final class Screens {
     }
 
     /** NOTIFICATION_DIALOG */
-    public static Screen notificationDialog(ScreenHandler handler) {
-        Screen s = new Screen(8, 112, handler);
+    public static Screen notificationDialog() {
+        Screen s = new Screen(8, 112);
         s.configureHeader(0, 1038);
         s.addLabelSeparator(1294);
         s.configureSoftKeys(0, 0, 669, 12, 12);
@@ -802,8 +800,8 @@ public final class Screens {
     }
 
     /** CREATE_GROUP — Создать группу */
-    public static Screen createGroup(ScreenHandler handler) {
-        Screen s = new Screen(0, 69, handler);
+    public static Screen createGroup() {
+        Screen s = new Screen(0, 69);
         s.configureHeader(35, 670);
         s.addTextInput(671, 63, 424, 0, 1295);
         s.configureSoftKeys(1053, 4, 1050, 12, 0);
@@ -811,8 +809,8 @@ public final class Screens {
     }
 
     /** REGION_CHOICE — Добавить контакт */
-    public static Screen regionChoice(ScreenHandler handler) {
-        Screen s = new Screen(0, 21, handler);
+    public static Screen regionChoice() {
+        Screen s = new Screen(0, 21);
         s.configureHeader(7, 552);
         s.addTextInput(673, 63, 425, 0, 1296);
         s.addDropdown(674, 694, 1480); // Домен:
@@ -834,8 +832,8 @@ public final class Screens {
     }
 
     /** XMPP_LOGIN_ALT — Учетная запись Jabber */
-    public static Screen xmppLoginAlt(ScreenHandler handler) {
-        Screen s = new Screen(0, 76, handler);
+    public static Screen xmppLoginAlt() {
+        Screen s = new Screen(0, 76);
         s.configureHeader(383, 697);
         s.addTextInput(673, 63, 425, 0, 1292);
         s.addTextInput(556, 63, 425, 327680, 1293);
@@ -844,8 +842,8 @@ public final class Screens {
     }
 
     /** XMPP_LOGIN_ALT2 — Учетная запись ВКонтакте */
-    public static Screen xmppLoginAlt2(ScreenHandler handler) {
-        Screen s = new Screen(0, 76, handler);
+    public static Screen xmppLoginAlt2() {
+        Screen s = new Screen(0, 76);
         s.configureHeader(387, 698);
         s.addLogin(12, 0);
         s.addDropdown(674, 694, 1474);
@@ -855,8 +853,8 @@ public final class Screens {
     }
 
     /** EMPTY_SCREEN — Списки видимости */
-    public static Screen emptyScreen(ScreenHandler handler) {
-        Screen s = new Screen(10, 124, handler);
+    public static Screen emptyScreen() {
+        Screen s = new Screen(10, 124);
         s.configureHeader(22, 700);
         s.showCheckboxes = true;
         s.addActionById(17, 763, 125); // Когда я ем...
@@ -867,8 +865,8 @@ public final class Screens {
     }
 
     /** CONTACT_EDITOR — Имя и телефоны */
-    public static Screen contactEditor(ScreenHandler handler) {
-        Screen s = new Screen(0, 19, handler);
+    public static Screen contactEditor() {
+        Screen s = new Screen(0, 19);
         s.configureHeader(18, 702);
         s.addTextInput(704, 63, 424, 0, 1302);
         s.configureSoftKeys(1053, 4, 1050, 12, 0);
@@ -876,8 +874,8 @@ public final class Screens {
     }
 
     /** ADD_MRIM_CONTACT — Добавить телефонный контакт */
-    public static Screen addMrimContact(ScreenHandler handler) {
-        Screen s = new Screen(0, 22, handler);
+    public static Screen addMrimContact() {
+        Screen s = new Screen(0, 22);
         s.configureHeader(27, 703);
         s.addTextSeparator(12);
         s.addActionById(3, 1303, 424);
@@ -887,8 +885,8 @@ public final class Screens {
     }
 
     /** RENAME_GROUP — Переименовать */
-    public static Screen renameGroup(ScreenHandler handler) {
-        Screen s = new Screen(0, 70, handler);
+    public static Screen renameGroup() {
+        Screen s = new Screen(0, 70);
         s.configureHeader(35, 721);
         s.addTextInput(671, 63, 424, 0, 1306);
         s.configureSoftKeys(1053, 4, 1050, 12, 0);
@@ -896,8 +894,8 @@ public final class Screens {
     }
 
     /** ADD_CONTACT — Добавить контакт */
-    public static Screen addContact(ScreenHandler handler) {
-        Screen s = new Screen(0, 21, handler);
+    public static Screen addContact() {
+        Screen s = new Screen(0, 21);
         s.configureHeader(256, 552);
         s.addNumericInput(263250, 10, 1262, 1491, 1, 2147483647, -1);
         s.addTextInput(675, 63, 424, 0, 1307);
@@ -912,8 +910,8 @@ public final class Screens {
     }
 
     /** PHONE_GROUPS — Отправить SMS */
-    public static Screen phoneGroups(ScreenHandler handler) {
-        Screen s = new Screen(0, 65, handler);
+    public static Screen phoneGroups() {
+        Screen s = new Screen(0, 65);
         s.configureHeader(27, 711);
         s.addDropdown(712, 1313, 1493); // Телефон:
         s.addTextInput(870, 160, 424, 0, 1279);
@@ -922,8 +920,8 @@ public final class Screens {
     }
 
     /** CHAT_STATUS */
-    public static Screen chatStatus(ScreenHandler handler) {
-        Screen s = new Screen(3, 87, handler);
+    public static Screen chatStatus() {
+        Screen s = new Screen(3, 87);
         s.configureHeader(0, 1038);
         s.addConditionalIf(1456, 40, -1, 1060); // UIKeys.FLAG_STATUS_TEXT_SET
         s.addConditionalIf(1456, 65, -1, 476); // UIKeys.FLAG_STATUS_TEXT_SET
@@ -936,8 +934,8 @@ public final class Screens {
     }
 
     /** CONTACT_GROUP_MENU */
-    public static Screen contactGroupMenu(ScreenHandler handler) {
-        Screen s = new Screen(4, 30, handler);
+    public static Screen contactGroupMenu() {
+        Screen s = new Screen(4, 30);
         s.configureHeader(0, 1038);
         s.addActionById(35, 721, 70); // Видимость
         s.addActionById(34, 719, 71); // Указать что я здесь
@@ -946,8 +944,8 @@ public final class Screens {
     }
 
     /** CONTACT_ACTIONS_MENU */
-    public static Screen contactActionsMenu(ScreenHandler handler) {
-        Screen s = new Screen(4, 0, handler);
+    public static Screen contactActionsMenu() {
+        Screen s = new Screen(4, 0);
         s.configureHeader(0, 1038);
         s.addConditionalIf(3707, 40, 21, 715); // ContactKeys.FLAG_CONTACT_MENU_MODE
         s.addConditionalUnless(1496, 63, 0, 714); // ContactKeys.FLAG_CONTACT_IS_GROUP
@@ -968,8 +966,8 @@ public final class Screens {
     }
 
     /** CONTACT_MENU */
-    public static Screen contactMenu(ScreenHandler handler) {
-        Screen s = new Screen(4, 0, handler);
+    public static Screen contactMenu() {
+        Screen s = new Screen(4, 0);
         s.configureHeader(0, 1038);
         s.addConditionalIf(12, 199, 14, 7);
         s.addActionById(0, 714, 63); // Маршрут сюда
@@ -986,24 +984,24 @@ public final class Screens {
     }
 
     /** CONTACT_INFO_VIEW_SCREEN — Анкета */
-    public static Screen contactInfoViewScreen(ScreenHandler handler) {
-        Screen s = new Screen(5, 96, handler);
+    public static Screen contactInfoViewScreen() {
+        Screen s = new Screen(5, 96);
         s.configureHeader(17, 716);
         s.configureSoftKeys(503, 0, 1050, 12, 0);
         return s;
     }
 
     /** CAPTCHA — Фото */
-    public static Screen captcha(ScreenHandler handler) {
-        Screen s = new Screen(5, 106, handler);
+    public static Screen captcha() {
+        Screen s = new Screen(5, 106);
         s.configureHeader(17, 503);
         s.configureSoftKeys(0, 0, 1050, 12, 0);
         return s;
     }
 
     /** PROFILE_LIST — Обновление */
-    public static Screen profileList(ScreenHandler handler) {
-        Screen s = new Screen(5, 59, handler);
+    public static Screen profileList() {
+        Screen s = new Screen(5, 59);
         s.configureHeader(36, 507);
         s.addSeparator(732, 1284); // Доступна новая версия Мобильного Агента
         s.addSeparator(733, 1285); // Загрузить новую версию можно, открыв в wap-брау...
@@ -1013,32 +1011,32 @@ public final class Screens {
     }
 
     /** SEARCH_RESULT_LIST — Результаты поиска */
-    public static Screen searchResultList(ScreenHandler handler) {
-        Screen s = new Screen(0, 73, handler);
+    public static Screen searchResultList() {
+        Screen s = new Screen(0, 73);
         s.configureHeader(17, 735);
         s.configureSoftKeys(1051, 66, 1050, 12, 103);
         return s;
     }
 
     /** CONTACT_INFO_DETAIL_SCREEN — Анкета */
-    public static Screen contactInfoDetailScreen(ScreenHandler handler) {
-        Screen s = new Screen(5, 103, handler);
+    public static Screen contactInfoDetailScreen() {
+        Screen s = new Screen(5, 103);
         s.configureHeader(17, 716);
         s.configureSoftKeys(503, 0, 1050, 12, 0);
         return s;
     }
 
     /** CONTACT_ADD_SCREEN — Запрос авторизации */
-    public static Screen contactAddScreen(ScreenHandler handler) {
-        Screen s = new Screen(0, 66, handler);
+    public static Screen contactAddScreen() {
+        Screen s = new Screen(0, 66);
         s.configureHeader(23, 737);
         s.configureSoftKeys(1058, 4, 1050, 12, 0);
         return s;
     }
 
     /** CONTACT_LIST_SCREEN — Запрос авторизации */
-    public static Screen contactListScreen(ScreenHandler handler) {
-        Screen s = new Screen(0, 66, handler);
+    public static Screen contactListScreen() {
+        Screen s = new Screen(0, 66);
         s.configureHeader(23, 737);
         s.addSeparator(263250, 1320);
         s.addActionById(738, 1320, 1);
@@ -1048,8 +1046,8 @@ public final class Screens {
     }
 
     /** ADD_CONTACT_FORM — Добавить контакт */
-    public static Screen addContactForm(ScreenHandler handler) {
-        Screen s = new Screen(0, 21, handler);
+    public static Screen addContactForm() {
+        Screen s = new Screen(0, 21);
         s.configureHeader(383, 552);
         s.addTextInput(744, 63, 425, 0, 1296);
         s.addDropdown(691, 684, 1487);
@@ -1059,8 +1057,8 @@ public final class Screens {
     }
 
     /** SETTINGS_MENU */
-    public static Screen settingsMenu(ScreenHandler handler) {
-        Screen s = new Screen(10, 8, handler);
+    public static Screen settingsMenu() {
+        Screen s = new Screen(10, 8);
         s.configureHeader(28, 1038);
         s.showCheckboxes = true;
         s.addActionById(28, 745, 0);
@@ -1072,15 +1070,15 @@ public final class Screens {
     }
 
     /** TRAFFIC_STATS */
-    public static Screen trafficStats(ScreenHandler handler) {
-        Screen s = new Screen(0, 34, handler);
+    public static Screen trafficStats() {
+        Screen s = new Screen(0, 34);
         s.configureSoftKeys(508, 34, 1050, 12, 0);
         return s;
     }
 
     /** SETTINGS_MAIN */
-    public static Screen settingsMain(ScreenHandler handler) {
-        Screen s = new Screen(5, 2, handler);
+    public static Screen settingsMain() {
+        Screen s = new Screen(5, 2);
         s.configureHeader(156, 459216);
         s.addLabelSeparator(1016); // Добро пожаловать в Мобильный Агент! Сейчас буде...
         s.configureSoftKeys(1017, 157, 0, 157, 157);
@@ -1088,48 +1086,48 @@ public final class Screens {
     }
 
     /** DELETE_CONTACT_LIST — Игнорировать */
-    public static Screen deleteContactList(ScreenHandler handler) {
-        Screen s = new Screen(0, 127, handler);
+    public static Screen deleteContactList() {
+        Screen s = new Screen(0, 127);
         s.configureHeader(20, 767);
         s.configureSoftKeys(719, 4, 1050, 12, 0);
         return s;
     }
 
     /** UNBLOCK_CONTACT_LIST — Я всегда невидим для... */
-    public static Screen unblockContactList(ScreenHandler handler) {
-        Screen s = new Screen(0, 126, handler);
+    public static Screen unblockContactList() {
+        Screen s = new Screen(0, 126);
         s.configureHeader(19, 764);
         s.configureSoftKeys(719, 4, 1050, 12, 0);
         return s;
     }
 
     /** BLOCK_CONTACT_LIST — Я всегда видим для... */
-    public static Screen blockContactList(ScreenHandler handler) {
-        Screen s = new Screen(0, 125, handler);
+    public static Screen blockContactList() {
+        Screen s = new Screen(0, 125);
         s.configureHeader(17, 763);
         s.configureSoftKeys(719, 4, 1050, 12, 0);
         return s;
     }
 
     /** PHONE_INPUT_ALT — Шаблоны сообщений */
-    public static Screen phoneInputAlt(ScreenHandler handler) {
-        Screen s = new Screen(0, 98, handler);
+    public static Screen phoneInputAlt() {
+        Screen s = new Screen(0, 98);
         s.configureHeader(32, 543);
         s.configureSoftKeys(1052, 12, 1050, 12, 12);
         return s;
     }
 
     /** URL_OPEN — Шаблоны сообщений */
-    public static Screen urlOpen(ScreenHandler handler) {
-        Screen s = new Screen(0, 99, handler);
+    public static Screen urlOpen() {
+        Screen s = new Screen(0, 99);
         s.configureHeader(32, 543);
         s.configureSoftKeys(1048, 65, 1050, 12, 65);
         return s;
     }
 
     /** ACCOUNT_SWITCH_OPTIONS */
-    public static Screen accountSwitchOptions(ScreenHandler handler) {
-        Screen s = new Screen(10, 64, handler);
+    public static Screen accountSwitchOptions() {
+        Screen s = new Screen(10, 64);
         s.configureHeader(9, 1038);
         s.showCheckboxes = true;
         s.addConditionalUnless(1496, 0, 0, 763); // ContactKeys.FLAG_CONTACT_IS_GROUP
@@ -1143,8 +1141,8 @@ public final class Screens {
     }
 
     /** CREATE_CHAT_ROOM — Начать конференцию */
-    public static Screen createChatRoom(ScreenHandler handler) {
-        Screen s = new Screen(0, 143, handler);
+    public static Screen createChatRoom() {
+        Screen s = new Screen(0, 143);
         s.configureHeader(232, 553);
         s.addTextInput(869, 255, 424, 0, 1292);
         s.addCheckbox(769, 2722); // Приглашаю только я
@@ -1154,24 +1152,24 @@ public final class Screens {
     }
 
     /** GROUP_MEMBERS — Список участников */
-    public static Screen groupMembers(ScreenHandler handler) {
-        Screen s = new Screen(0, 142, handler);
+    public static Screen groupMembers() {
+        Screen s = new Screen(0, 142);
         s.configureHeader(6, 724);
         s.configureSoftKeys(1051, 199, 1050, 12, 145);
         return s;
     }
 
     /** EDIT_MEMBERS — Добавить в конференцию */
-    public static Screen editMembers(ScreenHandler handler) {
-        Screen s = new Screen(0, 144, handler);
+    public static Screen editMembers() {
+        Screen s = new Screen(0, 144);
         s.configureHeader(7, 774);
         s.configureSoftKeys(1051, 40, 1050, 12, 0);
         return s;
     }
 
     /** CHAT_OPTIONS */
-    public static Screen chatOptions(ScreenHandler handler) {
-        Screen s = new Screen(10, 166, handler);
+    public static Screen chatOptions() {
+        Screen s = new Screen(10, 166);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addConditionalIf(1497, 65, 27, 776); // ContactKeys.FLAG_CONTACT_IS_USER
@@ -1182,8 +1180,8 @@ public final class Screens {
     }
 
     /** COLOR_PICKER */
-    public static Screen colorPicker(ScreenHandler handler) {
-        Screen s = new Screen(10, 104, handler);
+    public static Screen colorPicker() {
+        Screen s = new Screen(10, 104);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(156, 642, 0);
@@ -1197,8 +1195,8 @@ public final class Screens {
     }
 
     /** GROUP_MOVE */
-    public static Screen groupMove(ScreenHandler handler) {
-        Screen s = new Screen(10, 86, handler);
+    public static Screen groupMove() {
+        Screen s = new Screen(10, 86);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.configureSoftKeys(1048, 199, 1050, 12, 199);
@@ -1206,16 +1204,16 @@ public final class Screens {
     }
 
     /** CONTACT_INFO_EDITOR — Список видимости */
-    public static Screen contactInfoEditor(ScreenHandler handler) {
-        Screen s = new Screen(0, 156, handler);
+    public static Screen contactInfoEditor() {
+        Screen s = new Screen(0, 156);
         s.configureHeader(310, 779);
         s.configureSoftKeys(1053, 151, 1050, 151, 151);
         return s;
     }
 
     /** PROFILE_EDIT */
-    public static Screen profileEdit(ScreenHandler handler) {
-        Screen s = new Screen(8, 160, handler);
+    public static Screen profileEdit() {
+        Screen s = new Screen(8, 160);
         s.configureHeader(-1, 1038);
         s.addLabelSeparator(1337);
         s.configureSoftKeys(785, 171, 1052, 151, 171);
@@ -1223,8 +1221,8 @@ public final class Screens {
     }
 
     /** CHAT_DETAIL */
-    public static Screen chatDetail(ScreenHandler handler) {
-        Screen s = new Screen(10, 162, handler);
+    public static Screen chatDetail() {
+        Screen s = new Screen(10, 162);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(308, 657, 6); // Имя не может быть пустым.
@@ -1235,16 +1233,16 @@ public final class Screens {
     }
 
     /** MAIL_ACCOUNT_LIST */
-    public static Screen mailAccountList(ScreenHandler handler) {
-        Screen s = new Screen(2, 169, handler);
+    public static Screen mailAccountList() {
+        Screen s = new Screen(2, 169);
         s.configureHeader(303, 1038);
         s.configureSoftKeys(1048, 199, 1050, 12, 199);
         return s;
     }
 
     /** CHAT_ROOM_CONFIG — Описание статуса */
-    public static Screen chatRoomConfig(ScreenHandler handler) {
-        Screen s = new Screen(0, 49, handler);
+    public static Screen chatRoomConfig() {
+        Screen s = new Screen(0, 49);
         s.configureHeader(0, 795);
         s.addTextInput(0, 63, 424, 0, 0);
         s.configureSoftKeys(1053, 0, 1050, 12, 0);
@@ -1252,8 +1250,8 @@ public final class Screens {
     }
 
     /** FILE_SELECTOR — Выберите файл */
-    public static Screen fileSelector(ScreenHandler handler) {
-        Screen s = new Screen(0, 135, handler);
+    public static Screen fileSelector() {
+        Screen s = new Screen(0, 135);
         s.configureHeader(221, 797);
         s.addLogin(796, 1284); // *
         s.configureSoftKeys(1060, 141, 1050, 12, 0);
@@ -1261,8 +1259,8 @@ public final class Screens {
     }
 
     /** PHOTO_SELECTOR_ALT — Фото */
-    public static Screen photoSelectorAlt(ScreenHandler handler) {
-        Screen s = new Screen(5, 133, handler);
+    public static Screen photoSelectorAlt() {
+        Screen s = new Screen(5, 133);
         s.configureHeader(220, 503);
         s.addLabelSeparator(1344);
         s.configureSoftKeys(0, 0, 1055, 12, 0);
@@ -1270,8 +1268,8 @@ public final class Screens {
     }
 
     /** MAIN_SCREEN — Блокировка */
-    public static Screen mainScreen(ScreenHandler handler) {
-        Screen s = new Screen(5, 137, handler);
+    public static Screen mainScreen() {
+        Screen s = new Screen(5, 137);
         s.configureHeader(5, 502);
         s.addLabelSeparator(803); // Клавиатура заблокирована.
         s.configureSoftKeys(0, 0, 804, 0, 0);
@@ -1279,8 +1277,8 @@ public final class Screens {
     }
 
     /** ACCOUNT_SETUP — Настройка учетной записи */
-    public static Screen accountSetup(ScreenHandler handler) {
-        Screen s = new Screen(0, 157, handler);
+    public static Screen accountSetup() {
+        Screen s = new Screen(0, 157);
         s.configureHeader(383, 805);
         s.addActionById(-1, 697, 76); // XMPP_LOGIN
         s.configureSoftKeys(1048, 199, 1055, 4, 199);
@@ -1288,8 +1286,8 @@ public final class Screens {
     }
 
     /** REGISTRATION_FORM — Учетная запись Mail.Ru */
-    public static Screen registrationForm(ScreenHandler handler) {
-        Screen s = new Screen(0, 164, handler);
+    public static Screen registrationForm() {
+        Screen s = new Screen(0, 164);
         s.configureHeader(156, 557);
         s.addLogin(12, 0);
         s.addDropdown(674, 694, 1474);
@@ -1307,8 +1305,8 @@ public final class Screens {
     }
 
     /** REGISTRATION */
-    public static Screen registration(ScreenHandler handler) {
-        Screen s = new Screen(10, 16, handler);
+    public static Screen registration() {
+        Screen s = new Screen(10, 16);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(-1, 815, 76); // Название:
@@ -1318,8 +1316,8 @@ public final class Screens {
     }
 
     /** ERROR_ALERT */
-    public static Screen errorAlert(ScreenHandler handler) {
-        Screen s = new Screen(8, 0, handler);
+    public static Screen errorAlert() {
+        Screen s = new Screen(8, 0);
         s.configureHeader(0, 1038);
         s.addLabelSeparator(1344);
         s.configureSoftKeys(1056, 0, 1057, 12, 0);
@@ -1327,39 +1325,39 @@ public final class Screens {
     }
 
     /** CONFIRM_DIALOG */
-    public static Screen confirmDialog(ScreenHandler handler) {
-        Screen s = new Screen(7, 0, handler);
+    public static Screen confirmDialog() {
+        Screen s = new Screen(7, 0);
         s.configureSoftKeys(0, 0, 1055, 12, 0);
         return s;
     }
 
     /** GENERIC_LIST */
-    public static Screen genericList(ScreenHandler handler) {
-        Screen s = new Screen(1, 36, handler);
+    public static Screen genericList() {
+        Screen s = new Screen(1, 36);
         s.configureHeader(-1, 1038);
         s.configureSoftKeys(1062, 88, 1048, 37, 37);
         return s;
     }
 
     /** INPUT_FORM — Папки */
-    public static Screen inputForm(ScreenHandler handler) {
-        Screen s = new Screen(0, 38, handler);
+    public static Screen inputForm() {
+        Screen s = new Screen(0, 38);
         s.configureHeader(35, 834);
         s.configureSoftKeys(1059, 80, 1050, 12, 41);
         return s;
     }
 
     /** CONTACT_DETAILS */
-    public static Screen contactDetails(ScreenHandler handler) {
-        Screen s = new Screen(0, 43, handler);
+    public static Screen contactDetails() {
+        Screen s = new Screen(0, 43);
         s.configureHeader(0, 1038);
         s.configureSoftKeys(1059, 51, 1050, 12, 48);
         return s;
     }
 
     /** MESSAGE_PREVIEW */
-    public static Screen messagePreview(ScreenHandler handler) {
-        Screen s = new Screen(5, 52, handler);
+    public static Screen messagePreview() {
+        Screen s = new Screen(5, 52);
         s.configureHeader(240, 1284);
         s.addTextSeparator(1285);
         s.addLabelSeparator(1286);
@@ -1368,8 +1366,8 @@ public final class Screens {
     }
 
     /** COMPOSE_RECIPIENTS */
-    public static Screen composeRecipients(ScreenHandler handler) {
-        Screen s = new Screen(3, 53, handler);
+    public static Screen composeRecipients() {
+        Screen s = new Screen(3, 53);
         s.configureHeader(0, 1038);
         s.addActionById(213, 839, 54); // Ok, договорились.
         s.addActionById(214, 840, 54); // Ok, договорились.
@@ -1383,8 +1381,8 @@ public final class Screens {
     }
 
     /** CHAT_ROOM_CONTEXT */
-    public static Screen chatRoomContext(ScreenHandler handler) {
-        Screen s = new Screen(3, 51, handler);
+    public static Screen chatRoomContext() {
+        Screen s = new Screen(3, 51);
         s.configureHeader(0, 1038);
         s.addConditionalIf(1517, 37, 243, 851); // ChatKeys.SCREEN_FLAGS_START
         s.addActionById(238, 846, 54); // Ok, договорились.
@@ -1398,8 +1396,8 @@ public final class Screens {
     }
 
     /** SOFTKEY_MENU */
-    public static Screen softkeyMenu(ScreenHandler handler) {
-        Screen s = new Screen(10, 67, handler);
+    public static Screen softkeyMenu() {
+        Screen s = new Screen(10, 67);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(237, 853, 72); // Написать сообщение
@@ -1413,8 +1411,8 @@ public final class Screens {
     }
 
     /** MAIL_MENU */
-    public static Screen mailMenu(ScreenHandler handler) {
-        Screen s = new Screen(10, 62, handler);
+    public static Screen mailMenu() {
+        Screen s = new Screen(10, 62);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(213, 839, 48); // Привет!
@@ -1430,8 +1428,8 @@ public final class Screens {
     }
 
     /** INPUT_DIALOG */
-    public static Screen inputDialog(ScreenHandler handler) {
-        Screen s = new Screen(10, 60, handler);
+    public static Screen inputDialog() {
+        Screen s = new Screen(10, 60);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(218, 859, 78); // Сохранить закладку
@@ -1441,8 +1439,8 @@ public final class Screens {
     }
 
     /** GROUP_SELECTOR */
-    public static Screen groupSelector(ScreenHandler handler) {
-        Screen s = new Screen(10, 58, handler);
+    public static Screen groupSelector() {
+        Screen s = new Screen(10, 58);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(243, 864, 0);
@@ -1452,8 +1450,8 @@ public final class Screens {
     }
 
     /** NOTIFICATION_OPTIONS */
-    public static Screen notificationOptions(ScreenHandler handler) {
-        Screen s = new Screen(3, 80, handler);
+    public static Screen notificationOptions() {
+        Screen s = new Screen(3, 80);
         s.configureHeader(0, 1038);
         s.addActionById(243, 851, 37); // В вашем телефоне недостаточно оперативной памят...
         s.addActionById(238, 846, 54); // Ok, договорились.
@@ -1463,8 +1461,8 @@ public final class Screens {
     }
 
     /** SEARCH_RESULTS — Поиск */
-    public static Screen searchResults(ScreenHandler handler) {
-        Screen s = new Screen(0, 68, handler);
+    public static Screen searchResults() {
+        Screen s = new Screen(0, 68);
         s.configureHeader(227, 1061);
         s.addTextInput(867, 255, 424, 0, 1348);
         s.addTextInput(868, 255, 424, 0, 1349);
@@ -1476,8 +1474,8 @@ public final class Screens {
     }
 
     /** COMPOSE_MESSAGE — Написать письмо */
-    public static Screen composeMessage(ScreenHandler handler) {
-        Screen s = new Screen(0, 54, handler);
+    public static Screen composeMessage() {
+        Screen s = new Screen(0, 54);
         s.configureHeader(238, 875);
         s.addTextInput(868, 255, 425, 0, 1352);
         s.addTextInput(869, 255, 424, 0, 1353);
@@ -1488,8 +1486,8 @@ public final class Screens {
     }
 
     /** THEME_OPTIONS */
-    public static Screen themeOptions(ScreenHandler handler) {
-        Screen s = new Screen(3, 88, handler);
+    public static Screen themeOptions() {
+        Screen s = new Screen(3, 88);
         s.configureHeader(156, 1038);
         s.addActionById(8, 500, 56); // Я в пробке. Буду через   мин.
         s.addActionById(10, 1049, 10);
@@ -1498,8 +1496,8 @@ public final class Screens {
     }
 
     /** DIALOG_SCREEN */
-    public static Screen dialogScreen(ScreenHandler handler) {
-        Screen s = new Screen(10, 90, handler);
+    public static Screen dialogScreen() {
+        Screen s = new Screen(10, 90);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.configureSoftKeys(1048, 42, 1050, 12, 42);
@@ -1507,8 +1505,8 @@ public final class Screens {
     }
 
     /** VERSION_SELECT */
-    public static Screen versionSelect(ScreenHandler handler) {
-        Screen s = new Screen(10, 109, handler);
+    public static Screen versionSelect() {
+        Screen s = new Screen(10, 109);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(370, 880, 1);
@@ -1521,8 +1519,8 @@ public final class Screens {
     }
 
     /** VCARD_ACTIONS */
-    public static Screen vcardActions(ScreenHandler handler) {
-        Screen s = new Screen(3, 130, handler);
+    public static Screen vcardActions() {
+        Screen s = new Screen(3, 130);
         s.configureHeader(0, 1038);
         s.addActionById(-1, 885, 0);
         s.addActionById(-1, 886, 1);
@@ -1532,8 +1530,8 @@ public final class Screens {
     }
 
     /** FORM_SETTINGS — Подсветка */
-    public static Screen formSettings(ScreenHandler handler) {
-        Screen s = new Screen(0, 140, handler);
+    public static Screen formSettings() {
+        Screen s = new Screen(0, 140);
         s.configureHeader(236, 1009);
         s.addCheckbox(1010, 268); // Управлять подсветкой
         s.addCheckbox(1011, 269); // Выключать при блокировке
@@ -1545,8 +1543,8 @@ public final class Screens {
     }
 
     /** INVITE_TOS_SCREEN — Внимание! */
-    public static Screen inviteTosScreen(ScreenHandler handler) {
-        Screen s = new Screen(0, 138, handler);
+    public static Screen inviteTosScreen() {
+        Screen s = new Screen(0, 138);
         s.configureHeader(156, 1018);
         s.addLabelSeparator(1019); // Вы используете несертифицированную версию Мобил...
         s.addCheckbox(1020, 273); // Больше не показывать
@@ -1555,16 +1553,16 @@ public final class Screens {
     }
 
     /** ASYNC_CONFIRM_SCREEN */
-    public static Screen asyncConfirmScreen(ScreenHandler handler) {
-        Screen s = new Screen(2, 149, handler);
+    public static Screen asyncConfirmScreen() {
+        Screen s = new Screen(2, 149);
         s.configureHeader(0, 1038);
         s.configureSoftKeys(1048, 12, 1050, 12, 12);
         return s;
     }
 
     /** WIFI_NETWORKS — Рекомендовать */
-    public static Screen wifiNetworks(ScreenHandler handler) {
-        Screen s = new Screen(0, 168, handler);
+    public static Screen wifiNetworks() {
+        Screen s = new Screen(0, 168);
         s.configureHeader(376, 529);
         s.addTextInput(712, 31, 1262, 3, 1303);
         s.configureSoftKeys(1060, 199, 1050, 12, 199);
@@ -1572,8 +1570,8 @@ public final class Screens {
     }
 
     /** CONNECTION_SETTINGS */
-    public static Screen connectionSettings(ScreenHandler handler) {
-        Screen s = new Screen(10, 35, handler);
+    public static Screen connectionSettings() {
+        Screen s = new Screen(10, 35);
         s.configureHeader(0, 1038);
         s.showCheckboxes = true;
         s.addActionById(314, 1034, 0);

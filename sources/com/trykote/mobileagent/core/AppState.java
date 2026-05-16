@@ -1,20 +1,36 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
-import java.util.Vector;
+import com.trykote.mobileagent.key.ContactKeys;
+import com.trykote.mobileagent.key.MapKeys;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.SessionKeys;
+import com.trykote.mobileagent.key.SettingsKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.key.TrafficKeys;
+import com.trykote.mobileagent.key.UIKeys;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.net.TrafficAccounting;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.MainCanvas;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ChunkedRecordStore;
+import com.trykote.mobileagent.util.IOUtils;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  * Central state management for the application.
@@ -463,10 +479,6 @@ public abstract class AppState {
 
     public static Contact getCurrentContact() {
         return (Contact) pool[ContactKeys.SLOT_CURRENT_ENTITY];
-    }
-
-    public static MrimContact getCurrentMrimContact() {
-        return (MrimContact) pool[ContactKeys.SLOT_CURRENT_ENTITY];
     }
 
     public static void setCurrentEntity(Object entity) {

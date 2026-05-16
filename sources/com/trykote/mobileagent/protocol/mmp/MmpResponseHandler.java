@@ -1,11 +1,21 @@
 package com.trykote.mobileagent.protocol.mmp;
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.RegistrationKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Enumeration;
 import java.util.Vector;
 

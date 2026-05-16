@@ -1,16 +1,26 @@
 package com.trykote.mobileagent.model;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.MessageListener;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.ScreenId;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.ContactListManager;
+import com.trykote.mobileagent.ui.ListView;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.ui.Screen;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ChunkedRecordStore;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
@@ -132,7 +142,7 @@ public abstract class Contact implements Sortable {
 
     public final void addFlag(int flagBit) {
         this.flags = (byte) (this.flags | flagBit);
-        ContactListManager.markContactRead(this);
+        this.account.notifyContactActivated(this);
         this.dirty = true;
         this.lastMessageTime = SessionState.getTimestampCurrent();
         updateRenderState();
@@ -157,7 +167,7 @@ public abstract class Contact implements Sortable {
         state = !isOnline() ? state | RENDER_NOT_FULLY_ONLINE : state & RENDER_ONLINE_CLEAR_MASK;
         if (state != this.renderState) {
             this.renderState = state;
-            AppController.needsLayoutUpdate = true;
+            this.account.notifyContactListUpdated();
         }
     }
 
@@ -184,8 +194,6 @@ public abstract class Contact implements Sortable {
     }
 
     public final void receiveMessageFull(long timestamp, String text, int flagType) {
-        ContactState.setContactId(this.identifier);
-        NotificationHelper.playNotificationSound(NotificationHelper.SOUND_MESSAGE_RECEIVED);
         addFlag(flagType);
         this.account.markRead(getIdentifier());
         clearStatus();
@@ -195,24 +203,11 @@ public abstract class Contact implements Sortable {
             group.toggleSpecial();
         }
         updateRenderState();
-        Account acct = this.account;
-        String contactId = this.identifier;
-        if (acct == null || contactId == null) {
-            return;
-        }
-        Vector tabs = UIState.getTabBars();
-        for (int k = tabs.size() - 1; k >= 0; k--) {
-            TabBar tabBar = (TabBar) tabs.elementAt(k);
-            if (tabBar.account == acct) {
-                tabBar.selectedTitle = contactId;
-                tabBar.selectedIndex = 0;
-                return;
-            }
-        }
+        this.account.notifyMessageReceived(this, MessageListener.SOUND_MESSAGE_RECEIVED);
     }
 
     public final int sendMessage(String text) {
-        NotificationHelper.playNotificationSound(NotificationHelper.SOUND_MESSAGE_SENT);
+        this.account.notifyMessageSent(this);
         if (StringUtils.isEmpty(text)) {
             return ERROR_EMPTY_MESSAGE;
         }
@@ -345,7 +340,7 @@ public abstract class Contact implements Sortable {
         String name = this.displayName;
         RuntimeState.setCurrentMsgText(name);
         RuntimeState.setMessageIcon(getDisplayIcon());
-        Screen msgScreen = Screens.messageSummary(null);
+        Screen msgScreen = Screens.messageSummary();
         ByteBuffer dupe = getMessageBuffer().duplicate();
         int dateCode = AppState.getDateCode();
         while (dupe.length > 0) {
@@ -432,7 +427,7 @@ public abstract class Contact implements Sortable {
     }
 
     public final ListView showMessageSummary() {
-        Screen msgScreen = Screens.messageDetail(null);
+        Screen msgScreen = Screens.messageDetail();
         ByteBuffer dupe = getMessageBuffer().duplicate();
         while (dupe.length > 0) {
             int entryLen = dupe.readShortBE();
@@ -489,6 +484,46 @@ public abstract class Contact implements Sortable {
 
     public abstract String getIdentifier();
 
+    // Protocol-specific email/login identifier (for ContactInfo, email composition, etc.)
+    // MrimContact -> simpleIdentifier, MmpContact -> raw identifier, XmppContact -> jabberId
+    public String getContactEmail() { return getIdentifier(); }
+
+    // Whether this is an MRIM-type contact (for type code dispatch, group membership checks)
+    public boolean isMrimType() { return false; }
+
+    // Whether this contact supports XMPP presence subscription
+    public boolean canSubscribe() { return false; }
+
+    // Perform presence subscription action. Returns result code.
+    public int subscribe(int subscriptionType) { return 0; }
+
+    // Whether user details can be requested (MRIM "wake up" / detail request)
+    public boolean canRequestDetails() { return false; }
+
+    // Request user details from server. Returns error code or 0.
+    public int requestDetails() { return 0; }
+
+    // Whether this contact has location/VCard data for map display
+    public boolean hasLocationData() { return false; }
+
+    // Whether this contact can be edited (renamed, etc.)
+    public boolean isEditable() { return false; }
+
+    // Emoticon resource base index for this contact's protocol
+    public int getEmoticonBase() { return StringResKeys.EMOTICON_NAMES_BASE; }
+
+    // Populate protocol-specific fields into a ContactInfo object
+    public void populateContactInfo(Object contactInfo) {}
+
+    // Whether this contact has loaded vCard/profile data
+    public boolean hasVCard() { return false; }
+
+    // Whether this contact supports file transfer
+    public boolean supportsFileTransfer() { return false; }
+
+    // Group membership list for MRIM phone contacts
+    public Vector getGroupMembership() { return null; }
+
     public boolean isOffline() {
         return false;
     }
@@ -501,7 +536,7 @@ public abstract class Contact implements Sortable {
         }
         this.displayName = name;
         this.sortKey = StringUtils.intern(name.toLowerCase());
-        AppController.needsLayoutUpdate = true;
+        this.account.notifyContactListUpdated();
     }
 
     public final String toString() {

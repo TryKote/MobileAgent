@@ -1,16 +1,11 @@
 package com.trykote.mobileagent.map;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.SizeCache;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.StringUtils;
 public final class MapPoint implements ListItem {
 
     public String name;

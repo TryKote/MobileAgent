@@ -1,12 +1,15 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+
 import javax.microedition.media.Manager;
 import javax.microedition.media.Player;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public final class SoundPlayer {
 

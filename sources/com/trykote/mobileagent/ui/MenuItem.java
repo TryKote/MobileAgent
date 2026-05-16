@@ -1,11 +1,19 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.core.event.MenuItemEvent;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.key.UIKeys;
+import com.trykote.mobileagent.util.BitMath;
+import com.trykote.mobileagent.util.EmoticonReplacer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Vector;
 
 public final class MenuItem {
@@ -187,7 +195,7 @@ public final class MenuItem {
             NotificationHelper.showMessageById(MSG_PASSWORD_HINT);
             return RESULT_HANDLED;
         } else if (this.id == TYPE_DROPDOWN) {
-            Screen choiceScreen = Screens.choiceDialog(null);
+            Screen choiceScreen = Screens.choiceDialog();
             Object[] choiceData = (Object[]) this.data;
             String[] items = (String[]) choiceData[1];
             int selectedIndex = ((Integer) choiceData[0]).intValue();

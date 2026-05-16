@@ -1,16 +1,22 @@
 package com.trykote.mobileagent.net;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.ContactKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.key.TrafficKeys;
+import com.trykote.mobileagent.key.UIKeys;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.ScreenManager;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
 /* Extracted from AppController: traffic accounting subsystem */
 public final class TrafficAccounting extends AppState {
 
@@ -21,12 +27,19 @@ public final class TrafficAccounting extends AppState {
     protected int deltaStart() { return RANGE_TRAFFIC_START; }
     protected int deltaEnd() { return RANGE_TRAFFIC_END; }
 
-    private static final int CATEGORY_COUNT = 4;
-    private static final int SLOTS_PER_CATEGORY = 8;
-    private static final int DAILY_SENT_OFFSET = 4;
-    private static final int DAILY_RECV_OFFSET = 5;
-    private static final int MONTHLY_SENT_OFFSET = 6;
-    private static final int MONTHLY_RECV_OFFSET = 7;
+    // Base key for each traffic category (MRIM, MMP, XMPP, HTTP)
+    private static final int[] CATEGORY_BASE = {
+        TrafficKeys.TRAFFIC_MRIM_SENT_BYTES,
+        TrafficKeys.TRAFFIC_MMP_SENT_BYTES,
+        TrafficKeys.TRAFFIC_XMPP_SENT_BYTES,
+        TrafficKeys.TRAFFIC_HTTP_SENT_BYTES
+    };
+
+    // Offsets from category base for daily/monthly counters
+    private static final int OFFSET_DAILY_SENT = 2;
+    private static final int OFFSET_DAILY_RECV = 3;
+    private static final int OFFSET_MONTHLY_SENT = 4;
+    private static final int OFFSET_MONTHLY_RECV = 5;
     private static final int MONTH_SHIFT = 8;
 
     private static final int STAT_ROWS_PER_ACCOUNT = 8;
@@ -41,13 +54,14 @@ public final class TrafficAccounting extends AppState {
         int currentDate = AppState.getDateCode();
         int savedDate = AppState.getInt(TrafficKeys.TRAFFIC_SAVED_DATE);
         if (currentDate != savedDate) {
-            for (int i = 0; i < CATEGORY_COUNT; i++) {
-                int offset = i * SLOTS_PER_CATEGORY;
-                AppState.setInt(offset + DAILY_SENT_OFFSET, 0);
-                AppState.setInt(offset + DAILY_RECV_OFFSET, 0);
-                if ((currentDate >>> MONTH_SHIFT) != (savedDate >>> MONTH_SHIFT)) {
-                    AppState.setInt(offset + MONTHLY_SENT_OFFSET, 0);
-                    AppState.setInt(offset + MONTHLY_RECV_OFFSET, 0);
+            boolean monthChanged = (currentDate >>> MONTH_SHIFT) != (savedDate >>> MONTH_SHIFT);
+            for (int i = 0; i < CATEGORY_BASE.length; i++) {
+                int base = CATEGORY_BASE[i];
+                AppState.setInt(base + OFFSET_DAILY_SENT, 0);
+                AppState.setInt(base + OFFSET_DAILY_RECV, 0);
+                if (monthChanged) {
+                    AppState.setInt(base + OFFSET_MONTHLY_SENT, 0);
+                    AppState.setInt(base + OFFSET_MONTHLY_RECV, 0);
                 }
             }
             AppState.setInt(TrafficKeys.TRAFFIC_SAVED_DATE, currentDate);
@@ -139,15 +153,19 @@ public final class TrafficAccounting extends AppState {
     }
 
     public static final int getTrafficCount(int category, int period, int direction) {
-        return AppState.getInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES + category * SLOTS_PER_CATEGORY + period * 2 + direction);
+        return AppState.getInt(CATEGORY_BASE[category] + period * 2 + direction);
     }
 
     public static final int getTotalTraffic(int period, int direction) {
-        return getTrafficCount(0, period, direction) + getTrafficCount(1, period, direction) + getTrafficCount(2, period, direction) + getTrafficCount(3, period, direction);
+        int total = 0;
+        for (int i = 0; i < CATEGORY_BASE.length; i++) {
+            total += getTrafficCount(i, period, direction);
+        }
+        return total;
     }
 
     public static final void addTrafficCount(int category, int period, int direction) {
-        AppState.setInt(TrafficKeys.TRAFFIC_MRIM_SENT_BYTES + category * SLOTS_PER_CATEGORY + period * 2 + direction, 0);
+        AppState.setInt(CATEGORY_BASE[category] + period * 2 + direction, 0);
     }
 
     public static void showTrafficStats() {
@@ -193,7 +211,7 @@ public final class TrafficAccounting extends AppState {
         int costCents = (int) ((j * SettingsState.getTrafficCost()) / BYTES_PER_MB);
         RuntimeState.setTrafficCostText(ObjectPool.newStringBuffer().append(costCents / CENTS_PER_UNIT).append('.').append(Utils.zeroPad(costCents % CENTS_PER_UNIT)).append(' ').append(ResourceAccessor.str(StringResKeys.STR_CURRENCY_SYMBOL)));
         RuntimeState.setTrafficPeriodLabel(periodIndex + 745);
-        Screens.trafficStats(null).show();
+        Screens.trafficStats().show();
         AppState.clearRange(ContactKeys.SLOT_GROUP_LIST_INDEX, UIKeys.RANGE_SEARCH_LABEL_END);
     }
 

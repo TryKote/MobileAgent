@@ -1,10 +1,16 @@
 package com.trykote.mobileagent.protocol;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.net.SocketWrapper;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.IOUtils;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.Utils;
+
 import java.util.Vector;
 
 public final class ConnectionThread {

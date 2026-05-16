@@ -1,16 +1,13 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.util.ImageCache;
+import com.trykote.mobileagent.util.Utils;
+
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -155,7 +152,7 @@ public final class GraphicsContext {
                     }
                     if (drawW2 > 0) {
                         graphics.setClip(i7, i6, drawW, drawW2);
-                        graphics.drawImage(XmppContactGroup.getOrLoadImage(i10), i7 - i12, i6 - i13, 20);
+                        graphics.drawImage(ImageCache.getOrLoadImage(i10), i7 - i12, i6 - i13, 20);
                         graphics.setClip(clipX, clipY, clipWidth, clipHeight);
                     }
                 }

@@ -2,12 +2,13 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.UIState;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Vector;
+
 import javax.microedition.io.Connection;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Vector;
 
 public final class IOUtils {
 

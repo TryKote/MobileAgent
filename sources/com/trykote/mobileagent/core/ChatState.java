@@ -1,6 +1,6 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.key.*;
+import com.trykote.mobileagent.key.ChatKeys;
 
 import java.util.Vector;
 

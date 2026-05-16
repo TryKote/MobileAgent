@@ -1,15 +1,44 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 
-import com.trykote.mobileagent.core.*;
+import com.trykote.mobileagent.map.MapPoint;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.ChatRoom;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactGroup;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.model.SearchEntry;
+import com.trykote.mobileagent.model.VCard;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.ConnectionThread;
+import com.trykote.mobileagent.protocol.ProtocolEvent;
+import com.trykote.mobileagent.protocol.ProtocolFactory;
+import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
+import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
+import com.trykote.mobileagent.ui.ListItem;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.TabBar;
+import com.trykote.mobileagent.util.Base64;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.DiagnosticReporter;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.TimerManager;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlParser;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -116,10 +145,15 @@ public final class MrimAccount extends Account implements ListItem {
 
     // Icon resource IDs
     private static final int ICON_CONNECTING = 153;
-    private static final int ICON_STATUS_BASE = 155;
+    private static final int ICON_STATUS_OFFLINE = 155;
+    private static final int ICON_STATUS_ONLINE = 156;
+    private static final int ICON_STATUS_DND = 157;
+    private static final int ICON_STATUS_FREE_CHAT = 158;
+    private static final int ICON_STATUS_AWAY = 159;
+    private static final int ICON_STATUS_INVISIBLE = 160;
 
-    // Gender string resource IDs
-    private static final int STR_GENDER_BASE = 781;
+    // Gender string resource IDs (indexed by gender code 1-4)
+    private static final int[] GENDER_STR_KEYS = {-1, 781, 782, 783, 784};
 
     // Mail notification type codes
     private static final int MAIL_TYPE_LOGIN_OK = 65;
@@ -128,7 +162,10 @@ public final class MrimAccount extends Account implements ListItem {
     private static final int MAIL_TYPE_COMPLETE = 73;
 
     // Status text string resource IDs
-    private static final int STR_STATUS_TEXT_BASE = 1221;
+    private static final int STR_STATUS_ONLINE = 1221;
+    private static final int STR_STATUS_DND = 1222;
+    private static final int STR_STATUS_AWAY = 1224;
+    private static final int STR_STATUS_INVISIBLE = 1225;
 
     // Status change: free_chat maps to hidden DND flag
     private static final int STATUS_FREE_CHAT_FLAG = -2147483647;
@@ -291,19 +328,19 @@ public final class MrimAccount extends Account implements ListItem {
         }
         switch (this.lastError) {
             case STATUS_DISCONNECTED:
-                return ICON_STATUS_BASE;
+                return ICON_STATUS_OFFLINE;
             case STATUS_ONLINE:
-                return ICON_STATUS_BASE + 1;
+                return ICON_STATUS_ONLINE;
             case STATUS_DND:
-                return ICON_STATUS_BASE + 2;
+                return ICON_STATUS_DND;
             case STATUS_FREE_CHAT:
-                return ICON_STATUS_BASE + 3;
+                return ICON_STATUS_FREE_CHAT;
             case STATUS_AWAY:
-                return ICON_STATUS_BASE + 4;
+                return ICON_STATUS_AWAY;
             case STATUS_INVISIBLE:
-                return ICON_STATUS_BASE + 5;
+                return ICON_STATUS_INVISIBLE;
             default:
-                return ICON_STATUS_BASE + 2 + (this.lastError >> 8);
+                return ICON_STATUS_DND + (this.lastError >> 8);
         }
     }
 
@@ -319,7 +356,7 @@ public final class MrimAccount extends Account implements ListItem {
                 this.state = 0;
                 this.connection = new ConnectionThread(ResourceAccessor.str(PackedStringKeys.HOST_MRIM_REDIRECT));
                 this.progress = PROGRESS_CONNECTING_REDIRECT;
-                AppController.needsRepaint = true;
+                notifyConnectionProgressChanged();
                 break;
             case PROGRESS_CONNECTING_REDIRECT:
                 this.msgCount = PROGRESS_PERCENT_CONNECTING;
@@ -327,7 +364,7 @@ public final class MrimAccount extends Account implements ListItem {
                     RemoteLogger.log("MRIM", "redirect server connected, reading address");
                     this.msgCount = PROGRESS_PERCENT_REDIRECT;
                     this.progress = PROGRESS_READING_REDIRECT;
-                    AppController.needsRepaint = true;
+                    notifyConnectionProgressChanged();
                 }
                 break;
             case PROGRESS_READING_REDIRECT:
@@ -349,7 +386,7 @@ public final class MrimAccount extends Account implements ListItem {
                     RemoteLogger.log("MRIM", "redirect resolved to: " + mainServer);
                     this.connection = new ConnectionThread(mainServer);
                     this.progress = PROGRESS_CONNECTING_MAIN;
-                    AppController.needsRepaint = true;
+                    notifyConnectionProgressChanged();
                 }
                 break;
             case PROGRESS_CONNECTING_MAIN:
@@ -358,7 +395,7 @@ public final class MrimAccount extends Account implements ListItem {
                     this.msgCount = PROGRESS_PERCENT_AUTH_SENT;
                     sendData(ProtocolFactory.createMrimAuthPacket(this));
                     this.progress = PROGRESS_AUTHENTICATING;
-                    AppController.needsRepaint = true;
+                    notifyConnectionProgressChanged();
                 }
                 break;
         }
@@ -469,7 +506,7 @@ public final class MrimAccount extends Account implements ListItem {
                     break;
             }
             packet.clear();
-            AppController.needsLayoutUpdate = true;
+            notifyContactListUpdated();
         }
     }
 
@@ -503,7 +540,7 @@ public final class MrimAccount extends Account implements ListItem {
             contact.dirty = true;
             contact.updateRenderState();
             if (prevCount == 0 && statusCode != 0) {
-                NotificationHelper.playNotificationSound(NotificationHelper.SOUND_CONTACT_ONLINE);
+                notifyContactOnline(contact);
             }
         }
     }
@@ -743,19 +780,17 @@ public final class MrimAccount extends Account implements ListItem {
         int statusTextId;
         switch (this.configFlags) {
             case STATUS_ONLINE:
-                statusTextId = STR_STATUS_TEXT_BASE;
+            case STATUS_FREE_CHAT:
+                statusTextId = STR_STATUS_ONLINE;
                 break;
             case STATUS_DND:
-                statusTextId = STR_STATUS_TEXT_BASE + 1;
-                break;
-            case STATUS_FREE_CHAT:
-                statusTextId = STR_STATUS_TEXT_BASE;
+                statusTextId = STR_STATUS_DND;
                 break;
             case STATUS_AWAY:
-                statusTextId = STR_STATUS_TEXT_BASE + 3;
+                statusTextId = STR_STATUS_AWAY;
                 break;
             case STATUS_INVISIBLE:
-                statusTextId = STR_STATUS_TEXT_BASE + 4;
+                statusTextId = STR_STATUS_INVISIBLE;
                 break;
             default:
                 statusTextId = -1;
@@ -1027,7 +1062,8 @@ public final class MrimAccount extends Account implements ListItem {
         contact.receiveMessage(timestamp, msgBuf);
     }
 
-    public final void addOfflineContact(String contactAddress) {
+    @Override
+    public void addOfflineContact(String contactAddress) {
         if (StringUtils.equals(contactAddress, this.login) || findContactByIdentifier(contactAddress) != null) {
             return;
         }
@@ -1129,24 +1165,9 @@ public final class MrimAccount extends Account implements ListItem {
             if (Utils.nonEmpty(phone)) {
                 sb.append(phone).append('.').append(' ');
             }
-            String genderText;
-            switch (this.profileManager.profile.gender) {
-                case 1:
-                    genderText = AppState.getString(STR_GENDER_BASE);
-                    break;
-                case 2:
-                    genderText = AppState.getString(STR_GENDER_BASE + 1);
-                    break;
-                case 3:
-                    genderText = AppState.getString(STR_GENDER_BASE + 2);
-                    break;
-                case 4:
-                    genderText = AppState.getString(STR_GENDER_BASE + 3);
-                    break;
-                default:
-                    genderText = null;
-                    break;
-            }
+            int gender = this.profileManager.profile.gender;
+            String genderText = (gender >= 1 && gender < GENDER_STR_KEYS.length)
+                    ? AppState.getString(GENDER_STR_KEYS[gender]) : null;
             if (Utils.nonEmpty(genderText)) {
                 sb.append(genderText).append('.');
             }
@@ -1174,7 +1195,8 @@ public final class MrimAccount extends Account implements ListItem {
         return this.profileManager.sizeCache.getHeight(index, this);
     }
 
-    public final void performUserSearch(SearchEntry entry) {
+    @Override
+    public void performUserSearch(SearchEntry entry) {
         if (isConnected()) {
             entry.id = this.state;
             sendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_WP_REQUEST2, new ByteBuffer().writeIntLE(1).writeStringLatin1(entry.query)));
@@ -1282,5 +1304,257 @@ public final class MrimAccount extends Account implements ListItem {
 
     private ByteBuffer hashPassword() {
         return new ByteBuffer().writeRawString(this.password).encryptMD5();
+    }
+
+    // --- Account capability overrides ---
+
+    @Override
+    public boolean hasCustomDomain() {
+        return this.hasCustomDomain;
+    }
+
+    @Override
+    public boolean supportsChatRooms() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsVCard() {
+        return true;
+    }
+
+    @Override
+    public String getNickname() {
+        return this.chatRoomManager.nickname != null ? this.chatRoomManager.nickname : this.login;
+    }
+
+    @Override
+    public String getAuthCookie() {
+        return this.jabberId;
+    }
+
+    @Override
+    public void setAuthCookie(String cookie) {
+        this.jabberId = cookie;
+    }
+
+    @Override
+    public boolean isMapHighlighted() {
+        return this.isHighlighted;
+    }
+
+    @Override
+    public void setMapHighlighted(boolean value) {
+        this.isHighlighted = value;
+    }
+
+    @Override
+    public int handleStatusOption(int optionIndex) {
+        return setConfiguration(optionIndex);
+    }
+
+    @Override
+    public void syncProfile() {
+        this.profileManager.sync();
+    }
+
+    @Override
+    public boolean isMessageReadInAnyRoom(String messageId) {
+        Enumeration elements = this.chatRoomManager.list.elements();
+        while (elements.hasMoreElements()) {
+            if (((ChatRoom) elements.nextElement()).isMessageRead(messageId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isLastChatRoom(Object chatRoom) {
+        return chatRoom == this.chatRoomManager.getLast();
+    }
+
+    @Override
+    public ChatRoom findChatRoomByName(String name) {
+        return this.chatRoomManager.findByName(name);
+    }
+
+    @Override
+    public ChatRoom findChatRoomById(int id) {
+        return this.chatRoomManager.findById(id);
+    }
+
+    @Override
+    public int getChatRoomCount() {
+        return this.chatRoomManager.getCount();
+    }
+
+    @Override
+    public boolean areChatRoomsLoaded() {
+        return this.chatRoomManager.loaded;
+    }
+
+    @Override
+    public Vector getChatRooms() {
+        return this.chatRoomManager.list;
+    }
+
+    @Override
+    public ChatRoom getLastChatRoom() {
+        return this.chatRoomManager.getLast();
+    }
+
+    @Override
+    public ChatRoom findDefaultChatRoom() {
+        return this.chatRoomManager.findDefault();
+    }
+
+    @Override
+    public void parseChatRoomsFromJson(Object payload) {
+        this.chatRoomManager.parseFromJson(payload);
+    }
+
+
+    @Override
+    public void showChatRoomSelector() {
+        MrimChatRoomManager.showChatRoomSelector();
+    }
+
+    @Override
+    public void sendChatRoomRequest(Object[] request) {
+        MrimChatRoomManager.sendChatRoomRequest(request);
+    }
+
+    @Override
+    public int createChatRoom(String name, Vector members, boolean includeOwner) {
+        ByteBuffer buffer = new ByteBuffer();
+        int memberCount = members.size();
+        ByteBuffer membersBuf = buffer.writeIntLE(memberCount);
+        for (int i = memberCount - 1; i >= 0; i--) {
+            membersBuf.writeStringLatin1((String) members.elementAt(i));
+        }
+        ByteBuffer wrappedBuf = new ByteBuffer().writeBufferIntLen(membersBuf);
+        Object[] command = new Object[3];
+        command[0] = ProtocolFactory.createMrimPacket(this, MrimCommand.CS_ADD_CONTACT,
+                new ByteBuffer().writeIntLE(128).writeZeros(8).writeStringUTF16(name)
+                        .writeZeros(12).writeBufferIntLen(includeOwner
+                                ? wrappedBuf.writeStringLatin1(this.login) : wrappedBuf));
+        command[1] = ObjectPool.integerOf(RESP_ADD_PHONE);
+        command[2] = name;
+        return trySendData(createAndQueueCommand(command));
+    }
+
+    @Override
+    public int applyConfiguration(int config) {
+        return setConfiguration(config);
+    }
+
+    @Override
+    public int sendSmsMessage(Contact contact, String phone, String message) {
+        if (!isConnected()) {
+            return 299;
+        }
+        contact.appendMessage(1, ObjectPool.toStringAndRelease(
+                Utils.appendColon(ObjectPool.newStringBuffer()
+                        .append(ResourceAccessor.str(StringResKeys.STR_FILE_TRANSFER_PREFIX))
+                        .append(Utils.formatPhone(phone))).append(message)), 0L, 0L);
+        StringBuffer phoneSb = ObjectPool.newStringBuffer().append('+');
+        if (phone.charAt(0) == '8') {
+            phoneSb.append('7').append(StringUtils.suffix(phone, 1));
+        } else {
+            phoneSb.append(phone);
+        }
+        return trySendData(createAndQueueCommand(new Object[]{
+                ProtocolFactory.createMrimPacket(this, MrimCommand.CS_MESSAGE_EXT,
+                        new ByteBuffer().writeIntLE(0)
+                                .writeStringLatin1(ObjectPool.toStringAndRelease(phoneSb))
+                                .writeStringUTF16(message)),
+                ObjectPool.integerOf(RESP_XMPP_SERVICE), contact, message, phone}));
+    }
+
+    @Override
+    public int sendBlogPost(String message, boolean isReply, long timestamp) {
+        if (!isConnected()) {
+            return 299;
+        }
+        EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_OPERATION_COMPLETE));
+        return trySendData(ProtocolFactory.createMrimPacket(this, MrimCommand.CS_BLOG_POST,
+                new ByteBuffer().writeIntLE(isReply ? 5 : 20)
+                        .writeStringUTF16(message).writeLong(timestamp)));
+    }
+
+    @Override
+    public boolean hasProfileCoordinates() {
+        return this.profileManager.profile.hasCoordinates();
+    }
+
+    @Override
+    public void setProfileMapLocation(Object mapPoint) {
+        this.profileManager.setMapLocation((MapPoint) mapPoint);
+    }
+
+    @Override
+    public void setProfileSimpleLocation(String longitude, String latitude) {
+        this.profileManager.setSimpleLocation(longitude, latitude);
+    }
+
+    @Override
+    public void setChatRoomsLoaded() {
+        this.chatRoomManager.loaded = true;
+    }
+
+    @Override
+    public int getDefaultChatRoomId() {
+        return this.chatRoomManager.findDefault().id;
+    }
+
+    @Override
+    public void removeChatRoomUser(String userId) {
+        this.chatRoomManager.removeUser(userId);
+    }
+
+    @Override
+    public int getProfileGender() {
+        return this.profileManager.profile.gender;
+    }
+
+    @Override
+    public void clearLastChatRoom() {
+        this.chatRoomManager.getLast().clear();
+    }
+
+    @Override
+    public void publishLocation() {
+        this.profileManager.publishLocation();
+    }
+
+    @Override
+    public void hideLocation() {
+        this.profileManager.hideLocation();
+    }
+
+    @Override
+    public void setLocationGroups() {
+        this.profileManager.setGroups();
+    }
+
+    @Override
+    public void clearLocationGroups() {
+        this.profileManager.clearGroups();
+    }
+
+    @Override
+    public boolean isProfileSelected() {
+        return this.isHighlighted && this.profileManager.profile != null && this.profileManager.profile.hasCoordinates();
+    }
+
+    @Override
+    public ListItem asListItem() {
+        return this;
+    }
+
+    @Override
+    public boolean isProfileDirty() {
+        return this.profileManager.profile.dirty;
     }
 }

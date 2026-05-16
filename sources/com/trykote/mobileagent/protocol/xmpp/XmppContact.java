@@ -1,15 +1,16 @@
 package com.trykote.mobileagent.protocol.xmpp;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.model.Contact;
+import com.trykote.mobileagent.model.ContactInfo;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
 public final class XmppContact extends Contact {
 
     // Icon IDs
@@ -164,6 +165,36 @@ public final class XmppContact extends Contact {
 
     @Override
     public void performAction() {
+    }
+
+    @Override
+    public String getContactEmail() {
+        return this.jabberId;
+    }
+
+    @Override
+    public boolean canSubscribe() {
+        return true;
+    }
+
+    @Override
+    public int subscribe(int subscriptionType) {
+        return sendPresence(subscriptionType);
+    }
+
+    @Override
+    public int getEmoticonBase() {
+        return StringResKeys.XMPP_EMOTICONS_BASE;
+    }
+
+    @Override
+    public void populateContactInfo(Object contactInfo) {
+        ((ContactInfo) contactInfo).setXmppId(this.jabberId);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return !((XmppProtocol) this.account).isMailRuVariant();
     }
 
     public void updateFromPresence(String presenceType, XmlElement element) {

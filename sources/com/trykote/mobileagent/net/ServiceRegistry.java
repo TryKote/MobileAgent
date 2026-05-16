@@ -1,15 +1,20 @@
 package com.trykote.mobileagent.net;
 
 
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
-import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.util.Base64;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ChunkedRecordStore;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
 
 import javax.microedition.lcdui.Image;
 import java.util.Enumeration;
@@ -27,7 +32,7 @@ public final class ServiceRegistry {
     public static Vector hiddenContacts;
 
     public static final void loadSavedData() {
-        XmppContactGroup.sharedContactList = ObjectPool.newVector();
+        RequestQueue.sharedContactList = ObjectPool.newVector();
         hiddenContacts = Utils.split(ContactState.getHiddenList(), (char) 0);
         try {
             ByteBuffer registryBuf = Base64.decode(ContactState.getRegistryData());

@@ -1,18 +1,22 @@
 package com.trykote.mobileagent.model;
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.protocol.mrim.*;
-import com.trykote.mobileagent.protocol.mmp.*;
-import com.trykote.mobileagent.protocol.xmpp.*;
-import com.trykote.mobileagent.map.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppController;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.mrim.MrimContact;
+import com.trykote.mobileagent.ui.GraphicsContext;
+import com.trykote.mobileagent.ui.ListView;
+import com.trykote.mobileagent.ui.MenuItem;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+
+import javax.microedition.lcdui.Image;
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.microedition.lcdui.Image;
 
 public final class ContactInfo extends Hashtable {
 
@@ -72,13 +76,7 @@ public final class ContactInfo extends Hashtable {
     public ContactInfo(Contact contact) {
         put(ObjectPool.integerOf(KEY_ACCOUNT), contact.account);
         setContactField(FIELD_DISPLAY_NAME, contact.displayName);
-        if (contact instanceof MrimContact) {
-            setContactField(FIELD_EMAIL, ((MrimContact) contact).simpleIdentifier);
-        } else if (contact instanceof MmpContact) {
-            setMmpContactId(Utils.parseInt((Object) ((MmpContact) contact).identifier));
-        } else if (contact instanceof XmppContact) {
-            setContactField(FIELD_XMPP_ID, ((XmppContact) contact).jabberId);
-        }
+        contact.populateContactInfo(this);
     }
 
     public ContactInfo() {
@@ -93,20 +91,31 @@ public final class ContactInfo extends Hashtable {
     }
 
     public final boolean isXmppContact() {
-        if (getString(FIELD_XMPP_ID) == null) {
-            return getAccount() != null && (getAccount() instanceof XmppProtocol);
+        if (getString(FIELD_XMPP_ID) != null) {
+            return true;
         }
-        return true;
+        Account acct = getAccount();
+        return acct != null && acct.isXmppType();
     }
 
     public final boolean isMrimContact() {
         if (getString(FIELD_MMP_CONTACT_ID) != null) {
             return false;
         }
-        if ((getAccount() == null || !(getAccount() instanceof MmpProtocol)) && getString(FIELD_XMPP_ID) == null) {
-            return getAccount() == null || !(getAccount() instanceof XmppProtocol);
+        if (getString(FIELD_XMPP_ID) != null) {
+            return false;
         }
-        return false;
+        Account acct = getAccount();
+        if (acct == null) {
+            return true;
+        }
+        int type = acct.getType();
+        return type == Account.TYPE_MRIM;
+    }
+
+    public final boolean hasProfileActions() {
+        Account acct = getAccount();
+        return acct != null && acct.supportsVCard();
     }
 
     public static final ContactInfo createAccountInfo(Account account) {
@@ -250,6 +259,10 @@ public final class ContactInfo extends Hashtable {
         return setContactField(FIELD_MMP_CONTACT_ID, str);
     }
 
+    public final ContactInfo setXmppId(String str) {
+        return setContactField(FIELD_XMPP_ID, str);
+    }
+
     public final ContactInfo setMmpTypeId(int i) {
         return setContactField(FIELD_MMP_TYPE_ID, StringUtils.intern(Integer.toString(i)));
     }
@@ -300,7 +313,7 @@ public final class ContactInfo extends Hashtable {
         Account acct = getAccount();
         Vector labels = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_CONTACT_FIELD_LABELS));
         int size = labels.size();
-        if (acct instanceof MrimAccount) {
+        if (acct.getType() == Account.TYPE_MRIM) {
             MrimContact mrimContact = (MrimContact) acct.getContact((Object) getString(FIELD_EMAIL));
             int i3 = 0;
             while (i3 < size) {
@@ -381,7 +394,7 @@ public final class ContactInfo extends Hashtable {
                     screen.addItem(MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_SECTION_ABOUT), 0, 6).setIcon(365).setLabel(vCardDesc));
                 }
             }
-        } else if (acct instanceof MmpProtocol) {
+        } else if (acct.getType() == Account.TYPE_MMP) {
             String mmpId = getString(FIELD_MMP_CONTACT_ID);
             if (mmpId != null) {
                 screen.addLabelValue(Utils.appendSpace(ResourceAccessor.str(PackedStringKeys.PREFIX_UIN)), mmpId);
@@ -411,7 +424,7 @@ public final class ContactInfo extends Hashtable {
             if (website != null) {
                 screen.addLabelValue(ResourceAccessor.str(StringResKeys.STR_LABEL_WEBSITE), website);
             }
-        } else if (acct instanceof XmppProtocol) {
+        } else if (acct.isXmppType()) {
             Image image = (Image) get(ObjectPool.integerOf(FIELD_XMPP_IMAGE));
             if (image != null) {
                 screen.addItem(MenuItem.createGraphics(new GraphicsContext(image)));

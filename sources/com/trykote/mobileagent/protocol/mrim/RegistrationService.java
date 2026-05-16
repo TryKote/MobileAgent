@@ -1,13 +1,34 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 
-import com.trykote.mobileagent.core.*;
-import com.trykote.mobileagent.key.*;
-import com.trykote.mobileagent.ui.*;
-import com.trykote.mobileagent.model.*;
-import com.trykote.mobileagent.protocol.*;
-import com.trykote.mobileagent.net.*;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.core.AppState;
+import com.trykote.mobileagent.core.AsyncTask;
+import com.trykote.mobileagent.core.AsyncTaskId;
+import com.trykote.mobileagent.core.ChatState;
+import com.trykote.mobileagent.core.ContactState;
+import com.trykote.mobileagent.core.MapState;
+import com.trykote.mobileagent.core.RegistrationState;
+import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.key.UIKeys;
+import com.trykote.mobileagent.net.HttpClient;
+import com.trykote.mobileagent.net.NetworkLock;
+import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.ui.ContactListManager;
+import com.trykote.mobileagent.ui.NotificationHelper;
+import com.trykote.mobileagent.ui.Screens;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
+
 import java.util.Vector;
 
 public abstract class RegistrationService {
@@ -107,7 +128,7 @@ public abstract class RegistrationService {
         RegistrationState.setCountryCode(((Integer) objArr[19]).intValue());
         ContactState.setDisplayName((String) objArr[20]);
         RegistrationState.setRegionCode(((Integer) objArr[21]).intValue());
-        Screens.registrationForm(null).show();
+        Screens.registrationForm().show();
         String statusStr = ContactState.getDisplayName();
         if (statusStr == null) {
             RemoteLogger.log("NET", "triggering refreshContactList from RegistrationService");
@@ -270,7 +291,7 @@ public abstract class RegistrationService {
                     NotificationHelper.showMessageById(731);
                 }
             } else {
-                Screens.profileList(null).show();
+                Screens.profileList().show();
             }
         } catch (Throwable unused) {
             if (showMessage) {

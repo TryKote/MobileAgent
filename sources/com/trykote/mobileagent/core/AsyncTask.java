@@ -2,28 +2,42 @@ package com.trykote.mobileagent.core;
 
 import com.trykote.mobileagent.core.event.AccountDataEvent;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.*;
-
-
+import com.trykote.mobileagent.key.MapKeys;
+import com.trykote.mobileagent.key.PackedStringKeys;
+import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.map.GeoRegion;
 import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapPoint;
+import com.trykote.mobileagent.map.MapPointStore;
 import com.trykote.mobileagent.map.MapRenderer;
 import com.trykote.mobileagent.model.ContactListParser;
 import com.trykote.mobileagent.model.Conversation;
 import com.trykote.mobileagent.model.VCard;
-import com.trykote.mobileagent.net.*;
+import com.trykote.mobileagent.net.ApiClient;
+import com.trykote.mobileagent.net.HttpClient;
+import com.trykote.mobileagent.net.NetworkLock;
+import com.trykote.mobileagent.net.RequestQueue;
+import com.trykote.mobileagent.net.ServiceRegistry;
+import com.trykote.mobileagent.net.SocketWrapper;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
 import com.trykote.mobileagent.protocol.ConnectionThread;
 import com.trykote.mobileagent.protocol.ProtocolEvent;
-import com.trykote.mobileagent.protocol.mmp.MmpContact;
+import com.trykote.mobileagent.map.RouteData;
 import com.trykote.mobileagent.protocol.mrim.MrimAccount;
 import com.trykote.mobileagent.protocol.mrim.RegistrationService;
-import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
 import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
-import com.trykote.mobileagent.util.*;
+import com.trykote.mobileagent.util.ByteBuffer;
+import com.trykote.mobileagent.util.ChunkedRecordStore;
+import com.trykote.mobileagent.util.DiagnosticReporter;
+import com.trykote.mobileagent.util.IOUtils;
+import com.trykote.mobileagent.util.ObjectPool;
+import com.trykote.mobileagent.util.RemoteLogger;
+import com.trykote.mobileagent.util.SoftFloat;
+import com.trykote.mobileagent.util.StringUtils;
+import com.trykote.mobileagent.util.Utils;
+import com.trykote.mobileagent.util.XmlElement;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
@@ -280,10 +294,10 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(RES_MAP_POINTS_URL);
+            contactInfo = RequestQueue.getContactInfoFromState(RES_MAP_POINTS_URL);
             httpClient = HttpClient.createWithType2(requestData);
             if (httpClient.getResponseCode() == HTTP_OK) {
-                ChatState.setMessageList(XmppContactGroup.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen()));
+                ChatState.setMessageList(MapPointStore.parseMapPointsFromStr(new ByteBuffer(httpClient).readUTFWithLen()));
             } else {
                 ChatState.setMessageList(ObjectPool.newVector());
             }
@@ -291,7 +305,7 @@ public final class AsyncTask implements Runnable {
             ChatState.setMessageList(ObjectPool.newVector());
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
-            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            RequestQueue.removeContactInfoFromQueue(contactInfo);
             NetworkLock.releaseNetworkLock();
         }
     }
@@ -317,16 +331,16 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(RES_MMP_ROUTE_URL);
+            contactInfo = RequestQueue.getContactInfoFromState(RES_MMP_ROUTE_URL);
             httpClient = HttpClient.createWithType2(requestUrl);
             if (httpClient.getResponseCode() == HTTP_OK) {
-                MmpContact.parseRouteFromJson(new ByteBuffer(httpClient));
-                if (!MmpContact.routeRegions.isEmpty()) {
-                    MmpContact.setLocationEnabled(true);
+                RouteData.parseRouteFromJson(new ByteBuffer(httpClient));
+                if (!RouteData.routeRegions.isEmpty()) {
+                    RouteData.setLocationEnabled(true);
                     Object[] firstEntry;
                     MapRenderer.setPosition(
-                            !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[0] : 0L,
-                            !MmpContact.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) MmpContact.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
+                            !RouteData.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) RouteData.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[0] : 0L,
+                            !RouteData.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) RouteData.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
                 }
             } else {
                 EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_DOWNLOAD_COMPLETE));
@@ -335,13 +349,13 @@ public final class AsyncTask implements Runnable {
             EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_DOWNLOAD_COMPLETE));
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
-            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            RequestQueue.removeContactInfoFromQueue(contactInfo);
             NetworkLock.releaseNetworkLock();
         }
     }
 
     private void taskPeriodicTimeSync() throws Throwable {
-        XmppContactGroup.periodicTimeSync();
+        AccountManager.periodicTimeSync();
     }
 
     private void taskDownloadCachedPhoto() {
@@ -404,7 +418,7 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(RES_SAVED_LOCATIONS_URL);
+            contactInfo = RequestQueue.getContactInfoFromState(RES_SAVED_LOCATIONS_URL);
             httpClient = HttpClient.createWithType2(args[0]);
             if (httpClient.getResponseCode() == HTTP_OK) {
                 long[] coords = (long[]) args[1];
@@ -414,7 +428,7 @@ public final class AsyncTask implements Runnable {
         } catch (Throwable ignored) {
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
-            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            RequestQueue.removeContactInfoFromQueue(contactInfo);
             NetworkLock.releaseNetworkLock();
         }
     }
@@ -425,7 +439,7 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
+            contactInfo = RequestQueue.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
             httpClient = HttpClient.createWithType2(args[0]);
             if (httpClient.getResponseCode() == HTTP_OK) {
                 ContactListParser.parseContactsSync(new ByteBuffer(httpClient), (Integer) args[1]);
@@ -433,7 +447,7 @@ public final class AsyncTask implements Runnable {
         } catch (Throwable ignored) {
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
-            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            RequestQueue.removeContactInfoFromQueue(contactInfo);
             NetworkLock.releaseNetworkLock();
         }
     }
@@ -444,7 +458,7 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
+            contactInfo = RequestQueue.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
             httpClient = HttpClient.createWithType2(args[0]);
             if (httpClient.getResponseCode() == HTTP_OK) {
                 ContactListParser.parseContactsAsync(new ByteBuffer(httpClient), args[1], args[2]);
@@ -452,7 +466,7 @@ public final class AsyncTask implements Runnable {
         } catch (Throwable ignored) {
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
-            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            RequestQueue.removeContactInfoFromQueue(contactInfo);
             NetworkLock.releaseNetworkLock();
         }
     }
@@ -463,7 +477,7 @@ public final class AsyncTask implements Runnable {
         Object[] contactInfo = null;
         try {
             NetworkLock.acquireNetworkLock();
-            contactInfo = XmppContactGroup.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
+            contactInfo = RequestQueue.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
             String baseUrl = ResourceAccessor.str(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
             httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(ResourceAccessor.str(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(ResourceAccessor.str(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
             if (httpClient.getResponseCode() == HTTP_OK) {
@@ -483,7 +497,7 @@ public final class AsyncTask implements Runnable {
             EventDispatcher.postAccountEvent(account);
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
-            XmppContactGroup.removeContactInfoFromQueue(contactInfo);
+            RequestQueue.removeContactInfoFromQueue(contactInfo);
             NetworkLock.releaseNetworkLock();
         }
     }
