@@ -2,7 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
@@ -47,7 +47,7 @@ public abstract class Utils {
     public static final long parseDateTime(String str) {
         Vector parts = splitImpl(str, ' ', false);
         int day = parseInt(parts.elementAt(1));
-        int idx = ResourceAccessor.str(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
+        int idx = StringPool.get(PackedStringKeys.MONTH_ABBREV_TABLE).indexOf(getVectorString(parts, 2)) / 3;
         int year = parseInt(parts.elementAt(3));
         String timeStr = getVectorString(parts, 4);
         ObjectPool.releaseVector(parts);
@@ -62,7 +62,7 @@ public abstract class Utils {
             i--;
         }
         for (int i2 = idx - 2; i2 >= 0; i2--) {
-            i += i2 == 1 ? b : ResourceAccessor.bytes(StringResKeys.RES_MONTH_DAYS)[i2];
+            i += i2 == 1 ? b : AppState.getBytes(StringResKeys.RES_MONTH_DAYS)[i2];
         }
         return (MS_PER_SECOND * (((SECONDS_PER_DAY * i) + (hours * SECONDS_PER_HOUR)) + (minutes * SECONDS_PER_MINUTE))) - ((SettingsState.getTimezoneOffset() - 13) * (SECONDS_PER_HOUR * MS_PER_SECOND));
     }
@@ -552,7 +552,7 @@ public abstract class Utils {
             length = str.length();
         }
         int i3 = 0;
-        int spaceWidth = font.stringWidth(ResourceAccessor.str(StringResKeys.STR_SPACE));
+        int spaceWidth = font.stringWidth(StringPool.get(StringResKeys.STR_SPACE));
         while (length != -1) {
             String word = StringUtils.substring(str, i2, length);
             int wordWidth = font.stringWidth(word);

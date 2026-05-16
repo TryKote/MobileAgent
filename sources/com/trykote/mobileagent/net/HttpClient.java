@@ -2,7 +2,7 @@ package com.trykote.mobileagent.net;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
@@ -100,7 +100,7 @@ public final class HttpClient {
     private HttpClient(String str) {
         this.mockMode = 1;
         this.requestType = 2;
-        this.url = str.startsWith(ResourceAccessor.str(PackedStringKeys.SCHEME_HTTP)) ? StringUtils.suffix(str, 7) : str;
+        this.url = str.startsWith(StringPool.get(PackedStringKeys.SCHEME_HTTP)) ? StringUtils.suffix(str, 7) : str;
     }
 
     private HttpClient(String str, Account account, int i) throws IOException {
@@ -176,13 +176,13 @@ public final class HttpClient {
 
     public final HttpClient sendHttpRequest(int i, int i2, int i3) throws IOException {
         String str = this.url;
-        this.connection = Connector.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeRawString(StringUtils.prefix(str, str.indexOf(47))).getStringAndClear(), 3);
-        writeBuffer(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.suffix(str, str.indexOf(47))).writeCompressed(PackedStringKeys.HTTP_REQUEST_HEADER).writeRawString(StringUtils.prefix(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
+        this.connection = Connector.open(new ByteBuffer().writeCharBytes("socket://").writeRawString(StringUtils.prefix(str, str.indexOf(47))).getStringAndClear(), 3);
+        writeBuffer(new ByteBuffer().writeUInt(i2).writeByte(32).writeRawString(StringUtils.suffix(str, str.indexOf(47))).writeCharBytes(" HTTP/1.1\r\nUser-Agent: J2ME MailAgent\r\nHost: ").writeRawString(StringUtils.prefix(str, str.indexOf(58))).writeEncodedInt(i3).writeUInt(2573));
         if (i2 == 1414745936) {
             setRequestHeader(788628, 2164851);
             setRequestHeader(919726, 788668);
         }
-        return setRequestProperty(ResourceAccessor.str(PackedStringKeys.HEADER_CONTENT_LENGTH), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
+        return setRequestProperty(StringPool.get(PackedStringKeys.HEADER_CONTENT_LENGTH), StringUtils.intern(Integer.toString(i))).setRequestHeader(657608, 329938).writeBuffer(new ByteBuffer().writeUInt(2573));
     }
 
     private final HttpClient setRequestHeader(int i, int i2) throws IOException {
@@ -193,7 +193,7 @@ public final class HttpClient {
         int i;
         ByteBuffer headerBuf = readHeaders();
         String str = new String(headerBuf.data, 0, headerBuf.length);
-        int idx = StringUtils.intern(str.toLowerCase()).indexOf(ResourceAccessor.str(PackedStringKeys.HEADER_CONTENT_LENGTH_LC)) + 16;
+        int idx = StringUtils.intern(str.toLowerCase()).indexOf(StringPool.get(PackedStringKeys.HEADER_CONTENT_LENGTH_LC)) + 16;
         int i2 = Integer.parseInt(StringUtils.substring(str, idx, str.indexOf(13, idx)));
         ByteBuffer buffer = new ByteBuffer();
         byte[] readBuf = ObjectPool.newBytes(i2);

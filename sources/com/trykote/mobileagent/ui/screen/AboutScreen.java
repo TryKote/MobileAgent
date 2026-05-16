@@ -2,7 +2,7 @@ package com.trykote.mobileagent.ui.screen;
 
 import com.trykote.mobileagent.core.RegistrationState;
 import com.trykote.mobileagent.core.ScreenId;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.ui.MenuItem;
@@ -32,8 +32,8 @@ public final class AboutScreen extends ScreenView {
                 Long.toString(Runtime.getRuntime().totalMemory())));
         UIState.setScreenSubtitle((Object) Utils.getFreeMemoryString());
         UIState.setAppVersionStringFromBuffer(ObjectPool.newStringBuffer()
-                .append(ResourceAccessor.str(StringResKeys.STR_APP_NAME))
-                .append(ResourceAccessor.str(StringResKeys.STR_APP_BUILD_SUFFIX)));
+                .append(AppState.getString(StringResKeys.STR_APP_NAME))
+                .append(StringPool.get(StringResKeys.STR_APP_BUILD_SUFFIX)));
         RegistrationState.setDeviceId(new ByteBuffer()
                 .writeLongBytes(ABOUT_SCREEN_KEY).writeByte(',')
                 .writeRawString(AppState.getAppProperty(StringResKeys.STR_APP_PROPERTY_NAME))

@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.util;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
@@ -161,7 +161,7 @@ public final class XmlParser {
                     if (StringUtils.matchesKey(1046, text2)) {
                         z = true;
                     } else if (length2 <= 0) {
-                        endTag = text2.endsWith(ResourceAccessor.str(StringResKeys.STR_SPACE));
+                        endTag = text2.endsWith(StringPool.get(StringResKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                             length2--;
@@ -210,7 +210,7 @@ public final class XmlParser {
                             z3 = true;
                             length2--;
                         }
-                        endTag = text2.endsWith(ResourceAccessor.str(StringResKeys.STR_SPACE));
+                        endTag = text2.endsWith(StringPool.get(StringResKeys.STR_SPACE));
                         z = endTag;
                         if (endTag) {
                             length2--;

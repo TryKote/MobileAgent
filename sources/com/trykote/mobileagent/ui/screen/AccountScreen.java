@@ -3,7 +3,7 @@ package com.trykote.mobileagent.ui.screen;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -83,7 +83,7 @@ public final class AccountScreen extends ScreenView {
                 XmppMailRuProtocol.showLoginScreen();
                 break;
             case ScreenId.ACCOUNT_DELETE_CONFIRM:
-                NotificationHelper.showAlertBuffer(77, ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ALERT_PREFIX)).append(AppState.getAccount().login).append(ObjectPool.unpackChars(16167)));
+                NotificationHelper.showAlertBuffer(77, ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ALERT_PREFIX)).append(AppState.getAccount().login).append(ObjectPool.unpackChars(16167)));
                 break;
             case ScreenId.XMPP_LOGIN_ALT:
                 XmppMailRuProtocol.showLoginScreen();
@@ -277,7 +277,7 @@ public final class AccountScreen extends ScreenView {
             regData = new String[REG_DATA_ARRAY_SIZE];
             int domainIdx = RegistrationState.getRegDomainIndex();
             regData[0] = domainIdx > 0 ? StringUtils.intern(Integer.toString(domainIdx)) : AppState.emptyStr;
-            regData[1] = AppState.getString(RegistrationState.isRegSmsMode() ? 1046 : 1038);
+            regData[1] = StringPool.get(RegistrationState.isRegSmsMode() ? 1046 : 1038);
             regData[2] = Utils.defaultStr(RegistrationState.getSearchField(1));
             regData[3] = Utils.defaultStr(RegistrationState.getSearchField(2));
             regData[4] = Utils.defaultStr(RegistrationState.getSearchField(3));
@@ -296,7 +296,7 @@ public final class AccountScreen extends ScreenView {
     }
 
     private static void buildMmpAccountSelect() {
-        StringBuffer sb = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ACCOUNTS_HEADER));
+        StringBuffer sb = ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ACCOUNTS_HEADER));
         Vector mmpAccounts = AccountManager.getSyncedMrimAccounts();
         int selectedIdx = 0;
         int size = mmpAccounts.size();

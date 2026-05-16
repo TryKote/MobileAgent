@@ -2,7 +2,7 @@ package com.trykote.mobileagent.ui;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -265,7 +265,7 @@ public abstract class ScreenManager {
             if (idx < 0) {
                 return 0;
             }
-        } while (ResourceAccessor.blockStr(StringResKeys.PHONE_STRINGS_BASE, idx) != fieldId);
+        } while (StringPool.get(StringResKeys.PHONE_STRINGS_BASE + idx) != fieldId);
         AppState.setObject(StringResKeys.PHONE_STRINGS_BASE + idx, (Object) newValue);
         return 0;
     }
@@ -289,7 +289,7 @@ public abstract class ScreenManager {
         String[] result = new String[2];
         result[0] = formData;
         String langOption = UIState.getLanguageOption();
-        result[1] = langOption != null ? langOption : ResourceAccessor.str(StringResKeys.STR_DEFAULT_LANGUAGE);
+        result[1] = langOption != null ? langOption : StringPool.get(StringResKeys.STR_DEFAULT_LANGUAGE);
         return result;
     }
 
@@ -319,7 +319,7 @@ public abstract class ScreenManager {
     }
 
     private static int computeInitialState() {
-        return ResourceAccessor.bytes(StringResKeys.RES_UPDATE_DATA) != null ? CACHE_TIMEOUT_SHORT_MS : CACHE_TIMEOUT_LONG_MS;
+        return AppState.getBytes(StringResKeys.RES_UPDATE_DATA) != null ? CACHE_TIMEOUT_SHORT_MS : CACHE_TIMEOUT_LONG_MS;
     }
 
     public static int getThemeColor(int errorId) {

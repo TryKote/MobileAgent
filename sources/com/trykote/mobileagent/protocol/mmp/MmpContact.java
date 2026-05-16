@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.protocol.mmp;
 
 
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.model.Contact;
 import com.trykote.mobileagent.model.ContactInfo;
@@ -324,9 +324,9 @@ public final class MmpContact extends Contact {
                         contact.highlighted = true;
                     }
                 } else if (attrType == ATTR_GUID_LIST) {
-                    byte[] blockedGuid = ResourceAccessor.bytes(StringResKeys.RES_BLOCKED_GUID);
-                    byte[] unblockedGuid = ResourceAccessor.bytes(StringResKeys.RES_UNBLOCKED_GUID);
-                    byte[] iconGuids = ResourceAccessor.bytes(StringResKeys.RES_AUTH_SLOT_GUIDS);
+                    byte[] blockedGuid = AppState.getBytes(StringResKeys.RES_BLOCKED_GUID);
+                    byte[] unblockedGuid = AppState.getBytes(StringResKeys.RES_UNBLOCKED_GUID);
+                    byte[] iconGuids = AppState.getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS);
                     byte[] rawData = buffer.data;
                     int baseOffset = buffer.offset;
                     for (int guidOffset = 0; guidOffset < attrLen; guidOffset += GUID_SIZE) {

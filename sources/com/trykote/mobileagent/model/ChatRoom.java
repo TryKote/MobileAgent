@@ -2,7 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.JsonParser;
@@ -145,8 +145,8 @@ public final class ChatRoom {
 
     private String getFormattedName() {
         for (int i = MAILBOX_NAME_COUNT - 1; i >= 0; i--) {
-            if (this.name.equals(ResourceAccessor.blockStr(StringResKeys.MAILBOX_NAMES_EN_BASE, i))) {
-                return ResourceAccessor.blockStr(StringResKeys.MAILBOX_NAMES_RU_BASE, i);
+            if (this.name.equals(StringPool.get(StringResKeys.MAILBOX_NAMES_EN_BASE + i))) {
+                return StringPool.get(StringResKeys.MAILBOX_NAMES_RU_BASE + i);
             }
         }
         return this.name;

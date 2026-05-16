@@ -4,7 +4,7 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
@@ -210,7 +210,7 @@ public final class MmpProtocol extends Account {
         this.lastError = STATUS_OFFLINE;
         this.configFlags = STATUS_ONLINE;
         this.protocolVersion = PROTOCOL_VERSION_DEFAULT;
-        MmpContactGroup group = new MmpContactGroup(this, 0, ResourceAccessor.str(StringResKeys.STR_GROUP_DEFAULT));
+        MmpContactGroup group = new MmpContactGroup(this, 0, StringPool.get(StringResKeys.STR_GROUP_DEFAULT));
         group.isSpecial = true;
         this.defaultGroup = group;
         this.contactsByIdMap = new Hashtable();
@@ -250,22 +250,22 @@ public final class MmpProtocol extends Account {
 
     @Override // p000.Account
     public ContactGroup createOnlineGroup() {
-        return new MmpContactGroup(this, -1, ResourceAccessor.str(StringResKeys.STR_GROUP_NOT_IN_LIST));
+        return new MmpContactGroup(this, -1, StringPool.get(StringResKeys.STR_GROUP_NOT_IN_LIST));
     }
 
     @Override // p000.Account
     public ContactGroup createBlockedGroup() {
-        return new MmpContactGroup(this, -2, ResourceAccessor.str(StringResKeys.STR_GROUP_TEMPORARY));
+        return new MmpContactGroup(this, -2, StringPool.get(StringResKeys.STR_GROUP_TEMPORARY));
     }
 
     @Override // p000.Account
     public ContactGroup createOfflineGroup() {
-        return new MmpContactGroup(this, -3, ResourceAccessor.str(StringResKeys.STR_GROUP_IGNORE));
+        return new MmpContactGroup(this, -3, StringPool.get(StringResKeys.STR_GROUP_IGNORE));
     }
 
     @Override // p000.Account
     public ContactGroup createSpecialGroup() {
-        return new MmpContactGroup(this, -4, ResourceAccessor.str(StringResKeys.STR_GROUP_PHONE_CONTACTS));
+        return new MmpContactGroup(this, -4, StringPool.get(StringResKeys.STR_GROUP_PHONE_CONTACTS));
     }
 
     @Override
@@ -417,7 +417,7 @@ public final class MmpProtocol extends Account {
                         }
                     }
                     if (Utils.vectorSize(accounts) == 0) {
-                        EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_MMP_AUTH_ERROR));
+                        EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_MMP_AUTH_ERROR));
                         this.progress = PROGRESS_DISCONNECTED;
                     }
                     ObjectPool.releaseVector(accounts);
@@ -467,8 +467,8 @@ public final class MmpProtocol extends Account {
                         sendData(ProtocolFactory.updateMmpPacketLength(ProtocolFactory.createPingPacket(this, MmpCommand.PACKET_HANDSHAKE).writeIntBE(1).writeShortBE(6).writeShortBE(key.length).writeBytes(key)));
                         this.encryptionKey = null;
                         sendData(ProtocolFactory.createAuthData(this));
-                        sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_PREFS, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_LOGIN_HEADER)));
-                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(STATUS_CMD_FLAG | getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_AUTH_PACKET)), ObjectPool.integerOf(MmpResponseHandler.RESP_AUTH_STATUS)}));
+                        sendData(ProtocolFactory.createMmpCommand(this, MmpCommand.SET_PREFS, new ByteBuffer().writeCharBytes(StringPool.get(PackedStringKeys.MMP_LOGIN_HEADER))));
+                        sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.SET_STATUS, new ByteBuffer().writeShortBE(6).writeShortBE(4).writeIntBE(STATUS_CMD_FLAG | getConnectionModeValue()).writeCharBytes(StringPool.get(PackedStringKeys.MMP_AUTH_PACKET))), ObjectPool.integerOf(MmpResponseHandler.RESP_AUTH_STATUS)}));
                         this.contactListIndex = 0;
                         sendData(queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this, MmpCommand.GET_CONTACT_LIST, (ByteBuffer) null), ObjectPool.integerOf(MmpResponseHandler.RESP_CONTACT_LIST)}));
                         sendData(StringUtils.createContactInfoCmd(this, this.serverId));
@@ -544,7 +544,7 @@ public final class MmpProtocol extends Account {
             case MmpCommand.AUTH_RECEIVED:
                 String senderId = packet.readLenPrefixStr();
                 byte authFlag = packet.readByte();
-                onMessage(senderId, 0L, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MMP_FILE_TRANSFER)).append(AppState.getString(authFlag == AUTH_FLAG_ACCEPTED ? STR_AUTH_ACCEPTED : STR_AUTH_REJECTED)).append(packet.readVarLenStr())));
+                onMessage(senderId, 0L, ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_MMP_FILE_TRANSFER)).append(StringPool.get(authFlag == AUTH_FLAG_ACCEPTED ? STR_AUTH_ACCEPTED : STR_AUTH_REJECTED)).append(packet.readVarLenStr())));
                 if (authFlag == AUTH_FLAG_ACCEPTED) {
                     Contact authContact = getContact((Object) senderId);
                     if (authContact != null) {
@@ -553,10 +553,10 @@ public final class MmpProtocol extends Account {
                 }
                 break;
             case MmpCommand.SYSTEM_MESSAGE:
-                onMessage(packet.readLenPrefixStr(), 0L, ResourceAccessor.str(StringResKeys.STR_MMP_SYSTEM_MESSAGE));
+                onMessage(packet.readLenPrefixStr(), 0L, StringPool.get(StringResKeys.STR_MMP_SYSTEM_MESSAGE));
                 break;
             case MmpCommand.SPAM_REPORT_ACK:
-                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MMP_SPAM_REPORT)).append(SPAM_REPORT_CODE).append('/').append(packet.readShortBE()).append(ResourceAccessor.str(StringResKeys.STR_MMP_SPAM_SUFFIX))));
+                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_MMP_SPAM_REPORT)).append(SPAM_REPORT_CODE).append('/').append(packet.readShortBE()).append(StringPool.get(StringResKeys.STR_MMP_SPAM_SUFFIX))));
                 removeQueuedCommand(seqNum);
                 break;
             case MmpCommand.SEARCH_RESPONSE:

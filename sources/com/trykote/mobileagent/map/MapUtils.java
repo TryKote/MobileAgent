@@ -92,7 +92,7 @@ public final class MapUtils {
             String encodedQuery = Conversation.replaceText(query, 1046, 199350);
             Image mapImage = (Image) MapState.getFont2();
             long currentLat = MapRenderer.currentLat;
-            new AsyncTask(AsyncTaskId.FETCH_MAP_POINTS, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_MAPSSEARCH).writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCompressed(PackedStringKeys.PARAM_USER_LAT).writeLongAsString(currentLat).writeCompressed(PackedStringKeys.PARAM_USER_LON).writeLongAsString(MapRenderer.currentLon).writeCompressed(PackedStringKeys.PARAM_X_SCREEN).writeIntAsString(mapImage.getWidth()).writeCompressed(PackedStringKeys.PARAM_Y_SCREEN).writeIntAsString(mapImage.getHeight()).getStringAndClear());
+            new AsyncTask(AsyncTaskId.FETCH_MAP_POINTS, new ByteBuffer().writeCharBytes("http://mobile.mail.ru/").writeCharBytes("data/mapssearch_ver1?q=").writeRawString(Conversation.urlEncodeCyrillic((Object) encodedQuery)).writeCharBytes("&user_lat=").writeLongAsString(currentLat).writeCharBytes("&user_lon=").writeLongAsString(MapRenderer.currentLon).writeCharBytes("&x_screen=").writeIntAsString(mapImage.getWidth()).writeCharBytes("&y_screen=").writeIntAsString(mapImage.getHeight()).getStringAndClear());
         }
         return UIState.isLoading() ? 161 : 6;
     }
@@ -114,7 +114,7 @@ public final class MapUtils {
     }
 
     public static final void requestNearbyPeople() {
-        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), MapState.getZoomLevel()))).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), MapState.getZoomLevel()))).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), MapState.getZoomLevel()))).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), MapState.getZoomLevel()))).writeCompressed(PackedStringKeys.PARAM_QUANTITY_DENSITY);
+        ByteBuffer urlBuf = new ByteBuffer().writeCharBytes("http://geo194.32.248.3/?lat1=").writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY - (MapRenderer.viewportHeight / 2)), MapState.getZoomLevel()))).writeCharBytes("&lon1=").writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX - (MapRenderer.viewportWidth / 2)), MapState.getZoomLevel()))).writeCharBytes("&lat2=").writeRawString(pixelToLatitude((int) pixelToCoord((int) (MapRenderer.currentPixelY + (MapRenderer.viewportHeight / 2)), MapState.getZoomLevel()))).writeCharBytes("&lon2=").writeRawString(pixelToLongitude((int) pixelToCoord((int) (MapRenderer.currentPixelX + (MapRenderer.viewportWidth / 2)), MapState.getZoomLevel()))).writeCharBytes("&quantity=50&density=");
         long tileCount = SoftFloat.multiply(4612811918334230528L, SoftFloat.longToFloat(((MapRenderer.viewportHeight / 128) + 2) * ((MapRenderer.viewportWidth / 128) + 2)));
         int zoomLevel = MapState.getZoomLevel();
         long centerX = MapRenderer.currentPixelX;
@@ -184,11 +184,11 @@ public final class MapUtils {
 
     public static String buildTileRequestUrl(long pixelLon, long pixelLat, int zoomLevel, String query) {
         String encodedQuery;
-        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAPS_MAIL_RU).writeUInt(1031283503);
+        ByteBuffer urlBuf = new ByteBuffer().writeCharBytes("http://maps.mail.ru").writeUInt(1031283503);
         String longitude = pixelToLongitude(pixelLon);
         ByteBuffer urlBuf2 = urlBuf.writeRawString(longitude).writeUInt(4028710);
         String latitude = pixelToLatitude(pixelLat);
-        ByteBuffer urlBuffer = urlBuf2.writeRawString(latitude).writeUInt(4028966).writeIntAsString(zoomLevel).writeCompressed(PackedStringKeys.PARAM_MAP_FULLSCREEN);
+        ByteBuffer urlBuffer = urlBuf2.writeRawString(latitude).writeUInt(4028966).writeIntAsString(zoomLevel).writeCharBytes("&mode=map&fullscreen=true&jams=false");
         if (query != null) {
             ByteBuffer urlBuf3 = urlBuffer.writeUInt(1031302438).writeRawString(longitude).writeUInt(1031367974).writeRawString(latitude).writeUInt(1031040294);
             if (StringUtils.isEmpty(query)) {

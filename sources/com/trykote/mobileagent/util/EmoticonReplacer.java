@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.ui.GraphicsContext;
@@ -42,7 +42,7 @@ public final class EmoticonReplacer {
                 int i6 = -1;
                 int i7 = -1;
                 for (int i8 = 0; i8 < MMP_EMOTICON_COUNT; i8++) {
-                    String pattern = ResourceAccessor.blockStr(StringResKeys.MMP_EMOTICONS_BASE, i8);
+                    String pattern = StringPool.get(StringResKeys.MMP_EMOTICONS_BASE + i8);
                     if (pattern != null && (iIndexOf2 = str.indexOf(pattern, i)) >= 0 && (iIndexOf2 < i6 || i6 == -1)) {
                         i6 = iIndexOf2;
                         i7 = i8;
@@ -53,13 +53,13 @@ public final class EmoticonReplacer {
                 } else {
                     wrapText(vector, str, i, i6, i3, i4, EMOTICON_TYPE_NONE);
                     vector.addElement(new IconElement(ICON_SIZE, i7 + MMP_ICON_OFFSET));
-                    wrapText(vector, str, i6 + ResourceAccessor.blockStr(StringResKeys.MMP_EMOTICONS_BASE, i7).length(), i2, i3, i4, EMOTICON_TYPE_MMP);
+                    wrapText(vector, str, i6 + StringPool.get(StringResKeys.MMP_EMOTICONS_BASE + i7).length(), i2, i3, i4, EMOTICON_TYPE_MMP);
                 }
             } else if (i5 == EMOTICON_TYPE_XMPP || i5 == EMOTICON_TYPE_XMPP_ALT) {
                 int i9 = -1;
                 int i10 = -1;
                 for (int i11 = 0; i11 < XMPP_EMOTICON_COUNT; i11++) {
-                    String pattern2 = ResourceAccessor.blockStr(StringResKeys.XMPP_EMOTICONS_BASE, i11);
+                    String pattern2 = StringPool.get(StringResKeys.XMPP_EMOTICONS_BASE + i11);
                     if (pattern2 != null && (iIndexOf = str.indexOf(pattern2, i)) >= 0 && (iIndexOf < i9 || i9 == -1)) {
                         i9 = iIndexOf;
                         i10 = i11;
@@ -70,13 +70,13 @@ public final class EmoticonReplacer {
                 } else {
                     wrapText(vector, str, i, i9, i3, i4, EMOTICON_TYPE_NONE);
                     vector.addElement(new IconElement(ICON_SIZE, i10 + XMPP_ICON_OFFSET));
-                    wrapText(vector, str, i9 + ResourceAccessor.blockStr(StringResKeys.XMPP_EMOTICONS_BASE, i10).length(), i2, i3, i4, EMOTICON_TYPE_XMPP);
+                    wrapText(vector, str, i9 + StringPool.get(StringResKeys.XMPP_EMOTICONS_BASE + i10).length(), i2, i3, i4, EMOTICON_TYPE_XMPP);
                 }
             } else if (i5 == EMOTICON_TYPE_MRIM) {
                 int i12 = -1;
                 int i13 = -1;
                 for (int i14 = 0; i14 < MRIM_EMOTICON_COUNT; i14++) {
-                    int iIndexOf3 = str.indexOf(ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, i14), i);
+                    int iIndexOf3 = str.indexOf(StringPool.get(StringResKeys.EMOTICON_NAMES_BASE + i14), i);
                     if (iIndexOf3 >= 0 && (iIndexOf3 < i12 || i12 == -1)) {
                         i12 = iIndexOf3;
                         i13 = i14;
@@ -92,9 +92,9 @@ public final class EmoticonReplacer {
                             : i13 == MRIM_STANDARD_LIMIT + 2 ? MRIM_ICON_SPECIAL_76
                             : MRIM_ICON_SPECIAL_77;
                     vector.addElement(new IconElement(ICON_SIZE, iconCode));
-                    wrapText(vector, str, i12 + ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, i13).length(), i2, i3, i4, EMOTICON_TYPE_MRIM);
+                    wrapText(vector, str, i12 + StringPool.get(StringResKeys.EMOTICON_NAMES_BASE + i13).length(), i2, i3, i4, EMOTICON_TYPE_MRIM);
                 }
-            } else if (str != ResourceAccessor.str(StringResKeys.STR_PLACEHOLDER_TEXT)) {
+            } else if (str != StringPool.get(StringResKeys.STR_PLACEHOLDER_TEXT)) {
                 GraphicsContext fontGfx = UIState.getGfxContext(i3);
                 int offsetH = UIState.getIntOffset(i3);
                 int i15 = i;

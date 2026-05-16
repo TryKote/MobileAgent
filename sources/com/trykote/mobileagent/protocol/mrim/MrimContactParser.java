@@ -2,7 +2,7 @@ package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -34,13 +34,13 @@ public abstract class MrimContactParser {
         ContactInfo contactInfo = ContactInfo.createForAccount(account);
         switch (i) {
             case 0:
-                contactInfo.setContactName(ResourceAccessor.str(StringResKeys.STR_DEFAULT_CONTACT_NAME));
+                contactInfo.setContactName(StringPool.get(StringResKeys.STR_DEFAULT_CONTACT_NAME));
                 break;
             case 1:
                 contactInfo = (ContactInfo) parseMrimContacts(account, buffer).elementAt(0);
                 break;
             default:
-                contactInfo.setContactName(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
+                contactInfo.setContactName(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_CONTACT_NAME_PREFIX)).append(i)));
                 break;
         }
         RegistrationState.setParam1(contactInfo);
@@ -94,13 +94,13 @@ public abstract class MrimContactParser {
             if (contact != null) {
                 String fullName = contactInfo.getFullName();
                 contact.setDisplayName(fullName);
-                account.validateGroupAdd(email, fullName, ResourceAccessor.str(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
+                account.validateGroupAdd(email, fullName, StringPool.get(StringResKeys.STR_DEFAULT_GROUP_NAME), (ContactGroup) account.getFirstContactGroup(), true);
             }
         }
     }
     private static final Vector parseMrimContacts(MrimAccount account, ByteBuffer buffer) {
         Vector result = ObjectPool.newVector();
-        Vector fieldNames = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_REG_FIELD_NAMES));
+        Vector fieldNames = Utils.splitByNull(StringPool.get(StringResKeys.STR_REG_FIELD_NAMES));
         int fieldCount = buffer.readInt();
         int contactCount = buffer.readInt();
         buffer.readInt();

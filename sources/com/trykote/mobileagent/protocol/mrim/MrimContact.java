@@ -3,7 +3,7 @@ package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.AppController;
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -232,11 +232,11 @@ public final class MrimContact extends Contact implements ListItem {
         }
         this.lastStatusCheckTime = now;
         MrimAccount mrimAccount = (MrimAccount) this.account;
-        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(ResourceAccessor.str(StringResKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(ResourceAccessor.str(PackedStringKeys.MRIM_MESSAGE_RTF_BLOB))), ObjectPool.integerOf(MrimAccount.RESP_RENAME_CONTACT)}));
+        int sendResult = mrimAccount.trySendData(mrimAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(mrimAccount, MrimCommand.CS_MESSAGE, new ByteBuffer().writeIntLE(16512).writeStringLatin1(this.simpleIdentifier).writeStringUTF16(StringPool.get(StringResKeys.STR_MRIM_RENAME_CONTACT)).writeStringLatin1(StringPool.get(PackedStringKeys.MRIM_MESSAGE_RTF_BLOB))), ObjectPool.integerOf(MrimAccount.RESP_RENAME_CONTACT)}));
         if (sendResult != 0) {
             return sendResult;
         }
-        appendMessage(1, ResourceAccessor.str(StringResKeys.STR_WELCOME_MESSAGE), 0L, 0L);
+        appendMessage(1, StringPool.get(StringResKeys.STR_WELCOME_MESSAGE), 0L, 0L);
         return 0;
     }
 

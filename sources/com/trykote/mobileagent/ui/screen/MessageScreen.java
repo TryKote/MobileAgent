@@ -7,7 +7,7 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -80,14 +80,14 @@ public final class MessageScreen extends ScreenView {
                 ScreenManager.showScreen(AppState.getCurrentContact().showMessageSummary());
                 break;
             case ScreenId.DELETE_MESSAGES:
-                NotificationHelper.showAlertBuffer(128, ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_DELETE_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167)));
+                NotificationHelper.showAlertBuffer(128, ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_DELETE_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167)));
                 break;
             case ScreenId.SEND_CONFIRM:
                 NotificationHelper.showConfirmDialog(161, 872);
                 break;
             case ScreenId.NOTIFY_MESSAGE:
                 UIState.setConversationActive(false);
-                NotificationHelper.showAlertBuffer(163, ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_NOTIFY_MESSAGE)));
+                NotificationHelper.showAlertBuffer(163, ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_NOTIFY_MESSAGE)));
                 break;
             case ScreenId.MAILBOX_OPTIONS:
                 Screens.mailboxOptions().show();
@@ -217,7 +217,7 @@ public final class MessageScreen extends ScreenView {
             params.addElement(msgId);
             params.addElement(AppState.emptyStr);
             params.addElement(ObjectPool.unpackChars(6775156));
-            AppState.getAccount().sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.URL_PATH_AJAX_READMSG)).append('?').append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_GET_MSG_DATA)).append(SessionState.getSessionHash()).append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+            AppState.getAccount().sendChatRoomRequest(ApiClient.createAuthRequest(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.URL_PATH_AJAX_READMSG)).append('?').append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL)).append(StringPool.get(PackedStringKeys.FUNC_AJAX_GET_MSG_DATA)).append(SessionState.getSessionHash()).append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
         }
     }
 
@@ -257,7 +257,7 @@ public final class MessageScreen extends ScreenView {
         params.addElement(Utils.defaultStr(RuntimeState.getMsgSender()));
         params.addElement(Utils.defaultStr(RuntimeState.getMsgBody()));
         params.addElement(Utils.defaultStr(RuntimeState.getMsgExtra1()));
-        AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(ResourceAccessor.str(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_MAJAX_SEARCH)).append(SessionState.getSessionHash()).append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params)))));
+        AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(StringPool.get(PackedStringKeys.URL_PATH_MAILBOX), ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL)).append(StringPool.get(PackedStringKeys.FUNC_MAJAX_SEARCH)).append(SessionState.getSessionHash()).append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params)))));
     }
 
     private static void buildReplyMail() {
@@ -265,7 +265,7 @@ public final class MessageScreen extends ScreenView {
         Message newMessage = new Message(MailHelper.parseRecipientList(Utils.defaultStr(RuntimeState.getMsgExtra2())), Utils.defaultStr(RuntimeState.getMsgExtra3()), Utils.defaultStr(RuntimeState.getTrafficStatusText()));
         Vector params = ObjectPool.newVector();
         params.addElement(newMessage.toHashtable());
-        AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(ResourceAccessor.str(PackedStringKeys.URL_PATH_AJAX_SENDMSG), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_SEND_MSG)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params)))));
+        AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(StringPool.get(PackedStringKeys.URL_PATH_AJAX_SENDMSG), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL)).append(StringPool.get(PackedStringKeys.FUNC_AJAX_SEND_MSG)), Conversation.urlEncodeCyrillic((Object) JsonParser.toJson(params)))));
     }
 
     private static void buildSendToContact() {
@@ -355,7 +355,7 @@ public final class MessageScreen extends ScreenView {
         int size = vector.size();
         for (int i = 0; i < size; i++) {
             Hashtable hashtable = (Hashtable) vector.elementAt(i);
-            Vector vector2 = (Vector) JsonParser.getValue(hashtable, ResourceAccessor.str(PackedStringKeys.MAIL_PARAM_MLIST));
+            Vector vector2 = (Vector) JsonParser.getValue(hashtable, StringPool.get(PackedStringKeys.MAIL_PARAM_MLIST));
             String jsonStr = JsonParser.getStringByInt(hashtable, 198561);
             int size2 = vector2.size();
             for (int j = 0; j < size2; j++) {
@@ -379,7 +379,7 @@ public final class MessageScreen extends ScreenView {
                     lastChatRoom.isInitialized = true;
                 }
             }
-            lastChatRoom.name = new StringBuffer().append(ResourceAccessor.str(StringResKeys.STR_CHATROOM_PREFIX)).append(lastChatRoom.messageIds.size()).toString();
+            lastChatRoom.name = new StringBuffer().append(StringPool.get(StringResKeys.STR_CHATROOM_PREFIX)).append(lastChatRoom.messageIds.size()).toString();
         }
         if (lastChatRoom.messageIds.size() == 0) {
             return NotificationHelper.showError(736);
@@ -401,7 +401,7 @@ public final class MessageScreen extends ScreenView {
         Vector vec = UIState.getScreenTitleAsVector();
         if (Utils.vectorSize(vec) <= 1) {
             ObjectPool.releaseVector(vec);
-            EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_EXIT_CONFIRM));
+            EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_EXIT_CONFIRM));
             return ScreenId.CONTACT_LIST;
         }
         Object objElement = vec.elementAt(0);

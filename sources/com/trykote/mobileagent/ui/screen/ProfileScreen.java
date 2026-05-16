@@ -6,13 +6,12 @@ import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.ContactKeys;
-import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.RegistrationKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.map.MapController;
@@ -71,8 +70,8 @@ public final class ProfileScreen extends ScreenView {
                 Screens.peopleSearch().show();
                 break;
             case ScreenId.PROFILE_EDIT:
-                StringBuffer stringBuffer = new StringBuffer(ResourceAccessor.str(StringResKeys.STR_REGISTRATION_TEXT));
-                stringBuffer.append(AppState.getString(AppState.getAccount().getProfileGender() + StringResKeys.STR_REGISTRATION_TEXT));
+                StringBuffer stringBuffer = new StringBuffer(StringPool.get(StringResKeys.STR_REGISTRATION_TEXT));
+                stringBuffer.append(StringPool.get(AppState.getAccount().getProfileGender() + StringResKeys.STR_REGISTRATION_TEXT));
                 UIState.setPhotoCache2FromBuffer(stringBuffer);
                 lastTileLoadTime = System.currentTimeMillis();
                 Screens.profileEdit().show();
@@ -216,11 +215,11 @@ public final class ProfileScreen extends ScreenView {
         String domain = StringUtils.suffix(str, atIndex + 1);
         Object[] objArr = new Object[3];
         if (targetAccount.getType() == Account.TYPE_MMP) {
-            urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.URL_ICQ_BUDDY_ICON).writeRawString(str);
+            urlBuffer = new ByteBuffer().writeCharBytes("http://api.icq.net/expressions/get?f=native&type=buddyIcon&t=").writeRawString(str);
         } else {
-            ByteBuffer profileBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_OBRAZ_FOTO);
+            ByteBuffer profileBuf = new ByteBuffer().writeCharBytes("http://obraz.foto.mail.ru/");
             int dotIndex = domain.indexOf('.');
-            urlBuffer = profileBuf.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte('/').writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCompressed(PACKED_STRING_PHOTO_URL_BASE + RuntimeState.getAsyncTaskId());
+            urlBuffer = profileBuf.writeRawString(dotIndex < 0 ? ObjectPool.unpackChars(6775139) : StringUtils.prefix(domain, dotIndex)).writeByte('/').writeRawString(atIndex < 0 ? str : StringUtils.prefix(str, atIndex)).writeCharBytes(StringPool.get(PACKED_STRING_PHOTO_URL_BASE + RuntimeState.getAsyncTaskId()));
         }
         objArr[0] = urlBuffer.getStringAndClear();
         objArr[1] = targetAccount;

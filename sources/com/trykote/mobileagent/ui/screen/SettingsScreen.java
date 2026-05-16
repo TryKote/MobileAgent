@@ -4,7 +4,7 @@ import com.trykote.mobileagent.core.AppController;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -324,7 +324,7 @@ public final class SettingsScreen extends ScreenView {
     public void onMenuItemChanged(MenuItem item) {
         if (screenId == ScreenId.THEME_SETTINGS) {
             Object[] themeData = (Object[]) item.data;
-            if (ResourceAccessor.str(StringResKeys.STR_MENU_SETTINGS).equals(item.title)) {
+            if (StringPool.get(StringResKeys.STR_MENU_SETTINGS).equals(item.title)) {
                 SettingsState.setColorTheme(((Integer) themeData[0]).intValue());
             }
         } else if (screenId == ScreenId.SOUND_SETTINGS) {

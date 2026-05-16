@@ -3,7 +3,7 @@ package com.trykote.mobileagent.ui.screen;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
@@ -125,12 +125,12 @@ public final class ChatAsyncScreen extends AsyncScreenView {
         params.addElement(ObjectPool.integerOf(1));
         account.sendChatRoomRequest(ApiClient.createAuthRequest(
             ObjectPool.newStringBuffer()
-                .append(ResourceAccessor.str(PackedStringKeys.URL_PATH_MAILBOX))
+                .append(StringPool.get(PackedStringKeys.URL_PATH_MAILBOX))
                 .append('?')
-                .append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL))
-                .append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_GET_MAILBOX))
+                .append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL))
+                .append(StringPool.get(PackedStringKeys.FUNC_AJAX_GET_MAILBOX))
                 .append(SessionState.getSessionHash())
-                .append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ))
+                .append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ))
                 .append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
     }
 
@@ -143,11 +143,11 @@ public final class ChatAsyncScreen extends AsyncScreenView {
             params.addElement(StringUtils.intern(Integer.toString(0)));
             params.addElement(chatRoom.participants);
             request = ApiClient.createUploadRequest(
-                ResourceAccessor.str(PackedStringKeys.URL_PATH_MAILBOX),
+                StringPool.get(PackedStringKeys.URL_PATH_MAILBOX),
                 ObjectPool.newBufferFromState(722608)
-                    .append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST))
+                    .append(StringPool.get(PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST))
                     .append(SessionState.getSessionHash())
-                    .append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ))
+                    .append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ))
                     .append(Conversation.urlEncode((Object) JsonParser.toJson(params))));
         } else {
             params.addElement(StringUtils.intern(Integer.toString(chatRoom.id)));
@@ -168,10 +168,10 @@ public final class ChatAsyncScreen extends AsyncScreenView {
             request = ApiClient.createAuthRequest(
                 ObjectPool.newBufferFromState(1050207)
                     .append('?')
-                    .append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL))
-                    .append(ResourceAccessor.str(PackedStringKeys.FUNC_MAJAX_GET_MSGS))
+                    .append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL))
+                    .append(StringPool.get(PackedStringKeys.FUNC_MAJAX_GET_MSGS))
                     .append(SessionState.getSessionHash())
-                    .append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ))
+                    .append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ))
                     .append(Conversation.urlEncode((Object) JsonParser.toJson(params))));
         }
         account.sendChatRoomRequest(request);
@@ -182,12 +182,12 @@ public final class ChatAsyncScreen extends AsyncScreenView {
         params.addElement(ObjectPool.integerOf(ChatState.getActiveChatRoomId()));
         params.addElement(UIState.getMediaStream());
         AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(
-            ResourceAccessor.str(PackedStringKeys.URL_PATH_MAILBOX),
+            StringPool.get(PackedStringKeys.URL_PATH_MAILBOX),
             ObjectPool.newStringBuffer()
-                .append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL))
-                .append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_MOVE_MSGS))
+                .append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL))
+                .append(StringPool.get(PackedStringKeys.FUNC_AJAX_MOVE_MSGS))
                 .append(SessionState.getSessionHash())
-                .append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ))
+                .append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ))
                 .append(Conversation.urlEncode((Object) JsonParser.toJson(params)))));
     }
 
@@ -212,15 +212,15 @@ public final class ChatAsyncScreen extends AsyncScreenView {
         ChatRoom chatRoom = account.findChatRoomById(ChatState.getChatRoomId());
         if (!account.isLastChatRoom(chatRoom)) {
             chatRoom.subject = JsonParser.getStringValue(payload,
-                ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_LAST_MSG_ID));
+                StringPool.get(PackedStringKeys.MAIL_FIELD_LAST_MSG_ID));
             chatRoom.messageIds.removeAllElements();
             Enumeration allIds = ((Vector) JsonParser.getValue(payload,
-                ResourceAccessor.str(PackedStringKeys.MAIL_PARAM_MLIST_ALL))).elements();
+                StringPool.get(PackedStringKeys.MAIL_PARAM_MLIST_ALL))).elements();
             while (allIds.hasMoreElements()) {
                 chatRoom.messageIds.addElement(allIds.nextElement());
             }
             Enumeration msgEntries = ((Vector) JsonParser.getValue(payload,
-                ResourceAccessor.str(PackedStringKeys.MAIL_PARAM_MLIST))).elements();
+                StringPool.get(PackedStringKeys.MAIL_PARAM_MLIST))).elements();
             while (msgEntries.hasMoreElements()) {
                 Message msg = new Message((Hashtable) msgEntries.nextElement());
                 chatRoom.messages.put(msg.from, msg);

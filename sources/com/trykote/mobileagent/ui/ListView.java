@@ -4,7 +4,7 @@ package com.trykote.mobileagent.ui;
 import com.trykote.mobileagent.core.AppController;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
@@ -185,7 +185,7 @@ public class ListView {
         return getItemAt(expandedIdx);
     }
     public final ListView setHeader(int iconId, String title) {
-        this.headerItem = MenuItem.createSeparator().addText(ResourceAccessor.str(StringResKeys.STR_PLACEHOLDER_TEXT), UIKeys.GFX_INDEX_BOLD, 0).setLabelInternal(iconId, title, UIKeys.GFX_INDEX_BOLD, 0);
+        this.headerItem = MenuItem.createSeparator().addText(StringPool.get(StringResKeys.STR_PLACEHOLDER_TEXT), UIKeys.GFX_INDEX_BOLD, 0).setLabelInternal(iconId, title, UIKeys.GFX_INDEX_BOLD, 0);
         recalcLayout();
         return this;
     }

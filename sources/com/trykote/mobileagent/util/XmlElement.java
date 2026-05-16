@@ -2,7 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.PackedStringKeys;
 
 import java.util.Enumeration;
@@ -221,7 +221,7 @@ public final class XmlElement {
     }
 
     public final String getNameAttr() {
-        return getAttribute(ResourceAccessor.str(PackedStringKeys.ATTR_TYPE));
+        return getAttribute(StringPool.get(PackedStringKeys.ATTR_TYPE));
     }
 
     public final String getChildText(String str) {
@@ -235,7 +235,7 @@ public final class XmlElement {
     public final XmlElement findByAttrs(int i, int i2) {
         for (int idx = Utils.vectorSize(this.children) - 1; idx >= 0; idx--) {
             XmlElement child = getChildAt(idx);
-            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(ResourceAccessor.str(PackedStringKeys.XML_ATTR_XMLNS)))) {
+            if (StringUtils.matchesKey(i, child.tagName) && StringUtils.matchesKey(i2, child.getAttribute(StringPool.get(PackedStringKeys.XML_ATTR_XMLNS)))) {
                 return child;
             }
         }
@@ -243,6 +243,6 @@ public final class XmlElement {
     }
 
     public final XmlElement cloneElement() {
-        return addNameAttr(398982).setAttrValue(131590, getAttribute(ResourceAccessor.str(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
+        return addNameAttr(398982).setAttrValue(131590, getAttribute(StringPool.get(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
     }
 }

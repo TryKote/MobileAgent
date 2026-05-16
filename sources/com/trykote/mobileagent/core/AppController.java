@@ -138,10 +138,10 @@ public final class AppController {
             case 3:
                 return ScreenId.SHARE_LOCATION;
             default:
-                if (ResourceAccessor.str(StringResKeys.STR_CMD_SHOW_LIST).equals(command)) {
+                if (StringPool.get(StringResKeys.STR_CMD_SHOW_LIST).equals(command)) {
                     return ScreenId.PROFILE_EDIT;
                 }
-                if (ResourceAccessor.str(StringResKeys.STR_CMD_SHOW_MAP).equals(command)) {
+                if (StringPool.get(StringResKeys.STR_CMD_SHOW_MAP).equals(command)) {
                     return ScreenId.WIFI_ACCOUNT_LIST;
                 }
                 int optionId = Integer.parseInt(StringUtils.suffix(command, SERVER_CMD_PREFIX_LEN));
@@ -214,7 +214,7 @@ public final class AppController {
         SessionState.setCanvas(new MainCanvas(width, height));
         UIState.clearTempDataRange();
         TabBar.initialize();
-        AppState.setObject(StringResKeys.RES_EMOTICON_MAP, Utils.bytesToInts(ResourceAccessor.bytes(StringResKeys.RES_EMOTICON_MAP)));
+        AppState.setObject(StringResKeys.RES_EMOTICON_MAP, Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_EMOTICON_MAP)));
         UIState.setMediaResource(new byte[1]);
     }
 
@@ -765,7 +765,7 @@ public final class AppController {
                 RuntimeState.setPhoneScrollOffset(scrollOffset);
                 Screen popupScreen = Screens.contactPopup();
                 if (scrollOffset >= PHONE_PAGE_SIZE) {
-                    popupScreen.addIconItemWithData(ICON_NAVIGATION, ResourceAccessor.str(StringResKeys.STR_MENU_SMS), PAGE_ACTION_PREV, null);
+                    popupScreen.addIconItemWithData(ICON_NAVIGATION, StringPool.get(StringResKeys.STR_MENU_SMS), PAGE_ACTION_PREV, null);
                 }
                 for (int resultIdx = resultVector.size() - 1; resultIdx >= 0; resultIdx--) {
                     UserSearchResult searchResult = (UserSearchResult) resultVector.elementAt(resultIdx);
@@ -773,7 +773,7 @@ public final class AppController {
                     popupScreen.addIconItemWithData(genderIcon, searchResult.getText(), 0, searchResult);
                 }
                 if (scrollOffset < phoneContact.userCount - PHONE_PAGE_SIZE) {
-                    popupScreen.addIconItemWithData(ICON_NAVIGATION, ResourceAccessor.str(StringResKeys.STR_MENU_CALL), PAGE_ACTION_NEXT, null);
+                    popupScreen.addIconItemWithData(ICON_NAVIGATION, StringPool.get(StringResKeys.STR_MENU_CALL), PAGE_ACTION_NEXT, null);
                 }
                 UIState.setPhoneHasNext(scrollOffset < phoneContact.userCount - PHONE_PAGE_SIZE);
                 UIState.setPhoneHasPrev(scrollOffset >= PHONE_PAGE_SIZE);

@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
@@ -43,9 +43,9 @@ public final class TextInputHelper {
             if (StringUtils.matchesKey(424, inputMode)) {
                 int fontSizeSetting = SettingsState.getFontSizeList();
                 if (fontSizeSetting == 1) {
-                    textBox2.setInitialInputMode(ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_NUMERIC));
+                    textBox2.setInitialInputMode(StringPool.get(StringResKeys.STR_INPUT_MODE_NUMERIC));
                 } else if (fontSizeSetting == 2) {
-                    textBox2.setInitialInputMode(ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_LATIN));
+                    textBox2.setInitialInputMode(StringPool.get(StringResKeys.STR_INPUT_MODE_LATIN));
                 }
             } else {
                 textBox2.setInitialInputMode(inputMode);

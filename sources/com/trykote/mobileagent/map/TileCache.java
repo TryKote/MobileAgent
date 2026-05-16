@@ -3,7 +3,7 @@ package com.trykote.mobileagent.map;
 
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.net.NetworkLock;
@@ -50,7 +50,7 @@ public final class TileCache {
         if (storeNames != null) {
             for (int idx = storeNames.length - 1; idx >= 0; idx--) {
                 String str = storeNames[idx];
-                if (str.startsWith(ResourceAccessor.str(PackedStringKeys.MAP_TILES))) {
+                if (str.startsWith(StringPool.get(PackedStringKeys.MAP_TILES))) {
                     RecordStore recordStore = null;
                     try {
                         RecordStore store = IOUtils.openRecordStore(str, false);
@@ -135,7 +135,7 @@ public final class TileCache {
         long j = 0;
         String[] storeNames = StringUtils.listRecordStores();
         if (storeNames != null) {
-            String cachePrefix = ResourceAccessor.str(PackedStringKeys.MAP_TILES);
+            String cachePrefix = StringPool.get(PackedStringKeys.MAP_TILES);
             for (int idx = storeNames.length - 1; idx >= 0; idx--) {
                 String str2 = storeNames[idx];
                 if (str2.startsWith(cachePrefix)) {
@@ -188,7 +188,7 @@ public final class TileCache {
     }
 
     private static final String buildTileCacheKey(TileRequest resource) {
-        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.MAP_TILES)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
+        return ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.MAP_TILES)).append(resource.tileType).append('z').append(resource.zoomLevel).append('x').append((resource.tileX / 4) << 2).append('y').append((resource.tileY / 4) << 2));
     }
 
     private static final boolean reconnectHttp() {
@@ -198,7 +198,7 @@ public final class TileCache {
             if (oldSocket != null) {
                 oldSocket.close();
             }
-            MapState.setMenuActions(SocketWrapper.open(new ByteBuffer().writeCompressed(PackedStringKeys.SCHEME_SOCKET).writeCompressed(PackedStringKeys.HOST_MOBILEMAPS_2043).getStringAndClear(), false));
+            MapState.setMenuActions(SocketWrapper.open(new ByteBuffer().writeCharBytes("socket://").writeCharBytes("mobilemaps.mail.ru:2043").getStringAndClear(), false));
             return true;
         } catch (Throwable unused) {
             return false;
@@ -208,7 +208,7 @@ public final class TileCache {
     }
 
     public static final Image fetchTileImage(TileRequest resource) throws IOException {
-        ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.HTTP_GET_TILESENDER).writeRawString(resource.tileUrl).writeCompressed(PackedStringKeys.HTTP_MAP_TILE_HEADER).writeExtendedInt(2950495).writeEncodedInt(222).writeCompressed(PackedStringKeys.HTTP_TILE_HEADERS);
+        ByteBuffer requestBuf = new ByteBuffer().writeCharBytes("GET /TileSender.aspx?ModeKey=tiles").writeRawString(resource.tileUrl).writeCharBytes(" HTTP/1.1\r\nAccept: image/png\r\nUser-Agent: J2ME MailAgent v.").writeExtendedInt(2950495).writeEncodedInt(222).writeCharBytes("\r\nConnection: keep-alive\r\nCache-Control: no-transform\r\nContent-Length: 0\r\nHost: mobilemaps.mail.ru\r\n\r\n");
         try {
             SocketWrapper socket = (SocketWrapper) MapState.getMenuActions();
             byte[] bArr = requestBuf.data;

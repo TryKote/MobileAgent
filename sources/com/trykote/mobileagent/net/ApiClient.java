@@ -5,7 +5,7 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
@@ -59,7 +59,7 @@ public final class ApiClient {
         }
         objArr[8] = objArr;
         Account currentAccount = AppState.getAccount();
-        Object[] authRequest = createAuthRequest(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(currentAccount.login).append(ResourceAccessor.str(PackedStringKeys.PARAM_PASSWORD_EQ)).append(currentAccount.password).append(SessionState.getSessionHash()));
+        Object[] authRequest = createAuthRequest(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.URL_PATH_AUTH_LOGIN)).append(currentAccount.login).append(StringPool.get(PackedStringKeys.PARAM_PASSWORD_EQ)).append(currentAccount.password).append(SessionState.getSessionHash()));
         authRequest[8] = authRequest;
         ((AsyncTask) submitAsync(authRequest)[7]).thread.join();
         account.setAuthCookie((String) authRequest[6]);
@@ -76,7 +76,7 @@ public final class ApiClient {
                         NetworkLock.acquireNetworkLock();
                         String overrideUrl = (String) objArr[5];
                         if (overrideUrl == null) {
-                            requestUrl = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
+                            requestUrl = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.URL_AJ_MAIL_RU)).append(objArr[2]));
                         } else {
                             requestUrl = overrideUrl;
                         }
@@ -158,7 +158,7 @@ public final class ApiClient {
                     if (headerName == null && headerValue == null) {
                         break;
                     }
-                    if (headerName != null && headerValue != null && headerValue.startsWith(ResourceAccessor.str(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerName.toLowerCase()))) {
+                    if (headerName != null && headerValue != null && headerValue.startsWith(StringPool.get(PackedStringKeys.COOKIE_MPOP)) && StringUtils.matchesKey(PackedStringKeys.HEADER_SET_COOKIE, StringUtils.intern(headerName.toLowerCase()))) {
                         objArr[6] = StringUtils.prefix(headerValue, headerValue.indexOf(59));
                     }
                     headerIndex++;
@@ -188,7 +188,7 @@ public final class ApiClient {
     }
 
     private static final Object[] createErrorResult(int errorType, int messageKey, Object detail) {
-        return createHttpResult(errorType, ObjectPool.newStringBuffer().append(AppState.getString(messageKey)).append(ResourceAccessor.str(StringResKeys.STR_ERROR_SEPARATOR)).append(detail), 0, (ByteBuffer) null);
+        return createHttpResult(errorType, ObjectPool.newStringBuffer().append(AppState.getString(messageKey)).append(StringPool.get(StringResKeys.STR_ERROR_SEPARATOR)).append(detail), 0, (ByteBuffer) null);
     }
 
     public static final Object[] createConnectError(Throwable th) {
@@ -236,7 +236,7 @@ public final class ApiClient {
     }
 
     public static final StringBuffer appendAuthParams(StringBuffer buffer, String data) {
-        return buffer.append(SessionState.getSessionHash()).append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ)).append(data);
+        return buffer.append(SessionState.getSessionHash()).append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ)).append(data);
     }
 
     public static final int validateJsonResponse(Object[] objArr) {
@@ -284,7 +284,7 @@ public final class ApiClient {
                     }
                     if (statusOk && url != null) {
                         ObjectPool.releaseVector(children);
-                        EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_OPERATION_COMPLETE));
+                        EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_OPERATION_COMPLETE));
                         break;
                     }
                 }

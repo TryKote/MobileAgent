@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.model.Contact;
@@ -92,7 +92,7 @@ final class MrimResponseHandler {
                 break;
             case MrimAccount.RESP_XMPP_SERVICE:
                 if (resultCode != 1) {
-                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                    EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_XMPP_SERVICE_MSG)).append(objArr[2]).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                     break;
                 }
                 break;
@@ -158,7 +158,7 @@ final class MrimResponseHandler {
         }
         MrimContactGroup mrimGroup = (MrimContactGroup) objArr[4];
         int contactId = buf.readInt();
-        String statusStr = ResourceAccessor.str(StringResKeys.STR_PHONE_SUFFIX);
+        String statusStr = StringPool.get(StringResKeys.STR_PHONE_SUFFIX);
         String str = (String) objArr[2];
         String str2 = (String) objArr[3];
         String str3 = AppState.emptyStr;
@@ -190,11 +190,11 @@ final class MrimResponseHandler {
                 break;
             case AUTH_RESPONSE_ACK:
                 if (mrimContact.isSystem()) {
-                    EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_AUTH_GRANTED));
+                    EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_AUTH_GRANTED));
                     break;
                 }
             default:
-                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
+                EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_AUTH_REQUEST)).append(objArr[2]).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(resultCode)));
                 break;
         }
     }

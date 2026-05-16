@@ -3,7 +3,7 @@ package com.trykote.mobileagent.map;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -84,7 +84,7 @@ public final class RouteData {
     }
 
     public static final String buildLocationString() {
-        ByteBuffer urlBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_TRACKPOINTS).writeRawString(MapUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(URL_PARAM_LAT_PREFIX).writeRawString(MapUtils.pixelToLatitude(lastTokenPair[1]));
+        ByteBuffer urlBuf = new ByteBuffer().writeCharBytes("http://mobile.mail.ru/").writeCharBytes("data/trackpoints?getPath.aspx?mode=distance&x0=").writeRawString(MapUtils.pixelToLongitude(lastTokenPair[0])).writeUInt(URL_PARAM_LAT_PREFIX).writeRawString(MapUtils.pixelToLatitude(lastTokenPair[1]));
         int size = routePoints.size();
         int pointIdx = 0;
         while (pointIdx <= size) {
@@ -131,7 +131,7 @@ public final class RouteData {
                 pointData[0] = new int[]{((Integer) pointJson.elementAt(0)).intValue(), ((Integer) pointJson.elementAt(1)).intValue()};
                 if (fieldCount == 4) {
                     if (regionIdx == 0 && pointIdx == 1) {
-                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ROUTE_PREFIX));
+                        StringBuffer routeInfo = ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ROUTE_PREFIX));
                         int distUnitKey = STR_DISTANCE_UNIT_BASE;
                         int distance = totalRouteLength;
                         int fraction = 0;
@@ -151,19 +151,19 @@ public final class RouteData {
                             }
                             distBuf.append(trimmed);
                         }
-                        StringBuffer fullRouteInfo = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(AppState.getString(distUnitKey)))).append(ResourceAccessor.str(StringResKeys.STR_DISTANCE_UNIT));
+                        StringBuffer fullRouteInfo = routeInfo.append(ObjectPool.toStringAndRelease(distBuf.append(AppState.getString(distUnitKey)))).append(StringPool.get(StringResKeys.STR_DISTANCE_UNIT));
                         int durationSec = totalRouteDuration;
                         StringBuffer timeBuf = ObjectPool.newStringBuffer();
                         int minutes = durationSec / 60;
                         if (minutes < MINUTES_THRESHOLD_FOR_HOURS) {
                             timeBuf.append(minutes);
                         } else {
-                            timeBuf.append(minutes / 60).append(ResourceAccessor.str(StringResKeys.STR_HOUR_SEPARATOR)).append(minutes % 60);
+                            timeBuf.append(minutes / 60).append(StringPool.get(StringResKeys.STR_HOUR_SEPARATOR)).append(minutes % 60);
                         }
-                        pointData[1] = fullRouteInfo.append(ObjectPool.toStringAndRelease(timeBuf.append(ResourceAccessor.str(StringResKeys.STR_DISTANCE_SUFFIX)))).toString();
+                        pointData[1] = fullRouteInfo.append(ObjectPool.toStringAndRelease(timeBuf.append(StringPool.get(StringResKeys.STR_DISTANCE_SUFFIX)))).toString();
                         pointData[2] = AppState.emptyStr;
                     } else if (regionIdx == regionCount - 1 && pointIdx == pointArraySize - 2) {
-                        pointData[1] = ResourceAccessor.str(StringResKeys.STR_NO_ROUTE);
+                        pointData[1] = StringPool.get(StringResKeys.STR_NO_ROUTE);
                         pointData[2] = AppState.emptyStr;
                     } else {
                         pointData[1] = pointJson.elementAt(2);

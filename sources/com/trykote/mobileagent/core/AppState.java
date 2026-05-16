@@ -170,7 +170,7 @@ public abstract class AppState {
 
     private static void initObjectPool() {
         PoolInit.init(pool);
-        emptyStr = (String) pool[StringResKeys.STR_EMPTY];
+        emptyStr = StringPool.get(StringResKeys.STR_EMPTY);
     }
 
     private static void loadAllDeltas() {
@@ -210,6 +210,7 @@ public abstract class AppState {
     }
 
     private static void initSessionState(Object midlet) {
+        RemoteLogger.log("INIT", "initSessionState: midlet");
         pool[SessionKeys.OBJ_MIDLET] = midlet;
         pool[SessionKeys.ARR_EMPTY_INT] = new int[0];
         Date date = new Date();
@@ -219,7 +220,9 @@ public abstract class AppState {
         updateTime();
         pool[SessionKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
         pool[SessionKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
+        RemoteLogger.log("INIT", "initSessionState: before initPlatform");
         StringUtils.initPlatform();
+        RemoteLogger.log("INIT", "initSessionState: after initPlatform");
         TimerManager.timers = new long[TimerManager.SLOT_COUNT];
         pool[SessionKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
     }
@@ -256,16 +259,13 @@ public abstract class AppState {
             return StringUtils.intern(new String(getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16));
         }
         Object result = getOrDefault(key);
-        if (result == null) {
-            return null;
+        if (result instanceof String) {
+            return (String) result;
         }
         if (result instanceof byte[]) {
             return ObjectPool.decodeWin1251((byte[]) result);
         }
-        if (result instanceof String) {
-            return (String) result;
-        }
-        return null;
+        return StringPool.get(key);
     }
 
     public static int getInt(int key) {
@@ -286,15 +286,18 @@ public abstract class AppState {
 
     public static byte[] getBytes(int key) {
         Object value = pool[key];
-        if (value instanceof String) {
-            String s = (String) value;
+        if (value instanceof byte[]) {
+            return (byte[]) value;
+        }
+        String s = (value instanceof String) ? (String) value : StringPool.get(key);
+        if (s != null) {
             byte[] result = new byte[s.length()];
             for (int i = 0; i < s.length(); i++) {
                 result[i] = Utils.charToWin1251(s.charAt(i));
             }
             return result;
         }
-        return (byte[]) value;
+        return null;
     }
 
     public static int getAndClearInt(int key) {

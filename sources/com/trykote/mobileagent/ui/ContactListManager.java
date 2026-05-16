@@ -7,7 +7,7 @@ import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -547,14 +547,14 @@ public abstract class ContactListManager {
         ContactInfo contactInfo = ContactState.getInfo();
         Account acctRef = contactInfo.getAccount();
         if (getGroupCount(acctRef) == 0) {
-            EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_NOTIFICATION_NEW_MSG));
+            EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_NOTIFICATION_NEW_MSG));
             return;
         }
         if (UIState.isShowPhoto()) {
-            ContactState.setGroupAddGroup(AppState.getString(StringResKeys.STR_SOFTKEY_OK));
+            ContactState.setGroupAddGroup(StringPool.get(StringResKeys.STR_SOFTKEY_OK));
             UIState.setShowPhoto(0);
         } else {
-            ContactState.setGroupAddGroup(AppState.getString(StringResKeys.STR_DEFAULT_GROUP_NAME));
+            ContactState.setGroupAddGroup(StringPool.get(StringResKeys.STR_DEFAULT_GROUP_NAME));
         }
         if (acctRef.getType() == Account.TYPE_MMP) {
             ContactState.setGroupAddName(contactInfo.getString(60));

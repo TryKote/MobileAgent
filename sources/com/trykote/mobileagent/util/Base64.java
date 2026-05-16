@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.key.StringResKeys;
 
 public final class Base64 {
@@ -22,7 +22,7 @@ public final class Base64 {
     private static final int DIGIT_ADJUSTMENT = 4; // '0' maps to 52 (48 + 4 = 52)
 
     private static char base64Char(int i) {
-        return (char) ResourceAccessor.bytes(StringResKeys.RES_BASE64_TABLE)[i & 63];
+        return (char) AppState.getBytes(StringResKeys.RES_BASE64_TABLE)[i & 63];
     }
 
     public static String encode(byte[] data, int offset, int length) {

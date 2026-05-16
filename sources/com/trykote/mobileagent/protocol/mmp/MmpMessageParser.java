@@ -1,5 +1,6 @@
 package com.trykote.mobileagent.protocol.mmp;
 
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.protocol.ProtocolFactory;
 import com.trykote.mobileagent.util.ByteBuffer;
@@ -115,7 +116,7 @@ public abstract class MmpMessageParser {
                             }
                             messageBody = richText;
                             if (richText != null && messageBody.length() > 0) {
-                                protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.MSG_DELIVERED, new ByteBuffer().writeLong(timestamp).writeShortBE(2).writeByteLenStr(senderId).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER).writeShortLE(protocol.getConnectionModeValue()).writeCompressed(PackedStringKeys.MMP_CAPS_HEADER_2)));
+                                protocol.trySendData(ProtocolFactory.createMmpCommand(protocol, MmpCommand.MSG_DELIVERED, new ByteBuffer().writeLong(timestamp).writeShortBE(2).writeByteLenStr(senderId).writeCharBytes(StringPool.get(PackedStringKeys.MMP_CAPS_HEADER)).writeShortLE(protocol.getConnectionModeValue()).writeCharBytes(StringPool.get(PackedStringKeys.MMP_CAPS_HEADER_2))));
                                 break;
                             }
                         } else {

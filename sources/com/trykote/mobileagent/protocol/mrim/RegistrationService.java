@@ -8,7 +8,7 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
@@ -103,7 +103,7 @@ public abstract class RegistrationService {
             domain = AppState.emptyStr;
         }
         int i = 0;
-        Vector domains = Utils.splitNonEmpty(ResourceAccessor.str(StringResKeys.STR_DOMAIN_LIST), (char) 0);
+        Vector domains = Utils.splitNonEmpty(StringPool.get(StringResKeys.STR_DOMAIN_LIST), (char) 0);
         for (int idx = domains.size() - 1; idx >= 0; idx--) {
             if (StringUtils.equalsObj(domain, domains.elementAt(idx))) {
                 i = idx;
@@ -143,7 +143,7 @@ public abstract class RegistrationService {
     }
 
     public static final Object[] newRequest() {
-        String url = ResourceAccessor.str(PackedStringKeys.URL_SIGNUP);
+        String url = StringPool.get(PackedStringKeys.URL_SIGNUP);
         String empty = AppState.emptyStr;
         Integer zero = ObjectPool.integerOf(0);
         Integer minusOne = ObjectPool.integerOf(-1);
@@ -151,7 +151,7 @@ public abstract class RegistrationService {
     }
 
     public static final Object[] createRegRequest(String str, int i, String str2, String str3, String str4, String str5, String str6, String str7, int i2, int i3, int i4, int i5, int i6, String str8, String str9) {
-        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.URL_XHTML_WAP_MAIL_RU)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(CHAR_AT))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, ResourceAccessor.str(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ObjectPool.integerOf(0), str2, str3, ObjectPool.integerOf(0), str4, str5, str6, str7, ObjectPool.integerOf(i2), ObjectPool.integerOf(i3), ObjectPool.integerOf(i4), ObjectPool.integerOf(i5), null, ObjectPool.integerOf(i6)});
+        return startAsyncRequest(2, ObjectPool.toStringAndRelease(Utils.appendParam(Utils.appendIntParam(Utils.appendParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendIntParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(Utils.appendParam(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.URL_XHTML_WAP_MAIL_RU)), 1311927, str8), 1115339, StringUtils.prefix(str, str.indexOf(CHAR_AT))), 1246428, StringUtils.getDomain(str)), 591087, str2), 1049848, str3), 1180936, str4), 1049882, str5), 656682, str6), 591156, str7), 591165, i2), 722246, i3), 656721, i4), 263515, i5), 1181023, str9), 1443185, i6), 198023, StringPool.get(StringResKeys.STR_SEARCH_URL))), new Object[]{null, null, null, null, null, null, null, str, ObjectPool.integerOf(0), str2, str3, ObjectPool.integerOf(0), str4, str5, str6, str7, ObjectPool.integerOf(i2), ObjectPool.integerOf(i3), ObjectPool.integerOf(i4), ObjectPool.integerOf(i5), null, ObjectPool.integerOf(i6)});
     }
 
     private static final Object[] startAsyncRequest(int i, String str, Object[] objArr) {
@@ -230,7 +230,7 @@ public abstract class RegistrationService {
     public static void fetchUpdateStatus() {
         try {
             NetworkLock.acquireNetworkLock();
-            HttpClient httpConn = HttpClient.createHttpClient(ResourceAccessor.str(PackedStringKeys.URL_SETTINGS_XML), (Account) null, 3);
+            HttpClient httpConn = HttpClient.createHttpClient(StringPool.get(PackedStringKeys.URL_SETTINGS_XML), (Account) null, 3);
             if (httpConn.getResponseCode() == 200) {
                 ByteBuffer buffer = new ByteBuffer(httpConn);
                 synchronized (UIState.getUpdateLock()) {
@@ -286,7 +286,7 @@ public abstract class RegistrationService {
             }
             UIState.setScreenTitleFromBuffer(versionSb);
             UIState.setScreenSubtitleFromBuffer(urlSb);
-            if (parseVersionNumber(ResourceAccessor.str(StringResKeys.STR_APP_NAME)) >= parseVersionNumber(UIState.getScreenTitle())) {
+            if (parseVersionNumber(AppState.getString(StringResKeys.STR_APP_NAME)) >= parseVersionNumber(UIState.getScreenTitle())) {
                 if (showMessage) {
                     NotificationHelper.showMessageById(731);
                 }
@@ -345,6 +345,6 @@ public abstract class RegistrationService {
             throw new RuntimeException();
         }
         objArr[3] = null;
-        startAsyncRequest(1, new ByteBuffer().writeCompressed(PackedStringKeys.URL_XHTML_WAP_MAIL_RU).writeObjectStr((String) objArr[6]).getStringAndClear(), objArr);
+        startAsyncRequest(1, new ByteBuffer().writeCharBytes("http://xhtml.wap.mail.ru/cgi-bin/").writeObjectStr((String) objArr[6]).getStringAndClear(), objArr);
     }
 }

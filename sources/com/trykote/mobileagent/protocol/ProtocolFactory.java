@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.protocol;
 
 
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.protocol.mmp.MmpCommand;
 import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
@@ -53,7 +53,7 @@ public final class ProtocolFactory {
             buffer.writeCompressed(fieldIndex + AUTH_FIELDS_BASE_KEY);
         }
         if (authSlot != 0) {
-            buffer.writeBytesAt(ResourceAccessor.bytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, AUTH_SLOT_SIZE);
+            buffer.writeBytesAt(AppState.getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, AUTH_SLOT_SIZE);
         }
         return createMmpCommand(protocol, MmpCommand.EXTENDED_AUTH, buffer);
     }

@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.model;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.ui.ListItem;
 import com.trykote.mobileagent.ui.SizeCache;
@@ -77,7 +77,7 @@ public final class UserSearchResult implements ListItem, Identifiable {
     @Override // p000.ListItem
     public final String getText() {
         int suffixKey;
-        StringBuffer sb = ObjectPool.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : ResourceAccessor.str(StringResKeys.STR_ANONYMOUS_NAME));
+        StringBuffer sb = ObjectPool.newStringBuffer().append(Utils.nonEmpty(this.nickname) ? this.nickname : StringPool.get(StringResKeys.STR_ANONYMOUS_NAME));
         if (this.age > 0) {
             StringBuffer sb2 = sb.append(',').append(' ').append(this.age);
             if (this.age >= ContactInfo.AGE_MAX_VALID) {

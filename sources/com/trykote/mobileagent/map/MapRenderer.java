@@ -3,7 +3,7 @@ package com.trykote.mobileagent.map;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
@@ -603,7 +603,7 @@ public abstract class MapRenderer {
                 }
                 if (ChatRenderer.offsetX != i || ChatRenderer.offsetY != i2) {
                     int i69 = i66;
-                    StringBuffer sb = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MAP_INFO_PREFIX));
+                    StringBuffer sb = ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_MAP_INFO_PREFIX));
                     if (i69 < 0 || activeRegion == null) {
                         i3 = 975;
                     } else {

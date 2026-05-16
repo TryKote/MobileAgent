@@ -4,7 +4,7 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SettingsState;
@@ -139,7 +139,7 @@ public final class ChatScreen extends ScreenView {
             case ScreenId.CREATE_CHAT_ROOM:
                 ChatState.setChatRoomCreated(false);
                 ChatState.setChatNameFromBuffer(ObjectPool.newStringBuffer()
-                    .append(ResourceAccessor.str(StringResKeys.STR_CHAT_NAME_PREFIX))
+                    .append(StringPool.get(StringResKeys.STR_CHAT_NAME_PREFIX))
                     .append(1 + (SettingsState.getUiCounter() % CHAT_NAME_COUNTER_MODULO)));
                 configureHeader(232, 553);
                 addTextInput(869, 255, 424, 0, 1292);
@@ -363,7 +363,7 @@ public final class ChatScreen extends ScreenView {
         ChatState.setHasMore(!account.isLastChatRoom(chatRoom));
         ChatState.setUnreadCountText(
             ObjectPool.newStringBuffer()
-                .append(ResourceAccessor.str(StringResKeys.STR_UNREAD_COUNT_PREFIX))
+                .append(StringPool.get(StringResKeys.STR_UNREAD_COUNT_PREFIX))
                 .append(readCount).append(')'));
     }
 
@@ -456,7 +456,7 @@ public final class ChatScreen extends ScreenView {
 
     public static int handleChatInputAction(String actionLabel) {
         String messageText = Utils.defaultStr(UIState.getStatusText());
-        if (actionLabel != ResourceAccessor.str(StringResKeys.STR_NOTIFICATION_SOUND)) {
+        if (actionLabel != StringPool.get(StringResKeys.STR_NOTIFICATION_SOUND)) {
             StringBuffer sb = Utils.getMessageBuffer();
             if (StringUtils.matchesKey(473, actionLabel)) {
                 UIState.setStatusTextFromBuffer(sb.append(UIState.getNotificationText()));

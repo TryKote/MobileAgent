@@ -2,7 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 
@@ -207,7 +207,7 @@ public abstract class JsonParser {
 
     private static final StringBuffer serializeValue(Object obj, StringBuffer stringBuffer) {
         if (obj == null || obj == ObjectPool.JSON_NULL) {
-            stringBuffer.append(ResourceAccessor.str(StringResKeys.STR_SEPARATOR));
+            stringBuffer.append(StringPool.get(StringResKeys.STR_SEPARATOR));
         } else if ((obj instanceof Boolean) || (obj instanceof Integer)) {
             stringBuffer.append(obj);
         } else if (obj instanceof String) {

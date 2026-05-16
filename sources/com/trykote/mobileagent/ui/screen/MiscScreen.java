@@ -8,7 +8,7 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -107,7 +107,7 @@ public final class MiscScreen extends ScreenView {
                 break;
             case ScreenId.VERSION_SELECT:
                 Screen versionScreen = Screens.versionSelect();
-                versionScreen.selectByTitle(ResourceAccessor.str(StringResKeys.STR_PRIVACY_MODE_BASE + AppState.getAccount().getPendingVersion()));
+                versionScreen.selectByTitle(StringPool.get(StringResKeys.STR_PRIVACY_MODE_BASE + AppState.getAccount().getPendingVersion()));
                 versionScreen.show();
                 break;
             case ScreenId.EMPTY_SCREEN:
@@ -333,11 +333,11 @@ public final class MiscScreen extends ScreenView {
         Vector items = screen.menuItems;
         for (int itemIdx = items.size() - 1; itemIdx >= 0; itemIdx--) {
             MenuItem entry = (MenuItem) items.elementAt(itemIdx);
-            if (entry.id == 15 && entry.title.startsWith(ResourceAccessor.str(StringResKeys.STR_MENU_PHONE_PREFIX))) {
+            if (entry.id == 15 && entry.title.startsWith(StringPool.get(StringResKeys.STR_MENU_PHONE_PREFIX))) {
                 phoneItem = entry;
             }
         }
-        if (item.title.equals(ResourceAccessor.str(StringResKeys.STR_MENU_OPTIONS))) {
+        if (item.title.equals(StringPool.get(StringResKeys.STR_MENU_OPTIONS))) {
             String optionStr = selectedIndex == 0 ? Utils.defaultStr(RegistrationState.getDeviceId()) : options[selectedIndex];
             Object[] phoneData = (Object[]) phoneItem.data;
             phoneItem.clear().setAction(phoneData[4], optionStr, phoneData[1], phoneData[2], phoneData[3]);
@@ -358,7 +358,7 @@ public final class MiscScreen extends ScreenView {
 
     private static void buildPhoneScreen(Screen screen) {
         for (int i = 0; i < PHONE_STRING_COUNT; i++) {
-            screen.addTextItem(ResourceAccessor.blockStr(StringResKeys.PHONE_STRINGS_BASE, i));
+            screen.addTextItem(StringPool.get(StringResKeys.PHONE_STRINGS_BASE + i));
         }
         ScreenManager.showScreen(screen);
     }
@@ -396,7 +396,7 @@ public final class MiscScreen extends ScreenView {
         Vector params = ObjectPool.newVector();
         params.addElement(UIState.getMediaStream());
         params.addElement(ObjectPool.integerOf(UIState.isSpecialKeyMode() ? 1 : 0));
-        AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(ResourceAccessor.str(PackedStringKeys.URL_PATH_AJAX_SPAMABUSE), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_SPAMABUSE)), Conversation.urlEncode((Object) JsonParser.toJson(params)))));
+        AppState.getAccount().sendChatRoomRequest(ApiClient.createUploadRequest(StringPool.get(PackedStringKeys.URL_PATH_AJAX_SPAMABUSE), ApiClient.appendAuthParams(ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL)).append(StringPool.get(PackedStringKeys.FUNC_AJAX_SPAMABUSE)), Conversation.urlEncode((Object) JsonParser.toJson(params)))));
     }
 
     // --- Selection handlers ---
@@ -414,7 +414,7 @@ public final class MiscScreen extends ScreenView {
         String password = Utils.defaultStr(RegistrationState.getPassword());
         String firstName = Utils.defaultStr(UIState.getScreenTitle());
         int themeIdx = SettingsState.getSettingsTheme();
-        RegistrationState.setRegistrationData(RegistrationService.createRegRequest(fullLogin, 0, password, firstName, themeIdx == 0 ? Utils.defaultStr(RegistrationState.getDeviceId()) : (String) Utils.splitNonEmpty(ResourceAccessor.str(StringResKeys.STR_MENU_REG_SMS), (char) 0).elementAt(themeIdx), Utils.defaultStr(UIState.getAppVersionString()), Utils.defaultStr(RegistrationState.getFirstName()), Utils.defaultStr(RegistrationState.getLastName()), RegistrationState.getSearchGender(), RegistrationState.getSearchAge(), RegistrationState.getRegDomainIndex(), RegistrationState.getCountryCode(), RegistrationState.getRegionCode(), MapState.getLocationName(), MapState.getLocationUrl()));
+        RegistrationState.setRegistrationData(RegistrationService.createRegRequest(fullLogin, 0, password, firstName, themeIdx == 0 ? Utils.defaultStr(RegistrationState.getDeviceId()) : (String) Utils.splitNonEmpty(StringPool.get(StringResKeys.STR_MENU_REG_SMS), (char) 0).elementAt(themeIdx), Utils.defaultStr(UIState.getAppVersionString()), Utils.defaultStr(RegistrationState.getFirstName()), Utils.defaultStr(RegistrationState.getLastName()), RegistrationState.getSearchGender(), RegistrationState.getSearchAge(), RegistrationState.getRegDomainIndex(), RegistrationState.getCountryCode(), RegistrationState.getRegionCode(), MapState.getLocationName(), MapState.getLocationUrl()));
         return 13;
     }
 

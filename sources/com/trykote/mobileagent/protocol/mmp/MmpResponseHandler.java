@@ -2,7 +2,7 @@ package com.trykote.mobileagent.protocol.mmp;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.PackedStringKeys;
@@ -352,14 +352,14 @@ final class MmpResponseHandler {
         if (savedSequenceId != 0) {
             this.account.sendData(this.account.sendContactListRequest(savedSequenceId));
         }
-        this.account.sendData(ProtocolFactory.createMmpCommand(this.account, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCompressed(PackedStringKeys.MMP_TRANSFER_HEADER)));
+        this.account.sendData(ProtocolFactory.createMmpCommand(this.account, MmpCommand.SET_CAPABILITIES, new ByteBuffer().writeCharBytes(StringPool.get(PackedStringKeys.MMP_TRANSFER_HEADER))));
         this.account.sendData(this.account.queueCommand(new Object[]{ProtocolFactory.createMmpCommand(this.account, MmpCommand.SEARCH, new ByteBuffer().writeShortBE(1).writeShortBE(10).writeShortLE(8).writeIntLE(this.account.serverId).writeShortLE(SEARCH_HISTORY_MARKER).writeShortBE(0)), ObjectPool.integerOf(RESP_HISTORY)}));
         applyPermissionMaps();
         this.account.contactsByIdMap.clear();
         this.account.contactGroupsMap.clear();
         this.account.additionalDataMap.clear();
         if (this.account.groups.size() == 0) {
-            this.account.sendData(this.account.sendAddGroupCommand(ResourceAccessor.str(PackedStringKeys.XMPP_GROUP_GENERAL)));
+            this.account.sendData(this.account.sendAddGroupCommand(StringPool.get(PackedStringKeys.XMPP_GROUP_GENERAL)));
         }
         this.account.progress = MmpProtocol.PROGRESS_CONNECTED;
         this.account.msgCount = MmpProtocol.PROGRESS_CONNECTED;
@@ -449,7 +449,7 @@ final class MmpResponseHandler {
                 if (year >= CENTURY_YEAR) {
                     totalDays--;
                 }
-                byte[] monthDays = ResourceAccessor.bytes(StringResKeys.RES_MONTH_DAYS);
+                byte[] monthDays = AppState.getBytes(StringResKeys.RES_MONTH_DAYS);
                 int monthIndex = 0;
                 while (monthIndex < month - 1) {
                     totalDays += monthIndex == 1 ? febDays : monthDays[monthIndex];

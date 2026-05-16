@@ -2,7 +2,7 @@ package com.trykote.mobileagent.net;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
@@ -209,7 +209,7 @@ public final class TrafficAccounting extends AppState {
             }
         }
         int costCents = (int) ((j * SettingsState.getTrafficCost()) / BYTES_PER_MB);
-        RuntimeState.setTrafficCostText(ObjectPool.newStringBuffer().append(costCents / CENTS_PER_UNIT).append('.').append(Utils.zeroPad(costCents % CENTS_PER_UNIT)).append(' ').append(ResourceAccessor.str(StringResKeys.STR_CURRENCY_SYMBOL)));
+        RuntimeState.setTrafficCostText(ObjectPool.newStringBuffer().append(costCents / CENTS_PER_UNIT).append('.').append(Utils.zeroPad(costCents % CENTS_PER_UNIT)).append(' ').append(StringPool.get(StringResKeys.STR_CURRENCY_SYMBOL)));
         RuntimeState.setTrafficPeriodLabel(periodIndex + 745);
         Screens.trafficStats().show();
         AppState.clearRange(ContactKeys.SLOT_GROUP_LIST_INDEX, UIKeys.RANGE_SEARCH_LABEL_END);

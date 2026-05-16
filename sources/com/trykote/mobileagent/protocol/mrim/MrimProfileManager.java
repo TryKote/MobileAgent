@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.map.MapPoint;
@@ -75,7 +75,7 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_PUBLISHED;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.photoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, StringPool.get(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(1, new String[0], this.profile);
         }
@@ -86,7 +86,7 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_HIDDEN;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.photoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, StringPool.get(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, new String[0], this.profile);
         }
@@ -97,9 +97,9 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_CLEARED;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.photoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.photoUrls, StringPool.get(PackedStringKeys.MRIM_GEO_POINT));
             }
-            sendRename(new String[0], ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
+            sendRename(new String[0], StringPool.get(PackedStringKeys.MRIM_GEO_POINT));
         }
     }
 
@@ -108,9 +108,9 @@ public final class MrimProfileManager {
         this.profile.gender = LOCATION_WITH_GROUPS;
         if (this.account.isConnected()) {
             if (i == LOCATION_WITH_GROUPS) {
-                sendRename(this.profile.prevPhotoUrls, ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(this.profile.prevPhotoUrls, StringPool.get(PackedStringKeys.MRIM_GEO_POINT));
             } else if (i == LOCATION_PUBLISHED || i == LOCATION_HIDDEN) {
-                sendRename(new String[0], ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT));
+                sendRename(new String[0], StringPool.get(PackedStringKeys.MRIM_GEO_POINT));
             }
             sendUpdate(0, this.profile.photoUrls, this.profile);
         }
@@ -145,7 +145,7 @@ public final class MrimProfileManager {
     public void setSimpleLocation(String str, String str2) {
         try {
             VCard vcard = this.profile;
-            String typeStr = ResourceAccessor.str(PackedStringKeys.MRIM_MAPPOINT);
+            String typeStr = StringPool.get(PackedStringKeys.MRIM_MAPPOINT);
             String str3 = AppState.emptyStr;
             vcard.setCardData(str2, str, typeStr, str3, str3, str3, str3, str3);
         } catch (Throwable unused) {
@@ -159,7 +159,7 @@ public final class MrimProfileManager {
             VCard vcard = this.profile;
             String latStr = MapUtils.pixelToLatitude(mapPoint.latitude);
             String lonStr = MapUtils.pixelToLongitude(mapPoint.longitude);
-            String typeStr = ResourceAccessor.str(PackedStringKeys.MRIM_MAPOBJECT);
+            String typeStr = StringPool.get(PackedStringKeys.MRIM_MAPOBJECT);
             String pointName = mapPoint.getDisplayName();
             String str = AppState.emptyStr;
             vcard.setCardData(latStr, lonStr, typeStr, pointName, str, str, StringUtils.intern(Integer.toString(mapPoint.objectCode)), StringUtils.intern(Integer.toString(mapPoint.typeCode)));
@@ -174,7 +174,7 @@ public final class MrimProfileManager {
             return 0;
         }
         String[] strArr2 = {vcard.latStr, vcard.lonStr, vcard.mapTypeStr, vcard.phone, vcard.email, vcard.nickname, vcard.address, vcard.zoomStr};
-        this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(ResourceAccessor.str(PackedStringKeys.MRIM_GEO_POINT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
+        this.account.trySendData(ProtocolFactory.createMrimPacket(this.account, MrimCommand.CS_ANKETA_UPDATE, new ByteBuffer().writeIntLE(i).writeStringArr(strArr).writeStringLatin1(StringPool.get(PackedStringKeys.MRIM_GEO_POINT)).writeBuffer(new ByteBuffer().writeBufferIntLen(new ByteBuffer().writeStringLatin1(strArr2[0]).writeStringLatin1(strArr2[1]).writeStringLatin1(strArr2[2]).writeStringUTF16(strArr2[3]).writeStringLatin1(strArr2[4]).writeStringLatin1(strArr2[5]).writeStringLatin1(strArr2[6]).writeStringLatin1(strArr2[7])))));
         return 0;
     }
 

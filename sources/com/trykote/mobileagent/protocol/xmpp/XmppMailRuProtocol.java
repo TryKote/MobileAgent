@@ -7,7 +7,7 @@ import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.key.ChatKeys;
 import com.trykote.mobileagent.key.PackedStringKeys;
@@ -49,7 +49,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     public XmppMailRuProtocol(int id, String login, String password) {
         super(id, login, password);
-        this.serverAddress = ResourceAccessor.str(PackedStringKeys.HOST_VKMESSENGER);
+        this.serverAddress = StringPool.get(PackedStringKeys.HOST_VKMESSENGER);
         this.serverPort = DEFAULT_PORT;
     }
 
@@ -60,7 +60,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     public XmppMailRuProtocol(ByteBuffer buf) {
         super(buf);
-        this.serverAddress = ResourceAccessor.str(PackedStringKeys.HOST_VKMESSENGER);
+        this.serverAddress = StringPool.get(PackedStringKeys.HOST_VKMESSENGER);
         this.serverPort = DEFAULT_PORT;
     }
 
@@ -122,7 +122,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
             SessionState.setServerIndex(0);
             if (xmppAccount != null) {
                 String loginStr = xmppAccount.login;
-                Vector parts = Utils.splitNonEmpty(ResourceAccessor.str(StringResKeys.STR_SERVER_LIST), '\0');
+                Vector parts = Utils.splitNonEmpty(StringPool.get(StringResKeys.STR_SERVER_LIST), '\0');
                 int count = 0;
                 for (int ci = Utils.vectorSize(parts) - 1; ci >= 1; ci--) {
                     int idx = loginStr.indexOf((String) parts.elementAt(ci));
@@ -166,7 +166,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (currentAccount != null) {
             RegistrationState.setPassword(currentAccount.password);
             String login = currentAccount.login;
-            Vector domains = Utils.splitNonEmpty(ResourceAccessor.str(StringResKeys.STR_DOMAIN_LIST), '\0');
+            Vector domains = Utils.splitNonEmpty(StringPool.get(StringResKeys.STR_DOMAIN_LIST), '\0');
             int size = domains.size();
             for (int i = 0; i <= size; i++) {
                 if (i == size) {
@@ -316,15 +316,15 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         try {
             RemoteLogger.log("XMPP", "dnsLookupSrv acquiring network lock");
             NetworkLock.acquireNetworkLock();
-            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + ResourceAccessor.str(PackedStringKeys.HOST_NSRPUB_DNS));
+            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + StringPool.get(PackedStringKeys.HOST_NSRPUB_DNS));
             Vector parts = Utils.splitNonEmpty(srvName, '.');
-            ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.MMP_PADDING_12);
+            ByteBuffer requestBuf = new ByteBuffer().writeCharBytes(StringPool.get(PackedStringKeys.MMP_PADDING_12));
             for (int i = 0; i < Utils.vectorSize(parts); i++) {
                 requestBuf.writeByteLenStr(Utils.getVectorString(parts, i));
             }
             ObjectPool.releaseVector(parts);
-            requestBuf.writeCompressed(PackedStringKeys.MMP_SPACER);
-            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(ResourceAccessor.str(PackedStringKeys.HOST_NSRPUB_DNS)));
+            requestBuf.writeCharBytes(StringPool.get(PackedStringKeys.MMP_SPACER));
+            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(StringPool.get(PackedStringKeys.HOST_NSRPUB_DNS)));
             datagramConnection.send(datagramConnection.newDatagram(requestBuf.data, requestBuf.length));
             requestBuf.clear();
             Datagram datagram = datagramConnection.newDatagram(DNS_BUFFER_SIZE);
@@ -389,7 +389,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         }
         int serverIndex = SessionState.getServerIndex();
         if (serverIndex != 0 && fullLogin.indexOf(CHAR_AT) < 0) {
-            fullLogin = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(fullLogin).append(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_SERVER_LIST)).elementAt(serverIndex)));
+            fullLogin = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(fullLogin).append(Utils.splitByNull(StringPool.get(StringResKeys.STR_SERVER_LIST)).elementAt(serverIndex)));
         }
         if (accountType == 2 && fullLogin.indexOf(CHAR_AT) < 0) {
             return NotificationHelper.showError(699);
@@ -412,7 +412,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                     Vector responseLines = Utils.splitNonEmpty(new ByteBuffer(httpClient).getStringAndClear(), '\n');
                     if (((Integer) objArr[2]).intValue() == 0) {
                         objArr[2] = ObjectPool.integerOf(1);
-                        objArr[1] = new ByteBuffer().writeCompressed(PackedStringKeys.URL_GOOGLE_ACCOUNTS).writeCompressed(PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN).writeObjectStr((String) responseLines.elementAt(0)).writeByte(38).writeObjectStr((String) responseLines.elementAt(1)).readAllByteStr();
+                        objArr[1] = new ByteBuffer().writeCharBytes("https://www.google.com:443/accounts/").writeCharBytes("IssueAuthToken?service=mail&Session=true&").writeObjectStr((String) responseLines.elementAt(0)).writeByte(38).writeObjectStr((String) responseLines.elementAt(1)).readAllByteStr();
                         new AsyncTask(AsyncTaskId.PERFORM_XMPP_AUTH, objArr);
                     } else {
                         setAuthResult(objArr, responseLines.elementAt(0));

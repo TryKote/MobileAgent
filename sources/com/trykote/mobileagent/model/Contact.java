@@ -3,7 +3,7 @@ package com.trykote.mobileagent.model;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MessageListener;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -368,12 +368,12 @@ public abstract class Contact implements Sortable {
             long msgTime, long sentTime, int colorStyle, int dateCode) {
         screen.addSeparator(ObjectPool.toStringAndRelease(
                 ObjectPool.newStringBuffer().append(name)
-                        .append(ResourceAccessor.str(StringResKeys.STR_NAME_SEPARATOR))
+                        .append(StringPool.get(StringResKeys.STR_NAME_SEPARATOR))
                         .append(formatTime(msgTime, dateCode))), HEADER_STYLE_RECEIVED);
         screen.addIconItem(ICON_FORWARDED, msgText, 0);
         if (this.account.isConnected()) {
             screen.addExpandableItem(NO_ACTION,
-                    ResourceAccessor.str(StringResKeys.STR_EXPAND_MESSAGE), colorStyle,
+                    StringPool.get(StringResKeys.STR_EXPAND_MESSAGE), colorStyle,
                     new Object[]{ObjectPool.integerOf(1), msgText, name, new Long(sentTime)});
         }
     }

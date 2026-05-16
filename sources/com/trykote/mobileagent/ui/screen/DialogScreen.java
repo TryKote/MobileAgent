@@ -8,14 +8,13 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
-import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.key.UIKeys;
 import com.trykote.mobileagent.map.MapController;
@@ -86,7 +85,7 @@ public final class DialogScreen extends ScreenView {
         switch (screenId) {
             case ScreenId.STATUS_DIALOG: buildStatusDialog(); break;
             case ScreenId.BLOCK_CONFIRM: NotificationHelper.showAlertById(10, 710); break;
-            case ScreenId.UNBLOCK_CONFIRM: NotificationHelper.showAlertBuffer(11, ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_BLOCK_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167))); break;
+            case ScreenId.UNBLOCK_CONFIRM: NotificationHelper.showAlertBuffer(11, ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_BLOCK_CONFIRM)).append(AppState.getCurrentContact().displayName).append(ObjectPool.unpackChars(16167))); break;
             case ScreenId.CONFIRM_EXIT: NotificationHelper.showConfirmDialog(13, 505); break;
             case ScreenId.EMOTICON_DIALOG: buildEmoticonDialog(); break;
             case ScreenId.DELETE_CONFIRM: NotificationHelper.showConfirmDialog(55, 761); break;
@@ -238,7 +237,7 @@ public final class DialogScreen extends ScreenView {
                 }
                 break;
         }
-        ScreenManager.showScreen(dialogScreen.setSoftKeys(ResourceAccessor.str(StringResKeys.STR_SOFTKEY_YES), ResourceAccessor.str(StringResKeys.STR_SOFTKEY_NO), 199, 12, 199));
+        ScreenManager.showScreen(dialogScreen.setSoftKeys(StringPool.get(StringResKeys.STR_SOFTKEY_YES), StringPool.get(StringResKeys.STR_SOFTKEY_NO), 199, 12, 199));
     }
 
     private static void buildEmoticonDialog() {
@@ -254,11 +253,11 @@ public final class DialogScreen extends ScreenView {
                 }
             }
         }
-        ScreenManager.showScreen(dialogScreen.setSoftKeys(ResourceAccessor.str(StringResKeys.STR_SOFTKEY_YES), ResourceAccessor.str(StringResKeys.STR_SOFTKEY_NO), 199, 12, 199));
+        ScreenManager.showScreen(dialogScreen.setSoftKeys(StringPool.get(StringResKeys.STR_SOFTKEY_YES), StringPool.get(StringResKeys.STR_SOFTKEY_NO), 199, 12, 199));
     }
 
     private static void buildStatusInput() {
-        TextInputHelper.showTextInputDialog(AppState.getCurrentContact().displayName, UIState.getStatusText(), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new TextInputHandler());
+        TextInputHelper.showTextInputDialog(AppState.getCurrentContact().displayName, UIState.getStatusText(), 1000, StringUtils.isKnownDevice2 ? 2097152 : 0, StringPool.get(StringResKeys.STR_INPUT_MODE_DEFAULT), 1059, 1055, new TextInputHandler());
         RuntimeState.resetPollingState();
         ScreenManager.showScreen(new ListView());
     }
@@ -268,13 +267,13 @@ public final class DialogScreen extends ScreenView {
         int contactProtocol = AppState.getCurrentContact().account.getType();
         if (contactProtocol == Account.TYPE_MMP) {
             for (int i = 0; i < PICKER_MMP_COUNT; i++) {
-                if (ResourceAccessor.blockStr(StringResKeys.MMP_EMOTICONS_BASE, i) != null) {
+                if (StringPool.get(StringResKeys.MMP_EMOTICONS_BASE + i) != null) {
                     screen.addIconTextItem(i + PICKER_MMP_ICON_BASE, StringUtils.intern(Integer.toString(i)), i);
                 }
             }
         } else if (AppState.getCurrentContact().account.isXmppType()) {
             for (int i = 0; i < PICKER_XMPP_COUNT; i++) {
-                if (ResourceAccessor.blockStr(StringResKeys.XMPP_EMOTICONS_BASE, i) != null) {
+                if (StringPool.get(StringResKeys.XMPP_EMOTICONS_BASE + i) != null) {
                     screen.addIconTextItem(i + PICKER_XMPP_ICON_BASE, StringUtils.intern(Integer.toString(i)), i);
                 }
             }
@@ -334,7 +333,7 @@ public final class DialogScreen extends ScreenView {
         String[] langOptions = ScreenManager.getLanguageOptions();
         if (langOptions != null) {
             UIState.setScreenSubtitle((Object) langOptions[0]);
-            UIState.setScreenTitleFromBuffer(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_LANGUAGE_PREFIX)).append(langOptions[1]));
+            UIState.setScreenTitleFromBuffer(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_LANGUAGE_PREFIX)).append(langOptions[1]));
             if (RegistrationState.getSearchResultCount() != 0) {
                 UIState.clearLangOption1();
                 UIState.clearLangOption2();
@@ -362,7 +361,7 @@ public final class DialogScreen extends ScreenView {
             return NotificationHelper.showError(523);
         }
         Account smsAccount = AppState.getAccount();
-        new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_AGENTUPLOAD).writeUInt(4022591).writeRawString(smsAccount.login).writeUInt(4022822).writeRawString(smsAccount.password).writeCompressed(PackedStringKeys.PARAM_Z_JAVA).writeCompressed(PackedStringKeys.PARAM_CE).writeRawString(Conversation.urlEncodeCyrillic((Object) messageText)).writeRawString(Utils.defaultStr(SessionState.isCaptchaShown() ? UIState.getScreenSubtitle() : null)).getStringAndClear());
+        new AsyncTask(AsyncTaskId.SEND_SMS_REQUEST, new ByteBuffer().writeCharBytes("http://mobile.mail.ru/").writeCharBytes("data/agentupload").writeUInt(4022591).writeRawString(smsAccount.login).writeUInt(4022822).writeRawString(smsAccount.password).writeCharBytes("&z=java").writeCharBytes("&c=2&e=").writeRawString(Conversation.urlEncodeCyrillic((Object) messageText)).writeRawString(Utils.defaultStr(SessionState.isCaptchaShown() ? UIState.getScreenSubtitle() : null)).getStringAndClear());
         RegistrationState.addSearchResultCount(1);
         return 0;
     }

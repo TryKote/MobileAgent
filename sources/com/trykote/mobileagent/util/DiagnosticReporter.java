@@ -4,7 +4,6 @@ package com.trykote.mobileagent.util;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
-import com.trykote.mobileagent.core.ResourceAccessor;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -46,7 +45,7 @@ public abstract class DiagnosticReporter {
             Thread.sleep(SLEEP_DURATION_MS);
             NetworkLock.acquireNetworkLock();
             if (str == null) {
-                HttpClient diagClient = HttpClient.createWithType2((Object) new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_DATA_GET).writeCompressed(PackedStringKeys.API_PHONE_INFO).getStringAndClear());
+                HttpClient diagClient = HttpClient.createWithType2((Object) new ByteBuffer().writeCharBytes("http://mobile.mail.ru/").writeCharBytes("data/get").writeCharBytes("_phone_info").getStringAndClear());
                 httpClient = diagClient;
                 if (diagClient.getResponseCode() == 200) {
                     Vector children = new ByteBuffer(httpClient).parseXmlStr().children;
@@ -66,12 +65,12 @@ public abstract class DiagnosticReporter {
                     new AsyncTask(AsyncTaskId.SEND_DIAGNOSTIC, report.toString());
                 }
             } else {
-                ByteBuffer urlBuffer = new ByteBuffer().writeCompressed(PackedStringKeys.PARAM_Q_EQ);
+                ByteBuffer urlBuffer = new ByteBuffer().writeCharBytes("q=");
                 ByteBuffer dataBuffer = new ByteBuffer().writeUTFNoLen(str);
                 for (int i7 = 0; i7 < dataBuffer.length; i7 += BASE64_CHUNK_SIZE) {
                     int pos = i7;
                     int limit = Utils.min(pos + BASE64_CHUNK_SIZE, dataBuffer.length);
-                    byte[] base64Table = ResourceAccessor.bytes(StringResKeys.RES_BASE64_TABLE);
+                    byte[] base64Table = AppState.getBytes(StringResKeys.RES_BASE64_TABLE);
                     int outPos = 0;
                     boolean z = true;
                     while (z) {
@@ -190,7 +189,7 @@ public abstract class DiagnosticReporter {
                     urlBuffer.writeBytesAt(outputBuffer, 0, outPos);
                 }
                 dataBuffer.clear();
-                HttpClient uploadClient = HttpClient.createMockClient(new ByteBuffer().writeCompressed(PackedStringKeys.HOST_MOBILE_MAIL_RU_2041).writeCompressed(PackedStringKeys.API_DATA_ADD).writeCompressed(PackedStringKeys.API_PHONE_INFO).getStringAndClear());
+                HttpClient uploadClient = HttpClient.createMockClient(new ByteBuffer().writeCharBytes("mobile.mail.ru:2041/").writeCharBytes("data/add").writeCharBytes("_phone_info").getStringAndClear());
                 httpClient = uploadClient;
                 uploadClient.sendHttpRequest(urlBuffer.length, 1414745936, 1038).writeBuffer(urlBuffer).getResponseCode();
             }

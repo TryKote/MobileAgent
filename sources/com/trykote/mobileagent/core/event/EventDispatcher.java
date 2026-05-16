@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.core.event;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.protocol.Account;
@@ -45,27 +45,27 @@ public final class EventDispatcher {
     }
 
     public static final void postRenameError(Object[] requestData, int errorCode) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_REMOVED_FROM_LIST)).append(requestData[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_REMOVED_FROM_LIST)).append(requestData[2]).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
     }
 
     public static final void postAddGroupError(Object[] requestData, int errorCode) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_TYPING_NOTIFICATION)).append(requestData[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_TYPING_NOTIFICATION)).append(requestData[2]).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
     }
 
     public static final void postDeleteError(Object[] requestData, int errorCode) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ADDED_TO_LIST)).append(requestData[2]).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ADDED_TO_LIST)).append(requestData[2]).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
     }
 
     public static final void postOperationError(int errorCode) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_NETWORK_ERROR)).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_NETWORK_ERROR)).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
     }
 
     public static final void postAccountError(Account acct, int stringKey) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(stringKey))));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(StringPool.get(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(AppState.getString(stringKey))));
     }
 
     public static final void postAccountMessage(Account acct, String message) {
-        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(message)));
+        postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ACCOUNT_CONNECTED)).append(acct).append(StringPool.get(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(message)));
     }
 
     public static void postAccountNotification(Account acct, String message) {

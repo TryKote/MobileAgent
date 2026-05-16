@@ -7,12 +7,11 @@ import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.UIState;
-import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapPoint;
@@ -356,7 +355,7 @@ public final class MapScreen extends ScreenView {
         if (msgId != null) {
             RequestQueue.sharedContactList.addElement(new Object[]{msgId, new long[]{lon, lat}, msgId2});
             String sessionKey = Utils.defaultStr(SessionState.getSessionKey());
-            ByteBuffer requestBuf = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_ADD).writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(lon).writeUInt(4023078).writeLongAsString(lat).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCompressed(PackedStringKeys.TAG_SECRET).writeLongAsString(lon).encryptMD5().toHexString());
+            ByteBuffer requestBuf = new ByteBuffer().writeCharBytes("http://mobile.mail.ru/data/map_point/add_object?").writeUInt(15713).writeRawString(msgId).writeUInt(4022822).writeLongAsString(lon).writeUInt(4023078).writeLongAsString(lat).writeUInt(4023334).writeRawString(sessionKey).writeUInt(4023590).writeRawString(new ByteBuffer().writeRawString(sessionKey).writeCharBytes("secret").writeLongAsString(lon).encryptMD5().toHexString());
             if (msgId2 != null) {
                 requestBuf.writeUInt(4023846).writeRawString(Conversation.urlEncodeCyrillic(msgId2));
             }
@@ -447,13 +446,13 @@ public final class MapScreen extends ScreenView {
             }
             return NotificationHelper.showError(354);
         }
-        if (ResourceAccessor.str(StringResKeys.STR_PROTOCOL_MRIM).equals(protocol)) {
+        if (StringPool.get(StringResKeys.STR_PROTOCOL_MRIM).equals(protocol)) {
             MapState.setGpsActive(true);
             MapPointStore.stopMapAnimation(UIState.getPhotoQueue());
             MapRenderer.needsRedraw = true;
             return ScreenId.MAP;
         }
-        if (!ResourceAccessor.str(StringResKeys.STR_PROTOCOL_MMP).equals(protocol)) {
+        if (!StringPool.get(StringResKeys.STR_PROTOCOL_MMP).equals(protocol)) {
             return 0;
         }
         MapState.setGpsActive(false);

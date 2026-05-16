@@ -5,7 +5,7 @@ import com.trykote.mobileagent.core.AccountListener;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ContactListListener;
 import com.trykote.mobileagent.core.MessageListener;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
@@ -399,9 +399,9 @@ public abstract class Account {
         String errorMsg;
         Throwable th = this.connection.exception;
         if (th == null) {
-            errorMsg = ResourceAccessor.str(StringResKeys.STR_TIMEOUT_ERROR);
+            errorMsg = StringPool.get(StringResKeys.STR_TIMEOUT_ERROR);
         } else {
-            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(ResourceAccessor.str(StringResKeys.STR_ERROR_SEPARATOR)).append(AppState.getString(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
+            errorMsg = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(th).append(StringPool.get(StringResKeys.STR_ERROR_SEPARATOR)).append(StringPool.get(th instanceof IllegalArgumentException ? 947 : th instanceof ConnectionNotFoundException ? 948 : th instanceof IOException ? 949 : th instanceof SecurityException ? 950 : 463)));
         }
 
         // Retry on IOException (network errors), not on SecurityException or auth errors
@@ -443,7 +443,7 @@ public abstract class Account {
     }
 
     public final void handleError(int errorCode) {
-        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_CONNECTED)).append(this).append(ResourceAccessor.str(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(ResourceAccessor.str(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
+        EventDispatcher.postNotification(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ACCOUNT_CONNECTED)).append(this).append(StringPool.get(StringResKeys.STR_ACCOUNT_SEPARATOR)).append(StringPool.get(StringResKeys.STR_MESSAGE_SEPARATOR)).append(errorCode)));
         closeConnection();
         this.lastError = getDefaultError();
     }

@@ -4,7 +4,7 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.model.ChatRoom;
@@ -50,17 +50,17 @@ public final class MrimChatRoomManager {
             hasExisting = false;
             this.list = ObjectPool.newVector();
         }
-        Object roomsArray = JsonParser.getValue(obj, ResourceAccessor.str(PackedStringKeys.MAIL_PARAM_FLIST));
+        Object roomsArray = JsonParser.getValue(obj, StringPool.get(PackedStringKeys.MAIL_PARAM_FLIST));
         for (int i = 0; i < ((Vector) roomsArray).size(); i++) {
             Object roomObj = ((Vector) roomsArray).elementAt(i);
-            ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, ResourceAccessor.str(PackedStringKeys.ATTR_ID_UPPER)));
+            ChatRoom existingRoom = findById(JsonParser.getIntValue(roomObj, StringPool.get(PackedStringKeys.ATTR_ID_UPPER)));
             if (existingRoom == null) {
                 this.list.addElement(new ChatRoom(roomObj));
             } else {
                 existingRoom.parseJson(roomObj);
             }
         }
-        this.nickname = JsonParser.getStringValue(obj, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_REAL_NAME));
+        this.nickname = JsonParser.getStringValue(obj, StringPool.get(PackedStringKeys.MAIL_FIELD_REAL_NAME));
         assignDefault(hasExisting);
     }
 
@@ -105,8 +105,8 @@ public final class MrimChatRoomManager {
     }
 
     public ChatRoom findDefault() {
-        ChatRoom defaultRoom = findByNameExact(ResourceAccessor.str(StringResKeys.STR_MAIN_CHATROOM));
-        return defaultRoom != null ? defaultRoom : findByNameExact(ResourceAccessor.str(StringResKeys.STR_DEFAULT_CHATROOM));
+        ChatRoom defaultRoom = findByNameExact(StringPool.get(StringResKeys.STR_MAIN_CHATROOM));
+        return defaultRoom != null ? defaultRoom : findByNameExact(StringPool.get(StringResKeys.STR_DEFAULT_CHATROOM));
     }
 
     void assignDefault(boolean hasExisting) {

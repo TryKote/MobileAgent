@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 import com.trykote.mobileagent.core.AppController;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
@@ -101,8 +101,8 @@ public final class TabBar {
         int accountCount = accounts.size();
         if (accountCount == 0 || !SettingsState.isMultiAccount()) {
             RemoteLogger.log("TAB", "addTab DEFAULT: icon=" + ICON_CONTACTS
-                + " title=" + ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS));
-            addTab(ICON_CONTACTS, ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS),
+                + " title=" + StringPool.get(StringResKeys.STR_TAB_CONTACTS));
+            addTab(ICON_CONTACTS, StringPool.get(StringResKeys.STR_TAB_CONTACTS),
                 TYPE_CONTACTS, null);
         } else {
             for (int idx = 0; idx < accountCount; idx++) {
@@ -118,13 +118,13 @@ public final class TabBar {
         if (SettingsState.isMailTabEnabled()) {
             RemoteLogger.log("TAB", "addTab MAIL: getBool(67)="
                 + SettingsState.isMailTabEnabled());
-            addTab(ICON_MAIL, ResourceAccessor.str(StringResKeys.STR_TAB_MAIL),
+            addTab(ICON_MAIL, StringPool.get(StringResKeys.STR_TAB_MAIL),
                 TYPE_MAIL, null);
         }
         if (SettingsState.isSearchTabEnabled()) {
             RemoteLogger.log("TAB", "addTab SEARCH: getBool(68)="
                 + SettingsState.isSearchTabEnabled());
-            addTab(ICON_SEARCH, ResourceAccessor.str(StringResKeys.STR_TAB_SEARCH),
+            addTab(ICON_SEARCH, StringPool.get(StringResKeys.STR_TAB_SEARCH),
                 TYPE_SEARCH, null);
         }
         layout();
@@ -186,7 +186,7 @@ public final class TabBar {
     public static void ensureSettingsTab() {
         ensureDefaultTab();
         if (findTab(TYPE_MAIL, null) == null) {
-            addTab(ICON_MAIL, ResourceAccessor.str(StringResKeys.STR_TAB_MAIL),
+            addTab(ICON_MAIL, StringPool.get(StringResKeys.STR_TAB_MAIL),
                 TYPE_MAIL, null);
         }
     }
@@ -198,7 +198,7 @@ public final class TabBar {
     public static void ensureSearchTab() {
         ensureDefaultTab();
         if (findTab(TYPE_SEARCH, null) == null) {
-            addTab(ICON_SEARCH, ResourceAccessor.str(StringResKeys.STR_TAB_SEARCH),
+            addTab(ICON_SEARCH, StringPool.get(StringResKeys.STR_TAB_SEARCH),
                 TYPE_SEARCH, null);
         }
     }
@@ -225,7 +225,7 @@ public final class TabBar {
 
     private static void ensureDefaultTab() {
         if (SettingsState.isMultiAccount()) return;
-        updateTitle(ICON_CONTACTS, ResourceAccessor.str(StringResKeys.STR_TAB_CONTACTS));
+        updateTitle(ICON_CONTACTS, StringPool.get(StringResKeys.STR_TAB_CONTACTS));
     }
 
     public static TabBar getCurrentTab() {

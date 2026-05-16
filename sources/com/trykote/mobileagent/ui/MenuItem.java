@@ -2,7 +2,7 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
@@ -110,7 +110,7 @@ public final class MenuItem {
     }
 
     public static MenuItem createDefault() {
-        return new MenuItem(TYPE_REGULAR, ResourceAccessor.str(StringResKeys.STR_EMPTY));
+        return new MenuItem(TYPE_REGULAR, StringPool.get(StringResKeys.STR_EMPTY));
     }
 
     public static MenuItem create(String title) {

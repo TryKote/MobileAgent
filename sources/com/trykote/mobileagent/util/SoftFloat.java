@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.util;
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.StringResKeys;
 
 public final class SoftFloat {
@@ -354,7 +354,7 @@ public final class SoftFloat {
         if (z || firstChar == '+') {
             i = 1;
         }
-        if (i < length && (((ch = normalized.charAt(i)) == 'I' || ch == 'i') && StringUtils.equals(ResourceAccessor.str(StringResKeys.STR_INFINITY), StringUtils.intern(StringUtils.suffix(normalized, i).toUpperCase())))) {
+        if (i < length && (((ch = normalized.charAt(i)) == 'I' || ch == 'i') && StringUtils.equals(StringPool.get(StringResKeys.STR_INFINITY), StringUtils.intern(StringUtils.suffix(normalized, i).toUpperCase())))) {
             return z2 ? -4503599627370496L : 9218868437227405312L;
         }
         long j = 0;
@@ -406,7 +406,7 @@ public final class SoftFloat {
             return ObjectPool.unpackChars(negative ? 808333357 : 3157552);
         }
         if (isInfinite(j)) {
-            return AppState.getString(negative ? 985 : 984);
+            return StringPool.get(negative ? 985 : 984);
         }
         if (i < 9) {
             i = 9;
@@ -1239,9 +1239,9 @@ public final class SoftFloat {
         AppState.setObject(StringResKeys.RES_LOOKUP_TABLE, readLongArray(991));
         AppState.setObject(StringResKeys.RES_SHORT_INDEX_TABLE_2, Utils.readShortArray(989));
         AppState.setObject(StringResKeys.RES_SHORT_INDEX_TABLE_1, Utils.readShortArray(988));
-        AppState.setObject(StringResKeys.RES_PALETTE_MAP_1, Utils.bytesToInts(ResourceAccessor.bytes(StringResKeys.RES_PALETTE_MAP_1)));
-        AppState.setObject(StringResKeys.RES_PALETTE_MAP_2, Utils.bytesToInts(ResourceAccessor.bytes(StringResKeys.RES_PALETTE_MAP_2)));
-        AppState.setObject(StringResKeys.RES_ICON_MAP, Utils.bytesToInts(ResourceAccessor.bytes(StringResKeys.RES_ICON_MAP)));
+        AppState.setObject(StringResKeys.RES_PALETTE_MAP_1, Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_PALETTE_MAP_1)));
+        AppState.setObject(StringResKeys.RES_PALETTE_MAP_2, Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_PALETTE_MAP_2)));
+        AppState.setObject(StringResKeys.RES_ICON_MAP, Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_ICON_MAP)));
     }
 
     public static void clearMathTables() {

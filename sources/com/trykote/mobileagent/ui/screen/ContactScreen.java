@@ -5,7 +5,7 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -429,7 +429,7 @@ public final class ContactScreen extends ScreenView {
         }
         StringUtils.resetRegForm();
         if (ContactListManager.getGroupCount(AppState.getAccount()) == 0) {
-            EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_NOTIFICATION_NEW_MSG));
+            EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_NOTIFICATION_NEW_MSG));
         } else {
             Screens.addContactForm().show();
         }
@@ -489,7 +489,7 @@ public final class ContactScreen extends ScreenView {
     }
 
     private void buildDeleteEntity() {
-        StringBuffer alertBuffer = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_ALERT_PREFIX));
+        StringBuffer alertBuffer = ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_ALERT_PREFIX));
         Object deleteTarget = ContactState.getEntity();
         NotificationHelper.showAlertBuffer(71, alertBuffer.append(deleteTarget instanceof ContactGroup ? ((ContactGroup) deleteTarget).name : ((Contact) deleteTarget).displayName).append(ObjectPool.unpackChars(PACKED_CONFIRM_SUFFIX)));
     }
@@ -506,7 +506,7 @@ public final class ContactScreen extends ScreenView {
         }
         Vector outerParams = ObjectPool.newVector();
         outerParams.addElement(itemsParams);
-        MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(ResourceAccessor.str(PackedStringKeys.URL_PATH_AJAX_MARKMSG), ObjectPool.newStringBuffer().append(ResourceAccessor.str(PackedStringKeys.PARAM_AJAX_CALL)).append(ResourceAccessor.str(PackedStringKeys.FUNC_AJAX_MARK_MSG)).append(SessionState.getSessionHash()).append(ResourceAccessor.str(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
+        MrimChatRoomManager.sendChatRoomRequest(ApiClient.createUploadRequest(StringPool.get(PackedStringKeys.URL_PATH_AJAX_MARKMSG), ObjectPool.newStringBuffer().append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL)).append(StringPool.get(PackedStringKeys.FUNC_AJAX_MARK_MSG)).append(SessionState.getSessionHash()).append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ)).append(Conversation.urlEncode((Object) JsonParser.toJson(outerParams)))));
     }
 
     private void buildContactDelete() {
@@ -577,7 +577,7 @@ public final class ContactScreen extends ScreenView {
         if (membersScreen.menuItems.size() == 0) {
             membersScreen.selectable = false;
             ListView labelScreen = membersScreen.addLabelById(772);
-            labelScreen.setSoftKeys(ResourceAccessor.str(StringResKeys.STR_EMPTY), ResourceAccessor.str(StringResKeys.STR_SOFTKEY_NO), labelScreen.softKeyLeft, labelScreen.softKeyCenter, labelScreen.softKeyRight);
+            labelScreen.setSoftKeys(StringPool.get(StringResKeys.STR_EMPTY), StringPool.get(StringResKeys.STR_SOFTKEY_NO), labelScreen.softKeyLeft, labelScreen.softKeyCenter, labelScreen.softKeyRight);
         }
         ScreenManager.showScreen(membersScreen);
         RegistrationState.clearParam4();
@@ -646,7 +646,7 @@ public final class ContactScreen extends ScreenView {
             return NotificationHelper.showError(486);
         }
         MrimContactGroup contactGroup = addAccount.getFirstContactGroup();
-        ByteBuffer packetBuf = new ByteBuffer().writeIntLE(MRIM_FLAG_PHONE_CONTACT).writeIntLE(103).writeStringLatin1(ResourceAccessor.str(StringResKeys.STR_PHONE_SUFFIX)).writeStringUTF16(displayName);
+        ByteBuffer packetBuf = new ByteBuffer().writeIntLE(MRIM_FLAG_PHONE_CONTACT).writeIntLE(103).writeStringLatin1(StringPool.get(StringResKeys.STR_PHONE_SUFFIX)).writeStringUTF16(displayName);
         String emailsJoined = Utils.joinComma(addPhones);
         int sendResult = addAccount.trySendData(addAccount.createAndQueueCommand(new Object[]{ProtocolFactory.createMrimPacket(addAccount, MrimCommand.CS_ADD_CONTACT, packetBuf.writeStringLatin1(emailsJoined).writeZeros(8)), ObjectPool.integerOf(MrimAccount.RESP_ADD_PHONE_CONTACT), displayName, emailsJoined, contactGroup}));
         return sendResult != 0 ? NotificationHelper.showError(sendResult) : 0;

@@ -2,7 +2,7 @@ package com.trykote.mobileagent.map;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -282,7 +282,7 @@ public abstract class ChatRenderer {
         Vector textLines = Utils.wrapText(Utils.defaultStr(item.getText()), font, i - BUBBLE_TEXT_MARGIN);
         int size = textLines.size();
         int textWidth = getMaxTextWidth(textLines, font);
-        int iStringWidth = font.stringWidth(ResourceAccessor.str(StringResKeys.STR_SHOW_ROUTE)) + BUBBLE_PADDING + BUBBLE_BUTTON_ICON_SIZE;
+        int iStringWidth = font.stringWidth(StringPool.get(StringResKeys.STR_SHOW_ROUTE)) + BUBBLE_PADDING + BUBBLE_BUTTON_ICON_SIZE;
         int height = font.getHeight();
         Font font2 = graphics.getFont();
         int color = graphics.getColor();
@@ -337,7 +337,7 @@ public abstract class ChatRenderer {
             int i21 = ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)) + (i11 / 2);
             buttonBounds[1] = i21;
             graphics.drawImage(buttonImage, i20, i21, 6);
-            graphics.drawString(ResourceAccessor.str(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + ((i14 - iStringWidth) / 2) + BUBBLE_BUTTON_ICON_SIZE + BUBBLE_BUTTON_GAP, ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)), 20);
+            graphics.drawString(StringPool.get(StringResKeys.STR_SHOW_ROUTE), (i9 - (i14 / 2)) + BUBBLE_INNER_PADDING + ((i14 - iStringWidth) / 2) + BUBBLE_BUTTON_ICON_SIZE + BUBBLE_BUTTON_GAP, ((i10 - i18) - i12) + (BUBBLE_INNER_PADDING * 2) + i11 + (height * (size - 1)), 20);
         }
         graphics.setColor(Palette.getColor(themeIdx, Palette.MAP_FILL));
         graphics.fillTriangle(i9 + i16, i10 - i18, i9 + (i16 << 2), i10 - i18, i9, i10);
@@ -576,7 +576,7 @@ public abstract class ChatRenderer {
                     clipHeight -= (height > MIN_SOFTKEY_HEIGHT ? height : MIN_SOFTKEY_HEIGHT) + ROUTE_LABEL_SOFTKEY_MARGIN;
                     i34 = ROUTE_LABEL_DEFAULT_X - ROUTE_LABEL_COMPACT_SHIFT;
                 }
-                String routeLabel = ResourceAccessor.str(StringResKeys.STR_ROUTE_LABEL);
+                String routeLabel = StringPool.get(StringResKeys.STR_ROUTE_LABEL);
                 int labelWidth = font.stringWidth(routeLabel) + BUBBLE_PADDING;
                 int themeIdx2 = SettingsState.getColorTheme();
                 graphics.setColor(AppState.getInt(themeIdx2 + 5050));

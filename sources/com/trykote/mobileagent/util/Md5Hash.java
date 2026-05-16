@@ -1,14 +1,14 @@
 package com.trykote.mobileagent.util;
 
 
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.key.StringResKeys;
 
 public final class Md5Hash {
 
     public static final byte[] hash(byte[] bArr, int i) {
         int[] blockBuf = new int[16];
-        int[] state = Utils.bytesToInts(ResourceAccessor.bytes(StringResKeys.RES_EMOTICON_STATE));
+        int[] state = Utils.bytesToInts(AppState.getBytes(StringResKeys.RES_EMOTICON_STATE));
         int[] bitCount = new int[2];
         byte[] tempBuf = ObjectPool.newBytes(64);
         md5ProcessBuffer(bArr, i, blockBuf, state, bitCount, tempBuf);

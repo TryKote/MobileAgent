@@ -6,7 +6,7 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.UIState;
@@ -106,7 +106,7 @@ public final class StringUtils {
         if (key <= AppState.PACKED_STRING_THRESHOLD) {
             return equals(AppState.getString(key), str);
         }
-        byte[] bytes = ResourceAccessor.bytes(StringResKeys.RES_STRING_DATA);
+        byte[] bytes = AppState.getBytes(StringResKeys.RES_STRING_DATA);
         int expectedLen = key >> 16;
         int idx = expectedLen;
         if (expectedLen != str.length()) {
@@ -271,7 +271,7 @@ public final class StringUtils {
             }
             TileRequest tileReq = TileCache.peekTileRequest();
             int tileType = tileReq.tileType;
-            statusArr[1] = new StringBuffer().append(AppState.getString(tileType == 3 ? 997 : tileType == 1 ? 998 : 999)).append(Utils.formatSize(RuntimeState.getXmppTrafficBytes())).toString();
+            statusArr[1] = new StringBuffer().append(StringPool.get(tileType == 3 ? 997 : tileType == 1 ? 998 : 999)).append(Utils.formatSize(RuntimeState.getXmppTrafficBytes())).toString();
             XmppContactGroup.addContactInfoToQueue(statusArr);
             try {
                 Image cachedImage = (tileReq.tileType == 1 && MapState.isTileCacheEnabled()) ? TileCache.loadTileFromCache(tileReq) : null;
@@ -340,7 +340,7 @@ public final class StringUtils {
 
     private static final Vector createRegionVector() {
         Vector result = ObjectPool.newVector();
-        result.addElement(ResourceAccessor.str(StringResKeys.STR_CITY_LIST));
+        result.addElement(StringPool.get(StringResKeys.STR_CITY_LIST));
         return result;
     }
 
@@ -359,7 +359,7 @@ public final class StringUtils {
     public static final void showRegionSelector() {
         resetRegForm();
         RegistrationState.setRegionData(new XmlParser(new ByteBuffer(ObjectPool.unpackChars(25135), 41000)).parse().children);
-        StringBuffer sb = ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_SEARCH_TITLE));
+        StringBuffer sb = ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_SEARCH_TITLE));
         Vector items = RegistrationState.getRegionData();
         for (int i = 0; i < Utils.vectorSize(items); i++) {
             sb.append((char) 0).append(getXmlText((XmlElement) items.elementAt(i)));
@@ -377,12 +377,12 @@ public final class StringUtils {
         MenuItem menuItem = (MenuItem) selectedItem;
         int selectedIdx = ((Integer) ((Object[]) menuItem.data)[0]).intValue();
         String dropdownTitle = menuItem.title;
-        String countryLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_COUNTRY);
-        String regionLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_REGION);
-        String cityLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_CITY);
-        String monthLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_MONTH);
-        String ageLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_AGE_RANGE);
-        String genderLabel = ResourceAccessor.str(StringResKeys.STR_LABEL_GENDER);
+        String countryLabel = StringPool.get(StringResKeys.STR_LABEL_COUNTRY);
+        String regionLabel = StringPool.get(StringResKeys.STR_LABEL_REGION);
+        String cityLabel = StringPool.get(StringResKeys.STR_LABEL_CITY);
+        String monthLabel = StringPool.get(StringResKeys.STR_LABEL_MONTH);
+        String ageLabel = StringPool.get(StringResKeys.STR_LABEL_AGE_RANGE);
+        String genderLabel = StringPool.get(StringResKeys.STR_LABEL_GENDER);
         MenuItem regionItem = null;
         MenuItem cityItem = null;
         MenuItem monthDropdown = null;
@@ -416,7 +416,7 @@ public final class StringUtils {
                 addXmlChildTexts(regions, RegistrationState.getRegionData().elementAt(selectedIdx - 1));
             }
             regionDropdown.setChoices(regions, 0, regionLabel);
-            cityItem.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_CITY_LIST)), 0, cityLabel);
+            cityItem.setChoices(Utils.splitByNull(StringPool.get(StringResKeys.STR_CITY_LIST)), 0, cityLabel);
         } else if (equals(dropdownTitle, regionLabel)) {
             MenuItem cityDropdown = cityItem;
             int selectedCountryIdx = countryIdx;
@@ -426,10 +426,10 @@ public final class StringUtils {
             }
             cityDropdown.setChoices(cities, 0, cityLabel);
         } else if (equals(dropdownTitle, monthLabel)) {
-            ageDropdown.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_AGE_RANGES)), 0, ageLabel);
-            genderDropdown.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_GENDER_LIST)), 0, genderLabel);
+            ageDropdown.setChoices(Utils.splitByNull(StringPool.get(StringResKeys.STR_AGE_RANGES)), 0, ageLabel);
+            genderDropdown.setChoices(Utils.splitByNull(StringPool.get(StringResKeys.STR_GENDER_LIST)), 0, genderLabel);
         } else if (equals(dropdownTitle, ageLabel) || equals(dropdownTitle, genderLabel)) {
-            monthDropdown.setChoices(Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_MONTH_NAMES)), 0, monthLabel);
+            monthDropdown.setChoices(Utils.splitByNull(StringPool.get(StringResKeys.STR_MONTH_NAMES)), 0, monthLabel);
         }
         screen.rebuildItems();
     }
@@ -488,7 +488,9 @@ public final class StringUtils {
     }
 
     public static final void initPlatform() {
+        RemoteLogger.log("INIT", "initPlatform: setAppName");
         AppState.setObject(StringResKeys.STR_APP_NAME, (Object) AppState.getAppProperty(StringResKeys.STR_APP_NAME));
+        RemoteLogger.log("INIT", "initPlatform: randomId");
         while (Utils.parseInt((Object) Utils.defaultStr(SessionState.getRandomId())) <= 106) {
             try {
                 throw new Throwable();
@@ -496,14 +498,17 @@ public final class StringUtils {
                 SessionState.setRandomId(intern(Integer.toString(Utils.nextRandom())));
             }
         }
+        RemoteLogger.log("INIT", "initPlatform: guid/session");
         setOrGenerateGuid(validateGuid(SessionState.getAppProperty(SessionKeys.SLOT_SESSION_HASH)));
         SessionState.setSessionToken(SessionState.getAppProperty(SessionKeys.SLOT_SESSION_TOKEN));
         SessionState.setSessionHash(new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(SessionState.getRandomId())).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
+        RemoteLogger.log("INIT", "initPlatform: sysprops");
         SessionState.setAccountLogin(getSystemProp(963));
         SessionState.setAccountPassword(getSystemProp(964));
         SessionState.setAccountServer(getSystemProp(1378));
         SessionState.setAccountTypeStr(getSystemProp(1380));
         SessionState.setAccountDisplayName(getSystemProp(1379));
+        RemoteLogger.log("INIT", "initPlatform: classCheck");
         for (int i = 966; i >= 965; i--) {
             try {
                 String inputStr = Utils.defaultStr(AppState.getString(i));
@@ -514,7 +519,8 @@ public final class StringUtils {
             } catch (Throwable unused2) {
             }
         }
-        if (ResourceAccessor.str(StringResKeys.STR_APP_NAME).charAt(0) == '3' && ResourceAccessor.str(StringResKeys.STR_APP_NAME).charAt(2) == '9') {
+        RemoteLogger.log("INIT", "initPlatform: versionCheck appName=" + AppState.getString(StringResKeys.STR_APP_NAME));
+        if (AppState.getString(StringResKeys.STR_APP_NAME).charAt(0) == '3' && AppState.getString(StringResKeys.STR_APP_NAME).charAt(2) == '9') {
             if (SessionState.getDeviceInfo() == null) {
                 SessionState.setDeviceInfoFromPool(StringResKeys.STR_DEVICE_FEATURES);
             }
@@ -528,7 +534,7 @@ public final class StringUtils {
             byte major = parseVersionByte(0);
             byte minor = parseVersionByte(1);
             byte patch = parseVersionByte(2);
-            byte[] bytes = ResourceAccessor.bytes(StringResKeys.RES_SESSION_BYTES);
+            byte[] bytes = AppState.getBytes(StringResKeys.RES_SESSION_BYTES);
             bytes[13] = major;
             bytes[14] = minor;
             bytes[15] = patch;
@@ -546,14 +552,14 @@ public final class StringUtils {
 
     private static final byte parseVersionByte(int partIndex) {
         try {
-            return (byte) Utils.parseInt(Utils.split(ResourceAccessor.str(StringResKeys.STR_APP_NAME), '.').elementAt(partIndex));
+            return (byte) Utils.parseInt(Utils.split(AppState.getString(StringResKeys.STR_APP_NAME), '.').elementAt(partIndex));
         } catch (Throwable unused) {
             return (byte) 0;
         }
     }
 
     private static final String formatVersion() {
-        String versionStr = ResourceAccessor.str(StringResKeys.STR_APP_NAME);
+        String versionStr = AppState.getString(StringResKeys.STR_APP_NAME);
         String[] parts = new String[3];
         String empty = AppState.emptyStr;
         parts[0] = empty;
@@ -629,7 +635,7 @@ public final class StringUtils {
 
     public static final void initGeoRegions() {
         MapState.setMapPoints(ObjectPool.newVector());
-        MapState.setGeoRegion(new GeoRegion(ResourceAccessor.str(StringResKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L));
+        MapState.setGeoRegion(new GeoRegion(StringPool.get(StringResKeys.STR_REGION_NAME_2), 4115426L, 7539707L, 4267459L, 7412592L));
         try {
             ByteBuffer geoBuffer = Base64.decode(MapState.getGeoSavedData());
             MapState.getMapPoints().removeAllElements();
@@ -640,7 +646,7 @@ public final class StringUtils {
             }
         } catch (Throwable unused) {
         }
-        GeoRegion region = new GeoRegion(ResourceAccessor.str(StringResKeys.STR_REGION_NAME_1), 1866877L, 15815124L, 21989606L, 4133096L);
+        GeoRegion region = new GeoRegion(StringPool.get(StringResKeys.STR_REGION_NAME_1), 1866877L, 15815124L, 21989606L, 4133096L);
         region.centerLat = 10848141L;
         region.centerLon = 8758455L;
         MapState.setGeoRegion2(region);
@@ -725,14 +731,14 @@ public final class StringUtils {
         boolean isUpperCase = false;
         String translitResult = null;
         String upperVariant;
-        Vector sourceChars = Utils.splitByNull(ResourceAccessor.str(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
-        Vector targetChars = Utils.splitByNull(ResourceAccessor.str(StringResKeys.STR_SOUND_LIST));
+        Vector sourceChars = Utils.splitByNull(StringPool.get(PackedStringKeys.TRANSLIT_TABLE_EXTENDED));
+        Vector targetChars = Utils.splitByNull(StringPool.get(StringResKeys.STR_SOUND_LIST));
         Hashtable translitMap = new Hashtable();
         for (int idx = sourceChars.size() - 1; idx >= 0; idx--) {
             translitMap.put(sourceChars.elementAt(idx), targetChars.elementAt(idx));
         }
-        String lowerAlphabet = ResourceAccessor.str(StringResKeys.STR_SOUND_TYPE_1);
-        String upperAlphabet = ResourceAccessor.str(StringResKeys.STR_SOUND_TYPE_2);
+        String lowerAlphabet = StringPool.get(StringResKeys.STR_SOUND_TYPE_1);
+        String upperAlphabet = StringPool.get(StringResKeys.STR_SOUND_TYPE_2);
         Hashtable caseMap = new Hashtable();
         StringBuffer sb = ObjectPool.newStringBuffer();
         for (int idx = lowerAlphabet.length() - 1; idx >= 0; idx--) {

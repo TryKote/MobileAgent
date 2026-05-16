@@ -3,7 +3,7 @@ package com.trykote.mobileagent.model;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SettingsState;
@@ -228,9 +228,9 @@ public final class MailHelper {
             getFirstRecipient(toList);
             String subject = message.getSubject();
             String body = message.body;
-            String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
-            String fwdPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
-            String quotedBody = new StringBuffer().append(ResourceAccessor.str(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(body)).toString();
+            String replyPrefix = StringPool.get(PackedStringKeys.PREFIX_REPLY);
+            String fwdPrefix = StringPool.get(PackedStringKeys.PREFIX_FORWARD);
+            String quotedBody = new StringBuffer().append(StringPool.get(StringResKeys.STR_SEARCH_QUERY_PREFIX)).append(Utils.quoteText(body)).toString();
             switch (RuntimeState.getXmppActionType()) {
                 case 0:
                     composeEmail(getFirstAddress(toList), new StringBuffer().append(replyPrefix).append(subject).toString(), quotedBody);
@@ -260,8 +260,8 @@ public final class MailHelper {
         Vector ccList = message.getCcList();
         getFirstRecipient(toList);
         boolean needsAuth = SettingsState.isAuthRequired();
-        String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
-        String forwardPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
+        String replyPrefix = StringPool.get(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = StringPool.get(PackedStringKeys.PREFIX_FORWARD);
         String body = AppState.emptyStr;
         if (actionCode == ACTION_CLOSE_AND_OPEN) {
             ScreenBuilder.onScreenClosed();
@@ -311,8 +311,8 @@ public final class MailHelper {
         Vector toList = message.getToList();
         Vector ccList = message.getCcList();
         String subject = message.getSubject();
-        String replyPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_REPLY);
-        String forwardPrefix = ResourceAccessor.str(PackedStringKeys.PREFIX_FORWARD);
+        String replyPrefix = StringPool.get(PackedStringKeys.PREFIX_REPLY);
+        String forwardPrefix = StringPool.get(PackedStringKeys.PREFIX_FORWARD);
         String currentLogin = AppState.getAccount().login;
         wrapInVector(messageId);
         if (StringUtils.matchesKey(839, str)) {
@@ -367,7 +367,7 @@ public final class MailHelper {
         RuntimeState.setMsgExtra2(ObjectPool.toStringAndRelease(recipientsSb));
         RuntimeState.setMsgExtra3(Utils.defaultStr(subject));
         String emptyStr = AppState.emptyStr;
-        RuntimeState.setTrafficStatusText(ObjectPool.newStringBuffer().append(SettingsState.isTrafficInfoEnabled() ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : emptyStr).append(SettingsState.getTrafficInfoType() != 0 ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : emptyStr).append(Utils.defaultStr(bodyText)).append(ResourceAccessor.str(StringResKeys.STR_TRAFFIC_LABEL)));
+        RuntimeState.setTrafficStatusText(ObjectPool.newStringBuffer().append(SettingsState.isTrafficInfoEnabled() ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_TRAFFIC_INFO_YES)).append('\n')) : emptyStr).append(SettingsState.getTrafficInfoType() != 0 ? ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_TRAFFIC_INFO_NO)).append('\n')) : emptyStr).append(Utils.defaultStr(bodyText)).append(StringPool.get(StringResKeys.STR_TRAFFIC_LABEL)));
         return ScreenId.COMPOSE_MESSAGE;
     }
 }

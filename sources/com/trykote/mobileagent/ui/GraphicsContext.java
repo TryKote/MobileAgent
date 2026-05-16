@@ -1,7 +1,7 @@
 package com.trykote.mobileagent.ui;
 
 
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -131,7 +131,7 @@ public final class GraphicsContext {
             if (clipY - i6 < ICON_SIZE && (clipWidth2 = (clipX - i7) + (clipWidth = graphics.getClipWidth())) > 0 && (clipHeight2 = (clipY - i6) + (clipHeight = graphics.getClipHeight())) > 0) {
                 int drawW = Utils.min(clipWidth2, ICON_SIZE);
                 int drawW2 = Utils.min(clipHeight2, ICON_SIZE);
-                int i8 = i5 <= ICON_DATA_BOUNDARY ? ICON_DATA_UNSIGNED_MASK & ResourceAccessor.bytes(StringResKeys.RES_STRING_DATA)[i5 + 39] : ICON_DATA_SIGNED_OFFSET + ResourceAccessor.bytes(StringResKeys.RES_STRING_DATA)[i5 + 39];
+                int i8 = i5 <= ICON_DATA_BOUNDARY ? ICON_DATA_UNSIGNED_MASK & AppState.getBytes(StringResKeys.RES_STRING_DATA)[i5 + 39] : ICON_DATA_SIGNED_OFFSET + AppState.getBytes(StringResKeys.RES_STRING_DATA)[i5 + 39];
                 int i9 = i8;
                 int i10 = i8 >> NIBBLE_SHIFT;
                 int i11 = i9 & NIBBLE_MASK;

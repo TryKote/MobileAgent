@@ -8,7 +8,7 @@ import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
@@ -120,7 +120,7 @@ public final class MapController {
             if (MapState.isMapScreenVisible() || mapScreen == null) {
                 return;
             }
-            mapScreen.setSoftKeys(ResourceAccessor.str(StringResKeys.STR_SOFTKEY_MAP), ResourceAccessor.str(StringResKeys.STR_SOFTKEY_CLOSE), 167, 4, 167);
+            mapScreen.setSoftKeys(StringPool.get(StringResKeys.STR_SOFTKEY_MAP), StringPool.get(StringResKeys.STR_SOFTKEY_CLOSE), 167, 4, 167);
             MapState.setMapScreenVisible(true);
             return;
         }
@@ -193,7 +193,7 @@ public final class MapController {
     }
 
     private static final void setMapSoftKeys(ListView screen) {
-        screen.setSoftKeys(ResourceAccessor.str(StringResKeys.STR_SOFTKEY_MENU), AppState.getString(MapState.isMapOverlayActive() ? 1050 : 328), 20, 0, 0);
+        screen.setSoftKeys(StringPool.get(StringResKeys.STR_SOFTKEY_MENU), StringPool.get(MapState.isMapOverlayActive() ? 1050 : 328), 20, 0, 0);
     }
 
     public static final void toggleMapControls(ListView screen) {
@@ -633,7 +633,7 @@ public final class MapController {
     }
 
     public static final int processSearchQuery(String query) {
-        if (!ResourceAccessor.str(StringResKeys.STR_PROTOCOL_XMPP).equals(query)) {
+        if (!StringPool.get(StringResKeys.STR_PROTOCOL_XMPP).equals(query)) {
             return 0;
         }
         if (MapRenderer.selectedMapPoint != null) {

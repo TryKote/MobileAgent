@@ -122,9 +122,9 @@ public final class MapPointStore {
                 idList.append(',');
             }
         }
-        ByteBuffer requestUrl = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_VIEW).writeUInt(15713);
+        ByteBuffer requestUrl = new ByteBuffer().writeCharBytes("http://mobile.mail.ru/data/map_point/view_object?").writeUInt(15713);
         String contactIdStr = ObjectPool.toStringAndRelease(idList);
-        new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, requestUrl.writeRawString(contactIdStr).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(contactIdStr).writeCompressed(PackedStringKeys.SECRET_KEY_389).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(lon).writeUInt(4023334).writeLongAsString(lat).getStringAndClear());
+        new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, requestUrl.writeRawString(contactIdStr).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(contactIdStr).writeCharBytes("Secret_389").encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(lon).writeUInt(4023334).writeLongAsString(lat).getStringAndClear());
     }
 
     public static boolean isMapDataRecent() {

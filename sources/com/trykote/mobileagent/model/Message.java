@@ -2,7 +2,7 @@ package com.trykote.mobileagent.model;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -63,14 +63,14 @@ public final class Message {
     public Object[] attachments;
 
     public Message(Hashtable fields) {
-        this.from = JsonParser.getStringValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
-        this.timestamp = JsonParser.getIntValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
-        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
-        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_TO_NAME)));
-        this.priority = JsonParser.getIntValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
-        setFlag(FLAG_UNREAD, JsonParser.getIntValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
-        setFlag(FLAG_HAS_ATTACHMENT, JsonParser.getIntValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
-        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(fields, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_SUBJECT)));
+        this.from = JsonParser.getStringValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_MESSAGE_ID));
+        this.timestamp = JsonParser.getIntValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_DATE)) * 1000;
+        this.toList = MailHelper.parseAddressHeader(JsonParser.getStringValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_FROM_EMAIL)), JsonParser.getStringValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_FROM_DISPLAY)));
+        this.ccList = MailHelper.parseAddressHeader(JsonParser.getStringValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_TO_EMAIL)), JsonParser.getStringValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_TO_NAME)));
+        this.priority = JsonParser.getIntValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_CLEAR_SIZE));
+        setFlag(FLAG_UNREAD, JsonParser.getIntValue(fields, StringPool.get(PackedStringKeys.MAIL_FLAG_UNREAD)) != 0);
+        setFlag(FLAG_HAS_ATTACHMENT, JsonParser.getIntValue(fields, StringPool.get(PackedStringKeys.MAIL_FLAG_ATTACH)) != 0);
+        this.subject = Conversation.decodeHtmlSpecial(JsonParser.getStringValue(fields, StringPool.get(PackedStringKeys.MAIL_FIELD_SUBJECT)));
     }
 
     public Message(Vector recipients, String subject, String body) {
@@ -146,7 +146,7 @@ public final class Message {
         StringBuffer sb = ObjectPool.newStringBuffer();
         String dateStr = Utils.appendSpace(ObjectPool.toStringAndRelease((todayYear == cal.get(1) && todayMonth == cal.get(2) && todayDay == cal.get(5)) ? sb.append(Conversation.formatNumber(cal.get(11), 2)).append(':').append(Conversation.formatNumber(cal.get(12), 2)) : sb.append(Conversation.formatNumber(cal.get(5), 2)).append('.').append(Conversation.formatNumber(cal.get(2) + 1, 2)).append('.').append(Conversation.formatNumber(cal.get(1) - 2000, 2))));
         MenuItem textItem = iconItem.addText(dateStr, fontStyle, 10);
-        String priorityStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('[').append(this.priority).append(ResourceAccessor.str(StringResKeys.STR_PRIORITY_SUFFIX)));
+        String priorityStr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append('[').append(this.priority).append(StringPool.get(StringResKeys.STR_PRIORITY_SUFFIX)));
         MenuItem mainItem = textItem.addText(priorityStr, fontStyle, textStyle);
         int textWidth = UIState.getGfxContext(fontStyle).stringWidth(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(dateStr).append(priorityStr)));
         if (hasFlag(FLAG_HAS_ATTACHMENT)) {
@@ -163,11 +163,11 @@ public final class Message {
         }
         boolean hasForwardInfo = false;
         if ((roomType & 1) != 0 && (toRecipient = MailHelper.getFirstRecipient(getToList())) != null) {
-            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), fontStyle, availWidth - textWidth, ellipsisWidth, true), fontStyle, textStyle);
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_MSG_FORWARDED)).append(' ').append(toRecipient[1])), fontStyle, availWidth - textWidth, ellipsisWidth, true), fontStyle, textStyle);
             hasForwardInfo = true;
         }
         if ((roomType & 2) != 0 && (ccRecipient = MailHelper.getFirstRecipient(getCcList())) != null) {
-            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(ResourceAccessor.str(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), fontStyle, availWidth - (hasForwardInfo ? 0 : textWidth), ellipsisWidth, true), fontStyle, textStyle);
+            mainItem.addText(truncateText(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(StringPool.get(StringResKeys.STR_MSG_REPLIED)).append(' ').append(ccRecipient[1])), fontStyle, availWidth - (hasForwardInfo ? 0 : textWidth), ellipsisWidth, true), fontStyle, textStyle);
         }
         boolean isLastRoom = account.isLastChatRoom(chatRoom);
         mainItem.setLabelInternal(isUnread ? 225 : 237, truncateText(getSubject(), fontStyle, availWidth - SUBJECT_PADDING, ellipsisWidth, isLastRoom), fontStyle, textStyle);
@@ -226,16 +226,16 @@ public final class Message {
     }
 
     public final String getSubject() {
-        return (this.subject == null || this.subject.length() == 0) ? ResourceAccessor.str(StringResKeys.STR_NO_SUBJECT) : this.subject;
+        return (this.subject == null || this.subject.length() == 0) ? StringPool.get(StringResKeys.STR_NO_SUBJECT) : this.subject;
     }
 
     public final Object toHashtable() {
         Hashtable result = new Hashtable();
         String[] fromRecipient = MailHelper.getFirstRecipient(this.toList);
         if (fromRecipient != null) {
-            result.put(ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_FROM), fromRecipient[1]);
+            result.put(StringPool.get(PackedStringKeys.MAIL_FIELD_FROM), fromRecipient[1]);
         }
-        String toKey = ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_TO);
+        String toKey = StringPool.get(PackedStringKeys.MAIL_FIELD_TO);
         Vector ccAddresses = this.ccList;
         StringBuffer sb = ObjectPool.newStringBuffer();
         if (ccAddresses != null) {
@@ -249,13 +249,13 @@ public final class Message {
             }
         }
         result.put(toKey, ObjectPool.toStringAndRelease(sb));
-        result.put(ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
-        result.put(ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_BODY), this.body);
-        JsonParser.putIntValue(result, ResourceAccessor.str(PackedStringKeys.MAIL_ACTION_COPY), 1);
-        JsonParser.putIntValue(result, ResourceAccessor.str(PackedStringKeys.ACTION_SEND), 1);
-        JsonParser.putIntValue(result, ResourceAccessor.str(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
-        JsonParser.putIntValue(result, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
-        JsonParser.putIntValue(result, ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
+        result.put(StringPool.get(PackedStringKeys.MAIL_FIELD_SUBJECT), this.subject);
+        result.put(StringPool.get(PackedStringKeys.MAIL_FIELD_BODY), this.body);
+        JsonParser.putIntValue(result, StringPool.get(PackedStringKeys.MAIL_ACTION_COPY), 1);
+        JsonParser.putIntValue(result, StringPool.get(PackedStringKeys.ACTION_SEND), 1);
+        JsonParser.putIntValue(result, StringPool.get(PackedStringKeys.MAIL_FOLDER_DRAFT), 0);
+        JsonParser.putIntValue(result, StringPool.get(PackedStringKeys.MAIL_FIELD_RECEIPT), 0);
+        JsonParser.putIntValue(result, StringPool.get(PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED), 0);
         Vector attachList = ObjectPool.newVector();
         int count = this.attachments == null ? 0 : this.attachments.length;
         for (int i = 0; i < count; i++) {
@@ -266,9 +266,9 @@ public final class Message {
             }
             attachList.addElement(attachEntry);
         }
-        result.put(ResourceAccessor.str(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
+        result.put(StringPool.get(PackedStringKeys.MAIL_FIELD_ATTACHMENTS), attachList);
         if (attachList.size() > 0) {
-            JsonParser.putIntValue(result, ResourceAccessor.str(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
+            JsonParser.putIntValue(result, StringPool.get(PackedStringKeys.MAIL_FLAG_ATTACH), 1);
         }
         return result;
     }

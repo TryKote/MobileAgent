@@ -152,11 +152,11 @@ public final class VCard {
     }
 
     public static final String formatLocationUrl(int zoom, String lat, String lon) {
-        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_SEARCH_ZOOM).writeIntAsString(zoom).writeUInt(4028454).writeRawString(lat).writeUInt(4028710).writeRawString(lon).writeCompressed(PackedStringKeys.PARAM_DIST_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+        return new ByteBuffer().writeCharBytes("http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom=").writeIntAsString(zoom).writeUInt(4028454).writeRawString(lat).writeUInt(4028710).writeRawString(lon).writeCharBytes("&dist=100&sn=1&rand=").writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     public static final String formatPhoneContactUrl(PhoneContact phoneContact, int idFrom) {
-        return new ByteBuffer().writeCompressed(PackedStringKeys.URL_GEO_LAT1).writeRawString(phoneContact.surname).writeCompressed(PackedStringKeys.PARAM_LON1).writeRawString(phoneContact.firstName).writeCompressed(PackedStringKeys.PARAM_LAT2).writeRawString(phoneContact.address).writeCompressed(PackedStringKeys.PARAM_LON2).writeRawString(phoneContact.phone).writeCompressed(PackedStringKeys.PARAM_QUANTITY_IDFROM).writeIntAsString(idFrom).writeCompressed(PackedStringKeys.PARAM_RAND).writeIntAsString(Utils.nextRandom()).getStringAndClear();
+        return new ByteBuffer().writeCharBytes("http://geo194.32.248.3/?lat1=").writeRawString(phoneContact.surname).writeCharBytes("&lon1=").writeRawString(phoneContact.firstName).writeCharBytes("&lat2=").writeRawString(phoneContact.address).writeCharBytes("&lon2=").writeRawString(phoneContact.phone).writeCharBytes("&quantity=10&idfrom=").writeIntAsString(idFrom).writeCharBytes("&rand=").writeIntAsString(Utils.nextRandom()).getStringAndClear();
     }
 
     public static final Vector parseMapPointsFromJson(ByteBuffer buffer, long centerX, long centerY) throws NumberFormatException {

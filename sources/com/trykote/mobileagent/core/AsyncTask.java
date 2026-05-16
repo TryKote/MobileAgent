@@ -188,7 +188,7 @@ public final class AsyncTask implements Runnable {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createHttpClient(ResourceAccessor.str(PackedStringKeys.URL_VERSION_CHECK), null, 3);
+            httpClient = HttpClient.createHttpClient(StringPool.get(PackedStringKeys.URL_VERSION_CHECK), null, 3);
             args[0] = httpClient.getResponseCode() == HTTP_OK ? new ByteBuffer(httpClient) : ObjectPool.integerOf(ERR_FETCH_FAILED);
         } catch (Throwable e) {
             args[0] = ObjectPool.integerOf(ERR_FETCH_FAILED);
@@ -239,7 +239,7 @@ public final class AsyncTask implements Runnable {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_JAMS_STATE).getStringAndClear());
+            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCharBytes("http://mobile.mail.ru/").writeCharBytes("data/jams_state").getStringAndClear());
             if (httpClient.getResponseCode() == HTTP_OK) {
                 Vector children = new ByteBuffer(httpClient).parseXml().children;
                 int i = children.size();
@@ -314,7 +314,7 @@ public final class AsyncTask implements Runnable {
         HttpClient httpClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCompressed(PackedStringKeys.URL_MOBILE_MAIL_RU).writeCompressed(PackedStringKeys.API_ROAD_INFO).writeEncodedInt(MapKeys.URL_GEO_CONFIG).getStringAndClear());
+            httpClient = HttpClient.createWithType2(new ByteBuffer().writeCharBytes("http://mobile.mail.ru/").writeCharBytes("data/road_info_xml?timestamp=").writeEncodedInt(MapKeys.URL_GEO_CONFIG).getStringAndClear());
             if (httpClient.getResponseCode() == HTTP_OK) {
                 StringUtils.parseGeoConfig(new ByteBuffer(httpClient).parseXml());
             }
@@ -343,10 +343,10 @@ public final class AsyncTask implements Runnable {
                             !RouteData.routeRegions.isEmpty() && (firstEntry = (Object[]) ((Object[]) RouteData.routeRegions.firstElement())[1]).length > 0 ? (long) ((int[]) ((Object[]) firstEntry[1])[0])[1] : 0L);
                 }
             } else {
-                EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_DOWNLOAD_COMPLETE));
+                EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_DOWNLOAD_COMPLETE));
             }
         } catch (Throwable e) {
-            EventDispatcher.postNotification(ResourceAccessor.str(StringResKeys.STR_DOWNLOAD_COMPLETE));
+            EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_DOWNLOAD_COMPLETE));
         } finally {
             HttpClient.closeAndUpdateStats(httpClient);
             RequestQueue.removeContactInfoFromQueue(contactInfo);
@@ -478,8 +478,8 @@ public final class AsyncTask implements Runnable {
         try {
             NetworkLock.acquireNetworkLock();
             contactInfo = RequestQueue.getContactInfoFromState(RES_CONTACTS_SYNC_URL);
-            String baseUrl = ResourceAccessor.str(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
-            httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(ResourceAccessor.str(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(ResourceAccessor.str(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
+            String baseUrl = StringPool.get(PackedStringKeys.URL_GEO_OBJECT_SEARCH_2);
+            httpClient = HttpClient.createWithType2(ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(baseUrl).append(args[1]).append(StringPool.get(PackedStringKeys.PARAM_Y_EQ)).append(args[2]).append(StringPool.get(PackedStringKeys.PARAM_MAP_BESTOBJECT))));
             if (httpClient.getResponseCode() == HTTP_OK) {
                 long[] coords = (long[]) args[3];
                 MrimAccount account = (MrimAccount) args[0];
@@ -516,7 +516,7 @@ public final class AsyncTask implements Runnable {
             try {
                 Thread.sleep(SMS_SEND_DELAY_MS);
                 msgConn = (MessageConnection) IOUtils.registerResource((Object) Connector.open(smsAddress));
-                TextMessage textMsg = (TextMessage) msgConn.newMessage(ResourceAccessor.str(PackedStringKeys.CONTENT_TYPE_TEXT));
+                TextMessage textMsg = (TextMessage) msgConn.newMessage(StringPool.get(PackedStringKeys.CONTENT_TYPE_TEXT));
                 textMsg.setAddress(smsAddress);
                 textMsg.setPayloadText(smsText);
                 msgConn.send((Message) textMsg);
@@ -584,15 +584,15 @@ public final class AsyncTask implements Runnable {
                     }
                 } else {
                     String nextUrl = new ByteBuffer()
-                        .writeCompressed(PackedStringKeys.URL_VK_AUTH_GET)
-                        .writeCompressed(PackedStringKeys.AUTH_SESSION_NONCE)
+                        .writeCharBytes("http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.get")
+                        .writeCharBytes("SessionSecure&nonce=")
                         .writeObjectStr((String) args[1])
-                        .writeCompressed(PackedStringKeys.PARAM_LOGIN)
+                        .writeCharBytes("&login=")
                         .writeObjectStr((String) args[4])
-                        .writeCompressed(PackedStringKeys.PARAM_DIGEST)
+                        .writeCharBytes("&digest=")
                         .writeRawString(
                             new ByteBuffer()
-                                .writeCompressed(PackedStringKeys.VK_API_SECRET)
+                                .writeCharBytes("2DBvQWJBam3xuyYyQ0BeYuWKKfpk5fV4Z6sPc9wTBfeTx442f6")
                                 .writeByte(COLON)
                                 .writeObjectStr((String) args[1])
                                 .writeByte(COLON)
@@ -601,7 +601,7 @@ public final class AsyncTask implements Runnable {
                                 .writeRawString(
                                     new ByteBuffer()
                                         .writeObjectStr((String) args[4])
-                                        .writeCompressed(PackedStringKeys.DOMAIN_VK_COM)
+                                        .writeCharBytes(":vk.com:")
                                         .writeObjectStr((String) args[5])
                                         .encryptMD5()
                                         .toHexString()

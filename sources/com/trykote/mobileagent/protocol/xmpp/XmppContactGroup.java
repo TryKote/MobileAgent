@@ -5,7 +5,7 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.ResourceAccessor;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
@@ -135,10 +135,10 @@ public final class XmppContactGroup extends ContactGroup {
         ByteBuffer packet = new ByteBuffer().writeIntLE(0).writeStringLatin1(contact.simpleIdentifier);
         Hashtable emoticonLookup = new Hashtable();
         for (int ei = EMOTICON_COUNT - 1; ei >= 0; ei--) {
-            String emoticonName = ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, ei);
+            String emoticonName = StringPool.get(StringResKeys.EMOTICON_NAMES_BASE + ei);
             emoticonLookup.put(emoticonName, StringUtils.intern(emoticonName.toLowerCase()));
         }
-        String triggerChars = ResourceAccessor.str(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
+        String triggerChars = StringPool.get(PackedStringKeys.EMOTICON_TRIGGER_CHARS);
         StringBuffer result = ObjectPool.newStringBuffer();
         int textLen = messageText.length();
         int pos = 0;
@@ -149,11 +149,11 @@ public final class XmppContactGroup extends ContactGroup {
                 result.append(ch);
             } else {
                 if (emoticonIndex < EMOTICON_INLINE_LIMIT) {
-                    result.append(ResourceAccessor.str(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(emoticonIndex)).append('>');
+                    result.append(StringPool.get(PackedStringKeys.EMOTICON_TAG_PREFIX)).append(Utils.zeroPad(emoticonIndex)).append('>');
                 } else {
-                    result.append(ResourceAccessor.str(PackedStringKeys.EMOTICON_OPEN_TAG)).append(emoticonIndex < 74 ? emoticonIndex + EMOTICON_ICON_BASE_OFFSET : emoticonIndex == 74 ? EMOTICON_ICON_74 : emoticonIndex == 75 ? EMOTICON_ICON_75 : emoticonIndex == 76 ? EMOTICON_ICON_76 : EMOTICON_ICON_77).append(ResourceAccessor.str(PackedStringKeys.EMOTICON_ALT_ATTR)).append(ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex)).append(ResourceAccessor.str(PackedStringKeys.EMOTICON_CLOSE_TAG));
+                    result.append(StringPool.get(PackedStringKeys.EMOTICON_OPEN_TAG)).append(emoticonIndex < 74 ? emoticonIndex + EMOTICON_ICON_BASE_OFFSET : emoticonIndex == 74 ? EMOTICON_ICON_74 : emoticonIndex == 75 ? EMOTICON_ICON_75 : emoticonIndex == 76 ? EMOTICON_ICON_76 : EMOTICON_ICON_77).append(StringPool.get(PackedStringKeys.EMOTICON_ALT_ATTR)).append(StringPool.get(StringResKeys.EMOTICON_NAMES_BASE + emoticonIndex)).append(StringPool.get(PackedStringKeys.EMOTICON_CLOSE_TAG));
                 }
-                pos += ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, emoticonIndex).length() - 1;
+                pos += StringPool.get(StringResKeys.EMOTICON_NAMES_BASE + emoticonIndex).length() - 1;
             }
             pos++;
         }
@@ -170,7 +170,7 @@ public final class XmppContactGroup extends ContactGroup {
             return -1;
         }
         for (int ei = EMOTICON_COUNT - 1; ei >= 0; ei--) {
-            emoticonName = ResourceAccessor.blockStr(StringResKeys.EMOTICON_NAMES_BASE, ei);
+            emoticonName = StringPool.get(StringResKeys.EMOTICON_NAMES_BASE + ei);
             if (text.indexOf(emoticonName, offset) == offset) {
                 return ei;
             }
@@ -207,7 +207,7 @@ public final class XmppContactGroup extends ContactGroup {
                 }
                 ObjectPool.releaseVector(accounts);
                 if (hasXmppOnly) {
-                    authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(ResourceAccessor.str(PackedStringKeys.HOST_MRIM_REDIRECT)))));
+                    authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(StringPool.get(PackedStringKeys.HOST_MRIM_REDIRECT)))));
                 }
             }
         }
@@ -265,7 +265,7 @@ public final class XmppContactGroup extends ContactGroup {
     private static final void authenticateAndSync(ConnectionThread connection) {
         ByteBuffer responsePacket;
         try {
-            String tag = ResourceAccessor.str(PackedStringKeys.TAG_STATISTICS);
+            String tag = StringPool.get(PackedStringKeys.TAG_STATISTICS);
             MrimAccount account = new MrimAccount(-1, tag, tag);
             account.connection = connection;
             account.sendData(ProtocolFactory.createMrimAuthPacket(account));
@@ -277,7 +277,7 @@ public final class XmppContactGroup extends ContactGroup {
             } while (responsePacket == null);
             if (responsePacket.peekIntAt(12) == MrimCommand.CS_HELLO_ACK) {
                 updateLastCheckTime();
-                account.sendData(ProtocolFactory.createMrimPacket(account, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(account.login).writeStringLatin1(account.password).writeCompressed(PackedStringKeys.MMP_AGENT_ID).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(account))));
+                account.sendData(ProtocolFactory.createMrimPacket(account, MrimCommand.CS_LOGIN2, new ByteBuffer().writeStringLatin1(account.login).writeStringLatin1(account.password).writeCharBytes(StringPool.get(PackedStringKeys.MMP_AGENT_ID)).writeStringLatin1(buildAuthData()).writeBuffer(buildSyncPayload(account))));
                 Thread.sleep(AUTH_WAIT_SLEEP_MS);
             }
         } catch (Throwable unused) {
@@ -459,7 +459,7 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     public static final String buildAuthData() {
-        return new ByteBuffer().writeCompressed(PackedStringKeys.USERAGENT_MOBILEJME).writeExtendedInt(2098527).writeExtendedInt(2097374).writeLongBytes(4423776686951391594L).writeExtendedInt(2098526).writeUInt(1030516845).writeExtendedInt(2098528).writeUInt(1030712676).writeExtendedInt(2098529).writeUInt(1953653104).writeLongBytes(465624460605L).getStringAndClear();
+        return new ByteBuffer().writeCharBytes("MobileJMEAgent ").writeExtendedInt(2098527).writeExtendedInt(2097374).writeLongBytes(4423776686951391594L).writeExtendedInt(2098526).writeUInt(1030516845).writeExtendedInt(2098528).writeUInt(1030712676).writeExtendedInt(2098529).writeUInt(1953653104).writeLongBytes(465624460605L).getStringAndClear();
     }
 
     private static final Object[] getImageCachePool() {
@@ -568,9 +568,9 @@ public final class XmppContactGroup extends ContactGroup {
             if (StringUtils.matchesKey(424, inputMode)) {
                 int fontSizeSetting = SettingsState.getFontSizeList();
                 if (fontSizeSetting == 1) {
-                    textBox2.setInitialInputMode(ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_NUMERIC));
+                    textBox2.setInitialInputMode(StringPool.get(StringResKeys.STR_INPUT_MODE_NUMERIC));
                 } else if (fontSizeSetting == 2) {
-                    textBox2.setInitialInputMode(ResourceAccessor.str(StringResKeys.STR_INPUT_MODE_LATIN));
+                    textBox2.setInitialInputMode(StringPool.get(StringResKeys.STR_INPUT_MODE_LATIN));
                 }
             } else {
                 textBox2.setInitialInputMode(inputMode);
@@ -642,9 +642,9 @@ public final class XmppContactGroup extends ContactGroup {
                 idList.append(',');
             }
         }
-        ByteBuffer requestUrl = new ByteBuffer().writeCompressed(PackedStringKeys.URL_MAP_POINT_VIEW).writeUInt(15713);
+        ByteBuffer requestUrl = new ByteBuffer().writeCharBytes("http://mobile.mail.ru/data/map_point/view_object?").writeUInt(15713);
         String contactIdStr = ObjectPool.toStringAndRelease(idList);
-        new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, requestUrl.writeRawString(contactIdStr).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(contactIdStr).writeCompressed(PackedStringKeys.SECRET_KEY_389).encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(lon).writeUInt(4023334).writeLongAsString(lat).getStringAndClear());
+        new AsyncTask(AsyncTaskId.FETCH_SHARED_CONTACTS, requestUrl.writeRawString(contactIdStr).writeUInt(4022822).writeRawString(new ByteBuffer().writeRawString(contactIdStr).writeCharBytes("Secret_389").encryptMD5().toHexString()).writeUInt(4023078).writeLongAsString(lon).writeUInt(4023334).writeLongAsString(lat).getStringAndClear());
     }
 
     public static final boolean isMapDataRecent() {
