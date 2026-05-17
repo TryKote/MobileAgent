@@ -526,9 +526,9 @@ public class XmppProtocol extends Account {
                 newContact.online = true;
                 contact = newContact;
                 this.defaultGroup.addContact((Object) newContact);
+                onMessage(jid, 0L, StringPool.get(StringResKeys.STR_XMPP_AUTH_REQUEST));
             }
-            contact.updateFromPresence(presenceType, element);
-            onMessage(jid, 0L, StringPool.get(StringResKeys.STR_XMPP_AUTH_REQUEST));
+            updatePresenceStatus(jid, 1);
         } else if (contact != null) {
             contact.updateFromPresence(presenceType, element);
         }

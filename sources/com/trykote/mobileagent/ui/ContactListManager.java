@@ -7,11 +7,11 @@ import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -42,7 +42,7 @@ public abstract class ContactListManager {
     private static final int ICON_SIZE_LARGE = 12;
     private static final int PHONE_PAGE_SIZE = 10;
 
-    private static final long ONE_WEEK_MS = 604800000L;
+
     private static final int PRESENCE_SUBSCRIBE = 40;
     private static final int PRESENCE_UNSUBSCRIBE = 4;
 
@@ -171,10 +171,6 @@ public abstract class ContactListManager {
         if (SessionState.getAccountSelectionObj() != null) {
             return ScreenId.PRESENCE_ACTION;
         }
-        int promoResult = checkFirstRunPromo();
-        if (promoResult >= 0) {
-            return promoResult;
-        }
         updateState();
         Vector tabItems = screen.tabItems;
         if (entity != null) {
@@ -186,16 +182,6 @@ public abstract class ContactListManager {
         return UIState.isConversationActive() ? ScreenId.NOTIFY_MESSAGE : 0;
     }
 
-    private static int checkFirstRunPromo() {
-        if (!SessionState.isCleanupDone()) {
-            SessionState.setCleanupDone(1);
-            if (System.currentTimeMillis() - SessionState.getTimestampFirstRun() > ONE_WEEK_MS) {
-                UIState.setShowNotification(0);
-                return ScreenId.FIRST_RUN;
-            }
-        }
-        return -1;
-    }
 
     private static void updateContextForEntity(Object entity, Vector tabItems) {
         Contact contact = null;
