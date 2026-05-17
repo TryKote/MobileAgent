@@ -2,8 +2,6 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.StringPool;
-import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.net.HttpClient;
 
 import javax.microedition.lcdui.Image;
@@ -718,25 +716,7 @@ public final class ByteBuffer {
         return writeBufferIntLen(inner);
     }
 
-    // --- Packed string encoding (AppState integration) ---
-
-    public ByteBuffer writeCompressed(int key) {
-        if (key > AppState.PACKED_STRING_THRESHOLD) {
-            return writeBytesAt(AppState.getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16);
-        }
-        Object value = AppState.pool[key];
-        if (value instanceof byte[]) {
-            return writeBytes((byte[]) value);
-        }
-        if (value instanceof String) {
-            return writeCharBytes((String) value);
-        }
-        String str = StringPool.get(key);
-        if (str != null) {
-            return writeCharBytes(str);
-        }
-        return this;
-    }
+    // --- AppState integration ---
 
     public ByteBuffer writeEncodedInt(int key) {
         return writeRawString(AppState.getString(key));

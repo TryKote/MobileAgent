@@ -1,9 +1,11 @@
 package com.trykote.mobileagent.ui.screen;
 
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.RegistrationState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
+import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.ui.MenuItem;
 import com.trykote.mobileagent.ui.ScreenManager;
@@ -12,8 +14,6 @@ import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.ObjectPool;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
-
-import com.trykote.mobileagent.core.AppState;
 
 /**
  * About screen: displays app version, memory info, device details.
@@ -41,9 +41,9 @@ public final class AboutScreen extends ScreenView {
 
         configureHeader(9, 510);
         addSeparator(512, 1288);
-        addSeparator(853022, 1180715);
+        addSeparator(PackedStringKeys.LABEL_COPYRIGHT, PackedStringKeys.LABEL_MAIL_RU_YEAR);
         addSeparator(513, 1287);
-        addSeparator(514, 1377341);
+        addSeparator(514, PackedStringKeys.URL_AGENT_MAIL_RU);
         addSeparator(515, 1376);
         addSeparator(516, 1377);
         addSeparator(517, 1284);

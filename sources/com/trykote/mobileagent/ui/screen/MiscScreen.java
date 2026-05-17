@@ -493,7 +493,7 @@ public final class MiscScreen extends ScreenView {
             return responseCode;
         }
         Object payload = ApiClient.getJsonPayload();
-        Object jsonArray = JsonParser.getValueByInt(payload, 329636);
+        Object jsonArray = JsonParser.getValueByInt(payload, PackedStringKeys.MAIL_PARAM_MLIST);
         if (JsonParser.getIntByInt(payload, 198543) == 1) {
             for (int idx = ((Vector) jsonArray).size() - 1; idx >= 0; idx--) {
                 String jsonValue = Utils.getVectorString((Vector) jsonArray, idx);

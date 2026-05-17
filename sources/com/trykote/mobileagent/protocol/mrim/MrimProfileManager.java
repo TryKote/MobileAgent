@@ -33,7 +33,7 @@ public final class MrimProfileManager {
 
     // XML element and attribute IDs for geo-list
     private static final int XML_GEO_LIST_ELEMENT = 114;
-    private static final int XML_ATTR_USER_ID = 328413;
+    private static final int XML_ATTR_USER_ID = PackedStringKeys.ATTR_EMAIL;
 
     // MRIM command: update geo visibility list
     private static final int CS_GEO_VISIBILITY = 4181;

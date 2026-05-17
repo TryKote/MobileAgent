@@ -50,7 +50,7 @@ public final class ProtocolFactory {
         int authSlot = protocol.reserved2;
         buffer = buffer.writeShortBE(AUTH_DATA_BASE_SIZE + (authSlot == 0 ? 0 : AUTH_SLOT_SIZE));
         for (int fieldIndex = AUTH_FIELD_COUNT - 1; fieldIndex >= 0; fieldIndex--) {
-            buffer.writeCompressed(fieldIndex + AUTH_FIELDS_BASE_KEY);
+            buffer.writeBytes(AppState.getBytes(fieldIndex + AUTH_FIELDS_BASE_KEY));
         }
         if (authSlot != 0) {
             buffer.writeBytesAt(AppState.getBytes(StringResKeys.RES_AUTH_SLOT_GUIDS), (authSlot - 1) << 4, AUTH_SLOT_SIZE);

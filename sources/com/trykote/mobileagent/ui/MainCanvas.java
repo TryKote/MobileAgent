@@ -203,7 +203,8 @@ public final class MainCanvas extends Canvas implements CommandListener {
                     ImageCache.cleanupExpiredImages();
                 }
             }
-        } catch (Throwable unused) {
+        } catch (Throwable t) {
+            RemoteLogger.log("PAINT", "CRASH in paint: " + t);
         }
         AppController.needsRepaint = false;
     }

@@ -196,11 +196,11 @@ public final class XmlElement {
     }
 
     public final XmlElement addIdAttr(int i) {
-        return setAttrValue(333027, AppState.getString(i));
+        return setAttrValue(PackedStringKeys.XML_ATTR_XMLNS, AppState.getString(i));
     }
 
     public final XmlElement addNameAttr(int i) {
-        return setAttrValue(262589, AppState.getString(i));
+        return setAttrValue(PackedStringKeys.ATTR_TYPE, AppState.getString(i));
     }
 
     public final XmlElement addTextChild(String str, String str2) {
@@ -243,6 +243,6 @@ public final class XmlElement {
     }
 
     public final XmlElement cloneElement() {
-        return addNameAttr(398982).setAttrValue(131590, getAttribute(StringPool.get(PackedStringKeys.ATTR_FROM))).setAttrValue(262852, (String) null);
+        return addNameAttr(PackedStringKeys.XMPP_RESULT).setAttrValue(PackedStringKeys.ATTR_TO, getAttribute(StringPool.get(PackedStringKeys.ATTR_FROM))).setAttrValue(PackedStringKeys.ATTR_FROM, (String) null);
     }
 }

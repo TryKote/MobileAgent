@@ -251,7 +251,7 @@ public final class MessageScreen extends ScreenView {
     private static void buildSendMail() {
         NotificationHelper.showConfirmDialog(81, 872);
         Vector params = ObjectPool.newVector();
-        params.addElement(AppState.getString(ChatState.isExtendedView() ? 264068 : 1038));
+        params.addElement(AppState.getString(ChatState.isExtendedView() ? PackedStringKeys.VALUE_TRUE : 1038));
         params.addElement(ObjectPool.integerOf(ChatState.getChatRoomId()));
         params.addElement(Utils.defaultStr(RuntimeState.getMsgSubject()));
         params.addElement(Utils.defaultStr(RuntimeState.getMsgSender()));

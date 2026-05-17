@@ -366,7 +366,7 @@ public final class Conversation implements ListItem {
     }
 
     private static final boolean isFormatted(String text) {
-        return StringUtils.indexOfPoolString(text, 1245774) >= 0;
+        return StringUtils.indexOfPoolString(text, PackedStringKeys.URL_MAPS_MAIL_RU) >= 0;
     }
 
     public static final boolean hasKey(String text, int key) {

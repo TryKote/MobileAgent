@@ -319,7 +319,7 @@ public final class TileCache {
 
     private static final int parseContentLength(String str) {
         try {
-            int headerOffset = StringUtils.indexOfPoolString(StringUtils.intern(str.toLowerCase()), 1052310) + CONTENT_LENGTH_VALUE_OFFSET;
+            int headerOffset = StringUtils.indexOfPoolString(StringUtils.intern(str.toLowerCase()), PackedStringKeys.HEADER_CONTENT_LENGTH_LC) + CONTENT_LENGTH_VALUE_OFFSET;
             return Integer.parseInt(StringUtils.substring(str, headerOffset, str.indexOf(13, headerOffset)));
         } catch (Throwable unused) {
             return -1;

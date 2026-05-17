@@ -59,7 +59,6 @@ public abstract class AppState {
     static final int INT_POOL_SIZE = 3494; // covers keys 1406..4899
 
     // Packed string encoding
-    public static final int PACKED_STRING_THRESHOLD = 5179;
 
     // --- Persistence ---
 
@@ -210,7 +209,6 @@ public abstract class AppState {
     }
 
     private static void initSessionState(Object midlet) {
-        RemoteLogger.log("INIT", "initSessionState: midlet");
         pool[SessionKeys.OBJ_MIDLET] = midlet;
         pool[SessionKeys.ARR_EMPTY_INT] = new int[0];
         Date date = new Date();
@@ -220,9 +218,7 @@ public abstract class AppState {
         updateTime();
         pool[SessionKeys.OBJ_RANDOM] = new Random(System.currentTimeMillis() ^ Thread.currentThread().hashCode());
         pool[SessionKeys.VEC_EVENT_QUEUE] = ObjectPool.newVector();
-        RemoteLogger.log("INIT", "initSessionState: before initPlatform");
         StringUtils.initPlatform();
-        RemoteLogger.log("INIT", "initSessionState: after initPlatform");
         TimerManager.timers = new long[TimerManager.SLOT_COUNT];
         pool[SessionKeys.OBJ_CALLBACK_ARRAY] = new Object[1];
     }
@@ -255,10 +251,7 @@ public abstract class AppState {
     }
 
     public static String getString(int key) {
-        if (key > PACKED_STRING_THRESHOLD) {
-            return StringUtils.intern(new String(getBytes(StringResKeys.RES_STRING_DATA), key & 0xFFFF, key >> 16));
-        }
-        Object result = getOrDefault(key);
+        Object result = (key < OBJECT_POOL_SIZE) ? getOrDefault(key) : null;
         if (result instanceof String) {
             return (String) result;
         }

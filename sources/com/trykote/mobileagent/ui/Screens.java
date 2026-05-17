@@ -1,5 +1,7 @@
 package com.trykote.mobileagent.ui;
 
+import com.trykote.mobileagent.key.PackedStringKeys;
+
 
 /**
  * Screen factory methods.
@@ -404,7 +406,7 @@ public final class Screens {
         s.addConditionalIf(1464, 152, 365, 509); // SessionKeys.FLAG_HAS_MRIM_ACCOUNTS_2
         s.addConditionalUnless(1465, 152, 365, 509); // SessionKeys.FLAG_HAS_XMPP_ACCOUNTS
         s.addActionById(22, 1047, 5); // Эта операция доступна только при отсутствии сое...
-        s.addActionById(156, 459216, 146); // Засыпаю
+        s.addActionById(156, PackedStringKeys.LABEL_MAIL_RU, 146); // Засыпаю
         s.addActionById(8, 500, 7); // Заполните текст запроса авторизации.
         s.addActionById(9, 718, 132); // Веселюсь
         s.addActionById(10, 1049, 10); // Контакт и так в этой группе.
@@ -430,9 +432,9 @@ public final class Screens {
         Screen s = new Screen(5, 9);
         s.configureHeader(9, 510);
         s.addSeparator(512, 1288); // Версия:
-        s.addSeparator(853022, 1180715);
+        s.addSeparator(PackedStringKeys.LABEL_COPYRIGHT, PackedStringKeys.LABEL_MAIL_RU_YEAR);
         s.addSeparator(513, 1287); // Сборка:
-        s.addSeparator(514, 1377341); // Официальный сайт:
+        s.addSeparator(514, PackedStringKeys.URL_AGENT_MAIL_RU); // Официальный сайт:
         s.addSeparator(515, 1376); // Платформа:
         s.addSeparator(516, 1377); // Модель:
         s.addSeparator(517, 1284); // Память (всего):
@@ -897,13 +899,13 @@ public final class Screens {
     public static Screen addContact() {
         Screen s = new Screen(0, 21);
         s.configureHeader(256, 552);
-        s.addNumericInput(263250, 10, 1262, 1491, 1, 2147483647, -1);
+        s.addNumericInput(PackedStringKeys.LABEL_UIN, 10, 1262, 1491, 1, 2147483647, -1);
         s.addTextInput(675, 63, 424, 0, 1307);
         s.addTextInput(676, 63, 424, 0, 1308);
         s.addTextInput(677, 63, 424, 0, 1309);
-        s.addTextInput(394334, 63, 425, 0, 1310);
-        s.addTextInput(328804, 63, 424, 0, 1311);
-        s.addTextInput(525398, 63, 424, 0, 1312);
+        s.addTextInput(PackedStringKeys.LABEL_EMAIL, 63, 425, 0, 1310);
+        s.addTextInput(PackedStringKeys.LABEL_CITY, 63, 424, 0, 1311);
+        s.addTextInput(PackedStringKeys.LABEL_KEYWORD, 63, 424, 0, 1312);
         s.addCheckbox(678, 1492); // Искать только подключенных
         s.configureSoftKeys(1061, 44, 1050, 12, 0);
         return s;
@@ -1038,7 +1040,7 @@ public final class Screens {
     public static Screen contactListScreen() {
         Screen s = new Screen(0, 66);
         s.configureHeader(23, 737);
-        s.addSeparator(263250, 1320);
+        s.addSeparator(PackedStringKeys.LABEL_UIN, 1320);
         s.addActionById(738, 1320, 1);
         s.addTextSeparator(424);
         s.configureSoftKeys(1058, 4, 1050, 12, 0);
@@ -1079,7 +1081,7 @@ public final class Screens {
     /** SETTINGS_MAIN */
     public static Screen settingsMain() {
         Screen s = new Screen(5, 2);
-        s.configureHeader(156, 459216);
+        s.configureHeader(156, PackedStringKeys.LABEL_MAIL_RU);
         s.addLabelSeparator(1016); // Добро пожаловать в Мобильный Агент! Сейчас буде...
         s.configureSoftKeys(1017, 157, 0, 157, 157);
         return s;

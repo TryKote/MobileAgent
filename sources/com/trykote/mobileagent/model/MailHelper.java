@@ -179,7 +179,7 @@ public final class MailHelper {
         Message message = chatRoom.getMessage(messageId);
         boolean wasUnread = message.hasFlag(Message.FLAG_UNREAD);
         Object jsonPayload = ApiClient.getJsonPayload();
-        Object attachmentsList = JsonParser.getValueByInt(jsonPayload, 722874);
+        Object attachmentsList = JsonParser.getValueByInt(jsonPayload, PackedStringKeys.MAIL_FIELD_ATTACHMENTS);
         int size = ((Vector) attachmentsList).size();
         Object[] attachments = new Object[size];
         for (int i = size - 1; i >= 0; i--) {

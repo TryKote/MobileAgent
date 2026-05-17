@@ -179,6 +179,11 @@ public final class MmpProtocol extends Account {
     private static final int ERROR_NOT_CONNECTED = 299;
     private static final int ERROR_CONTACT_ONLINE = 310;
 
+    private static final byte[] RICH_MSG_CAPS = {0, 0, 0, 0, -1, -1, -1, 0};
+    private static final byte[] RICH_MSG_CAPS_BLOCKED = {0, 0, 0, 0, 0, -1, -1, -1, 38, 0, 0, 0,
+        123, 48, 57, 52, 54, 49, 51, 52, 69, 45, 52, 67, 55, 70, 45, 49, 49, 68, 49, 45, 56, 50,
+        50, 50, 45, 52, 52, 52, 53, 53, 51, 53, 52, 48, 48, 48, 48, 125};
+
     final MmpResponseHandler responseHandler = new MmpResponseHandler(this);
 
     public int serverId;
@@ -647,7 +652,7 @@ public final class MmpProtocol extends Account {
             bodyBuffer.writeByte(0);
             int bodyLength = bodyBuffer.length;
             int contentLength = bodyLength - (blockedFlag == 1 ? 0 : RICH_MSG_OVERHEAD);
-            command = ProtocolFactory.createMmpCommand(this, MmpCommand.SEND_MESSAGE, headerBuffer.writeShortBE(5).writeShortBE(contentLength + RICH_MSG_HEADER_SIZE).writeShortBE(0).writeLong(timestamp).writeCompressed(906).writeShortBE(10).writeShortBE(2).writeShortBE(1).writeShortBE(15).writeShortBE(0).writeShortBE(MmpMessageParser.MSG_TLV_RICH_CONTAINER).writeShortBE(contentLength + RICH_MSG_CONTAINER_OVERHEAD).writeShortLE(27).writeShortLE(8).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortBE(0).writeIntLE(3).writeByte(0).writeShortBE(0).writeIntLE(14).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortLE(1).writeShortLE(getConnectionModeValue()).writeShortLE(1).writeShortLE(bodyLength).writeBuffer(bodyBuffer).writeCompressed(blockedFlag == 0 ? 526807 : 3279327).writeShortBE(3).writeShortBE(0));
+            command = ProtocolFactory.createMmpCommand(this, MmpCommand.SEND_MESSAGE, headerBuffer.writeShortBE(5).writeShortBE(contentLength + RICH_MSG_HEADER_SIZE).writeShortBE(0).writeLong(timestamp).writeBytes(AppState.getBytes(906)).writeShortBE(10).writeShortBE(2).writeShortBE(1).writeShortBE(15).writeShortBE(0).writeShortBE(MmpMessageParser.MSG_TLV_RICH_CONTAINER).writeShortBE(contentLength + RICH_MSG_CONTAINER_OVERHEAD).writeShortLE(27).writeShortLE(8).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortBE(0).writeIntLE(3).writeByte(0).writeShortBE(0).writeIntLE(14).writeIntLE(0).writeIntLE(0).writeIntLE(0).writeShortLE(1).writeShortLE(getConnectionModeValue()).writeShortLE(1).writeShortLE(bodyLength).writeBuffer(bodyBuffer).writeBytes(blockedFlag == 0 ? RICH_MSG_CAPS : RICH_MSG_CAPS_BLOCKED).writeShortBE(3).writeShortBE(0));
         }
         return trySendData(command);
     }

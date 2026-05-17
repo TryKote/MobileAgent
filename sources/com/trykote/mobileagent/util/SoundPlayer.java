@@ -2,6 +2,7 @@ package com.trykote.mobileagent.util;
 
 
 import com.trykote.mobileagent.core.StringPool;
+import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
@@ -20,7 +21,7 @@ public final class SoundPlayer {
     public static final void playSound(int i) {
         stopSound();
         try {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCharBytes("MThd\0\0\0\0").writeCompressed(i + MIDI_NOTE_BASE_KEY).writeIntLE(MIDI_END_OF_TRACK).toByteArray());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new ByteBuffer().writeCharBytes("MThd\0\0\0\0").writeBytes(AppState.getBytes(i + MIDI_NOTE_BASE_KEY)).writeIntLE(MIDI_END_OF_TRACK).toByteArray());
             Object resource = IOUtils.registerResource((Object) byteArrayInputStream);
             UIState.setMediaResource(resource);
             if (resource != null) {

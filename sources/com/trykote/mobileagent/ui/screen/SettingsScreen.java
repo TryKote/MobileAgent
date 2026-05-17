@@ -1,5 +1,8 @@
 package com.trykote.mobileagent.ui.screen;
 
+import com.trykote.mobileagent.key.PackedStringKeys;
+
+import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.core.AppController;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ContactState;
@@ -76,7 +79,7 @@ public final class SettingsScreen extends ScreenView {
     public void buildContent() {
         switch (screenId) {
             case ScreenId.SETTINGS:
-                configureHeader(156, 459216);
+                configureHeader(156, PackedStringKeys.LABEL_MAIL_RU);
                 addLabelSeparator(1016);
                 configureSoftKeys(1017, 157, 0, 157, 157);
                 break;

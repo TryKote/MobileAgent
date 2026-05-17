@@ -144,7 +144,7 @@ public final class ChatAsyncScreen extends AsyncScreenView {
             params.addElement(chatRoom.participants);
             request = ApiClient.createUploadRequest(
                 StringPool.get(PackedStringKeys.URL_PATH_MAILBOX),
-                ObjectPool.newBufferFromState(722608)
+                ObjectPool.newBufferFromState(PackedStringKeys.PARAM_AJAX_CALL)
                     .append(StringPool.get(PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST))
                     .append(SessionState.getSessionHash())
                     .append(StringPool.get(PackedStringKeys.PARAM_DATA_EQ))
@@ -166,7 +166,7 @@ public final class ChatAsyncScreen extends AsyncScreenView {
             }
             params.addElement(messageIdParams);
             request = ApiClient.createAuthRequest(
-                ObjectPool.newBufferFromState(1050207)
+                ObjectPool.newBufferFromState(PackedStringKeys.URL_PATH_MAILBOX)
                     .append('?')
                     .append(StringPool.get(PackedStringKeys.PARAM_AJAX_CALL))
                     .append(StringPool.get(PackedStringKeys.FUNC_MAJAX_GET_MSGS))

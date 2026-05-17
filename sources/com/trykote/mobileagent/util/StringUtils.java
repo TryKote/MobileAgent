@@ -103,23 +103,7 @@ public final class StringUtils {
         if (str == null) {
             return false;
         }
-        if (key <= AppState.PACKED_STRING_THRESHOLD) {
-            return equals(AppState.getString(key), str);
-        }
-        byte[] bytes = AppState.getBytes(StringResKeys.RES_STRING_DATA);
-        int expectedLen = key >> 16;
-        int idx = expectedLen;
-        if (expectedLen != str.length()) {
-            return false;
-        }
-        int baseOffset = key & 65535;
-        do {
-            idx--;
-            if (idx < 0) {
-                return true;
-            }
-        } while (str.charAt(idx) == bytes[baseOffset + idx]);
-        return false;
+        return equals(AppState.getString(key), str);
     }
 
     public static final boolean equalsObj(String str, Object obj) {
@@ -488,9 +472,7 @@ public final class StringUtils {
     }
 
     public static final void initPlatform() {
-        RemoteLogger.log("INIT", "initPlatform: setAppName");
         AppState.setObject(StringResKeys.STR_APP_NAME, (Object) AppState.getAppProperty(StringResKeys.STR_APP_NAME));
-        RemoteLogger.log("INIT", "initPlatform: randomId");
         while (Utils.parseInt((Object) Utils.defaultStr(SessionState.getRandomId())) <= 106) {
             try {
                 throw new Throwable();
@@ -498,17 +480,14 @@ public final class StringUtils {
                 SessionState.setRandomId(intern(Integer.toString(Utils.nextRandom())));
             }
         }
-        RemoteLogger.log("INIT", "initPlatform: guid/session");
         setOrGenerateGuid(validateGuid(SessionState.getAppProperty(SessionKeys.SLOT_SESSION_HASH)));
         SessionState.setSessionToken(SessionState.getAppProperty(SessionKeys.SLOT_SESSION_TOKEN));
         SessionState.setSessionHash(new ByteBuffer().writeUInt(1029990694).writeRawString(Utils.defaultStr(SessionState.getRandomId())).writeLongBytes(263912257062L).writeRawString(formatVersion()).getStringAndClear());
-        RemoteLogger.log("INIT", "initPlatform: sysprops");
         SessionState.setAccountLogin(getSystemProp(963));
         SessionState.setAccountPassword(getSystemProp(964));
         SessionState.setAccountServer(getSystemProp(1378));
         SessionState.setAccountTypeStr(getSystemProp(1380));
         SessionState.setAccountDisplayName(getSystemProp(1379));
-        RemoteLogger.log("INIT", "initPlatform: classCheck");
         for (int i = 966; i >= 965; i--) {
             try {
                 String inputStr = Utils.defaultStr(AppState.getString(i));
@@ -519,7 +498,6 @@ public final class StringUtils {
             } catch (Throwable unused2) {
             }
         }
-        RemoteLogger.log("INIT", "initPlatform: versionCheck appName=" + AppState.getString(StringResKeys.STR_APP_NAME));
         if (AppState.getString(StringResKeys.STR_APP_NAME).charAt(0) == '3' && AppState.getString(StringResKeys.STR_APP_NAME).charAt(2) == '9') {
             if (SessionState.getDeviceInfo() == null) {
                 SessionState.setDeviceInfoFromPool(StringResKeys.STR_DEVICE_FEATURES);

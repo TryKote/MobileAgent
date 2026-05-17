@@ -1,6 +1,8 @@
 package com.trykote.mobileagent.model;
 
 
+
+import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -128,7 +130,7 @@ public final class ChatRoom {
     public final void parseJson(Object jsonData) {
         this.name = JsonParser.getStringByInt(jsonData, 263472);
         this.memberCount = JsonParser.getIntByInt(jsonData, 526252);
-        this.id = JsonParser.getIntByInt(jsonData, 132297);
+        this.id = JsonParser.getIntByInt(jsonData, PackedStringKeys.ATTR_ID_UPPER);
         this.unreadCount = JsonParser.getIntByInt(jsonData, 395188);
         this.subject = AppState.emptyStr;
         this.isInitialized = true;

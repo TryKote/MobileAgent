@@ -488,11 +488,8 @@ public class XmppProtocol extends Account {
         String nonce = StringUtils.substring(challenge, nonceStart, challenge.indexOf(CHAR_QUOTE, nonceStart));
         String cnonce = Utils.generateRandomHash();
 
-        RemoteLogger.log("XMPP", "DIGEST vars: nonce=" + nonce + " cnonce=" + cnonce);
         String ha1Hex = new ByteBuffer().writeRawString(username).writeByte(':').writeRawString(realm).writeByte(':').writeRawString(password).encryptMD5().writeByte(':').writeRawString(nonce).writeByte(':').writeRawString(cnonce).encryptMD5().toHexString();
-        RemoteLogger.log("XMPP", "DIGEST ha1=" + ha1Hex);
         String ha2Hex = new ByteBuffer().writeCharBytes("AUTHENTICATE:xmpp/").writeRawString(realm).encryptMD5().toHexString();
-        RemoteLogger.log("XMPP", "DIGEST ha2=" + ha2Hex);
         String responseHex = new ByteBuffer().writeRawString(ha1Hex).writeByte(':').writeRawString(nonce).writeCharBytes(":00000001:").writeRawString(cnonce).writeByte(':').writeCharBytes("auth").writeByte(':').writeRawString(ha2Hex).encryptMD5().toHexString();
 
         ByteBuffer digestBuffer = new ByteBuffer()

@@ -1,6 +1,5 @@
 package com.trykote.mobileagent.core;
 
-import com.trykote.mobileagent.key.PackedStringKeys;
 
 /**
  * All UI strings and packed strings in one pool.
@@ -1394,278 +1393,636 @@ public final class StringPool {
         "X-MRA-GUID",
         "X-MRA-Invite",
         null,
-        "Пробки: нет данных"
+        "Пробки: нет данных",
+        "a",
+        "5",
+        "q=",
+        "os",
+        "id",
+        "to",
+        "a=",
+        "ID",
+        "OK",
+        "To",
+        "--",
+        "iq",
+        "xa",
+        "\">",
+        "get",
+        "(?)",
+        "200",
+        "fw:",
+        "re:",
+        "set",
+        "&y=",
+        "dir",
+        "dnd",
+        "inv",
+        "ask",
+        "jid",
+        "data",
+        "type",
+        "name",
+        "from",
+        "link",
+        "UIN:",
+        "auth",
+        "send",
+        "true",
+        "Body",
+        "From",
+        "Date",
+        "copy",
+        "j2me",
+        "port",
+        "host",
+        "GET&",
+        "chat",
+        "%D0%",
+        "%D1%",
+        "text",
+        "nick",
+        "bind",
+        "ping",
+        "away",
+        "show",
+        "none",
+        "item",
+        "body",
+        "email",
+        "value",
+        "false",
+        "mList",
+        "draft",
+        "fList",
+        "Mpop=",
+        "token",
+        "&pwd=",
+        "tiles",
+        "PLAIN",
+        "xmlns",
+        "vcard",
+        "query",
+        "photo",
+        "error",
+        "vCard",
+        "group",
+        "\0\0!\0",
+        "&rand=",
+        "&lon1=",
+        "&lat2=",
+        "&lon2=",
+        "status",
+        "&data=",
+        "ToName",
+        "cookie",
+        "secret",
+        " alt='",
+        "Sender",
+        "%D0%81",
+        "%D1%91",
+        "points",
+        "sms://",
+        "nonce=",
+        "Jabber",
+        "binval",
+        "result",
+        "active",
+        "remove",
+        "http://",
+        "General",
+        "version",
+        "&c=2&e=",
+        "&z=java",
+        "Receipt",
+        "ToEmail",
+        "Subject",
+        "loginid",
+        "session",
+        "\"\0 \0>\0<",
+        "&login=",
+        "success",
+        "message",
+        "failure",
+        "subject",
+        "data/add",
+        "data/get",
+        "MAPPOINT",
+        "geo-list",
+        "mListAll",
+        "FromName",
+        "realName",
+        "hosttime",
+        "listlink",
+        "response",
+        "presence",
+        "resource",
+        "priority",
+        "&digest=",
+        ":vk.com:",
+        "MThd\0\0\0\0",
+        "MAPOBJECT",
+        "geo-point",
+        "lastMsgId",
+        "ClearSize",
+        "FromEmail",
+        "MessageId",
+        "'</SMILE>",
+        ":;8}$SB()",
+        "socket://",
+        "timestamp",
+        "subscribe",
+        "mechanism",
+        "insisible",
+        "available",
+        "\",realm=\"",
+        "\",nonce=\"",
+        "challenge",
+        "statistics",
+        "audio/midi",
+        "HAS_MYMAIL",
+        "&Password=",
+        "FlagAttach",
+        "FlagUnread",
+        "set-cookie",
+        "statuscode",
+        "<SMILE>id=",
+        "&user_lat=",
+        "&user_lon=",
+        "&x_screen=",
+        "&y_screen=",
+        "Secret_389",
+        "subscribed",
+        "mechanisms",
+        "DIGEST-MD5",
+        "username=\"",
+        ":00000001:",
+        "@gmail.com",
+        "vcard-temp",
+        "_phone_info",
+        "ajax_call=1",
+        "Attachments",
+        "snap_logins",
+        "AjaxResponse",
+        "&sig_sha256=",
+        "X-MRIM-Flags",
+        "unsubscribed",
+        "\",response=\"",
+        "subscription",
+        "\0\0\0\0\0\0\0\0",
+        "VolumeControl",
+        "MRIM.NICKNAME",
+        "sessionsecret",
+        "<###20###img0",
+        "stream:stream",
+        "urn:xmpp:ping",
+        "ReceiptArrived",
+        "Content-Length",
+        "X-GOOGLE-TOKEN",
+        "MESSAGES.UNREAD",
+        "client.endpoint",
+        "MobileJMEAgent ",
+        "data/jams_state",
+        "\",charset=utf-8",
+        "stream:features",
+        "vkmessenger.com",
+        "data/agentupload",
+        "/cgi-bin/mailbox",
+        "\0\0\0\0\0@зз\0\0\0\0",
+        "mrim_sms@mail.ru",
+        "content-length: ",
+        "jabber:iq:roster",
+        "194.32.248.3:2042",
+        "geo.point.suggest",
+        "security_image_id",
+        "http://aj.mail.ru",
+        "Mobile Mail Agent",
+        "jabber:iq:version",
+        "AUTHENTICATE:xmpp/",
+        "_xmpp-client._tcp.",
+        "http://maps.mail.ru",
+        "security_image_link",
+        "&quantity=10&idfrom=",
+        "&dist=100&sn=1&rand=",
+        "mobile.mail.ru:2041/",
+        "%40gmail.com&Passwd=",
+        "SessionSecure&nonce=",
+        "&quantity=50&density=",
+        "/cgi-bin/ajax_markmsg",
+        "/cgi-bin/ajax_readmsg",
+        "/cgi-bin/ajax_sendmsg",
+        "X-MRIM-Multichat-Type",
+        "http://mobile.mail.ru/",
+        "\0\0\0\0\0\0\0\0\0\0\0ru\0\0\0\0\0\0\0",
+        "\",nc=00000001,cnonce=\"",
+        "/cgi-bin/ajax_spamabuse",
+        "&func_name=majax_search",
+        "&quot;\0&nbsp;\0&gt;\0&lt;",
+        "mobilemaps.mail.ru:2043",
+        "data/mapssearch_ver1?q=",
+        "&func_name=ajax_mark_msg",
+        "&func_name=ajax_send_msg",
+        "&func_name=ajax_spamabuse",
+        "&func_name=ajax_move_msgs",
+        "&func_name=majax_get_msgs",
+        "client=\"jagent\" version=\"",
+        "http://obraz.foto.mail.ru/",
+        "\0\0\0ru\0\0\0\0\0\0\0\0\0geo-list",
+        "/cgi-bin/auth?lite=1&Login=",
+        "&dist=100&sn=1&bestobject=1",
+        "&func_name=ajax_get_msg_data",
+        "\",qop=auth,digest-uri=\"xmpp/",
+        "datagram://nsrpub.mail.ru:53",
+        "http://geo194.32.248.3/?lat1=",
+        "data/road_info_xml?timestamp=",
+        "http://jabber.org/protocol/nick",
+        "&func_name=ajax_get_mailbox_data",
+        "urn:ietf:params:xml:ns:xmpp-sasl",
+        "urn:ietf:params:xml:ns:xmpp-bind",
+        "http://xhtml.wap.mail.ru/cgi-bin/",
+        "GET /TileSender.aspx?ModeKey=tiles",
+        "http://mrb.mail.ru/java/version.txt",
+        "urn:ietf:params:xml:ns:xmpp-session",
+        "&mode=map&fullscreen=true&jams=false",
+        "https://www.google.com:443/accounts/",
+        "http://jabber.org/protocol/chatstates",
+        "+++JanFebMarAprMayJunJulAugSepOctNovDec",
+        "\0\0%АЁ\0\0\0«Н\0\0\0\0\0\0\0\0\0P\0\0\0j2me Mail.Ru\0\0",
+        "IssueAuthToken?service=mail&Session=true&",
+        "https://api.login.icq.net/auth/clientLogin",
+        "devId=ic122ravsLx0z-5F&f=xml&idType=ICQ&s=",
+        "http://win.mail.ru/cgi-bin/signup?mobileagent",
+        "&func_name=ajax_get_folder_msg_list_info_part",
+        " HTTP/1.1\r\nUser-Agent: J2ME MailAgent\r\nHost: ",
+        "http://api.icq.net:5190/aim/startOSCARSession",
+        "data/trackpoints?getPath.aspx?mode=distance&x0=",
+        "http://mobile.mail.ru/data/map_point/add_object?",
+        "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+        "\0\0\0\0'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0яя\0\0\0\0яя\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
+        "http://mobile.mail.ru/data/map_point/view_object?",
+        "2DBvQWJBam3xuyYyQ0BeYuWKKfpk5fV4Z6sPc9wTBfeTx442f6",
+        "http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom=",
+        "http://mra.mail.ru/settings/MobileJMEAgent/settings.xml",
+        "http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom=17&x=",
+        "ClientAuth?PersistentCookie=false&source=googletalk&Email=",
+        " HTTP/1.1\r\nAccept: image/png\r\nUser-Agent: J2ME MailAgent v.",
+        "http://api.icq.net/expressions/get?f=native&type=buddyIcon&t=",
+        "http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.get",
+        "a\0b\0v\0g\0d\0e\0zh\0z\0i\0y\0k\0l\0m\0n\0o\0p\0r\0s\0t\0u\0f\0h\0c\0ch\0sh\0sch\0\"\0i\0'\0e\0yu\0ya\0yo",
+        "\0\0д\0\0д\0\0д\0\0д\0\0д\0\0д\0\0д\0\t\0д\0\n\0д\0\0д",
+        "http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.getTokenSecure&nonce=",
+        "Privet, ia postavil Mobile Mail.ru Agent, dobavliaiysia - http://m.mail.ru/magent?u=",
+        "\r\nConnection: keep-alive\r\nCache-Control: no-transform\r\nContent-Length: 0\r\nHost: mobilemaps.mail.ru\r\n\r\n",
+        "<?xml version=\"1.0\"?><stream:stream xmlns:stream=\"http://etherx.jabber.org/streams\" version=\"1.0\" xmlns=\"jabber:client\" to=\"",
+        "&buildNumber=1000&clientName=Mail.ru%20J2ME%20Agent&clientVersion=1000&distId=20200&f=xml&k=ic122ravsLx0z-5F&majorVersion=32&minorVersion=0&pointVersion=0&port=5190&ts=",
+        "a\0b\0v\0g\0d\0e\0z\0i\0y\0k\0l\0m\0n\0o\0p\0r\0s\0t\0u\0f\0h\0c\0\"\0'\0yo\0jo\0yu\0ju\0ya\0ja\0zh\0ch\0sh\0by\0vy\0wy\0dy\0zy\0ly\0my\0ny\0py\0ry\0sy\0ty\0cy\0sch\0sh \0bya\0vya\0wya\0dya\0dyu\0zya\0zyu\0lya\0lyu\0mya\0myu\0nya\0nyu\0pya\0pyu\0rya\0ryu\0ryo\0sya\0syu\0tya\0tyo\0tyu\0sch ",
+        "eNptUsFugkAQJaYnE/9h0nOji6Kx+g29ND3uBXFBUgSDa3sw/lv7Cf7BalklWFCgaZtoSheMSY297Jt9M/PezmRLkiQ1SpI0xS7VZazaY7M4tJEh15sy7hNdR/lpqbYhI+V2inXHprRniQBh3TYtrGsD1R0TWkcKPKgDZ6h2Z7NKeYo1x3JcUdrFLukjbLiE2Aj3rAlBBVVvNo9kHuS0wPPE32p0XosuVU/t4t0FKzcb/7mdaIFFIr+fJU46LeXIC8zplnJpKdfbXTErfjLJ86Np9xU80WQ8Ut1+sZ6x3MZar4E1sdsewiPXoUSjlfI8WvCYe6EfwDba7hO2iTNYshh2bL1IPT853EDkhSyIIC34NE5YGC03PGRFvOPLbyZa+C72M7hTTat6P4GXNx4mDBZ8LWQ9j+9WgQ8faRh8+j5cvwrhzUF4XldhHrAvlhxAaKY/RxkBe3iPVjzhsPZ4fOjAgNJRp1ZTDWLT6jA3cSe1fDqolGdX4utkWSb9AlobC7Q=",
+        "result",
+        "UIN:",
+        "stati",
+        "City:",
+        "Email:",
+        "Mail.Ru",
+        "Keyword:",
+        "Copyright (c)",
+        "Mail.Ru, 2006-2010",
+        "http://agent.mail.ru/"
     };
 
     public static String get(int key) {
         if (key >= 0 && key < STRINGS.length) {
             return STRINGS[key];
         }
-        return getPacked(key);
+        return decodePacked(key);
     }
 
-    private static String getPacked(int key) {
-        switch (key) {
-            case PackedStringKeys.TAG_STATISTICS: return "statistics";
-            case PackedStringKeys.TAG_A: return "a";
-            case PackedStringKeys.PARAM_Q_EQ: return "q=";
-            case PackedStringKeys.TAG_DATA: return "data";
-            case PackedStringKeys.API_DATA_ADD: return "data/add";
-            case PackedStringKeys.API_DATA_GET: return "data/get";
-            case PackedStringKeys.XMPP_TYPE_GET: return "get";
-            case PackedStringKeys.API_PHONE_INFO: return "_phone_info";
-            case PackedStringKeys.XMPP_PRIORITY_DEFAULT: return "5";
-            case PackedStringKeys.ATTR_TYPE: return "type";
-            case PackedStringKeys.ATTR_NAME: return "name";
-            case PackedStringKeys.PLACEHOLDER_UNKNOWN: return "(?)";
-            case PackedStringKeys.MIME_TYPE_MIDI: return "audio/midi";
-            case PackedStringKeys.ATTR_ID: return "id";
-            case PackedStringKeys.MIDP_VOLUME_CONTROL: return "VolumeControl";
-            case PackedStringKeys.MIDI_HEADER: return "MThd\0\0\0\0";
-            case PackedStringKeys.SCHEME_HTTP: return "http://";
-            case PackedStringKeys.URL_OBRAZ_FOTO: return "http://obraz.foto.mail.ru/";
-            case PackedStringKeys.ATTR_TO: return "to";
-            case PackedStringKeys.URL_ICQ_BUDDY_ICON: return "http://api.icq.net/expressions/get?f=native&type=buddyIcon&t=";
-            case PackedStringKeys.URL_MAPS_MAIL_RU: return "http://maps.mail.ru";
-            case PackedStringKeys.URL_GEO_SEARCH_ZOOM: return "http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom=";
-            case PackedStringKeys.URL_GEO_LAT1: return "http://geo194.32.248.3/?lat1=";
-            case PackedStringKeys.PARAM_QUANTITY_DENSITY: return "&quantity=50&density=";
-            case PackedStringKeys.PARAM_QUANTITY_IDFROM: return "&quantity=10&idfrom=";
-            case PackedStringKeys.ATTR_FROM: return "from";
-            case PackedStringKeys.PARAM_DIST_RAND: return "&dist=100&sn=1&rand=";
-            case PackedStringKeys.PARAM_RAND: return "&rand=";
-            case PackedStringKeys.ATTR_EMAIL: return "email";
-            case PackedStringKeys.PARAM_LON1: return "&lon1=";
-            case PackedStringKeys.PARAM_LAT2: return "&lat2=";
-            case PackedStringKeys.PARAM_LON2: return "&lon2=";
-            case PackedStringKeys.MRIM_MAPPOINT: return "MAPPOINT";
-            case PackedStringKeys.MRIM_MAPOBJECT: return "MAPOBJECT";
-            case PackedStringKeys.XMPP_GROUP_GENERAL: return "General";
-            case PackedStringKeys.HOST_MRIM_REDIRECT: return "194.32.248.3:2042";
-            case PackedStringKeys.MRIM_NICKNAME: return "MRIM.NICKNAME";
-            case PackedStringKeys.MRIM_MESSAGES_UNREAD: return "MESSAGES.UNREAD";
-            case PackedStringKeys.MRIM_CLIENT_ENDPOINT: return "client.endpoint";
-            case PackedStringKeys.MRIM_HAS_MYMAIL: return "HAS_MYMAIL";
-            case PackedStringKeys.MRIM_GEO_SUGGEST: return "geo.point.suggest";
-            case PackedStringKeys.MRIM_GEO_POINT: return "geo-point";
-            case PackedStringKeys.MRIM_GEO_LIST: return "geo-list";
-            case PackedStringKeys.MRIM_GEO_LIST_PACKET: return "\0\0\0ru\0\0\0\0\0\0\0\0\0geo-list";
-            case PackedStringKeys.URL_MOBILE_MAIL_RU: return "http://mobile.mail.ru/";
-            case PackedStringKeys.HOST_MOBILE_MAIL_RU_2041: return "mobile.mail.ru:2041/";
-            case PackedStringKeys.API_AGENTUPLOAD: return "data/agentupload";
-            case PackedStringKeys.PARAM_A_EQ: return "a=";
-            case PackedStringKeys.HTTP_STATUS_200: return "200";
-            case PackedStringKeys.PARAM_CE: return "&c=2&e=";
-            case PackedStringKeys.PARAM_Z_JAVA: return "&z=java";
-            case PackedStringKeys.TAG_LINK: return "link";
-            case PackedStringKeys.MMP_AGENT_ID: return "\0\0\0\0\0\0\0\0\0\0\0ru\0\0\0\0\0\0\0";
-            case PackedStringKeys.PREFIX_UIN: return "UIN:";
-            case PackedStringKeys.URL_SIGNUP: return "http://win.mail.ru/cgi-bin/signup?mobileagent";
-            case PackedStringKeys.URL_XHTML_WAP_MAIL_RU: return "http://xhtml.wap.mail.ru/cgi-bin/";
-            case PackedStringKeys.ATTR_ID_UPPER: return "ID";
-            case PackedStringKeys.TAG_SECURITY_IMAGE_ID: return "security_image_id";
-            case PackedStringKeys.TAG_SECURITY_IMAGE_LINK: return "security_image_link";
-            case PackedStringKeys.ATTR_VALUE: return "value";
-            case PackedStringKeys.TAG_STATUS: return "status";
-            case PackedStringKeys.URL_VERSION_CHECK: return "http://mrb.mail.ru/java/version.txt";
-            case PackedStringKeys.FUNC_AJAX_GET_MAILBOX: return "&func_name=ajax_get_mailbox_data";
-            case PackedStringKeys.URL_PATH_AJAX_MARKMSG: return "/cgi-bin/ajax_markmsg";
-            case PackedStringKeys.FUNC_AJAX_MARK_MSG: return "&func_name=ajax_mark_msg";
-            case PackedStringKeys.PARAM_PASSWORD_EQ: return "&Password=";
-            case PackedStringKeys.URL_AJ_MAIL_RU: return "http://aj.mail.ru";
-            case PackedStringKeys.TAG_AJAX_RESPONSE: return "AjaxResponse";
-            case PackedStringKeys.URL_PATH_AUTH_LOGIN: return "/cgi-bin/auth?lite=1&Login=";
-            case PackedStringKeys.TAG_AUTH: return "auth";
-            case PackedStringKeys.URL_PATH_MAILBOX: return "/cgi-bin/mailbox";
-            case PackedStringKeys.URL_PATH_AJAX_SPAMABUSE: return "/cgi-bin/ajax_spamabuse";
-            case PackedStringKeys.URL_PATH_AJAX_READMSG: return "/cgi-bin/ajax_readmsg";
-            case PackedStringKeys.URL_PATH_AJAX_SENDMSG: return "/cgi-bin/ajax_sendmsg";
-            case PackedStringKeys.ACTION_SEND: return "send";
-            case PackedStringKeys.PARAM_AJAX_CALL: return "ajax_call=1";
-            case PackedStringKeys.FUNC_AJAX_SPAMABUSE: return "&func_name=ajax_spamabuse";
-            case PackedStringKeys.FUNC_AJAX_GET_FOLDER_LIST: return "&func_name=ajax_get_folder_msg_list_info_part";
-            case PackedStringKeys.FUNC_AJAX_MOVE_MSGS: return "&func_name=ajax_move_msgs";
-            case PackedStringKeys.FUNC_MAJAX_GET_MSGS: return "&func_name=majax_get_msgs";
-            case PackedStringKeys.FUNC_AJAX_GET_MSG_DATA: return "&func_name=ajax_get_msg_data";
-            case PackedStringKeys.FUNC_AJAX_SEND_MSG: return "&func_name=ajax_send_msg";
-            case PackedStringKeys.FUNC_MAJAX_SEARCH: return "&func_name=majax_search";
-            case PackedStringKeys.PARAM_DATA_EQ: return "&data=";
-            case PackedStringKeys.VALUE_TRUE: return "true";
-            case PackedStringKeys.VALUE_FALSE: return "false";
-            case PackedStringKeys.STATUS_OK: return "OK";
-            case PackedStringKeys.PREFIX_FORWARD: return "fw:";
-            case PackedStringKeys.PREFIX_REPLY: return "re:";
-            case PackedStringKeys.MAIL_FIELD_LAST_MSG_ID: return "lastMsgId";
-            case PackedStringKeys.MAIL_PARAM_MLIST: return "mList";
-            case PackedStringKeys.MAIL_PARAM_MLIST_ALL: return "mListAll";
-            case PackedStringKeys.MAIL_FIELD_ATTACHMENTS: return "Attachments";
-            case PackedStringKeys.MAIL_FIELD_BODY: return "Body";
-            case PackedStringKeys.MAIL_FLAG_ATTACH: return "FlagAttach";
-            case PackedStringKeys.MAIL_FLAG_UNREAD: return "FlagUnread";
-            case PackedStringKeys.MAIL_FIELD_CLEAR_SIZE: return "ClearSize";
-            case PackedStringKeys.MAIL_FIELD_RECEIPT: return "Receipt";
-            case PackedStringKeys.MAIL_FIELD_RECEIPT_ARRIVED: return "ReceiptArrived";
-            case PackedStringKeys.MAIL_FIELD_TO: return "To";
-            case PackedStringKeys.MAIL_FIELD_TO_NAME: return "ToName";
-            case PackedStringKeys.MAIL_FIELD_TO_EMAIL: return "ToEmail";
-            case PackedStringKeys.MAIL_FIELD_FROM: return "From";
-            case PackedStringKeys.MAIL_FIELD_FROM_EMAIL: return "FromEmail";
-            case PackedStringKeys.MAIL_FIELD_MESSAGE_ID: return "MessageId";
-            case PackedStringKeys.MAIL_FIELD_FROM_DISPLAY: return "FromName";
-            case PackedStringKeys.MAIL_FIELD_SUBJECT: return "Subject";
-            case PackedStringKeys.MAIL_FOLDER_DRAFT: return "draft";
-            case PackedStringKeys.MAIL_FIELD_REAL_NAME: return "realName";
-            case PackedStringKeys.MAIL_PARAM_FLIST: return "fList";
-            case PackedStringKeys.MAIL_FIELD_DATE: return "Date";
-            case PackedStringKeys.MAIL_ACTION_COPY: return "copy";
-            case PackedStringKeys.HTTP_REQUEST_HEADER: return " HTTP/1.1\r\nUser-Agent: J2ME MailAgent\r\nHost: ";
-            case PackedStringKeys.HEADER_CONTENT_LENGTH: return "Content-Length";
-            case PackedStringKeys.XMPP_TYPE_SET: return "set";
-            case PackedStringKeys.HEADER_SET_COOKIE: return "set-cookie";
-            case PackedStringKeys.TAG_COOKIE: return "cookie";
-            case PackedStringKeys.COOKIE_MPOP: return "Mpop=";
-            case PackedStringKeys.MMP_AUTH_PACKET: return "\0\0%АЁ\0\0\0«Н\0\0\0\0\0\0\0\0\0P\0\0\0j2me Mail.Ru\0\0";
-            case PackedStringKeys.PLATFORM_J2ME: return "j2me";
-            case PackedStringKeys.MMP_TRANSFER_HEADER: return "\0\0д\0\0д\0\0д\0\0д\0\0д\0\0д\0\0д\0\t\0д\0\n\0д\0\0д";
-            case PackedStringKeys.MMP_CAPS_HEADER: return "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            case PackedStringKeys.MMP_CAPS_HEADER_2: return "\0\0\0\0'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0яя\0\0\0\0яя\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-            case PackedStringKeys.MMP_LOGIN_HEADER: return "\0\0\0\0\0@зз\0\0\0\0";
-            case PackedStringKeys.URL_ICQ_CLIENT_LOGIN: return "https://api.login.icq.net/auth/clientLogin";
-            case PackedStringKeys.ICQ_AUTH_PARAMS: return "devId=ic122ravsLx0z-5F&f=xml&idType=ICQ&s=";
-            case PackedStringKeys.URL_ICQ_OSCAR_SESSION: return "http://api.icq.net:5190/aim/startOSCARSession";
-            case PackedStringKeys.ICQ_OSCAR_PARAMS: return "&buildNumber=1000&clientName=Mail.ru%20J2ME%20Agent&clientVersion=1000&distId=20200&f=xml&k=ic122ravsLx0z-5F&majorVersion=32&minorVersion=0&pointVersion=0&port=5190&ts=";
-            case PackedStringKeys.TAG_PORT: return "port";
-            case PackedStringKeys.PARAM_SIG_SHA256: return "&sig_sha256=";
-            case PackedStringKeys.TAG_STATUSCODE: return "statuscode";
-            case PackedStringKeys.TAG_LOGINID: return "loginid";
-            case PackedStringKeys.TAG_TOKEN: return "token";
-            case PackedStringKeys.TAG_HOST: return "host";
-            case PackedStringKeys.TAG_HOSTTIME: return "hosttime";
-            case PackedStringKeys.TAG_SESSIONSECRET: return "sessionsecret";
-            case PackedStringKeys.TAG_SECRET: return "secret";
-            case PackedStringKeys.PARAM_PWD: return "&pwd=";
-            case PackedStringKeys.HTTP_GET_AMP: return "GET&";
-            case PackedStringKeys.URL_SETTINGS_XML: return "http://mra.mail.ru/settings/MobileJMEAgent/settings.xml";
-            case PackedStringKeys.TAG_SNAP_LOGINS: return "snap_logins";
-            case PackedStringKeys.EMOTICON_TAG_PREFIX: return "<###20###img0";
-            case PackedStringKeys.EMOTICON_OPEN_TAG: return "<SMILE>id=";
-            case PackedStringKeys.EMOTICON_CLOSE_TAG: return "'</SMILE>";
-            case PackedStringKeys.EMOTICON_TRIGGER_CHARS: return ":;8}$SB()";
-            case PackedStringKeys.EMOTICON_ALT_ATTR: return " alt='";
-            case PackedStringKeys.MRIM_MESSAGE_DELIMITER: return "--";
-            case PackedStringKeys.MAIL_FIELD_SENDER: return "Sender";
-            case PackedStringKeys.HEADER_X_MRIM_MULTICHAT: return "X-MRIM-Multichat-Type";
-            case PackedStringKeys.XMPP_TYPE_CHAT: return "chat";
-            case PackedStringKeys.HEADER_X_MRIM_FLAGS: return "X-MRIM-Flags";
-            case PackedStringKeys.MONTH_ABBREV_TABLE: return "+++JanFebMarAprMayJunJulAugSepOctNovDec";
-            case PackedStringKeys.MRIM_MESSAGE_RTF_BLOB: return "eNptUsFugkAQJaYnE/9h0nOji6Kx+g29ND3uBXFBUgSDa3sw/lv7Cf7BalklWFCgaZtoSheMSY297Jt9M/PezmRLkiQ1SpI0xS7VZazaY7M4tJEh15sy7hNdR/lpqbYhI+V2inXHprRniQBh3TYtrGsD1R0TWkcKPKgDZ6h2Z7NKeYo1x3JcUdrFLukjbLiE2Aj3rAlBBVVvNo9kHuS0wPPE32p0XosuVU/t4t0FKzcb/7mdaIFFIr+fJU46LeXIC8zplnJpKdfbXTErfjLJ86Np9xU80WQ8Ut1+sZ6x3MZar4E1sdsewiPXoUSjlfI8WvCYe6EfwDba7hO2iTNYshh2bL1IPT853EDkhSyIIC34NE5YGC03PGRFvOPLbyZa+C72M7hTTat6P4GXNx4mDBZ8LWQ9j+9WgQ8faRh8+j5cvwrhzUF4XldhHrAvlhxAaKY/RxkBe3iPVjzhsPZ4fOjAgNJRp1ZTDWLT6jA3cSe1fDqolGdX4utkWSb9AlobC7Q=";
-            case PackedStringKeys.MRIM_SMS_ADDRESS: return "mrim_sms@mail.ru";
-            case PackedStringKeys.MRIM_CLIENT_VERSION: return "client=\"jagent\" version=\"";
-            case PackedStringKeys.USERAGENT_MOBILEJME: return "MobileJMEAgent ";
-            case PackedStringKeys.SCHEME_SOCKET: return "socket://";
-            case PackedStringKeys.HEADER_CONTENT_LENGTH_LC: return "content-length: ";
-            case PackedStringKeys.TRANSLIT_TABLE_EXTENDED: return "a\0b\0v\0g\0d\0e\0z\0i\0y\0k\0l\0m\0n\0o\0p\0r\0s\0t\0u\0f\0h\0c\0\"\0'\0yo\0jo\0yu\0ju\0ya\0ja\0zh\0ch\0sh\0by\0vy\0wy\0dy\0zy\0ly\0my\0ny\0py\0ry\0sy\0ty\0cy\0sch\0sh \0bya\0vya\0wya\0dya\0dyu\0zya\0zyu\0lya\0lyu\0mya\0myu\0nya\0nyu\0pya\0pyu\0rya\0ryu\0ryo\0sya\0syu\0tya\0tyo\0tyu\0sch ";
-            case PackedStringKeys.TRANSLIT_TABLE_BASIC: return "a\0b\0v\0g\0d\0e\0zh\0z\0i\0y\0k\0l\0m\0n\0o\0p\0r\0s\0t\0u\0f\0h\0c\0ch\0sh\0sch\0\"\0i\0'\0e\0yu\0ya\0yo";
-            case PackedStringKeys.HTML_ENTITY_NAMES: return "&quot;\0&nbsp;\0&gt;\0&lt;";
-            case PackedStringKeys.HTML_ENTITY_VALUES: return "\"\0 \0>\0<";
-            case PackedStringKeys.URL_ENCODE_D0: return "%D0%";
-            case PackedStringKeys.URL_ENCODE_YO_UPPER: return "%D0%81";
-            case PackedStringKeys.URL_ENCODE_D1: return "%D1%";
-            case PackedStringKeys.URL_ENCODE_YO_LOWER: return "%D1%91";
-            case PackedStringKeys.PARAM_MAP_FULLSCREEN: return "&mode=map&fullscreen=true&jams=false";
-            case PackedStringKeys.ATTR_TIMESTAMP: return "timestamp";
-            case PackedStringKeys.TAG_POINTS: return "points";
-            case PackedStringKeys.HOST_MOBILEMAPS_2043: return "mobilemaps.mail.ru:2043";
-            case PackedStringKeys.HTTP_MAP_TILE_HEADER: return " HTTP/1.1\r\nAccept: image/png\r\nUser-Agent: J2ME MailAgent v.";
-            case PackedStringKeys.HTTP_GET_TILESENDER: return "GET /TileSender.aspx?ModeKey=tiles";
-            case PackedStringKeys.MAP_TILES: return "tiles";
-            case PackedStringKeys.HTTP_TILE_HEADERS: return "\r\nConnection: keep-alive\r\nCache-Control: no-transform\r\nContent-Length: 0\r\nHost: mobilemaps.mail.ru\r\n\r\n";
-            case PackedStringKeys.API_MAPSSEARCH: return "data/mapssearch_ver1?q=";
-            case PackedStringKeys.PARAM_USER_LAT: return "&user_lat=";
-            case PackedStringKeys.PARAM_USER_LON: return "&user_lon=";
-            case PackedStringKeys.PARAM_X_SCREEN: return "&x_screen=";
-            case PackedStringKeys.PARAM_Y_SCREEN: return "&y_screen=";
-            case PackedStringKeys.URL_GEO_OBJECT_SEARCH_2: return "http://maps.mail.ru/GeoObjectSearchInArea2.aspx?zoom=17&x=";
-            case PackedStringKeys.PARAM_MAP_BESTOBJECT: return "&dist=100&sn=1&bestobject=1";
-            case PackedStringKeys.PARAM_Y_EQ: return "&y=";
-            case PackedStringKeys.API_ROAD_INFO: return "data/road_info_xml?timestamp=";
-            case PackedStringKeys.API_JAMS_STATE: return "data/jams_state";
-            case PackedStringKeys.PARAM_LOGIN: return "&login=";
-            case PackedStringKeys.API_TRACKPOINTS: return "data/trackpoints?getPath.aspx?mode=distance&x0=";
-            case PackedStringKeys.URL_MAP_POINT_VIEW: return "http://mobile.mail.ru/data/map_point/view_object?";
-            case PackedStringKeys.URL_MAP_POINT_ADD: return "http://mobile.mail.ru/data/map_point/add_object?";
-            case PackedStringKeys.SECRET_KEY_389: return "Secret_389";
-            case PackedStringKeys.TAG_LISTLINK: return "listlink";
-            case PackedStringKeys.ATTR_DIR: return "dir";
-            case PackedStringKeys.CONTENT_TYPE_TEXT: return "text";
-            case PackedStringKeys.SCHEME_SMS: return "sms://";
-            case PackedStringKeys.INVITE_MESSAGE_RU: return "Privet, ia postavil Mobile Mail.ru Agent, dobavliaiysia - http://m.mail.ru/magent?u=";
-            case PackedStringKeys.XMPP_SUBSCRIBE: return "subscribe";
-            case PackedStringKeys.XMPP_MECHANISMS: return "mechanisms";
-            case PackedStringKeys.HEADER_X_GOOGLE_TOKEN: return "X-GOOGLE-TOKEN";
-            case PackedStringKeys.AUTH_MECHANISM_PLAIN: return "PLAIN";
-            case PackedStringKeys.AUTH_DIGEST_MD5: return "DIGEST-MD5";
-            case PackedStringKeys.XMPP_STATUS_AVAILABLE: return "available";
-            case PackedStringKeys.DIGEST_USERNAME: return "username=\"";
-            case PackedStringKeys.DIGEST_REALM: return "\",realm=\"";
-            case PackedStringKeys.DIGEST_NONCE: return "\",nonce=\"";
-            case PackedStringKeys.DIGEST_NONCE_EQ: return "nonce=";
-            case PackedStringKeys.DIGEST_NC_CNONCE: return "\",nc=00000001,cnonce=\"";
-            case PackedStringKeys.DIGEST_QOP_AUTH: return "\",qop=auth,digest-uri=\"xmpp/";
-            case PackedStringKeys.DIGEST_RESPONSE: return "\",response=\"";
-            case PackedStringKeys.DIGEST_NC: return ":00000001:";
-            case PackedStringKeys.DIGEST_AUTH_XMPP: return "AUTHENTICATE:xmpp/";
-            case PackedStringKeys.DIGEST_CHARSET: return "\",charset=utf-8";
-            case PackedStringKeys.XML_XMPP_STREAM_HEADER: return "<?xml version=\"1.0\"?><stream:stream xmlns:stream=\"http://etherx.jabber.org/streams\" version=\"1.0\" xmlns=\"jabber:client\" to=\"";
-            case PackedStringKeys.XMPP_STREAM_STREAM: return "stream:stream";
-            case PackedStringKeys.XML_ATTR_XMLNS: return "xmlns";
-            case PackedStringKeys.DOMAIN_GMAIL_COM: return "@gmail.com";
-            case PackedStringKeys.TAG_NICK: return "nick";
-            case PackedStringKeys.XMPP_IQ: return "iq";
-            case PackedStringKeys.XMPP_BIND: return "bind";
-            case PackedStringKeys.XMPP_STATUS_AWAY: return "away";
-            case PackedStringKeys.XMPP_STATUS_XA: return "xa";
-            case PackedStringKeys.XMPP_STATUS_DND: return "dnd";
-            case PackedStringKeys.XMPP_STATUS_INV: return "inv";
-            case PackedStringKeys.XMPP_STREAM_FEATURES: return "stream:features";
-            case PackedStringKeys.TAG_CHALLENGE: return "challenge";
-            case PackedStringKeys.TAG_SUCCESS: return "success";
-            case PackedStringKeys.TAG_PRESENCE: return "presence";
-            case PackedStringKeys.TAG_MESSAGE: return "message";
-            case PackedStringKeys.TAG_FAILURE: return "failure";
-            case PackedStringKeys.TAG_BINVAL: return "binval";
-            case PackedStringKeys.TAG_PHOTO: return "photo";
-            case PackedStringKeys.TAG_ERROR: return "error";
-            case PackedStringKeys.TAG_RESULT: return "result";
-            case PackedStringKeys.TAG_SHOW: return "show";
-            case PackedStringKeys.VALUE_NONE: return "none";
-            case PackedStringKeys.ATTR_ASK: return "ask";
-            case PackedStringKeys.TAG_ITEM: return "item";
-            case PackedStringKeys.TAG_BODY: return "body";
-            case PackedStringKeys.TAG_SUBJECT: return "subject";
-            case PackedStringKeys.ATTR_JID: return "jid";
-            case PackedStringKeys.ATTR_SUBSCRIPTION: return "subscription";
-            case PackedStringKeys.XMPP_GROUP_TAG: return "group";
-            case PackedStringKeys.TAG_REMOVE: return "remove";
-            case PackedStringKeys.XML_CLOSE_TAG_END: return "\">";
-            case PackedStringKeys.XMPP_RESOURCE: return "resource";
-            case PackedStringKeys.XMPP_PRIORITY: return "priority";
-            case PackedStringKeys.GMAIL_PASSWD: return "%40gmail.com&Passwd=";
-            case PackedStringKeys.URL_GOOGLE_ACCOUNTS: return "https://www.google.com:443/accounts/";
-            case PackedStringKeys.GOOGLE_CLIENT_AUTH: return "ClientAuth?PersistentCookie=false&source=googletalk&Email=";
-            case PackedStringKeys.GOOGLE_ISSUE_AUTH_TOKEN: return "IssueAuthToken?service=mail&Session=true&";
-            case PackedStringKeys.SRV_XMPP_CLIENT_TCP: return "_xmpp-client._tcp.";
-            case PackedStringKeys.HOST_NSRPUB_DNS: return "datagram://nsrpub.mail.ru:53";
-            case PackedStringKeys.MMP_PADDING_12: return "\0\0\0\0\0\0\0\0";
-            case PackedStringKeys.MMP_SPACER: return "\0\0!\0";
-            case PackedStringKeys.VK_API_SECRET: return "2DBvQWJBam3xuyYyQ0BeYuWKKfpk5fV4Z6sPc9wTBfeTx442f6";
-            case PackedStringKeys.URL_VK_AUTH_GET: return "http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.get";
-            case PackedStringKeys.URL_VK_AUTH_TOKEN_SECURE: return "http://api.vkontakte.ru/api.php?api_id=2023699&method=auth.getTokenSecure&nonce=";
-            case PackedStringKeys.AUTH_SESSION_NONCE: return "SessionSecure&nonce=";
-            case PackedStringKeys.PARAM_DIGEST: return "&digest=";
-            case PackedStringKeys.DOMAIN_VK_COM: return ":vk.com:";
-            case PackedStringKeys.HOST_VKMESSENGER: return "vkmessenger.com";
-            default: return null;
+    private static String decodePacked(int key) {
+        int offset = key & 0xFFFF;
+        int length = key >> 16;
+        if (length > 0 && offset + length <= PACKED_BLOB.length) {
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++) {
+                chars[i] = (char) (PACKED_BLOB[offset + i] & 0xFF);
+            }
+            return new String(chars);
         }
+        return null;
     }
+
+    private static final byte[] PACKED_BLOB = {
+        115,116,97,116,105,115,116,105,99,115,113,61,100,97,116,97,47,97,100,100,
+        100,97,116,97,47,103,101,116,95,112,104,111,110,101,95,105,110,102,111,0,
+        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+        21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,-128,-127,-126,-125,-124,
+        -123,-122,-121,-120,-119,64,65,66,67,80,81,82,83,68,69,70,71,84,85,86,
+        87,72,73,74,75,88,89,90,91,76,77,78,79,92,93,94,95,96,97,98,
+        99,112,113,114,115,100,101,102,103,116,117,118,119,104,105,106,107,120,121,122,
+        123,108,109,110,111,124,125,126,127,64,108,69,87,65,80,67,76,75,84,122,
+        109,91,81,123,0,0,-121,0,0,68,0,117,0,126,103,111,-118,-113,127,-128,
+        72,-117,118,105,96,0,93,0,-126,118,0,0,36,37,38,39,40,44,41,45,
+        48,52,56,60,-112,-108,42,46,51,55,49,53,57,61,-111,-107,43,47,59,63,
+        50,0,54,58,62,66,67,0,82,83,69,70,72,74,91,92,93,95,-128,-127,
+        -121,-119,-110,-106,-116,-124,-123,-115,-114,-113,-109,-105,-64,-63,-62,-61,-48,-47,-46,-60,
+        -59,-58,-57,-44,-43,-42,-56,-55,-54,-53,-40,-39,-38,-52,-51,-50,-49,-36,-35,-34,
+        -32,-31,-30,-45,-41,-45,-41,-33,-28,-27,-26,-25,-24,-23,-22,-21,-20,-19,-18,-17,
+        -16,-15,-14,-29,-13,-12,-11,-104,-96,-95,-94,-93,-80,-79,-78,-77,-92,-91,-90,-89,
+        -76,-75,-74,-73,-88,-87,-86,-85,-72,-71,-70,-69,-84,-83,-82,-81,-68,-67,-66,-65,
+        -100,-99,-98,-97,-103,-102,-101,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,64,65,67,
+        81,69,84,87,89,79,0,0,80,0,-65,0,-128,-123,0,0,51,0,0,103,
+        0,0,-118,-60,-74,-114,-31,0,-80,0,-91,0,-36,108,0,1,0,0,14,2,
+        3,4,5,6,7,8,9,10,11,16,17,18,19,12,13,15,20,21,22,23,
+        24,25,26,27,28,29,30,31,38,108,111,110,38,108,97,116,38,111,98,106,
+        99,111,100,101,38,116,121,112,101,99,111,100,101,38,103,101,111,110,97,109,
+        101,40,63,41,77,97,105,108,46,82,117,97,117,100,105,111,47,109,105,100,
+        105,86,111,108,117,109,101,67,111,110,116,114,111,108,77,84,104,100,0,0,
+        0,6,0,104,116,116,112,58,47,47,111,98,114,97,122,46,102,111,116,111,
+        46,109,97,105,108,46,114,117,47,104,116,116,112,58,47,47,97,112,105,46,
+        105,99,113,46,110,101,116,47,101,120,112,114,101,115,115,105,111,110,115,47,
+        103,101,116,63,102,61,110,97,116,105,118,101,38,116,121,112,101,61,98,117,
+        100,100,121,73,99,111,110,38,116,61,104,116,116,112,58,47,47,109,97,112,
+        115,46,109,97,105,108,46,114,117,47,71,101,111,79,98,106,101,99,116,83,
+        101,97,114,99,104,73,110,65,114,101,97,50,46,97,115,112,120,63,122,111,
+        111,109,61,104,116,116,112,58,47,47,103,101,111,49,57,52,46,51,50,46,
+        50,52,56,46,51,47,63,108,97,116,49,61,38,113,117,97,110,116,105,116,
+        121,61,53,48,38,100,101,110,115,105,116,121,61,38,113,117,97,110,116,105,
+        116,121,61,49,48,38,105,100,102,114,111,109,61,38,100,105,115,116,61,49,
+        48,48,38,115,110,61,49,38,114,97,110,100,61,101,109,97,105,108,38,108,
+        111,110,49,61,38,108,97,116,50,61,38,108,111,110,50,61,77,65,80,80,
+        79,73,78,84,77,65,80,79,66,74,69,67,84,73,67,81,71,101,110,101,
+        114,97,108,49,57,52,46,51,50,46,50,52,56,46,51,58,50,48,52,50,
+        77,82,73,77,46,78,73,67,75,78,65,77,69,77,69,83,83,65,71,69,
+        83,46,85,78,82,69,65,68,99,108,105,101,110,116,46,101,110,100,112,111,
+        105,110,116,72,65,83,95,77,89,77,65,73,76,103,101,111,46,112,111,105,
+        110,116,46,115,117,103,103,101,115,116,103,101,111,45,112,111,105,110,116,103,
+        101,111,45,108,105,115,116,2,0,0,0,114,117,16,0,0,0,1,0,0,
+        0,8,0,0,0,103,101,111,45,108,105,115,116,104,116,116,112,58,47,47,
+        109,111,98,105,108,101,46,109,97,105,108,46,114,117,47,109,111,98,105,108,
+        101,46,109,97,105,108,46,114,117,58,50,48,52,49,47,100,97,116,97,47,
+        97,103,101,110,116,117,112,108,111,97,100,97,103,101,110,116,118,101,114,115,
+        105,111,110,61,49,38,97,61,50,48,48,38,99,61,51,38,103,61,38,99,
+        61,50,38,101,61,38,122,61,106,97,118,97,108,105,110,107,0,0,0,0,
+        0,0,0,0,2,0,0,0,114,117,4,0,0,0,0,0,0,0,104,116,
+        116,112,58,47,47,109,46,109,97,105,108,46,114,117,67,111,112,121,114,105,
+        103,104,116,32,40,99,41,77,97,105,108,46,82,117,44,32,50,48,48,54,
+        45,50,48,49,48,104,116,116,112,58,47,47,97,103,101,110,116,46,109,97,
+        105,108,46,114,117,47,85,73,78,58,75,101,121,119,111,114,100,58,69,109,
+        97,105,108,58,67,105,116,121,58,104,116,116,112,58,47,47,119,105,110,46,
+        109,97,105,108,46,114,117,47,99,103,105,45,98,105,110,47,115,105,103,110,
+        117,112,63,109,111,98,105,108,101,97,103,101,110,116,104,116,116,112,58,47,
+        47,120,104,116,109,108,46,119,97,112,46,109,97,105,108,46,114,117,47,99,
+        103,105,45,98,105,110,47,114,101,103,63,109,111,98,105,108,101,97,103,101,
+        110,116,61,49,38,73,68,38,67,111,117,110,116,61,49,38,85,115,101,114,
+        110,97,109,101,38,82,101,103,105,115,116,114,97,116,105,111,110,68,111,109,
+        97,105,110,38,80,97,115,115,119,111,114,100,38,80,97,115,115,119,111,114,
+        100,95,86,101,114,105,102,121,38,80,97,115,115,119,111,114,100,95,81,117,
+        101,115,116,105,111,110,38,80,97,115,115,119,111,114,100,95,65,110,115,119,
+        101,114,38,70,105,114,115,116,78,97,109,101,38,76,97,115,116,78,97,109,
+        101,38,66,105,114,116,104,68,97,121,38,66,105,114,116,104,77,111,110,116,
+        104,38,66,105,114,116,104,89,101,97,114,38,83,101,120,38,115,101,99,117,
+        114,105,116,121,95,105,109,97,103,101,95,105,100,38,115,101,99,117,114,105,
+        116,121,95,105,109,97,103,101,95,97,110,115,119,101,114,38,66,49,115,101,
+        99,117,114,105,116,121,95,105,109,97,103,101,95,108,105,110,107,118,97,108,
+        117,101,115,116,97,116,117,115,104,116,116,112,58,47,47,109,114,98,46,109,
+        97,105,108,46,114,117,47,106,97,118,97,47,118,101,114,115,105,111,110,46,
+        116,120,116,38,102,117,110,99,95,110,97,109,101,61,97,106,97,120,95,103,
+        101,116,95,109,97,105,108,98,111,120,95,100,97,116,97,47,99,103,105,45,
+        98,105,110,47,97,106,97,120,95,109,97,114,107,109,115,103,38,102,117,110,
+        99,95,110,97,109,101,61,97,106,97,120,95,109,97,114,107,95,109,115,103,
+        109,115,103,73,100,38,80,97,115,115,119,111,114,100,61,104,116,116,112,58,
+        47,47,97,106,46,109,97,105,108,46,114,117,65,106,97,120,82,101,115,112,
+        111,110,115,101,47,99,103,105,45,98,105,110,47,97,117,116,104,63,108,105,
+        116,101,61,49,38,76,111,103,105,110,61,47,99,103,105,45,98,105,110,47,
+        109,97,105,108,98,111,120,47,99,103,105,45,98,105,110,47,97,106,97,120,
+        95,115,112,97,109,97,98,117,115,101,47,99,103,105,45,98,105,110,47,97,
+        106,97,120,95,114,101,97,100,109,115,103,47,99,103,105,45,98,105,110,47,
+        97,106,97,120,95,115,101,110,100,109,115,103,97,106,97,120,95,99,97,108,
+        108,61,49,38,102,117,110,99,95,110,97,109,101,61,97,106,97,120,95,115,
+        112,97,109,97,98,117,115,101,38,102,117,110,99,95,110,97,109,101,61,97,
+        106,97,120,95,103,101,116,95,102,111,108,100,101,114,95,109,115,103,95,108,
+        105,115,116,95,105,110,102,111,95,112,97,114,116,38,102,117,110,99,95,110,
+        97,109,101,61,97,106,97,120,95,109,111,118,101,95,109,115,103,115,38,102,
+        117,110,99,95,110,97,109,101,61,109,97,106,97,120,95,103,101,116,95,109,
+        115,103,115,38,102,117,110,99,95,110,97,109,101,61,97,106,97,120,95,103,
+        101,116,95,109,115,103,95,100,97,116,97,38,102,117,110,99,95,110,97,109,
+        101,61,97,106,97,120,95,115,101,110,100,95,109,115,103,38,102,117,110,99,
+        95,110,97,109,101,61,109,97,106,97,120,95,115,101,97,114,99,104,38,100,
+        97,116,97,61,116,114,117,101,102,97,108,115,101,79,75,100,101,108,102,119,
+        58,114,101,58,108,97,115,116,77,115,103,73,100,102,73,100,109,76,105,115,
+        116,65,108,108,77,101,115,115,97,103,101,115,85,110,114,101,97,100,65,116,
+        116,97,99,104,109,101,110,116,115,66,111,100,121,95,84,101,120,116,95,72,
+        84,77,76,70,108,97,103,65,116,116,97,99,104,70,108,97,103,85,110,114,
+        101,97,100,67,108,101,97,114,83,105,122,101,82,101,99,101,105,112,116,65,
+        114,114,105,118,101,100,84,111,78,97,109,101,84,111,69,109,97,105,108,70,
+        114,111,109,69,109,97,105,108,77,101,115,115,97,103,101,73,100,70,114,111,
+        109,78,97,109,101,83,117,98,106,101,99,116,100,114,97,102,116,114,101,97,
+        108,78,97,109,101,102,76,105,115,116,68,97,116,101,99,111,112,121,32,72,
+        84,84,80,47,49,46,49,13,10,85,115,101,114,45,65,103,101,110,116,58,
+        32,74,50,77,69,32,77,97,105,108,65,103,101,110,116,13,10,72,111,115,
+        116,58,32,97,112,112,108,105,99,97,116,105,111,110,47,120,45,119,119,119,
+        45,102,111,114,109,45,117,114,108,101,110,99,111,100,101,100,67,111,110,116,
+        101,110,116,45,84,121,112,101,67,111,110,116,101,110,116,45,76,101,110,103,
+        116,104,65,99,99,101,112,116,45,67,104,97,114,115,101,116,119,105,110,100,
+        111,119,115,45,49,50,53,49,67,111,110,110,101,99,116,105,111,110,99,108,
+        111,115,101,115,101,116,45,99,111,111,107,105,101,67,111,111,107,105,101,77,
+        112,111,112,61,0,12,0,37,-64,-88,0,1,0,0,-85,-51,0,0,8,0,
+        0,0,0,0,0,0,80,0,0,0,3,106,50,109,101,32,77,97,105,108,
+        46,82,117,0,0,0,1,0,4,1,16,8,-28,0,19,0,4,1,16,8,
+        -28,0,2,0,1,1,16,8,-28,0,3,0,1,1,16,8,-28,0,21,0,
+        1,1,16,8,-28,0,4,0,1,1,16,8,-28,0,6,0,1,1,16,8,
+        -28,0,9,0,1,1,16,8,-28,0,10,0,1,1,16,8,-28,0,11,0,
+        1,1,16,8,-28,0,3,27,0,8,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,26,0,0,0,0,0,39,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,
+        0,0,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,11,31,64,3,-25,3,-25,0,0,0,0,0,
+        0,0,0,-1,-1,-1,0,0,0,0,0,0,-1,-1,-1,38,0,0,0,123,
+        48,57,52,54,49,51,52,69,45,52,67,55,70,45,49,49,68,49,45,56,
+        50,50,50,45,52,52,52,53,53,51,53,52,48,48,48,48,125,104,116,116,
+        112,115,58,47,47,97,112,105,46,108,111,103,105,110,46,105,99,113,46,110,
+        101,116,47,97,117,116,104,47,99,108,105,101,110,116,76,111,103,105,110,100,
+        101,118,73,100,61,105,99,49,50,50,114,97,118,115,76,120,48,122,45,53,
+        70,38,102,61,120,109,108,38,105,100,84,121,112,101,61,73,67,81,38,115,
+        61,104,116,116,112,58,47,47,97,112,105,46,105,99,113,46,110,101,116,58,
+        53,49,57,48,47,97,105,109,47,115,116,97,114,116,79,83,67,65,82,83,
+        101,115,115,105,111,110,38,98,117,105,108,100,78,117,109,98,101,114,61,49,
+        48,48,48,38,99,108,105,101,110,116,78,97,109,101,61,77,97,105,108,46,
+        114,117,37,50,48,74,50,77,69,37,50,48,65,103,101,110,116,38,99,108,
+        105,101,110,116,86,101,114,115,105,111,110,61,49,48,48,48,38,100,105,115,
+        116,73,100,61,50,48,50,48,48,38,102,61,120,109,108,38,107,61,105,99,
+        49,50,50,114,97,118,115,76,120,48,122,45,53,70,38,109,97,106,111,114,
+        86,101,114,115,105,111,110,61,51,50,38,109,105,110,111,114,86,101,114,115,
+        105,111,110,61,48,38,112,111,105,110,116,86,101,114,115,105,111,110,61,48,
+        38,112,111,114,116,61,53,49,57,48,38,116,115,61,38,115,105,103,95,115,
+        104,97,50,53,54,61,115,116,97,116,117,115,99,111,100,101,108,111,103,105,
+        110,105,100,116,111,107,101,110,104,111,115,116,116,105,109,101,115,101,115,115,
+        105,111,110,115,101,99,114,101,116,38,112,119,100,61,71,69,84,38,104,116,
+        116,112,58,47,47,109,114,97,46,109,97,105,108,46,114,117,47,115,101,116,
+        116,105,110,103,115,47,77,111,98,105,108,101,74,77,69,65,103,101,110,116,
+        47,115,101,116,116,105,110,103,115,46,120,109,108,115,110,97,112,95,108,111,
+        103,105,110,115,60,35,35,35,50,48,35,35,35,105,109,103,48,60,83,77,
+        73,76,69,62,105,100,61,39,60,47,83,77,73,76,69,62,58,59,56,125,
+        36,83,66,40,41,32,97,108,116,61,39,45,45,83,101,110,100,101,114,88,
+        45,77,82,73,77,45,77,117,108,116,105,99,104,97,116,45,84,121,112,101,
+        88,45,77,82,73,77,45,70,108,97,103,115,43,43,43,74,97,110,70,101,
+        98,77,97,114,65,112,114,77,97,121,74,117,110,74,117,108,65,117,103,83,
+        101,112,79,99,116,78,111,118,68,101,99,101,78,112,116,85,115,70,117,103,
+        107,65,81,74,97,89,110,69,47,57,104,48,110,79,106,105,54,75,120,43,
+        103,50,57,78,68,51,117,66,88,70,66,85,103,83,68,97,51,115,119,47,
+        108,118,55,67,102,55,66,97,108,107,108,87,70,67,103,97,90,116,111,83,
+        104,101,77,83,89,50,57,55,74,116,57,77,47,80,101,122,109,82,76,107,
+        105,81,49,83,112,73,48,120,83,55,86,90,97,122,97,89,55,77,52,116,
+        74,69,104,49,53,115,121,55,104,78,100,82,47,108,112,113,98,89,104,73,
+        43,86,50,105,110,88,72,112,114,82,110,105,81,66,104,51,84,89,116,114,
+        71,115,68,49,82,48,84,87,107,99,75,80,75,103,68,90,54,104,50,90,
+        55,78,75,101,89,111,49,120,51,74,99,85,100,114,70,76,117,107,106,98,
+        76,105,69,50,65,106,51,114,65,108,66,66,86,86,118,78,111,57,107,72,
+        117,83,48,119,80,80,69,51,50,112,48,88,111,115,117,86,85,47,116,52,
+        116,48,70,75,122,99,98,47,55,109,100,97,73,70,70,73,114,43,102,74,
+        85,52,54,76,101,88,73,67,56,122,112,108,110,74,112,75,100,102,98,88,
+        84,69,114,102,106,76,74,56,54,78,112,57,120,85,56,48,87,81,56,85,
+        116,49,43,115,90,54,120,51,77,90,97,114,52,69,49,115,100,115,101,119,
+        105,80,88,111,85,83,106,108,102,73,56,87,118,67,89,101,54,69,102,119,
+        68,98,97,55,104,79,50,105,84,78,89,115,104,104,50,98,76,49,73,80,
+        84,56,53,51,69,68,107,104,83,121,73,73,67,51,52,78,69,53,89,71,
+        67,48,51,80,71,82,70,118,79,80,76,98,121,90,97,43,67,55,50,77,
+        55,104,84,84,97,116,54,80,52,71,88,78,120,52,109,68,66,90,56,76,
+        87,81,57,106,43,57,87,103,81,56,102,97,82,104,56,43,106,53,99,118,
+        119,114,104,122,85,70,52,88,108,100,104,72,114,65,118,108,104,120,65,97,
+        75,89,47,82,120,107,66,101,51,105,80,86,106,122,104,115,80,90,52,102,
+        79,106,65,103,78,74,82,112,49,90,84,68,87,76,84,54,106,65,51,99,
+        83,101,49,102,68,113,111,108,71,100,88,52,117,116,107,87,83,98,57,65,
+        108,111,98,67,55,81,61,109,114,105,109,95,115,109,115,64,109,97,105,108,
+        46,114,117,2,0,0,0,114,117,0,0,0,0,0,0,0,0,99,108,105,
+        101,110,116,61,34,106,97,103,101,110,116,34,32,118,101,114,115,105,111,110,
+        61,34,32,98,117,105,108,100,61,34,77,111,98,105,108,101,74,77,69,65,
+        103,101,110,116,32,115,111,99,107,101,116,58,47,47,99,111,110,116,101,110,
+        116,45,108,101,110,103,116,104,58,32,97,0,98,0,118,0,103,0,100,0,
+        101,0,122,0,105,0,121,0,107,0,108,0,109,0,110,0,111,0,112,0,
+        114,0,115,0,116,0,117,0,102,0,104,0,99,0,34,0,39,0,121,111,
+        0,106,111,0,121,117,0,106,117,0,121,97,0,106,97,0,122,104,0,99,
+        104,0,115,104,0,98,121,0,118,121,0,119,121,0,100,121,0,122,121,0,
+        108,121,0,109,121,0,110,121,0,112,121,0,114,121,0,115,121,0,116,121,
+        0,99,121,0,115,99,104,0,115,104,32,0,98,121,97,0,118,121,97,0,
+        119,121,97,0,100,121,97,0,100,121,117,0,122,121,97,0,122,121,117,0,
+        108,121,97,0,108,121,117,0,109,121,97,0,109,121,117,0,110,121,97,0,
+        110,121,117,0,112,121,97,0,112,121,117,0,114,121,97,0,114,121,117,0,
+        114,121,111,0,115,121,97,0,115,121,117,0,116,121,97,0,116,121,111,0,
+        116,121,117,0,115,99,104,32,97,0,98,0,118,0,103,0,100,0,101,0,
+        122,104,0,122,0,105,0,121,0,107,0,108,0,109,0,110,0,111,0,112,
+        0,114,0,115,0,116,0,117,0,102,0,104,0,99,0,99,104,0,115,104,
+        0,115,99,104,0,34,0,105,0,39,0,101,0,121,117,0,121,97,0,121,
+        111,38,113,117,111,116,59,0,38,110,98,115,112,59,0,38,103,116,59,0,
+        38,108,116,59,34,0,32,0,62,0,60,37,68,48,37,56,49,37,68,49,
+        37,57,49,46,46,47,102,105,108,101,58,47,47,108,111,99,97,108,104,111,
+        115,116,118,105,100,101,111,46,115,110,97,112,115,104,111,116,46,101,110,99,
+        111,100,105,110,103,115,115,117,112,112,111,114,116,115,46,118,105,100,101,111,
+        46,99,97,112,116,117,114,101,38,109,111,100,101,61,37,50,66,37,51,68,
+        37,50,70,38,109,111,100,101,61,109,97,112,38,102,117,108,108,115,99,114,
+        101,101,110,61,116,114,117,101,38,106,97,109,115,61,102,97,108,115,101,116,
+        105,109,101,115,116,97,109,112,112,111,105,110,116,115,109,111,98,105,108,101,
+        109,97,112,115,46,109,97,105,108,46,114,117,58,50,48,52,51,32,72,84,
+        84,80,47,49,46,49,13,10,65,99,99,101,112,116,58,32,105,109,97,103,
+        101,47,112,110,103,13,10,85,115,101,114,45,65,103,101,110,116,58,32,74,
+        50,77,69,32,77,97,105,108,65,103,101,110,116,32,118,46,71,69,84,32,
+        47,84,105,108,101,83,101,110,100,101,114,46,97,115,112,120,63,77,111,100,
+        101,75,101,121,61,116,105,108,101,115,13,10,67,111,110,110,101,99,116,105,
+        111,110,58,32,107,101,101,112,45,97,108,105,118,101,13,10,67,97,99,104,
+        101,45,67,111,110,116,114,111,108,58,32,110,111,45,116,114,97,110,115,102,
+        111,114,109,13,10,67,111,110,116,101,110,116,45,76,101,110,103,116,104,58,
+        32,48,13,10,72,111,115,116,58,32,109,111,98,105,108,101,109,97,112,115,
+        46,109,97,105,108,46,114,117,13,10,13,10,100,97,116,97,47,109,97,112,
+        115,115,101,97,114,99,104,95,118,101,114,49,63,113,61,38,117,115,101,114,
+        95,108,97,116,61,38,117,115,101,114,95,108,111,110,61,38,120,95,115,99,
+        114,101,101,110,61,38,121,95,115,99,114,101,101,110,61,104,116,116,112,58,
+        47,47,109,97,112,115,46,109,97,105,108,46,114,117,47,71,101,111,79,98,
+        106,101,99,116,83,101,97,114,99,104,73,110,65,114,101,97,50,46,97,115,
+        112,120,63,122,111,111,109,61,49,55,38,120,61,38,100,105,115,116,61,49,
+        48,48,38,115,110,61,49,38,98,101,115,116,111,98,106,101,99,116,61,49,
+        38,121,61,100,97,116,97,47,114,111,97,100,95,105,110,102,111,95,120,109,
+        108,63,116,105,109,101,115,116,97,109,112,61,100,97,116,97,47,106,97,109,
+        115,95,115,116,97,116,101,104,116,116,112,58,47,47,103,101,111,46,109,114,
+        97,46,109,97,105,108,46,114,117,47,99,103,105,45,98,105,110,47,103,101,
+        116,108,111,99,97,116,105,111,110,63,99,111,109,112,114,101,115,115,101,100,
+        61,48,38,99,108,105,101,110,116,95,116,121,112,101,61,77,111,98,105,108,
+        101,74,77,69,65,103,101,110,116,38,100,97,116,97,61,38,118,101,114,115,
+        105,111,110,61,112,114,101,99,105,115,105,111,110,108,111,99,97,116,105,111,
+        110,115,38,109,105,99,114,111,112,111,115,116,61,49,38,114,101,109,111,116,
+        101,95,105,112,61,38,108,111,103,105,110,61,44,85,110,107,110,111,119,110,
+        44,38,103,117,105,100,61,65,99,116,105,118,101,111,98,106,95,99,111,100,
+        101,84,121,112,101,67,111,100,101,82,111,111,116,115,116,114,105,99,116,95,
+        122,111,111,109,100,97,116,97,47,116,114,97,99,107,112,111,105,110,116,115,
+        63,103,101,116,80,97,116,104,46,97,115,112,120,63,109,111,100,101,61,100,
+        105,115,116,97,110,99,101,38,120,48,61,104,116,116,112,58,47,47,109,111,
+        98,105,108,101,46,109,97,105,108,46,114,117,47,100,97,116,97,47,109,97,
+        112,95,112,111,105,110,116,47,118,105,101,119,95,111,98,106,101,99,116,63,
+        104,116,116,112,58,47,47,109,111,98,105,108,101,46,109,97,105,108,46,114,
+        117,47,100,97,116,97,47,109,97,112,95,112,111,105,110,116,47,97,100,100,
+        95,111,98,106,101,99,116,63,83,101,99,114,101,116,95,51,56,57,108,105,
+        115,116,108,105,110,107,100,105,114,116,101,120,116,115,109,115,58,47,47,80,
+        114,105,118,101,116,44,32,105,97,32,112,111,115,116,97,118,105,108,32,77,
+        111,98,105,108,101,32,77,97,105,108,46,114,117,32,65,103,101,110,116,44,
+        32,100,111,98,97,118,108,105,97,105,121,115,105,97,32,45,32,104,116,116,
+        112,58,47,47,109,46,109,97,105,108,46,114,117,47,109,97,103,101,110,116,
+        63,117,61,77,111,98,105,108,101,32,77,97,105,108,32,65,103,101,110,116,
+        117,110,115,117,98,115,99,114,105,98,101,100,109,101,99,104,97,110,105,115,
+        109,115,88,45,71,79,79,71,76,69,45,84,79,75,69,78,80,76,65,73,
+        78,68,73,71,69,83,84,45,77,68,53,105,110,115,105,115,105,98,108,101,
+        97,118,97,105,108,97,98,108,101,117,115,101,114,110,97,109,101,61,34,34,
+        44,114,101,97,108,109,61,34,34,44,110,111,110,99,101,61,34,34,44,110,
+        99,61,48,48,48,48,48,48,48,49,44,99,110,111,110,99,101,61,34,34,
+        44,113,111,112,61,97,117,116,104,44,100,105,103,101,115,116,45,117,114,105,
+        61,34,120,109,112,112,47,34,44,114,101,115,112,111,110,115,101,61,34,58,
+        48,48,48,48,48,48,48,49,58,65,85,84,72,69,78,84,73,67,65,84,
+        69,58,120,109,112,112,47,34,44,99,104,97,114,115,101,116,61,117,116,102,
+        45,56,74,97,98,98,101,114,95,118,107,60,63,120,109,108,32,118,101,114,
+        115,105,111,110,61,34,49,46,48,34,63,62,60,115,116,114,101,97,109,58,
+        115,116,114,101,97,109,32,120,109,108,110,115,58,115,116,114,101,97,109,61,
+        34,104,116,116,112,58,47,47,101,116,104,101,114,120,46,106,97,98,98,101,
+        114,46,111,114,103,47,115,116,114,101,97,109,115,34,32,118,101,114,115,105,
+        111,110,61,34,49,46,48,34,32,120,109,108,110,115,61,34,106,97,98,98,
+        101,114,58,99,108,105,101,110,116,34,32,116,111,61,34,118,107,111,110,116,
+        97,107,116,101,46,114,117,64,103,109,97,105,108,46,99,111,109,104,116,116,
+        112,58,47,47,106,97,98,98,101,114,46,111,114,103,47,112,114,111,116,111,
+        99,111,108,47,110,105,99,107,104,116,116,112,58,47,47,106,97,98,98,101,
+        114,46,111,114,103,47,112,114,111,116,111,99,111,108,47,99,104,97,116,115,
+        116,97,116,101,115,106,97,98,98,101,114,58,105,113,58,114,111,115,116,101,
+        114,106,97,98,98,101,114,58,105,113,58,118,101,114,115,105,111,110,117,114,
+        110,58,105,101,116,102,58,112,97,114,97,109,115,58,120,109,108,58,110,115,
+        58,120,109,112,112,45,115,97,115,108,117,114,110,58,105,101,116,102,58,112,
+        97,114,97,109,115,58,120,109,108,58,110,115,58,120,109,112,112,45,98,105,
+        110,100,117,114,110,58,105,101,116,102,58,112,97,114,97,109,115,58,120,109,
+        108,58,110,115,58,120,109,112,112,45,115,101,115,115,105,111,110,117,114,110,
+        58,120,109,112,112,58,112,105,110,103,118,99,97,114,100,45,116,101,109,112,
+        113,117,101,114,121,97,119,97,121,120,97,100,110,100,105,110,118,115,116,114,
+        101,97,109,58,102,101,97,116,117,114,101,115,99,104,97,108,108,101,110,103,
+        101,115,117,99,99,101,115,115,112,114,101,115,101,110,99,101,109,101,115,115,
+        97,103,101,102,97,105,108,117,114,101,98,105,110,118,97,108,112,104,111,116,
+        111,101,114,114,111,114,114,101,115,117,108,116,118,67,97,114,100,97,99,116,
+        105,118,101,115,104,111,119,110,111,110,101,98,111,116,104,97,115,107,105,116,
+        101,109,98,111,100,121,115,117,98,106,101,99,116,106,105,100,115,117,98,115,
+        99,114,105,112,116,105,111,110,103,114,111,117,112,114,101,109,111,118,101,34,
+        62,114,101,115,111,117,114,99,101,112,114,105,111,114,105,116,121,37,52,48,
+        103,109,97,105,108,46,99,111,109,38,80,97,115,115,119,100,61,104,116,116,
+        112,115,58,47,47,119,119,119,46,103,111,111,103,108,101,46,99,111,109,58,
+        52,52,51,47,97,99,99,111,117,110,116,115,47,67,108,105,101,110,116,65,
+        117,116,104,63,80,101,114,115,105,115,116,101,110,116,67,111,111,107,105,101,
+        61,102,97,108,115,101,38,115,111,117,114,99,101,61,103,111,111,103,108,101,
+        116,97,108,107,38,69,109,97,105,108,61,73,115,115,117,101,65,117,116,104,
+        84,111,107,101,110,63,115,101,114,118,105,99,101,61,109,97,105,108,38,83,
+        101,115,115,105,111,110,61,116,114,117,101,38,95,120,109,112,112,45,99,108,
+        105,101,110,116,46,95,116,99,112,46,100,97,116,97,103,114,97,109,58,47,
+        47,110,115,114,112,117,98,46,109,97,105,108,46,114,117,58,53,51,18,16,
+        1,0,0,1,0,0,0,0,0,0,0,0,33,0,1,50,68,66,118,81,
+        87,74,66,97,109,51,120,117,121,89,121,81,48,66,101,89,117,87,75,75,
+        102,112,107,53,102,86,52,90,54,115,80,99,57,119,84,66,102,101,84,120,
+        52,52,50,102,54,104,116,116,112,58,47,47,97,112,105,46,118,107,111,110,
+        116,97,107,116,101,46,114,117,47,97,112,105,46,112,104,112,63,97,112,105,
+        95,105,100,61,50,48,50,51,54,57,57,38,109,101,116,104,111,100,61,97,
+        117,116,104,46,103,101,116,84,111,107,101,110,83,101,99,117,114,101,38,110,
+        111,110,99,101,61,83,101,115,115,105,111,110,83,101,99,117,114,101,38,110,
+        111,110,99,101,61,38,100,105,103,101,115,116,61,58,118,107,46,99,111,109,
+        58,100,111,109,97,105,110,118,107,109,101,115,115,101,110,103,101,114,46,99,
+        111,109
+    };
 }
