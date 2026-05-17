@@ -10,11 +10,13 @@ import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapPoint;
 import com.trykote.mobileagent.map.MapPointStore;
 import com.trykote.mobileagent.map.MapRenderer;
+import com.trykote.mobileagent.map.RouteData;
 import com.trykote.mobileagent.model.ContactListParser;
 import com.trykote.mobileagent.model.Conversation;
 import com.trykote.mobileagent.model.VCard;
 import com.trykote.mobileagent.net.ApiClient;
 import com.trykote.mobileagent.net.HttpClient;
+import com.trykote.mobileagent.net.InlineImageCache;
 import com.trykote.mobileagent.net.NetworkLock;
 import com.trykote.mobileagent.net.RequestQueue;
 import com.trykote.mobileagent.net.ServiceRegistry;
@@ -23,7 +25,6 @@ import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
 import com.trykote.mobileagent.protocol.ConnectionThread;
 import com.trykote.mobileagent.protocol.ProtocolEvent;
-import com.trykote.mobileagent.map.RouteData;
 import com.trykote.mobileagent.protocol.mrim.MrimAccount;
 import com.trykote.mobileagent.protocol.mrim.RegistrationService;
 import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
@@ -41,6 +42,7 @@ import com.trykote.mobileagent.util.XmlElement;
 
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
+import javax.microedition.lcdui.Image;
 import javax.wireless.messaging.Message;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
@@ -156,6 +158,7 @@ public final class AsyncTask implements Runnable {
                 case AsyncTaskId.FETCH_UPDATE_STATUS: taskFetchUpdateStatus(); return;
                 case AsyncTaskId.RESOLVE_XMPP_SERVER: taskResolveXmppServer(); return;
                 case AsyncTaskId.XMPP_HTTP_AUTH: taskXmppHttpAuth(); return;
+                case AsyncTaskId.DOWNLOAD_INLINE_IMAGE: taskDownloadInlineImage(); return;
             }
         } catch (Throwable e) {
             RemoteLogger.log("TASK", "FATAL exception in run taskId=" + this.taskId, e);
@@ -180,6 +183,47 @@ public final class AsyncTask implements Runnable {
             HttpClient.closeAndUpdateStats(httpClient);
             NetworkLock.releaseNetworkLock();
             args[2] = result;
+        }
+    }
+
+    private void taskDownloadInlineImage() {
+        String url = (String) this.taskData;
+        HttpClient httpClient = null;
+        try {
+            NetworkLock.acquireNetworkLock();
+            String downloadUrl = InlineImageCache.toHttpUrl(url);
+            httpClient = HttpClient.createHttpClient(downloadUrl, null, 3);
+            int responseCode = httpClient.getResponseCode();
+            if (responseCode != HTTP_OK) {
+                EventDispatcher.postNotification("HTTP " + responseCode);
+                return;
+            }
+            long contentLength = httpClient.getContentLength();
+            if (contentLength > InlineImageCache.MAX_IMAGE_SIZE) {
+                InlineImageCache.markTooLarge(url);
+                EventDispatcher.postNotification("Файл слишком большой");
+                return;
+            }
+            ByteBuffer buf = new ByteBuffer(httpClient);
+            if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
+                InlineImageCache.markTooLarge(url);
+                EventDispatcher.postNotification("Файл слишком большой");
+                return;
+            }
+            Image image = buf.toImage();
+            if (image != null) {
+                image = InlineImageCache.scaleToFit(image);
+                InlineImageCache.putImage(url, image);
+                InlineImageCache.setPendingImage(image);
+            }
+        } catch (Throwable e) {
+            RemoteLogger.log("IMG", "download failed: " + url + " " + e);
+            EventDispatcher.postNotification("Ошибка загрузки");
+        } finally {
+            InlineImageCache.clearDownloading(url);
+            HttpClient.closeAndUpdateStats(httpClient);
+            NetworkLock.releaseNetworkLock();
+            AppController.needsRepaint = true;
         }
     }
 

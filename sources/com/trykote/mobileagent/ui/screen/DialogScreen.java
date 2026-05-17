@@ -22,6 +22,7 @@ import com.trykote.mobileagent.map.MapPoint;
 import com.trykote.mobileagent.model.ChatRoom;
 import com.trykote.mobileagent.model.Contact;
 import com.trykote.mobileagent.model.Conversation;
+import com.trykote.mobileagent.net.InlineImageCache;
 import com.trykote.mobileagent.net.SocketWrapper;
 import com.trykote.mobileagent.net.TrafficAccounting;
 import com.trykote.mobileagent.protocol.Account;
@@ -46,6 +47,7 @@ import com.trykote.mobileagent.util.SoftFloat;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
 
+import javax.microedition.lcdui.Image;
 import java.util.Vector;
 
 public final class DialogScreen extends ScreenView {
@@ -189,9 +191,7 @@ public final class DialogScreen extends ScreenView {
             case ScreenId.CONFIRM_EXIT: return processConfirmExitIdle();
             case ScreenId.DELETE_CONFIRM: return processDeleteConfirmIdle();
             case ScreenId.STATUS_INPUT: return updateMessageInput();
-            case ScreenId.CLEAR_SEARCH:
-                Contact contact = AppState.getCurrentContact();
-                return (contact.flags != 0) || contact.dirty ? ScreenId.CLEAR_SEARCH : 0;
+            case ScreenId.CLEAR_SEARCH: return processMessageScreenIdle();
             case ScreenId.ASYNC_CONFIRM: return processAsyncConfirmIdle();
             default: return 0;
         }
@@ -383,7 +383,11 @@ public final class DialogScreen extends ScreenView {
     private static int handleClearSearchSelect(Object headerData) {
         if (headerData != null) {
             Object[] objArr = (Object[]) headerData;
-            if (((Integer) objArr[0]).intValue() == 0) {
+            int marker = ((Integer) objArr[0]).intValue();
+            if (marker == 2) {
+                return handleImageClick((String) objArr[1]);
+            }
+            if (marker == 0) {
                 MapPoint mapPoint = new MapPoint((String) objArr[1]);
                 mapPoint.height = 2;
                 MapController.navigateToPoint(mapPoint, false);
@@ -403,6 +407,26 @@ public final class DialogScreen extends ScreenView {
         UIState.clearStatusText();
         Contact currentContact = AppState.getCurrentContact();
         return !currentContact.account.isConnected() ? NotificationHelper.showError(299) : currentContact.isOffline() ? ContactListManager.clearSmsFields() : 63;
+    }
+
+    private static int handleImageClick(String url) {
+        Image cached = InlineImageCache.getImage(url);
+        if (cached != null) {
+            showImagePopup(cached);
+            return -1;
+        }
+        if (!InlineImageCache.isDownloading(url)) {
+            InlineImageCache.markDownloading(url);
+            new AsyncTask(AsyncTaskId.DOWNLOAD_INLINE_IMAGE, url);
+        }
+        return 0;
+    }
+
+    static void showImagePopup(Image image) {
+        Screen popup = new Screen(ScreenManager.TYPE_TOAST, ScreenId.NONE);
+        popup.configureSoftKeys(null, 0, "Назад", 12, 0);
+        popup.addItem(MenuItem.createInlineImage(image));
+        popup.show();
     }
 
     // --- Public static ---
@@ -540,6 +564,16 @@ public final class DialogScreen extends ScreenView {
             return 0;
         }
         return stateArr[3] == null ? 0 : RegistrationService.handleRegSubmit(stateArr);
+    }
+
+    private static int processMessageScreenIdle() {
+        Image pending = InlineImageCache.takePendingImage();
+        if (pending != null) {
+            showImagePopup(pending);
+            return 0;
+        }
+        Contact contact = AppState.getCurrentContact();
+        return (contact.flags != 0) || contact.dirty ? ScreenId.CLEAR_SEARCH : 0;
     }
 
     // --- Private ---

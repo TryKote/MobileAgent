@@ -531,6 +531,14 @@ public abstract class ContactListManager {
 
     public static void showAddContactScreen() {
         ContactInfo contactInfo = ContactState.getInfo();
+        if (contactInfo == null) {
+            Contact current = AppState.getCurrentContact();
+            if (current == null) {
+                return;
+            }
+            contactInfo = new ContactInfo(current);
+            ContactState.setInfo(contactInfo);
+        }
         Account acctRef = contactInfo.getAccount();
         if (getGroupCount(acctRef) == 0) {
             EventDispatcher.postNotification(StringPool.get(StringResKeys.STR_NOTIFICATION_NEW_MSG));

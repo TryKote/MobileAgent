@@ -540,8 +540,10 @@ public class XmppProtocol extends Account {
         String senderJid = extractBareJid(fromAttr);
         XmppContact sender = findContactByJid(senderJid);
         if (sender == null) {
-            RemoteLogger.log("XMPP", "handleMessage: sender not found for jid=" + senderJid);
-            return;
+            sender = new XmppContact(this, senderJid, senderJid, null);
+            sender.online = true;
+            this.defaultGroup.addContact((Object) sender);
+            RemoteLogger.log("XMPP", "handleMessage: created contact for jid=" + senderJid);
         }
         sender.markOnlineIfOffline();
         StringBuffer sb = ObjectPool.newStringBuffer();

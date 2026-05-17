@@ -2,8 +2,8 @@ package com.trykote.mobileagent.ui;
 
 
 import com.trykote.mobileagent.core.AppState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.core.event.MenuItemEvent;
@@ -14,6 +14,7 @@ import com.trykote.mobileagent.util.EmoticonReplacer;
 import com.trykote.mobileagent.util.ObjectPool;
 import com.trykote.mobileagent.util.Utils;
 
+import javax.microedition.lcdui.Image;
 import java.util.Vector;
 
 public final class MenuItem {
@@ -171,6 +172,12 @@ public final class MenuItem {
         MenuItem graphicsItem = new MenuItem(TYPE_GRAPHICS, AppState.emptyStr);
         graphicsItem.addElement(new ImageElement(gfx.image));
         return graphicsItem;
+    }
+
+    public static MenuItem createInlineImage(Image image) {
+        MenuItem item = new MenuItem(TYPE_GRAPHICS, AppState.emptyStr);
+        item.addElement(new ImageElement(image));
+        return item;
     }
 
     public int execute(ListView screen) {

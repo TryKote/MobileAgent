@@ -20,6 +20,8 @@ public final class ImageElement implements RenderElement {
     }
 
     public void render(GraphicsContext gfx, int x, int y, int baseX, int containerWidth) {
-        gfx.graphics.drawImage(this.image, x, y, 20);
+        int imgWidth = this.image.getWidth();
+        int centerX = baseX + (containerWidth - imgWidth) / 2;
+        gfx.graphics.drawImage(this.image, centerX, y, 20);
     }
 }

@@ -32,6 +32,7 @@ public final class AsyncTaskId {
     public static final int FETCH_UPDATE_STATUS = 32;
     public static final int RESOLVE_XMPP_SERVER = 33;
     public static final int XMPP_HTTP_AUTH = 34;
+    public static final int DOWNLOAD_INLINE_IMAGE = 35;
 
     private AsyncTaskId() {}
 }

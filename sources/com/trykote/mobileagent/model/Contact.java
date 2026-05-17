@@ -3,12 +3,13 @@ package com.trykote.mobileagent.model;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MessageListener;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.net.InlineImageCache;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.ui.ContactListManager;
 import com.trykote.mobileagent.ui.ListView;
@@ -407,6 +408,9 @@ public abstract class Contact implements Sortable {
             if (Conversation.isValidFormat(lineText)) {
                 screen.addExpandableItem(ICON_EXPANDABLE, Conversation.decodeMessage(lineText),
                         colorStyle, new Object[]{ObjectPool.integerOf(0), lineText});
+            } else if (InlineImageCache.isImageUrl(lineText)) {
+                screen.addExpandableItem(-1, "[Картинка]", colorStyle,
+                        new Object[]{ObjectPool.integerOf(2), lineText});
             } else {
                 screen.addItem(MenuItem.createSeparator().addTextInternal(lineText, 0, colorStyle,
                         this.account.getType()));

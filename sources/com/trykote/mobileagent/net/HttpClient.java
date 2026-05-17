@@ -121,6 +121,13 @@ public final class HttpClient {
         return responseCode;
     }
 
+    public final long getContentLength() throws IOException {
+        if (this.mockMode != 0) {
+            return -1;
+        }
+        return ((HttpConnection) this.connection).getLength();
+    }
+
     public final void setRequestMethod(String str) throws IOException {
         ((HttpConnection) this.connection).setRequestMethod(str);
     }
