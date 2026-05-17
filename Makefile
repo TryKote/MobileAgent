@@ -1,5 +1,5 @@
 LIBS    = libs
-CP      = $(LIBS)/cldcapi11.jar:$(LIBS)/midpapi20.jar:$(LIBS)/jsr75.jar:$(LIBS)/nokiaui.jar:$(LIBS)/wma.jar
+CP      = $(LIBS)/cldcapi11.jar:$(LIBS)/midpapi20.jar:$(LIBS)/jsr75.jar:$(LIBS)/nokiaui.jar:$(LIBS)/wma.jar:$(LIBS)/bouncycastle-j2me.jar
 SRC     = sources
 BUILD   = build
 JAR     = TK_MobileAgent_3.9.jar
@@ -29,6 +29,7 @@ compile: $(BUILD)/.compiled
 $(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	@mkdir -p $(BUILD)/classes
 	$(JAVAC8) -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
+	@cd $(BUILD)/classes && unzip -qo ../../$(LIBS)/bouncycastle-j2me.jar 'org/*'
 	cd editor && mvn -q compile
 	$(EDITOR) -Dexec.args="--patch-stringbuilder ../$(BUILD)/classes"
 	@# CLDC 1.1 compatibility: detect autoboxing (Integer.valueOf etc.) that javac silently emits

@@ -16,6 +16,7 @@ import com.trykote.mobileagent.model.Conversation;
 import com.trykote.mobileagent.model.VCard;
 import com.trykote.mobileagent.net.ApiClient;
 import com.trykote.mobileagent.net.HttpClient;
+import com.trykote.mobileagent.net.HttpsClient;
 import com.trykote.mobileagent.net.InlineImageCache;
 import com.trykote.mobileagent.net.NetworkLock;
 import com.trykote.mobileagent.net.RequestQueue;
@@ -46,6 +47,7 @@ import javax.microedition.lcdui.Image;
 import javax.wireless.messaging.Message;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
+import java.io.InputStream;
 import java.util.Vector;
 
 public final class AsyncTask implements Runnable {
@@ -188,28 +190,61 @@ public final class AsyncTask implements Runnable {
 
     private void taskDownloadInlineImage() {
         String url = (String) this.taskData;
+        boolean isHttps = url.startsWith("https://");
         HttpClient httpClient = null;
+        HttpsClient httpsClient = null;
         try {
             NetworkLock.acquireNetworkLock();
-            String downloadUrl = InlineImageCache.toHttpUrl(url);
-            httpClient = HttpClient.createHttpClient(downloadUrl, null, 3);
-            int responseCode = httpClient.getResponseCode();
+            int responseCode;
+            long contentLength;
+            InputStream imageStream;
+
+            if (isHttps) {
+                httpsClient = new HttpsClient(url);
+                responseCode = httpsClient.getResponseCode();
+                contentLength = httpsClient.getContentLength();
+                imageStream = httpsClient.getInputStream();
+            } else {
+                httpClient = HttpClient.createHttpClient(url, null, 3);
+                responseCode = httpClient.getResponseCode();
+                contentLength = httpClient.getContentLength();
+                imageStream = null;
+            }
+
             if (responseCode != HTTP_OK) {
                 EventDispatcher.postNotification("HTTP " + responseCode);
                 return;
             }
-            long contentLength = httpClient.getContentLength();
             if (contentLength > InlineImageCache.MAX_IMAGE_SIZE) {
                 InlineImageCache.markTooLarge(url);
                 EventDispatcher.postNotification("Файл слишком большой");
                 return;
             }
-            ByteBuffer buf = new ByteBuffer(httpClient);
-            if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
-                InlineImageCache.markTooLarge(url);
-                EventDispatcher.postNotification("Файл слишком большой");
-                return;
+
+            ByteBuffer buf;
+            if (isHttps) {
+                buf = new ByteBuffer();
+                byte[] readBuf = ObjectPool.newBytes(2048);
+                int bytesRead;
+                while ((bytesRead = imageStream.read(readBuf)) >= 0) {
+                    buf.writeBytesAt(readBuf, 0, bytesRead);
+                    if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
+                        InlineImageCache.markTooLarge(url);
+                        EventDispatcher.postNotification("Файл слишком большой");
+                        ObjectPool.releaseBytes(readBuf);
+                        return;
+                    }
+                }
+                ObjectPool.releaseBytes(readBuf);
+            } else {
+                buf = new ByteBuffer(httpClient);
+                if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
+                    InlineImageCache.markTooLarge(url);
+                    EventDispatcher.postNotification("Файл слишком большой");
+                    return;
+                }
             }
+
             Image image = buf.toImage();
             if (image != null) {
                 image = InlineImageCache.scaleToFit(image);
@@ -221,7 +256,12 @@ public final class AsyncTask implements Runnable {
             EventDispatcher.postNotification("Ошибка загрузки");
         } finally {
             InlineImageCache.clearDownloading(url);
-            HttpClient.closeAndUpdateStats(httpClient);
+            if (httpsClient != null) {
+                httpsClient.close();
+            }
+            if (httpClient != null) {
+                HttpClient.closeAndUpdateStats(httpClient);
+            }
             NetworkLock.releaseNetworkLock();
             AppController.needsRepaint = true;
         }
