@@ -5,10 +5,10 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -193,6 +193,7 @@ public final class XmppContactGroup extends ContactGroup {
             }
             if (System.currentTimeMillis() - SessionState.getTimestampLastXmppAuth() >= SYNC_INTERVAL_MS) {
                 boolean hasXmppOnly = false;
+                boolean hasMailRuXmpp = false;
                 Vector accounts = AccountManager.copyAllAccounts();
                 for (int si = accounts.size() - 1; si >= 0; si--) {
                     Account account = (Account) accounts.elementAt(si);
@@ -203,10 +204,13 @@ public final class XmppContactGroup extends ContactGroup {
                             break;
                         }
                         hasXmppOnly = true;
+                        if (account instanceof XmppMailRuProtocol) {
+                            hasMailRuXmpp = true;
+                        }
                     }
                 }
                 ObjectPool.releaseVector(accounts);
-                if (hasXmppOnly) {
+                if (hasXmppOnly && hasMailRuXmpp) {
                     authenticateAndSync(establishSecureConn(extractPlainText(establishSecureConn(StringPool.get(PackedStringKeys.HOST_MRIM_REDIRECT)))));
                 }
             }

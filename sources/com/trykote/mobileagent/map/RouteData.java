@@ -5,7 +5,6 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
-import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.JsonParser;
@@ -121,7 +120,7 @@ public final class RouteData {
             int pointArraySize = points.size() + 2;
             Object[] pointArray = new Object[pointArraySize];
             pointArray[0] = lastPointData;
-            pointArray[pointArraySize - 1] = 0;
+            pointArray[pointArraySize - 1] = ObjectPool.integerOf(0);
             int pointIdx = 1;
             while (pointIdx < pointArraySize - 1) {
                 Vector pointJson = (Vector) points.elementAt(pointIdx - 1);

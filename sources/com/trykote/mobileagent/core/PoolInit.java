@@ -11,6 +11,8 @@ abstract class PoolInit {
     static void init(Object[] pool) {
         initInts(pool);
         initBytes0(pool);
+        initBytes0b(pool);
+        initBytes0c(pool);
         initBytes1(pool);
         initStringLists(pool);
     }
@@ -355,6 +357,9 @@ abstract class PoolInit {
             77,84,114,107,0,0,0,25,0,-1,3,7,77,73,68,73,32,48,53,0,
             -76,0,0,0,32,0,0,-60,56
         };
+    }
+
+    private static void initBytes0b(Object[] pool) {
         pool[580] = new byte[] {
             0,-96,0,120,1,64,0,-16,2,-128,1,-32,4,-128,3,96,6,64,4,-80,
             0,120,0,-96,0,-16,1,64,1,-32,2,-128,3,96,4,-128,4,-80,6,64
@@ -485,6 +490,9 @@ abstract class PoolInit {
             -111,-21,-124,89,59,123,13,-102,-60,113,-78,-28,121,-47,1,60,-10,-85,106,69,
             -7,122,-29,-48,-46,68,111,37,51,23,-16,101,-65,-65,95,67
         };
+    }
+
+    private static void initBytes0c(Object[] pool) {
         pool[987] = new byte[] {
             -12,-80,118,-98,71,-21,90,121,-18,-12,83,-42,-110,59,-42,90,-23,90,-103,-33,
             -118,-50,111,84,-29,-30,122,68,77,-115,-104,-72,-34,-117,43,102,-77,-68,71,36,

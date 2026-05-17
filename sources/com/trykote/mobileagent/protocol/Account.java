@@ -2,11 +2,10 @@ package com.trykote.mobileagent.protocol;
 
 
 import com.trykote.mobileagent.core.AccountListener;
-import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ContactListListener;
 import com.trykote.mobileagent.core.MessageListener;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -491,9 +490,11 @@ public abstract class Account {
     }
 
     public final void onMessage(String contactId, long timestamp, String messageText) {
+        RemoteLogger.log("MSG", "onMessage from=" + contactId + " text=" + (messageText != null ? messageText.substring(0, Math.min(messageText.length(), 80)) : "null"));
         Contact contact = getContact((Object) contactId);
         Contact target = contact;
         if (contact == null) {
+            RemoteLogger.log("MSG", "onMessage: contact not found, creating new for " + contactId);
             target = newContact(contactId);
         }
         this.recvCount++;

@@ -4,10 +4,10 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.map.MapController;
@@ -90,79 +90,79 @@ public final class ChatScreen extends ScreenView {
                 buildChatRoomMessages();
                 break;
             case ScreenId.CHAT_ROOM_CONFIG:
-                configureHeader(0, 795);
-                addTextInput(0, 63, 424, 0, 0);
-                configureSoftKeys(1053, 0, 1050, 12, 0);
+                configureHeader(0, AppState.getString(795));
+                addTextInput(null, 63, AppState.getString(424), 0, 0);
+                configureSoftKeys(AppState.getString(1053), 0, AppState.getString(1050), 12, 0);
                 break;
             case ScreenId.CHAT_VIEW_MODE:
-                configureHeader(309, 544);
-                addCheckbox(625, 112);
-                configureSoftKeys(1053, 12, 1050, 12, 0);
+                configureHeader(309, AppState.getString(544));
+                addCheckbox(AppState.getString(625), 112);
+                configureSoftKeys(AppState.getString(1053), 12, AppState.getString(1050), 12, 0);
                 break;
             case ScreenId.CHAT_ROOM_CONTEXT:
                 setupChatRoomContext();
-                configureHeader(0, 1038);
-                addConditionalIf(1517, 37, 243, 851);
-                addActionById(238, 846, 54);
-                addConditionalIf(1518, 43, 24, 847);
-                addConditionalIf(1519, 43, 25, 848);
-                addConditionalIf(1520, 67, 25, 1347);
-                addConditionalIf(1521, 62, 240, 850);
-                addConditionalIf(1517, 68, 227, 1061);
-                configureSoftKeys(1048, 199, 1050, 12, 199);
+                configureHeader(0, AppState.getString(1038));
+                addConditionalIf(1517, AppState.getString(851), 243, 37);
+                addAction(238, AppState.getString(846), 54);
+                addConditionalIf(1518, AppState.getString(847), 24, 43);
+                addConditionalIf(1519, AppState.getString(848), 25, 43);
+                addConditionalIf(1520, AppState.getString(1347), 25, 67);
+                addConditionalIf(1521, AppState.getString(850), 240, 62);
+                addConditionalIf(1517, AppState.getString(1061), 227, 68);
+                configureSoftKeys(AppState.getString(1048), 199, AppState.getString(1050), 12, 199);
                 break;
             case ScreenId.CHAT_STATUS:
                 UIState.setStatusTextSet(Utils.nonEmpty(UIState.getStatusText()));
-                configureHeader(0, 1038);
-                addConditionalIf(1456, 40, -1, 1060);
-                addConditionalIf(1456, 65, -1, 476);
-                addActionById(-1, 472, 99);
-                addConditionalIf(1460, 65, -1, 473);
-                addConditionalIf(1456, 65, -1, 474);
-                addConditionalIf(1456, 98, -1, 475);
-                configureSoftKeys(1048, 199, 1050, 12, 199);
+                configureHeader(0, AppState.getString(1038));
+                addConditionalIf(1456, AppState.getString(1060), -1, 40);
+                addConditionalIf(1456, AppState.getString(476), -1, 65);
+                addAction(-1, AppState.getString(472), 99);
+                addConditionalIf(1460, AppState.getString(473), -1, 65);
+                addConditionalIf(1456, AppState.getString(474), -1, 65);
+                addConditionalIf(1456, AppState.getString(475), -1, 98);
+                configureSoftKeys(AppState.getString(1048), 199, AppState.getString(1050), 12, 199);
                 break;
             case ScreenId.CHAT_ROOM_OPTIONS:
-                configureHeader(0, 1038);
+                configureHeader(0, AppState.getString(1038));
                 showCheckboxes = true;
-                addActionById(228, 357, 0);
-                addActionById(229, 358, 1);
-                configureSoftKeys(1048, 199, 1050, 12, 199);
+                addAction(228, AppState.getString(357), 0);
+                addAction(229, AppState.getString(358), 1);
+                configureSoftKeys(AppState.getString(1048), 199, AppState.getString(1050), 12, 199);
                 break;
             case ScreenId.CHAT_LIST_OPTIONS:
-                configureHeader(0, 1038);
-                addActionById(308, 379, ACTION_NAVIGATE_TO);
-                addActionById(16, 1060, ACTION_VIEW_RESOURCE);
-                addActionById(34, 719, ACTION_REMOVE_POINT);
-                configureSoftKeys(1048, 199, 1050, 12, 199);
+                configureHeader(0, AppState.getString(1038));
+                addAction(308, AppState.getString(379), ACTION_NAVIGATE_TO);
+                addAction(16, AppState.getString(1060), ACTION_VIEW_RESOURCE);
+                addAction(34, AppState.getString(719), ACTION_REMOVE_POINT);
+                configureSoftKeys(AppState.getString(1048), 199, AppState.getString(1050), 12, 199);
                 break;
             case ScreenId.CREATE_CHAT_ROOM:
                 ChatState.setChatRoomCreated(false);
                 ChatState.setChatNameFromBuffer(ObjectPool.newStringBuffer()
                     .append(StringPool.get(StringResKeys.STR_CHAT_NAME_PREFIX))
                     .append(1 + (SettingsState.getUiCounter() % CHAT_NAME_COUNTER_MODULO)));
-                configureHeader(232, 553);
-                addTextInput(869, 255, 424, 0, 1292);
-                addCheckbox(769, 2722);
-                addTextSeparator(770);
-                configureSoftKeys(1053, 4, 1050, 12, 0);
+                configureHeader(232, AppState.getString(553));
+                addTextInput(AppState.getString(869), 255, AppState.getString(424), 0, 1292);
+                addCheckbox(AppState.getString(769), 2722);
+                addTextSeparator(AppState.getString(770));
+                configureSoftKeys(AppState.getString(1053), 4, AppState.getString(1050), 12, 0);
                 break;
             case ScreenId.CHAT_DETAIL:
                 Conversation.updateStatusText(411);
-                configureHeader(0, 1038);
+                configureHeader(0, AppState.getString(1038));
                 showCheckboxes = true;
-                addActionById(308, 657, ACTION_NAVIGATE_TO);
-                addActionById(303, 659, ACTION_SHOW_MAP);
-                addActionById(360, 1251, ACTION_REMOVE_POINT);
-                configureSoftKeys(1048, 199, 1050, 12, 199);
+                addAction(308, AppState.getString(657), ACTION_NAVIGATE_TO);
+                addAction(303, AppState.getString(659), ACTION_SHOW_MAP);
+                addAction(360, AppState.getString(1251), ACTION_REMOVE_POINT);
+                configureSoftKeys(AppState.getString(1048), 199, AppState.getString(1050), 12, 199);
                 break;
             case ScreenId.CHAT_OPTIONS:
-                configureHeader(0, 1038);
+                configureHeader(0, AppState.getString(1038));
                 showCheckboxes = true;
-                addConditionalIf(1497, 65, 27, 776);
-                addConditionalIf(1497, 54, 238, 777);
-                addConditionalIf(1500, 135, 221, 778);
-                configureSoftKeys(1048, 199, 1050, 12, 199);
+                addConditionalIf(1497, AppState.getString(776), 27, 65);
+                addConditionalIf(1497, AppState.getString(777), 238, 54);
+                addConditionalIf(1500, AppState.getString(778), 221, 135);
+                configureSoftKeys(AppState.getString(1048), 199, AppState.getString(1050), 12, 199);
                 break;
         }
     }
@@ -267,8 +267,8 @@ public final class ChatScreen extends ScreenView {
 
     private void buildChatRoomList() {
         Account account = AppState.getAccount();
-        configureHeader(35, 834);
-        configureSoftKeys(1059, 80, 1050, 12, 41);
+        configureHeader(35, AppState.getString(834));
+        configureSoftKeys(AppState.getString(1059), 80, AppState.getString(1050), 12, 41);
         Vector chatRooms = account.getChatRooms();
         if (chatRooms == null) {
             return;
@@ -292,9 +292,9 @@ public final class ChatScreen extends ScreenView {
     private void buildChatRoomMessages() {
         Account account = AppState.getAccount();
         ChatRoom chatRoom = account.findChatRoomById(ChatState.getChatRoomId());
-        configureHeader(0, 1038);
+        configureHeader(0, AppState.getString(1038));
         setHeader(234, chatRoom.getDisplayName());
-        configureSoftKeys(1059, 51, 1050, 12, 48);
+        configureSoftKeys(AppState.getString(1059), 51, AppState.getString(1050), 12, 48);
         Vector messages = ObjectPool.newVector();
         Enumeration elements = chatRoom.messageIds.elements();
         while (elements.hasMoreElements()) {
@@ -309,7 +309,7 @@ public final class ChatScreen extends ScreenView {
         }
         if (menuItems.size() == 0) {
             selectable = false;
-            addLabelById(835);
+            addLabel(AppState.getString(835));
         } else {
             scrollOffset = ChatState.getScrollOffset();
             selectByTitle((String) MapState.getMapPoint2());

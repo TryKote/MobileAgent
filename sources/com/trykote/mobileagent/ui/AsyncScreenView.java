@@ -21,7 +21,7 @@ public abstract class AsyncScreenView extends ScreenView {
     public void buildContent() {
         UIState.setHttpParam1(loadingIcon);
         UIState.setHttpParam2(loadingText);
-        configureSoftKeys(0, 0, 1055, 12, 0);
+        configureSoftKeys(null, 0, "Отмена", 12, 0);
     }
 
     public void showSelf() {

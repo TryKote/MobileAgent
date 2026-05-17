@@ -8,11 +8,11 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -42,7 +42,6 @@ import com.trykote.mobileagent.ui.TextInputHelper;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.IOUtils;
 import com.trykote.mobileagent.util.ObjectPool;
-import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.SoftFloat;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
@@ -223,17 +222,17 @@ public final class DialogScreen extends ScreenView {
         Account account = AppState.getAccount();
         switch (account.getType()) {
             case 0:
-                dialogScreen.addIconById(156, 642, 0).addIconById(159, 643, 1).addIconById(157, 644, 2).addIconById(160, 645, 3).addIconById(158, 646, 4).addIconById(155, 647, 5).addActionById(-1, 718, 6);
+                dialogScreen.addIcon(156, AppState.getString(642), 0).addIcon(159, AppState.getString(643), 1).addIcon(157, AppState.getString(644), 2).addIcon(160, AppState.getString(645), 3).addIcon(158, AppState.getString(646), 4).addIcon(155, AppState.getString(647), 5).addAction(-1, AppState.getString(718), 6);
                 break;
             case 1:
                 int iconResId = account.getIconResourceId();
-                dialogScreen.addIconById(iconResId, 642, 0).addIconById(iconResId | 16384000, 643, 1).addIconById(iconResId | 16449536, 645, 3).addIconById(iconResId | 16318464, 644, 4).addIconById(iconResId | 16580608, 648, 5).addIconById(iconResId | 16646144, 654, 6).addIconById(iconResId | 17039360, 649, 7).addIconById(iconResId | 16973824, 650, 8).addIconById(iconResId | 16908288, 651, 9).addIconById(iconResId | 16842752, 652, 10).addIconById(iconResId | 17104896, 653, 11).addIconById(iconResId | 16515072, 646, 2).addIconById(255, 647, 12).addActionById(account.getExtType(), 655, 14).addActionById(-1, 718, 13);
+                dialogScreen.addIcon(iconResId, AppState.getString(642), 0).addIcon(iconResId | 16384000, AppState.getString(643), 1).addIcon(iconResId | 16449536, AppState.getString(645), 3).addIcon(iconResId | 16318464, AppState.getString(644), 4).addIcon(iconResId | 16580608, AppState.getString(648), 5).addIcon(iconResId | 16646144, AppState.getString(654), 6).addIcon(iconResId | 17039360, AppState.getString(649), 7).addIcon(iconResId | 16973824, AppState.getString(650), 8).addIcon(iconResId | 16908288, AppState.getString(651), 9).addIcon(iconResId | 16842752, AppState.getString(652), 10).addIcon(iconResId | 17104896, AppState.getString(653), 11).addIcon(iconResId | 16515072, AppState.getString(646), 2).addIcon(255, AppState.getString(647), 12).addAction(account.getExtType(), AppState.getString(655), 14).addAction(-1, AppState.getString(718), 13);
                 break;
             default:
                 if (account.isMailRuVariant()) {
-                    dialogScreen.addIconById(387, 642, 1).addIconById(385, 647, 0);
+                    dialogScreen.addIcon(387, AppState.getString(642), 1).addIcon(385, AppState.getString(647), 0);
                 } else {
-                    dialogScreen.addIconById(383, 642, 1).addIconById(16384383, 643, 4).addIconById(16318847, 644, 2).addIconById(16449919, 645, 5).addIconById(16580991, 648, 6).addIconById(16515455, 646, 3).addIconById(381, 647, 0);
+                    dialogScreen.addIcon(383, AppState.getString(642), 1).addIcon(16384383, AppState.getString(643), 4).addIcon(16318847, AppState.getString(644), 2).addIcon(16449919, AppState.getString(645), 5).addIcon(16580991, AppState.getString(648), 6).addIcon(16515455, AppState.getString(646), 3).addIcon(381, AppState.getString(647), 0);
                 }
                 break;
         }
@@ -244,12 +243,12 @@ public final class DialogScreen extends ScreenView {
         ListView dialogScreen = ScreenManager.createDialogScreen(17);
         if (AppState.getAccount().getType() == Account.TYPE_MMP) {
             for (int i = 0; i < MMP_EMOTICON_COUNT; i++) {
-                dialogScreen.addIconById(i + MMP_EMOTICON_ICON_BASE, i + MMP_EMOTICON_LABEL_BASE, i);
+                dialogScreen.addIcon(i + MMP_EMOTICON_ICON_BASE, AppState.getString(i + MMP_EMOTICON_LABEL_BASE), i);
             }
         } else {
             for (int i = 0; i < XMPP_EMOTICON_COUNT; i++) {
                 if (i != XMPP_EXCLUDED_INDEX_1 && i != XMPP_EXCLUDED_INDEX_2) {
-                    dialogScreen.addIconById(i + XMPP_EMOTICON_ICON_BASE, i + XMPP_EMOTICON_LABEL_BASE, i + XMPP_EMOTICON_CMD_OFFSET);
+                    dialogScreen.addIcon(i + XMPP_EMOTICON_ICON_BASE, AppState.getString(i + XMPP_EMOTICON_LABEL_BASE), i + XMPP_EMOTICON_CMD_OFFSET);
                 }
             }
         }
@@ -298,7 +297,7 @@ public final class DialogScreen extends ScreenView {
         if (obj instanceof javax.microedition.lcdui.Image) {
             screen.addItem(MenuItem.createGraphics(new GraphicsContext((javax.microedition.lcdui.Image) obj)));
         } else {
-            screen.addLabelById(((Integer) obj).intValue());
+            screen.addLabel(AppState.getString(((Integer) obj).intValue()));
         }
         ScreenManager.showScreen(screen);
         RegistrationState.clearRegistrationData();

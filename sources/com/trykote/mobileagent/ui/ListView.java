@@ -4,9 +4,9 @@ package com.trykote.mobileagent.ui;
 import com.trykote.mobileagent.core.AppController;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -882,8 +882,8 @@ public class ListView {
         return addTextPair(label, value, DEFAULT_ITEM_WIDTH);
     }
 
-    public final ListView addIconById(int iconId, int stringKey, int width) {
-        return addIconItem(iconId, AppState.getString(stringKey), width);
+    public final ListView addIcon(int iconId, String label, int width) {
+        return addIconItem(iconId, label, width);
     }
 
     public final ListView addExpandableItem(int iconId, String text, int width, Object data) {
@@ -896,9 +896,8 @@ public class ListView {
         return addItem(MenuItem.createSeparator().addText(text, UIKeys.GFX_INDEX_BOLD, textStyle));
     }
 
-    public final ListView addActionById(int iconId, int stringKey, int width) {
-        String labelStr = AppState.getString(stringKey);
-        MenuItem actionItem = MenuItem.createWithWidth(labelStr, width).setIcon(iconId).setLabel(labelStr).setIcon(MenuItem.ICON_ALIGN_RIGHT);
+    public final ListView addAction(int iconId, String label, int width) {
+        MenuItem actionItem = MenuItem.createWithWidth(label, width).setIcon(iconId).setLabel(label).setIcon(MenuItem.ICON_ALIGN_RIGHT);
         actionItem.enabled = true;
         return addItem(actionItem);
     }
@@ -911,8 +910,8 @@ public class ListView {
         return addItem(MenuItem.createWithWidth(text, width).setIcon(iconId));
     }
 
-    public final ListView addLabelById(int stringKey) {
-        return addItem(MenuItem.createSeparator().setLabel(AppState.getString(stringKey)));
+    public final ListView addLabel(String label) {
+        return addItem(MenuItem.createSeparator().setLabel(label));
     }
 
     public final ListView addFullItem(int iconId, String label, String text, int width, Object data) {

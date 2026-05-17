@@ -5,11 +5,11 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.PackedStringKeys;
@@ -36,12 +36,10 @@ import com.trykote.mobileagent.ui.ListView;
 import com.trykote.mobileagent.ui.MenuItem;
 import com.trykote.mobileagent.ui.NotificationHelper;
 import com.trykote.mobileagent.ui.Screen;
-import com.trykote.mobileagent.ui.ScreenBuilder;
 import com.trykote.mobileagent.ui.ScreenManager;
 import com.trykote.mobileagent.ui.ScreenView;
 import com.trykote.mobileagent.ui.Screens;
 import com.trykote.mobileagent.ui.TextInputHelper;
-import com.trykote.mobileagent.ui.screen.AccountScreen;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.JsonParser;
 import com.trykote.mobileagent.util.ObjectPool;
@@ -576,7 +574,7 @@ public final class ContactScreen extends ScreenView {
         }
         if (membersScreen.menuItems.size() == 0) {
             membersScreen.selectable = false;
-            ListView labelScreen = membersScreen.addLabelById(772);
+            ListView labelScreen = membersScreen.addLabel(AppState.getString(772));
             labelScreen.setSoftKeys(StringPool.get(StringResKeys.STR_EMPTY), StringPool.get(StringResKeys.STR_SOFTKEY_NO), labelScreen.softKeyLeft, labelScreen.softKeyCenter, labelScreen.softKeyRight);
         }
         ScreenManager.showScreen(membersScreen);

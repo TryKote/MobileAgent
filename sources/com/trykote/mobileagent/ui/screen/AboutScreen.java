@@ -39,16 +39,16 @@ public final class AboutScreen extends ScreenView {
                 .writeRawString(AppState.getAppProperty(StringResKeys.STR_APP_PROPERTY_NAME))
                 .getStringAndClear());
 
-        configureHeader(9, 510);
-        addSeparator(512, 1288);
-        addSeparator(PackedStringKeys.LABEL_COPYRIGHT, PackedStringKeys.LABEL_MAIL_RU_YEAR);
-        addSeparator(513, 1287);
-        addSeparator(514, PackedStringKeys.URL_AGENT_MAIL_RU);
-        addSeparator(515, 1376);
-        addSeparator(516, 1377);
-        addSeparator(517, 1284);
-        addSeparator(518, 1285);
-        configureSoftKeys(507, 57, 1050, 12, 0);
+        configureHeader(9, AppState.getString(510));
+        addSeparator(AppState.getString(512), AppState.getString(1288));
+        addSeparator(AppState.getString(PackedStringKeys.LABEL_COPYRIGHT), AppState.getString(PackedStringKeys.LABEL_MAIL_RU_YEAR));
+        addSeparator(AppState.getString(513), AppState.getString(1287));
+        addSeparator(AppState.getString(514), AppState.getString(PackedStringKeys.URL_AGENT_MAIL_RU));
+        addSeparator(AppState.getString(515), AppState.getString(1376));
+        addSeparator(AppState.getString(516), AppState.getString(1377));
+        addSeparator(AppState.getString(517), AppState.getString(1284));
+        addSeparator(AppState.getString(518), AppState.getString(1285));
+        configureSoftKeys(AppState.getString(507), 57, AppState.getString(1050), 12, 0);
     }
 
     public int onItemSelected(MenuItem item, String title, int action, Object data) {

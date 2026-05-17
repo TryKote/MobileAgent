@@ -4,8 +4,6 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.util.ObjectPool;
-import com.trykote.mobileagent.util.RemoteLogger;
-import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.Utils;
 
 import javax.microedition.lcdui.Image;
@@ -71,111 +69,107 @@ public class Screen extends ListView {
 
     // --- Header (behavior depends on screen type) ---
 
-    public void configureHeader(int headerMode, int titleKey) {
-        String title = Utils.defaultStr(AppState.getString(titleKey));
+    public void configureHeader(int headerMode, String title) {
+        String t = Utils.defaultStr(title);
         if (isOverlayType()) {
             return;
         }
         if (screenType == ScreenManager.TYPE_TOAST) {
-            addItem(new MenuItem(0, title).addText(title, 1, 0));
+            addItem(new MenuItem(0, t).addText(t, 1, 0));
         } else {
-            setHeader(headerMode, title);
+            setHeader(headerMode, t);
         }
     }
 
     // --- Soft keys ---
 
-    public void configureSoftKeys(int lskLabel, int lskCmd, int rskLabel, int rskCmd, int extraCmd) {
-        setSoftKeys(
-            lskLabel > 0 ? AppState.getString(lskLabel) : null,
-            rskLabel > 0 ? AppState.getString(rskLabel) : null,
-            lskCmd, rskCmd, extraCmd);
+    public void configureSoftKeys(String leftLabel, int leftCmd,
+                                  String rightLabel, int rightCmd, int extraCmd) {
+        setSoftKeys(leftLabel, rightLabel, leftCmd, rightCmd, extraCmd);
     }
 
     // --- Conditional items ---
 
-    public void addConditionalIf(int condKey, int label, int icon, int cmd) {
+    public void addConditionalIf(int condKey, String label, int icon, int width) {
         if (AppState.getBool(condKey)) {
-            addActionById(icon, cmd, label);
+            addAction(icon, label, width);
         }
     }
 
-    public void addConditionalUnless(int condKey, int label, int icon, int cmd) {
+    public void addConditionalUnless(int condKey, String label, int icon, int width) {
         if (!AppState.getBool(condKey)) {
-            addActionById(icon, cmd, label);
+            addAction(icon, label, width);
         }
     }
 
     // --- Item helpers for generated screen code ---
 
-    public void addSeparator(int labelKey, int sublabelKey) {
-        String label = Utils.defaultStr(AppState.getString(labelKey));
-        MenuItem sep = MenuItem.createSeparator().addText(label + " ", 0, 0);
-        String sub = Utils.defaultStr(AppState.getString(sublabelKey));
-        if (!StringUtils.isEmpty(sub)) {
+    public void addSeparator(String label, String sublabel) {
+        String l = Utils.defaultStr(label);
+        MenuItem sep = MenuItem.createSeparator().addText(l + " ", 0, 0);
+        String sub = Utils.defaultStr(sublabel);
+        if (sub.length() > 0) {
             sep.addText(sub, 0, 6);
         }
         addItem(sep);
     }
 
-    public void addTextSeparator(int labelKey) {
+    public void addTextSeparator(String label) {
         addItem(MenuItem.createSeparator()
-            .addText(Utils.defaultStr(AppState.getString(labelKey)), 1, 0));
+            .addText(Utils.defaultStr(label), 1, 0));
     }
 
-    public void addLabelSeparator(int labelKey) {
+    public void addLabelSeparator(String label) {
         addItem(MenuItem.createSeparator()
-            .setLabel(Utils.defaultStr(AppState.getString(labelKey))));
+            .setLabel(Utils.defaultStr(label)));
     }
 
-    public void addCheckbox(int labelKey, int stateKey) {
-        addItem(MenuItem.createCheckbox(
-            Utils.defaultStr(AppState.getString(labelKey)),
+    public void addCheckbox(String label, int stateKey) {
+        addItem(MenuItem.createCheckbox(Utils.defaultStr(label),
             AppState.getBool(stateKey)));
         addBinding(BIND_BOOL, menuItems.size() - 1, stateKey);
     }
 
-    public void addDropdown(int labelKey, int choicesKey, int indexKey) {
-        String label = Utils.defaultStr(AppState.getString(labelKey));
+    public void addDropdown(String label, int choicesKey, int indexKey) {
+        String l = Utils.defaultStr(label);
         Vector choices = Utils.splitByNull(
             Utils.defaultStr(AppState.getString(choicesKey)));
-        addItem(new MenuItem(MenuItem.TYPE_DROPDOWN, label)
-            .setChoices(choices, AppState.getInt(indexKey), label));
+        addItem(new MenuItem(MenuItem.TYPE_DROPDOWN, l)
+            .setChoices(choices, AppState.getInt(indexKey), l));
         addBinding(BIND_INT, menuItems.size() - 1, indexKey);
     }
 
-    public void addTextInput(int dataKey, int inputType, int hintKey,
+    public void addTextInput(String data, int inputType, String hint,
                              int validation, int valueKey) {
-        String data = Utils.defaultStr(AppState.getString(dataKey));
-        String hint = Utils.defaultStr(AppState.getString(hintKey));
+        String d = Utils.defaultStr(data);
+        String h = Utils.defaultStr(hint);
         String value = Utils.defaultStr(AppState.getString(valueKey));
-        addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, data)
-            .setAction(data, value, ObjectPool.integerOf(inputType),
-                       ObjectPool.integerOf(validation), hint));
+        addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, d)
+            .setAction(d, value, ObjectPool.integerOf(inputType),
+                       ObjectPool.integerOf(validation), h));
         addBinding(BIND_STRING, menuItems.size() - 1, valueKey);
     }
 
     // --- Additional item helpers ---
 
-    public void addNumericInput(int dataKey, int inputType, int hintKey,
+    public void addNumericInput(String data, int inputType, String hint,
                                 int stateKey, int min, int max, int def) {
-        String data = Utils.defaultStr(AppState.getString(dataKey));
-        String hint = Utils.defaultStr(AppState.getString(hintKey));
+        String d = Utils.defaultStr(data);
+        String h = Utils.defaultStr(hint);
         int currentValue = AppState.getInt(stateKey);
         String value = currentValue != def ? String.valueOf(currentValue) : String.valueOf(def);
-        addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, data)
-            .setAction(data, value, ObjectPool.integerOf(inputType),
-                       ObjectPool.integerOf(2), hint));
+        addItem(new MenuItem(MenuItem.TYPE_TEXT_INPUT, d)
+            .setAction(d, value, ObjectPool.integerOf(inputType),
+                       ObjectPool.integerOf(2), h));
         addNumericBinding(menuItems.size() - 1, stateKey, min, max, def);
     }
 
-    public void addLogin(int labelKey, int valueKey) {
-        String label = Utils.defaultStr(AppState.getString(labelKey));
+    public void addLogin(String label, int valueKey) {
+        String l = Utils.defaultStr(label);
         String displayName = Utils.defaultStr(
             SessionState.getAccountDisplayName());
         String username = Utils.defaultStr(AppState.getString(valueKey));
-        RemoteLogger.log("SCREEN", "addLogin: labelKey=" + labelKey + " label='" + label + "' valueKey=" + valueKey + " username='" + username + "' displayName='" + displayName + "'");
-        MenuItem item = new MenuItem(MenuItem.TYPE_LOGIN, label)
+        MenuItem item = new MenuItem(MenuItem.TYPE_LOGIN, l)
             .setIcon(MenuItem.ICON_LOGIN);
         if (displayName.length() > 0) {
             item.addText(displayName, 1, 0);
@@ -211,7 +205,6 @@ public class Screen extends ListView {
     // --- Form processing ---
 
     public void processForm() {
-        RemoteLogger.log("FORM", "processForm: bindings=" + formBindingsSize + " screenId=" + screenId);
         if (formBindings == null || formBindingsSize == 0) {
             return;
         }
@@ -222,12 +215,10 @@ public class Screen extends ListView {
             MenuItem item = (MenuItem) menuItems.elementAt(itemIdx);
             switch (type) {
                 case BIND_BOOL:
-                    RemoteLogger.log("FORM", "  BOOL key=" + formBindings[pos] + " val=" + item.data);
                     AppState.setBool(formBindings[pos++],
                         ((Boolean) item.data).booleanValue());
                     break;
                 case BIND_INT:
-                    RemoteLogger.log("FORM", "  INT key=" + formBindings[pos] + " val=" + ((Object[]) item.data)[0]);
                     AppState.setInt(formBindings[pos++],
                         ((Integer) ((Object[]) item.data)[0]).intValue());
                     break;
@@ -241,7 +232,6 @@ public class Screen extends ListView {
                     } else {
                         val = (String) ((Object[]) item.data)[0];
                     }
-                    RemoteLogger.log("FORM", "  STRING key=" + key + " val='" + val + "'");
                     AppState.setString(key, val);
                     break;
                 }

@@ -5,8 +5,8 @@ import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.AsyncTask;
 import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.PackedStringKeys;
@@ -316,7 +316,7 @@ public final class ApiClient {
             Vector lines = Utils.splitReplace(new ByteBuffer(http).readUTFWithLen(), '\n', '\r');
             RequestQueue.sharedContactList.removeAllElements();
             for (int i = lines.size() - 1; i >= 0; i--) {
-                Vector fields = Utils.splitMerge((String) lines.elementAt(i), '|');
+                Vector fields = Utils.splitMerge((String) lines.elementAt(i));
                 if (fields.size() == 5) {
                     RequestQueue.sharedContactList.addElement(new Object[]{fields.elementAt(0), new long[]{Long.parseLong((String) fields.elementAt(1)), Long.parseLong((String) fields.elementAt(2))}, fields.elementAt(4)});
                 }

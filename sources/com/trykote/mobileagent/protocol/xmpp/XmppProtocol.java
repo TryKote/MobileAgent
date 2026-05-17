@@ -535,9 +535,12 @@ public class XmppProtocol extends Account {
     }
 
     private void handleMessage(XmlElement element) {
-        String senderJid = extractBareJid(element.getIntAttribute(PackedStringKeys.ATTR_FROM));
+        String fromAttr = element.getIntAttribute(PackedStringKeys.ATTR_FROM);
+        RemoteLogger.log("XMPP", "handleMessage from=" + fromAttr);
+        String senderJid = extractBareJid(fromAttr);
         XmppContact sender = findContactByJid(senderJid);
         if (sender == null) {
+            RemoteLogger.log("XMPP", "handleMessage: sender not found for jid=" + senderJid);
             return;
         }
         sender.markOnlineIfOffline();
@@ -938,6 +941,7 @@ public class XmppProtocol extends Account {
             return result;
         }
         this.sentCount++;
+        RemoteLogger.log("XMPP", "validateSend to=" + contact.getIdentifier() + " msg=" + message.substring(0, Math.min(message.length(), 100)));
         return sendXmlElement(XmlElement.createFromState(PackedStringKeys.TAG_MESSAGE).setAttrValue(PackedStringKeys.ATTR_TO, contact.getIdentifier()).addNameAttr(PackedStringKeys.XMPP_TYPE_CHAT).addChild(XmlElement.createFromState(PackedStringKeys.TAG_BODY).appendText((Object) message)).addSimpleChild(PackedStringKeys.XMPP_CHATSTATES_ACTIVE, PackedStringKeys.XMPP_NS_CHATSTATES));
     }
 

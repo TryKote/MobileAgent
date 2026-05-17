@@ -3,11 +3,11 @@ package com.trykote.mobileagent.ui.screen;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.map.MapController;
@@ -239,7 +239,7 @@ public final class AccountScreen extends ScreenView {
         for (int i = 0; i < size; i++) {
             screen.addItem(((Account) accounts.elementAt(i)).createFlagMenuItem());
         }
-        ScreenManager.showScreen(screen.addActionById(-1, 531, 16).addIconById(-1, 532, 1).addIconById(-1, 533, 3).addIconById(-1, 534, 2));
+        ScreenManager.showScreen(screen.addAction(-1, AppState.getString(531), 16).addIcon(-1, AppState.getString(532), 1).addIcon(-1, AppState.getString(533), 3).addIcon(-1, AppState.getString(534), 2));
     }
 
     private static void buildAccountCheckboxList() {
@@ -252,7 +252,7 @@ public final class AccountScreen extends ScreenView {
         for (int i = 0; i < size; i++) {
             Object element = accountList.elementAt(i);
             if (!(element instanceof Account)) {
-                screen.addActionById(11, 548, 0);
+                screen.addAction(11, AppState.getString(548), 0);
             } else if (showFlags) {
                 screen.addItem(((Account) element).createFlagMenuItem());
             } else {
@@ -352,13 +352,13 @@ public final class AccountScreen extends ScreenView {
         Vector accounts = AccountManager.getMrimAccountList();
         int size = accounts.size();
         if (size > 0) {
-            screen.addLabelById(832);
+            screen.addLabel(AppState.getString(832));
             for (int i = 0; i < size; i++) {
                 screen.addItem(((MrimAccount) accounts.elementAt(i)).createMenuItem());
             }
         } else {
             screen.selectable = false;
-            screen.addLabelById(551);
+            screen.addLabel(AppState.getString(551));
         }
         ObjectPool.releaseVector(accounts);
         ScreenManager.pushScreen(screen);

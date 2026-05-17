@@ -31,6 +31,9 @@ $(BUILD)/.compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/Tes
 	$(JAVAC8) -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	cd editor && mvn -q compile
 	$(EDITOR) -Dexec.args="--patch-stringbuilder ../$(BUILD)/classes"
+	@# CLDC 1.1 compatibility: detect autoboxing (Integer.valueOf etc.) that javac silently emits
+	@bad=$$(grep -rl 'java/lang/Integer.valueOf\|java/lang/Long.valueOf\|java/lang/Short.valueOf\|java/lang/Byte.valueOf\|java/lang/Boolean.valueOf\|java/lang/Character.valueOf' $(BUILD)/classes/ 2>/dev/null); \
+	if [ -n "$$bad" ]; then echo "ERROR: autoboxing detected (forbidden on CLDC 1.1):"; echo "$$bad"; exit 1; fi
 	@touch $@
 
 # --- JAR (preverify only, no optimization/obfuscation) ---
