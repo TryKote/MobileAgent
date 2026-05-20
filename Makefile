@@ -7,6 +7,17 @@ JAVAC8  = /usr/lib/jvm/java-8-openjdk/bin/javac
 PROGUARD = tools/proguard.jar
 EDITOR  = cd editor && mvn -q exec:java -Dexec.mainClass="com.trykote.editor.Main"
 
+# Release
+RELEASE_JAR   = MobileAgent.jar
+RELEASE_JAD   = MobileAgent.jad
+JADSIGN_SRC   = tools/JadSign.java
+JADSIGN_DIR   = $(BUILD)/jadsign
+SIGN_KEYSTORE = certs/signer.jks
+SIGN_PASSWORD = changeit
+SIGN_ALIAS    = signer
+CA_CERT_DER   = certs/trykote_ca.cer
+JAD_FIELDS    = MIDlet-1|MIDlet-Name|MIDlet-Version|MIDlet-Vendor|MIDlet-Description|MIDlet-Permissions|MicroEdition-Configuration|MicroEdition-Profile
+
 RESOURCES_SRC = resources-src
 RESOURCES_OUT = $(BUILD)/resources
 GEN_DIR  = $(BUILD)/generated/com/trykote/mobileagent/util
@@ -18,7 +29,7 @@ SOURCES  = $(shell find $(SRC) -name '*.java' ! -name 'RemoteLoggerConfig.java' 
 
 # Editor (Maven project in editor/)
 
-.PHONY: all compile jar optimized-jar debug-jar clean clean-rms resources screen-defs palette-keys gen-keys gen-screens gen-string-pool gen-palette gen-all editor editor-build
+.PHONY: all compile jar optimized-jar debug-jar clean clean-rms resources screen-defs palette-keys gen-keys gen-screens gen-string-pool gen-palette gen-all editor editor-build jadsign unsigned-release signed-release
 
 all: jar
 
@@ -71,6 +82,7 @@ optimized-jar: $(BUILD)/optimized-$(JAR)
 
 $(BUILD)/.optimized: $(BUILD)/.compiled
 	@rm -rf $(BUILD)/optimized
+	@cd $(BUILD)/classes && unzip -qo ../../$(LIBS)/bouncycastle-j2me.jar 'java/*'
 	java -jar $(PROGUARD) \
 		-injars $(BUILD)/classes \
 		-outjars $(BUILD)/optimized \
@@ -179,6 +191,56 @@ editor-build:
 
 editor: editor-build
 	cd editor && mvn -q javafx:run
+
+# --- JadSign tool ---
+
+jadsign: $(JADSIGN_DIR)/.compiled
+
+$(JADSIGN_DIR)/.compiled: $(JADSIGN_SRC)
+	@mkdir -p $(JADSIGN_DIR)
+	javac -d $(JADSIGN_DIR) $(JADSIGN_SRC)
+	@touch $@
+
+# --- Release builds ---
+# Usage:
+#   make unsigned-release                        # optimized JAR + unsigned JAD
+#   make signed-release                          # optimized JAR + signed JAD
+#   make signed-release SUBSTITUTE_TEST_DATA=1   # same, with test account from config/test_account.cfg
+
+MANIFEST = $(RESOURCES_SRC)/META-INF/MANIFEST.MF
+
+define release-build
+@if [ -z "$(SUBSTITUTE_TEST_DATA)" ]; then \
+	echo "Test account: disabled (pass SUBSTITUTE_TEST_DATA=1 to enable)"; \
+	mkdir -p $(GEN_DIR); \
+	cp $(TEST_SRC) $(GEN_DIR)/TestConfig.java; \
+else \
+	echo "Test account: enabled from $(TEST_CFG)"; \
+	rm -f $(GEN_DIR)/TestConfig.java; \
+fi
+@rm -f $(BUILD)/.compiled $(BUILD)/.optimized
+@$(MAKE) --no-print-directory optimized-jar
+@cp $(BUILD)/optimized-$(JAR) $(BUILD)/$(RELEASE_JAR)
+@JAR_SIZE=$$(stat -c%s "$(BUILD)/$(RELEASE_JAR)"); \
+{ grep -E '^($(JAD_FIELDS)):' $(MANIFEST) | tr -d '\r'; \
+  echo "MIDlet-Jar-URL: $(RELEASE_JAR)"; \
+  echo "MIDlet-Jar-Size: $$JAR_SIZE"; \
+} > $(BUILD)/$(RELEASE_JAD)
+endef
+
+unsigned-release:
+	$(release-build)
+	@echo "Release: $(BUILD)/$(RELEASE_JAR) + $(BUILD)/$(RELEASE_JAD)"
+
+signed-release: $(JADSIGN_DIR)/.compiled
+	$(release-build)
+	@java -cp $(JADSIGN_DIR) JadSign $(SIGN_KEYSTORE) $(SIGN_PASSWORD) $(SIGN_ALIAS) \
+		$(BUILD)/$(RELEASE_JAR) $(BUILD)/$(RELEASE_JAD)
+	@CA_B64=$$(openssl x509 -inform DER -in $(CA_CERT_DER) -outform PEM | grep -v '^-----' | tr -d '\n'); \
+	echo "MIDlet-Certificate-1-2: $$CA_B64" >> $(BUILD)/$(RELEASE_JAD)
+	@echo "Signed release: $(BUILD)/$(RELEASE_JAR) + $(BUILD)/$(RELEASE_JAD)"
+
+# --- Cleanup ---
 
 clean:
 	rm -rf $(BUILD)

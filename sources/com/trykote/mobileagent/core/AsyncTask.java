@@ -47,6 +47,7 @@ import javax.microedition.lcdui.Image;
 import javax.wireless.messaging.Message;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
@@ -200,10 +201,12 @@ public final class AsyncTask implements Runnable {
             InputStream imageStream;
 
             if (isHttps) {
+                RemoteLogger.log("IMG", "opening HTTPS: " + url.substring(0, Math.min(url.length(), 60)));
                 httpsClient = new HttpsClient(url);
                 responseCode = httpsClient.getResponseCode();
                 contentLength = httpsClient.getContentLength();
                 imageStream = httpsClient.getInputStream();
+                RemoteLogger.log("IMG", "HTTPS response=" + responseCode + " len=" + contentLength);
             } else {
                 httpClient = HttpClient.createHttpClient(url, null, 3);
                 responseCode = httpClient.getResponseCode();
@@ -223,18 +226,38 @@ public final class AsyncTask implements Runnable {
 
             ByteBuffer buf;
             if (isHttps) {
+                RemoteLogger.log("IMG", "reading body");
                 buf = new ByteBuffer();
                 byte[] readBuf = ObjectPool.newBytes(2048);
                 int bytesRead;
-                while ((bytesRead = imageStream.read(readBuf)) >= 0) {
-                    buf.writeBytesAt(readBuf, 0, bytesRead);
-                    if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
-                        InlineImageCache.markTooLarge(url);
-                        EventDispatcher.postNotification("Файл слишком большой");
+                int totalRead = 0;
+                int remaining = (int) contentLength;
+                try {
+                    while (remaining > 0) {
+                        int toRead = Math.min(readBuf.length, remaining);
+                        bytesRead = imageStream.read(readBuf, 0, toRead);
+                        if (bytesRead < 0) break;
+                        totalRead += bytesRead;
+                        remaining -= bytesRead;
+                        buf.writeBytesAt(readBuf, 0, bytesRead);
+                        if (totalRead % 10240 < 2048) {
+                            RemoteLogger.log("IMG", "read " + totalRead + "b");
+                        }
+                        if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
+                            InlineImageCache.markTooLarge(url);
+                            EventDispatcher.postNotification("Файл слишком большой");
+                            ObjectPool.releaseBytes(readBuf);
+                            return;
+                        }
+                    }
+                } catch (IOException readEx) {
+                    RemoteLogger.log("IMG", "read error at " + totalRead + "/" + contentLength + ": " + readEx);
+                    if (totalRead < contentLength) {
                         ObjectPool.releaseBytes(readBuf);
-                        return;
+                        throw readEx;
                     }
                 }
+                RemoteLogger.log("IMG", "body done, total=" + totalRead + "b");
                 ObjectPool.releaseBytes(readBuf);
             } else {
                 buf = new ByteBuffer(httpClient);
@@ -245,11 +268,14 @@ public final class AsyncTask implements Runnable {
                 }
             }
 
+            RemoteLogger.log("IMG", "creating image from " + buf.length + "b");
             Image image = buf.toImage();
+            RemoteLogger.log("IMG", "image=" + (image != null ? image.getWidth() + "x" + image.getHeight() : "null"));
             if (image != null) {
                 image = InlineImageCache.scaleToFit(image);
                 InlineImageCache.putImage(url, image);
                 InlineImageCache.setPendingImage(image);
+                RemoteLogger.log("IMG", "cached, scaled to " + image.getWidth() + "x" + image.getHeight());
             }
         } catch (Throwable e) {
             RemoteLogger.log("IMG", "download failed: " + url + " " + e);

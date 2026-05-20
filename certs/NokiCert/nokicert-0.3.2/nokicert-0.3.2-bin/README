@@ -1,0 +1,46 @@
+= NokiCert =
+
+NokiCert makes it possible to install X.509 certificates on Nokia S40 phones. 
+It can install certificates for accessing SSL protected websites as well as for 
+authenticating MIDlet suites to place them in the identified (trusted) third 
+party domain. It uses a Bluetooth connection to the phone to install the 
+certificates. Most S40 phones (assuming they have a certificate database) will 
+work.
+
+NokiCert is written in Java and runs on Windows, Mac OS X and Linux.
+
+See the docs directory for documentation.
+
+= Requirements =
+
+  * Sun Java 6 or OpenJDK.
+  * Bluetooth device supported by your operating system
+
+= Running =
+
+== On Mac OS X ==
+
+Note: only Mac OS X 10.6 "Snow Leopard" is supported at the moment. 
+
+Open a terminal and run "sh NokiCert.sh" in the NokiCert binary directory. Make 
+sure Bluetooth is enabled and the phone is paired with your system.
+
+== Windows ==
+
+Note: Only tested on Windows XP and above. On 64 bit Windows systems you need
+to install the 32 bit Java environment!
+
+Double click on "NokiCert.cmd". Make sure Bluetooth is enabled and the phone 
+is paired with your system.
+
+== Linux ==
+
+Note: both 32 and 64 bit Linux installations are supported! 
+
+The development files of BlueZ are required on Linux: 
+
+Debian/Ubuntu: install package libbluetooth-dev 
+Fedora: install package bluez-libs-devel
+
+Open a terminal and run "sh NokiCert.sh" in the NokiCert binary directory. Make
+sure Bluetooth is enabled and the phone is paired with your system.

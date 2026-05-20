@@ -12,5 +12,6 @@ Nokia-MIDlet-No-Exit: true
 MIDlet-1: TryKoteAgent,/icon.png,com.trykote.mobileagent.core.Midlet
 MicroEdition-Profile: MIDP-2.0
 MIDlet-Name: MobileAgent by TryKote
+MIDlet-Permissions: javax.microedition.io.Connector.http, javax.microedition.io.Connector.https, javax.microedition.io.Connector.socket, javax.microedition.io.Connector.datagram, javax.wireless.messaging.sms.send, javax.wireless.messaging.sms.receive
 MIDlet-Info-URL: http://www.mail.ru/
 

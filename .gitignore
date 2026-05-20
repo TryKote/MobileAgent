@@ -11,3 +11,9 @@ editor/target
 freej2me_system
 screenshots
 *.json
+
+# Private keys and keystores
+certs/ca_key.pem
+certs/sign_key.pem
+certs/signer.jks
+certs/trykote_ca.srl
