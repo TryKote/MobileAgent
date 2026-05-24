@@ -427,6 +427,8 @@ public final class DialogScreen extends ScreenView {
         popup.configureSoftKeys(null, 0, "Назад", 12, 0);
         popup.addItem(MenuItem.createInlineImage(image));
         popup.show();
+        // force GC so the peak does not stay near the OOM ceiling.
+        System.gc();
     }
 
     // --- Public static ---

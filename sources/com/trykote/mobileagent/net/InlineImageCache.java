@@ -160,15 +160,19 @@ public final class InlineImageCache {
         int dstW = maxWidth;
         int dstH = (srcH * dstW) / srcW;
 
-        int[] srcPixels = new int[srcW * srcH];
-        source.getRGB(srcPixels, 0, srcW, 0, 0, srcW, srcH);
-
+        int[] srcRow = new int[srcW];
         int[] dstPixels = new int[dstW * dstH];
+        int prevSy = -1;
         for (int dy = 0; dy < dstH; dy++) {
             int sy = (dy * srcH) / dstH;
+            if (sy != prevSy) {
+                source.getRGB(srcRow, 0, srcW, 0, sy, srcW, 1);
+                prevSy = sy;
+            }
+            int rowBase = dy * dstW;
             for (int dx = 0; dx < dstW; dx++) {
                 int sx = (dx * srcW) / dstW;
-                dstPixels[dy * dstW + dx] = srcPixels[sy * srcW + sx];
+                dstPixels[rowBase + dx] = srcRow[sx];
             }
         }
 
