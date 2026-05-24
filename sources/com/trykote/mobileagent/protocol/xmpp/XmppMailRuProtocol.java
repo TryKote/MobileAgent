@@ -33,6 +33,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
 
     private static final int DEFAULT_PORT = 43289;
     private static final int XMPP_STANDARD_PORT = 5222;
+    private static final int XMPP_TLS_PORT = 5223;
     private static final int ICON_MAILRU_START = 381;
     private static final int ICON_MAILRU_END = 384;
     private static final int ICON_MAILRU_OFFSET = 4;
@@ -131,9 +132,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 ChatState.setChatName(loginStr);
                 RegistrationState.setPassword(xmppAccount.password);
                 ContactState.setDisplayName(xmppAccount.displayName);
+                RegistrationState.setUseSslTls(xmppAccount.useTls);
             } else if (TestConfig.ENABLED && TestConfig.ACCOUNT_TYPE == TYPE_XMPP) {
                 ChatState.setChatName(TestConfig.LOGIN);
                 RegistrationState.setPassword(TestConfig.PASSWORD);
+                RegistrationState.setUseSslTls(TestConfig.USE_TLS);
             }
             SessionState.setAccountDisplayName(null);
             RemoteLogger.debug("LOGIN", "TYPE_XMPP: chatName=" + ChatState.getChatName() + " displayName=" + SessionState.getAccountDisplayName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
@@ -263,8 +266,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     public static final void resolveXmppServer(Object[] taskArgs) {
         XmppProtocol xmppAccount = (XmppProtocol) taskArgs[0];
         String host = xmppAccount.getStreamDomain();
-        RemoteLogger.debug("XMPP", "resolve: direct connect to " + host + ":" + XMPP_STANDARD_PORT);
-        xmppAccount.setAuthParameters(host, XMPP_STANDARD_PORT);
+        int port = xmppAccount.useTls ? XMPP_TLS_PORT : XMPP_STANDARD_PORT;
+        RemoteLogger.debug("XMPP", "resolve: direct connect to " + host + ":" + port + " tls=" + xmppAccount.useTls);
+        xmppAccount.setAuthParameters(host, port);
     }
 
     public static final int loginXmpp(int accountType) {
@@ -286,7 +290,11 @@ public final class XmppMailRuProtocol extends XmppProtocol {
         if (errorCode != 0) {
             return NotificationHelper.showError(errorCode);
         }
-        AccountManager.addToAccountSelection(AccountManager.findAccountByLogin(accountType, fullLogin).setDisplayName(Utils.defaultStr(ContactState.getDisplayName())));
+        Account acc = AccountManager.findAccountByLogin(accountType, fullLogin);
+        if (acc instanceof XmppProtocol) {
+            ((XmppProtocol) acc).useTls = RegistrationState.isUseSslTls();
+        }
+        AccountManager.addToAccountSelection(acc.setDisplayName(Utils.defaultStr(ContactState.getDisplayName())));
         return 0;
     }
 

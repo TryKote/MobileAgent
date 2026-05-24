@@ -105,6 +105,8 @@ public class XmppProtocol extends Account {
 
     public int serverPort;
 
+    public boolean useTls;
+
     public Object authResult;
 
     private Throwable lastException;
@@ -154,12 +156,13 @@ public class XmppProtocol extends Account {
         this.serverAddress = buffer.readWideStr();
         this.serverPort = buffer.readShortBE();
         this.serverResourceId = buffer.readWideStr();
+        this.useTls = buffer.length > 0 && buffer.readBoolean();
     }
 
     @Override
     public final Account serializeAccount(ByteBuffer buffer, boolean includeGroups, boolean includePrivate) {
         super.serializeAccount(buffer, includeGroups, includePrivate);
-        buffer.writeStringLatin1(this.serverAddress).writeShortBE(this.serverPort).writeStringLatin1(this.serverResourceId);
+        buffer.writeStringLatin1(this.serverAddress).writeShortBE(this.serverPort).writeStringLatin1(this.serverResourceId).writeBoolean(this.useTls);
         return this;
     }
 
@@ -349,8 +352,8 @@ public class XmppProtocol extends Account {
         this.msgCount = 30;
         this.state = 0;
         String connAddr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort));
-        RemoteLogger.info("XMPP", "progress CONNECTING to " + connAddr);
-        this.connection = new ConnectionThread(connAddr);
+        RemoteLogger.info("XMPP", "progress CONNECTING to " + connAddr + " tls=" + this.useTls);
+        this.connection = new ConnectionThread(connAddr, this.useTls);
         this.progress = PROGRESS_OPENING_STREAM;
         notifyConnectionProgressChanged();
     }

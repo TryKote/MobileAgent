@@ -43,6 +43,14 @@ public final class RegistrationState extends AppState {
         setInt(RegistrationKeys.FLAG_REG_SMS_MODE, mode ? 1 : 0);
     }
 
+    public static boolean isUseSslTls() {
+        return getBool(RegistrationKeys.FLAG_USE_SSL_TLS);
+    }
+
+    public static void setUseSslTls(boolean useSsl) {
+        setInt(RegistrationKeys.FLAG_USE_SSL_TLS, useSsl ? 1 : 0);
+    }
+
     public static int getRegDomainIndex() {
         return getInt(RegistrationKeys.INT_REG_DOMAIN_INDEX);
     }

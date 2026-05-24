@@ -27,6 +27,7 @@ public final class ConnectionThread {
 
     private SocketWrapper socket;
     private String connUrl;
+    private final boolean useTls;
     private final ByteBuffer inBuffer = new ByteBuffer();
     public final ByteBuffer outBuffer = new ByteBuffer();
     public int state = STATE_CONNECTING;
@@ -36,8 +37,13 @@ public final class ConnectionThread {
     private Throwable connectError;
 
     public ConnectionThread(String url) {
+        this(url, false);
+    }
+
+    public ConnectionThread(String url, boolean useTls) {
         this.connUrl = url;
-        RemoteLogger.info("CONN", "new ConnectionThread url=" + url);
+        this.useTls = useTls;
+        RemoteLogger.info("CONN", "new ConnectionThread url=" + url + " tls=" + useTls);
         Vector mediaControl = UIState.getMediaControl();
         if (mediaControl != null) {
             synchronized (mediaControl) {
@@ -136,13 +142,26 @@ public final class ConnectionThread {
 
     private void startConnectThread() {
         this.connectDeadline = System.currentTimeMillis() + CONNECT_TIMEOUT_MS;
-        final String url = new ByteBuffer().writeCharBytes("socket://")
+        final boolean tls = this.useTls;
+        // TLS streams must be drained via blocking read on a separate thread:
+        // BC TlsInputStream.available() returns 0 until the RecordLayer parses
+        // a frame, so the polling path in readFromSocket() would never fire.
+        final boolean async = tls || SettingsState.isCompressionEnabled();
+        final String hostPort = this.connUrl;
+        final String url = tls ? null : new ByteBuffer().writeCharBytes("socket://")
             .writeRawString(this.connUrl).getStringAndClear();
-        final boolean async = SettingsState.isCompressionEnabled();
         this.connectThread = new Thread() {
             public void run() {
                 try {
-                    SocketWrapper result = SocketWrapper.open(url, async);
+                    SocketWrapper result;
+                    if (tls) {
+                        int colonIdx = hostPort.lastIndexOf(':');
+                        String host = hostPort.substring(0, colonIdx);
+                        int port = Integer.parseInt(hostPort.substring(colonIdx + 1));
+                        result = SocketWrapper.openTls(host, port, async);
+                    } else {
+                        result = SocketWrapper.open(url, async);
+                    }
                     synchronized (ConnectionThread.this) {
                         ConnectionThread.this.socket = result;
                     }
@@ -154,7 +173,7 @@ public final class ConnectionThread {
             }
         };
         this.connectThread.start();
-        RemoteLogger.info("CONN", "connect started to " + this.connUrl);
+        RemoteLogger.info("CONN", "connect started to " + this.connUrl + " tls=" + tls);
     }
 
     private void setError(Throwable error) {

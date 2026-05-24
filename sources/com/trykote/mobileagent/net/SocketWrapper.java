@@ -30,9 +30,42 @@ public final class SocketWrapper {
     public Throwable error;
     public ByteBuffer asyncBuffer;
     private final boolean async;
+    private TlsConnection tls;
 
     private SocketWrapper(boolean async) {
         this.async = async;
+    }
+
+    public static SocketWrapper openTls(String host, int port, boolean async) throws IOException {
+        RemoteLogger.info("NET", "SocketWrapper.openTls host=" + host + ":" + port + " async=" + async);
+        long t0 = System.currentTimeMillis();
+        SocketWrapper wrapper = new SocketWrapper(async);
+        try {
+            TlsConnection tlsConn = new TlsConnection(host, port);
+            RemoteLogger.info("NET", "SocketWrapper.openTls handshake done in " + (System.currentTimeMillis() - t0) + "ms");
+            wrapper.tls = tlsConn;
+            IOUtils.registerResource(tlsConn);
+            wrapper.inputStream = (InputStream) IOUtils.registerResource((Object) tlsConn.getInputStream());
+            wrapper.outputStream = (OutputStream) IOUtils.registerResource((Object) tlsConn.getOutputStream());
+            if (async) {
+                wrapper.asyncBuffer = new ByteBuffer();
+                new AsyncTask(AsyncTaskId.SOCKET_READER, wrapper);
+            }
+            MapState.getTileRequestVector().addElement(wrapper);
+            return wrapper;
+        } catch (IOException e) {
+            RemoteLogger.error("NET", "SocketWrapper.openTls FAILED after " + (System.currentTimeMillis() - t0) + "ms", e);
+            wrapper.closeImmediate();
+            throw e;
+        } catch (RuntimeException e) {
+            RemoteLogger.error("NET", "SocketWrapper.openTls FAILED (RE) after " + (System.currentTimeMillis() - t0) + "ms", e);
+            wrapper.closeImmediate();
+            throw e;
+        } catch (Error e) {
+            RemoteLogger.error("NET", "SocketWrapper.openTls FAILED (Error) after " + (System.currentTimeMillis() - t0) + "ms: " + e);
+            wrapper.closeImmediate();
+            throw e;
+        }
     }
 
     public static SocketWrapper open(String url, boolean async) throws IOException {
@@ -131,11 +164,17 @@ public final class SocketWrapper {
     private void closeImpl(boolean immediate) {
         IOUtils.closeInput(this.inputStream);
         IOUtils.closeOutput(this.outputStream);
-        Connection conn = this.connection;
-        if (conn == null || immediate) {
-            IOUtils.closeConn(conn);
+        if (this.tls != null) {
+            IOUtils.unregisterResource(this.tls);
+            this.tls.close();
+            this.tls = null;
         } else {
-            new AsyncTask(AsyncTaskId.DELAYED_CLOSE, conn);
+            Connection conn = this.connection;
+            if (conn == null || immediate) {
+                IOUtils.closeConn(conn);
+            } else {
+                new AsyncTask(AsyncTaskId.DELAYED_CLOSE, conn);
+            }
         }
         this.connection = null;
         this.inputStream = null;

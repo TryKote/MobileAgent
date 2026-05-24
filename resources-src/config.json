@@ -4221,6 +4221,15 @@
           "label": 0,
           "icon": 0,
           "cmd": 0
+        },
+        {
+          "type": "checkbox",
+          "label": 0,
+          "_label": "Использовать SSL/TLS",
+          "stateKey": 1493,
+          "stateKey_": "RegistrationKeys.FLAG_USE_SSL_TLS",
+          "icon": 0,
+          "cmd": 0
         }
       ],
       "handler": "ProfileHandler"

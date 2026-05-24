@@ -838,6 +838,7 @@ public final class Screens {
         s.configureHeader(383, "Учетная запись Jabber");
         s.addTextInput("Логин:", 63, "UCB_BASIC_LATIN", 0, 1292);
         s.addTextInput("Пароль:", 63, "UCB_BASIC_LATIN", 327680, 1293);
+        s.addCheckbox("Использовать SSL/TLS", 1493);
         s.configureSoftKeys("Сохранить", 25, "Отмена", 12, 0);
         return s;
     }

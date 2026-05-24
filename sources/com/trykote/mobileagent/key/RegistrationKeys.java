@@ -42,4 +42,5 @@ public final class RegistrationKeys {
     public static final int FLAG_SEARCH_ONLINE_ONLY = 1490;
     public static final int INT_REG_DOMAIN_INDEX = 1491;
     public static final int FLAG_REG_SMS_MODE = 1492;
+    public static final int FLAG_USE_SSL_TLS = 1493;
 }

@@ -169,11 +169,13 @@ $(GEN_DIR)/TestConfig.java: $(TEST_SRC) $(TEST_CFG)
 	@awk -F= 'FNR==NR { if ($$1=="enabled") e=($$2=="true"||$$2=="1")?"true":"false"; \
 	                      if ($$1=="login") l=$$2; \
 	                      if ($$1=="password") pw=$$2; \
-	                      if ($$1=="type") t=$$2; next } \
+	                      if ($$1=="type") t=$$2; \
+	                      if ($$1=="use_tls") u=($$2=="true"||$$2=="1")?"true":"false"; next } \
 	           /@@TEST_ACCOUNT_ENABLED@@/ { sub(/= [^;]+;/, "= "e";") } \
 	           /@@TEST_ACCOUNT_LOGIN@@/   { sub(/= "[^"]*";/, "= \""l"\";") } \
 	           /@@TEST_ACCOUNT_PASSWORD@@/{ sub(/= "[^"]*";/, "= \""pw"\";") } \
 	           /@@TEST_ACCOUNT_TYPE@@/    { sub(/= [^;]+;/, "= "t";") } \
+	           /@@TEST_ACCOUNT_USE_TLS@@/ { sub(/= [^;]+;/, "= "u";") } \
 	           { print }' $(TEST_CFG) $(TEST_SRC) > $@
 
 # --- Code generation targets ---
