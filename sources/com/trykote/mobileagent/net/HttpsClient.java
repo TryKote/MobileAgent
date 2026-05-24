@@ -41,13 +41,13 @@ public final class HttpsClient {
                 + "Host: " + host + "\r\n"
                 + "Connection: close\r\n"
                 + "\r\n";
-        RemoteLogger.log("TLS", "sending GET " + path.substring(0, Math.min(path.length(), 40)));
+        RemoteLogger.debug("TLS", "sending GET " + path.substring(0, Math.min(path.length(), 40)));
         out.write(request.getBytes("UTF-8"));
         out.flush();
-        RemoteLogger.log("TLS", "request sent, reading headers");
+        RemoteLogger.debug("TLS", "request sent, reading headers");
 
         parseResponseHeaders();
-        RemoteLogger.log("TLS", "response " + responseCode + " len=" + contentLength);
+        RemoteLogger.info("TLS", "response " + responseCode + " len=" + contentLength);
     }
 
     public int getResponseCode() {
@@ -74,14 +74,14 @@ public final class HttpsClient {
         int pos = 0;
         boolean headersDone = false;
 
-        RemoteLogger.log("TLS", "parseHeaders: reading first byte");
+        RemoteLogger.debug("TLS", "parseHeaders: reading first byte");
         while (!headersDone && pos < MAX_HEADER_SIZE) {
             int b = in.read();
             if (pos == 0) {
-                RemoteLogger.log("TLS", "parseHeaders: first byte=" + b);
+                RemoteLogger.debug("TLS", "parseHeaders: first byte=" + b);
             }
             if (b < 0) {
-                RemoteLogger.log("TLS", "parseHeaders: EOF at pos=" + pos);
+                RemoteLogger.debug("TLS", "parseHeaders: EOF at pos=" + pos);
                 break;
             }
             buf[pos++] = (byte) b;
@@ -91,10 +91,10 @@ public final class HttpsClient {
                 headersDone = true;
             }
         }
-        RemoteLogger.log("TLS", "parseHeaders: done=" + headersDone + " pos=" + pos);
+        RemoteLogger.debug("TLS", "parseHeaders: done=" + headersDone + " pos=" + pos);
 
         String headers = new String(buf, 0, pos, "UTF-8");
-        RemoteLogger.log("TLS", "headers: " + headers.substring(0, Math.min(headers.length(), 120)));
+        RemoteLogger.debug("TLS", "headers: " + headers.substring(0, Math.min(headers.length(), 120)));
         int statusStart = headers.indexOf(' ');
         if (statusStart > 0) {
             responseCode = Integer.parseInt(

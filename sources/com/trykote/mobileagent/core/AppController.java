@@ -13,6 +13,7 @@ import com.trykote.mobileagent.key.UIKeys;
 import com.trykote.mobileagent.map.MapController;
 import com.trykote.mobileagent.map.MapRenderer;
 import com.trykote.mobileagent.map.MapUtils;
+import com.trykote.mobileagent.map.RouteData;
 import com.trykote.mobileagent.map.TileCache;
 import com.trykote.mobileagent.model.Contact;
 import com.trykote.mobileagent.model.Conversation;
@@ -23,7 +24,6 @@ import com.trykote.mobileagent.net.TrafficAccounting;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
 import com.trykote.mobileagent.protocol.ProtocolEvent;
-import com.trykote.mobileagent.map.RouteData;
 import com.trykote.mobileagent.ui.ContactListManager;
 import com.trykote.mobileagent.ui.ListView;
 import com.trykote.mobileagent.ui.MainCanvas;
@@ -183,6 +183,7 @@ public final class AppController {
         appLock = new Object();
         synchronized (appLock) {
             RemoteLogger.init();
+            RemoteLogger.logKvmInfo(RemoteLogger.LEVEL_INFO, width, height);
             AppState.init(midlet);
             initializeVectors(width, height);
             initializeTimers();
@@ -257,7 +258,8 @@ public final class AppController {
             loopCounter++;
             long now = System.currentTimeMillis();
             if (now - lastHeartbeat > 5000) {
-                RemoteLogger.log("LOOP", "heartbeat #" + loopCounter + " screenId=" + ScreenManager.getCurrentScreen().screenId + " queueSize=" + SessionState.getEventQueue().size() + " pre-lock");
+                RemoteLogger.trace("LOOP", "heartbeat #" + loopCounter + " screenId=" + ScreenManager.getCurrentScreen().screenId + " queueSize=" + SessionState.getEventQueue().size() + " pre-lock");
+                RemoteLogger.logHeapStats(RemoteLogger.LEVEL_TRACE);
                 lastHeartbeat = now;
             }
             synchronized (appLock) {
@@ -318,7 +320,7 @@ public final class AppController {
                     }
                 }
                 } catch (Throwable e) {
-                    RemoteLogger.log("LOOP", "EXCEPTION in event loop: " + e.getClass().getName() + ": " + e.getMessage(), e);
+                    RemoteLogger.error("LOOP", "EXCEPTION in event loop: " + e.getClass().getName() + ": " + e.getMessage(), e);
                 }
             }
             String savedStr = UIState.getSavedString();
@@ -373,7 +375,8 @@ public final class AppController {
                 if (acct.progress == Account.PROGRESS_CONNECTED) {
                     acct.retryCount = 0;
                 }
-            } catch (Throwable unused) {
+            } catch (Throwable th) {
+                RemoteLogger.error("ACCT", "loadData threw login=" + acct.login + " progress=" + acct.progress, th);
                 acct.handleConnError();
             }
         }

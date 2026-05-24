@@ -572,8 +572,39 @@ public final class DialogScreen extends ScreenView {
             showImagePopup(pending);
             return 0;
         }
+        updateImageProgress();
         Contact contact = AppState.getCurrentContact();
         return (contact.flags != 0) || contact.dirty ? ScreenId.CLEAR_SEARCH : 0;
+    }
+
+    private static final int GFX_EXPANDABLE = 5;
+    private static final int IMAGE_DATA_MIN_LEN = 4;
+    private static final int IMAGE_DATA_MARKER = 2;
+
+    private static void updateImageProgress() {
+        if (!InlineImageCache.consumeStateChange()) return;
+        ListView screen = ScreenManager.getCurrentScreen();
+        if (screen == null) return;
+        Vector items = screen.menuItems;
+        int size = items.size();
+        for (int i = 0; i < size; i++) {
+            MenuItem item = (MenuItem) items.elementAt(i);
+            if (!(item.data instanceof Object[])) continue;
+            Object[] arr = (Object[]) item.data;
+            if (arr.length < IMAGE_DATA_MIN_LEN) continue;
+            if (!(arr[0] instanceof Integer)) continue;
+            if (((Integer) arr[0]).intValue() != IMAGE_DATA_MARKER) continue;
+            String url = (String) arr[1];
+            int colorStyle = ((Integer) arr[2]).intValue();
+            String oldLabel = (String) arr[3];
+            String newLabel = InlineImageCache.resolveImageLabel(url);
+            if (!newLabel.equals(oldLabel)) {
+                arr[3] = newLabel;
+                item.clear();
+                item.addText(newLabel, GFX_EXPANDABLE, colorStyle);
+                AppController.needsRepaint = true;
+            }
+        }
     }
 
     // --- Private ---

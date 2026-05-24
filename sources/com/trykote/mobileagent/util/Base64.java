@@ -15,6 +15,7 @@ public final class Base64 {
     private static final int DIGIT_9 = 57;   // '9'
     private static final int CHAR_PLUS = 43;  // '+'
     private static final int CHAR_SLASH = 47; // '/'
+    private static final int CHAR_PAD = 61;   // '='
 
     // Offsets for converting ASCII code → 6-bit Base64 index
     private static final int UPPER_OFFSET = 65;  // 'A' maps to 0
@@ -78,6 +79,9 @@ public final class Base64 {
         }
         if (i == CHAR_SLASH) {
             return 63;
+        }
+        if (i == CHAR_PAD) {
+            return 0;
         }
         throw new RuntimeException();
     }
@@ -150,6 +154,14 @@ public final class Base64 {
             if (i > 2) {
                 buffer.writeByte((val3 << 6) | val4);
             }
+        }
+        // Trim trailing padding: each '=' at the end of input drops one output byte.
+        int padCount = 0;
+        for (int idx = length - 1; idx >= 0 && str.charAt(idx) == '='; idx--) {
+            padCount++;
+        }
+        if (padCount > 0) {
+            buffer.length -= padCount;
         }
         return buffer;
     }

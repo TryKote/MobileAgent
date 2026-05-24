@@ -89,7 +89,7 @@ public final class AsyncTask implements Runnable {
     public Thread thread;
 
     public AsyncTask(Object target, int commandId, int commandParam) {
-        RemoteLogger.log("TASK", "new AsyncTask type=" + commandId + " param=" + commandParam);
+        RemoteLogger.debug("TASK", "new AsyncTask type=" + commandId + " param=" + commandParam);
         AppController.dispatchCommand(target, commandId, commandParam);
     }
 
@@ -106,10 +106,10 @@ public final class AsyncTask implements Runnable {
                     }
                 }
                 SocketWrapper.closeAll();
-                RemoteLogger.log("PERSIST", "SHUTDOWN: saveOnExit=" + AppController.saveOnExit);
+                RemoteLogger.info("PERSIST", "SHUTDOWN: saveOnExit=" + AppController.saveOnExit);
                 AccountManager.saveState(AppController.saveOnExit, true);
                 AppState.saveAllDeltas(AppController.saveOnExit);
-                RemoteLogger.log("PERSIST", "SHUTDOWN: save complete");
+                RemoteLogger.info("PERSIST", "SHUTDOWN: save complete");
             }
         }
     }
@@ -127,7 +127,7 @@ public final class AsyncTask implements Runnable {
     }
 
     public void run() {
-        RemoteLogger.log("TASK", "run taskId=" + this.taskId);
+        RemoteLogger.debug("TASK", "run taskId=" + this.taskId);
         try {
             switch (this.taskId) {
                 case AsyncTaskId.PROCESS_SOFTKEY: taskProcessSoftkey(); return;
@@ -164,7 +164,7 @@ public final class AsyncTask implements Runnable {
                 case AsyncTaskId.DOWNLOAD_INLINE_IMAGE: taskDownloadInlineImage(); return;
             }
         } catch (Throwable e) {
-            RemoteLogger.log("TASK", "FATAL exception in run taskId=" + this.taskId, e);
+            RemoteLogger.error("TASK", "FATAL exception in run taskId=" + this.taskId, e);
         }
     }
 
@@ -201,12 +201,14 @@ public final class AsyncTask implements Runnable {
             InputStream imageStream;
 
             if (isHttps) {
-                RemoteLogger.log("IMG", "opening HTTPS: " + url.substring(0, Math.min(url.length(), 60)));
+                RemoteLogger.info("IMG", "opening HTTPS: " + url.substring(0, Math.min(url.length(), 60)));
+                InlineImageCache.setProgress(url, InlineImageCache.PHASE_CONNECTING, 0);
+                AppController.needsRepaint = true;
                 httpsClient = new HttpsClient(url);
                 responseCode = httpsClient.getResponseCode();
                 contentLength = httpsClient.getContentLength();
                 imageStream = httpsClient.getInputStream();
-                RemoteLogger.log("IMG", "HTTPS response=" + responseCode + " len=" + contentLength);
+                RemoteLogger.info("IMG", "HTTPS response=" + responseCode + " len=" + contentLength);
             } else {
                 httpClient = HttpClient.createHttpClient(url, null, 3);
                 responseCode = httpClient.getResponseCode();
@@ -226,12 +228,15 @@ public final class AsyncTask implements Runnable {
 
             ByteBuffer buf;
             if (isHttps) {
-                RemoteLogger.log("IMG", "reading body");
+                RemoteLogger.debug("IMG", "reading body");
                 buf = new ByteBuffer();
                 byte[] readBuf = ObjectPool.newBytes(2048);
                 int bytesRead;
                 int totalRead = 0;
                 int remaining = (int) contentLength;
+                int lastPercent = -1;
+                InlineImageCache.setProgress(url, InlineImageCache.PHASE_BODY, 0);
+                AppController.needsRepaint = true;
                 try {
                     while (remaining > 0) {
                         int toRead = Math.min(readBuf.length, remaining);
@@ -240,8 +245,11 @@ public final class AsyncTask implements Runnable {
                         totalRead += bytesRead;
                         remaining -= bytesRead;
                         buf.writeBytesAt(readBuf, 0, bytesRead);
-                        if (totalRead % 10240 < 2048) {
-                            RemoteLogger.log("IMG", "read " + totalRead + "b");
+                        int percent = (int) (totalRead * 100 / contentLength);
+                        if (percent != lastPercent) {
+                            lastPercent = percent;
+                            InlineImageCache.setProgress(url, InlineImageCache.PHASE_BODY, percent);
+                            AppController.needsRepaint = true;
                         }
                         if (buf.length > InlineImageCache.MAX_IMAGE_SIZE) {
                             InlineImageCache.markTooLarge(url);
@@ -251,13 +259,13 @@ public final class AsyncTask implements Runnable {
                         }
                     }
                 } catch (IOException readEx) {
-                    RemoteLogger.log("IMG", "read error at " + totalRead + "/" + contentLength + ": " + readEx);
+                    RemoteLogger.error("IMG", "read error at " + totalRead + "/" + contentLength + ": " + readEx);
                     if (totalRead < contentLength) {
                         ObjectPool.releaseBytes(readBuf);
                         throw readEx;
                     }
                 }
-                RemoteLogger.log("IMG", "body done, total=" + totalRead + "b");
+                RemoteLogger.debug("IMG", "body done, total=" + totalRead + "b");
                 ObjectPool.releaseBytes(readBuf);
             } else {
                 buf = new ByteBuffer(httpClient);
@@ -268,17 +276,18 @@ public final class AsyncTask implements Runnable {
                 }
             }
 
-            RemoteLogger.log("IMG", "creating image from " + buf.length + "b");
+            RemoteLogger.debug("IMG", "creating image from " + buf.length + "b");
             Image image = buf.toImage();
-            RemoteLogger.log("IMG", "image=" + (image != null ? image.getWidth() + "x" + image.getHeight() : "null"));
+            RemoteLogger.debug("IMG", "image=" + (image != null ? image.getWidth() + "x" + image.getHeight() : "null"));
             if (image != null) {
                 image = InlineImageCache.scaleToFit(image);
                 InlineImageCache.putImage(url, image);
                 InlineImageCache.setPendingImage(image);
-                RemoteLogger.log("IMG", "cached, scaled to " + image.getWidth() + "x" + image.getHeight());
+                InlineImageCache.setProgress(url, InlineImageCache.PHASE_DONE, 100);
+                RemoteLogger.debug("IMG", "cached, scaled to " + image.getWidth() + "x" + image.getHeight());
             }
         } catch (Throwable e) {
-            RemoteLogger.log("IMG", "download failed: " + url + " " + e);
+            RemoteLogger.error("IMG", "download failed: " + url + " " + e);
             EventDispatcher.postNotification("Ошибка загрузки");
         } finally {
             InlineImageCache.clearDownloading(url);

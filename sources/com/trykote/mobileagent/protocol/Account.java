@@ -287,11 +287,11 @@ public abstract class Account {
     }
 
     public final int sendData(ByteBuffer buffer) {
-        RemoteLogger.log("ACCT", "sendData: " + buffer.length + " bytes, connState=" + this.connection.state);
+        RemoteLogger.debug("ACCT", "sendData: " + buffer.length + " bytes, connState=" + this.connection.state);
         AccountManager.recordOutboundTraffic(this, buffer.length);
         ConnectionThread conn = this.connection;
         if (conn.exception != null) {
-            RemoteLogger.log("ACCT", "sendData: connection has exception: " + conn.exception);
+            RemoteLogger.warn("ACCT", "sendData: connection has exception: " + conn.exception);
             throw new RuntimeException();
         }
         ByteBuffer outBuf = conn.outBuffer;
@@ -341,9 +341,9 @@ public abstract class Account {
     public abstract int getType();
 
     public int connect(int authModeParam) {
-        RemoteLogger.log("ACCT", "connect(" + authModeParam + ") login=" + this.login + " progress=" + this.progress);
+        RemoteLogger.info("ACCT", "connect(" + authModeParam + ") login=" + this.login + " progress=" + this.progress);
         if (isConnecting()) {
-            RemoteLogger.log("ACCT", "already connecting, returning 297");
+            RemoteLogger.warn("ACCT", "already connecting, returning 297");
             return 297;
         }
         if (authModeParam == 0) {
@@ -354,12 +354,12 @@ public abstract class Account {
         }
         this.msgCount = 0;
         this.progress = PROGRESS_STARTING;
-        RemoteLogger.log("ACCT", "connect: progress=1, authMode=" + this.authMode);
+        RemoteLogger.info("ACCT", "connect: progress=1, authMode=" + this.authMode);
         return 0;
     }
 
     public int disconnect() {
-        RemoteLogger.log("ACCT", "disconnect login=" + this.login + " isConnecting=" + isConnecting());
+        RemoteLogger.info("ACCT", "disconnect login=" + this.login + " isConnecting=" + isConnecting());
         return !isConnecting() ? 298 : 0;
     }
 
@@ -386,7 +386,7 @@ public abstract class Account {
     public abstract int getDefaultError();
 
     public final void closeConnection() {
-        RemoteLogger.log("ACCT", "closeConnection login=" + this.login);
+        RemoteLogger.info("ACCT", "closeConnection login=" + this.login);
         if (this.connection != null) {
             this.connection.state = ConnectionThread.STATE_CLOSING;
         }
@@ -406,14 +406,14 @@ public abstract class Account {
         // Retry on IOException (network errors), not on SecurityException or auth errors
         if (th instanceof IOException && this.retryCount < MAX_RETRIES) {
             this.retryCount++;
-            RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " retry " + this.retryCount + "/" + MAX_RETRIES + " err=" + errorMsg);
+            RemoteLogger.info("ACCT", "handleConnError login=" + this.login + " retry " + this.retryCount + "/" + MAX_RETRIES + " err=" + errorMsg);
             closeConnection();
             try { Thread.sleep(RETRY_DELAY_MS); } catch (Throwable unused) {}
             this.progress = PROGRESS_STARTING;
             return;
         }
 
-        RemoteLogger.log("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
+        RemoteLogger.info("ACCT", "handleConnError login=" + this.login + " err=" + errorMsg);
         EventDispatcher.postAccountMessage(this, errorMsg);
         closeConnection();
         this.retryCount = 0;
@@ -421,7 +421,7 @@ public abstract class Account {
     }
 
     public final void handleTimeout() {
-        RemoteLogger.log("ACCT", "handleTimeout login=" + this.login);
+        RemoteLogger.info("ACCT", "handleTimeout login=" + this.login);
         EventDispatcher.postAccountError(this, 462);
         closeConnection();
         this.lastError = getDefaultError();
@@ -490,11 +490,11 @@ public abstract class Account {
     }
 
     public final void onMessage(String contactId, long timestamp, String messageText) {
-        RemoteLogger.log("MSG", "onMessage from=" + contactId + " text=" + (messageText != null ? messageText.substring(0, Math.min(messageText.length(), 80)) : "null"));
+        RemoteLogger.debug("MSG", "onMessage from=" + contactId + " text=" + (messageText != null ? messageText.substring(0, Math.min(messageText.length(), 80)) : "null"));
         Contact contact = getContact((Object) contactId);
         Contact target = contact;
         if (contact == null) {
-            RemoteLogger.log("MSG", "onMessage: contact not found, creating new for " + contactId);
+            RemoteLogger.warn("MSG", "onMessage: contact not found, creating new for " + contactId);
             target = newContact(contactId);
         }
         this.recvCount++;

@@ -1,9 +1,9 @@
 package com.trykote.mobileagent.ui;
 
 import com.trykote.mobileagent.core.AppController;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.key.UIKeys;
@@ -92,7 +92,7 @@ public final class TabBar {
     }
 
     public static void initialize() {
-        RemoteLogger.log("TAB", "initialize: accounts=" + SessionState.getAccounts().size()
+        RemoteLogger.debug("TAB", "initialize: accounts=" + SessionState.getAccounts().size()
             + " multiAcct=" + SettingsState.isMultiAccount());
         currentIndex = 0;
         currentAccount = null;
@@ -100,14 +100,14 @@ public final class TabBar {
         Vector accounts = SessionState.getAccounts();
         int accountCount = accounts.size();
         if (accountCount == 0 || !SettingsState.isMultiAccount()) {
-            RemoteLogger.log("TAB", "addTab DEFAULT: icon=" + ICON_CONTACTS
+            RemoteLogger.debug("TAB", "addTab DEFAULT: icon=" + ICON_CONTACTS
                 + " title=" + StringPool.get(StringResKeys.STR_TAB_CONTACTS));
             addTab(ICON_CONTACTS, StringPool.get(StringResKeys.STR_TAB_CONTACTS),
                 TYPE_CONTACTS, null);
         } else {
             for (int idx = 0; idx < accountCount; idx++) {
                 Account acct = (Account) accounts.elementAt(idx);
-                RemoteLogger.log("TAB", "addTab ACCOUNT: icon=" + acct.getIconId()
+                RemoteLogger.debug("TAB", "addTab ACCOUNT: icon=" + acct.getIconId()
                     + " name=" + acct.shortName + " login=" + acct.login);
                 addTab(acct.getIconId(), acct.shortName, TYPE_CONTACTS, acct);
                 if (idx == 0) {
@@ -116,19 +116,19 @@ public final class TabBar {
             }
         }
         if (SettingsState.isMailTabEnabled()) {
-            RemoteLogger.log("TAB", "addTab MAIL: getBool(67)="
+            RemoteLogger.debug("TAB", "addTab MAIL: getBool(67)="
                 + SettingsState.isMailTabEnabled());
             addTab(ICON_MAIL, StringPool.get(StringResKeys.STR_TAB_MAIL),
                 TYPE_MAIL, null);
         }
         if (SettingsState.isSearchTabEnabled()) {
-            RemoteLogger.log("TAB", "addTab SEARCH: getBool(68)="
+            RemoteLogger.debug("TAB", "addTab SEARCH: getBool(68)="
                 + SettingsState.isSearchTabEnabled());
             addTab(ICON_SEARCH, StringPool.get(StringResKeys.STR_TAB_SEARCH),
                 TYPE_SEARCH, null);
         }
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs="
+        RemoteLogger.debug("TAB", "initialize done: totalTabs="
             + UIState.getTabBars().size());
         AppController.needsRepaint = true;
     }
@@ -146,7 +146,7 @@ public final class TabBar {
         newTab.selectedTitle = savedTitle;
         newTab.selectedIndex = savedIndex;
         layout();
-        RemoteLogger.log("TAB", "initialize done: totalTabs="
+        RemoteLogger.debug("TAB", "initialize done: totalTabs="
             + UIState.getTabBars().size());
         AppController.needsRepaint = true;
     }
@@ -215,7 +215,7 @@ public final class TabBar {
             if (tab.type == tabType) {
                 tabs.removeElement(tab);
                 layout();
-                RemoteLogger.log("TAB", "initialize done: totalTabs="
+                RemoteLogger.debug("TAB", "initialize done: totalTabs="
                     + UIState.getTabBars().size());
                 AppController.needsRepaint = true;
                 return;
@@ -257,7 +257,7 @@ public final class TabBar {
 
     public static void layout() {
         Vector tabs = UIState.getTabBars();
-        RemoteLogger.log("TAB", "layout: tabs="
+        RemoteLogger.debug("TAB", "layout: tabs="
             + (tabs != null ? String.valueOf(tabs.size()) : "null")
             + " currentIdx=" + currentIndex);
         if (tabs == null) return;

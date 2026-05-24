@@ -112,6 +112,7 @@ debug-jar: $(BUILD)/debug-$(JAR)
 $(BUILD)/.debug-compiled: $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
 	@mkdir -p $(BUILD)/classes
 	$(JAVAC8) -g -source 1.5 -target 1.5 -Xlint:-options -classpath "$(CP)" -d $(BUILD)/classes -encoding UTF-8 $(SOURCES) $(GEN_DIR)/RemoteLoggerConfig.java $(GEN_DIR)/TestConfig.java
+	@cd $(BUILD)/classes && unzip -qo ../../$(LIBS)/bouncycastle-j2me.jar 'org/*'
 	@touch $@
 
 $(BUILD)/debug-$(JAR): $(BUILD)/.debug-compiled $(BUILD)/.resources
@@ -119,6 +120,10 @@ $(BUILD)/debug-$(JAR): $(BUILD)/.debug-compiled $(BUILD)/.resources
 	@mkdir -p $(BUILD)/debug-jar
 	cp -r $(RESOURCES_OUT)/* $(BUILD)/debug-jar/
 	cp -r $(BUILD)/classes/* $(BUILD)/debug-jar/
+	@# KEmulator's CustomClassLoader refuses to load classes in java.* packages.
+	@# BC's java.* shims are needed on real J2ME (CLDC lacks SecureRandom/BigInteger)
+	@# but break on full-JVM emulators — strip them so the bootstrap loader is used.
+	rm -rf $(BUILD)/debug-jar/java
 	rm -rf $(BUILD)/debug-jar/META-INF
 	mkdir -p $(BUILD)/debug-jar/META-INF
 	cp $(RESOURCES_SRC)/META-INF/MANIFEST.MF $(BUILD)/debug-jar/META-INF/
@@ -141,12 +146,22 @@ $(BUILD)/.resources: $(RESOURCES_SRC)/cities.xml $(RESOURCES_SRC)/images/mapping
 
 $(GEN_DIR)/RemoteLoggerConfig.java: $(GEN_SRC) $(GEN_CFG)
 	@mkdir -p $(GEN_DIR)
-	@awk -F= 'FNR==NR { if ($$1=="enabled") e=($$2=="true"||$$2=="1")?"true":"false"; \
+	@awk -F= 'BEGIN { lvl="0" } \
+	           FNR==NR { if ($$1=="enabled") e=($$2=="true"||$$2=="1")?"true":"false"; \
 	                      if ($$1=="host") h=$$2; \
-	                      if ($$1=="port") p=$$2; next } \
+	                      if ($$1=="port") p=$$2; \
+	                      if ($$1=="level") { \
+	                          if ($$2=="trace")        lvl="0"; \
+	                          else if ($$2=="debug")   lvl="1"; \
+	                          else if ($$2=="info")    lvl="2"; \
+	                          else if ($$2=="warning") lvl="3"; \
+	                          else if ($$2=="error")   lvl="4"; \
+	                      } \
+	                      next } \
 	           /@@REMOTE_LOGGER_ENABLED@@/ { sub(/= [^;]+;/, "= "e";") } \
 	           /@@REMOTE_LOGGER_HOST@@/    { sub(/= "[^"]*";/, "= \""h"\";") } \
 	           /@@REMOTE_LOGGER_PORT@@/    { sub(/= [^;]+;/, "= "p";") } \
+	           /@@REMOTE_LOGGER_LEVEL@@/   { sub(/= [^;]+;/, "= "lvl";") } \
 	           { print }' $(GEN_CFG) $(GEN_SRC) > $@
 
 $(GEN_DIR)/TestConfig.java: $(TEST_SRC) $(TEST_CFG)

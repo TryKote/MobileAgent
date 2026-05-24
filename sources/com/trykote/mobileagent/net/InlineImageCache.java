@@ -17,6 +17,20 @@ public final class InlineImageCache {
     private static final Hashtable tooLarge = new Hashtable();
     private static final Hashtable downloading = new Hashtable();
     private static Image pendingImage;
+    public static final int PHASE_NONE = -1;
+    public static final int PHASE_CONNECTING = 0;
+    public static final int PHASE_HEADERS = 1;
+    public static final int PHASE_BODY = 2;
+    public static final int PHASE_DONE = 3;
+
+    public static final String LABEL_IMAGE = "[Картинка]";
+    public static final String LABEL_TOO_LARGE = "[Файл слишком большой]";
+    public static final String LABEL_CONNECTING = "[Подключение...]";
+
+    private static String progressUrl;
+    private static int progressPercent;
+    private static int progressPhase = PHASE_NONE;
+    private static boolean stateChanged;
 
     public static synchronized Image getImage(String url) {
         return (Image) cache.get(url);
@@ -33,6 +47,7 @@ public final class InlineImageCache {
         }
         cache.put(url, image);
         keys.addElement(url);
+        stateChanged = true;
     }
 
     public static synchronized boolean isTooLarge(String url) {
@@ -41,6 +56,7 @@ public final class InlineImageCache {
 
     public static synchronized void markTooLarge(String url) {
         tooLarge.put(url, url);
+        stateChanged = true;
     }
 
     public static synchronized boolean isDownloading(String url) {
@@ -49,10 +65,56 @@ public final class InlineImageCache {
 
     public static synchronized void markDownloading(String url) {
         downloading.put(url, url);
+        stateChanged = true;
     }
 
     public static synchronized void clearDownloading(String url) {
         downloading.remove(url);
+        if (url != null && url.equals(progressUrl)) {
+            progressUrl = null;
+            progressPhase = PHASE_NONE;
+            progressPercent = 0;
+        }
+        stateChanged = true;
+    }
+
+    public static synchronized void setProgress(String url, int phase, int percent) {
+        progressUrl = url;
+        progressPhase = phase;
+        progressPercent = percent;
+        stateChanged = true;
+    }
+
+    public static synchronized boolean consumeStateChange() {
+        boolean wasChanged = stateChanged;
+        stateChanged = false;
+        return wasChanged;
+    }
+
+    public static synchronized String resolveImageLabel(String url) {
+        if (cache.containsKey(url)) return LABEL_IMAGE;
+        if (tooLarge.containsKey(url)) return LABEL_TOO_LARGE;
+        if (url.equals(progressUrl)
+                && progressPhase != PHASE_NONE
+                && progressPhase != PHASE_DONE) {
+            return buildProgressLabel(progressPhase, progressPercent);
+        }
+        return LABEL_IMAGE;
+    }
+
+    private static String buildProgressLabel(int phase, int percent) {
+        if (phase == PHASE_CONNECTING || phase == PHASE_HEADERS) {
+            return LABEL_CONNECTING;
+        }
+        int filled = percent / 10;
+        StringBuffer sb = new StringBuffer("[");
+        for (int i = 0; i < 10; i++) {
+            sb.append(i < filled ? '#' : '-');
+        }
+        sb.append(' ');
+        sb.append(percent);
+        sb.append("%]");
+        return sb.toString();
     }
 
     public static synchronized void setPendingImage(Image image) {

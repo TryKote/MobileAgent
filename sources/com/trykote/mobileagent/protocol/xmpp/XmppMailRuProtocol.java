@@ -7,8 +7,8 @@ import com.trykote.mobileagent.core.AsyncTaskId;
 import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.key.ChatKeys;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.RegistrationKeys;
@@ -21,17 +21,12 @@ import com.trykote.mobileagent.ui.NotificationHelper;
 import com.trykote.mobileagent.ui.ScreenManager;
 import com.trykote.mobileagent.ui.Screens;
 import com.trykote.mobileagent.util.ByteBuffer;
-import com.trykote.mobileagent.util.IOUtils;
 import com.trykote.mobileagent.util.ObjectPool;
 import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.StringUtils;
 import com.trykote.mobileagent.util.TestConfig;
 import com.trykote.mobileagent.util.Utils;
 
-import javax.microedition.io.Connection;
-import javax.microedition.io.Connector;
-import javax.microedition.io.Datagram;
-import javax.microedition.io.DatagramConnection;
 import java.util.Vector;
 
 public final class XmppMailRuProtocol extends XmppProtocol {
@@ -97,7 +92,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final void showLoginScreen() {
-        RemoteLogger.log("LOGIN", "showLoginScreen: accountType=" + getAccountType() + " account=" + AppState.getAccount());
+        RemoteLogger.info("LOGIN", "showLoginScreen: accountType=" + getAccountType() + " account=" + AppState.getAccount());
         if (getAccountType() == TYPE_MMP) {
             Account account = AppState.getAccount();
             if (account != null && account.isConnecting()) {
@@ -141,7 +136,7 @@ public final class XmppMailRuProtocol extends XmppProtocol {
                 RegistrationState.setPassword(TestConfig.PASSWORD);
             }
             SessionState.setAccountDisplayName(null);
-            RemoteLogger.log("LOGIN", "TYPE_XMPP: chatName=" + ChatState.getChatName() + " displayName=" + SessionState.getAccountDisplayName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
+            RemoteLogger.debug("LOGIN", "TYPE_XMPP: chatName=" + ChatState.getChatName() + " displayName=" + SessionState.getAccountDisplayName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
             Screens.xmppLoginAlt().show();
             return;
         }
@@ -185,9 +180,9 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final int performLogin() {
-        RemoteLogger.log("LOGIN", "performLogin: accountType=" + getAccountType());
+        RemoteLogger.info("LOGIN", "performLogin: accountType=" + getAccountType());
         ScreenManager.processScreenForm();
-        RemoteLogger.log("LOGIN", "after processForm: chatName=" + ChatState.getChatName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
+        RemoteLogger.debug("LOGIN", "after processForm: chatName=" + ChatState.getChatName() + " password=" + (RegistrationState.getPassword() != null ? "***" : "null"));
         if (getAccountType() == TYPE_MMP) {
             Account account = AppState.getAccount();
             String login = getLoginLowerCase();
@@ -266,124 +261,17 @@ public final class XmppMailRuProtocol extends XmppProtocol {
     }
 
     public static final void resolveXmppServer(Object[] taskArgs) {
-        try {
-            XmppProtocol xmppAccount = (XmppProtocol) taskArgs[0];
-            String login = xmppAccount.login;
-            String domain = StringUtils.suffix(login, login.indexOf('@') + 1);
-
-            // Skip DNS SRV for IP addresses — connect directly
-            if (isIpAddress(domain)) {
-                RemoteLogger.log("XMPP", "domain is IP address, skipping SRV: " + domain + ":" + XMPP_STANDARD_PORT);
-                xmppAccount.setAuthParameters(domain, XMPP_STANDARD_PORT);
-                return;
-            }
-
-            String srvQuery = StringUtils.concatKey(PackedStringKeys.SRV_XMPP_CLIENT_TCP, domain);
-            RemoteLogger.log("XMPP", "DNS SRV lookup: " + srvQuery);
-            String srvRecord = dnsLookupSrv(srvQuery);
-            RemoteLogger.log("XMPP", "DNS SRV result: " + srvRecord);
-            if (srvRecord == null || srvRecord.indexOf(':') <= 0) {
-                String fallback = xmppAccount.getStreamDomain();
-                RemoteLogger.log("XMPP", "SRV failed, using fallback: " + fallback + ":" + XMPP_STANDARD_PORT);
-                xmppAccount.setAuthParameters(fallback, XMPP_STANDARD_PORT);
-            } else {
-                Vector parts = Utils.splitNonEmpty(srvRecord, ':');
-                String host = Utils.getVectorString(parts, 0);
-                int port = Integer.parseInt(Utils.getVectorString(parts, 1));
-                RemoteLogger.log("XMPP", "SRV resolved: " + host + ":" + port);
-                xmppAccount.setAuthParameters(host, port);
-                ObjectPool.releaseVector(parts);
-            }
-        } catch (Throwable th) {
-            RemoteLogger.log("XMPP", "resolveXmppServer FAILED", th);
-            ((XmppProtocol) taskArgs[0]).setException(th);
-        }
-    }
-
-    private static boolean isIpAddress(String str) {
-        if (str == null || str.length() == 0) return false;
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (c != '.' && (c < '0' || c > '9')) return false;
-        }
-        return true;
-    }
-
-    private static final String dnsLookupSrv(String srvName) {
-        final int DNS_BUFFER_SIZE = 512;
-        String result;
-        DatagramConnection datagramConnection = null;
-        try {
-            RemoteLogger.log("XMPP", "dnsLookupSrv acquiring network lock");
-            NetworkLock.acquireNetworkLock();
-            RemoteLogger.log("XMPP", "dnsLookupSrv opening datagram to: " + StringPool.get(PackedStringKeys.HOST_NSRPUB_DNS));
-            Vector parts = Utils.splitNonEmpty(srvName, '.');
-            ByteBuffer requestBuf = new ByteBuffer().writeCharBytes(StringPool.get(PackedStringKeys.MMP_PADDING_12));
-            for (int i = 0; i < Utils.vectorSize(parts); i++) {
-                requestBuf.writeByteLenStr(Utils.getVectorString(parts, i));
-            }
-            ObjectPool.releaseVector(parts);
-            requestBuf.writeCharBytes(StringPool.get(PackedStringKeys.MMP_SPACER));
-            datagramConnection = (DatagramConnection) IOUtils.registerResource(Connector.open(StringPool.get(PackedStringKeys.HOST_NSRPUB_DNS)));
-            datagramConnection.send(datagramConnection.newDatagram(requestBuf.data, requestBuf.length));
-            requestBuf.clear();
-            Datagram datagram = datagramConnection.newDatagram(DNS_BUFFER_SIZE);
-            datagramConnection.receive(datagram);
-            ByteBuffer recordBuf = new ByteBuffer().setData(datagram.getData());
-            recordBuf.skip(6);
-            if (recordBuf.readShortBE() <= 0) {
-                result = null;
-            } else {
-                recordBuf.readInt();
-                while (true) {
-                    int labelLen = recordBuf.readUByte();
-                    int remaining = labelLen;
-                    if (labelLen == 0) {
-                        break;
-                    }
-                    for (int ri = remaining - 1; ri >= 0; ri--) {
-                        recordBuf.readUByte();
-                    }
-                }
-                recordBuf.skip(20);
-                int port = recordBuf.readShortBE();
-                ByteBuffer hostBuf = new ByteBuffer();
-                int labelLen = recordBuf.readUByte();
-                while (true) {
-                    labelLen--;
-                    if (labelLen < 0) {
-                        int nextLen = recordBuf.readUByte();
-                        labelLen = nextLen;
-                        if (nextLen == 0) {
-                            break;
-                        }
-                        hostBuf.writeByte('.');
-                    } else {
-                        hostBuf.writeByte(recordBuf.readUByte());
-                    }
-                }
-                result = hostBuf.writeByte(':').writeIntAsString(port).getStringAndClear();
-            }
-            String dnsResult = result;
-            IOUtils.closeConn((Connection) datagramConnection);
-            NetworkLock.releaseNetworkLock();
-            return dnsResult;
-        } catch (RuntimeException th) {
-            IOUtils.closeConn((Connection) datagramConnection);
-            NetworkLock.releaseNetworkLock();
-            throw th;
-        } catch (Throwable th) {
-            IOUtils.closeConn((Connection) datagramConnection);
-            NetworkLock.releaseNetworkLock();
-            throw new RuntimeException(th.toString());
-        }
+        XmppProtocol xmppAccount = (XmppProtocol) taskArgs[0];
+        String host = xmppAccount.getStreamDomain();
+        RemoteLogger.debug("XMPP", "resolve: direct connect to " + host + ":" + XMPP_STANDARD_PORT);
+        xmppAccount.setAuthParameters(host, XMPP_STANDARD_PORT);
     }
 
     public static final int loginXmpp(int accountType) {
         String password = Utils.defaultStr(RegistrationState.getPassword());
         String login = getLoginLowerCase();
         String fullLogin = login;
-        RemoteLogger.log("LOGIN", "loginXmpp: type=" + accountType + " login='" + login + "' password=" + (password.length() > 0 ? "***(" + password.length() + ")" : "EMPTY") + " serverIndex=" + SessionState.getServerIndex());
+        RemoteLogger.info("LOGIN", "loginXmpp: type=" + accountType + " login='" + login + "' password=" + (password.length() > 0 ? "***(" + password.length() + ")" : "EMPTY") + " serverIndex=" + SessionState.getServerIndex());
         if (StringUtils.isEmpty(login)) {
             return NotificationHelper.showError(301);
         }

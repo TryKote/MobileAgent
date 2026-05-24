@@ -37,6 +37,8 @@ public class XmppProtocol extends Account {
     public static final int PROGRESS_OPENING_STREAM = 4;
     public static final int PROGRESS_PROCESSING = 5;
 
+    private static final int WAITING_LOG_INTERVAL_MS = 5000;
+
     // XMPP status modes
     public static final int STATUS_DISCONNECTED = 0;
     public static final int STATUS_ONLINE = 1;
@@ -106,6 +108,8 @@ public class XmppProtocol extends Account {
     public Object authResult;
 
     private Throwable lastException;
+
+    private long lastWaitingLogMs;
 
     private String serverDomain;
 
@@ -206,7 +210,7 @@ public class XmppProtocol extends Account {
 
     private int sendXmlElement(XmlElement element) {
         String xml = element.toString();
-        RemoteLogger.log("XMPP", ">>> send: " + xml.substring(0, Math.min(xml.length(), 300)));
+        RemoteLogger.trace("XMPP", ">>> send: " + xml.substring(0, Math.min(xml.length(), 300)));
         return sendData(new ByteBuffer().writeUTFNoLen(xml));
     }
 
@@ -287,7 +291,7 @@ public class XmppProtocol extends Account {
     }
 
     private void handleStarting() {
-        RemoteLogger.log("XMPP", "progress STARTING, login=" + this.login + " isMailRu=" + isMailRuVariant());
+        RemoteLogger.info("XMPP", "progress STARTING, login=" + this.login + " isMailRu=" + isMailRuVariant());
         this.msgCount = 10;
         if (isMailRuVariant()) {
             if (Utils.nonEmpty(this.serverResourceId)) {
@@ -326,13 +330,17 @@ public class XmppProtocol extends Account {
                 handleException(this.lastException);
             }
         } else if (Utils.nonEmpty(this.serverAddress)) {
-            RemoteLogger.log("XMPP", "RESOLVING done -> CONNECTING, addr=" + this.serverAddress + ":" + this.serverPort);
+            RemoteLogger.info("XMPP", "RESOLVING done -> CONNECTING, addr=" + this.serverAddress + ":" + this.serverPort);
             this.progress = PROGRESS_CONNECTING;
         } else if (this.lastException != null) {
-            RemoteLogger.log("XMPP", "RESOLVING failed: " + this.lastException);
+            RemoteLogger.error("XMPP", "RESOLVING failed: " + this.lastException);
             handleException(this.lastException);
         } else {
-            RemoteLogger.log("XMPP", "RESOLVING: still waiting, serverAddress=" + this.serverAddress + " exception=" + this.lastException);
+            long now = System.currentTimeMillis();
+            if (now - this.lastWaitingLogMs > WAITING_LOG_INTERVAL_MS) {
+                this.lastWaitingLogMs = now;
+                RemoteLogger.debug("XMPP", "RESOLVING: still waiting, serverAddress=" + this.serverAddress + " exception=" + this.lastException);
+            }
         }
         notifyConnectionProgressChanged();
     }
@@ -341,7 +349,7 @@ public class XmppProtocol extends Account {
         this.msgCount = 30;
         this.state = 0;
         String connAddr = ObjectPool.toStringAndRelease(ObjectPool.newStringBuffer().append(this.serverAddress).append(':').append(this.serverPort));
-        RemoteLogger.log("XMPP", "progress CONNECTING to " + connAddr);
+        RemoteLogger.info("XMPP", "progress CONNECTING to " + connAddr);
         this.connection = new ConnectionThread(connAddr);
         this.progress = PROGRESS_OPENING_STREAM;
         notifyConnectionProgressChanged();
@@ -357,7 +365,7 @@ public class XmppProtocol extends Account {
             return;
         }
         if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
-            RemoteLogger.log("XMPP", "stream connected, opening XMPP stream");
+            RemoteLogger.info("XMPP", "stream connected, opening XMPP stream");
             this.msgCount = 50;
             this.progress = PROGRESS_PROCESSING;
             Object[] parserArgs = new Object[3];
@@ -385,7 +393,7 @@ public class XmppProtocol extends Account {
             return;
         }
         String tagName = element.tagName;
-        RemoteLogger.log("XMPP", "<<< element: " + element.toString().substring(0, Math.min(element.toString().length(), 300)));
+        RemoteLogger.trace("XMPP", "<<< element: " + element.toString().substring(0, Math.min(element.toString().length(), 300)));
         extractServerDomain(element, tagName);
         if (!StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName)) {
             dispatchStanza(element, tagName);
@@ -409,15 +417,17 @@ public class XmppProtocol extends Account {
             String fromDomain = element.getIntAttribute(PackedStringKeys.ATTR_FROM);
             if (fromDomain != null) {
                 this.serverDomain = fromDomain;
-                RemoteLogger.log("XMPP", "server domain: " + fromDomain);
+                RemoteLogger.debug("XMPP", "server domain: " + fromDomain);
             }
         }
     }
 
     private void dispatchStanza(XmlElement element, String tagName) {
+        RemoteLogger.trace("XMPP", "dispatchStanza tagName='" + tagName + "' challengeKey='" + AppState.getString(PackedStringKeys.TAG_CHALLENGE) + "'");
         if (StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_FEATURES, tagName)) {
             handleStreamFeatures(element);
         } else if (StringUtils.matchesKey(PackedStringKeys.TAG_CHALLENGE, tagName)) {
+            RemoteLogger.trace("XMPP", "dispatchStanza: matched TAG_CHALLENGE");
             handleChallenge(element);
         } else if (StringUtils.matchesKey(PackedStringKeys.TAG_SUCCESS, tagName)) {
             sendStreamHeader();
@@ -469,9 +479,10 @@ public class XmppProtocol extends Account {
     }
 
     private void handleChallenge(XmlElement element) {
+        RemoteLogger.debug("XMPP", "handleChallenge: textContent=" + (element.textContent != null ? "len=" + element.textContent.length() : "null"));
         XmlElement challengeResponse = XmlElement.createFromState(PackedStringKeys.TAG_RESPONSE).addIdAttr(PackedStringKeys.XMPP_NS_SASL);
         String decoded = Base64.decode(StringUtils.fromBuffer(element.textContent)).getStringAndClear();
-        RemoteLogger.log("XMPP", "DIGEST-MD5 challenge: " + decoded);
+        RemoteLogger.trace("XMPP", "DIGEST-MD5 challenge: " + decoded);
         int idx = decoded.indexOf(StringPool.get(PackedStringKeys.DIGEST_NONCE_EQ));
         if (idx >= 0) {
             buildDigestMd5Response(challengeResponse, decoded, idx);
@@ -484,7 +495,7 @@ public class XmppProtocol extends Account {
         String username = getAuthUsername();
         String password = this.password;
         String realm = parseDigestRealm(challenge);
-        RemoteLogger.log("XMPP", "DIGEST-MD5 auth: user=" + username + " realm=" + realm);
+        RemoteLogger.debug("XMPP", "DIGEST-MD5 auth: user=" + username + " realm=" + realm);
         String nonce = StringUtils.substring(challenge, nonceStart, challenge.indexOf(CHAR_QUOTE, nonceStart));
         String cnonce = Utils.generateRandomHash();
 
@@ -536,14 +547,14 @@ public class XmppProtocol extends Account {
 
     private void handleMessage(XmlElement element) {
         String fromAttr = element.getIntAttribute(PackedStringKeys.ATTR_FROM);
-        RemoteLogger.log("XMPP", "handleMessage from=" + fromAttr);
+        RemoteLogger.debug("XMPP", "handleMessage from=" + fromAttr);
         String senderJid = extractBareJid(fromAttr);
         XmppContact sender = findContactByJid(senderJid);
         if (sender == null) {
             sender = new XmppContact(this, senderJid, senderJid, null);
             sender.online = true;
             this.defaultGroup.addContact((Object) sender);
-            RemoteLogger.log("XMPP", "handleMessage: created contact for jid=" + senderJid);
+            RemoteLogger.debug("XMPP", "handleMessage: created contact for jid=" + senderJid);
         }
         sender.markOnlineIfOffline();
         StringBuffer sb = ObjectPool.newStringBuffer();
@@ -638,7 +649,7 @@ public class XmppProtocol extends Account {
     // --- End loadData decomposition ---
 
     private void handleException(Throwable exception) {
-        RemoteLogger.log("XMPP", "handleException login=" + this.login, exception);
+        RemoteLogger.error("XMPP", "handleException login=" + this.login, exception);
         EventDispatcher.postAccountMessage(this, exception.toString());
         closeConnection();
         this.lastError = getDefaultError();
@@ -943,7 +954,7 @@ public class XmppProtocol extends Account {
             return result;
         }
         this.sentCount++;
-        RemoteLogger.log("XMPP", "validateSend to=" + contact.getIdentifier() + " msg=" + message.substring(0, Math.min(message.length(), 100)));
+        RemoteLogger.debug("XMPP", "validateSend to=" + contact.getIdentifier() + " msg=" + message.substring(0, Math.min(message.length(), 100)));
         return sendXmlElement(XmlElement.createFromState(PackedStringKeys.TAG_MESSAGE).setAttrValue(PackedStringKeys.ATTR_TO, contact.getIdentifier()).addNameAttr(PackedStringKeys.XMPP_TYPE_CHAT).addChild(XmlElement.createFromState(PackedStringKeys.TAG_BODY).appendText((Object) message)).addSimpleChild(PackedStringKeys.XMPP_CHATSTATES_ACTIVE, PackedStringKeys.XMPP_NS_CHATSTATES));
     }
 
@@ -990,7 +1001,7 @@ public class XmppProtocol extends Account {
                 String jid = itemElement.getIntAttribute(PackedStringKeys.ATTR_JID);
                 if (jid != null && jid.indexOf(CHAR_AT) < 0 && this.serverDomain != null) {
                     jid = jid + CHAR_AT + this.serverDomain;
-                    RemoteLogger.log("XMPP", "roster: bare JID fixed -> " + jid);
+                    RemoteLogger.debug("XMPP", "roster: bare JID fixed -> " + jid);
                 }
                 String subscription = itemElement.getIntAttribute(PackedStringKeys.ATTR_SUBSCRIPTION);
                 String displayName = itemElement.getIntAttribute(PackedStringKeys.ATTR_NAME);

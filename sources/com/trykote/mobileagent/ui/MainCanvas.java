@@ -204,13 +204,13 @@ public final class MainCanvas extends Canvas implements CommandListener {
                 }
             }
         } catch (Throwable t) {
-            RemoteLogger.log("PAINT", "CRASH in paint: " + t);
+            RemoteLogger.error("PAINT", "CRASH in paint: " + t);
         }
         AppController.needsRepaint = false;
     }
 
     public final void keyPressed(int i) {
-        RemoteLogger.log("INPUT", "keyPressed: " + i);
+        RemoteLogger.trace("INPUT", "keyPressed: " + i);
         handleKeyInput(i, 0);
     }
 
@@ -342,13 +342,13 @@ public final class MainCanvas extends Canvas implements CommandListener {
         TimerManager.setTimer(TimerManager.SLOT_ANIMATION, 10000L);
         if (command != null) {
             if (command == this.okCommand) {
-                RemoteLogger.log("UI", "commandAction: OK pressed");
+                RemoteLogger.debug("UI", "commandAction: OK pressed");
                 EventDispatcher.postOkEvent();
             } else if (command == this.cancelCommand) {
-                RemoteLogger.log("UI", "commandAction: Cancel pressed");
+                RemoteLogger.debug("UI", "commandAction: Cancel pressed");
                 EventDispatcher.postCancelEvent();
             } else {
-                RemoteLogger.log("UI", "commandAction: unknown cmd " + command.getLabel());
+                RemoteLogger.warn("UI", "commandAction: unknown cmd " + command.getLabel());
             }
         }
     }

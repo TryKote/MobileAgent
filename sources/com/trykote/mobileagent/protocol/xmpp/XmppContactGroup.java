@@ -787,7 +787,7 @@ public final class XmppContactGroup extends ContactGroup {
     }
 
     public static final Object[] addContactInfoToQueue(Object[] contactInfo) {
-        RemoteLogger.log("XGRP", "addContactInfoToQueue");
+        RemoteLogger.debug("XGRP", "addContactInfoToQueue");
         if (contactInfo != null) {
             Vector queue = MapState.getTileQueue();
             synchronized (queue) {

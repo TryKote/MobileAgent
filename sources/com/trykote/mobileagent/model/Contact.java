@@ -409,8 +409,10 @@ public abstract class Contact implements Sortable {
                 screen.addExpandableItem(ICON_EXPANDABLE, Conversation.decodeMessage(lineText),
                         colorStyle, new Object[]{ObjectPool.integerOf(0), lineText});
             } else if (InlineImageCache.isImageUrl(lineText)) {
-                screen.addExpandableItem(-1, "[Картинка]", colorStyle,
-                        new Object[]{ObjectPool.integerOf(2), lineText});
+                String label = InlineImageCache.resolveImageLabel(lineText);
+                screen.addExpandableItem(-1, label, colorStyle,
+                        new Object[]{ObjectPool.integerOf(2), lineText,
+                                ObjectPool.integerOf(colorStyle), label});
             } else {
                 screen.addItem(MenuItem.createSeparator().addTextInternal(lineText, 0, colorStyle,
                         this.account.getType()));

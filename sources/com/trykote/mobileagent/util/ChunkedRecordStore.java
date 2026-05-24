@@ -10,7 +10,7 @@ public final class ChunkedRecordStore {
     private static final int MIN_CHUNK_SIZE = 2048;
 
     public static final ByteBuffer readChunkedRecord(String str) {
-        RemoteLogger.log("PERSIST", "readChunkedRecord: name='" + str + "'");
+        RemoteLogger.debug("PERSIST", "readChunkedRecord: name='" + str + "'");
         ByteBuffer buf = new ByteBuffer();
         int i = 0;
         while (true) {
@@ -22,7 +22,7 @@ public final class ChunkedRecordStore {
                 RecordStore store = IOUtils.openRecordStore(chunkName, false);
                 recordStore = store;
                 byte[] record = store.getRecord(1);
-                RemoteLogger.log("PERSIST", "readChunkedRecord: chunk " + i2 + " ('" + chunkName + "') = " + record.length + " bytes");
+                RemoteLogger.debug("PERSIST", "readChunkedRecord: chunk " + i2 + " ('" + chunkName + "') = " + record.length + " bytes");
                 buf.writeBytes(record);
                 ObjectPool.releaseBytes(record);
                 IOUtils.closeRecordStore(recordStore);
@@ -31,21 +31,21 @@ public final class ChunkedRecordStore {
                 throw th;
             } catch (Throwable th) {
                 IOUtils.closeRecordStore(recordStore);
-                RemoteLogger.log("PERSIST", "readChunkedRecord: done, total " + buf.length + " bytes (" + i + " chunks tried, exception: " + th.getClass().getName() + ")");
+                RemoteLogger.debug("PERSIST", "readChunkedRecord: done, total " + buf.length + " bytes (" + i + " chunks tried, exception: " + th.getClass().getName() + ")");
                 return buf;
             }
         }
     }
 
     public static final void writeRecord(String str, ByteBuffer buf, boolean z) {
-        RemoteLogger.log("PERSIST", "writeRecord: name='" + str + "', length=" + buf.length + ", chunked=" + z);
+        RemoteLogger.debug("PERSIST", "writeRecord: name='" + str + "', length=" + buf.length + ", chunked=" + z);
         if (z) {
             writeChunkedRecord(str, buf);
             return;
         }
         int i = buf.length;
         if (i == 0) {
-            RemoteLogger.log("PERSIST", "writeRecord: DELETING (empty buffer)");
+            RemoteLogger.debug("PERSIST", "writeRecord: DELETING (empty buffer)");
             String[] storeNames = StringUtils.listRecordStores();
             int i2 = 0;
             while (true) {
@@ -87,14 +87,14 @@ public final class ChunkedRecordStore {
                     }
                 }
                 IOUtils.closeRecordStore(recordStore);
-                RemoteLogger.log("PERSIST", "writeRecord: OK, wrote " + i + " bytes to '" + str + "'");
+                RemoteLogger.debug("PERSIST", "writeRecord: OK, wrote " + i + " bytes to '" + str + "'");
             } catch (RuntimeException th) {
                 IOUtils.closeRecordStore(recordStore);
-                RemoteLogger.log("PERSIST", "writeRecord FAILED (RE): " + th);
+                RemoteLogger.error("PERSIST", "writeRecord FAILED (RE): " + th);
                 throw th;
             } catch (Throwable th) {
                 IOUtils.closeRecordStore(recordStore);
-                RemoteLogger.log("PERSIST", "writeRecord FAILED: " + th);
+                RemoteLogger.error("PERSIST", "writeRecord FAILED: " + th);
                 throw new RuntimeException(th.toString());
             }
         }

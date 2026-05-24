@@ -15,8 +15,8 @@ import com.trykote.mobileagent.net.TrafficAccounting;
 import com.trykote.mobileagent.protocol.mmp.MmpProtocol;
 import com.trykote.mobileagent.protocol.mrim.MrimAccount;
 import com.trykote.mobileagent.protocol.xmpp.XmppContact;
-import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.protocol.xmpp.XmppContactGroup;
+import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
 import com.trykote.mobileagent.ui.NotificationHelper;
 import com.trykote.mobileagent.ui.ProtocolListeners;
@@ -159,7 +159,7 @@ public final class AccountManager {
     }
 
     public static void loadSavedAccounts() {
-        RemoteLogger.log("ACCT", "loadSavedAccounts START");
+        RemoteLogger.info("ACCT", "loadSavedAccounts START");
         Vector accounts = ObjectPool.newVector();
         ByteBuffer buffer = ChunkedRecordStore.readChunkedRecord(ObjectPool.unpackChars(ACCOUNT_STORE_KEY));
         while (buffer.length > 0) {
@@ -171,25 +171,25 @@ public final class AccountManager {
                         MrimAccount mrimAccount = new MrimAccount(buffer);
                         account = mrimAccount;
                         accounts.addElement(mrimAccount);
-                        RemoteLogger.log("ACCT", "loaded MRIM: " + mrimAccount.login);
+                        RemoteLogger.info("ACCT", "loaded MRIM: " + mrimAccount.login);
                         break;
                     case Account.TYPE_MMP:
                         MmpProtocol mmpProtocol = new MmpProtocol(buffer);
                         account = mmpProtocol;
                         accounts.addElement(mmpProtocol);
-                        RemoteLogger.log("ACCT", "loaded MMP: " + mmpProtocol.login);
+                        RemoteLogger.info("ACCT", "loaded MMP: " + mmpProtocol.login);
                         break;
                     case Account.TYPE_XMPP:
                         XmppProtocol xmppProtocol = new XmppProtocol(buffer);
                         account = xmppProtocol;
                         accounts.addElement(xmppProtocol);
-                        RemoteLogger.log("ACCT", "loaded XMPP: " + xmppProtocol.login);
+                        RemoteLogger.info("ACCT", "loaded XMPP: " + xmppProtocol.login);
                         break;
                     case Account.TYPE_XMPP_MAILRU:
                         XmppMailRuProtocol xmppMailRu = new XmppMailRuProtocol(buffer);
                         account = xmppMailRu;
                         accounts.addElement(xmppMailRu);
-                        RemoteLogger.log("ACCT", "loaded MailRu: " + xmppMailRu.login);
+                        RemoteLogger.info("ACCT", "loaded MailRu: " + xmppMailRu.login);
                         break;
                 }
                 if ((typeByte & HAS_PROPERTIES_FLAG) != 0) {
@@ -199,7 +199,7 @@ public final class AccountManager {
             } catch (Throwable unused) {
             }
         }
-        RemoteLogger.log("ACCT", "loadSavedAccounts: loaded " + accounts.size() + " accounts");
+        RemoteLogger.info("ACCT", "loadSavedAccounts: loaded " + accounts.size() + " accounts");
         SessionState.setAccounts(accounts);
     }
 
@@ -231,11 +231,11 @@ public final class AccountManager {
                     ((Account) accounts.elementAt(i)).serializeAccount(buffer, chunked, false).saveProperties(buffer);
                 }
             }
-            RemoteLogger.log("PERSIST", "saveAccounts: " + buffer.length + " bytes, chunked=" + chunked + ", destructive=" + destructive);
+            RemoteLogger.debug("PERSIST", "saveAccounts: " + buffer.length + " bytes, chunked=" + chunked + ", destructive=" + destructive);
             ChunkedRecordStore.writeRecord(ObjectPool.unpackChars(ACCOUNT_STORE_KEY), buffer, chunked);
-            RemoteLogger.log("PERSIST", "saveAccounts: writeRecord done");
+            RemoteLogger.debug("PERSIST", "saveAccounts: writeRecord done");
         } catch (Throwable th) {
-            RemoteLogger.log("PERSIST", "saveAccounts FAILED", th);
+            RemoteLogger.error("PERSIST", "saveAccounts FAILED", th);
         }
     }
 
@@ -269,7 +269,7 @@ public final class AccountManager {
         }
         SessionState.getAccounts().addElement(newAccount);
         registerListeners(newAccount);
-        RemoteLogger.log("ACCT", "validateCredentials OK, new account type=" + protocolType + " login=" + login);
+        RemoteLogger.info("ACCT", "validateCredentials OK, new account type=" + protocolType + " login=" + login);
         TabBar.initialize();
         saveAccountList();
         return 0;
@@ -497,10 +497,10 @@ public final class AccountManager {
 
     public static int handlePresenceAction() {
         Vector accounts = SessionState.getAccountSelection();
-        RemoteLogger.log("ACCT", "handlePresenceAction: " + accounts.size() + " accounts to connect");
+        RemoteLogger.debug("ACCT", "handlePresenceAction: " + accounts.size() + " accounts to connect");
         for (int i = accounts.size() - 1; i >= 0; i--) {
             Account account = (Account) accounts.elementAt(i);
-            RemoteLogger.log("ACCT", "  connecting: type=" + account.getType() + " login=" + account.login);
+            RemoteLogger.debug("ACCT", "  connecting: type=" + account.getType() + " login=" + account.login);
             account.connect(0);
         }
         return ScreenId.CONTACT_LIST;

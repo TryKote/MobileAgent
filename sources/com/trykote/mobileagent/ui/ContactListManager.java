@@ -91,7 +91,7 @@ public abstract class ContactListManager {
         return ScreenId.MAP;
     }
     public static void showContactList() {
-        RemoteLogger.log("CL", "showContactList called");
+        RemoteLogger.debug("CL", "showContactList called");
         SessionState.clearCurrentAccount();
         ContactState.clearEntity();
         SessionState.setConnectionState(CONNECTION_STATE_CONTACT_LIST);
@@ -125,7 +125,7 @@ public abstract class ContactListManager {
     }
 
     public static void refreshList() {
-        RemoteLogger.log("CL", "refreshList called");
+        RemoteLogger.debug("CL", "refreshList called");
         clearState();
         TabBar currentTab = TabBar.getCurrentTab();
         ListView selectedScreen = buildContactList().selectByTitle(currentTab.selectedTitle);
@@ -265,7 +265,7 @@ public abstract class ContactListManager {
     }
 
     private static ListView buildContactList() {
-        RemoteLogger.log("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
+        RemoteLogger.debug("CL", "buildContactList: currentAccount=" + (TabBar.currentAccount != null ? TabBar.currentAccount.login : "null"));
         int layoutColumns = 1 + SettingsState.getContactSortMode();
         ContactState.setIconSize(layoutColumns == 1 ? ICON_SIZE_SMALL : ICON_SIZE_LARGE);
         Screen screen = Screens.contactListTemplate();
@@ -784,7 +784,7 @@ public abstract class ContactListManager {
     }
 
     public static void refreshContactList() {
-        RemoteLogger.log("CL", "refreshContactList called");
+        RemoteLogger.debug("CL", "refreshContactList called");
         AppState.clearRange(UIKeys.RANGE_ACCOUNT_CACHE_START, UIKeys.RANGE_ACCOUNT_CACHE_END);
     }
 

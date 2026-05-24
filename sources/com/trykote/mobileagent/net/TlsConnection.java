@@ -30,14 +30,14 @@ public final class TlsConnection {
     private TlsClientProtocol tlsProtocol;
 
     public TlsConnection(String host, int port) throws IOException {
-        RemoteLogger.log("TLS", "connecting to " + host + ":" + port);
+        RemoteLogger.debug("TLS", "connecting to " + host + ":" + port);
         socket = (SocketConnection) Connector.open("socket://" + host + ":" + port);
         InputStream plainIn = socket.openInputStream();
         OutputStream plainOut = socket.openOutputStream();
 
         tlsProtocol = new TlsClientProtocol(plainIn, plainOut, new SecureRandom());
         tlsProtocol.connect(new SniTlsClient(host));
-        RemoteLogger.log("TLS", "handshake complete");
+        RemoteLogger.info("TLS", "handshake complete");
     }
 
     public InputStream getInputStream() {
@@ -88,7 +88,7 @@ public final class TlsConnection {
                 sb.append(' ');
                 sb.append(keys.nextElement());
             }
-            RemoteLogger.log("TLS", sb.toString());
+            RemoteLogger.debug("TLS", sb.toString());
             return ext;
         }
 

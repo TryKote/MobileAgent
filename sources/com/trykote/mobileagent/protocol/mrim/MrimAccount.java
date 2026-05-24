@@ -1,17 +1,17 @@
 package com.trykote.mobileagent.protocol.mrim;
 
 
-import com.trykote.mobileagent.map.MapPoint;
 import com.trykote.mobileagent.core.AppController;
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.ContactState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
+import com.trykote.mobileagent.map.MapPoint;
 import com.trykote.mobileagent.model.ChatRoom;
 import com.trykote.mobileagent.model.Contact;
 import com.trykote.mobileagent.model.ContactGroup;
@@ -351,7 +351,7 @@ public final class MrimAccount extends Account implements ListItem {
                 this.msgCount = 0;
                 break;
             case PROGRESS_STARTING:
-                RemoteLogger.log("MRIM", "progress STARTING, connecting to redirect server");
+                RemoteLogger.info("MRIM", "progress STARTING, connecting to redirect server");
                 this.msgCount = PROGRESS_PERCENT_STARTING;
                 this.state = 0;
                 this.connection = new ConnectionThread(StringPool.get(PackedStringKeys.HOST_MRIM_REDIRECT));
@@ -361,7 +361,7 @@ public final class MrimAccount extends Account implements ListItem {
             case PROGRESS_CONNECTING_REDIRECT:
                 this.msgCount = PROGRESS_PERCENT_CONNECTING;
                 if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
-                    RemoteLogger.log("MRIM", "redirect server connected, reading address");
+                    RemoteLogger.info("MRIM", "redirect server connected, reading address");
                     this.msgCount = PROGRESS_PERCENT_REDIRECT;
                     this.progress = PROGRESS_READING_REDIRECT;
                     notifyConnectionProgressChanged();
@@ -383,7 +383,7 @@ public final class MrimAccount extends Account implements ListItem {
                     }
                     this.connection.state = ConnectionThread.STATE_CLOSING;
                     String mainServer = ObjectPool.toStringAndRelease(sb);
-                    RemoteLogger.log("MRIM", "redirect resolved to: " + mainServer);
+                    RemoteLogger.info("MRIM", "redirect resolved to: " + mainServer);
                     this.connection = new ConnectionThread(mainServer);
                     this.progress = PROGRESS_CONNECTING_MAIN;
                     notifyConnectionProgressChanged();
@@ -391,7 +391,7 @@ public final class MrimAccount extends Account implements ListItem {
                 break;
             case PROGRESS_CONNECTING_MAIN:
                 if (this.connection.getState() == ConnectionThread.STATE_CONNECTED) {
-                    RemoteLogger.log("MRIM", "main server connected, sending auth packet");
+                    RemoteLogger.info("MRIM", "main server connected, sending auth packet");
                     this.msgCount = PROGRESS_PERCENT_AUTH_SENT;
                     sendData(ProtocolFactory.createMrimAuthPacket(this));
                     this.progress = PROGRESS_AUTHENTICATING;

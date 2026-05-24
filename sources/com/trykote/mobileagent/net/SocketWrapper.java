@@ -36,12 +36,12 @@ public final class SocketWrapper {
     }
 
     public static SocketWrapper open(String url, boolean async) throws IOException {
-        RemoteLogger.log("NET", "SocketWrapper.open url=" + url + " async=" + async);
+        RemoteLogger.info("NET", "SocketWrapper.open url=" + url + " async=" + async);
         long t0 = System.currentTimeMillis();
         SocketWrapper wrapper = new SocketWrapper(async);
         try {
             SocketConnection socketConnection = (SocketConnection) IOUtils.registerResource((Object) Connector.open(url, 3));
-            RemoteLogger.log("NET", "SocketWrapper.open connected in " + (System.currentTimeMillis() - t0) + "ms");
+            RemoteLogger.info("NET", "SocketWrapper.open connected in " + (System.currentTimeMillis() - t0) + "ms");
             wrapper.connection = socketConnection;
             try {
                 if (socketConnection instanceof SocketConnection) {
@@ -66,15 +66,15 @@ public final class SocketWrapper {
             MapState.getTileRequestVector().addElement(wrapper);
             return wrapper;
         } catch (IOException e) {
-            RemoteLogger.log("NET", "SocketWrapper.open FAILED after " + (System.currentTimeMillis() - t0) + "ms", e);
+            RemoteLogger.error("NET", "SocketWrapper.open FAILED after " + (System.currentTimeMillis() - t0) + "ms", e);
             wrapper.closeImmediate();
             throw e;
         } catch (RuntimeException e) {
-            RemoteLogger.log("NET", "SocketWrapper.open FAILED (RE) after " + (System.currentTimeMillis() - t0) + "ms", e);
+            RemoteLogger.error("NET", "SocketWrapper.open FAILED (RE) after " + (System.currentTimeMillis() - t0) + "ms", e);
             wrapper.closeImmediate();
             throw e;
         } catch (Error e) {
-            RemoteLogger.log("NET", "SocketWrapper.open FAILED (Error) after " + (System.currentTimeMillis() - t0) + "ms: " + e);
+            RemoteLogger.error("NET", "SocketWrapper.open FAILED (Error) after " + (System.currentTimeMillis() - t0) + "ms: " + e);
             wrapper.closeImmediate();
             throw e;
         }
@@ -120,7 +120,7 @@ public final class SocketWrapper {
     }
 
     public void close() {
-        RemoteLogger.log("NET", "closeConnection");
+        RemoteLogger.info("NET", "closeConnection");
         closeImpl(false);
     }
 
@@ -144,7 +144,7 @@ public final class SocketWrapper {
     }
 
     public void asyncReaderLoop() {
-        RemoteLogger.log("NET", "asyncReaderLoop started");
+        RemoteLogger.debug("NET", "asyncReaderLoop started");
         int bytesRead;
         byte[] buf = new byte[READ_BUFFER_SIZE];
         do {
@@ -159,7 +159,7 @@ public final class SocketWrapper {
                     Thread.sleep(100L);
                 }
             } catch (Throwable th) {
-                RemoteLogger.log("NET", "asyncReaderLoop error", th);
+                RemoteLogger.error("NET", "asyncReaderLoop error", th);
                 try {
                     Thread.sleep(3000);
                 } catch (Throwable unused) {
@@ -198,7 +198,7 @@ public final class SocketWrapper {
     }
 
     public static final void closeAll() {
-        RemoteLogger.log("NET", "closeAllConnections");
+        RemoteLogger.info("NET", "closeAllConnections");
         java.util.Vector connections = MapState.getTileRequestVector();
         for (int idx = connections.size() - 1; idx >= 0; idx--) {
             ((SocketWrapper) connections.elementAt(idx)).closeImmediate();

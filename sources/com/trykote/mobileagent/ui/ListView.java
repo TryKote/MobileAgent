@@ -915,7 +915,7 @@ public class ListView {
     }
 
     public final ListView addFullItem(int iconId, String label, String text, int width, Object data) {
-        RemoteLogger.log("SCR", "addFullItem icon=" + iconId + " str2='" + text + "' w=" + width);
+        RemoteLogger.debug("SCR", "addFullItem icon=" + iconId + " str2='" + text + "' w=" + width);
         MenuItem newItem = MenuItem.createWithWidth(text, width);
         if (iconId >= 0) {
             newItem.setIcon(iconId);

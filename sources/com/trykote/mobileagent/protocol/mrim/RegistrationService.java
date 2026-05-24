@@ -8,9 +8,9 @@ import com.trykote.mobileagent.core.ChatState;
 import com.trykote.mobileagent.core.ContactState;
 import com.trykote.mobileagent.core.MapState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.PackedStringKeys;
 import com.trykote.mobileagent.key.StringResKeys;
@@ -131,7 +131,7 @@ public abstract class RegistrationService {
         Screens.registrationForm().show();
         String statusStr = ContactState.getDisplayName();
         if (statusStr == null) {
-            RemoteLogger.log("NET", "triggering refreshContactList from RegistrationService");
+            RemoteLogger.debug("NET", "triggering refreshContactList from RegistrationService");
             ContactListManager.refreshContactList();
             return;
         }

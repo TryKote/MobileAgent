@@ -37,7 +37,7 @@ public final class ConnectionThread {
 
     public ConnectionThread(String url) {
         this.connUrl = url;
-        RemoteLogger.log("CONN", "new ConnectionThread url=" + url);
+        RemoteLogger.info("CONN", "new ConnectionThread url=" + url);
         Vector mediaControl = UIState.getMediaControl();
         if (mediaControl != null) {
             synchronized (mediaControl) {
@@ -84,7 +84,7 @@ public final class ConnectionThread {
             case STATE_CLOSING:
                 readFromSocket();
                 writeToSocket();
-                RemoteLogger.log("CONN", "state 3->0 (closing)");
+                RemoteLogger.info("CONN", "state 3->0 (closing)");
                 this.socket.close();
                 this.state = STATE_CLOSED;
                 return;
@@ -116,12 +116,12 @@ public final class ConnectionThread {
                 this.state = STATE_CONNECTED;
                 this.connUrl = null;
                 this.connectThread = null;
-                RemoteLogger.log("CONN", "state 1->2 (socket opened)");
+                RemoteLogger.info("CONN", "state 1->2 (socket opened)");
                 return;
             }
             if (this.connectError != null) {
                 setError(this.connectError);
-                RemoteLogger.log("CONN", "connect failed: " + this.connectError, this.connectError);
+                RemoteLogger.error("CONN", "connect failed: " + this.connectError, this.connectError);
                 this.connectThread = null;
                 return;
             }
@@ -129,7 +129,7 @@ public final class ConnectionThread {
 
         if (System.currentTimeMillis() > this.connectDeadline) {
             setError(new IOException("connect timeout: " + this.connUrl));
-            RemoteLogger.log("CONN", "connect timeout after " + CONNECT_TIMEOUT_MS + "ms: " + this.connUrl);
+            RemoteLogger.info("CONN", "connect timeout after " + CONNECT_TIMEOUT_MS + "ms: " + this.connUrl);
             this.connectThread = null;
         }
     }
@@ -154,7 +154,7 @@ public final class ConnectionThread {
             }
         };
         this.connectThread.start();
-        RemoteLogger.log("CONN", "connect started to " + this.connUrl);
+        RemoteLogger.info("CONN", "connect started to " + this.connUrl);
     }
 
     private void setError(Throwable error) {
@@ -184,11 +184,11 @@ public final class ConnectionThread {
                 buf.length += available;
                 buf.compact();
             }
-            RemoteLogger.log("CONN", "IN " + available + "b: " + formatBytes(readBuf, available));
+            RemoteLogger.trace("CONN", "IN " + available + "b: " + formatBytes(readBuf, available));
             ObjectPool.releaseBytes(readBuf);
         } catch (Throwable th) {
             setError(th);
-            RemoteLogger.log("CONN", "readFromSocket ERROR: " + th, th);
+            RemoteLogger.error("CONN", "readFromSocket ERROR: " + th, th);
             this.socket.close();
         }
     }
@@ -210,13 +210,13 @@ public final class ConnectionThread {
                 buf.offset += len;
                 buf.length -= len;
                 buf.compact();
-                RemoteLogger.log("CONN", "OUT " + len + "b: " + formatBytes(writeBuf, len));
+                RemoteLogger.trace("CONN", "OUT " + len + "b: " + formatBytes(writeBuf, len));
                 sock.write(writeBuf, len);
                 ObjectPool.releaseBytes(writeBuf);
             }
         } catch (Throwable th) {
             setError(th);
-            RemoteLogger.log("CONN", "writeToSocket ERROR: " + th, th);
+            RemoteLogger.error("CONN", "writeToSocket ERROR: " + th, th);
             this.socket.close();
         }
     }

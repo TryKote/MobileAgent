@@ -22,7 +22,7 @@ public final class ScreenBuilder {
 
     public static void openScreen(int screenId) {
         Debug.assertState(screenId >= 0 && screenId <= MAX_SCREEN_ID, "screenId out of range: " + screenId);
-        RemoteLogger.log("UI", "openScreen(" + screenId + ")");
+        RemoteLogger.debug("UI", "openScreen(" + screenId + ")");
         TimerManager.resetBacklightTimer();
         AppController.needsRepaint = true;
         while (ScreenManager.hasScreen(screenId) || hasToastInStack()) {
@@ -48,7 +48,7 @@ public final class ScreenBuilder {
         MenuItem menuItem = ScreenManager.getCurrentMenuItem();
         Object itemData = menuItem == null ? null : menuItem.data;
         int nextScreen = dispatchSelect(currentScreen, menuItem, title, action, itemData);
-        RemoteLogger.log("UI", "onMenuItemSelected screenId=" + currentScreen.screenId + " next=" + nextScreen + " skL=" + currentScreen.softKeyLeft);
+        RemoteLogger.debug("UI", "onMenuItemSelected screenId=" + currentScreen.screenId + " next=" + nextScreen + " skL=" + currentScreen.softKeyLeft);
         if (nextScreen == RESULT_VETO) {
             return;
         }
@@ -75,7 +75,7 @@ public final class ScreenBuilder {
         if (view != null) {
             result = view.onAction(menuItem, itemData);
         }
-        RemoteLogger.log("UI", "onMenuItemAction screenId=" + screenId + " result=" + result + " skC=" + currentScreen.softKeyCenter);
+        RemoteLogger.debug("UI", "onMenuItemAction screenId=" + screenId + " result=" + result + " skC=" + currentScreen.softKeyCenter);
         if (result == RESULT_VETO) {
             return;
         }
@@ -179,7 +179,7 @@ public final class ScreenBuilder {
             return;
         }
         int resolvedAction = softKeyAction == SOFT_KEY_DEFAULT_ACTION ? action : softKeyAction;
-        RemoteLogger.log("UI", "softKeyLeft action=" + resolvedAction);
+        RemoteLogger.debug("UI", "softKeyLeft action=" + resolvedAction);
         if (resolvedAction == ScreenId.CLOSE) {
             onScreenClosed();
         } else if (resolvedAction != ScreenId.NONE) {

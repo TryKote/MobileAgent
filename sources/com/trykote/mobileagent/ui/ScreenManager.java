@@ -2,11 +2,11 @@ package com.trykote.mobileagent.ui;
 
 import com.trykote.mobileagent.core.AppState;
 import com.trykote.mobileagent.core.RegistrationState;
-import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.RuntimeState;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.core.SessionState;
 import com.trykote.mobileagent.core.SettingsState;
+import com.trykote.mobileagent.core.StringPool;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.key.StringResKeys;
 import com.trykote.mobileagent.map.MapController;
@@ -127,7 +127,7 @@ public abstract class ScreenManager {
         screens.addElement(screen);
     }
     public static void showScreen(ListView screen) {
-        RemoteLogger.log("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
+        RemoteLogger.debug("SCR", "showScreen id=" + (screen != null ? screen.screenId : -1));
         ListView prevScreen = null;
         Vector screens = UIState.getScreenStack();
         int topIndex = screens.size() - 1;
