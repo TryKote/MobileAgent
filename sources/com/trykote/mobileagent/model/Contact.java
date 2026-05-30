@@ -224,6 +224,15 @@ public abstract class Contact implements Sortable {
         return 0;
     }
 
+    /** Appends an outgoing message locally without invoking the protocol send path. */
+    public final void appendOutgoingMessage(String text) {
+        this.account.notifyMessageSent(this);
+        long now = SessionState.getTimestampCurrent();
+        appendMessage(MSG_TYPE_OUTGOING, text, now, now);
+        this.lastMessageTime = now;
+        updateRenderState();
+    }
+
     public final int validateDelete() {
         return this.account.validateContactDelete(this);
     }

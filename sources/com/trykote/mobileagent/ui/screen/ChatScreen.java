@@ -20,6 +20,7 @@ import com.trykote.mobileagent.model.Conversation;
 import com.trykote.mobileagent.model.MailHelper;
 import com.trykote.mobileagent.model.Message;
 import com.trykote.mobileagent.protocol.Account;
+import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
 import com.trykote.mobileagent.ui.ContactListManager;
 import com.trykote.mobileagent.ui.MenuItem;
 import com.trykote.mobileagent.ui.NotificationHelper;
@@ -404,6 +405,9 @@ public final class ChatScreen extends ScreenView {
     }
 
     public static int handleChatOption(int optionId) {
+        if (optionId == ScreenId.UNUSED_135) {
+            return handleAttachFile();
+        }
         if (optionId != ScreenId.COMPOSE_MESSAGE) {
             ScreenBuilder.onScreenClosed();
             ScreenBuilder.onScreenClosed();
@@ -416,6 +420,16 @@ public final class ChatScreen extends ScreenView {
         ScreenBuilder.onScreenClosed();
         ScreenBuilder.onScreenClosed();
         return 0;
+    }
+
+    private static int handleAttachFile() {
+        Contact contact = AppState.getCurrentContact();
+        if (!(contact.account instanceof XmppProtocol)
+                || !FilePickerScreen.prepare((XmppProtocol) contact.account, contact.getIdentifier())) {
+            return ScreenId.NONE;
+        }
+        ScreenBuilder.onScreenClosed();
+        return ScreenId.UNUSED_135;
     }
 
     public static int handleRoutePointOption(int optionId) {

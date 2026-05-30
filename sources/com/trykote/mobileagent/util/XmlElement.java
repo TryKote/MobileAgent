@@ -92,6 +92,18 @@ public final class XmlElement {
         return setAttrImpl(ObjectPool.unpackChars(i), str);
     }
 
+    public final XmlElement setStringAttr(String name, String value) {
+        return setAttrImpl(name, value);
+    }
+
+    public final String getStringAttr(String name) {
+        return getAttribute(name);
+    }
+
+    public final XmlElement findByRawName(String name) {
+        return findChildByName(name);
+    }
+
     private XmlElement setAttrImpl(String str, String str2) {
         if (str != null) {
             if (str2 != null) {

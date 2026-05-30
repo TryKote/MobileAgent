@@ -172,7 +172,7 @@ public class ListView {
         return getItemAt(this.selectedIndex).width;
     }
     public final MenuItem getSelectedItem() {
-        if (!this.selectable || this.menuItems.size() <= 0) {
+        if (!this.selectable || this.selectedIndex < 0 || this.selectedIndex >= this.menuItems.size()) {
             return null;
         }
         return getItemAt(this.selectedIndex);

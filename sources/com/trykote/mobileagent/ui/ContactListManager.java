@@ -27,6 +27,8 @@ import com.trykote.mobileagent.model.Sortable;
 import com.trykote.mobileagent.model.VCard;
 import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
+import com.trykote.mobileagent.ui.screen.FilePickerScreen;
 import com.trykote.mobileagent.util.ObjectPool;
 import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.StringUtils;
@@ -614,6 +616,14 @@ public abstract class ContactListManager {
     public static int handleContactMenuAction(String label, int actionId) {
         SessionState.clearCurrentAccount();
         Contact contact = AppState.getCurrentContact();
+        if (actionId == ScreenId.UNUSED_135) {
+            if (!(contact.account instanceof XmppProtocol)
+                    || !FilePickerScreen.prepare((XmppProtocol) contact.account, contact.getIdentifier())) {
+                return ScreenId.NONE;
+            }
+            ScreenBuilder.onScreenClosed();
+            return ScreenId.UNUSED_135;
+        }
         if (actionId == ScreenId.STATUS_INPUT && !contact.account.isConnected()) {
             return NotificationHelper.showError(Account.ERROR_DISCONNECTED);
         }

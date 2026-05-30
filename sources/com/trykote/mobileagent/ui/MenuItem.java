@@ -43,7 +43,7 @@ public final class MenuItem {
     static final int ICON_DROPDOWN = 247;
 
     // No icon sentinel
-    static final int NO_ICON = -1;
+    public static final int NO_ICON = -1;
 
     // Input constraints for password masking (MIDP TextField.PASSWORD | TextField.SENSITIVE)
     static final int PASSWORD_INPUT_TYPE = 327680;

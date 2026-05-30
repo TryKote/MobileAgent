@@ -10,7 +10,7 @@ import java.util.Vector;
 public final class InlineImageCache {
 
     private static final int MAX_CACHED_IMAGES = 4;
-    public static final int MAX_IMAGE_SIZE = 204800;
+    public static final int MAX_IMAGE_SIZE = 524288;
 
     private static final Hashtable cache = new Hashtable();
     private static final Vector keys = new Vector();
@@ -48,6 +48,15 @@ public final class InlineImageCache {
         cache.put(url, image);
         keys.addElement(url);
         stateChanged = true;
+    }
+
+    /** Frees all decoded images. Used as a recovery action after OutOfMemoryError. */
+    public static synchronized int clearCache() {
+        int freed = keys.size();
+        keys.removeAllElements();
+        cache.clear();
+        stateChanged = true;
+        return freed;
     }
 
     public static synchronized boolean isTooLarge(String url) {

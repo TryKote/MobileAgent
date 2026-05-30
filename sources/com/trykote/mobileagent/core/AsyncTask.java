@@ -28,8 +28,10 @@ import com.trykote.mobileagent.protocol.ConnectionThread;
 import com.trykote.mobileagent.protocol.ProtocolEvent;
 import com.trykote.mobileagent.protocol.mrim.MrimAccount;
 import com.trykote.mobileagent.protocol.mrim.RegistrationService;
+import com.trykote.mobileagent.protocol.xmpp.XmppHttpUpload;
 import com.trykote.mobileagent.protocol.xmpp.XmppMailRuProtocol;
 import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
+import com.trykote.mobileagent.ui.screen.FilePickerScreen;
 import com.trykote.mobileagent.util.ByteBuffer;
 import com.trykote.mobileagent.util.ChunkedRecordStore;
 import com.trykote.mobileagent.util.DiagnosticReporter;
@@ -162,6 +164,8 @@ public final class AsyncTask implements Runnable {
                 case AsyncTaskId.RESOLVE_XMPP_SERVER: taskResolveXmppServer(); return;
                 case AsyncTaskId.XMPP_HTTP_AUTH: taskXmppHttpAuth(); return;
                 case AsyncTaskId.DOWNLOAD_INLINE_IMAGE: taskDownloadInlineImage(); return;
+                case AsyncTaskId.XMPP_HTTP_UPLOAD: taskXmppHttpUpload(); return;
+                case AsyncTaskId.FILE_PICKER_READ: taskFilePickerRead(); return;
             }
         } catch (Throwable e) {
             RemoteLogger.error("TASK", "FATAL exception in run taskId=" + this.taskId, e);
@@ -187,6 +191,14 @@ public final class AsyncTask implements Runnable {
             NetworkLock.releaseNetworkLock();
             args[2] = result;
         }
+    }
+
+    private void taskXmppHttpUpload() {
+        ((XmppHttpUpload) this.taskData).performUpload();
+    }
+
+    private void taskFilePickerRead() {
+        FilePickerScreen.readAndUpload((Object[]) this.taskData);
     }
 
     private void taskDownloadInlineImage() {
@@ -217,7 +229,7 @@ public final class AsyncTask implements Runnable {
             }
 
             if (responseCode != HTTP_OK) {
-                EventDispatcher.postNotification("HTTP " + responseCode);
+                EventDispatcher.postNotification("Сервер вернул HTTP " + responseCode);
                 return;
             }
             if (contentLength > InlineImageCache.MAX_IMAGE_SIZE) {
@@ -286,9 +298,18 @@ public final class AsyncTask implements Runnable {
                 InlineImageCache.setProgress(url, InlineImageCache.PHASE_DONE, 100);
                 RemoteLogger.debug("IMG", "cached, scaled to " + image.getWidth() + "x" + image.getHeight());
             }
+        } catch (OutOfMemoryError oom) {
+            int freed = InlineImageCache.clearCache();
+            RemoteLogger.error("IMG", "OOM downloading " + url + ", evicted " + freed + " cached: " + oom);
+            EventDispatcher.postNotification(freed > 0
+                    ? "Недостаточно памяти, кеш очищен — попробуйте снова"
+                    : "Картинка не помещается в память");
+        } catch (IOException ioe) {
+            RemoteLogger.error("IMG", "IO error " + url + ": " + ioe);
+            EventDispatcher.postNotification("Нет связи с сервером");
         } catch (Throwable e) {
             RemoteLogger.error("IMG", "download failed: " + url + " " + e);
-            EventDispatcher.postNotification("Ошибка загрузки");
+            EventDispatcher.postNotification("Ошибка загрузки картинки");
         } finally {
             InlineImageCache.clearDownloading(url);
             if (httpsClient != null) {

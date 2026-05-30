@@ -31,6 +31,8 @@ import com.trykote.mobileagent.protocol.mrim.MrimCommand;
 import com.trykote.mobileagent.protocol.mrim.MrimContact;
 import com.trykote.mobileagent.protocol.mrim.MrimContactGroup;
 import com.trykote.mobileagent.protocol.mrim.MrimProfileManager;
+import com.trykote.mobileagent.protocol.xmpp.XmppHttpUpload;
+import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
 import com.trykote.mobileagent.ui.ContactListManager;
 import com.trykote.mobileagent.ui.ListView;
 import com.trykote.mobileagent.ui.MenuItem;
@@ -64,6 +66,7 @@ public final class ContactScreen extends ScreenView {
     private static final int CYRILLIC_EXTRA_BYTES = 2;
     private static final int SMS_CHAR_LIMIT = 160;
     private static final long PHONE_INPUT_CHECK_INTERVAL_MS = 3000L;
+    private static final int ICON_ATTACH_FILE = 216;
     private static final int NAME_PARTS_COUNT = 3;
     private static final int CONTACT_TYPE_BASIC = 1;
     private static final int CONTACT_TYPE_MRIM = 4;
@@ -540,7 +543,20 @@ public final class ContactScreen extends ScreenView {
         setupContactMenuFlags(menuContact);
         UIState.setOkMenuType(MENU_TYPE_CONTACT_MENU);
         UIState.setOkMenuAction(ScreenId.CONTACT_MENU);
-        Screens.contactActionsMenu().show();
+        Screen actions = Screens.contactActionsMenu();
+        if (isHttpUploadReady(menuContact)) {
+            actions.addAction(ICON_ATTACH_FILE, "Прикрепить файл", ScreenId.UNUSED_135);
+        }
+        ScreenManager.showScreen(actions);
+    }
+
+    private static boolean isHttpUploadReady(Contact menuContact) {
+        Account acc = menuContact.account;
+        if (!(acc instanceof XmppProtocol)) {
+            return false;
+        }
+        XmppHttpUpload upl = ((XmppProtocol) acc).getHttpUpload();
+        return upl != null && upl.getState() == XmppHttpUpload.STATE_READY;
     }
 
     private void buildContactInfoView() {

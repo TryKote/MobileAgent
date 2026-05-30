@@ -117,6 +117,15 @@ public class XmppProtocol extends Account {
 
     public String serverResourceId;
 
+    private XmppHttpUpload httpUpload;
+
+    private static final long DISCO_TIMEOUT_MS = 5000L;
+    private static final int MSG_COUNT_ROSTER_DONE = 90;
+    private static final int MSG_COUNT_CONNECTED = 100;
+
+    private boolean rosterReceived;
+    private long discoStartedMs;
+
     public XmppProtocol(int accountId, String login, String password) {
         super(accountId, login, password);
         this.configFlags = STATUS_ONLINE;
@@ -217,6 +226,15 @@ public class XmppProtocol extends Account {
         return sendData(new ByteBuffer().writeUTFNoLen(xml));
     }
 
+    /** Used by sub-protocols (e.g. XEP-0363) to inject XML stanzas onto the wire. */
+    public final int sendRaw(XmlElement element) {
+        return sendXmlElement(element);
+    }
+
+    public final XmppHttpUpload getHttpUpload() {
+        return this.httpUpload;
+    }
+
     private int sendElementWithId(XmlElement element) {
         return sendXmlElement(element.setAttrValue(PackedStringKeys.ATTR_ID, generateMessageId()));
     }
@@ -290,6 +308,8 @@ public class XmppProtocol extends Account {
         }
         this.authState = null;
         this.lastException = null;
+        this.rosterReceived = false;
+        this.discoStartedMs = 0L;
         this.msgCount = 0;
     }
 
@@ -393,6 +413,9 @@ public class XmppProtocol extends Account {
         feedParserBuffer();
         XmlElement element = (XmlElement) Utils.dequeue(this.elementQueue);
         if (element == null) {
+            if (this.rosterReceived && this.progress != PROGRESS_CONNECTED) {
+                tryFinishConnect();
+            }
             return;
         }
         String tagName = element.tagName;
@@ -400,6 +423,9 @@ public class XmppProtocol extends Account {
         extractServerDomain(element, tagName);
         if (!StringUtils.matchesKey(PackedStringKeys.XMPP_STREAM_STREAM, tagName)) {
             dispatchStanza(element, tagName);
+            if (this.rosterReceived && this.progress != PROGRESS_CONNECTED) {
+                tryFinishConnect();
+            }
             notifyConnectionProgressChanged();
             notifyContactListUpdated();
         }
@@ -583,11 +609,16 @@ public class XmppProtocol extends Account {
 
     private void handleIq(XmlElement element) {
         if (handlePing(element)) return;
+        if (handleHttpUpload(element)) return;
         if (processRosterUpdate(element)) return;
         if (handleBindResult(element)) return;
         if (handleSessionResult(element)) return;
         if (handleDiscoInfo(element)) return;
         handleRosterResponse(element);
+    }
+
+    private boolean handleHttpUpload(XmlElement element) {
+        return this.httpUpload != null && this.httpUpload.handleIq(element);
     }
 
     private boolean handlePing(XmlElement element) {
@@ -612,6 +643,7 @@ public class XmppProtocol extends Account {
         if (!StringUtils.matchesKey(PackedStringKeys.TAG_RESULT, element.getNameAttr())) return false;
         sendElementWithId(XmlElement.createFromState(PackedStringKeys.XMPP_IQ).addNameAttr(PackedStringKeys.XMPP_TYPE_GET).addSimpleChild(PackedStringKeys.TAG_QUERY, PackedStringKeys.XMPP_NS_ROSTER));
         this.msgCount = 80;
+        startHttpUploadDiscovery();
         return true;
     }
 
@@ -643,10 +675,50 @@ public class XmppProtocol extends Account {
             if (Utils.vectorSize(this.groups) == 0) {
                 this.groups.addElement(new XmppContactGroup(this, 1, StringPool.get(PackedStringKeys.XMPP_GROUP_GENERAL)));
             }
-            this.progress = PROGRESS_CONNECTED;
-            setStatusMode(this.configFlags);
-            this.msgCount = 100;
+            this.rosterReceived = true;
+            this.msgCount = MSG_COUNT_ROSTER_DONE;
+            tryFinishConnect();
         }
+    }
+
+    private void startHttpUploadDiscovery() {
+        if (isMailRuVariant()) {
+            return;
+        }
+        String domain = this.serverDomain != null ? this.serverDomain : getStreamDomain();
+        if (domain == null) {
+            return;
+        }
+        if (this.httpUpload == null) {
+            this.httpUpload = new XmppHttpUpload(this);
+        }
+        this.httpUpload.start(domain);
+        this.discoStartedMs = System.currentTimeMillis();
+    }
+
+    /** Marks connection complete once both roster and HTTP upload discovery are done (or disco times out). */
+    private void tryFinishConnect() {
+        if (!this.rosterReceived || this.progress == PROGRESS_CONNECTED) {
+            return;
+        }
+        if (!isMailRuVariant() && this.httpUpload != null && isDiscoveryPending()
+                && System.currentTimeMillis() - this.discoStartedMs < DISCO_TIMEOUT_MS) {
+            return;
+        }
+        if (this.httpUpload != null && isDiscoveryPending()) {
+            RemoteLogger.warn("XMPP", "disco timeout, finishing connect without HTTP upload");
+        }
+        this.progress = PROGRESS_CONNECTED;
+        setStatusMode(this.configFlags);
+        this.msgCount = MSG_COUNT_CONNECTED;
+        notifyConnectionProgressChanged();
+    }
+
+    private boolean isDiscoveryPending() {
+        int s = this.httpUpload.getState();
+        return s == XmppHttpUpload.STATE_IDLE
+                || s == XmppHttpUpload.STATE_DISCO_ITEMS_SENT
+                || s == XmppHttpUpload.STATE_DISCO_INFO_SENT;
     }
 
     // --- End loadData decomposition ---
@@ -900,6 +972,7 @@ public class XmppProtocol extends Account {
         this.lastException = null;
         this.msgCount = 0;
         clearParserState();
+        this.httpUpload = null;
         return 0;
     }
 

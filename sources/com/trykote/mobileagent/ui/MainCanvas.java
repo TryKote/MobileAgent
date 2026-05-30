@@ -9,7 +9,11 @@ import com.trykote.mobileagent.core.SettingsState;
 import com.trykote.mobileagent.core.UIState;
 import com.trykote.mobileagent.core.event.EventDispatcher;
 import com.trykote.mobileagent.core.event.PointerEvent;
+import com.trykote.mobileagent.key.UIKeys;
+import com.trykote.mobileagent.protocol.Account;
 import com.trykote.mobileagent.protocol.AccountManager;
+import com.trykote.mobileagent.protocol.xmpp.XmppHttpUpload;
+import com.trykote.mobileagent.protocol.xmpp.XmppProtocol;
 import com.trykote.mobileagent.util.ImageCache;
 import com.trykote.mobileagent.util.RemoteLogger;
 import com.trykote.mobileagent.util.TimerManager;
@@ -68,6 +72,14 @@ public final class MainCanvas extends Canvas implements CommandListener {
     // Blinking icon IDs for notification overlays
     private static final int ICON_UNREAD_BLINK = 16384;
     private static final int ICON_CONNECTION_BLINK = 16385;
+
+    // Upload progress bar (popup-style: matches startup connection UI)
+    private static final int UPLOAD_PALETTE_TEXT = 0;
+    private static final int UPLOAD_PALETTE_BACKGROUND = 1;
+    private static final int UPLOAD_PALETTE_SELECTION = 13;
+    private static final int UPLOAD_PALETTE_BORDER = 16;
+    private static final int UPLOAD_MIN_BAR_HEIGHT = 16;
+    private static final int UPLOAD_TEXT_OFFSET = 4;
 
     private Command okCommand;
 
@@ -200,6 +212,7 @@ public final class MainCanvas extends Canvas implements CommandListener {
                             gfx.drawIcon(ICON_CONNECTION_BLINK, iconX, 1);
                         }
                     }
+                    paintUploadProgress(gfx);
                     ImageCache.cleanupExpiredImages();
                 }
             }
@@ -207,6 +220,60 @@ public final class MainCanvas extends Canvas implements CommandListener {
             RemoteLogger.error("PAINT", "CRASH in paint: " + t);
         }
         AppController.needsRepaint = false;
+    }
+
+    private void paintUploadProgress(GraphicsContext gfx) {
+        XmppHttpUpload upload = findActiveUpload();
+        if (upload == null) {
+            return;
+        }
+        String label = upload.getUploadStatusText();
+        if (label == null) {
+            return;
+        }
+        int screenWidth = UIState.getScreenWidth();
+        int screenHeight = UIState.getHeight();
+        gfx.setFont(UIState.getGfxContext(UIKeys.GFX_INDEX_DEFAULT));
+        int fontHeight = UIState.getFontHeight();
+        int barHeight = Utils.max(fontHeight, UPLOAD_MIN_BAR_HEIGHT);
+        int barTop = screenHeight - barHeight - 1;
+
+        gfx.setClip(0, barTop, screenWidth, barHeight + 1);
+        gfx.setColorFromPalette(UPLOAD_PALETTE_BORDER);
+        gfx.fillRect(0, barTop, screenWidth, barHeight + 1);
+        gfx.setColorFromPalette(UPLOAD_PALETTE_BACKGROUND);
+        gfx.fillRect(1, barTop + 1, screenWidth - 2, barHeight);
+
+        int total = upload.getUploadBytesTotal();
+        int sent = upload.getUploadBytesSent();
+        if (total > 0 && sent > 0) {
+            if (sent > total) {
+                sent = total;
+            }
+            int filled = (int) ((long) (screenWidth - 2) * sent / total);
+            if (filled > 0) {
+                gfx.setColorFromPalette(UPLOAD_PALETTE_SELECTION);
+                gfx.fillRect(1, barTop + 1, filled, barHeight);
+            }
+        }
+
+        gfx.setColorFromPalette(UPLOAD_PALETTE_TEXT);
+        gfx.graphics.drawString(label, UPLOAD_TEXT_OFFSET, barTop + barHeight, Graphics.BOTTOM | Graphics.LEFT);
+    }
+
+    private XmppHttpUpload findActiveUpload() {
+        Vector accounts = SessionState.getAccounts();
+        for (int i = 0; i < accounts.size(); i++) {
+            Account account = (Account) accounts.elementAt(i);
+            if (!(account instanceof XmppProtocol)) {
+                continue;
+            }
+            XmppHttpUpload upload = ((XmppProtocol) account).getHttpUpload();
+            if (upload != null && upload.isUploadInProgress()) {
+                return upload;
+            }
+        }
+        return null;
     }
 
     public final void keyPressed(int i) {

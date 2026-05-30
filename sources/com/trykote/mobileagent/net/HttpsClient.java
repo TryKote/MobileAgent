@@ -9,8 +9,13 @@ import java.io.OutputStream;
 
 public final class HttpsClient {
 
+    public interface ProgressListener {
+        void onUploadProgress(int sent, int total);
+    }
+
     private static final int BUFFER_SIZE = 1024;
     private static final int MAX_HEADER_SIZE = 4096;
+    private static final int PUT_CHUNK_SIZE = 2048;
 
     private TlsConnection tls;
     private InputStream in;
@@ -18,6 +23,14 @@ public final class HttpsClient {
     private long contentLength = -1;
 
     public HttpsClient(String url) throws IOException {
+        this(url, "GET", null, null, null, null);
+    }
+
+    public HttpsClient(String url, String method, byte[] body, String contentType, String[] extraHeaders) throws IOException {
+        this(url, method, body, contentType, extraHeaders, null);
+    }
+
+    public HttpsClient(String url, String method, byte[] body, String contentType, String[] extraHeaders, ProgressListener listener) throws IOException {
         String remaining = url.substring(8);
         int slashIdx = remaining.indexOf('/');
         String hostPort = slashIdx >= 0 ? remaining.substring(0, slashIdx) : remaining;
@@ -37,12 +50,36 @@ public final class HttpsClient {
         OutputStream out = tls.getOutputStream();
         in = tls.getInputStream();
 
-        String request = "GET " + path + " HTTP/1.1\r\n"
-                + "Host: " + host + "\r\n"
-                + "Connection: close\r\n"
-                + "\r\n";
-        RemoteLogger.debug("TLS", "sending GET " + path.substring(0, Math.min(path.length(), 40)));
-        out.write(request.getBytes("UTF-8"));
+        StringBuffer req = new StringBuffer();
+        req.append(method).append(' ').append(path).append(" HTTP/1.1\r\n");
+        req.append("Host: ").append(host).append("\r\n");
+        req.append("Connection: close\r\n");
+        if (body != null) {
+            req.append("Content-Length: ").append(body.length).append("\r\n");
+            if (contentType != null) {
+                req.append("Content-Type: ").append(contentType).append("\r\n");
+            }
+        }
+        if (extraHeaders != null) {
+            for (int i = 0; i + 1 < extraHeaders.length; i += 2) {
+                req.append(extraHeaders[i]).append(": ").append(extraHeaders[i + 1]).append("\r\n");
+            }
+        }
+        req.append("\r\n");
+
+        RemoteLogger.debug("TLS", "sending " + method + " " + path.substring(0, Math.min(path.length(), 40)) + " body=" + (body != null ? body.length : 0));
+        out.write(req.toString().getBytes("UTF-8"));
+        if (body != null) {
+            int offset = 0;
+            while (offset < body.length) {
+                int chunk = Math.min(PUT_CHUNK_SIZE, body.length - offset);
+                out.write(body, offset, chunk);
+                offset += chunk;
+                if (listener != null) {
+                    listener.onUploadProgress(offset, body.length);
+                }
+            }
+        }
         out.flush();
         RemoteLogger.debug("TLS", "request sent, reading headers");
 

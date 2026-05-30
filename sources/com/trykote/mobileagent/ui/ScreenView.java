@@ -3,10 +3,11 @@ package com.trykote.mobileagent.ui;
 import com.trykote.mobileagent.core.ScreenId;
 import com.trykote.mobileagent.ui.screen.AboutScreen;
 import com.trykote.mobileagent.ui.screen.AccountScreen;
-import com.trykote.mobileagent.ui.screen.DialogScreen;
 import com.trykote.mobileagent.ui.screen.ChatAsyncScreen;
 import com.trykote.mobileagent.ui.screen.ChatScreen;
 import com.trykote.mobileagent.ui.screen.ContactScreen;
+import com.trykote.mobileagent.ui.screen.DialogScreen;
+import com.trykote.mobileagent.ui.screen.FilePickerScreen;
 import com.trykote.mobileagent.ui.screen.MapScreen;
 import com.trykote.mobileagent.ui.screen.MessageScreen;
 import com.trykote.mobileagent.ui.screen.MiscScreen;
@@ -113,6 +114,8 @@ public abstract class ScreenView extends Screen {
         switch (screenId) {
             case ScreenId.ABOUT:
                 return new AboutScreen();
+            case ScreenId.UNUSED_135:
+                return new FilePickerScreen();
             case ScreenId.TRAFFIC_COST:
                 return new TrafficCostScreen();
             case ScreenId.SETTINGS:
